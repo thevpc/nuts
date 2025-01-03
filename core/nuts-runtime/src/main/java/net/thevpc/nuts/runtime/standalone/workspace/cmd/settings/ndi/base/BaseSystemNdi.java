@@ -917,25 +917,25 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
 //    public String createNutsEnvString(NdiScriptOptions options, boolean updateEnv, boolean updatePATH) {
 //        final NutsWorkspace ws = session.getWorkspace();
-//        String NUTS_JAR_PATH = ws.search()
+//        String NUTS_APP_JAR_PATH = ws.search()
 //                .setSession(session.copy())
 //                .addId(ws.getApiId()).getResultPaths().required();
 //
 //        TreeSet<String> exports = new TreeSet<>();
 //        SimpleScriptBuilder tmp = scriptBuilderSimple("nuts-env", options.resolveNutsApiId(), options);
 //        if (updateEnv) {
-//            exports.addAll(Arrays.asList("NUTS_VERSION", "NUTS_WORKSPACE", "NUTS_JAR", "NUTS_WORKSPACE_BINDIR"));
+//            exports.addAll(Arrays.asList("NUTS_VERSION", "NUTS_WORKSPACE", "NUTS_APP_JAR", "NUTS_WORKSPACE_BINDIR"));
 //            tmp.printSetStatic("NUTS_VERSION", ws.getApiVersion().toString());
 //            tmp.printSetStatic("NUTS_WORKSPACE", ws.locations().getWorkspaceLocation());
 //            for (NutsStoreLocation value : NutsStoreLocation.values()) {
 //                tmp.printSetStatic("NUTS_WORKSPACE_" + value, ws.locations().getStoreLocation(value));
 //                exports.add("NUTS_WORKSPACE_" + value);
 //            }
-//            if (NUTS_JAR_PATH.startsWith(ws.locations().getStoreLocation(NutsStoreLocation.LIB))) {
-//                String pp = NUTS_JAR_PATH.substring(ws.locations().getStoreLocation(NutsStoreLocation.LIB).length());
-//                tmp.printSet("NUTS_JAR", varRef("NUTS_WORKSPACE_LIB") + pp);
+//            if (NUTS_APP_JAR_PATH.startsWith(ws.locations().getStoreLocation(NutsStoreLocation.LIB))) {
+//                String pp = NUTS_APP_JAR_PATH.substring(ws.locations().getStoreLocation(NutsStoreLocation.LIB).length());
+//                tmp.printSet("NUTS_APP_JAR", varRef("NUTS_WORKSPACE_LIB") + pp);
 //            } else {
-//                tmp.printSetStatic("NUTS_JAR", NUTS_JAR_PATH);
+//                tmp.printSetStatic("NUTS_APP_JAR", NUTS_APP_JAR_PATH);
 //            }
 //            String p0 = options.resolveBinFolder().toString().substring(
 //                    ws.locations().getStoreLocation(NutsStoreLocation.APPS).length()

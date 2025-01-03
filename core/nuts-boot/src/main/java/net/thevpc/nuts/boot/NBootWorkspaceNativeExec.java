@@ -1,5 +1,6 @@
 package net.thevpc.nuts.boot;
 
+import net.thevpc.nuts.NExceptionBootAware;
 import net.thevpc.nuts.NWorkspaceBase;
 import net.thevpc.nuts.boot.reserved.cmdline.NBootArg;
 import net.thevpc.nuts.boot.reserved.cmdline.NBootCmdLine;
@@ -22,20 +23,22 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
     private long minTime = 5000;
     private long waitTime = 3000;
     private long maxCount = -1;
+    private NBootArguments unparsedOptions;
 
-    public NBootWorkspaceNativeExec(NBootArguments userOptionsUnparsed) {
-        if (userOptionsUnparsed == null) {
-            userOptionsUnparsed = new NBootArguments();
+    public NBootWorkspaceNativeExec(NBootArguments unparsedOptions) {
+        if (unparsedOptions == null) {
+            unparsedOptions = new NBootArguments();
         }
+        this.unparsedOptions=unparsedOptions;
         NBootOptionsInfo userOptions = new NBootOptionsInfo();
-        userOptions.setStdin(userOptionsUnparsed.getIn());
-        userOptions.setStdout(userOptionsUnparsed.getOut());
-        userOptions.setStderr(userOptionsUnparsed.getErr());
-        userOptions.setCreationTime(userOptionsUnparsed.getStartTime());
+        userOptions.setStdin(unparsedOptions.getIn());
+        userOptions.setStdout(unparsedOptions.getOut());
+        userOptions.setStderr(unparsedOptions.getErr());
+        userOptions.setCreationTime(unparsedOptions.getStartTime());
         InputStream in = userOptions.getStdin();
         scanner = new Scanner(in == null ? System.in : in);
         this.bLog = new NBootLog(userOptions);
-        String[] args = userOptionsUnparsed.getArgs();
+        String[] args = unparsedOptions.getArgs();
         parseArguments(args == null ? new String[0] : args, userOptions);
         if (NBootUtils.firstNonNull(userOptions.getSkipErrors(), false)) {
             StringBuilder errorMessage = new StringBuilder();
@@ -49,6 +52,14 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
         }
         this.options = userOptions.copy();
         this.postInit();
+    }
+
+    public NBootArguments getUnparsedOptions() {
+        return unparsedOptions;
+    }
+
+    public NBootOptionsInfo getOptions() {
+        return options;
     }
 
     private void parseArguments(String[] bootArguments, NBootOptionsInfo userOptions) {
@@ -739,8 +750,21 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
         throw new IllegalArgumentException("unsupported operation openWorkspace in native-exec");
     }
 
-    @Override
     public NWorkspaceBase runWorkspace() {
+        try {
+            return runWorkspace0();
+        } catch (Exception ex) {
+            NExceptionBootAware u = NBootUtils.findThrowable(ex, NExceptionBootAware.class, null);
+            if (u != null) {
+                u.processThrowable();
+            } else {
+                NBootUtils.processThrowable(ex, bLog, true, NBootUtils.resolveShowStackTrace(options), NBootUtils.resolveGui(options));
+            }
+            throw ex;
+        }
+    }
+
+    public NWorkspaceBase runWorkspace0() {
         NWorkspaceBase ws = null;
         if (NBootUtils.firstNonNull(options.getCommandHelp(), false)) {
             NBootWorkspaceHelper.runCommandHelp(options, bLog);

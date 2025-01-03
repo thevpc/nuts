@@ -276,10 +276,14 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
             fireChange = true;
             this.config.setStoreStrategy(NWorkspace.of().getRepositoryStoreStrategy());
         }
-        if (!Objects.equals(NRepositoryUtils.getRepoType(config), repositoryType)) {
-            throw new NIllegalArgumentException(
-                    NMsg.ofC("invalid Repository Type : expected %s, found %s", repositoryType, NRepositoryUtils.getRepoType(config))
-            );
+        if(config.getLocation()!=null && !NBlankable.isBlank(config.getLocation().getLocationType())) {
+            // do not waste time on constructor to connect to internet and check repo type....
+            //if (!Objects.equals(NRepositoryUtils.getRepoType(config), repositoryType)) {
+            if (!Objects.equals(config.getLocation().getLocationType(), repositoryType)) {
+                throw new NIllegalArgumentException(
+                        NMsg.ofC("invalid Repository Type : expected %s, found %s", repositoryType, NRepositoryUtils.getRepoType(config))
+                );
+            }
         }
         tags.clear();
         if (this.config.getTags() != null) {

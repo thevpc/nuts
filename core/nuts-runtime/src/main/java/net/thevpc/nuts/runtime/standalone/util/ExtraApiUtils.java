@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.NClassLoaderNode;
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NIllegalArgumentException;
-import net.thevpc.nuts.Nuts;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
@@ -251,11 +248,11 @@ public class ExtraApiUtils {
     }
 
     public static String resolveDescPath(NId id) {
-        return resolveFilePath(id, "nuts");
+        return resolveFilePath(id, NConstants.Files.DESCRIPTOR_FILE_EXTENSION_SIMPLE);
     }
 
     public static String resolveNutsDescriptorPath(NId id) {
-        return resolveFilePath(id, "nuts");
+        return resolveFilePath(id, NConstants.Files.DESCRIPTOR_FILE_EXTENSION_SIMPLE);
     }
 
     public static String resolveFileName(NId id, String extension) {

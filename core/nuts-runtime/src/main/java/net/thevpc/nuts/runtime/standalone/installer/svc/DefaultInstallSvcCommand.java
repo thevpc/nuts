@@ -511,8 +511,8 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
                     return base.getInstallDir();
                 case "JAVA":
                     return System.getProperty("java.home") + "/bin/java";
-                case "NUTS_JAR":
-                    return base.getLibDir() + "/net/thevpc/nuts/nuts/" + base.nutsApiVersion + "/nuts-" + base.nutsApiVersion + ".jar";
+                case "NUTS_APP_JAR":
+                    return base.getLibDir() + "/net/thevpc/nuts/nuts-app/" + base.nutsApiVersion + "/nuts-app-" + base.nutsApiVersion + ".jar";
                 case "USER":
                     return System.getProperty("user.name");
                 case "START_COMMANDLINE": {

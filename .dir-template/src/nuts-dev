@@ -17,7 +17,7 @@
 ## you can simply call 'nuts ---jdb your-application' (Please note the 3 dashes preceding jdb)
 ##
 NUTS_VERSION=${{latestApiVersion}}
-NUTS_JAR=~/.m2/repository/net/thevpc/nuts/nuts/$NUTS_VERSION/nuts-$NUTS_VERSION.jar
+NUTS_APP_JAR=~/.m2/repository/net/thevpc/nuts/nuts-app/$NUTS_VERSION/nuts-app-$NUTS_VERSION.jar
 
 if [ x"$NUTS_VERSION" = "x" ] ; then
     echo "you must call 'nuts nsh build-website.nsh' first to update NUTS_VERSION"
@@ -75,4 +75,4 @@ elif [ x"${JAVA_HOME}" != "x" ] ; then
     JAVA_CMD="${JAVA_HOME}/bin/java";
 fi
 
-$JAVA_CMD $NUTS_DEBUG_ARG -jar "$NUTS_JAR" -w development "$@"
+$JAVA_CMD $NUTS_DEBUG_ARG -jar "$NUTS_APP_JAR" -w development "$@"

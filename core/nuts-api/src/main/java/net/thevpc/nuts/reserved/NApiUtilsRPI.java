@@ -152,7 +152,7 @@ public class NApiUtilsRPI {
         }
     }
 
-    public static int processThrowable(Throwable ex, String[] args) {
+    public static int processThrowable(Throwable ex, String[] args,NBootOptionsInfo bootOptions) {
         if (ex == null) {
             return 0;
         }
@@ -161,9 +161,26 @@ public class NApiUtilsRPI {
             return (NApplicationExceptionHandler.of()
                     .processThrowable(args, ex));
         }
-        NBootOptionsInfo options = new NBootOptionsInfo();
-        NBootWorkspaceCmdLineParser.parseNutsArguments(args, options);
-        return processThrowable(ex, null, true, resolveShowStackTrace(options), resolveGui(options));
+        if(bootOptions==null) {
+            bootOptions = new NBootOptionsInfo();
+            NBootWorkspaceCmdLineParser.parseNutsArguments(args, bootOptions);
+        }
+        return processThrowable(ex, null, true, resolveShowStackTrace(bootOptions), resolveGui(bootOptions));
+    }
+
+    public int exitIfError(Throwable ex, String[] args,NBootOptionsInfo bootOptions) {
+        int code = processThrowable(ex, args,bootOptions);
+        if(code!=0){
+            System.exit(code);
+        }
+        return code;
+    }
+
+    public int exitIfError(int code) {
+        if(code!=0){
+            System.exit(code);
+        }
+        return code;
     }
 
     /**

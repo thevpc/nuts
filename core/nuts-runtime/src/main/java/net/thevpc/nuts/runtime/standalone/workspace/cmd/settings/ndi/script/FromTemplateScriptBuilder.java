@@ -149,7 +149,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                         return sndi.getIncludeNutsInit(options,getShellFamily()).path().toString();
                                     case "SCRIPT_NUTS_ENV":
                                         return sndi.getIncludeNutsEnv(options,getShellFamily()).path().toString();
-                                    case "NUTS_JAR":
+                                    case "NUTS_APP_JAR":
                                         return options.resolveNutsAppJarPath().toString();
                                     case "BIN_FOLDER":
                                         return options.resolveBinFolder().toString();
@@ -179,13 +179,13 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                         return str(NWorkspace.of().getStoreLocation(NStoreType.TEMP));
                                     case "NUTS_WORKSPACE_VAR":
                                         return str(NWorkspace.of().getStoreLocation(NStoreType.VAR));
-                                    case "NUTS_JAR_EXPR": {
-                                        String NUTS_JAR_PATH = options.resolveNutsAppJarPath().toString();
-                                        if (NUTS_JAR_PATH.startsWith(NWorkspace.of().getStoreLocation(NStoreType.LIB).toString())) {
-                                            String pp = NUTS_JAR_PATH.substring(NWorkspace.of().getStoreLocation(NStoreType.LIB).toString().length());
+                                    case "NUTS_APP_JAR_EXPR": {
+                                        String NUTS_APP_JAR_PATH = options.resolveNutsAppJarPath().toString();
+                                        if (NUTS_APP_JAR_PATH.startsWith(NWorkspace.of().getStoreLocation(NStoreType.LIB).toString())) {
+                                            String pp = NUTS_APP_JAR_PATH.substring(NWorkspace.of().getStoreLocation(NStoreType.LIB).toString().length());
                                             return NShellHelper.of(getShellFamily()).varRef("NUTS_WORKSPACE_LIB") + pp;
                                         } else {
-                                            return NUTS_JAR_PATH;
+                                            return NUTS_APP_JAR_PATH;
                                         }
                                     }
                                     case "NUTS_WORKSPACE_BINDIR_EXPR": {

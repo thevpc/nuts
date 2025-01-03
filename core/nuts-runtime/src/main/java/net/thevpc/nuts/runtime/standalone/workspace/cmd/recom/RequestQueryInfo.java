@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.recom;
 
-import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
 import net.thevpc.nuts.util.NStringUtils;
 
 public class RequestQueryInfo {

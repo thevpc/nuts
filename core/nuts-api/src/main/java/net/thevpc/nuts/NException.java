@@ -12,21 +12,34 @@
  *
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.elem.NArrayElementBuilder;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.format.NContentType;
+import net.thevpc.nuts.io.NIO;
+import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.log.NLogOp;
+import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.NUtils;
+
+import java.io.PrintStream;
+import java.util.logging.Level;
 
 /**
  * Base Nuts Exception. Parent of all Nuts defined Exceptions.
@@ -35,7 +48,7 @@ import net.thevpc.nuts.util.NMsg;
  * @app.category Exceptions
  * @since 0.5.4
  */
-public class NException extends RuntimeException implements NSessionAwareExceptionBase {
+public class NException extends RuntimeException implements NSessionAwareExceptionBase, NExceptionBootAware {
 
     private final NSession session;
     private final NMsg formattedMessage;
@@ -100,7 +113,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
     }
 
     static NText messageToFormattedString(NMsg message) {
-        if(NWorkspace.get().isNotPresent()){
+        if (NWorkspace.get().isNotPresent()) {
             throw new IllegalArgumentException("missing workspace");
         }
         return NText.of(validateFormattedMessage(message));
@@ -127,5 +140,10 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
 
     public NSession getSession() {
         return session;
+    }
+
+
+    public int processThrowable() {
+        return NApplicationExceptionHandler.of().processThrowable(null, this);
     }
 }

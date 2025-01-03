@@ -11,26 +11,20 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NBootArguments;
-import net.thevpc.nuts.boot.NBootException;
-import net.thevpc.nuts.boot.NBootWorkspace;
-import net.thevpc.nuts.boot.NBootWorkspaceImpl;
-import net.thevpc.nuts.reserved.NApiUtilsRPI;
-
-import java.time.Instant;
+import net.thevpc.nuts.boot.*;
 
 /**
  * Nuts App. Nuts is a Package manager for Java Applications and this
@@ -53,24 +47,9 @@ public final class NutsApp {
     @SuppressWarnings("UseSpecificCatch")
     public static void main(String[] args) {
         try {
-            Instant startTime = Instant.now();
-            NBootArguments options = new NBootArguments();
-            options.setArgs(args);
-            options.setStartTime(startTime);
-            NBootWorkspace.of(options).runWorkspace();
-            System.exit(0);
-        } catch (NBootException ex) {
-            throw ex;
+            NBootWorkspace.of(args).runWorkspace();
         } catch (Exception ex) {
-            NSession session = NSessionAwareExceptionBase.resolveSession(ex).orNull();
-            if (session != null) {
-                session.runWith(()->{
-                    System.exit(NApplicationExceptionHandler.of()
-                            .processThrowable(args, ex));
-                });
-            } else {
-                System.exit(NApiUtilsRPI.processThrowable(ex, args));
-            }
+            NBootWorkspace.exitOnError(ex);
         }
     }
 }

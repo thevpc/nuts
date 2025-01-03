@@ -35,7 +35,7 @@ public class NRepositoryUtils {
     }
 
     public static NRepositoryLocation validateLocation(NRepositoryLocation r, NLog nLog) {
-        if (NBlankable.isBlank(r.getLocationType()) || NBlankable.isBlank(r.getName())) {
+        if (NBlankable.isBlank(r.getLocationType()) /*|| NBlankable.isBlank(r.getName())*/) {
             if (r.getFullLocation() != null) {
                 NPath r1 = NPath.of(r.getPath()).toAbsolute();
                 if (!Objects.equals(r.getPath(),r1.toString())) {

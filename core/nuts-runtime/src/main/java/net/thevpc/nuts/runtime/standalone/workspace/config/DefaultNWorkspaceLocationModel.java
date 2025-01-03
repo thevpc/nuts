@@ -211,7 +211,7 @@ public class DefaultNWorkspaceLocationModel {
                 return ".ear";
             case "pom":
                 return ".pom";
-            case "nuts":
+            case NConstants.Files.DESCRIPTOR_FILE_EXTENSION_SIMPLE:
                 return NConstants.Files.DESCRIPTOR_FILE_EXTENSION;
             case "rar":
                 return ".rar";

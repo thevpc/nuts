@@ -152,9 +152,12 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                         throw new NExecutionException(NMsg.ofC("no java version %s was found", javaVer), NExecutionException.ERROR_1);
                     }
                     return s;
-                } else if (skey.equals("nuts")) {
+                } else if (
+                        skey.equals(NConstants.Ids.NUTS_API_ARTIFACT_ID)
+                        || skey.equals(NConstants.Ids.NUTS_APP_ARTIFACT_ID)
+                ) {
                     NDefinition nDefinition;
-                    nDefinition = NFetchCmd.ofNutsApi()
+                    nDefinition = NFetchCmd.ofNutsApp()
                             .getResultDefinition();
                     if (nDefinition.getContent().isPresent()) {
                         return ("<::expand::> " + apply("java") + " -jar " + nDefinition.getContent());

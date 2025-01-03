@@ -202,7 +202,7 @@ public class NdiScriptOptions implements Cloneable {
 
     public NId resolveNutsAppId() {
         NId r = resolveNutsApiId();
-        return r.builder().setArtifactId("nuts").build();
+        return r.builder().setArtifactId(NConstants.Ids.NUTS_APP_ARTIFACT_ID).build();
     }
 
     public NId resolveNutsApiId() {

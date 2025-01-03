@@ -531,6 +531,7 @@ public final class NConstants {
          * artifact descriptor file extension
          */
         public static final String DESCRIPTOR_FILE_EXTENSION = ".nuts";
+        public static final String DESCRIPTOR_FILE_EXTENSION_SIMPLE = "nuts";
         /**
          * workspace boot config file name for a particular nuts-api version
          */

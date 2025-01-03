@@ -453,7 +453,7 @@ public class NWorkspaceUtils {
         public void fireOnAddRepository(NWorkspaceEvent event) {
             if (u._LOG().isLoggable(Level.CONFIG)) {
                 u._LOGOP().level(Level.CONFIG).verb(NLogVerb.ADD)
-                        .log(NMsg.ofJ("added repo ##{0}##", event.getRepository().getName()));
+                        .log(NMsg.ofJ("loaded repo ##{0}##", event.getRepository().getName()));
             }
 
             for (NWorkspaceListener listener : event.getWorkspace().getWorkspaceListeners()) {
@@ -467,7 +467,7 @@ public class NWorkspaceUtils {
         public void fireOnRemoveRepository(NWorkspaceEvent event) {
             if (u._LOG().isLoggable(Level.FINEST)) {
                 u._LOGOP().level(Level.FINEST).verb(NLogVerb.REMOVE)
-                        .log(NMsg.ofJ("removed repo ##{0}##", event.getRepository().getName()));
+                        .log(NMsg.ofJ("unloaded repo ##{0}##", event.getRepository().getName()));
             }
             for (NWorkspaceListener listener : event.getWorkspace().getWorkspaceListeners()) {
                 listener.onRemoveRepository(event);

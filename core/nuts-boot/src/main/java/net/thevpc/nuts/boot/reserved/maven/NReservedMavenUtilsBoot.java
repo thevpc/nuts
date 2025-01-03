@@ -791,9 +791,9 @@ public class NReservedMavenUtilsBoot {
     }
 
     private static Set<String> expandRepoUrls(NBootRepositoryLocation repoUrl2, NBootLog bLog, NBootCache cache) {
-        Function<String, Set<String>> mappingFunction = new Function<String, Set<String>>() {
+        Function<String, Object> mappingFunction = new Function<String, Object>() {
             @Override
-            public Set<String> apply(String repo) {
+            public Object apply(String repo) {
                 Set<String> urls = new LinkedHashSet<>();
                 if (isMavenSettingsRepo(repoUrl2)) {
                     Map<String, String> p = repoUrl2.getProperties();
@@ -874,12 +874,12 @@ public class NReservedMavenUtilsBoot {
                 return urls;
             }
         };
-        return (Set<String>) cache.cache.computeIfAbsent((NMavenSettingsBoot.class.getName() + "::expandRepoUrls::" + repoUrl2), mappingFunction);
+        return (Set<String>) cache.get((NMavenSettingsBoot.class.getName() + "::expandRepoUrls::" + repoUrl2), mappingFunction);
     }
 
 
     private static Set<String> loadMavenSettingsUrls(boolean local, boolean central, boolean other, NBootLog bLog, NBootCache cache) {
-        NMavenSettingsBoot mavenSettings = (NMavenSettingsBoot) cache.cache.computeIfAbsent(NMavenSettingsBoot.class.getName(), x -> new NMavenSettingsLoaderBoot(bLog).loadSettingsRepos());
+        NMavenSettingsBoot mavenSettings = (NMavenSettingsBoot) cache.get(NMavenSettingsBoot.class.getName(), x -> new NMavenSettingsLoaderBoot(bLog).loadSettingsRepos());
         Set<String> urls = new LinkedHashSet<>();
         if (local) {
             urls.add(mavenSettings.getLocalRepository());

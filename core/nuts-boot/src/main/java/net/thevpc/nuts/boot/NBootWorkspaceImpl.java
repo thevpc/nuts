@@ -24,6 +24,7 @@
  */
 package net.thevpc.nuts.boot;
 
+import net.thevpc.nuts.NExceptionBootAware;
 import net.thevpc.nuts.NWorkspaceBase;
 import net.thevpc.nuts.boot.reserved.cmdline.NBootCmdLine;
 import net.thevpc.nuts.boot.reserved.cmdline.NBootWorkspaceCmdLineFormatter;
@@ -116,11 +117,13 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
     private NBootCache cache = new NBootCache();
     Boolean runtimeLoaded;
     NBootId runtimeLoadedId;
+    NBootArguments unparsedOptions;
 
     public NBootWorkspaceImpl(NBootArguments userOptionsUnparsed) {
         if (userOptionsUnparsed == null) {
             userOptionsUnparsed = new NBootArguments();
         }
+        this.unparsedOptions = userOptionsUnparsed;
         NBootOptionsInfo userOptions = new NBootOptionsInfo();
         userOptions.setStdin(userOptionsUnparsed.getIn());
         userOptions.setStdout(userOptionsUnparsed.getOut());
@@ -143,6 +146,14 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
         }
         this.options = userOptions.copy();
         this.postInit();
+    }
+
+    public NBootArguments getUnparsedOptions() {
+        return unparsedOptions;
+    }
+
+    public NBootOptionsInfo getOptions() {
+        return options;
     }
 
     public NBootWorkspaceImpl(NBootOptionsInfo options) {
@@ -388,11 +399,6 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
         );
         return a.toCmdLine();
     }
-
-    public NBootOptionsInfo getOptions() {
-        return options;
-    }
-
 
     private NBootIdCache getFallbackCache(NBootId baseId, boolean lastWorkspace, boolean copyTemp) {
         NBootIdCache old = cache.fallbackIdMap.get(baseId);
@@ -1105,13 +1111,12 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
      *
      * @return NWorkspace instance as object
      */
-    @Override
-    public NWorkspaceBase runWorkspace() {
+    public NWorkspaceBase runWorkspace0() {
         if (NBootUtils.firstNonNull(options.getCommandHelp(), false)) {
             NBootWorkspaceHelper.runCommandHelp(options, bLog);
             return null;
         } else if (NBootUtils.firstNonNull(options.getCommandVersion(), false)) {
-            NBootWorkspaceHelper.runCommandVersion(()->getApiDigestOrInternal(), options, bLog);
+            NBootWorkspaceHelper.runCommandVersion(() -> getApiDigestOrInternal(), options, bLog);
             return null;
         }
         if (hasUnsatisfiedRequirements()) {
@@ -1119,6 +1124,20 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             return null;
         }
         return this.openOrRunWorkspace(true);
+    }
+
+    public NWorkspaceBase runWorkspace() {
+        try {
+            return runWorkspace0();
+        } catch (Exception ex) {
+            NExceptionBootAware u = NBootUtils.findThrowable(ex, NExceptionBootAware.class, null);
+            if (u != null) {
+                u.processThrowable();
+            } else {
+                NBootUtils.processThrowable(ex, bLog, true, NBootUtils.resolveShowStackTrace(options), NBootUtils.resolveGui(options));
+            }
+            throw ex;
+        }
     }
 
     private void fallbackInstallActionUnavailable(String message) {

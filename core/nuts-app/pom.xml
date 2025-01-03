@@ -60,7 +60,7 @@
     <dependencies>
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
-            <artifactId>nuts</artifactId>
+            <artifactId>nuts-boot</artifactId>
             <version>0.8.5</version>
         </dependency>
     </dependencies>

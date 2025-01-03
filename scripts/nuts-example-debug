@@ -1,6 +1,6 @@
 #!/bin/bash
 export TWS="/home/vpc/xprojects/nuts/nuts-community/test/nuts-runtime-test/runtime/test/Test23_PerfTest_testPerfLocalNoSystem"
-export NUTS_JAR="${TWS}/lib/id/net/thevpc/nuts/nuts-api/0.8.5/nuts-api-0.8.5.jar"
+export NUTS_APP_JAR="${TWS}/lib/id/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar"
 export NUTS_FILE="${TWS}/lib/id/net/thevpc/nuts/toolbox/nsh/0.8.5.0/nsh-0.8.5.0.jar"
 export NUTS_JAVA="/usr/lib64/jvm/java-1.8.0-openjdk-1.8.0/jre/bin/java"
 export NUTS_CMD="/usr/lib64/jvm/java-1.8.0-openjdk-1.8.0/jre/bin/java -jar ${TWS}/lib/id/net/thevpc/nuts/nuts-api/0.8.5/nuts-api-0.8.5.jar"

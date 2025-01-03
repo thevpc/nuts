@@ -65,7 +65,6 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
                     NMsg.ofPlain("unable to get system terminal")
             );
         }
-        boolean showMessage = true;
         if (fout != null) {
             if (session.getOutputFormat().orDefault() == NContentType.PLAIN) {
                 if (fm != null) {

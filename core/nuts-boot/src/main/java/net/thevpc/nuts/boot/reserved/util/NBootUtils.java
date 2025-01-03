@@ -24,8 +24,10 @@
  */
 package net.thevpc.nuts.boot.reserved.util;
 
+import net.thevpc.nuts.NExceptionBootAware;
 import net.thevpc.nuts.boot.*;
 import net.thevpc.nuts.boot.reserved.cmdline.NBootArg;
+import net.thevpc.nuts.boot.reserved.cmdline.NBootWorkspaceCmdLineParser;
 import net.thevpc.nuts.boot.reserved.maven.NReservedMavenUtilsBoot;
 
 import java.io.*;
@@ -65,7 +67,7 @@ public final class NBootUtils {
             "yyyy-MM-dd'T'HH:mm:ss.SSSX"
     };
     public static final String DELETE_FOLDERS_HEADER = "ATTENTION ! You are about to delete nuts workspace files.";
-    private static final char[] BASE16_CHARS = new char[]{'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+    private static final char[] BASE16_CHARS = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
     public static final URL urlOf(String any) {
         try {
@@ -1710,7 +1712,7 @@ public final class NBootUtils {
     }
 
     public static void copy(File ff, File to, NBootLog bLog) throws IOException {
-        if(ff.equals(to)){
+        if (ff.equals(to)) {
             return;
         }
         if (to.getParentFile() != null) {
@@ -1733,13 +1735,13 @@ public final class NBootUtils {
             throw new IOException("empty path " + path);
         }
         File file = toFile(path);
-        if(file!=null){
-            copy(file,to,bLog);
-        }else{
+        if (file != null) {
+            copy(file, to, bLog);
+        } else {
             URL u = toURL(path);
-            if(u!=null){
-                copy(u,to,bLog);
-            }else{
+            if (u != null) {
+                copy(u, to, bLog);
+            } else {
                 throw new IOException("neither file nor URL : " + path);
             }
         }
@@ -1968,7 +1970,7 @@ public final class NBootUtils {
                     return null;
                 }
             }
-        } catch (IOException|UncheckedIOException e) {
+        } catch (IOException | UncheckedIOException e) {
             bLog.with().level(Level.FINE).verbFail().error(e).log(NBootMsg.ofC("unable to resolveInputStream %s", url));
         }
         return in;
@@ -2744,14 +2746,14 @@ public final class NBootUtils {
     }
 
     public static String toStringOrEmpty(Object any) {
-        if(any==null) {
+        if (any == null) {
             return "";
         }
         return any.toString();
     }
 
     public static boolean isBlank(String value) {
-        return value==null||value.trim().isEmpty();
+        return value == null || value.trim().isEmpty();
     }
 
     private static NBootMsg createMessage(Supplier<NBootMsg> msg) {
@@ -2835,4 +2837,121 @@ public final class NBootUtils {
         }
         return object;
     }
+
+
+    public static int processThrowable(Throwable ex, String[] args, NBootOptionsInfo bootOptions,NBootLog bootLog) {
+        if (ex == null) {
+            return 0;
+        } else {
+            NExceptionBootAware u = findThrowable(ex, NExceptionBootAware.class, null);
+            if (u != null) {
+                return u.processThrowable();
+            } else {
+                if (bootOptions == null) {
+                    bootOptions = new NBootOptionsInfo();
+                    NBootWorkspaceCmdLineParser.parseNutsArguments(args, bootOptions);
+                }
+                return processThrowable(ex, (NBootLog) bootLog, true, resolveShowStackTrace(bootOptions), resolveGui(bootOptions));
+            }
+        }
+    }
+
+
+
+    public static boolean resolveGui(NBootOptionsInfo bo) {
+        if (bo.getBot() != null && bo.getBot()) {
+            return false;
+        } else if (bo.getGui() != null && bo.getGui()) {
+            return isGraphicalDesktopEnvironment();
+        } else {
+            return false;
+        }
+    }
+
+    public static int processThrowable(Throwable ex, NBootLog out, boolean showMessage, boolean showStackTrace, boolean showGui) {
+        if (ex == null) {
+            return 0;
+        } else {
+            String m = getErrorMessage(ex);
+            if (out == null) {
+                if (showMessage) {
+                    System.err.println(NBootMsg.ofPlain(m));
+                    if (showStackTrace) {
+                        System.err.println(NBootMsg.ofPlain("---------------"));
+                        System.err.println(NBootMsg.ofPlain(">  STACKTRACE :"));
+                        System.err.println(NBootMsg.ofPlain("---------------"));
+                        System.err.println(NBootMsg.ofPlain(stacktrace(ex)));
+                    }
+                }
+                if (showGui) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(m);
+                    if (showStackTrace && sb.length() > 0) {
+                        sb.append("\n");
+                        sb.append(stacktrace(ex));
+                    }
+                    showMessage(NBootMsg.ofPlain(sb.toString()).toString(), "Nuts Package Manager - Error", out);
+                }
+            } else {
+                if (showMessage) {
+                    out.with().level(Level.OFF).verbFail().log(NBootMsg.ofPlain(m));
+                    if (showStackTrace) {
+                        out.with().level(Level.OFF).verbFail().log(NBootMsg.ofPlain("---------------"));
+                        out.with().level(Level.OFF).verbFail().log(NBootMsg.ofPlain(">  STACKTRACE :"));
+                        out.with().level(Level.OFF).verbFail().log(NBootMsg.ofPlain("---------------"));
+                        out.with().level(Level.OFF).verbFail().log(NBootMsg.ofPlain(stacktrace(ex)));
+                    }
+                }
+                if (showGui) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(m);
+                    if (showStackTrace && sb.length() > 0) {
+                        sb.append("\n");
+                        sb.append(stacktrace(ex));
+                    }
+                    showMessage(NBootMsg.ofPlain(sb.toString()).toString(), "Nuts Package Manager - Error", out);
+                }
+            }
+            return 224;
+        }
+    }
+
+    public static int exitIfError(Throwable ex, String[] args, NBootOptionsInfo bootOptions,NBootLog bootLog) {
+        int code = processThrowable(ex, args, bootOptions,bootLog);
+        if (code != 0) {
+            System.exit(code);
+        }
+        return code;
+    }
+
+    public static int exitIfError(int code) {
+        if (code != 0) {
+            System.exit(code);
+        }
+        return code;
+    }
+
+
+    public static boolean resolveShowStackTrace(NBootOptionsInfo bo) {
+        if (bo.getShowStacktrace() != null) {
+            return bo.getShowStacktrace();
+        } else if (bo.getBot() != null && bo.getBot()) {
+            return false;
+        } else {
+            if (getSysBoolNutsProperty("stacktrace", false)) {
+                return true;
+            }
+            if (bo.getDebug() != null && !isBlank(bo.getDebug())) {
+                return true;
+            }
+            NBootLogConfig nLogConfig = bo.getLogConfig();
+            if (nLogConfig != null && nLogConfig.getLogTermLevel() != null
+                    && nLogConfig.getLogTermLevel().intValue() < Level.INFO.intValue()) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+
 }
