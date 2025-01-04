@@ -448,20 +448,23 @@ public final class NBootWorkspace {
                 for (Path path : stream.collect(Collectors.toList())) {
                     NVersion version = NVersion.of(path.getFileName().toString()).orNull();
                     if (version != null) {
-                        if (Files.isDirectory(path)) {
-                            NId rId = baseId.builder().setVersion(version).build();
-                            Path jar = ss.resolve(version.toString()).resolve(NIdUtils.resolveFileName(
-                                    rId,
-                                    "jar"
-                            ));
-                            if (Files.isRegularFile(jar)) {
-                                if (bestVersion == null || bestVersion.compareTo(version) < 0) {
-                                    bestVersion = version;
-                                    bestPath = jar;
-                                    bestId = rId;
+                        if (!(baseId.equals(NId.RUNTIME_ID) && !version.toString().startsWith(Nuts.getVersion() + "."))) {
+                            if (Files.isDirectory(path)) {
+                                NId rId = baseId.builder().setVersion(version).build();
+                                Path jar = ss.resolve(version.toString()).resolve(NIdUtils.resolveFileName(
+                                        rId,
+                                        "jar"
+                                ));
+                                if (Files.isRegularFile(jar)) {
+                                    if (bestVersion == null || bestVersion.compareTo(version) < 0) {
+                                        bestVersion = version;
+                                        bestPath = jar;
+                                        bestId = rId;
+                                    }
                                 }
                             }
                         }
+
                     }
                 }
             } catch (Exception ex) {
@@ -1053,6 +1056,9 @@ public final class NBootWorkspace {
                 bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("unable to load Workspace \"%s\" from ClassPath :", computedOptions.getName().orNull()));
                 for (URL url : bootClassWorldURLs) {
                     bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("\t %s", NReservedIOUtils.formatURL(url)));
+                }
+                if (exceptions.isEmpty()) {
+                    bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("current classpath does not any Nuts Workspace implementation at %s", computedOptions.getWorkspace().orNull()));
                 }
                 for (Throwable exception : exceptions) {
                     bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("%s", exception), exception);

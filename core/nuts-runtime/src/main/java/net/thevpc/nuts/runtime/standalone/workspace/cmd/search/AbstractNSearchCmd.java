@@ -70,7 +70,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     protected boolean sorted = false;
     protected Boolean defaultVersions = null;
     protected String execType = null;
-    protected NVersion targetApiVersion = null;
+    protected NVersion targetApiVersion;
     protected NInstallStatusFilter installStatus;
 
     public AbstractNSearchCmd(NSession session) {
