@@ -18,7 +18,7 @@ public class Main extends Application implements NutsApplication {
     public void init() throws Exception {
         NSession ac=NutsApplications.createApplicationContext(this,appArgs,null);
         NutsApplications.runApplication(this,ac);
-        NutsSession session=ac.getSession();
+        NSession session=ac.getSession();
         switch (ac.getMode()){
             case INSTALL:
             case UNINSTALL:

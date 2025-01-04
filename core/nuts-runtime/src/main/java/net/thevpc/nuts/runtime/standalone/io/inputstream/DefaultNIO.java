@@ -136,8 +136,8 @@ public class DefaultNIO implements NIO {
 //    @Override
 //    public NSessionTerminal createInMemoryTerminal(boolean mergeErr) {
 //        ByteArrayInputStream in = new ByteArrayInputStream(new byte[0]);
-//        NMemoryPrintStream out = NMemoryPrintStream.of(session);
-//        NMemoryPrintStream err = mergeErr ? out : NMemoryPrintStream.of(session);
+//        NMemoryPrintStream out = NMemoryPrintStream.of();
+//        NMemoryPrintStream err = mergeErr ? out : NMemoryPrintStream.of();
 //        return createTerminal(in, out, err);
 //    }
 

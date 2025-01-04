@@ -100,7 +100,7 @@ package net.thevpc.nuts.toolbox.ndb.sql.nmysql.local;
 //                result.put(c.getName(), c.getConfig());
 //            }
 //        }
-//        NutsSession session = context.getSession();
+//        NSession session = context.getSession();
 //        if (session.isIterableOut()) {
 //            try {
 //                session.getIterableOutput().start();

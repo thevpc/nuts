@@ -274,12 +274,12 @@ public class DefaultNWorkspaceExtensionModel {
         this.workspaceExtensionsClassLoader = new DefaultNClassLoader("workspaceExtensionsClassLoader", workspace, bootClassLoader);
     }
 
-    //    public void registerType(RegInfo regInfo, NutsSession session) {
+    //    public void registerType(RegInfo regInfo, NSession session) {
 //        if (registerType(regInfo.extensionPointType, regInfo.extensionTypeImpl, session)) {
 //            defaultWiredComponents.add(regInfo.extensionPointType.getName(), ((Class<? extends NutsComponent>) regInfo.extensionTypeImpl).getName());
 //        }
 //    }
-//    public void registerTypes(List<RegInfo> all, NutsSession session) {
+//    public void registerTypes(List<RegInfo> all, NSession session) {
 //        for (RegInfo regInfo : all) {
 //            registerType(regInfo, session);
 //        }
@@ -295,7 +295,7 @@ public class DefaultNWorkspaceExtensionModel {
     }
 
     //    @Override
-//    public NutsWorkspaceExtension addWorkspaceExtension(NutsId id, NutsSession session) {
+//    public NutsWorkspaceExtension addWorkspaceExtension(NutsId id, NSession session) {
 //        session = NutsWorkspaceUtils.validateSession(ws, session);
 //        NutsWorkspaceConfigManagerExt cfg = NutsWorkspaceConfigManagerExt.of(ws.config());
 //        NutsExtensionListHelper h = new NutsExtensionListHelper(cfg.getStoredConfig().getExtensions()).save().compress().add(id);
@@ -326,7 +326,7 @@ public class DefaultNWorkspaceExtensionModel {
     }
 
     //    @Override
-//    public Set<Class> discoverTypes(ClassLoader classLoader, NutsSession session) {
+//    public Set<Class> discoverTypes(ClassLoader classLoader, NSession session) {
 //        return objectFactory.discoverTypes(classLoader);
 //    }
     public <T extends NComponent, B> NServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType) {
@@ -341,7 +341,7 @@ public class DefaultNWorkspaceExtensionModel {
         return objectFactory.createComponent(type, supportCriteria);
     }
 
-//    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters, boolean required, NutsSession session) {
+//    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters, boolean required, NSession session) {
 //        return objectFactory.createSupported(type, supportCriteria, constructorParameterTypes, constructorParameters, required, session);
 //    }
 
@@ -365,7 +365,7 @@ public class DefaultNWorkspaceExtensionModel {
     }
 
     //    @Override
-//    public Set<Class> getExtensionPoints(NutsSession session) {
+//    public Set<Class> getExtensionPoints(NSession session) {
 //        return objectFactory.getExtensionPoints();
 //    }
     public <T extends NComponent> Set<Class<? extends T>> getExtensionTypes(Class<T> extensionPoint) {
@@ -650,7 +650,7 @@ public class DefaultNWorkspaceExtensionModel {
         return a;
     }
 
-    //    public boolean installExtensionComponentType(Class extensionPointType, Class extensionImplType, NutsSession session) {
+    //    public boolean installExtensionComponentType(Class extensionPointType, Class extensionImplType, NSession session) {
 //        if (NutsComponent.class.isAssignableFrom(extensionPointType)) {
 //            if (extensionPointType.isAssignableFrom(extensionImplType)) {
 //                return registerType(extensionPointType, extensionImplType, session);

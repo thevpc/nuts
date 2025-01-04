@@ -11,11 +11,11 @@ import java.util.List;
 public class NProgressUtils {
 //    public static java.io.InputStream ofMonitored(URL from, NProgressListener monitor, NSession session) {
 //        return ofMonitored(
-//                NPath.of(from, session).getInputStream(),
-//                from, NTexts.of(session).ofStyled(
-//                        NPath.of(from, session).getName()
+//                NPath.of(from).getInputStream(),
+//                from, NTexts.of().ofStyled(
+//                        NPath.of(from).getName()
 //                        , NTextStyle.path()),
-//                NPath.of(from, session).getContentLength(), monitor, session);
+//                NPath.of(from).getContentLength(), monitor, session);
 //    }
 
 

@@ -33,7 +33,7 @@ public class Docusaurus2Adoc {
     protected String projectTitle;
     protected DocusaurusFolder rootFolder;
 
-//    public Docusaurus2Adoc(String projectName, String projectTitle, String[] headers, DocusaurusFolder docs,NutsSession session) {
+//    public Docusaurus2Adoc(String projectName, String projectTitle, String[] headers, DocusaurusFolder docs,NSession session) {
 //        this.projectName = projectName;
 //        this.projectTitle = projectTitle;
 //        this.headers = headers;

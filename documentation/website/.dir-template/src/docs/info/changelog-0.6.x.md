@@ -1,6 +1,6 @@
 ---
-id: changelog
-title: Change Log
+id: changelog060
+title: Change Log 0.6.0
 sidebar_label: Change Log
 order: 50
 ---

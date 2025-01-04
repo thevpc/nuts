@@ -157,7 +157,7 @@ public final class NApplications {
         } catch (InvocationTargetException ex) {
             throw new NIllegalArgumentException(NMsg.ofC("invocation exception for %s", appType.getName()), ex);
         }
-        throw new NIllegalArgumentException(NMsg.ofC("missing application constructor for %s from of : \n\t static createApplicationInstance(NutsSession,String[])\n\t Constructor(NutsSession,String[])\n\t Constructor()", appType.getName()));
+        throw new NIllegalArgumentException(NMsg.ofC("missing application constructor for %s from of : \n\t static createApplicationInstance(NSession,String[])\n\t Constructor(NSession,String[])\n\t Constructor()", appType.getName()));
     }
 
     /**

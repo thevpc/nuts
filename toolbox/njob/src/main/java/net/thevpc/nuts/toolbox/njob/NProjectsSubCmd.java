@@ -6,6 +6,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -340,7 +341,7 @@ public class NProjectsSubCmd {
                             parent.getFormattedProject(x.getName() == null ? "*" : x.getName())
                     );
                 });
-                session.setProperty("LastResults", lastResults.toArray(new NProject[0]));
+                NApp.of().setProperty("LastResults", NScopeType.SESSION, lastResults.toArray(new NProject[0]));
                 NTableFormat.of()
                         .setBorder("spaces")
                         .setValue(m).println(session.out());
@@ -404,7 +405,7 @@ public class NProjectsSubCmd {
         if (pid.startsWith("#")) {
             int x = JobServiceCmd.parseIntOrFF(pid.substring(1));
             if (x >= 1) {
-                Object lastResults = session.getProperty("LastResults");
+                Object lastResults = NApp.of().getProperty("LastResults",NScopeType.SESSION).orNull();
                 if (lastResults instanceof NProject[] && x <= ((NProject[]) lastResults).length) {
                     t = ((NProject[]) lastResults)[x - 1];
                 }

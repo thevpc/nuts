@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.remote;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
@@ -14,7 +15,8 @@ import net.thevpc.nuts.util.NMsg;
 
 public abstract class RemoteNWorkspace extends AbstractNWorkspace {
 
-    public RemoteNWorkspace() {
+    public RemoteNWorkspace(NBootOptionsInfo info) {
+        super(info);
     }
 
     public NElement createCall(String commandName, NElement body) {

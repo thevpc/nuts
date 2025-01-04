@@ -84,6 +84,8 @@ public class BaseConfRunner extends AbstractRunner {
         NPath conf = NPath.of("nuts-release.conf");
         if (conf.exists()) {
             context().loadConfig(conf, cmdLine);
+        } else {
+            throw new IllegalArgumentException(conf.toAbsolute() + " does not exist. Current directory must contain nuts-release.conf");
         }
     }
 

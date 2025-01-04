@@ -66,7 +66,7 @@ public class DefaultNExecutionEntry implements NExecutionEntry {
 
     @Override
     public String toString() {
-        return "NutsExecutionEntry{"
+        return "NExecutionEntry{"
                 + "name='" + name + '\''
                 + ", app=" + app
                 + ", defaultEntry=" + defaultEntry

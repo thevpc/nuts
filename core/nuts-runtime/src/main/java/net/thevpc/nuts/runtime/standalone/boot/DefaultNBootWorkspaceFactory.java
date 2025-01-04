@@ -55,6 +55,9 @@ public class DefaultNBootWorkspaceFactory implements NBootWorkspaceFactory {
 
     @Override
     public NWorkspace createWorkspace(NBootOptionsInfo bOptions) {
+        if(bOptions==null){
+            bOptions=new NBootOptionsInfo();
+        }
         NBootOptions info2=new DefaultNBootOptionsBuilder(bOptions).build();
         String workspaceLocation = info2.getWorkspace().orNull();
         if(workspaceLocation!=null && workspaceLocation.matches("[a-z-]+://.*")){
@@ -66,7 +69,7 @@ public class DefaultNBootWorkspaceFactory implements NBootWorkspaceFactory {
             }
             return null;
         }
-        return new DefaultNWorkspace(info2);
+        return new DefaultNWorkspace(bOptions,info2);
     }
 
     @Override

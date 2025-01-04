@@ -267,7 +267,7 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
     }
 
 //    @Override
-//    public NutsSession getSession() {
+//    public NSession getSession() {
 //        return base != null ? base.getSession() : super.getSession();
 //    }
 

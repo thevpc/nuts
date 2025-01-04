@@ -23,7 +23,7 @@ public class NElementMapperNText implements NElementMapper<NText> {
     @Override
     public NText createObject(NElement o, Type to, NElementFactoryContext context) {
         String i = context.defaultElementToObject(o, String.class);
-        //return NutsTexts.of(context.getSession()).parse(i).toText();
+        //return NTexts.of(context.getSession()).parse(i).toText();
         return NText.ofPlain(i);
     }
 }

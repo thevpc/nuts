@@ -8,7 +8,7 @@ public class NRepositoryAndFetchModeTracker {
     private List<NRepositoryAndFetchMode> possibilities = new ArrayList<>();
     private List<NRepositoryAndFetchMode> failed = new ArrayList<>();
 
-//    public NutsRepositoryAndFetchModeTracker(NutsSession session, NutsFetchStrategy nutsFetchModes, InstalledVsNonInstalledSearch installedVsNonInstalledSearch) {
+//    public NutsRepositoryAndFetchModeTracker(NSession session, NutsFetchStrategy nutsFetchModes, InstalledVsNonInstalledSearch installedVsNonInstalledSearch) {
 //        NutsRepositoryAndFetchModeTracker descTracker=new NutsRepositoryAndFetchModeTracker();
 //        for (NutsFetchMode mode : nutsFetchModes) {
 //            for (NutsRepository repo : NutsWorkspaceUtils.of(session.getWorkspace())

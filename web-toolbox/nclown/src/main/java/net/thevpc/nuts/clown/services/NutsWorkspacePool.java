@@ -6,10 +6,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class NutsWorkspacePool {
-    private static final Map<String, NutsSession> pool = new LinkedHashMap<>();
+    private static final Map<String, NSession> pool = new LinkedHashMap<>();
 
-    public static synchronized NutsSession openWorkspace(String ws) {
-        NutsSession o = pool.get(ws);
+    public static synchronized NSession openWorkspace(String ws) {
+        NSession o = pool.get(ws);
         if (o == null) {
             o = Nuts.openWorkspace(new NutsBootOptions()
                     //should suppose the workspace is already created!

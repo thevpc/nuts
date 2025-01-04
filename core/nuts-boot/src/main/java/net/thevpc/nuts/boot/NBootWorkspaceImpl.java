@@ -25,6 +25,7 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.NExceptionBootAware;
+import net.thevpc.nuts.NExceptionWithExitCodeBase;
 import net.thevpc.nuts.NWorkspaceBase;
 import net.thevpc.nuts.boot.reserved.cmdline.NBootCmdLine;
 import net.thevpc.nuts.boot.reserved.cmdline.NBootWorkspaceCmdLineFormatter;
@@ -55,12 +56,12 @@ import java.util.stream.Stream;
 /**
  * NutsBootWorkspace is responsible of loading initial nuts-runtime.jar and its
  * dependencies and for creating workspaces using the method
- * {@link #openWorkspace()} . NutsBootWorkspace is also responsible of managing
+ * {@link #getWorkspace()} . NutsBootWorkspace is also responsible of managing
  * local jar cache folder located at ~/.cache/nuts/default-workspace/boot
  * <br>
  * Default Bootstrap implementation. This class is responsible of loading
  * initial nuts-runtime.jar and its dependencies and for creating workspaces
- * using the method {@link #openWorkspace()}.
+ * using the method {@link #getWorkspace()}.
  * <br>
  *
  * @author thevpc
@@ -118,6 +119,8 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
     Boolean runtimeLoaded;
     NBootId runtimeLoadedId;
     NBootArguments unparsedOptions;
+    NWorkspaceBase loadedWorkspace;
+    Runnable exceptionRunnable;
 
     public NBootWorkspaceImpl(NBootArguments userOptionsUnparsed) {
         if (userOptionsUnparsed == null) {
@@ -148,7 +151,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
         this.postInit();
     }
 
-    public NBootArguments getUnparsedOptions() {
+    public NBootArguments getBootArguments() {
         return unparsedOptions;
     }
 
@@ -923,17 +926,14 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
      * @return NWorkspace instance as object
      */
     @Override
-    public NWorkspaceBase openWorkspace() {
-        return openOrRunWorkspace(false);
-    }
-
-    /**
-     * return type is Object to remove static dependency on NWorkspace class
-     * so than versions of API can evolve independently of Boot
-     *
-     * @return NWorkspace instance as object
-     */
-    private NWorkspaceBase openOrRunWorkspace(boolean run) {
+    public NWorkspaceBase getWorkspace() {
+        if (loadedWorkspace != null) {
+            return loadedWorkspace;
+        }
+        if (exceptionRunnable != null) {
+            exceptionRunnable.run();
+            return loadedWorkspace;
+        }
         prepareWorkspace();
         if (hasUnsatisfiedRequirements()) {
             throw new NBootUnsatisfiedRequirementsException(NBootMsg.ofC("unable to open a distinct version : %s from nuts#%s", getRequirementsHelpString(true), NBootWorkspaceImpl.NUTS_BOOT_VERSION));
@@ -1043,11 +1043,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                         bLog.log(Level.CONFIG, "INFO", NBootMsg.ofC("create workspace using %s", factoryInstance.getClass().getName()));
                     }
                     options.setBootWorkspaceFactory(factoryInstance);
-                    if (run) {
-                        wsInstance = a.runWorkspace(options);
-                    } else {
-                        wsInstance = a.createWorkspace(options);
-                    }
+                    wsInstance = a.createWorkspace(options);
                 } catch (UnsatisfiedLinkError | Exception ex) {
                     exceptions.add(ex);
                     bLog.error(NBootMsg.ofC("unable to create workspace using factory %s", a), ex);
@@ -1074,23 +1070,31 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 bLog.error(NBootMsg.ofC("unable to load Workspace Component from ClassPath : %s", Arrays.asList(bootClassWorldURLs)));
                 throw new NBootInvalidWorkspaceException(this.options.getWorkspace(), NBootMsg.ofC("unable to load Workspace Component from ClassPath : %s%n  caused by:%n\t%s", Arrays.asList(bootClassWorldURLs), exceptions.stream().map(Throwable::toString).collect(Collectors.joining("\n\t"))));
             }
-            return wsInstance;
 //        } catch (NReadOnlyException | NCancelException | NNoSessionCancelException ex) {
 //            throw ex;
         } catch (UnsatisfiedLinkError | AbstractMethodError ex) {
+            URL[] finalBootClassWorldURLs = bootClassWorldURLs;
             NBootMsg errorMessage = NBootMsg.ofC("unable to boot nuts workspace because the installed binaries are incompatible with the current nuts bootstrap version %s\nusing '-N' command line flag should fix the problem", NBootWorkspaceImpl.NUTS_BOOT_VERSION);
             errorList.insert(0, new NReservedErrorInfo(null, null, null, errorMessage + ": " + ex, ex));
-            logError(bootClassWorldURLs, errorList);
-            throw new NBootException(errorMessage, ex);
+            exceptionRunnable = () -> {
+                logError(finalBootClassWorldURLs, errorList);
+                throw new NBootException(errorMessage, ex);
+            };
+            exceptionRunnable.run();
         } catch (Throwable ex) {
             NBootMsg message = NBootMsg.ofPlain("unable to locate valid nuts-runtime package");
             errorList.insert(0, new NReservedErrorInfo(null, null, null, message + " : " + ex, ex));
-            logError(bootClassWorldURLs, errorList);
-            if (ex instanceof NBootException) {
-                throw (NBootException) ex;
-            }
-            throw new NBootException(message, ex);
+            URL[] finalBootClassWorldURLs1 = bootClassWorldURLs;
+            exceptionRunnable = () -> {
+                logError(finalBootClassWorldURLs1, errorList);
+                if (ex instanceof NBootException) {
+                    throw (NBootException) ex;
+                }
+                throw new NBootException(message, ex);
+            };
+            exceptionRunnable.run();
         }
+        return loadedWorkspace = wsInstance;
     }
 
     private ClassLoader getContextClassLoader() {
@@ -1104,41 +1108,61 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
         return Thread.currentThread().getContextClassLoader();
     }
 
-
-    /**
-     * return type is Object to remove static dependency on NWorkspace class
-     * so than versions of API can evolve independently of Boot
-     *
-     * @return NWorkspace instance as object
-     */
-    public NWorkspaceBase runWorkspace0() {
+    public NBootWorkspace runWorkspace() {
         if (NBootUtils.firstNonNull(options.getCommandHelp(), false)) {
             NBootWorkspaceHelper.runCommandHelp(options, bLog);
-            return null;
         } else if (NBootUtils.firstNonNull(options.getCommandVersion(), false)) {
             NBootWorkspaceHelper.runCommandVersion(() -> getApiDigestOrInternal(), options, bLog);
-            return null;
+        } else {
+            if (hasUnsatisfiedRequirements()) {
+                runNewProcess();
+                return this;
+            }
+            NWorkspaceBase ws = this.getWorkspace();
+            try {
+                ws.runBootCommand();
+            } catch (Exception ex) {
+                throw doLogException(ex);
+            }
         }
-        if (hasUnsatisfiedRequirements()) {
-            runNewProcess();
-            return null;
-        }
-        return this.openOrRunWorkspace(true);
+        return this;
     }
 
-    public NWorkspaceBase runWorkspace() {
-        try {
-            return runWorkspace0();
-        } catch (Exception ex) {
+    private RuntimeException doLogException(Exception ex) {
+        NExceptionWithExitCodeBase ec = NBootUtils.findThrowable(ex, NExceptionWithExitCodeBase.class, null);
+        int c = ec == null ? 254 : ec.getExitCode();
+        if (c != 0) {
             NExceptionBootAware u = NBootUtils.findThrowable(ex, NExceptionBootAware.class, null);
             if (u != null) {
-                u.processThrowable();
+                try {
+                    u.processThrowable(options, bLog);
+                }catch (Exception any){
+                    NBootUtils.processThrowable(ex, bLog, true, NBootUtils.resolveShowStackTrace(options), NBootUtils.resolveGui(options));
+                }
             } else {
                 NBootUtils.processThrowable(ex, bLog, true, NBootUtils.resolveShowStackTrace(options), NBootUtils.resolveGui(options));
             }
-            throw ex;
         }
+        if (ec instanceof RuntimeException) {
+            return (RuntimeException) ec;
+        }
+        return new RuntimeException(ex);
     }
+
+
+//    public NWorkspaceBase runWorkspace() {
+//        try {
+//            return runWorkspace0();
+//        } catch (Exception ex) {
+//            NExceptionBootAware u = NBootUtils.findThrowable(ex, NExceptionBootAware.class, null);
+//            if (u != null) {
+//                u.processThrowable();
+//            } else {
+//                NBootUtils.processThrowable(ex, bLog, true, NBootUtils.resolveShowStackTrace(options), NBootUtils.resolveGui(options));
+//            }
+//            throw ex;
+//        }
+//    }
 
     private void fallbackInstallActionUnavailable(String message) {
         bLog.error(NBootMsg.ofPlain(message));
@@ -1348,4 +1372,5 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
         }
         return NBootId.ofRuntime(sApiVersion + ".0").toString();
     }
+
 }

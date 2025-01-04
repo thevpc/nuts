@@ -101,19 +101,19 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         return NLog.of(DefaultNInstalledRepository.class);
     }
 
-//    public Set<NutsId> getChildrenDependencies(NutsId id, NutsSession session) {
+//    public Set<NutsId> getChildrenDependencies(NutsId id, NSession session) {
 //        return Collections.emptySet();
 //    }
 //
-//    public Set<NutsId> getParentDependencies(NutsId id, NutsSession session) {
+//    public Set<NutsId> getParentDependencies(NutsId id, NSession session) {
 //        return Collections.emptySet();
 //    }
 //
-//    public void addDependency(NutsId id, NutsId parentId, NutsSession session) {
+//    public void addDependency(NutsId id, NutsId parentId, NSession session) {
 //
 //    }
 //
-//    public void removeDependency(NutsId id, NutsId parentId, NutsSession session) {
+//    public void removeDependency(NutsId id, NutsId parentId, NSession session) {
 //
 //    }
 

@@ -197,8 +197,8 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
 
     //    @Override
 //    public int getColumns() {
-//        int tputCallTimeout = NEnvs.of(session).getBootCustomArgument("---nuts.term.tput.call.timeout").getValue().getInt(60);
-//        Integer w = NEnvs.of(session).getBootCustomArgument("---nuts.term.width").getValue().getInt(null);
+//        int tputCallTimeout = NWorkspace.of().getBootCustomArgument("---nuts.term.tput.call.timeout").getValue().getInt(60);
+//        Integer w = NWorkspace.of().getBootCustomArgument("---nuts.term.width").getValue().getInt(null);
 //        if (w == null) {
 //            if (tput_cols == null) {
 //                tput_cols = new NutsCachedValue<>(new DefaultAnsiEscapeCommand.TputEvaluator(session), tputCallTimeout);

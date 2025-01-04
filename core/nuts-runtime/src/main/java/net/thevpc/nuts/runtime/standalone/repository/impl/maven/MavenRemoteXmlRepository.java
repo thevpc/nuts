@@ -116,9 +116,9 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
 //                            true,
 //                            session
 //                    );
-//                    final InputStream is = NutsInputStreamMonitor.of(session).setSource(s).create();
-//                    return MavenUtils.of(session)
-//                            .createArchetypeCatalogIterator(is, filter, true, session);
+//                    final InputStream is = NutsInputStreamMonitor.of().setSource(s).create();
+//                    return MavenUtils.of()
+//                            .createArchetypeCatalogIterator(is, filter, true);
 //                } catch (UncheckedIOException | NutsIOException ex) {
 //                    return IteratorUtils.emptyIterator();
 //                }

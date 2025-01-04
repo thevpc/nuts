@@ -352,40 +352,6 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
     List<NListener> getListeners();
 
     /**
-     * set session property
-     *
-     * @param key   property key
-     * @param value property value
-     * @return {@code this} instance
-     */
-    NSession setProperty(String key, Object value);
-
-    /**
-     * return defined properties
-     *
-     * @return defined properties
-     */
-    Map<String, Object> getProperties(NScopeType scope, boolean withDefaults);
-
-    Map<String, Object> getProperties(NScopeType scope);
-
-    /**
-     * add session properties
-     *
-     * @param properties properties
-     * @return {@code this} instance
-     */
-    NSession setProperties(NScopeType scope, Map<String, Object> properties);
-
-    /**
-     * return property value or null
-     *
-     * @param key property key
-     * @return return property value or null
-     */
-    Object getProperty(String key);
-
-    /**
      * return confirmation mode or {@link NConfirmationMode#ASK}
      *
      * @return confirmation mode

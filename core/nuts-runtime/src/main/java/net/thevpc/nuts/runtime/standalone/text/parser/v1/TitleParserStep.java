@@ -36,7 +36,7 @@ public class TitleParserStep extends ParserStep {
     @Override
     public NText toText() {
         String s = start.toString();
-//        NutsTexts text = ws.text();
+//        NTexts text = ws.text();
         DefaultNTexts factory0 = (DefaultNTexts) NTexts.of();
         String s0=s.trim();
         NText child=null;

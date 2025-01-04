@@ -1,0 +1,5 @@
+#!/bin/sh 
+currDir=$(dirname $0)
+$currDir/001-Rationale/make-this
+$currDir/002-Components/make-this
+$currDir/003-API/make-this

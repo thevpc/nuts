@@ -160,7 +160,7 @@ public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
                 ;
         ((NContentMetadataProvider)z).getMetaData().setKind(sourceTypeName);
         return z;
-//        return (InputStream) NIO.of(session).ofInputSource(
+//        return (InputStream) NIO.of().ofInputSource(
 //                NProgressUtils.ofMonitored(openedStream, source, sourceName, size, new SilentStartNProgressListenerAdapter(monitor, sourceName), session),
 //                new DefaultNContentMetadata(source.getMetaData())
 //                        .setKind(sourceTypeName)

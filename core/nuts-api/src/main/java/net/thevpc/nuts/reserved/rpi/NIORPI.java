@@ -140,7 +140,7 @@ public interface NIORPI extends NComponent {
     List<NExecutionEntry> parseExecutionEntries(NPath file);
 
 
-//    NutsExecutionEntry[] parse(NPath file);
+//    NExecutionEntry[] parse(NPath file);
 
     /**
      * parse Execution Entries

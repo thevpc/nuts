@@ -71,7 +71,7 @@ public class CoreNApplications {
         } catch (InvocationTargetException ex) {
             throw new NWorkspaceException(NMsg.ofC("invocation exception for %s", appType.getName()), ex);
         }
-        throw new NWorkspaceException(NMsg.ofC("missing application constructor one of : \n\t static createApplicationInstance(NutsSession,String[])\n\t Constructor(NutsSession,String[])\n\t Constructor()", appType.getName()));
+        throw new NWorkspaceException(NMsg.ofC("missing application constructor one of : \n\t static createApplicationInstance(NSession,String[])\n\t Constructor(NSession,String[])\n\t Constructor()", appType.getName()));
     }
 
     public static String getNutsAppVersion(Class cls) {

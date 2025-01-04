@@ -225,7 +225,7 @@ public class LsCommand extends NShellBuiltinDefault {
             // if plain
 //            ResultError s = context.getResult();
 //            for (Map.Entry<String, NMsg> e : s.result.entrySet()) {
-//                NutsTexts text = NutsTexts.of(session);
+//                NTexts text = NTexts.of();
 //                out.printf("%s%n",
 //                        text.builder().append(e.getKey(),NutsTextStyle.primary5())
 //                                .append(" : ")

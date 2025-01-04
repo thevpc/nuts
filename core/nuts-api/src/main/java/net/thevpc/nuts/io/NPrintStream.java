@@ -43,7 +43,7 @@ public interface NPrintStream extends NOutputTarget {
 
     /**
      * return new in-memory NutsPrintStream implementation.
-     * this is equivalent to {@code NutsMemoryPrintStream.of(session)}
+     * this is equivalent to {@code NMemoryPrintStream.of()}
      *
      * @return new in-memory NutsPrintStream implementation
      */

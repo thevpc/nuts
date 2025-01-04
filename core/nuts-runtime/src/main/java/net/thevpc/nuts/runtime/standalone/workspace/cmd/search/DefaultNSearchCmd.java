@@ -489,7 +489,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
     //    private NutsId[] findDependencies(List<NutsId> ids) {
 //        checkSession();
 //        NutsWorkspace ws = getSession().getWorkspace();
-//        NutsSession _session = this.getSession();
+//        NSession _session = this.getSession();
 //        NutsDependencyFilter _dependencyFilter = ws.dependency().filter().byScope(getScope())
 //                .and(ws.dependency().filter().byOptional(getOptional()))
 //                .and(getDependencyFilter());
@@ -508,7 +508,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
 //    private NutsDependency[] findDependencies2(List<NutsDependency> ids) {
 //        checkSession();
 //        NutsWorkspace ws = getSession().getWorkspace();
-//        NutsSession _session = this.getSession();
+//        NSession _session = this.getSession();
 //        NutsDependencyFilter _dependencyFilter = ws.dependency().filter().byScope(getScope())
 //                .and(ws.dependency().filter().byOptional(getOptional()))
 //                .and(getDependencyFilter());
@@ -702,7 +702,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
 //        List<NutsIterator<NutsDependency>> allResults = new ArrayList<>();
 //        checkSession();
 //        NutsWorkspace ws = getSession().getWorkspace();
-//        NutsSession session = search.getSession();
+//        NSession session = search.getSession();
 //        NutsWorkspaceUtils.checkSession(ws, session);
 //        NutsIdFilter sIdFilter = search.getIdFilter();
 //        NutsRepositoryFilter sRepositoryFilter = search.getRepositoryFilter();
@@ -713,7 +713,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
 //                search.isSearchInInstalled(),
 //                search.isSearchInOtherRepositories()
 //        );
-//        NutsWorkspaceUtils wu = NutsWorkspaceUtils.of(session);
+//        NutsWorkspaceUtils wu = NutsWorkspaceUtils.of();
 //
 //        if (regularIds.length > 0) {
 //            for (String id : regularIds) {
@@ -733,7 +733,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
 //                        nutsId2.add(nutsId);
 //                    }
 //                    List<NutsIterator<NutsDependency>> coalesce = new ArrayList<>();
-//                    NutsSession finalSession = session;
+//                    NSession finalSession = session;
 //                    for (NutsId nutsId1 : nutsId2) {
 //                        List<NutsIterator<NutsDependency>> idLookup = new ArrayList<>();
 //                        NutsIdFilter idFilter2 = ws.filters().all(sIdFilter,
@@ -805,7 +805,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
 //                    fetchMode, session,
 //                    installedVsNonInstalledSearch
 //            )) {
-//                NutsSession finalSession1 = session;
+//                NSession finalSession1 = session;
 //                all.add(IteratorBuilder.ofLazyNamed("search(" + repoAndMode.getRepository().getName() + ","
 //                        + repoAndMode.getFetchMode() + "," + sRepositoryFilter + "," + session + ")",
 //                        () -> CoreNutsUtils.itIdToDep(wu.repoSPI(repoAndMode.getRepository()).search()

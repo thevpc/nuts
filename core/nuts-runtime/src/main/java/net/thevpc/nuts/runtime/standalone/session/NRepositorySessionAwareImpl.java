@@ -88,7 +88,7 @@
 //        return session;
 //    }
 //
-////    public NutsRepository setSession(NutsSession session) {
+////    public NutsRepository setSession(NSession session) {
 ////        this.session = session;
 ////        return this;
 ////    }

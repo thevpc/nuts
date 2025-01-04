@@ -1,7 +1,7 @@
 package net.thevpc.nuts.clown;
 
 import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NutsWorkspaceListManager;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,7 +16,7 @@ public class NutsClownApplication {
     }
 
     @Bean
-    NutsSession defaultSession(){
+    NSession defaultSession(){
         return Nuts.openWorkspace();
     }
 

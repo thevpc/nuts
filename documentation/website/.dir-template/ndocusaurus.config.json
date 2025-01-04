@@ -22,7 +22,7 @@
         ":sectnumlevels: 6"
       ],
       "command": {
-        "bin": "asciidoctor-pdf",
+        "bin": "asciidoctor-pdf.ruby3.3",
         "args": [
           "-a",
           "pdf-themesdir=${asciidoctor.baseDir}/resources/themes",

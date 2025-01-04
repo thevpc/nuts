@@ -2,7 +2,7 @@ import {Component, Input, ViewChild} from '@angular/core';
 import {NbPopoverDirective} from '@nebular/theme';
 
 import {WorkspaceSwitcherListComponent} from './workspace-switcher-list/workspace-switcher-list.component';
-import {NutsWorkspace} from '../../../pages/nuts-workspace/nuts-workspace';
+import {NWorkspace} from '../../../pages/nuts-workspace/n-workspace';
 
 @Component({
   selector: 'ngx-workspace-switcher',
@@ -15,5 +15,5 @@ export class WorkspaceSwitcherComponent {
   @Input() showTitle: boolean = true;
 
   switcherListComponent = WorkspaceSwitcherListComponent;
-  workspace: NutsWorkspace;
+  workspace: NWorkspace;
 }

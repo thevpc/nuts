@@ -82,7 +82,7 @@ public interface NExtensions extends NComponent  {
 
     <T extends NComponent> List<T> createAll(Class<T> type);
 
-//    Set<Class> getExtensionPoints(NutsSession session);
+//    Set<Class> getExtensionPoints(NSession session);
 
 
     <T extends NComponent> Set<Class<? extends T>> getExtensionTypes(Class<T> extensionPoint);

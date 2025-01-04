@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.executor.system;
 
 import net.thevpc.nuts.*;
 
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -64,8 +65,7 @@ public class NSysExecUtils {
         NOsFamily sysFamily = NWorkspace.of().getOsFamily();
         switch (sysFamily) {
             case WINDOWS: {
-                NSession session = NSession.get().get();
-                String s = (String) session.getProperty("nuts.windows.root-user");
+                String s = (String) NApp.of().getProperty("nuts.windows.root-user", NScopeType.SESSION).orNull();
                 if (s == null) {
                     s = NWorkspace.of().getConfigProperty("nuts.windows.root-user").flatMap(NLiteral::asString).orNull();
                 }
@@ -83,7 +83,7 @@ public class NSysExecUtils {
     public static String resolveRootUserName(NOsFamily sysFamily) {
         switch (sysFamily) {
             case WINDOWS: {
-                String s = (String) NSession.get().get().getProperty("nuts.windows.root-user");
+                String s = (String) NApp.of().getProperty("nuts.windows.root-user", NScopeType.SESSION).orNull();
                 if (s == null) {
                     s = NWorkspace.of().getConfigProperty("nuts.windows.root-user").flatMap(NLiteral::asString).orNull();
                 }

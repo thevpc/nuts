@@ -701,7 +701,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         NDefinition newFile = null;
         NId newId = null;
 //        List<NutsId> dependencies = new ArrayList<>();
-//        NutsSession sessionOffline = session.copy().setFetchMode(NutsFetchMode.OFFLINE);
+//        NSession sessionOffline = session.copy().setFetchMode(NutsFetchMode.OFFLINE);
         switch (type) {
             case API: {
                 oldId = NWorkspace.of().getStoredConfig().getApiId();

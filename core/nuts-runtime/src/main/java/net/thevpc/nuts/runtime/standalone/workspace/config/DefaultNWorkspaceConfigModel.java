@@ -1252,7 +1252,7 @@ public class DefaultNWorkspaceConfigModel {
     }
 
     private boolean deployToInstalledRepository(Path tmp) {
-//        NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(session).repoSPI(repo);
+//        NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of().repoSPI(repo);
 //        NutsDeployRepositoryCommand desc = repoSPI.deploy()
 //                .setId(id)
 //                .setSession(session.copy().setConfirm(NutsConfirmationMode.YES))

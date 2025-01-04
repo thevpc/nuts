@@ -244,8 +244,8 @@ public class DefaultNWebCli implements NWebCli {
                                 }
                             }
                     ).createInputSource();
-//                    byte[] byteArrayResult = NCp.of(session).from(uc.getInputStream()).getByteArrayResult();
-//                    bytes = NIO.of(session).ofInputSource(byteArrayResult);
+//                    byte[] byteArrayResult = NCp.of().from(uc.getInputStream()).getByteArrayResult();
+//                    bytes = NIO.of().ofInputSource(byteArrayResult);
                     long contentLength = uc.getContentLengthLong();
                     if (contentLength >= 0) {
                         bytes.getMetaData().setContentLength(contentLength);

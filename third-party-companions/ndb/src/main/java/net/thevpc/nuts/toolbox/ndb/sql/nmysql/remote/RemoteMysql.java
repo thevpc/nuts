@@ -79,7 +79,7 @@ package net.thevpc.nuts.toolbox.ndb.sql.nmysql.remote;
 //                result.put(c.getName(), c.getConfig());
 //            }
 //        }
-//        NutsSession session = context.getSession();
+//        NSession session = context.getSession();
 //        if (session.isIterableOut()) {
 //            session.getIterableOutput().start();
 //            for (Map.Entry<String, RemoteMysqlConfig> cnf : result.entrySet()) {

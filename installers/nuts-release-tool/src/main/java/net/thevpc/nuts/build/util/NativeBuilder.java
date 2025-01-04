@@ -326,7 +326,7 @@ public class NativeBuilder {
 //        jar2appFolderSrc.resolve("jar2app_basefiles").copyTo(
 //                jar2appFolderBin.resolve("jar2app_basefiles")
 //        );
-//        NExecCmd.of(session).system().setDirectory(jar2appFolderSrc).addCommand("chmod","-R", "a+rw",jar2appFolderBin.resolve("jar2app_basefiles").toString()).run();
+//        NExecCmd.of().system().setDirectory(jar2appFolderSrc).addCommand("chmod","-R", "a+rw",jar2appFolderBin.resolve("jar2app_basefiles").toString()).run();
 //        jar2appFolderSrc.resolve("jar2app").copyTo(
 //                jar2appFolderBin
 //        );

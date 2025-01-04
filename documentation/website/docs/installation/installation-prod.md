@@ -54,7 +54,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.211-b12, mixed mode)
 }>
 <TabItem value="windows">
 
-download [nuts-0.8.5.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.8.5/nuts-0.8.5.jar)
+download [nuts-0.8.5.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.0.8.5/nuts-0.8.5.jar)
 ```
 java -jar nuts-0.8.5.jar  -Zy
 ```

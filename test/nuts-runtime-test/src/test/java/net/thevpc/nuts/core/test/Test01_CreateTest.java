@@ -53,9 +53,9 @@ public class Test01_CreateTest {
                 NWorkspace.of().getStoreLocation(NStoreType.CACHE));
         Assertions.assertEquals(0, NWorkspace.of().getRepositories().size());
 //        Assertions.assertEquals(new File(wsPath,  "cache/" + NutsConstants.Folders.REPOSITORIES + "/" +
-//                        NRepositories.of(session).getRepositories()[0].getName() +
-//                        "/" + NRepositories.of(session).getRepositories()[0].getUuid()).getPath(),
-//                NRepositories.of(session).getRepositories()[0].config().getStoreLocation(NutsStoreLocation.CACHE));
+//                        NRepositories.of().getRepositories()[0].getName() +
+//                        "/" + NRepositories.of().getRepositories()[0].getUuid()).getPath(),
+//                NRepositories.of().getRepositories()[0].config().getStoreLocation(NutsStoreLocation.CACHE));
 
 //        String str="     __        __    \n" +
 //                "  /\\ \\ \\ _  __/ /______\n" +

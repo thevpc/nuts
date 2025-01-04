@@ -10,11 +10,11 @@
 //
 //public class NTextNodeWriterRaw {
 //
-//    private final NutsSession session;
+//    private final NSession session;
 //    private final List<NutsText> items = new ArrayList<>();
 //    private NutsTextTransformConfig config;
 //
-//    public NutsTextNodeWriterRaw(NutsSession session) {
+//    public NutsTextNodeWriterRaw(NSession session) {
 //        this.session = session;
 //    }
 //
@@ -54,9 +54,9 @@
 //                    boolean newline = line.startsWith("\n")
 //                            || line.startsWith("\r");
 //                    if (newline || ctx.isFiltered() || style == null || style.isPlain()) {
-//                        items.add(NutsTexts.of(session).ofPlain(line));
+//                        items.add(NTexts.of().ofPlain(line));
 //                    } else {
-//                        items.add(NutsTexts.of(session).ofStyled(line, style));
+//                        items.add(NTexts.of().ofStyled(line, style));
 //                    }
 //                }
 //                break;
@@ -85,12 +85,12 @@
 //                if (ctx.isProcessTitleNumbers()) {
 //                    NutsTitleSequence seq = ctx.getTitleNumberSequence();
 //                    if (seq == null) {
-//                        seq = NutsTexts.of(session).ofNumbering();
+//                        seq = NTexts.of().ofNumbering();
 //                        ctx.setTitleNumberSequence(seq);
 //                    }
 //                    NutsTitleSequence a = seq.next(s.getTextStyleCode().length());
 //                    String ts = a.toString() + " ";
-//                    flattenNode(NutsTexts.of(session).ofPlain(ts), ctx, NutsTextStyles.of(NutsTextStyle.title(s.getLevel())));
+//                    flattenNode(NTexts.of().ofPlain(ts), ctx, NutsTextStyles.of(NutsTextStyle.title(s.getLevel())));
 //                }
 //                flattenNode(s.getChild(), ctx, NutsTextStyles.of(NutsTextStyle.title(s.getLevel())));
 //                break;
@@ -107,18 +107,18 @@
 //            case LINK: {
 //                NutsTextLink s = (NutsTextLink) node;
 //                if (!ctx.isFiltered()) {
-//                    flattenNode(NutsTexts.of(session).ofPlain(s.getText()), ctx, NutsTextStyles.of(NutsTextStyle.primary1()));//
+//                    flattenNode(NTexts.of().ofPlain(s.getText()), ctx, NutsTextStyles.of(NutsTextStyle.primary1()));//
 //                } else {
-//                    flattenNode(NutsTexts.of(session).ofPlain(s.getText()), ctx, style);//
+//                    flattenNode(NTexts.of().ofPlain(s.getText()), ctx, style);//
 //                }
 //                break;
 //            }
 //            case INCLUDE: {
 //                NutsTextInclude s = (NutsTextInclude) node;
 //                if (!ctx.isFiltered()) {
-//                    flattenNode(NutsTexts.of(session).ofPlain(s.getText()), ctx, NutsTextStyles.of(NutsTextStyle.primary1()));//
+//                    flattenNode(NTexts.of().ofPlain(s.getText()), ctx, NutsTextStyles.of(NutsTextStyle.primary1()));//
 //                } else {
-//                    flattenNode(NutsTexts.of(session).ofPlain(s.getText()), ctx, style);//
+//                    flattenNode(NTexts.of().ofPlain(s.getText()), ctx, style);//
 //                }
 //                break;
 //            }
@@ -127,7 +127,7 @@
 //                if (!ctx.isFiltered()) {
 //                    flattenNode(s.highlight(session), ctx, null);
 //                } else {
-//                    flattenNode(NutsTexts.of(session).ofPlain(s.getText()), ctx, style);
+//                    flattenNode(NTexts.of().ofPlain(s.getText()), ctx, style);
 //                }
 //                break;
 //            }

@@ -22,7 +22,7 @@ public class NutsWorkspaceService {
     @Autowired
     private NutsWorkspaceListManager workspaceManager;
     @Autowired
-    private NutsSession session;
+    private NSession session;
 
     @GetMapping(value = "", produces = "application/json")
     public ResponseEntity<List<Map<String, String>>> getAll() {
@@ -59,7 +59,7 @@ public class NutsWorkspaceService {
         return getAll();
     }
 
-    public NutsSession getWorkspace(String nameOrPath) {
+    public NSession getWorkspace(String nameOrPath) {
         for (NutsWorkspaceLocation workspace : this.workspaceManager.getWorkspaces()) {
             if (NutsClownUtils.trim(workspace.getName()).equals(nameOrPath)) {
                 return NutsWorkspacePool.openWorkspace(workspace.getLocation());

@@ -3,8 +3,8 @@
 :source-highlighter: pygments
 :icons: font
 :icon-set: pf
-:revnumber: v1.1
-:revdate: 2022-01-08
+:revnumber: v0.8.5.0
+:revdate: 2025-01-04
 //:revremark: Private use only - (Taha BEN SALAH)
 :appendix-caption: Appx
 :sectnums:
@@ -30,7 +30,7 @@ https://thevpc.github.io/nuts  (website)
 nuts.packagemanager@gmail.com
 
 [.text-center]
-thevpc, 2022-01-08
+thevpc, 2025-01-04
 
 :toc:
 :toclevels: 4

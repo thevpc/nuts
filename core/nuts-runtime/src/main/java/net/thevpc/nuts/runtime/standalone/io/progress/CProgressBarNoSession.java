@@ -1,6 +1,6 @@
 //package net.thevpc.nuts.runtime.standalone.io.progress;
 //
-//import net.thevpc.nuts.NutsSession;
+//import net.thevpc.nuts.NSession;
 //import net.thevpc.nuts.NutsString;
 //import net.thevpc.nuts.NutsWorkspace;
 //import net.thevpc.nuts.io.NutsPrintStream;

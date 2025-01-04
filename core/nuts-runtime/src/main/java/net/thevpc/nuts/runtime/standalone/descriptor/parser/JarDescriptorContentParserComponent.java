@@ -187,7 +187,7 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
             }
         }
 //        if (NutsBlankable.isBlank(mainClassString) || alwaysSelectAllMainClasses) {
-//            NutsExecutionEntry[] classes = NutsExecutionEntries.of(session)
+//            NExecutionEntry[] classes = NutsExecutionEntries.of()
 //                    .parse(parserContext.getFullStream(), "jar", parserContext.getFullStream().toString());
 //            if (classes.length == 0) {
 //                return baseNutsDescriptor;

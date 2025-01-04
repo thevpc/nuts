@@ -11,14 +11,14 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
@@ -78,7 +78,7 @@ public final class Nuts {
      *
      * @param overriddenNutsArgs nuts arguments to override inherited arguments
      * @param appArgs application arguments
-     * @return NutsSession instance
+     * @return NSession instance
      */
     public static NWorkspace openInheritedWorkspace(String[] overriddenNutsArgs, String... appArgs) throws NBootUnsatisfiedRequirementsException {
         return openInheritedWorkspace(null, overriddenNutsArgs, appArgs);
@@ -94,7 +94,7 @@ public final class Nuts {
      * @param term boot terminal or null for defaults
      * @param overriddenNutsArgs nuts arguments to override inherited arguments
      * @param appArgs arguments
-     * @return NutsSession instance
+     * @return NSession instance
      */
     public static NWorkspace openInheritedWorkspace(NWorkspaceTerminalOptions term, String[] overriddenNutsArgs, String... appArgs) throws NBootUnsatisfiedRequirementsException {
         Instant startTime = Instant.now();
@@ -116,21 +116,21 @@ public final class Nuts {
             options.setOut(term.getOut());
             options.setErr(term.getErr());
         }
-        return (NWorkspace) NBootWorkspace.of(options).openWorkspace();
+        return (NWorkspace) NBootWorkspace.of(options).getWorkspace();
     }
 
     /**
      * open a workspace. Nuts Boot arguments are passed in <code>args</code>
      *
      * @param args nuts boot arguments
-     * @return new NutsSession instance
+     * @return new NSession instance
      */
     public static NWorkspace openWorkspace(String... args) throws NBootUnsatisfiedRequirementsException {
         Instant startTime = Instant.now();
         NBootArguments options = new NBootArguments();
         options.setArgs(args);
         options.setStartTime(startTime);
-        return (NWorkspace) NBootWorkspace.of(options).openWorkspace();
+        return (NWorkspace) NBootWorkspace.of(options).getWorkspace();
     }
 
     /**
@@ -138,7 +138,7 @@ public final class Nuts {
      *
      * @param term boot terminal or null for null
      * @param args nuts boot arguments
-     * @return new NutsSession instance
+     * @return new NSession instance
      */
     public static NWorkspace openWorkspace(NWorkspaceTerminalOptions term, String... args) throws NBootUnsatisfiedRequirementsException {
         Instant startTime = Instant.now();
@@ -150,13 +150,13 @@ public final class Nuts {
             options.setOut(term.getOut());
             options.setErr(term.getErr());
         }
-        return (NWorkspace) NBootWorkspace.of(options).openWorkspace();
+        return (NWorkspace) NBootWorkspace.of(options).getWorkspace();
     }
 
     /**
      * open default workspace (no boot options)
      *
-     * @return new NutsSession instance
+     * @return new NSession instance
      */
     public static NWorkspace openWorkspace() {
         return openWorkspace((NWorkspaceOptions) null);
@@ -166,10 +166,10 @@ public final class Nuts {
      * open a workspace using the given options
      *
      * @param options boot options
-     * @return new NutsSession instance
+     * @return new NSession instance
      */
     public static NWorkspace openWorkspace(NWorkspaceOptions options) {
-        return (NWorkspace) new NBootWorkspaceImpl(options==null?null:options.toBootOptionsInfo()).openWorkspace();
+        return (NWorkspace) new NBootWorkspaceImpl(options == null ? null : options.toBootOptionsInfo()).getWorkspace();
     }
 
     /**
@@ -194,7 +194,8 @@ public final class Nuts {
             options.setOut(term.getOut());
             options.setErr(term.getErr());
         }
-        return (NWorkspace) NBootWorkspace.of(options).runWorkspace();
+        NBootWorkspace bw = NBootWorkspace.of(options);
+        return (NWorkspace) bw.runWorkspace().getWorkspace();
     }
 
     /**
@@ -213,6 +214,7 @@ public final class Nuts {
         NBootArguments options = new NBootArguments();
         options.setArgs(args);
         options.setStartTime(startTime);
-        return (NWorkspace) NBootWorkspace.of(options).runWorkspace();
+        NBootWorkspace bws = NBootWorkspace.of(options);
+        return (NWorkspace) bws.runWorkspace().getWorkspace();
     }
 }

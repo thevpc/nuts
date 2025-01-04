@@ -238,7 +238,7 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
 //        if (getSession().isPlainTrace()) {
 //            getSession().getTerminal().out().resetLine().print(NMsg.ofC("Nuts %s deployed successfully to %s%n",
 //                    nid,
-//                    NutsTexts.of(session).ofStyled(toRepository == null ? "<default-repo>" : toRepository, NutsTextStyle.primary3())
+//                    NTexts.of().ofStyled(toRepository == null ? "<default-repo>" : toRepository, NutsTextStyle.primary3())
 //            );
 //        }
     }

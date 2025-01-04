@@ -9,6 +9,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineUtils;
 import net.thevpc.nuts.runtime.standalone.session.DefaultNSession;
+import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
@@ -32,7 +33,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 @NComponentScope(NScopeType.SESSION)
-public class NAppImpl implements NApp, Cloneable {
+public class NAppImpl implements NApp, Cloneable, NCopiable {
     private Class appClass;
     private final NPath[] folders = new NPath[NStoreType.values().length];
     private final NPath[] sharedFolders = new NPath[NStoreType.values().length];
@@ -110,15 +111,15 @@ public class NAppImpl implements NApp, Cloneable {
 
     @Override
     public NOptional<NId> getId() {
-        return NOptional.ofNamed(this.id,"app-id");
+        return NOptional.ofNamed(this.id, "app-id");
     }
 
 
     public void prepare(NAppInitInfo appInitInfo) {
-        String[] args0=appInitInfo.getArgs();
-        Class<?> appClass=appInitInfo.getAppClass();
-        NClock startTime=appInitInfo.getStartTime();
-        this.storeLocationResolver =appInitInfo.getStoreLocationSupplier();
+        String[] args0 = appInitInfo.getArgs();
+        Class<?> appClass = appInitInfo.getAppClass();
+        NClock startTime = appInitInfo.getStartTime();
+        this.storeLocationResolver = appInitInfo.getStoreLocationSupplier();
         List<String> args = new ArrayList<>();
         if (args0 != null) {
             for (String s : args0) {
@@ -380,7 +381,7 @@ public class NAppImpl implements NApp, Cloneable {
 
     @Override
     public NOptional<NVersion> getPreviousVersion() {
-        return NOptional.ofNamed(previousVersion,"previousVersion");
+        return NOptional.ofNamed(previousVersion, "previousVersion");
     }
 
     @Override
@@ -477,14 +478,13 @@ public class NAppImpl implements NApp, Cloneable {
             scope = NScopeType.SHARED_SESSION;
         }
         switch (scope) {
+            case SHARED_SESSION:
+            case TRANSITIVE_SESSION:
             case SESSION: {
-                return ((DefaultNSession) NSession.of()).getRefProperties().getOrComputeProperty(name, supplier);
-            }
-            case SHARED_SESSION: {
-                return ((DefaultNSession) NSession.of()).getSharedProperties().getOrComputeProperty(name, supplier);
+                return ((DefaultNSession) NSession.of()).getPropertiesHolder().getOrComputeProperty(name, supplier, scope);
             }
             case WORKSPACE: {
-                return ((NWorkspaceExt.of())).getModel().properties.getOrComputeProperty(name, supplier);
+                return ((NWorkspaceExt.of())).getModel().properties.getOrComputeProperty(name, supplier, NScopeType.WORKSPACE);
             }
             case PROTOTYPE: {
                 return supplier.get();
@@ -500,15 +500,16 @@ public class NAppImpl implements NApp, Cloneable {
             scope = NScopeType.SHARED_SESSION;
         }
         switch (scope) {
-            case SESSION: {
-                return (T) ((DefaultNSession) NSession.of()).getRefProperties().setProperty(name, value);
-            }
+            case SESSION:
             case SHARED_SESSION: {
-                return (T) ((DefaultNSession) NSession.of()).getSharedProperties().setProperty(name, value);
+                return (T) ((DefaultNSession) NSession.of()).getPropertiesHolder().setProperty(name, value, scope);
+            }
+            case TRANSITIVE_SESSION: {
+                return (T) ((DefaultNSession) NSession.of()).getPropertiesHolder().setProperty(name, CoreNUtils.checkCopiableValue(value), scope);
             }
             case WORKSPACE: {
                 NWorkspaceModel m = ((NWorkspaceExt.of())).getModel();
-                return (T) m.properties.setProperty(name, value);
+                return (T) m.properties.setProperty(name, value,NScopeType.WORKSPACE);
             }
             case PROTOTYPE:
             default: {
@@ -522,22 +523,20 @@ public class NAppImpl implements NApp, Cloneable {
             scope = NScopeType.SHARED_SESSION;
         }
         switch (scope) {
-            case SESSION: {
-                return ((DefaultNSession) NSession.of()).getRefProperties().<T>getOptional(name)
-                        .withDefault(() -> this.<T>getProperty(name, NScopeType.SHARED_SESSION).orDefault())
-                        ;
+            case PROTOTYPE: {
+                return NOptional.<T>ofNamedEmpty(name)
+                        .withDefault(() -> this.<T>getProperty(name, NScopeType.SESSION).orDefault());
             }
-            case SHARED_SESSION: {
-                return ((DefaultNSession) NSession.of()).getSharedProperties().<T>getOptional(name)
+            case SHARED_SESSION:
+            case SESSION:
+            case TRANSITIVE_SESSION:
+            {
+                return ((DefaultNSession) NSession.of()).getPropertiesHolder().<T>getOptional(name)
                         .withDefault(() -> this.<T>getProperty(name, NScopeType.WORKSPACE).orDefault())
                         ;
             }
             case WORKSPACE: {
                 return (NWorkspaceExt.of()).getModel().properties.getOptional(name);
-            }
-            case PROTOTYPE: {
-                return NOptional.<T>ofNamedEmpty(name)
-                        .withDefault(() -> this.<T>getProperty(name, NScopeType.SESSION).orDefault());
             }
             default: {
                 return NOptional.<T>ofNamedEmpty(name);

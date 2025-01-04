@@ -633,25 +633,25 @@ public class ProcessBuilder2 {
                 if (base.redirectErrorStream()) {
                     if (out.base.getType() == NRedirectType.GRAB_FILE || out.base.getType() == NRedirectType.GRAB_STREAM) {
                         throw new NExecutionException(
-                                NMsg.ofC("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
+                                NMsg.ofC("process execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
                                         NCmdLine.of(getCommand())),
                                 result);
                     }
                 } else {
                     if (err.base.getType() == NRedirectType.GRAB_FILE || err.base.getType() == NRedirectType.GRAB_STREAM) {
                         throw new NExecutionException(
-                                NMsg.ofC("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
+                                NMsg.ofC("process execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
                                         NCmdLine.of(getCommand())),
                                 result);
                     }
                     if (out.base.getType() == NRedirectType.GRAB_FILE || out.base.getType() == NRedirectType.GRAB_STREAM) {
                         throw new NExecutionException(NMsg.ofC(
-                                "execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
+                                "process execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
                                 NCmdLine.of(getCommand())
                         ), result);
                     }
                 }
-                throw new NExecutionException(NMsg.ofC("execution failed with code %d. Command was %s", result,
+                throw new NExecutionException(NMsg.ofC("process execution failed with code %d. Command was %s", result,
                         NCmdLine.of(getCommand())
                 ), result);
             }

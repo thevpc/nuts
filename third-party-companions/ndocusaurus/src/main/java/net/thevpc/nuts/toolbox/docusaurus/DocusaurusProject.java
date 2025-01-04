@@ -68,7 +68,7 @@ public class DocusaurusProject {
         }
     }
 
-//    static DocusaurusFile extractItem(Path p, String partialPath,NutsSession session) {
+//    static DocusaurusFile extractItem(Path p, String partialPath,NSession session) {
 //        try {
 //            BufferedReader br = Files.newBufferedReader(p);
 //            String line1 = br.readLine();
@@ -231,10 +231,10 @@ public class DocusaurusProject {
 //        } else if (Files.isDirectory(path)) {
 //            String longId = path.subpath(root.getNameCount(), path.getNameCount()).toString();
 //            Path dfi = path.resolve(DOCUSAURUS_FOLDER_CONFIG);
-//            NutsObjectElement config = NutsElements.of(session).forObject().build();
+//            NutsObjectElement config = NElements.of().forObject().build();
 //            if (Files.isRegularFile(dfi)) {
 //                try {
-//                    config = NutsElements.of(session).parse(new String(Files.readAllBytes(dfi))).asSafeObject();
+//                    config = NElements.of().parse(new String(Files.readAllBytes(dfi))).asSafeObject();
 //                } catch (IOException e) {
 //                    //ignore...
 //                }

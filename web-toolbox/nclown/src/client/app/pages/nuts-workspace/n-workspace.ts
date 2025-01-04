@@ -1,4 +1,4 @@
-export class NutsWorkspace {
+export class NWorkspace {
   name: string;
   location: string;
   enabled: boolean;

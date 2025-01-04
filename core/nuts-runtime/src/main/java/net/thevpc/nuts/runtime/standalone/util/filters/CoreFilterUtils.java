@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.util.filters;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.ext.NExtensionInformation;
 import net.thevpc.nuts.spi.base.AbstractNPredicate;
@@ -323,7 +324,7 @@ public class CoreFilterUtils {
 
     private static boolean matchesProperty(String k, String expected) {
         return matchesProperty(k, expected, x -> {
-            Object u = NSession.get().get().getProperty(x);
+            Object u = NApp.of().getProperty(x, NScopeType.SESSION).orNull();
             if (u != null) {
                 return String.valueOf(u);
             }

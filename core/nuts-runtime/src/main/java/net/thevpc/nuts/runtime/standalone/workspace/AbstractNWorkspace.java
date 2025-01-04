@@ -26,20 +26,32 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.boot.NBootOptionsInfo;
+import net.thevpc.nuts.boot.NBootWorkspaceImpl;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NLogOp;
+import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.reserved.NScopedWorkspace;
+import net.thevpc.nuts.runtime.standalone.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NCallable;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NObservableMapListener;
 import net.thevpc.nuts.util.NRunnable;
 
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Created by vpc on 1/6/17.
  */
 public abstract class AbstractNWorkspace implements NWorkspace {
-    public AbstractNWorkspace() {
+    protected NBootOptionsInfo callerBootOptionsInfo;
+
+    public AbstractNWorkspace(NBootOptionsInfo callerBootOptionsInfo) {
+        this.callerBootOptionsInfo=callerBootOptionsInfo;
     }
 
     @Override
@@ -154,4 +166,45 @@ public abstract class AbstractNWorkspace implements NWorkspace {
         return eventsModel().getInstallListeners();
     }
 
+
+    @Override
+    public void runBootCommand() {
+        runWith(() -> {
+            NBootOptions info2=new DefaultNBootOptionsBuilder(callerBootOptionsInfo).build();
+            NApp.of().setId(getApiId());
+            NLogOp logOp = NLog.of(NBootWorkspaceImpl.class).with().level(Level.CONFIG);
+            logOp.verb(NLogVerb.SUCCESS).log(NMsg.ofC("running workspace in %s mode", getRunModeString(info2)));
+            NExecCmd execCmd = NExecCmd.of()
+                    .setExecutionType(info2.getExecutionType().orNull())
+                    .setRunAs(info2.getRunAs().orNull())
+                    .failFast();
+            List<String> executorOptions = info2.getExecutorOptions().orNull();
+            if (executorOptions != null) {
+                execCmd.configure(true, executorOptions.toArray(new String[0]));
+            }
+            NCmdLine executorOptionsCmdLine = NCmdLine.of(executorOptions).setExpandSimpleOptions(false);
+            while (executorOptionsCmdLine.hasNext()) {
+                execCmd.configureLast(executorOptionsCmdLine);
+            }
+            if (info2.getApplicationArguments().get().isEmpty()) {
+                if (info2.getSkipWelcome().orElse(false)) {
+                    return;
+                }
+                execCmd.addCommand("welcome");
+            } else {
+                execCmd.addCommand(info2.getApplicationArguments().get());
+            }
+            execCmd.run();
+        });
+    }
+
+    private String getRunModeString(NBootOptions options) {
+        if (options.getReset().orElse(false)) {
+            return "reset";
+        } else if (options.getRecover().orElse(false)) {
+            return "recover";
+        } else {
+            return "exec";
+        }
+    }
 }

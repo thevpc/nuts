@@ -53,14 +53,14 @@ public class NutsComponentService {
     @GetMapping(value = "", produces = "application/json")
     public ResponseEntity<List<Map<String, String>>> getAll(@RequestParam("workspace") String workspaceLocation,
                                                             @RequestParam("repository") String repositoryUuid) {
-        NutsSession session = wss.getWorkspace(workspaceLocation);
+        NSession session = wss.getWorkspace(workspaceLocation);
         if (session == null) {
             return ResponseEntity.ok(new ArrayList<Map<String, String>>());
         }
         List<NutsId> ids = NSearchCmd.of()
             .setRepositoryFilter(
                 NutsClownUtils.trim(repositoryUuid).isEmpty() ? null :
-                    NutsRepositoryFilters.of(session).byUuid(repositoryUuid)
+                    NutsRepositoryFilters.of().byUuid(repositoryUuid)
             ).setFailFast(false)
             .setContent(false)
             .setEffective(true)
@@ -83,7 +83,7 @@ public class NutsComponentService {
                             String scope,
                             //            @RequestParam(NutsConstants.QueryKeys.ALTERNATIVE) String alternative,
                             String all) {
-        NutsSession _workspace = wss.getWorkspace(workspace);
+        NSession _workspace = wss.getWorkspace(workspace);
         if (_workspace == null) {
             return null;
         }
@@ -109,7 +109,7 @@ public class NutsComponentService {
                                                                      @RequestParam("scope") String scope,
                                                                      //            @RequestParam(NutsConstants.QueryKeys.ALTERNATIVE) String alternative,
                                                                      @RequestParam("all") String all) {
-        NutsSession _workspace = wss.getWorkspace(workspace);
+        NSession _workspace = wss.getWorkspace(workspace);
         if (_workspace != null) {
             NutsId _id = searchId(workspace, name, namespace, group, version, os, osdist, arch, face, scope, all);
             if (_id != null) {
@@ -144,7 +144,7 @@ public class NutsComponentService {
                                                       @RequestParam("scope") String scope
                                                       //        ,@RequestParam(NutsConstants.QueryKeys.ALTERNATIVE) String alternative
     ) {
-        NutsSession _workspace = wss.getWorkspace(workspace);
+        NSession _workspace = wss.getWorkspace(workspace);
         if (_workspace != null) {
             NutsId _id = searchId(workspace, name, namespace, group, version, os, osdist, null, face, scope, null);
             if (_id != null) {
@@ -206,7 +206,7 @@ public class NutsComponentService {
                                                                      @RequestParam("scope") String scope
                                                                      //        ,@RequestParam(NutsConstants.QueryKeys.ALTERNATIVE) String alternative
     ) {
-        NutsSession _session = wss.getWorkspace(workspace);
+        NSession _session = wss.getWorkspace(workspace);
         if (_session != null) {
             NutsId _id = searchId(workspace, name, namespace, group, version, os, osdist, null, face, scope, null);
             if (_id != null) {

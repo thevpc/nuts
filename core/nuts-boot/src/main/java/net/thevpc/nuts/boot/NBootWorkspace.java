@@ -41,11 +41,11 @@ public interface NBootWorkspace {
         return 0;
     }
 
-    NBootArguments getUnparsedOptions();
+    NBootArguments getBootArguments();
 
     NBootOptionsInfo getOptions();
 
-    NWorkspaceBase openWorkspace();
+    NWorkspaceBase getWorkspace();
+    NBootWorkspace runWorkspace();
 
-    NWorkspaceBase runWorkspace();
 }

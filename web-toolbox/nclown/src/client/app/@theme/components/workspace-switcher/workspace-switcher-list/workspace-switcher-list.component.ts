@@ -1,6 +1,6 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {NbPopoverDirective} from '@nebular/theme';
-import {NutsWorkspace} from '../../../../pages/nuts-workspace/nuts-workspace';
+import {NWorkspace} from '../../../../pages/nuts-workspace/n-workspace';
 import {NutsWorkspaceService} from '../../../../pages/nuts-workspace/nuts-workspace.service';
 import {Subscription} from 'rxjs';
 
@@ -27,7 +27,7 @@ export class WorkspaceSwitcherListComponent implements OnInit, OnDestroy {
 
   subscription: Subscription;
 
-  workspace: NutsWorkspace;
+  workspace: NWorkspace;
 
   workspaces = [];
 

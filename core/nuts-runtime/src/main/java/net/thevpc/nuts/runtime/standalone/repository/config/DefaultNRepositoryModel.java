@@ -169,7 +169,7 @@ public class DefaultNRepositoryModel {
     protected void addRepository(NRepository repo, boolean temp, boolean enabled) {
         repositoryRegistryHelper.addRepository(repo);
         repo.config().setEnabled(enabled);
-//        NConfigs.of(session).save();
+//        NWorkspace.of().save();
         if (!temp) {
             NSession session = workspace.currentSession();
             NWorkspaceExt.of(workspace).getConfigModel().fireConfigurationChanged("config-main", ConfigEventType.MAIN);

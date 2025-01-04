@@ -39,8 +39,7 @@ public final class NutsApp {
 
     /**
      * main method. This Main will call
-     * {@link Nuts#runWorkspace(java.lang.String...)} then
-     * {@link System#exit(int)} at completion
+     * {@code NBootWorkspace.of(args).runWorkspace()}
      *
      * @param args main arguments
      */

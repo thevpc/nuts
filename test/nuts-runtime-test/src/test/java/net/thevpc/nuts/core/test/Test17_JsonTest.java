@@ -54,8 +54,8 @@ public class Test17_JsonTest {
 //                .setNtf(false)
 //                .format();
 
-//        TestUtils.println(NutsTexts.of(session).forPlain("a@@@"));
-//        TestUtils.println(NutsTexts.of(session).forPlain("a@@@").filteredText());
+//        TestUtils.println(NTexts.of().forPlain("a@@@"));
+//        TestUtils.println(NTexts.of().forPlain("a@@@").filteredText());
 
         TestUtils.println(NText.ofPlain("a##@"));
         TestUtils.println(NText.ofPlain("a##@").filteredText());
@@ -215,8 +215,8 @@ public class Test17_JsonTest {
 //                .setNtf(false)
 //                .format();
 
-//        TestUtils.println(NutsTexts.of(session).forPlain("a@@@"));
-//        TestUtils.println(NutsTexts.of(session).forPlain("a@@@").filteredText());
+//        TestUtils.println(NTexts.of().forPlain("a@@@"));
+//        TestUtils.println(NTexts.of().forPlain("a@@@").filteredText());
 
         TestUtils.println(NText.ofPlain("a##@"));
         TestUtils.println(NText.ofPlain("a##@").filteredText());

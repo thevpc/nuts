@@ -54,13 +54,14 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
         this.postInit();
     }
 
-    public NBootArguments getUnparsedOptions() {
+    public NBootArguments getBootArguments() {
         return unparsedOptions;
     }
 
     public NBootOptionsInfo getOptions() {
         return options;
     }
+
 
     private void parseArguments(String[] bootArguments, NBootOptionsInfo userOptions) {
         NBootCmdLine cmdLine = new NBootCmdLine(bootArguments)
@@ -746,32 +747,29 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
     }
 
     @Override
-    public NWorkspaceBase openWorkspace() {
-        throw new IllegalArgumentException("unsupported operation openWorkspace in native-exec");
+    public NBootWorkspace runWorkspace() {
+        runWorkspace0();
+        return this;
     }
 
-    public NWorkspaceBase runWorkspace() {
-        try {
-            return runWorkspace0();
-        } catch (Exception ex) {
-            NExceptionBootAware u = NBootUtils.findThrowable(ex, NExceptionBootAware.class, null);
-            if (u != null) {
-                u.processThrowable();
-            } else {
-                NBootUtils.processThrowable(ex, bLog, true, NBootUtils.resolveShowStackTrace(options), NBootUtils.resolveGui(options));
+
+    @Override
+    public NWorkspaceBase getWorkspace() {
+        return new NWorkspaceBase() {
+            @Override
+            public void runBootCommand() {
             }
-            throw ex;
-        }
+        };
     }
 
-    public NWorkspaceBase runWorkspace0() {
-        NWorkspaceBase ws = null;
+
+    public void runWorkspace0() {
         if (NBootUtils.firstNonNull(options.getCommandHelp(), false)) {
             NBootWorkspaceHelper.runCommandHelp(options, bLog);
-            return ws;
+            return;
         } else if (NBootUtils.firstNonNull(options.getCommandVersion(), false)) {
             NBootWorkspaceHelper.runCommandVersion(null, options, bLog);
-            return ws;
+            return;
         }
 
         if (options.getApplicationArguments().isEmpty()) {
@@ -814,7 +812,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
             }
             count++;
             if (maxCount > 0 && count >= maxCount) {
-                return ws;
+                return;
             }
         }
     }

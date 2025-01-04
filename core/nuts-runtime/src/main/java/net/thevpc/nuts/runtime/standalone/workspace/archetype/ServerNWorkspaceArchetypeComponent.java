@@ -90,10 +90,10 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
         Boolean installCompanions = NWorkspace.of().getBootOptions().getInstallCompanions().orElse(false);
 
 //        if (initializeJava) {
-//            NWorkspaceUtils.of(session).installAllJVM();
+//            NWorkspaceUtils.of().installAllJVM();
 //        } else {
 //            //at least add current vm
-//            NWorkspaceUtils.of(session).installCurrentJVM();
+//            NWorkspaceUtils.of().installCurrentJVM();
 //        }
         if (initializeScripts || initializeLaunchers || installCompanions) {
             NId api = NFetchCmd.of().setId(workspace.getApiId()).setFailFast(false).getResultId();

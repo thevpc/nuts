@@ -260,7 +260,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
 //                            .setContent(true)
 //                            .setLatest(true)
 //                            .setDependencies(true)
-//                            .setDependencyFilter(NDependencyFilters.of(session).byRunnable())
+//                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
 //                            .setFailFast(true)
 //                            .setEffective(true)
 //                            .getResultDefinitions()

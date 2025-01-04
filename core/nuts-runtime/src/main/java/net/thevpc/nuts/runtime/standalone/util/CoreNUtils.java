@@ -11,14 +11,14 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
@@ -71,7 +71,7 @@ public class CoreNUtils {
     private static final Map<String, String> _QUERY_EMPTY_ENV = new HashMap<>();
     public static final Map<String, String> QUERY_EMPTY_ENV = Collections.unmodifiableMap(_QUERY_EMPTY_ENV);
 
-    public static final boolean isDevVerbose(){
+    public static final boolean isDevVerbose() {
         return Boolean.getBoolean("nuts.dev.verbose");
     }
 
@@ -530,7 +530,7 @@ public class CoreNUtils {
                     return NIdType.RUNTIME;
                 } else {
                     for (NClassLoaderNode n : NWorkspace.of().getBootExtensionClassLoaderNode()) {
-                        if(n.getId()!=null) {
+                        if (n.getId() != null) {
                             if (n.getId().equalsShortId(depId)) {
                                 return NIdType.EXTENSION;
                             }
@@ -614,7 +614,7 @@ public class CoreNUtils {
     }
 
     public static RuntimeException toUncheckedException(Throwable e) {
-        if(e instanceof RuntimeException){
+        if (e instanceof RuntimeException) {
             return (RuntimeException) e;
         }
         return new RuntimeException(e);
@@ -626,5 +626,46 @@ public class CoreNUtils {
                 .orElse(false);
     }
 
+
+    public static Object checkCopiableValue(Object value) {
+        if (!isCopiableValue(value)) {
+            throw new IllegalArgumentException("value is not copiable : " + value);
+        }
+        return value;
+    }
+
+    public static boolean isImmutableValue(Object value) {
+        if (value == null) {
+            return true;
+        }
+        switch (value.getClass().getName()) {
+            case "java.lang.Boolean":
+            case "java.lang.Integer":
+            case "java.lang.Long":
+            case "java.lang.Short":
+            case "java.lang.Byte":
+            case "java.lang.Character":
+            case "java.lang.String":
+                return true;
+        }
+        return value instanceof NImmutable;
+    }
+
+    public static boolean isCopiableValue(Object value) {
+        if (isImmutableValue(value)) {
+            return true;
+        }
+        return value instanceof NCopiable;
+    }
+
+    public static Object copyValue(Object value) {
+        if (isImmutableValue(value)) {
+            return value;
+        }
+        if (value instanceof NCopiable) {
+            return ((NCopiable) value).copy();
+        }
+        throw new IllegalArgumentException("value is not copiable : " + value);
+    }
 
 }

@@ -36,7 +36,7 @@ public class NutsRepositoryService {
     @GetMapping(value = "delete", produces = "application/json")
     public ResponseEntity<List<Map<String, Object>>> deleteRepository(@RequestParam("name") String name,
             @RequestParam("workspace") String workspace) {
-        NutsSession ws = wss.getWorkspace(workspace);
+        NSession ws = wss.getWorkspace(workspace);
         ws.repos().removeRepository(name);
         ws.config().save();
         logger.info(String.format("Repository with name %s was deleted", name));
@@ -47,7 +47,7 @@ public class NutsRepositoryService {
     @GetMapping(value = "add", produces = "application/json")
     public ResponseEntity<List<Map<String, Object>>> addRepository(@RequestParam("workspace") String workspace,
             @RequestParam("data") String data) {
-        NutsSession ws = wss.getWorkspace(workspace);
+        NSession ws = wss.getWorkspace(workspace);
         try {
             HashMap<String, String> dataMap = new ObjectMapper().readValue(data, HashMap.class);
             ws.repos().addRepository(new NutsAddRepositoryOptions()

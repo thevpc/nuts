@@ -28,6 +28,7 @@ import net.thevpc.nuts.*;
 
 import net.thevpc.nuts.NBootOptions;
 
+import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
@@ -44,23 +45,21 @@ import net.thevpc.nuts.runtime.standalone.elem.DefaultNArrayElementBuilder;
 import net.thevpc.nuts.runtime.standalone.io.progress.ProgressOptions;
 import net.thevpc.nuts.runtime.standalone.io.terminal.AbstractNTerminal;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.util.NPropertiesHolder;
+import net.thevpc.nuts.runtime.standalone.util.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.*;
 
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.logging.Filter;
 import java.util.logging.Level;
 
 /**
  * Created by vpc on 2/1/17.
  */
-public class DefaultNSession implements Cloneable, NSession {
+public class DefaultNSession implements Cloneable, NSession, NCopiable {
     public static final InheritableThreadLocal<Stack<NSession>> CURRENT_SESSION = new InheritableThreadLocal<>();
 
     //    protected NutsIterableFormat iterFormatHandler = null;
@@ -68,8 +67,10 @@ public class DefaultNSession implements Cloneable, NSession {
     protected NWorkspace workspace = null;
     protected List<String> outputFormatOptions = new ArrayList<>();
     private NTerminal terminal;
-    private NPropertiesHolder sharedProperties = new NPropertiesHolder();
-    private NPropertiesHolder refProperties = new NPropertiesHolder();
+    //    private NPropertiesHolder sharedProperties = new NPropertiesHolder();
+//    private NPropertiesHolder transitiveProperties = new NPropertiesHolder();
+//    private NPropertiesHolder refProperties = new NPropertiesHolder();
+    private NPropertiesHolder properties = new NPropertiesHolder();
     private Map<Class, LinkedHashSet<NListener>> listeners = new HashMap<>();
     private String dependencySolver;
     private Boolean trace;
@@ -106,20 +107,26 @@ public class DefaultNSession implements Cloneable, NSession {
         this.workspace = workspace;
         setAll(NWorkspace.of().getBootOptions().toWorkspaceOptions());
     }
+
     public DefaultNSession(NWorkspace workspace, NWorkspaceOptions options) {
         this.workspace = workspace;
-        if(options!=null) {
+        if (options != null) {
             setAll(options);
         }
     }
 
-    public NPropertiesHolder getSharedProperties() {
-        return sharedProperties;
-    }
 
-    public NPropertiesHolder getRefProperties() {
-        return refProperties;
-    }
+//    public NPropertiesHolder getSharedProperties() {
+//        return sharedProperties;
+//    }
+//
+//    public NPropertiesHolder getTransitiveProperties() {
+//        return transitiveProperties;
+//    }
+//
+//    public NPropertiesHolder getRefProperties() {
+//        return refProperties;
+//    }
 
     @Override
     public void runWith(NRunnable runnable) {
@@ -146,7 +153,7 @@ public class DefaultNSession implements Cloneable, NSession {
     @Override
     public <T> T callWith(NCallable<T> callable) {
         if (callable != null) {
-            return NScopedWorkspace.callWith0(workspace,()->{
+            return NScopedWorkspace.callWith0(workspace, () -> {
                 Stack<NSession> nSessions = NWorkspaceExt.of().sessionScopes();
                 if (!nSessions.isEmpty()) {
                     NSession l = nSessions.peek();
@@ -841,8 +848,20 @@ public class DefaultNSession implements Cloneable, NSession {
         try {
             DefaultNSession cloned = (DefaultNSession) clone();
             cloned.terminal = terminal == null ? null : NTerminal.of(terminal);
-            cloned.sharedProperties = sharedProperties == null ? null : sharedProperties.copy();
-            cloned.refProperties = new NPropertiesHolder();
+            cloned.properties = new NPropertiesHolder();
+            for (String s : properties.keySet()) {
+                NPropertiesHolder.NScopedValue v = properties.getScopedValue(s);
+                switch (v.getScope()) {
+                    case SHARED_SESSION: {
+                        cloned.properties.setProperty(s, v.getValue(), NScopeType.SHARED_SESSION);
+                        break;
+                    }
+                    case TRANSITIVE_SESSION: {
+                        cloned.properties.setProperty(s, CoreNUtils.copyValue(v.getValue()), NScopeType.TRANSITIVE_SESSION);
+                        break;
+                    }
+                }
+            }
             cloned.outputFormatOptions = outputFormatOptions == null ? null : new ArrayList<>(outputFormatOptions);
             cloned.listeners = null;
             if (listeners != null) {
@@ -861,7 +880,19 @@ public class DefaultNSession implements Cloneable, NSession {
         //boolean withDefaults = false;
         this.terminal = other.getTerminal() == null ? null : NTerminal.of(terminal);
         this.terminal = other.getTerminal();
-        this.sharedProperties.setProperties(other.getProperties(NScopeType.SHARED_SESSION));
+        for (String s : ((DefaultNSession) other).properties.keySet()) {
+            NPropertiesHolder.NScopedValue v = properties.getScopedValue(s);
+            switch (v.getScope()) {
+                case SHARED_SESSION: {
+                    this.properties.setProperty(s, v.getValue(), NScopeType.SHARED_SESSION);
+                    break;
+                }
+                case TRANSITIVE_SESSION: {
+                    this.properties.setProperty(s, CoreNUtils.copyValue(v.getValue()), NScopeType.TRANSITIVE_SESSION);
+                    break;
+                }
+            }
+        }
         this.listeners.clear();
         for (NListener listener : other.getListeners()) {
             addListener(listener);
@@ -1034,90 +1065,67 @@ public class DefaultNSession implements Cloneable, NSession {
         return new ArrayList<>(all);
     }
 
-    @Override
-    public NSession setProperty(String key, Object value) {
-        this.sharedProperties.setProperty(key, value);
-        return this;
+    public NPropertiesHolder getPropertiesHolder() {
+        return properties;
     }
 
-    @Override
-    public Map<String, Object> getProperties(NScopeType scope, boolean withDefaults) {
-        if (scope == null) {
-            scope = NScopeType.SHARED_SESSION;
-        }
-        switch (scope) {
-            case PROTOTYPE: {
-                if (withDefaults) {
-                    return getProperties(NScopeType.SESSION, withDefaults);
-                }
-                return new LinkedHashMap<>();
-            }
-            case SESSION: {
-                LinkedHashMap<String, Object> a = new LinkedHashMap<>();
-                if (withDefaults) {
-                    a.putAll(getProperties(NScopeType.SHARED_SESSION));
-                }
-                a.putAll(refProperties.toMap());
-                return a;
-            }
-            case SHARED_SESSION: {
-                LinkedHashMap<String, Object> a = new LinkedHashMap<>();
-                if (withDefaults) {
-                    a.putAll(getProperties(NScopeType.WORKSPACE));
-                }
-                a.putAll(sharedProperties.toMap());
-                return a;
-            }
-            case WORKSPACE: {
-                LinkedHashMap<String, Object> a = new LinkedHashMap<>();
-                a.putAll(((NWorkspaceExt) workspace).getModel().properties.toMap());
-                return a;
-            }
-        }
-        return new LinkedHashMap<>();
-    }
+//    @Override
+//    public Map<String, Object> getProperties() {
+//        return properties.toMap();
+//    }
 
-    @Override
-    public Map<String, Object> getProperties(NScopeType scope) {
-        return getProperties(scope, false);
-    }
+//    @Override
+//    public Map<String, Object> getProperties(NScopeType scope) {
+//        LinkedHashMap<String, Object> a = new LinkedHashMap<>();
+//        for (String s : properties.keySet()) {
+//            NPropertiesHolder.NScopedValue v = properties.getScopedValue(s);
+//            if (v.getScope()==scope) {
+//                a.put(s, v.getValue());
+//            }
+//        }
+//        return a;
+//    }
 
-    public Map<String, Object> getProperties() {
-        return sharedProperties.toMap();
-    }
+//    @Override
+//    public NSession setProperties(NScopeType scope, Map<String, Object> properties) {
+//        if (scope == null) {
+//            scope = NScopeType.SHARED_SESSION;
+//        }
+//        switch (scope) {
+//            case SESSION: {
+//                this.refProperties.setProperties(properties);
+//                break;
+//            }
+//            case SHARED_SESSION: {
+//                this.sharedProperties.setProperties(properties);
+//                break;
+//            }
+//            case TRANSITIVE_SESSION: {
+//                if (properties != null) {
+//                    for (Map.Entry<String, Object> e : properties.entrySet()) {
+//                        this.transitiveProperties.setProperty(e.getKey(), CoreNUtils.checkCopiableValue(e.getValue()));
+//                    }
+//                }
+//                break;
+//            }
+//            case WORKSPACE: {
+//                ((NWorkspaceExt) workspace).getModel().properties.setProperties(properties);
+//                break;
+//            }
+//            case PROTOTYPE: {
+//                break;
+//            }
+//            default: {
+//                throw new NUnsupportedEnumException(scope);
+//            }
+//        }
+//        return this;
+//    }
 
-    @Override
-    public NSession setProperties(NScopeType scope, Map<String, Object> properties) {
-        if (scope == null) {
-            scope = NScopeType.SHARED_SESSION;
-        }
-        switch (scope) {
-            case SESSION: {
-                this.refProperties.setProperties(properties);
-                break;
-            }
-            case SHARED_SESSION: {
-                this.sharedProperties.setProperties(properties);
-                break;
-            }
-            case WORKSPACE: {
-                ((NWorkspaceExt) workspace).getModel().properties.setProperties(properties);
-                break;
-            }
-            case PROTOTYPE: {
-                break;
-            }
-            default: {
-                throw new NUnsupportedEnumException(scope);
-            }
-        }
-        return this;
-    }
-
-    @Override
-    public Object getProperty(String key) {
-        return sharedProperties.getProperty(key);
-    }
+//    @Override
+//    public Object getProperty(String key) {
+//        return sharedProperties.getProperty(key);
+//    }
 
     @Override
     public NOptional<NConfirmationMode> getConfirm() {
@@ -1304,7 +1312,7 @@ public class DefaultNSession implements Cloneable, NSession {
             return false;
         }
         //TODO, should we cache this?
-        return callWith(()->ProgressOptions.of().isEnabled());
+        return callWith(() -> ProgressOptions.of().isEnabled());
     }
 
     @Override
@@ -1608,11 +1616,11 @@ public class DefaultNSession implements Cloneable, NSession {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("NutsSession(");
+        StringBuilder sb = new StringBuilder("NSession(");
         NWorkspace ws = getWorkspace();
         sb.append(ws == null ? "null" : ws.getLocation());
-        if (sharedProperties.size() > 0) {
-            sb.append(", properties=").append(sharedProperties);
+        if (properties.size() > 0) {
+            sb.append(", properties=").append(properties);
         }
         sb.append(")");
         return sb.toString();

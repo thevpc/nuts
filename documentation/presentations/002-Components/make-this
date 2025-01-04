@@ -7,7 +7,7 @@ shared_baseDir=${asciidoctor_baseDir}/../shared/asciidoctor
 ASI=/usr/lib64/ruby/gems/3.1.0/gems/asciidoctor-pdf-1.6.2/bin/
 for f in $asciidoctor_baseDir/*.adoc
 do
-PLANTUML_URL="http://localhost:8081/" ${ASI}asciidoctor-pdf -r asciidoctor-diagram -a "pdf-themesdir=${shared_baseDir}/resources/themes" -a "pdf-theme=default" -a "pdf-fontsdir=${shared_baseDir}/resources/fonts/;GEM_FONTS_DIR" "$f"
+PLANTUML_URL="http://localhost:8081/" asciidoctor-pdf-cmd -r asciidoctor-diagram -a "pdf-themesdir=${shared_baseDir}/resources/themes" -a "pdf-theme=default" -a "pdf-fontsdir=${shared_baseDir}/resources/fonts/;GEM_FONTS_DIR" "$f"
 done
 cp $asciidoctor_baseDir/*.pdf $asciidoctor_baseDir/../../website/static/pdf/
 

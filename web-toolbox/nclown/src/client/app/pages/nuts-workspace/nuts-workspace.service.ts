@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {NutsWorkspace} from './nuts-workspace';
+import {NWorkspace} from './n-workspace';
 import {Observable, Subject} from 'rxjs';
 
 @Injectable({
@@ -10,9 +10,9 @@ export class NutsWorkspaceService {
 
   public currentWorkspace = 'default-workspace';
 
-  public workspaces: NutsWorkspace[] = [];
-  public workspacesSubject: Subject<NutsWorkspace[]>;
-  public workspacesObservable: Observable<NutsWorkspace[]>;
+  public workspaces: NWorkspace[] = [];
+  public workspacesSubject: Subject<NWorkspace[]>;
+  public workspacesObservable: Observable<NWorkspace[]>;
 
   constructor(private http: HttpClient) {
     this.workspacesSubject = new Subject();
@@ -28,19 +28,19 @@ export class NutsWorkspaceService {
 
   public getAll() {
     this.http
-      .get<NutsWorkspace[]>(`/ws/workspaces`)
+      .get<NWorkspace[]>(`/ws/workspaces`)
       .subscribe(workspaces => this.refreshData(workspaces));
   }
 
   public add(name: String) {
     this.http
-      .get<NutsWorkspace[]>(`/ws/workspaces/add?name=${name}`)
+      .get<NWorkspace[]>(`/ws/workspaces/add?name=${name}`)
       .subscribe(workspaces => this.refreshData(workspaces));
   }
 
   public delete(name: String) {
     this.http
-      .get<NutsWorkspace[]>(`/ws/workspaces/delete?name=${name}`)
+      .get<NWorkspace[]>(`/ws/workspaces/delete?name=${name}`)
       .subscribe(workspaces => this.refreshData(workspaces));
   }
 
@@ -50,7 +50,7 @@ export class NutsWorkspaceService {
 
   public switchEnabled(name: string, value: boolean) {
     this.http
-      .get<NutsWorkspace[]>(`/ws/workspaces/onOff?name=${name}&value=${value}`)
+      .get<NWorkspace[]>(`/ws/workspaces/onOff?name=${name}&value=${value}`)
       .subscribe(workspaces => this.refreshData(workspaces));
   }
 }

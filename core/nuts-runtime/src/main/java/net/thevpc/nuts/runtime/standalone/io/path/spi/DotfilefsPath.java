@@ -155,13 +155,12 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
 
     @Override
     public boolean isRegularFile(NPath basePath) {
-        return false;
+        return ref.isRegularFile();
     }
 
     @Override
     public boolean exists(NPath basePath) {
-        String t = getContentType(basePath);
-        return "text/html".equals(t);
+        return ref.exists();
     }
 
     @Override

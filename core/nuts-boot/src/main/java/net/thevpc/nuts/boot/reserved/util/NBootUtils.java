@@ -2845,7 +2845,7 @@ public final class NBootUtils {
         } else {
             NExceptionBootAware u = findThrowable(ex, NExceptionBootAware.class, null);
             if (u != null) {
-                return u.processThrowable();
+                return u.processThrowable(bootOptions, bootLog);
             } else {
                 if (bootOptions == null) {
                     bootOptions = new NBootOptionsInfo();
@@ -2859,6 +2859,9 @@ public final class NBootUtils {
 
 
     public static boolean resolveGui(NBootOptionsInfo bo) {
+        if(bo==null){
+            return false;
+        }
         if (bo.getBot() != null && bo.getBot()) {
             return false;
         } else if (bo.getGui() != null && bo.getGui()) {
@@ -2933,6 +2936,9 @@ public final class NBootUtils {
 
 
     public static boolean resolveShowStackTrace(NBootOptionsInfo bo) {
+        if(bo==null){
+            return true;
+        }
         if (bo.getShowStacktrace() != null) {
             return bo.getShowStacktrace();
         } else if (bo.getBot() != null && bo.getBot()) {

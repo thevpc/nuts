@@ -7,7 +7,7 @@ import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions;
 import net.thevpc.nuts.runtime.standalone.io.cache.CachedSupplier;
 import net.thevpc.nuts.util.NLRUMap;
-import net.thevpc.nuts.util.NPropertiesHolder;
+import net.thevpc.nuts.runtime.standalone.util.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.util.filters.DefaultNFilterModel;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTextManagerModel;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNLogModel;

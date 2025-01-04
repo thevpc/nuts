@@ -171,7 +171,7 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
             //try {
                 byte[] bytes = s.getBytes();
                 printStream.writeRaw(bytes,0,bytes.length);
-//                NWorkspaceTerminalOptions bootStdFd = NEnvs.of(session).getBootTerminal();
+//                NWorkspaceTerminalOptions bootStdFd = NWorkspace.of().getBootTerminal();
 //                bootStdFd.getOut().write(bytes);
             //} catch (IOException e) {
             //    throw new NIOException(session, e);

@@ -47,7 +47,7 @@ import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.util.NClassClassMap;
 import net.thevpc.nuts.util.NListMap;
-import net.thevpc.nuts.util.NPropertiesHolder;
+import net.thevpc.nuts.runtime.standalone.util.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.util.stream.DefaultNCollectionsRPI;
 import net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionFormat;
 import net.thevpc.nuts.runtime.standalone.web.DefaultNWebCli;
@@ -86,7 +86,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     public DefaultNWorkspaceFactory(NWorkspace ws) {
         this.workspace = ws;
         LOG = ((DefaultNWorkspace) ws).LOG;
-        cache = new NBeanCache(LOG, CoreNUtils.isDevVerbose()?System.err:null);
+        cache = new NBeanCache(LOG, CoreNUtils.isDevVerbose() ? System.err : null);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
 
         switch (type.getName()) {
             case "net.thevpc.nuts.NApp": {
-                return NOptional.of((T)((DefaultNSession)session).getRefProperties().getOrComputeProperty(type.getName(),()->new NAppImpl()));
+                return NOptional.of((T) ((DefaultNSession) session).getPropertiesHolder().getOrComputeProperty(type.getName(), () -> new NAppImpl(), NScopeType.TRANSITIVE_SESSION));
             }
         }
         List<T> all = createAll(type);
@@ -211,7 +211,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 }
             }
             if (all.isEmpty()) {
-                if(!session.isBot()) {
+                if (!session.isBot()) {
                     System.err.println("[Nuts] unable to resolve " + type);
                     Set<Class<? extends T>> extensionTypes = getExtensionTypes(type);
                     System.err.println("[Nuts] extensionTypes =  " + extensionTypes);
@@ -221,7 +221,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             }
         }
         if (all.isEmpty()) {
-            if(!session.isBot()) {
+            if (!session.isBot()) {
                 System.err.println("[Nuts] unable to resolve " + type);
                 Set<Class<? extends T>> extensionTypes = getExtensionTypes(type);
                 System.err.println("[Nuts] extensionTypes =  " + extensionTypes);
@@ -306,6 +306,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         }
         return all;
     }
+
     private <T extends NComponent> Set<Class<? extends T>> getExtensionTypesNoCache2(Class<T> type, NSession session) {
         LinkedHashSet<Class<? extends T>> all = new LinkedHashSet<>();
         for (IdCache v : discoveredCacheById.values()) {
@@ -427,14 +428,14 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                             .log(NMsg.ofC("error when instantiating %s as %s : no constructor found", apiType, t));
                 }
             }
-            NBeanCache cache2 = new NBeanCache(LOG,CoreNUtils.isDevVerbose()?System.err:null);
+            NBeanCache cache2 = new NBeanCache(LOG, CoreNUtils.isDevVerbose() ? System.err : null);
             cache2.findConstructor(t, argTypes);
             throw new NFactoryException(NMsg.ofC("instantiate '%s' failed", t), new NoSuchElementException(
                     NMsg.ofC("No constructor was found %s(%s). All %s available constructors are : %s",
                             t.getName(),
                             Arrays.stream(argTypes).map(Class::getSimpleName).collect(Collectors.joining(",")),
                             t.getDeclaredConstructors().length,
-                            Arrays.stream(t.getDeclaredConstructors()).map(x->toString()).collect(Collectors.joining(" ; "))
+                            Arrays.stream(t.getDeclaredConstructors()).map(x -> toString()).collect(Collectors.joining(" ; "))
                     ).toString()
             ));
         }
@@ -485,7 +486,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                     scope = apiScope.value();
                     if (LOG.isLoggable(Level.CONFIG)) {
                         switch (apiType.getName()) {
-                            //skip logging for NutsTexts to avoid infinite recursion
+                            //skip logging for NTexts to avoid infinite recursion
                             case "net.thevpc.nuts.text.NTexts": {
                                 break;
                             }
@@ -547,7 +548,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         NPropertiesHolder beans = resolveBeansHolder(scope);
         return (T) beans.getOrComputeProperty(implementation.getName(), () -> {
             return newInstanceAndLog(implementation, argTypes, args, apiType, finalScope);
-        });
+        }, finalScope);
     }
 
     private static NPropertiesHolder resolveBeansHolder(NScopeType scope) {
@@ -606,7 +607,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         }
     }
 
-    public void dump(Class<?> type,NSession session) {
+    public void dump(Class<?> type, NSession session) {
         System.err.println("Start Extensions Factory Dump");
         String tname = type.getName();
         for (Map.Entry<NId, IdCache> e : discoveredCacheById.entrySet()) {
@@ -625,9 +626,9 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                             }
                             System.err.println("\t\t\t --->  " + type + "->" + vv.get(type) + " ::: class loader : found " + k.getClassLoader() + " __VS__ expected " + type.getClassLoader());
                             System.err.println("\t\t\t\t --->  getAll => " + type + "->" + Arrays.asList(vv.getAll(type)));
-                            System.err.println("\t\t\t\t --->  getExtensionTypes => " + getExtensionTypes((Class)type));
-                            System.err.println("\t\t\t\t --->  getExtensionTypesNoCache => " + getExtensionTypesNoCache((Class)type,session));
-                            System.err.println("\t\t\t\t --->  getExtensionTypesNoCache2 => " + getExtensionTypesNoCache2((Class)type,session));
+                            System.err.println("\t\t\t\t --->  getExtensionTypes => " + getExtensionTypes((Class) type));
+                            System.err.println("\t\t\t\t --->  getExtensionTypesNoCache => " + getExtensionTypesNoCache((Class) type, session));
+                            System.err.println("\t\t\t\t --->  getExtensionTypesNoCache2 => " + getExtensionTypesNoCache2((Class) type, session));
                         } else {
                             System.err.println("\t\t" + k + "->" + vv.get(k));
                         }

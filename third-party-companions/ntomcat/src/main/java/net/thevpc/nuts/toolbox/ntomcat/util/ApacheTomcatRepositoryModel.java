@@ -220,7 +220,7 @@ public class ApacheTomcatRepositoryModel implements NRepositoryModel {
                 .toString();
     }
 
-//    public boolean catalinaMatchesJavaVersion(NutsVersion cv, String javaVersion, NutsSession session) {
+//    public boolean catalinaMatchesJavaVersion(NutsVersion cv, String javaVersion, NSession session) {
 //        if (NutsBlankable.isBlank(javaVersion)) {
 //            return true;
 //        }

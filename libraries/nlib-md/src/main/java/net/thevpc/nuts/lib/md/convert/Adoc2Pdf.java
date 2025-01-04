@@ -36,7 +36,6 @@ public class Adoc2Pdf {
     }
 
     public Path generatePdf(Adoc2PdfConfig config) {
-        NAssert.requireNonNull(config.getSession(),"session");
         String bin = config.getBin();
         String[] args = config.getArgs();
         File workDir = toCanonicalFile(new File(config.getWorkDir()));

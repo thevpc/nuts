@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {NutsWorkspaceService} from '../../../pages/nuts-workspace/nuts-workspace.service';
-import {NutsWorkspace} from '../../../pages/nuts-workspace/nuts-workspace';
+import {NWorkspace} from '../../../pages/nuts-workspace/n-workspace';
 
 @Component({
   selector: 'ngx-table-switcher',
@@ -15,7 +15,7 @@ import {NutsWorkspace} from '../../../pages/nuts-workspace/nuts-workspace';
 export class WorkspaceEnableSwitcherComponent implements OnInit {
 
   @Input() value: string;
-  @Input() rowData: NutsWorkspace;
+  @Input() rowData: NWorkspace;
 
   @Output() save: EventEmitter<any> = new EventEmitter();
 

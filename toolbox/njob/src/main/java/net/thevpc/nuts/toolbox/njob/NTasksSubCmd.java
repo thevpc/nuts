@@ -6,6 +6,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
@@ -608,7 +609,7 @@ public class NTasksSubCmd {
                     ));
                     lastResults.add(x);
                 });
-                session.setProperty("LastResults", lastResults.toArray(new NTask[0]));
+                NApp.of().setProperty("LastResults", NScopeType.SESSION, lastResults.toArray(new NTask[0]));
                 NTableFormat.of()
                         .setBorder("spaces")
                         .setValue(m).println();
@@ -741,7 +742,7 @@ public class NTasksSubCmd {
         if (pid.startsWith("#")) {
             int x = NLiteral.of(pid.substring(1)).asInt().orElse(-1);
             if (x >= 1) {
-                Object lastResults = session.getProperty("LastResults");
+                Object lastResults = NApp.of().getProperty("LastResults",NScopeType.SESSION).orNull();
                 if (lastResults instanceof NTask[] && x <= ((NTask[]) lastResults).length) {
                     t = ((NTask[]) lastResults)[x - 1];
                 }

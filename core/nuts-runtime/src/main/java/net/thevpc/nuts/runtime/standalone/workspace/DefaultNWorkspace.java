@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NBootOptions;
+import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.NBootWorkspaceFactory;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.boot.NBootWorkspaceAlreadyExistsException;
@@ -129,7 +130,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     public NLog LOG;
     private NWorkspaceModel wsModel;
 
-    public DefaultNWorkspace(NBootOptions info) {
+    public DefaultNWorkspace(NBootOptionsInfo callerBootOptionsInfo, NBootOptions info) {
+        super(callerBootOptionsInfo);
         initWorkspace(info);
     }
 
@@ -140,7 +142,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 //     * @return bundled nuts file, the nuts is neither deployed nor installed!
 //     */
 //    @Deprecated
-//    public NutsDefinition createBundle(Path contentFolder, Path destFile, NutsQueryOptions queryOptions, NutsSession session) {
+//    public NutsDefinition createBundle(Path contentFolder, Path destFile, NutsQueryOptions queryOptions, NSession session) {
 //        session = CoreNutsUtils.validateSession(session, this);
 //        if (Files.isDirectory(contentFolder)) {
 //            NutsDescriptor descriptor = null;
@@ -177,9 +179,9 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 //        }
 //    }
 //    @Override
-//    public boolean isFetched(NutsId parseList, NutsSession session) {
+//    public boolean isFetched(NutsId parseList, NSession session) {
 //        session = CoreNutsUtils.validateSession(session, this);
-//        NutsSession offlineSession = session.copy();
+//        NSession offlineSession = session.copy();
 //        try {
 //            NutsDefinition found = fetch().parseList(parseList).offline().setSession(offlineSession).setIncludeInstallInformation(false).setIncludeFile(true).getResultDefinition();
 //            return found != null;
@@ -2035,7 +2037,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         }
     }
 
-    public DefaultNRepositoryModel getRepositoryModel(){
+    public DefaultNRepositoryModel getRepositoryModel() {
         return wsModel.repositoryModel;
     }
 
@@ -2450,8 +2452,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     /// ////////////
 
 
-
-
     @Override
     public boolean addPlatform(NPlatformLocation location) {
         return getSdkModel().addPlatform(location);
@@ -2519,12 +2519,12 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
     @Override
     public NStream<NPlatformLocation> findPlatforms() {
-        return findPlatforms(null,null);
+        return findPlatforms(null, null);
     }
 
     @Override
     public NWorkspace addDefaultPlatforms(NPlatformFamily type) {
-        if(type==NPlatformFamily.JAVA) {
+        if (type == NPlatformFamily.JAVA) {
             NWorkspaceUtils.of(this).installAllJVM();
         }
         return this;
@@ -2532,7 +2532,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
     @Override
     public NWorkspace addDefaultPlatform(NPlatformFamily type) {
-        if(type==NPlatformFamily.JAVA) {
+        if (type == NPlatformFamily.JAVA) {
             //at least add current vm
             NWorkspaceUtils.of(this).installCurrentJVM();
         }

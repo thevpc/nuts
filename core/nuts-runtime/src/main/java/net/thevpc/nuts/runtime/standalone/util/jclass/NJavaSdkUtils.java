@@ -250,7 +250,7 @@ public class NJavaSdkUtils {
                 if (r != null) {
                     all.add(r);
 //                    if (session != null && session.isPlainTrace()) {
-//                            NTexts factory = NTexts.of(session);
+//                            NTexts factory = NTexts.of();
 //                            session.out().println(NMsg.ofC("detected java %s %s at %s", r.getPackaging(),
 //                                    factory.ofStyled(r.getVersion(), NutsTextStyle.version()),
 //                                    factory.ofStyled(r.getPath(), NutsTextStyle.path())

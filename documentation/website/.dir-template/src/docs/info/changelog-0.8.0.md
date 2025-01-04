@@ -1,6 +1,6 @@
 ---
-id: changelog
-title: Change Log
+id: changelog080
+title: Change Log 0.8.0
 sidebar_label: Change Log
 order: 50
 ---
@@ -18,7 +18,7 @@ Starred releases are most stable ones.
 - CHANGED: removed support for vpc-public-maven and vpc-public-nuts
 - CHANGED: ```nuts -Z``` will update ```.bashrc``` file and switch back to default workspace
 - ADDED  : when a dependency is missing it will be shown in the error message
-- ADDED  : nuts commandline argument --N (--expire) to force reloading invoked artifacts (expire fetched jars). a related NutsSession.expireTime is introduced to force reinstall of any launched application and it dependencies, example: ```nuts -N ndi```
+- ADDED  : nuts commandline argument --N (--expire) to force reloading invoked artifacts (expire fetched jars). a related NSession.expireTime is introduced to force reinstall of any launched application and it dependencies, example: ```nuts -N ndi```
 - ADDED  : install --strategy=install|reinstall|require|repair introduced to select install strategy (or sub command)
 - ADDED  : NutsInput & NutsOutput to help considering reusable sources/targets
 - ADDED  : nuts commandline argument --skip-errors  to ignore unsupported commandline args

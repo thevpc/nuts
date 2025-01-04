@@ -77,7 +77,7 @@ public class NoApiUtils {
         if (json) {
             return NElements.of().json().parse(source, NElement.class);
         } else {
-//            return NutsElements.of(session).json().parse(inputStream, NutsElement.class);
+//            return NElements.of().json().parse(inputStream, NutsElement.class);
             try (InputStream is = source.getInputStream()) {
                 final Object o = new Yaml().load(is);
                 return NElements.of().toElement(o);

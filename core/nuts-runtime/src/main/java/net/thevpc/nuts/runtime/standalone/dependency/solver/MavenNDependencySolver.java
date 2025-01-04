@@ -435,7 +435,7 @@ public class MavenNDependencySolver implements NDependencySolver {
 //            return false;
 //        }
 //        if (!os.isEmpty()) {
-//            NutsOsFamily eos = NEnvs.of(session).getOsFamily();
+//            NutsOsFamily eos = NWorkspace.of().getOsFamily();
 //            boolean osOk = false;
 //            for (String e : os.split("[,; ]")) {
 //                if (!e.isEmpty()) {
@@ -450,7 +450,7 @@ public class MavenNDependencySolver implements NDependencySolver {
 //            }
 //        }
 //        if (!arch.isEmpty()) {
-//            NutsArchFamily earch = NEnvs.of(session).getArchFamily();
+//            NutsArchFamily earch = NWorkspace.of().getArchFamily();
 //            if (earch != null) {
 //                boolean archOk = false;
 //                for (String e : arch.split("[,; ]")) {
@@ -469,16 +469,16 @@ public class MavenNDependencySolver implements NDependencySolver {
 //        }
 //        return true;
 //    }
-//    public NutsDependencyFilter getEffDependencyFilter(NutsSession session) {
+//    public NutsDependencyFilter getEffDependencyFilter(NSession session) {
 //        if (effDependencyFilter == null) {
 //            if (dependencyFilter == null) {
-//                effDependencyFilter = session.dependency().filter().byOs(NEnvs.of(session).getOsFamily())
-//                        .and(session.dependency().filter().byArch(NEnvs.of(session).getArchFamily()));
+//                effDependencyFilter = session.dependency().filter().byOs(NWorkspace.of().getOsFamily())
+//                        .and(session.dependency().filter().byArch(NWorkspace.of().getArchFamily()));
 //            } else {
 //                effDependencyFilter
 //                        = dependencyFilter
-//                                .and(session.dependency().filter().byOs(NEnvs.of(session).getOsFamily()))
-//                                .and(session.dependency().filter().byArch(NEnvs.of(session).getArchFamily()));
+//                                .and(session.dependency().filter().byOs(NWorkspace.of().getOsFamily()))
+//                                .and(session.dependency().filter().byArch(NWorkspace.of().getArchFamily()));
 //            }
 //
 //        }

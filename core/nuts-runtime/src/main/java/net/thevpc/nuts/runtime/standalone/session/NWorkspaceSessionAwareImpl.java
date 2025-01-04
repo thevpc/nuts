@@ -98,7 +98,7 @@
 //    }
 //
 ////    @Override
-////    public Set<NutsId> getCompanionIds(NutsSession session) {
+////    public Set<NutsId> getCompanionIds(NSession session) {
 ////        return ws.getCompanionIds(session);
 ////    }
 //

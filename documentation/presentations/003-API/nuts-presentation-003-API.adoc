@@ -3,8 +3,8 @@
 :source-highlighter: pygments
 :icons: font
 :icon-set: pf
-:revnumber: v1.1
-:revdate: 2022-01-08
+:revnumber: v0.8.5.0
+:revdate: 2025-01-04
 //:revremark: Private use only - (Taha BEN SALAH)
 :appendix-caption: Appx
 :sectnums:
@@ -30,7 +30,7 @@ https://thevpc.github.io/nuts  (website)
 nuts.packagemanager@gmail.com
 
 [.text-center]
-thevpc, 2022-01-08
+thevpc, 2025-01-04
 
 :toc:
 :toclevels: 4
@@ -59,7 +59,7 @@ image::images/nuts-components.png[scaledwidth=80%]
 ```xml
 <dependency>
     <groupId>net.thevpc.nuts</groupId>
-    <artifactId>nuts-api</artifactId>
+    <artifactId>nuts-lib</artifactId>
     <version>0.8.5</version>
 </dependency>
 ```
@@ -67,7 +67,7 @@ image::images/nuts-components.png[scaledwidth=80%]
 <<<
 == Nuts as A Library
 
-* You can add runtime to force the runtime version
+* You can also add runtime to force the runtime version
 
 ```xml
 <dependency>
@@ -82,7 +82,10 @@ image::images/nuts-components.png[scaledwidth=80%]
 === Session API
 
 ```java
-    NSession session=Nuts.openWorkspace("-Z","-S","y","--json");
+    // setSharedInstance allows NSession/NWorkspace to be accessible globally as a singleton
+    Nuts.openWorkspace("-Z","-S","y","--json").setSharedInstance();
+    // then you can get the current session anywhere in your code
+    NSession session=NSession.of();
     session.setConfirm(NConfirmationMode.ASK);
     session.setOutputFormat(NContentType.XML);
 
@@ -90,7 +93,29 @@ image::images/nuts-components.png[scaledwidth=80%]
     session.out().printlnf("Hello");
 
     session.out().println(Arrays.asList("Hello"));
+    session.out().printlnf("Hello %s","world");
+    session.out().println(NMsg.ofC("Hello %s","world"));
+    session.out().println(NMsg.ofJ("Hello {0}","world"));
+    session.out().println(NMsg.ofV("Hello $v",NMaps.of("v","world"));
+```
+
+
+<<<
+
+=== Messages and text formatting
+    Nuts Library allows multiple variants of string interpolation
+```java
+    NSession session=NSession.of();
+    session.setConfirm(NConfirmationMode.ASK);
+    session.setOutputFormat(NContentType.XML);
+
+    session.out().println("Hello");
     session.out().printlnf("Hello");
+    session.out().println(Arrays.asList("Hello"));
+    session.out().printlnf("Hello %s","world");
+    session.out().println(NMsg.ofC("Hello %s","world"));
+    session.out().println(NMsg.ofJ("Hello {0}","world"));
+    session.out().println(NMsg.ofV("Hello $v",NMaps.of("v","world"));
 ```
 
 <<<
@@ -98,8 +123,8 @@ image::images/nuts-components.png[scaledwidth=80%]
 === Std In/Out/Err API
 
 ```java
-    NSession session=Nuts.openWorkspace("-Z","-S","y","--json");
-
+    Nuts.openWorkspace("-Z","-S","y","--json").setSharedInstance();
+    NSession session=NSession.of();
     session.out().println("Hello");
     session.out().printlnf("Hello");
 
@@ -127,7 +152,7 @@ image::images/nuts-components.png[scaledwidth=80%]
     NStream<NDefinition> defs=NSearchCmd.of()
         .addId("org.jedit:jedit")
         .setLatest(true)
-        .setDistinct(true).getResultDefnintions();
+        .setDistinct(true).getResultDefinitions();
     for(NDefinition d:defs){
        session.out().println(d.getInstallInformation()
        .getInstallFolder());
@@ -180,7 +205,7 @@ image::images/nuts-components.png[scaledwidth=80%]
 ```java
     NSession session=...;
     Object a,b,c,d; ...
-    NMutableTableModel m = NMutableTableModel.of(session);
+    NMutableTableModel m = NMutableTableModel.of();
     m.newRow().addCells(a,b,c,d);
     session.out().printlnf(m);
 ```
@@ -191,8 +216,8 @@ image::images/nuts-components.png[scaledwidth=80%]
 
 ```java
     NSession session=Nuts.openWorkspace("-Z","-S");
-    int code=NExecCmd.of(session).addCommand("ls", "-l").getResult();
-    String out=NExecCmd.of(session).addCommand("nsh", "ls","--table")
+    int code=NExecCmd.of().addCommand("ls", "-l").getResult();
+    String out=NExecCmd.of().addCommand("nsh", "ls","--table")
         .grabOutputString()
         .getOutputString();
 ```
@@ -203,15 +228,14 @@ image::images/nuts-components.png[scaledwidth=80%]
 === IO API
 
 ```java
-    NSession session=...;
-    NCp.of(session)
+    NCp.of()
         .from("http://my-server.com/file.pdf")
         .to("/home/my-file")
         .setProgressMonitor(true)
         .setValidator((in)->checkSHA1Hash(in))
         .run();
 
-    NPs ps=NPs.of(session)
+    NPs ps=NPs.of()
     if(ps.isSupportedKillProcess()){
         ps.killProcess("1234");
     }
@@ -257,8 +281,8 @@ public class Main implements NApplication {
         new Main.runAndExit(args);
     }
     @Override
-    public void run(NSession session) {
-        NCmdLine cmd=session.getAppCmdLine();
+    public void run() {
+        NCmdLine cmd=NApp.of().getCmdLine();
         ...
     }
 }
@@ -272,16 +296,16 @@ public class Main implements NApplication {
 public class Main implements NApplication {
     public static void main(String[] args) {new Main().runAndExit(args);}
     @Override
-    public void run(NSession session) {
-        NCmdLine cmd=session.getAppCmdLine();
+    public void run() {
+        NCmdLine cmd=NApp.of().getCmdLine();
         ...
     }
     @Override
-    public void onInstallApplication(NSession session) {}
+    public void onInstallApplication() {}
     @Override
-    public void onUpdateApplication(NSession session) {}
+    public void onUpdateApplication() {}
     @Override
-    public void onUninstallApplication(NSession session) {}
+    public void onUninstallApplication() {}
 }
 ```
 
@@ -299,29 +323,28 @@ public class AppExample implements NApplication {
     }
 
     @Override
-    public void run(NSession session) {
-        NPrintStream out = session.out();
+    public void run() {
+        NPrintStream out = NSession.of().out();
         out.println("Hello ##World##");
     }
 }
 ```
 
+<<<
+
+== NAF + Spring
+while adding the following maven dependency
+
 ```xml
 		<dependency>
 			<groupId>net.thevpc.nuts</groupId>
-			<artifactId>nuts-api</artifactId>
-			<version>0.8.5</version>
-		</dependency>
-		<dependency>
-			<groupId>net.thevpc.nuts.lib</groupId>
 			<artifactId>nlib-spring-boot</artifactId>
 			<version>0.8.5.0</version>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
-		</dependency>
 ```
+
+<<<
+
 
 === Conclusion
 

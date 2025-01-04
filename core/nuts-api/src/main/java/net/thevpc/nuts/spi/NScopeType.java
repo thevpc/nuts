@@ -51,6 +51,10 @@ public enum NScopeType implements NEnum {
      */
     SHARED_SESSION,
     /**
+     * a new instance will be created per session, when copied, it will be copied first
+     */
+    TRANSITIVE_SESSION,
+    /**
      * a new instance will be created at each call
      */
     PROTOTYPE;

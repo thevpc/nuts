@@ -690,7 +690,7 @@ public class Test04_NTFTest {
 //    @Test
 //    public void test25() {
 //        NutsWorkspace ws = TestUtils.openNewTestWorkspace();
-//        NutsSession session = ws.createSession();
+//        NSession session = ws.createSession();
 //        session.out().print("Hi");
 //        ws.io().term().sendCommand(session.out(), NutsTerminals.CMD_LATER_RESET_LINE);
 //        session.out().print("Bye");

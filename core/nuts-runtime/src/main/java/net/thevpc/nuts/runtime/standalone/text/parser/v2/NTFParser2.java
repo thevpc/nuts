@@ -60,7 +60,7 @@ public class NTFParser2 extends AbstractNTextNodeParser {
 
     public NTFParser2(NWorkspace workspace) {
         super(workspace);
-        this.txt = new DefaultNTexts(workspace);//NutsTexts.of(
+        this.txt = new DefaultNTexts(workspace);//NTexts.of(
     }
 
     @Override

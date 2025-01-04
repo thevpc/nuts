@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * This is just an example to demonstrate how you can inject
- * NutsSession and other objects in your spring application
+ * NSession and other objects in your spring application
  */
 @Component
 public class MyBean {

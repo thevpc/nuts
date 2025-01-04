@@ -23,7 +23,7 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
     }
 
 //    @Override
-//    public void setSession(NutsSession session) {
+//    public void setSession(NSession session) {
 //        this.session=session;
 //        this.ws=session==null?null:session.getWorkspace();
 //    }
