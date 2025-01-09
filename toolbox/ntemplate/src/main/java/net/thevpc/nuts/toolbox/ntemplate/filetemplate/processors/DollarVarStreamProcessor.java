@@ -3,7 +3,7 @@ package net.thevpc.nuts.toolbox.ntemplate.filetemplate.processors;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.FileTemplater;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.MimeTypeConstants;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.StreamProcessor;
-import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.FileProcessorUtils;
+import net.thevpc.nuts.util.NCharReader;
 
 import java.io.*;
 
@@ -13,138 +13,229 @@ public class DollarVarStreamProcessor implements StreamProcessor {
     public DollarVarStreamProcessor() {
     }
 
+    private static class ProcessStreamContext {
+        private NCharReader br;
+        private FileTemplater context;
+        private boolean startOfLine=true;
+    }
+
     @Override
     public void processStream(InputStream source, OutputStream target, FileTemplater context) {
         try {
-            Writer out = new OutputStreamWriter(target);
-            char[] charArray = FileProcessorUtils.loadString(source, null).toCharArray();
+            AstNode r = new ListAstNode();
+            AstNode c = r;
+            ProcessStreamContext ctx = new ProcessStreamContext();
+            ctx.context = context;
+            ctx.br = new NCharReader(new InputStreamReader(source));
             boolean dollarAtLineStart = false;
             int brackets = 0;
-            for (int i = 0, charArrayLength = charArray.length; i < charArrayLength; i++) {
-                char c = charArray[i];
-                switch (c) {
-                    case '\\': {
-                        if (i + 1 < charArray.length && charArray[i + 1] == '$') {
-                            out.append('$');
-                            i++;
-                        } else {
-                            out.append(c);
-                        }
-                        break;
+            StringBuilder plain = new StringBuilder();
+            while (true) {
+                if (ctx.br.read("\\$")) {
+                    plain.append('$');
+                } else if (ctx.br.peek("${")) {
+                    if (plain.length() > 0) {
+                        String t = plain.toString();
+                        ctx.startOfLine=t.endsWith('\n');
+                        c = c.append(new PlainAstNode(t))
+                        plain.setength(0);
                     }
-                    case '$': {
-                        if (i + 1 < charArray.length && charArray[i + 1] == '{') {
-                            dollarAtLineStart = (i == 0 || charArray[i - 1] == '\n');
-                            StringBuilder sb2 = new StringBuilder();
-                            StringBuilder sb20 = new StringBuilder();
-                            sb20.append("${");
-                            i += 2;
-                            int offset = i;
-                            boolean end = false;
-                            while (!end && i < charArrayLength) {
-                                c = charArray[i];
-                                switch (c) {
-//                                    case '\\': {
-//                                        if (i + 1 < charArray.length && charArray[i + 1] == '}') {
-//                                            out.append('}');
-//                                            i++;
-//                                        } else {
-//                                            out.append(c);
-//                                        }
-//                                        i++;
-//                                        break;
-//                                    }
-                                    case '/': {
-                                        if (i + 1 < charArray.length && charArray[i + 1] == '/') {
-                                            c=charArray[i];
-                                            sb2.append(c);
-                                            i++;
-                                            sb2.append(charArray[i]);
-                                            while (i < charArray.length && charArray[i] != '\n') {
-                                                sb2.append(charArray[i]);
-                                                i++;
-                                            }
-                                        } else {
-                                            sb2.append(c);
-                                        }
-                                        break;
-                                    }
-                                    case '"':
-                                    case '\'':
-                                    case '`': {
-                                        char s = c;
-                                        sb2.append(c);
-                                        i++;
-                                        while (i < charArray.length) {
-                                            c = charArray[i];
-                                            if (c == s) {
-                                                sb2.append(c);
-                                                i++;
-                                                break;
-                                            } else if (c == '\\') {
-                                                sb2.append(c);
-                                                i++;
-                                                if (i < charArray.length) {
-                                                    c = charArray[i];
-                                                    sb2.append(c);
-                                                }
-                                            } else {
-                                                sb2.append(c);
-                                            }
-                                            i++;
-                                        }
-                                        break;
-                                    }
-                                    case '{': {
-                                        sb2.append(c);
-                                        brackets++;
-                                        break;
-                                    }
-                                    case '}': {
-                                        brackets--;
-                                        if (brackets <= 0) {
-                                            if (dollarAtLineStart && i + 2 < charArray.length && charArray[i + 1] == '\r' && charArray[i + 2] == '\n') {
-                                                sb20.append("}\r\n");
-                                                i += 2;
-                                            } else if (dollarAtLineStart && i + 1 < charArray.length && charArray[i + 1] == '\n') {
-                                                sb20.append("}\n");
-                                                i++;
-                                            } else {
-                                                sb20.append("}");
-                                            }
-                                            end = true;
-                                        } else {
-                                            sb2.append(c);
-                                        }
-                                        break;
-                                    }
-                                    default: {
-                                        sb2.append(c);
-                                        sb20.append(c);
-                                        i++;
-                                    }
-                                }
-                            }
-                            String v = evaluateDollarValue(sb2.toString(),context);
-                            out.append(String.valueOf(v));
-                        } else {
-                            out.append(c);
-                        }
+                    AstNode n = readDollarBracket(ctx);
+                    c = c.append(n)
+                } else {
+                    int r = ctx.br.read();
+                    if (r >= 0) {
+                        plain.append((char) r);
+                    } else {
                         break;
-                    }
-                    default: {
-                        out.append(c);
                     }
                 }
             }
+            if (plain.length() > 0) {
+                String t = plain.toString();
+                ctx.startOfLine=t.endsWith('\n');
+                c = c.append(new PlainAstNode(t));
+                plain.setength(0);
+            }
+            if (plain.length() > 0) {
+                n = n.append(new PlainAstNode(plain.toString()))
+                plain.setength(0);
+            }
+            r.run(out, context);
             out.flush();
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
     }
 
-    protected String evaluateDollarValue(String str, FileTemplater context){
-        return context.executeStream(new ByteArrayInputStream(str.getBytes()), MimeTypeConstants.FTEX);
+    private AstNode readDollarBracket(ProcessStreamContext ctx) {
+        if(!ctx.br.read("${")){
+            throw new IllegalArgumentException("expected ${");
+        }
+        StringBuilder sb2 = new StringBuilder();
+        StringBuilder sb20 = new StringBuilder();
+        sb20.append("${");
+        int offset = i;
+        while (true) {
+            c = ctx.br.peek();
+            if(c<0){
+                break;
+            }
+            switch (c) {
+                case '/': {
+                    if (ctx.br.read("//")) {
+                        sb2.append("//");
+                        while (true) {
+                            int cc = ctx.br.read();
+                            if(cc<0){
+                                break;
+                            }else if(cc=='\n'){
+                                sb2.append((char)cc);
+                                break;
+                            }else{
+                                sb2.append((char)cc);
+                            }
+                        }
+                    } else {
+                        sb2.append(c);
+                    }
+                    break;
+                }
+                case '"':{
+                    sb2.append((char)ctx.br.read());
+                    while (true) {
+                        int cc = ctx.br.read();
+                        if(cc<0){
+                            break;
+                        }else if(cc=='"'){
+                            sb2.append((char)cc);
+                            break;
+                        }else if(cc=='\\'){
+                            sb2.append((char)cc);
+                            int cc=ctx.br.read();
+                            if(cc>=0){
+                                sb2.append((char)cc);
+                            }
+                        }else{
+                            sb2.append((char)cc);
+                        }
+                    }
+                    break;
+                }
+                case '\'':{
+                    sb2.append((char)ctx.br.read());
+                    while (true) {
+                        int cc = ctx.br.read();
+                        if(cc<0){
+                            break;
+                        }else if(cc=='\''){
+                            sb2.append((char)cc);
+                            break;
+                        }else if(cc=='\\'){
+                            sb2.append((char)cc);
+                            int cc=ctx.br.read();
+                            if(cc>=0){
+                                sb2.append((char)cc);
+                            }
+                        }else{
+                            sb2.append((char)cc);
+                        }
+                    }
+                    break;
+                }
+                case '`': {
+                    sb2.append((char)ctx.br.read());
+                    while (true) {
+                        int cc = ctx.br.read();
+                        if(cc<0){
+                            break;
+                        }else if(cc=='`'){
+                            sb2.append((char)cc);
+                            break;
+                        }else if(cc=='\\'){
+                            sb2.append((char)cc);
+                            int cc=ctx.br.read();
+                            if(cc>=0){
+                                sb2.append((char)cc);
+                            }
+                        }else{
+                            sb2.append((char)cc);
+                        }
+                    }
+                    break;
+                }
+                case '{': {
+                    sb2.append((char)ctx.br.read());
+                    brackets++;
+                    break;
+                }
+                case '}': {
+                    brackets--;
+                    if (brackets <= 0) {
+                        if (dollarAtLineStart && ctx.br.read("}\r\n")) {
+                            sb20.append("}\r\n");
+                            i += 2;
+                        } else if (dollarAtLineStart && ctx.br.read("}\n")) {
+                            sb20.append("}\n");
+                        } else {
+                            sb20.append("}");
+                        }
+                        end = true;
+                    } else {
+                        sb2.append(c);
+                    }
+                    break;
+                }
+                default: {
+                    char ccc = (char) ctx.br.read();
+                    sb2.append(ccc);
+                    sb20.append(ccc);
+                }
+            }
+        }
+        return new VarAstNode(sb2.toString());
+    }
+
+    private abstract static class AstNode {
+        protected AstNode parent;
+
+        public abstract void run(Writer w, FileTemplater context);
+
+        public AstNode append(AstNode other) {
+            throw new IllegalArgumentException("unsupported");
+        }
+    }
+
+    private static class ListAstNode extends AstNode {
+        List<AstNode> children = new ArrayList();
+
+        public AstNode append(AstNode other) {
+            other.parent = this;
+            children.add(other);
+            return this;
+        }
+    }
+
+    private static class PlainAstNode extends AstNode {
+        private String value;
+
+        public void run(Writer w, FileTemplater context) {
+            w.write(value);
+        }
+    }
+
+    private static class VarAstNode extends AstNode {
+        private String expr;
+
+        public VarAstNode(String expr) {
+            this.expr = expr;
+        }
+
+        public void run(Writer w, FileTemplater context) {
+            w.write(context.executeStream(new ByteArrayInputStream(expr.getBytes()),
+                    MimeTypeConstants.FTEX
+            ));
+        }
     }
 
     @Override

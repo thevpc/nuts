@@ -3,14 +3,11 @@ package net.thevpc.nuts.runtime.standalone.text.parser.v2;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.text.AbstractNTextNodeParser;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
-import net.thevpc.nuts.util.NCharQueue;
-import net.thevpc.nuts.util.NMatchType;
-import net.thevpc.nuts.util.NStringMatchResult;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.text.NTextVisitor;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NRef;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -141,7 +138,7 @@ public class NTFParser2 extends AbstractNTextNodeParser {
                             int simpleLvl = (embedded == null ? 0 : embedded.level) + 1;
                             NRef<NText> ret = NRef.ofNull();
                             q.doWithPattern(
-                                    new NCharQueue.MultiPattern()
+                                    new NMultiPattern()
                                             .setFully(fully)
                                             .onFullMatch("##:(?<n>[!a-zA-Z0-9_,(')/%+-]+)[: ]", m -> {
                                                 String a = m.get();

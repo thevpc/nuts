@@ -6,7 +6,6 @@ import java.io.Reader;
 import java.io.UncheckedIOException;
 import java.nio.CharBuffer;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
@@ -182,152 +181,15 @@ public class NCharQueue implements CharSequence {
         to = 0;
     }
 
-    private static class PatternInfo implements Comparable<PatternInfo> {
-        private String pattern;
-        private Consumer<NStringMatchResult> action;
-        private Consumer<NStringMatchResult> fullMatchAction;
-        private Consumer<NStringMatchResult> matchAction;
-        private Consumer<NStringMatchResult> partialMatchAction;
-        private NStringMatchResult result;
-
-        public PatternInfo(String pattern) {
-            this.pattern = pattern;
-        }
-
-        @Override
-        public int compareTo(NCharQueue.PatternInfo b) {
-            NCharQueue.PatternInfo a = this;
-            int r = a.result.mode().compareTo(b.result.mode());
-            if (r != 0) {
-                return r;
-            }
-            switch (a.result.mode()) {
-                case FULL_MATCH:
-                case MATCH: {
-                    return -Integer.compare(a.result.get().length(), b.result.get().length());
-                }
-            }
-            return 0;
-        }
-    }
-
-    public static class MultiPattern {
-        LinkedHashMap<String, PatternInfo> map = new LinkedHashMap<>();
-        boolean fully;
-        Runnable noMatch;
-        Consumer<NStringMatchResult> match;
-        Consumer<NStringMatchResult> fullMatch;
-
-        Consumer<NStringMatchResult> partialMatch;
-
-        public MultiPattern onMatch(String pattern, Consumer<NStringMatchResult> action) {
-            return on(pattern, true, action, NMatchType.MATCH);
-        }
-
-        public MultiPattern onMatch(String pattern, boolean condition, Consumer<NStringMatchResult> action) {
-            return on(pattern, condition, action, NMatchType.MATCH);
-        }
-
-        public MultiPattern onPartialMatch(String pattern, Consumer<NStringMatchResult> action) {
-            return on(pattern, true, action, NMatchType.PARTIAL_MATCH);
-        }
-
-        public MultiPattern onPartialMatch(String pattern, boolean condition, Consumer<NStringMatchResult> action) {
-            return on(pattern, condition, action, NMatchType.PARTIAL_MATCH);
-        }
-
-        public MultiPattern onFullMatch(String pattern, Consumer<NStringMatchResult> action) {
-            return on(pattern, true, action, NMatchType.FULL_MATCH);
-        }
-
-        public MultiPattern onFullMatch(String pattern, boolean condition, Consumer<NStringMatchResult> action) {
-            return on(pattern, condition, action, NMatchType.FULL_MATCH);
-        }
-
-        public MultiPattern on(String pattern, boolean condition, Consumer<NStringMatchResult> action) {
-            return on(pattern, condition, action, null);
-        }
-
-
-        public MultiPattern on(String pattern, Consumer<NStringMatchResult> action) {
-            return on(pattern, true, action, null);
-        }
-
-        public MultiPattern on(String pattern, boolean condition, Consumer<NStringMatchResult> action, NMatchType matchType) {
-            if (action == null) {
-                return this;
-            }
-            if (!condition) {
-                return this;
-            }
-            PatternInfo nfo = map.get(pattern);
-            if (nfo == null) {
-                nfo = new PatternInfo(pattern);
-                map.put(pattern, nfo);
-            }
-            if (matchType == null) {
-                nfo.action = action;
-            } else {
-                switch (matchType) {
-                    case FULL_MATCH: {
-                        nfo.fullMatchAction = action;
-                        break;
-                    }
-                    case MATCH: {
-                        nfo.matchAction = action;
-                        break;
-                    }
-                    case PARTIAL_MATCH: {
-                        nfo.partialMatchAction = action;
-                        break;
-                    }
-                    case NO_MATCH: {
-                        throw new IllegalArgumentException("unsupported");
-                    }
-                }
-            }
-            return this;
-        }
-
-        public boolean isFully() {
-            return fully;
-        }
-
-        public MultiPattern fully() {
-            return setFully(true);
-        }
-
-        public MultiPattern setFully(boolean fully) {
-            this.fully = fully;
-            return this;
-        }
-
-        public MultiPattern onNoMatch(Runnable noMatch) {
-            this.noMatch = noMatch;
-            return this;
-        }
-
-        public MultiPattern onMatch(Consumer<NStringMatchResult> match) {
-            this.match = match;
-            return this;
-        }
-
-        public MultiPattern onPartialMatch(Consumer<NStringMatchResult> partialMatch) {
-            this.partialMatch = partialMatch;
-            return this;
-        }
-
-    }
-
-    public NStringMatchResult doWithPattern(MultiPattern pattern) {
-        List<PatternInfo> all = new ArrayList<>(pattern.map.values());
+    public NStringMatchResult doWithPattern(NMultiPattern pattern) {
+        List<NPatternInfo> all = new ArrayList<>(pattern.map.values());
         if (all.isEmpty()) {
             throw new IllegalArgumentException("missing pattern");
         }
-        for (PatternInfo patternInfo : all) {
+        for (NPatternInfo patternInfo : all) {
             patternInfo.result = peekPattern(patternInfo.pattern, pattern.fully);
         }
-        PatternInfo p = all.stream().min(PatternInfo::compareTo).get();
+        NPatternInfo p = all.stream().min(NPatternInfo::compareTo).get();
         NStringMatchResult r = p.result;
         switch (r.mode()) {
             case NO_MATCH: {

@@ -59,7 +59,7 @@ public class NTemplateMain implements NApplication {
 
             @Override
             public void run(NCmdLine cmdLine, NCmdLineContext context) {
-                new NTemplateProject(config);
+                new NTemplateProject(config).run();
             }
         });
     }

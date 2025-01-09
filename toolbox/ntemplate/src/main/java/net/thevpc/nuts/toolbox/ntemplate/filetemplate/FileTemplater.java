@@ -14,6 +14,7 @@ import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
@@ -143,6 +144,7 @@ public class FileTemplater {
         }
         return pp;
     }
+
     public boolean isUserParentProperties() {
         return userParentProperties;
     }
@@ -453,13 +455,14 @@ public class FileTemplater {
         return vars.containsKey(name);
     }
 
-    public void setVars(Map<String,Object> vars) {
-        if(vars!=null){
+    public void setVars(Map<String, Object> vars) {
+        if (vars != null) {
             for (Map.Entry<String, Object> e : vars.entrySet()) {
-                setVar(e.getKey(),e.getValue());
+                setVar(e.getKey(), e.getValue());
             }
         }
     }
+
     public FileTemplater setVar(String name, Object value) {
         switch (name) {
             case SOURCE_PATH: {
@@ -797,33 +800,35 @@ public class FileTemplater {
     }
 
     public void processProject(TemplateConfig config) {
-        String projectPath = config.getProjectPath();
         String scriptType = config.getScriptType();
         String targetFolder = config.getTargetFolder();
         setVars(config.getVars());
         this.contextName = NStringUtils.trimToNull(config.getContextName());
-        if (projectPath == null) {
-            if (config.getPaths().isEmpty()) {
-                throw new NIllegalArgumentException(NMsg.ofPlain("missing path to process"));
-            }
-            if (targetFolder == null) {
+        String projectPath = config.getProjectPath();
+        boolean projectFolderSpecified = !NBlankable.isBlank(projectPath);
+        List<String> initScripts = new ArrayList<>(config.getInitScripts());
+        List<String> paths = new ArrayList<>(config.getPaths());
+        if (!projectFolderSpecified) {
+            if (NBlankable.isBlank(targetFolder)) {
                 throw new NIllegalArgumentException(NMsg.ofPlain("missing target folder"));
             }
+        } else {
+            Path oProjectDirPath = Paths.get(projectPath);
+            Path oProjectFile = oProjectDirPath.resolve(getProjectFileName());
+            Path oProjectSrc = oProjectDirPath.resolve("src");
+            if (!Files.isDirectory(oProjectSrc)) {
+                throw new NIllegalArgumentException(NMsg.ofC("invalid project, missing 'src/' folder : %s", oProjectDirPath));
+            }
+            if (!Files.isRegularFile(oProjectFile)) {
+                throw new NIllegalArgumentException(NMsg.ofC("invalid project, missing project.ftex : %s", oProjectDirPath));
+            }
+            initScripts.add(oProjectFile.toString());
+            paths.add(oProjectSrc.toString());
         }
-        Path oProjectDirPath = Paths.get(projectPath);
-        Path oProjectFile = oProjectDirPath.resolve(getProjectFileName());
-        Path oProjectSrc = oProjectDirPath.resolve("src");
-        if (!Files.isDirectory(oProjectSrc)) {
-            throw new NIllegalArgumentException(NMsg.ofC("invalid project, missing src/ folder : %s", oProjectDirPath));
-        }
-        if (!Files.isRegularFile(oProjectFile)) {
-            throw new NIllegalArgumentException(NMsg.ofC("invalid project, missing project.ftex : %s", oProjectDirPath));
-        }
-        List<String> initScripts = new ArrayList<>(config.getInitScripts());
-        initScripts.add(oProjectFile.toString());
 
-        List<String> paths = new ArrayList<>(config.getPaths());
-        paths.add(oProjectSrc.toString());
+        if (config.getPaths().isEmpty()) {
+            throw new NIllegalArgumentException(NMsg.ofPlain("missing path to process"));
+        }
 
         if (scriptType != null) {
             if (scriptType.indexOf('/') < 0) {
@@ -837,7 +842,7 @@ public class FileTemplater {
             this.setWorkingDir(workingPath(fpath).toString());
             this.executeProjectFile(fpath, scriptType);
         }
-        if (projectPath != null) {
+        if (projectFolderSpecified) {
             //&& targetFolder==null
             String tf = (String) this.getVar("targetFolder", null);
             if (tf != null && targetFolder == null) {
