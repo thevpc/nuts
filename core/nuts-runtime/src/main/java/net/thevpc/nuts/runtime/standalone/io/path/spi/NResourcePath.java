@@ -614,6 +614,10 @@ public class NResourcePath implements NPathSPI {
             return NConstants.Support.NO_SUPPORT;
         }
     }
+    @Override
+    public boolean isEqOrDeepChildOf(NPath basePath,NPath other) {
+        return toRelativePath(basePath, other)!=null;
+    }
 
     private class NResourceCompressedPath implements NCompressedPathHelper {
         @Override

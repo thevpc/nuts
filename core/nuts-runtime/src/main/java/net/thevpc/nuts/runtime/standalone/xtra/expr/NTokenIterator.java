@@ -56,13 +56,13 @@ public class NTokenIterator implements Iterator<NToken> {
         while (true) {
             int nt = st.nextToken();
             switch (nt) {
-                case StreamTokenizer.TT_EOF: {
+                case NToken.TT_EOF: {
                     previous = null;
                     return false;
                 }
                 case ' ':
                 case '\t':
-                case StreamTokenizer.TT_EOL: {
+                case NToken.TT_EOL: {
                     if (returnSpace) {
                         previous = NToken.ofStr(NToken.TT_SPACE, st.sval,"SPACE", st.lineno());
                         return true;
@@ -71,7 +71,7 @@ public class NTokenIterator implements Iterator<NToken> {
                 }
                 case '&':{
                     int i = st.nextToken();
-                    if(i==StreamTokenizer.TT_EOF){
+                    if(i==NToken.TT_EOF){
                         previous = NToken.ofChar((char)nt, st.lineno());
                         return true;
                     }else if(i=='&'){
@@ -301,6 +301,16 @@ public class NTokenIterator implements Iterator<NToken> {
                         case '\'': {
                             String sval = st.sval;
                             previous = NToken.of(NToken.TT_STRING_LITERAL, sval, 0, st.lineno(),st.image,"SIMPLE_QUOTED_STRING_LITERAL");
+                            return true;
+                        }
+                        case NToken.TT_ISTR_DQ: {
+                            String sval = st.sval;
+                            previous = NToken.of(NToken.TT_STRING_LITERAL, sval, 0, st.lineno(),st.image,"INTERPOLATED_DBL_QUOTED_STRING_LITERAL");
+                            return true;
+                        }
+                        case NToken.TT_ISTR_SQ: {
+                            String sval = st.sval;
+                            previous = NToken.of(NToken.TT_STRING_LITERAL, sval, 0, st.lineno(),st.image,"INTERPOLATED_SIMPLE_QUOTED_STRING_LITERAL");
                             return true;
                         }
                         case NToken.TT_INT:{

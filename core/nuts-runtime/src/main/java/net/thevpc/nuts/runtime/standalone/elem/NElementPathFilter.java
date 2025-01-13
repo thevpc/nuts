@@ -28,8 +28,10 @@ package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.util.NLiteral;
+import net.thevpc.nuts.util.NStreamTokenizer;
 
 import java.io.IOException;
 import java.io.StreamTokenizer;
@@ -57,21 +59,21 @@ public class NElementPathFilter {
     private static final NElementIndexMatcherForValue NUTS_ELEMENT_INDEX_MATCHER_FOR_VALUE_MINUS_ONE = new NElementIndexMatcherForValue(-1);
     private static final NElementIndexMatcherTrue NUTS_ELEMENT_INDEX_MATCHER_TRUE = new NElementIndexMatcherTrue();
 
-    private static void compile_readChar(StreamTokenizer st, char c) throws IOException {
+    private static void compile_readChar(NStreamTokenizer st, char c) throws IOException {
         int i = st.nextToken();
         if (i != c) {
             throw new IllegalArgumentException("Expected " + c + ". got " + ((char) i));
         }
     }
 
-    private static String compile_readArrItem(StreamTokenizer st) throws IOException {
+    private static String compile_readArrItem(NStreamTokenizer st) throws IOException {
         compile_readChar(st, '[');
         st.nextToken();
         String value = null;
         switch (st.ttype) {
             case ']':
                 return "";
-            case StreamTokenizer.TT_WORD:
+            case NToken.TT_WORD:
                 value = st.sval;
                 compile_readChar(st, ']');
                 return value;
@@ -88,7 +90,7 @@ public class NElementPathFilter {
      * @return element path
      */
     public static NElementPath compile(String jpath, NWorkspace workspace) {
-        StreamTokenizer st = new StreamTokenizer(new StringReader(jpath));
+        NStreamTokenizer st = new NStreamTokenizer(new StringReader(jpath));
         st.resetSyntax();
         st.wordChars(33, 255);
         st.ordinaryChar('.');
@@ -97,9 +99,9 @@ public class NElementPathFilter {
         QueueJsonPath q = new QueueJsonPath();
         try {
             boolean wasNotDotName = false;
-            while (st.nextToken() != StreamTokenizer.TT_EOF) {
+            while (st.nextToken() != NToken.TT_EOF) {
                 switch (st.ttype) {
-                    case StreamTokenizer.TT_WORD: {
+                    case NToken.TT_WORD: {
                         wasNotDotName = true;
                         q.queue.add(new SubItemJsonPath(st.sval, workspace));
                         break;

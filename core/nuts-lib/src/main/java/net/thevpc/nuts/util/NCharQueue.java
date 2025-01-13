@@ -187,10 +187,10 @@ public class NCharQueue implements CharSequence {
             throw new IllegalArgumentException("missing pattern");
         }
         for (NPatternInfo patternInfo : all) {
-            patternInfo.result = peekPattern(patternInfo.pattern, pattern.fully);
+            patternInfo.setResult(peekPattern(patternInfo.getPattern(), pattern.fully));
         }
         NPatternInfo p = all.stream().min(NPatternInfo::compareTo).get();
-        NStringMatchResult r = p.result;
+        NStringMatchResult r = p.getResult();
         switch (r.mode()) {
             case NO_MATCH: {
                 if (pattern.noMatch != null) {
@@ -202,11 +202,11 @@ public class NCharQueue implements CharSequence {
                 if (pattern.partialMatch != null) {
                     pattern.partialMatch.accept(r);
                 }
-                if (p.partialMatchAction != null) {
-                    p.partialMatchAction.accept(r);
+                if (p.getPartialMatchAction() != null) {
+                    p.getPartialMatchAction().accept(r);
                 }
-                if (p.action != null) {
-                    p.action.accept(r);
+                if (p.getAction() != null) {
+                    p.getAction().accept(r);
                 }
                 break;
             }
@@ -214,11 +214,11 @@ public class NCharQueue implements CharSequence {
                 if (pattern.match != null) {
                     pattern.match.accept(r);
                 }
-                if (p.matchAction != null) {
-                    p.matchAction.accept(r);
+                if (p.getMatchAction() != null) {
+                    p.getMatchAction().accept(r);
                 }
-                if (p.action != null) {
-                    p.action.accept(r);
+                if (p.getAction() != null) {
+                    p.getAction().accept(r);
                 }
                 break;
             }
@@ -226,11 +226,11 @@ public class NCharQueue implements CharSequence {
                 if (pattern.fullMatch != null) {
                     pattern.fullMatch.accept(r);
                 }
-                if (p.fullMatchAction != null) {
-                    p.fullMatchAction.accept(r);
+                if (p.getFullMatchAction() != null) {
+                    p.getFullMatchAction().accept(r);
                 }
-                if (p.action != null) {
-                    p.action.accept(r);
+                if (p.getAction() != null) {
+                    p.getAction().accept(r);
                 }
                 break;
             }

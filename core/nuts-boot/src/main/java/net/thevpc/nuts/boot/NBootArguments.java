@@ -7,6 +7,7 @@ import java.util.Set;
 
 public class NBootArguments {
     private String[] args;
+    private String[] appArgs;
     private Instant startTime;
     private boolean inherited;
     private InputStream in;
@@ -21,6 +22,14 @@ public class NBootArguments {
     public NBootArguments setArgs(String[] args) {
         this.args = args;
         return this;
+    }
+
+    public String[] getAppArgs() {
+        return appArgs;
+    }
+
+    public void setAppArgs(String[] appArgs) {
+        this.appArgs = appArgs;
     }
 
     public Instant getStartTime() {

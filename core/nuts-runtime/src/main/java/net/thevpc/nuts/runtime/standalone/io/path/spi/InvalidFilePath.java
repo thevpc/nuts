@@ -430,6 +430,10 @@ public class InvalidFilePath implements NPathSPI {
     public void walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
 
     }
+    @Override
+    public boolean isEqOrDeepChildOf(NPath basePath,NPath other) {
+        return toRelativePath(basePath, other)!=null;
+    }
 
     @Override
     public boolean isLocal(NPath basePath) {

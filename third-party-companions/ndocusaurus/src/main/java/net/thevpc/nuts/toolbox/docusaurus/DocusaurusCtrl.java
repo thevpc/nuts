@@ -6,21 +6,15 @@
 package net.thevpc.nuts.toolbox.docusaurus;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NArrayElement;
-import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NTerminal;
-import net.thevpc.nuts.toolbox.nsh.eval.NShellContext;
-import net.thevpc.nuts.toolbox.nsh.nshell.*;
-import net.thevpc.nuts.toolbox.nsh.nodes.NShellVar;
-import net.thevpc.nuts.toolbox.nsh.nodes.NShellVarListener;
-import net.thevpc.nuts.toolbox.nsh.nodes.NShellVariables;
-import net.thevpc.nuts.toolbox.ntemplate.filetemplate.*;
-import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.FileProcessorUtils;
-import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
+import net.thevpc.nuts.lib.doc.*;
+import net.thevpc.nuts.lib.doc.context.NDocContext;
+import net.thevpc.nuts.lib.doc.mimetype.DefaultNDocMimeTypeResolver;
+import net.thevpc.nuts.lib.doc.mimetype.MimeTypeConstants;
+import net.thevpc.nuts.lib.doc.util.FileProcessorUtils;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.*;
@@ -28,7 +22,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.function.Function;
 
 /**
  * @author thevpc
@@ -47,6 +40,7 @@ public class DocusaurusCtrl {
     public DocusaurusCtrl(DocusaurusProject project) {
         this.project = project;
     }
+
 
     public boolean isBuildPdf() {
         return buildPdf;
@@ -99,21 +93,22 @@ public class DocusaurusCtrl {
             }
 
             session.out().print(NMsg.ofC("process template %s -> %s%n", preProcessor, getTargetBaseDir()));
-            TemplateConfig config = new TemplateConfig()
+            NDocProjectConfig config = new NDocProjectConfig()
                     .setProjectPath(preProcessor.toString())
                     .setTargetFolder(getTargetBaseDir().toString())
                     .setContextName("ndocusaurus")
                     .setVars(vars);
-            FileTemplater ftex = new NFileTemplater()
-                    .setWorkingDir(base.toString())
+            NDocContext nexpr = new DaucusaurusNDocContext()
+                    //.setWorkingDir(base.toString())
                     .setMimeTypeResolver(
-                            new DefaultMimeTypeResolver()
-                                    .setExtensionMimeType("ftex", MimeTypeConstants.FTEX)
+                            new DefaultNDocMimeTypeResolver()
+                                    .setExtensionMimeType("nexpr", MimeTypeConstants.NEXPR)
                                     .setNameMimeType(DocusaurusProject.DOCUSAURUS_FOLDER_CONFIG, DocusaurusProject.DOCUSAURUS_FOLDER_CONFIG_MIMETYPE)
                     )
-                    .setDefaultProcessor(DocusaurusProject.DOCUSAURUS_FOLDER_CONFIG_MIMETYPE, new FolderConfigProcessor())
                     .setCustomVarEvaluator(new DocusaurusCustomVarEvaluator(project));
-            ftex.processProject(config);
+            nexpr.getProcessorManager()
+                    .setDefaultProcessor(DocusaurusProject.DOCUSAURUS_FOLDER_CONFIG_MIMETYPE, new DocusaurusFolderConfigProcessor(this));
+            nexpr.run(config);
         }
         if (genSidebarMenu) {
             DocusaurusFolder root = project.getPhysicalDocsFolder();
@@ -158,11 +153,17 @@ public class DocusaurusCtrl {
                 }
                 Path toPath = FileProcessorUtils.toAbsolute(Paths.get(copyBuildPath), base);
                 deleteFolderIfFound(toPath, "index.html", "404.html", "sitemap.xml");
-                new FileTemplater()
+                NDocContext nDocContext = new NDocContext()
                         .setWorkingDir(fromPath)
                         .setTargetPath(toPath)
-                        .setMimeTypeResolver((String path) -> MimeTypeConstants.ANY_TYPE)
-                        .processTree(Paths.get(fromPath), null);
+                        .setMimeTypeResolver((String path) -> MimeTypeConstants.ANY_TYPE);
+                nDocContext.run(
+                        new NDocProjectConfig()
+                                .setTargetFolder(toPath.toString())
+                                .addSource(Paths.get(fromPath).toAbsolutePath().toString())
+                );
+                nDocContext
+                        .processSourceTree(Paths.get(fromPath), null);
             }
         }
         if (isStartWebSite()) {
@@ -203,7 +204,7 @@ public class DocusaurusCtrl {
                 .failFast().getResultCode();
     }
 
-    private void runCommand(Path workFolder, boolean yes, String... cmd) {
+    public void runCommand(Path workFolder, boolean yes, String... cmd) {
         NSession.of().copy().setConfirm(yes ? NConfirmationMode.YES : NConfirmationMode.ERROR)
                 .runWith(() -> {
                     NExecCmd.of().addCommand(cmd).setDirectory(NPath.of(workFolder))
@@ -258,7 +259,7 @@ public class DocusaurusCtrl {
                 ;
     }
 
-    private Path getPreProcessorBaseDir() {
+    public Path getPreProcessorBaseDir() {
         return Paths.get(project.getDocusaurusBaseFolder()).resolve(".dir-template");
     }
 
@@ -269,190 +270,6 @@ public class DocusaurusCtrl {
     public DocusaurusCtrl setAutoInstallNutsPackages(boolean autoInstallNutsPackages) {
         this.autoInstallNutsPackages = autoInstallNutsPackages;
         return this;
-    }
-
-    private static class NshEvaluator implements ExprEvaluator {
-        private NShell shell;
-        private FileTemplater fileTemplater;
-
-        public NshEvaluator(FileTemplater fileTemplater) {
-            this.fileTemplater = fileTemplater;
-            shell = new NShell(new NShellConfiguration().setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true));
-            shell.getRootContext().setSession(shell.getRootContext().getSession().copy());
-            shell.getRootContext().vars().addVarListener(
-                    new NShellVarListener() {
-                        @Override
-                        public void varAdded(NShellVar nShellVar, NShellVariables vars, NShellContext context) {
-                            setVar(nShellVar.getName(), nShellVar.getValue());
-                        }
-
-                        @Override
-                        public void varValueUpdated(NShellVar nShellVar, String oldValue, NShellVariables vars, NShellContext context) {
-                            setVar(nShellVar.getName(), nShellVar.getValue());
-                        }
-
-                        @Override
-                        public void varRemoved(NShellVar nShellVar, NShellVariables vars, NShellContext context) {
-                            setVar(nShellVar.getName(), null);
-                        }
-                    }
-            );
-            shell.getRootContext()
-                    .builtins()
-                    .set(new ProcessCmd(fileTemplater));
-        }
-
-        public void setVar(String varName, String newValue) {
-            fileTemplater.getLog().debug("eval", varName + "=" + StringUtils.toLiteralString(newValue));
-            fileTemplater.setVar(varName, newValue);
-        }
-
-        @Override
-        public Object eval(String content, FileTemplater context) {
-            return NSession.of().copy()
-                    .setTerminal(NTerminal.ofMem())
-                    .callWith(
-                            () -> {
-                                NShellContext ctx = shell.createInlineContext(
-                                        shell.getRootContext(),
-                                        context.getSourcePath().orElseGet(() -> "nsh"), new String[0]
-                                );
-                                shell.executeScript(content, ctx);
-                                return NSession.of().out().toString();
-                            }
-                    );
-
-        }
-
-        @Override
-        public String toString() {
-            return "nsh";
-        }
-
-    }
-
-    private static class NFileTemplater extends FileTemplater {
-        public NFileTemplater() {
-            super();
-            this.setDefaultExecutor("text/ntemplate-nsh-project", new NshEvaluator(this));
-            setProjectFileName("project.nsh");
-        }
-
-        public void executeProjectFile(Path path, String mimeTypesString) {
-            executeRegularFile(path, "text/ntemplate-nsh-project");
-        }
-    }
-
-    private static class DocusaurusCustomVarEvaluator implements Function<String, Object> {
-        NElement config;
-        String projectName;
-        String projectTitle;
-        DocusaurusProject project;
-
-        public DocusaurusCustomVarEvaluator(DocusaurusProject project) {
-            this.project = project;
-            config = project.getConfig();
-            projectName = project.getProjectName();
-            projectTitle = project.getTitle();
-        }
-
-        @Override
-        public Object apply(String varName) {
-            switch (varName) {
-                case "projectName": {
-                    return projectName;
-                }
-                case "projectTitle": {
-                    return projectTitle;
-                }
-                default: {
-                    String[] a = Arrays.stream(varName.split("[./]")).map(String::trim).filter(x -> !x.isEmpty())
-                            .toArray(String[]::new);
-                    NElement config = this.config;
-                    if (config != null) {
-                        for (String s : a) {
-                            config = config.asObject().orElse(NObjectElement.ofEmpty()).get(s).orNull();
-                            if (config == null) {
-                                return null;
-                            }
-                        }
-                    }
-                    if (config == null) {
-                        return null;
-                    }
-                    if (config.isNull()) {
-                        return null;
-                    }
-                    if (config.isString()) {
-                        return config.asString().get();
-                    }
-                    if (config.isArray()) {
-                        return config.asArray().get().stream().map(Object::toString).toArray(String[]::new);
-                    }
-                    return config.asString().get();
-                }
-            }
-        }
-    }
-
-    private class FolderConfigProcessor implements TemplateProcessor {
-        public FolderConfigProcessor() {
-        }
-
-        @Override
-        public void processStream(InputStream source, OutputStream target, FileTemplater context) {
-            throw new IllegalArgumentException("Unsupported");
-        }
-
-        @Override
-        public void processPath(Path source, String mimeType, FileTemplater context) {
-            NObjectElement config = DocusaurusFolder.ofFolder(source.getParent(),
-                            Paths.get(context.getRootDirRequired()).resolve("docs"),
-                            getPreProcessorBaseDir().resolve("src"),
-                            0)
-                    .getConfig().getObject("type").get();
-            if (
-                    "javadoc".equals(config.getString("name").orNull())
-                            || "doc".equals(config.getString("name").orNull())
-            ) {
-                String[] sources = config.getArray("sources").orElse(NArrayElement.ofEmpty())
-                        .stream().map(x -> x.asString().orElse(null))
-                        .filter(Objects::nonNull).toArray(String[]::new);
-                if (sources.length == 0) {
-                    throw new IllegalArgumentException("missing doc sources in " + source);
-                }
-                String[] packages = config.getArray("packages").orElse(NArrayElement.ofEmpty())
-                        .stream().map(x -> x.asString().orNull()).filter(Objects::nonNull).toArray(String[]::new);
-                String target = context.getPathTranslator().translatePath(source.getParent().toString());
-                if (target == null) {
-                    throw new IllegalArgumentException("invalid source " + source.getParent());
-                }
-                ArrayList<String> cmd = new ArrayList<>();
-//                cmd.add("--bot");
-                cmd.add("ndoc" + ((getNdocVersion() == null || getNdocVersion().isEmpty()) ? "" : "#" + (getNdocVersion())));
-                cmd.add("--backend=docusaurus");
-                for (String s : sources) {
-                    s = context.processString(s, MimeTypeConstants.PLACEHOLDER_DOLLARS);
-                    cmd.add("--source");
-                    cmd.add(FileProcessorUtils.toAbsolutePath(Paths.get(s), source.getParent()).toString());
-                }
-                for (String s : packages) {
-                    s = context.processString(s, MimeTypeConstants.PLACEHOLDER_DOLLARS);
-                    cmd.add("--package");
-                    cmd.add(s);
-                }
-                cmd.add("--target");
-                cmd.add(target);
-                FileProcessorUtils.mkdirs(Paths.get(target));
-                runCommand(Paths.get(target), autoInstallNutsPackages, cmd.toArray(new String[0]));
-            }
-
-        }
-
-        @Override
-        public String toString() {
-            return "DocusaurusFolderConfig";
-        }
     }
 
     public DocusaurusCtrl setVar(String name, Object value) {

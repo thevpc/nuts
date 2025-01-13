@@ -494,4 +494,5 @@ public interface NPath extends NInputSource, NOutputTarget, NWorkspaceProvider {
 
     boolean isDeleteOnDispose();
 
+    boolean isEqOrDeepChildOf(NPath other);
 }

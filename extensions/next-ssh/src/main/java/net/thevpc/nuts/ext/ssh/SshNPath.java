@@ -784,6 +784,11 @@ class SshNPath implements NPathSPI {
         return b;
     }
 
+    @Override
+    public boolean isEqOrDeepChildOf(NPath basePath, NPath other) {
+        return toRelativePath(basePath, other) != null;
+    }
+
     private static String joinPathString(List<String> a) {
         return "/" + String.join("/", a);
     }

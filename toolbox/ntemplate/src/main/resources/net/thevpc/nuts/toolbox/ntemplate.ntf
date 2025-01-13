@@ -1,8 +1,0 @@
-==ntemplate== generate files and forlder from template file/folder
-
-##) SYNOPSIS:
-
-##) EXAMPLES:
-
-# ndoc: generate folder
-nuts -Zy -w test ntemplate --progress=none --skip-errors -bZy ntemplate -p $ProjectFileDir$/dir-template

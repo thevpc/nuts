@@ -24,7 +24,7 @@ public class DocusaurusMdParser implements MdParser {
         SectionPathHolder path = new SectionPathHolder();
         MdElementAndChildrenList list=new MdElementAndChildrenList();
         while (reader.hasMore()) {
-            n = readLine(new Cond().setConsumeNewline(NewLineAction.SPACE)
+            n = readLine(new Cond().setConsumeNewline(NewLineAction.STOP)
                             .setWasNewline(true)
                     , path);
             if (n != null) {
@@ -593,6 +593,8 @@ public class DocusaurusMdParser implements MdParser {
 //        String lookahead = reader.peekString(20);
         char c = (char) q;
         if (c == '\n' || c == '\r') {
+            reader.readChar();
+            cond.setWasNewline(true);
             return null;
         } else {
             boolean wasNewline0 = cond.isWasNewline();

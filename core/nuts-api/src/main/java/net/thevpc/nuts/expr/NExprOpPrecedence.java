@@ -33,15 +33,16 @@ public final class NExprOpPrecedence {
     public static int DIV = MUL;
     public static int MOD = MUL;
 
-    public static int COALESCE = MUL+10;
+    public static final int POW = 1250;
+    public static final int COALESCE = MUL+10;
 
     public static final int NOT = 1300;
 
-    public static int UNARY_PRE = 1300;
-    public static int UNARY_POST = 1400;
-    public static int PARS = 1600;
-    public static int BRACKETS = PARS;
-    public static int BRACES = PARS;
-    public static int DOT = PARS;
-    public static int STATEMENT_SEPARATOR = 50;
+    public static final int UNARY_PRE = 1300;
+    public static final int UNARY_POST = 1400;
+    public static final int PARS = 1600;
+    public static final int BRACKETS = PARS;
+    public static final int BRACES = PARS;
+    public static final int DOT = PARS;
+    public static final int STATEMENT_SEPARATOR = 50;
 }

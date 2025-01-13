@@ -104,11 +104,9 @@ public final class Nuts {
         if (overriddenNutsArgs != null) {
             nutsArgs.addAll(Arrays.asList(overriddenNutsArgs));
         }
-        if (appArgs != null) {
-            nutsArgs.addAll(Arrays.asList(appArgs));
-        }
         NBootArguments options = new NBootArguments();
         options.setArgs(nutsArgs.toArray(new String[0]));
+        options.setAppArgs(appArgs);
         options.setInherited(true);
         options.setStartTime(startTime);
         if (term != null) {

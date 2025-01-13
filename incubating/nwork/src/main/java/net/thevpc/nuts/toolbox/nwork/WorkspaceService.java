@@ -630,7 +630,7 @@ public class WorkspaceService {
     public int find(List<File> folders, String where) {
         FileScanner fs = new FileScanner();
         if (where != null && where.trim().length() > 0) {
-            fs.setPathFilter(FileScanner.parseExpr(where, session));
+            fs.setPathFilter(FileScanner.parseExpr(where));
         }
         fs.getSource().addAll(folders.stream().map(File::toPath).collect(Collectors.toSet()));
         fs.scan().forEach(x -> {

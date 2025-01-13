@@ -296,8 +296,8 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                 if (id == null) {
                     return new FixAction(nInstallInformation.getId(), "MissingInstallation") {
                         @Override
-                        public void fix(NSession session) {
-                            NInstallCmd.of().addId(getId()).run();
+                        public void fix() {
+                            NInstallCmd.of(getId()).run();
                         }
                     };
                 }
@@ -546,7 +546,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
             NSession session = workspace.currentSession();
             NPrintStream out = session.out();
             for (FixAction n : resultFixes) {
-                n.fix(session);
+                n.fix();
                 out.println(NMsg.ofC("[```error FIX```] unable to %s %s ", n.getId(), n.getProblemKey()));
             }
         }
@@ -910,7 +910,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
             return problemKey;
         }
 
-        public abstract void fix(NSession session);
+        public abstract void fix();
 
         @Override
         public String toString() {

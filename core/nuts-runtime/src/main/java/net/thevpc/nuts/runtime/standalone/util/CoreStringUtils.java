@@ -25,9 +25,11 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NStreamTokenizer;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
@@ -100,12 +102,12 @@ public final class CoreStringUtils {
     }
 
     public static boolean containsTopWord(String word, String line) {
-        StreamTokenizer tokenizer = new StreamTokenizer(new StringReader(line));
+        NStreamTokenizer tokenizer = new NStreamTokenizer(new StringReader(line));
         int last_ttype = -1;
         try {
-            while (tokenizer.nextToken() != StreamTokenizer.TT_EOF) {
+            while (tokenizer.nextToken() != NToken.TT_EOF) {
                 switch (tokenizer.ttype) {
-                    case StreamTokenizer.TT_WORD: {
+                    case NToken.TT_WORD: {
                         if (word.equals(tokenizer.sval)) {
                             if (last_ttype != '.') {
                                 return true;
@@ -115,7 +117,7 @@ public final class CoreStringUtils {
                 }
                 last_ttype = tokenizer.ttype;
             }
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             // not error expected here
         }
         return false;

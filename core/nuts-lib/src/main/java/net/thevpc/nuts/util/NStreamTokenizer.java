@@ -1,5 +1,6 @@
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.io.NIOException;
 
 import java.io.IOException;
@@ -44,54 +45,6 @@ import java.util.Arrays;
 
 public class NStreamTokenizer {
 
-    /**
-     * A constant indicating that the end of the stream has been read.
-     */
-    public static final int TT_EOF = -1;
-    /**
-     * A constant indicating that the end of the line has been read.
-     */
-    public static final int TT_EOL = '\n';
-    /**
-     * A constant indicating that a word token has been read.
-     */
-    public static final int TT_WORD = -3;
-    public static final int TT_INT = -4;
-    public static final int TT_LONG = -5;
-    public static final int TT_BIG_INT = -6;
-    public static final int TT_FLOAT = -7;
-    public static final int TT_DOUBLE = -8;
-    public static final int TT_BIG_DECIMAL = -9;
-    public static final int TT_COMMENTS = -10;
-    public static final int TT_SPACES = -11;
-
-    private static final int TT_NOTHING = -25;
-
-    /* A constant indicating that no token has been read, used for
-     * initializing ttype.  FIXME This could be made public and
-     * made available as the part of the API in a future release.
-     */
-    public static final int TT_AND = -40; // &&
-    public static final int TT_OR = -41;
-    public static final int TT_LEFT_SHIFT = -42;
-    public static final int TT_RIGHT_SHIFT = -43;
-    public static final int TT_LEFT_SHIFT_UNSIGNED = -44;
-    public static final int TT_RIGHT_SHIFT_UNSIGNED = -45;
-    public static final int TT_LTE = -46;
-    public static final int TT_GTE = -47;
-    public static final int TT_LTGT = -48;
-    public static final int TT_EQ = -49; // ==
-    public static final int TT_EQ3 = -50; // ===
-    public static final int TT_NEQ = -51; // !=
-    public static final int TT_NEQ2 = -52; //!==
-    public static final int TT_RIGHT_ARROW = -53;
-    public static final int TT_QUOTE_SINGLE3 = -54;
-    public static final int TT_QUOTE_DOUBLE3 = -55;
-    public static final int TT_QUOTE_ANTI3 = -56;
-    public static final int TT_COMMENT_LINE_C = -57;
-    public static final int TT_COMMENT_LINE_SH = -58;
-    public static final int TT_COMMENT_MULTILINE_C = -59;
-    public static final int TT_COMMENT_MULTILINE_XML = -60;
 
 
     private static final int NEED_CHAR = Integer.MAX_VALUE;
@@ -125,7 +78,7 @@ public class NStreamTokenizer {
      * <p>
      * The initial value of this field is -4.
      */
-    public int ttype = TT_NOTHING;
+    public int ttype = NToken.TT_NOTHING;
     /**
      * If the current token is a word token, this field contains a
      * string giving the characters of the word token. When the current
@@ -202,7 +155,7 @@ public class NStreamTokenizer {
      */
     public NStreamTokenizer(Reader r) {
         this();
-        reader = r==null?new StringReader("") : r;
+        reader = r == null ? new StringReader("") : r;
     }
 
     public NStreamTokenizer(String r) {
@@ -380,28 +333,42 @@ public class NStreamTokenizer {
     }
 
     public void parseOperators(boolean parse) {
-        parsableTokenTypes[-TT_AND] = parse;
-        parsableTokenTypes[-TT_OR] = parse;
-        parsableTokenTypes[-TT_LEFT_SHIFT] = parse;
-        parsableTokenTypes[-TT_RIGHT_SHIFT] = parse;
-        parsableTokenTypes[-TT_LEFT_SHIFT_UNSIGNED] = parse;
-        parsableTokenTypes[-TT_RIGHT_SHIFT_UNSIGNED] = parse;
-        parsableTokenTypes[-TT_LTE] = parse;
-        parsableTokenTypes[-TT_GTE] = parse;
-        parsableTokenTypes[-TT_LTGT] = parse;
-        parsableTokenTypes[-TT_EQ] = parse;
-        parsableTokenTypes[-TT_EQ3] = parse;
-        parsableTokenTypes[-TT_NEQ] = parse;
-        parsableTokenTypes[-TT_NEQ2] = parse;
-        parsableTokenTypes[-TT_RIGHT_ARROW] = parse;
+        parsableTokenTypes[-NToken.TT_AND] = parse;
+        parsableTokenTypes[-NToken.TT_OR] = parse;
+        parsableTokenTypes[-NToken.TT_LEFT_SHIFT] = parse;
+        parsableTokenTypes[-NToken.TT_RIGHT_SHIFT] = parse;
+        parsableTokenTypes[-NToken.TT_LEFT_SHIFT_UNSIGNED] = parse;
+        parsableTokenTypes[-NToken.TT_RIGHT_SHIFT_UNSIGNED] = parse;
+        parsableTokenTypes[-NToken.TT_LTE] = parse;
+        parsableTokenTypes[-NToken.TT_GTE] = parse;
+        parsableTokenTypes[-NToken.TT_LTGT] = parse;
+        parsableTokenTypes[-NToken.TT_EQ2] = parse;
+        parsableTokenTypes[-NToken.TT_EQ3] = parse;
+        parsableTokenTypes[-NToken.TT_NEQ] = parse;
+        parsableTokenTypes[-NToken.TT_NEQ2] = parse;
+        parsableTokenTypes[-NToken.TT_RIGHT_ARROW] = parse;
+        parsableTokenTypes[-NToken.TT_PLUS_PLUS] = parse;
+        parsableTokenTypes[-NToken.TT_MINUS_MINUS] = parse;
+        parsableTokenTypes[-NToken.TT_MUL_MUL] = parse;
+        parsableTokenTypes[-NToken.TT_DIV_DIV] = parse;
+
+        parsableTokenTypes[-NToken.TT_POW_POW] = parse;
+        parsableTokenTypes[-NToken.TT_REM_REM] = parse;
+        parsableTokenTypes[-NToken.TT_MUL_EQ] = parse;
+        parsableTokenTypes[-NToken.TT_PLUS_EQ] = parse;
+        parsableTokenTypes[-NToken.TT_MINUS_EQ] = parse;
+        parsableTokenTypes[-NToken.TT_DIV_EQ] = parse;
+        parsableTokenTypes[-NToken.TT_POW_EQ] = parse;
+        parsableTokenTypes[-NToken.TT_REM_EQ] = parse;
     }
 
     public void doNotParseNumbers() {
     }
 
     public void acceptTokenType(int tt) {
-        acceptTokenType(tt,true);
+        acceptTokenType(tt, true);
     }
+
     public void acceptTokenType(int tt, boolean b) {
         if (tt <= 0 && tt > -parsableTokenTypes.length) {
             parsableTokenTypes[-tt] = b;
@@ -447,7 +414,7 @@ public class NStreamTokenizer {
      *             C-style comments.
      */
     public void slashStarComments(boolean flag) {
-        acceptTokenType(TT_COMMENT_MULTILINE_C, flag);
+        acceptTokenType(NToken.TT_COMMENT_MULTILINE_C, flag);
     }
 
     /**
@@ -464,11 +431,11 @@ public class NStreamTokenizer {
      *             C++-style comments.
      */
     public void slashSlashComments(boolean flag) {
-        acceptTokenType(TT_COMMENT_LINE_C, flag);
+        acceptTokenType(NToken.TT_COMMENT_LINE_C, flag);
     }
 
     public NStreamTokenizer xmlComments(boolean flag) {
-        acceptTokenType(TT_COMMENT_MULTILINE_XML, flag);
+        acceptTokenType(NToken.TT_COMMENT_MULTILINE_XML, flag);
         slashSlashComments(false);
         slashStarComments(false);
         return this;
@@ -482,7 +449,7 @@ public class NStreamTokenizer {
     }
 
     public NStreamTokenizer pythonComments() {
-        acceptTokenType(TT_COMMENT_LINE_SH, true);
+        acceptTokenType(NToken.TT_COMMENT_LINE_SH, true);
         commentChar('#');
         slashSlashComments(false);
         slashStarComments(false);
@@ -576,14 +543,14 @@ public class NStreamTokenizer {
         if (c == SKIP_LF) {
             c = readChar();
             if (c < 0)
-                return ttype = TT_EOF;
+                return ttype = NToken.TT_EOF;
             if (c == '\n')
                 c = NEED_CHAR;
         }
         if (c == NEED_CHAR) {
             c = readChar();
             if (c < 0)
-                return ttype = TT_EOF;
+                return ttype = NToken.TT_EOF;
         }
         ttype = c;              /* Just to be safe */
 
@@ -626,14 +593,14 @@ public class NStreamTokenizer {
         }
         switch (c) {
             case '&': {
-                if (isParsable(TT_AND)) {
+                if (isParsable(NToken.TT_AND)) {
                     markChar(1);
                     int n = readChar();
                     if (n < 0) {
                         //EOF, this is okkay
                     } else if (n == '&') {
                         image = "&&";
-                        return ttype = TT_AND;
+                        return ttype = NToken.TT_AND;
                     } else {
                         resetChar();
                     }
@@ -641,14 +608,14 @@ public class NStreamTokenizer {
                 break;
             }
             case '|': {
-                if (isParsable(TT_OR)) {
+                if (isParsable(NToken.TT_OR)) {
                     markChar(1);
                     int n = readChar();
                     if (n < 0) {
                         //EOF, this is okkay
                     } else if (n == '|') {
                         image = "||";
-                        return ttype = TT_OR;
+                        return ttype = NToken.TT_OR;
                     } else {
                         resetChar();
                     }
@@ -659,30 +626,30 @@ public class NStreamTokenizer {
                 break;
             }
             case '<': {
-                if (isParsable(TT_LEFT_SHIFT_UNSIGNED) || isParsable(TT_LEFT_SHIFT) || isParsable(TT_LTE) || isParsable(TT_LTGT)) {
+                if (isParsable(NToken.TT_LEFT_SHIFT_UNSIGNED) || isParsable(NToken.TT_LEFT_SHIFT) || isParsable(NToken.TT_LTE) || isParsable(NToken.TT_LTGT)) {
                     markChar(1);
                     int n = readChar();
                     if (n < 0) {
                         //EOF, this is okkay
-                    } else if (n == '<' && (isParsable(TT_LEFT_SHIFT_UNSIGNED) || isParsable(TT_LEFT_SHIFT))) {
+                    } else if (n == '<' && (isParsable(NToken.TT_LEFT_SHIFT_UNSIGNED) || isParsable(NToken.TT_LEFT_SHIFT))) {
                         markChar(1);
                         int n2 = readChar();
-                        if (n2 == '<' && isParsable(TT_LEFT_SHIFT_UNSIGNED)) {
+                        if (n2 == '<' && isParsable(NToken.TT_LEFT_SHIFT_UNSIGNED)) {
                             image = "<<<";
-                            return ttype = TT_LEFT_SHIFT_UNSIGNED;
-                        } else if (isParsable(TT_LEFT_SHIFT)) {
+                            return ttype = NToken.TT_LEFT_SHIFT_UNSIGNED;
+                        } else if (isParsable(NToken.TT_LEFT_SHIFT)) {
                             resetChar();
                             image = "<<";
-                            return ttype = TT_LEFT_SHIFT;
+                            return ttype = NToken.TT_LEFT_SHIFT;
                         } else {
                             resetChar();
                         }
-                    } else if (n == '=' && isParsable(TT_LTE)) {
+                    } else if (n == '=' && isParsable(NToken.TT_LTE)) {
                         image = "<=";
-                        return ttype = TT_LTE;
-                    } else if (n == '>' && isParsable(TT_LTGT)) {
+                        return ttype = NToken.TT_LTE;
+                    } else if (n == '>' && isParsable(NToken.TT_LTGT)) {
                         image = "<>";
-                        return ttype = TT_LTGT;
+                        return ttype = NToken.TT_LTGT;
                     } else {
                         resetChar();
                     }
@@ -690,27 +657,27 @@ public class NStreamTokenizer {
                 break;
             }
             case '>': {
-                if (isParsable(TT_RIGHT_SHIFT_UNSIGNED) || isParsable(TT_RIGHT_SHIFT) || isParsable(TT_GTE)) {
+                if (isParsable(NToken.TT_RIGHT_SHIFT_UNSIGNED) || isParsable(NToken.TT_RIGHT_SHIFT) || isParsable(NToken.TT_GTE)) {
                     markChar(1);
                     int n = readChar();
                     if (n < 0) {
                         //EOF, this is okkay
-                    } else if (n == '>' && (isParsable(TT_RIGHT_SHIFT_UNSIGNED) || isParsable(TT_RIGHT_SHIFT))) {
+                    } else if (n == '>' && (isParsable(NToken.TT_RIGHT_SHIFT_UNSIGNED) || isParsable(NToken.TT_RIGHT_SHIFT))) {
                         markChar(1);
                         int n2 = readChar();
-                        if (n2 == '>' && isParsable(TT_RIGHT_SHIFT_UNSIGNED)) {
+                        if (n2 == '>' && isParsable(NToken.TT_RIGHT_SHIFT_UNSIGNED)) {
                             image = ">>>";
-                            return ttype = TT_RIGHT_SHIFT_UNSIGNED;
-                        } else if (isParsable(TT_RIGHT_SHIFT)) {
+                            return ttype = NToken.TT_RIGHT_SHIFT_UNSIGNED;
+                        } else if (isParsable(NToken.TT_RIGHT_SHIFT)) {
                             resetChar();
                             image = ">>";
-                            return ttype = TT_RIGHT_SHIFT;
+                            return ttype = NToken.TT_RIGHT_SHIFT;
                         } else {
                             resetChar();
                         }
-                    } else if (n == '=' && isParsable(TT_GTE)) {
+                    } else if (n == '=' && isParsable(NToken.TT_GTE)) {
                         image = ">=";
-                        return ttype = TT_GTE;
+                        return ttype = NToken.TT_GTE;
                     } else {
                         resetChar();
                     }
@@ -718,24 +685,24 @@ public class NStreamTokenizer {
                 break;
             }
             case '=': {
-                if (isParsable(TT_RIGHT_ARROW) || isParsable(TT_EQ) || isParsable(TT_EQ3)) {
+                if (isParsable(NToken.TT_RIGHT_ARROW) || isParsable(NToken.TT_EQ2) || isParsable(NToken.TT_EQ3)) {
                     markChar(1);
                     int n = readChar();
                     if (n < 0) {
                         //EOF, this is okkay
-                    } else if (n == '>' && isParsable(TT_RIGHT_ARROW)) {
+                    } else if (n == '>' && isParsable(NToken.TT_RIGHT_ARROW)) {
                         resetChar();
                         image = "=>";
-                        return ttype = TT_RIGHT_ARROW;
-                    } else if (n == '=' && (isParsable(TT_EQ) || isParsable(TT_EQ3))) {
+                        return ttype = NToken.TT_RIGHT_ARROW;
+                    } else if (n == '=' && (isParsable(NToken.TT_EQ2) || isParsable(NToken.TT_EQ3))) {
                         markChar(1);
                         int n2 = readChar();
-                        if (n2 == '=' && isParsable(TT_EQ3)) {
+                        if (n2 == '=' && isParsable(NToken.TT_EQ3)) {
                             image = "===";
-                            return ttype = TT_EQ3;
-                        } else if (isParsable(TT_EQ)) {
+                            return ttype = NToken.TT_EQ3;
+                        } else if (isParsable(NToken.TT_EQ2)) {
                             image = "==";
-                            return ttype = TT_EQ;
+                            return ttype = NToken.TT_EQ2;
                         } else {
                             resetChar();
                         }
@@ -746,28 +713,202 @@ public class NStreamTokenizer {
                 break;
             }
             case '!': {
-                if (isParsable(TT_NEQ2) || isParsable(TT_NEQ)) {
+                if (isParsable(NToken.TT_NEQ2) || isParsable(NToken.TT_NEQ)) {
                     markChar(1);
                     int n = readChar();
                     if (n < 0) {
                         //EOF, this is okkay
                     } else if (n == '=') {
-                        if (isParsable(TT_NEQ2)) {
+                        if (isParsable(NToken.TT_NEQ2)) {
                             markChar(1);
                             int n2 = readChar();
                             if (n2 == '=') {
                                 image = "!==";
-                                return ttype = TT_NEQ2;
+                                return ttype = NToken.TT_NEQ2;
                             } else {
                                 resetChar();
                                 image = "!=";
-                                return ttype = TT_NEQ;
+                                return ttype = NToken.TT_NEQ;
                             }
                         } else {
                             image = "!=";
-                            return ttype = TT_NEQ;
+                            return ttype = NToken.TT_NEQ;
                         }
                     } else {
+                        resetChar();
+                    }
+                }
+                break;
+            }
+            case '+': {
+                if (isParsable(NToken.TT_PLUS_PLUS) || isParsable(NToken.TT_PLUS_EQ)) {
+                    markChar(1);
+                    int n = readChar();
+                    if (n < 0) {
+                        //EOF, this is okkay
+                    } else if (n == '+') {
+                        if (isParsable(NToken.TT_PLUS_PLUS)) {
+                            image = "++";
+                            return ttype = NToken.TT_PLUS_PLUS;
+                        } else {
+                            image = "+";
+                            return ttype = '+';
+                        }
+                    } else if (n == '=') {
+                        if (isParsable(NToken.TT_PLUS_PLUS)) {
+                            image = "+=";
+                            return ttype = NToken.TT_PLUS_PLUS;
+                        } else {
+                            image = "+";
+                            return ttype = '+';
+                        }
+                    } else {
+                        image = "+";
+                        resetChar();
+                    }
+                }
+                break;
+            }
+            case '-': {
+                if (isParsable(NToken.TT_MINUS_MINUS) || isParsable(NToken.TT_MINUS_EQ)) {
+                    markChar(1);
+                    int n = readChar();
+                    if (n < 0) {
+                        //EOF, this is okkay
+                    } else if (n == '-') {
+                        if (isParsable(NToken.TT_MINUS_MINUS)) {
+                            image = "--";
+                            return ttype = NToken.TT_MINUS_MINUS;
+                        } else {
+                            image = "-";
+                            return ttype = '-';
+                        }
+                    } else if (n == '=') {
+                        if (isParsable(NToken.TT_MINUS_EQ)) {
+                            image = "-=";
+                            return ttype = NToken.TT_MINUS_EQ;
+                        } else {
+                            image = "-";
+                            return ttype = '-';
+                        }
+                    } else {
+                        image = "-";
+                        resetChar();
+                    }
+                }
+                break;
+            }
+            case '*': {
+                if (isParsable(NToken.TT_MUL_MUL) || isParsable(NToken.TT_MUL_EQ)) {
+                    markChar(1);
+                    int n = readChar();
+                    if (n < 0) {
+                        //EOF, this is okkay
+                    } else if (n == '*') {
+                        if (isParsable(NToken.TT_MUL_MUL)) {
+                            image = "**";
+                            return ttype = NToken.TT_MUL_MUL;
+                        } else {
+                            image = "*";
+                            return ttype = '*';
+                        }
+                    } else if (n == '=') {
+                        if (isParsable(NToken.TT_MUL_EQ)) {
+                            image = "*=";
+                            return ttype = NToken.TT_MUL_EQ;
+                        } else {
+                            image = "*";
+                            return ttype = '*';
+                        }
+                    } else {
+                        image = "*";
+                        resetChar();
+                    }
+                }
+                break;
+            }
+            case '/': {
+                if (isParsable(NToken.TT_DIV_DIV) || isParsable(NToken.TT_DIV_EQ)) {
+                    markChar(1);
+                    int n = readChar();
+                    if (n < 0) {
+                        //EOF, this is okkay
+                    } else if (n == '/') {
+                        if (isParsable(NToken.TT_DIV_DIV)) {
+                            image = "//";
+                            return ttype = NToken.TT_DIV_DIV;
+                        } else {
+                            image = "/";
+                            return ttype = '/';
+                        }
+                    } else if (n == '=') {
+                        if (isParsable(NToken.TT_DIV_EQ)) {
+                            image = "/=";
+                            return ttype = NToken.TT_DIV_EQ;
+                        } else {
+                            image = "/";
+                            return ttype = '/';
+                        }
+                    } else {
+                        image = "/";
+                        resetChar();
+                    }
+                }
+                break;
+            }
+            case '^': {
+                if (isParsable(NToken.TT_POW_POW) || isParsable(NToken.TT_POW_EQ)) {
+                    markChar(1);
+                    int n = readChar();
+                    if (n < 0) {
+                        //EOF, this is okkay
+                    } else if (n == '^') {
+                        if (isParsable(NToken.TT_POW_POW)) {
+                            image = "^^";
+                            return ttype = NToken.TT_POW_POW;
+                        } else {
+                            image = "^";
+                            return ttype = '^';
+                        }
+                    } else if (n == '=') {
+                        if (isParsable(NToken.TT_POW_EQ)) {
+                            image = "^=";
+                            return ttype = NToken.TT_POW_EQ;
+                        } else {
+                            image = "^";
+                            return ttype = '^';
+                        }
+                    } else {
+                        image = "^";
+                        resetChar();
+                    }
+                }
+                break;
+            }
+            case '%': {
+                if (isParsable(NToken.TT_REM_REM) || isParsable(NToken.TT_REM_EQ)) {
+                    markChar(1);
+                    int n = readChar();
+                    if (n < 0) {
+                        //EOF, this is okkay
+                    } else if (n == '%') {
+                        if (isParsable(NToken.TT_REM_REM)) {
+                            image = "%%";
+                            return ttype = NToken.TT_REM_REM;
+                        } else {
+                            image = "%";
+                            return ttype = '%';
+                        }
+                    } else if (n == '=') {
+                        if (isParsable(NToken.TT_REM_EQ)) {
+                            image = "%=";
+                            return ttype = NToken.TT_REM_EQ;
+                        } else {
+                            image = "%";
+                            return ttype = '%';
+                        }
+                    } else {
+                        image = "%";
                         resetChar();
                     }
                 }
@@ -794,7 +935,7 @@ public class NStreamTokenizer {
             image = sval;
             if (forceLower)
                 sval = sval.toLowerCase();
-            ttype = TT_WORD;
+            ttype = NToken.TT_WORD;
             return true;
         }
         return false;
@@ -865,14 +1006,14 @@ public class NStreamTokenizer {
             if (intType) {
                 try {
                     nval = Integer.parseInt(image.toString());
-                    ttype = TT_INT;
+                    ttype = NToken.TT_INT;
                 } catch (Exception ex) {
                     try {
                         nval = Long.parseLong(image.toString());
-                        ttype = TT_LONG;
+                        ttype = NToken.TT_LONG;
                     } catch (Exception ex2) {
                         nval = new BigInteger(image.toString());
-                        ttype = TT_BIG_INT;
+                        ttype = NToken.TT_BIG_INT;
                     }
                 }
 //                ival=neg ? -iv : iv;
@@ -880,14 +1021,14 @@ public class NStreamTokenizer {
             } else {
                 try {
                     nval = Float.parseFloat(image.toString());
-                    ttype = TT_FLOAT;
+                    ttype = NToken.TT_FLOAT;
                 } catch (Exception ex) {
                     try {
                         nval = Double.parseDouble(image.toString());
-                        ttype = TT_DOUBLE;
+                        ttype = NToken.TT_DOUBLE;
                     } catch (Exception ex2) {
                         nval = new BigDecimal(image.toString());
-                        ttype = TT_BIG_DECIMAL;
+                        ttype = NToken.TT_BIG_DECIMAL;
                     }
                 }
 //                ival=neg ? -iv : iv;
@@ -904,7 +1045,7 @@ public class NStreamTokenizer {
                 LINENO++;
                 if (eolIsSignificantP) {
                     peekc = SKIP_LF;
-                    ttype = TT_EOL;
+                    ttype = NToken.TT_EOL;
                     return true;
                 }
                 c = readChar();
@@ -916,7 +1057,7 @@ public class NStreamTokenizer {
                 if (c == '\n') {
                     LINENO++;
                     if (eolIsSignificantP) {
-                        ttype = TT_EOL;
+                        ttype = NToken.TT_EOL;
                         return true;
                     }
                 }
@@ -925,11 +1066,11 @@ public class NStreamTokenizer {
             if (bufImage.length() > 0 && returnSpaces) {
                 peekc = c;
                 image = bufImage.toString();
-                ttype = TT_SPACES;
+                ttype = NToken.TT_SPACE;
                 return true;
             }
             if (c < 0) {
-                ttype = TT_EOF;
+                ttype = NToken.TT_EOF;
                 return true;
             }
             ctype = c < 256 ? commonCharTypes[c] : CT_ALPHA;
@@ -938,7 +1079,7 @@ public class NStreamTokenizer {
     }
 
     private boolean _read_xmlComments() {
-        if (c == '<' && isParsable(TT_COMMENT_MULTILINE_XML)) {
+        if (c == '<' && isParsable(NToken.TT_COMMENT_MULTILINE_XML)) {
             StringBuilder sb = new StringBuilder();
             sb.append((char) c);
             markChar(4);
@@ -975,7 +1116,7 @@ public class NStreamTokenizer {
                         }
                         if (returnComments) {
                             image = sb.toString();
-                            ttype = TT_COMMENTS;
+                            ttype = NToken.TT_COMMENTS;
                             return true;
                         } else {
                             nextToken();
@@ -990,8 +1131,8 @@ public class NStreamTokenizer {
     }
 
     private boolean _read_slashComments() {
-        boolean slashStarCommentsP = isParsable(TT_COMMENT_MULTILINE_C);
-        boolean slashSlashCommentsP = isParsable(TT_COMMENT_LINE_C);
+        boolean slashStarCommentsP = isParsable(NToken.TT_COMMENT_MULTILINE_C);
+        boolean slashSlashCommentsP = isParsable(NToken.TT_COMMENT_LINE_C);
         if (c == '/' && (slashSlashCommentsP || slashStarCommentsP)) {
             StringBuilder sb = new StringBuilder();
             sb.append((char) c);
@@ -1016,14 +1157,14 @@ public class NStreamTokenizer {
                         }
                     }
                     if (c < 0) {
-                        ttype = TT_EOF;
+                        ttype = NToken.TT_EOF;
                         return true;
                     }
                     prevc = c;
                 }
                 if (returnComments) {
                     image = sb.toString();
-                    ttype = TT_COMMENTS;
+                    ttype = NToken.TT_COMMENTS;
                     return true;
                 }
                 ttype = nextToken();
@@ -1036,7 +1177,7 @@ public class NStreamTokenizer {
                 peekc = c;
                 if (returnComments) {
                     image = sb.toString();
-                    ttype = TT_COMMENTS;
+                    ttype = NToken.TT_COMMENTS;
                     return true;
                 }
                 ctype = nextToken();
@@ -1050,7 +1191,7 @@ public class NStreamTokenizer {
                     }
                     if (returnComments) {
                         image = sb.toString();
-                        ttype = TT_COMMENTS;
+                        ttype = NToken.TT_COMMENTS;
                         return true;
                     }
                     peekc = c;
@@ -1068,17 +1209,49 @@ public class NStreamTokenizer {
     }
 
     private boolean _read_string() {
+        boolean interpolatedString=false;
+        if(c=='$'){
+            markChar(1);
+            c=readChar();
+            int ctype2 = c < 256 ? commonCharTypes[c] : CT_ALPHA;
+            if ((ctype2 & CT_QUOTE) != 0) {
+                ctype=ctype2;
+                interpolatedString=true;
+            }else{
+                resetChar();
+                return false;
+            }
+        }
         if ((ctype & CT_QUOTE) != 0) {
-            ttype = c;
             bufImage.setLength(0);
+            if(interpolatedString){
+                switch (c){
+                    case '\"':{
+                        ttype=NToken.TT_ISTR_DQ;
+                        break;
+                    }
+                    case '\'':{
+                        ttype=NToken.TT_ISTR_SQ;
+                        break;
+                    }
+                    case '`':{
+                        ttype=NToken.TT_ISTR_AQ;
+                        break;
+                    }
+                }
+                bufImage.append('$');
+            }else{
+                ttype = c;
+            }
             bufImage.append((char) c);
             int i = 0;
+            int c0=c;
             /* Invariants (because \Octal needs a lookahead):
              *   (i)  c contains char value
              *   (ii) d contains the lookahead
              */
             int d = readChar();
-            while (d >= 0 && d != ttype && d != '\n' && d != '\r') {
+            while (d >= 0 && d != c0 && d != '\n' && d != '\r') {
                 bufImage.append((char) d);
                 if (d == '\\') {
                     c = readChar();
@@ -1142,8 +1315,8 @@ public class NStreamTokenizer {
              * character then arrange to read a new character next time
              * around; otherwise, save the character.
              */
-            peekc = (d == ttype) ? NEED_CHAR : d;
-            if (d == ttype) {
+            peekc = (d == c0) ? NEED_CHAR : d;
+            if (d == c0) {
                 bufImage.append((char) d);
             }
             sval = String.copyValueOf(buf, 0, i);
@@ -1160,7 +1333,7 @@ public class NStreamTokenizer {
      * {@code sval} field.
      */
     public void pushBack() {
-        if (ttype != TT_NOTHING) {  /* No-op if nextToken() not called */
+        if (ttype != NToken.TT_NOTHING) {  /* No-op if nextToken() not called */
             pushedBack = true;
         }
     }
@@ -1188,34 +1361,34 @@ public class NStreamTokenizer {
     public String toString() {
         String ret;
         switch (ttype) {
-            case TT_EOF:
+            case NToken.TT_EOF:
                 ret = "EOF";
                 break;
-            case TT_EOL:
+            case NToken.TT_EOL:
                 ret = "EOL";
                 break;
-            case TT_WORD:
+            case NToken.TT_WORD:
                 ret = sval;
                 break;
-            case TT_INT:
+            case NToken.TT_INT:
                 ret = "I=" + nval;
                 break;
-            case TT_LONG:
+            case NToken.TT_LONG:
                 ret = "L=" + nval;
                 break;
-            case TT_BIG_INT:
+            case NToken.TT_BIG_INT:
                 ret = "BI=" + nval;
                 break;
-            case TT_FLOAT:
+            case NToken.TT_FLOAT:
                 ret = "F=" + nval;
                 break;
-            case TT_DOUBLE:
+            case NToken.TT_DOUBLE:
                 ret = "D=" + nval;
                 break;
-            case TT_BIG_DECIMAL:
+            case NToken.TT_BIG_DECIMAL:
                 ret = "BD=" + nval;
                 break;
-            case TT_NOTHING:
+            case NToken.TT_NOTHING:
                 ret = "NOTHING";
                 break;
             default: {

@@ -5,6 +5,7 @@ import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.expr.*;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NComplexExpressionString;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -72,17 +73,17 @@ public class DefaultOpNode implements NExprOpNode {
     }
     @Override
     public String toString() {
-        switch (name) {
-            case "[]": {
-                return toParString("[","]");
-            }
-            case "()": {
-                return toParString("(",")");
-            }
-            case "{}": {
-                return toParString("{","}");
-            }
-        }
+//        switch (name) {
+//            case "[]": {
+//                return toParString("[","]");
+//            }
+//            case "()": {
+//                return toParString("(",")");
+//            }
+//            case "{}": {
+//                return toParString("{","}");
+//            }
+//        }
         switch (op) {
             case PREFIX: {
                 switch (name) {
@@ -127,10 +128,22 @@ public class DefaultOpNode implements NExprOpNode {
 
     @Override
     public NOptional<Object> eval(NExprDeclarations context) {
+        switch (name) {
+            case "()":
+            case "(":
+            {
+                if(getChildren().size()==1){
+                    return getChildren().get(0).eval(context);
+                }
+                break;
+            }
+        }
         try {
-            return context.evalOperator(getName(), op, args.toArray(new NExprNode[0]));
+            return context.evalOperator(getName(), op,
+                    args.stream().map(context::nodeAsValue).toArray(NExprNodeValue[]::new)
+                    );
         } catch (Exception ex) {
-            return NOptional.ofError(() -> NMsg.ofC("error %s ", ex));
+            return NOptional.ofError(() -> NMsg.ofC("error : %s", ex));
         }
     }
 }

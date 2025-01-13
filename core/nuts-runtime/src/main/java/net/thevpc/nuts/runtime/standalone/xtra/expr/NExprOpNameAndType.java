@@ -33,4 +33,9 @@ public final class NExprOpNameAndType {
     public int hashCode() {
         return Objects.hash(name, type);
     }
+
+    @Override
+    public String toString() {
+        return type+"["+name+"]" ;
+    }
 }

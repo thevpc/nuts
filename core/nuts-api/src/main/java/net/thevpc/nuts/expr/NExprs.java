@@ -28,6 +28,9 @@ package net.thevpc.nuts.expr;
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.NFunction;
+import net.thevpc.nuts.util.NFunction2;
+import net.thevpc.nuts.util.NOptional;
 
 /**
  * Simple Expression Parser Module used in multiple syb-systems of nuts (such as search)
@@ -36,22 +39,36 @@ public interface NExprs extends NComponent {
     static NExprs of() {
         return NExtensions.of(NExprs.class);
     }
+
     static NExprVar ofVar(String name) {
         return of().newVar(name);
     }
-    static NExprVar ofConst(Object value) {
-        return of().newConst(value);
+
+    static NExprVar ofConst(String name, Object value) {
+        return of().newConst(name, value);
     }
 
     NExprVar newVar(String var);
 
-    NExprVar newConst(Object value);
+    NExprVar newConst(String name, Object value);
+
+    NExprDeclarations newDeclarations();
 
     NExprDeclarations newDeclarations(boolean includeDefaults);
 
     NExprDeclarations newDeclarations(boolean includeDefaults, NExprEvaluator evaluator);
 
-    NExprMutableDeclarations newMutableDeclarations(boolean includeDefaults, NExprEvaluator evaluator) ;
+    NExprMutableDeclarations newMutableDeclarations(NExprEvaluator evaluator);
 
-    NExprMutableDeclarations newMutableDeclarations(boolean includeDefaults) ;
+    NExprMutableDeclarations newMutableDeclarations(boolean includeDefaults, NExprEvaluator evaluator);
+
+    NExprMutableDeclarations newMutableDeclarations(boolean includeDefaults);
+
+    NExprMutableDeclarations newMutableDeclarations();
+
+    <A, B> NOptional<NFunction2<A, B, ?>> findCommonInfixOp(NExprCommonOp op, Class<? extends A> firstArgType, Class<? extends B> secondArgType);
+
+    <A> NOptional<NFunction<A, ?>> findCommonPrefixOp(NExprCommonOp op, Class<? extends A> argType);
+
+    <A> NOptional<NFunction<A, ?>> findCommonPostfixOp(NExprCommonOp op, Class<? extends A> argType);
 }

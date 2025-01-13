@@ -11,14 +11,14 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
@@ -38,7 +38,7 @@ import java.io.StringReader;
 public class Test19_ExprTest {
     @BeforeAll
     public static void init() {
-        TestUtils.openNewTestWorkspace();
+        TestUtils.openNewMinTestWorkspace();
     }
 
     private boolean accept(NExprOpDeclaration d, String pattern) {
@@ -143,7 +143,7 @@ public class Test19_ExprTest {
         st.wordChars('-', '-');
 
         int s;
-        while ((s = st.nextToken()) != NStreamTokenizer.TT_EOF) {
+        while ((s = st.nextToken()) != NToken.TT_EOF) {
             TestUtils.println(st.image);
         }
     }
@@ -168,6 +168,16 @@ public class Test19_ExprTest {
     }
 
     @Test
+    public void test7b() throws Exception {
+        NExprMutableDeclarations expr = NExprs.of().newMutableDeclarations();
+//        _retain(expr,"infix:+");
+        expr.declareVar("a");
+        NExprNode n = expr.parse("a=1").get();
+//        Assertions.assertEquals(NExprNodeType.IF, n.getType());
+        TestUtils.println(n.eval(expr).get());
+    }
+
+    @Test
     public void test7() throws Exception {
         NExprDeclarations expr = NExprs.of().newDeclarations(true);
 //        _retain(expr,"infix:+");
@@ -175,6 +185,7 @@ public class Test19_ExprTest {
 //        Assertions.assertEquals(NExprNodeType.IF, n.getType());
         TestUtils.println(n);
     }
+
     @Test
     public void test8() throws Exception {
         NExprDeclarations expr = NExprs.of().newDeclarations(true);
@@ -191,5 +202,56 @@ public class Test19_ExprTest {
         NExprNode n = expr.parse("printChunk(0);;printChunk(0);;printChunk(0)\n").get();
 //        Assertions.assertEquals(NExprNodeType.IF, n.getType());
         TestUtils.println(n);
+    }
+
+
+    @Test
+    public void test10() throws Exception {
+        NExprMutableDeclarations expr = NExprs.of().newMutableDeclarations();
+        expr.declareVar("v");
+        expr.setVarValue("v", "me");
+//        _retain(expr,"infix:+");
+        NExprNode n = expr.parse("$'something for $v'").get();
+        TestUtils.println(n.eval(expr).get());
+        Assertions.assertEquals("something for me", n.eval(expr).get());
+    }
+
+    @Test
+    public void test11() throws Exception {
+        NExprMutableDeclarations expr = NExprs.of().newMutableDeclarations();
+        NExprNode n = expr.parse("a*b+c").get();
+        Assertions.assertTrue(n.getName().equals("+"));
+        Assertions.assertTrue(n.getChildren().size() == 2);
+        Assertions.assertTrue(n.getChildren().get(0).getName().equals("*"));
+        Assertions.assertTrue(n.getChildren().get(1) instanceof NExprWordNode);
+    }
+
+    @Test
+    public void test12() throws Exception {
+        NExprMutableDeclarations expr = NExprs.of().newMutableDeclarations();
+        NExprNode n = expr.parse("a.b>1").get();
+        Assertions.assertTrue(n.getName().equals(">"));
+        Assertions.assertTrue(n.getChildren().size() == 2);
+        Assertions.assertTrue(n.getChildren().get(0).getName().equals("."));
+        Assertions.assertTrue(n.getChildren().get(1) instanceof NExprLiteralNode);
+    }
+    @Test
+    public void test13() throws Exception {
+        NExprMutableDeclarations expr = NExprs.of().newMutableDeclarations();
+        NExprNode n = expr.parse("a=b.c>2").get();
+        Assertions.assertTrue(n.getName().equals("="));
+        Assertions.assertTrue(n.getChildren().size() == 2);
+        Assertions.assertTrue(n.getChildren().get(0).getName().equals("a"));
+        Assertions.assertTrue(n.getChildren().get(1).getName().equals(">"));
+    }
+
+    @Test
+    public void test14() throws Exception {
+        NExprMutableDeclarations expr = NExprs.of().newMutableDeclarations();
+        NExprNode n = expr.parse("(b.c)>2").get();
+        Assertions.assertTrue(n.getName().equals(">"));
+        Assertions.assertTrue(n.getChildren().size() == 2);
+        Assertions.assertTrue(n.getChildren().get(0).getName().equals("("));
+        Assertions.assertTrue(n.getChildren().get(1) instanceof NExprLiteralNode);
     }
 }

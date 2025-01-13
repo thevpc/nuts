@@ -21,8 +21,8 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
 
     private NExprDeclarations parent;
 
-    public DefaultDeclarationMutableContext(NWorkspace workspace,NExprDeclarations parent) {
-        super(workspace);
+    public DefaultDeclarationMutableContext(NExprs exprs,NWorkspace workspace,NExprDeclarations parent) {
+        super(exprs,workspace);
         this.parent = parent;
     }
 
@@ -40,7 +40,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
     }
 
     @Override
-    public NOptional<NExprFctDeclaration> getFunction(String name, Object... args) {
+    public NOptional<NExprFctDeclaration> getFunction(String name, NExprNodeValue... args) {
         DecInfo<NExprFctDeclaration> f = userFunctions.get(name);
         if (f != null) {
             if (f.value != null) {
@@ -53,7 +53,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
     }
 
     @Override
-    public NOptional<NExprConstructDeclaration> getConstruct(String name, NExprNode... args) {
+    public NOptional<NExprConstructDeclaration> getConstruct(String name, NExprNodeValue... args) {
         DecInfo<NExprConstructDeclaration> f = userConstructs.get(name);
         if (f != null) {
             if (f.value != null) {
@@ -86,7 +86,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
 
     @Override
     public NExprVarDeclaration declareConstant(String name, Object value) {
-        return declareVar(name, new DefaultNExprConstImpl(value));
+        return declareVar(name, ofConst(name,value));
     }
 
     @Override
@@ -363,7 +363,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
                     }
 
                     @Override
-                    public Object eval(String name, List<NExprNode> args, NExprDeclarations context) {
+                    public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
                         return impl.eval(name, args, context);
                     }
                 });
@@ -375,7 +375,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
     }
 
     @Override
-    public NOptional<NExprOpDeclaration> getOperator(String opName, NExprOpType type, NExprNode... nodes) {
+    public NOptional<NExprOpDeclaration> getOperator(String opName, NExprOpType type, NExprNodeValue... nodes) {
         DecInfo<NExprOpDeclaration> f = this.ops.get(new NExprOpNameAndType(opName, type));
         if (f != null) {
             if (f.value != null) {
@@ -477,24 +477,6 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
         return all;
     }
 
-    private static class DefaultNExprConstImpl implements NExprVar {
-        private Object value;
-
-        public DefaultNExprConstImpl(Object value) {
-            this.value = value;
-        }
-
-        @Override
-        public Object get(String name, NExprDeclarations context) {
-            return value;
-        }
-
-        @Override
-        public Object set(String name, Object value, NExprDeclarations context) {
-            return this.value;
-        }
-    }
-
     private static class DefaultNExprVarImpl implements NExprVar {
         private Object value;
 
@@ -509,12 +491,5 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
             this.value = value;
             return old;
         }
-    }
-
-    public int[] getOperatorPrecedences() {
-        return Stream.concat(
-                ops.values().stream().filter(x -> x.value != null).map(x -> x.value.getPrecedence()),
-                IntStream.of(parent.getOperatorPrecedences()).boxed()
-        ).sorted().distinct().mapToInt(x -> x).toArray();
     }
 }

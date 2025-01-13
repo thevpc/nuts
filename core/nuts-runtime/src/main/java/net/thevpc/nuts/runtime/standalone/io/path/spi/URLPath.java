@@ -715,6 +715,10 @@ public class URLPath implements NPathSPI {
         }
         return null;
     }
+    @Override
+    public boolean isEqOrDeepChildOf(NPath basePath,NPath other) {
+        return toRelativePath(basePath, other)!=null;
+    }
 
     private CacheInfo loadCacheInfo() {
         try {

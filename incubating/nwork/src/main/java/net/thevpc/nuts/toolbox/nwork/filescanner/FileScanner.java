@@ -1,6 +1,5 @@
 package net.thevpc.nuts.toolbox.nwork.filescanner;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.expr.*;
 import net.thevpc.nuts.toolbox.nwork.filescanner.tags.*;
 
@@ -31,25 +30,25 @@ public class FileScanner {
     }
 
 
-    public static Predicate<RichPath> parseExpr(String anyStr, NSession session) {
+    public static Predicate<RichPath> parseExpr(String anyStr) {
         NExprMutableDeclarations d = NExprs.of().newMutableDeclarations(true);
         d.declareFunction("tag", new NExprFct() {
             @Override
-            public Object eval(String name, List<Object> args, NExprDeclarations context) {
+            public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
                 RichPath rc = (RichPath) context.getVar("this");
-                for (Object arg : args) {
-                    Object v = arg;
+                for (NExprNodeValue arg : args) {
+                    Object v = arg.getValue();
                     if (v != null) {
-                        if (rc.getTags((String) context.evalFunction("string", v).orNull()).size() == 0) {
+                        if (rc.getTags((String) context.evalFunction("string", arg).orNull()).size() == 0) {
                             return false;
                         }
                     }
                 }
                 if (rc.getPath().toString().endsWith(".java")) {
-                    for (Object arg : args) {
-                        Object v = arg;
+                    for (NExprNodeValue arg : args) {
+                        Object v = arg.getValue();
                         if (v != null) {
-                            if (rc.getTags((String) context.evalFunction("string", v).orNull()).size() == 0) {
+                            if (rc.getTags((String) context.evalFunction("string", arg).orNull()).size() == 0) {
                                 return false;
                             }
                         }
@@ -76,7 +75,7 @@ public class FileScanner {
         return richPath -> {
             d.removeDeclaration(d.getVar("this").orNull());
             d.declareConstant("this", richPath);
-            return (Boolean) d.evalFunction("boolean", node.eval(d).get()).get();
+            return (Boolean) d.evalFunction("boolean", d.literalAsValue(node.eval(d).get())).get();
         };
     }
 

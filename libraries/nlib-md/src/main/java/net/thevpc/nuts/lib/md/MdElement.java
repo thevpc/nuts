@@ -67,6 +67,10 @@ public interface MdElement extends NBlankable {
 
     boolean isRow();
 
+    boolean isHr();
+
+    boolean isHr(String type);
+
     boolean isBody();
 
     boolean isPhrase();

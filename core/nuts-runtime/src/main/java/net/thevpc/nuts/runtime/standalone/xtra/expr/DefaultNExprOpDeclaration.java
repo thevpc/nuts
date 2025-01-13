@@ -34,7 +34,15 @@ public class DefaultNExprOpDeclaration implements NExprOpDeclaration {
     }
 
     @Override
-    public Object eval(List<NExprNode> args, NExprDeclarations context) {
+    public Object eval(List<NExprNodeValue> args, NExprDeclarations context) {
         return op.eval(name, args, context);
+    }
+
+    @Override
+    public String toString() {
+        return "DefaultNExprOpDeclaration{" +
+                "name='" + name + '\'' +
+                ", op=" + op +
+                '}';
     }
 }

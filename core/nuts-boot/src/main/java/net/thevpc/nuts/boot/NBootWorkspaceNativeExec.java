@@ -29,7 +29,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
         if (unparsedOptions == null) {
             unparsedOptions = new NBootArguments();
         }
-        this.unparsedOptions=unparsedOptions;
+        this.unparsedOptions = unparsedOptions;
         NBootOptionsInfo userOptions = new NBootOptionsInfo();
         userOptions.setStdin(unparsedOptions.getIn());
         userOptions.setStdout(unparsedOptions.getOut());
@@ -38,8 +38,14 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
         InputStream in = userOptions.getStdin();
         scanner = new Scanner(in == null ? System.in : in);
         this.bLog = new NBootLog(userOptions);
-        String[] args = unparsedOptions.getArgs();
-        parseArguments(args == null ? new String[0] : args, userOptions);
+        List<String> allArgs = new ArrayList<>();
+        if (unparsedOptions.getArgs() != null) {
+            allArgs.addAll(Arrays.asList(unparsedOptions.getArgs()));
+        }
+        if (unparsedOptions.getAppArgs() != null) {
+            allArgs.addAll(Arrays.asList(unparsedOptions.getAppArgs()));
+        }
+        parseArguments(allArgs.toArray(new String[0]), userOptions);
         if (NBootUtils.firstNonNull(userOptions.getSkipErrors(), false)) {
             StringBuilder errorMessage = new StringBuilder();
             if (userOptions.getErrors() != null) {

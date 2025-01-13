@@ -7,6 +7,7 @@ import java.math.BigInteger;
 
 public class EvalUtils {
 
+
     public static String castToString(Object o) {
         if (o == null) {
             return null;
@@ -144,7 +145,7 @@ public class EvalUtils {
             }
             return s;
         }
-        if (n instanceof DefaultVarNode) {
+        if (n instanceof DefaultWordNode) {
             return n.toString();
         }
         if (n instanceof DefaultOpNode) {

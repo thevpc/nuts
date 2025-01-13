@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.expr.NExprConstruct;
-import net.thevpc.nuts.expr.NExprConstructDeclaration;
-import net.thevpc.nuts.expr.NExprDeclarations;
-import net.thevpc.nuts.expr.NExprNode;
+import net.thevpc.nuts.expr.*;
 
 import java.util.List;
 
@@ -17,7 +14,7 @@ public class DefaultNExprConstructDeclaration implements NExprConstructDeclarati
     }
 
     @Override
-    public Object eval(List<NExprNode> args, NExprDeclarations context) {
+    public Object eval(List<NExprNodeValue> args, NExprDeclarations context) {
         return impl.eval(name, args, context);
     }
 

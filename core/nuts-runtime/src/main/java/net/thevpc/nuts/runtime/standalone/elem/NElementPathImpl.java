@@ -4,6 +4,7 @@ import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementEntry;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.util.NStreamTokenizer;
 
 import java.util.*;
@@ -19,7 +20,7 @@ public class NElementPathImpl {
         while (tit.hasNext()) {
             _readItem(tit);
             int t = tit.nextToken();
-            if (t != '/' && t != NStreamTokenizer.TT_EOF) {
+            if (t != '/' && t != NToken.TT_EOF) {
                 throw new IllegalArgumentException("expected '/'");
             }
         }
@@ -38,10 +39,10 @@ public class NElementPathImpl {
     private void _readItem(NStreamTokenizer tit) {
         int t = tit.nextToken();
         switch (t) {
-            case NStreamTokenizer.TT_EOF: {
+            case NToken.TT_EOF: {
                 throw new IllegalArgumentException("Expected token");
             }
-            case NStreamTokenizer.TT_WORD: {
+            case NToken.TT_WORD: {
                 if (tit.image.equals("**")) {
                     items.add(new ItemAny(consumeDepth(ItemDepth.ANY)));
                 } else if (tit.image.equals("*")) {

@@ -148,6 +148,17 @@ public abstract class MdAbstractElement implements MdElement {
         return this instanceof MdRow;
     }
 
+
+    @Override
+    public boolean isHr() {
+        return false;
+    }
+
+    @Override
+    public boolean isHr(String type) {
+        return false;
+    }
+
     @Override
     public boolean isColumn() {
         return this instanceof MdColumn;

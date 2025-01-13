@@ -61,6 +61,16 @@ public class MdHr extends MdAbstractElement {
     }
 
     @Override
+    public boolean isHr() {
+        return true;
+    }
+
+    @Override
+    public boolean isHr(String type) {
+        return Objects.equals(this.type, type);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

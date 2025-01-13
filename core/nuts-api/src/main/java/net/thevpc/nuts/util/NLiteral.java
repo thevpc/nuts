@@ -43,6 +43,14 @@ public interface NLiteral extends NBlankable {
 
     boolean isBoolean();
 
+    boolean isDecimalNumber();
+
+    boolean isBigNumber();
+
+    boolean isBigDecimal();
+
+    boolean isBigInt();
+
     boolean isNull();
 
     /**

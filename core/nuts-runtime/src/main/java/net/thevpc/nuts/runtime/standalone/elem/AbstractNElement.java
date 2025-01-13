@@ -181,6 +181,40 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public boolean isDecimalNumber() {
+        switch (type()) {
+            case FLOAT:
+            case DOUBLE:
+            case BIG_DECIMAL:{
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isBigNumber() {
+        switch (type()) {
+            case BIG_DECIMAL:
+            case BIG_INTEGER:
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isBigDecimal() {
+        return type()==NElementType.BIG_DECIMAL;
+    }
+
+    @Override
+    public boolean isBigInt() {
+        return type()==NElementType.BIG_INTEGER;
+    }
+
+    @Override
     public boolean isObject() {
         NElementType t = type();
         return t == NElementType.OBJECT;

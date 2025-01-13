@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.util.reflect;
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NArrays;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.NSession;
@@ -47,10 +48,18 @@ public class DefaultNReflectType implements NReflectType {
     private static final Pattern GETTER_SETTER = Pattern.compile("(?<prefix>(get|set|is))(?<suffix>([A-Z].*))");
 
     private Type javaType;
-    private Map<String, NReflectProperty> direct;
-    private List<NReflectProperty> directList;
-    private Map<String, NReflectProperty> all;
-    private List<NReflectProperty> allList;
+
+    private Map<String, NReflectProperty> propertiesDeclaredMap;
+    private List<NReflectProperty> propertiesDeclaredList;
+    private Map<String, NReflectProperty> propertiesAllMap;
+    private List<NReflectProperty> propertiesAllList;
+
+    private Map<String, NReflectMethod> methodsDeclaredMap;
+    private List<NReflectMethod> methodsDeclaredList;
+    private Map<String, NReflectMethod> methodsAllMap;
+    private List<NReflectMethod> methodsAllList;
+
+
     private NReflectRepository repo;
     private NReflectPropertyAccessStrategy propertyAccessStrategy;
     private NReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy;
@@ -98,7 +107,7 @@ public class DefaultNReflectType implements NReflectType {
     @Override
     public List<NReflectProperty> getDeclaredProperties() {
         build();
-        return directList;
+        return propertiesDeclaredList;
     }
 
     @Override
@@ -112,18 +121,18 @@ public class DefaultNReflectType implements NReflectType {
     @Override
     public List<NReflectProperty> getProperties() {
         build();
-        return allList;
+        return propertiesAllList;
     }
 
     @Override
     public NOptional<NReflectProperty> getProperty(String name) {
         build();
-        return NOptional.ofNamed(all.get(name), "property " + name);
+        return NOptional.ofNamed(propertiesAllMap.get(name), "property " + getName() + "::" + name);
     }
 
     @Override
     public NOptional<NReflectProperty> getDeclaredProperty(String name) {
-        return NOptional.ofNamed(direct.get(name), "property " + name);
+        return NOptional.ofNamed(propertiesDeclaredMap.get(name), "property " + name);
     }
 
     private Supplier<Object> resolveSessionConstr() {
@@ -349,42 +358,135 @@ public class DefaultNReflectType implements NReflectType {
     }
 
     private void build() {
-        if (direct == null) {
+        if (propertiesDeclaredMap == null) {
             Object cleanInstance = null;
             try {
                 cleanInstance = newInstance();
             } catch (Exception ex) {
                 //ignore any error...
             }
+            LinkedHashMap<String, IndexedItem<NReflectMethod>> declaredMethods = new LinkedHashMap<>();
+            LinkedHashMap<String, IndexedItem<NReflectMethod>> allMethods = new LinkedHashMap<>();
+
+
             LinkedHashMap<String, IndexedItem<NReflectProperty>> declaredProperties = new LinkedHashMap<>();
-            LinkedHashMap<String, IndexedItem<NReflectProperty>> fieldAllProperties = new LinkedHashMap<>();
+            LinkedHashMap<String, IndexedItem<NReflectProperty>> allProperties = new LinkedHashMap<>();
             Set<String> ambiguousWrites = new HashSet<>();
             int hierarchyIndex = 0;
+
             fillProperties(hierarchyIndex, javaType, declaredProperties, cleanInstance, ambiguousWrites, propertyAccessStrategy, propertyDefaultValueStrategy);
-            fieldAllProperties.putAll(declaredProperties);
+            allProperties.putAll(declaredProperties);
+
+            fillMethods(hierarchyIndex, javaType, declaredMethods, cleanInstance);
+            allMethods.putAll(declaredMethods);
+
             NReflectType parent = getSuperType();
             while (parent != null) {
                 hierarchyIndex++;
                 for (NReflectProperty property : parent.getProperties()) {
-                    if (!fieldAllProperties.containsKey(property.getName())) {
-                        fieldAllProperties.put(property.getName(), new IndexedItem<>(hierarchyIndex, property));
+                    if (!allProperties.containsKey(property.getName())) {
+                        allProperties.put(property.getName(), new IndexedItem<>(hierarchyIndex, property));
+                    }
+                }
+                for (NReflectMethod m : parent.getDeclaredMethods()) {
+                    String sig = normalizeSig(m.getName(),m.getSignature());
+                    if (!allMethods.containsKey(sig)) {
+                        allMethods.put(sig, new IndexedItem<>(hierarchyIndex, m));
                     }
                 }
                 parent = parent.getSuperType();
             }
-            this.direct = reorder(declaredProperties);
-            this.all = reorder(fieldAllProperties);
-            this.directList = Collections.unmodifiableList(new ArrayList<>(direct.values()));
-            this.allList = Collections.unmodifiableList(new ArrayList<>(all.values()));
+
+
+            this.propertiesDeclaredMap = reorderProperties(declaredProperties);
+            this.propertiesAllMap = reorderProperties(allProperties);
+            this.propertiesDeclaredList = Collections.unmodifiableList(new ArrayList<>(propertiesDeclaredMap.values()));
+            this.propertiesAllList = Collections.unmodifiableList(new ArrayList<>(propertiesAllMap.values()));
+
+            this.methodsDeclaredMap = reorderMethods(declaredMethods);
+            this.methodsAllMap = reorderMethods(allMethods);
+            this.methodsDeclaredList = Collections.unmodifiableList(new ArrayList<>(methodsDeclaredMap.values()));
+            this.methodsAllList = Collections.unmodifiableList(new ArrayList<>(methodsAllMap.values()));
 
         }
     }
 
-    private LinkedHashMap<String, NReflectProperty> reorder(LinkedHashMap<String, IndexedItem<NReflectProperty>> fieldAllProperties) {
+    @Override
+    public List<NReflectMethod> getMethods() {
+        build();
+        return Collections.unmodifiableList(methodsAllList);
+    }
+
+    @Override
+    public NOptional<NReflectMethod> getMethod(String name,NSignature signature) {
+        if(NBlankable.isBlank(name)){
+            //TODO
+            return NOptional.ofNamedEmpty(signature.toString());
+        }else {
+            NReflectMethod value = methodsAllMap.get(normalizeSig(name,signature));
+            if (value != null) {
+                return NOptional.of(value);
+            }
+            return NOptional.ofNamedEmpty(signature.toString());
+        }
+    }
+
+    private String normalizeSig(String name,NSignature signature) {
+        return name+signature.setVararg(false).toString();
+    }
+
+    /**
+     * TODO
+     * @param signature
+     * @return
+     */
+    @Override
+    public List<NReflectMethod> getMatchingMethods(String name,NSignature signature) {
+        NOptional<NReflectMethod> m = getMethod(name,signature);
+        if(m.isPresent()){
+            return Arrays.asList(m.get());
+        }
+        return Collections.emptyList();
+    }
+
+    /**
+     * TODO
+     * @param signature
+     * @return
+     */
+    @Override
+    public NOptional<NReflectMethod> getMatchingMethod(String name,NSignature signature) {
+        return getMethod(name,signature);
+    }
+
+    @Override
+    public List<NReflectMethod> getDeclaredMethods() {
+        return Collections.unmodifiableList(methodsDeclaredList);
+    }
+
+    private void fillMethods(int hierarchyIndex, Type javaType, LinkedHashMap<String, IndexedItem<NReflectMethod>> declaredMethods, Object cleanInstance) {
+        Method[] declaredMethods2 = _getMethods(javaType);
+        for (Method m : declaredMethods2) {
+            DefaultNReflectMethod rm = new DefaultNReflectMethod(m, this);
+            declaredMethods.put(normalizeSig(m.getName(),rm.getSignature()), new IndexedItem<>(hierarchyIndex, rm));
+        }
+    }
+
+    private LinkedHashMap<String, NReflectProperty> reorderProperties(LinkedHashMap<String, IndexedItem<NReflectProperty>> fieldAllProperties) {
         Map.Entry<String, IndexedItem<NReflectProperty>>[] ee = fieldAllProperties.entrySet().toArray(new Map.Entry[0]);
         Arrays.sort(ee, (o1, o2) -> Integer.compare(o2.getValue().index, o1.getValue().index));
         LinkedHashMap<String, NReflectProperty> r = new LinkedHashMap<>();
         for (Map.Entry<String, IndexedItem<NReflectProperty>> entry : ee) {
+            r.put(entry.getKey(), entry.getValue().item);
+        }
+        return r;
+    }
+
+    private LinkedHashMap<String, NReflectMethod> reorderMethods(LinkedHashMap<String, IndexedItem<NReflectMethod>> fieldAllProperties) {
+        Map.Entry<String, IndexedItem<NReflectMethod>>[] ee = fieldAllProperties.entrySet().toArray(new Map.Entry[0]);
+        Arrays.sort(ee, (o1, o2) -> Integer.compare(o2.getValue().index, o1.getValue().index));
+        LinkedHashMap<String, NReflectMethod> r = new LinkedHashMap<>();
+        for (Map.Entry<String, IndexedItem<NReflectMethod>> entry : ee) {
             r.put(entry.getKey(), entry.getValue().item);
         }
         return r;

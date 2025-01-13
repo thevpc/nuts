@@ -97,7 +97,7 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
         NInstallStatus installStatus = def.getInstallInformation().get().getInstallStatus();
         if (!installStatus.isInstalled()) {
             if (autoInstall) {
-                NInstallCmd.of().addId(def.getId()).run();
+                NInstallCmd.of(def.getId()).run();
                 NInstallStatus st = NFetchCmd.of(def.getId()).getResultDefinition().getInstallInformation().get().getInstallStatus();
                 if (!st.isInstalled()) {
                     throw new NUnexpectedException(NMsg.ofC("auto installation of %s failed", def.getId()));
@@ -107,9 +107,9 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
             }
         } else if (installStatus.isObsolete()) {
             if (autoInstall) {
-                NInstallCmd.of()
+                NInstallCmd.of(def.getId())
                         .configure(true, "--reinstall")
-                        .addId(def.getId()).run();
+                        .run();
             }
         }
 //        LinkedHashSet<NutsDependency> reinstall = new LinkedHashSet<>();

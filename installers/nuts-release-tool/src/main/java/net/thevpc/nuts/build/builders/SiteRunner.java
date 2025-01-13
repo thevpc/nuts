@@ -12,12 +12,13 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.lib.doc.context.NDocContext;
+import net.thevpc.nuts.lib.doc.context.ProjectNDocContext;
 import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.toolbox.docusaurus.DocusaurusCtrl;
 import net.thevpc.nuts.toolbox.docusaurus.DocusaurusProject;
-import net.thevpc.nuts.toolbox.ntemplate.filetemplate.TemplateConfig;
-import net.thevpc.nuts.toolbox.ntemplate.project.NTemplateProject;
+import net.thevpc.nuts.lib.doc.NDocProjectConfig;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMsg;
 
@@ -98,24 +99,23 @@ public class SiteRunner extends AbstractRunner {
     }
 
     private void runSiteGithubRepo() {
-        echo("**** $v (nuts)...", NMaps.of("v", NMsg.ofStyled("ntemplate", NTextStyle.keyword())));
-        NTemplateProject templateProject = new NTemplateProject(
-                new TemplateConfig()
-                        .setContextName("nuts-release-tool")
-                        .setProjectPath(context().root.resolve(".dir-template").toString())
-                        .setTargetFolder(context().root.toString())
-
-        );
+        echo("**** $v (nuts)...", NMaps.of("v", NMsg.ofStyled("ndoc", NTextStyle.keyword())));
+        NDocProjectConfig config = new NDocProjectConfig()
+                .setContextName("nuts-release-tool")
+                .setProjectPath(context().root.resolve(".dir-template").toString())
+                .setTargetFolder(context().root.toString());
+        NDocContext templateProject = new ProjectNDocContext();
         for (Map.Entry<String, Object> e : prepareVars().entrySet()) {
             templateProject.setVar(e.getKey(), e.getValue());
         }
         NPath.of(Mvn.localMaven() + "/" + Mvn.file(Nuts.getApiId(), MvnArtifactType.JAR))
                 .copyTo(context().NUTS_WEBSITE_BASE.resolve("static/nuts-preview.jar")
                 );
+        templateProject.run(config);
     }
 
     private void runSiteGithubDocumentation() {
-        NInstallCmd.of().addIds("ndocusaurus").run();
+        NInstallCmd.of("ndocusaurus").run();
         echo("**** $v (nuts)...", NMaps.of("v", NMsg.ofStyled("ndocusaurus", NTextStyle.keyword())));
         String workdir = context().NUTS_WEBSITE_BASE.toString();
         DocusaurusProject docusaurusProject = new DocusaurusProject(workdir,

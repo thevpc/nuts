@@ -62,13 +62,13 @@ public class XmlCodeHighlighter implements NCodeHighlighter {
         List<NText> nodes = new ArrayList<>();
         int s;
         NEvictingQueue<String> last = new NEvictingQueue<>(3);
-        while ((s = st.nextToken()) != NStreamTokenizer.TT_EOF) {
+        while ((s = st.nextToken()) != NToken.TT_EOF) {
             switch (s) {
-                case NStreamTokenizer.TT_SPACES: {
+                case NToken.TT_SPACE: {
                     nodes.add(txt.ofPlain(st.image));
                     break;
                 }
-                case NStreamTokenizer.TT_COMMENTS: {
+                case NToken.TT_COMMENTS: {
                     nodes.add(txt.ofStyled(st.image, NTextStyle.comments()));
                     break;
                 }
@@ -81,7 +81,7 @@ public class XmlCodeHighlighter implements NCodeHighlighter {
                     nodes.add(txt.ofStyled(st.image, NTextStyle.number()));
                     break;
                 }
-                case NStreamTokenizer.TT_WORD: {
+                case NToken.TT_WORD: {
                     if (last.size() > 0 && last.get(last.size() - 1).equals("<")) {
                         nodes.add(formatNodeName(st.image, txt));
                     } else if (last.size() > 1 && last.get(last.size() - 2).equals("<") && last.get(last.size() - 1).equals("/")) {

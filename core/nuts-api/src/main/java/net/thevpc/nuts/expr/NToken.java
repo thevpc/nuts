@@ -5,36 +5,43 @@ import net.thevpc.nuts.util.NStringUtils;
 
 public class NToken {
 
+    /***
+     * A constant indicating that the end of the line has been read.
+     */
+    public static final int TT_EOL = '\n';
     /**
      * A constant indicating that the end of the stream has been read.
      */
     public static final int TT_EOF = -1;
-
-    /**
-     * A constant indicating that the end of the line has been read.
-     */
-    public static final int TT_EOL = '\n';
-
-    public static final int TT_INT = -4;
-    public static final int TT_LONG = -5;
-    public static final int TT_BIG_INT = -6;
-    public static final int TT_FLOAT = -7;
-    public static final int TT_DOUBLE = -8;
-    public static final int TT_BIG_DECIMAL = -9;
-
+    //NOT USED
+    public static final int TT_NUMBER = -2;
     /**
      * A constant indicating that a word token has been read.
      */
     public static final int TT_WORD = -3;
 
     /* A constant indicating that no token has been read, used for
-     * initializing ttype.  FIXME This could be made public and
-     * made available as the part of the API in a future release.
+     * initializing ttype.
      */
-    public static final int TT_NOTHING = -30;
-    public static final int TT_STRING_LITERAL = -10;
-    public static final int TT_SPACE = -11;
-    public static final int TT_AND = -40;
+    public static final int TT_NOTHING = -4;
+
+    /// //////////////////////////////////////////////////////////////////
+
+    public static final int TT_INT = -10;
+    public static final int TT_LONG = -11;
+    public static final int TT_BIG_INT = -12;
+    public static final int TT_FLOAT = -13;
+    public static final int TT_DOUBLE = -14;
+    public static final int TT_BIG_DECIMAL = -15;
+    public static final int TT_COMMENTS = -16;
+    public static final int TT_SPACE = -17;
+
+//    public static final int TT_NOTHING = -25;
+
+    public static final int TT_STRING_LITERAL = -18;
+
+
+    public static final int TT_AND = -40; // &&
     public static final int TT_OR = -41;
     public static final int TT_LEFT_SHIFT = -42;
     public static final int TT_RIGHT_SHIFT = -43;
@@ -48,18 +55,44 @@ public class NToken {
     public static final int TT_NEQ2 = -51;
     public static final int TT_RIGHT_ARROW = -52;
     public static final int TT_RIGHT_ARROW2 = -53;
-    public static final int TT_COALESCE = -54;
-    public static final int TT_DOTS2 = -55;
-    public static final int TT_DOTS3 = -56;
-    public static final int TT_EQ3 = -57;
-    public static final int TT_NOT3 = -58;
-    public static final int TT_NOT2 = -59;
-    public static final int TT_NOT_LIKE = -60;
-    public static final int TT_LIKE2 = -62;
-    public static final int TT_LIKE3 = -63;
-    public static final int TT_DOLLAR = -64;
-    public static final int TT_DOLLAR_BRACE = -65;
-    public static final int TT_VAR = -66;
+
+    public static final int TT_QUOTE_SINGLE3 = -54;
+    public static final int TT_QUOTE_DOUBLE3 = -55;
+    public static final int TT_QUOTE_ANTI3 = -56;
+    public static final int TT_COMMENT_LINE_C = -57;
+    public static final int TT_COMMENT_LINE_SH = -58;
+    public static final int TT_COMMENT_MULTILINE_C = -59;
+    public static final int TT_COMMENT_MULTILINE_XML = -60;
+    public static final int TT_MUL_MUL = -61;
+    public static final int TT_PLUS_PLUS = -62;
+    public static final int TT_MINUS_MINUS = -63;
+    public static final int TT_DIV_DIV = -64;
+    public static final int TT_POW_POW = -65;
+    public static final int TT_REM_REM = -66;
+
+    public static final int TT_MUL_EQ = -67;
+    public static final int TT_PLUS_EQ = -68;
+    public static final int TT_MINUS_EQ = -69;
+    public static final int TT_DIV_EQ = -70;
+    public static final int TT_POW_EQ = -71;
+    public static final int TT_REM_EQ = -72;
+    public static final int TT_ISTR_DQ = -73;
+    public static final int TT_ISTR_SQ = -74;
+    public static final int TT_ISTR_AQ = -75;
+
+    public static final int TT_COALESCE = -76;
+    public static final int TT_DOTS2 = -77;
+    public static final int TT_DOTS3 = -78;
+    public static final int TT_EQ3 = -79;
+    public static final int TT_NOT3 = -80;
+    public static final int TT_NOT2 = -81;
+    public static final int TT_NOT_LIKE = -82;
+    public static final int TT_LIKE2 = -83;
+    public static final int TT_LIKE3 = -84;
+    public static final int TT_DOLLAR = -85;
+    public static final int TT_DOLLAR_BRACE = -86;
+    public static final int TT_VAR = -87;
+
     public static final int TT_DEFAULT = Integer.MIN_VALUE;
 
 
@@ -76,6 +109,8 @@ public class NToken {
     public static final int TT_CLOSE_BRACE = '}';
     public static final int TT_OPEN_PAR = '(';
     public static final int TT_CLOSE_PAR = ')';
+
+
 
     public int ttype;
     public int lineno;
@@ -228,9 +263,15 @@ public class NToken {
             case TT_DOLLAR:
                 return "TT_DOLLAR";
             case TT_DOLLAR_BRACE:
-                return "TT_DOLLAR_BRACE";
+                return "DOLLAR_BRACE";
             case TT_VAR:
-                return "TT_VAR";
+                return "VAR";
+            case TT_COMMENTS:
+                return "COMMENTS";
+            case TT_DIV_EQ:
+                return "DIV_EQ";
+            case TT_DEFAULT:
+                return "TT_DEFAULT";
             case '\t':
                 return "'\\t'";
             case '\f':

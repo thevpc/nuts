@@ -12,15 +12,15 @@ public class NExprEvaluatorAsContext extends NExprDeclarationsBase {
     private NExprEvaluator eval;
     private NExprDeclarations parent;
 
-    public NExprEvaluatorAsContext(NWorkspace workspace,NExprEvaluator eval, NExprDeclarations parent) {
-        super(workspace);
+    public NExprEvaluatorAsContext(NExprs exprs,NWorkspace workspace,NExprEvaluator eval, NExprDeclarations parent) {
+        super(exprs,workspace);
         this.eval = eval;
         this.parent = parent;
     }
 
 
     @Override
-    public NOptional<NExprFctDeclaration> getFunction(String fctName, Object... args) {
+    public NOptional<NExprFctDeclaration> getFunction(String fctName, NExprNodeValue... args) {
         return eval.getFunction(fctName, args, this)
                 .<NExprFctDeclaration>map(x -> new DefaultNExprFctDeclaration(fctName, x))
                 .orElseUse(() -> parent.getFunction(fctName, args))
@@ -28,7 +28,7 @@ public class NExprEvaluatorAsContext extends NExprDeclarationsBase {
     }
 
     @Override
-    public NOptional<NExprConstructDeclaration> getConstruct(String constructName, NExprNode... args) {
+    public NOptional<NExprConstructDeclaration> getConstruct(String constructName, NExprNodeValue... args) {
         return eval.getConstruct(constructName, args, this)
                 .<NExprConstructDeclaration>map(x -> new DefaultNExprConstructDeclaration(constructName, x))
                 .orElseUse(() -> parent.getConstruct(constructName, args))
@@ -36,7 +36,7 @@ public class NExprEvaluatorAsContext extends NExprDeclarationsBase {
     }
 
     @Override
-    public NOptional<NExprOpDeclaration> getOperator(String opName, NExprOpType type, NExprNode... args) {
+    public NOptional<NExprOpDeclaration> getOperator(String opName, NExprOpType type, NExprNodeValue... args) {
         return eval.getOperator(opName, type, args, this)
                 .<NExprOpDeclaration>map(x -> new DefaultNExprOpDeclaration(opName, x))
                 .orElseUse(() -> parent.getOperator(opName, type, args))
@@ -49,13 +49,6 @@ public class NExprEvaluatorAsContext extends NExprDeclarationsBase {
                 .<NExprVarDeclaration>map(x -> new DefaultNExprVarDeclaration(getWorkspace(),varName, x))
                 .orElseUse(() -> parent.getVar(varName))
                 ;
-    }
-
-    public int[] getOperatorPrecedences() {
-        return Stream.concat(
-                IntStream.of(eval.getOperatorPrecedences(this)).boxed(),
-                IntStream.of(parent.getOperatorPrecedences()).boxed()
-        ).sorted().distinct().mapToInt(x -> x).toArray();
     }
 
     @Override

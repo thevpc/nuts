@@ -516,4 +516,5 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     public boolean isDeleteOnDispose() {
         return deleteOnDispose;
     }
+
 }

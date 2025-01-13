@@ -6,9 +6,9 @@
     <artifactId>ndoc</artifactId>
     <version>0.8.5.0</version>
     <packaging>jar</packaging>
-    <name>Nuts Community Toolbox NDoc</name>
+    <name>Nuts Community Toolbox Documentation Tool</name>
     <url>https://github.com/thevpc/nuts</url>
-    <description>Nuts Javadoc Command</description>
+    <description>Nuts Static Site Generator and Javadoc Command</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -61,24 +61,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>net.thevpc.nuts</groupId>
-            <artifactId>nuts</artifactId>
-            <version>0.8.5</version>
-        </dependency>
-        <dependency>
             <groupId>net.thevpc.nuts.lib</groupId>
-            <artifactId>nlib-md</artifactId>
+            <artifactId>nlib-doc</artifactId>
             <version>0.8.5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.javaparser</groupId>
-            <artifactId>javaparser-symbol-solver-core</artifactId>
-            <version>3.16.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.javaparser</groupId>
-            <artifactId>javaparser-core</artifactId>
-            <version>3.16.1</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

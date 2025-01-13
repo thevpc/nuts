@@ -1,13 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
 import net.thevpc.nuts.NWorkspace;
-import net.thevpc.nuts.expr.NExprOpNode;
-import net.thevpc.nuts.expr.NToken;
+import net.thevpc.nuts.expr.*;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.expr.NExprNode;
-import net.thevpc.nuts.expr.NExprOpType;
 
 import java.io.StringReader;
 import java.util.*;
@@ -115,7 +111,12 @@ public class SyntaxParser {
         return false;
     }
 
-    boolean isOpenPar(NToken t, NExprOpType opType, int precedenceIndex) {
+//    int comparePrecedenceIndex(NExprOpDeclaration op, int precedenceIndex) {
+//        int v = withCache.precedenceIndex(op.getPrecedence());
+//        return Integer.compare(v, precedenceIndex);
+//    }
+
+    boolean isOpenPar(NToken t, NExprOpType opType) {
         if (t == null) {
             return false;
         }
@@ -123,12 +124,12 @@ public class SyntaxParser {
             case '(':
             case '[':
             case '{':
-                return withCache.isOp(t.sval, opType, precedenceIndex);
+                return withCache.getOp(t, opType) != null;
         }
         return false;
     }
 
-    boolean isOpIgnoresMissingSecondOperand(NToken t, NExprOpType opType, int precedenceIndex) {
+    boolean isOpIgnoresMissingSecondOperand(NToken t, NExprOpType opType) {
         if (t == null) {
             return false;
         }
@@ -138,6 +139,7 @@ public class SyntaxParser {
         }
         return false;
     }
+
     private boolean isInfixOpZipped(String name, String uniformName) {
         if (name == null) {
             return false;
@@ -148,7 +150,8 @@ public class SyntaxParser {
         }
         return false;
     }
-    boolean isOpAcceptsMissingSecondOperand(NToken t, NExprOpType opType, int precedenceIndex) {
+
+    boolean isOpAcceptsMissingSecondOperand(NToken t, NExprOpType opType) {
         if (t == null) {
             return false;
         }
@@ -157,35 +160,6 @@ public class SyntaxParser {
         return false;
     }
 
-    boolean isOp(NToken t, NExprOpType opType, int precedenceIndex) {
-        if (t == null) {
-            return false;
-        }
-        switch (t.ttype) {
-            case '(':
-            case ')':
-            case '[':
-            case ']':
-            case '{':
-            case '}':
-            case NToken.TT_SPACE:
-            case NToken.TT_STRING_LITERAL:
-            case NToken.TT_EOL:
-            case NToken.TT_EOF:
-            case NToken.TT_INT:
-            case NToken.TT_LONG:
-            case NToken.TT_BIG_INT:
-            case NToken.TT_FLOAT:
-            case NToken.TT_DOUBLE:
-            case NToken.TT_BIG_DECIMAL:
-                return false;
-        }
-        String s = t.sval;
-        if (s == null) {
-            s = String.valueOf((char) t.ttype);
-        }
-        return withCache.isOp(s, opType, precedenceIndex);
-    }
 
     private NOptional<NExprNode> nextNonTerminalIf() {
         NToken t = peekSkipSpace();
@@ -232,20 +206,21 @@ public class SyntaxParser {
     }
 
     private NToken peekSkipSpace() {
-        while (true){
+        while (true) {
             NToken t = tokens.peek();
-            if(t!=null){
-                if(t.ttype!=NToken.TT_SPACE){
+            if (t != null) {
+                if (t.ttype != NToken.TT_SPACE) {
                     return t;
-                }else{
+                } else {
                     //skip space
                     tokens.next();
                 }
-            }else{
+            } else {
                 return null;
             }
         }
     }
+
     private NOptional<NExprNode> nextTerminalOrStmt() {
         NToken t = peekSkipSpace();
         if (t == null) {
@@ -257,15 +232,7 @@ public class SyntaxParser {
         return nextTerminal();
     }
 
-    private NOptional<NExprNode> nextNonTerminal(int precedenceIndex) {
-        if (precedenceIndex == withCache.precedences.length) {
-            return nextTerminalOrStmt();
-        }
-        NToken t = peekSkipSpace();
-        if (t == null) {
-            return NOptional.ofError(() -> NMsg.ofPlain("expected non terminal"));
-        }
-        NOptional<NExprNode> first = null;
+    private NOptional<NExprNode> _nextOpenPar(NToken t) {
         if (isOpenParStart(t)) {
             NToken startPar = tokens.next();
             NToken p2 = peekSkipSpace();
@@ -303,141 +270,183 @@ public class SyntaxParser {
                 }
             }
         }
-        if (isOp(t, NExprOpType.PREFIX, precedenceIndex)) {
+        return null;
+    }
+
+    private NOptional<NExprNode> _nextPrefixOp(NToken t, int precedence) {
+        NExprOpDeclaration op = withCache.getOp(t, NExprOpType.PREFIX);
+        if (op != null && !(op.getPrecedence() < precedence)) {
             tokens.next();
-            NOptional<NExprNode> q = nextNonTerminal(precedenceIndex);
+            NOptional<NExprNode> q = nextNonTerminal(precedence);
             if (q.isEmpty()) {
                 return NOptional.ofError(() -> NMsg.ofPlain("expected expression"));
             }
             if (q.isError()) {
                 return q;
             }
-            first = NOptional.of(
-                    new DefaultOpNode(t.sval, opName(t), NExprOpType.PREFIX, withCache.precedences[precedenceIndex], Arrays.asList(q.get()))
+            return NOptional.of(
+                    new DefaultOpNode(t.sval, opName(t), NExprOpType.PREFIX, op.getPrecedence(), Arrays.asList(q.get()))
             );
-        } else {
-            first = nextNonTerminal(precedenceIndex + 1);
         }
-        if (first.isEmpty()) {
-            return NOptional.ofError(() -> NMsg.ofPlain("expected expression"));
+        return nextTerminalOrStmt();
+//        return nextNonTerminal(precedenceIndex + 1);
+    }
+
+    private NOptional<NExprNode> _nextPostfixOp(NOptional<NExprNode> first, int precedence) {
+        while (true) {
+            NToken t = peekSkipSpace();
+            if (t == null) {
+                break;
+            }
+            if (isOpenPar(t, NExprOpType.POSTFIX)) {
+                NOptional<NExprNode> e = nextTerminalOrStmt();
+                NOptional<NExprNode> finalFirst = first;
+                NToken finalInfixOp = t;
+                first = e.map(x -> {
+                    List<NExprNode> cc = new ArrayList<>();
+                    cc.add(finalFirst.get());
+                    cc.addAll(x.getChildren());
+                    String opName = "()";
+                    switch (finalInfixOp.ttype) {
+                        case '[': {
+                            opName = "[]";
+                            break;
+                        }
+                        case '(': {
+                            opName = "()";
+                            break;
+                        }
+                        case '{': {
+                            opName = "{}";
+                            break;
+                        }
+                        default: {
+                            throw new IllegalArgumentException("unsupported");
+                        }
+                    }
+                    return new DefaultOpNode(finalInfixOp.sval, opName, NExprOpType.POSTFIX, -1, cc);
+                });
+            } else {
+                NExprOpDeclaration op = withCache.getOp(t, NExprOpType.POSTFIX);
+                if (op != null && !(op.getPrecedence() < precedence)) {
+                    tokens.next();
+                    first = NOptional.of(new DefaultOpNode(t.sval, opName(t), NExprOpType.POSTFIX, op.getPrecedence(), Arrays.asList(first.get())));
+                } else {
+                    break;
+                }
+            }
         }
+        return first;
+    }
+
+
+    private NOptional<NExprNode> nextNonTerminal(int precedence) {
+//        if (precedence < 0) {
+//            return NOptional.ofNamedEmpty("non-terminal");
+//        }
+//        if (precedence >= Integer.MAX_VALUE) {
+//            return nextTerminalOrStmt();
+//        }
+        NToken t = peekSkipSpace();
+        if (t == null) {
+            return NOptional.ofError(() -> NMsg.ofPlain("expected non terminal"));
+        }
+        NOptional<NExprNode> first = null;
+        if (precedence == 0) {
+            NOptional<NExprNode> v = _nextOpenPar(t);
+            if (v != null) {
+                first = v;
+                if (first != null) {
+                    if (first.isEmpty()) {
+                        return NOptional.ofError(() -> NMsg.ofPlain("expected expression"));
+                    }
+                    if (first.isError()) {
+                        return first;
+                    }
+                }
+            }
+        }
+
+        if (first == null) {
+            first = _nextPrefixOp(t, precedence);
+            if (first.isEmpty()) {
+                return NOptional.ofError(() -> NMsg.ofPlain("expected expression"));
+            }
+            if (first.isError()) {
+                return first;
+            }
+        }
+
+        first = _nextInfixOp(first, precedence);
         if (first.isError()) {
             return first;
         }
-        NToken infixOp = peekSkipSpace();
-        if (isOpenPar(infixOp, NExprOpType.POSTFIX, precedenceIndex)) {
-            NOptional<NExprNode> e = nextTerminalOrStmt();
-            NOptional<NExprNode> finalFirst = first;
-            NToken finalInfixOp = infixOp;
-            return e.map(x -> {
-                List<NExprNode> cc = new ArrayList<>();
-                cc.add(finalFirst.get());
-                cc.addAll(x.getChildren());
-                String opName = "()";
-                switch (finalInfixOp.ttype) {
-                    case '[': {
-                        opName = "[]";
-                        break;
-                    }
-                    case '(': {
-                        opName = "()";
-                        break;
-                    }
-                    case '{': {
-                        opName = "{}";
-                        break;
-                    }
-                    default: {
-                        throw new IllegalArgumentException("unsupported");
-                    }
-                }
-                return new DefaultOpNode(finalInfixOp.sval, opName, NExprOpType.POSTFIX, -1, cc);
-            });
-        }
-        if (isOp(infixOp, NExprOpType.INFIX, precedenceIndex)) {
+
+        return _nextPostfixOp(first, precedence);
+    }
+
+    private NOptional<NExprNode> _nextInfixOp(NOptional<NExprNode> first, int precedence) {
+        while (true) {
+            NToken infixOp = peekSkipSpace();
+            if (infixOp == null) {
+                break;
+            }
+            NExprOpDeclaration op = withCache.getOp(infixOp, NExprOpType.INFIX);
+            if (op == null) {
+                break;
+            }
+            if (op.getPrecedence() < precedence) {
+                break;
+            }
             tokens.next();
-            //if right associative
-//            NutsExpr.Node q = nextNonTerminal(precedenceIndex);
-//            if (q == null) {
-//                throw new NutsIllegalArgumentException(session, NMsg.ofC("expected expression"));
-//            }
-//            return new DefaultOpNode(opName(infixOp), NutsExpr.OpType.INFIX, withCache.precedences[precedenceIndex], new NutsExpr.Node[]{first,q});
-            //else
-            NOptional<NExprNode> q = nextNonTerminal(precedenceIndex + 1);
+            int nextPrecedence = op.getPrecedence();
+            if (op.getAssociativity() == NExprOpAssociativity.LEFT) {
+                nextPrecedence--;
+            }
+            NOptional<NExprNode> q = nextNonTerminal(nextPrecedence);
+
             if (q.isEmpty()) {
-                if(isOpIgnoresMissingSecondOperand(infixOp, NExprOpType.INFIX, precedenceIndex)){
-                    return first;
-                }else if(isOpAcceptsMissingSecondOperand(infixOp, NExprOpType.INFIX, precedenceIndex)){
-                    first = NOptional.of(new DefaultOpNode(infixOp.sval, opName(infixOp), NExprOpType.INFIX, withCache.precedences[precedenceIndex], Arrays.asList(first.get(), null)));
-                }else {
+                if (isOpIgnoresMissingSecondOperand(infixOp, NExprOpType.INFIX)) {
+                    //do nothing
+                } else if (isOpAcceptsMissingSecondOperand(infixOp, NExprOpType.INFIX)) {
+                    first = NOptional.of(createInfixOpNodeOrCombine(infixOp.sval, opName(infixOp), op.getPrecedence(), first.get(), null));
+                } else {
                     return NOptional.ofError(() -> NMsg.ofPlain("expected expression"));
                 }
-            }else if (q.isError()) {
-                if(isOpIgnoresMissingSecondOperand(infixOp, NExprOpType.INFIX, precedenceIndex)){
+            } else if (q.isError()) {
+                if (isOpIgnoresMissingSecondOperand(infixOp, NExprOpType.INFIX)) {
                     //do nothing
-                }else if(isOpAcceptsMissingSecondOperand(infixOp, NExprOpType.INFIX, precedenceIndex)){
-                    first = NOptional.of(createInfixOpNodeOrCombine(infixOp.sval, opName(infixOp), withCache.precedences[precedenceIndex], first.get(), null));
-                }else {
+                } else if (isOpAcceptsMissingSecondOperand(infixOp, NExprOpType.INFIX)) {
+                    first = NOptional.of(createInfixOpNodeOrCombine(infixOp.sval, opName(infixOp), op.getPrecedence(), first.get(), null));
+                } else {
                     return q;
                 }
-            }else {
-                first = NOptional.of(createInfixOpNodeOrCombine(infixOp.sval, opName(infixOp), withCache.precedences[precedenceIndex], first.get(), q.get()));
+            } else {
+                first = NOptional.of(createInfixOpNodeOrCombine(infixOp.sval, opName(infixOp), op.getPrecedence(), first.get(), q.get()));
             }
-            infixOp = peekSkipSpace();
-            while (infixOp != null && isOp(infixOp, NExprOpType.INFIX, precedenceIndex)) {
-                tokens.next();
-                q = nextNonTerminal(precedenceIndex + 1);
-
-                if (q.isEmpty()) {
-                    if(isOpIgnoresMissingSecondOperand(infixOp, NExprOpType.INFIX, precedenceIndex)){
-                        //do nothing
-                    }else if(isOpAcceptsMissingSecondOperand(infixOp, NExprOpType.INFIX, precedenceIndex)){
-                        first = NOptional.of(createInfixOpNodeOrCombine(infixOp.sval, opName(infixOp), withCache.precedences[precedenceIndex], first.get(), null));
-                    }else {
-                        return NOptional.ofError(() -> NMsg.ofPlain("expected expression"));
-                    }
-                }else if (q.isError()) {
-                    if(isOpIgnoresMissingSecondOperand(infixOp, NExprOpType.INFIX, precedenceIndex)){
-                        //do nothing
-                    }else if(isOpAcceptsMissingSecondOperand(infixOp, NExprOpType.INFIX, precedenceIndex)){
-                        first = NOptional.of(createInfixOpNodeOrCombine(infixOp.sval, opName(infixOp), withCache.precedences[precedenceIndex], first.get(), null));
-                    }else {
-                        return q;
-                    }
-                }else {
-                    first = NOptional.of(createInfixOpNodeOrCombine(infixOp.sval, opName(infixOp), withCache.precedences[precedenceIndex], first.get(), q.get()));
-                }
-                infixOp = peekSkipSpace();
-            }
-            return first;
-        } else if (isOp(infixOp, NExprOpType.POSTFIX, precedenceIndex)) {
-            tokens.next();
-            return NOptional.of(new DefaultOpNode(infixOp.sval, opName(infixOp), NExprOpType.POSTFIX, withCache.precedences[precedenceIndex], Arrays.asList(first.get())));
-        } else {
-            return first;
         }
+        return first;
     }
 
     private NExprOpNode createInfixOpNodeOrCombine(String name, String uniformName, int precedence, NExprNode a, NExprNode b) {
-        if(isInfixOpZipped(name,uniformName)){
-            if((a!=null && a.getName().equals(name)) || (b!=null && b.getName().equals(name))){
-                List<NExprNode> aa=new ArrayList<>();
-                if((a!=null && a.getName().equals(name))) {
+        if (isInfixOpZipped(name, uniformName)) {
+            if ((a != null && a.getName().equals(name)) || (b != null && b.getName().equals(name))) {
+                List<NExprNode> aa = new ArrayList<>();
+                if ((a != null && a.getName().equals(name))) {
                     aa.addAll(a.getChildren());
-                }else{
+                } else {
                     aa.add(a);
                 }
-                if((b!=null && b.getName().equals(name))) {
+                if ((b != null && b.getName().equals(name))) {
                     aa.addAll(b.getChildren());
-                }else{
+                } else {
                     aa.add(b);
                 }
                 return new DefaultOpNode(name, uniformName, NExprOpType.INFIX, precedence, aa);
             }
         }
-        return new DefaultOpNode(name, uniformName, NExprOpType.INFIX, precedence, new ArrayList<>(Arrays.asList(a,b)));
+        return new DefaultOpNode(name, uniformName, NExprOpType.INFIX, precedence, new ArrayList<>(Arrays.asList(a, b)));
     }
-
 
 
     private NOptional<NExprNode> nextTerminal() {
@@ -590,7 +599,7 @@ public class SyntaxParser {
                     }
                     return NOptional.of(new DefaultFunctionNode(n, functionParams.toArray(new NExprNode[0])));
                 } else {
-                    return NOptional.of(new DefaultVarNode(n));
+                    return NOptional.of(new DefaultWordNode(n));
                 }
             }
             case NToken.TT_INT:
@@ -604,6 +613,9 @@ public class SyntaxParser {
             }
             case NToken.TT_STRING_LITERAL: {
                 tokens.next();
+                if (t.image.charAt(0) == '$') {
+                    return NOptional.of(new DefaultNExprInterpolatedStrNode(t.sval));
+                }
                 return NOptional.of(new DefaultLiteralNode(t.sval));
             }
         }

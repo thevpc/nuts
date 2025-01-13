@@ -138,10 +138,8 @@ public final class NApplications {
                     return (T) constructor.newInstance((Object) args);
                 } else if (constructor.getParameterCount() == 0) {
                     dconstructor = (Constructor<T>) constructor;
+                    return dconstructor.newInstance();
                 }
-            }
-            if (dconstructor != null) {
-                return dconstructor.newInstance();
             }
         } catch (InstantiationException ex) {
             Throwable c = ex.getCause();

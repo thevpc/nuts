@@ -10,7 +10,7 @@ public class BracesFctNode extends AbstractOp {
     }
 
     @Override
-    public Object eval(String name, List<NExprNode> args, NExprDeclarations e) {
+    public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations e) {
         throw new IllegalArgumentException("unable to evaluate");
     }
 }

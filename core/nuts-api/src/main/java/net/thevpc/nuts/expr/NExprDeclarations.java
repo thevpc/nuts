@@ -1,18 +1,18 @@
 package net.thevpc.nuts.expr;
 
+import net.thevpc.nuts.util.NFunction;
+import net.thevpc.nuts.util.NFunction2;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NSessionProvider;
 
 import java.util.List;
 
 public interface NExprDeclarations {
 
-    NOptional<NExprFctDeclaration> getFunction(String fctName, Object... args);
+    NOptional<NExprFctDeclaration> getFunction(String fctName, NExprNodeValue... args);
 
-    NOptional<NExprConstructDeclaration> getConstruct(String constructName, NExprNode... args);
+    NOptional<NExprConstructDeclaration> getConstruct(String constructName, NExprNodeValue... args);
 
-    NOptional<NExprOpDeclaration> getOperator(String opName, NExprOpType type, NExprNode... args);
+    NOptional<NExprOpDeclaration> getOperator(String opName, NExprOpType type, NExprNodeValue... args);
 
     List<NExprOpDeclaration> getOperators();
 
@@ -24,15 +24,21 @@ public interface NExprDeclarations {
     NExprMutableDeclarations newMutableDeclarations();
 
 
-    NOptional<Object> evalFunction(String fctName, Object... args);
+    NOptional<Object> evalFunction(String fctName, NExprNodeValue... args);
 
-    NOptional<Object> evalConstruct(String constructName, NExprNode... args);
+    NOptional<Object> evalConstruct(String constructName, NExprNodeValue... args);
 
-    NOptional<Object> evalOperator(String opName, NExprOpType type, NExprNode... args);
+    NOptional<Object> evalOperator(String opName, NExprOpType type, NExprNodeValue... args);
 
-    NOptional<Object> evalSetVar(String varName, Object value);
+    NOptional<Object> evalInfixOperator(String opName, NExprNodeValue first, NExprNodeValue second);
 
-    NOptional<Object> evalGetVar(String varName);
+    NOptional<Object> evalPrefixOperator(String opName, NExprNodeValue arg);
+
+    NOptional<Object> evalPostfixOperator(String opName, NExprNodeValue arg);
+
+    NOptional<Object> setVarValue(String varName, Object value);
+
+    NOptional<Object> getVarValue(String varName);
 
 
     /**
@@ -43,5 +49,23 @@ public interface NExprDeclarations {
      */
     NOptional<NExprNode> parse(String expression);
 
-    int[] getOperatorPrecedences();
+    NExprNodeValue literalAsValue(Object any);
+
+    NExprNodeValue nodeAsValue(NExprNode any);
+
+    NExprNode literalAsNode(Object any);
+
+    <A, B> NOptional<NFunction2<A, B, ?>> findCommonInfixOp(NExprCommonOp op, Class<? extends A> firstArgType, Class<? extends B> secondArgType);
+
+    <A> NOptional<NFunction<A, ?>> findCommonPrefixOp(NExprCommonOp op, Class<? extends A> argType);
+
+    <A> NOptional<NFunction<A, ?>> findCommonPostfixOp(NExprCommonOp op, Class<? extends A> argType);
+
+    NExprWordNode ofWord(String a);
+
+    NExprLiteralNode ofLiteral(Object a);
+
+    NExprVar ofConst(String name,Object a);
+
+    NExprInterpolatedStrNode ofInterpolatedStr(String a);
 }

@@ -262,6 +262,16 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
     }
 
     @Override
+    public boolean isLocal(NPath basePath) {
+        return ref.isLocal();
+    }
+
+    @Override
+    public boolean isEqOrDeepChildOf(NPath basePath, NPath other) {
+        return ref.isEqOrDeepChildOf(other);
+    }
+
+    @Override
     public NPath getRoot(NPath basePath) {
         if (isRoot(basePath)) {
             return basePath;
@@ -342,6 +352,7 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
             return false;
         }
     }
+
 
     @Override
     public byte[] getDigest(NPath basePath, String algo) {

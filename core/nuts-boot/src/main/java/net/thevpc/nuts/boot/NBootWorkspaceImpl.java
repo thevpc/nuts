@@ -147,6 +147,9 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             errorMessage.append("Try 'nuts --help' for more information.");
             bLog.warn(NBootMsg.ofC("Skipped Error : %s", errorMessage));
         }
+        if (userOptionsUnparsed.getAppArgs() != null) {
+            userOptions.getApplicationArguments().addAll(Arrays.asList(userOptionsUnparsed.getAppArgs()));
+        }
         this.options = userOptions.copy();
         this.postInit();
     }
@@ -1136,7 +1139,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             if (u != null) {
                 try {
                     u.processThrowable(options, bLog);
-                }catch (Exception any){
+                } catch (Exception any) {
                     NBootUtils.processThrowable(ex, bLog, true, NBootUtils.resolveShowStackTrace(options), NBootUtils.resolveGui(options));
                 }
             } else {

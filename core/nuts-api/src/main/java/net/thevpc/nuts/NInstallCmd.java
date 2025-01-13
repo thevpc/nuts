@@ -48,6 +48,14 @@ public interface NInstallCmd extends NWorkspaceCmd {
         return NExtensions.of(NInstallCmd.class);
     }
 
+    static NInstallCmd of(String... ids) {
+        return NExtensions.of(NInstallCmd.class).addIds(ids);
+    }
+
+    static NInstallCmd of(NId... ids) {
+        return NExtensions.of(NInstallCmd.class).addIds(ids);
+    }
+
     /**
      * remove artifact id to install
      *

@@ -58,19 +58,19 @@ public class NMultiPattern {
             map.put(pattern, nfo);
         }
         if (matchType == null) {
-            nfo.action = action;
+            nfo.setAction(action);
         } else {
             switch (matchType) {
                 case FULL_MATCH: {
-                    nfo.fullMatchAction = action;
+                    nfo.setFullMatchAction(action);
                     break;
                 }
                 case MATCH: {
-                    nfo.matchAction = action;
+                    nfo.setMatchAction(action);
                     break;
                 }
                 case PARTIAL_MATCH: {
-                    nfo.partialMatchAction = action;
+                    nfo.setPartialMatchAction(action);
                     break;
                 }
                 case NO_MATCH: {

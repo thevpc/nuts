@@ -214,7 +214,7 @@
 /installers/nuts-bundle-template/nuts-bundle-template.iml
 /tutorials/naf/remote-self-call-example/target
 /tutorials/naf/custom-shell-example/target
-/documentation/website/old/
+/deprecated/documentation-docusaurus-website/old/
 /documentation/website-old
 /installers/nuts-installer/src/dist/nuts-installer-*.jar
 /installers/nuts-installer/dist/portable-jar/nuts-*.jar
@@ -239,3 +239,5 @@ core/nuts-app-full/target
 /core/nuts-boot/assembly.xml
 /core/nuts-lib/target
 
+/documentation/website/dist/
+/libraries/nlib-doc/target

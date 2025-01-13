@@ -10,22 +10,22 @@ import java.util.Collections;
 import java.util.List;
 
 public class EmptyRootDeclarations extends NExprDeclarationsBase {
-    public EmptyRootDeclarations(NWorkspace workspace) {
-        super(workspace);
+    public EmptyRootDeclarations(NExprs exprs, NWorkspace workspace) {
+        super(exprs, workspace);
     }
 
     @Override
-    public NOptional<NExprFctDeclaration> getFunction(String fctName, Object... args) {
+    public NOptional<NExprFctDeclaration> getFunction(String fctName, NExprNodeValue... args) {
         return NOptional.ofEmpty(() -> NMsg.ofC("function not found %s", fctName));
     }
 
     @Override
-    public NOptional<NExprConstructDeclaration> getConstruct(String constructName, NExprNode... args) {
+    public NOptional<NExprConstructDeclaration> getConstruct(String constructName, NExprNodeValue... args) {
         return NOptional.ofEmpty(() -> NMsg.ofC("construct not found %s", constructName));
     }
 
     @Override
-    public NOptional<NExprOpDeclaration> getOperator(String opName, NExprOpType type, NExprNode... args) {
+    public NOptional<NExprOpDeclaration> getOperator(String opName, NExprOpType type, NExprNodeValue... args) {
         return NOptional.ofEmpty(() -> NMsg.ofC("operator not found %s", opName));
     }
 
@@ -37,10 +37,5 @@ public class EmptyRootDeclarations extends NExprDeclarationsBase {
     @Override
     public List<NExprOpDeclaration> getOperators() {
         return Collections.emptyList();
-    }
-
-    @Override
-    public int[] getOperatorPrecedences() {
-        return new int[0];
     }
 }

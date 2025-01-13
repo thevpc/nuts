@@ -63,6 +63,26 @@ public interface NReflectType {
 
     NReflectType replaceVars(Function<NReflectType, NReflectType> mapper);
 
+    /**
+     * all methods including super (if not overridden)
+     *
+     * @return
+     */
+    List<NReflectMethod> getMethods();
+
+    NOptional<NReflectMethod> getMethod(String name,NSignature signature);
+
+    List<NReflectMethod> getMatchingMethods(String name,NSignature signature);
+
+    NOptional<NReflectMethod> getMatchingMethod(String name,NSignature signature);
+
+    /**
+     * only declared methods
+     *
+     * @return
+     */
+    List<NReflectMethod> getDeclaredMethods();
+
     List<NReflectProperty> getProperties();
 
     NOptional<NReflectProperty> getProperty(String name);
@@ -72,6 +92,7 @@ public interface NReflectType {
     boolean isAssignableFrom(NReflectType type);
 
     boolean hasNoArgsConstructor();
+
     boolean hasSpecialConstructor();
 
     boolean hasSessionConstructor();
@@ -88,9 +109,9 @@ public interface NReflectType {
 
     boolean isPrimitive();
 
-    NOptional<NReflectType> getBoxedType() ;
+    NOptional<NReflectType> getBoxedType();
 
-    NOptional<NReflectType> getPrimitiveType() ;
+    NOptional<NReflectType> getPrimitiveType();
 
     Object getDefaultValue();
 

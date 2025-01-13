@@ -541,4 +541,19 @@ public class NPathFromSPI extends NPathBase {
         }
         return digest;
     }
+
+    @Override
+    public boolean isEqOrDeepChildOf(NPath other) {
+        if(other==null){
+            return false;
+        }
+        if(other instanceof NCompressedPathBase){
+            other=((NCompressedPathBase) other).getBase();
+        }
+        if(other instanceof NCompressedPath){
+            other=((NCompressedPath) other).getBase();
+        }
+        return base.isEqOrDeepChildOf(this,other);
+    }
+
 }

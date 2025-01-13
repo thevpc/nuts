@@ -36,6 +36,10 @@ public class NCompressedPath extends NPathBase {
         this.compressedPathHelper = compressedPathHelper;
     }
 
+    public NPath getBase() {
+        return base;
+    }
+
     @Override
     public NPath copy() {
         return new NCompressedPath(
@@ -402,5 +406,17 @@ public class NCompressedPath extends NPathBase {
         }
     }
 
-
+    @Override
+    public boolean isEqOrDeepChildOf(NPath other) {
+        if(other==null){
+            return false;
+        }
+        if(other instanceof NCompressedPathBase){
+            other=((NCompressedPathBase) other).getBase();
+        }
+        if(other instanceof NCompressedPath){
+            other=((NCompressedPath) other).getBase();
+        }
+        return base.isEqOrDeepChildOf(other);
+    }
 }

@@ -27,6 +27,7 @@
 package net.thevpc.nuts.format;
 
 import net.thevpc.nuts.NDependency;
+import net.thevpc.nuts.NDescriptor;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
@@ -42,8 +43,12 @@ import java.util.List;
  */
 public interface NDependencyFormat extends NFormat, NComponent {
 
+    static NDependencyFormat of(NDependency value) {
+        return of().setValue(value);
+    }
+
     static NDependencyFormat of() {
-       return NExtensions.of(NDependencyFormat.class);
+        return NExtensions.of(NDependencyFormat.class);
     }
 
     /**

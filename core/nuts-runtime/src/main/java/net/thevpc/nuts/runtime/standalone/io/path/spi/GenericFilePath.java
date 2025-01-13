@@ -566,6 +566,10 @@ public class GenericFilePath implements NPathSPI {
         }
 
     }
+    @Override
+    public boolean isEqOrDeepChildOf(NPath basePath,NPath other) {
+        return toRelativePath(basePath, other)!=null;
+    }
 
     @Override
     public byte[] getDigest(NPath basePath, String algo) {

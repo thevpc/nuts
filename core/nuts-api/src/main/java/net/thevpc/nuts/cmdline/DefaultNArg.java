@@ -386,6 +386,26 @@ public class DefaultNArg implements NArg {
     }
 
     @Override
+    public boolean isDecimalNumber() {
+        return toValue().isDecimalNumber();
+    }
+
+    @Override
+    public boolean isBigNumber() {
+        return toValue().isBigNumber();
+    }
+
+    @Override
+    public boolean isBigDecimal() {
+        return toValue().isBigDecimal();
+    }
+
+    @Override
+    public boolean isBigInt() {
+        return toValue().isBigInt();
+    }
+
+    @Override
     public boolean isInt() {
         return toValue().isInt();
     }

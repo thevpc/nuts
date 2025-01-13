@@ -841,11 +841,11 @@ public class NMemorySize implements Serializable {
         if (value == null) {
             return NOptional.ofNull();
         }
-        StreamTokenizer st = new StreamTokenizer(new StringReader(value));
+        NStreamTokenizer st = new NStreamTokenizer(new StringReader(value));
         try {
             int r = st.nextToken();
             if (r == StreamTokenizer.TT_NUMBER) {
-                double nval = st.nval;
+                Number nval = st.nval;
                 StringBuilder sb = new StringBuilder();
                 while (true) {
                     r = st.nextToken();
@@ -871,11 +871,11 @@ public class NMemorySize implements Serializable {
                 }
                 String unitString = sb.toString();
                 if (unitString.isEmpty()) {
-                    return NOptional.of(NMemorySize.ofUnit((long) nval, defaultUnit, false));
+                    return NOptional.of(NMemorySize.ofUnit(nval.longValue(), defaultUnit, false));
                 }
                 return NOptional.ofNull();
             }
-        } catch (IOException ie) {
+        } catch (Exception ie) {
             String finalValue1 = value;
             return NOptional.ofError(() -> NMsg.ofC(
                     "erroneous memory size : %s",

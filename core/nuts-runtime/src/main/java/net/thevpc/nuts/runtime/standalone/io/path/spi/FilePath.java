@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
-import com.sun.nio.file.ExtendedOpenOption;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -276,15 +275,15 @@ public class FilePath implements NPathSPI {
                             break;
                         }
                         case NOSHARE_READ: {
-                            oo.add(ExtendedOpenOption.NOSHARE_READ);
+                            //oo.add(ExtendedOpenOption.NOSHARE_READ);
                             break;
                         }
                         case NOSHARE_DELETE: {
-                            oo.add(ExtendedOpenOption.NOSHARE_DELETE);
+                            //oo.add(ExtendedOpenOption.NOSHARE_DELETE);
                             break;
                         }
                         case NOSHARE_WRITE: {
-                            oo.add(ExtendedOpenOption.NOSHARE_WRITE);
+                            //oo.add(ExtendedOpenOption.NOSHARE_WRITE);
                             break;
                         }
                     }
@@ -874,6 +873,11 @@ public class FilePath implements NPathSPI {
             return NPath.of(child);
         }
         return null;
+    }
+
+    @Override
+    public boolean isEqOrDeepChildOf(NPath basePath,NPath other) {
+        return toRelativePath(basePath, other)!=null;
     }
 
     @Override

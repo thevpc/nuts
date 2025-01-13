@@ -5,3 +5,12 @@
 
 ```nuts -Zy -w test ndoc --progress=none --skip-errors -bZKy ndoc --backend=docusaurus --source /data/git/nuts/core/nuts --target /data/git/nuts/documentation/website/docs/javadocs```
     generate javadoc
+
+==ntemplate== generate files and forlder from template file/folder
+
+##) SYNOPSIS:
+
+##) EXAMPLES:
+
+# ndoc: generate folder
+nuts -Zy -w test ntemplate --progress=none --skip-errors -bZy ntemplate -p $ProjectFileDir$/dir-template

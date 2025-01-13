@@ -186,4 +186,6 @@ public interface NPathSPI {
     NPath toRelativePath(NPath basePath, NPath parentPath);
 
     byte[] getDigest(NPath basePath, String algo);
+
+    boolean isEqOrDeepChildOf(NPath basePath,NPath other);
 }

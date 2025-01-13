@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.expr.NExprDeclarations;
-import net.thevpc.nuts.expr.NExprNode;
-import net.thevpc.nuts.expr.NExprOpAssociativity;
-import net.thevpc.nuts.expr.NExprOpType;
+import net.thevpc.nuts.expr.*;
 
 import java.util.List;
 
@@ -13,7 +10,7 @@ public class SemiCommaFctNode extends AbstractOp {
     }
 
     @Override
-    public Object eval(String name, List<NExprNode> args, NExprDeclarations e) {
+    public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations e) {
         Object a=null;
         for (NExprNode arg : args) {
             a = arg.eval(e).get();

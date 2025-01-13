@@ -1,11 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
+import net.thevpc.nuts.expr.*;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.expr.NExprDeclarations;
-import net.thevpc.nuts.expr.NExprFunctionNode;
-import net.thevpc.nuts.expr.NExprNode;
-import net.thevpc.nuts.expr.NExprNodeType;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NComplexExpressionString;
 
 import java.util.Arrays;
@@ -58,7 +55,7 @@ public class DefaultFunctionNode implements NExprFunctionNode {
     public NOptional<Object> eval(NExprDeclarations context) {
         try {
             return context.evalFunction(getName(),
-                    Arrays.stream(args).map(x -> x.eval(context).get()).toArray()
+                    Arrays.stream(args).map(context::nodeAsValue).toArray(NExprNodeValue[]::new)
             );
         }catch (Exception ex){
             return NOptional.ofError(() -> NMsg.ofC("error %s ", ex));

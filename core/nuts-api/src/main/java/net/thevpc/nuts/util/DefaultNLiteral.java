@@ -470,7 +470,7 @@ public class DefaultNLiteral implements NLiteral {
 
     @Override
     public boolean isByte() {
-        return asByte().isPresent();
+        return value instanceof Byte;
     }
 
     @Override
@@ -480,32 +480,52 @@ public class DefaultNLiteral implements NLiteral {
 
     @Override
     public boolean isInt() {
-        return asInt().isPresent();
+        return value instanceof Integer;
     }
 
     @Override
     public boolean isLong() {
-        return asInt().isPresent();
+        return value instanceof Long;
     }
 
     @Override
     public boolean isShort() {
-        return asShort().isPresent();
+        return value instanceof Short;
     }
 
     @Override
     public boolean isFloat() {
-        return asFloat().isPresent();
+        return value instanceof Float;
     }
 
     @Override
     public boolean isDouble() {
-        return asDouble().isPresent();
+        return value instanceof Double;
     }
 
     @Override
     public boolean isInstant() {
-        return asInstant().isPresent();
+        return value instanceof Instant;
+    }
+
+    @Override
+    public boolean isDecimalNumber() {
+        return value instanceof BigDecimal || value instanceof Float || value instanceof Double;
+    }
+
+    @Override
+    public boolean isBigNumber() {
+        return value instanceof BigDecimal || value instanceof BigInteger;
+    }
+
+    @Override
+    public boolean isBigDecimal() {
+        return value instanceof BigDecimal;
+    }
+
+    @Override
+    public boolean isBigInt() {
+        return value instanceof BigInteger;
     }
 
     @Override

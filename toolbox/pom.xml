@@ -14,7 +14,6 @@
         <module>njob</module>
         <module>noapi</module>
         <module>nserver</module>
-        <module>ntemplate</module>
         <module>nversion</module>
         <module>ncode</module>
     </modules>

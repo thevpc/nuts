@@ -1,67 +1,68 @@
-package net.thevpc.nuts.runtime.standalone.xtra.expr;
-
-import net.thevpc.nuts.expr.NExprDeclarations;
-import net.thevpc.nuts.expr.NExprNode;
-import net.thevpc.nuts.expr.NExprOpAssociativity;
-import net.thevpc.nuts.expr.NExprOpType;
-
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.List;
-
-public abstract class BinArithFctNode extends AbstractOp {
-    public BinArithFctNode(String name, int precedence) {
-        super(name, precedence, NExprOpAssociativity.LEFT, NExprOpType.INFIX);
-    }
-
-    @Override
-    public Object eval(String name, List<NExprNode> args, NExprDeclarations e) {
-        Object a = args.get(0).eval(e).get();
-        Object b = args.get(1).eval(e).get();
-        if (EvalUtils.isNumber(a) && EvalUtils.isNumber(b)) {
-            return evalAny(EvalUtils.castToNumber(a).doubleValue(), EvalUtils.castToNumber(b).doubleValue());
-        }
-        if (EvalUtils.isBoolean(a) && EvalUtils.isBoolean(b)) {
-            return evalAny(EvalUtils.castToNumber(a).doubleValue(), EvalUtils.castToNumber(b).doubleValue());
-        }
-        String aa = EvalUtils.castToString(a);
-        String bb = EvalUtils.castToString(b);
-        if (aa == null) {
-            aa = "";
-        }
-        if (bb == null) {
-            bb = "";
-        }
-        return evalAny(aa.length(), bb.length());
-    }
-
-    protected final Number evalAny(Number a, Number b) {
-        if (EvalUtils.isBig(a) || EvalUtils.isBig(b)) {
-            if (EvalUtils.isFloat(a) || EvalUtils.isFloat(b)) {
-                BigDecimal aa = (a instanceof BigDecimal) ? ((BigDecimal) a) : new BigDecimal(a.toString());
-                BigDecimal bb = (b instanceof BigDecimal) ? ((BigDecimal) b) : new BigDecimal(b.toString());
-                return evalBigDecimal(aa, bb);
-            }
-            BigInteger aa = (a instanceof BigInteger) ? ((BigInteger) a) : new BigInteger(a.toString());
-            BigInteger bb = (b instanceof BigInteger) ? ((BigInteger) b) : new BigInteger(b.toString());
-            return evalBigInteger(aa, bb);
-        } else {
-            if (EvalUtils.isFloat(a) || EvalUtils.isFloat(b)) {
-                double aa = a.doubleValue();
-                double bb = b.doubleValue();
-                return evalFloat(aa, bb);
-            }
-            long aa = a.longValue();
-            long bb = b.longValue();
-            return evalOrdinal(aa, bb);
-        }
-    }
-
-    protected abstract long evalOrdinal(long a, long b);
-
-    protected abstract double evalFloat(double a, double b);
-
-    protected abstract BigDecimal evalBigDecimal(BigDecimal a, BigDecimal b);
-
-    protected abstract BigInteger evalBigInteger(BigInteger a, BigInteger b);
-}
+//package net.thevpc.nuts.runtime.standalone.xtra.expr;
+//
+//import net.thevpc.nuts.expr.*;
+//import net.thevpc.nuts.util.NLiteral;
+//import net.thevpc.nuts.util.NOptional;
+//
+//import java.math.BigDecimal;
+//import java.math.BigInteger;
+//import java.util.List;
+//
+//public abstract class BinArithFctNode extends AbstractOp {
+//    public BinArithFctNode(String name, int precedence) {
+//        super(name, precedence, NExprOpAssociativity.LEFT, NExprOpType.INFIX);
+//    }
+//
+//    @Override
+//    public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations e) {
+//        NLiteral a = NLiteral.of(args.get(0).eval(e).get());
+//        NLiteral b = NLiteral.of(args.get(1).eval(e).get());
+//        if (a.asNumber().isPresent() && b.asNumber().isPresent()) {
+//            Number na = a.asNumber().get();
+//            Number nb = b.asNumber().get();
+//
+//            if (a.isBigDecimal() || b.isBigDecimal()) {
+//                return evalBigDecimal(a.asBigDecimal().get(), b.asBigDecimal().get());
+//            }
+//            if (a.isBigInt() || b.isBigInt()) {
+//                return evalBigInt(a.asBigInt().get(), b.asBigInt().get());
+//            }
+//            if (a.isDouble() || b.isDouble()) {
+//                return evalDouble(a.asDouble().get(), b.asDouble().get());
+//            }
+//            if (a.isFloat() || b.isFloat()) {
+//                if (a.isLong() || b.isLong()) {
+//                    return evalDouble(a.asDouble().get(), b.asDouble().get());
+//                }
+//                return evalDouble(a.asFloat().get(), b.asFloat().get());
+//            }
+//            if (a.isFloat() || b.isFloat()) {
+//                return evalDouble(a.asDouble().get(), b.asDouble().get());
+//            }
+//            return evalLong(a.asLong().get(), a.asLong().get());
+//        }
+//        NOptional<Boolean> aBoolean = a.asBoolean();
+//        NOptional<Boolean> bBoolean = b.asBoolean();
+//        if (aBoolean.isPresent() && bBoolean.isPresent()) {
+//            return evalLong(aBoolean.get() ? 1 : 0, bBoolean.get() ? 1 : 0);
+//        }
+//        String aa = a.asString().orNull();
+//        String bb = b.asString().orNull();
+//        if (aa == null) {
+//            aa = "";
+//        }
+//        if (bb == null) {
+//            bb = "";
+//        }
+//        throw new IllegalArgumentException("invalid expression: " + a);
+//    }
+//
+//
+//    protected abstract long evalLong(long a, long b);
+//
+//    protected abstract double evalDouble(double a, double b);
+//
+//    protected abstract BigDecimal evalBigDecimal(BigDecimal a, BigDecimal b);
+//
+//    protected abstract BigInteger evalBigInt(BigInteger a, BigInteger b);
+//}

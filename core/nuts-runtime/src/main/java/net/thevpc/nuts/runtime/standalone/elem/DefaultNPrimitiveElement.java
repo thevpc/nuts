@@ -141,6 +141,31 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
     }
 
     @Override
+    public boolean isDecimalNumber() {
+        return value.isDecimalNumber();
+    }
+
+    @Override
+    public boolean isBigNumber() {
+        return value.isBigNumber();
+    }
+
+    @Override
+    public boolean isBigDecimal() {
+        return value.isBigDecimal();
+    }
+
+    @Override
+    public boolean isBigInt() {
+        return value.isBigInt();
+    }
+
+    @Override
+    public boolean isString() {
+        return value.isString();
+    }
+
+    @Override
     public boolean isLong() {
         return value.isLong();
     }
