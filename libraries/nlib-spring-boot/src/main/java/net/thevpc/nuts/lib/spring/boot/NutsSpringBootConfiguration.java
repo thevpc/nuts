@@ -3,7 +3,6 @@ package net.thevpc.nuts.lib.spring.boot;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLines;
-import net.thevpc.nuts.concurrent.NLocks;
 import net.thevpc.nuts.concurrent.NScheduler;
 
 import net.thevpc.nuts.expr.NExprs;
@@ -13,7 +12,6 @@ import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.time.NProgressMonitors;
-import net.thevpc.nuts.util.NGlob;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.CommandLineRunner;

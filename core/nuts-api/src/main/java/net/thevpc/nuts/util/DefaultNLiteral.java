@@ -2,7 +2,6 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementType;
-import net.thevpc.nuts.reflect.NReflectUtils;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.ParameterizedType;
@@ -865,7 +864,7 @@ public class DefaultNLiteral implements NLiteral {
             }
             case "boolean": {
                 if (NBlankable.isBlank(value)) {
-                    return (NOptional<ET>) NOptional.of(NReflectUtils.getDefaultValue(type));
+                    return (NOptional<ET>) NOptional.of(getDefaultValue(type));
                 }
                 return (NOptional<ET>) asBoolean();
             }
@@ -877,7 +876,7 @@ public class DefaultNLiteral implements NLiteral {
             }
             case "byte": {
                 if (NBlankable.isBlank(value)) {
-                    return (NOptional<ET>) NOptional.of(NReflectUtils.getDefaultValue(type));
+                    return (NOptional<ET>) NOptional.of(getDefaultValue(type));
                 }
                 return (NOptional<ET>) asByte();
             }
@@ -889,7 +888,7 @@ public class DefaultNLiteral implements NLiteral {
             }
             case "short": {
                 if (NBlankable.isBlank(value)) {
-                    return (NOptional<ET>) NOptional.of(NReflectUtils.getDefaultValue(type));
+                    return (NOptional<ET>) NOptional.of(getDefaultValue(type));
                 }
                 return (NOptional<ET>) asShort();
             }
@@ -901,7 +900,7 @@ public class DefaultNLiteral implements NLiteral {
             }
             case "char": {
                 if (NBlankable.isBlank(value)) {
-                    return (NOptional<ET>) NOptional.of(NReflectUtils.getDefaultValue(type));
+                    return (NOptional<ET>) NOptional.of(getDefaultValue(type));
                 }
                 return (NOptional<ET>) asChar();
             }
@@ -913,7 +912,7 @@ public class DefaultNLiteral implements NLiteral {
             }
             case "int": {
                 if (NBlankable.isBlank(value)) {
-                    return (NOptional<ET>) NOptional.of(NReflectUtils.getDefaultValue(type));
+                    return (NOptional<ET>) NOptional.of(getDefaultValue(type));
                 }
                 return (NOptional<ET>) asInt();
             }
@@ -925,7 +924,7 @@ public class DefaultNLiteral implements NLiteral {
             }
             case "long": {
                 if (NBlankable.isBlank(value)) {
-                    return (NOptional<ET>) NOptional.of(NReflectUtils.getDefaultValue(type));
+                    return (NOptional<ET>) NOptional.of(getDefaultValue(type));
                 }
                 return (NOptional<ET>) asLong();
             }
@@ -937,7 +936,7 @@ public class DefaultNLiteral implements NLiteral {
             }
             case "float": {
                 if (NBlankable.isBlank(value)) {
-                    return (NOptional<ET>) NOptional.of(NReflectUtils.getDefaultValue(type));
+                    return (NOptional<ET>) NOptional.of(getDefaultValue(type));
                 }
                 return (NOptional<ET>) asFloat();
             }
@@ -949,7 +948,7 @@ public class DefaultNLiteral implements NLiteral {
             }
             case "double": {
                 if (NBlankable.isBlank(value)) {
-                    return (NOptional<ET>) NOptional.of(NReflectUtils.getDefaultValue(type));
+                    return (NOptional<ET>) NOptional.of(getDefaultValue(type));
                 }
                 return (NOptional<ET>) asDouble();
             }
@@ -992,6 +991,31 @@ public class DefaultNLiteral implements NLiteral {
             }
         }
         return NOptional.ofError(() -> NMsg.ofC("unsupported type %s", type));
+    }
+
+    private static Object getDefaultValue(Class<?> anyType) {
+        NAssert.requireNonNull(anyType, "type");
+        switch (anyType.getName()) {
+            case "boolean":
+                return false;
+            case "byte":
+                return (byte) 0;
+            case "short":
+                return (short) 0;
+            case "int":
+                return (int) 0;
+            case "long":
+                return 0L;
+            case "char":
+                return '\0';
+            case "float":
+                return 0.0f;
+            case "double":
+                return 0.0;
+            case "void":
+                return null;
+        }
+        return null;
     }
 }
 

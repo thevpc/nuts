@@ -63,7 +63,6 @@ public enum NPathOption implements NEnum {
 
     /**
      * operations involving the path should be interruptible.
-     * @see NCp#interrupt()
      */
     INTERRUPTIBLE,
 

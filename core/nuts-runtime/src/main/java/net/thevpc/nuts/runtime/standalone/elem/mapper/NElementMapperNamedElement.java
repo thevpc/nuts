@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.reflect.NReflectRepository;
 import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
 
 import java.lang.reflect.ParameterizedType;
@@ -26,7 +27,7 @@ public class NElementMapperNamedElement implements NElementMapper<NElementEntry>
         m.put("key", je.getKey());
         m.put("value", je.getValue());
         return context.objectToElement(m,
-                context.getReflectRepository().getParametrizedType(
+                NReflectRepository.of().getParametrizedType(
                         Map.class, null, new Type[]{String.class, Object.class}
                 ).getJavaType()
         );
@@ -37,7 +38,7 @@ public class NElementMapperNamedElement implements NElementMapper<NElementEntry>
         Type[] args = (typeOfResult instanceof ParameterizedType)
                 ? (((ParameterizedType) typeOfResult).getActualTypeArguments())
                 : new Type[]{Object.class, Object.class};
-        Type mapType = context.getReflectRepository().getParametrizedType(
+        Type mapType = NReflectRepository.of().getParametrizedType(
                 Map.class, null, args
         ).getJavaType();
         Map map = (Map) context.elementToObject(o, mapType);

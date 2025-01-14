@@ -3,9 +3,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.expr;
 import net.thevpc.nuts.expr.NExprDeclarations;
 import net.thevpc.nuts.expr.NExprOpDeclaration;
 import net.thevpc.nuts.expr.NExprOpType;
-import net.thevpc.nuts.expr.NToken;
-
-import java.util.*;
+import net.thevpc.nuts.util.NToken;
 
 public class NExprWithCache {
     NExprDeclarations evaluator;

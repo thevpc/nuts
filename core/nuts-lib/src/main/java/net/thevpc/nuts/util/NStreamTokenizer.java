@@ -1,6 +1,5 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.io.NIOException;
 
 import java.io.IOException;

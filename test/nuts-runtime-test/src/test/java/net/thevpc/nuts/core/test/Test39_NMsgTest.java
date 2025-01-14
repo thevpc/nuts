@@ -1,6 +1,6 @@
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.expr.NToken;
+import net.thevpc.nuts.util.NToken;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NMsgParam;
 import net.thevpc.nuts.util.NMsgTemplate;

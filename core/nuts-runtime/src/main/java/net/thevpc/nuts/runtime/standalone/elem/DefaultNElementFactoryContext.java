@@ -66,16 +66,6 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
     }
 
     @Override
-    public NReflectRepository getReflectRepository() {
-        return repository;
-    }
-
-//    @Override
-//    public NSession getSession() {
-//        return repository.getSession();
-//    }
-
-    @Override
     public Predicate<Class<?>> getIndestructibleObjects() {
         return base.getIndestructibleObjects();
     }

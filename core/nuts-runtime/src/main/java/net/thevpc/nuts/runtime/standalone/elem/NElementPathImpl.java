@@ -4,7 +4,7 @@ import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementEntry;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.expr.NToken;
+import net.thevpc.nuts.util.NToken;
 import net.thevpc.nuts.util.NStreamTokenizer;
 
 import java.util.*;

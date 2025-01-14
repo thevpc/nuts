@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NGlob;
+import net.thevpc.nuts.expr.NGlob;
 
 import java.io.File;
 import java.util.regex.Pattern;

@@ -25,7 +25,6 @@
 package net.thevpc.nuts.reflect;
 
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.NSession;
 
 import java.lang.reflect.Type;
 import java.util.List;

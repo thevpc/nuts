@@ -77,8 +77,8 @@
             <version>0.8.5.0</version>
         </dependency>
         <dependency>
-            <groupId>net.thevpc.nuts.toolbox</groupId>
-            <artifactId>ntemplate</artifactId>
+            <groupId>net.thevpc.nuts.lib</groupId>
+            <artifactId>nlib-doc</artifactId>
             <version>0.8.5.0</version>
         </dependency>
         <dependency>

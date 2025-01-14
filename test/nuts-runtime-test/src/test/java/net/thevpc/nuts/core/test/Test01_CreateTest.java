@@ -8,6 +8,7 @@ package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.expr.NGlob;
 import net.thevpc.nuts.format.NCmdLineFormat;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.concurrent.NLocks;

@@ -2,7 +2,6 @@ package net.thevpc.nuts.reflect;
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
-import net.thevpc.nuts.util.NOptional;
 
 import java.lang.reflect.Type;
 

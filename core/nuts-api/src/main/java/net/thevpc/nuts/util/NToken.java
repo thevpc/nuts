@@ -1,7 +1,4 @@
-package net.thevpc.nuts.expr;
-
-import net.thevpc.nuts.util.NQuoteType;
-import net.thevpc.nuts.util.NStringUtils;
+package net.thevpc.nuts.util;
 
 public class NToken {
 

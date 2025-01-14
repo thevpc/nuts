@@ -3,8 +3,6 @@ package net.thevpc.nuts.reflect;
 import net.thevpc.nuts.util.NEqualizer;
 import net.thevpc.nuts.util.NOptional;
 
-import java.lang.reflect.Type;
-
 public interface NReflectMapperContext {
     void include(String... names);
 

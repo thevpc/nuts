@@ -14,7 +14,7 @@ import net.thevpc.nuts.toolbox.nsh.cmds.util.NNumberedObject;
 import net.thevpc.nuts.toolbox.nsh.cmds.util.WindowFilterIterator;
 import net.thevpc.nuts.toolbox.nsh.cmds.util.WindowObject;
 import net.thevpc.nuts.toolbox.nsh.util.FileInfo;
-import net.thevpc.nuts.util.NGlob;
+import net.thevpc.nuts.expr.NGlob;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

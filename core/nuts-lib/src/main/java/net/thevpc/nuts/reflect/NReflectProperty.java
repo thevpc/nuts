@@ -24,8 +24,6 @@
  */
 package net.thevpc.nuts.reflect;
 
-import java.lang.reflect.Type;
-
 /**
  *
  * @author thevpc
