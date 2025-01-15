@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MdElementAndChildrenList {
+    private Object frontMatter;
     List<MdElementAndChildren> currPath = new ArrayList<>();
 
     public MdElementAndChildrenList() {
@@ -13,7 +14,9 @@ public class MdElementAndChildrenList {
     }
 
     public MdElement build() {
-        return currPath.get(0).build().e;
+        MdElementAndChildren b = currPath.get(0).build();
+        ((MdAbstractElement)b.e).setFrontMatter(frontMatter);
+        return b.e;
     }
 
     public MdElementAndChildren last() {
@@ -139,5 +142,13 @@ public class MdElementAndChildrenList {
                 return false;
             }
         }
+    }
+
+    public Object getFrontMatter() {
+        return frontMatter;
+    }
+
+    public void setFrontMatter(Object frontMatter) {
+        this.frontMatter = frontMatter;
     }
 }

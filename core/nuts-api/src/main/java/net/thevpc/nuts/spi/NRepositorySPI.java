@@ -173,18 +173,6 @@ public interface NRepositorySPI {
      */
     Map<String, Object> getUserProperties();
 
-//    /**
-//     * add listener to user properties
-//     * @param listener listener
-//     */
-//    NutsRepository addUserPropertyListener(NutsMapListener<String, Object> listener);
-//
-//    /**
-//     * remove listener from user properties
-//     * @param listener listener
-//     */
-//    NutsRepository removeUserPropertyListener(NutsMapListener<String, Object> listener);
-
     /**
      * return array of registered user properties listeners
      *

@@ -68,12 +68,47 @@ public class TextReader {
         return s;
     }
 
+    public String peekSingleLineRegexp(String regexp) {
+        String s = readSingleLineRegexp(regexp);
+        if(s==null || s.length()==0){
+            return null;
+        }
+        unread(s);
+        return s;
+    }
+
     public String readRegexp(String regexp) {
 //        String ss=peekString(20);
         Pattern p = cachedPatterns.computeIfAbsent(regexp, Pattern::compile);
         return readStringOrNull(new Globber() {
             @Override
             public GlobberRet accept(StringBuilder visited, char next) {
+                String s = visited.toString() + next;
+                Matcher m = p.matcher(s);
+                if (m.matches()) {
+                    return GlobberRet.ACCEPT;
+                }
+                if (m.hitEnd()) {
+                    return GlobberRet.WAIT_FOR_MORE;
+                }
+                return GlobberRet.REJECT_LAST;
+            }
+        });
+    }
+
+    public String readSingleLineRegexp(String regexp) {
+//        String ss=peekString(20);
+        Pattern p = cachedPatterns.computeIfAbsent(regexp, Pattern::compile);
+        return readStringOrNull(new Globber() {
+            @Override
+            public GlobberRet accept(StringBuilder visited, char next) {
+                if(next=='\n' || next=='\r'){
+                    Matcher m = p.matcher(visited.toString());
+                    if (m.matches()) {
+                        return GlobberRet.ACCEPT;
+                    }
+                    return GlobberRet.REJECT_ALL;
+                }
                 String s = visited.toString() + next;
                 Matcher m = p.matcher(s);
                 if (m.matches()) {

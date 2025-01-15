@@ -5,8 +5,8 @@ import net.thevpc.nuts.expr.NExprNodeValue;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.lib.doc.context.NDocContext;
 import net.thevpc.nuts.lib.doc.executor.expr.BaseNexprNExprFct;
-import net.thevpc.nuts.lib.doc.pages.PageGroup;
-import net.thevpc.nuts.lib.doc.pages.PageGroupMdLoader;
+import net.thevpc.nuts.lib.doc.pages.MdPage;
+import net.thevpc.nuts.lib.doc.pages.MdPageLoader;
 import net.thevpc.nuts.lib.doc.util.StringUtils;
 import net.thevpc.nuts.util.NComparator;
 import net.thevpc.nuts.util.NStringUtils;
@@ -30,50 +30,61 @@ public class LoadPages extends BaseNexprNExprFct {
         Object strOrGroup = args.get(0).getValue().orNull();
         String str = null;
         int level;
-        if(strOrGroup instanceof String) {
+        MdPage parent=null;
+        if (strOrGroup instanceof String) {
             level = 0;
             str = (String) strOrGroup;
-        }else if(strOrGroup instanceof PageGroup) {
-            str = ((PageGroup)strOrGroup).path;
-            level=((PageGroup)strOrGroup).getLevel()+1;
-        }else{
+            try {
+                parent = MdPageLoader.load(NPath.of(str));
+                if (parent != null) {
+                    level = parent.getLevel() + 1;
+                }
+            } catch (Exception e) {
+                return null;
+            }
+        } else if (strOrGroup instanceof MdPage) {
+            parent=((MdPage) strOrGroup);
+            str = ((MdPage) strOrGroup).path;
+            level = ((MdPage) strOrGroup).getLevel() + 1;
+        } else {
+            parent=null;
             level = 0;
             return new ArrayList<>();
         }
-        if(NPath.of(str).getName().equals(".folder-info.md")){
-            str=NPath.of(str).getParent().toString();
+        boolean sortAsc = true;
+        if(parent!=null){
+            sortAsc=parent.isSortAsc();
+        }
+        if (NPath.of(str).getName().equals(".folder-info.md")) {
+            str = NPath.of(str).getParent().toString();
         }
         fcontext.getLog().debug("eval", name + "(" + StringUtils.toLiteralString(str) + ")");
-        List<PageGroup> pages = NPath.of(str).list().stream()
+        int finalLevel = level;
+        boolean finalSortAsc = sortAsc;
+        List<MdPage> pages = NPath.of(str).list().stream()
                 .map(x -> {
-                    if (x.isDirectory()) {
-                        try {
-                            return PageGroupMdLoader.load(x);
-                        } catch (Exception e) {
-                            return null;
-                        }
-                    } else if (x.isRegularFile()) {
-                        if (!x.getName().startsWith(".") && x.getName().endsWith(".md")) {
-                            return PageGroupMdLoader.load(x);
-                        }
+                    try {
+                        return MdPageLoader.load(x);
+                    } catch (Exception e) {
+                        return null;
                     }
-                    return null;
                 })
                 .filter(x -> x != null)
                 .peek(x -> {
-                    x.setLevel(level);
-                })                .sorted(new NComparator<PageGroup>() {
+                    x.setLevel(finalLevel);
+                }).sorted(new NComparator<MdPage>() {
                     @Override
-                    public int compare(PageGroup o1, PageGroup o2) {
+                    public int compare(MdPage o1, MdPage o2) {
                         int r1 = o1.getOrder();
                         int r2 = o2.getOrder();
                         if (r1 == r2) {
                             int i = NStringUtils.trim(o1.getPathName()).compareTo(o2.getPathName());
                             if (i != 0) {
-                                return i;
+                                return finalSortAsc ?i:-i;
                             }
                         }
-                        return r1 - r2;
+                        int v = r1 - r2;
+                        return finalSortAsc ?v:-v;
                     }
                 })
                 .collect(Collectors.toList());

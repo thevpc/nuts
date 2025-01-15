@@ -1,10 +1,12 @@
 package net.thevpc.nuts.lib.md.docusaurus;
 
+import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.lib.md.*;
 import net.thevpc.nuts.lib.md.util.MdElementAndChildrenList;
+import net.thevpc.nuts.util.NStringBuilder;
+import org.yaml.snakeyaml.Yaml;
 
-import java.io.Reader;
-import java.io.StringReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -22,9 +24,11 @@ public class DocusaurusMdParser implements MdParser {
     public MdElement parse() {
         MdElement n;
         SectionPathHolder path = new SectionPathHolder();
-        MdElementAndChildrenList list=new MdElementAndChildrenList();
+        MdElementAndChildrenList list = new MdElementAndChildrenList();
+        Object frontMatter = parseFrontMatter(path);
+        list.setFrontMatter(frontMatter);
         while (reader.hasMore()) {
-            n = readLine(new Cond().setConsumeNewline(NewLineAction.STOP)
+            n = readLine(new Cond().setConsumeNewline(NewLineAction.SPACE)
                             .setWasNewline(true)
                     , path);
             if (n != null) {
@@ -34,35 +38,59 @@ public class DocusaurusMdParser implements MdParser {
         return list.build();
     }
 
+    private Object parseFrontMatter(SectionPathHolder path) {
+        NStringBuilder frontMatter = new NStringBuilder();
+        reader.readSpacesOrNewline();
+        if (reader.hasMore()) {
+            String line = reader.readSingleLineRegexp("---.*");
+            if (line != null) {
+                while (reader.hasMore()) {
+                    String s = reader.readLine(true);
+                    if (s.startsWith("---")) {
+                        break;
+                    }
+                    frontMatter.println(s);
+                }
+            }
+        }
+        try (Reader is = new StringReader(frontMatter.toString())) {
+            return new Yaml().load(is);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
     @Override
     public void close() {
         reader.close();
     }
 
     public MdElement peekImage(Cond cond) {
-        return readOrPeekImage(cond,true);
+        return readOrPeekImage(cond, true);
     }
+
     public MdElement readImage(Cond cond) {
-        return readOrPeekImage(cond,false);
+        return readOrPeekImage(cond, false);
     }
-    public MdElement readOrPeekImage(Cond cond,boolean peek) {
+
+    public MdElement readOrPeekImage(Cond cond, boolean peek) {
         String regexp1 = "!\\[(?<caption>[^()\\[\\]]*)\\]\\((?<path>[^()\\[\\]]+)\\)";
-        String r = peek?reader.peekRegexp(regexp1):reader.readRegexp(regexp1);
-        if(r!=null){
+        String r = peek ? reader.peekRegexp(regexp1) : reader.readRegexp(regexp1);
+        if (r != null) {
             Matcher m = Pattern.compile(regexp1).matcher(r);
             m.find();
             String c = m.group("caption");
             String p = m.group("path");
-            return new MdImage("![]()", MdImage.ImageFormat.PATH, c,p);
+            return new MdImage("![]()", MdImage.ImageFormat.PATH, c, p);
         }
         String regexp2 = "!\\[(?<caption>[^()\\[\\]]*)\\]\\[(?<path>[^()\\[\\]]+)\\]";
-        r = peek?reader.peekRegexp(regexp2):reader.readRegexp(regexp2);
-        if(r!=null){
+        r = peek ? reader.peekRegexp(regexp2) : reader.readRegexp(regexp2);
+        if (r != null) {
             Matcher m = Pattern.compile(regexp2).matcher(r);
             m.find();
             String c = m.group("caption");
             String p = m.group("id");
-            return new MdImage("![][]", MdImage.ImageFormat.ID, c,p);
+            return new MdImage("![][]", MdImage.ImageFormat.ID, c, p);
         }
         return null;
     }
@@ -159,9 +187,10 @@ public class DocusaurusMdParser implements MdParser {
             return MdFactory.codeBacktick3(n, c == null ? "" : c);
         }
         s = reader.readChars('`', 1, 2);
-        if(s.length()==1) {
+        if (s.length() == 1) {
             String c = reader.readStringOrEmpty(new TextReader.Globber() {
-                boolean accepted=false;
+                boolean accepted = false;
+
                 @Override
                 public TextReader.GlobberRet accept(StringBuilder curr, char next) {
                     if (next == '`') {
@@ -175,7 +204,7 @@ public class DocusaurusMdParser implements MdParser {
                 c = c.substring(0, c.length() - 1);
             }
             return MdFactory.codeBacktick1("", c == null ? "" : c);
-        }else if(s.length()==2){
+        } else if (s.length() == 2) {
             return MdFactory.codeBacktick1("", "");
         }
         return null;
@@ -226,7 +255,7 @@ public class DocusaurusMdParser implements MdParser {
         int last = -1;
         boolean doLoop = true;
         boolean inline = true;
-        String addSep="";
+        String addSep = "";
         while (doLoop && (r = reader.peekChar()) != -1) {
             char c = (char) r;
             switch (c) {
@@ -241,35 +270,35 @@ public class DocusaurusMdParser implements MdParser {
                                 reader.readNewline();//read first newline
                                 inline = false;
                                 doLoop = false;
-                                addSep="";
+                                addSep = "";
                             } else if (reader.peekRegexp("\\R\\s*(---)") != null) {
                                 inline = false;
                                 doLoop = false;
-                                addSep="";
+                                addSep = "";
                             } else if (reader.peekRegexp("\\R\\s*(```)[a-z]*\\s*\\R") != null) {
                                 inline = false;
                                 doLoop = false;
-                                addSep="";
+                                addSep = "";
                             } else if (reader.peekRegexp("\\R\\s*`\\s*\\R") != null) {
                                 inline = false;
                                 doLoop = false;
-                                addSep="";
+                                addSep = "";
                             } else if (reader.peekRegexp("\\R\\s*[-+*#]\\s") != null) {
                                 inline = false;
                                 doLoop = false;
-                                addSep="";
+                                addSep = "";
                             } else if (reader.peekRegexp("\\R\\s*(([-]+)|([+]+)|([*]+)|([#]+)|([.]\\d))") != null) {
                                 inline = false;
                                 doLoop = false;
-                                addSep="";
+                                addSep = "";
                             } else {
                                 reader.readNewline();
-                                addSep=" ";
+                                addSep = " ";
                             }
                             break;
                         }
                         case STOP: {
-                            addSep="";
+                            addSep = "";
                             doLoop = false;
                             break;
                         }
@@ -327,7 +356,7 @@ public class DocusaurusMdParser implements MdParser {
                         sb.append(addSep);
                         sb.append((char) rr);
                     }
-                    addSep="";
+                    addSep = "";
                     break;
                 }
                 case '`': {
@@ -335,14 +364,14 @@ public class DocusaurusMdParser implements MdParser {
                         return null;
                     }
                     doLoop = false;
-                    addSep="";
+                    addSep = "";
                     break;
                 }
                 case '*':
                 case '<':
                 case '_': {
                     if (cond.exit(c, reader)) {
-                        addSep="";
+                        addSep = "";
                         if (sb.length() == 0) {
                             return null;
                         }
@@ -356,12 +385,12 @@ public class DocusaurusMdParser implements MdParser {
 //                            } else {
                             doLoop = false;
 //                            }
-                            addSep="";
+                            addSep = "";
                         } else {
                             reader.readChar();
                             sb.append(addSep);
                             sb.append(c);
-                            addSep="";
+                            addSep = "";
                         }
                     }
                     break;
@@ -369,7 +398,7 @@ public class DocusaurusMdParser implements MdParser {
                 case ':': {
                     if (last <= 0 || !isWord(last)) {
                         if (reader.peekString(2).equals("::")) {
-                            addSep="";
+                            addSep = "";
                             if (sb.length() == 0) {
                                 return null;
                             }
@@ -378,19 +407,19 @@ public class DocusaurusMdParser implements MdParser {
                             reader.readChar();
                             sb.append(addSep);
                             sb.append(c);
-                            addSep="";
+                            addSep = "";
                         }
                     } else {
                         reader.readChar();
                         sb.append(addSep);
                         sb.append(c);
-                        addSep="";
+                        addSep = "";
                     }
                     break;
                 }
                 case '|': {
                     if (cond.exitOnPipe) {
-                        addSep="";
+                        addSep = "";
                         if (sb.length() == 0) {
                             return null;
                         }
@@ -399,19 +428,19 @@ public class DocusaurusMdParser implements MdParser {
                         reader.readChar();
                         sb.append(addSep);
                         sb.append(c);
-                        addSep="";
+                        addSep = "";
                     }
                     break;
                 }
                 case '!': {
-                    if(peekImage(cond)!=null){
-                        addSep="";
-                        doLoop=false;
-                    }else{
+                    if (peekImage(cond) != null) {
+                        addSep = "";
+                        doLoop = false;
+                    } else {
                         reader.readChar();
                         sb.append(addSep);
                         sb.append(c);
-                        addSep="";
+                        addSep = "";
                     }
                     break;
                 }
@@ -419,7 +448,7 @@ public class DocusaurusMdParser implements MdParser {
                     reader.readChar();
                     sb.append(addSep);
                     sb.append(c);
-                    addSep="";
+                    addSep = "";
                     break;
                 }
             }
@@ -480,7 +509,7 @@ public class DocusaurusMdParser implements MdParser {
                 }
                 SectionPath newPath = path.path.resolveNext(MdElementTypeGroup.TITLE, s.length());
                 path.path = newPath;
-                return new MdTitle(s, ln, newPath.last().effDepth,new MdElement[0]);
+                return new MdTitle(s, ln, newPath.last().effDepth, new MdElement[0]);
             }
             return null;
         } else {
@@ -538,7 +567,7 @@ public class DocusaurusMdParser implements MdParser {
                     if (ln == null) {
                         ln = MdText.empty();
                     }
-                    ln=requireInline(ln);
+                    ln = requireInline(ln);
                     SectionPath newPath = path.path.resolveNext(MdElementTypeGroup.UNNUMBERED_ITEM, s.length());
                     path.path = newPath;
                     return new MdUnNumberedItem(s, newPath.last().effDepth, ln, new MdElement[0]);
@@ -563,7 +592,7 @@ public class DocusaurusMdParser implements MdParser {
                 if (ln == null) {
                     ln = MdText.empty();
                 }
-                ln=requireInline(ln);
+                ln = requireInline(ln);
                 SectionPath newPath = path.path.resolveNext(MdElementTypeGroup.UNNUMBERED_ITEM, depth + 1);
                 path.path = newPath;
                 return new MdUnNumberedItem(String.valueOf(cc), newPath.last().effDepth, ln, new MdElement[0]);
@@ -573,16 +602,16 @@ public class DocusaurusMdParser implements MdParser {
     }
 
     public MdElement requireInline(MdElement e) {
-        if(e.isInline()) {
+        if (e.isInline()) {
             return e;
         }
-        if(e.isPhrase()){
+        if (e.isPhrase()) {
             return e.asPhrase().toInline();
         }
-        if(e.isText()){
+        if (e.isText()) {
             return e.asText().toInline();
         }
-        throw new IllegalArgumentException("expected inline able element. got: "+e.type());
+        throw new IllegalArgumentException("expected inline able element. got: " + e.type());
     }
 
     public MdElement readNext(Cond cond, SectionPathHolder path) {
@@ -635,7 +664,7 @@ public class DocusaurusMdParser implements MdParser {
                     }
 //                    return readText(cond.copy().setConsumeNewline(NewLineAction.STOP));
                     reader.readChar();
-                    return new MdText(""+c, true);
+                    return new MdText("" + c, true);
                 }
                 case '*': {
                     if (cond.exit(c, reader)) {
@@ -657,7 +686,7 @@ public class DocusaurusMdParser implements MdParser {
                     }
 //                    return readText(new Cond());
                     reader.readChar();
-                    return new MdText(""+c, true);
+                    return new MdText("" + c, true);
                 }
                 case '-':
                 case '+': {
@@ -672,7 +701,7 @@ public class DocusaurusMdParser implements MdParser {
                     }
 //                    return readText(cond.copy().setConsumeNewline(NewLineAction.STOP));
                     reader.readChar();
-                    return new MdText(""+c, true);
+                    return new MdText("" + c, true);
                 }
                 case '!': {
                     if (cond.exit(c, reader)) {
@@ -800,7 +829,9 @@ public class DocusaurusMdParser implements MdParser {
             for (int i = 0; i < headers.size(); i++) {
                 columns.add(new MdColumn(headers.get(i), MdHorizontalAlign.LEFT));
             }
-            if(sorts!=null){rows.add(sorts);}
+            if (sorts != null) {
+                rows.add(sorts);
+            }
         }
         while (true) {
             MdRow t = readRow();
@@ -819,17 +850,17 @@ public class DocusaurusMdParser implements MdParser {
             String line = reader.peekLine().trim();
             if (line.length() > 0 && line.charAt(0) == '|' && line.charAt(line.length() - 1) == '|') {
                 List<MdElement> cells = new ArrayList<>();
-                boolean lastEmptyCol=false;
+                boolean lastEmptyCol = false;
                 while (reader.hasMore() && !reader.peekNewlineChar()) {
-                    lastEmptyCol=false;
+                    lastEmptyCol = false;
                     reader.readSpaces();
                     if (reader.readChar('|')) {
                         MdElement cell = readLine(new Cond()
-                                .setExitOnPipe(true)
+                                        .setExitOnPipe(true)
                                         .setConsumeNewline(NewLineAction.STOP)
                                 , new SectionPathHolder());
                         if (cell == null) {
-                            lastEmptyCol=true;
+                            lastEmptyCol = true;
                             cell = MdText.empty();
                         }
                         cells.add(cell);
@@ -837,8 +868,8 @@ public class DocusaurusMdParser implements MdParser {
                         break;
                     }
                 }
-                if(lastEmptyCol){
-                    cells.remove(cells.size()-1);
+                if (lastEmptyCol) {
+                    cells.remove(cells.size() - 1);
                 }
                 if (reader.peekNewlineChar()) {
                     reader.readNewline();

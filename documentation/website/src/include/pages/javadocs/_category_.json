@@ -1,8 +1,0 @@
-{
-  "label": "Java Docs",
-  "position": 12,
-  "link": {
-    "type": "generated-index",
-    "description": "nuts is a package manager for the Java Platform. Basically, it is what npm is for Javascript and pip for Python. However, nuts presents several concepts that make it suitable for other technologies as well. "
-  }
-}

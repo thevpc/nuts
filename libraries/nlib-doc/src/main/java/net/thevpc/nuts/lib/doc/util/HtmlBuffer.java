@@ -51,6 +51,10 @@ public class HtmlBuffer {
     public static class TagList extends Node {
         Node[] all;
 
+        public TagList(List<Node>  all) {
+            this(all.toArray(new Node[0]));
+        }
+
         public TagList(Node... all) {
             this.all = all;
         }

@@ -24,6 +24,8 @@ import net.thevpc.nuts.util.NBlankable;
  * @author thevpc
  */
 public interface MdElement extends NBlankable {
+    Object getFrontMatter();
+
     MdElementType type();
 
     MdAdmonition asAdmonition();

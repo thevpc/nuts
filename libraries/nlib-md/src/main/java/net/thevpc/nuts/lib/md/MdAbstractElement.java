@@ -22,6 +22,15 @@ package net.thevpc.nuts.lib.md;
  * @author thevpc
  */
 public abstract class MdAbstractElement implements MdElement {
+    private Object frontMatter;
+
+    public Object getFrontMatter() {
+        return frontMatter;
+    }
+
+    public void setFrontMatter(Object frontMatter) {
+        this.frontMatter = frontMatter;
+    }
 
     @Override
     public MdAdmonition asAdmonition() {
