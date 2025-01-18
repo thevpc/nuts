@@ -579,6 +579,9 @@ public class SyntaxParser {
                         functionParams.add(e.get());
                         while (true) {
                             t = peekSkipSpace();
+                            if(t==null){
+                                break;
+                            }
                             if (t.ttype == ')') {
                                 tokens.next();
                                 break;

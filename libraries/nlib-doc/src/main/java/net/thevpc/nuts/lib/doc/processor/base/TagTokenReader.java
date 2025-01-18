@@ -220,20 +220,32 @@ public class TagTokenReader {
                 }
             }
         }
-        String ss = buffer.buffer.toString();
-        if (ss.trim().startsWith(":")) {
+        String ss = buffer.buffer.toString().trim();
+        if (ss.startsWith(":")) {
             if (TagStreamProcessor.startsWithWord(ss, ":if")) {
-                return new TagToken(TagTokenType.CTRL_IF, ss);
+                return new TagToken(TagTokenType.IF, ss.substring(":if".length()).trim());
+
             } else if (TagStreamProcessor.startsWithWord(ss, ":else if")) {
-                return new TagToken(TagTokenType.CTRL_ELSE_IF, ss);
+                return new TagToken(TagTokenType.CTRL_ELSE_IF, ss.substring(":else if".length()).trim());
+
             } else if (TagStreamProcessor.startsWithWord(ss, ":else")) {
-                return new TagToken(TagTokenType.CTRL_ELSE, ss);
+                return new TagToken(TagTokenType.CTRL_ELSE, ss.substring(":else".length()).trim());
+
             } else if (TagStreamProcessor.startsWithWord(ss, ":for")) {
-                return new TagToken(TagTokenType.CTRL_FOR, ss);
+                return new TagToken(TagTokenType.FOR, ss.substring(":for".length()).trim());
+
+            } else if (TagStreamProcessor.startsWithWord(ss, ":include")) {
+                return new TagToken(TagTokenType.INCLUDE, ss.substring(":include".length()).trim());
+
             } else if (TagStreamProcessor.startsWithWord(ss, ":end")) {
-                return new TagToken(TagTokenType.CTRL_END, ss);
+                return new TagToken(TagTokenType.CTRL_END, ss.substring(":end".length()).trim());
+
             } else if (ss.startsWith("::")) {
-                return new TagToken(TagTokenType.CTRL_EVAL, ss.substring(2));
+                return new TagToken(TagTokenType.STATEMENT, ss.substring(2));
+
+            } else if (ss.startsWith(":")) {
+                return new TagToken(TagTokenType.STATEMENT, ss.substring(1));
+
             } else {
                 return new TagToken(TagTokenType.CTRL_OTHER, ss);
             }

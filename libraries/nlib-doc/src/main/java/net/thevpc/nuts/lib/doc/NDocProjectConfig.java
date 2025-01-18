@@ -11,6 +11,7 @@ import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -18,22 +19,23 @@ import java.util.function.Predicate;
 /**
  * @author thevpc
  */
-public class NDocProjectConfig implements NCmdLineConfigurable {
+public class NDocProjectConfig implements NCmdLineConfigurable ,Cloneable{
 
-    private List<String> sourcePaths = new ArrayList<String>();
-    private List<String> resourcePaths = new ArrayList<String>();
     private String targetFolder;
-    private List<String> initScripts = new ArrayList<>();
-    private Map<String, Object> vars;
     private String scriptType;
     private String projectPath;
     private Predicate<Path> pathFilter;
     private String contextName;
     private boolean clean;
-    private List<String> javaSourcePaths = new ArrayList<>();
-    private List<String> javaPackages = new ArrayList<>();
     private String javadocTarget;
     private String javadocBackend;
+
+    private List<String> javaSourcePaths = new ArrayList<>();
+    private List<String> javaPackages = new ArrayList<>();
+    private List<String> sourcePaths = new ArrayList<String>();
+    private List<String> resourcePaths = new ArrayList<String>();
+    private List<String> initScripts = new ArrayList<>();
+    private Map<String, Object> vars;
 
     public List<String> getJavaSourcePaths() {
         return javaSourcePaths;
@@ -143,9 +145,62 @@ public class NDocProjectConfig implements NCmdLineConfigurable {
         return pathFilter;
     }
 
+    public void setJavaSourcePaths(List<String> javaSourcePaths) {
+        this.javaSourcePaths = javaSourcePaths;
+    }
+
+    public void setJavaPackages(List<String> javaPackages) {
+        this.javaPackages = javaPackages;
+    }
+
+    public void setSourcePaths(List<String> sourcePaths) {
+        this.sourcePaths = sourcePaths;
+    }
+
+    public void setResourcePaths(List<String> resourcePaths) {
+        this.resourcePaths = resourcePaths;
+    }
+
+    public void setInitScripts(List<String> initScripts) {
+        this.initScripts = initScripts;
+    }
+
     public NDocProjectConfig setPathFilter(Predicate<Path> pathFilter) {
         this.pathFilter = pathFilter;
         return this;
+    }
+
+    public NDocProjectConfig copy(){
+        return clone();
+    }
+
+    @Override
+    protected NDocProjectConfig clone()  {
+        try {
+            NDocProjectConfig clone = (NDocProjectConfig) super.clone();
+            if(clone.javaSourcePaths!=null){
+                clone.javaSourcePaths=new ArrayList<>(clone.javaSourcePaths);
+            }
+            if(clone.javaPackages!=null){
+                clone.javaPackages=new ArrayList<>(clone.javaPackages);
+            }
+            if(clone.sourcePaths!=null){
+                clone.sourcePaths=new ArrayList<>(clone.sourcePaths);
+            }
+            if(clone.resourcePaths!=null){
+                clone.resourcePaths=new ArrayList<>(clone.resourcePaths);
+            }
+            if(clone.initScripts!=null){
+                clone.initScripts=new ArrayList<>(clone.initScripts);
+            }
+            if(clone.vars!=null){
+                clone.vars=new HashMap<>(clone.vars);
+            }
+
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

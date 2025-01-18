@@ -20,20 +20,24 @@ public class TagNodeReader {
         switch (t.type) {
             case PLAIN:{
                 t = tr.next();
-                return new PlainAstNode(t.value);
+                return new PlainTagNode(t.value);
             }
             case EXPR: {
                 t = tr.next();
-                return new VarAstNode(exprLang, t.value);
+                return new ExpressionTagNode(exprLang, t.value);
             }
-            case CTRL_EVAL: {
+            case STATEMENT: {
                 t = tr.next();
-                return new EvalAstNode(exprLang, t.value);
+                return new StatementTagNode(exprLang, t.value);
             }
-            case CTRL_IF: {
+            case INCLUDE: {
+                t = tr.next();
+                return new IncludeNode(exprLang, t.value);
+            }
+            case IF: {
                 return _nextCtrlIf();
             }
-            case CTRL_FOR: {
+            case FOR: {
                 return _nextCtrlFor();
             }
         }
@@ -42,7 +46,7 @@ public class TagNodeReader {
 
     private TagNode _nextCtrlIf() {
         TagToken t = tr.next();
-        IfTagNode nn = new IfTagNode(exprLang, t.value.substring(":if".length()).trim());
+        IfTagNode nn = new IfTagNode(exprLang, t.value);
         List<TagNode> ifBody = new ArrayList<>();
         while (true) {
             TagToken t2 = tr.peek();
@@ -59,7 +63,7 @@ public class TagNodeReader {
                         all.add(next());
                     }
                 }
-                nn.elseIfBranches.add(new IfTagNode.ElseIf(t2.value, ListAstNode.of(all)));
+                nn.elseIfBranches.add(new IfTagNode.ElseIf(t2.value, ListTagNode.of(all)));
             } else if (t2.type == TagTokenType.CTRL_ELSE) {
                 t2 = tr.next();
                 List<TagNode> all = new ArrayList<>();
@@ -71,7 +75,7 @@ public class TagNodeReader {
                         all.add(next());
                     }
                 }
-                nn.elseExpr = ListAstNode.of(all);
+                nn.elseExpr = ListTagNode.of(all);
             } else if (t2.type == TagTokenType.CTRL_END) {
                 tr.next();
                 break;
@@ -79,13 +83,13 @@ public class TagNodeReader {
                 ifBody.add(next());
             }
         }
-        nn.elseIfBranches.get(0).body = ListAstNode.of(ifBody);
+        nn.elseIfBranches.get(0).body = ListTagNode.of(ifBody);
         return nn;
     }
 
     private TagNode _nextCtrlFor() {
         TagToken t = tr.next();
-        ForTagNode nn = new ForTagNode(exprLang, t.value.substring(":for".length()).trim());
+        ForTagNode nn = new ForTagNode(exprLang, t.value);
         List<TagNode> all = new ArrayList<>();
         while (true) {
             TagToken t3 = tr.peek();
@@ -99,7 +103,7 @@ public class TagNodeReader {
                 all.add(next());
             }
         }
-        nn.body = ListAstNode.of(all);
+        nn.body = ListTagNode.of(all);
         return nn;
     }
 }

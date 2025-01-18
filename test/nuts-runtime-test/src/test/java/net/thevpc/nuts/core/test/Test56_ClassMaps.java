@@ -1,8 +1,8 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.util.NSig;
-import net.thevpc.nuts.util.NSigMap;
+import net.thevpc.nuts.util.NPlatformSignature;
+import net.thevpc.nuts.util.NPlatformSignatureMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -18,12 +18,12 @@ public class Test56_ClassMaps {
 
     @Test
     public void test01() {
-        NSigMap<NSig> cm=new NSigMap<NSig>(NSig.class);
-        cm.put(NSig.of(CharSequence.class,int.class), NSig.of(CharSequence.class,int.class));
-        cm.put(NSig.of(String.class,Number.class), NSig.of(String.class,Number.class));
+        NPlatformSignatureMap<NPlatformSignature> cm=new NPlatformSignatureMap<NPlatformSignature>(NPlatformSignature.class);
+        cm.put(NPlatformSignature.of(CharSequence.class,int.class), NPlatformSignature.of(CharSequence.class,int.class));
+        cm.put(NPlatformSignature.of(String.class,Number.class), NPlatformSignature.of(String.class,Number.class));
         Assertions.assertEquals(
-                NSig.of(CharSequence.class,int.class),
-                cm.get(NSig.of(String.class,Integer.class)).get()
+                NPlatformSignature.of(CharSequence.class,int.class),
+                cm.get(NPlatformSignature.of(String.class,Integer.class)).get()
         );
     }
 

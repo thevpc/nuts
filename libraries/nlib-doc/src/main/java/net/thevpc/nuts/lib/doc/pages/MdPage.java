@@ -2,15 +2,70 @@ package net.thevpc.nuts.lib.doc.pages;
 
 import net.thevpc.nuts.lib.md.MdElement;
 
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.Map;
+
 public class MdPage {
     public String pathName;
     public String id;
     public String path;
     public String title;
+    public String subTitle;
+    public String menuTitle;
     public int order;
     public int level;
     public MdElement markdown;
-    public boolean sortAsc=true;
+    public boolean sortAsc = true;
+
+    private String author;
+    private String authorTitle;
+    private String authorURL;
+    private String authorImageUrl;
+    private Instant publishDate;
+    private Instant lastModified;
+    private String[] tags;
+    private Map<String,Object> typeInfo;
+
+    public String getSubTitle() {
+        return subTitle;
+    }
+
+    public void setSubTitle(String subTitle) {
+        this.subTitle = subTitle;
+    }
+
+    public Map<String, Object> getTypeInfo() {
+        return typeInfo;
+    }
+
+    public void setTypeInfo(Map<String, Object> typeInfo) {
+        this.typeInfo = typeInfo;
+    }
+
+    public String getMenuTitle() {
+        return menuTitle;
+    }
+
+    public void setMenuTitle(String menuTitle) {
+        this.menuTitle = menuTitle;
+    }
+
+    public Instant getPublishDate() {
+        return publishDate;
+    }
+
+    public void setPublishDate(Instant publishDate) {
+        this.publishDate = publishDate;
+    }
+
+    public Instant getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Instant lastModified) {
+        this.lastModified = lastModified;
+    }
 
     public boolean isSortAsc() {
         return sortAsc;
@@ -85,11 +140,66 @@ public class MdPage {
         return this;
     }
 
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getAuthorTitle() {
+        return authorTitle;
+    }
+
+    public void setAuthorTitle(String authorTitle) {
+        this.authorTitle = authorTitle;
+    }
+
+    public String getAuthorURL() {
+        return authorURL;
+    }
+
+    public void setAuthorURL(String authorURL) {
+        this.authorURL = authorURL;
+    }
+
+    public String getAuthorImageUrl() {
+        return authorImageUrl;
+    }
+
+    public void setAuthorImageUrl(String authorImageUrl) {
+        this.authorImageUrl = authorImageUrl;
+    }
+
+    public String[] getTags() {
+        return tags;
+    }
+
+    public void setTags(String[] tags) {
+        this.tags = tags;
+    }
+
     @Override
     public String toString() {
         return "MdPage{" +
-                "title='" + title + '\'' +
+                "pathName='" + pathName + '\'' +
+                ", id='" + id + '\'' +
                 ", path='" + path + '\'' +
+                ", title='" + title + '\'' +
+                ", menuTitle='" + menuTitle + '\'' +
+                ", order=" + order +
+                ", level=" + level +
+                ", markdown=" + markdown +
+                ", sortAsc=" + sortAsc +
+                ", author='" + author + '\'' +
+                ", authorTitle='" + authorTitle + '\'' +
+                ", authorURL='" + authorURL + '\'' +
+                ", authorImageUrl='" + authorImageUrl + '\'' +
+                ", publishDate=" + publishDate +
+                ", lastModified=" + lastModified +
+                ", tags=" + Arrays.toString(tags) +
+                ", typeInfo=" + typeInfo +
                 '}';
     }
 }

@@ -73,8 +73,18 @@ public class HtmlBuffer {
         String name;
         List<Attr> attrs=new ArrayList<>();
         List<Node> body=new ArrayList<>();
+        boolean noEnd;
         public Tag(String name) {
             this.name=name;
+        }
+
+        public boolean isNoEnd() {
+            return noEnd;
+        }
+
+        public Tag setNoEnd(boolean noEnd) {
+            this.noEnd = noEnd;
+            return this;
         }
 
         public Tag attr(String name, String value) {
@@ -99,11 +109,15 @@ public class HtmlBuffer {
             for (Attr attr : attrs) {
                 sb.append(" ").append(attr.name).append("=\"").append(attr.value).append("\"");
             }
-            sb.append(">");
-            for (Node b : body) {
-                sb.append(b);
+            if(body.size()==0 && noEnd) {
+                sb.append("/>");
+            }else {
+                sb.append(">");
+                for (Node b : body) {
+                    sb.append(b);
+                }
+                sb.append("</").append(name).append(">");
             }
-            sb.append("</").append(name).append(">");
             return sb.toString();
         }
     }

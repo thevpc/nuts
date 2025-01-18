@@ -844,36 +844,44 @@ public class NMemorySize implements Serializable {
         NStreamTokenizer st = new NStreamTokenizer(new StringReader(value));
         try {
             int r = st.nextToken();
-            if (r == StreamTokenizer.TT_NUMBER) {
-                Number nval = st.nval;
-                StringBuilder sb = new StringBuilder();
-                while (true) {
-                    r = st.nextToken();
-                    if (r == StreamTokenizer.TT_EOF) {
-                        break;
+            switch (r){
+                case  NToken.TT_NUMBER:
+                case  NToken.TT_FLOAT:
+                case  NToken.TT_INT:
+                case  NToken.TT_LONG:
+                case  NToken.TT_BIG_DECIMAL:
+                case  NToken.TT_BIG_INT:
+                case  NToken.TT_DOUBLE:{
+                    Number nval = st.nval;
+                    StringBuilder sb = new StringBuilder();
+                    while (true) {
+                        r = st.nextToken();
+                        if (r == StreamTokenizer.TT_EOF) {
+                            break;
+                        }
+                        if (r == ' ') {
+                            //ignore
+                        } else if (
+                                (r >= 'a' && r <= 'z')
+                                        || (r >= 'A' && r <= 'Z')
+                        ) {
+                            sb.append((char) r);
+                        } else {
+                            String finalValue = value;
+                            int finalR = r;
+                            return NOptional.ofError(() -> NMsg.ofC(
+                                    "unexpected char %s in memory size : %s",
+                                    String.valueOf((char) finalR),
+                                    String.valueOf(finalValue)
+                            ));
+                        }
                     }
-                    if (r == ' ') {
-                        //ignore
-                    } else if (
-                            (r >= 'a' && r <= 'z')
-                                    || (r >= 'A' && r <= 'Z')
-                    ) {
-                        sb.append((char) r);
-                    } else {
-                        String finalValue = value;
-                        int finalR = r;
-                        return NOptional.ofError(() -> NMsg.ofC(
-                                "unexpected char %s in memory size : %s",
-                                String.valueOf((char) finalR),
-                                String.valueOf(finalValue)
-                        ));
+                    String unitString = sb.toString();
+                    if (unitString.isEmpty()) {
+                        return NOptional.of(NMemorySize.ofUnit(nval.longValue(), defaultUnit, false));
                     }
+                    return NOptional.ofNull();
                 }
-                String unitString = sb.toString();
-                if (unitString.isEmpty()) {
-                    return NOptional.of(NMemorySize.ofUnit(nval.longValue(), defaultUnit, false));
-                }
-                return NOptional.ofNull();
             }
         } catch (Exception ie) {
             String finalValue1 = value;

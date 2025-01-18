@@ -14,16 +14,16 @@ escape code on linux/windows terminals if available.
 
 Here after a showcase of available NTF syntax.
 
-![text-coloring-format](text-coloring-format-01.png)
+![text-coloring-format](assets/images/console/text-coloring-format-01.png)
 
 
-![text-coloring-format](text-coloring-format-02.png)
+![text-coloring-format](assets/images/console/text-coloring-format-02.png)
 
 
-![text-coloring-format](text-coloring-format-03.png)
+![text-coloring-format](assets/images/console/text-coloring-format-03.png)
 
 
-![text-coloring-format](text-coloring-format-04.png)
+![text-coloring-format](assets/images/console/text-coloring-format-04.png)
 
 # Nuts Text Format Specification
 
@@ -38,7 +38,7 @@ Here after a showcase of available NTF syntax.
 <TOKEN> S3 : '###'
 <TOKEN> S2 : '##'
 <TOKEN> S1 : '##'
-<TOKEN> A3 : '```'
+<TOKEN> A3 : '\```'
 
 <RULE>  S2 ':' KEY ':' ANYTHING S2
 <RULE>  S2 '{:' WORD ANYTHING S2

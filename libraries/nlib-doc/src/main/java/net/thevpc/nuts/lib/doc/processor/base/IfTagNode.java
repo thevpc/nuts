@@ -39,6 +39,24 @@ class IfTagNode extends TagNode {
             this.expr = expr;
             this.body = body;
         }
+    }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < elseIfBranches.size(); i++) {
+            ElseIf elseIfBranch = elseIfBranches.get(i);
+            if(i>0){
+                sb.append("\n else if ");
+            }else{
+                sb.append("if ");
+            }
+            sb.append(elseIfBranch.expr);
+        }
+        if(elseExpr!=null){
+            sb.append("\nelse ").append(elseExpr);
+        }
+        sb.append("\nend");
+        return sb.toString();
     }
 }

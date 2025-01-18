@@ -33,4 +33,9 @@ class NExprCommonOpAndType {
     public int hashCode() {
         return Objects.hash(op, type);
     }
+
+    @Override
+    public String toString() {
+        return op.name()+"-"+type.name();
+    }
 }

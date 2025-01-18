@@ -528,12 +528,12 @@ public class NStreamTokenizer {
      * @return the value of the {@code ttype} field.
      */
     public int nextToken() {
-        this.image = null;
         if (pushedBack) {
             pushedBack = false;
             return ttype;
         }
         byte[] ct = commonCharTypes;
+        this.image = null;
         sval = null;
 
         c = peekc;

@@ -5,7 +5,6 @@ import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.expr.*;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NComplexExpressionString;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,11 +13,11 @@ public class DefaultOpNode implements NExprOpNode {
     private final String name;
     private final String uniformName;
     private final List<NExprNode> args;
-    private final NExprOpType op;
+    private final NExprOpType opType;
     private final int precedence;
 
     public DefaultOpNode(String name, String uniformName, NExprOpType type, int precedence, List<NExprNode> args) {
-        this.op = type;
+        this.opType = type;
         this.name = name;
         this.uniformName = uniformName;
         this.precedence = precedence;
@@ -84,7 +83,7 @@ public class DefaultOpNode implements NExprOpNode {
 //                return toParString("{","}");
 //            }
 //        }
-        switch (op) {
+        switch (opType) {
             case PREFIX: {
                 switch (name) {
                     case "[": {
@@ -139,7 +138,7 @@ public class DefaultOpNode implements NExprOpNode {
             }
         }
         try {
-            return context.evalOperator(getName(), op,
+            return context.evalOperator(getName(), opType,
                     args.stream().map(context::nodeAsValue).toArray(NExprNodeValue[]::new)
                     );
         } catch (Exception ex) {

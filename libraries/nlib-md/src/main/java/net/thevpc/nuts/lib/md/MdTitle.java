@@ -1,8 +1,8 @@
 /**
  * ====================================================================
- *            thevpc-common-md : Simple Markdown Manipulation Library
+ * thevpc-common-md : Simple Markdown Manipulation Library
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
@@ -34,17 +34,21 @@ public class MdTitle extends MdParent {
     private MdElement value;
 
     public MdTitle(String code, MdElement value, int depth) {
-        this(code,value,depth,new MdElement[0]);
+        this(code, value, depth, new MdElement[0]);
     }
 
-    public MdTitle(String code, MdElement value, int depth,MdElement[] children) {
+    public MdTitle(String code, MdElement value, int depth, MdElement[] children) {
         super(children);
         this.code = code;
         this.value = value;
-        if(!value.isInline()){
-            throw new IllegalArgumentException("unexpected newline element title: "+value.type());
+        if (!value.isInline()) {
+            throw new IllegalArgumentException("unexpected newline element title: " + value.type());
         }
-        id = new MdElementType(MdElementTypeGroup.TITLE,depth);
+        id = new MdElementType(MdElementTypeGroup.TITLE, depth);
+    }
+
+    public int getDepth() {
+        return id.depth();
     }
 
     public MdElement getValue() {
@@ -79,6 +83,7 @@ public class MdTitle extends MdParent {
         }
         return sb.toString();
     }
+
     @Override
     public boolean isEndWithNewline() {
         return true;
@@ -101,6 +106,6 @@ public class MdTitle extends MdParent {
     @Override
     public boolean isBlank() {
         return NBlankable.isBlank(value)
-                && (getChildren()==null || Arrays.stream(getChildren()).allMatch(x-> NBlankable.isBlank(x)));
+                && (getChildren() == null || Arrays.stream(getChildren()).allMatch(x -> NBlankable.isBlank(x)));
     }
 }

@@ -1,6 +1,5 @@
 package net.thevpc.nuts.lib.md.docusaurus;
 
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.lib.md.*;
 import net.thevpc.nuts.lib.md.util.MdElementAndChildrenList;
 import net.thevpc.nuts.util.NStringBuilder;
@@ -16,6 +15,7 @@ public class DocusaurusMdParser implements MdParser {
 
     //    boolean wasNewline = true;
     private DocusaurusTextReader reader;
+    private MdRow pushBackRow;
 
     public DocusaurusMdParser(Reader r) {
         this.reader = new DocusaurusTextReader(r);
@@ -159,20 +159,29 @@ public class DocusaurusMdParser implements MdParser {
             String n = reader.readTagName();
             String c = reader.readStringOrEmpty(new TextReader.Globber() {
                 int backtics = 0;
-
+                boolean ignoreNext = false;
                 @Override
                 public TextReader.GlobberRet accept(StringBuilder curr, char next) {
                     if (backtics >= 3) {
                         return TextReader.GlobberRet.REJECT_LAST;
                     }
-                    if (next == '`') {
+                    if (next == '\\') {
+                        ignoreNext=true;
+                        return TextReader.GlobberRet.WAIT_FOR_MORE;
+                    }else if (next == '`') {
                         backtics++;
                         if (backtics == 3) {
+                            if(ignoreNext){
+                                backtics=0;
+                                ignoreNext=false;
+                                return TextReader.GlobberRet.WAIT_FOR_MORE;
+                            }
                             return TextReader.GlobberRet.ACCEPT;
                         }
                         return TextReader.GlobberRet.WAIT_FOR_MORE;
                     } else {
                         backtics = 0;
+                        ignoreNext=false;
                         return TextReader.GlobberRet.WAIT_FOR_MORE;
                     }
                 }
@@ -249,7 +258,7 @@ public class DocusaurusMdParser implements MdParser {
         return null;
     }
 
-    public MdText readText(Cond cond) {
+    public MdElement readText(Cond cond) {
         StringBuilder sb = new StringBuilder();
         int r;
         int last = -1;
@@ -454,7 +463,75 @@ public class DocusaurusMdParser implements MdParser {
             }
             last = r;
         }
-        return new MdText(sb.toString(), inline);
+        MdElement mdElement = splitText(sb.toString(), inline);
+        return mdElement;//new MdText(sb.toString(), inline);
+    }
+
+    private MdElement splitText(String text1, boolean inline) {
+        List<MdElement> textOrUrls = new ArrayList<>();
+        Pattern photoPattern = Pattern.compile("[!]\\[(?<name>[^\\[\\]]*)\\]\\(\\s*(?<url>[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])\\s*\\)");
+        Pattern urlPatternFull = Pattern.compile("\\[(?<name>[^\\[\\]]*)\\]\\(\\s*(?<url>(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])\\s*\\)");
+        Pattern anchorPattern = Pattern.compile("\\[(?<name>[^\\[\\]]*)\\]\\(\\s*(?<url>[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])\\s*\\)");
+        Pattern urlPattern = Pattern.compile("(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
+        String text1Remainings = text1;
+        while (!text1Remainings.isEmpty()) {
+            Matcher photoPatternMatcher = photoPattern.matcher(text1Remainings);
+            if (photoPatternMatcher.find()) {
+                int s = photoPatternMatcher.start();
+                if (s > 0) {
+                    textOrUrls.add(new MdText(text1Remainings.substring(0, s), true));
+                }
+                textOrUrls.add(new MdImage("", MdImage.ImageFormat.PATH, photoPatternMatcher.group("name"), photoPatternMatcher.group("url")));
+                text1Remainings = text1Remainings.substring(photoPatternMatcher.end());
+            } else {
+                Matcher urlPatternFullMatcher = urlPatternFull.matcher(text1Remainings);
+                if (urlPatternFullMatcher.find()) {
+                    int s = urlPatternFullMatcher.start();
+                    if (s > 0) {
+                        textOrUrls.add(new MdText(text1Remainings.substring(0, s), true));
+                    }
+                    textOrUrls.add(new MdLink("", urlPatternFullMatcher.group("name"), urlPatternFullMatcher.group("url")));
+                    text1Remainings = text1Remainings.substring(urlPatternFullMatcher.end());
+                } else {
+                    Matcher urlPatternMatcher = urlPattern.matcher(text1Remainings);
+                    if (urlPatternMatcher.find()) {
+                        int s = urlPatternMatcher.start();
+                        if (s > 0) {
+                            textOrUrls.add(new MdText(text1Remainings.substring(0, s), true));
+                        }
+                        textOrUrls.add(new MdLink("", urlPatternMatcher.group(), urlPatternMatcher.group()));
+                        text1Remainings = text1Remainings.substring(urlPatternMatcher.end());
+                    } else {
+                        Matcher anchorPatternMatcher = anchorPattern.matcher(text1Remainings);
+                        if (anchorPatternMatcher.find()) {
+                            int s = anchorPatternMatcher.start();
+                            if (s > 0) {
+                                textOrUrls.add(new MdText(text1Remainings.substring(0, s), true));
+                            }
+                            textOrUrls.add(new MdLink("", anchorPatternMatcher.group("name"), anchorPatternMatcher.group("url")));
+                            text1Remainings = text1Remainings.substring(anchorPatternMatcher.end());
+                        }else {
+                            textOrUrls.add(new MdText(text1Remainings, true));
+                            text1Remainings = "";
+                        }
+                    }
+                }
+            }
+        }
+        if (textOrUrls.size() == 1) {
+            MdElement e = textOrUrls.get(0);
+            if (e instanceof MdText) {
+                MdText t = (MdText) e;
+                if (t.isInline() != inline) {
+                    textOrUrls.set(0, new MdText(t.getText(), inline));
+                }
+            }
+            return textOrUrls.get(0);
+        }
+        if (textOrUrls.size() > 1) {
+            return new MdPhrase(textOrUrls.toArray(new MdElement[0]));
+        }
+        return null;
     }
 
     public boolean isWord(int w) {
@@ -782,13 +859,7 @@ public class DocusaurusMdParser implements MdParser {
         }
     }
 
-    private MdElement readTable() {
-        MdRow headers = readRow();
-        if (headers == null) {
-            return null;
-        }
-        MdRow sorts = readRow();
-        List<MdColumn> columns = new ArrayList<>();
+    private List<MdHorizontalAlign> readHeaderRowAlignments(MdRow headers, MdRow sorts){
         boolean isSortRow = sorts != null;
         List<MdHorizontalAlign> sortAligns = new ArrayList<>();
         if (sorts != null) {
@@ -805,6 +876,8 @@ public class DocusaurusMdParser implements MdParser {
                             ha = MdHorizontalAlign.RIGHT;
                         } else if (t.isEmpty() || t.matches(":[-]+") || t.matches("[-]+")) {
                             ha = MdHorizontalAlign.LEFT;
+                        } else if (t.isEmpty() || t.matches("[-]+")) {
+                            ha = MdHorizontalAlign.LEFT;
                         } else {
                             isSortRow = false;
                             break;
@@ -819,19 +892,28 @@ public class DocusaurusMdParser implements MdParser {
                 }
             }
         }
+        if(isSortRow){
+            return sortAligns;
+        }
+        return null;
+    }
+    private MdElement readTable() {
+        List<MdColumn> columns = new ArrayList<>();
+        MdRow headers = readRow();
+        MdRow nextRow = readRow();
+        List<MdHorizontalAlign> sortAligns= readHeaderRowAlignments(headers,nextRow);
+        if(sortAligns!=null){
+            nextRow=readRow();
+        }else{
+            sortAligns=new ArrayList<>();
+        }
+        for (int i = 0; i < headers.size(); i++) {
+            MdHorizontalAlign ha = i < sortAligns.size() ? sortAligns.get(i) : MdHorizontalAlign.LEFT;
+            columns.add(new MdColumn(headers.get(i), ha));
+        }
         List<MdRow> rows = new ArrayList<>();
-        if (isSortRow) {
-            for (int i = 0; i < headers.size(); i++) {
-                MdHorizontalAlign ha = i < sortAligns.size() ? sortAligns.get(i) : MdHorizontalAlign.LEFT;
-                columns.add(new MdColumn(headers.get(i), ha));
-            }
-        } else {
-            for (int i = 0; i < headers.size(); i++) {
-                columns.add(new MdColumn(headers.get(i), MdHorizontalAlign.LEFT));
-            }
-            if (sorts != null) {
-                rows.add(sorts);
-            }
+        if (nextRow != null) {
+            rows.add(nextRow);
         }
         while (true) {
             MdRow t = readRow();
@@ -844,6 +926,11 @@ public class DocusaurusMdParser implements MdParser {
     }
 
     private MdRow readRow() {
+        if (pushBackRow != null) {
+            MdRow pushBackRow1 = pushBackRow;
+            pushBackRow = null;
+            return pushBackRow1;
+        }
         StringBuilder sb = new StringBuilder();
         sb.append(reader.readSpaces());
         if (reader.peekChar('|')) {
@@ -862,8 +949,12 @@ public class DocusaurusMdParser implements MdParser {
                         if (cell == null) {
                             lastEmptyCol = true;
                             cell = MdText.empty();
+                            cells.add(cell);
+                            break;
+                        } else {
+                            cell = trimElement(cell);
+                            cells.add(cell);
                         }
-                        cells.add(cell);
                     } else {
                         break;
                     }
@@ -895,6 +986,20 @@ public class DocusaurusMdParser implements MdParser {
             reader.unread(sb.toString());
             return null;
         }
+    }
+
+    private MdElement trimElement(MdElement cell) {
+        if (cell == null) {
+            return null;
+        }
+        if (cell instanceof MdText) {
+            String t = ((MdText) cell).getText();
+            String t2 = t.trim();
+            if (!t2.equals(t)) {
+                cell = new MdText(t2, cell.isInline());
+            }
+        }
+        return cell;
     }
 
     private enum NewLineAction {

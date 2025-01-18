@@ -1,7 +1,9 @@
 package net.thevpc.nuts.lib.doc.processor;
 
 import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.lib.doc.DefaultNDocPathTranslator;
 import net.thevpc.nuts.lib.doc.context.NDocContext;
 import net.thevpc.nuts.lib.doc.executor.NDocExprEvaluator;
@@ -164,7 +166,11 @@ public class NDocProcessorManager {
                 stream.forEach(x -> {
                     if (filter == null || filter.test(x)) {
                         try {
-                            getProcessorExact(MimeTypeConstants.ANY_TYPE).processPath(x, null, context);
+                            String p = context.getPathTranslator().translatePath(x.toString());
+                            if(p!=null) {
+                                NCp.of().from(NPath.of(x)).to(NPath.of(p)).setMkdirs(true).run();
+                                //getProcessorExact(MimeTypeConstants.ANY_TYPE).processPath(x, null, context);
+                            }
                         } catch (Exception ex) {
                             throw new NIllegalArgumentException(NMsg.ofC("error processing %s : %s", x, ex), ex);
                         }

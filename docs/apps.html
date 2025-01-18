@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
+    <link href="assets/images/favicon.ico" rel="icon"/>
+    <title>Nuts Java Package Manager</title>
+    <meta name="description" content="Your ThemeForest item Name and description">
+    <meta name="author" content="thevpc">
+
+    <!-- Stylesheet
+    ============================== -->
+    <!-- Bootstrap -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/bootstrap/css/bootstrap.min.css"/>
+    <!-- Font Awesome Icon -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/font-awesome/css/all.min.css"/>
+    <!-- Magnific Popup -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/magnific-popup/magnific-popup.min.css"/>
+    <!-- Highlight Syntax -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/highlight.js/styles/github.css"/>
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet.css"/>
+</head>
+
+<body data-spy="scroll" data-target=".idocs-navigation" data-offset="125">
+
+<!-- Preloader -->
+<div class="preloader">
+    <div class="lds-ellipsis">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>
+<!-- Preloader -->
+
+<!-- Document Wrapper   
+=============================== -->
+<div id="main-wrapper">
+    
+    <!-- Header
+    ============================ -->
+<header id="header" class="sticky-top">
+    <!-- Navbar -->
+    <nav class="primary-menu navbar navbar-expand-lg navbar-dropdown-dark">
+        <div class="container-fluid">
+            <!-- Sidebar Toggler -->
+            <button id="sidebarCollapse" class="navbar-toggler d-block d-md-none" type="button"><span></span><span
+                    class="w-75"></span><span class="w-50"></span></button>
+
+            <!-- Logo -->
+            <a class="logo ml-md-3" href="index.html" title="Nuts Package Manager"> <img
+                    src="assets/images/nuts-icon.png" alt="Nuts Package Manager" width="32px"/> </a>
+            <span class="text-4 ml-2"><strong><a href="index.html">Nuts Package Manager</a></strong></span>
+            <span class="text-2 ml-2"><span class="badge badge-info">v0.8.5.0</span></span>
+            <!-- Logo End -->
+
+            <!-- Navbar Toggler -->
+            <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#header-nav">
+                <span></span><span></span><span></span></button>
+
+            <div id="header-nav" class="collapse navbar-collapse justify-content-end">
+                <ul class="navbar-nav">
+                    <!--
+                    <li class="dropdown"> <a class="dropdown-toggle" href="#">Dropdown</a>
+                      <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Action</a></li>
+                        <li class="dropdown"><a class="dropdown-item dropdown-toggle" href="#">Dropdown Action</a>
+                          <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="index.html">Action</a></li>
+                            <li><a class="dropdown-item" href="feature-header-dark.html">Another Action</a></li>
+                            <li><a class="dropdown-item" href="feature-header-primary.html">Something Else Here</a></li>
+                            <li><a class="dropdown-item" href="index-2.html">Another Link</a></li>
+                          </ul>
+                        </li>
+                        <li><a class="dropdown-item" href="#">Another Action</a>
+                        <li><a class="dropdown-item" href="#">Something Else Here</a></li>
+                      </ul>
+                    </li>
+                    -->
+                    <li><a href="documentation.html" class="">Documentation</a></li>
+                    <li><a href="blog.html" class="">Blog</a></li>
+                    <li><a href="apps.html" class="not-active">Apps</a></li>
+                    <li><a href="download.html" class="">Download</a></li>
+                    <li><a target="_blank" href="https://github.com/thevpc/nuts">GitHub</a></li>
+                </ul>
+            </div>
+            <ul class="social-icons social-icons-sm ml-lg-2 mr-2">
+                <li class="social-icons-twitter"><a data-toggle="tooltip"
+                                                    href="http://www.twitter.com/tbensalah/" target="_blank"
+                                                    title="" data-original-title="Twitter"><i
+                        class="fab fa-twitter"></i></a></li>
+                <li class="social-icons-facebook"><a data-toggle="tooltip"
+                                                     href="http://www.facebook.com/tbensalah/" target="_blank"
+                                                     title="" data-original-title="Facebook"><i
+                        class="fab fa-facebook-f"></i></a></li>
+                <li class="social-icons-dribbble"><a data-toggle="tooltip"
+                                                     href="http://www.dribbble.com/tbensalah/" target="_blank"
+                                                     title="" data-original-title="Dribbble"><i
+                        class="fab fa-dribbble"></i></a></li>
+            </ul>
+        </div>
+    </nav>
+    <!-- Navbar End -->
+</header>
+<!-- Header End -->
+
+
+    <!-- Content
+    ============================ -->
+    <div id="content" role="main">
+
+        <!-- Sidebar Navigation
+        ============================ -->
+        <div class="idocs-navigation bg-light">
+            <ul class="nav flex-column ">
+                
+                <li class="nav-item"><a class="nav-link" href="#CommandlineApps">1 Commandline Apps</a>
+                    
+                    
+                    <ul class="nav flex-column">
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-nuts">1.1 nuts</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-ncode">1.2 ncode</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-ndb">1.3 ndb</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-ndiff">1.4 ndiff</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-ndocusaurus">1.5 ndocusaurus</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-njob">1.6 njob</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-nmvn">1.7 nmvn</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-noapi">1.8 noapi</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-nsh">1.9 nsh</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-ndoc">1.10 ndoc</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-nversion">1.11 nversion</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-xspring-cli">1.12 Spring Cli</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-xtsunami">1.13 Google Tsunami</a>
+                            
+                            
+                        </li>
+                        
+                    </ul>
+                    
+                </li>
+                
+                <li class="nav-item"><a class="nav-link" href="#DesktopApps">2 Desktop Apps</a>
+                    
+                    
+                    <ul class="nav flex-column">
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-dbclient">2.1 DBClient</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-kifkif">2.2 KifKif</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-netbeans-launcher">2.3 Netbeans Launcher</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-pnote">2.4 Pangaea Note</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-xbinjr">2.5 Binjr</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-xjd-gui">2.6 Java Decompiler GUI</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-xjdiskreport">2.7 JDiskReport</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-xjedit">2.8 JEdit</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-xjmeld">2.9 JMeld</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-jpass">2.10 JPass</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-xmucommander">2.11 MuCommander</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-xomegat">2.12 OmegaT</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-xomnigraph">2.13 OmniGraph</a>
+                            
+                            
+                        </li>
+                        
+                    </ul>
+                    
+                </li>
+                
+                <li class="nav-item"><a class="nav-link" href="#GameApps">3 Game Apps</a>
+                    
+                    
+                    <ul class="nav flex-column">
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-xflappy-bird">3.1 Flappy Bird</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-xmindustry">3.2 Mindustry</a>
+                            
+                            
+                        </li>
+                        
+                    </ul>
+                    
+                </li>
+                
+                <li class="nav-item"><a class="nav-link" href="#app-misc">4 misc</a>
+                    
+                    
+                </li>
+                
+                <li class="nav-item"><a class="nav-link" href="#ServerApps">5 Server Apps</a>
+                    
+                    
+                    <ul class="nav flex-column">
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-nserver">5.1 nserver</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#app-ntomcat">5.2 ntomcat</a>
+                            
+                            
+                        </li>
+                        
+                    </ul>
+                    
+                </li>
+                
+            </ul>
+        </div>
+
+        <!-- Docs Content
+        ============================ -->
+        <div class="idocs-content">
+            <div class="container">
+
+                
+                    <!--MdPage{pathName='01-cmdline', id='CommandlineApps', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/01-cmdline', title='Commandline Apps', menuTitle='Commandline Apps', order=0, level=1, markdown=**```nuts```** exposes a set of commands :
+###  Nuts Toolboxnet.thevpc.nuts.lib.md.MdTable@f8b142c3
+###  Commonnet.thevpc.nuts.lib.md.MdTable@36c943e1, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                    <section id="CommandlineApps">
+                        <H2>1 Commandline Apps</H2>
+<p class="md-phrase"><b class="md-bold"><code class="md-code md-code-``` ">nuts</code></b> exposes a set of commands :</p>
+<H4 class="md-title-3"> Nuts Toolbox</H4>
+<table class="table table-bordered table-striped"><tr><th>App Name</th>
+<th>Description</th>
+</tr>
+<tr><td>nuts</td>
+<td>nuts package manager</td>
+</tr>
+<tr><td>nsh</td>
+<td>bash compatible shell (rewritten in java)</td>
+</tr>
+<tr><td>ndocusaurus</td>
+<td>Facebook Documentation Tool Templater</td>
+</tr>
+<tr><td>nmvn</td>
+<td>Maver wrapper</td>
+</tr>
+<tr><td>ndiff</td>
+<td>Jar/Archive diff tool</td>
+</tr>
+<tr><td>njob</td>
+<td>Commandline Task/Time Tracker</td>
+</tr>
+<tr><td>noapi</td>
+<td>OpenAPI Documentation Generator</td>
+</tr>
+<tr><td>ndoc</td>
+<td>folder templating (replace vars)</td>
+</tr>
+<tr><td>nversion</td>
+<td>folder, file (dll) version extractor</td>
+</tr>
+<tr><td>ndb</td>
+<td>DB Commandline for derby,mysql, postgres,...</td>
+</tr>
+<tr><td>ncode</td>
+<td>Nuts Code Search Tool</td>
+</tr>
+</table>
+
+<H4 class="md-title-3"> Common</H4>
+<table class="table table-bordered table-striped"><tr><th>App Name</th>
+<th>Description</th>
+</tr>
+<tr><td>spring-cli</td>
+<td>spring cli tool</td>
+</tr>
+<tr><td>tsunami</td>
+<td>Google Tsunami is a general purpose network security scanner</td>
+</tr>
+</table>
+
+
+                        
+                            <!--MdPage{pathName='01-nuts.md', id='app-nuts', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/01-cmdline/01-nuts.md', title='nuts', menuTitle='nuts', order=0, level=2, markdown=##  T0000- Nuts Package ManagerYou of course can install multiple versions of nuts 
+```
+
+nuts install nuts
+# Example of usage
+nuts install nuts#0.8.3
+
+```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-nuts">
+                                <H3>1.1 nuts</H3>
+<H4 class="md-title-2"> T0000- Nuts Package Manager</H4>
+You of course can install multiple versions of nuts 
+<pre class="md-code md-code-``` "><code class="">
+nuts install nuts
+# Example of usage
+nuts install nuts#0.8.3
+</code></pre>
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='ncode.md', id='app-ncode', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/01-cmdline/ncode.md', title='ncode', menuTitle='ncode', order=0, level=2, markdown=##  T0013- Nuts Code Search (Code Search Tool)```
+
+nuts ncode
+# Example of usage
+nuts ncode .
+
+```
+ , sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-ncode">
+                                <H3>1.2 ncode</H3>
+<H4 class="md-title-2"> T0013- Nuts Code Search (Code Search Tool)</H4>
+<pre class="md-code md-code-``` "><code class="">
+nuts ncode
+# Example of usage
+nuts ncode .
+</code></pre>
+ 
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='ndb.md', id='app-ndb', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/01-cmdline/ndb.md', title='ndb', menuTitle='ndb', order=0, level=2, markdown=##  T0008- DB Commandline Tool```
+
+nuts install ndb
+# Example of usage
+nuts ndb derby --start
+nuts ndb mysql --backup
+
+```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-ndb">
+                                <H3>1.3 ndb</H3>
+<H4 class="md-title-2"> T0008- DB Commandline Tool</H4>
+<pre class="md-code md-code-``` "><code class="">
+nuts install ndb
+# Example of usage
+nuts ndb derby --start
+nuts ndb mysql --backup
+</code></pre>
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='ndiff.md', id='app-ndiff', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/01-cmdline/ndiff.md', title='ndiff', menuTitle='ndiff', order=0, level=2, markdown=##  T0012- Nuts Diff (Jar Diff Tool)```
+
+nuts install ndiff
+# Example of usage
+nuts ndiff my-app-v1.jar my-app-v2.jar
+
+```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-ndiff">
+                                <H3>1.4 ndiff</H3>
+<H4 class="md-title-2"> T0012- Nuts Diff (Jar Diff Tool)</H4>
+<pre class="md-code md-code-``` "><code class="">
+nuts install ndiff
+# Example of usage
+nuts ndiff my-app-v1.jar my-app-v2.jar
+</code></pre>
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='ndocusaurus.md', id='app-ndocusaurus', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/01-cmdline/ndocusaurus.md', title='ndocusaurus', menuTitle='ndocusaurus', order=0, level=2, markdown=##  T0006- Docusaurus (Templater Companion for Facebook's Docusaurus)```
+
+nuts install ndocusaurus
+# Example of usage
+nuts ndocusaurus -d ./website pdf build
+
+```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-ndocusaurus">
+                                <H3>1.5 ndocusaurus</H3>
+<H4 class="md-title-2"> T0006- Docusaurus (Templater Companion for Facebook's Docusaurus)</H4>
+<pre class="md-code md-code-``` "><code class="">
+nuts install ndocusaurus
+# Example of usage
+nuts ndocusaurus -d ./website pdf build
+</code></pre>
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='njob.md', id='app-njob', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/01-cmdline/njob.md', title='njob', menuTitle='njob', order=0, level=2, markdown=##  T0011- Nuts Job (Task List App)```
+
+nuts install njob
+# Example of usage
+nuts njob tasks add 'I will buy milk' --on afternoon
+
+```
+* T0012- Nuts Diff (Jar Diff Tool)``````, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-njob">
+                                <H3>1.6 njob</H3>
+<H4 class="md-title-2"> T0011- Nuts Job (Task List App)</H4>
+<pre class="md-code md-code-``` "><code class="">
+nuts install njob
+# Example of usage
+nuts njob tasks add 'I will buy milk' --on afternoon
+</code></pre>
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase">T0012- Nuts Diff (Jar Diff Tool)<code class="md-code md-code-``` "></code></p></li></ul>
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='nmvn.md', id='app-nmvn', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/01-cmdline/nmvn.md', title='nmvn', menuTitle='nmvn', order=0, level=2, markdown=##  T0010- Maven (Maven Build Tool)```
+
+nuts install nmvn
+# Example of usage
+nuts nmvn clean install
+
+```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-nmvn">
+                                <H3>1.7 nmvn</H3>
+<H4 class="md-title-2"> T0010- Maven (Maven Build Tool)</H4>
+<pre class="md-code md-code-``` "><code class="">
+nuts install nmvn
+# Example of usage
+nuts nmvn clean install
+</code></pre>
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='noapi.md', id='app-noapi', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/01-cmdline/noapi.md', title='noapi', menuTitle='noapi', order=0, level=2, markdown=##  T0005- Nuts Open Api (Open Api Pdf Generator)```
+
+nuts install noapi
+# Example of usage
+nuts noapi your-apis.yaml
+
+```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-noapi">
+                                <H3>1.8 noapi</H3>
+<H4 class="md-title-2"> T0005- Nuts Open Api (Open Api Pdf Generator)</H4>
+<pre class="md-code md-code-``` "><code class="">
+nuts install noapi
+# Example of usage
+nuts noapi your-apis.yaml
+</code></pre>
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='nsh.md', id='app-nsh', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/01-cmdline/nsh.md', title='nsh', menuTitle='nsh', order=0, level=2, markdown=##  T0001- Nuts shell (Bash compatible Shell)```
+
+nuts install nsh
+# Example of usage
+nuts nsh
+
+```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-nsh">
+                                <H3>1.9 nsh</H3>
+<H4 class="md-title-2"> T0001- Nuts shell (Bash compatible Shell)</H4>
+<pre class="md-code md-code-``` "><code class="">
+nuts install nsh
+# Example of usage
+nuts nsh
+</code></pre>
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='ntemplate.md', id='app-ndoc', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/01-cmdline/ntemplate.md', title='ndoc', menuTitle='ndoc', order=0, level=2, markdown=##  T0003- Nuts Document Templater`ndoc` is a simple templating tool. It is used to generate statically Nuts website from  markdown documents. `ndoc` can also be embedded as a library (as `net.thevpc.nuts.lib:nlib-doc#0.8.5.0`)
+```
+
+nuts install ndoc
+# Example of usage
+nuts ndoc --source your-folder  --target the-generated-folder
+
+```
+###  Synopsis```
+
+nuts ndoc (--source=<path>)+ (--resource=<path>)* --target=<path> (<other-options>)*
+
+```
+Options are :
+* `-s=<...>` ou `--source=<...>` :  source file or folder to process.
+* `--resource=<...>` :         source file or folder that are copied as is and are not processed by the template engine.
+* `-t=<...>` ou `--target=<...>` : target folder where the generated files will be located
+###  Templating format ()```
+
+    {{: statement}}
+    {{expression}}
+    {{:for varName(,index):<expression}} ... {{:end}}
+    {{:if expression}} ... {{:else if expression}} ... {{:else if expression}} {{:end}}
+
+```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-ndoc">
+                                <H3>1.10 ndoc</H3>
+<H4 class="md-title-2"> T0003- Nuts Document Templater</H4>
+<p class="md-phrase"><code class="md-code md-code-` ">ndoc</code> is a simple templating tool. It is used to generate statically Nuts website from  markdown documents. <code class="md-code md-code-` ">ndoc</code> can also be embedded as a library (as <code class="md-code md-code-` ">net.thevpc.nuts.lib:nlib-doc#0.8.5.0</code>)</p>
+<pre class="md-code md-code-``` "><code class="">
+nuts install ndoc
+# Example of usage
+nuts ndoc --source your-folder  --target the-generated-folder
+</code></pre>
+<H4 class="md-title-3"> Synopsis</H4>
+<pre class="md-code md-code-``` "><code class="">
+nuts ndoc (--source=&lt;path&gt;)+ (--resource=&lt;path&gt;)* --target=&lt;path&gt; (&lt;other-options&gt;)*
+</code></pre>
+Options are :
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">-s=&lt;...&gt;</code> ou <code class="md-code md-code-` ">--source=&lt;...&gt;</code> :  source file or folder to process.</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">--resource=&lt;...&gt;</code> :         source file or folder that are copied as is and are not processed by the template engine.</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">-t=&lt;...&gt;</code> ou <code class="md-code md-code-` ">--target=&lt;...&gt;</code> : target folder where the generated files will be located</p></li></ul>
+
+<H4 class="md-title-3"> Templating format ()</H4>
+<pre class="md-code md-code-``` "><code class="">
+    {{: statement}}
+    {{expression}}
+    {{:for varName(,index):&lt;expression}} ... {{:end}}
+    {{:if expression}} ... {{:else if expression}} ... {{:else if expression}} {{:end}}
+</code></pre>
+
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='nversion.md', id='app-nversion', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/01-cmdline/nversion.md', title='nversion', menuTitle='nversion', order=0, level=2, markdown=##  T0002- Nuts Version (File/Folder/Project version detector)```
+
+nuts install nversion
+# Example of usage
+nuts nversion ./your-maven-project-folder
+nuts nversion your-jar-file.jar
+
+```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-nversion">
+                                <H3>1.11 nversion</H3>
+<H4 class="md-title-2"> T0002- Nuts Version (File/Folder/Project version detector)</H4>
+<pre class="md-code md-code-``` "><code class="">
+nuts install nversion
+# Example of usage
+nuts nversion ./your-maven-project-folder
+nuts nversion your-jar-file.jar
+</code></pre>
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='xspring-cli.md', id='app-xspring-cli', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/01-cmdline/xspring-cli.md', title='Spring Cli', menuTitle='Spring Cli', order=0, level=2, markdown=##  T0014- Spring Cli (Spring Boot Client App)```
+
+nuts install org.springframework.boot:spring-boot-cli
+nuts settings add alias spring="--main-class=1 spring-boot-cli"
+# Examples of usage
+nuts spring --version
+nuts spring init --dependencies=web,data-jpa my-project
+
+```
+ , sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-xspring-cli">
+                                <H3>1.12 Spring Cli</H3>
+<H4 class="md-title-2"> T0014- Spring Cli (Spring Boot Client App)</H4>
+<pre class="md-code md-code-``` "><code class="">
+nuts install org.springframework.boot:spring-boot-cli
+nuts settings add alias spring="--main-class=1 spring-boot-cli"
+# Examples of usage
+nuts spring --version
+nuts spring init --dependencies=web,data-jpa my-project
+</code></pre>
+ 
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='xtsunami.md', id='app-xtsunami', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/01-cmdline/xtsunami.md', title='Google Tsunami', menuTitle='null', order=0, level=2, markdown=##  T0016- Google Tsunami (Security Scanner)Google Tsunami is a general purpose network security scanner with an extensible plugin system for detecting high severity vulnerabilities with high confidence.
+```
+
+nuts com.google.tsunami:tsunami-main
+nuts settings add alias tsunami='--cp=${NUTS_ID_APPS}/your-plugins-folder/*.jar tsunami-main'
+# Example of usage
+nuts tsunami --ip-v4-target=127.0.0.1
+
+```
+ , sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-xtsunami">
+                                <H3>1.13 Google Tsunami</H3>
+<H4 class="md-title-2"> T0016- Google Tsunami (Security Scanner)</H4>
+Google Tsunami is a general purpose network security scanner with an extensible plugin system for detecting high severity vulnerabilities with high confidence.
+<pre class="md-code md-code-``` "><code class="">
+nuts com.google.tsunami:tsunami-main
+nuts settings add alias tsunami='--cp=${NUTS_ID_APPS}/your-plugins-folder/*.jar tsunami-main'
+# Example of usage
+nuts tsunami --ip-v4-target=127.0.0.1
+</code></pre>
+ 
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                    </section>
+                    <hr class="divider">
+                
+                    <!--MdPage{pathName='02-desktop', id='DesktopApps', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/02-desktop', title='Desktop Apps', menuTitle='Desktop Apps', order=0, level=1, markdown=**```nuts```** exposes a set of applications :
+###  Productivitynet.thevpc.nuts.lib.md.MdTable@21735ab4, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                    <section id="DesktopApps">
+                        <H2>2 Desktop Apps</H2>
+<p class="md-phrase"><b class="md-bold"><code class="md-code md-code-``` ">nuts</code></b> exposes a set of applications :</p>
+<H4 class="md-title-3"> Productivity</H4>
+<table class="table table-bordered table-striped"><tr><th>App Name</th>
+<th>Description</th>
+</tr>
+<tr><td>kifkif</td>
+<td>File/Folder Duplicates finder</td>
+</tr>
+<tr><td>netbeans-launcher</td>
+<td>Nutbeans multi-workspace launcher</td>
+</tr>
+<tr><td>pnote</td>
+<td>Nota Taking App</td>
+</tr>
+<tr><td>binjr</td>
+<td>Time Series Browser</td>
+</tr>
+<tr><td>jd-gui</td>
+<td>Java Decompiler Tool</td>
+</tr>
+<tr><td>jdiskreport</td>
+<td>Disk reporting Tool</td>
+</tr>
+<tr><td>jedit</td>
+<td>Text Editor</td>
+</tr>
+<tr><td>jmeld</td>
+<td>File/Folder Comparator</td>
+</tr>
+<tr><td>jpass</td>
+<td>Password manager application</td>
+</tr>
+<tr><td>mucommander</td>
+<td>File Manager</td>
+</tr>
+<tr><td>omegat</td>
+<td>Translation Memory Tool</td>
+</tr>
+<tr><td>omnigraph</td>
+<td>Graph Visualizer</td>
+</tr>
+<tr><td>dbclient</td>
+<td>Jdbc client</td>
+</tr>
+</table>
+
+
+                        
+                            <!--MdPage{pathName='dbclient.md', id='app-dbclient', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/02-desktop/dbclient.md', title='DBClient', menuTitle='DBClient', order=0, level=2, markdown=##  dbclient (Jdbc client)```
+
+  nuts install dbclient
+# Example of usage
+  nuts dbclient
+
+```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-dbclient">
+                                <H3>2.1 DBClient</H3>
+<H4 class="md-title-2"> dbclient (Jdbc client)</H4>
+<pre class="md-code md-code-``` "><code class="">
+  nuts install dbclient
+# Example of usage
+  nuts dbclient
+</code></pre>
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='kifkif.md', id='app-kifkif', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/02-desktop/kifkif.md', title='KifKif', menuTitle='KifKif', order=0, level=2, markdown=##  G0006- kifkif (File/Folder Duplicates finder)```
+
+  nuts install kifkif
+# Example of usage
+  nuts kifkif
+
+```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-kifkif">
+                                <H3>2.2 KifKif</H3>
+<H4 class="md-title-2"> G0006- kifkif (File/Folder Duplicates finder)</H4>
+<pre class="md-code md-code-``` "><code class="">
+  nuts install kifkif
+# Example of usage
+  nuts kifkif
+</code></pre>
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='netbeans-launcher.md', id='app-netbeans-launcher', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/02-desktop/netbeans-launcher.md', title='Netbeans Launcher', menuTitle='Netbeans Launcher', order=0, level=2, markdown=##  G0001- Netbeans Launcher (Netbeans IDE multi-workspace Launcher)```
+
+nuts install netbeans-launcher
+# Example of usage
+nuts netbeans-launcher
+
+```
+* G0002- Pangaea Note (Note Taking Application)
+``````, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-netbeans-launcher">
+                                <H3>2.3 Netbeans Launcher</H3>
+<H4 class="md-title-2"> G0001- Netbeans Launcher (Netbeans IDE multi-workspace Launcher)</H4>
+<pre class="md-code md-code-``` "><code class="">
+nuts install netbeans-launcher
+# Example of usage
+nuts netbeans-launcher
+</code></pre>
+<ul class="md-ul"><li class="md-uli">G0002- Pangaea Note (Note Taking Application)</li></ul>
+<code class="md-code md-code-``` "></code>
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='pnote.md', id='app-pnote', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/02-desktop/pnote.md', title='Pangaea Note', menuTitle='null', order=0, level=2, markdown=net.thevpc.nuts.lib.md.MdAdmonition@cfc38a4d
+##  Install```
+
+nuts install pnote
+
+```
+##  Run```
+
+nuts pnote
+
+```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-pnote">
+                                <H3>2.4 Pangaea Note</H3>
+<div class="alert alert-info mb-4"><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">Category</b>  : Productivity / Note Taking</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Interface</b>  : Desktop Graphical User Interface</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Website</b><p class="md-phrase">  : <a href="https://github.com/thevpc/pangaea-note" class="md-link">https://github.com/thevpc/pangaea-note</a></p></p></li></ul>
+
+</div>
+<H4 class="md-title-2"> Install</H4>
+<pre class="md-code md-code-``` "><code class="">
+nuts install pnote
+</code></pre>
+
+<H4 class="md-title-2"> Run</H4>
+<pre class="md-code md-code-``` "><code class="">
+nuts pnote
+</code></pre>
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='xbinjr.md', id='app-xbinjr', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/02-desktop/xbinjr.md', title='Binjr', menuTitle='Binjr', order=0, level=2, markdown=net.thevpc.nuts.lib.md.MdAdmonition@49853579
+Time Series Browser
+##  Install```
+
+nuts install eu.binjr:binjr-core
+
+```
+##  Run```
+
+nuts binjr-core
+
+```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-xbinjr">
+                                <H3>2.5 Binjr</H3>
+<div class="alert alert-info mb-4"><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">Category</b>  : Productivity / Time Series Dashboard</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Interface</b>  : Desktop Graphical User Interface</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Website</b><p class="md-phrase">  : <a href="https://binjr.eu" class="md-link">https://binjr.eu</a></p></p></li></ul>
+
+</div>
+Time Series Browser
+<H4 class="md-title-2"> Install</H4>
+<pre class="md-code md-code-``` "><code class="">
+nuts install eu.binjr:binjr-core
+</code></pre>
+
+<H4 class="md-title-2"> Run</H4>
+<pre class="md-code md-code-``` "><code class="">
+nuts binjr-core
+</code></pre>
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='xjd-gui.md', id='app-xjd-gui', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/02-desktop/xjd-gui.md', title='Java Decompiler GUI', menuTitle='null', order=0, level=2, markdown=##  G0011- Java Decompiler GUI (Java Decompiler)```
+
+  nuts install org.jd:jd-gui
+# Example of usage
+  nuts jd-gui
+
+```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-xjd-gui">
+                                <H3>2.6 Java Decompiler GUI</H3>
+<H4 class="md-title-2"> G0011- Java Decompiler GUI (Java Decompiler)</H4>
+<pre class="md-code md-code-``` "><code class="">
+  nuts install org.jd:jd-gui
+# Example of usage
+  nuts jd-gui
+</code></pre>
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='xjdiskreport.md', id='app-xjdiskreport', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/02-desktop/xjdiskreport.md', title='JDiskReport', menuTitle='JDiskReport', order=0, level=2, markdown=##  G0014- JDiskReport (Disk Usage Utility)```
+
+  nuts install com.jgoodies:jdiskreport
+# Example of usage
+  nuts jdiskreport
+
+```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-xjdiskreport">
+                                <H3>2.7 JDiskReport</H3>
+<H4 class="md-title-2"> G0014- JDiskReport (Disk Usage Utility)</H4>
+<pre class="md-code md-code-``` "><code class="">
+  nuts install com.jgoodies:jdiskreport
+# Example of usage
+  nuts jdiskreport
+</code></pre>
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='xjedit.md', id='app-xjedit', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/02-desktop/xjedit.md', title='JEdit', menuTitle='null', order=0, level=2, markdown=##  G0009- jedit (JEdit Text Editor)```
+
+  nuts install org.jedit:jedit
+# Example of usage
+  nuts jedit
+
+```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-xjedit">
+                                <H3>2.8 JEdit</H3>
+<H4 class="md-title-2"> G0009- jedit (JEdit Text Editor)</H4>
+<pre class="md-code md-code-``` "><code class="">
+  nuts install org.jedit:jedit
+# Example of usage
+  nuts jedit
+</code></pre>
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='xjmeld.md', id='app-xjmeld', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/02-desktop/xjmeld.md', title='JMeld', menuTitle='null', order=0, level=2, markdown=##  G0009- jedit (JEdit Text Editor)```
+
+  nuts install org.jedit:jedit
+# Example of usage
+  nuts jedit
+
+```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-xjmeld">
+                                <H3>2.9 JMeld</H3>
+<H4 class="md-title-2"> G0009- jedit (JEdit Text Editor)</H4>
+<pre class="md-code md-code-``` "><code class="">
+  nuts install org.jedit:jedit
+# Example of usage
+  nuts jedit
+</code></pre>
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='xjpass.md', id='app-jpass', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/02-desktop/xjpass.md', title='JPass', menuTitle='null', order=0, level=2, markdown=##  G0007- jpass (Password app)```
+
+  nuts install jpass:jpass
+# Example of usage
+  nuts jpass
+
+```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-jpass">
+                                <H3>2.10 JPass</H3>
+<H4 class="md-title-2"> G0007- jpass (Password app)</H4>
+<pre class="md-code md-code-``` "><code class="">
+  nuts install jpass:jpass
+# Example of usage
+  nuts jpass
+</code></pre>
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='xmucommander.md', id='app-xmucommander', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/02-desktop/xmucommander.md', title='MuCommander', menuTitle='null', order=0, level=2, markdown=* G0010- mucommander (File Manager)
+```
+
+  nuts install com.mucommander:mucommander
+# Example of usage
+  nuts mucommander
+
+```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-xmucommander">
+                                <H3>2.11 MuCommander</H3>
+<ul class="md-ul"><li class="md-uli">G0010- mucommander (File Manager)</li></ul>
+<pre class="md-code md-code-``` "><code class="">
+  nuts install com.mucommander:mucommander
+# Example of usage
+  nuts mucommander
+</code></pre>
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='xomegat.md', id='app-xomegat', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/02-desktop/xomegat.md', title='OmegaT', menuTitle='null', order=0, level=2, markdown=##  G0005- OmegaT (Translation Tool)```
+
+nuts install org.omegat:omegat
+# Example of usage
+nuts omegat
+
+```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-xomegat">
+                                <H3>2.12 OmegaT</H3>
+<H4 class="md-title-2"> G0005- OmegaT (Translation Tool)</H4>
+<pre class="md-code md-code-``` "><code class="">
+nuts install org.omegat:omegat
+# Example of usage
+nuts omegat
+</code></pre>
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='xomnigraph.md', id='app-xomnigraph', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/02-desktop/xomnigraph.md', title='OmniGraph', menuTitle='null', order=0, level=2, markdown=##  G0008- omnigraph (Graph Editor)```
+
+  nuts install com.github.todense:omnigraph
+# Example of usage
+  nuts omnigraph
+
+```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-xomnigraph">
+                                <H3>2.13 OmniGraph</H3>
+<H4 class="md-title-2"> G0008- omnigraph (Graph Editor)</H4>
+<pre class="md-code md-code-``` "><code class="">
+  nuts install com.github.todense:omnigraph
+# Example of usage
+  nuts omnigraph
+</code></pre>
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                    </section>
+                    <hr class="divider">
+                
+                    <!--MdPage{pathName='03-games', id='GameApps', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/03-games', title='Game Apps', menuTitle='Game Apps', order=0, level=1, markdown=**```nuts```** exposes a set of applications :
+###  Gamesnet.thevpc.nuts.lib.md.MdTable@720632b9, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                    <section id="GameApps">
+                        <H2>3 Game Apps</H2>
+<p class="md-phrase"><b class="md-bold"><code class="md-code md-code-``` ">nuts</code></b> exposes a set of applications :</p>
+<H4 class="md-title-3"> Games</H4>
+<table class="table table-bordered table-striped"><tr><th>App Name</th>
+<th>Description</th>
+</tr>
+<tr><td>flappy-bird</td>
+<td>Arcade Game</td>
+</tr>
+<tr><td>mindustry</td>
+<td>tower defense RTS</td>
+</tr>
+</table>
+
+
+                        
+                            <!--MdPage{pathName='xflappy-bird.md', id='app-xflappy-bird', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/03-games/xflappy-bird.md', title='Flappy Bird', menuTitle='null', order=0, level=2, markdown=net.thevpc.nuts.lib.md.MdAdmonition@1d55e8f5
+##  Install```
+
+  nuts install io.github.jiashunx:masker-flappybird
+
+```
+##  Run```
+
+  nuts masker-flappybird
+
+```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-xflappy-bird">
+                                <H3>3.1 Flappy Bird</H3>
+<div class="alert alert-info mb-4"><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">Category</b>  : Entertainment / Game</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Interface</b>  : Desktop Graphical User Interface</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Website</b><p class="md-phrase">  : <a href="https://flappybird.io" class="md-link">https://flappybird.io</a></p></p></li></ul>
+
+</div>
+<H4 class="md-title-2"> Install</H4>
+<pre class="md-code md-code-``` "><code class="">
+  nuts install io.github.jiashunx:masker-flappybird
+</code></pre>
+
+<H4 class="md-title-2"> Run</H4>
+<pre class="md-code md-code-``` "><code class="">
+  nuts masker-flappybird
+</code></pre>
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='xmindustry.md', id='app-xmindustry', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/03-games/xmindustry.md', title='Mindustry', menuTitle='null', order=0, level=2, markdown=##  Mindustry Game* G0013- Mindustry Desktop (Game)
+```
+
+  nuts install com.github.anuken:mindustry-desktop
+# Example of usage
+  nuts mindustry-desktop
+
+```
+* G0013- Mindustry Server (Game Server)
+```
+
+  nuts install com.github.anuken:mindustry-server
+# Example of usage
+  nuts mindustry-server
+
+```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-xmindustry">
+                                <H3>3.2 Mindustry</H3>
+<H4 class="md-title-2"> Mindustry Game</H4>
+<ul class="md-ul"><li class="md-uli">G0013- Mindustry Desktop (Game)</li></ul>
+<pre class="md-code md-code-``` "><code class="">
+  nuts install com.github.anuken:mindustry-desktop
+# Example of usage
+  nuts mindustry-desktop
+</code></pre>
+<ul class="md-ul"><li class="md-uli">G0013- Mindustry Server (Game Server)</li></ul>
+<pre class="md-code md-code-``` "><code class="">
+  nuts install com.github.anuken:mindustry-server
+# Example of usage
+  nuts mindustry-server
+</code></pre>
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                    </section>
+                    <hr class="divider">
+                
+                    <!--MdPage{pathName='aaa-all.md', id='app-misc', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/aaa-all.md', title='misc', menuTitle='misc', order=0, level=1, markdown=##  Java ApplicationsThis is a short list of applications that can be installed and run using ```nuts``` 
+###  Commandlinenet.thevpc.nuts.lib.md.MdTable@7f61549a
+###   Desktop Appsnet.thevpc.nuts.lib.md.MdTable@d1ea742f
+###  Gamesnet.thevpc.nuts.lib.md.MdTable@f98de5ee
+###  Serversnet.thevpc.nuts.lib.md.MdTable@d886c6de, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                    <section id="app-misc">
+                        <H2>4 misc</H2>
+<H4 class="md-title-2"> Java Applications</H4>
+<p class="md-phrase">This is a short list of applications that can be installed and run using <code class="md-code md-code-``` ">nuts</code> </p>
+<H4 class="md-title-3"> Commandline</H4>
+<table class="table table-bordered table-striped"><tr><th>App Name</th>
+<th>Description</th>
+</tr>
+<tr><td>nuts</td>
+<td>nuts package manager</td>
+</tr>
+<tr><td>nsh</td>
+<td>bash compatible shell (rewritten in java)</td>
+</tr>
+<tr><td>spring-cli</td>
+<td>spring cli tool</td>
+</tr>
+<tr><td>ndocusaurus</td>
+<td>Facebook Documentation Tool Templater</td>
+</tr>
+<tr><td>nmvn</td>
+<td>maven wrapper</td>
+</tr>
+<tr><td>...</td>
+</tr>
+</table>
+
+<H4 class="md-title-3">  Desktop Apps</H4>
+<table class="table table-bordered table-striped"><tr><th>App Name</th>
+<th>Description</th>
+</tr>
+<tr><td>jdiskreport</td>
+<td>Disk reporting Tool</td>
+</tr>
+<tr><td>jedit</td>
+<td>Text Editor</td>
+</tr>
+<tr><td>jmeld</td>
+<td>File/Folder Comparator</td>
+</tr>
+<tr><td>...</td>
+</tr>
+</table>
+
+<H4 class="md-title-3"> Games</H4>
+<table class="table table-bordered table-striped"><tr><th>App Name</th>
+<th>Description</th>
+</tr>
+<tr><td>flappy-bird</td>
+<td>Arcade Game</td>
+</tr>
+<tr><td>mindustry</td>
+<td>tower defense RTS</td>
+</tr>
+<tr><td>...</td>
+</tr>
+</table>
+
+<H4 class="md-title-3"> Servers</H4>
+<table class="table table-bordered table-striped"><tr><th>App Name</th>
+<th>Description</th>
+</tr>
+<tr><td>nserver</td>
+<td>Nuts Repository Server</td>
+</tr>
+<tr><td>ntomcat</td>
+<td>Tomcat Webserver Wrapper</td>
+</tr>
+<tr><td>mindustry</td>
+<td>tower defense RTS server</td>
+</tr>
+<tr><td>...</td>
+</tr>
+</table>
+
+
+
+                        
+                    </section>
+                    <hr class="divider">
+                
+                    <!--MdPage{pathName='servers', id='ServerApps', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/servers', title='Server Apps', menuTitle='null', order=0, level=1, markdown=**```nuts```** exposes a set of applications :
+##  Appsnet.thevpc.nuts.lib.md.MdTable@ec3ddae0, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                    <section id="ServerApps">
+                        <H2>5 Server Apps</H2>
+<p class="md-phrase"><b class="md-bold"><code class="md-code md-code-``` ">nuts</code></b> exposes a set of applications :</p>
+<H4 class="md-title-2"> Apps</H4>
+<table class="table table-bordered table-striped"><tr><th>App Name</th>
+<th>Description</th>
+</tr>
+<tr><td>nserver</td>
+<td>Nuts Repository Server</td>
+</tr>
+<tr><td>ntomcat</td>
+<td>Tomcat Webserver Wrapper</td>
+</tr>
+</table>
+
+
+                        
+                            <!--MdPage{pathName='nserver.md', id='app-nserver', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/servers/nserver.md', title='nserver', menuTitle='null', order=0, level=2, markdown=##  T0004- Nuts Repository (Nuts Repository Server)```
+
+nuts install nserver
+# Example of usage
+nuts nserver --http
+
+```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-nserver">
+                                <H3>5.1 nserver</H3>
+<H4 class="md-title-2"> T0004- Nuts Repository (Nuts Repository Server)</H4>
+<pre class="md-code md-code-``` "><code class="">
+nuts install nserver
+# Example of usage
+nuts nserver --http
+</code></pre>
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--MdPage{pathName='ntomcat.md', id='app-ntomcat', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/apps/servers/ntomcat.md', title='ntomcat', menuTitle='null', order=0, level=2, markdown=##  T0007- Tomcat Web Sever```
+
+nuts install ntomcat
+# Example of usage
+nuts ntomcat --start
+
+```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <section id="app-ntomcat">
+                                <H3>5.2 ntomcat</H3>
+<H4 class="md-title-2"> T0007- Tomcat Web Sever</H4>
+<pre class="md-code md-code-``` "><code class="">
+nuts install ntomcat
+# Example of usage
+nuts ntomcat --start
+</code></pre>
+
+
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                    </section>
+                    <hr class="divider">
+                
+
+            </div>
+        </div>
+
+    </div>
+    <!-- Content end -->
+
+    <!-- Footer
+============================ -->
+<footer id="footer" class="section bg-dark footer-text-light">
+    <div class="container">
+        <ul class="social-icons social-icons-lg social-icons-muted justify-content-center mb-3">
+            <li><a data-toggle="tooltip" href="https://twitter.com/tbensalah/" target="_blank" title=""
+                   data-original-title="Twitter"><i class="fab fa-twitter"></i></a></li>
+            <li><a data-toggle="tooltip" href="http://www.facebook.com/tbensalah/" target="_blank" title=""
+                   data-original-title="Facebook"><i class="fab fa-facebook-f"></i></a></li>
+            <li><a data-toggle="tooltip" href="http://www.dribbble.com/tbensalah/" target="_blank" title=""
+                   data-original-title="Dribbble"><i class="fab fa-dribbble"></i></a></li>
+            <li><a data-toggle="tooltip" href="https://github.com/thevpc/nuts" target="_blank" title=""
+                   data-original-title="GitHub"><i class="fab fa-github"></i></a></li>
+        </ul>
+        <p class="text-2 text-center mb-0">
+            Copyright © 2024 Nuts Package Manager Team.
+            <br>
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a>
+            <br>
+            <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
+                                                        href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
+        </p>
+    </div>
+</footer>
+<!-- Footer end -->
+
+</div>
+<!-- Document Wrapper end -->
+
+<!-- Back To Top -->
+<a id="back-to-top" data-toggle="tooltip" title="Back to Top" href="javascript:void(0)"><i class="fa fa-chevron-up"></i></a>
+
+<!-- JavaScript
+============================ -->
+<script src="assets/vendor/jquery/jquery.min.js"></script>
+<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- Highlight JS -->
+<script src="assets/vendor/highlight.js/highlight.min.js"></script>
+<!-- Easing -->
+<script src="assets/vendor/jquery.easing/jquery.easing.min.js"></script>
+<!-- Magnific Popup -->
+<script src="assets/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+<!-- Custom Script -->
+<script src="assets/js/theme.js"></script>
+</body>
+</html>

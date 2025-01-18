@@ -23,6 +23,10 @@ public class ProcessStreamContext {
         nr =new TagNodeReader(tr,tagStreamProcessor.exprLang);
     }
 
+    public TagStreamProcessor getStreamProcessor() {
+        return tagStreamProcessor;
+    }
+
     public TagNode next() throws IOException {
         List<TagNode> r = new ArrayList<>();
         while (true) {
@@ -33,7 +37,7 @@ public class ProcessStreamContext {
                 break;
             }
         }
-        return ListAstNode.of(r);
+        return ListTagNode.of(r);
     }
 
 }

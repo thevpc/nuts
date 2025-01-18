@@ -5,13 +5,12 @@ import net.thevpc.nuts.cmdline.NCmdLineContext;
 import net.thevpc.nuts.cmdline.NCmdLineRunner;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.lib.doc.javadoc.MdDoclet;
-import net.thevpc.nuts.lib.doc.javadoc.MdDocletConfig;
+import net.thevpc.nuts.lib.doc.NDocProjectConfig;
+import net.thevpc.nuts.lib.doc.context.NDocContext;
+import net.thevpc.nuts.util.NLiteral;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class NDocMain implements NApplication, NCmdLineRunner {
+public class NDocMain implements NApplication {
+    NDocProjectConfig config = new NDocProjectConfig();
 
     public static void main(String[] args) {
         NApplication.main(NDocMain.class, args);
@@ -19,26 +18,28 @@ public class NDocMain implements NApplication, NCmdLineRunner {
 
     @Override
     public void run() {
-        NSession session = NSession.get().get();
-        NApp.of().processCmdLine(this);
-    }
+        NApp.of().processCmdLine(new NCmdLineRunner() {
 
-    @Override
-    public boolean nextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
-        switch (option.key()) {
+            @Override
+            public boolean nextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
+                if(config.configureFirst(cmdLine)){
+                    return true;
+                }
+                return false;
+            }
 
-        }
-        return false;
-    }
+            @Override
+            public boolean nextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
+                config.addSource(cmdLine.next().flatMap(NLiteral::asString).get());
+                return false;
+            }
 
-    @Override
-    public boolean nextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
-        return false;
-    }
 
-    @Override
-    public void run(NCmdLine cmdLine, NCmdLineContext context) {
-
+            @Override
+            public void run(NCmdLine cmdLine, NCmdLineContext context) {
+                new NDocContext().run(config);
+            }
+        });
     }
 
 

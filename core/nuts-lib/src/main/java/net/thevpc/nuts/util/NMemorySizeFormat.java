@@ -116,8 +116,13 @@ public class NMemorySizeFormat {
             formatUnit(memorySize, chronoUnit, processed, out);
         }
         if (processed.isEmpty()) {
-            out.print(formatNumber(0, memorySize.getSmallestUnit()), NTextStyle.number());
-            out.print(unitString(memorySize.getSmallestUnit(), memorySize.isIEC()), NTextStyle.info());
+            out.print("0");
+//            NMemoryUnit smallestUnit = memorySize.getSmallestUnit();
+//            if(smallestUnit==NMemoryUnit.BIT){
+//                smallestUnit=NMemoryUnit.BYTE;
+//            }
+//            out.print(formatNumber(0, smallestUnit), NTextStyle.number());
+//            out.print(unitString(smallestUnit, memorySize.isIEC()), NTextStyle.info());
         }
     }
 

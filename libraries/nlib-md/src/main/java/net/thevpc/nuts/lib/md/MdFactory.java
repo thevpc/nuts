@@ -352,7 +352,31 @@ public class MdFactory {
             return new MdBody(content);
         }
         if(MdPhrase.acceptPhrase(content)){
-            return new MdPhrase(content);
+            List<MdElement> all = new ArrayList<>();
+            MdElement last=null;
+            for (MdElement e : content) {
+                if(last==null){
+                    last=e;
+                }else if(e instanceof MdText && last instanceof MdText && ((MdText) last).isInline() && ((MdText) e).isInline()){
+                    last=new MdText(
+                            ((MdText) last).getText()+
+                            ((MdText) e).getText()
+                            ,true
+                    );
+                }else{
+                    all.add(last);
+                    last=e;
+                }
+            }
+            if(last!=null){
+                all.add(last);
+                last=null;
+            }
+            if(all.size()==1){
+                return all.get(0);
+            }
+            MdPhrase p = new MdPhrase(all.toArray(new MdElement[0]));
+            return p;
         }
         Set<MdElementTypeGroup> ss = Arrays.stream(content).map(x -> x.type().group()).collect(Collectors.toSet());
         if(ss.size()==1){

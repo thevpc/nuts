@@ -15,6 +15,7 @@ import net.thevpc.nuts.lib.doc.javadoc.MdDoclet;
 import net.thevpc.nuts.lib.doc.javadoc.MdDocletConfig;
 import net.thevpc.nuts.lib.doc.mimetype.DefaultNDocMimeTypeResolver;
 import net.thevpc.nuts.lib.doc.mimetype.NDocMimeTypeResolver;
+import net.thevpc.nuts.lib.doc.pages.MdToHtml;
 import net.thevpc.nuts.lib.doc.processor.*;
 import net.thevpc.nuts.lib.doc.util.FileProcessorUtils;
 import net.thevpc.nuts.lib.doc.util.StringUtils;
@@ -34,6 +35,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 /**
  * @author thevpc
@@ -44,9 +46,11 @@ public class NDocContext {
     public static final String WORKING_DIR = "workingDir";
     public static final String SOURCE_PATH = "sourcePath";
     public static final String PROJECT_FILENAME = "project.nexpr";
+    private MdToHtml rootMdToHtml = new MdToHtml();
 
     private final Map<String, Object> vars = new HashMap<>();
     private NDocContext parent;
+    private MdToHtml mdToHtml;
     private Function<String, Object> customVarEvaluator;
     private NDocMimeTypeResolver mimeTypeResolver;
     private String sourcePath;
@@ -61,8 +65,8 @@ public class NDocContext {
     private NDocProcessorManager processorManager;
 
     public NDocContext() {
-        executorManager=new NDocExecutorManager(this);
-        processorManager=new NDocProcessorManager(this);
+        executorManager = new NDocExecutorManager(this);
+        processorManager = new NDocProcessorManager(this);
         this.setLog(new NDocLog() {
             NLogOp logOp;
 
@@ -80,7 +84,7 @@ public class NDocContext {
 
             @Override
             public void error(String title, String message) {
-                log().verb(NLogVerb.FAIL).level(Level.FINER)
+                log().verb(NLogVerb.FAIL).level(Level.SEVERE)
                         .log(NMsg.ofC("%s : %s", title, message));
             }
 
@@ -98,6 +102,16 @@ public class NDocContext {
     public NDocContext(NDocContext parent) {
         this();
         this.parent = parent;
+    }
+
+    public MdToHtml md2Html() {
+        if (mdToHtml != null) {
+            return mdToHtml;
+        }
+        if (parent != null) {
+            parent.md2Html();
+        }
+        return rootMdToHtml;
     }
 
     public NDocProcessorManager getProcessorManager() {
@@ -155,7 +169,6 @@ public class NDocContext {
     }
 
 
-
     public Function<String, Object> getCustomVarEvaluator() {
         if (customVarEvaluator != null) {
             return customVarEvaluator;
@@ -170,7 +183,6 @@ public class NDocContext {
         this.customVarEvaluator = customVarEvaluator;
         return this;
     }
-
 
 
     public NDocLog getLog() {
@@ -361,7 +373,6 @@ public class NDocContext {
     }
 
 
-
 //    public void processResourceTree(Path path, String targetFolder, Predicate<Path> filter) {
 //        getProcessorManager().
 //    }
@@ -369,10 +380,6 @@ public class NDocContext {
     public void executeProjectFile(Path path, String mimeTypesString) {
         getExecutorManager().executeRegularFile(path, mimeTypesString);
     }
-
-
-
-
 
 
     public Path toAbsolutePath(Path path) {
@@ -389,7 +396,7 @@ public class NDocContext {
 
     public Object eval(InputStream source, String mimeType) {
         String[] mimeTypes = FileProcessorUtils.splitMimeTypes(mimeType);
-        String lastError=null;
+        String lastError = null;
         for (String mimeType0 : mimeTypes) {
             NDocExecutor proc = null;
             proc = getExecutorManager().getExecutor(mimeType0);
@@ -405,7 +412,7 @@ public class NDocContext {
                 }
             }
         }
-        if(lastError!=null){
+        if (lastError != null) {
             throw new NIllegalArgumentException(NMsg.ofC("%s", lastError));
         }
         throw new NIllegalArgumentException(NMsg.ofC("unsupported mimetype : %s", mimeType));
@@ -434,7 +441,6 @@ public class NDocContext {
             throw new NIOException(ex);
         }
     }
-
 
 
     public NDocMimeTypeResolver getMimeTypeResolver() {
@@ -484,33 +490,66 @@ public class NDocContext {
     }
 
     public void run(NDocProjectConfig config) {
+        config = config.copy();
         String scriptType = config.getScriptType();
         String targetFolder = config.getTargetFolder();
         setVars(config.getVars());
         this.contextName = NStringUtils.trimToNull(config.getContextName());
         String projectPath = config.getProjectPath();
         boolean projectFolderSpecified = !NBlankable.isBlank(projectPath);
-        List<String> initScripts = new ArrayList<>(config.getInitScripts());
-        List<String> paths = new ArrayList<>(config.getSourcePaths());
+        List<String> initScripts = new ArrayList<>();
+        List<String> sourcePaths = new ArrayList<>();
+        List<String> resourcePaths = new ArrayList<>();
+        NPath oProjectDirPath = null;
         if (!projectFolderSpecified) {
-            if (NBlankable.isBlank(targetFolder)) {
-                throw new NIllegalArgumentException(NMsg.ofPlain("missing target folder"));
-            }
+
         } else {
-            Path oProjectDirPath = Paths.get(projectPath);
-            Path oProjectFile = oProjectDirPath.resolve(getProjectFileName());
-            Path oProjectSrc = oProjectDirPath.resolve("src");
-            if (!Files.isDirectory(oProjectSrc)) {
-                throw new NIllegalArgumentException(NMsg.ofC("invalid project, missing 'src/' folder : %s", oProjectDirPath));
-            }
-            if (!Files.isRegularFile(oProjectFile)) {
+            oProjectDirPath = NPath.of(projectPath).normalize();
+            NPath oProjectFile = oProjectDirPath.resolve(getProjectFileName());
+            if (!oProjectFile.isRegularFile()) {
                 throw new NIllegalArgumentException(NMsg.ofC("invalid project, missing project.nexpr : %s", oProjectDirPath));
             }
             initScripts.add(oProjectFile.toString());
-            paths.add(oProjectSrc.toString());
+            for (NPath script : oProjectDirPath.resolve("scripts").list().stream().sorted(Comparator.comparing(x -> x.getName())).collect(Collectors.toList())) {
+                if (!Objects.equals(getProjectFileName(), script.getName())) {
+                    initScripts.add(oProjectFile.toString());
+                }
+            }
+            sourcePaths.add(0, oProjectDirPath.resolve("src/main").toString());
+            resourcePaths.add(0, oProjectDirPath.resolve("src/resources").toString());
+            if (NBlankable.isBlank(targetFolder)) {
+                targetFolder = oProjectDirPath.resolve("dist").toString();
+            }
         }
 
-        if (config.getSourcePaths().isEmpty()) {
+        if (NBlankable.isBlank(targetFolder)) {
+            throw new NIllegalArgumentException(NMsg.ofPlain("missing target folder"));
+        }
+
+        if (config.getInitScripts() != null) {
+            for (String path : config.getInitScripts()) {
+                initScripts.add(toAbsolutePath(path, oProjectDirPath).toString());
+            }
+        }
+        initScripts=new ArrayList<>(new LinkedHashSet<>(initScripts));
+
+        if (config.getSourcePaths() != null) {
+            for (String path : config.getSourcePaths()) {
+                sourcePaths.add(toAbsolutePath(path, oProjectDirPath).toString());
+            }
+        }
+        sourcePaths=new ArrayList<>(new LinkedHashSet<>(sourcePaths));
+
+        if (config.getResourcePaths() != null) {
+            for (String path : config.getResourcePaths()) {
+                resourcePaths.add(toAbsolutePath(path, oProjectDirPath).toString());
+            }
+        }
+        resourcePaths=new ArrayList<>(new LinkedHashSet<>(resourcePaths));
+
+
+
+        if (sourcePaths.isEmpty()) {
             throw new NIllegalArgumentException(NMsg.ofPlain("missing path to process"));
         }
 
@@ -521,11 +560,8 @@ public class NDocContext {
         } else {
             //scriptType = MimeTypeConstants.APPLICATION_SIMPLE_EXPR;
         }
-        for (String initScript : initScripts) {
-            Path fpath = Paths.get(initScript).toAbsolutePath();
-            this.setWorkingDir(workingPath(fpath).toString());
-            this.executeProjectFile(fpath, scriptType);
-        }
+
+
         if (projectFolderSpecified) {
             //&& targetFolder==null
             String tf = (String) this.getVar("targetFolder", null);
@@ -536,10 +572,24 @@ public class NDocContext {
         if (targetFolder == null) {
             throw new NIllegalArgumentException(NMsg.ofPlain("missing target folder"));
         }
+
+        config.setInitScripts(initScripts);
+        config.setSourcePaths(sourcePaths);
+        config.setResourcePaths(resourcePaths);
+        config.setTargetFolder(targetFolder);
         config.setTargetFolder(resolvePath(targetFolder));
+
+
         if (config.isClean()) {
-            clean(config);
+            cleanTargetFolder(config);
         }
+
+        for (String initScript : initScripts) {
+            Path fpath = Paths.get(initScript).toAbsolutePath();
+            this.setWorkingDir(workingPath(fpath).toString());
+            this.executeProjectFile(fpath, scriptType);
+        }
+
 
         FileProcessorUtils.mkdirs(Paths.get(targetFolder));
 
@@ -548,8 +598,10 @@ public class NDocContext {
                 getProcessorManager().processResourceTree(Paths.get(path), targetFolder, config.getPathFilter());
             }
         }
+
         runJavadoc(config);
-        for (String path : paths) {
+
+        for (String path : sourcePaths) {
             getProcessorManager().processSourceTree(Paths.get(path), targetFolder, config.getPathFilter());
         }
     }
@@ -570,7 +622,7 @@ public class NDocContext {
         );
     }
 
-    private void clean(NDocProjectConfig config) {
+    private void cleanTargetFolder(NDocProjectConfig config) {
         boolean clean = true;
         String targetFolder = config.getTargetFolder();
         NPath p2 = NPath.of(resolvePath(targetFolder)).toAbsolute();
@@ -599,6 +651,15 @@ public class NDocContext {
         }
     }
 
+    private NPath toAbsolutePath(String path, NPath base) {
+        if (NPath.of(path).isAbsolute()) {
+            return NPath.of(path).normalize();
+        }
+        if (base == null) {
+            return NPath.ofUserDirectory().resolve(path);
+        }
+        return base.normalize().resolve(path);
+    }
 
     private String resolvePath(String path) {
         try {
@@ -609,6 +670,6 @@ public class NDocContext {
     }
 
     public void processSourceTree(Path path, Predicate<Path> filter) {
-        getProcessorManager().processSourceTree(path,filter);
+        getProcessorManager().processSourceTree(path, filter);
     }
 }

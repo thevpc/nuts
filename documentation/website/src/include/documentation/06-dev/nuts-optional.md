@@ -142,7 +142,7 @@ values={[
 { label: 'Typescript', value: 'typescript', }
 ]
 }>
-<TabItem value="windows">
+<TabItem value="typescript">
 
 ```typescript 
     var roadNumber=app?.person?.address!.road?.number??0;

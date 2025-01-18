@@ -163,7 +163,6 @@ public class NMsg {
         return of(NTextFormatType.PLAIN, message, NO_PARAMS, null, null, null);
     }
 
-    @Deprecated
     public static NMsg ofC(String message) {
         return of(NTextFormatType.CFORMAT, message, NO_PARAMS, null, null, null);
     }

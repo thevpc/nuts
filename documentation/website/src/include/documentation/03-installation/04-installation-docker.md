@@ -166,7 +166,7 @@ Any bash terminal application is a nuts-aware terminal.
 
 Yous should then see some log like the following :
 
-![install-log-example](../../static/img/install-log-example.png)
+![install-log-example](assets/images/console/install-log-example.png)
 
 As you can see, installation upon first launch, will also trigger installation of other optional programs called "companion tools".
 The main recommended helpful is **nsh**  (stands for __Nuts Shell__), is a bash compatible shell implementation application that will run equally on linux and windows systems.

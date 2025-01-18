@@ -297,14 +297,13 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
         public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations e) {
             Object a = args.get(0).eval(e).get();
             Object b = args.get(1).eval(e).get();
-            NFunction2 f = e.findCommonInfixOp(op
-                    , a == null ? null : a.getClass()
-                    , b == null ? null : b.getClass()
-            ).orNull();
+            Class<?> aClass = a == null ? null : a.getClass();
+            Class<?> bClass = b == null ? null : b.getClass();
+            NFunction2 f = e.findCommonInfixOp(op, aClass, bClass).orNull();
             if (f != null) {
                 return f.apply(a, b);
             }
-            return null;
+            throw new IllegalArgumentException("not found a "+name+" b");
         }
     }
 
@@ -323,7 +322,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
             if (f != null) {
                 return f.apply(a);
             }
-            return null;
+            throw new IllegalArgumentException("not found a "+name);
         }
     }
 
@@ -341,7 +340,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
             if (f != null) {
                 return f.apply(a);
             }
-            return null;
+            throw new IllegalArgumentException("not found "+name+" a");
         }
     }
 

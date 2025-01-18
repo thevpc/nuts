@@ -45,43 +45,43 @@ Options starting with "-//" and "--//" are simply ignored by the command line pa
 Options in **```nuts```** are can be of one of the following categories :
 
 * Create Options : such options are only relevant when creating a new workspace. They define the configuration of the workspace to create. They will be ignored when the workspace already exists. They will be ignored too, in sub-processes. Examples include
-    * --install-companions
-    * --archetype
-    * --store-strategy
-    * --standalone
+    * `--install-companions`
+    * `--archetype`
+    * `--store-strategy`
+    * `--standalone`
 
 * Runtime Options : such options are relevant when running a workspace (be it existing or to be created) and are not passed to sub-processes
-    * --reset
-    * --recover
-    * --dry
-    * --version
+    * `--reset`
+    * `--recover`
+    * `--dry`
+    * `--version`
 
 * Exported Options : are passed to sub-**nuts**-processes that will be created by **nuts**. For instance when nuts will call the **nsh** command it will spawn a new process. In such case, these options are passed to the sub-process as environment variable.
-    * --workspace
-    * --global
-    * --color
-    * --bot
+    * `--workspace`
+    * `--global`
+    * `--color`
+    * `--bot`
 
 * Executor Options : are options that are supported byte the package executor. Most of the time this will be the java executor and hence this coincides with the JVM options) 
-    * -Xmx...
-    * -Xmx
-    * -D...
+    * `-Xmx...`
+    * `-Xmx`
+    * `-D...`
 
 * Custom Nuts options : are special `nuts` options that are specific to nuts implementation or validation process to be promoted to standard options. The arguments parser will never report an error regarding such options. They are used when available and valid. they will be ignored in all other cases. Such options start with triple hyphen (---)
-  * ---monitor.enabled
-  * ---monitor.start
-  * ---show-command
-  * ---perf
-  * ---init-platforms
-  * ---init-scripts
-  * ---init-java
-  * ---system-desktop-launcher
-  * ---system-menu-launcher
-  * ---system-custom-launcher
+  * `---monitor.enabled`
+  * `---monitor.start`
+  * `---show-command`
+  * `---perf`
+  * `---init-platforms`
+  * `---init-scripts`
+  * `---init-java`
+  * `---system-desktop-launcher`
+  * `---system-menu-launcher`
+  * `---system-custom-launcher`
 
 * Application Options : are options that are by default supported by Applications using NAF (Nuts Application Framework) (as well as Nuts it self).
-    * --help
-    * --version
+    * `--help`
+    * `--version`
 
 all **```nuts```** options are described in the command help. Just type :
 ```

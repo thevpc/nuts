@@ -2,7 +2,9 @@ package net.thevpc.nuts.lib.doc.executor.expr;
 
 import net.thevpc.nuts.expr.*;
 import net.thevpc.nuts.lib.doc.context.NDocContext;
+import net.thevpc.nuts.lib.doc.executor.expr.fct.FormatDate;
 import net.thevpc.nuts.lib.doc.executor.expr.fct.LoadPages;
+import net.thevpc.nuts.lib.doc.executor.expr.fct.PageContentToHtml;
 import net.thevpc.nuts.lib.doc.executor.expr.fct.PageToHtml;
 import net.thevpc.nuts.lib.doc.util.FileProcessorUtils;
 import net.thevpc.nuts.lib.doc.util.StringUtils;
@@ -157,6 +159,8 @@ public class NDocExprEvaluator implements net.thevpc.nuts.lib.doc.executor.NDocE
 
         declareFunction(new LoadPages());
         declareFunction(new PageToHtml());
+        declareFunction(new PageContentToHtml());
+        declareFunction(new FormatDate());
 
     }
 

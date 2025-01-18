@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunknuts=self.webpackChunknuts||[]).push([[9539],{7878:e=>{e.exports=JSON.parse('[{"label":"release","permalink":"/nuts/blog/tags/release","count":2},{"label":"nuts","permalink":"/nuts/blog/tags/nuts","count":1}]')}}]);

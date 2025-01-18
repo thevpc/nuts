@@ -11,11 +11,13 @@ import net.thevpc.nuts.util.NStringUtils;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.UncheckedIOException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.*;
 
 public class MdPageLoader {
     public static void main(String[] args) {
-        Nuts.openInheritedWorkspace(null, null).setSharedInstance();
+        Nuts.openInheritedWorkspace(null).setSharedInstance();
 
         try (Reader r = NPath.of("/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/pages/01-intro/.folder-info.md").getReader()) {
             DocusaurusMdParser p = new DocusaurusMdParser(r);
@@ -35,7 +37,7 @@ public class MdPageLoader {
                 mdPage.setPathName(path.getName());
                 return mdPage;
             }
-        } else if (path.getName().endsWith(".md") && ! path.getName().endsWith(".folder-info.md")) {
+        } else if (path.getName().endsWith(".md") && !path.getName().endsWith(".folder-info.md")) {
             return loadFile(path);
         }
         return null;
@@ -72,6 +74,69 @@ public class MdPageLoader {
                                 g.setSortAsc(NLiteral.of(fe.getValue()).asBoolean().orElse(!"desc".equalsIgnoreCase(String.valueOf(fe.getValue()))));
                                 break;
                             }
+                            case "author": {
+                                g.setAuthor(NLiteral.of(fe.getValue()).asString().orNull());
+                                break;
+                            }
+                            case "authorTitle":
+                            case "author_title": {
+                                g.setAuthorTitle(NLiteral.of(fe.getValue()).asString().orNull());
+                                break;
+                            }
+                            case "authorUrl":
+                            case "authorURL":
+                            case "author_url": {
+                                g.setAuthorURL(NLiteral.of(fe.getValue()).asString().orNull());
+                                break;
+                            }
+                            case "authorImageUrl":
+                            case "authorImageURL":
+                            case "author_image_url":
+                            case "authorImage":
+                            case "author_image": {
+                                g.setAuthorImageUrl(NLiteral.of(fe.getValue()).asString().orNull());
+                                break;
+                            }
+                            case "menuTitle":
+                            case "menu_title":
+                            case "sidebarLabel":
+                            case "sidebar_label": {
+                                g.setMenuTitle(NLiteral.of(fe.getValue()).asString().orNull());
+                                break;
+                            }
+                            case "subTitle":
+                            case "sub_title":
+                            {
+                                g.setSubTitle(NLiteral.of(fe.getValue()).asString().orNull());
+                                break;
+                            }
+                            case "publishDate":
+                            case "publish_date": {
+                                if (fe.getValue() instanceof Date) {
+                                    g.setPublishDate(((Date) fe.getValue()).toInstant());
+                                } else if (fe.getValue() instanceof Instant) {
+                                    g.setPublishDate(((Instant) fe.getValue()));
+                                } else {
+                                    String d = NLiteral.of(fe.getValue()).asString().orNull();
+                                    if (d != null) {
+                                        g.setPublishDate(parseDate(d));
+                                    }
+                                }
+                                break;
+                            }
+                            case "tags": {
+                                if (fe.getValue() instanceof String[]) {
+                                    g.setTags((String[]) fe.getValue());
+                                }
+                                break;
+                            }
+                            case "type": {
+                                g.setTypeInfo((Map) fe.getValue());
+                                break;
+                            }
+                            default: {
+                                System.out.print("");
+                            }
                         }
                     }
                 }
@@ -80,5 +145,20 @@ public class MdPageLoader {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
+    }
+
+    private static Instant parseDate(String d) {
+        for (String pattern : new String[]{
+                "yyyy-MM-dd HH:mm:ss",
+                "yyyy-MM-dd HH:mm",
+                "yyyy-MM-dd"
+        }) {
+            try {
+                return (new SimpleDateFormat(pattern).parse(d).toInstant());
+            } catch (Exception ex) {
+                //
+            }
+        }
+        return null;
     }
 }

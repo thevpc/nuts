@@ -1,0 +1,10 @@
+stableApiVersion="0.8.5";
+stableRuntimeVersion="0.8.5.0";
+stableJarLocation="https://thevpc.net/maven/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.0.jar";
+latestApiVersion="0.8.5";
+latestRuntimeVersion="0.8.5.0";
+latestJarLocation="https://thevpc.net/maven/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.0.jar";
+apiVersion="0.8.5";
+runtimeVersion="0.8.5.0";
+jarLocation="https://thevpc.net/maven/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.0.jar";
+buildTime="2024-04-23-161642";

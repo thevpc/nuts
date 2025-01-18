@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Reader;
 
-public class NCharReader extends LineNumberReader {
+public class NCharReader extends BufferedReader {
 
     public NCharReader(Reader reader) {
         super(reader);
