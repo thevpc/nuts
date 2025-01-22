@@ -261,9 +261,9 @@ public class TagTokenReader {
             } else if (startOfLine && br.read(endTag + "\n")) {
                 image.appendImageOnly(endTag + "\n");
                 return true;
-            } else if (br.read(endTag + "\n")) {
-                image.appendImageOnly(endTag);
-                return true;
+//            } else if (br.read(endTag + "\n")) {
+//                image.appendImageOnly(endTag);
+//                return true;
             } else if (br.read(endTag)) {
                 image.appendImageOnly(endTag);
                 return true;

@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
+    <link href="assets/images/favicon.ico" rel="icon"/>
+    <title>Nuts Java Package Manager</title>
+    <meta name="description" content="Nuts Java Package Manager Website">
+    <meta name="author" content="thevpc">
+
+    <!-- Stylesheet
+    ============================== -->
+    <!-- Bootstrap -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/bootstrap/css/bootstrap.min.css"/>
+    <!-- Font Awesome Icon -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/font-awesome/css/all.min.css"/>
+    <!-- Magnific Popup -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/magnific-popup/magnific-popup.min.css"/>
+    <!-- Highlight Syntax -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/highlight.js/styles/github.css"/>
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet.css"/>
+</head>
+
+<body data-spy="scroll" data-target=".idocs-navigation" data-offset="125">
+
+<!-- Preloader -->
+<div class="preloader">
+    <div class="lds-ellipsis">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>
+<!-- Preloader -->
+
+<!-- Document Wrapper   
+=============================== -->
+<div id="main-wrapper" class="documentation-main-wrapper">
+    
+    <!-- Header
+    ============================ -->
+<header id="header" class="sticky-top">
+    <!-- Navbar -->
+    <nav class="primary-menu navbar navbar-expand-lg navbar-dropdown-dark">
+        <div class="container-fluid">
+            <!-- Sidebar Toggler -->
+            <button id="sidebarCollapse" class="navbar-toggler d-block d-md-none" type="button"><span></span><span
+                    class="w-75"></span><span class="w-50"></span></button>
+
+            <!-- Logo -->
+            <a class="logo ml-md-3" href="index.html" title="Nuts Package Manager"> <img
+                    src="assets/images/nuts-icon.png" alt="Nuts Package Manager" width="32px"/> </a>
+            <span class="text-4 ml-2" style="font-family: ZeroesTwo;"><strong><a href="index.html">Nuts Package Manager</a></strong></span>
+            <span class="text-2 ml-2" style="font-family: ZeroesTwo;"><span class="badge badge-info">v0.8.5.0</span></span>
+            <!-- Logo End -->
+
+            <!-- Navbar Toggler -->
+            <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#header-nav">
+                <span></span><span></span><span></span></button>
+
+            <div id="header-nav" class="collapse navbar-collapse justify-content-end">
+                <ul class="navbar-nav">
+                    <li class="dropdown"> <a class="dropdown-toggle" href="#">Documentation</a>
+                      <ul class="dropdown-menu">
+                          <li><a class="dropdown-item " href="documentation.html">Package Manager</a>
+                          <li><a class="dropdown-item not-active" href="naf.html">Application Framework</a></li>
+                          <li><a class="dropdown-item " href="contrib.html">Contributing</a></li>
+                          <li><a class="dropdown-item " href="faq.html">FAQ</a></li>
+                          <!--
+                        <li><a class="dropdown-item" href="#">Action</a></li>
+                        <li class="dropdown"><a class="dropdown-item dropdown-toggle" href="#">More</a>
+                          <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="index.html">Apps</a></li>
+                            <li><a class="dropdown-item" href="feature-header-dark.html">Change Log</a></li>
+                            <li><a class="dropdown-item" href="feature-header-primary.html">FAQ</a></li>
+                            <li><a class="dropdown-item" href="index-2.html">Another Link</a></li>
+                          </ul>
+                        </li>
+                        -->
+                      </ul>
+                    </li>
+                    <li><a href="blog.html" class="">Blog</a></li>
+                    <li><a href="apps.html" class="">Apps</a></li>
+                    <li><a href="download.html" class="">Download</a></li>
+                    <li><a target="_blank" href="https://github.com/thevpc/nuts">GitHub</a></li>
+                </ul>
+            </div>
+            <ul class="social-icons social-icons-sm ml-lg-2 mr-2">
+                <li class="social-icons-twitter"><a data-toggle="tooltip"
+                                                    href="http://www.twitter.com/tbensalah/" target="_blank"
+                                                    title="" data-original-title="Twitter"><i
+                        class="fab fa-twitter"></i></a></li>
+                <li class="social-icons-facebook"><a data-toggle="tooltip"
+                                                     href="http://www.facebook.com/tbensalah/" target="_blank"
+                                                     title="" data-original-title="Facebook"><i
+                        class="fab fa-facebook-f"></i></a></li>
+                <li class="social-icons-dribbble"><a data-toggle="tooltip"
+                                                     href="http://www.dribbble.com/tbensalah/" target="_blank"
+                                                     title="" data-original-title="Dribbble"><i
+                        class="fab fa-dribbble"></i></a></li>
+            </ul>
+        </div>
+    </nav>
+    <!-- Navbar End -->
+</header>
+<!-- Header End -->
+
+
+    <!-- Content
+    ============================ -->
+    <div id="content" role="main">
+
+        <!-- Sidebar Navigation
+        ============================ -->
+        <div class="idocs-navigation bg-light">
+            <ul class="nav flex-column ">
+                
+                <li class="nav-item"><a class="nav-link" href="#ApplicationFramework">1 Application Framework</a>
+                    
+                    
+                    <ul class="nav flex-column">
+                        
+                        <li class="nav-item"><a class="nav-link" href="#nutsAppNAF">1.1 Nuts Application Framework</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#nutsApp">1.2 Your first Application using nuts</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#nutsDescriptorIntegration">1.3 Nuts Descriptor Integration</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#NOptional">1.4 NOptional</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#NPath">1.5 NPath</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#NStream">1.6 NStream</a>
+                            
+                            
+                        </li>
+                        
+                    </ul>
+                    
+                </li>
+                
+            </ul>
+        </div>
+
+        <!-- Docs Content
+        ============================ -->
+        <div class="idocs-content">
+            <div class="container">
+
+                
+                    <!--pageLevel1-->
+                    <section id="ApplicationFramework" >
+                        <h2 class="main-section1"><a href="#ApplicationFramework">1 Application Framework</a></h2>
+                        <div class="text-card">
+                        <p class="md-phrase"><mark class="md-code md-code-` ">nuts</mark> is a package manager that can be embedded in your application and hence present a solid Application Framework and tooling to make the applicable more robust and more portable.</p>
+
+                        </div>
+                        
+                            <!--pageLevel2-->
+                            <section id="nutsAppNAF" >
+                                <h3 class="main-section2"><a href="#ApplicationFramework">1.1 Nuts Application Framework</a></h3>
+                                <div class="text-card">
+                                <H4 class="md-title-1"> Using Nuts Application Framework (NAF)</H4>
+<p class="md-phrase">Using <mark class="md-code md-code-``` ">nuts</mark> is transparent as we have seen so far. It is transparent both at build time and runtime. However, <mark class="md-code md-code-``` ">nuts</mark> can provide our application a set of unique helpful features, such as install and uninstall hooks, comprehensive command line support and so on.</p>
+<p class="md-phrase">To create your first <mark class="md-code md-code-``` ">NAF</mark> application, you will need to add nuts as a dependency and change your <code class="md-code md-code-` ">pom.xml</code> as follows:</p>
+<pre class="md-code md-code-``` xml"><code class="xml">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+    &lt;groupId&gt;com.mycompany.app&lt;/groupId&gt;
+    &lt;artifactId&gt;my-app&lt;/artifactId&gt;
+    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+    &lt;packaging&gt;jar&lt;/packaging&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
+            &lt;artifactId&gt;nuts-api&lt;/artifactId&gt;
+            &lt;version&gt;0.8.5&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;jexcelapi&lt;/groupId&gt;
+            &lt;artifactId&gt;jxl&lt;/artifactId&gt;
+            &lt;version&gt;2.4.2&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+    &lt;properties&gt;
+        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+        &lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt;
+        &lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
+        &lt;nuts.application&gt;true&lt;/nuts.application&gt;
+    &lt;/properties&gt;
+&lt;/project&gt; 
+</code></pre>
+<p class="md-phrase">Please take note that we have added a property <code class="md-code md-code-` ">nuts.application=true</code>.  Actually this is not mandatory, but this will help <mark class="md-code md-code-``` ">nuts</mark> package manager detect that this application uses NAF before downloading its jar (the information will be available in the <code class="md-code md-code-``` pom">.xml</code> descriptor on the remote repository).</p>
+Then we will add some cool features to our application. We write a dummy message whenever the application is installed, uninstalled or updated. We will also add support to "--file=[path]" argument to specify the workbook path.
+<pre class="md-code md-code-``` java"><code class="java">
+package com.mycompany.app;
+
+import java.io.File;
+
+import jxl.Workbook;
+import jxl.write.WritableWorkbook;
+
+public class App implements NApplication {
+
+    public static void main(String[] args) {
+        // just create an instance and call runAndExit in the main method
+        // this method ensures that exist code is well propagted
+        // from exceptions to caller processes
+        new App().runAndExit(args);
+    }
+
+    @Override
+    public void run(NSession session) {
+        NCmdLine cmd = session.getAppCmdLine();
+        File file = new File("file.xls");
+        while (cmd.hasNext()) {
+            switch (cmd.getKey().getString()) {
+                case "--file": {
+                    NArg a = cmd.nextEntry().get();
+                    file = new File(a.getStringValue());
+                    break;
+                }
+                case "--fill": {
+                    // process other options here ...
+                    break;
+                }
+                default: {
+                    s.configureLast(cmd);
+                }
+            }
+        }
+        try {
+            WritableWorkbook w = Workbook.createWorkbook(file);
+            s.out().printf("Workbook just created at %s%n", file);
+        } catch (Exception ex) {
+            ex.printStackTrace(s.err());
+        }
+    }
+
+    @Override // this method is not required, implement when needed
+    public void onInstallApplication(NSession s) {
+        s.out().printf("we are installing My Application : %s%n", s.getAppId());
+    }
+
+    @Override // this method is not required, implement when needed
+    public void onUninstallApplication(NSession s) {
+        s.out().printf("we are uninstalling My Application : %s%n", s.getAppId());
+    }
+
+    @Override // this method is not required, implement when needed
+    public void onUpdateApplication(NSession s) {
+        s.out().printf("we are updating My Application : %s%n", s.getAppId());
+    }
+}
+
+</code></pre>
+Now we can install or uninstall the application and see the expected messages.
+<pre class="md-code md-code-``` bash"><code class="bash">
+nuts -y install com.mycompany.app:my-app
+nuts -y uninstall com.mycompany.app:my-app
+</code></pre>
+
+
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
+                            <section id="nutsApp" >
+                                <h3 class="main-section2"><a href="#ApplicationFramework">1.2 Your first Application using nuts</a></h3>
+                                <div class="text-card">
+                                <H4 class="md-title-2"> Running your application with Nuts</H4>
+<p class="md-phrase">Lets take, step by step, an example of an application that you will run using <mark class="md-code md-code-``` ">nuts</mark> package manager</p>
+<p class="md-phrase">First we can create the project using your favourite IDE or using simply <mark class="md-code md-code-` ">mvn</mark> command</p>
+<pre class="md-code md-code-``` "><code class="">
+mvn archetype:generate -DgroupId=com.mycompany.app -DartifactId=my-app -DarchetypeArtifactId=maven-archetype-simple -DarchetypeVersion=1.4 -DinteractiveMode=false
+</code></pre>
+We will have a fully generated java project
+<pre class="md-code md-code-``` bash"><code class="bash">
+~/&gt; tree
+.
+└── my-app
+    ├── pom.xml
+    └── src
+        ├── main
+        │   └── java
+        │       └── com
+        │           └── mycompany
+        │               └── app
+        │                   └── App.java
+        └── test
+            └── java
+                └── com
+                    └── mycompany
+                        └── app
+                            └── AppTest.java
+
+</code></pre>
+<p class="md-phrase">Now we will add some dependencies to the project. Let's add <code class="md-code md-code-` ">jexcelapi:jxl#2.4.2</code> and update <code class="md-code md-code-` ">pom.xml</code> consequently.</p>
+<pre class="md-code md-code-``` xml"><code class="xml">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+    &lt;groupId&gt;com.mycompany.app&lt;/groupId&gt;
+    &lt;artifactId&gt;my-app&lt;/artifactId&gt;
+    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+    &lt;packaging&gt;jar&lt;/packaging&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;jexcelapi&lt;/groupId&gt;
+            &lt;artifactId&gt;jxl&lt;/artifactId&gt;
+            &lt;version&gt;2.4.2&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+    &lt;properties&gt;
+        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+        &lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt;
+        &lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
+    &lt;/properties&gt;
+&lt;/project&gt; 
+</code></pre>
+Now we update the App.java file
+<pre class="md-code md-code-``` java"><code class="java">
+package com.mycompany.app;
+
+import java.io.File;
+
+import jxl.Workbook;
+import jxl.write.WritableWorkbook;
+
+public class App {
+
+    public static void main(String[] args) {
+        try {
+            WritableWorkbook w = Workbook.createWorkbook(new File("any-file.xls"));
+            System.out.println("Workbook just created");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+}
+
+</code></pre>
+finally we compile the app:
+<pre class="md-code md-code-``` bash"><code class="bash">
+mvn clean install
+</code></pre>
+<p class="md-phrase">Of course, we won't be able to run the application yet. Would we? For this app to work there are several ways, all of them are complicated and require modifying the <code class="md-code md-code-` ">pom.xml</code>  and even modifying the output jar. we can for instance generate an output lib directory and update the <mark class="md-code md-code-` ">META-INF</mark> file using <mark class="md-code md-code-` ">maven-dependency-plugin</mark>. (see <a href="https://maven.apache.org/plugins/maven-shade-plugin" class="md-link">https://maven.apache.org/plugins/maven-shade-plugin</a> ; <a href="https://www.baeldung.com/executable-jar-with-maven" class="md-link">https://www.baeldung.com/executable-jar-with-maven</a>). We could also use <mark class="md-code md-code-` ">maven-assembly-plugin</mark> to include the dependencies into the jar itself ('what the fat' jar!). Another alternative is to use an uglier solution with <mark class="md-code md-code-``` ">maven-shade-plugin</mark> and blend libraries into the main jar. In all cases we need as well to configure <mark class="md-code md-code-` ">maven-jar-plugin</mark> to specify the main class file.</p>
+<p class="md-phrase">I am not exposing all solutions here. You can read this article for more details (<a href="https://www.baeldung.com/executable-jar-with-maven" class="md-link">https://www.baeldung.com/executable-jar-with-maven</a>) but trust me, they all stink.Instead of that we will use <mark class="md-code md-code-` ">nuts</mark>. In that case, actually we are already done, the app is already OK! We do not need to specify the main class neither are we required to bundle <mark class="md-code md-code-` ">jxl</mark> and its dependencies. We only need to run the app. That's it.</p>
+<p class="md-phrase">Basically, you can install the application using its identifier <code class="md-code md-code-` ">com.mycompany.app:my-app</code>. The latest version will be resolved.</p>
+<pre class="md-code md-code-``` bash"><code class="bash">
+nuts install com.mycompany.app:my-app
+nuts my-app
+</code></pre>
+This will install the application and run it on the fly. Dependencies will be detected, resolved and downloaded. The application is installed from local maven repository. It needs to be deployed to a public repository for it to be publicly accessible, however.
+We can also choose not to install the app and bundle it as a jar. No need for a public repository in that case:
+<pre class="md-code md-code-``` bash"><code class="bash">
+nuts -y com my-app-1.0.0-SNAPSHOT.jar
+</code></pre>
+<p class="md-phrase">As we can see, <mark class="md-code md-code-` ">nuts</mark> provides the simplest and the most elegant way to deploy your application.</p>
+<p class="md-phrase">One question though. what happens if we define multiple main methods (in multiple public classes). It is handled as well by <mark class="md-code md-code-``` ">nuts</mark> seamlessly. It just asks, at runtime, for the appropriate class to run.</p>
+
+<H4 class="md-title-1"> Using Nuts Application Framework</H4>
+<p class="md-phrase">Using <mark class="md-code md-code-``` ">nuts</mark> is transparent as we have seen so far. It is transparent both at build time and runtime. However, <mark class="md-code md-code-``` ">nuts</mark> can provide our application a set of unique helpful features, such as install and uninstall hooks, comprehensive command line support and so on.</p>
+<p class="md-phrase">To create your first <mark class="md-code md-code-``` ">NAF</mark> application, you will need to add nuts as a dependency and change your <code class="md-code md-code-` ">pom.xml</code> as follows:</p>
+<pre class="md-code md-code-``` xml"><code class="xml">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+    &lt;groupId&gt;com.mycompany.app&lt;/groupId&gt;
+    &lt;artifactId&gt;my-app&lt;/artifactId&gt;
+    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+    &lt;packaging&gt;jar&lt;/packaging&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
+            &lt;artifactId&gt;nuts-api&lt;/artifactId&gt;
+            &lt;version&gt;0.8.5&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;jexcelapi&lt;/groupId&gt;
+            &lt;artifactId&gt;jxl&lt;/artifactId&gt;
+            &lt;version&gt;2.4.2&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+    &lt;properties&gt;
+        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+        &lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt;
+        &lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
+        &lt;nuts.application&gt;true&lt;/nuts.application&gt;
+    &lt;/properties&gt;
+&lt;/project&gt; 
+</code></pre>
+<p class="md-phrase">Please take note that we have added a property <code class="md-code md-code-` ">nuts.application=true</code>.  Actually this is not mandatory, but this will help <mark class="md-code md-code-``` ">nuts</mark> package manager detect that this application uses NAF before downloading its jar (the information will be available in the <code class="md-code md-code-``` pom">.xml</code> descriptor on the remote repository).</p>
+Then we will add some cool features to our application. We write a dummy message whenever the application is installed, uninstalled or updated. We will also add support to "--file=[path]" argument to specify the workbook path.
+<pre class="md-code md-code-``` java"><code class="java">
+package com.mycompany.app;
+
+import java.io.File;
+
+import jxl.Workbook;
+import jxl.write.WritableWorkbook;
+
+public class App implements NApplication {
+
+    public static void main(String[] args) {
+        // just create an instance and call runAndExit in the main method
+        new App().runAndExit(args);
+    }
+
+    @Override
+    public void run(NSession session) {
+        NCmdLine cmd = session.getAppCmdLine();
+        File file = new File("file.xls");
+        while (cmd.hasNext()) {
+            switch (cmd.getKey().getString()) {
+                case "--file": {
+                    NArg a = cmd.nextEntry().get();
+                    file = new File(a.getStringValue());
+                    break;
+                }
+                case "--fill": {
+                    // process other options here ...
+                    break;
+                }
+                default: {
+                    s.configureLast(cmd);
+                }
+            }
+        }
+        try {
+            WritableWorkbook w = Workbook.createWorkbook(file);
+            s.out().printf("Workbook just created at %s%n", file);
+        } catch (Exception ex) {
+            ex.printStackTrace(s.err());
+        }
+    }
+
+    @Override
+    public void onInstallApplication(NSession s) {
+        s.out().printf("we are installing My Application : %s%n", s.getAppId());
+    }
+
+    @Override
+    public void onUninstallApplication(NSession s) {
+        s.out().printf("we are uninstalling My Application : %s%n", s.getAppId());
+    }
+
+    @Override
+    public void onUpdateApplication(NSession s) {
+        s.out().printf("we are updating My Application : %s%n", s.getAppId());
+    }
+}
+
+</code></pre>
+Now we can install or uninstall the application and see the expected messages.
+<pre class="md-code md-code-``` bash"><code class="bash">
+nuts -y install com.mycompany.app:my-app
+nuts -y uninstall com.mycompany.app:my-app
+</code></pre>
+
+
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
+                            <section id="nutsDescriptorIntegration" >
+                                <h3 class="main-section2"><a href="#ApplicationFramework">1.3 Nuts Descriptor Integration</a></h3>
+                                <div class="text-card">
+                                <H4 class="md-title-2"> Nuts Descriptor Integration</H4>
+<ul class="md-ul"><li class="md-uli">Seamless integration</li><li class="md-uli">Maven Solver</li></ul>
+<H4 class="md-title-3"> Nuts and Maven</H4>
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">nuts.executable=&lt;true|false&gt;</code> : when true the artifact is an executable (contains main class)</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">nuts.application=&lt;true|false&gt;</code> : when true the artifact is an executable application (implements NutsApplication)</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">nuts.gui=&lt;true|false&gt;</code> : when true the requires a gui environment to execute</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">nuts.term=&lt;true|false&gt;</code> : when true the artifact is a command line executable</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">nuts.icons=&lt;icon-path-string-array&gt;</code> : an array (separated with ',' or new lines) of icon paths (url in the NPath   format)</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">nuts.genericName=&lt;genericNameString&gt;</code> : a generic name for the application like 'Text Editor'</p><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">nuts.categories=&lt;categories-string-array&gt;</code> : an array (separated with ',' or new lines) of categories. the       categories should be compatible with Free Desktop Menu       specification (<a href="https://specifications.freedesktop.org/menu-spec/menu-spec-1.0.html" class="md-link">https://specifications.freedesktop.org/menu-spec/menu-spec-1.0.html</a>)</p></li></ul></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">nuts.&lt;os&gt;-os-dependencies</code> : list (':',';' or line separated) of short ids of dependencies that shall be appended to   classpath only if running on the given os (see NutsOsFamily). This is a ways more simple than using the builtin '   profile' concept of Maven (which is of course supported as well)</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">nuts.&lt;arch&gt;-arch-dependencies</code> : list (':',';' or line separated) of short ids of dependencies that shall be appended   to classpath only if running on the given hardware architecture (see NutsArchFamily). This is a ways more simple than   using the builtin 'profile' concept of Maven (which is of course supported as well)</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">nuts.&lt;os&gt;-os-&lt;arch&gt;-arch-dependencies</code> : list (':',';' or line separated) of short ids of dependencies that shall be   appended to classpath only if running on the given hardware architecture and os family</p></li></ul>
+<pre class="md-code md-code-``` xml"><code class="xml">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+    &lt;groupId&gt;your-group&lt;/groupId&gt;
+    &lt;artifactId&gt;your-project&lt;/artifactId&gt;
+    &lt;version&gt;1.2.3&lt;/version&gt;
+    &lt;packaging&gt;jar&lt;/packaging&gt;
+    &lt;properties&gt;
+        &lt;!--properties having special meanings in Nuts--&gt;
+        &lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
+
+        &lt;!--properties specific to nuts for developers extending nuts--&gt;
+        &lt;nuts.runtime&gt;true&lt;/nuts.runtime&gt; &lt;!--if you implement a whole new runtime--&gt;
+        &lt;nuts.extension&gt;true&lt;/nuts.extension&gt; &lt;!--if you implement an extension--&gt;
+
+        &lt;!--other properties specific to nuts--&gt;
+        &lt;nuts.genericName&gt;A Generic Name&lt;/nuts.genericName&gt;
+        &lt;nuts.executable&gt;true&lt;/nuts.executable&gt;
+        &lt;nuts.application&gt;true&lt;/nuts.application&gt;
+        &lt;nuts.gui&gt;true&lt;/nuts.gui&gt;
+        &lt;nuts.term&gt;true&lt;/nuts.term&gt;
+
+        &lt;nuts.categories&gt;
+            /Settings/YourCategory
+        &lt;/nuts.categories&gt;
+        &lt;nuts.icons&gt;
+            classpath://net/yourpackage/yourapp/icon.svg
+            classpath://net/yourpackage/yourapp/icon.png
+            classpath://net/yourpackage/yourapp/icon.ico
+        &lt;/nuts.icons&gt;
+        &lt;nuts.windows-os-dependencies&gt;
+            org.fusesource.jansi:jansi
+            com.github.vatbub:mslinks
+        &lt;/nuts.windows-os-dependencies&gt;
+        &lt;nuts.windows-os-x86_32-arch-dependencies&gt;
+            org.fusesource.jansi:jansi
+            com.github.vatbub:mslinks
+        &lt;/nuts.windows-os-x86_32-arch-dependencies&gt;
+    &lt;/properties&gt;
+
+    &lt;dependencies&gt;
+    &lt;/dependencies&gt;
+&lt;/project&gt;
+
+</code></pre>
+
+<H4 class="md-title-3"> Nuts and Java MANIFEST.MF</H4>
+<pre class="md-code md-code-``` manifest"><code class="manifest">
+
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Built-By: vpc
+Created-By: Apache Maven 3.8.1
+Build-Jdk: 1.8.0_302
+
+Nuts-Id: groupid:artifactid#version
+Nuts-Dependencies: org.fusesource.jansi:jansi#1.2?os=windows;com.github.vatbub:mslinks#1.3?os=windows
+Nuts-Name: Your App Name
+Nuts-Generic-Name: Your App Generic Name
+Nuts-Description: Your App Description
+Nuts-Categories: /Settings/YourCategory;/Settings/YourCategory2
+Nuts-Icons: classpath://net/yourpackage/yourapp/icon.svg;classpath://net/yourpackage/yourapp/icon.png
+Nuts-Property-YourProp: YourValue
+
+Comment: if the Nuts-Id could not be found, best effort will be used from the following
+Automatic-Module-Name: yourgroupid.yourartifactid.YourClass
+Main-Class: groupid.artifactid.YourClass
+Implementation-Version: 1.2.3
+
+</code></pre>
+
+<H4 class="md-title-3"> Nuts and Java 9 (jdeps)</H4>
+<p class="md-phrase">Nuts supports <mark class="md-code md-code-` ">Automatic-Module-Name</mark>.</p>
+<pre class="md-code md-code-``` manifest"><code class="manifest">
+Automatic-Module-Name: yourgroupid.yourartifactid.YourClass
+
+</code></pre>
+
+<H4 class="md-title-3"> Nuts and Gradle (TODO)</H4>
+
+
+
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
+                            <section id="NOptional" >
+                                <h3 class="main-section2"><a href="#ApplicationFramework">1.4 NOptional</a></h3>
+                                <div class="text-card">
+                                <p class="md-phrase"><b class="md-bold">nuts</b> introduces a concept very similar to java's Optional but with better extension builtin mechanisms and helper methods : <mark class="md-code md-code-``` ">NOptional</mark></p>
+<p class="md-phrase"><mark class="md-code md-code-``` ">NOptional</mark> is extensively used in Nuts Package Manager itself.</p>
+<H4 class="md-title-2"> Non Null Assertion</H4>
+Java has a builtin null Check mechanism but it does not enable customized messages or exceptions. Optional are described as per Java's (c) Documentation "A container object which may or may not contain a non-null value". NOptional is more of an Object Wrapper than addes several useful null related operators like '??' '?.' and '!' in typescript. 
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="id0cf1fbbd15c84758b777d0e806ff9c900-tab" data-toggle="tab" href="#id0cf1fbbd15c84758b777d0e806ff9c900" role="tab" aria-controls="id0cf1fbbd15c84758b777d0e806ff9c900" aria-selected="false">windows</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="id0cf1fbbd15c84758b777d0e806ff9c901-tab" data-toggle="tab" href="#id0cf1fbbd15c84758b777d0e806ff9c901" role="tab" aria-controls="id0cf1fbbd15c84758b777d0e806ff9c901" aria-selected="false">java</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="id0cf1fbbd15c84758b777d0e806ff9c902-tab" data-toggle="tab" href="#id0cf1fbbd15c84758b777d0e806ff9c902" role="tab" aria-controls="id0cf1fbbd15c84758b777d0e806ff9c902" aria-selected="true">NAF</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="id0cf1fbbd15c84758b777d0e806ff9c903-tab" data-toggle="tab" href="#id0cf1fbbd15c84758b777d0e806ff9c903" role="tab" aria-controls="id0cf1fbbd15c84758b777d0e806ff9c903" aria-selected="false"></a></li>
+</ul>
+<div class="tab-content my-3"><div class="tab-pane fade show " id="id0cf1fbbd15c84758b777d0e806ff9c900" role="tabpanel" aria-labelledby="id0cf1fbbd15c84758b777d0e806ff9c900-tab"><pre class="md-code md-code-``` typescript"><code class="typescript"> 
+    if(stringWord==null){
+        throw new Exception("missing user name");
+    }
+    stringWord!.toUpperCase()
+</code></pre></div>
+<div class="tab-pane fade show " id="id0cf1fbbd15c84758b777d0e806ff9c901" role="tabpanel" aria-labelledby="id0cf1fbbd15c84758b777d0e806ff9c901-tab"><pre class="md-code md-code-``` java"><code class="java">
+    if(stringWord==null){
+        throw new IllegalArgumentException("missing user name");
+    }
+    stringWord.toUpperCase()
+</code></pre></div>
+<div class="tab-pane fade show active" id="id0cf1fbbd15c84758b777d0e806ff9c902" role="tabpanel" aria-labelledby="id0cf1fbbd15c84758b777d0e806ff9c902-tab"><pre class="md-code md-code-``` java"><code class="java"> 
+    NOptional.ofNamed(stringWord,"user name").get().toUpperCase();
+    // will throw an IllegalArgumentException|NIllegalArgumentException with "missing user name" message;
+</code></pre></div>
+<div class="tab-pane fade show " id="id0cf1fbbd15c84758b777d0e806ff9c903" role="tabpanel" aria-labelledby="id0cf1fbbd15c84758b777d0e806ff9c903-tab">#
+#
+ Nullish Coalescing
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idf4f2aebbf29c44e08bb15e33fdf551f80-tab" data-toggle="tab" href="#idf4f2aebbf29c44e08bb15e33fdf551f80" role="tab" aria-controls="idf4f2aebbf29c44e08bb15e33fdf551f80" aria-selected="false">windows</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="idf4f2aebbf29c44e08bb15e33fdf551f81-tab" data-toggle="tab" href="#idf4f2aebbf29c44e08bb15e33fdf551f81" role="tab" aria-controls="idf4f2aebbf29c44e08bb15e33fdf551f81" aria-selected="false">java</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="idf4f2aebbf29c44e08bb15e33fdf551f82-tab" data-toggle="tab" href="#idf4f2aebbf29c44e08bb15e33fdf551f82" role="tab" aria-controls="idf4f2aebbf29c44e08bb15e33fdf551f82" aria-selected="true">NAF</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="idf4f2aebbf29c44e08bb15e33fdf551f83-tab" data-toggle="tab" href="#idf4f2aebbf29c44e08bb15e33fdf551f83" role="tab" aria-controls="idf4f2aebbf29c44e08bb15e33fdf551f83" aria-selected="false"></a></li>
+</ul>
+<div class="tab-content my-3"><div class="tab-pane fade show " id="idf4f2aebbf29c44e08bb15e33fdf551f80" role="tabpanel" aria-labelledby="idf4f2aebbf29c44e08bb15e33fdf551f80-tab"><pre class="md-code md-code-``` typescript"><code class="typescript"> 
+    var roadNumber=road.number??10;
+</code></pre></div>
+<div class="tab-pane fade show " id="idf4f2aebbf29c44e08bb15e33fdf551f81" role="tabpanel" aria-labelledby="idf4f2aebbf29c44e08bb15e33fdf551f81-tab"><pre class="md-code md-code-``` java"><code class="java">
+    Number roadNumber=road.number!=null?road.number:10;
+</code></pre></div>
+<div class="tab-pane fade show active" id="idf4f2aebbf29c44e08bb15e33fdf551f82" role="tabpanel" aria-labelledby="idf4f2aebbf29c44e08bb15e33fdf551f82-tab"><pre class="md-code md-code-``` java"><code class="java"> 
+    Number roadNumber=NOptional.of(road.number).orElse(10);
+</code></pre></div>
+<div class="tab-pane fade show " id="idf4f2aebbf29c44e08bb15e33fdf551f83" role="tabpanel" aria-labelledby="idf4f2aebbf29c44e08bb15e33fdf551f83-tab">#
+#
+ Optional Chaining
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="id721b80875d0f4bf3a85194b677086f8b0-tab" data-toggle="tab" href="#id721b80875d0f4bf3a85194b677086f8b0" role="tab" aria-controls="id721b80875d0f4bf3a85194b677086f8b0" aria-selected="false">windows</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="id721b80875d0f4bf3a85194b677086f8b1-tab" data-toggle="tab" href="#id721b80875d0f4bf3a85194b677086f8b1" role="tab" aria-controls="id721b80875d0f4bf3a85194b677086f8b1" aria-selected="false">java</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="id721b80875d0f4bf3a85194b677086f8b2-tab" data-toggle="tab" href="#id721b80875d0f4bf3a85194b677086f8b2" role="tab" aria-controls="id721b80875d0f4bf3a85194b677086f8b2" aria-selected="true">NAF</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="id721b80875d0f4bf3a85194b677086f8b3-tab" data-toggle="tab" href="#id721b80875d0f4bf3a85194b677086f8b3" role="tab" aria-controls="id721b80875d0f4bf3a85194b677086f8b3" aria-selected="false"></a></li>
+</ul>
+<div class="tab-content my-3"><div class="tab-pane fade show " id="id721b80875d0f4bf3a85194b677086f8b0" role="tabpanel" aria-labelledby="id721b80875d0f4bf3a85194b677086f8b0-tab"><pre class="md-code md-code-``` typescript"><code class="typescript"> 
+    var roadNumber=app?.person?.address?.road?.number;
+</code></pre></div>
+<div class="tab-pane fade show " id="id721b80875d0f4bf3a85194b677086f8b1" role="tabpanel" aria-labelledby="id721b80875d0f4bf3a85194b677086f8b1-tab"><pre class="md-code md-code-``` java"><code class="java">
+    Number roadNumber=(app!=null &amp;&amp; app.person!=null &amp;&amp; app.person.road!=null)? app.person.address.road.number:null;
+</code></pre></div>
+<div class="tab-pane fade show active" id="id721b80875d0f4bf3a85194b677086f8b2" role="tabpanel" aria-labelledby="id721b80875d0f4bf3a85194b677086f8b2-tab"><pre class="md-code md-code-``` java"><code class="java"> 
+    Number roadNumber=NOptional.of(app).then(v-&gt;v.person).then(v-&gt;v.road).then(v-&gt;v.number).orNull();
+</code></pre></div>
+<div class="tab-pane fade show " id="id721b80875d0f4bf3a85194b677086f8b3" role="tabpanel" aria-labelledby="id721b80875d0f4bf3a85194b677086f8b3-tab">#
+#
+ Combining Optional Chaining
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="id71b1e1501cb24829ad136078d4260f750-tab" data-toggle="tab" href="#id71b1e1501cb24829ad136078d4260f750" role="tab" aria-controls="id71b1e1501cb24829ad136078d4260f750" aria-selected="false">typescript</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="id71b1e1501cb24829ad136078d4260f751-tab" data-toggle="tab" href="#id71b1e1501cb24829ad136078d4260f751" role="tab" aria-controls="id71b1e1501cb24829ad136078d4260f751" aria-selected="false">java</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="id71b1e1501cb24829ad136078d4260f752-tab" data-toggle="tab" href="#id71b1e1501cb24829ad136078d4260f752" role="tab" aria-controls="id71b1e1501cb24829ad136078d4260f752" aria-selected="true">NAF</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="id71b1e1501cb24829ad136078d4260f753-tab" data-toggle="tab" href="#id71b1e1501cb24829ad136078d4260f753" role="tab" aria-controls="id71b1e1501cb24829ad136078d4260f753" aria-selected="false"></a></li>
+</ul>
+<div class="tab-content my-3"><div class="tab-pane fade show " id="id71b1e1501cb24829ad136078d4260f750" role="tabpanel" aria-labelledby="id71b1e1501cb24829ad136078d4260f750-tab"><pre class="md-code md-code-``` typescript"><code class="typescript"> 
+    var roadNumber=app?.person?.address!.road?.number??0;
+</code></pre></div>
+<div class="tab-pane fade show " id="id71b1e1501cb24829ad136078d4260f751" role="tabpanel" aria-labelledby="id71b1e1501cb24829ad136078d4260f751-tab"><pre class="md-code md-code-``` java"><code class="java">
+    Address address=(app!=null &amp;&amp; app.person!=null)?app.person.address:null;
+    if(address==null){
+       throw new IllegalArgumentException("missing address"); 
+    }
+    Number roadNumber=(address!=null 
+        &amp;&amp; address.road!=null)
+        ? address.road.number:0;
+</code></pre></div>
+<div class="tab-pane fade show active" id="id71b1e1501cb24829ad136078d4260f752" role="tabpanel" aria-labelledby="id71b1e1501cb24829ad136078d4260f752-tab"><pre class="md-code md-code-``` java"><code class="java"> 
+    Number roadNumber=NOptional.of(app).then(v-&gt;v.person).then(v-&gt;v.address).get().then(v-&gt;v.road).then(v-&gt;v.number).orElse(0);
+</code></pre></div>
+<div class="tab-pane fade show " id="id71b1e1501cb24829ad136078d4260f753" role="tabpanel" aria-labelledby="id71b1e1501cb24829ad136078d4260f753-tab"></div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
+                            <section id="NPath" >
+                                <h3 class="main-section2"><a href="#ApplicationFramework">1.5 NPath</a></h3>
+                                <div class="text-card">
+                                <p class="md-phrase"><b class="md-bold">nuts</b> introduces a concept very similar to java's URL but with better extension builtin mechanisms and helper methods : <mark class="md-code md-code-``` ">NPath</mark></p>
+supported formats/protocols are:
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase">file format   <code class="md-code md-code-``` ">/path/to/to/resource</code> or <code class="md-code md-code-``` c:">\\path\\to\\resource</code></p></li><li class="md-uli"><p class="md-phrase">file URL <code class="md-code md-code-``` file:">/path/to/to/resource</code> or <code class="md-code md-code-``` file:c:">/path/to/resource</code></p></li><li class="md-uli"><p class="md-phrase">http/https URLs (or any other Java supported URL) <code class="md-code md-code-``` http:">//some-url</code> or <code class="md-code md-code-``` https:">//some-url</code></p></li><li class="md-uli"><p class="md-phrase">classpath <code class="md-code md-code-``` classpath:">/path/to/to/resource</code> (you must provide the used classpath upon creation)</p></li><li class="md-uli"><p class="md-phrase">resource Path <code class="md-code md-code-``` resource:">//groupId1:artifactId1#version1;groupId2:artifactId2#version2/path/to/resource</code> or <code class="md-code md-code-``` resource:">//(groupId1:artifactId1#version1;groupId2:artifactId2#version2)/path/to/resource</code> in that case the resource is looked up in any of the artifact classpaths (including dependencies)  </p></li></ul>
+
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
+                            <section id="NStream" >
+                                <h3 class="main-section2"><a href="#ApplicationFramework">1.6 NStream</a></h3>
+                                <div class="text-card">
+                                <p class="md-phrase"><b class="md-bold">nuts</b> introduces a concept very similar to java's Stream but with better extension builtin mechanisms and helper methods : <mark class="md-code md-code-``` ">NStream</mark></p>
+<p class="md-phrase"><mark class="md-code md-code-``` ">NStream</mark> is actually a wrapper to java's Stream, Iterator and Iterable and you can create a stream using <code class="md-code md-code-``` NStream">.of(...)</code> methods.</p>
+<p class="md-phrase"><mark class="md-code md-code-``` ">NStream</mark> is extensively used in Search Command.</p>
+
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                    </section>
+                    <hr class="divider">
+                
+
+            </div>
+        </div>
+
+    </div>
+    <!-- Content end -->
+
+    <!-- Footer
+============================ -->
+<footer id="footer" class="section bg-dark footer-text-light">
+    <div class="container">
+        <ul class="social-icons social-icons-lg social-icons-muted justify-content-center mb-3">
+            <li><a data-toggle="tooltip" href="https://twitter.com/tbensalah/" target="_blank" title=""
+                   data-original-title="Twitter"><i class="fab fa-twitter"></i></a></li>
+            <li><a data-toggle="tooltip" href="http://www.facebook.com/tbensalah/" target="_blank" title=""
+                   data-original-title="Facebook"><i class="fab fa-facebook-f"></i></a></li>
+            <li><a data-toggle="tooltip" href="http://www.dribbble.com/tbensalah/" target="_blank" title=""
+                   data-original-title="Dribbble"><i class="fab fa-dribbble"></i></a></li>
+            <li><a data-toggle="tooltip" href="https://github.com/thevpc/nuts" target="_blank" title=""
+                   data-original-title="GitHub"><i class="fab fa-github"></i></a></li>
+        </ul>
+        <p class="text-2 text-center mb-0">
+            Copyright © 2018-2025 Nuts Package Manager Team.
+            <br>
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-01-22-232856
+            <br>
+            <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
+                                                        href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
+        </p>
+    </div>
+</footer>
+<!-- Footer end -->
+
+</div>
+<!-- Document Wrapper end -->
+
+<!-- Back To Top -->
+<a id="back-to-top" data-toggle="tooltip" title="Back to Top" href="javascript:void(0)"><i class="fa fa-chevron-up"></i></a>
+
+<!-- JavaScript
+============================ -->
+<script src="assets/vendor/jquery/jquery.min.js"></script>
+<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- Highlight JS -->
+<script src="assets/vendor/highlight.js/highlight.min.js"></script>
+<!-- Easing -->
+<script src="assets/vendor/jquery.easing/jquery.easing.min.js"></script>
+<!-- Magnific Popup -->
+<script src="assets/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+<!-- Custom Script -->
+<script src="assets/js/theme.js"></script>
+</body>
+</html>

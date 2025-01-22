@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
+    <link href="assets/images/favicon.ico" rel="icon"/>
+    <title>Nuts Java Package Manager</title>
+    <meta name="description" content="Nuts Java Package Manager Website">
+    <meta name="author" content="thevpc">
+
+    <!-- Stylesheet
+    ============================== -->
+    <!-- Bootstrap -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/bootstrap/css/bootstrap.min.css"/>
+    <!-- Font Awesome Icon -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/font-awesome/css/all.min.css"/>
+    <!-- Magnific Popup -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/magnific-popup/magnific-popup.min.css"/>
+    <!-- Highlight Syntax -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/highlight.js/styles/github.css"/>
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet.css"/>
+</head>
+
+<body data-spy="scroll" data-target=".idocs-navigation" data-offset="125">
+
+<!-- Preloader -->
+<div class="preloader">
+    <div class="lds-ellipsis">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>
+<!-- Preloader -->
+
+<!-- Document Wrapper   
+=============================== -->
+<div id="main-wrapper" class="documentation-main-wrapper">
+    
+    <!-- Header
+    ============================ -->
+<header id="header" class="sticky-top">
+    <!-- Navbar -->
+    <nav class="primary-menu navbar navbar-expand-lg navbar-dropdown-dark">
+        <div class="container-fluid">
+            <!-- Sidebar Toggler -->
+            <button id="sidebarCollapse" class="navbar-toggler d-block d-md-none" type="button"><span></span><span
+                    class="w-75"></span><span class="w-50"></span></button>
+
+            <!-- Logo -->
+            <a class="logo ml-md-3" href="index.html" title="Nuts Package Manager"> <img
+                    src="assets/images/nuts-icon.png" alt="Nuts Package Manager" width="32px"/> </a>
+            <span class="text-4 ml-2" style="font-family: ZeroesTwo;"><strong><a href="index.html">Nuts Package Manager</a></strong></span>
+            <span class="text-2 ml-2" style="font-family: ZeroesTwo;"><span class="badge badge-info">v0.8.5.0</span></span>
+            <!-- Logo End -->
+
+            <!-- Navbar Toggler -->
+            <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#header-nav">
+                <span></span><span></span><span></span></button>
+
+            <div id="header-nav" class="collapse navbar-collapse justify-content-end">
+                <ul class="navbar-nav">
+                    <li class="dropdown"> <a class="dropdown-toggle" href="#">Documentation</a>
+                      <ul class="dropdown-menu">
+                          <li><a class="dropdown-item " href="documentation.html">Package Manager</a>
+                          <li><a class="dropdown-item " href="naf.html">Application Framework</a></li>
+                          <li><a class="dropdown-item not-active" href="contrib.html">Contributing</a></li>
+                          <li><a class="dropdown-item " href="faq.html">FAQ</a></li>
+                          <!--
+                        <li><a class="dropdown-item" href="#">Action</a></li>
+                        <li class="dropdown"><a class="dropdown-item dropdown-toggle" href="#">More</a>
+                          <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="index.html">Apps</a></li>
+                            <li><a class="dropdown-item" href="feature-header-dark.html">Change Log</a></li>
+                            <li><a class="dropdown-item" href="feature-header-primary.html">FAQ</a></li>
+                            <li><a class="dropdown-item" href="index-2.html">Another Link</a></li>
+                          </ul>
+                        </li>
+                        -->
+                      </ul>
+                    </li>
+                    <li><a href="blog.html" class="">Blog</a></li>
+                    <li><a href="apps.html" class="">Apps</a></li>
+                    <li><a href="download.html" class="">Download</a></li>
+                    <li><a target="_blank" href="https://github.com/thevpc/nuts">GitHub</a></li>
+                </ul>
+            </div>
+            <ul class="social-icons social-icons-sm ml-lg-2 mr-2">
+                <li class="social-icons-twitter"><a data-toggle="tooltip"
+                                                    href="http://www.twitter.com/tbensalah/" target="_blank"
+                                                    title="" data-original-title="Twitter"><i
+                        class="fab fa-twitter"></i></a></li>
+                <li class="social-icons-facebook"><a data-toggle="tooltip"
+                                                     href="http://www.facebook.com/tbensalah/" target="_blank"
+                                                     title="" data-original-title="Facebook"><i
+                        class="fab fa-facebook-f"></i></a></li>
+                <li class="social-icons-dribbble"><a data-toggle="tooltip"
+                                                     href="http://www.dribbble.com/tbensalah/" target="_blank"
+                                                     title="" data-original-title="Dribbble"><i
+                        class="fab fa-dribbble"></i></a></li>
+            </ul>
+        </div>
+    </nav>
+    <!-- Navbar End -->
+</header>
+<!-- Header End -->
+
+
+    <!-- Content
+    ============================ -->
+    <div id="content" role="main">
+
+        <!-- Sidebar Navigation
+        ============================ -->
+        <div class="idocs-navigation bg-light">
+            <ul class="nav flex-column ">
+                
+                <li class="nav-item"><a class="nav-link" href="#NutsContributing">1 Contributing</a>
+                    
+                    
+                    <ul class="nav flex-column">
+                        
+                        <li class="nav-item"><a class="nav-link" href="#building">1.1 Building</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#contributing">1.2 Contributing</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#projects">1.3 Repository Structure</a>
+                            
+                            
+                        </li>
+                        
+                    </ul>
+                    
+                </li>
+                
+                <li class="nav-item"><a class="nav-link" href="#API-Documentation">2 API Documentation</a>
+                    
+                    
+                </li>
+                
+            </ul>
+        </div>
+
+        <!-- Docs Content
+        ============================ -->
+        <div class="idocs-content">
+            <div class="container">
+
+                
+                    <!--pageLevel1-->
+                    <section id="NutsContributing" >
+                        <h2 class="main-section1"><a href="#NutsContributing">1 Contributing</a></h2>
+                        <div class="text-card">
+                        <H4 class="md-title-1"> Contributing</H4>
+<p class="md-phrase">This section is reserved to developers and content authors who want to know the internal of <mark class="md-code md-code-``` ">nuts</mark></p>
+package manager and/or are tempted to contribute to the project.
+
+
+                        </div>
+                        
+                            <!--pageLevel2-->
+                            <section id="building" >
+                                <h3 class="main-section2"><a href="#NutsContributing">1.1 Building</a></h3>
+                                <div class="text-card">
+                                <p class="md-phrase">To build<mark class="md-code md-code-` ">nuts</mark> Package Management you need the following software installed on your machine:</p>
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase">java JDK 8 (<mark class="md-code md-code-` ">nuts</mark> is still compatible with java 8)</p></li><li class="md-uli">maven 3.8+</li><li class="md-uli">You favorite IDE (I'm using Netbeans and sometimes IntellijIdea and very sporadically Eclipse)</li></ul>
+<H4 class="md-title-2"> Compiling Nuts</H4>
+<p class="md-phrase">Here is the typical commands to get your own local copy of <mark class="md-code md-code-` ">nuts</mark> sources and to compile them.</p>
+<p class="md-phrase">First of all, get your local copy of <mark class="md-code md-code-` ">nuts</mark> source code from <mark class="md-code md-code-` ">github</mark> </p>
+<pre class="md-code md-code-``` bash"><code class="bash">
+git clone https://github.com/thevpc/nuts.git
+cd nuts
+</code></pre>
+<p class="md-phrase">Then, you need to invoke <code class="md-code md-code-` ">mvn install</code> to compile all of the project:</p>
+<pre class="md-code md-code-``` bash"><code class="bash">
+mvn clean install
+</code></pre>
+<p class="md-phrase">That being done, <mark class="md-code md-code-` ">nuts</mark> will be compiled and installed to your local maven repository.</p>
+
+<H4 class="md-title-2"> Building Documentation and preparing development scripts</H4>
+<p class="md-phrase">The next thing we need to worry about is the building of nuts community website and to have a working development version of <mark class="md-code md-code-` ">nuts</mark> you can rely on in your tests manipulations.</p>
+<p class="md-phrase">To do so we will need to install locally <mark class="md-code md-code-``` ">nuts</mark> and <mark class="md-code md-code-``` ">nsh</mark>.</p>
+<p class="md-phrase">Assuming you are always under <mark class="md-code md-code-` ">nuts</mark> repo root folder, issue the following command (its a bash command, so you need to be on linux or MacOS for it to work)</p>
+<pre class="md-code md-code-``` bash"><code class="bash">
+cd installers/nuts-release-tool
+java -jar target/nuts-release-tool-$version.jar
+</code></pre>
+<p class="md-phrase">You can now play with your development version of nuts using the generated <mark class="md-code md-code-` ">nuts-dev</mark> script. You may want to update the following line to match your java 8 JDK install location or simply add it to your shell <mark class="md-code md-code-` ">rcfile</mark>.</p>
+<pre class="md-code md-code-``` sh"><code class="sh">
+NUTS_JAVA_HOME=/usr/lib64/jvm/java-1.8.0-openjdk-1.8.0
+</code></pre>
+<p class="md-phrase">Indeed, you must compile <mark class="md-code md-code-` ">nuts</mark> with java 8 because nuts needs to be working on Java 8 and all later java versions ( this means that compiling on more recent versions of java should pass successfully as well). So you must not use deprecated features (in java9+) in nuts source code (examples : js nashorn, rmi activation, etc...)</p>
+
+<H4 class="md-title-2"> Running, testing and working with nuts-dev, in development environment</H4>
+<p class="md-phrase">Here are some tips when working on nuts project or even working on an application that builds on <mark class="md-code md-code-` ">nuts</mark> using NAF (aka Nuts Application Framework) for example:</p>
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-``` ">nuts-dev</mark> is the script you are most of the time using when developing <mark class="md-code md-code-` ">nuts</mark> project.</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-``` ">nuts-dev</mark> script uses a special workspace called <mark class="md-code md-code-``` ">development</mark>, so it does not interfere with your local <mark class="md-code md-code-` ">nuts</mark> installation.</p></li><li class="md-uli"><p class="md-phrase">you can always change the workspace in <mark class="md-code md-code-``` ">nuts-dev</mark> using <mark class="md-code md-code-``` ">-w</mark> option</p></li></ul>
+<pre class="md-code md-code-``` sh"><code class="sh"> 
+./nuts-dev -w test
+</code></pre>
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase">You can run nuts in debug mode with <mark class="md-code md-code-` ">--debug</mark> that shall be the very <b class="md-bold">FIRST</b> option. The following example will spawn a jvm listening on the 5005/tcp port you can attach to your favorite IDE.</p></li></ul>
+<pre class="md-code md-code-``` sh"><code class="sh"> 
+./nuts-dev --debug
+</code></pre>
+<ul class="md-ul"><li class="md-uli">Always make sure you are working on a clean workspace, to have a reproducible environment,</li></ul>
+<pre class="md-code md-code-``` sh"><code class="sh"> 
+./nuts-dev -Zy
+</code></pre>
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase">If you are willing to run directly from your IDE, make sure you add <code class="md-code md-code-` ">-w=development</code> or <code class="md-code md-code-` ">-w=test</code> to   the program command line arguments as an example to work on a separate workspace than the one used in production or locally</p></li><li class="md-uli"><p class="md-phrase">If you want to debug an application running under <mark class="md-code md-code-` ">nuts</mark>, you can just debug <mark class="md-code md-code-` ">nuts</mark> project using the embedded flag   ( <mark class="md-code md-code-` ">-b</mark> or <mark class="md-code md-code-` ">--embedded</mark>) to run that application in the same virtual machine</p></li></ul>
+<pre class="md-code md-code-``` sh"><code class="sh"> 
+nuts -w test -b my-app
+</code></pre>
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase">If you want to debug an application running under <mark class="md-code md-code-` ">nuts</mark> in a separate virtual machine, use the option <mark class="md-code md-code-` ">--debug</mark> option to run the application in debug mode listening to the 5005 tcp port, then attach it to your IDE. This will debug  <mark class="md-code md-code-` ">nuts</mark> itself but will make possible running spawn jvm as well, the effective debugging port will be randomly selected and  displayed on your stdout. You will need to attach another jvm to your IDE using that port.</p></li></ul>
+<pre class="md-code md-code-``` sh"><code class="sh"> 
+nuts -w test --debug my-app
+# or
+nuts -w test --debug=5010 my-app
+</code></pre>
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase">When you need to have more information about what <mark class="md-code md-code-` ">nuts</mark> is doing under the hood, just run it in verbose mode</p></li></ul>
+<pre class="md-code md-code-``` sh"><code class="sh"> 
+./nuts-dev --verbose install some-application
+</code></pre>
+<ul class="md-ul"><li class="md-uli">You may want to disable creation of shortcuts and desktop icons in development mode:</li></ul>
+<pre class="md-code md-code-``` sh"><code class="sh"> 
+./nuts-dev --!init-launchers
+</code></pre>
+<ul class="md-ul"><li class="md-uli">You may want to disable all repositories and use solely your local maven repo:</li></ul>
+<pre class="md-code md-code-``` sh"><code class="sh"> 
+./nuts-dev -r=maven-local
+</code></pre>
+
+
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
+                            <section id="contributing" >
+                                <h3 class="main-section2"><a href="#NutsContributing">1.2 Contributing</a></h3>
+                                <div class="text-card">
+                                <H4 class="md-title-2"> Pull Request Checklist</H4>
+<ul class="md-ul"><li class="md-uli">Branch from the master branch and, if needed, rebase to the current master   branch before submitting your pull request. If it doesn't merge cleanly with   master you may be asked to rebase your changes.</li><li class="md-uli">Commits should be as small as possible, while ensuring that each commit is   correct independently (i.e., each commit should compile and pass tests).</li><li class="md-uli">Don't put sub-module updates in your pull request unless they are to landed   commits.</li><li class="md-uli">If your patch is not getting reviewed or you need a specific person to review   it, you can @-reply a reviewer asking for a review in the pull request or a   comment.</li><li class="md-uli">Add tests relevant to the fixed bug or new feature.</li></ul>
+
+<H4 class="md-title-2"> How to contribute</H4>
+You can contribute in a myriad of ways:
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase">submitting issues on <a href="https://github.com/thevpc/nuts/issues" class="md-link">github issues corner</a> and adding any information you judge important for the maintainers.   please mark them with 'bug' label. <mark class="md-code md-code-` ">nuts</mark> should make best effort to work on any environment. So if you encounter any malfunctioning, please contribute with submitting the issue. We are actually unable to test on all environments, so you really are our best hope!</p></li><li class="md-uli"><p class="md-phrase">submitting a feature request again on <a href="https://github.com/thevpc/nuts/issues" class="md-link">github issues corner</a>   please detail your idea and mark it with 'enhancement' label.</p></li><li class="md-uli"><p class="md-phrase">working on existing issues. The issues are marked with labels. The priority is given always to the current version milestone (example 0.8.3).   The complexity of the issue is estimated with the <code class="md-code md-code-` ">T-shirt sizing</code> approach: <mark class="md-code md-code-` ">size-xxs</mark> is the simplest, <mark class="md-code md-code-` ">size-m</mark> is medium sized and <mark class="md-code md-code-` ">size-xxl</mark> is the more complex one.   Complexity is relative to both required time to do the task and experience on <mark class="md-code md-code-``` ">nuts</mark> project to do the work. So please start with smallest (simplest) issues.</p></li><li class="md-uli">working on media and UX by submitting enhancements/replacements of existing website/icons/themes, etc...</li><li class="md-uli">writing in press about nuts</li></ul>
+
+
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
+                            <section id="projects" >
+                                <h3 class="main-section2"><a href="#NutsContributing">1.3 Repository Structure</a></h3>
+                                <div class="text-card">
+                                <H4 class="md-title-2"> Quick Lookup on sources organization</H4>
+The repository is organized in several folders described here after:
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">[.dir-template]</b> : contains template files for generating <code class="md-code md-code-` ">README.md</code> and <mark class="md-code md-code-` ">METADATA</mark> (among other) files according to the current <mark class="md-code md-code-` ">nuts</mark> development version</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">[core]</b>          : contains the core of <mark class="md-code md-code-` ">nuts</mark> package manager (and the only required pieces for <mark class="md-code md-code-` ">nuts</mark> to work). Practically this contains the Bootstrap (and API) project (called <mark class="md-code md-code-` ">nuts</mark>) and the Runtime (Implementation) project (called <mark class="md-code md-code-` ">nuts-runtime</mark>)</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">[docs]</b>          : contains a generated (using docusaurus) website that is deployed to github pages (<a href="https://thevpc.github.io/nuts/" class="md-link">https://thevpc.github.io/nuts/</a>)</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">[extensions]</b>           : contains some <mark class="md-code md-code-` ">nuts</mark> extensions/plugins. as an example it includes and extension for nuts terminal features implemented using <mark class="md-code md-code-` ">jline</mark> library</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">[incubating]</b>    : ignore this for the moment :), it is a work in progress and an attempt to simplify <mark class="md-code md-code-` ">nuts</mark> installation process and other frozen features. Still very embryonic.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">[installers]</b>    : native image generators, gui installers and repository website generator goes here. </p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">[libraries]</b>           : contains a suite of libraries that are based on <mark class="md-code md-code-` ">nuts</mark> and that can be used by other applications. This includes markdown parsers, ssh support, etc...</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">[test]</b>          : contains unit test projects</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">[companions]</b>    : contains a suite of applications that are tightly coupled with <mark class="md-code md-code-` ">nuts</mark>. This includes <mark class="md-code md-code-` ">nsh</mark> the shell companion</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">[third-party-companions]</b>    : contains a suite of third party wrapper applications. This includes <mark class="md-code md-code-` ">ndocusaurus</mark> documentation generator</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">[toolbox]</b>       : contains a suite of applications that are based on <mark class="md-code md-code-` ">nuts</mark> and that complement <mark class="md-code md-code-` ">nuts</mark> features.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">[web-toolbox]</b>   : contains a suite of web applications that are based on <mark class="md-code md-code-` ">nuts</mark> and that complement <mark class="md-code md-code-` ">nuts</mark> features. This includes <mark class="md-code md-code-` ">nwar</mark>, a servlet implementation to serve <mark class="md-code md-code-` ">nuts</mark> workspaces.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">[documentation]</b> : contains the sources of <mark class="md-code md-code-` ">nuts</mark>'s docusaurus based website and documentation files</p><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">[website/.dir-template]</b>       : contains the effective sources of <mark class="md-code md-code-` ">nuts</mark>'s documentation (used to create the website as well). To be more precise, the website is built using a two steps process: first we pre-process the markdown files with template processing (using <mark class="md-code md-code-` ">ndoc</mark>) that will handle things like <mark class="md-code md-code-` ">nuts</mark> version variables, documentation structure etc and hence prepare the <mark class="md-code md-code-` ">docusaurus</mark> base folder. And then, we run <mark class="md-code md-code-` ">docusaurus</mark> to generate the effective <mark class="md-code md-code-` ">html</mark>/<mark class="md-code md-code-` ">js</mark> for the statically compiled website.</p></li></ul></li></ul>
+
+<H4 class="md-title-2"> nuts projects</H4>
+<p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> repository is composed of several projects that can be organized in 5 categories</p>
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold"><p class="md-phrase">Core <mark class="md-code md-code-``` ">nuts</mark></p></b> : These projects are the core/base of the <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> package manager</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Companion Tools</b> : These projects are applications and tools to install with <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> itself. Their installation are prompted at first install of <b class="md-bold">nuts</b></p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Toolbox</b> : These projects are applications and tools built on top of <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> Application Framework and are of common interest</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Lib</b> : These projects are common libraries that can be used to enabled some <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> features in your application</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Extension</b> : These projects are add features to the nuts platform. on example is the ability to add JLine library support to have smarter terminals.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Other</b> : All other apps that doe no fit in the previous categories</p></li></ul>
+
+<H4 class="md-title-2"> Core Nuts projects</H4>
+<p class="md-phrase">Core <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> projects include <b class="md-bold">nuts-builder</b>, <b class="md-bold">nuts-api</b> (/core/nuts), <b class="md-bold">nuts-runtime</b> (/core/nuts-runtime).</p>
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">nuts-builder</b></p></H4>
+<p class="md-phrase"><b class="md-bold">nuts-builder</b> is a meta project (parent maven pom project) that helps building all the other projects.</p>
+
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">nuts-api</b></p></H4>
+<p class="md-phrase"><b class="md-bold">nuts-api</b> is the effective "nuts" only required dependency.  It defines the bootstrap application that is responsible of loading all necessary libraries for its execution. </p>
+<p class="md-phrase"><b class="md-bold">nuts-api</b> starts to load <b class="md-bold">nuts-runtime</b> which is responsible of implementing all features and interfaces declared by the <b class="md-bold">nuts-api</b> library.  That implementation will handle further download, version dependency etc. Such architecture is considered to force loose coupling with nuts binaries.</p>
+<p class="md-phrase"><b class="md-bold">nuts-api</b> is a very thin boostrapper : its size is about 300k. It can be used as a standalone application or as an embedded library.</p>
+
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">nuts-runtime</b></p></H4>
+<p class="md-phrase"><b class="md-bold">nuts-runtime</b> is the effective and standard implementation of <b class="md-bold">nuts-api</b>. </p>
+<p class="md-phrase"><b class="md-bold">nuts-runtime</b> has a faster update pace than <b class="md-bold">nuts-api</b>.  It focuses on performance an compliance to the <b class="md-bold">nuts</b> specifications declared by <b class="md-bold">nuts-api</b> interfaces.  You are not required to add this dependency to your application if you want to embed <b class="md-bold">nuts</b>.  The library will be loaded on the wire (if not yet present in the classpath of course).</p>
+<p class="md-phrase"><b class="md-bold">nuts-runtime</b> is designed to have very few dependencies : <b class="md-bold">mslinks</b> and <b class="md-bold">jansi</b>. Both are supports/used only on windows platform. They wont be used on linux or MacOS </p>
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">mslinks</b> trivially is used to support windows shortcut menus</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">jansi</b> is used to support terminal coloring and the "Nuts Text Format" (NTF), a simple text format (markdown like) that helps creating colorful terminal applications.</p></li></ul>
+
+
+<H4 class="md-title-2"> Companion tools projects</H4>
+<p class="md-phrase">Companion tools include mainly <b class="md-bold">nsh</b>  This application is implemented following the "<b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> Application Framework" and hence is dependent on <b class="md-bold">nuts-api</b> library.</p>
+<p class="md-phrase"><b class="md-bold">nsh</b> is a recommended for installation because it adds portable bash like features to the tool, however is is mandatory and may be ignored particularly when using <b class="md-bold">nuts-api</b> as library.</p>
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">nsh</b></p></H4>
+<p class="md-phrase"><b class="md-bold">nsh</b> (for <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> shell) is simply a portable POSIX bash compatible implementation.  It supports all common builtin commands (ls, cd, rm, ...) and adds support to grep, ssh and scp in a seamless manner.  It also supports command line, scripts (including commons constructs with if, do, case, ...), pipes (|) and common bash syntax.</p>
+
+
+<H4 class="md-title-2"> Toolbox projects</H4>
+<p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> comes with an array of tools out of the box you can install and play with. Here are some of them:</p>
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">nversion</b></p></H4>
+<p class="md-phrase"><b class="md-bold">nversion</b> is a small tool that helps detecting files versions.  It supports jar, war, ear, dll and exe file versions. It opens a file and looks for it's version in its meta-data.</p>
+
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">ndb</b></p></H4>
+<p class="md-phrase"><b class="md-bold">ndb</b> is a companion tool to the relational databased. <b class="md-bold">mysql</b>, <b class="md-bold">mariadb</b> and <b class="md-bold">nderby</b> servers are supported.  The main actions supported are backup and restore including push/pull mechanism from/to a couple of databases for synchronization.  It supports jdbc and ssh based access to remote mysql/mariadb installation.</p>
+
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">ntomcat</b></p></H4>
+<p class="md-phrase"><b class="md-bold">ntomcat</b> is a companion tool to the tomcat http server.  The main actions supported are start, stop, status, configure (http ports etc..) and deploy.  It supports as well installation of several versions of Tomcat and multi domain configuration for deployments.</p>
+
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">nmvn</b></p></H4>
+<p class="md-phrase"><b class="md-bold">nmvn</b> is a companion tool to maven.  It supports installations of several versions of maven and running them seamlessly.</p>
+
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">noapi</b></p></H4>
+<p class="md-phrase"><b class="md-bold">noapi</b> (for Nuts OpenApi) is an OpenAPI documentation generator.</p>
+
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">ncode</b></p></H4>
+<p class="md-phrase"><b class="md-bold">ncode</b> is a small code search tool. It searches for files, file contents and classes within jars. You can search for files than contains some text or jars that contain some class, or jars of a specific version of java.</p>
+
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">nwork</b></p></H4>
+<p class="md-phrase"><b class="md-bold">nwork</b> is a developer centered tool. <b class="md-bold">nwork</b> is the tool we - maven users - need to check if the version of project we are working on is yet to be deployed to nexus or not. So basically it checks if the version is the same, and downloads the server's version and then compares binaries to local project's to check if we have missed to update the version in our pom.xml. I know I'm not the only one having pain with jar deployments to nexus. <b class="md-bold">nwork</b> does other things as well to help me on on daily basis.</p>
+
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">ndoc</b></p></H4>
+<p class="md-phrase"><b class="md-bold">ndoc</b> is a file templating tool that replaces place-holders in the files with an evaluated expression. </p>
+
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">njob</b></p></H4>
+<p class="md-phrase"><b class="md-bold">njob</b> is a powerful terminal todo list</p>
+
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">ndocusaurus</b></p></H4>
+<p class="md-phrase"><b class="md-bold">ndocusaurus</b> is a <a href="https://docusaurus.io" class="md-link">Docusaurus 2</a> toolbox that adds several features to the tool such as: </p>
+<ul class="md-ul"><li class="md-uli">templating (using ndoc)</li><li class="md-uli">pdf generation</li></ul>
+
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">ntalk-agent</b></p></H4>
+<p class="md-phrase"><b class="md-bold">ntalk-agent</b> is a client-to-client communication broker used for sharing <b class="md-bold">nuts</b> workspaces</p>
+
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">nclown</b></p></H4>
+<p class="md-phrase"><b class="md-bold">nclown</b> is an angular web application frontend for <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b>. It helps navigating, searching and installing artifacts. It is intended to be a web admin tool as well.</p>
+
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">nserver</b></p></H4>
+<p class="md-phrase"><b class="md-bold">nserver</b> is a standalone application that runs a small http server that will expose a workspace as a remote repository to other <b class="md-bold">nuts</b> installations. This is the simplest way to mirror a workspace and share artifacts between networked nodes.</p>
+
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">nwar</b></p></H4>
+<p class="md-phrase"><b class="md-bold">nwar</b> (for <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> Web Application Archive) is a web application that exposes <b class="md-bold">nserver</b> as a war to be deployed on a more mature http server or container.</p>
+
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">ndexer</b></p></H4>
+<p class="md-phrase"><b class="md-bold">ndexer</b> (for Indexer) is a lucene powered index for <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b>. It can be shared across multiple <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> workspaces and processes.</p>
+
+
+<H4 class="md-title-2"> Library Projects</H4>
+<p class="md-phrase">Library projects are several libraries that add <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> support in a particular environment or domain.</p>
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">nlib-tomcat-classloader</b></p></H4>
+<p class="md-phrase">This is a must-have feature in your web application if deployed on Tomcat. It solves the following problem : a simple war application is surprisingly fat with too many jars (hundreds of Megas) you need to upload each time you change a single file or class in your web project. Basically all the jars included in the lib folder of the war are to be uploaded each time to the remote Tomcat server. The common solution is to use "provided" scope in maven and put your jars in Tomcat lib or ext folders. This is a bad approach if you are using a single Tomcat process for multiple applications. <b class="md-bold">nuts-tomcat-classloader</b> simply uses <b class="md-bold">nuts</b> to download libraries when the application is deployed based on the <b class="md-bold">pom.xml</b> you provide and include them in the current web application class loader. Hence, the war becomes lighter than ever. <b class="md-bold">nuts</b> cache mechanisms optimizes bandwidth and makes this more convenient by sharing the same jar files between applications depending on the same versions.  All you have to do is to add this library to your application and configure your <b class="md-bold">pom.xml</b> accordingly.</p>
+
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">nlib-servlet</b></p></H4>
+<p class="md-phrase">Basically this is the simplest way to include <b class="md-bold">nserver</b> into your web application.</p>
+
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">nlib-doc</b></p></H4>
+<p class="md-phrase">This library provides helper methods to manipulate maven pom.xml and generate simple Java files while supporting <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> concepts. It is used in other tools that are meant to generate maven projects.</p>
+
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">nlib-talkagent</b></p></H4>
+This library provides support for client to client communication
+
+
+<H4 class="md-title-2"> Extensions</H4>
+Extensions provide extra feature to nuts.
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">next-term</b></p></H4>
+This library provides rich terminal support (auto-complete, history) based on the JLine library
+
+
+<H4 class="md-title-2"> Other Projects</H4>
+<p class="md-phrase">Other projects you may encounter in the repository are WIP projects that may be continued or discontinued. This includes : <b class="md-bold">nutsc</b> (a native c bootstrapper) and <b class="md-bold">nuts-installer</b> (a <b class="md-bold">nuts</b> installer tool)</p>
+
+<H4 class="md-title-2"> Honorable mentions</H4>
+<p class="md-phrase">Although not included in this Git repository some other tools are based on <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> and hence are installable using <code class="md-code md-code-``` nuts"> install the-app</code> command. Those tools are published in other repositories.</p>
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">netbeans-launcher</b> </p></H4>
+<p class="md-phrase">this tool supports installation and launch of multiple netbeans instances in parallel. See <a href="https://github.com/thevpc/netbeans-launcher" class="md-link">Netbeans Launcher GitHub Repository</a></p>
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">pnote</b></p></H4>
+
+<p class="md-phrase">this tool is a multi purpose, developer oriented, Note taking application. See <a href="https://github.com/thevpc/pangaea-note" class="md-link">Pangaea Note</a></p>
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">upa-box</b> (deprecated)</p></H4>
+
+<p class="md-phrase">this tool supports creation of UPA aware projects. UPA is a non structured ORM for the Java Language. See <a href="https://github.com/thevpc/upa" class="md-link">UPA GitHub Repository</a></p>
+<H4 class="md-title-3"><p class="md-phrase"> <b class="md-bold">vr-box</b> (deprecated)</p></H4>
+
+<p class="md-phrase">this tool supports creation of VR aware projects. VR is a web portal framework. See <a href="https://github.com/thevpc/vr" class="md-link">VR GitHub Repository</a></p>
+
+
+
+
+
+
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                    </section>
+                    <hr class="divider">
+                
+                    <!--pageLevel1-->
+                    <section id="API-Documentation" >
+                        <h2 class="main-section1"><a href="#API-Documentation">2 API Documentation</a></h2>
+                        <div class="text-card">
+                        <H4 class="md-title-1"> API Documentation</H4>
+This is an introduction of API Documentation
+
+
+                        </div>
+                        
+                    </section>
+                    <hr class="divider">
+                
+
+            </div>
+        </div>
+
+    </div>
+    <!-- Content end -->
+
+    <!-- Footer
+============================ -->
+<footer id="footer" class="section bg-dark footer-text-light">
+    <div class="container">
+        <ul class="social-icons social-icons-lg social-icons-muted justify-content-center mb-3">
+            <li><a data-toggle="tooltip" href="https://twitter.com/tbensalah/" target="_blank" title=""
+                   data-original-title="Twitter"><i class="fab fa-twitter"></i></a></li>
+            <li><a data-toggle="tooltip" href="http://www.facebook.com/tbensalah/" target="_blank" title=""
+                   data-original-title="Facebook"><i class="fab fa-facebook-f"></i></a></li>
+            <li><a data-toggle="tooltip" href="http://www.dribbble.com/tbensalah/" target="_blank" title=""
+                   data-original-title="Dribbble"><i class="fab fa-dribbble"></i></a></li>
+            <li><a data-toggle="tooltip" href="https://github.com/thevpc/nuts" target="_blank" title=""
+                   data-original-title="GitHub"><i class="fab fa-github"></i></a></li>
+        </ul>
+        <p class="text-2 text-center mb-0">
+            Copyright © 2018-2025 Nuts Package Manager Team.
+            <br>
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-01-22-232856
+            <br>
+            <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
+                                                        href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
+        </p>
+    </div>
+</footer>
+<!-- Footer end -->
+
+</div>
+<!-- Document Wrapper end -->
+
+<!-- Back To Top -->
+<a id="back-to-top" data-toggle="tooltip" title="Back to Top" href="javascript:void(0)"><i class="fa fa-chevron-up"></i></a>
+
+<!-- JavaScript
+============================ -->
+<script src="assets/vendor/jquery/jquery.min.js"></script>
+<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- Highlight JS -->
+<script src="assets/vendor/highlight.js/highlight.min.js"></script>
+<!-- Easing -->
+<script src="assets/vendor/jquery.easing/jquery.easing.min.js"></script>
+<!-- Magnific Popup -->
+<script src="assets/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+<!-- Custom Script -->
+<script src="assets/js/theme.js"></script>
+</body>
+</html>

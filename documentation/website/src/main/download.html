@@ -48,19 +48,19 @@
             <div class="container">
 
                 {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/$pageId')}}
-                    <!--{{pageLevel1}}-->
+                    <!--pageLevel1-->
                     <section id="{{pageLevel1.id}}">
                         <div class="text-card" style="margin-top: 10px">
                             {{pageToHtml(pageLevel1,(pageLevel1Index+1))}}
                         </div>
                         {{:for pageLevel2,pageLevel2Index:loadPages(pageLevel1)}}
-                            <!--{{pageLevel2}}-->
+                            <!--pageLevel2-->
                             <section id="{{pageLevel2.id}}">
                                 <div class="text-card" style="margin-top: 10px">
                                 {{pageToHtml(pageLevel2,(pageLevel1Index+1)+"."+(pageLevel2Index+1))}}
                                 </div>
                                 {{:for pageLevel3,pageLevel3Index:loadPages(pageLevel2)}}
-                                    <!--{{pageLevel3}}-->
+                                    <!--pageLevel3-->
                                     <section id="{{pageLevel3.id}}">
                                         <div class="text-card" style="margin-top: 10px">
                                         {{pageToHtml(pageLevel3,(pageLevel1Index+1)+"."+(pageLevel2Index+1)+"."+(pageLevel3Index+1))}}

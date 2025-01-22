@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
+    <link href="assets/images/favicon.ico" rel="icon"/>
+    <title>Nuts Java Package Manager</title>
+    <meta name="description" content="Nuts Java Package Manager Website">
+    <meta name="author" content="thevpc">
+
+    <!-- Stylesheet
+    ============================== -->
+    <!-- Bootstrap -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/bootstrap/css/bootstrap.min.css"/>
+    <!-- Font Awesome Icon -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/font-awesome/css/all.min.css"/>
+    <!-- Magnific Popup -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/magnific-popup/magnific-popup.min.css"/>
+    <!-- Highlight Syntax -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/highlight.js/styles/github.css"/>
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet.css"/>
+</head>
+
+<body data-spy="scroll" data-target=".idocs-navigation" data-offset="125">
+
+<!-- Preloader -->
+<div class="preloader">
+    <div class="lds-ellipsis">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>
+<!-- Preloader -->
+
+<!-- Document Wrapper   
+=============================== -->
+<div id="main-wrapper" class="documentation-main-wrapper">
+    
+    <!-- Header
+    ============================ -->
+<header id="header" class="sticky-top">
+    <!-- Navbar -->
+    <nav class="primary-menu navbar navbar-expand-lg navbar-dropdown-dark">
+        <div class="container-fluid">
+            <!-- Sidebar Toggler -->
+            <button id="sidebarCollapse" class="navbar-toggler d-block d-md-none" type="button"><span></span><span
+                    class="w-75"></span><span class="w-50"></span></button>
+
+            <!-- Logo -->
+            <a class="logo ml-md-3" href="index.html" title="Nuts Package Manager"> <img
+                    src="assets/images/nuts-icon.png" alt="Nuts Package Manager" width="32px"/> </a>
+            <span class="text-4 ml-2" style="font-family: ZeroesTwo;"><strong><a href="index.html">Nuts Package Manager</a></strong></span>
+            <span class="text-2 ml-2" style="font-family: ZeroesTwo;"><span class="badge badge-info">v0.8.5.0</span></span>
+            <!-- Logo End -->
+
+            <!-- Navbar Toggler -->
+            <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#header-nav">
+                <span></span><span></span><span></span></button>
+
+            <div id="header-nav" class="collapse navbar-collapse justify-content-end">
+                <ul class="navbar-nav">
+                    <li class="dropdown"> <a class="dropdown-toggle" href="#">Documentation</a>
+                      <ul class="dropdown-menu">
+                          <li><a class="dropdown-item " href="documentation.html">Package Manager</a>
+                          <li><a class="dropdown-item " href="naf.html">Application Framework</a></li>
+                          <li><a class="dropdown-item " href="contrib.html">Contributing</a></li>
+                          <li><a class="dropdown-item not-active" href="faq.html">FAQ</a></li>
+                          <!--
+                        <li><a class="dropdown-item" href="#">Action</a></li>
+                        <li class="dropdown"><a class="dropdown-item dropdown-toggle" href="#">More</a>
+                          <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="index.html">Apps</a></li>
+                            <li><a class="dropdown-item" href="feature-header-dark.html">Change Log</a></li>
+                            <li><a class="dropdown-item" href="feature-header-primary.html">FAQ</a></li>
+                            <li><a class="dropdown-item" href="index-2.html">Another Link</a></li>
+                          </ul>
+                        </li>
+                        -->
+                      </ul>
+                    </li>
+                    <li><a href="blog.html" class="">Blog</a></li>
+                    <li><a href="apps.html" class="">Apps</a></li>
+                    <li><a href="download.html" class="">Download</a></li>
+                    <li><a target="_blank" href="https://github.com/thevpc/nuts">GitHub</a></li>
+                </ul>
+            </div>
+            <ul class="social-icons social-icons-sm ml-lg-2 mr-2">
+                <li class="social-icons-twitter"><a data-toggle="tooltip"
+                                                    href="http://www.twitter.com/tbensalah/" target="_blank"
+                                                    title="" data-original-title="Twitter"><i
+                        class="fab fa-twitter"></i></a></li>
+                <li class="social-icons-facebook"><a data-toggle="tooltip"
+                                                     href="http://www.facebook.com/tbensalah/" target="_blank"
+                                                     title="" data-original-title="Facebook"><i
+                        class="fab fa-facebook-f"></i></a></li>
+                <li class="social-icons-dribbble"><a data-toggle="tooltip"
+                                                     href="http://www.dribbble.com/tbensalah/" target="_blank"
+                                                     title="" data-original-title="Dribbble"><i
+                        class="fab fa-dribbble"></i></a></li>
+            </ul>
+        </div>
+    </nav>
+    <!-- Navbar End -->
+</header>
+<!-- Header End -->
+
+
+    <!-- Content
+    ============================ -->
+    <div id="content" role="main">
+
+        <!-- Sidebar Navigation
+        ============================ -->
+        <div class="idocs-navigation bg-light">
+            <ul class="nav flex-column ">
+                
+                <li class="nav-item"><a class="nav-link" href="#CommonQuestions">1 Common Questions</a>
+                    
+                    
+                    <ul class="nav flex-column">
+                        
+                        <li class="nav-item"><a class="nav-link" href="#U59BD6B2A01045AC3B20AC55E6069EB9184A36B63">1.1 Why not maven?</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#UE4B94A99920201D819B6E24626D4FD55D7AA66B4">1.2 What does Nuts mean and why ?</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#U7E7641A2A1C97C287F745FBC184560252F07CE45">1.3 Does nuts support only jar packaging</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#faq04">1.4 Can I contribute to the project</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#U413734E3CEAE31FD74724E8319E1832AFC939175">1.5 Where can I find Documentation about the Project</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#UF24F46DFF716F4398827DE5F0658045231D63F21">1.6 What is the License used in Nuts</a>
+                            
+                            
+                        </li>
+                        
+                    </ul>
+                    
+                </li>
+                
+                <li class="nav-item"><a class="nav-link" href="#FAQNaf">2 NAF Questions</a>
+                    
+                    
+                    <ul class="nav flex-column">
+                        
+                        <li class="nav-item"><a class="nav-link" href="#U9A4F83D2741DEEA597D90CDBFA71E91B7CD76830">2.1 How can I make my application "Nuts aware"</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#U1FFCA5A4DB77B435E9C00BA1F87D20843A87994A">2.2 Why Nuts Application Framework (NAF)</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#U42EED6E95381082EA08D95712450D8B48CC6A727">2.3 Can I use NAF for non terminal applications, Swing or JavaFX perhaps</a>
+                            
+                            
+                        </li>
+                        
+                    </ul>
+                    
+                </li>
+                
+            </ul>
+        </div>
+
+        <!-- Docs Content
+        ============================ -->
+        <div class="idocs-content">
+            <div class="container">
+
+                
+                    <!--pageLevel1-->
+                    <section id="CommonQuestions" >
+                        <h2 class="main-section1"><a href="#CommonQuestions">1 Common Questions</a></h2>
+                        <div class="text-card" style="margin-bottom: 30px">
+                        <p class="md-phrase">In this section we will consider the simplest usage of <mark class="md-code md-code-` ">nuts</mark> package manager.</p>
+
+                        </div>
+                        <div class="accordion" id="accordionDefaultCommonQuestions">
+                        
+                            <!--pageLevel2-->
+                                <div class="card" id="U59BD6B2A01045AC3B20AC55E6069EB9184A36B63">
+                                    <div class="card-header" id="headingU59BD6B2A01045AC3B20AC55E6069EB9184A36B63">
+                                        <h5 class="mb-0"> <a href="#" data-toggle="collapse" data-target="#collapseU59BD6B2A01045AC3B20AC55E6069EB9184A36B63" aria-expanded="true" aria-controls="collapseU59BD6B2A01045AC3B20AC55E6069EB9184A36B63">Why not maven?</a> </h5>
+                                    </div>
+                                    <div id="collapseU59BD6B2A01045AC3B20AC55E6069EB9184A36B63" class="collapse show" aria-labelledby="headingU59BD6B2A01045AC3B20AC55E6069EB9184A36B63" data-parent="#accordionDefaultCommonQuestions">
+                                            <div class="text-card">
+                                                <p class="md-phrase">or, "Why do we need a package manager for Java. Isn't <b class="md-bold">Maven</b> enough?".</p>
+<p class="md-phrase">Please read <a href="../01-intro/02-nuts-and-maven" class="md-link">Nuts Introduction, Why and What for</a>. In few words maven manages dependencies to build applications, nuts uses maven dependencies system to install applications.</p>
+
+                                            </div>
+                                    </div>
+                                </div>
+                        
+                            <!--pageLevel2-->
+                                <div class="card" id="UE4B94A99920201D819B6E24626D4FD55D7AA66B4">
+                                    <div class="card-header" id="headingUE4B94A99920201D819B6E24626D4FD55D7AA66B4">
+                                        <h5 class="mb-0"> <a href="#" data-toggle="collapse" data-target="#collapseUE4B94A99920201D819B6E24626D4FD55D7AA66B4" aria-expanded="true" aria-controls="collapseUE4B94A99920201D819B6E24626D4FD55D7AA66B4">What does Nuts mean and why ?</a> </h5>
+                                    </div>
+                                    <div id="collapseUE4B94A99920201D819B6E24626D4FD55D7AA66B4" class="collapse show" aria-labelledby="headingUE4B94A99920201D819B6E24626D4FD55D7AA66B4" data-parent="#accordionDefaultCommonQuestions">
+                                            <div class="text-card">
+                                                <H4 class="md-title-2"> What does Nuts mean and why ?</H4>
+<p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> stands for "Network Updatable Things Services". It helps managing things (artifacts of any type, not only java). The Name also helps depicting another idea : <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> is a good companion and complement to Maven tool.  The word maven (MAY-vin), from Yiddish, means a super-enthusiastic expert/fan/connoisseur/Wizard. And where wizards are, fools and <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> must be. </p>
+<p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> is the foolish tool to support the deployment and not the build.  Hence the name.</p>
+
+
+                                            </div>
+                                    </div>
+                                </div>
+                        
+                            <!--pageLevel2-->
+                                <div class="card" id="U7E7641A2A1C97C287F745FBC184560252F07CE45">
+                                    <div class="card-header" id="headingU7E7641A2A1C97C287F745FBC184560252F07CE45">
+                                        <h5 class="mb-0"> <a href="#" data-toggle="collapse" data-target="#collapseU7E7641A2A1C97C287F745FBC184560252F07CE45" aria-expanded="true" aria-controls="collapseU7E7641A2A1C97C287F745FBC184560252F07CE45">Does nuts support only jar packaging</a> </h5>
+                                    </div>
+                                    <div id="collapseU7E7641A2A1C97C287F745FBC184560252F07CE45" class="collapse show" aria-labelledby="headingU7E7641A2A1C97C287F745FBC184560252F07CE45" data-parent="#accordionDefaultCommonQuestions">
+                                            <div class="text-card">
+                                                <p class="md-phrase">Not only. <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> supports all types of packaging, particularly, those supported by maven.  This includes  pom , jar , maven-plugin , ejb , war , ear , rar.</p>
+<p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> is also intended to support any "thing" including "exe" ,"dll", "so", "zip" files, etc.</p>
+<p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> differs from maven as it defines other properties to the artifact descriptor (aka pom in maven) : os (operating system), arch (hardware architecture), osdist (relevant for linux for instance : opensuse, ubuntu) and platform (relevant to vm platforms like java vm, dotnet clr, etc). Such properties are queried to download the most appropriate binaries for the the current environment.</p>
+
+                                            </div>
+                                    </div>
+                                </div>
+                        
+                            <!--pageLevel2-->
+                                <div class="card" id="faq04">
+                                    <div class="card-header" id="headingfaq04">
+                                        <h5 class="mb-0"> <a href="#" data-toggle="collapse" data-target="#collapsefaq04" aria-expanded="true" aria-controls="collapsefaq04">Can I contribute to the project</a> </h5>
+                                    </div>
+                                    <div id="collapsefaq04" class="collapse show" aria-labelledby="headingfaq04" data-parent="#accordionDefaultCommonQuestions">
+                                            <div class="text-card">
+                                                <H4 class="md-title-2"> </H4>
+I hoped you would ask this question. Of course.  You can drop me an email (see my github profile email) to add you as contributor or fork the repository and ping a pull request.  You can also open a new issue for feature implementation to invite any other contributor to implement that feature (or even implement it your self).
+
+
+                                            </div>
+                                    </div>
+                                </div>
+                        
+                            <!--pageLevel2-->
+                                <div class="card" id="U413734E3CEAE31FD74724E8319E1832AFC939175">
+                                    <div class="card-header" id="headingU413734E3CEAE31FD74724E8319E1832AFC939175">
+                                        <h5 class="mb-0"> <a href="#" data-toggle="collapse" data-target="#collapseU413734E3CEAE31FD74724E8319E1832AFC939175" aria-expanded="true" aria-controls="collapseU413734E3CEAE31FD74724E8319E1832AFC939175">Where can I find Documentation about the Project</a> </h5>
+                                    </div>
+                                    <div id="collapseU413734E3CEAE31FD74724E8319E1832AFC939175" class="collapse show" aria-labelledby="headingU413734E3CEAE31FD74724E8319E1832AFC939175" data-parent="#accordionDefaultCommonQuestions">
+                                            <div class="text-card">
+                                                Mainly all of the documentation can be found in 2 places:
+<ul class="md-ul"><li class="md-uli">this website: it includes both user documentation and javadocs (code documentation)</li><li class="md-uli">each command help option. when you type</li></ul>
+<pre class="md-code md-code-``` sh"><code class="sh"> 
+  nuts --help
+  </code></pre>
+ 
+or
+  
+<pre class="md-code md-code-``` sh"><code class="sh"> 
+  nsh --help
+  </code></pre>
+ 
+you will get more details on nuts or on the tool (here nsh)
+
+
+                                            </div>
+                                    </div>
+                                </div>
+                        
+                            <!--pageLevel2-->
+                                <div class="card" id="UF24F46DFF716F4398827DE5F0658045231D63F21">
+                                    <div class="card-header" id="headingUF24F46DFF716F4398827DE5F0658045231D63F21">
+                                        <h5 class="mb-0"> <a href="#" data-toggle="collapse" data-target="#collapseUF24F46DFF716F4398827DE5F0658045231D63F21" aria-expanded="true" aria-controls="collapseUF24F46DFF716F4398827DE5F0658045231D63F21">What is the License used in Nuts</a> </h5>
+                                    </div>
+                                    <div id="collapseUF24F46DFF716F4398827DE5F0658045231D63F21" class="collapse show" aria-labelledby="headingUF24F46DFF716F4398827DE5F0658045231D63F21" data-parent="#accordionDefaultCommonQuestions">
+                                            <div class="text-card">
+                                                <p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> is published under Licensed under the GNU LESSER GENERAL PUBLIC LICENSE, Version 3.   </p>
+
+                                            </div>
+                                    </div>
+                                </div>
+                        
+                        </div>
+                    </section>
+                    <hr class="divider">
+                
+                    <!--pageLevel1-->
+                    <section id="FAQNaf" >
+                        <h2 class="main-section1"><a href="#FAQNaf">2 NAF Questions</a></h2>
+                        <div class="text-card" style="margin-bottom: 30px">
+                        In this section we will consider Nuts Application Framework related questions.
+
+                        </div>
+                        <div class="accordion" id="accordionDefaultFAQNaf">
+                        
+                            <!--pageLevel2-->
+                                <div class="card" id="U9A4F83D2741DEEA597D90CDBFA71E91B7CD76830">
+                                    <div class="card-header" id="headingU9A4F83D2741DEEA597D90CDBFA71E91B7CD76830">
+                                        <h5 class="mb-0"> <a href="#" data-toggle="collapse" data-target="#collapseU9A4F83D2741DEEA597D90CDBFA71E91B7CD76830" aria-expanded="true" aria-controls="collapseU9A4F83D2741DEEA597D90CDBFA71E91B7CD76830">How can I make my application "Nuts aware"</a> </h5>
+                                    </div>
+                                    <div id="collapseU9A4F83D2741DEEA597D90CDBFA71E91B7CD76830" class="collapse show" aria-labelledby="headingU9A4F83D2741DEEA597D90CDBFA71E91B7CD76830" data-parent="#accordionDefaultFAQNaf">
+                                            <div class="text-card">
+                                                <p class="md-phrase">If by <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> aware you mean that you would download your application and run it using <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b>, then you just need to create the application using maven and deploy your application to the public maven central. Nothing really special is to be done from your side. You do not have to use plugins like 'maven-assembly-plugin' and 'maven-shade-plugin' to include your dependencies. Or, you can also use NAF (<b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> Application Framework) to make your application full featured "Nuts aware" application.</p>
+
+                                            </div>
+                                    </div>
+                                </div>
+                        
+                            <!--pageLevel2-->
+                                <div class="card" id="U1FFCA5A4DB77B435E9C00BA1F87D20843A87994A">
+                                    <div class="card-header" id="headingU1FFCA5A4DB77B435E9C00BA1F87D20843A87994A">
+                                        <h5 class="mb-0"> <a href="#" data-toggle="collapse" data-target="#collapseU1FFCA5A4DB77B435E9C00BA1F87D20843A87994A" aria-expanded="true" aria-controls="collapseU1FFCA5A4DB77B435E9C00BA1F87D20843A87994A">Why Nuts Application Framework (NAF)</a> </h5>
+                                    </div>
+                                    <div id="collapseU1FFCA5A4DB77B435E9C00BA1F87D20843A87994A" class="collapse show" aria-labelledby="headingU1FFCA5A4DB77B435E9C00BA1F87D20843A87994A" data-parent="#accordionDefaultFAQNaf">
+                                            <div class="text-card">
+                                                or, "Why should I consider implementing my terminal application using Nuts Application Framework (NAF)?" First of all, NAF is a simple 300k jar so for what it provided to you, you would be surprised.  Indeed, implementing your application using NAF will provide you a clean way to :
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase">seamless integration with <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> and all other NAF applications (obviously!)</p></li><li class="md-uli"><p class="md-phrase">support standard file system layout (XDG) where config files and log files are not necessarily in the same folder see <a href="../04-nuts-concepts/04-filesystem" class="md-link">Nuts File System</a> for more details.<b class="md-bold"> support application life cycle events (onInstall, onUninstall, onUpdate), </b></p></li><li class="md-uli">standard support of command line arguments</li><li class="md-uli">dynamic dependency aware class loading</li><li class="md-uli">terminal coloring, and terminal components (progress bar, etc...)</li><li class="md-uli">json, yaml, xml, table, tree and plain format support out of the box as output to all your commands</li><li class="md-uli">pipe manipulation when calling sub processes</li><li class="md-uli">advanced io features (persistence Locks, monitored downloads, compression, file hashing....)</li><li class="md-uli">standard ways to support and use installed platforms (installed JRE, JDK, ...)</li><li class="md-uli">and lots more...</li></ul>
+
+                                            </div>
+                                    </div>
+                                </div>
+                        
+                            <!--pageLevel2-->
+                                <div class="card" id="U42EED6E95381082EA08D95712450D8B48CC6A727">
+                                    <div class="card-header" id="headingU42EED6E95381082EA08D95712450D8B48CC6A727">
+                                        <h5 class="mb-0"> <a href="#" data-toggle="collapse" data-target="#collapseU42EED6E95381082EA08D95712450D8B48CC6A727" aria-expanded="true" aria-controls="collapseU42EED6E95381082EA08D95712450D8B48CC6A727">Can I use NAF for non terminal applications, Swing or JavaFX perhaps</a> </h5>
+                                    </div>
+                                    <div id="collapseU42EED6E95381082EA08D95712450D8B48CC6A727" class="collapse show" aria-labelledby="headingU42EED6E95381082EA08D95712450D8B48CC6A727" data-parent="#accordionDefaultFAQNaf">
+                                            <div class="text-card">
+                                                Sure, you will be able to benefit of all the items in the preceding question but terminal coloring wont be relevant of course.  Check netbeans-launcher in github. It's a good example of how interesting is to use NAF in non terminal applications. 
+
+                                            </div>
+                                    </div>
+                                </div>
+                        
+                        </div>
+                    </section>
+                    <hr class="divider">
+                
+
+            </div>
+        </div>
+
+    </div>
+    <!-- Content end -->
+
+    <!-- Footer
+============================ -->
+<footer id="footer" class="section bg-dark footer-text-light">
+    <div class="container">
+        <ul class="social-icons social-icons-lg social-icons-muted justify-content-center mb-3">
+            <li><a data-toggle="tooltip" href="https://twitter.com/tbensalah/" target="_blank" title=""
+                   data-original-title="Twitter"><i class="fab fa-twitter"></i></a></li>
+            <li><a data-toggle="tooltip" href="http://www.facebook.com/tbensalah/" target="_blank" title=""
+                   data-original-title="Facebook"><i class="fab fa-facebook-f"></i></a></li>
+            <li><a data-toggle="tooltip" href="http://www.dribbble.com/tbensalah/" target="_blank" title=""
+                   data-original-title="Dribbble"><i class="fab fa-dribbble"></i></a></li>
+            <li><a data-toggle="tooltip" href="https://github.com/thevpc/nuts" target="_blank" title=""
+                   data-original-title="GitHub"><i class="fab fa-github"></i></a></li>
+        </ul>
+        <p class="text-2 text-center mb-0">
+            Copyright © 2018-2025 Nuts Package Manager Team.
+            <br>
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-01-22-232856
+            <br>
+            <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
+                                                        href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
+        </p>
+    </div>
+</footer>
+<!-- Footer end -->
+
+</div>
+<!-- Document Wrapper end -->
+
+<!-- Back To Top -->
+<a id="back-to-top" data-toggle="tooltip" title="Back to Top" href="javascript:void(0)"><i class="fa fa-chevron-up"></i></a>
+
+<!-- JavaScript
+============================ -->
+<script src="assets/vendor/jquery/jquery.min.js"></script>
+<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- Highlight JS -->
+<script src="assets/vendor/highlight.js/highlight.min.js"></script>
+<!-- Easing -->
+<script src="assets/vendor/jquery.easing/jquery.easing.min.js"></script>
+<!-- Magnific Popup -->
+<script src="assets/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+<!-- Custom Script -->
+<script src="assets/js/theme.js"></script>
+</body>
+</html>

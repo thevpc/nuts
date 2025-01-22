@@ -17,19 +17,19 @@
         <div class="idocs-navigation bg-light">
             <ul class="nav flex-column ">
                 {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/$pageId')}}
-                <!-- {{pageLevel1}} -->
+                <!-- pageLevel1 -->
                 <li class="nav-item"><a class="nav-link" href="#{{pageLevel1.id}}" style="font-size:x-small">{{formatDate(pageLevel1.publishDate)}} {{pageLevel1.title}}</a>
                     {{:: allPagesLevel2=loadPages(pageLevel1)}}
                     {{:if (allPagesLevel2.size)>0}}
                     <ul class="nav flex-column">
                         {{:for pageLevel2,pageLevel2Index:allPagesLevel2}}
-                        <!-- {{pageLevel2}} -->
+                        <!-- pageLevel2 -->
                         <li class="nav-item"><a class="nav-link" href="#{{pageLevel2.id}}" style="font-size:x-small">{{formatDate(pageLevel2.publishDate)}} {{pageLevel2.title}}</a>
                             {{:: allPagesLevel3=loadPages(pageLevel2)}}
                             {{:if (allPagesLevel3.size)>0}}
                             <ul class="nav flex-column">
                                 {{:for pageLevel3,pageLevel3Index:allPagesLevel3}}
-                                <!-- {{pageLevel3}} -->
+                                <!-- pageLevel3 -->
                                 <li class="nav-item"><a class="nav-link" href="#{{pageLevel3.id}}" style="font-size:x-small">{{formatDate(pageLevel3.publishDate)}} {{pageLevel3.title}}</a>
 
                                 </li>
@@ -51,10 +51,9 @@
             <div class="container">
                 <h1>Recent Blog</h1>
                 {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/$pageId')}}
-                    <!--{{pageLevel1}}-->
+                    <!--pageLevel1-->
                     <section id="{{pageLevel1.id}}">
                         <h2 style="margin-bottom: 0;"><a href="#{{pageLevel1.id}}">{{pageLevel1.title}}</a></h2>
-<!--                        <h4 style="margin: 0;font-style: italic">{{pageLevel1.subTitle}}</h4>-->
                         <header style="margin-left: 50px">
                             <div class="container_mt6G margin-vert--md" style="font-size: medium">
                                 <time>{{formatDate(pageLevel1.publishDate)}}</time>

@@ -48,7 +48,7 @@
             <div class="container">
 
                 {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/$pageId')}}
-                    <!--{{pageLevel1}}-->
+                    <!--pageLevel1-->
                     <section id="{{pageLevel1.id}}" >
                         <h2 class="main-section1"><a href="#{{pageLevel1.id}}">{{(pageLevel1Index+1)+" "+pageLevel1.title}}</a></h2>
                         <div class="text-card" style="margin-bottom: 30px">
@@ -56,7 +56,7 @@
                         </div>
                         <div class="accordion" id="accordionDefault{{pageLevel1.id}}">
                         {{:for pageLevel2,pageLevel2Index:loadPages(pageLevel1)}}
-                            <!--{{pageLevel2}}-->
+                            <!--pageLevel2-->
                                 <div class="card" id="{{pageLevel2.id}}">
                                     <div class="card-header" id="heading{{pageLevel2.id}}">
                                         <h5 class="mb-0"> <a href="#" data-toggle="collapse" data-target="#collapse{{pageLevel2.id}}" aria-expanded="true" aria-controls="collapse{{pageLevel2.id}}">{{pageLevel2.title}}</a> </h5>

@@ -51,14 +51,14 @@
             <div class="container">
 
                 {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/$pageId')}}
-                <!--{{pageLevel1}}-->
+                <!--pageLevel1-->
                 <section id="{{pageLevel1.id}}">
                     <h2 class="main-section1"><a href="#{{pageLevel1.id}}">{{(pageLevel1Index+1)+" "+pageLevel1.title}}</a></h2>
                     <div class="text-card">
                         {{pageContentToHtml(pageLevel1,(pageLevel1Index+1))}}
                     </div>
                     {{:for pageLevel2,pageLevel2Index:loadPages(pageLevel1)}}
-                    <!--{{pageLevel2}}-->
+                    <!--pageLevel2-->
                     <section id="{{pageLevel2.id}}">
                         <div class="glass-card">
                             <h3><a href="#{{pageLevel1.id}}">{{(pageLevel1Index+1)+"."+(pageLevel2Index+1)+" "+pageLevel2.title}}</a></h3>
@@ -88,7 +88,7 @@
 
 
                         {{:for pageLevel3,pageLevel3Index:loadPages(pageLevel2)}}
-                        <!--{{pageLevel3}}-->
+                        <!--pageLevel3-->
                         <section id="{{pageLevel3.id}}">
                             <h4 class="main-section3"><a href="#{{pageLevel1.id}}">{{(pageLevel1Index+1)+"."+(pageLevel2Index+1)+"."+(pageLevel3Index+1)+"
                                 "+pageLevel3.title}}</a></h4>

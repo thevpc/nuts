@@ -32,12 +32,13 @@ public class NDocProcessorManager {
         registerGlobalProcessorByMimeType(TagStreamProcessor.DOLLAR_BARACKET2, MimeTypeConstants.PLACEHOLDER_DOLLAR_BRACKET2);
         registerGlobalProcessorByMimeType(TagStreamProcessor.LT_PERCENT, MimeTypeConstants.PLACEHOLDER_LT_PERCENT);
 
-        registerGlobalProcessorByMimeType(TagStreamProcessor.BARACKET2, "text/html","text/markdown","text/x-shellscript", "application/x-shellscript");
+        registerGlobalProcessorByMimeType(TagStreamProcessor.BARACKET2, "text/html","text/markdown","text/x-shellscript", "application/x-shellscript",
+                MimeTypeConstants.ANY_TEXT
+                );
         for (String mimeType : NConstants.Ntf.MIME_TYPES) {
             registerGlobalProcessorByMimeType(TagStreamProcessor.BARACKET2, mimeType);
         }
         registerGlobalProcessorByMimeType(TagStreamProcessor.DOLLAR_BARACKET2,
-                MimeTypeConstants.ANY_TEXT,
                 "application/json",
                 "application/javascript",
                 "application/java"

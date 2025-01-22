@@ -1,27 +1,27 @@
-buildTime={{buildTime}}
+buildTime=2025-01-22-232856
 
-stableApiId={{stableApi}}
-stableApiVersion={{stableApiVersion}}
-stableAppId={{stableAppId}}
-stableAppVersion={{stableAppVersion}}
-stableRuntimeId={{stableRuntimeId}}
-stableRuntimeVersion={{stableRuntimeVersion}}
-stableJarLocation={{stableJarLocation}}
+stableApiId=
+stableApiVersion=0.8.5
+stableAppId=net.thevpc.nuts:nuts-app#0.8.5
+stableAppVersion=0.8.5
+stableRuntimeId=net.thevpc.nuts:nuts-runtime#0.8.5.0
+stableRuntimeVersion=0.8.5.0
+stableJarLocation=https://thevpc.net/maven/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar
 
-latestApiId={{latestApiId}}
-latestApiVersion={{latestApiVersion}}
-latestAppId={{latestAppId}}
-latestAppVersion={{latestAppVersion}}
-latestRuntimeId={{latestRuntimeId}}
-latestRuntimeVersion={{latestRuntimeVersion}}
-latestJarLocation={{latestJarLocation}}
+latestApiId=net.thevpc.nuts:nuts#0.8.5
+latestApiVersion=0.8.5
+latestAppId=net.thevpc.nuts:nuts-app#0.8.5
+latestAppVersion=0.8.5
+latestRuntimeId=net.thevpc.nuts:nuts-runtime#0.8.5.0
+latestRuntimeVersion=0.8.5.0
+latestJarLocation=https://thevpc.net/maven/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar
 
 
-apiId={{apiId}}
-apiVersion={{apiVersion}}
-appId={{appId}}
-appVersion={{appVersion}}
-runtimeId={{runtimeId}}
-runtimeVersion={{runtimeVersion}}
-jarLocation={{jarLocation}}
+apiId=net.thevpc.nuts:nuts#0.8.5
+apiVersion=0.8.5
+appId=net.thevpc.nuts:nuts-app#0.8.5
+appVersion=0.8.5
+runtimeId=net.thevpc.nuts:nuts-runtime#0.8.5.0
+runtimeVersion=0.8.5.0
+jarLocation=https://thevpc.net/maven/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar
 

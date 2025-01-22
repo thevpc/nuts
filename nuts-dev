@@ -16,7 +16,8 @@
 ## In the case you are debugging an application called by nuts
 ## you can simply call 'nuts ---jdb your-application' (Please note the 3 dashes preceding jdb)
 ##
-NUTS_VERSION=0.8.5NUTS_APP_JAR=~/.m2/repository/net/thevpc/nuts/nuts-app/$NUTS_VERSION/nuts-app-$NUTS_VERSION.jar
+NUTS_VERSION=0.8.5
+NUTS_APP_JAR=~/.m2/repository/net/thevpc/nuts/nuts-app/$NUTS_VERSION/nuts-app-$NUTS_VERSION.jar
 
 if [ x"$NUTS_VERSION" = "x" ] ; then
     echo "you must call 'nuts nsh build-website.nsh' first to update NUTS_VERSION"
@@ -27,6 +28,7 @@ fi
 ## DO NOT commit your changes to GIT for this file !!
 #NUTS_JAVA_HOME='';
 NUTS_JAVA_HOME=/usr/lib64/jvm/java-1.8.0-openjdk-1.8.0
+
 base=$(dirname $0)
 
 if [ x"$1" = x"--debug" ] ; then

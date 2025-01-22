@@ -34,7 +34,8 @@ nuts --version
 It should show a result in the format : nuts-api-version/nuts-runtime-version
 
 ```
-0.8.5/0.8.5.0```
+0.8.5/0.8.5.0
+```
 
 ## Installing Nuts Preview (Development, recommended for testing)
 

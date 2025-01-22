@@ -457,7 +457,7 @@
             <div class="container">
 
                 
-                    <!--MdPage{pathName='01-intro', id='Introduction', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/01-intro', title='Introducing Nuts', menuTitle='Introduction', order=0, level=1, markdown=`nuts` is a powerful and versatile open-source package manager designed to simplify software dependency management and enhance development workflows across a wide range of projects.  Whether you're working on a small personal project or a large-scale enterprise application, `nuts` offers a streamlined and efficient way to manage libraries, tools, and dependencies, enabling you to focus on building and innovating. With its intuitive interface and robust features, `nuts` supports seamless integration into existing workflows, providing flexibility and scalability for developers of all levels. Basically, it is what npm is for Javascript and pip for Python. However, `nuts` presents several unique features that make it suitable for other technologies as well. This documentation is your gateway to understanding and utilizing the full potential of `nuts`, covering everything from installation and basic setup to advanced usage patterns and customization options. For additional resources, detailed guides, and further insights into how Nuts can empower your development process, visit [this link](#other-resources). Let’s dive in and explore what makes `nuts` a game-changer for modern development!, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                    <!--pageLevel1-->
                     <section id="Introduction" >
                         <h2 class="main-section1"><a href="#Introduction">1 Introducing Nuts</a></h2>
                         <div class="text-card">
@@ -465,20 +465,7 @@
 
                         </div>
                         
-                            <!--MdPage{pathName='01-introduction.md', id='introduction', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/01-intro/01-introduction.md', title='Java Package Manager', menuTitle='Introduction', order=0, level=2, markdown=**```nuts```** stands for **Network Updatable Things Services** tool and is a portable package manager for java (mainly) that handles remote artifacts, installs these artifacts to the current machine and executes such artifacts on need.
-**```nuts```** solves the **fatjar** problem delegating the dependency resolution to the time when the application is to be executed and simplifies the packaging process while being transparent to the build process. Actually, nuts uses **maven** **pom** descriptors to resolve dependencies when the artifact is installed on the target machine, and it can use also other types of descriptors for other types of packages.
-**```nuts```** artifacts are  stored  into repositories. A  **repository**  may be local for  storing local artifacts or remote for accessing remote artifacts (good examples  are  remote maven  repositories). It may also be a proxy repository so that remote artifacts are fetched and cached locally to save network resources.
-One manages a set of repositories called a  workspace (like **virtualenv** in **```pip```**). Managed **```nuts```**  (artifacts)  have descriptors that depicts dependencies between them. This dependency is seamlessly handled by  **```nuts```**  (tool) to resolve and download on-need dependencies over the wire.
-**```nuts```** is a swiss army knife tool as it acts like (and supports) **maven** build tool to have an abstract view of the artifacts dependency and like  **npm** and **pip** language package managers to  install and uninstall artifacts allowing multiple versions of the very same artifact to  be installed. **```nuts```** is not exclusive for Java/Scala/Kotlin and other Java Platform Languages, by design it supports multiple artifact formats other than jars and wars and is able to select the appropriate artifacts and dependencies according to the current OS, architecture and even Desktop Environment.
-**```nuts```** common verbs are:
-* ```exec```               : execute an artifact or a command
-* ```which```              : detect the proper artifact or system command to execute
-* ```install```, ```uninstall``` : install/uninstall an artifact (using its fetched/deployed installer)
-* ```update```,```check-updates```  : search for updates
-* ```deploy```, ```undeploy```   : manage artifacts (artifact installers) on the local repositories
-* ```fetch```, ```push```        : download from, upload to remote repositories
-* ```search```             : search for existing/installable artifacts
-* ```welcome```            : a command that does nothing but bootstrapping **```nuts```** and showing a welcome message., sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="introduction" >
                                 <h3 class="main-section2"><a href="#Introduction">1.1 Java Package Manager</a></h3>
                                 <div class="text-card">
@@ -495,36 +482,7 @@ One manages a set of repositories called a  workspace (like **virtualenv** in **
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='02-nuts-and-maven.md', id='nutsAndMaven', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/01-intro/02-nuts-and-maven.md', title='Nuts and Maven', menuTitle='Nuts and Maven', order=0, level=2, markdown=##  You'd still be Maven, yet you gonna be NutsIs there any package manager for Java(TM) applications? You can google for it and you will find that many have  queried this on blogs and forums. In most cases responses point to maven and gradle, the tremendous build tools. However,  both maven and gradle are build tools, while helping build packages they lack of deployment features. They bundle every  dependency in every package (think of wars, ears and standalone jars). They do not handle installation or upgrading. Apache ivy, as well, while competing with maven build tool does not provide more than transitive dependency management.    The main idea behind a package manager is the automation of installation, update, configuration and removal of programs  or libraries in a coherent manner with the help of a database that manages binaries and metadata. maven, to consider one,  sticks to the build process, an goes no further.
-You may also ask, "Why ever, do we need a package manager for Java(TM) applications". Okkay, let's take some  example of Java(TM) applications. How can we install apache netbeans IDE ? The proper way is to browse to the editor's  website, select the proper mirror if applicable, download the archive, uncompress it, chmod the main binary (i'm a linux  guy) and adjust PATH environment variable to point to this binary; Quite a pain. What do we do to update it now? Hopefully, the IDE has a solid plugin architecture and an in-app update/upgrade tool that will help the process (in a gui manner of course). The same applies to eclipse and apache tomcat with the exception that apache tomcat does not even bundle an in-app update tool. The same applies too when dealing with other operating systems (Windows, MacOS, ...). Managing Java(TM) applications is far from helpful.
-Furthermore, as Java(TM) applications are (usually) not bundled in OS-aware installers, you will end up with a spaguetty  home directory with applications installed all over your partitions, which - simply - does not mix up with all the work  OS-developers have done to separate logs from data, from temporary files, from binaries, etc. Each application will handle it's files in a very specific manner that would make it hard to manage own's disk (automatic archive/backup/restore) or roaming applications across machines, etc.
-Moreover, in a world of containers and devops, deployments of Java(TM) applications need to be automatable and reproducible  with the highest level of simplicity, configurability and integrability. Installing tomcat on a custom port should not not  be as painful as using a custom Docker image or a complicated Dockerfile or even a custom apache tomcat bundle. 
-When we recall that Java(TM) is the one language that has the more versatile number of libraries, frameworks and tools,  I find it annoying not to have a decent package manager to make the leap and provide facilities I find prime in other  languages and platforms (```pip```/```python```, ```npm```/```nodejs```/```javascript```) and most of linux distribution (```zypper```/```opensuse```, ```dnf```/```redhat``` ```apt-get```/```debian```/```ubuntu```)
-Hence I'm introducing here a humble attempt to provide a tiny (300ko) yet powerful package manager for Java(TM)  applications (but not only) that should handle jar files seamlessly (with little or no modification) and that comes with  a set of portable tools that makes this management at a higher level. I'm not talking about redefining the wheel.  I'm aware that many tools such as maven, are already very good at what they do, I just needed to make the leap for deployments.  You will be able to deploy your applications without bundling all of their dependencies : **```nuts```** will take care of that. 
-So you'd still be maven, yet you gonna be **```nuts```**.
-  
-##  Nuts Package manager**```nuts```** is actually :
-* a transitive dependency resolution manager
-* a package manager (backports maven and supports maven repositories)
-* an automation tool
-* a feature rich toolset
-* an application framework
-* decentralized
-* sandbox based
-###  Transitive dependency resolution manager**```nuts```** calculates transitive dependencies of an application to resolve other packages to download at install or  update/upgrade time. So typically, deployed applications should no more bundle their dependencies within the deployed archive. Thus we avoid the annoying fat jars (using maven plugins like 'maven-assembly-plugin' and 'maven-shade-plugin') and lib folders  (using 'maven-dependency-plugin'). It will also reuse dependencies and packages across multiple installed applications  and hence save disk space, and network bandwidth.
-All what **```nuts```** needs is a descriptor file withing the jar file that defines the immediate dependencies. It then  calculates all transitive dependencies automatically. And guess what, all maven built jars already contain that  descriptor : the pom.xml file. So basically all maven applications are already **```nuts```** aware applications.
-###  Package manager**```nuts```** uses this dependency resolution to help install, update, remove and search for applications. To be able to use an  application, it has to be installed and configured with all of its dependencies. This is the main goal of **```nuts```**. When we ask to install tomcat, for instance, it will search for the best version in registered repositories, download it, and configure it to be ready for execution. The best version is not always the the latest one. Actually it would be the  latest valid one, thus the latest one that matches some constraints.   Constraints include the version of the running java (tomcat 8 works on java 7 but not 6 for instance), the running operating  system (windows, linux, ... to help selecting the proper binaries), may be the hardware architecture or even the  operating distribution (for linux based systems). Constraints will filter the search result to include the best, the most  accurate version to install. Installation also would configure the installed application and even may run another  artifact to help this configuration.
-**```nuts```** also handles search for newer versions and update the installed application at request. Updating a software does not  necessarily delete the older version. Both version can coexist and it is up to the user the decide whether or  not to retain both versions. Indeed, one of the key features of **```nuts```** is the ability to install and hence run multiple versions  of the same software in parallel. You would never see an error message telling you can't install that software because a  dependency of it is installed with different version. All software and all libraries can coexist peacefully.
-Software artifacts are stored in repositories. **```nuts```** can handle multiple repositories, remote and local ones.  Installed software are stored in special local repositories. Supported repositories include maven repositories and github  repositories. Actually a fresh installation of **```nuts```** is configured with maven central repository so that, you already have access  to thousands of installable artifacts.
-At some point, you may need to uninstall an artifact and that's to undo the artifact installation.   Installation will help you choose between uninstalling binaries only and keeping data/config files or remove permanently  all of the artifact files. In all ways, uninstalling will not affect other artifacts that use the same dependencies if ever. 
- 
-###  Feature rich Toolset**```nuts```** is intended to be used either by human users or by robots and other applications. It comes with portable, feature rich toolset, a versatile library and a handy parsable result. 
-**```nuts```** is mainly a commandline program that helps installing, uninstalling, searching, updating and running artifacts.  To help desktop integration, **```nuts```** installs by default a set of other companion tools such as ```nsh``` (a portable  bash-compatible implementation), and ```nadmin``` (an administration tool for **```nuts```** to configure users, authorizations, repositories,  create scripts,...);
-**nsh** brings the bash  facilities to all environments (windows included) in a very portable manner. Besides it integrates well with the installed **```nuts```** version. Several common commands are ported to ```nsh``` such as ```cat```,```head```, and ```ssh```,  as well as core features like pipes, redirection and scripts. 
-**nadmin** is intended for configuring **```nuts```** workspaces, managing repositories and users. It helps also configuring  sub commands and aliases to make **```nuts```** usage even easier.
-##  Nuts WorkspacesOne of the key features of **```nuts```** is the ability to support multiple isolated workspaces, each managing it's own  repositories, applications and libraries; each defining it's sandbox security constraints. Thus non-root installation is made easy while it remains possible to overlap between workspaces by sharing repositories. Roaming is also supported, so that a workspaces can be copied/moved across machines.
-##  Application Framework**nuts** can also be embedded as a library in you application. This enables you to wire classes on the fly by its network  dependency-aware classloading mechanisms. The library allows as well building solid and well integrated applications,  mainly console applications. Indeed, ```nuts``` comes with rich outputs that support automatic formatting to json, xml, table,  tree and plain texts. It handles standard File Systems layouts; XDG Base Directory Specification is implemented  for linux and MacOS. A compatible one is also implemented in Windows systems. And of course, it helps seamlessly install, update and remove events. 
-##  Nuts ? Really ?In every palace you will find the wizard and the fool, the **```maven```** and the **```nuts```**; There's no  exception in the java kingdom! If you do prefer acronyms here is another reason : **```nuts```** stands for Network  Updatable Things Services. It should be able to facilitate things deployment and update over the  wire where things resolve here to any piece of software depending (or not) on other piece of software., sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="nutsAndMaven" >
                                 <h3 class="main-section2"><a href="#Introduction">1.2 Nuts and Maven</a></h3>
                                 <div class="text-card">
@@ -574,48 +532,7 @@ At some point, you may need to uninstall an artifact and that's to undo the arti
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='03-start-here.md', id='start_here', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/01-intro/03-start-here.md', title='First example', menuTitle='null', order=0, level=2, markdown=##  Let's start the journeyGet started by **running your first application**. Nuts is not a build tool (like `maven` and `gradle`). Nuts is more likely to be compared with nodejs `npm` or python's `pip`
-It consists mainly of a commandline application that is used to install, uninstall and run other java applications in a smooth elegant way.
-###  What you'll need* `java`  compatible operating system including [Linux],[Windows] and [MacOS]
-* [java](https://www.java.com) version 1.8 or above. JRE is sufficient, JDK allows you to do more with `nuts`
-Let's check that java is installed :
-```
-
-java --version
-
-```
-But in the following example, I am assuming you are using a Linux distribution et MacOS.  If you are using Windows please refer to the [installation](#Installation) section.
-###  Installing and Running Nuts
-We start by opening a new terminal (term, konsole or whatever you prefer) then download **```nuts```** using this command : On linux/MacOS system we issue :
-```
-
-curl -sOL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar && java -jar nuts.jar -Zy
-
-```
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
-The command also installs all necessary dependencies you need to run Docusaurus.
-We used the flags ```-y``` to auto-confirm and ```-z``` to ignore cached binaries (combined here as ```-zy```). These flags are optional and are used here to demonstrate some of Nuts' available options. The installation process may take several minutes, as it involves downloading all required dependencies, companions, and tools.
-You should then see this message
-```
-
-Welcome to nuts. Yeah, it is working...
-
-```
-**```nuts```** is well installed, just restart your terminal.
-Now we will install `jedit`, a tremendous underrated text editor. So in your terminal type:
-```
-
-nuts install org.jedit:jedit
-
-```
-Let's run jedit now
-```
-
-nuts jedit
-
-```
-As you can see, simple commands are all you need to download, install, configure and run `jedit` or any java application that is deployed in the maven repository.
-So please visit ```nuts``` [website](https://thevpc.github.com/nuts) or [github repository](https://github.com/thevpc/nuts) for more information., sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="start_here" >
                                 <h3 class="main-section2"><a href="#Introduction">1.3 First example</a></h3>
                                 <div class="text-card">
@@ -662,10 +579,7 @@ nuts jedit
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='06-license.md', id='license', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/01-intro/06-license.md', title='License', menuTitle='License', order=0, level=2, markdown=This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-Copyright (C) 2016-2022 thevpc, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="license" >
                                 <h3 class="main-section2"><a href="#Introduction">1.4 License</a></h3>
                                 <div class="text-card">
@@ -679,11 +593,7 @@ Copyright (C) 2016-2022 thevpc
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='10-other-resources.md', id='other-resources', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/01-intro/10-other-resources.md', title='Other Resources', menuTitle='Other Resources', order=0, level=2, markdown=To help you get started and explore its capabilities, we've compiled a selection of resources, including comprehensive documentation, technical presentations, and detailed PDF guides. These materials cover everything from installation and configuration to advanced usage scenarios, ensuring you have all the information needed to make the most of Nuts. Below, you’ll find a curated list of links to these resources for easy access:
-* [Offline user documentation](files/nuts-documentation.pdf)
-* [Nuts Rationale](files/nuts-presentation-001-rationale.pdf)
-* [Nuts Components](files/nuts-presentation-002-components.pdf)
-* [Nuts API](files/nuts-presentation-003-API.pdf)Feel free to explore these resources and dive deeper into what Nuts has to offer!, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="other-resources" >
                                 <h3 class="main-section2"><a href="#Introduction">1.5 Other Resources</a></h3>
                                 <div class="text-card">
@@ -695,97 +605,7 @@ Copyright (C) 2016-2022 thevpc
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='11-running.md', id='running', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/01-intro/11-running.md', title='Running Nuts', menuTitle='Running Nuts', order=0, level=2, markdown=In this section we will consider the simplest usage of `nuts` package manager.
-##  Running a deployed artifactYou can run any jar using **```nuts```** as far as the jar is accessible from one of the supported repositories. By default, **```nuts```** supports:
-* maven central
-* local maven folder (~/.m2)
-You can configure other repositories or even implement your own if you need to.
-The jar will be parsed to check form maven descriptor so that dependencies will be resolved and downloaded on the fly. Then, all executable classes (public with static void main method) are enumerated. You can actually run any of them when prompted. Any jar built using maven should be well described and can be run using its artifact long id.
-##  Artifact Long Ids**```nuts```** long ids are a string representation of a unique identifier of the artifact. It has the following form :
-```bash
-
-groupId:artifactId#version
-
-```
-for instance, to install ```netbeans-launcher``` (which is a simple UI helping launch of multiple instances of netbeans), you can issue
-```bash
-
-  nuts net.thevpc.app:netbeans-launcher#1.2.2
-
-```
-You do agree that this can be of some cumbersome to type. So you can simplify it to :
-```bash
-
-  nuts netbeans-launcher
-
-```
-In this form, **```nuts```** will auto-detect both the ```groupId``` and the ```version```. The group id is detected if it is already imported (we will see later how to import a groupId).  By default, there is a couple of groupIds that are automatically imported :
-* ```net .thevpc``` (contains various applications of the author)
-* ```net .thevpc.nuts.toolbox``` (contains various companion tools of **```nuts```**, such as ```nsh```, ...)
-And it turns out, hopefully, that netbeans-launcher belongs to an imported groupId, so we can omit it. Besides, if no version is provided, **```nuts```** will also auto-detect the best version to execute. If the application is already installed, the version you choose to install will be resolved. If you have not installed any, the most recent version, obviously, will be detected for you.
-##  Artifact InstallationAny java application can run using **```nuts```** but it has to be installed first. If you try to run the application before installing it, you will be prompted to confirm installation. To install our favorite application here we could have issued :
-```bash
-
-  nuts install netbeans-launcher
-
-```
-But as we have tried to run the application first, it has been installed for us (after confirmation).
-##  Multiple Artifact version InstallationOne of the key features of **```nuts```** is the ability to install multiple versions of the same application. We can for instance type :
-```bash
-
-  nuts install netbeans-launcher#1.2.2
-  # then
-  nuts install netbeans-launcher#1.2.0
-
-```
-Now we have two versions installed, the last one always is considered default one. you can run either, using it's version
-```bash
-
-  nuts netbeans-launcher#1.2.2 &
-  # or
-  nuts netbeans-launcher#1.2.0 &
-
-```
-Actually, when you have many versions installed for the same artifact and you try to run it without specifying the version, the last one installed will be considered. To be more precise, an artifact has a default version when it is installed. This default version is considered when no explicit version is typed. In our example, when we type 
-```
-
-  nuts netbeans-launcher &
-
-```
-the 1.2.0 version will be invoked because the artifact is already installed and the default version points to the last one installed. So if you want to switch back to version 1.2.2 you just have to re-install it. Don't worry, no file will be downloaded again, nuts will detect that the version is not marked as default and will switch it to.
-##  Searching artifactsNow let's take a look at installed artifacts. We will type :
-```bash
-
-  nuts search --installed
-
-```
-This will list all installed artifacts. We can get a better listing using long format :
-```bash
-
-  nuts search --installed -l
-
-```
-you will see something like
-```
-
-I-X 2019-08-21 04:54:22.951 anonymous vpc-public-maven net.thevpc.app:netbeans-launcher#1.2.0
-i-X 2019-08-21 04:54:05.196 anonymous vpc-public-maven net.thevpc.app:netbeans-launcher#1.2.2
-
-```
-The first column here is a the artifact status that helps getting zipped information of the artifact. the 'I' stands for 'installed and default' whereas, 'i' is simply 'installed'. The 'X' stands for 'executable application', where 'x' is simply 'executable'. Roughly said, executable applications are executables aware of (or depends on) **nuts**, as they provide a special api that helps nuts to get more information and more features for the application. As an example, executable applications have special OnInstall and OnUninstall hooks called by nuts. The second and the third columns are date and time of installation. The fourth column points to the installation user. When Secure mode has not been enabled (which is the default), you are running nuts as 'anonymous'. The fifth column shows the repository from which the package was installed. And the last column depicts the artifact long id.
-##  Running local jar file with its dependenciesLet's suppose that my-app.jar is a maven created jar (contains META-INF/maven files) with a number of dependencies. **```nuts```** is able to download on the fly needed dependencies, detect the Main class (no need for MANIFEST.MF) and run the  application. If a Main-Class Attribute was detected in a valid MANIFEST.MF, il will be considered. If more than one class is detected with a main method, **```nuts```** will ask for the current class to run.
-When you run a local file, **```nuts```** will behave as if the app is installed (in the given path, an no need to invoke install command). Local files are detected if they are denoted by a valid path (containing '/' or '' depending on the underlying operating system). Dependencies will be downloaded as well (and cached in the workspace)
-```bash
-
-nuts ./my-app.jar some-argument-of-my-app
-
-```
-If you need to pass JVM arguments you have to prefix them with "--exec". So if you want to fix maximum heap size use 
-```bash
-
-nuts --exec -Xms1G -Xmx2G ./my-app.jar argument-1 argument-2
-
-```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="running" >
                                 <h3 class="main-section2"><a href="#Introduction">1.6 Running Nuts</a></h3>
                                 <div class="text-card">
@@ -875,7 +695,7 @@ nuts --exec -Xms1G -Xmx2G ./my-app.jar argument-1 argument-2
                     </section>
                     <hr class="divider">
                 
-                    <!--MdPage{pathName='03-installation', id='Installation', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/03-installation', title='Installation', menuTitle='null', order=0, level=1, markdown=`nuts` is a package manager for the Java Platform. Basically, it is what npm is for Javascript and pip for Python. However, `nuts` presents several concepts that make it suitable for other technologies as well. , sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                    <!--pageLevel1-->
                     <section id="Installation" >
                         <h2 class="main-section1"><a href="#Installation">2 Installation</a></h2>
                         <div class="text-card">
@@ -883,80 +703,7 @@ nuts --exec -Xms1G -Xmx2G ./my-app.jar argument-1 argument-2
 
                         </div>
                         
-                            <!--MdPage{pathName='03-tutorial.md', id='tutorial', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/03-installation/03-tutorial.md', title='Tutorial', menuTitle='Tutorial', order=0, level=2, markdown=import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
-##  GUI InstallationYou can install `nuts` using a gui installer. Multiple targets are available. You may select a portable installer (a jar that you can double click as far as you have a valid java+ runtime installed and configured in your environment). You may also want to select a native image for the installer; you only need to download and run.
-![install-log-example](assets/images/installer/00.png)
-Once you launch the installer, you will be prompted first to select your favourite look : light mode or dark mode. This will customize the look of all the remaining steps.
-![install-log-example](assets/images/installer/01-li.png)
-Then, a description message is shown.
-![install-log-example](assets/images/installer/02-li.png)
-In the next step, you are asked to accept the OSS licence.
-![install-log-example](assets/images/installer/03-li.png)
-`nuts` comes with a dual version, stable and preview. Stable version is recommended in most cases. But if you want to take advantage of new features not yet released you may want to install the preview version.
-![install-log-example](assets/images/installer/04-li.png)
-The installer will even prompt you for selecting extra java applications you may want to install along with `nuts`. The only recommended apps are already selected and marked as `Companions`. This includes mostly `nsh`, a bash compatible implementation in Java.
-![install-log-example](assets/images/installer/05-li.png)
-Then, you may want to tune some nuts options. Please note that by default, any existing workspace will be erased. So if you want to preserve you older installation, deselect "Reset Workspace (-Z)". "Verbose" and "Log file" are also good options to consider if some thing odd occurs during the installation process. This will leverage more debug messages to be printed and stored to log files you attach when contacting the dev team.
-![install-log-example](assets/images/installer/06-li.png)
-Now the effective installation starts. You will see the progress in a colourful terminal.![install-log-example](assets/images/installer/07-li.png)
-And voilà! you now have reached the installation end. Just click on Exit.![install-log-example](assets/images/installer/08-li.png)
-If you check your system menu, you will notice some new icons, including a `nuts aware` terminal. On Linux and MacOs, you do not need such menu to run you favorite nuts command though. The Installer has already configured your shell rc files to include nuts in the execution `PATH` env variable.
-Here is and example af your menu when using Enlightenment Desktop Environment on Linux
-![install-log-example](assets/images/installer/00-menu-e17.png)
-##  Dark ModeYou may have chosen the Dark mode of course, and you would have crossed the following steps:
-![install-log-example](assets/images/installer/01-b.png)
-![install-log-example](assets/images/installer/02-b.png)
-![install-log-example](assets/images/installer/03-b.png)
-![install-log-example](assets/images/installer/04-b.png)
-![install-log-example](assets/images/installer/05-b.png)
-![install-log-example](assets/images/installer/06-b.png)
-![install-log-example](assets/images/installer/07-b.png)
-![install-log-example](assets/images/installer/08-b.png)
-![install-log-example](assets/images/installer/08-b.png)
-##  Your first commandsAfter installation, open any nuts `aware terminal` (on linux, any bash,zsh,fish,... terminal is ok).
-```bash
-
-$> nuts
-
-$> nuts update
-
-$> nuts search
-
-$> nuts search 'net.thevpc.nuts.toolbox:*' --anywhere
- 
-        net.thevpc.nuts.toolbox:nsh#0.8.5.0
-        net.thevpc.nuts.toolbox:ndoc#0.8.5.0
-        net.thevpc.nuts.toolbox:ndexer#0.8.5.0
-        net.thevpc.nuts.toolbox:njob#0.8.5.0
-        net.thevpc.nuts.toolbox:nmvn#0.8.5.0
-        net.thevpc.nuts.toolbox:nwork#0.8.5.0
-        net.thevpc.nuts.toolbox:nsh#0.8.5.0
-        net.thevpc.nuts.toolbox:ntomcat#0.8.5.0
-        net.thevpc.nuts.toolbox:ntalk-agent#0.8.5.0
-        net.thevpc.nuts.toolbox:ndiff#0.8.5.0
-        net.thevpc.nuts.toolbox:nserver#0.8.5.0
-        net.thevpc.nuts.toolbox:ndb#0.8.5.0
-        net.thevpc.nuts.toolbox:nversion#0.8.5.0
-        net.thevpc.nuts.toolbox:ncode#0.8.5.0
-        net.thevpc.nuts.toolbox:ndocusaurus#0.8.5.0
-        net.thevpc.nuts.toolbox:noapi#0.8.5.0
-
-$> nuts install org.jedit:jedit
-
-$> nuts jedit
-
-$> nuts install njob
-
-$> nuts update njob
- 
-$> nuts install netbeans-launcher
-
-$> nuts netbeans-launcher
- 
-
-
-
-```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="tutorial" >
                                 <h3 class="main-section2"><a href="#Installation">2.1 Tutorial</a></h3>
                                 <div class="text-card">
@@ -1044,167 +791,7 @@ $&gt; nuts netbeans-launcher
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='04-installation-docker.md', id='installation-docker', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/03-installation/04-installation-docker.md', title='Running with Docker', menuTitle='Running with Docker', order=0, level=2, markdown=```bash
-
-docker pull eclipse/centos_jdk8
-docker run -it eclipse/centos_jdk8 sh
-
-docker pull xiaofengdi/oracle-jdk8
-docker run -it xiaofengdi/oracle-jdk8 sh
-
-
-docker pull bellsoft/liberica-runtime-container
-docker run -it bellsoft/liberica-runtime-container sh
-
-
-docker pull openjdk:8
-docker run -it -v $(pwd):/workspace openjdk:8 sh
-cd /workspace
-wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
-java -jar nuts.jar -P=no -ZyS -r=+thevpc net.thevpc.nuts.toolbox:noapi#0.8.5.0 buat-insurance-connector.json
-#############
-
-
-```
-The result would be equivalent to the following. Just be sure the version is 1.8 or over. In this example,  the java version is 1.8.0_211
-```bash
-
-$> java -version
-java version "1.8.0_211"
-Java(TM) SE Runtime Environment (build 1.8.0_211-b12)
-Java HotSpot(TM) 64-Bit Server VM (build 25.211-b12, mixed mode)
-
-```
-##  Installation<Tabs defaultValue="linux" values="{[\n    { label: 'Linux', value: 'linux', },\n    { label: 'MacOS', value: 'macos', },\n    { label: 'Windows', value: 'windows', },\n    { label: '*NIX wget', value: 'wget', },\n    { label: '*NIX curl', value: 'curl', }\n  ]\n}"><TabItem value="windows">download [nuts-0.8.5.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.0.8.5/nuts-0.8.5.jar)
-```
-
-java -jar nuts-0.8.5.jar  -Zy
-
-```
-On Windows systems, first launch will create a new 
-**```nuts```**
- Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.
--
- 
-**nuts-cmd-0.8.5**
- : this shortcut will open a configured command terminal. 
-**```nuts```**
- command will be available as well as several nuts companion tools installed by 
-**nadmin**
- by default
--
- 
-**nuts-cmd**
-       : this shortcut will point to the last installed 
-**nuts**
- version, here 0.8.5  
-Any of these shortcuts will launch a nuts-aware terminal.
-Supported Windows systems include Window 7 and later.
-net.thevpc.nuts.lib.md.MdAdmonition@df44c2a2</TabItem>
-<TabItem value="linux">**for production (using wget):**
-This will reset/delete any previous nuts installation before installing the latest version. Removing the 
-`Z`
- modifier (replace 
-`-Zy`
- by 
-`-y`
-) flag if you do not want to reset the workspace.
-```
-
-$ wget https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
-    0.8.3/nuts-0.8.3.jar -qO nuts.jar
-$ java -jar nuts.jar -Zy
-$ exit
-
-```
-**for production (using curl):**
-This will reset/delete any previous nuts installation before installing the latest version. Removing the 
-`Z`
- modifier (replace 
-`-Zy`
- by 
-`-y`
-) flag if you do not want to reset the workspace.
-```
-
-$ curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
-    0.8.3/nuts-0.8.3.jar -o nuts.jar
-$ java -jar nuts.jar -Zy
-$ exit
-
-```
-Linux Systems installation is based on bash shell. First launch will configure "~/.bashrc" so that 
-**nuts**
- and other companion tool commands will be available in any future terminal instances. Note that shells are also supported and the relative 
-`rcfiles`
- are also updated (including 
-`zsh`
-, 
-`fish`
- etc) Using 
-**```nuts```**
- on unix-like system should be seamless. A simple bash terminal (Gnome Terminal, KDE Konsole,...) is already a nuts-aware terminal.
-All Linux versions and distributions should work with or without X Window (or equivalent). Graphical system is required only if you plan to run a gui application using 
-**nuts**
-. All tests where performed on OpenSuse Tumbleweed.
-net.thevpc.nuts.lib.md.MdAdmonition@ac24bebb</TabItem>
-<TabItem value="macos">```
-
-$ curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
-    0.8.3/nuts-0.8.3.jar -o nuts.jar
-$ java -jar nuts.jar -Zy
-$ exit
-
-```
-MacOS Systems installation is based on 
-**bash**
- shell. First launch will configure "~/.bashrc" so that 
-**nuts**
- and other companion tool commands will be available in any future terminal instances. Using 
-**```nuts```**
- on MacOS system should be seamless. A simple bash terminal (MacOs Terminal App) is already a nuts-aware terminal.
-net.thevpc.nuts.lib.md.MdAdmonition@ac24bebb</TabItem>
-<TabItem value="wget">```
-
-  $ wget https://github.com/thevpc/vpc-public-maven/raw/master/\
-     net/vpc/app/nuts/nuts/0.8.3/nuts-0.8.3.jar \
-     -O nuts.jar
-  $  java -jar nuts.jar -y
-
-```
-net.thevpc.nuts.lib.md.MdAdmonition@ac24bebb</TabItem>
-<TabItem value="curl">```
-
-$ curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
-    0.8.3/nuts-0.8.3.jar -o nuts.jar
-$ java -jar nuts.jar -Zy
-$ exit
-
-```
-net.thevpc.nuts.lib.md.MdAdmonition@ac24bebb</TabItem></Tabs>
-Yous should then see some log like the following :
-![install-log-example](assets/images/console/install-log-example.png)
-As you can see, installation upon first launch, will also trigger installation of other optional programs called "companion tools". The main recommended helpful is **nsh**  (stands for **Nuts Shell**), is a bash compatible shell implementation application that will run equally on linux and windows systems.
-net.thevpc.nuts.lib.md.MdAdmonition@9f320dd4
-##  Test InstallationTo test installation the simplest way is to open a nuts-aware terminal and type : 
-```
-
-nuts --version
-
-```
-It should show a result in the format : nuts-api-version/nuts-impl-version
-```
-
-0.8.3/0.8.3.1
-
-```
-##  Run a commandTo run a command using **nuts** just type
-```
-
-nuts <command>
-
-```
-Several commands are available, and you can always manually run any java and non java application., sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="installation-docker" >
                                 <h3 class="main-section2"><a href="#Installation">2.2 Running with Docker</a></h3>
                                 <div class="text-card">
@@ -1236,13 +823,13 @@ Java(TM) SE Runtime Environment (build 1.8.0_211-b12)
 Java HotSpot(TM) 64-Bit Server VM (build 25.211-b12, mixed mode)
 </code></pre>
 <H4 class="md-title-2"> Installation</H4>
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="id6643068214ad4a07b547694f8615a5d80-tab" data-toggle="tab" href="#id6643068214ad4a07b547694f8615a5d80" role="tab" aria-controls="id6643068214ad4a07b547694f8615a5d80" aria-selected="false">windows</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link active" id="id6643068214ad4a07b547694f8615a5d81-tab" data-toggle="tab" href="#id6643068214ad4a07b547694f8615a5d81" role="tab" aria-controls="id6643068214ad4a07b547694f8615a5d81" aria-selected="true">linux</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="id6643068214ad4a07b547694f8615a5d82-tab" data-toggle="tab" href="#id6643068214ad4a07b547694f8615a5d82" role="tab" aria-controls="id6643068214ad4a07b547694f8615a5d82" aria-selected="false">macos</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="id6643068214ad4a07b547694f8615a5d83-tab" data-toggle="tab" href="#id6643068214ad4a07b547694f8615a5d83" role="tab" aria-controls="id6643068214ad4a07b547694f8615a5d83" aria-selected="false">wget</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="id6643068214ad4a07b547694f8615a5d84-tab" data-toggle="tab" href="#id6643068214ad4a07b547694f8615a5d84" role="tab" aria-controls="id6643068214ad4a07b547694f8615a5d84" aria-selected="false">curl</a></li>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="id2259e3e2e4004f86b63514769363cdde0-tab" data-toggle="tab" href="#id2259e3e2e4004f86b63514769363cdde0" role="tab" aria-controls="id2259e3e2e4004f86b63514769363cdde0" aria-selected="false">windows</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="id2259e3e2e4004f86b63514769363cdde1-tab" data-toggle="tab" href="#id2259e3e2e4004f86b63514769363cdde1" role="tab" aria-controls="id2259e3e2e4004f86b63514769363cdde1" aria-selected="true">linux</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="id2259e3e2e4004f86b63514769363cdde2-tab" data-toggle="tab" href="#id2259e3e2e4004f86b63514769363cdde2" role="tab" aria-controls="id2259e3e2e4004f86b63514769363cdde2" aria-selected="false">macos</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="id2259e3e2e4004f86b63514769363cdde3-tab" data-toggle="tab" href="#id2259e3e2e4004f86b63514769363cdde3" role="tab" aria-controls="id2259e3e2e4004f86b63514769363cdde3" aria-selected="false">wget</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="id2259e3e2e4004f86b63514769363cdde4-tab" data-toggle="tab" href="#id2259e3e2e4004f86b63514769363cdde4" role="tab" aria-controls="id2259e3e2e4004f86b63514769363cdde4" aria-selected="false">curl</a></li>
 </ul>
-<div class="tab-content my-3"><div class="tab-pane fade show " id="id6643068214ad4a07b547694f8615a5d80" role="tabpanel" aria-labelledby="id6643068214ad4a07b547694f8615a5d80-tab"><p class="md-phrase">download <a href="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.0.8.5/nuts-0.8.5.jar" class="md-link">nuts-0.8.5.jar</a></p>
+<div class="tab-content my-3"><div class="tab-pane fade show " id="id2259e3e2e4004f86b63514769363cdde0" role="tabpanel" aria-labelledby="id2259e3e2e4004f86b63514769363cdde0-tab"><p class="md-phrase">download <a href="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.0.8.5/nuts-0.8.5.jar" class="md-link">nuts-0.8.5.jar</a></p>
 <pre class="md-code md-code-``` "><code class="">
 java -jar nuts-0.8.5.jar  -Zy
 </code></pre>
@@ -1269,7 +856,7 @@ Supported Windows systems include Window 7 and later.
 
 </div>
 </div>
-<div class="tab-pane fade show active" id="id6643068214ad4a07b547694f8615a5d81" role="tabpanel" aria-labelledby="id6643068214ad4a07b547694f8615a5d81-tab"><b class="md-bold">for production (using wget):</b>
+<div class="tab-pane fade show active" id="id2259e3e2e4004f86b63514769363cdde1" role="tabpanel" aria-labelledby="id2259e3e2e4004f86b63514769363cdde1-tab"><b class="md-bold">for production (using wget):</b>
 This will reset/delete any previous nuts installation before installing the latest version. Removing the 
 <mark class="md-code md-code-` ">Z</mark>
  modifier (replace 
@@ -1315,7 +902,7 @@ All Linux versions and distributions should work with or without X Window (or eq
 
 </div>
 </div>
-<div class="tab-pane fade show " id="id6643068214ad4a07b547694f8615a5d82" role="tabpanel" aria-labelledby="id6643068214ad4a07b547694f8615a5d82-tab"><pre class="md-code md-code-``` "><code class="">
+<div class="tab-pane fade show " id="id2259e3e2e4004f86b63514769363cdde2" role="tabpanel" aria-labelledby="id2259e3e2e4004f86b63514769363cdde2-tab"><pre class="md-code md-code-``` "><code class="">
 $ curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
     0.8.3/nuts-0.8.3.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
@@ -1332,7 +919,7 @@ MacOS Systems installation is based on
 
 </div>
 </div>
-<div class="tab-pane fade show " id="id6643068214ad4a07b547694f8615a5d83" role="tabpanel" aria-labelledby="id6643068214ad4a07b547694f8615a5d83-tab"><pre class="md-code md-code-``` "><code class="">
+<div class="tab-pane fade show " id="id2259e3e2e4004f86b63514769363cdde3" role="tabpanel" aria-labelledby="id2259e3e2e4004f86b63514769363cdde3-tab"><pre class="md-code md-code-``` "><code class="">
   $ wget https://github.com/thevpc/vpc-public-maven/raw/master/\
      net/vpc/app/nuts/nuts/0.8.3/nuts-0.8.3.jar \
      -O nuts.jar
@@ -1342,7 +929,7 @@ MacOS Systems installation is based on
 
 </div>
 </div>
-<div class="tab-pane fade show " id="id6643068214ad4a07b547694f8615a5d84" role="tabpanel" aria-labelledby="id6643068214ad4a07b547694f8615a5d84-tab"><pre class="md-code md-code-``` "><code class="">
+<div class="tab-pane fade show " id="id2259e3e2e4004f86b63514769363cdde4" role="tabpanel" aria-labelledby="id2259e3e2e4004f86b63514769363cdde4-tab"><pre class="md-code md-code-``` "><code class="">
 $ curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
     0.8.3/nuts-0.8.3.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
@@ -1384,158 +971,7 @@ Several commands are available, and you can always manually run any java and non
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='04-installation-prod.md', id='installation-prod', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/03-installation/04-installation-prod.md', title='Installation in Production', menuTitle='Installation in Production', order=0, level=2, markdown=import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
-Installation of `nuts` in production is based on stable `nuts` binaries that are released according to a semi-annual schedule. Stable versions are deployed to maven-central and hence are made accessible very easily to all users. Releases include most of the time updates to the core nuts api (and bootstrap). Update/Fix releases can occur to fix blocking/serious/security issues is faster pace.
-##  System RequirementsHere are all **```nuts```** requirements :
-* **Java** : **```nuts```** requires a valid Java Runtime Environment (JRE) or Java Development Kit (JDK) version **8** or above to execute. Please note that you need to update your 1.8 version to the latest update (update 150+)
-* **System Memory**: **```nuts```** memory footprint is very little and has no minimum RAM requirements.
-* **Disk**: 5Mo on the disk are required for the **```nuts```** installation itself. In addition to that, additional disk space will be used for your local Nuts workspace. The size of your local workspace will vary depending on usage but expect at least 500MB.
-* **Operating System**: **```nuts```** is able to run on any java enabled Operating System including all recent versions of Windows, Linux and MacOS.
-To check if you have a valid java installation type
-```bash
-
-java -version
-
-```
-The result would be equivalent to the following. Just be sure the version is 1.8 or over. In this example,  the java version is 1.8.0_211
-```bash
-
-$> java -version
-java version "1.8.0_211"
-Java(TM) SE Runtime Environment (build 1.8.0_211-b12)
-Java HotSpot(TM) 64-Bit Server VM (build 25.211-b12, mixed mode)
-
-```
-##  Installation<Tabs defaultValue="linux" values="{[\n    { label: 'Linux', value: 'linux', },\n    { label: 'MacOS', value: 'macos', },\n    { label: 'Windows', value: 'windows', },\n    { label: '*NIX wget', value: 'wget', },\n    { label: '*NIX curl', value: 'curl', }\n  ]\n}"><TabItem value="windows">download [nuts-0.8.5.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.0.8.5/nuts-0.8.5.jar)
-```
-
-java -jar nuts-0.8.5.jar  -Zy
-
-```
-On Windows systems, first launch will create a new 
-**```nuts```**
- Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.
--
- 
-**nuts-cmd-0.8.5**
- : this shortcut will open a configured command terminal. 
-**```nuts```**
- command will be available as well as several nuts companion tools installed by 
-**nadmin**
- by default
--
- 
-**nuts-cmd**
-       : this shortcut will point to the last installed 
-**nuts**
- version, here 0.8.5  
-Any of these shortcuts will launch a nuts-aware terminal.
-Supported Windows systems include Window 7 and later.
-net.thevpc.nuts.lib.md.MdAdmonition@df44c2a2</TabItem>
-<TabItem value="linux">**for production (using wget):**
-This will reset/delete any previous nuts installation before installing the latest version. Removing the 
-`Z`
- modifier (replace 
-`-Zy`
- by 
-`-y`
-) flag if you do not want to reset the workspace.
-```
-
-$ wget https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
-    0.8.3/nuts-0.8.3.jar -qO nuts.jar
-$ java -jar nuts.jar -Zy
-$ exit
-
-```
-**for production (using curl):**
-This will reset/delete any previous nuts installation before installing the latest version. Removing the 
-`Z`
- modifier (replace 
-`-Zy`
- by 
-`-y`
-) flag if you do not want to reset the workspace.
-```
-
-$ curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
-    0.8.3/nuts-0.8.3.jar -o nuts.jar
-$ java -jar nuts.jar -Zy
-$ exit
-
-```
-Linux Systems installation is based on bash shell. First launch will configure "~/.bashrc" so that 
-**nuts**
- and other companion tool commands will be available in any future terminal instances. Note that shells are also supported and the relative 
-`rcfiles`
- are also updated (including 
-`zsh`
-, 
-`fish`
- etc) Using 
-**```nuts```**
- on unix-like system should be seamless. A simple bash terminal (Gnome Terminal, KDE Konsole,...) is already a nuts-aware terminal.
-All Linux versions and distributions should work with or without X Window (or equivalent). Graphical system is required only if you plan to run a gui application using 
-**nuts**
-. All tests where performed on OpenSuse Tumbleweed.
-net.thevpc.nuts.lib.md.MdAdmonition@ac24bebb</TabItem>
-<TabItem value="macos">```
-
-$ curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
-    0.8.3/nuts-0.8.3.jar -o nuts.jar
-$ java -jar nuts.jar -Zy
-$ exit
-
-```
-MacOS Systems installation is based on 
-**bash**
- shell. First launch will configure "~/.bashrc" so that 
-**nuts**
- and other companion tool commands will be available in any future terminal instances. Using 
-**```nuts```**
- on MacOS system should be seamless. A simple bash terminal (MacOs Terminal App) is already a nuts-aware terminal.
-net.thevpc.nuts.lib.md.MdAdmonition@ac24bebb</TabItem>
-<TabItem value="wget">```
-
-  $ wget https://github.com/thevpc/vpc-public-maven/raw/master/\
-     net/vpc/app/nuts/nuts/0.8.3/nuts-0.8.3.jar \
-     -O nuts.jar
-  $  java -jar nuts.jar -y
-
-```
-net.thevpc.nuts.lib.md.MdAdmonition@ac24bebb</TabItem>
-<TabItem value="curl">```
-
-$ curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
-    0.8.3/nuts-0.8.3.jar -o nuts.jar
-$ java -jar nuts.jar -Zy
-$ exit
-
-```
-net.thevpc.nuts.lib.md.MdAdmonition@ac24bebb</TabItem></Tabs>
-Yous should then see some log like the following :
-![install-log-example](assets/images/console/install-log-example.png)
-As you can see, installation upon first launch, will also trigger installation of other optional programs called "companion tools". The main recommended helpful is **nsh**  (stands for **Nuts Shell**), is a bash compatible shell implementation application that will run equally on linux and windows systems.
-net.thevpc.nuts.lib.md.MdAdmonition@9f320dd4
-##  Test InstallationTo test installation the simplest way is to open a nuts-aware terminal and type : 
-```
-
-nuts --version
-
-```
-It should show a result in the format : nuts-api-version/nuts-impl-version
-```
-
-0.8.3/0.8.3.1
-
-```
-##  Run a commandTo run a command using **nuts** just type
-```
-
-nuts <command>
-
-```
-Several commands are available, and you can always manually run any java and non java application., sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="installation-prod" >
                                 <h3 class="main-section2"><a href="#Installation">2.3 Installation in Production</a></h3>
                                 <div class="text-card">
@@ -1557,13 +993,13 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.211-b12, mixed mode)
 </code></pre>
 
 <H4 class="md-title-2"> Installation</H4>
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="ide1432c5dede24bca8705a8193cfe68e60-tab" data-toggle="tab" href="#ide1432c5dede24bca8705a8193cfe68e60" role="tab" aria-controls="ide1432c5dede24bca8705a8193cfe68e60" aria-selected="false">windows</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link active" id="ide1432c5dede24bca8705a8193cfe68e61-tab" data-toggle="tab" href="#ide1432c5dede24bca8705a8193cfe68e61" role="tab" aria-controls="ide1432c5dede24bca8705a8193cfe68e61" aria-selected="true">linux</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="ide1432c5dede24bca8705a8193cfe68e62-tab" data-toggle="tab" href="#ide1432c5dede24bca8705a8193cfe68e62" role="tab" aria-controls="ide1432c5dede24bca8705a8193cfe68e62" aria-selected="false">macos</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="ide1432c5dede24bca8705a8193cfe68e63-tab" data-toggle="tab" href="#ide1432c5dede24bca8705a8193cfe68e63" role="tab" aria-controls="ide1432c5dede24bca8705a8193cfe68e63" aria-selected="false">wget</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="ide1432c5dede24bca8705a8193cfe68e64-tab" data-toggle="tab" href="#ide1432c5dede24bca8705a8193cfe68e64" role="tab" aria-controls="ide1432c5dede24bca8705a8193cfe68e64" aria-selected="false">curl</a></li>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idbea1c9cb593747b19db984147ef752ab0-tab" data-toggle="tab" href="#idbea1c9cb593747b19db984147ef752ab0" role="tab" aria-controls="idbea1c9cb593747b19db984147ef752ab0" aria-selected="false">windows</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="idbea1c9cb593747b19db984147ef752ab1-tab" data-toggle="tab" href="#idbea1c9cb593747b19db984147ef752ab1" role="tab" aria-controls="idbea1c9cb593747b19db984147ef752ab1" aria-selected="true">linux</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="idbea1c9cb593747b19db984147ef752ab2-tab" data-toggle="tab" href="#idbea1c9cb593747b19db984147ef752ab2" role="tab" aria-controls="idbea1c9cb593747b19db984147ef752ab2" aria-selected="false">macos</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="idbea1c9cb593747b19db984147ef752ab3-tab" data-toggle="tab" href="#idbea1c9cb593747b19db984147ef752ab3" role="tab" aria-controls="idbea1c9cb593747b19db984147ef752ab3" aria-selected="false">wget</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="idbea1c9cb593747b19db984147ef752ab4-tab" data-toggle="tab" href="#idbea1c9cb593747b19db984147ef752ab4" role="tab" aria-controls="idbea1c9cb593747b19db984147ef752ab4" aria-selected="false">curl</a></li>
 </ul>
-<div class="tab-content my-3"><div class="tab-pane fade show " id="ide1432c5dede24bca8705a8193cfe68e60" role="tabpanel" aria-labelledby="ide1432c5dede24bca8705a8193cfe68e60-tab"><p class="md-phrase">download <a href="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.0.8.5/nuts-0.8.5.jar" class="md-link">nuts-0.8.5.jar</a></p>
+<div class="tab-content my-3"><div class="tab-pane fade show " id="idbea1c9cb593747b19db984147ef752ab0" role="tabpanel" aria-labelledby="idbea1c9cb593747b19db984147ef752ab0-tab"><p class="md-phrase">download <a href="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.0.8.5/nuts-0.8.5.jar" class="md-link">nuts-0.8.5.jar</a></p>
 <pre class="md-code md-code-``` "><code class="">
 java -jar nuts-0.8.5.jar  -Zy
 </code></pre>
@@ -1590,7 +1026,7 @@ Supported Windows systems include Window 7 and later.
 
 </div>
 </div>
-<div class="tab-pane fade show active" id="ide1432c5dede24bca8705a8193cfe68e61" role="tabpanel" aria-labelledby="ide1432c5dede24bca8705a8193cfe68e61-tab"><b class="md-bold">for production (using wget):</b>
+<div class="tab-pane fade show active" id="idbea1c9cb593747b19db984147ef752ab1" role="tabpanel" aria-labelledby="idbea1c9cb593747b19db984147ef752ab1-tab"><b class="md-bold">for production (using wget):</b>
 This will reset/delete any previous nuts installation before installing the latest version. Removing the 
 <mark class="md-code md-code-` ">Z</mark>
  modifier (replace 
@@ -1636,7 +1072,7 @@ All Linux versions and distributions should work with or without X Window (or eq
 
 </div>
 </div>
-<div class="tab-pane fade show " id="ide1432c5dede24bca8705a8193cfe68e62" role="tabpanel" aria-labelledby="ide1432c5dede24bca8705a8193cfe68e62-tab"><pre class="md-code md-code-``` "><code class="">
+<div class="tab-pane fade show " id="idbea1c9cb593747b19db984147ef752ab2" role="tabpanel" aria-labelledby="idbea1c9cb593747b19db984147ef752ab2-tab"><pre class="md-code md-code-``` "><code class="">
 $ curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
     0.8.3/nuts-0.8.3.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
@@ -1653,7 +1089,7 @@ MacOS Systems installation is based on
 
 </div>
 </div>
-<div class="tab-pane fade show " id="ide1432c5dede24bca8705a8193cfe68e63" role="tabpanel" aria-labelledby="ide1432c5dede24bca8705a8193cfe68e63-tab"><pre class="md-code md-code-``` "><code class="">
+<div class="tab-pane fade show " id="idbea1c9cb593747b19db984147ef752ab3" role="tabpanel" aria-labelledby="idbea1c9cb593747b19db984147ef752ab3-tab"><pre class="md-code md-code-``` "><code class="">
   $ wget https://github.com/thevpc/vpc-public-maven/raw/master/\
      net/vpc/app/nuts/nuts/0.8.3/nuts-0.8.3.jar \
      -O nuts.jar
@@ -1663,7 +1099,7 @@ MacOS Systems installation is based on
 
 </div>
 </div>
-<div class="tab-pane fade show " id="ide1432c5dede24bca8705a8193cfe68e64" role="tabpanel" aria-labelledby="ide1432c5dede24bca8705a8193cfe68e64-tab"><pre class="md-code md-code-``` "><code class="">
+<div class="tab-pane fade show " id="idbea1c9cb593747b19db984147ef752ab4" role="tabpanel" aria-labelledby="idbea1c9cb593747b19db984147ef752ab4-tab"><pre class="md-code md-code-``` "><code class="">
 $ curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
     0.8.3/nuts-0.8.3.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
@@ -1705,132 +1141,7 @@ Several commands are available, and you can always manually run any java and non
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='05-installation-preview.md', id='installation-preview', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/03-installation/05-installation-preview.md', title='Installation (Preview Mode)', menuTitle='Installation (Dev Mode)', order=0, level=2, markdown=import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
-Installation of `nuts` for preview/test/evaluation or simply for personal use is based on a rolling `nuts` binaries version that is released a faster pace than the production version (generally a semi-monthly schedule). Versions are not rock solid but still they are "very" usable and more importantly they include all latest features. Preview releases are deployed to a development repository and hence are made accessible using a repository swith option.
-##  System RequirementsHere are all **```nuts```** requirements :
-* **Java** : **```nuts```** requires a valid Java Runtime Environment (JRE) or Java Development Kit (JDK) version **8** or above to execute. Please note that you need to update your 1.8 version to the latest update (update 150+)
-* **System Memory**: **```nuts```** memory footprint is very little and has no minimum RAM requirements.
-* **Disk**: 5Mo on the disk are required for the **```nuts```** installation itself. In addition to that, additional disk space will be used for your local Nuts workspace. The size of your local workspace will vary depending on usage but expect at least 500MB.
-* **Operating System**: **```nuts```** is able to run on any java enabled Operating System including all recent versions of Windows, Linux and MacOS.
-To check if you have a valid java installation type
-```bash
-
-java -version
-
-```
-The result would be equivalent to the following. Just be sure the version is 1.8 or over. In this example,  the java version is 1.8.0_211
-```bash
-
-$ java -version
-java version "1.8.0_211"
-Java(TM) SE Runtime Environment (build 1.8.0_211-b12)
-Java HotSpot(TM) 64-Bit Server VM (build 25.211-b12, mixed mode)
-
-```
-##  Installation<Tabs defaultValue="linux" values="{[\n    { label: 'Linux', value: 'linux', },\n    { label: 'MacOS', value: 'macos', },\n    { label: 'Windows', value: 'windows', },\n    { label: '*NIX wget', value: 'wget', },\n    { label: '*NIX curl', value: 'curl', }\n  ]\n}"><TabItem value="windows">download [nuts-preview.jar](https://thevpc.net/nuts/nuts-preview.jar)
-```
-
-java -jar nuts-preview.jar -r=+preview -Zy
-
-```
-On Windows systems, first launch will create a new 
-**```nuts```**
- Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.
--
- 
-**nuts-cmd-0.8.5**
- : this shortcut will open a configured command terminal. 
-**```nuts```**
- command will be available as well as several nuts companion tools installed by 
-**nadmin**
- by default
--
- 
-**nuts-cmd**
-       : this shortcut will point to the last installed 
-**nuts**
- version, here 0.8.5  
-Any of these shortcuts will launch a nuts-aware terminal.
-Supported Windows systems include Window 7 and later.
-net.thevpc.nuts.lib.md.MdAdmonition@df44c2a2</TabItem>
-<TabItem value="linux">**for testing or development (using wget):**
-This will reset/delete any previous nuts installation before installing the latest version. Removing the 
-`Z`
- modifier (replace 
-`-Zy`
- by 
-`-y`
-) flag if you do not want to reset the workspace.
-```
-
-$ wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
-$ java -jar nuts.jar -r=+preview -Zy
-$ exit
-
-```
-Linux Systems installation is based on bash shell. First launch will configure "~/.bashrc" so that 
-**nuts**
- and other companion tool commands will be available in any future terminal instances. Using 
-**```nuts```**
- on unix-like system should be seamless. A simple bash terminal (Gnome Terminal, KDE Konsole,...) is already a nuts-aware terminal.
-All Linux versions and distributions should work with or without X Window (or equivalent). Graphical system is required only if you plan to run a gui application using 
-**nuts**
-. All tests where performed on OpenSuse Tumbleweed.
-net.thevpc.nuts.lib.md.MdAdmonition@ac24bebb</TabItem>
-<TabItem value="macos">```
-
-$ curl -sOL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar
-$ java -jar nuts.jar -Zy
-$ exit
-
-```
-MacOS Systems installation is based on 
-**bash**
- shell. First launch will configure "~/.bashrc" so that 
-**nuts**
- and other companion tool commands will be available in any future terminal instances. Using 
-**```nuts```**
- on MacOS system should be seamless. A simple bash terminal (MacOs Terminal App) is already a nuts-aware terminal.
-net.thevpc.nuts.lib.md.MdAdmonition@ac24bebb</TabItem>
-<TabItem value="wget">```
-
-$ wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
-$ java -jar nuts.jar -r=+preview -Zy
-$ exit
-
-```
-net.thevpc.nuts.lib.md.MdAdmonition@ac24bebb</TabItem>
-<TabItem value="curl">```
-
-$ curl -sOL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar
-$ java -jar nuts.jar -r=+preview -Zy
-$ exit
-
-```
-net.thevpc.nuts.lib.md.MdAdmonition@ac24bebb</TabItem></Tabs>
-Yous should then see some log like the following :
-![install-log-example](assets/images/console/install-log-example.png)
-As you can see, installation upon first launch, will also trigger installation of other optional programs called "companion tools". The main recommended helpful is **nsh**  (stands for **Nuts Shell**), is a bash compatible shell implementation application that will run equally on linux and windows systems.
-net.thevpc.nuts.lib.md.MdAdmonition@9f320dd4
-##  Test InstallationTo test installation the simplest way is to open a nuts-aware terminal and type : 
-```
-
-nuts --version
-
-```
-It should show a result in the format : nuts-api-version/nuts-impl-version
-```
-
-0.8.5/0.8.5.0
-
-```
-##  Run a commandTo run a command using **nuts** just type
-```
-
-nuts <command>
-
-```
-Several commands are available, and you can always manually run any java and non java application., sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="installation-preview" >
                                 <h3 class="main-section2"><a href="#Installation">2.4 Installation (Preview Mode)</a></h3>
                                 <div class="text-card">
@@ -1852,13 +1163,13 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.211-b12, mixed mode)
 </code></pre>
 
 <H4 class="md-title-2"> Installation</H4>
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="id7b59af83a66d4415b7e1da544b6b974b0-tab" data-toggle="tab" href="#id7b59af83a66d4415b7e1da544b6b974b0" role="tab" aria-controls="id7b59af83a66d4415b7e1da544b6b974b0" aria-selected="false">windows</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link active" id="id7b59af83a66d4415b7e1da544b6b974b1-tab" data-toggle="tab" href="#id7b59af83a66d4415b7e1da544b6b974b1" role="tab" aria-controls="id7b59af83a66d4415b7e1da544b6b974b1" aria-selected="true">linux</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="id7b59af83a66d4415b7e1da544b6b974b2-tab" data-toggle="tab" href="#id7b59af83a66d4415b7e1da544b6b974b2" role="tab" aria-controls="id7b59af83a66d4415b7e1da544b6b974b2" aria-selected="false">macos</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="id7b59af83a66d4415b7e1da544b6b974b3-tab" data-toggle="tab" href="#id7b59af83a66d4415b7e1da544b6b974b3" role="tab" aria-controls="id7b59af83a66d4415b7e1da544b6b974b3" aria-selected="false">wget</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="id7b59af83a66d4415b7e1da544b6b974b4-tab" data-toggle="tab" href="#id7b59af83a66d4415b7e1da544b6b974b4" role="tab" aria-controls="id7b59af83a66d4415b7e1da544b6b974b4" aria-selected="false">curl</a></li>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="id3f7c200af3234d22a3553ac6b68f9c0f0-tab" data-toggle="tab" href="#id3f7c200af3234d22a3553ac6b68f9c0f0" role="tab" aria-controls="id3f7c200af3234d22a3553ac6b68f9c0f0" aria-selected="false">windows</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="id3f7c200af3234d22a3553ac6b68f9c0f1-tab" data-toggle="tab" href="#id3f7c200af3234d22a3553ac6b68f9c0f1" role="tab" aria-controls="id3f7c200af3234d22a3553ac6b68f9c0f1" aria-selected="true">linux</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="id3f7c200af3234d22a3553ac6b68f9c0f2-tab" data-toggle="tab" href="#id3f7c200af3234d22a3553ac6b68f9c0f2" role="tab" aria-controls="id3f7c200af3234d22a3553ac6b68f9c0f2" aria-selected="false">macos</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="id3f7c200af3234d22a3553ac6b68f9c0f3-tab" data-toggle="tab" href="#id3f7c200af3234d22a3553ac6b68f9c0f3" role="tab" aria-controls="id3f7c200af3234d22a3553ac6b68f9c0f3" aria-selected="false">wget</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="id3f7c200af3234d22a3553ac6b68f9c0f4-tab" data-toggle="tab" href="#id3f7c200af3234d22a3553ac6b68f9c0f4" role="tab" aria-controls="id3f7c200af3234d22a3553ac6b68f9c0f4" aria-selected="false">curl</a></li>
 </ul>
-<div class="tab-content my-3"><div class="tab-pane fade show " id="id7b59af83a66d4415b7e1da544b6b974b0" role="tabpanel" aria-labelledby="id7b59af83a66d4415b7e1da544b6b974b0-tab"><p class="md-phrase">download <a href="https://thevpc.net/nuts/nuts-preview.jar" class="md-link">nuts-preview.jar</a></p>
+<div class="tab-content my-3"><div class="tab-pane fade show " id="id3f7c200af3234d22a3553ac6b68f9c0f0" role="tabpanel" aria-labelledby="id3f7c200af3234d22a3553ac6b68f9c0f0-tab"><p class="md-phrase">download <a href="https://thevpc.net/nuts/nuts-preview.jar" class="md-link">nuts-preview.jar</a></p>
 <pre class="md-code md-code-``` "><code class="">
 java -jar nuts-preview.jar -r=+preview -Zy
 </code></pre>
@@ -1885,7 +1196,7 @@ Supported Windows systems include Window 7 and later.
 
 </div>
 </div>
-<div class="tab-pane fade show active" id="id7b59af83a66d4415b7e1da544b6b974b1" role="tabpanel" aria-labelledby="id7b59af83a66d4415b7e1da544b6b974b1-tab"><b class="md-bold">for testing or development (using wget):</b>
+<div class="tab-pane fade show active" id="id3f7c200af3234d22a3553ac6b68f9c0f1" role="tabpanel" aria-labelledby="id3f7c200af3234d22a3553ac6b68f9c0f1-tab"><b class="md-bold">for testing or development (using wget):</b>
 This will reset/delete any previous nuts installation before installing the latest version. Removing the 
 <mark class="md-code md-code-` ">Z</mark>
  modifier (replace 
@@ -1910,7 +1221,7 @@ All Linux versions and distributions should work with or without X Window (or eq
 
 </div>
 </div>
-<div class="tab-pane fade show " id="id7b59af83a66d4415b7e1da544b6b974b2" role="tabpanel" aria-labelledby="id7b59af83a66d4415b7e1da544b6b974b2-tab"><pre class="md-code md-code-``` "><code class="">
+<div class="tab-pane fade show " id="id3f7c200af3234d22a3553ac6b68f9c0f2" role="tabpanel" aria-labelledby="id3f7c200af3234d22a3553ac6b68f9c0f2-tab"><pre class="md-code md-code-``` "><code class="">
 $ curl -sOL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
@@ -1926,7 +1237,7 @@ MacOS Systems installation is based on
 
 </div>
 </div>
-<div class="tab-pane fade show " id="id7b59af83a66d4415b7e1da544b6b974b3" role="tabpanel" aria-labelledby="id7b59af83a66d4415b7e1da544b6b974b3-tab"><pre class="md-code md-code-``` "><code class="">
+<div class="tab-pane fade show " id="id3f7c200af3234d22a3553ac6b68f9c0f3" role="tabpanel" aria-labelledby="id3f7c200af3234d22a3553ac6b68f9c0f3-tab"><pre class="md-code md-code-``` "><code class="">
 $ wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
 $ java -jar nuts.jar -r=+preview -Zy
 $ exit
@@ -1935,7 +1246,7 @@ $ exit
 
 </div>
 </div>
-<div class="tab-pane fade show " id="id7b59af83a66d4415b7e1da544b6b974b4" role="tabpanel" aria-labelledby="id7b59af83a66d4415b7e1da544b6b974b4-tab"><pre class="md-code md-code-``` "><code class="">
+<div class="tab-pane fade show " id="id3f7c200af3234d22a3553ac6b68f9c0f4" role="tabpanel" aria-labelledby="id3f7c200af3234d22a3553ac6b68f9c0f4-tab"><pre class="md-code md-code-``` "><code class="">
 $ curl -sOL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar
 $ java -jar nuts.jar -r=+preview -Zy
 $ exit
@@ -1976,38 +1287,7 @@ Several commands are available, and you can always manually run any java and non
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='06-troubleshooting.md', id='troubleshooting', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/03-installation/06-troubleshooting.md', title='Troubleshooting', menuTitle='Troubleshooting', order=0, level=2, markdown=Whenever installation fails, it is more likely there is a mis-configuration or invalid libraries bundles used. You may have to options to circumvent this which are two levels or workspace reinitialization.
-##  recover mode**recover mode** will apply best efforts to correct configuration without losing them. It will delete all cached data and  libraries for them to be downloaded later and searches for a valid nuts installation binaries to run (it will actually  do a forced update). To run nuts in recover mode type :
-```
-
-nuts -z
-
-```
-##  newer mode**newer mode** will apply best efforts to reload cached files and libraries. to run nuts in 'newer mode' type:
-```
-
-nuts -N
-
-```
-##  reset mode**reset mode** will apply all efforts to correct configuration by, actually, **deleting** them  (and all of workspace files!!) to create a new fresh workspace. This is quite a radical action to run. Do not ever invoke this unless your are really knowing what you are doing.  To run nuts in reset mode type :
-```
-
-nuts -Z
-
-```
-##  kill mode**kill mode** is a special variant of reset mode where workspace will not be recreated after deletion.  This can be achieved by using a combination of reset mode and --skip-boot (-Q) option. Do not ever invoke it unless you are really knowing what you are doing. To run nuts in kill mode type :
-To run nuts in kill mode type :
-```
-
-nuts -ZQ
-
-```
-##  After invoking reset modeAfter invoking reset mode, nuts shell launchers (installed by nuts settings) will not be available anymore.  PATH environment will point (temporarily) to a non existing folder. You should use the jar based invocation at least once to reinstall these commands.
-```
-
-java -jar nuts-0.8.5.jar
-
-```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="troubleshooting" >
                                 <h3 class="main-section2"><a href="#Installation">2.5 Troubleshooting</a></h3>
                                 <div class="text-card">
@@ -2052,7 +1332,7 @@ java -jar nuts-0.8.5.jar
                     </section>
                     <hr class="divider">
                 
-                    <!--MdPage{pathName='04-nuts-concepts', id='NutsConcepts', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/04-nuts-concepts', title='Nuts Concepts', menuTitle='Nuts Concepts', order=0, level=1, markdown=#  Nuts Concepts```nuts``` introduces a set of unique concepts that are important to leverage. These concepts are  mainly introduced for portability and repeatability., sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                    <!--pageLevel1-->
                     <section id="NutsConcepts" >
                         <h2 class="main-section1"><a href="#NutsConcepts">3 Nuts Concepts</a></h2>
                         <div class="text-card">
@@ -2062,44 +1342,7 @@ java -jar nuts-0.8.5.jar
 
                         </div>
                         
-                            <!--MdPage{pathName='01-aliases.md', id='aliases', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/04-nuts-concepts/01-aliases.md', title='Aliases, Imports & Launchers', menuTitle='Aliases, Imports & Launchers', order=0, level=2, markdown=Aliases, Imports and launchers, are three features in nuts where you can call artifacts with a simple word instead of using the full id. Indeed, usually, artifacts are uniquely identified by groupId, artifactId, version and classifier (whenever applicable). This is kind of cumbersome if most of the cases:
-```bash
-
-nuts net.thevpc.toolbox.nsh:nsh#0.8.5.0
-
-```
-##  ImportsImports help you discard groupId and call/install artifacts using only artifactId. You can as an example import 'com.my-company' and as a result any artifact under 'com.mycompany' is resolved automatically. Actually 'com.my-company:my-app' and 'com.my-company.my-app:my-app' are
-```bash
-
-nuts net.thevpc.toolbox.nsh:nsh#0.8.5.0
-# becomes
-nuts settings add import net.thevpc.toolbox
-# now call it simply with
-nuts nsh#0.8.5.0
-# or even simpler with
-nuts nsh
-
-```
-As a matter of fact, there are a couple of imports automatically defined 'net.thevpc' and 'net.thevpc.toolbox' 
-##  AliasesAliases help you define your own command by calling existing artifacts and defining some arguments as well. It is very similar to shell aliases where you define `ll` as an alias to `/bin/ls -l` for example.
-```bash
-
-nuts net.thevpc.toolbox.nsh:nsh#0.8.5.0
-# becomes
-nuts settings add alias ll='net.thevpc.toolbox.nsh:nsh#0.8.5.0 -c ls -l'
-# now call it simply with
-nuts ll
-
-```
-##  LaunchersLaunchers help you define your own system command by calling nuts with existing artifacts and even creating Desktop Environment Shortcuts and Icons (whenever GUI is applicable). 
-```bash
-
-nuts net.thevpc.toolbox.nsh:nsh#0.8.5.0
-# becomes
-nuts settings add launcher --menu --desktop 'net.thevpc.toolbox.nsh:nsh#0.8.5.0'
-# now call it simply click on the desktop icon or open via system menu
-
-```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="aliases" >
                                 <h3 class="main-section2"><a href="#NutsConcepts">3.1 Aliases, Imports & Launchers</a></h3>
                                 <div class="text-card">
@@ -2145,17 +1388,7 @@ nuts settings add launcher --menu --desktop 'net.thevpc.toolbox.nsh:nsh#0.8.5.0'
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='01-automation.md', id='automation', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/04-nuts-concepts/01-automation.md', title='Automation', menuTitle='Automation & DevOps', order=0, level=2, markdown=```nuts``` has been designed and implemented with automation and devops philosophy in mind.
-```nuts``` Application Framework infrastructure provides a seamless support process automation with structured output, including json, xml, yaml, tson and so on. You can for instance call the  POSIX ls command and get the file list as ```json```. You can then process this ```json```
-and extract meaningful information and pass it to the next command using standard pipe mechanism.  Think of this as a general pattern for any and all commands you can run via nuts. 
-Besides, automation includes dynamic classloading of on-the-fly dependencies (remotely resolved and downloaded) to make usage of a feature you need such as installing a tomcat version that is compatible with the jre version you run.
-Automation requires also partitioning, isolation, sand-boxing, security reinforcements and portability. This is ensured by workspace feature that helps isolating the application dependencies from other applications, authentication and authorisation mechanisms to limit access to nuts configurations (and hence available repositories used for dependency resolution) and to system resources (running with or without elevated privileges) and finally environment adaptability to handle appropriate support for each architecture (x86_32,itanium_64,...), operating system (linux, windows,...), shell (bash, zsh,...), platform (java, dotnet, ...) and desktop environment.
-##  Install AutomationTODO...
-##  Structured OutputTODO...
-##  Environment SensitiveTODO...
-##  Multi PlatformTODO...
-##  Workspace IsolationTODO...
-##  Security MechanismsTODO..., sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="automation" >
                                 <h3 class="main-section2"><a href="#NutsConcepts">3.2 Automation</a></h3>
                                 <div class="text-card">
@@ -2188,37 +1421,7 @@ TODO...
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='03-commandline.md', id='commandline', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/04-nuts-concepts/03-commandline.md', title='Command Line Arguments', menuTitle='Command Line Arguments', order=0, level=2, markdown=**nuts** supports a specific format for command line arguments. This format is the format supported in **```nuts```** Application Framework (NAF) and as such all NAF applications support the same command line arguments format. Arguments in **```nuts```** can be options or non options. Options always start with hyphen (-). 
-##  Short vs Long OptionsOptions can be long options (starts with double hyphen) or short options (start with a single hyphen).  Many arguments support both forms. For instance "-w" and "--workspace" are the supported forms to define the workspace location in the nuts command.
-##  Valued / Non-valued OptionsOptions can also support a value of type string or boolean. The value can be suffixed to the option while separated with '=' sign or immediately after the option. 
-As an example, all are equivalent.  
-```sh
-
-nuts -w=/myfolder/myworkspace
-nuts -w /myfolder/myworkspace
-nuts --workspace /myfolder/myworkspace
-nuts --workspace=/myfolder/myworkspace
-
-```
-Of course, not all options can support values, an not all options neither support the suffixed and/or the non-suffixed mode. Please relate to the documentation of nuts or the application you are using to know how to use the options.
-##  Boolean OptionsParticularly, when the value is a boolean, the value do not need to be defined. As a result "--install-companions" and "--install-companions=true" are equivalent. However "--install-companions true" is not (because the option is of type boolean) and "true" will be parsed as a NonOption.
-To define a "false" value to the boolean option we can either suffix with "=false" or prefix with "!" or "~" sign.  Hence, "--install-companions=false", "--!install-companions" and "--~install-companions" are all equivalent. Note also that `~` if referred to `!` because in bash shells (and som other shells) `!` will be expanded in a special manner.
-##  Combo Simple OptionsSimple options can be grouped in a single word. "-ls" is equivalent to "-l -s". So one should be careful.  One exception though. For portability reasons, "-version" is considered a single short option.
-##  Ignoring Options, CommentsOptions starting with "-//" and "--//" are simply ignored by the command line parser.
-##  Nuts Option TypesOptions in **```nuts```** are can be of one of the following categories :
-* Create Options : such options are only relevant when creating a new workspace. They define the configuration of the workspace to create. They will be ignored when the workspace already exists. They will be ignored too, in sub-processes. Examples include
-* Runtime Options : such options are relevant when running a workspace (be it existing or to be created) and are not passed to sub-processes
-* Exported Options : are passed to sub-**nuts**-processes that will be created by **nuts**. For instance when nuts will call the **nsh** command it will spawn a new process. In such case, these options are passed to the sub-process as environment variable.
-* Executor Options : are options that are supported byte the package executor. Most of the time this will be the java executor and hence this coincides with the JVM options) 
-* Custom Nuts options : are special `nuts` options that are specific to nuts implementation or validation process to be promoted to standard options. The arguments parser will never report an error regarding such options. They are used when available and valid. they will be ignored in all other cases. Such options start with triple hyphen (---)
-* Application Options : are options that are by default supported by Applications using NAF (Nuts Application Framework) (as well as Nuts it self).
-all **```nuts```** options are described in the command help. Just type :
-```
-
-nuts --help
-
-```
- , sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="commandline" >
                                 <h3 class="main-section2"><a href="#NutsConcepts">3.3 Command Line Arguments</a></h3>
                                 <div class="text-card">
@@ -2262,99 +1465,7 @@ nuts --help
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='04-filesystem.md', id='filesystem', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/04-nuts-concepts/04-filesystem.md', title='File system', menuTitle='File system', order=0, level=2, markdown=**```nuts```**
- manages multiple workspaces. It has a default one located at ~/.config/nuts (~ is the user home directory). Each workspace handles a database and files related to the installed applications. The workspace has a specific layout to store different types of files relatives to your applications. 
-**nuts**
- is largely inspired by [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html) and hence defines several  store locations for each file type. Such organization of folders is called Layout and is dependent on the current operating system, the layout strategy and any custom configuration.
-##  Store Locations
-Supported Store Locations are : 
-**```nuts```** File System defines the following folders :
-* **config** : defines the base directory relative to which application specific configuration files should be stored.
-* **apps** : defines the base directory relative to which application executable binaries should be stored 
-* **lib** : defines the base directory relative to which application non executable binaries should be stored 
-* **var** : defines the base directory relative to which application specific data files (other than config) should be stored
-* **log** : defines the base directory relative to which application specific log and trace files should be stored
-* **temp** : defines the base directory relative to which application specific temporary files should be stored
-* **cache** : defines the base directory relative to which application non-essential data and binary files should be stored to optimize bandwidth or performance
-* **run** : defines the base directory relative to which application-specific non-essential runtime files and other file objects (such as sockets, named pipes, ...) should be stored
-**```nuts```** defines such distinct folders (named Store Locations) for storing different types of application data according to your operating system.
-On Windows Systems the default locations are :
-** apps     : "$HOME/AppData/Roaming/nuts/apps"
-** lib      : "$HOME/AppData/Roaming/nuts/lib"
-** config   : "$HOME/AppData/Roaming/nuts/config"
-** var      : "$HOME/AppData/Roaming/nuts/var"
-** log      : "$HOME/AppData/Roaming/nuts/log"
-** temp     : "$HOME/AppData/Local/nuts/temp"
-** cache    : "$HOME/AppData/Local/nuts/cache"
-** run      : "$HOME/AppData/Local/nuts/run"
-On Linux, Unix, MacOS and any POSIX System the default locations are :
-** config   : "$HOME/.config/nuts"
-** apps     : "$HOME/.local/share/nuts/apps"
-** lib      : "$HOME/.local/share/nuts/lib"
-** var      : "$HOME/.local/share/nuts/var"
-** log      : "$HOME/.local/log/nuts"
-** cache    : "$HOME/.cache/nuts"
-** temp     : "$java.io.tmpdir/$username/nuts"
-** run      : "/run/user/$USER_ID/nuts"
-As an example, the configuration folder for the artifact net.thevpc.app:netbeans-launcher#1.2.4 in the default workspace in a Linux environment is
-```
-
-home/me/.config/nuts/default-workspace/config/id/net/vpc/app/netbeans-launcher/1.2.4/
-
-```
-And the log file "app.log" for the same artifact in the workspace named "personal" in a Windows environment is located at
-```
-
-C:/Users/me/AppData/Roaming/nuts/log/nuts/personal/config/id/net/vpc/app/netbeans-launcher/1.2.4/app.log
-
-```
-##  Store Location StrategiesWhen you install any application using the **```nuts```** command a set of specific folders for the presented Store Locations are created. For that,  two strategies exist : **Exploded strategy** (the default) and **Standalone strategy**.  
-In **Exploded strategy**  **```nuts```** defines top level folders (in linux ~/.config for config Store Location etc), and then creates withing each top level Store Location a sub folder for the given application (or application version to be more specific). This helps putting all your config files in a SSD partition for instance and make **nuts** run faster. However if you are interested in the backup or roaming of your workspace, this may be not the best approach.
-The **Standalone strategy**   is indeed provided mainly for Roaming workspaces that can be shared, copied, moved to other locations. A single root folder will contain all of the Store Locations.
-As an example, in "Standalone Strategy", the configuration folder for the artifact net.thevpc.app:netbeans-launcher#1.2.4 in the default workspace in a Linux environment is
-```
-
-home/me/.config/nuts/default-workspace/config/id/net/vpc/app/netbeans-launcher/1.2.4/
-
-```
-And the log file "app.log" for the same artifact in the workspace named "personal" in the same Linux environment is located at
-```
-
-/home/me/.config/nuts/default-workspace/log/id/net/vpc/app/netbeans-launcher/1.2.4/
-
-```
-You can see here that the following folder will contain ALL the data files of the workspace.
-```
-
-/home/me/.config/nuts/default-workspace
-
-```
-whereas in the **Exploded strategy** the Store Location are "exploded" into multiple root folders.
-##  Custom Store LocationsOf course, you are able to configure separately each Store Location to meet your needs.
-###  Selecting strategiesThe following command will create an exploded workspace
-```
-
-nuts -w my-workspace --exploded
-
-```
-The following command will create a standalone workspace
-```
-
-nuts -w my-workspace --standalone
-
-```
-###  Finer CustomizationThe following command will create an exploded workspace and moves all config files to the SSD partition folder /myssd/myconfig
-```
-
-nuts -w my-workspace --system-conf-home=/myssd/myconfig
-
-```
-You can type help for more details.
-```
-
-nuts help
-
-```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="filesystem" >
                                 <h3 class="main-section2"><a href="#NutsConcepts">3.4 File system</a></h3>
                                 <div class="text-card">
@@ -2428,32 +1539,7 @@ nuts help
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='05-text-coloring-format.md', id='doc1', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/04-nuts-concepts/05-text-coloring-format.md', title='Nuts Text Format', menuTitle='Nuts Text Format', order=0, level=2, markdown=#  Nuts Text Format**```nuts```** comes up with a simple coloring syntax that helps writing better looking portable command line programs. standard output is automatically configured to accept the "Nuts Text Format" (NTF) syntax.  Though it remains possible to disable this ability using the --!color standard option (or programmatically,  see **```nuts```** API documentation). NTF will be translated to the underlying terminal implementation using ANSI  escape code on linux/windows terminals if available.
-Here after a showcase of available NTF syntax.
-![text-coloring-format](assets/images/console/text-coloring-format-01.png)
-![text-coloring-format](assets/images/console/text-coloring-format-02.png)
-![text-coloring-format](assets/images/console/text-coloring-format-03.png)
-![text-coloring-format](assets/images/console/text-coloring-format-04.png)
-#  Nuts Text Format Specification```
-
-<TOKEN> S10: '##########'
-<TOKEN> S9 : '#########'
-<TOKEN> S8 : '########'
-<TOKEN> S7 : '#######'
-<TOKEN> S6 : '######'
-<TOKEN> S5 : '#####'
-<TOKEN> S4 : '####'
-<TOKEN> S3 : '###'
-<TOKEN> S2 : '##'
-<TOKEN> S1 : '##'
-<TOKEN> A3 : '\```'
-
-<RULE>  S2 ':' KEY ':' ANYTHING S2
-<RULE>  S2 '{:' WORD ANYTHING S2
-<RULE>  13 ANYTHING A3
-
-
-```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="doc1" >
                                 <h3 class="main-section2"><a href="#NutsConcepts">3.5 Nuts Text Format</a></h3>
                                 <div class="text-card">
@@ -2494,15 +1580,7 @@ Here after a showcase of available NTF syntax.
                     </section>
                     <hr class="divider">
                 
-                    <!--MdPage{pathName='05-nuts-commands', id='Commands', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands', title='Nuts Commands', menuTitle='null', order=0, level=1, markdown=**```nuts```** exposes a set of commands :
-* ```exec```               : execute an artifact or a command
-* ```which```              : detect the proper artifact or system command to execute
-* ```install```, ```uninstall``` : install/uninstall an artifact (using its fetched/deployed installer)
-* ```update```,```check-updates```  : search for updates
-* ```deploy```, ```undeploy```   : manage artifacts (artifact installers) on the local repositories
-* ```fetch```, ```push```        : download from, upload to remote repositories
-* ```search```             : search for existing/installable artifacts
-* ```welcome```            : a command that does nothing but bootstrapping **```nuts```** and showing a welcome message., sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                    <!--pageLevel1-->
                     <section id="Commands" >
                         <h2 class="main-section1"><a href="#Commands">4 Nuts Commands</a></h2>
                         <div class="text-card">
@@ -2511,26 +1589,7 @@ Here after a showcase of available NTF syntax.
 
                         </div>
                         
-                            <!--MdPage{pathName='030-commands.md', id='cmds', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/030-commands.md', title='Nuts Commands', menuTitle='Nuts Commands', order=0, level=2, markdown=Nuts supports multiple types of commands (internal , external), multiple types of execution (embedded, spawn, and system execution) and multiple modes of execution (effective, dry).
-Internal Commands include:
-* `welcome` : this is the default command that simply shows a welcome message and exits
-* `help` : documentation and help command for `nuts` and applications and exits 
-* `version` : show nuts version and exits
-* `info` : show detailed `nuts` installation information and exits
-* `license` : simply show `nuts` license and exits
-* `search` : search for applications installed/to install
-* `fetch` : download applications (without installing)
-* `which` : resolve the appropriate application (or an internal command) for a given command
-* `exec` : execute c(or an internal command)
-* `install` : installs an application 
-* `uninstall` : uninstalls an application
-* `update` : updates an installed application
-* `reinstall` : reinstall an existing application
-* `check-updates` : checks for updates of an application (do not perform the update)
-* `deploy` : deploys a local application (and its descriptors) to a local repository
-* `push` : syncronizes the local repositry to it's remote peer and hence, deploy to a remote repository.
-* `bundle` : creates a standalone bundle as a complete nuts workspace that serve a single application
-* `settings` : this is main settings/configuration commands to manage nuts workspaces, apps, security, etc., sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="cmds" >
                                 <h3 class="main-section2"><a href="#Commands">4.1 Nuts Commands</a></h3>
                                 <div class="text-card">
@@ -2543,89 +1602,7 @@ Internal Commands include:
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='040-exec-cmd.md', id='exec-cmd', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/040-exec-cmd.md', title='Exec', menuTitle='null', order=0, level=2, markdown=**exec** command runs another command and **which** command does a dry run of it.
-When one types
-```
-
-nuts netbeans-command
-
-```
-it is actually equivalent to
-```
-
-nuts exec netbeans-command
-
-```
-What is helpful with 
-**exec**
- is that it permits passing extra parameters to application executors. In 
-**nuts**
-, an application executor is an artifact that can be used to run other artifacts. For instance 
-**nsh**
-, which is a 
-**nuts**
- companion, is an executor for all "
-**.nsh" artifacts (yest script files are artifacts too). Some executors are specially handled such as "java" executor that is used to run all jars and basically all java based artifacts. Java executor for instance supports all java standard vm option arguments**
-```
-
-me@linux:~> nuts exec -Xmx1G netbeans-launcher
-
-```
-Here we pass -Xmx1G option argument to java executor because **netbeans-launcher** will be resolved as a java based artifact. For what concerns **which** command, it does not really execute the command, it just resolves the command execution
-```
-
-me@linux:~> nuts which version ls
-version : internal command 
-ls : nuts alias (owner maven-local://net.thevpc.app.nuts.toolbox:nsh#0.8.5.0 ) : maven-local://net.thevpc.app.nuts.toolbox:nsh#0.8.5.0 -c ls
-
-```
-Here **which** returns that **version** is an internal command while **ls** is an alias to an artifact based command (nsh -c ls) which is called a "nuts alias". As you can see, ls is actually a sub command of nsh artifact.
-####  1.2 External CommandsExternal commands are commands that will invoke another artifact. for instance
-```
-
-nuts netbeans-command
-
-```
-is running an external command which is net.thevpc.app:netbeans-launcher#1.2.2 artifact.
-####  1.2 External Files & URLsYou can run any jar file using **nuts** as far as it fulfills two points : the files must contain a supported descriptor (if it is compiled with maven, it already has the supported descriptor) and the file should be typed as a path (it must contain a '/' or '' separator)
-```
-
-wget -N https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/netbeans-launcher/1.2.2/netbeans-launcher-1.2.2.jar
-nuts ./netbeans-launcher-1.2.2.jar
-
-```
-You can even run a remove file using its url format :
-```
-
-nuts https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/netbeans-launcher/1.2.2/netbeans-launcher-1.2.2.jar
-
-```
-##  2. Execution types###  2.1 spawnThis is the default execution type where any external command will spawn a new process to execute within. Internal commands are not affected by this mode and are executed, always, in the current vm process (with embedded type).
-```
-
-me@linux:~> nuts --spawn ls
-
-```
-###  2.2 embeddedIn this type the command will try not to spawn a new process but load in the current vm the commmand to run (as far as it is a java command)
-```
-
-me@linux:~> nuts --embedded ls
-
-```
-###  2.3 syscallIn this type, the command execution is delegated to the underlying operating system end hence will also swan a new process.
-```
-
-me@linux:~> nuts --syscall ls
-
-```
-##  3 Execution modes###  3.1 effective executionThis is the default execution mode where the command is really and effectively ran.
-###  3.2 dry executionIn this mode, the command will be ran in dry mode with no side effects which implies a "simulation" of the execution.
-```
-
-me@linux:~> nuts --dry version
-[dry] internal version 
-
-```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="exec-cmd" >
                                 <h3 class="main-section2"><a href="#Commands">4.2 Exec</a></h3>
                                 <div class="text-card">
@@ -2715,7 +1692,7 @@ me@linux:~&gt; nuts --dry version
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='041-exec-cmd-help.ntf', id='exec-help', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/041-exec-cmd-help.ntf', title='Exec Cmdline', menuTitle='null', order=0, level=2, markdown=null, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="exec-help" >
                                 <h3 class="main-section2"><a href="#Commands">4.3 Exec Cmdline</a></h3>
                                 <div class="text-card">
@@ -2815,89 +1792,7 @@ EXAMPLES
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='045-which-cmd.md', id='which-cmd', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/045-which-cmd.md', title='Which', menuTitle='null', order=0, level=2, markdown=**which** command does a dry run of a command.
-When one types
-```
-
-nuts netbeans-command
-
-```
-it is actually equivalent to
-```
-
-nuts exec netbeans-command
-
-```
-What is helpful with 
-**exec**
- is that it permits passing extra parameters to application executors. In 
-**nuts**
-, an application executor is an artifact that can be used to run other artifacts. For instance 
-**nsh**
-, which is a 
-**nuts**
- companion, is an executor for all "
-**.nsh" artifacts (yest script files are artifacts too). Some executors are specially handled such as "java" executor that is used to run all jars and basically all java based artifacts. Java executor for instance supports all java standard vm option arguments**
-```
-
-me@linux:~> nuts exec -Xmx1G netbeans-launcher
-
-```
-Here we pass -Xmx1G option argument to java executor because **netbeans-launcher** will be resolved as a java based artifact. For what concerns **which** command, it does not really execute the command, it just resolves the command execution
-```
-
-me@linux:~> nuts which version ls
-version : internal command 
-ls : nuts alias (owner maven-local://net.thevpc.app.nuts.toolbox:nsh#0.8.5.0 ) : maven-local://net.thevpc.app.nuts.toolbox:nsh#0.8.5.0 -c ls
-
-```
-Here **which** returns that **version** is an internal command while **ls** is an alias to an artifact based command (nsh -c ls) which is called a "nuts alias". As you can see, ls is actually a sub command of nsh artifact.
-####  1.2 External CommandsExternal commands are commands that will invoke another artifact. for instance
-```
-
-nuts netbeans-command
-
-```
-is running an external command which is net.thevpc.app:netbeans-launcher#1.2.2 artifact.
-####  1.2 External Files & URLsYou can run any jar file using **nuts** as far as it fulfills two points : the files must contain a supported descriptor (if it is compiled with maven, it already has the supported descriptor) and the file should be typed as a path (it must contain a '/' or '' separator)
-```
-
-wget -N https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/netbeans-launcher/1.2.2/netbeans-launcher-1.2.2.jar
-nuts ./netbeans-launcher-1.2.2.jar
-
-```
-You can even run a remove file using its url format :
-```
-
-nuts https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/netbeans-launcher/1.2.2/netbeans-launcher-1.2.2.jar
-
-```
-##  2. Execution types###  2.1 spawnThis is the default execution type where any external command will spawn a new process to execute within. Internal commands are not affected by this mode and are executed, always, in the current vm process (with embedded type).
-```
-
-me@linux:~> nuts --spawn ls
-
-```
-###  2.2 embeddedIn this type the command will try not to spawn a new process but load in the current vm the commmand to run (as far as it is a java command)
-```
-
-me@linux:~> nuts --embedded ls
-
-```
-###  2.3 syscallIn this type, the command execution is delegated to the underlying operating system end hence will also swan a new process.
-```
-
-me@linux:~> nuts --syscall ls
-
-```
-##  3 Execution modes###  3.1 effective executionThis is the default execution mode where the command is really and effectively ran.
-###  3.2 dry executionIn this mode, the command will be ran in dry mode with no side effects which implies a "simulation" of the execution.
-```
-
-me@linux:~> nuts --dry version
-[dry] internal version 
-
-```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="which-cmd" >
                                 <h3 class="main-section2"><a href="#Commands">4.4 Which</a></h3>
                                 <div class="text-card">
@@ -2987,7 +1882,7 @@ me@linux:~&gt; nuts --dry version
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='046-which-cmd-help.ntf', id='which-help', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/046-which-cmd-help.ntf', title='Which Cmdline', menuTitle='null', order=0, level=2, markdown=null, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="which-help" >
                                 <h3 class="main-section2"><a href="#Commands">4.5 Which Cmdline</a></h3>
                                 <div class="text-card">
@@ -3021,12 +1916,7 @@ EXAMPLES:
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='050-fetch-cmd.md', id='fetch-cmd', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/050-fetch-cmd.md', title='Fetch', menuTitle='null', order=0, level=2, markdown=**fetch** command is used to download content of an artifact when you exactly know of it's nuts long id (which is required). This will download a cached version of the artifact in the local machine (the artifact passes to 'fetched' status)
-```
-
-me@linux:~> nuts fetch net.thevpc.app:netbeans-launcher#1.2.2
-
-```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="fetch-cmd" >
                                 <h3 class="main-section2"><a href="#Commands">4.6 Fetch</a></h3>
                                 <div class="text-card">
@@ -3040,7 +1930,7 @@ me@linux:~&gt; nuts fetch net.thevpc.app:netbeans-launcher#1.2.2
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='051-fetch-cmd-help.ntf', id='fetch-help', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/051-fetch-cmd-help.ntf', title='Fetch Cmdline', menuTitle='null', order=0, level=2, markdown=null, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="fetch-help" >
                                 <h3 class="main-section2"><a href="#Commands">4.7 Fetch Cmdline</a></h3>
                                 <div class="text-card">
@@ -3298,60 +2188,7 @@ EXAMPLES
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='060-install.md', id='install-cmd', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/060-install.md', title='Install', menuTitle='null', order=0, level=2, markdown=A part from URL and path based executions, an artifact should be installed to be run. Installation can be auto fired when you first execute the artifact (you will be prompted to install the artifact) or manually using the **install** command. Note that when you run directly a jar file as a path or url, the artifact will not be installed! to install an application just type
-```
-
-nuts install <your-artifact-query-here>
-
-```
-For example
-```
-
-nuts install net.thevpc.app:netbeans-launcher#1.2.2
-
-```
-you may use any artifact query (see search command section) to install a command.
-```
-
-nuts install net.thevpc.app:netbeans-*
-
-```
-if the artifact is already installed, you should use the force flag (--force)
-```
-
-nuts install net.thevpc.app:netbeans-launcher#1.2.2
-#this second time we have to force install
-nuts install -- force net.thevpc.app:netbeans-launcher#1.2.2
-
-```
-One exception is when you want to switch between multiple versions installed to set the default one, you can omit the --force flag. Actually, when multiple version of the same artifact are installed all of them are executable directly by specifying the right version. When you specify no version, the default one is selected for you. And to make is simple, the default one is the last one you ran an install command for it.
-```
-
-me@linux:~> nuts install net.thevpc.app:netbeans-launcher#1.2.2
-me@linux:~> nuts netbeans-launcher
-1.2.2
-me@linux:~> nuts install net.thevpc.app:netbeans-launcher#1.2.1
-me@linux:~> nuts netbeans-launcher
-1.2.1
-me@linux:~> nuts install net.thevpc.app:netbeans-launcher#1.2.2
-1.2.2
-
-```
-You can find all installed artifacts using 'nuts search --installed' command
-##  PurposeThe install command is used to install or reinstall packages.
-* A+B  : read A main package and B dependencies
-* A+B? : ask, if confirmed, read A main package and B dependencies.
-* require : deploy package as 'required'
-* install : deploy package as 'installed'
-* nothing : do nothing
-The available strategies are
-* require   : install the package and all of its dependencies as required class installed package
-* install   : install the package and all of its dependencies as first class installed package
-* reinstall : re-install or re-required the package and all of its dependencies
-* repair    : repair (re-install or re-required) the given dependency
-"required class installed package" can be removed (uninstalled automatically by nuts when none  of the depending package is nomore installed.
-net.thevpc.nuts.lib.md.MdTable@69c6703b
-net.thevpc.nuts.lib.md.MdTable@f6cadc44, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="install-cmd" >
                                 <h3 class="main-section2"><a href="#Commands">4.8 Install</a></h3>
                                 <div class="text-card">
@@ -3496,7 +2333,7 @@ The available strategies are
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='061-install-cmd-help.ntf', id='install-help', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/061-install-cmd-help.ntf', title='Install Cmdline', menuTitle='null', order=0, level=2, markdown=null, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="install-help" >
                                 <h3 class="main-section2"><a href="#Commands">4.9 Install Cmdline</a></h3>
                                 <div class="text-card">
@@ -3549,60 +2386,7 @@ EXAMPLES:
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='070-uninstall.md', id='uninstall-cmd', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/070-uninstall.md', title='Uninstall', menuTitle='null', order=0, level=2, markdown=A part from URL and path based executions, an artifact should be installed to be run. Installation can be auto fired when you first execute the artifact (you will be prompted to install the artifact) or manually using the **install** command. Note that when you run directly a jar file as a path or url, the artifact will not be installed! to install an application just type
-```
-
-nuts install <your-artifact-query-here>
-
-```
-For example
-```
-
-nuts install net.thevpc.app:netbeans-launcher#1.2.2
-
-```
-you may use any artifact query (see search command section) to install a command.
-```
-
-nuts install net.thevpc.app:netbeans-*
-
-```
-if the artifact is already installed, you should use the force flag (--force)
-```
-
-nuts install net.thevpc.app:netbeans-launcher#1.2.2
-#this second time we have to force install
-nuts install -- force net.thevpc.app:netbeans-launcher#1.2.2
-
-```
-One exception is when you want to switch between multiple versions installed to set the default one, you can omit the --force flag. Actually, when multiple version of the same artifact are installed all of them are executable directly by specifying the right version. When you specify no version, the default one is selected for you. And to make is simple, the default one is the last one you ran an install command for it.
-```
-
-me@linux:~> nuts install net.thevpc.app:netbeans-launcher#1.2.2
-me@linux:~> nuts netbeans-launcher
-1.2.2
-me@linux:~> nuts install net.thevpc.app:netbeans-launcher#1.2.1
-me@linux:~> nuts netbeans-launcher
-1.2.1
-me@linux:~> nuts install net.thevpc.app:netbeans-launcher#1.2.2
-1.2.2
-
-```
-You can find all installed artifacts using 'nuts search --installed' command
-##  PurposeThe install command is used to install or reinstall packages.
-* A+B  : read A main package and B dependencies
-* A+B? : ask, if confirmed, read A main package and B dependencies.
-* require : deploy package as 'required'
-* install : deploy package as 'installed'
-* nothing : do nothing
-The available strategies are
-* require   : install the package and all of its dependencies as required class installed package
-* install   : install the package and all of its dependencies as first class installed package
-* reinstall : re-install or re-required the package and all of its dependencies
-* repair    : repair (re-install or re-required) the given dependency
-"required class installed package" can be removed (uninstalled automatically by nuts when none  of the depending package is nomore installed.
-net.thevpc.nuts.lib.md.MdTable@69c6703b
-net.thevpc.nuts.lib.md.MdTable@f6cadc44, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="uninstall-cmd" >
                                 <h3 class="main-section2"><a href="#Commands">4.10 Uninstall</a></h3>
                                 <div class="text-card">
@@ -3747,7 +2531,7 @@ The available strategies are
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='071-uninstall-cmd-help.ntf', id='uninstall-help', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/071-uninstall-cmd-help.ntf', title='Uninstall Cmdline', menuTitle='null', order=0, level=2, markdown=null, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="uninstall-help" >
                                 <h3 class="main-section2"><a href="#Commands">4.11 Uninstall Cmdline</a></h3>
                                 <div class="text-card">
@@ -3802,60 +2586,7 @@ EXAMPLES
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='080-check-updates.md', id='check-updates-cmd', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/080-check-updates.md', title='Check Updates', menuTitle='null', order=0, level=2, markdown=A part from URL and path based executions, an artifact should be installed to be run. Installation can be auto fired when you first execute the artifact (you will be prompted to install the artifact) or manually using the **install** command. Note that when you run directly a jar file as a path or url, the artifact will not be installed! to install an application just type
-```
-
-nuts install <your-artifact-query-here>
-
-```
-For example
-```
-
-nuts install net.thevpc.app:netbeans-launcher#1.2.2
-
-```
-you may use any artifact query (see search command section) to install a command.
-```
-
-nuts install net.thevpc.app:netbeans-*
-
-```
-if the artifact is already installed, you should use the force flag (--force)
-```
-
-nuts install net.thevpc.app:netbeans-launcher#1.2.2
-#this second time we have to force install
-nuts install -- force net.thevpc.app:netbeans-launcher#1.2.2
-
-```
-One exception is when you want to switch between multiple versions installed to set the default one, you can omit the --force flag. Actually, when multiple version of the same artifact are installed all of them are executable directly by specifying the right version. When you specify no version, the default one is selected for you. And to make is simple, the default one is the last one you ran an install command for it.
-```
-
-me@linux:~> nuts install net.thevpc.app:netbeans-launcher#1.2.2
-me@linux:~> nuts netbeans-launcher
-1.2.2
-me@linux:~> nuts install net.thevpc.app:netbeans-launcher#1.2.1
-me@linux:~> nuts netbeans-launcher
-1.2.1
-me@linux:~> nuts install net.thevpc.app:netbeans-launcher#1.2.2
-1.2.2
-
-```
-You can find all installed artifacts using 'nuts search --installed' command
-##  PurposeThe install command is used to install or reinstall packages.
-* A+B  : read A main package and B dependencies
-* A+B? : ask, if confirmed, read A main package and B dependencies.
-* require : deploy package as 'required'
-* install : deploy package as 'installed'
-* nothing : do nothing
-The available strategies are
-* require   : install the package and all of its dependencies as required class installed package
-* install   : install the package and all of its dependencies as first class installed package
-* reinstall : re-install or re-required the package and all of its dependencies
-* repair    : repair (re-install or re-required) the given dependency
-"required class installed package" can be removed (uninstalled automatically by nuts when none  of the depending package is nomore installed.
-net.thevpc.nuts.lib.md.MdTable@69c6703b
-net.thevpc.nuts.lib.md.MdTable@f6cadc44, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="check-updates-cmd" >
                                 <h3 class="main-section2"><a href="#Commands">4.12 Check Updates</a></h3>
                                 <div class="text-card">
@@ -4000,7 +2731,7 @@ The available strategies are
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='081-check-updates-cmd-help.ntf', id='check-updates-help', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/081-check-updates-cmd-help.ntf', title='check-updates Cmdline', menuTitle='null', order=0, level=2, markdown=null, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="check-updates-help" >
                                 <h3 class="main-section2"><a href="#Commands">4.13 check-updates Cmdline</a></h3>
                                 <div class="text-card">
@@ -4057,60 +2788,7 @@ EXAMPLES
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='090-update.md', id='update-cmd', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/090-update.md', title='Update', menuTitle='null', order=0, level=2, markdown=A part from URL and path based executions, an artifact should be installed to be run. Installation can be auto fired when you first execute the artifact (you will be prompted to install the artifact) or manually using the **install** command. Note that when you run directly a jar file as a path or url, the artifact will not be installed! to install an application just type
-```
-
-nuts install <your-artifact-query-here>
-
-```
-For example
-```
-
-nuts install net.thevpc.app:netbeans-launcher#1.2.2
-
-```
-you may use any artifact query (see search command section) to install a command.
-```
-
-nuts install net.thevpc.app:netbeans-*
-
-```
-if the artifact is already installed, you should use the force flag (--force)
-```
-
-nuts install net.thevpc.app:netbeans-launcher#1.2.2
-#this second time we have to force install
-nuts install -- force net.thevpc.app:netbeans-launcher#1.2.2
-
-```
-One exception is when you want to switch between multiple versions installed to set the default one, you can omit the --force flag. Actually, when multiple version of the same artifact are installed all of them are executable directly by specifying the right version. When you specify no version, the default one is selected for you. And to make is simple, the default one is the last one you ran an install command for it.
-```
-
-me@linux:~> nuts install net.thevpc.app:netbeans-launcher#1.2.2
-me@linux:~> nuts netbeans-launcher
-1.2.2
-me@linux:~> nuts install net.thevpc.app:netbeans-launcher#1.2.1
-me@linux:~> nuts netbeans-launcher
-1.2.1
-me@linux:~> nuts install net.thevpc.app:netbeans-launcher#1.2.2
-1.2.2
-
-```
-You can find all installed artifacts using 'nuts search --installed' command
-##  PurposeThe install command is used to install or reinstall packages.
-* A+B  : read A main package and B dependencies
-* A+B? : ask, if confirmed, read A main package and B dependencies.
-* require : deploy package as 'required'
-* install : deploy package as 'installed'
-* nothing : do nothing
-The available strategies are
-* require   : install the package and all of its dependencies as required class installed package
-* install   : install the package and all of its dependencies as first class installed package
-* reinstall : re-install or re-required the package and all of its dependencies
-* repair    : repair (re-install or re-required) the given dependency
-"required class installed package" can be removed (uninstalled automatically by nuts when none  of the depending package is nomore installed.
-net.thevpc.nuts.lib.md.MdTable@69c6703b
-net.thevpc.nuts.lib.md.MdTable@f6cadc44, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="update-cmd" >
                                 <h3 class="main-section2"><a href="#Commands">4.14 Update</a></h3>
                                 <div class="text-card">
@@ -4255,7 +2933,7 @@ The available strategies are
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='091-update-cmd-help.ntf', id='update-help', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/091-update-cmd-help.ntf', title='updates Cmdline', menuTitle='null', order=0, level=2, markdown=null, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="update-help" >
                                 <h3 class="main-section2"><a href="#Commands">4.15 updates Cmdline</a></h3>
                                 <div class="text-card">
@@ -4331,77 +3009,7 @@ EXAMPLES
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='120-search-cmd.md', id='search-cmd', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/120-search-cmd.md', title='Search', menuTitle='null', order=0, level=2, markdown=Artifact can be in multiple states. they can be
-* 'unavailable' if no registered repository can serve that artifact
-* 'available' if there is at least one repository that can serve that artifact
-* 'fetched' if there is a repository that can serve the artifact from local machine. This happens either if the repository is a local one (for instance a folder repository) or the repository has already downloaded and cached the artifact
-* 'installed' if the artifact is fetched and installed in the the machine.
-* 'installed default' if the artifact is installed and marked as default
-To search for these artifacts status you will use the appropriate option flag with an artifact query. An artifact query is a generalization of an artifact id where you may use wild cards and version intervals in it. These are some examples of artifact queries.
-```
-
-# all artifacts that start with netbeans, whatever groupId they belong to
-# nuts search netbeans*
-
-# all artifacts that start with netbeans, whatever groupId they belong to. same as the latter.
-# nuts search *:netbeans*
-
-# all artifacts in the net.thevpc.app groupId
-# nuts search net.thevpc.*:*
-
-# all artifacts in the net.thevpc.* groupId which includes all of net.thevpc.app and net.thevpc.app.example for instance.
-# nuts search net.thevpc.*:*
-
-# all artifacts that start with netbeans and is available for windows operating system in x86_64 architecture
-# nuts search netbeans*?os=windows&arch=x86_64
-
-# all netbeans launcher version that are greater than 1.2.0 (excluding 1.2.0)
-# nuts search netbeans-launcher#]1.2.0,[
-
-# all netbeans launcher version that are greater than 1.2.0 (including 1.2.0)
-# nuts search netbeans-launcher#[1.2.0,[
-
-
-```
-You can then use the these flags to tighten your search :
-* --installed (or -i) : search only for installed artifacts
-* --local     : search only for fetched artifacts
-* --remote    : search only for non fetched artifacts
-* --online    : search in installed then in local then in remote, stop when you first find a result.
-* --anywhere  (or -a) : search in installed and local and remote, return all results.
-You can also change the output layout using --long (or -l) flag
-```
-
-me@linux:~> nuts search -i -l
-I-X 2019-08-26 09:53:53.141 anonymous vpc-public-maven net.thevpc.app:netbeans-launcher#1.2.1
-IcX 2019-08-24 11:05:49.591 admin     maven-local      net.thevpc.app.nuts.toolbox:nsh#0.8.5.0
-I-x 2019-08-26 09:50:03.423 anonymous vpc-public-maven net.thevpc.app:kifkif#1.3.3
-
-```
-you can even change the output format
-```
-
-me@linux:~> nuts search -i -l --json
-
-```
-```json
-
-[
-{
-  "id": "vpc-public-maven://net.thevpc.app:netbeans-launcher#1.2.1",
-  "descriptor": {
-    "id": "net.thevpc.app:netbeans-launcher#1.2.1",
-    "parents": [],
-    "packaging": "jar",
-    "executable": true,
-    ...
-  }
- }
-]
-
-```
-Indeed, all of **nuts** commands support the following formats : **plain**, **json**, **xml**, **table** and **tree** because **nuts** adds support to multi format output by default. You can switch to any of them for any command by adding the right option in **nuts** (typically --plain, --json, --xml, --table and --tree). I know this is awesome!.
-**search** is a very versatile command, you are welcome to run "nuts search --help" to get more information., sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="search-cmd" >
                                 <h3 class="main-section2"><a href="#Commands">4.16 Search</a></h3>
                                 <div class="text-card">
@@ -4466,7 +3074,7 @@ me@linux:~&gt; nuts search -i -l --json
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='121-search-cmd-help.ntf', id='search-help', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/121-search-cmd-help.ntf', title='Search Cmdline', menuTitle='null', order=0, level=2, markdown=null, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="search-help" >
                                 <h3 class="main-section2"><a href="#Commands">4.17 Search Cmdline</a></h3>
                                 <div class="text-card">
@@ -4724,23 +3332,7 @@ EXAMPLES
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='200-deploy-cmd.md', id='deploy-cmd', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/200-deploy-cmd.md', title='Deploy', menuTitle='null', order=0, level=2, markdown=This command does absolutely nothing but showing this message
-```
-
-    _   __      __       
-   / | / /_  __/ /______   Network Updatable Things Services
-  /  |/ / / / / __/ ___/   The Open Source Package Manager for Java (TM)
- / /|  / /_/ / /_(__  )    and other Things ... by vpc
-/_/ |_/\__,_/\__/____/     https://github.com/thevpc/nuts
-    version 0.8.5.0
-
-
-SYNOPSIS:
-nuts [<options>]... <command> <args> ...
-
-For Help, type nuts help
-
-```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="deploy-cmd" >
                                 <h3 class="main-section2"><a href="#Commands">4.18 Deploy</a></h3>
                                 <div class="text-card">
@@ -4765,7 +3357,7 @@ For Help, type nuts help
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='201-deploy-cmd-help.ntf', id='deploy-help', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/201-deploy-cmd-help.ntf', title='Deploy Cmdline', menuTitle='null', order=0, level=2, markdown=null, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="deploy-help" >
                                 <h3 class="main-section2"><a href="#Commands">4.19 Deploy Cmdline</a></h3>
                                 <div class="text-card">
@@ -5001,23 +3593,7 @@ EXAMPLES:
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='210-push-cmd.md', id='push-cmd', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/210-push-cmd.md', title='Push', menuTitle='null', order=0, level=2, markdown=This command does absolutely nothing but showing this message
-```
-
-    _   __      __       
-   / | / /_  __/ /______   Network Updatable Things Services
-  /  |/ / / / / __/ ___/   The Open Source Package Manager for Java (TM)
- / /|  / /_/ / /_(__  )    and other Things ... by vpc
-/_/ |_/\__,_/\__/____/     https://github.com/thevpc/nuts
-    version 0.8.5.0
-
-
-SYNOPSIS:
-nuts [<options>]... <command> <args> ...
-
-For Help, type nuts help
-
-```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="push-cmd" >
                                 <h3 class="main-section2"><a href="#Commands">4.20 Push</a></h3>
                                 <div class="text-card">
@@ -5042,7 +3618,7 @@ For Help, type nuts help
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='211-push-cmd-help.ntf', id='push-help', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/211-push-cmd-help.ntf', title='Push Cmdline', menuTitle='null', order=0, level=2, markdown=null, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="push-help" >
                                 <h3 class="main-section2"><a href="#Commands">4.21 Push Cmdline</a></h3>
                                 <div class="text-card">
@@ -5073,23 +3649,7 @@ EXAMPLES:
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='600-settings-cmd.md', id='settings-cmd', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/600-settings-cmd.md', title='Settings', menuTitle='null', order=0, level=2, markdown=This command does absolutely nothing but showing this message
-```
-
-    _   __      __       
-   / | / /_  __/ /______   Network Updatable Things Services
-  /  |/ / / / / __/ ___/   The Open Source Package Manager for Java (TM)
- / /|  / /_/ / /_(__  )    and other Things ... by vpc
-/_/ |_/\__,_/\__/____/     https://github.com/thevpc/nuts
-    version 0.8.5.0
-
-
-SYNOPSIS:
-nuts [<options>]... <command> <args> ...
-
-For Help, type nuts help
-
-```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="settings-cmd" >
                                 <h3 class="main-section2"><a href="#Commands">4.22 Settings</a></h3>
                                 <div class="text-card">
@@ -5114,7 +3674,7 @@ For Help, type nuts help
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='601-settings-cmd-help.ntf', id='settings-help', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/601-settings-cmd-help.ntf', title='Settings Cmdline', menuTitle='null', order=0, level=2, markdown=null, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="settings-help" >
                                 <h3 class="main-section2"><a href="#Commands">4.23 Settings Cmdline</a></h3>
                                 <div class="text-card">
@@ -5350,23 +3910,7 @@ EXAMPLES:
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='610-welcome-cmd.md', id='welcome-cmd', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/610-welcome-cmd.md', title='Welcome', menuTitle='null', order=0, level=2, markdown=This command does absolutely nothing but showing this message
-```
-
-    _   __      __       
-   / | / /_  __/ /______   Network Updatable Things Services
-  /  |/ / / / / __/ ___/   The Open Source Package Manager for Java (TM)
- / /|  / /_/ / /_(__  )    and other Things ... by vpc
-/_/ |_/\__,_/\__/____/     https://github.com/thevpc/nuts
-    version 0.8.5.0
-
-
-SYNOPSIS:
-nuts [<options>]... <command> <args> ...
-
-For Help, type nuts help
-
-```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="welcome-cmd" >
                                 <h3 class="main-section2"><a href="#Commands">4.24 Welcome</a></h3>
                                 <div class="text-card">
@@ -5391,7 +3935,7 @@ For Help, type nuts help
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='611-welcome-cmd-help.ntf', id='welcome-help', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/611-welcome-cmd-help.ntf', title='Welcome Cmdline', menuTitle='null', order=0, level=2, markdown=null, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="welcome-help" >
                                 <h3 class="main-section2"><a href="#Commands">4.25 Welcome Cmdline</a></h3>
                                 <div class="text-card">
@@ -5413,7 +3957,7 @@ SYNOPSIS:
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='620-info-cmd-help.ntf', id='version-help', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/620-info-cmd-help.ntf', title='Info Cmdline', menuTitle='null', order=0, level=2, markdown=null, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="version-help" >
                                 <h3 class="main-section2"><a href="#Commands">4.26 Info Cmdline</a></h3>
                                 <div class="text-card">
@@ -5473,64 +4017,7 @@ EXAMPLES
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='621-info-cmd.md', id='info-cmd', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/621-info-cmd.md', title='Info', menuTitle='null', order=0, level=2, markdown=**info** command is a more verbose command than version. It shows a lot of other **nuts** properties that describe the booted workspace, such as the workspace name, the store locations (artifacts, caches, ....)
-```
-
-me@linux:~> nuts info
-name                     = default-workspace
-nuts-api-version         = 0.8.5
-nuts-api-id              = net.thevpc.app.nuts:nuts#0.8.5
-nuts-runtime-id          = net.thevpc.app.nuts:nuts-core#0.8.5.0
-nuts-runtime-path        = ~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts-core/0.8.5.0/nuts-core-0.8.5.0.jar;~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts/0.8.5/nuts-0.8.5.jar;~/.cache/nuts/default-workspace/boot/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar;~/.cache/nuts/default-workspace/boot/org/fusesource/jansi/jansi/1.17.1/jansi-1.17.1.jar
-nuts-workspace-id        = 99b73002-804d-4e4c-9a13-f57ac1f40b3d
-nuts-store-layout        = linux
-nuts-store-strategy      = exploded
-nuts-repo-store-strategy = exploded
-nuts-global              = false
-nuts-workspace           = ~/.config/nuts/default-workspace
-nuts-workspace-apps      = ~/.local/share/nuts/apps/default-workspace
-nuts-workspace-config    = ~/.config/nuts/default-workspace/config
-nuts-workspace-var       = ~/.local/share/nuts/var/default-workspace
-nuts-workspace-log       = ~/.local/log/nuts/default-workspace
-nuts-workspace-temp      = ~/nuts/default-workspace
-nuts-workspace-cache     = ~/.cache/nuts/default-workspace
-nuts-workspace-lib       = ~/.local/share/nuts/lib/default-workspace
-nuts-workspace-run       = /run/user/1000/nuts/default-workspace
-nuts-open-mode           = open-or-create
-nuts-secure              = false
-nuts-gui                 = false
-nuts-inherited           = false
-nuts-recover             = false
-nuts-reset               = false
-nuts-debug               = false
-nuts-trace               = true
-nuts-read-only           = false
-nuts-install-companions  = false
-nuts-skip-welcome        = false
-java-version             = 1.8.0_222
-platform                 = java#1.8.0_222
-java-home                = /usr/lib64/jvm/java-1.8.0-openjdk-1.8.0/jre
-java-executable          = /usr/lib64/jvm/java-1.8.0-openjdk-1.8.0/jre/bin/java
-java-classpath           = ~/.m2/repository/net/vpc/app/nuts/nuts/0.8.5/nuts-0.8.5.jar
-java-library-path        = /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
-os-name                  = linux#4.12.14-lp151.28.13-default
-os-family                = linux
-os-dist                  = opensuse-leap#15.1
-os-arch                  = x86_64
-user-name                = me
-user-home                = /home/me
-user-dir                 = /home/me
-command-line-long        = --color=system --trace --open-or-create --exec info
-command-line-short       = -t info
-inherited                = false
-inherited-nuts-boot-args = 
-inherited-nuts-args      = 
-creation-started         = 2019-08-26 00:02:10.903
-creation-finished        = 2019-08-26 00:02:11.223
-creation-within          = 320ms
-repositories-count       = 5
-
-```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="info-cmd" >
                                 <h3 class="main-section2"><a href="#Commands">4.27 Info</a></h3>
                                 <div class="text-card">
@@ -5596,21 +4083,7 @@ repositories-count       = 5
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='630-version-cmd.md', id='version-cmd', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/630-version-cmd.md', title='Version', menuTitle='null', order=0, level=2, markdown=This command will show 
-**nuts**
- version. It is helpful to note that 
-**nuts**
- has a couple of components : api and impl. api is the 
-**nuts**
- bootstrap jar (actually nuts-
-**.jar, ~500Ko of size) that contains only the minimum code to use nuts and to download the full implementation (3Mo of size) : impl component. Usually, the implementation version starts with the api version but this should be no rule.**
-```
-
-me@linux:~> nuts version
-0.8.5/0.8.5.0
-
-```
-Here the **version** command show api version (0.8.5) and the impl version (0.8.5.0), sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="version-cmd" >
                                 <h3 class="main-section2"><a href="#Commands">4.28 Version</a></h3>
                                 <div class="text-card">
@@ -5634,7 +4107,7 @@ me@linux:~&gt; nuts version
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='631-version-cmd-help.ntf', id='version-cmd-help', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/631-version-cmd-help.ntf', title='Version Cmdline', menuTitle='null', order=0, level=2, markdown=null, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="version-cmd-help" >
                                 <h3 class="main-section2"><a href="#Commands">4.29 Version Cmdline</a></h3>
                                 <div class="text-card">
@@ -5685,26 +4158,7 @@ EXAMPLES
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='900-help-cmd.md', id='help-cmd', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/900-help-cmd.md', title='Help Command', menuTitle='Help Command', order=0, level=2, markdown=This command, as you should have guessed, show. help manual of your favorite command or of nuts it self.
-```
-
-me@linux:~> nuts help version
-version :
-nuts version
-nuts --version
-nuts -version
-nuts -v
-      show version and exit
-...
-
-```
-will show help of the **version** command.
-Usually, all nuts commands support the '--help' option command that should also show this very same help. So the latter command is equivalent to
-```
-
-me@linux:~> nuts version --help
-
-```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="help-cmd" >
                                 <h3 class="main-section2"><a href="#Commands">4.30 Help Command</a></h3>
                                 <div class="text-card">
@@ -5730,34 +4184,7 @@ me@linux:~&gt; nuts version --help
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='910-license-cmd.md', id='license-cmd', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/910-license-cmd.md', title='License', menuTitle='null', order=0, level=2, markdown=**license** command shows license of **nuts** and exits. **nuts** adopts GNU General Public License v3 which is quite permissive.
-```
-
-me@linux:~> nuts license
-    _   __      __       
-   / | / /_  __/ /______   Network Updatable Things Services
-  /  |/ / / / / __/ ___/   The Open Source Package Manager for Java (TM)
- / /|  / /_/ / /_(__  )    and other Things ... by vpc
-/_/ |_/\__,_/\__/____/     https://github.com/thevpc/nuts
-    version 0.8.5.0
-
-
-
- Is a new Open Source Package Manager to help install packages
- and libraries for runtime execution. Nuts is the ultimate companion for
- maven (and other build managers) as it helps installing all package
- dependencies at runtime. Nuts is not tied to java and is a good choice
- to share shell scripts and other 'Things' . It is based on an extensible
- architecture to help supporting a large range of sub managers / repositories.
- 
- Copyright (C) 2016-2019 Taha BEN SALAH
- 
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 3 of the License, or
- (at your option) any later version.
-
-```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="license-cmd" >
                                 <h3 class="main-section2"><a href="#Commands">4.31 License</a></h3>
                                 <div class="text-card">
@@ -5793,7 +4220,7 @@ me@linux:~&gt; nuts license
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='911-license-cmd-help.ntf', id='license-help', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/05-nuts-commands/911-license-cmd-help.ntf', title='License Command Commandline', menuTitle='null', order=0, level=2, markdown=null, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="license-help" >
                                 <h3 class="main-section2"><a href="#Commands">4.32 License Command Commandline</a></h3>
                                 <div class="text-card">
@@ -5829,7 +4256,7 @@ EXAMPLES
                     </section>
                     <hr class="divider">
                 
-                    <!--MdPage{pathName='60-changelog', id='ChangeLog', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/60-changelog', title='ChangeLog', menuTitle='null', order=0, level=1, markdown=In this section we will consider the simplest usage of `nuts` package manager., sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                    <!--pageLevel1-->
                     <section id="ChangeLog" >
                         <h2 class="main-section1"><a href="#ChangeLog">5 ChangeLog</a></h2>
                         <div class="text-card">
@@ -5837,111 +4264,7 @@ EXAMPLES
 
                         </div>
                         
-                            <!--MdPage{pathName='changelog-0.5.x.md', id='changelog050', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/60-changelog/changelog-0.5.x.md', title='Change Log 0.5.0', menuTitle='Change Log', order=0, level=2, markdown=View Official releases [here](https://github.com/thevpc/nuts/releases) : Starred releases are most stable ones.
-##  nuts 0.5.8.0
-WARNING: this version is not deployed to maven-central
-* ```2019/09/02 	nuts 0.5.8.0 (*)``` released [download nuts-0.5.8.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.7/nuts-0.5.7.jar) 
-* ADDED    : support for Custom Monitor in Copy Command
-* ADDED    : support to javaw for windows (exec  command supports --javaw or --win flag)
-* ADDED    : support to workspace custom logging (with support for colouring)
-* ADDED    : support to userProperties per repository
-* ADDED    : NutsString and NutsStringFormat to support 'Nuts Stream Format'
-* ADDED    : NutsWarkspaceAware to support initialize/dispose of NutsComponents
-* ADDED    : I/O Delete action
-* ADDED    : I/O Lock action
-* ADDED    : I/O Compress and Uncompress actions
-* CHANGE   : now if a command to execute ends with '!', we will force searching in installed only.
-* CHANGE   : removed install/uninstall in Terminal, replaced by NutsWorkspaceAware
-##  nuts 0.5.7.0WARNING: this version is not deployed to maven-central
-* ```2019/07/23 	nuts 0.5.7.0 (*)``` released [download nuts-0.5.7.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.7/nuts-0.5.7.jar) 
-* ADDED    : support to Windows (Tested on Win 7) and MacOS(Not Tested) ofr Desktop Integration
-* ADDED    : added session and Nuts(Add/Update/Remove)Options where applicable
-* ADDED    : Initial support for uri based workspaces
-* ADDED    : --dry option to help dry-run commands (test execution without side effects)
-* ADDED    : NutsApplication getShared*Folder() method for configuration shared between versions
-* ADDED    : flags (in Definition and search) : api,runtime,extension,companion
-* CHANGED  : Improved compatibility with Maven
-* CHANGED  : Improved Documentation (still to much to go though)
-* CHANGED  : Changed NutsCommandLine main api to simplify boot time implementations 
-* CHANGED  : Renamed NutsEffectiveUser->NutsUser 
-* CHANGED  : Renamed NutsRight->NutsPermission (and all subsequent methods) 
-* CHANGED  : NutsExtensionInfo->NutsExtensionInformation
-* CHANGED  : NutsHttpConnectionFacade->NutsHttpConnection 
-* CHANGED  : Added java.io.Serializable anchor when applicable
-* REMOVED  : NutsDefaultRepositoriesProvider,NutsSingletonClassLoaderProvider,NutsDefaultClassLoaderProvider,NutsWorkspaceSPI 
-* REMOVED  : NutsRepositoryListener.onInstall(...) 
-* REMOVED  : 'alternative' concept, and added NutsClassifierMapping so that classifier can be resolved according to env 
-##  nuts 0.5.6.0WARNING: this version is not deployed to maven-central
-* ```2019/06/23 	nuts 0.5.6.0``` released [download nuts-0.5.6.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.6/nuts-0.5.6.jar) 
-* ADDED    : Implements XDG Base Directory Specification
-* ADDED    : Added Json Path support
-* ADDED    : Added NutsQuestionParser and NutsQuestionFormat 
-* CHANGED  : Extensions are loaded by boot instead of impl so that one can change default impl behavour
-* CHANGED  : All repositories are now cache aware.
-* CHANGED  : Refactored **Format to extends the very same interface.**- CHANGED  : Using to java.time package instead of older Date class
-* CHANGED  : Improved Documentation (still to much to go though)
-* CHANGED  : Prefer https repository urls
-* FIXED    : Fixed several issues
-* REMOVED  : [CommandLine] IMMEDIATE
-* REMOVED  : [Options] --term
-* REMOVED  : [Extensions] add/remove extensions from extension manager (should use install/uninstall commands)
-##  nuts 0.5.5.0WARNING: this version is not deployed to maven-central
-* ```2019/06/08 	nuts 0.5.5.0``` released [download nuts-0.5.5.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.5/nuts-0.5.5.jar) 
-* REMOVED  : Removed Nsh commands Console Deploy Info Install Fetch Uninstall,Push Update Exec Which
-* REMOVED  : Removed maven-github repository type support (web API)
-* REMOVED  : Removed nuts-cmd-app project dependency. A built-in NutsApplication is included in the api the help simplify extension.
-* ADDED    : Added support for XML,TABLE and TREE (along with JSON, PROPS and PLAIN) printing format to help automate result parsing
-* ADDED    : Added Better api in Nuts IO to handle SHA and MD5
-* ADDED    : json and xml nsh commands to help manipulating json and xml in commands outputs
-* FIXED    : Fixed fprint issue with "" (empty string)
-* FIXED    : Fixed Update indexes/stats command
-* FIXED    : When installing nuts, lookup latest core implementation
-* CHANGED  : Renamed FindCommand to SearchCommand (and some of their methods too)
-* CHANGED  : NutsIdFilter.accept accepts workspace as a second argument
-* CHANGED  : Improved Help text
-* CHANGED  : Improved Documentation (still to much to go through)
-* ADDED    : (nsh) Builtin nsh commands basename and dirname 
-* CHANGED  : (nsh) Builtin nsh command who renamed to whoami 
-* REMOVED  : (nfind) Removed nfind companion (the built-in search command is a better replacement)
-##  nuts 0.5.4.0 Change LogWARNING: this version is not deployed to maven-central
-* ```2019/04/21 	nuts 0.5.4.0 (*)``` released [download nuts-0.5.4.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.4/nuts-0.5.4.jar) 
--Added lucene indexing facility (thanks to the excellent work of nasreddine bac ali)
-* Removed dependencies to common,strings, io and utils (utility classes).
-* Removed dependencies to asm (bytecode manipulation).
-* From Now on only gson and jansi are retained.
-* Layout changes
-* Better support for JDK 8+ (New IO,Predicates, Streams, ...)
-* Added Comprehensive implementation of Iterator (Stream Like) to better handle result iteration while search is in progress
-* Speed improvements
-* Added JUnit test battery
-* Added support to JSON,PROPS and PLAIN result, implemented in version and info. Should continue implementing in other commands.
-* Removed --license, --update, --install, ... options, replaced by workspace "internal" commands new concept.
-* Workspaces handle several type of executables that will be resolved in that order : "internal command","aliases : aka workspace command aliases", "components",   "path/unmanaged components" and system/native commands.
-* Several Fixes
-##  nuts 0.5.3.0 Change LogWARNING: this version is not deployed to maven-central
-* ```2019/01/05 	nuts 0.5.3.0``` released [download nuts-0.5.3.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.3/nuts-0.5.3.jar)
-* (WINDOWS) First support to Windows platform
-* (LINUX,UNIX) ndi no more stores to ~/bin but instead it updates .bashrc to point to current workspace added a confirmation question.
-* API Change
-* Added Archetype "standalone" to help bundling and application with all its dependencies
-* Several fixes
-* nsh 
-* TODO 
-##  nuts 0.5.2.0 Change LogWARNING: this version is not deployed to maven-central
-* ```2018/12/28 	nuts 0.5.2.0``` released [download nuts-0.5.2.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.2/nuts-0.5.2.jar) 
-* Global refactoring
-* Extracted nsh commands as regular nuts package (nadmin, nfind)     WORKING-ON : Fixing "mvn" start from nuts (handling, exclude, pom import and classifiers from maven)
-##  nuts 0.5.1.0 Change LogWARNING: this version is not deployed to maven-central
-* ```2018/12/18 	nuts 0.5.1.0 released``` [download nuts-0.5.1.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.1/nuts-0.5.1.jar) 
-* FIXED : Fixed problem with inheritIO from child process (added InputStreamTransparentAdapter and OutputStreamTransparentAdapter interfaces)
-* FIXED : Added distinction  between workspace config and runtime boot api/runtime values
-* FIXED : Do not read workspace version and dependency config from child process (because it may require distinct version of nuts)
-* FIXED : Mkdir,cp, etc... used incorrectly cwd. Fixed.
-* CHANGED : Optimized pom.xml parse execution time (using DOM instead of SAX)
-* CHANGED : moved cache from bootstrap folder to default-workspace/cache
-##  nuts 0.5.0.0 Change LogWARNING: this version is not deployed to maven-central
-* ```2018/11/25 	nuts 0.5.0.0 released``` [download nuts-0.5.0.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.0/nuts-0.5.0.jar) 
-* Very first published version. older ones were used internally for internal projects only., sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="changelog050" >
                                 <h3 class="main-section2"><a href="#ChangeLog">5.1 Change Log 0.5.0</a></h3>
                                 <div class="text-card">
@@ -5991,23 +4314,7 @@ WARNING: this version is not deployed to maven-central
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='changelog-0.6.x.md', id='changelog060', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/60-changelog/changelog-0.6.x.md', title='Change Log 0.6.0', menuTitle='Change Log', order=0, level=2, markdown=View Official releases [here](https://github.com/thevpc/nuts/releases) : Starred releases are most stable ones.
-##  nuts 0.6.0.0
-WARNING: this version is not deployed to maven-central
-* ```2020/01/15 	nuts 0.6.0.0 (*)``` released [download nuts-0.6.0.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.6.0/nuts-0.6.0.jar)
-* CHANGED  : config file format changed
-* CHANGED  : now installed packages are stored in 'installed' meta repository
-* CHANGED  : alias files have extension changed form **.njc to **.cmd-alias.json
-* CHANGED  : now nuts looks for system env variable NUTS_WORKSPACE for default workspace location
-* CHANGED  : api and runtime are installed by default
-* CHANGED  : now distinguishes between installed primary and installed dependencies packages.
-* ADDED    : support for ROOT_CMD execution (SYSCALL was renamed USER_CMD)
-* ADDED    : support for Interrupting Copy
-* ADDED    : support to ps (list processes)
-* ADDED    : support progress options
-* CHANGED  : worky, searches now for modified deployments with same version but different content
-* FIXED    : encoding problem with json/xml
-* REMOVED  : NutsRepositorySession, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="changelog060" >
                                 <h3 class="main-section2"><a href="#ChangeLog">5.2 Change Log 0.6.0</a></h3>
                                 <div class="text-card">
@@ -6023,29 +4330,7 @@ WARNING: this version is not deployed to maven-central
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='changelog-0.7.x.md', id='changelog070', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/60-changelog/changelog-0.7.x.md', title='Change Log 0.7.0', menuTitle='Change Log', order=0, level=2, markdown=View Official releases [here](https://github.com/thevpc/nuts/releases) : Starred releases are most stable ones.
-##  nuts 0.7.2.0
-WARNING: this version is not deployed to maven-central
-* ```2020/09/23 	nuts 0.7.2.0 (*)``` released [download nuts-0.7.2.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.7.2/nuts-0.7.2.jar)
-* FIXED  : execute non installed artifacts sometimes do not ask for confirmation
-* ADDED  : NutsCommandLineProcessor.prepare/exec/autoComplete
-* ADDED  : NutsApplicationContext.processCommandLine(cmdLine)
-* ADDED  : NutsApplicationContext.configureLast(cmdLine)
-* RENAMED: feenoo renamed to ncode
-* ADDED  : Docusaurus Website
-* ADDED  : new toolbox ndocusaurus : Docusaurus Website templating
-##  nuts 0.7.1.0WARNING: this version is not deployed to maven-central
-* ```2020/09/14 	nuts 0.7.1.0 (*)``` released [download nuts-0.7.1.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.7.1/nuts-0.7.1.jar)
-* FIXED  : reset stdout line when calling external processes
-* FIXED  : fixed several display issues.
-##  nuts 0.7.0.0WARNING: this version is not deployed to maven-central
-* ```2020/07/26 	nuts 0.7.0.0 (*)``` released [download nuts-0.7.0.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.7.0/nuts-0.7.0.jar)
-* ADDED  : NutsApplicationContext.processCommandLine(c)
-* ADDED  : NutsWorkspaceCommand.copySession()
-* RENAMED: derby renamed to nderby
-* RENAMED: mysql renamed to nmysql
-* RENAMED: tomcat renamed to ntomcat
-* RENAMED: mvn renamed to nmvn, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="changelog070" >
                                 <h3 class="main-section2"><a href="#ChangeLog">5.3 Change Log 0.7.0</a></h3>
                                 <div class="text-card">
@@ -6069,24 +4354,7 @@ WARNING: this version is not deployed to maven-central
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='changelog-0.8.0.md', id='changelog080', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/60-changelog/changelog-0.8.0.md', title='Change Log 0.8.0', menuTitle='Change Log', order=0, level=2, markdown=View Official releases [here](https://github.com/thevpc/nuts/releases) : Starred releases are most stable ones.
-##  nuts 0.8.0.0 (PUBLISHED VERSION)
-* ```2020/11/8? 	nuts 0.8.0.0 (*)``` released [download nuts-0.8.0.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.0/nuts-0.8.0.jar)
-* WARNING: this is the first version to be deployed to maven central. previous versions will no longer be supported
-* WARNING: this is a **major version**, API has evolved with multiple incompatibilities with previous versions
-* WARNING: The OSS License has changed from GPL3 to the more permessive Apache Licence v2.0
-* CHANGED: changed packages from net.vpc to net.thevpc (required for central to be aligned with website)
-* CHANGED: removed support for vpc-public-maven and vpc-public-nuts
-* CHANGED: ```nuts  -Z``` will update ```.bashrc``` file and switch back to default workspace
-* ADDED  : when a dependency is missing it will be shown in the error message
-* ADDED  : nuts commandline argument --N (--expire) to force reloading invoked artifacts (expire fetched jars). a related NSession.expireTime is introduced to force reinstall of any launched application and it dependencies, example: ```nuts  -N ndi```
-* ADDED  : install --strategy=install|reinstall|require|repair introduced to select install strategy (or sub command)
-* ADDED  : NutsInput & NutsOutput to help considering reusable sources/targets
-* ADDED  : nuts commandline argument --skip-errors  to ignore unsupported commandline args
-* ADDED  : new toolbox njob, to track service jobs (how many hours you are working on each service project)
-* ADDED  : new next-term, to support jline console extension into nuts
-* ADDED  : workspace.str() to create NutsStringBuilder
-* ADDED  : 'switch' command in ndi to support switching from one workspace to another. example : ```ndi  switch -w other-workspace -a 0.8.0```, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="changelog080" >
                                 <h3 class="main-section2"><a href="#ChangeLog">5.4 Change Log 0.8.0</a></h3>
                                 <div class="text-card">
@@ -6101,43 +4369,7 @@ WARNING: this version is not deployed to maven-central
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='changelog-0.8.1.md', id='changelog081', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/60-changelog/changelog-0.8.1.md', title='Change Log 0.8.1', menuTitle='Change Log', order=0, level=2, markdown=View Official releases [here](https://github.com/thevpc/nuts/releases) : Starred releases are most stable ones.
-##  nuts 0.8.1.0 (PUBLISHED VERSION)
-* ```2021/08/24 	nuts 0.8.1.0 (*)``` released [download nuts-0.8.1.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.1/nuts-0.8.1.jar)
-* WARNING: API has evolved with multiple incompatibilities with previous versions
-* ADDED: ```api``` added static methods of() in interfaces to simplify instantiation
-* ADDED: ```api``` parseLenient to all NutsEnum classes
-* CHANGED: ```nadmin``` removed nadmin and merged into runtime (tight coupling!!)
-* REMOVED: ```api```   removed session.formatObject() as the session is now propagated silently
-* CHANGED: ```api```   removed NutsApplicationLifeCycle and replaced with NutsApplication (an interface instead of a class)
-* ADDED  : ```api```   added support for parsing pom.xml (MAVEN) along with **.nuts (nuts descriptors)**- ADDED  : ```api```   added io killProcess support
-* CHANGED: ```api```   added path API, implemented via nlib-ssh to add ssh support for paths
-* CHANGED: ```all```   remove dependencies, runtime has no dependencies, and others have the bare minimum
-* CHANGED: ```api```   session is from now on mandatory to perform any operation. A simple way to make it simple to use is to get a "session aware" workspace with session.getWorkspace()
-* ADDED  : ```api```  added support for Yaml with minimal implementation
-* ADDED  : ```api```  element now supports complex keys in Map Entries (Objects)
-* ADDED  : ```api``` ```cmdline``` added support for History and implemented in JLine extension
-* ADDED  : ```api``` ```cmdline``` added support for readline syntax coloring (using jline)
-* ADDED  : ```api``` ```cmdline``` added --locale option to support multi languages. The option is reflected to Session as well
-* ADDED  : ```api``` ```cmdline``` added ---key=value options to support extra properties
-* ADDED  : ```api``` ```cmdline``` added -S short option, equivalent to --standalone
-* ADDED  : ```api``` ```cmdline``` added NutsFormattedMessage to support formatted messages in a uniform manner (C-style, positional)
-* CHANGED: ```api``` ```cmdline``` both list and tree dependencies are now accessible as NutsDependencies
-* ADDED  : ```runtime``` added support to community maven repositories : jcenter, jboss, spring, clojars, atlassian, atlassian-snapshot, google, oracle   to use the repository you can add it as a permanent repository or temporary. here are some examples:
-* FIXED  : ```runtime``` extension support (for JLine)
-* ADDED  : ```runtime``` added minimal implementation for YAM
-* ADDED  : ```runtime``` added fast implementation for JSON and removed gson dependency
-* CHANGED: ```runtime``` revamped Nuts Text Format to support simplified syntax but more verbose styles.   Now supports #), ##), ###) and so on as Title Nodes.   It supports as well the common markdown 'code' format with anti-quotes such as   ```java  code goes here...```
-  Other supported examples are:   ```sh  some command...```
-  ```error  error message...```
-  ```kw  someKeyword```
-* CHANGED: ```runtime``` help files now have extensions ".ntf" (for nuts text format) instead of ".help"
-* ADDED  : ```njob``` added --help sub-command
-* FIXED  : ```nsh```  fixed multiple inconsistencies and implemented a brand new parser
-* REMOVED: ```docusaurus-to-ascidoctor``` tool fully removed as replaced by a more mature ndocusaurus
-* REMOVED: ```ndi```, removed project, merged into nadmin
-* REMOVED: ```nded```, removed project, temporarily code added to nadmin, needs to be refactored
-* ADDED  : ```ntalk-agent``` new modules nlib-talk-agent (library) and ntalk-agent (application using the library) that enable client to client communication.   nlib-talk-agent is a broker that helps communication between nuts components with minimum overhead.   nlib-talk-agent enables one workspace to talk with any other workspace without having to create one server socket for each workspace.   It also enables singleton per location implementation, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="changelog081" >
                                 <h3 class="main-section2"><a href="#ChangeLog">5.5 Change Log 0.8.1</a></h3>
                                 <div class="text-card">
@@ -6156,12 +4388,7 @@ WARNING: this version is not deployed to maven-central
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='changelog-0.8.2.md', id='changelog082', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/60-changelog/changelog-0.8.2.md', title='Change Log 0.8.2', menuTitle='Change Log', order=0, level=2, markdown=View Official releases [here](https://github.com/thevpc/nuts/releases) : Starred releases are most stable ones.
-##  nuts 0.8.2.0 (PUBLISHED VERSION)
-* ```2021/09/04 	nuts 0.8.2.0 (*)``` released [download nuts-0.8.2.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.2/nuts-0.8.2.jar)
-* WARNING: API has evolved with multiple incompatibilities with previous versions
-* FIXED: Fixed problem that requires reinstalling nuts each time we have a new version
-* FIXED: Fixed some Documentation issues (still fixing), sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="changelog082" >
                                 <h3 class="main-section2"><a href="#ChangeLog">5.6 Change Log 0.8.2</a></h3>
                                 <div class="text-card">
@@ -6176,53 +4403,7 @@ WARNING: this version is not deployed to maven-central
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='changelog-0.8.3.md', id='changelog083', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/60-changelog/changelog-0.8.3.md', title='Change Log 0.8.3', menuTitle='Change Log', order=0, level=2, markdown=View Official releases [here](https://github.com/thevpc/nuts/releases) : Starred releases are most stable ones.
-##  nuts 0.8.3.1 (PUBLISHED VERSION)
-* ```2022/02/01 	nuts 0.8.3.1``` released nuts-runtime-0.8.3.1.jar
-* UPDATED   : move support to repositories "nuts-public" and "nuts-preview"
-* FIXED   : Updated README 
-* FIXED   : ```runtime``` Fixed problem with dependency resolution whit maven's "import" scope
-* ROLLBACK : Rolled back test on maven-local
-* FIXED : Fixed nuts api without changing the version and without breaking the API, changes will be promoted to next version later 
-* UPDATED : Updated NEXT API CHANGES
-* UPDATED : Updated .gitignore
-* FIXED : Fixed Help files
-* FIXED : Changed $** by $@**- FIXED : Fixed NAF support in ncode
-* UPDATED : Updated TEST
-* FIXED : Fixed display of URL paths
-* PERF : Optimize Maven Dependency Resolver
-* FIXED : Fix reinstall so that it calls uninstaller component
-* FIXED : Fix recommendation connector API
-* FIXED : Fix Class Name resolution when using CGLIB
-* FIXED : Call clearLine before Progress
-* FIXED : Call resetLine before Log
-##  nuts 0.8.3.0 (PUBLISHED VERSION)* ```2021/01/05 	nuts 0.8.3.0 (*)``` released [download nuts-0.8.3.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar)
-* WARNING : ```api```  API has evolved with incompatibilities with previous versions
-* ADDED   : ```runtime```  now search --dry displays the search query plan
-* ADDED   : ```api```  added command "settings install-log" to display installation logs
-* ADDED   : ```api```  added NutsExpr to help parsing simple expressions (used or will be used in almost all commands)
-* CHANGED : ```api```  Simplified API
-* ADDED   : ```api```  added NutsDescriptorFlag to match multiple descriptor info such as app, executable etc.
-* ADDED   : ```api```  added NutsIOCopyAction.setSource(byte[]) and NutsIOHashAction.setSource(byte[]) 
-* ADDED   : ```api```  removed NutsId.compatFilter and NutsVersion.compatFilter and replaced by compatNewer/compatOlder
-* ADDED   : ```api```  replaced string messages with NutsMessage in NutsLogger
-* ADDED   : ```api```  removed 'NutsInput' and 'NutsOutput'
-* ADDED   : ```api```  removed 'NutsCommandlineFamily' and replaced by 'NutsShellFamily'
-* ADDED   : ```api```  added 'NutsBootTerminal' to help nuts bootstrap using custom stdin/out end err  
-* CHANGED : ```api```  added 'NutsHomeLocation' to replace compound key NutsOSFamily and NutsStoreLocation  
-* ADDED   : ```api```  added 'NutsPath.isDirectory' and 'NutsPath.isRegularFile' 
-* CHANGED : ```api```  removed commandline options '-C' and '--no-color', you can use '--!color' instead
-* CHANGED : ```api```  removed commandline options '--no-switch' and '--no-progress', you can use '--!switch' and '--!progress' instead
-* CHANGED : ```api```  NutsResultList renamed to NutsStream and revamped with handy stream features and added ws.util.streamOf(...)
-* CHANGED : ```api```  ws.io.expandPath replaced by NutsPath.builder.setExpanded(true)
-* REMOVED : ```api```  removed deprecated ClassifierMapping
-* REMOVED : ```api```  removed NutsTokenFilter (little to no interest)
-* REMOVED : ```api```  removed deprecated feature inheritedLog
-* ADDED   : ```api```  NutsVal, a simple wrapper for strings and objects with helpful converters used in args, env, options and properties.
-* CHANGED : ```api```  changed descriptor to add maven profiles support, mainly added platform for dependency and added os/platform etc to property
-* ADDED   : ```api```  added NutsShellFamily to support bash, csh, and other shell families
-* ADDED   : ```pom``` add Manifest Entry 'Automatic-Module-Name' in all projects to support j9+ module technology
-* FIXED   : ```impl``` NutsFormat now creates any missing parent folder when calling print(Path/File) or println(Path/File), sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="changelog083" >
                                 <h3 class="main-section2"><a href="#ChangeLog">5.7 Change Log 0.8.3</a></h3>
                                 <div class="text-card">
@@ -6240,49 +4421,7 @@ WARNING: this version is not deployed to maven-central
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='changelog-0.8.4.md', id='changelog084', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/60-changelog/changelog-0.8.4.md', title='Change Log 0.8.4', menuTitle='Change Log', order=0, level=2, markdown=View Official releases [here](https://github.com/thevpc/nuts/releases) : Starred releases are most stable ones.
-##  nuts 0.8.4.0 (DEVELOPMENT VERSION)
-* ```2024/04/25 	nuts 0.8.4.0``` not released yet nuts-runtime-0.8.4.0-rc1.jar
-* WARNING: The OSS License has changed from APACHE2 to LGPL3
-* WARNING : ```api```  API has evolved with incompatibilities with previous versions
-* CHANGED: renamed nlib-ssh to next-ssh et is promoted as extension
-* FIXED: Fixed maven url parsing on Windows platforms that prevented nsh from being installed
-* CHANGED: Prefix is now 'N' instead of 'Nuts'
-* ADDED: Add native installers for windows, linux and macOS
-* ADDED: Add links to pdf docs in website and offline documentation
-* ADDED: Add new nuts LOGO
-* ADDED: Add NOptional a feature riche replacement of java's Optional
-* ADDED: Add NEnvCondition/NEnvConditionBuilder::setProperties/getProperties
-* ADDED: Add NDescriptor/NDescriptorBuilder::setLicenses
-* ADDED: Add NDescriptor/NDescriptorBuilder::setDevelopers
-* ADDED: Add    NConstants.IdProperties.DESKTOP_ENVIRONMENT -> NConstants.IdProperties.PROPERTIES
-* ADDED: Add NPath::getLongBaseName // longest file name before last '.'
-* ADDED: Add NMessageFormattable
-* ADDED: Add NDescribable now takes a Session instead of NElements
-* ADDED: Add cmdline arguments : --isolation,--confined, --sandbox
-* ADDED: promote cmdline arguments : --init-platforms,--init-launchers,--init-scripts, --init-java
-* ADDED: promote cmdline arguments : --desktop-launcher,--menu-launcher,--user-launcher
-* ADDED: Add 30+ unit tests
-* ADDED: NSession::isProgress
-* ADDED: NCommandline now extends NBlankable
-* ADDED: Added/Exposed Bean Reflection API : NReflectRepository,NReflectType,NReflectProperty
-* ADDED: Added NChronometer, NDuration
-* ADDED: Added Var Style (dollar based placeholder) in NMessage
-* ADDED: added NProgressMonitor and monitoring api
-* ADDED: NMemorySize and memory size api
-* ADDED: --progress=log now prints progress to log instead of stderr
-* CHANGED: Enum.parseLenient replaced by NOptional
-* CHANGED: Rename NConstants.IdProperties.DESKTOP_ENVIRONMENT -> NConstants.IdProperties.DESKTOP
-* CHANGED: Now NWorkspaceOptionsBuilder extends NWorkspaceOptions
-* CHANGED: Rename NRepositoryDB::getRepositoryNameByURL -> NRepositoryDB::getRepositoryNameByLocation
-* CHANGED: Rename NRepositoryDB::getRepositoryURLByName -> NRepositoryDB::getRepositoryLocationByName
-* CHANGED: Change type to long in NExecCmd::getSleepMillis()/setSleepMillis(int sleepMillis);
-* CHANGED: complete rewrite of NTF parser
-* CHANGED: classes refactored to be repackaged in inner packages
-* REMOVED: Remove session dependency from NVersion,NId and NDescriptor
-* REMOVED: Remove NBootOptions
-* REMOVED: removed CoreNumberUtils
-* REMOVED: NMessageFormatted, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="changelog084" >
                                 <h3 class="main-section2"><a href="#ChangeLog">5.8 Change Log 0.8.4</a></h3>
                                 <div class="text-card">
@@ -6297,20 +4436,7 @@ WARNING: this version is not deployed to maven-central
                             </section>
                             <hr class="divider">
                         
-                            <!--MdPage{pathName='changelog-0.8.5.md', id='changelog085', path='/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/60-changelog/changelog-0.8.5.md', title='Change Log 0.8.5', menuTitle='Change Log', order=0, level=2, markdown=View Official releases [here](https://github.com/thevpc/nuts/releases) : Starred releases are most stable ones.
-##  nuts 0.8.5.0 (DEVELOPMENT VERSION)
-* ```2024/09/06 	nuts 0.8.5.0``` not released yet nuts-runtime-0.8.5.0
-* ADDED: added new tool `ndoc` and `nlib-doc` (the related library) to generate statically html websites...
-* FIXED: enhanced NExprs toolkil to support complex expressions, and is now default for ndoc
-* DEPRECATED: deprecated for removal nclown (was really never used)
-* DEPRECATED: deprecated for removal old docusaurus website and replace with one new based on ndoc (a tool by nuts!!)
-* CHANGED: When generating preview jar, it will support natively thevpc.net
-* ADDED: added option --preview-repo | -U to help simplifying preview mode installation. 
-* CHANGED: nuts-app now depends only on nuts-boot 
-* CHANGED: extracted nuts boot that does only load runtime all within its API. This will make it simpler api upgrades 
-* CHANGED: nuts is exploded into nuts (api library ) two applications nuts-app (minimal) and nuts-app-full (including runtime) 
-* WARNING: The OSS License has changed from APACHE2 to LGPL3
-* ```2024/09/06``` started new version, sortAsc=true, author='null', authorTitle='null', authorURL='null', authorImageUrl='null', publishDate=null, lastModified=null, tags=null, typeInfo=null}-->
+                            <!--pageLevel2-->
                             <section id="changelog085" >
                                 <h3 class="main-section2"><a href="#ChangeLog">5.9 Change Log 0.8.5</a></h3>
                                 <div class="text-card">
@@ -6352,7 +4478,8 @@ WARNING: this version is not deployed to maven-central
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-01-22-225647            <br>
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-01-22-232856
+            <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
         </p>
