@@ -1,6 +1,6 @@
 ---
-id: welcome-cmd
-title: Welcome Command
+id: deploy-cmd
+title: Deploy
 ---
 
 

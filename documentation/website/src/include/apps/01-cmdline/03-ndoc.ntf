@@ -1,0 +1,13 @@
+---
+id: app-ndoc
+title: ndoc
+subTitle: Templating and Static Site Generator
+category: Productivity / Static Site Generator
+hmi: Commandline
+website: https://thevpc.github.com/nuts
+installCommand: nuts install ndoc
+exampleCommand: nuts ndiff my-app-v1.jar my-app-v2.jar
+---
+
+
+{{include($"$root/toolbox/ndoc/src/main/resources/net/thevpc/nuts/toolbox/ndoc.ntf"}}

@@ -1,6 +1,6 @@
 ---
 id: license-cmd
-title: License Command
+title: License
 ---
 
 

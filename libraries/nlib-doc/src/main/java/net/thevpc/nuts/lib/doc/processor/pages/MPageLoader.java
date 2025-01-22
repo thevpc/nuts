@@ -59,43 +59,43 @@ public class MPageLoader {
 
 
     private static MPage loadFileNtf(NPath path, NDocContext fcontext, InputStream is) {
-        int maxRowSize=1024*4;
-        try(BufferedReader br = new BufferedReader(new InputStreamReader(is))){
+        int maxRowSize = 1024 * 4;
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
             br.mark(maxRowSize);
             String firstLine = br.readLine();
             MPage g = new MPage(MPageType.NTF)
                     .setPath(path.toString())
                     .setTitle(path.getName())
                     .setPathName(path.getName());
-            if(firstLine!=null){
-                if(firstLine.startsWith("---")){
+            if (firstLine != null) {
+                if (firstLine.startsWith("---")) {
                     List<String> headerLines = new ArrayList<>();
-                    while(true){
+                    while (true) {
                         br.mark(maxRowSize);
                         String nextLine = br.readLine();
-                        if(nextLine==null){
+                        if (nextLine == null) {
                             break;
-                        }else if(nextLine.startsWith("---")){
+                        } else if (nextLine.startsWith("---")) {
                             break;
-                        }else{
-                            nextLine=nextLine.trim();
-                            if(!nextLine.startsWith("#")){
-                                int i=nextLine.indexOf(':');
-                                if(i>0){
-                                    setPageHeaderVar(g,nextLine.substring(0,i).trim(),nextLine.substring(i+1).trim());
+                        } else {
+                            nextLine = nextLine.trim();
+                            if (!nextLine.startsWith("#")) {
+                                int i = nextLine.indexOf(':');
+                                if (i > 0) {
+                                    setPageHeaderVar(g, nextLine.substring(0, i).trim(), nextLine.substring(i + 1).trim());
                                 }
                             }
                             headerLines.add(nextLine);
                         }
                     }
-                }else{
+                } else {
                     br.reset();
                 }
                 NText text = NTexts.of().parser().parse(br);
                 g.setNtfContent(text);
                 return g;
             }
-        }catch (IOException ex) {
+        } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
         return null;
@@ -113,7 +113,7 @@ public class MPageLoader {
         if (mdHeader instanceof Map) {
             for (Map.Entry<?, ?> fe : ((Map<?, ?>) mdHeader).entrySet()) {
                 if (fe.getKey() instanceof String) {
-                    setPageHeaderVar(g,(String) fe.getKey(),fe.getValue());
+                    setPageHeaderVar(g, (String) fe.getKey(), fe.getValue());
                 }
             }
         }
@@ -171,6 +171,26 @@ public class MPageLoader {
             case "subTitle":
             case "sub_title": {
                 g.setSubTitle(NLiteral.of(value).asString().orNull());
+                break;
+            }
+            case "website": {
+                g.setWebsite(NLiteral.of(value).asString().orNull());
+                break;
+            }
+            case "hmi": {
+                g.setHmi(NLiteral.of(value).asString().orNull());
+                break;
+            }
+            case "category": {
+                g.setCategory(NLiteral.of(value).asString().orNull());
+                break;
+            }
+            case "installCommand": {
+                g.setInstallCommand(NLiteral.of(value).asString().orNull());
+                break;
+            }
+            case "exampleCommand": {
+                g.setExampleCommand(NLiteral.of(value).asString().orNull());
                 break;
             }
             case "publishDate":

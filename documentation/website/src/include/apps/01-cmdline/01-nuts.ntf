@@ -1,0 +1,14 @@
+---
+id: app-nuts
+title: nuts
+subTitle: The Java Package Manager
+sidebar_label: nuts
+category: Settings / Package Manager
+hmi: Commandline
+website: https://thevpc.github.com/nuts
+installCommand: curl -sOL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar && java -jar nuts.jar -Zy
+exampleCommand: nuts install jedit
+---
+
+
+{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/nuts-help.ntf"}}

@@ -1,0 +1,12 @@
+---
+id: app-ndiff
+title: ndiff
+subTitle: Commandline folder and jar diff tool
+category: Utility / Finder
+hmi: Commandline
+website: https://thevpc.github.com/nuts
+installCommand: nuts install ndiff
+---
+
+
+{{include($"$root/toolbox/ndiff/src/main/resources/net/thevpc/nuts/toolbox/ndiff.ntf"}}

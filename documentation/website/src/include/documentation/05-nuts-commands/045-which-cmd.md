@@ -1,10 +1,10 @@
 ---
-id: exec-cmd
-title: Exec and Which Commands
+id: which-cmd
+title: Which
 ---
 
 
-**exec** command runs another command and **which** command does a dry run of it.
+**which** command does a dry run of a command.
 
 When one types
 ```

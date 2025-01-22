@@ -4,7 +4,7 @@
 
 <!-- Document Wrapper   
 =============================== -->
-<div id="main-wrapper">
+<div id="main-wrapper" class="blog-main-wrapper">
     {{:: pageId='blog'}}
     {{:include $'$projectRoot/src/include/template/v1/11-header.html'}}
 
@@ -54,7 +54,7 @@
                     <!--{{pageLevel1}}-->
                     <section id="{{pageLevel1.id}}">
                         <h2 style="margin-bottom: 0;"><a href="#{{pageLevel1.id}}">{{pageLevel1.title}}</a></h2>
-                        <h4 style="margin: 0;font-style: italic">{{pageLevel1.subTitle}}</h4>
+<!--                        <h4 style="margin: 0;font-style: italic">{{pageLevel1.subTitle}}</h4>-->
                         <header style="margin-left: 50px">
                             <div class="container_mt6G margin-vert--md" style="font-size: medium">
                                 <time>{{formatDate(pageLevel1.publishDate)}}</time>
@@ -78,7 +78,10 @@
                                 </div>
                             </div>
                         </header>
+                        <p class="lead">{{pageLevel1.subTitle}}</p>
+                        <div class="text-card">
                         {{pageContentToHtml(pageLevel1,formatDate(pageLevel1.publishDate))}}
+                        </div>
                     </section>
                     <hr class="divider">
                 {{:end}}

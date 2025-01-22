@@ -11,8 +11,8 @@
             <!-- Logo -->
             <a class="logo ml-md-3" href="index.html" title="Nuts Package Manager"> <img
                     src="assets/images/nuts-icon.png" alt="Nuts Package Manager" width="32px"/> </a>
-            <span class="text-4 ml-2"><strong><a href="index.html">Nuts Package Manager</a></strong></span>
-            <span class="text-2 ml-2"><span class="badge badge-info">v0.8.5.0</span></span>
+            <span class="text-4 ml-2" style="font-family: ZeroesTwo;"><strong><a href="index.html">Nuts Package Manager</a></strong></span>
+            <span class="text-2 ml-2" style="font-family: ZeroesTwo;"><span class="badge badge-info">v0.8.5.0</span></span>
             <!-- Logo End -->
 
             <!-- Navbar Toggler -->
@@ -21,24 +21,25 @@
 
             <div id="header-nav" class="collapse navbar-collapse justify-content-end">
                 <ul class="navbar-nav">
-                    <!--
-                    <li class="dropdown"> <a class="dropdown-toggle" href="#">Dropdown</a>
+                    <li class="dropdown"> <a class="dropdown-toggle" href="#">Documentation</a>
                       <ul class="dropdown-menu">
+                          <li><a class="dropdown-item {{ if(pageId=='documentation') 'not-active' else '' }}" href="documentation.html">Package Manager</a>
+                          <li><a class="dropdown-item {{ if(pageId=='naf') 'not-active' else '' }}" href="naf.html">Application Framework</a></li>
+                          <li><a class="dropdown-item {{ if(pageId=='contrib') 'not-active' else '' }}" href="contrib.html">Contributing</a></li>
+                          <li><a class="dropdown-item {{ if(pageId=='faq') 'not-active' else '' }}" href="faq.html">FAQ</a></li>
+                          <!--
                         <li><a class="dropdown-item" href="#">Action</a></li>
-                        <li class="dropdown"><a class="dropdown-item dropdown-toggle" href="#">Dropdown Action</a>
+                        <li class="dropdown"><a class="dropdown-item dropdown-toggle" href="#">More</a>
                           <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="index.html">Action</a></li>
-                            <li><a class="dropdown-item" href="feature-header-dark.html">Another Action</a></li>
-                            <li><a class="dropdown-item" href="feature-header-primary.html">Something Else Here</a></li>
+                            <li><a class="dropdown-item" href="index.html">Apps</a></li>
+                            <li><a class="dropdown-item" href="feature-header-dark.html">Change Log</a></li>
+                            <li><a class="dropdown-item" href="feature-header-primary.html">FAQ</a></li>
                             <li><a class="dropdown-item" href="index-2.html">Another Link</a></li>
                           </ul>
                         </li>
-                        <li><a class="dropdown-item" href="#">Another Action</a>
-                        <li><a class="dropdown-item" href="#">Something Else Here</a></li>
+                        -->
                       </ul>
                     </li>
-                    -->
-                    <li><a href="documentation.html" class="{{ if(pageId=='documentation') 'not-active' else '' }}">Documentation</a></li>
                     <li><a href="blog.html" class="{{ if(pageId=='blog') 'not-active' else '' }}">Blog</a></li>
                     <li><a href="apps.html" class="{{ if(pageId=='apps') 'not-active' else '' }}">Apps</a></li>
                     <li><a href="download.html" class="{{ if(pageId=='download') 'not-active' else '' }}">Download</a></li>

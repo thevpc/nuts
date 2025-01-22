@@ -1,6 +1,6 @@
 ---
-id: install-cmd
-title: Install Command
+id: uninstall-cmd
+title: Uninstall
 ---
 
 

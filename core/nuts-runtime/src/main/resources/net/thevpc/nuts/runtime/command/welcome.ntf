@@ -1,0 +1,7 @@
+show minimal welcome message
+    show minimal welcome message
+
+##) SYNOPSIS:
+
+    ```sh nuts welcome [<-options>]```
+

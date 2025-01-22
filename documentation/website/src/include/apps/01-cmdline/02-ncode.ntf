@@ -1,0 +1,13 @@
+---
+id: app-ncode
+title: ncode
+subTitle: Commandline code search tool
+category: Settings / Package Manager
+hmi: Commandline
+website: https://thevpc.github.com/nuts
+installCommand: nuts install ncode
+exampleCommand: ncode -t String . foo.zip
+---
+
+
+{{include($"$root/toolbox/ncode/src/main/resources/net/thevpc/nuts/toolbox/ncode.ntf"}}

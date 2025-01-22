@@ -2,17 +2,20 @@ package net.thevpc.nuts.lib.doc.executor.expr.fct;
 
 import net.thevpc.nuts.expr.NExprDeclarations;
 import net.thevpc.nuts.expr.NExprNodeValue;
+import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.lib.doc.context.NDocContext;
 import net.thevpc.nuts.lib.doc.executor.expr.BaseNexprNExprFct;
 import net.thevpc.nuts.lib.doc.processor.pages.MPage;
 import net.thevpc.nuts.lib.doc.processor.pages.MPageLoader;
 import net.thevpc.nuts.lib.doc.util.StringUtils;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NComparator;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class LoadPagesFct extends BaseNexprNExprFct {
@@ -73,6 +76,10 @@ public class LoadPagesFct extends BaseNexprNExprFct {
                 })
                 .filter(x -> x != null)
                 .peek(x -> {
+                    if(NBlankable.isBlank(x.getId())){
+                        String id="U"+NDigest.of().setSource(x.getPath().getBytes()).computeString();
+                        x.setId(id);
+                    }
                     x.setLevel(finalLevel);
                 }).sorted(new NComparator<MPage>() {
                     @Override

@@ -1,0 +1,13 @@
+---
+id: app-njob
+title: njob
+subTitle: A Commandline Task Manager
+category: Productivity / Task Manager
+hmi: Commandline
+website: https://thevpc.github.com/nuts
+installCommand: nuts install njob
+exampleCommand: nuts njob tasks add 'I will buy milk' --on afternoon
+---
+
+
+{{include($"$root/toolbox/njob/src/main/resources/net/thevpc/nuts/toolbox/njob.ntf"}}

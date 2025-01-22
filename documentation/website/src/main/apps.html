@@ -4,7 +4,7 @@
 
 <!-- Document Wrapper   
 =============================== -->
-<div id="main-wrapper">
+<div id="main-wrapper" class="apps-main-wrapper">
     {{:: pageId='apps'}}
     {{:include $'$projectRoot/src/include/template/v1/11-header.html'}}
 
@@ -17,17 +17,20 @@
         <div class="idocs-navigation bg-light">
             <ul class="nav flex-column ">
                 {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/$pageId')}}
-                <li class="nav-item"><a class="nav-link" href="#{{pageLevel1.id}}">{{pageLevel1Index+1}} {{pageLevel1.title}}</a>
+                <li class="nav-item"><a class="nav-link" href="#{{pageLevel1.id}}">{{pageLevel1Index+1}}
+                    {{pageLevel1.title}}</a>
                     {{:: allPagesLevel2=loadPages(pageLevel1)}}
                     {{:if (allPagesLevel2.size)>0}}
                     <ul class="nav flex-column">
                         {{:for pageLevel2,pageLevel2Index:allPagesLevel2}}
-                        <li class="nav-item"><a class="nav-link" href="#{{pageLevel2.id}}">{{pageLevel1Index+1}}.{{pageLevel2Index+1}} {{pageLevel2.title}}</a>
+                        <li class="nav-item"><a class="nav-link" href="#{{pageLevel2.id}}">{{pageLevel1Index+1}}.{{pageLevel2Index+1}}
+                            {{pageLevel2.title}}</a>
                             {{:: allPagesLevel3=loadPages(pageLevel2)}}
                             {{:if (allPagesLevel3.size)>0}}
                             <ul class="nav flex-column">
                                 {{:for pageLevel3,pageLevel3Index:allPagesLevel3}}
-                                <li class="nav-item"><a class="nav-link" href="#{{pageLevel3.id}}">{{pageLevel1Index+1}}.{{pageLevel2Index+1}}.{{pageLevel3Index+1}} {{pageLevel3.title}}</a>
+                                <li class="nav-item"><a class="nav-link" href="#{{pageLevel3.id}}">{{pageLevel1Index+1}}.{{pageLevel2Index+1}}.{{pageLevel3Index+1}}
+                                    {{pageLevel3.title}}</a>
 
                                 </li>
                                 {{:end}}
@@ -48,25 +51,56 @@
             <div class="container">
 
                 {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/$pageId')}}
-                    <!--{{pageLevel1}}-->
-                    <section id="{{pageLevel1.id}}">
-                        {{pageToHtml(pageLevel1,(pageLevel1Index+1))}}
-                        {{:for pageLevel2,pageLevel2Index:loadPages(pageLevel1)}}
-                            <!--{{pageLevel2}}-->
-                            <section id="{{pageLevel2.id}}">
-                                {{pageToHtml(pageLevel2,(pageLevel1Index+1)+"."+(pageLevel2Index+1))}}
-                                {{:for pageLevel3,pageLevel3Index:loadPages(pageLevel2)}}
-                                    <!--{{pageLevel3}}-->
-                                    <section id="{{pageLevel3.id}}">
-                                        {{pageToHtml(pageLevel3,(pageLevel1Index+1)+"."+(pageLevel2Index+1)+"."+(pageLevel3Index+1))}}
-                                    </section>
-                                    <hr class="divider">
-                                {{:end}}
-                            </section>
-                            <hr class="divider">
+                <!--{{pageLevel1}}-->
+                <section id="{{pageLevel1.id}}">
+                    <h2 class="main-section1"><a href="#{{pageLevel1.id}}">{{(pageLevel1Index+1)+" "+pageLevel1.title}}</a></h2>
+                    <div class="text-card">
+                        {{pageContentToHtml(pageLevel1,(pageLevel1Index+1))}}
+                    </div>
+                    {{:for pageLevel2,pageLevel2Index:loadPages(pageLevel1)}}
+                    <!--{{pageLevel2}}-->
+                    <section id="{{pageLevel2.id}}">
+                        <div class="glass-card">
+                            <h3><a href="#{{pageLevel1.id}}">{{(pageLevel1Index+1)+"."+(pageLevel2Index+1)+" "+pageLevel2.title}}</a></h3>
+                            <p class="lead">{{pageLevel2.subTitle}}</p>
+                            <div class="flex-column">
+                                <div class="alert alert-info mb-4">
+                                    <ul class="md-ul">
+                                        <li class="md-uli"><p class="md-phrase"><b class="md-bold">Category</b> :
+                                            {{pageLevel2.category}}</p></li>
+                                        <li class="md-uli"><p class="md-phrase"><b class="md-bold">Interface</b> :
+                                            {{pageLevel2.hmi}}</p></li>
+                                        <li class="md-uli"><p class="md-phrase"><b class="md-bold">Website</b> : <a
+                                                href="{{pageLevel2.website}}">{{pageLevel2.website}}</a></p></li>
+                                    </ul>
+                                </div>
+                                <div class="mb-4">
+                                    <span class="badge badge-info">INSTALLATION COMMAND</span>
+                                    <pre><code>{{pageLevel2.installCommand}}</code></pre>
+                                    <span class="badge badge-info">EXAMPLE COMMAND</span>
+                                    <pre><code>{{pageLevel2.exampleCommand}}</code></pre>
+                                </div>
+                            </div>
+                            <div class="text-card">
+                                {{pageContentToHtml(pageLevel2,(pageLevel1Index+1)+"."+(pageLevel2Index+1))}}
+                            </div>
+                        </div>
+
+
+                        {{:for pageLevel3,pageLevel3Index:loadPages(pageLevel2)}}
+                        <!--{{pageLevel3}}-->
+                        <section id="{{pageLevel3.id}}">
+                            <h4 class="main-section3"><a href="#{{pageLevel1.id}}">{{(pageLevel1Index+1)+"."+(pageLevel2Index+1)+"."+(pageLevel3Index+1)+"
+                                "+pageLevel3.title}}</a></h4>
+                            {{pageContentToHtml(pageLevel3,(pageLevel1Index+1)+"."+(pageLevel2Index+1)+"."+(pageLevel3Index+1))}}
+                        </section>
+                        <hr class="divider">
                         {{:end}}
                     </section>
                     <hr class="divider">
+                    {{:end}}
+                </section>
+                <hr class="divider">
                 {{:end}}
 
             </div>

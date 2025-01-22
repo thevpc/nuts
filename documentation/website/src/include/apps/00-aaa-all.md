@@ -1,6 +1,6 @@
 ---
 id: app-misc
-title: misc
+title: Apps
 sidebar_label: misc
 ---
 

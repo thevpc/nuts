@@ -13,7 +13,12 @@ public class MPage {
     public String id;
     public String path;
     public String title;
+    public String category;
+    public String hmi;
+    public String website;
     public String subTitle;
+    public String installCommand;
+    public String exampleCommand;
     public String menuTitle;
     public int order;
     public int level;
@@ -29,6 +34,47 @@ public class MPage {
     private Instant lastModified;
     private String[] tags;
     private Map<String, Object> typeInfo;
+
+
+    public String getInstallCommand() {
+        return installCommand;
+    }
+
+    public void setInstallCommand(String installCommand) {
+        this.installCommand = installCommand;
+    }
+
+    public String getExampleCommand() {
+        return exampleCommand;
+    }
+
+    public void setExampleCommand(String exampleCommand) {
+        this.exampleCommand = exampleCommand;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getHmi() {
+        return hmi;
+    }
+
+    public void setHmi(String hmi) {
+        this.hmi = hmi;
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
 
     public MPage(MPageType type) {
         this.type = type;

@@ -1,8 +1,0 @@
----
-id: nutsHelp
-title: Nuts Cmdline Help
-sidebar_label: Nuts Help
----
-
-
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/nuts-help.ntf"}}

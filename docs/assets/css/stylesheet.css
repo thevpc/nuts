@@ -2988,19 +2988,99 @@ input:-internal-autofill-selected {
 .main-section1{
   background: #e4eef9;
   padding: 20px;
+  border-radius: 15px 50px;
+  text-shadow: 1px 1px 1px #2F353AFF;
+
+  margin-top: 40px;
+  margin-bottom: 10px;
 }
 
 .main-section2{
   background: #f0f9e4;
   padding: 20px;
+  border-radius: 15px 50px;
+  text-shadow: 1px 1px 1px #252721FF;
+
+  margin-top: 40px;
+  margin-bottom: 10px;
 }
 
 .main-section3{
   background: #f9f1e4;
   padding: 20px;
+  border-radius: 15px 50px;
+  text-shadow: 1px 1px 1px #3B3833FF;
+
+  margin-top: 40px;
+  margin-bottom: 10px;
 }
 
 time {
   font-family: Roboto, sans-serif;
   font-size: small;
 }
+
+
+
+.glass-card {
+  /*max-width: 300px;*/
+  min-height: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  width: 100%;
+  /*height: 300px;*/
+  padding: 20px;
+  margin-top: 20px;
+
+  border: 1px solid rgba(255, 255, 255, .25);
+  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0.45);
+  box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.25);
+
+  backdrop-filter: blur(15px);
+}
+
+
+
+.glass-card-footer {
+  font-size: 0.65em;
+  color: #446;
+}
+
+.text-card {
+  background: #f4f1f1;
+  border: 1px solid rgba(255, 255, 255, 0.61);
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.apps-main-wrapper{
+  font: 1em/1.618 Inter, sans-serif !important;
+  margin: 0 !important;;
+  color: #224 !important;;
+  background: url(https://i.ibb.co/Qjt7TJn/milad-fakurian-E8-Ufcyxz514-unsplash-1.jpg) center / cover no-repeat fixed !important;
+}
+
+.blog-main-wrapper{
+  font: 1em/1.618 Inter, sans-serif !important;;
+  margin: 0 !important;;
+  color: #224 !important;;
+  background: url(https://i.ibb.co/Qjt7TJn/milad-fakurian-E8-Ufcyxz514-unsplash-1.jpg) center / cover no-repeat fixed !important;;
+}
+
+.documentation-main-wrapper{
+  font: 1em/1.618 Inter, sans-serif !important;;
+  margin: 0 !important;;
+  color: #224 !important;;
+  background: url(https://i.ibb.co/Qjt7TJn/milad-fakurian-E8-Ufcyxz514-unsplash-1.jpg) center / cover no-repeat fixed !important;;
+}
+
+.download-main-wrapper{
+  font: 1em/1.618 Inter, sans-serif !important;;
+  margin: 0 !important;;
+  color: #224 !important;;
+  background: url(https://i.ibb.co/Qjt7TJn/milad-fakurian-E8-Ufcyxz514-unsplash-1.jpg) center / cover no-repeat fixed !important;;
+}
+

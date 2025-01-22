@@ -1,13 +1,10 @@
 ---
 id: app-nmvn
 title: nmvn
-sidebar_label: nmvn
+installCommand: nuts install nmvn
+exampleCommand: nuts nmvn clean install
 ---
 
 
 ## T0010- Maven (Maven Build Tool)
-```
-nuts install nmvn
-# Example of usage
-nuts nmvn clean install
-```
+

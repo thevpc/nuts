@@ -1,7 +1,6 @@
 ---
 id: fetch-cmd
-title: Fetch Command
-sidebar_label: Fetch Command
+title: Fetch
 ---
 
 

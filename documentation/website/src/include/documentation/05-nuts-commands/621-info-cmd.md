@@ -1,6 +1,6 @@
 ---
 id: info-cmd
-title: Info Command
+title: Info
 ---
 
 

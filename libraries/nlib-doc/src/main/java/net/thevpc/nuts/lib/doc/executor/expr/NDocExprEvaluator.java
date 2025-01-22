@@ -21,6 +21,7 @@ public class NDocExprEvaluator implements net.thevpc.nuts.lib.doc.executor.NDocE
             }
         });
         declareFunction(new ExecFct());
+        declareFunction(new CurrentYearFct());
         declareFunction(new PrintlnFct());
         declareFunction(new PrintFct());
         declareFunction(new StringFct());

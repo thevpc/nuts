@@ -1,13 +1,10 @@
 ---
 id: app-nsh
 title: nsh
-sidebar_label: nsh
+installCommand: nuts install nsh
+exampleCommand: nuts nsh -c ls -l
 ---
 
 
 ## T0001- Nuts shell (Bash compatible Shell)
-```
-nuts install nsh
-# Example of usage
-nuts nsh
-```
+

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+{{:include $'$projectRoot/src/include/template/v1/01-preamble.html'}}
+
+<!-- Document Wrapper   
+=============================== -->
+<div id="main-wrapper" class="documentation-main-wrapper">
+    {{:: pageId='contrib'}}
+    {{:include $'$projectRoot/src/include/template/v1/11-header.html'}}
+
+    <!-- Content
+    ============================ -->
+    <div id="content" role="main">
+
+        <!-- Sidebar Navigation
+        ============================ -->
+        <div class="idocs-navigation bg-light">
+            <ul class="nav flex-column ">
+                {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/$pageId')}}
+                <li class="nav-item"><a class="nav-link" href="#{{pageLevel1.id}}">{{pageLevel1Index+1}} {{pageLevel1.title}}</a>
+                    {{:: allPagesLevel2=loadPages(pageLevel1)}}
+                    {{:if (allPagesLevel2.size)>0}}
+                    <ul class="nav flex-column">
+                        {{:for pageLevel2,pageLevel2Index:allPagesLevel2}}
+                        <li class="nav-item"><a class="nav-link" href="#{{pageLevel2.id}}">{{pageLevel1Index+1}}.{{pageLevel2Index+1}} {{pageLevel2.title}}</a>
+                            {{:: allPagesLevel3=loadPages(pageLevel2)}}
+                            {{:if (allPagesLevel3.size)>0}}
+                            <ul class="nav flex-column">
+                                {{:for pageLevel3,pageLevel3Index:allPagesLevel3}}
+                                <li class="nav-item"><a class="nav-link" href="#{{pageLevel3.id}}">{{pageLevel1Index+1}}.{{pageLevel2Index+1}}.{{pageLevel3Index+1}} {{pageLevel3.title}}</a>
+
+                                </li>
+                                {{:end}}
+                            </ul>
+                            {{:end}}
+                        </li>
+                        {{:end}}
+                    </ul>
+                    {{:end}}
+                </li>
+                {{:end}}
+            </ul>
+        </div>
+
+        <!-- Docs Content
+        ============================ -->
+        <div class="idocs-content">
+            <div class="container">
+
+                {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/$pageId')}}
+                    <!--{{pageLevel1}}-->
+                    <section id="{{pageLevel1.id}}" >
+                        <h2 class="main-section1"><a href="#{{pageLevel1.id}}">{{(pageLevel1Index+1)+" "+pageLevel1.title}}</a></h2>
+                        <div class="text-card">
+                        {{pageContentToHtml(pageLevel1,(pageLevel1Index+1))}}
+                        </div>
+                        {{:for pageLevel2,pageLevel2Index:loadPages(pageLevel1)}}
+                            <!--{{pageLevel2}}-->
+                            <section id="{{pageLevel2.id}}" >
+                                <h3 class="main-section2"><a href="#{{pageLevel1.id}}">{{(pageLevel1Index+1)+"."+(pageLevel2Index+1)+" "+pageLevel2.title}}</a></h3>
+                                <div class="text-card">
+                                {{pageContentToHtml(pageLevel2,(pageLevel1Index+1)+"."+(pageLevel2Index+1))}}
+                                </div>
+                                {{:for pageLevel3,pageLevel3Index:loadPages(pageLevel2)}}
+                                    <!--{{pageLevel3}}-->
+                                    <section id="{{pageLevel3.id}}" >
+                                        <h4 class="main-section3"><a href="#{{pageLevel1.id}}">{{(pageLevel1Index+1)+"."+(pageLevel2Index+1)+"."+(pageLevel3Index+1)+" "+pageLevel3.title}}</a></h4>
+                                        <div class="text-card">
+                                        {{pageContentToHtml(pageLevel3,(pageLevel1Index+1)+"."+(pageLevel2Index+1)+"."+(pageLevel3Index+1))}}
+                                        </div>
+                                    </section>
+                                    <hr class="divider">
+                                {{:end}}
+                            </section>
+                            <hr class="divider">
+                        {{:end}}
+                    </section>
+                    <hr class="divider">
+                {{:end}}
+
+            </div>
+        </div>
+
+    </div>
+    <!-- Content end -->
+
+    {{:include $'$projectRoot/src/include/template/v1/12-footer.html'}}
+</div>
+<!-- Document Wrapper end -->
+
+{{:include $'$projectRoot/src/include/template/v1/99-epilog.html'}}
+</html>

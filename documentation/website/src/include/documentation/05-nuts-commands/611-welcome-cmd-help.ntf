@@ -1,0 +1,7 @@
+---
+id: welcome-help
+title: Welcome Cmdline
+---
+
+{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/welcome.ntf"}}
+

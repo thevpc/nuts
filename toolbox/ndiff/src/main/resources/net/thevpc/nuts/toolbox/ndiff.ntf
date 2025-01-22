@@ -5,4 +5,11 @@ diff folders/files/jars (incubating)
 ```sh
 ndiff <path1> <path2>
  ```
-generate code documentation
+
+show differences
+
+***) EXAMPLE
+
+```
+nuts ndiff my-app-v1.jar my-app-v2.jar
+```

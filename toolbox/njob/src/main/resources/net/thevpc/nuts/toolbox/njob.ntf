@@ -1,6 +1,17 @@
 ##) njob:
 is a productivity tool to follow you tasks
 
+###) INSTALL
+```
+nuts install njob
+```
+
+###) EXAMPLE OF USAGE
+
+```
+nuts njob tasks add 'I will buy milk' --on afternoon
+```
+
 ###) SYNOPSIS:
 ```sh
 njob tasks | jobs | projects | summary...

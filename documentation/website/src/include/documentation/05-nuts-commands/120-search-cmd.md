@@ -1,6 +1,6 @@
 ---
-id: search-cmds
-title: Search Command
+id: search-cmd
+title: Search
 ---
 
 

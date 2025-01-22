@@ -1,6 +1,6 @@
 ---
 id: version-cmd
-title: Version Command
+title: Version
 ---
 
 
