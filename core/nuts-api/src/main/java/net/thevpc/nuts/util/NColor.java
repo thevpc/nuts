@@ -28,31 +28,48 @@ package net.thevpc.nuts.util;
  * Color Model
  */
 public class NColor {
-    private final int type;
-    private final int color;
+    public static final byte TYPE4 = 4;
+    public static final byte TYPE8 = 8;
+    public static final byte TYPE24 = 24;
+    public static final byte TYPE32 = 32;
+    public static final byte TYPE64 = 64;
+    private final byte type;
+    private final long color;
 
-    public NColor(int type, int color) {
+    public NColor(byte type, long color) {
         this.type = type;
         this.color = color;
     }
 
     public static NColor of4(int color) {
-        return new NColor(4, color);
+        return new NColor(TYPE4, color);
     }
 
     public static NColor of8(int color) {
-        return new NColor(8, color);
+        return new NColor(TYPE8, color);
     }
 
     public static NColor of24(int color) {
-        return new NColor(24, color);
+        return new NColor(TYPE24, color);
+    }
+
+    public static NColor of32(int color) {
+        return new NColor(TYPE32, color);
+    }
+
+    public static NColor of64(long color) {
+        return new NColor(TYPE64, color);
     }
 
     public int getType() {
         return type;
     }
 
-    public int getColor() {
+    public int getIntColor() {
+        return (int) color;
+    }
+
+    public long getLongColor() {
         return color;
     }
 }

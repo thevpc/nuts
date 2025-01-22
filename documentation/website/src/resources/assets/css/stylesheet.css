@@ -2977,8 +2977,30 @@ input:-internal-autofill-selected {
 }
 .avatar__name {
   font: 700 var(--ifm-h4-font-size)/var(--ifm-heading-line-height) var(--ifm-font-family-base);
+  font-size: small;
 }
 
 .avatar__subtitle {
-  margin-top: .25rem;
+  /*margin-top: .25rem;*/
+  font-weight: lighter;
+}
+
+.main-section1{
+  background: #e4eef9;
+  padding: 20px;
+}
+
+.main-section2{
+  background: #f0f9e4;
+  padding: 20px;
+}
+
+.main-section3{
+  background: #f9f1e4;
+  padding: 20px;
+}
+
+time {
+  font-family: Roboto, sans-serif;
+  font-size: small;
 }

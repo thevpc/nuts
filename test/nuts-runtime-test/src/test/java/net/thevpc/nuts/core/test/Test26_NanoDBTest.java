@@ -3,7 +3,7 @@ package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBTableFile;
-import net.thevpc.nuts.util.NIOUtils;
+import net.thevpc.nuts.io.NIOUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

@@ -8,8 +8,14 @@ import java.util.Arrays;
 public class MdPhrase extends MdParent {
     public MdPhrase(MdElement[] content) {
         super(content);
+
         if (!acceptPhrase(content)) {
             throw new IllegalArgumentException("expected inline elements");
+        }
+        for (MdElement mdElement : content) {
+            if(mdElement instanceof MdPhrase){
+                throw new IllegalArgumentException("phrase elements can't contain more than one phrase");
+            }
         }
     }
 

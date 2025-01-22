@@ -48,6 +48,16 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
+    public boolean startsWith(NPath other) {
+        return base.startsWith(other);
+    }
+
+    @Override
+    public boolean startsWith(String other) {
+        return base.startsWith(other);
+    }
+
+    @Override
     public NPath copy() {
         return new NCompressedPathBase(base, compressedForm, formattedCompressedForm).copyExtraFrom(this);
     }
@@ -338,8 +348,8 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public int getLocationItemsCount() {
-        return base.getLocationItemsCount();
+    public int getNameCount() {
+        return base.getNameCount();
     }
 
     @Override
@@ -363,8 +373,8 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public List<String> getLocationItems() {
-        return base.getLocationItems();
+    public List<String> getNames() {
+        return base.getNames();
     }
 
     @Override
@@ -399,6 +409,7 @@ public class NCompressedPathBase extends NPathBase {
         return base.walkGlob(options);
     }
 
+
     @Override
     public String toString() {
         return String.valueOf(compressedForm);
@@ -406,16 +417,18 @@ public class NCompressedPathBase extends NPathBase {
 
     @Override
     public boolean isEqOrDeepChildOf(NPath other) {
-        if(other==null){
+        if (other == null) {
             return false;
         }
-        if(other instanceof NCompressedPathBase){
-            other=((NCompressedPathBase) other).getBase();
+        return base.isEqOrDeepChildOf(unwrapPath(other));
+    }
+
+    @Override
+    public int compareTo(NPath other) {
+        if (other == null) {
+            return 1;
         }
-        if(other instanceof NCompressedPath){
-            other=((NCompressedPath) other).getBase();
-        }
-        return base.isEqOrDeepChildOf(other);
+        return base.compareTo(unwrapPath(other));
     }
 
     public static class MyPathFormat extends DefaultFormatBase<NFormat> {

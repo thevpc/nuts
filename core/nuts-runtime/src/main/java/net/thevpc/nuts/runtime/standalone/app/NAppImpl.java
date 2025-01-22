@@ -253,7 +253,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
         );
         NPrintStream out = NSession.of().out();
         if (h == null) {
-            out.println(NMsg.ofC("Help is %s.", NMsg.ofStyled("missing", NTextStyle.error())));
+            out.println(NMsg.ofC("Help is %s.", NMsg.ofStyledError("missing")));
         } else {
             out.println(h);
         }

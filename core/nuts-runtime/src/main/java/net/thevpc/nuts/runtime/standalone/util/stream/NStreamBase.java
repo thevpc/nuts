@@ -451,4 +451,9 @@ public abstract class NStreamBase<T> implements NStream<T> {
         }
         return new NStreamWithDescription<>(this, description);
     }
+
+    @Override
+    public void close() {
+
+    }
 }

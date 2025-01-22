@@ -41,6 +41,25 @@ public class NCompressedPath extends NPathBase {
     }
 
     @Override
+    public boolean startsWith(NPath other) {
+        return base.startsWith(other);
+    }
+
+    @Override
+    public boolean startsWith(String other) {
+        return base.startsWith(other);
+    }
+
+    @Override
+    public int compareTo(NPath other) {
+        if (other == null) {
+            return 1;
+        }
+        return base.compareTo(unwrapPath(other));
+    }
+
+
+    @Override
     public NPath copy() {
         return new NCompressedPath(
                 base, compressedPathHelper
@@ -88,13 +107,13 @@ public class NCompressedPath extends NPathBase {
     }
 
     @Override
-    public byte[] readBytes(NPathOption...options) {
+    public byte[] readBytes(NPathOption... options) {
         return base.readBytes(options);
     }
 
     @Override
-    public NPath writeBytes(byte[] bytes, NPathOption...options) {
-        return base.writeBytes(bytes,options);
+    public NPath writeBytes(byte[] bytes, NPathOption... options) {
+        return base.writeBytes(bytes, options);
     }
 
     @Override
@@ -310,8 +329,8 @@ public class NCompressedPath extends NPathBase {
     }
 
     @Override
-    public int getLocationItemsCount() {
-        return base.getLocationItemsCount();
+    public int getNameCount() {
+        return base.getNameCount();
     }
 
     @Override
@@ -335,8 +354,8 @@ public class NCompressedPath extends NPathBase {
     }
 
     @Override
-    public List<String> getLocationItems() {
-        return base.getLocationItems();
+    public List<String> getNames() {
+        return base.getNames();
     }
 
     @Override
@@ -408,15 +427,9 @@ public class NCompressedPath extends NPathBase {
 
     @Override
     public boolean isEqOrDeepChildOf(NPath other) {
-        if(other==null){
+        if (other == null) {
             return false;
         }
-        if(other instanceof NCompressedPathBase){
-            other=((NCompressedPathBase) other).getBase();
-        }
-        if(other instanceof NCompressedPath){
-            other=((NCompressedPath) other).getBase();
-        }
-        return base.isEqOrDeepChildOf(other);
+        return base.isEqOrDeepChildOf(unwrapPath(other));
     }
 }

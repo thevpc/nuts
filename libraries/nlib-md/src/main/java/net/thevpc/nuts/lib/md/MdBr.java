@@ -17,6 +17,8 @@
  */
 package net.thevpc.nuts.lib.md;
 
+import net.thevpc.nuts.lib.md.base.MdAbstractElement;
+
 import java.util.Objects;
 
 /**

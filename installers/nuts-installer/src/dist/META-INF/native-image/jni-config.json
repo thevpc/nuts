@@ -85,6 +85,10 @@
   "fields":[{"name":"bitMasks"}, {"name":"bitOffsets"}, {"name":"bitSizes"}, {"name":"maxBitSize"}]
 },
 {
+  "name":"java.io.InputStream",
+  "methods":[{"name":"available","parameterTypes":[] }, {"name":"read","parameterTypes":["byte[]","int","int"] }]
+},
+{
   "name":"java.lang.Boolean",
   "methods":[{"name":"getBoolean","parameterTypes":["java.lang.String"] }]
 },
@@ -128,6 +132,9 @@
   "fields":[{"name":"drawState"}, {"name":"graphicsConfig"}, {"name":"target"}]
 },
 {
+  "name":"sun.awt.X11.XWindowPeer"
+},
+{
   "name":"sun.awt.X11GraphicsConfig",
   "fields":[{"name":"aData"}, {"name":"bitsPerPixel"}]
 },
@@ -145,12 +152,20 @@
   "methods":[{"name":"<init>","parameterTypes":["long"] }]
 },
 {
+  "name":"sun.awt.image.ByteComponentRaster",
+  "fields":[{"name":"data"}, {"name":"dataOffsets"}, {"name":"pixelStride"}, {"name":"scanlineStride"}, {"name":"type"}]
+},
+{
   "name":"sun.awt.image.ImageRepresentation",
   "fields":[{"name":"numSrcLUT"}, {"name":"srcLUTtransIndex"}]
 },
 {
   "name":"sun.awt.image.IntegerComponentRaster",
   "fields":[{"name":"data"}, {"name":"dataOffsets"}, {"name":"pixelStride"}, {"name":"scanlineStride"}, {"name":"type"}]
+},
+{
+  "name":"sun.awt.image.JPEGImageDecoder",
+  "methods":[{"name":"sendHeaderInfo","parameterTypes":["int","int","boolean","boolean","boolean"] }, {"name":"sendPixels","parameterTypes":["byte[]","int"] }, {"name":"sendPixels","parameterTypes":["int[]","int"] }]
 },
 {
   "name":"sun.font.CharToGlyphMapper",

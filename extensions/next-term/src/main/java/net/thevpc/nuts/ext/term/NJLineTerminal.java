@@ -73,10 +73,9 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     }
 
     private AttributedString toAttributedString(NText n, NTextStyles styles) {
-        NSession session = getWorkspace().currentSession();
         switch (n.getType()) {
             case PLAIN: {
-                styles = NTexts.of().getTheme().toBasicStyles(styles);
+                styles = NTexts.of().getTheme().toBasicStyles(styles,false);
                 NTextPlain p = (NTextPlain) n;
                 if (styles.isPlain()) {
                     return new AttributedString(p.getText());

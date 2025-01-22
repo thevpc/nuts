@@ -644,7 +644,7 @@ public class NShell {
                 copyRight = String.valueOf(Year.now().getValue());
             }
             m = NMsg.ofC("%s v%s (c) %s",
-                    NMsg.ofStyled(NStringUtils.firstNonNull(serviceName, "app"), NTextStyle.primary1()),
+                    NMsg.ofStyledPrimary1(NStringUtils.firstNonNull(serviceName, "app")),
                     (appId == null || appId.getVersion().isBlank()) ?
                             getRootContext().getWorkspace().getRuntimeId().getVersion() :
                             appId.getVersion()

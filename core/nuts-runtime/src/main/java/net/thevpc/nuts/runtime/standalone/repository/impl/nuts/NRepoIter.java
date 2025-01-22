@@ -59,9 +59,9 @@ class NRepoIter extends NIdPathIteratorBase {
                     if (fn.equals(an + "-" + vn + ".pom")) {
                         NPath groupFolder = artifactFolder.getParent();
                         if (groupFolder != null) {
-                            NPath gg = groupFolder.subpath(rootPath.getLocationItemsCount(), groupFolder.getLocationItemsCount());
+                            NPath gg = groupFolder.subpath(rootPath.getNameCount(), groupFolder.getNameCount());
                             StringBuilder gn = new StringBuilder();
-                            for (int i = 0; i < gg.getLocationItemsCount(); i++) {
+                            for (int i = 0; i < gg.getNameCount(); i++) {
                                 String ns = gg.getLocationItem(i);
                                 if (i > 0) {
                                     gn.append('.');
@@ -89,9 +89,9 @@ class NRepoIter extends NIdPathIteratorBase {
                     if (fn.equals(an + "-" + vn + ".nuts")) {
                         NPath groupFolder = artifactFolder.getParent();
                         if (groupFolder != null) {
-                            NPath gg = groupFolder.subpath(rootPath.getLocationItemsCount(), groupFolder.getLocationItemsCount());
+                            NPath gg = groupFolder.subpath(rootPath.getNameCount(), groupFolder.getNameCount());
                             StringBuilder gn = new StringBuilder();
-                            for (int i = 0; i < gg.getLocationItemsCount(); i++) {
+                            for (int i = 0; i < gg.getNameCount(); i++) {
                                 String ns = gg.getLocationItem(i);
                                 if (i > 0) {
                                     gn.append('.');

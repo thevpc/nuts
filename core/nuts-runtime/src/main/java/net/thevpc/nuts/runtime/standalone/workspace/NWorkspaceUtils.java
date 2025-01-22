@@ -237,11 +237,11 @@ public class NWorkspaceUtils {
             }
             if (session.isPlainTrace()) {
                 if (someAdded == 0) {
-                    session.out().println(NMsg.ofC("%s java installation locations found...", NMsg.ofStyled("no new", NTextStyle.error())));
+                    session.out().println(NMsg.ofC("%s java installation locations found...", NMsg.ofStyledError("no new")));
                 } else if (someAdded == 1) {
-                    session.out().println(NMsg.ofC("%s new java installation location added...", NMsg.ofStyled("1", NTextStyle.primary2())));
+                    session.out().println(NMsg.ofC("%s new java installation location added...", NMsg.ofStyledPrimary2("1")));
                 } else {
-                    session.out().println(NMsg.ofC("%s new java installation locations added...", NMsg.ofStyled("" + someAdded, NTextStyle.primary2())));
+                    session.out().println(NMsg.ofC("%s new java installation locations added...", NMsg.ofStyledPrimary2("" + someAdded)));
                 }
                 session.out().println("you can always add another installation manually using 'nuts settings add java' command.");
             }
@@ -255,7 +255,7 @@ public class NWorkspaceUtils {
                 NPrintStream out = session.out();
                 out.resetLine();
                 out.println(NMsg.ofC("%s :  %s",
-                        NMsg.ofStyled("unable to resolve default JRE/JDK locations", NTextStyle.error()),
+                        NMsg.ofStyledError("unable to resolve default JRE/JDK locations"),
                         ex));
             }
         }
@@ -277,7 +277,7 @@ public class NWorkspaceUtils {
             }
             if (session.isPlainTrace()) {
                 if (someAdded == 0) {
-                    session.out().println(NMsg.ofC("%s java installation locations found...", NMsg.ofStyled("no new", NTextStyle.error())));
+                    session.out().println(NMsg.ofC("%s java installation locations found...", NMsg.ofStyledError("no new")));
                 }
             }
             if (!workspace.isReadOnly()) {
@@ -288,7 +288,7 @@ public class NWorkspaceUtils {
                     .log(NMsg.ofJ("unable to resolve default JRE/JDK locations : {0}", ex));
             if (session.isPlainTrace()) {
                 NPrintStream out = session.out();
-                out.resetLine().println(NMsg.ofC("Ms :  %s", NMsg.ofStyled("unable to resolve default JRE/JDK locations", NTextStyle.error()), ex));
+                out.resetLine().println(NMsg.ofC("Ms :  %s", NMsg.ofStyledError("unable to resolve default JRE/JDK locations"), ex));
             }
         }
     }
@@ -312,7 +312,7 @@ public class NWorkspaceUtils {
             if (session.isPlainTrace()) {
                 NPrintStream out = session.out();
                 out.resetLine().println(NMsg.ofC("%s :  %s",
-                        NMsg.ofStyled("unable to install desktop launchers", NTextStyle.error()),
+                        NMsg.ofStyledError("unable to install desktop launchers"),
                         ex));
             }
         }
@@ -343,7 +343,7 @@ public class NWorkspaceUtils {
                 NPrintStream out = session.out();
                 out.resetLine().println(NMsg.ofC("%s :  %s "
                                 + "this happens when none of the following repositories are able to locate them : %s\n",
-                        NMsg.ofStyled("unable to install companion tools", NTextStyle.error()),
+                        NMsg.ofStyledError("unable to install companion tools"),
                         ex,
                         text.ofBuilder().appendJoined(text.ofPlain(", "),
                                 workspace.getRepositories().stream().map(x

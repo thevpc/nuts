@@ -13,7 +13,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutable
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.CharacterizedExecFile;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmd;
 import net.thevpc.nuts.log.NLogVerb;
-import net.thevpc.nuts.util.NIOUtils;
+import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.Closeable;

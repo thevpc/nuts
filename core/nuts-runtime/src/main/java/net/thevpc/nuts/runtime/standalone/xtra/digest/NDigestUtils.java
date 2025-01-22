@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.digest;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NHex;
-import net.thevpc.nuts.util.NIOUtils;
+import net.thevpc.nuts.io.NIOUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

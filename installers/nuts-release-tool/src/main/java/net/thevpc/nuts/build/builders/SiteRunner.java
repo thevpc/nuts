@@ -7,7 +7,6 @@ package net.thevpc.nuts.build.builders;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.build.util.AbstractRunner;
 import net.thevpc.nuts.build.util.Mvn;
-import net.thevpc.nuts.build.util.MvnArtifactType;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
@@ -15,14 +14,10 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.lib.doc.context.NDocContext;
 import net.thevpc.nuts.lib.doc.context.ProjectNDocContext;
 import net.thevpc.nuts.util.NMaps;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.toolbox.docusaurus.DocusaurusCtrl;
-import net.thevpc.nuts.toolbox.docusaurus.DocusaurusProject;
 import net.thevpc.nuts.lib.doc.NDocProjectConfig;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMsg;
 
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,10 +34,6 @@ public class SiteRunner extends AbstractRunner {
         super();
     }
 
-    @Override
-    public void configureAfterOptions() {
-        context().NUTS_WEBSITE_BASE = context().root.resolve("documentation/website");
-    }
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
@@ -68,67 +59,113 @@ public class SiteRunner extends AbstractRunner {
     }
 
     private void runSite() {
-        echo("**** $v (nuts)...", NMaps.of("v", NMsg.ofStyled("build-nuts-site", NTextStyle.keyword())));
-        runSiteGithubRepo();
-        runSiteGithubDocumentation();
+        echoV("**** $v (nuts)...", NMaps.of("v", NMsg.ofStyledKeyword("build-nuts-site")));
+        runGithubRepository();
+        runGithubDocumentationWebsite();
     }
 
 
     private Map<String, Object> prepareVars() {
         Map<String, Object> vars = new HashMap<>();
-        String latestApiVersion = Nuts.getVersion().toString();
-        String stableApiVersion = NAssert.requireNonBlank(context().nutsStableVersion, "nutsStableVersion");
-        String stableRuntimeVersion = NAssert.requireNonBlank(context().runtimeStableVersion, "runtimeStableVersion");
-        String latestJarLocation = "https://raw.githubusercontent.com/thevpc/nuts-preview/master/net/thevpc/nuts/nuts/" + latestApiVersion + "/nuts-" + latestApiVersion + ".jar";
-        String stableJarLocation = "https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/" + stableApiVersion + "/nuts-" + stableApiVersion + ".jar";
+//        String latestJarLocation = "https://raw.githubusercontent.com/thevpc/nuts-preview/master/net/thevpc/nuts/nuts/" + latestApiVersion + "/nuts-" + latestApiVersion + ".jar";
+//        String stableJarLocation = "https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/" + stableApiVersion + "/nuts-" + stableApiVersion + ".jar";
 
+        String latestJarLocation = "https://thevpc.net/maven/" + Mvn.jar(NWorkspace.of().getAppId());
+
+        vars.putAll(context().vars);
         vars.put("buildTime", new SimpleDateFormat("yyyy-MM-dd-HHmmss").format(new Date()));
-        vars.put("latestApiVersion", latestApiVersion);
-        String latestRuntimeVersion = NDescriptorParser.of()
-                .setDescriptorStyle(NDescriptorStyle.MAVEN)
-                .parse(context().root.resolve("core/nuts-runtime/pom.xml")).get().getId().getVersion().toString();
-        vars.put("latestRuntimeVersion", latestRuntimeVersion);
-        vars.put("latestJarLocation", latestJarLocation);
-        vars.put("stableApiVersion", stableApiVersion);
-        vars.put("stableRuntimeVersion", stableRuntimeVersion);
-        vars.put("stableJarLocation", stableJarLocation);
-        vars.put("jarLocation", latestJarLocation);
-        vars.put("apiVersion", latestApiVersion);
-        vars.put("runtimeVersion", latestRuntimeVersion);
+        {//stable
+            NAssert.requireNonBlank(context().nutsStableAppVersion, "nutsStableVersion");
+            NAssert.requireNonBlank(context().nutsStableApiVersion, "nutsApiStableVersion");
+            NAssert.requireNonBlank(context().nutsStableRuntimeVersion, "runtimeStableVersion");
+
+            NId stableApiId = NWorkspace.of().getApiId().builder().setVersion(context().nutsStableApiVersion).build();
+            NId stableAppId = NWorkspace.of().getAppId().builder().setVersion(context().nutsStableAppVersion).build();
+            NId stableRuntimeId = NWorkspace.of().getRuntimeId().builder().setVersion(context().nutsStableRuntimeVersion).build();
+
+            String stableJarLocation = "https://thevpc.net/maven/" + Mvn.jar(stableAppId);
+
+            vars.put("stableApiId", stableApiId.toString());
+            vars.put("stableApiVersion", stableApiId.getVersion().toString());
+
+            vars.put("stableAppId", stableAppId.toString());
+            vars.put("stableAppVersion", stableAppId.getVersion().toString());
+
+            vars.put("stableRuntimeId", stableRuntimeId.toString());
+            vars.put("stableRuntimeVersion", stableRuntimeId.getVersion().toString());
+
+            vars.put("stableJarLocation", stableJarLocation);
+        }
+
+        {
+            NId latestApiId = NWorkspace.of().getApiId();
+            NId latestRuntimeId = NWorkspace.of().getRuntimeId();
+            NId latestAppId = NWorkspace.of().getAppId();
+
+            vars.put("latestApiId", latestApiId.toString());
+            vars.put("latestApiVersion", latestApiId.getVersion().toString());
+            vars.put("latestRuntimeId", latestRuntimeId.toString());
+            vars.put("latestRuntimeVersion", latestRuntimeId.getVersion().toString());
+            vars.put("latestAppId", latestAppId.toString());
+            vars.put("latestAppVersion", latestAppId.getVersion().toString());
+            vars.put("latestJarLocation", latestJarLocation);
+        }
+        {
+            vars.put("jarLocation", vars.get("latestJarLocation"));
+            vars.put("apiId", vars.get("latestApiId"));
+            vars.put("apiVersion", vars.get("latestApiVersion"));
+            vars.put("appId", vars.get("latestAppId"));
+            vars.put("appVersion", vars.get("latestAppVersion"));
+            vars.put("runtimeId", vars.get("latestRuntimeId"));
+            vars.put("runtimeVersion", vars.get("latestRuntimeVersion"));
+        }
         return vars;
     }
 
-    private void runSiteGithubRepo() {
-        echo("**** $v (nuts)...", NMaps.of("v", NMsg.ofStyled("ndoc", NTextStyle.keyword())));
+    private void runGithubRepository() {
+        echoC("**** %s %s (nuts)...", NMsg.ofStyledKeyword("ndoc"), NMsg.ofStyledSuccess("repository"));
         NDocProjectConfig config = new NDocProjectConfig()
-                .setContextName("nuts-release-tool")
-                .setProjectPath(context().root.resolve(".dir-template").toString())
-                .setTargetFolder(context().root.toString());
+                .setContextName("nuts-release-tool/repository")
+                .setProjectPath(context().repositoryProjectFolder.toString())
+                .addSource(context().websiteProjectFolder.resolve("src/main/METADATA").toString())
+                .setTargetFolder(context().nutsRootFolder.toString());
         NDocContext templateProject = new ProjectNDocContext();
-        for (Map.Entry<String, Object> e : prepareVars().entrySet()) {
-            templateProject.setVar(e.getKey(), e.getValue());
-        }
-        NPath.of(Mvn.localMaven() + "/" + Mvn.file(Nuts.getApiId(), MvnArtifactType.JAR))
-                .copyTo(context().NUTS_WEBSITE_BASE.resolve("static/nuts-preview.jar")
+        templateProject.setVars(prepareVars());
+        NPath.of(Mvn.localMaven() + "/" + Mvn.jar(NWorkspace.of().getAppId()))
+                .copyTo(context().websiteProjectFolder.resolve("src/resources/nuts-preview.jar")
                 );
         templateProject.run(config);
     }
 
-    private void runSiteGithubDocumentation() {
-        NInstallCmd.of("ndocusaurus").run();
-        echo("**** $v (nuts)...", NMaps.of("v", NMsg.ofStyled("ndocusaurus", NTextStyle.keyword())));
-        String workdir = context().NUTS_WEBSITE_BASE.toString();
-        DocusaurusProject docusaurusProject = new DocusaurusProject(workdir,
-                Paths.get(workdir).resolve(".dir-template").resolve("src").toString());
-        DocusaurusCtrl docusaurusCtrl = new DocusaurusCtrl(docusaurusProject)
-                .setBuildWebSite(true)
-                .setStartWebSite(false)
-                .setBuildPdf(true)
-                .setAutoInstallNutsPackages(NWorkspace.of()
-                        .getBootOptions().getConfirm().orElse(NConfirmationMode.ASK) == NConfirmationMode.YES)
-                .setVars(prepareVars());
+    private void runGithubDocumentationWebsite() {
+        echoC("**** %s %s (nuts)...", NMsg.ofStyledKeyword("ndoc"), NMsg.ofStyledSuccess("documentation"));
+        NDocProjectConfig config = new NDocProjectConfig()
+                .setContextName("nuts-release-tool/documentation")
+                .setProjectPath(context().websiteProjectFolder.toString())
+                .setClean(true)
+                .setTargetFolder(context().nutsRootFolder.resolve("docs").toString());
+        NDocContext templateProject = new ProjectNDocContext();
+        templateProject.setVars(prepareVars());
+        NPath.of(Mvn.localMaven() + "/" + Mvn.jar(NWorkspace.of().getAppId()))
+                .copyTo(context().websiteProjectFolder.resolve("src/resources/nuts-preview.jar")
+                );
+        templateProject.run(config);
 
-        docusaurusCtrl.run();
+
+//        NInstallCmd.of("ndocusaurus").run();
+//        echo("**** $v (nuts)...", NMaps.of("v", NMsg.ofStyled("ndocusaurus", NTextStyle.keyword())));
+//        String workdir = context().NUTS_WEBSITE_BASE.toString();
+//        DocusaurusProject docusaurusProject = new DocusaurusProject(workdir,
+//                Paths.get(workdir).resolve(".dir-template").resolve("src").toString());
+//        DocusaurusCtrl docusaurusCtrl = new DocusaurusCtrl(docusaurusProject)
+//                .setBuildWebSite(true)
+//                .setStartWebSite(false)
+//                .setBuildPdf(true)
+//                .setAutoInstallNutsPackages(NWorkspace.of()
+//                        .getBootOptions().getConfirm().orElse(NConfirmationMode.ASK) == NConfirmationMode.YES)
+//                .setVars(prepareVars());
+//
+//        docusaurusCtrl.run();
 
     }
 }

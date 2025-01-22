@@ -5,16 +5,11 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.oldws.OldWorkspace;
-import net.thevpc.nuts.core.test.oldws.impl.OldWorkspace083;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 
 
-import net.thevpc.nuts.io.NCp;
-import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NIOUtils;
+import net.thevpc.nuts.io.NIOUtils;
 import org.junit.jupiter.api.*;
 
 import java.io.*;

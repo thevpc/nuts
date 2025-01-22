@@ -101,7 +101,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
         NDescriptorFormat.of(desc).print(new OutputStreamWriter(descStream));
         NWebCli nWebCli = NWebCli.of();
-        nWebCli.req().post()
+        nWebCli.req().POST()
                 .setUrl(CoreIOUtils.buildUrl(config().getLocationPath().toString(), "/deploy?" + resolveAuthURLPart()))
                 .addPart("descriptor-hash", NDigest.of().sha1().setSource(desc).computeString())
                 .addPart("content-hash", NDigestUtils.evalSHA1Hex(content))
@@ -172,7 +172,7 @@ public class NHttpSrvRepository extends NCachedRepository {
             String js = ((NExprIdFilter) filter).toExpr();
             if (js != null) {
                 NWebCli nWebCli = NWebCli.of();
-                ret = nWebCli.req().post()
+                ret = nWebCli.req().POST()
                         .setUrl(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()))
                         .addPart("root", "/")
                         .addPart("ul", ulp[0])
@@ -185,7 +185,7 @@ public class NHttpSrvRepository extends NCachedRepository {
             }
         } else {
             NWebCli nWebCli = NWebCli.of();
-            ret = nWebCli.req().post()
+            ret = nWebCli.req().POST()
                     .setUrl(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()))
                     .addPart("root", "/")
                     .addPart("ul", ulp[0])
@@ -277,8 +277,8 @@ public class NHttpSrvRepository extends NCachedRepository {
         String passphrase = config().getConfigProperty(CoreSecurityUtils.ENV_KEY_PASSPHRASE)
                 .flatMap(NLiteral::asString)
                 .orElse(CoreSecurityUtils.DEFAULT_PASSPHRASE);
-        newLogin = new String(CoreSecurityUtils.defaultEncryptChars(NStringUtils.trim(newLogin).toCharArray(), passphrase));
-        credentials = CoreSecurityUtils.defaultEncryptChars(credentials, passphrase);
+        newLogin = new String(CoreSecurityUtils.INSTANCE.defaultEncryptChars(NStringUtils.trim(newLogin).toCharArray(), passphrase));
+        credentials = CoreSecurityUtils.INSTANCE.defaultEncryptChars(credentials, passphrase);
         return new String[]{newLogin, new String(credentials)};
     }
 

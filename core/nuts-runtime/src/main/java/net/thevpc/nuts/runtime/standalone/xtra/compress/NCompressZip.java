@@ -8,7 +8,7 @@ import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
-import net.thevpc.nuts.util.NIOUtils;
+import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 

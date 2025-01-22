@@ -56,9 +56,9 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
         try {
             fout = NIO.of().getSystemTerminal().getErr();
             if (fm != null) {
-                fm = NMsg.ofStyled(fm, NTextStyle.error());
+                fm = NMsg.ofStyledError(fm);
             } else {
-                fm = NMsg.ofStyled(m, NTextStyle.error());
+                fm = NMsg.ofStyledError(m);
             }
         } catch (Exception ex2) {
             NLogOp.of(NApplications.class).level(Level.FINE).error(ex2).log(

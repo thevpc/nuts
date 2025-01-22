@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.docusaurus;
 
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.lib.doc.context.NDocContext;
 
 import java.nio.file.Path;
@@ -11,7 +12,7 @@ class DaucusaurusNDocContext extends NDocContext {
         setProjectFileName("project.nsh");
     }
 
-    public void executeProjectFile(Path path, String mimeTypesString) {
+    public void executeProjectFile(NPath path, String mimeTypesString) {
         getExecutorManager().executeRegularFile(path, "text/ndoc-nsh-project");
     }
 }

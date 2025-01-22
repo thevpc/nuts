@@ -17,6 +17,7 @@
  */
 package net.thevpc.nuts.lib.md;
 
+import net.thevpc.nuts.lib.md.base.MdAbstractElement;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.lib.md.util.MdUtils;
 

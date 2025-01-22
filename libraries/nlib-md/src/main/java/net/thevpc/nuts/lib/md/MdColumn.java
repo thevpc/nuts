@@ -17,6 +17,7 @@
  */
 package net.thevpc.nuts.lib.md;
 
+import net.thevpc.nuts.lib.md.base.MdAbstractElement;
 import net.thevpc.nuts.util.NBlankable;
 
 import java.util.Objects;
@@ -25,7 +26,7 @@ import java.util.Objects;
  *
  * @author thevpc
  */
-public class MdColumn extends MdAbstractElement{
+public class MdColumn extends MdAbstractElement {
 
     private MdElement name;
     private MdHorizontalAlign horizontalAlign;

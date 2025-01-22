@@ -46,7 +46,7 @@ import net.thevpc.nuts.runtime.standalone.session.DefaultNSession;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.util.NClassClassMap;
-import net.thevpc.nuts.util.NListMap;
+import net.thevpc.nuts.util.NListValueMap;
 import net.thevpc.nuts.runtime.standalone.util.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.util.stream.DefaultNCollectionsRPI;
 import net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionFormat;
@@ -77,7 +77,7 @@ import java.util.stream.Collectors;
 public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
 
     private final NLog LOG;
-    private final NListMap<Class<?>, Object> instances = new NListMap<>();
+    private final NListValueMap<Class<?>, Object> instances = new NListValueMap<>();
     private final Map<NId, IdCache> discoveredCacheById = new HashMap<>();
     private final HashMap<String, String> _alreadyLogger = new HashMap<>();
     private final NWorkspace workspace;
@@ -177,7 +177,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.web.NWebCli": {
-                    NWebCli p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNWebCli(session));
+                    NWebCli p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNWebCli());
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.NIdBuilder": {

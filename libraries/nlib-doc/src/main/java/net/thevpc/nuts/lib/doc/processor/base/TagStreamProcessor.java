@@ -1,6 +1,7 @@
 package net.thevpc.nuts.lib.doc.processor.base;
 
 import net.thevpc.nuts.lib.doc.context.NDocContext;
+import net.thevpc.nuts.lib.doc.mimetype.MimeTypeConstants;
 import net.thevpc.nuts.lib.doc.processor.NDocStreamProcessor;
 
 import java.io.*;
@@ -14,10 +15,14 @@ import java.io.*;
  * ${:for}
  */
 public class TagStreamProcessor implements NDocStreamProcessor {
-    String startTag;
-    String endTag;
-    String escape;
-    String exprLang;
+    public static final TagStreamProcessor DOLLAR =new TagStreamProcessor("${","}", MimeTypeConstants.NEXPR);
+    public static final TagStreamProcessor DOLLAR_BARACKET2 =new TagStreamProcessor("${{","}}",MimeTypeConstants.NEXPR);
+    public static final TagStreamProcessor BARACKET2=new TagStreamProcessor("{{","}}",MimeTypeConstants.NEXPR);
+    public static final TagStreamProcessor LT_PERCENT=new TagStreamProcessor("<%","%>",MimeTypeConstants.NEXPR);
+    protected String startTag;
+    protected String endTag;
+    protected String escape;
+    protected String exprLang;
 
     public TagStreamProcessor(String startTag, String endTag, String exprLang) {
         this.startTag = startTag;

@@ -144,7 +144,7 @@ public class NameBuilder {
                     }
                     case 'h': {
                         if (!NWorkspaceUtils.isUserDefaultWorkspace()) {
-                            h.append(workspace.getHashName());
+                            h.append(workspace.getDigestName());
                         }
                         break;
                     }

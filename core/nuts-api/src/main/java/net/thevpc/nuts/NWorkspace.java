@@ -25,7 +25,6 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.reserved.NScopedWorkspace;
@@ -90,9 +89,11 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
      */
     String getName();
 
-    String getHashName();
+    String getDigestName();
 
     NVersion getApiVersion();
+
+    NVersion getBootVersion();
 
     NId getApiId();
 

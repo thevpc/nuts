@@ -11,14 +11,14 @@
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
@@ -78,11 +78,13 @@ public enum NTextStyleType implements NEnum {
     }
 
     public static NOptional<NTextStyleType> parse(String value) {
-        return NEnumUtils.parseEnum(value, NTextStyleType.class, s->{
+        return NEnumUtils.parseEnum(value, NTextStyleType.class, s -> {
             switch (s.getNormalizedValue()) {
                 case "F":
                 case "FOREGROUND":
-                case "FOREGROUNDCOLOR": {
+                case "FOREGROUNDCOLOR":
+                case "FORE_COLOR":
+                case "FOREGROUND_COLOR": {
                     return NOptional.of(FORE_COLOR);
                 }
                 case "PLAIN": {
@@ -90,20 +92,24 @@ public enum NTextStyleType implements NEnum {
                 }
                 case "FX":
                 case "FOREGROUNDX":
-                case "FOREGROUNDTRUECOLOR": {
+                case "FOREGROUNDTRUECOLOR":
+                case "FOREGROUND_TRUE_COLOR": {
                     return NOptional.of(FORE_TRUE_COLOR);
                 }
                 case "B":
                 case "BACKGROUND":
                 case "BACK_COLOR":
                 case "BACKCOLOR":
-                case "BACKGROUNDCOLOR": {
+                case "BACKGROUNDCOLOR":
+                case "BACKGROUND_COLOR": {
                     return NOptional.of(BACK_COLOR);
                 }
                 case "BX":
                 case "BACKTRUECOLOR":
+                case "BACK_TRUE_COLOR":
                 case "BACKGROUNDX":
-                case "BACKGROUNDTRUECOLOR": {
+                case "BACKGROUNDTRUECOLOR":
+                case "BACKGROUND_TRUE_COLOR": {
                     return NOptional.of(BACK_TRUE_COLOR);
 
                 }
@@ -219,7 +225,37 @@ public enum NTextStyleType implements NEnum {
         return id;
     }
 
+    public boolean isBasic(boolean trueBasic) {
+        if (trueBasic) {
+            if (basic) {
+                switch (this) {
+                    case BACK_COLOR:
+                    case FORE_COLOR: {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            return false;
+        } else {
+            return basic;
+        }
+    }
+
     public boolean basic() {
         return basic;
+    }
+
+    public boolean trueBasic() {
+        if (basic) {
+            switch (this) {
+                case BACK_COLOR:
+                case FORE_COLOR: {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }

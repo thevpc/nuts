@@ -50,6 +50,16 @@ public class HtmlBuffer {
 
     public static class TagList extends Node {
         Node[] all;
+        private boolean newLine=true;
+
+        public boolean isNewLine() {
+            return newLine;
+        }
+
+        public TagList setNewLine(boolean newLine) {
+            this.newLine = newLine;
+            return this;
+        }
 
         public TagList(List<Node>  all) {
             this(all.toArray(new Node[0]));
@@ -64,7 +74,9 @@ public class HtmlBuffer {
             StringBuilder sb = new StringBuilder();
             for (Node node : all) {
                 sb.append(node);
-                sb.append("\n");
+                if(newLine) {
+                    sb.append("\n");
+                }
             }
             return sb.toString();
         }

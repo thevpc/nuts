@@ -3,11 +3,10 @@ package net.thevpc.nuts.core.test.oldws;
 import net.thevpc.nuts.NExecCmd;
 import net.thevpc.nuts.NExecutionType;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.core.test.Test06_UpdateTest;
 import net.thevpc.nuts.core.test.oldws.impl.OldWorkspace083;
 import net.thevpc.nuts.core.test.oldws.impl.OldWorkspace084;
 import net.thevpc.nuts.core.test.oldws.impl.OldWorkspace085;
-import net.thevpc.nuts.util.NIOUtils;
+import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.File;

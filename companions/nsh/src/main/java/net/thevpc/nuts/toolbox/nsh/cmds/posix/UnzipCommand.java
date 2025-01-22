@@ -137,7 +137,7 @@ public class UnzipCommand extends NShellBuiltinDefault {
 
                                 @Override
                                 public boolean visitFile(String path, InputStream inputStream) {
-                                    session.out().print(NMsg.ofStyled(path, NTextStyle.path()));
+                                    session.out().print(NMsg.ofStyledPath(path));
                                     return true;
                                 }
                             }).run();

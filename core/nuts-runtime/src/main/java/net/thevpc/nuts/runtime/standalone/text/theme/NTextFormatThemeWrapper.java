@@ -21,33 +21,46 @@ public class NTextFormatThemeWrapper implements NTextFormatTheme {
     }
 
     @Override
-    public NTextStyles toBasicStyles(NTextStyles styles) {
+    public NTextStyles toBasicStyles(NTextStyles styles, boolean basicTrueStyles) {
         NTextStyles ret = NTextStyles.PLAIN;
         if (styles != null) {
             for (NTextStyle style : styles) {
-                ret = ret.append(toBasicStyles(style));
+                ret = ret.append(toBasicStyles(style,basicTrueStyles));
             }
         }
         return ret;
     }
 
-    public NTextStyles toBasicStyles(NTextStyle style) {
+    public NTextStyles toBasicStyles(NTextStyle style,boolean basicTrueStyles) {
         if (style == null) {
             return NTextStyles.PLAIN;
         }
-        if (style.getType().basic()) {
+        if(style.getType().isBasic(basicTrueStyles)) {
             return NTextStyles.of(style);
         }
-        NTextStyles t = other.toBasicStyles(NTextStyles.of(style));
+        if(style.getType().isBasic(basicTrueStyles)) {
+            return NTextStyles.of(style);
+        }
+        NTextStyles t = other.toBasicStyles(style, basicTrueStyles);
         if (t == null) {
             return NTextStyles.PLAIN;
         }
         List<NTextStyle> rr = new ArrayList<>();
-        for (NTextStyle s : t) {
-            if (s.getType().basic()) {
-                rr.add(s);
-            } else {
-                //ignore...
+        if(basicTrueStyles){
+            for (NTextStyle s : t) {
+                if (s.getType().trueBasic()) {
+                    rr.add(s);
+                } else {
+                    System.out.println("Error");
+                }
+            }
+        }else{
+            for (NTextStyle s : t) {
+                if (s.getType().basic()) {
+                    rr.add(s);
+                } else {
+                    System.out.println("Error");
+                }
             }
         }
         return NTextStyles.PLAIN.append(rr.toArray(new NTextStyle[0]));

@@ -6,6 +6,7 @@
 package net.thevpc.nuts.lib.md.docusaurus;
 
 import net.thevpc.nuts.lib.md.*;
+import net.thevpc.nuts.lib.md.base.AbstractMdWriter;
 
 import java.io.Writer;
 

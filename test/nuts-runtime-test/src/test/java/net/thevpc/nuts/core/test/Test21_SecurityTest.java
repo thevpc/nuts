@@ -21,9 +21,9 @@ public class Test21_SecurityTest {
 
     @Test
     public void testEncrypt(){
-        char[] r = CoreSecurityUtils.defaultEncryptChars("Hello".toCharArray(), "okkay");
+        char[] r = CoreSecurityUtils.INSTANCE.defaultEncryptChars("Hello".toCharArray(), "okkay");
         TestUtils.println(new String(r));
-        char[] i = CoreSecurityUtils.defaultDecryptChars(r, "okkay");
+        char[] i = CoreSecurityUtils.INSTANCE.defaultDecryptChars(r, "okkay");
         TestUtils.println(new String(i));
     }
 

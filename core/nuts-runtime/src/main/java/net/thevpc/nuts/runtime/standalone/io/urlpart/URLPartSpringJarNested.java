@@ -4,7 +4,7 @@ import net.thevpc.nuts.format.NVisitResult;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
-import net.thevpc.nuts.util.NIOUtils;
+import net.thevpc.nuts.io.NIOUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

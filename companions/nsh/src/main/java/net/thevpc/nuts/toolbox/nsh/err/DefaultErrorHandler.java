@@ -63,7 +63,7 @@ public class DefaultErrorHandler implements NShellErrorHandler {
     public void onError(String message, Throwable th, NShellContext context) {
         if (context.getSession() != null && context.getSession().err() != null) {
             NPrintStream err = context.getSession().err();
-            err.println(NMsg.ofStyled(message, NTextStyle.error()));
+            err.println(NMsg.ofStyledError(message));
             err.flush();
         }else{
             th.printStackTrace();

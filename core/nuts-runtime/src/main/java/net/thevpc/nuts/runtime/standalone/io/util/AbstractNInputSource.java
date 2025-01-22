@@ -2,11 +2,10 @@ package net.thevpc.nuts.runtime.standalone.io.util;
 
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.util.NHex;
-import net.thevpc.nuts.util.NIOUtils;
+import net.thevpc.nuts.io.NIOUtils;
 
 import java.io.*;
 import java.nio.charset.Charset;

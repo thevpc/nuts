@@ -63,7 +63,7 @@ Indeed, implementing your application using NAF will provide you a clean way to 
 
 * seamless integration with **```nuts```** and all other NAF applications (obviously!)
 
-* support standard file system layout (XDG) where config files and log files are not necessarily in the same folder see [Nuts File System](../04-nuts-concepts/filesystem.md) for more details.
+* support standard file system layout (XDG) where config files and log files are not necessarily in the same folder see [Nuts File System](../04-nuts-concepts/04-filesystem) for more details.
 
 * support application life cycle events (onInstall, onUninstall, onUpdate), 
 

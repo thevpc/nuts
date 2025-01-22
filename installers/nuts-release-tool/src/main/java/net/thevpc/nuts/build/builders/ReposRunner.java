@@ -9,7 +9,6 @@ import net.thevpc.nuts.build.util.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.util.NMaps;
-import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NMsg;
 
 /**
@@ -22,7 +21,7 @@ public class ReposRunner extends AbstractRunner {
 
     @Override
     public void configureAfterOptions() {
-        context().NUTS_WEBSITE_BASE = context().root.resolve("documentation/website");
+
     }
 
     @Override
@@ -53,18 +52,18 @@ public class ReposRunner extends AbstractRunner {
     @Override
     public void run() {
         if (repoPreview) {
-            echo("**** $v (nuts settings update stats)...", NMaps.of("v", NMsg.ofStyled("build-nuts-preview", NTextStyle.keyword())));
+            echoV("**** $v (nuts settings update stats)...", NMaps.of("v", NMsg.ofStyledKeyword("build-nuts-preview")));
             NExecCmd.of()
                     .addCommand("settings", "update", "stats")
-                    .addCommand(context().root.resolve("../nuts-preview"))
+                    .addCommand(context().nutsRootFolder.resolve("../nuts-preview"))
                     .failFast()
                     .run();
         }
         if (repoPublic) {
-            echo("**** $v (nuts settings update stats)...", NMaps.of("v", NMsg.ofStyled("build-nuts-public", NTextStyle.keyword())));
+            echoV("**** $v (nuts settings update stats)...", NMaps.of("v", NMsg.ofStyledKeyword("build-nuts-public")));
             NExecCmd.of()
                     .addCommand("settings", "update", "stats")
-                    .addCommand(context().root.resolve("../nuts-public"))
+                    .addCommand(context().nutsRootFolder.resolve("../nuts-public"))
                     .failFast()
                     .run();
         }

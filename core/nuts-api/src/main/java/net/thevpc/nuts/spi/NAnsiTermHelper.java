@@ -116,9 +116,9 @@ public class NAnsiTermHelper {
 
     public String foreColor(NColor c) {
         if (c != null) {
-            int intColor = c.getColor();
             switch (c.getType()) {
                 case 4: {
+                    int intColor = c.getIntColor();
                     if (intColor <= 0) {
                         intColor = 0;
                     }
@@ -128,6 +128,7 @@ public class NAnsiTermHelper {
                     return ("" + FG8[intColor]);
                 }
                 case 8: {
+                    int intColor = c.getIntColor();
                     if (intColor <= 0) {
                         intColor = 0;
                     }
@@ -137,6 +138,15 @@ public class NAnsiTermHelper {
                     return ("38;5;" + intColor);
                 }
                 case 24: {
+                    int intColor = c.getIntColor();
+                    java.awt.Color color = new java.awt.Color(intColor);
+                    int red = color.getRed();
+                    int green = color.getGreen();
+                    int blue = color.getBlue();
+                    return ("38;2;" + red + ";" + green + ";" + blue);
+                }
+                default: {
+                    int intColor = (int) c.getLongColor();
                     java.awt.Color color = new java.awt.Color(intColor);
                     int red = color.getRed();
                     int green = color.getGreen();
@@ -150,9 +160,9 @@ public class NAnsiTermHelper {
 
     public String backColor(NColor c) {
         if (c != null) {
-            int intColor = c.getColor();
             switch (c.getType()) {
                 case 4: {
+                    int intColor = c.getIntColor();
                     if (intColor <= 0) {
                         intColor = 0;
                     }
@@ -162,6 +172,7 @@ public class NAnsiTermHelper {
                     return "" + BG8[intColor];
                 }
                 case 8: {
+                    int intColor = c.getIntColor();
                     if (intColor <= 0) {
                         intColor = 0;
                     }
@@ -171,6 +182,15 @@ public class NAnsiTermHelper {
                     return ("48;5;" + intColor);
                 }
                 case 24: {
+                    int intColor = c.getIntColor();
+                    java.awt.Color color = new java.awt.Color(intColor);
+                    int red = color.getRed();
+                    int green = color.getGreen();
+                    int blue = color.getBlue();
+                    return ("48;2;" + red + ";" + green + ";" + blue);
+                }
+                default: {
+                    int intColor = (int) c.getLongColor();
                     java.awt.Color color = new java.awt.Color(intColor);
                     int red = color.getRed();
                     int green = color.getGreen();

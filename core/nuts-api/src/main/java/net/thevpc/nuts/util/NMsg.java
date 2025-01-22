@@ -13,13 +13,13 @@
  * <br>
  * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
@@ -103,9 +103,9 @@ public class NMsg {
             }
         }
         if (format == NTextFormatType.STYLED) {
-            NAssert.requireNonNull(styles,"styles for "+format);
+            NAssert.requireNonNull(styles, "styles for " + format);
         } else {
-            NAssert.requireNull(styles,"styles for "+format+" (not supported)");
+            NAssert.requireNull(styles, "styles for " + format + " (not supported)");
         }
         this.codeLang = NStringUtils.trimToNull(codeLang);
         this.message = message;
@@ -125,10 +125,10 @@ public class NMsg {
     }
 
     public static NMsg ofStringLiteral(String literal) {
-        if(literal==null){
-            return NMsg.ofStyled("null",NTextStyle.primary1());
+        if (literal == null) {
+            return NMsg.ofStyled("null", NTextStyle.primary1());
         }
-        return NMsg.ofStyled(NStringUtils.formatStringLiteral(literal),NTextStyle.string());
+        return NMsg.ofStyled(NStringUtils.formatStringLiteral(literal), NTextStyle.string());
     }
 
     public static NMsg ofStyled(String message, NTextStyle style) {
@@ -251,23 +251,23 @@ public class NMsg {
         return level;
     }
 
-    private Object _preFormatOne(Object o){
-        if(o==null){
+    private Object _preFormatOne(Object o) {
+        if (o == null) {
             return null;
         }
-        if(o instanceof NMsgFormattable){
+        if (o instanceof NMsgFormattable) {
             return ((NMsgFormattable) o).toMsg();
         }
         return o;
     }
 
-    private Object[] _preFormatArr(Object[] o){
-        if(o==null){
+    private Object[] _preFormatArr(Object[] o) {
+        if (o == null) {
             return o;
         }
-        Object[] r=new Object[o.length];
+        Object[] r = new Object[o.length];
         for (int i = 0; i < r.length; i++) {
-            r[i]=_preFormatOne(o[i]);
+            r[i] = _preFormatOne(o[i]);
         }
         return r;
     }
@@ -370,31 +370,31 @@ public class NMsg {
         );
     }
 
-    public NMsg asSevere(){
+    public NMsg asSevere() {
         return withLevel(Level.SEVERE);
     }
 
-    public NMsg asInfo(){
+    public NMsg asInfo() {
         return withLevel(Level.FINE);
     }
 
-    public NMsg asConfig(){
+    public NMsg asConfig() {
         return withLevel(Level.CONFIG);
     }
 
-    public NMsg asWarning(){
+    public NMsg asWarning() {
         return withLevel(Level.WARNING);
     }
 
-    public NMsg asFinest(){
+    public NMsg asFinest() {
         return withLevel(Level.FINEST);
     }
 
-    public NMsg asFine(){
+    public NMsg asFine() {
         return withLevel(Level.FINE);
     }
 
-    public NMsg asFiner(){
+    public NMsg asFiner() {
         return withLevel(Level.FINER);
     }
 
@@ -423,5 +423,446 @@ public class NMsg {
         return result;
     }
 
+    /// //////////////////////////////////////////////////////////////////
+    public static NMsg ofStyledKeyword(String message) {
+        return ofStyled(message, NTextStyle.keyword());
+    }
+
+    public static NMsg ofStyledPath(String message) {
+        return ofStyled(message, NTextStyle.path());
+    }
+
+    public static NMsg ofStyledPale(String message) {
+        return ofStyled(message, NTextStyle.pale());
+    }
+
+    public static NMsg ofStyledSeparator(String message) {
+        return ofStyled(message, NTextStyle.separator());
+    }
+
+    public static NMsg ofStyledString(String message) {
+        return ofStyled(message, NTextStyle.string());
+    }
+
+    public static NMsg ofStyledBlink(String message) {
+        return ofStyled(message, NTextStyle.blink());
+    }
+
+    public static NMsg ofStyledBold(String message) {
+        return ofStyled(message, NTextStyle.bold());
+    }
+
+    public static NMsg ofStyledBool(String message) {
+        return ofStyled(message, NTextStyle.bool());
+    }
+
+    public static NMsg ofStyledComments(String message) {
+        return ofStyled(message, NTextStyle.comments());
+    }
+
+    public static NMsg ofStyledConfig(String message) {
+        return ofStyled(message, NTextStyle.config());
+    }
+
+    public static NMsg ofStyledDanger(String message) {
+        return ofStyled(message, NTextStyle.danger());
+    }
+
+    public static NMsg ofStyledDate(String message) {
+        return ofStyled(message, NTextStyle.date());
+    }
+
+    public static NMsg ofStyledError(String message) {
+        return ofStyled(message, NTextStyle.error());
+    }
+
+    public static NMsg ofStyledFail(String message) {
+        return ofStyled(message, NTextStyle.fail());
+    }
+
+    public static NMsg ofStyledInfo(String message) {
+        return ofStyled(message, NTextStyle.info());
+    }
+
+    public static NMsg ofStyledInput(String message) {
+        return ofStyled(message, NTextStyle.input());
+    }
+
+    public static NMsg ofStyledItalic(String message) {
+        return ofStyled(message, NTextStyle.italic());
+    }
+
+    public static NMsg ofStyledNumber(String message) {
+        return ofStyled(message, NTextStyle.number());
+    }
+
+    public static NMsg ofStyledOperator(String message) {
+        return ofStyled(message, NTextStyle.operator());
+    }
+
+    public static NMsg ofStyledOption(String message) {
+        return ofStyled(message, NTextStyle.option());
+    }
+
+    public static NMsg ofStyledPrimary1(String message) {
+        return ofStyled(message, NTextStyle.primary1());
+    }
+
+    public static NMsg ofStyledPrimary2(String message) {
+        return ofStyled(message, NTextStyle.primary2());
+    }
+
+    public static NMsg ofStyledPrimary3(String message) {
+        return ofStyled(message, NTextStyle.primary3());
+    }
+
+    public static NMsg ofStyledPrimary4(String message) {
+        return ofStyled(message, NTextStyle.primary4());
+    }
+
+    public static NMsg ofStyledPrimary5(String message) {
+        return ofStyled(message, NTextStyle.primary5());
+    }
+
+    public static NMsg ofStyledPrimary6(String message) {
+        return ofStyled(message, NTextStyle.primary6());
+    }
+
+    public static NMsg ofStyledPrimary7(String message) {
+        return ofStyled(message, NTextStyle.primary7());
+    }
+
+    public static NMsg ofStyledPrimary8(String message) {
+        return ofStyled(message, NTextStyle.primary8());
+    }
+
+    public static NMsg ofStyledPrimary9(String message) {
+        return ofStyled(message, NTextStyle.primary9());
+    }
+
+    public static NMsg ofStyledSecondary1(String message) {
+        return ofStyled(message, NTextStyle.secondary1());
+    }
+
+    public static NMsg ofStyledSecondary2(String message) {
+        return ofStyled(message, NTextStyle.secondary2());
+    }
+
+    public static NMsg ofStyledSecondary3(String message) {
+        return ofStyled(message, NTextStyle.secondary3());
+    }
+
+    public static NMsg ofStyledSecondary4(String message) {
+        return ofStyled(message, NTextStyle.secondary4());
+    }
+
+    public static NMsg ofStyledSecondary5(String message) {
+        return ofStyled(message, NTextStyle.secondary5());
+    }
+
+    public static NMsg ofStyledSecondary6(String message) {
+        return ofStyled(message, NTextStyle.secondary6());
+    }
+
+    public static NMsg ofStyledSecondary7(String message) {
+        return ofStyled(message, NTextStyle.secondary7());
+    }
+
+    public static NMsg ofStyledSecondary8(String message) {
+        return ofStyled(message, NTextStyle.secondary8());
+    }
+
+    public static NMsg ofStyledSecondary9(String message) {
+        return ofStyled(message, NTextStyle.secondary9());
+    }
+
+    public static NMsg ofStyledTitle1(String message) {
+        return ofStyled(message, NTextStyle.title1());
+    }
+
+    public static NMsg ofStyledTitle2(String message) {
+        return ofStyled(message, NTextStyle.title2());
+    }
+
+    public static NMsg ofStyledTitle3(String message) {
+        return ofStyled(message, NTextStyle.title3());
+    }
+
+    public static NMsg ofStyledTitle4(String message) {
+        return ofStyled(message, NTextStyle.title4());
+    }
+
+    public static NMsg ofStyledTitle5(String message) {
+        return ofStyled(message, NTextStyle.title5());
+    }
+
+    public static NMsg ofStyledTitle6(String message) {
+        return ofStyled(message, NTextStyle.title6());
+    }
+
+    public static NMsg ofStyledTitle7(String message) {
+        return ofStyled(message, NTextStyle.title7());
+    }
+
+    public static NMsg ofStyledTitle8(String message) {
+        return ofStyled(message, NTextStyle.title8());
+    }
+
+    public static NMsg ofStyledTitle9(String message) {
+        return ofStyled(message, NTextStyle.title9());
+    }
+
+    public static NMsg ofStyledSuccess(String message) {
+        return ofStyled(message, NTextStyle.success());
+    }
+
+    public static NMsg ofStyledStriked(String message) {
+        return ofStyled(message, NTextStyle.striked());
+    }
+
+    public static NMsg ofStyledVariable(String message) {
+        return ofStyled(message, NTextStyle.variable());
+    }
+
+    public static NMsg ofStyledWarn(String message) {
+        return ofStyled(message, NTextStyle.warn());
+    }
+
+    public static NMsg ofStyledForegroundColor(String message, int color) {
+        return ofStyled(message, NTextStyle.foregroundColor(color));
+    }
+
+    public static NMsg ofStyledForegroundTrueColor(String message, int color) {
+        return ofStyled(message, NTextStyle.foregroundTrueColor(color));
+    }
+
+    public static NMsg ofStyledBackgroundColor(String message, int color) {
+        return ofStyled(message, NTextStyle.backgroundColor(color));
+    }
+
+    public static NMsg ofStyledBackgroundTrueColor(String message, int color) {
+        return ofStyled(message, NTextStyle.backgroundTrueColor(color));
+    }
+
+    /// //////////////////////////////////////////////////////////////////
+    public static NMsg ofStyledKeyword(NMsg message) {
+        return ofStyled(message, NTextStyle.keyword());
+    }
+
+    public static NMsg ofStyledPath(NMsg message) {
+        return ofStyled(message, NTextStyle.path());
+    }
+
+    public static NMsg ofStyledPale(NMsg message) {
+        return ofStyled(message, NTextStyle.pale());
+    }
+
+    public static NMsg ofStyledSeparator(NMsg message) {
+        return ofStyled(message, NTextStyle.separator());
+    }
+
+    public static NMsg ofStyledString(NMsg message) {
+        return ofStyled(message, NTextStyle.string());
+    }
+
+    public static NMsg ofStyledBlink(NMsg message) {
+        return ofStyled(message, NTextStyle.blink());
+    }
+
+    public static NMsg ofStyledBold(NMsg message) {
+        return ofStyled(message, NTextStyle.bold());
+    }
+
+    public static NMsg ofStyledBool(NMsg message) {
+        return ofStyled(message, NTextStyle.bool());
+    }
+
+    public static NMsg ofStyledComments(NMsg message) {
+        return ofStyled(message, NTextStyle.comments());
+    }
+
+    public static NMsg ofStyledConfig(NMsg message) {
+        return ofStyled(message, NTextStyle.config());
+    }
+
+    public static NMsg ofStyledDanger(NMsg message) {
+        return ofStyled(message, NTextStyle.danger());
+    }
+
+    public static NMsg ofStyledDate(NMsg message) {
+        return ofStyled(message, NTextStyle.date());
+    }
+
+    public static NMsg ofStyledError(NMsg message) {
+        return ofStyled(message, NTextStyle.error());
+    }
+
+    public static NMsg ofStyledFail(NMsg message) {
+        return ofStyled(message, NTextStyle.fail());
+    }
+
+    public static NMsg ofStyledInfo(NMsg message) {
+        return ofStyled(message, NTextStyle.info());
+    }
+
+    public static NMsg ofStyledInput(NMsg message) {
+        return ofStyled(message, NTextStyle.input());
+    }
+
+    public static NMsg ofStyledItalic(NMsg message) {
+        return ofStyled(message, NTextStyle.italic());
+    }
+
+    public static NMsg ofStyledNumber(NMsg message) {
+        return ofStyled(message, NTextStyle.number());
+    }
+
+    public static NMsg ofStyledOperator(NMsg message) {
+        return ofStyled(message, NTextStyle.operator());
+    }
+
+    public static NMsg ofStyledOption(NMsg message) {
+        return ofStyled(message, NTextStyle.option());
+    }
+
+    public static NMsg ofStyledPrimary1(NMsg message) {
+        return ofStyled(message, NTextStyle.primary1());
+    }
+
+    public static NMsg ofStyledPrimary2(NMsg message) {
+        return ofStyled(message, NTextStyle.primary2());
+    }
+
+    public static NMsg ofStyledPrimary3(NMsg message) {
+        return ofStyled(message, NTextStyle.primary3());
+    }
+
+    public static NMsg ofStyledPrimary4(NMsg message) {
+        return ofStyled(message, NTextStyle.primary4());
+    }
+
+    public static NMsg ofStyledPrimary5(NMsg message) {
+        return ofStyled(message, NTextStyle.primary5());
+    }
+
+    public static NMsg ofStyledPrimary6(NMsg message) {
+        return ofStyled(message, NTextStyle.primary6());
+    }
+
+    public static NMsg ofStyledPrimary7(NMsg message) {
+        return ofStyled(message, NTextStyle.primary7());
+    }
+
+    public static NMsg ofStyledPrimary8(NMsg message) {
+        return ofStyled(message, NTextStyle.primary8());
+    }
+
+    public static NMsg ofStyledPrimary9(NMsg message) {
+        return ofStyled(message, NTextStyle.primary9());
+    }
+
+    public static NMsg ofStyledSecondary1(NMsg message) {
+        return ofStyled(message, NTextStyle.secondary1());
+    }
+
+    public static NMsg ofStyledSecondary2(NMsg message) {
+        return ofStyled(message, NTextStyle.secondary2());
+    }
+
+    public static NMsg ofStyledSecondary3(NMsg message) {
+        return ofStyled(message, NTextStyle.secondary3());
+    }
+
+    public static NMsg ofStyledSecondary4(NMsg message) {
+        return ofStyled(message, NTextStyle.secondary4());
+    }
+
+    public static NMsg ofStyledSecondary5(NMsg message) {
+        return ofStyled(message, NTextStyle.secondary5());
+    }
+
+    public static NMsg ofStyledSecondary6(NMsg message) {
+        return ofStyled(message, NTextStyle.secondary6());
+    }
+
+    public static NMsg ofStyledSecondary7(NMsg message) {
+        return ofStyled(message, NTextStyle.secondary7());
+    }
+
+    public static NMsg ofStyledSecondary8(NMsg message) {
+        return ofStyled(message, NTextStyle.secondary8());
+    }
+
+    public static NMsg ofStyledSecondary9(NMsg message) {
+        return ofStyled(message, NTextStyle.secondary9());
+    }
+
+    public static NMsg ofStyledTitle1(NMsg message) {
+        return ofStyled(message, NTextStyle.title1());
+    }
+
+    public static NMsg ofStyledTitle2(NMsg message) {
+        return ofStyled(message, NTextStyle.title2());
+    }
+
+    public static NMsg ofStyledTitle3(NMsg message) {
+        return ofStyled(message, NTextStyle.title3());
+    }
+
+    public static NMsg ofStyledTitle4(NMsg message) {
+        return ofStyled(message, NTextStyle.title4());
+    }
+
+    public static NMsg ofStyledTitle5(NMsg message) {
+        return ofStyled(message, NTextStyle.title5());
+    }
+
+    public static NMsg ofStyledTitle6(NMsg message) {
+        return ofStyled(message, NTextStyle.title6());
+    }
+
+    public static NMsg ofStyledTitle7(NMsg message) {
+        return ofStyled(message, NTextStyle.title7());
+    }
+
+    public static NMsg ofStyledTitle8(NMsg message) {
+        return ofStyled(message, NTextStyle.title8());
+    }
+
+    public static NMsg ofStyledTitle9(NMsg message) {
+        return ofStyled(message, NTextStyle.title9());
+    }
+
+    public static NMsg ofStyledSuccess(NMsg message) {
+        return ofStyled(message, NTextStyle.success());
+    }
+
+    public static NMsg ofStyledStriked(NMsg message) {
+        return ofStyled(message, NTextStyle.striked());
+    }
+
+    public static NMsg ofStyledVariable(NMsg message) {
+        return ofStyled(message, NTextStyle.variable());
+    }
+
+    public static NMsg ofStyledWarn(NMsg message) {
+        return ofStyled(message, NTextStyle.warn());
+    }
+
+    public static NMsg ofStyledForegroundColor(NMsg message, int color) {
+        return ofStyled(message, NTextStyle.foregroundColor(color));
+    }
+
+    public static NMsg ofStyledForegroundTrueColor(NMsg message, int color) {
+        return ofStyled(message, NTextStyle.foregroundTrueColor(color));
+    }
+
+    public static NMsg ofStyledBackgroundColor(NMsg message, int color) {
+        return ofStyled(message, NTextStyle.backgroundColor(color));
+    }
+
+    public static NMsg ofStyledBackgroundTrueColor(NMsg message, int color) {
+        return ofStyled(message, NTextStyle.backgroundTrueColor(color));
+    }
 
 }

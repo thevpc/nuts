@@ -28,7 +28,7 @@ public class NPathFromSPI extends NPathBase {
     private final NPathSPI base;
     private List<String> items;
 
-    public NPathFromSPI(NWorkspace workspace,NPathSPI base) {
+    public NPathFromSPI(NWorkspace workspace, NPathSPI base) {
         super(workspace);
         this.base = base;
     }
@@ -39,7 +39,7 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public NPath copy() {
-        return new NPathFromSPI(workspace,base).copyExtraFrom(this);
+        return new NPathFromSPI(workspace, base).copyExtraFrom(this);
     }
 
     @Override
@@ -406,8 +406,8 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
-    public int getLocationItemsCount() {
-        return base.getLocationItemsCount(this);
+    public int getNameCount() {
+        return base.getNameCount(this);
     }
 
     @Override
@@ -439,13 +439,13 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public String getLocationItem(int index) {
-        return getLocationItems().get(index);
+        return getNames().get(index);
     }
 
     @Override
-    public List<String> getLocationItems() {
+    public List<String> getNames() {
         if (items == null) {
-            items = base.getLocationItems(this);
+            items = base.getNames(this);
         }
         return items == null ? Collections.emptyList() : items;
     }
@@ -477,7 +477,7 @@ public class NPathFromSPI extends NPathBase {
         }
         if (NUseDefaultUtils.isUseDefault(base.getClass(), "walkDfs",
                 NPath.class, NTreeVisitor.class, int.class, NPathOption[].class)) {
-            NPathSPIHelper.walkDfs( this, visitor, maxDepth, options);
+            NPathSPIHelper.walkDfs(this, visitor, maxDepth, options);
         } else {
             base.walkDfs(this, visitor, maxDepth, options);
         }
@@ -544,16 +544,29 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public boolean isEqOrDeepChildOf(NPath other) {
-        if(other==null){
+        if (other == null) {
             return false;
         }
-        if(other instanceof NCompressedPathBase){
-            other=((NCompressedPathBase) other).getBase();
+        return base.isEqOrDeepChildOf(this, unwrapPath(other));
+    }
+
+    @Override
+    public boolean startsWith(NPath other) {
+        return base.startsWith(this, unwrapPath(other));
+    }
+
+    @Override
+    public int compareTo(NPath other) {
+        if (other == null) {
+            return 1;
         }
-        if(other instanceof NCompressedPath){
-            other=((NCompressedPath) other).getBase();
-        }
-        return base.isEqOrDeepChildOf(this,other);
+        return base.compareTo(this, unwrapPath(other));
+    }
+
+
+    @Override
+    public boolean startsWith(String other) {
+        return base.startsWith(this, other);
     }
 
 }

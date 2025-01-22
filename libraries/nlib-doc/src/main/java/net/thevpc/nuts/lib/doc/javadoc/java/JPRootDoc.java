@@ -29,13 +29,11 @@ import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.lib.doc.javadoc.JDClassDoc;
 import net.thevpc.nuts.lib.doc.javadoc.JDRootDoc;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -50,32 +48,27 @@ public class JPRootDoc implements JDRootDoc {
 
     private Map<String, JDClassDoc> classes = new HashMap<String, JDClassDoc>();
 
-    public void parseSrcFolder(Path path, Predicate<String> packageFilter) {
-        try {
-            //support for maven
-            if(Files.isRegularFile(path.resolve("pom.xml"))
-                    && Files.isDirectory(path.resolve("src/main/java"))
-            ){
-                path=path.resolve("src/main/java");
-            }
-            Path path0=path;
-            Files.walk(path0).filter(x -> Files.isRegularFile(x)
-                    && x.getFileName().toString().endsWith(".java")
-            ).forEach(file -> {
-                String pck =
-                        StreamSupport.stream(file.subpath(path0.getNameCount(), file.getNameCount()).spliterator(), false)
-                                .map(Path::toString)
-                                .collect(Collectors.joining("."));
-                if (packageFilter == null || packageFilter.test(pck)) {
-                    parseFile(file);
-                }
-            });
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+    public void parseSrcFolder(NPath path, Predicate<String> packageFilter) {
+        //support for maven
+        if(path.resolve("pom.xml").isRegularFile()
+                && path.resolve("src/main/java").isDirectory()
+        ){
+            path=path.resolve("src/main/java");
         }
+        NPath path0=path;
+        path0.walk().filter(x -> x.isRegularFile()
+                && x.getName().toString().endsWith(".java")
+        ).forEach(file -> {
+            String pck =
+                    StreamSupport.stream(file.subpath(path0.getNameCount(), file.getNameCount()).getNames().spliterator(), false)
+                            .collect(Collectors.joining("."));
+            if (packageFilter == null || packageFilter.test(pck)) {
+                parseFile(file);
+            }
+        });
     }
 
-    public void parseFile(Path path) {
+    public void parseFile(NPath path) {
         try {
             new VoidVisitorAdapter<Object>() {
                 PackageDeclaration p;
@@ -92,7 +85,7 @@ public class JPRootDoc implements JDRootDoc {
                     this.p = p;
                 }
 
-            }.visit(StaticJavaParser.parse(path), null);
+            }.visit(StaticJavaParser.parse(path.toPath().get()), null);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

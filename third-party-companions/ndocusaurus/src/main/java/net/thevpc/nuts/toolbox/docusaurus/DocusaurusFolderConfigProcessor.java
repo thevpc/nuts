@@ -2,6 +2,7 @@ package net.thevpc.nuts.toolbox.docusaurus;
 
 import net.thevpc.nuts.elem.NArrayElement;
 import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.lib.doc.mimetype.MimeTypeConstants;
 import net.thevpc.nuts.lib.doc.processor.NDocProcessor;
 import net.thevpc.nuts.lib.doc.context.NDocContext;
@@ -9,8 +10,6 @@ import net.thevpc.nuts.lib.doc.util.FileProcessorUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -27,9 +26,9 @@ class DocusaurusFolderConfigProcessor implements NDocProcessor {
     }
 
     @Override
-    public void processPath(Path source, String mimeType, NDocContext context) {
+    public void processPath(NPath source, String mimeType, NDocContext context) {
         NObjectElement config = DocusaurusFolder.ofFolder(source.getParent(),
-                        Paths.get(context.getRootDirRequired()).resolve("docs"),
+                        NPath.of(context.getRootDirRequired()).resolve("docs"),
                         docusaurusCtrl.getPreProcessorBaseDir().resolve("src"),
                         0)
                 .getConfig().getObject("type").get();
@@ -54,19 +53,19 @@ class DocusaurusFolderConfigProcessor implements NDocProcessor {
             cmd.add("ndoc" + ((docusaurusCtrl.getNdocVersion() == null || docusaurusCtrl.getNdocVersion().isEmpty()) ? "" : "#" + (docusaurusCtrl.getNdocVersion())));
             cmd.add("--backend=docusaurus");
             for (String s : sources) {
-                s = context.getProcessorManager().processString(s, MimeTypeConstants.PLACEHOLDER_DOLLARS);
+                s = context.getProcessorManager().processString(s, MimeTypeConstants.PLACEHOLDER_DOLLAR);
                 cmd.add("--source");
-                cmd.add(FileProcessorUtils.toAbsolutePath(Paths.get(s), source.getParent()).toString());
+                cmd.add(FileProcessorUtils.toAbsolutePath(NPath.of(s), source.getParent()).toString());
             }
             for (String s : packages) {
-                s = context.getProcessorManager().processString(s, MimeTypeConstants.PLACEHOLDER_DOLLARS);
+                s = context.getProcessorManager().processString(s, MimeTypeConstants.PLACEHOLDER_DOLLAR);
                 cmd.add("--package");
                 cmd.add(s);
             }
             cmd.add("--target");
             cmd.add(target);
-            FileProcessorUtils.mkdirs(Paths.get(target));
-            docusaurusCtrl.runCommand(Paths.get(target), docusaurusCtrl.isAutoInstallNutsPackages(), cmd.toArray(new String[0]));
+            FileProcessorUtils.mkdirs(NPath.of(target));
+            docusaurusCtrl.runCommand(NPath.of(target), docusaurusCtrl.isAutoInstallNutsPackages(), cmd.toArray(new String[0]));
         }
 
     }

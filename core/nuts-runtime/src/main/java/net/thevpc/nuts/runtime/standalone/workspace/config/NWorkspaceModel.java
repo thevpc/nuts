@@ -39,7 +39,6 @@ public class NWorkspaceModel {
     public String location;
     public String name;
     public String hashName;
-    public NVersion apiVersion;
     public NId apiId;
     public NId runtimeId;
     public DefaultNInstalledRepository installedRepository;
@@ -83,8 +82,7 @@ public class NWorkspaceModel {
         }
 
         this.textModel = new DefaultNTextManagerModel(workspace);
-        this.apiVersion = Nuts.getVersion();
-        this.apiId = NId.getApi(this.apiVersion).get();
+        this.apiId = NId.getApi(Nuts.getVersion()).get();
         this.runtimeId = NId.get(
                 askedRuntimeId.getGroupId(),
                 askedRuntimeId.getArtifactId(),

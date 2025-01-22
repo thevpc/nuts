@@ -43,7 +43,7 @@ import java.util.stream.*;
  * @see NSearchCmd#getResultIds()
  * @since 0.5.4
  */
-public interface NStream<T> extends Iterable<T>, NElementDescribable<NStream<T>> {
+public interface NStream<T> extends Iterable<T>, NElementDescribable<NStream<T>>, AutoCloseable {
     static <T> NStream<T> of(T[] str) {
         return NCollectionsRPI.of().arrayToStream(str);
     }
@@ -142,6 +142,7 @@ public interface NStream<T> extends Iterable<T>, NElementDescribable<NStream<T>>
     <R> NStream<R> map(Function<? super T, ? extends R> mapper);
 
     <R> NStream<R> mapUnsafe(UnsafeFunction<? super T, ? extends R> mapper);
+
     <R> NStream<R> mapUnsafe(UnsafeFunction<? super T, ? extends R> mapper, Function<Exception, ? extends R> onError);
 
     NStream<T> sorted();
@@ -216,4 +217,6 @@ public interface NStream<T> extends Iterable<T>, NElementDescribable<NStream<T>>
     NOptional<T> min(Comparator<? super T> comparator);
 
     NOptional<T> max(Comparator<? super T> comparator);
+
+    void close();
 }

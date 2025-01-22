@@ -36,18 +36,28 @@ import java.util.function.Function;
  * @app.category Format
  */
 public class NTextTransformConfig implements Cloneable, NBlankable {
+
     /**
      * when true all styles are removed, transform any node to PLAIN, or LIST only
      */
     private boolean filtered;
+
     /**
      * when true, every node is split over newlines. Newlines will remain as separate plain tokens
      */
     private boolean flatten;
+
     /**
      * when true, transform any node to PLAIN, STYLED or LIST
      */
     private boolean normalize;
+
+    /**
+     * when true all styles are transformed to plain colors
+     */
+    private boolean applyTheme;
+    
+    private boolean basicTrueStyles;
 
     /**
      * when true any title will be prefixed with an incremental number according to {@code titleNumberSequence}
@@ -80,10 +90,39 @@ public class NTextTransformConfig implements Cloneable, NBlankable {
      */
     private Integer rootLevel;
 
+    private String themeName;
+
     /**
      * when provided, try to use this class loader for 'classpath:' resources
      */
     private ClassLoader importClassLoader;
+
+    public String getThemeName() {
+        return themeName;
+    }
+
+    public NTextTransformConfig setThemeName(String themeName) {
+        this.themeName = themeName;
+        return this;
+    }
+
+    public boolean isBasicTrueStyles() {
+        return basicTrueStyles;
+    }
+
+    public NTextTransformConfig setBasicTrueStyles(boolean basicTrueStyles) {
+        this.basicTrueStyles = basicTrueStyles;
+        return this;
+    }
+
+    public boolean isApplyTheme() {
+        return applyTheme;
+    }
+
+    public NTextTransformConfig setApplyTheme(boolean applyTheme) {
+        this.applyTheme = applyTheme;
+        return this;
+    }
 
     public boolean isProcessTitleNumbers() {
         return processTitleNumbers;
@@ -185,12 +224,13 @@ public class NTextTransformConfig implements Cloneable, NBlankable {
                 && !processTitleNumbers
                 && !processIncludes
                 && !processVars
-                && titleNumberSequence==null
-                && currentDir==null
-                && varProvider==null
+                && !applyTheme
+                && titleNumberSequence == null
+                && currentDir == null
+                && varProvider == null
                 && NBlankable.isBlank(anchor)
-                && rootLevel==null
-                && importClassLoader==null;
+                && rootLevel == null
+                && importClassLoader == null;
     }
 
 
@@ -233,14 +273,13 @@ public class NTextTransformConfig implements Cloneable, NBlankable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NTextTransformConfig that = (NTextTransformConfig) o;
-        return filtered == that.filtered && flatten == that.flatten && normalize == that.normalize && processTitleNumbers == that.processTitleNumbers && processIncludes == that.processIncludes && processVars == that.processVars && Objects.equals(titleNumberSequence, that.titleNumberSequence) && Objects.equals(currentDir, that.currentDir) && Objects.equals(varProvider, that.varProvider) && Objects.equals(anchor, that.anchor) && Objects.equals(rootLevel, that.rootLevel) && Objects.equals(importClassLoader, that.importClassLoader);
+        return filtered == that.filtered && flatten == that.flatten && normalize == that.normalize && applyTheme == that.applyTheme && basicTrueStyles == that.basicTrueStyles && processTitleNumbers == that.processTitleNumbers && processIncludes == that.processIncludes && processVars == that.processVars && Objects.equals(titleNumberSequence, that.titleNumberSequence) && Objects.equals(currentDir, that.currentDir) && Objects.equals(varProvider, that.varProvider) && Objects.equals(anchor, that.anchor) && Objects.equals(rootLevel, that.rootLevel) && Objects.equals(themeName, that.themeName) && Objects.equals(importClassLoader, that.importClassLoader);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(filtered, flatten, normalize, processTitleNumbers, titleNumberSequence, processIncludes, currentDir, processVars, varProvider, anchor, rootLevel, importClassLoader);
+        return Objects.hash(filtered, flatten, normalize, applyTheme, basicTrueStyles, processTitleNumbers, titleNumberSequence, processIncludes, currentDir, processVars, varProvider, anchor, rootLevel, themeName, importClassLoader);
     }
 }

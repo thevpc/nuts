@@ -16,7 +16,7 @@ public class AsciiDoctorMdProvider implements MdProvider {
 
     @Override
     public MdParser createParser(Reader reader) {
-        return null;
+        return new AsciiDoctorMdParser(reader);
     }
 
     @Override

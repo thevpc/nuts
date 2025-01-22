@@ -5,16 +5,13 @@
  */
 package net.thevpc.nuts.lib.doc.processor;
 
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.lib.doc.context.NDocContext;
-import net.thevpc.nuts.lib.doc.util.FileProcessorUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  *
@@ -30,13 +27,13 @@ public class StreamToProcessor implements NDocProcessor {
 
 
     @Override
-    public void processPath(Path source, String mimeType, NDocContext context) {
+    public void processPath(NPath source, String mimeType, NDocContext context) {
         String p = context.getPathTranslator().translatePath(source.toString());
         if (p != null) {
-            Path targetPath = Paths.get(p);
-            FileProcessorUtils.mkdirs(targetPath.getParent());
-            try (InputStream in = Files.newInputStream(source);
-                    OutputStream out = Files.newOutputStream(targetPath);) {
+            NPath targetPath = NPath.of(p);
+            targetPath.mkParentDirs();
+            try (InputStream in = source.getInputStream();
+                    OutputStream out = targetPath.getOutputStream();) {
 //                context.getLog().debug(context.getContextName(), "update "+p+" (from "+source+") using "+streamProcessor);
                 context.setVar("source",p);
                 context.setVar("target",targetPath);

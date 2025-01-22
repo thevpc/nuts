@@ -566,7 +566,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                                 .append(this.getWorkspaceLocation())
                                 .append(" ")
                                 .append(" (")
-                                .append(getHashName())
+                                .append(getDigestName())
                                 .append(")")
                 );
             }
@@ -653,7 +653,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     )
             ));
             LOGCRF.log(NMsg.ofJ("   nuts-workspace                 : {0}", NTextUtils.formatLogValue(text, userBootOptions.getWorkspace().orNull(), effectiveBootOptions.getWorkspace().orNull())));
-            LOGCRF.log(NMsg.ofJ("   nuts-hash-name                 : {0}", getHashName()));
+            LOGCRF.log(NMsg.ofJ("   nuts-hash-name                 : {0}", getDigestName()));
             LOGCRF.log(NMsg.ofJ("   nuts-store-bin                 : {0}", NTextUtils.formatLogValue(text, userBootOptions.getStoreType(NStoreType.BIN).orNull(), effectiveBootOptions.getStoreType(NStoreType.BIN).orNull())));
             LOGCRF.log(NMsg.ofJ("   nuts-store-conf                : {0}", NTextUtils.formatLogValue(text, userBootOptions.getStoreType(NStoreType.CONF).orNull(), effectiveBootOptions.getStoreType(NStoreType.CONF).orNull())));
             LOGCRF.log(NMsg.ofJ("   nuts-store-var                 : {0}", NTextUtils.formatLogValue(text, userBootOptions.getStoreType(NStoreType.VAR).orNull(), effectiveBootOptions.getStoreType(NStoreType.VAR).orNull())));
@@ -1921,10 +1921,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     }
 
     @Override
-    public String getHashName() {
+    public String getDigestName() {
         if (wsModel.hashName == null) {
             runWith(() -> {
-                wsModel.hashName = NHashName.of().getHashName(this);
+                wsModel.hashName = NDigestName.of().getDigestName(this);
             });
         }
         return wsModel.hashName;
@@ -1932,7 +1932,12 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
     @Override
     public NVersion getApiVersion() {
-        return wsModel.apiVersion;
+        return Nuts.getVersion();
+    }
+
+    @Override
+    public NVersion getBootVersion() {
+        return Nuts.getBootVersion();
     }
 
     @Override
@@ -1942,7 +1947,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
     @Override
     public NId getAppId() {
-        return NId.get(wsModel.apiId.getGroupId(), "nuts", wsModel.apiId.getVersion()).get();
+        return NId.get(wsModel.apiId.getGroupId(), NConstants.Ids.NUTS_APP_ARTIFACT_ID, Nuts.getBootVersion()).get();
     }
 
     @Override

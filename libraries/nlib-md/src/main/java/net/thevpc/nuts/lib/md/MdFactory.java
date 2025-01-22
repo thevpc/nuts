@@ -1,8 +1,8 @@
 /**
  * ====================================================================
- *            thevpc-common-md : Simple Markdown Manipulation Library
+ * thevpc-common-md : Simple Markdown Manipulation Library
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
@@ -17,6 +17,11 @@
  */
 package net.thevpc.nuts.lib.md;
 
+import net.thevpc.nuts.lib.md.base.DefaultMdProvider;
+import net.thevpc.nuts.util.NRef;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.*;
@@ -26,6 +31,10 @@ import java.util.stream.Collectors;
  * @author thevpc
  */
 public class MdFactory {
+    public static final String MIMETYPE_DOCUSAURUS = "text/markdown-docusaurus";
+    public static final String MIMETYPE_ASCIIDOCTOR = "text/markdown-asciidoctor";
+    public static final String MIMETYPE_DEFAULT = "text/markdown";
+
     private static boolean loaded = false;
     private static Map<String, MdProvider> providers = new HashMap<>();
 
@@ -41,6 +50,10 @@ public class MdFactory {
             return ((MdParent) e).getChildren();
         }
         return new MdElement[]{e};
+    }
+
+    public static MdParser createParser(String mimeType, InputStream inputStream) {
+        return createParser(mimeType,new InputStreamReader(inputStream));
     }
 
     public static MdParser createParser(String mimeType, Reader reader) {
@@ -70,23 +83,23 @@ public class MdFactory {
 
 
     public static MdElement codeBacktick1(String lang, String code) {
-        return new MdCode("`",lang,code,code.indexOf('\n')<0);
+        return new MdCode("`", lang, code, code.indexOf('\n') < 0);
     }
 
     public static MdElement codeBacktick3(String lang, String code) {
-        return new MdCode("```",lang,code,code.indexOf('\n')<0);
+        return new MdCode("```", lang, code, code.indexOf('\n') < 0);
     }
 
     public static MdElement codeBacktick3Paragraph(String lang, String code) {
-        return new MdCode("```",lang,code,false);
+        return new MdCode("```", lang, code, false);
     }
 
-    public static MdElement codeBacktick3(String lang, String code,boolean inline) {
-        return new MdCode("```",lang,code,inline);
+    public static MdElement codeBacktick3(String lang, String code, boolean inline) {
+        return new MdCode("```", lang, code, inline);
     }
 
     public static MdElement title(int depth, String e) {
-        return new MdTitle("", MdText.phrase(e), depth,new MdElement[0]);
+        return new MdTitle("", MdText.phrase(e), depth, new MdElement[0]);
     }
 
     public static MdElement seq(MdElement... arr) {
@@ -118,14 +131,13 @@ public class MdFactory {
 
     public static MdBody asBody(MdElement a) {
         if (a == null) {
-            return new MdBody( new MdElement[0]);
+            return new MdBody(new MdElement[0]);
         }
         if (a instanceof MdBody) {
             return (MdBody) a;
         }
-        return new MdBody( new MdElement[]{a});
+        return new MdBody(new MdElement[]{a});
     }
-
 
 
     public static MdElement unwrapSeq(MdElement a) {
@@ -155,9 +167,9 @@ public class MdFactory {
 
     public static MdProvider findProvider(String mimeType) {
         if (mimeType == null) {
-            mimeType = "text/markdown";
+            mimeType = MIMETYPE_DEFAULT;
         } else if (mimeType.equals("markdown")) {
-            mimeType = "text/markdown";
+            mimeType = MIMETYPE_DEFAULT;
         } else if (mimeType.indexOf('/') < 0) {
             if (mimeType.startsWith("markdown-")) {
                 mimeType = "text/" + mimeType;
@@ -168,7 +180,7 @@ public class MdFactory {
         if (!loaded) {
             synchronized (MdFactory.class) {
                 if (!loaded) {
-                    providers.put("text/markdown", new DefaultMdProvider());
+                    providers.put(MIMETYPE_DEFAULT, new DefaultMdProvider());
                     ServiceLoader<MdProvider> serviceLoader = ServiceLoader.load(MdProvider.class);
                     for (MdProvider mdProvider : serviceLoader) {
                         providers.put(mdProvider.getMimeType(), mdProvider);
@@ -181,12 +193,13 @@ public class MdFactory {
 
     public static boolean isBlank(MdElement[] e) {
         for (MdElement m : e) {
-            if(!isBlank(m)){
+            if (!isBlank(m)) {
                 return false;
             }
         }
         return true;
     }
+
     public static boolean isBlank(MdElement e) {
         e = unpack(e);
         if (e == null) {
@@ -250,9 +263,11 @@ public class MdFactory {
     public static MdTableBuilder.MdColumnBuilder column() {
         return new MdTableBuilder.MdColumnBuilder();
     }
+
     public static MdTableBuilder.MdRowBuilder row() {
         return new MdTableBuilder.MdRowBuilder();
     }
+
     public static MdElement text(String s) {
         return MdText.phrase(s);
     }
@@ -266,39 +281,23 @@ public class MdFactory {
     }
 
     public static MdElement ul(int depth, MdElement elem) {
-        return new MdUnNumberedItem("",depth,elem,new MdElement[0]);
+        return new MdUnNumberedItem("", depth, elem, new MdElement[0]);
     }
-    public static MdElement ol(int number,int depth, MdElement elem) {
-        return new MdNumberedItem(number,depth,".",elem,new MdElement[0]);
+
+    public static MdElement ol(int number, int depth, MdElement elem) {
+        return new MdNumberedItem(number, depth, ".", elem, new MdElement[0]);
     }
 
     public static MdDocumentBuilder document() {
         return new MdDocumentBuilder();
     }
 
-    private static class DefaultMdProvider implements MdProvider {
-        @Override
-        public String getMimeType() {
-            return "text/markdown";
-        }
-
-        @Override
-        public MdParser createParser(Reader reader) {
-            return null;
-        }
-
-        @Override
-        public MdWriter createWriter(Writer writer) {
-            return new DefaultMdWriter(writer);
-        }
-    }
-
-    public static MdTableBuilder table(){
+    public static MdTableBuilder table() {
         return new MdTableBuilder();
     }
 
 
-    public static MdElementBuilder element(MdElement e){
+    public static MdElementBuilder element(MdElement e) {
         return new MdElementAsBuilder(e);
     }
 
@@ -317,7 +316,7 @@ public class MdFactory {
 
     public static boolean detectXml(MdElement[] content) {
         for (MdElement mdElement : content) {
-            if(mdElement.isXml()){
+            if (mdElement.isXml()) {
                 return true;
             }
         }
@@ -326,67 +325,75 @@ public class MdFactory {
 
 
     public static MdElement ofListOrNull(MdElement[] content) {
-        return ofList(content,true);
+        return ofList(content, true);
     }
 
     public static MdElement ofListOrEmpty(MdElement[] content) {
-        return ofList(content,false);
+        return ofList(content, false);
     }
 
-    public static MdElement ofList(MdElement[] content,boolean noneIsNull) {
-        if(content!=null){
-            content=Arrays.stream(content).filter(Objects::nonNull).toArray(MdElement[]::new);
-        }else{
-            content=new MdElement[0];
+    public static MdElement ofList(MdElement[] content, boolean noneIsNull) {
+        if (content != null) {
+            content = Arrays.stream(content).filter(Objects::nonNull).toArray(MdElement[]::new);
+        } else {
+            content = new MdElement[0];
         }
-        if(content.length==0){
-            if(noneIsNull){
+        if (content.length == 0) {
+            if (noneIsNull) {
                 return null;
             }
             return MdText.phrase("");
         }
-        if(content.length==1){
+        if (content.length == 1) {
             return content[0];
         }
-        if(detectXml(content)){
+        if (detectXml(content)) {
             return new MdBody(content);
         }
-        if(MdPhrase.acceptPhrase(content)){
+        if (MdPhrase.acceptPhrase(content)) {
             List<MdElement> all = new ArrayList<>();
-            MdElement last=null;
+            NRef<MdElement> last = NRef.of(null);
             for (MdElement e : content) {
-                if(last==null){
-                    last=e;
-                }else if(e instanceof MdText && last instanceof MdText && ((MdText) last).isInline() && ((MdText) e).isInline()){
-                    last=new MdText(
-                            ((MdText) last).getText()+
-                            ((MdText) e).getText()
-                            ,true
-                    );
-                }else{
-                    all.add(last);
-                    last=e;
-                }
+                processNextPhraseITem(e, last, all);
             }
-            if(last!=null){
-                all.add(last);
-                last=null;
+            if (!last.isNull()) {
+                all.add(last.get());
+                last.set(null);
             }
-            if(all.size()==1){
+            if (all.size() == 1) {
                 return all.get(0);
             }
             MdPhrase p = new MdPhrase(all.toArray(new MdElement[0]));
             return p;
         }
         Set<MdElementTypeGroup> ss = Arrays.stream(content).map(x -> x.type().group()).collect(Collectors.toSet());
-        if(ss.size()==1){
-            if(ss.contains(MdElementTypeGroup.UNNUMBERED_LIST)) {
+        if (ss.size() == 1) {
+            if (ss.contains(MdElementTypeGroup.UNNUMBERED_LIST)) {
                 return new MdUnNumberedList(Arrays.asList(content).toArray(new MdUnNumberedItem[0]));
             }
-            if(ss.contains(MdElementTypeGroup.NUMBERED_LIST)) {
+            if (ss.contains(MdElementTypeGroup.NUMBERED_LIST)) {
                 return new MdNumberedList(Arrays.asList(content).toArray(new MdNumberedItem[0]));
             }
         }
         return new MdBody(content);
+    }
+
+    private static void processNextPhraseITem(MdElement e, NRef<MdElement> last, List<MdElement> all) {
+        if (e instanceof MdPhrase && (last.isNull() || ((MdPhrase) e).isInline())) {
+            for (MdElement ee : ((MdPhrase) e).getChildren()) {
+                processNextPhraseITem(ee, last, all);
+            }
+        } else if (last.isNull()) {
+            last.set(e);
+        } else if (e instanceof MdText && last.get() instanceof MdText && ((MdText) last.get()).isInline() && ((MdText) e).isInline()) {
+            last.set(new MdText(
+                    ((MdText) last.get()).getText() +
+                            ((MdText) e).getText()
+                    , true
+            ));
+        } else  {
+            all.add(last.get());
+            last.set(e);
+        }
     }
 }

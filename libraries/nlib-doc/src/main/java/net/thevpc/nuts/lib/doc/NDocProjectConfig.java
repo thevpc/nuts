@@ -8,8 +8,8 @@ package net.thevpc.nuts.lib.doc;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
+import net.thevpc.nuts.io.NPath;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +24,7 @@ public class NDocProjectConfig implements NCmdLineConfigurable ,Cloneable{
     private String targetFolder;
     private String scriptType;
     private String projectPath;
-    private Predicate<Path> pathFilter;
+    private Predicate<NPath> pathFilter;
     private String contextName;
     private boolean clean;
     private String javadocTarget;
@@ -65,8 +65,9 @@ public class NDocProjectConfig implements NCmdLineConfigurable ,Cloneable{
         return clean;
     }
 
-    public void setClean(boolean clean) {
+    public NDocProjectConfig setClean(boolean clean) {
         this.clean = clean;
+        return this;
     }
 
     public Map<String, Object> getVars() {
@@ -141,7 +142,7 @@ public class NDocProjectConfig implements NCmdLineConfigurable ,Cloneable{
         return initScripts;
     }
 
-    public Predicate<Path> getPathFilter() {
+    public Predicate<NPath> getPathFilter() {
         return pathFilter;
     }
 
@@ -165,7 +166,7 @@ public class NDocProjectConfig implements NCmdLineConfigurable ,Cloneable{
         this.initScripts = initScripts;
     }
 
-    public NDocProjectConfig setPathFilter(Predicate<Path> pathFilter) {
+    public NDocProjectConfig setPathFilter(Predicate<NPath> pathFilter) {
         this.pathFilter = pathFilter;
         return this;
     }

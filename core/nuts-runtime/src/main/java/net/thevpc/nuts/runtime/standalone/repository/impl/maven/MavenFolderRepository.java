@@ -37,7 +37,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MvnClient;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NRepositorySPI;
-import net.thevpc.nuts.util.NIOUtils;
+import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.util.NIterator;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.NMsg;

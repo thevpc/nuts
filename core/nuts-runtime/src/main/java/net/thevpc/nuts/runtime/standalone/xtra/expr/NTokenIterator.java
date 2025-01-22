@@ -23,6 +23,7 @@ public class NTokenIterator implements Iterator<NToken> {
     public NTokenIterator(Reader r, NWorkspace workspace) {
         this.st = new NStreamTokenizer(r);
         this.st.ordinaryChar('.');
+        this.st.wordChar('_');
     }
 
     public void pushBack() {

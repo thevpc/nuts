@@ -540,12 +540,12 @@ class SshNPath implements NPathSPI {
     }
 
     @Override
-    public int getLocationItemsCount(NPath basePath) {
+    public int getNameCount(NPath basePath) {
         String location = getLocation(basePath);
         if (NBlankable.isBlank(location)) {
             return 0;
         }
-        return NPath.of(location).getLocationItemsCount();
+        return NPath.of(location).getNameCount();
     }
 
     @Override
@@ -613,8 +613,8 @@ class SshNPath implements NPathSPI {
     }
 
     @Override
-    public List<String> getLocationItems(NPath basePath) {
-        return NPath.of(getLocation(basePath)).getLocationItems();
+    public List<String> getNames(NPath basePath) {
+        return NPath.of(getLocation(basePath)).getNames();
     }
 
     @Override
@@ -791,5 +791,20 @@ class SshNPath implements NPathSPI {
 
     private static String joinPathString(List<String> a) {
         return "/" + String.join("/", a);
+    }
+
+    @Override
+    public boolean startsWith(NPath basePath, String other) {
+        return startsWith(basePath,NPath.of(other));
+    }
+
+    @Override
+    public boolean startsWith(NPath basePath, NPath other) {
+        return toRelativePath(basePath,other)!=null;
+    }
+
+    @Override
+    public int compareTo(NPath basePath, NPath other) {
+        return basePath.toString().compareTo(other.toString());
     }
 }

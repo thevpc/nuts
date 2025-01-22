@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.lib.doc.javadoc;
 
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.lib.md.*;
 import net.thevpc.nuts.lib.doc.javadoc.java.JPRootDoc;
 
@@ -12,7 +13,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -417,7 +417,7 @@ public class MdDoclet /*extends Doclet*/ {
             return false;
         };
         for (String s : config.getSources()) {
-            root.parseSrcFolder(Paths.get(s), packageFilter);
+            root.parseSrcFolder(NPath.of(s), packageFilter);
         }
 
         JDClassDoc[] classes = root.classes();

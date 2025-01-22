@@ -696,7 +696,7 @@ public class SShConnection implements AutoCloseable {
 
     public InputStream prepareStream(File file) throws FileNotFoundException {
         FileInputStream in = new FileInputStream(file);
-        NMsg path = NMsg.ofStyled(file.getPath(), NTextStyle.path());
+        NMsg path = NMsg.ofStyledPath(file.getPath());
         for (SshListener listener : listeners) {
             InputStream v = listener.monitorInputStream(in, file.length(), path);
             if (v != null) {

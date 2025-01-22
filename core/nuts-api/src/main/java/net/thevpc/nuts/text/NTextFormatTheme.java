@@ -29,5 +29,15 @@ package net.thevpc.nuts.text;
 public interface NTextFormatTheme {
     String getName();
 
-    NTextStyles toBasicStyles(NTextStyles style);
+    /**
+     * return styles in terms of color
+     *
+     * @param style
+     * @param basicTrueStyles
+     * @return
+     */
+    NTextStyles toBasicStyles(NTextStyles style, boolean basicTrueStyles);
+
+    NTextStyles toBasicStyles(NTextStyle style, boolean basicTrueStyles);
+
 }

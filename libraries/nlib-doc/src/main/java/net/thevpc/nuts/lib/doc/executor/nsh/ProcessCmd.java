@@ -3,6 +3,7 @@ package net.thevpc.nuts.lib.doc.executor.nsh;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.lib.doc.context.NDocContext;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
@@ -10,7 +11,6 @@ import net.thevpc.nuts.lib.doc.util.StringUtils;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +45,7 @@ public class ProcessCmd extends NShellBuiltinDefault {
         }
         for (String pathString : o.args) {
             documentContext.getLog().debug("eval", getName() + "(" + StringUtils.toLiteralString(pathString) + ")");
-            documentContext.getExecutorManager().executeRegularFile(Paths.get(pathString), null);
+            documentContext.getExecutorManager().executeRegularFile(NPath.of(pathString), null);
         }
     }
 

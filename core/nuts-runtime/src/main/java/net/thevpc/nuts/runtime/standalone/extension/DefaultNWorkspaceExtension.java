@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NWorkspaceExtension;
-import net.thevpc.nuts.util.NListMap;
+import net.thevpc.nuts.util.NListValueMap;
 import net.thevpc.nuts.spi.NExtensionLifeCycle;
 
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class DefaultNWorkspaceExtension implements NWorkspaceExtension {
     private NId wiredId;
     private boolean enabled;
     private ClassLoader classLoader;
-    private NListMap<String, String> wiredComponents = new NListMap<>();
+    private NListValueMap<String, String> wiredComponents = new NListValueMap<>();
     private List<NExtensionLifeCycle> events = new ArrayList<>();
 
     public DefaultNWorkspaceExtension(NId id, NId wiredId, ClassLoader classLoader) {
@@ -79,7 +79,7 @@ public class DefaultNWorkspaceExtension implements NWorkspaceExtension {
         return id;
     }
 
-    public NListMap<String, String> getWiredComponents() {
+    public NListValueMap<String, String> getWiredComponents() {
         return wiredComponents;
     }
 }

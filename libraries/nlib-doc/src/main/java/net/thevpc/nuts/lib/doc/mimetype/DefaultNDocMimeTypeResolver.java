@@ -5,9 +5,11 @@
  */
 package net.thevpc.nuts.lib.doc.mimetype;
 
+import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.io.NPath;
+
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +25,7 @@ public class DefaultNDocMimeTypeResolver implements NDocMimeTypeResolver {
 
     public static final NDocMimeTypeResolver DEFAULT = new DefaultNDocMimeTypeResolver()
             .setExtensionMimeType("nexpr", MimeTypeConstants.NEXPR)
+            .setExtensionMimeType("ntf", NConstants.Ntf.MIME_TYPE)
             .setImmutable();
     private final Map<String, String> extensionToMimeType = new HashMap<>();
     private final Map<String, String> nameToMimeType = new HashMap<>();
@@ -95,7 +98,7 @@ public class DefaultNDocMimeTypeResolver implements NDocMimeTypeResolver {
     @Override
     public String resolveMimetype(String path) {
         try {
-            String s = nameToMimeType.get(Paths.get(path).getFileName().toString());
+            String s = nameToMimeType.get(NPath.of(path).getName().toString());
             if(s!=null){
                 return s;
             }
@@ -105,7 +108,7 @@ public class DefaultNDocMimeTypeResolver implements NDocMimeTypeResolver {
                     return r;
                 }
             }
-            String mimeType = Files.probeContentType(Paths.get(path));
+            String mimeType = Files.probeContentType(NPath.of(path).toPath().get());
             if (mimeType != null) {
                 return mimeType;
             }

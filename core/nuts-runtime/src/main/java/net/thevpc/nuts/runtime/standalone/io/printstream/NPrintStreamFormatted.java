@@ -14,7 +14,7 @@ import java.io.OutputStream;
 public class NPrintStreamFormatted extends NPrintStreamRendered {
     public NPrintStreamFormatted(NPrintStreamBase base, NWorkspace workspace, Bindings bindings) {
         super(base, workspace, NTerminalMode.FORMATTED, bindings);
-        getMetaData().setMessage(NMsg.ofStyled("<formatted-stream>", NTextStyle.path()));
+        getMetaData().setMessage(NMsg.ofStyledPath("<formatted-stream>"));
     }
 
 

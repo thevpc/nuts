@@ -203,21 +203,21 @@ public class LocalTomcat {
                         case "long": {
                             NCmdLine jcmd = NCmdLine.parse(jpsResult.getArgsLine()).orNull();
                             out.println(NMsg.ofC("%s: %s %s: v%s %s: %s %s: %s %s: %s",
-                                    NMsg.ofStyled("pid", NTextStyle.comments()),
-                                    factory.ofStyled(jpsResult.getPid(), NTextStyle.primary1()),
-                                    NMsg.ofStyled("version", NTextStyle.comments()),
+                                    NMsg.ofStyledComments("pid"),
+                                    NMsg.ofStyledPrimary1(jpsResult.getPid()),
+                                    NMsg.ofStyledComments("version"),
                                     jpsResult.getVersion(),
-                                    NMsg.ofStyled("home", NTextStyle.comments()),
+                                    NMsg.ofStyledComments("home"),
                                     jpsResult.getHome(),
-                                    NMsg.ofStyled("base", NTextStyle.comments()),
-                                    NMsg.ofStyled(jpsResult.getBase() == null ? "?" : jpsResult.getBase(), NTextStyle.path()),
-                                    NMsg.ofStyled("cmd", NTextStyle.comments()),
+                                    NMsg.ofStyledComments("base"),
+                                    NMsg.ofStyledPrimary2(jpsResult.getBase() == null ? "?" : jpsResult.getBase()),
+                                    NMsg.ofStyledComments("cmd"),
                                     jcmd == null ? jpsResult.getArgsLine() : jcmd
                             ));
                             break;
                         }
                         default: {
-                            out.println(factory.ofStyled(jpsResult.getPid(), NTextStyle.primary1()));
+                            out.println(NMsg.ofStyledPrimary1(jpsResult.getPid()));
                             break;
                         }
                     }

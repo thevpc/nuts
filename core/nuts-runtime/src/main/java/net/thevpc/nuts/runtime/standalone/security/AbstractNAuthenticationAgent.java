@@ -14,7 +14,6 @@ import net.thevpc.nuts.util.NMsg;
 public abstract class AbstractNAuthenticationAgent implements NAuthenticationAgent {
 
     private final String name;
-    private NWorkspace ws;
     private int supportLevel;
 
     public AbstractNAuthenticationAgent(String name, int supportLevel) {

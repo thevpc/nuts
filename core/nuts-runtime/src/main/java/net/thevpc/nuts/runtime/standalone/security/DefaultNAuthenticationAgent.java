@@ -14,17 +14,17 @@ public class DefaultNAuthenticationAgent extends AbstractNAuthenticationAgent {
 
     @Override
     protected char[] decryptChars(char[] data, String passphrase) {
-        return CoreSecurityUtils.defaultDecryptChars(data, passphrase);
+        return CoreSecurityUtils.INSTANCE.defaultDecryptChars(data, passphrase);
     }
 
     @Override
     protected char[] encryptChars(char[] data, String passphrase) {
-        return CoreSecurityUtils.defaultEncryptChars(data, passphrase);
+        return CoreSecurityUtils.INSTANCE.defaultEncryptChars(data, passphrase);
     }
 
     @Override
     protected char[] hashChars(char[] data, String passphrase) {
-        return CoreSecurityUtils.defaultHashChars(data, passphrase);
+        return CoreSecurityUtils.INSTANCE.defaultHashChars(data, passphrase);
     }
 
 }

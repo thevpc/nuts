@@ -20,7 +20,7 @@ import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NVersion;
 import net.thevpc.nuts.util.NArrays;
-import net.thevpc.nuts.util.NIOUtils;
+import net.thevpc.nuts.io.NIOUtils;
 
 /**
  * @author thevpc

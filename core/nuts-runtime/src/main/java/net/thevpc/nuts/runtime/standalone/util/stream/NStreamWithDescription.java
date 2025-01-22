@@ -40,4 +40,9 @@ public class NStreamWithDescription<T> extends NStreamDelegate<T> {
         }
         return super.describe();
     }
+
+    @Override
+    public void close() {
+        base.close();
+    }
 }

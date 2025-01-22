@@ -15,6 +15,7 @@ import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 
+import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -82,11 +83,11 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
     }
 
     @Override
-    public NTextStyles toBasicStyles(NTextStyles styles) {
+    public NTextStyles toBasicStyles(NTextStyles styles, boolean basicTrueStyles) {
         NTextStyles ret = NTextStyles.PLAIN;
         if (styles != null) {
             for (NTextStyle style : styles) {
-                ret = ret.append(toBasicStyles(style));
+                ret = ret.append(toBasicStyles(style, basicTrueStyles));
             }
         }
         return ret;
@@ -128,6 +129,17 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
         return NLiteral.of(props.getProperty(n)).asInt().orElse(0);
     }
 
+    private Color getVarValAsColor(String n) {
+        String b = props.getProperty(n);
+        if (b != null) {
+            b = b.trim();
+            if (b.startsWith("#")) {
+                return new Color(Integer.parseInt(b.substring(1), 16));
+            }
+        }
+        return null;
+    }
+
     private String getProp(NTextStyleType t, String variant) {
         String name = t.name();
         String s = props.getProperty(name + "(" + variant + ")");
@@ -137,31 +149,50 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
         return s;
     }
 
-    public NTextStyles toBasicStyles(NTextStyle style) {
-        return toBasicStyles(style, 20);
+    public NTextStyles toBasicStyles(NTextStyle style, boolean basicTrueStyles) {
+        if (style == null) {
+            return NTextStyles.PLAIN;
+        }
+        if(style.getType().isBasic(basicTrueStyles)) {
+            return NTextStyles.of(style);
+        }
+        return toBasicStyles(style, basicTrueStyles, 20);
     }
 
-    public NTextStyles toBasicStyles(NTextStyle style, int maxLoop) {
+    public NTextStyles toBasicStyles(NTextStyle style, boolean basicTrueStyles, int maxLoop) {
+        if (style == null) {
+            return NTextStyles.PLAIN;
+        }
+        if(style.getType().isBasic(basicTrueStyles)) {
+            return NTextStyles.of(style);
+        }
         if (maxLoop <= 0) {
             throw new NIllegalArgumentException(
                     NMsg.ofC("invalid ntf theme for %s(%s). infinite loop", style.getType(), style.getVariant()));
         }
-        if (style.getType().basic()) {
-            return NTextStyles.of(style);
-        }
         String s = getProp(style.getType(), style.getVariant());
         if (s == null) {
+            switch (style.getType()){
+                case FORE_COLOR:{
+                    //basicTrue is true!!
+                    return NTextStyles.of(NTextStyle.foregroundTrueColor(DefaultNTextFormatTheme.foregroundSimpleToTrueColor(style.getVariant())));
+                }
+                case BACK_COLOR:{
+                    //basicTrue is true!!
+                    return NTextStyles.of(NTextStyle.foregroundTrueColor(DefaultNTextFormatTheme.backgroundSimpleToTrueColor(style.getVariant())));
+                }
+            }
             return NTextStyles.PLAIN;
         }
         NTextStyles ret = NTextStyles.PLAIN;
         for (String v : s.split(",")) {
-            NTextStyles ss = toBasicStyles(v, style.getVariant(), maxLoop - 1);
+            NTextStyles ss = toBasicStyles(v, basicTrueStyles, style.getVariant(), maxLoop - 1);
             ret = ret.append(ss);
         }
         return ret;
     }
 
-    public NTextStyles toBasicStyles(String v, int defaultVariant, int maxLoop) {
+    public NTextStyles toBasicStyles(String v, boolean basicTrueStyles, int defaultVariant, int maxLoop) {
         v = v.trim();
         int a = v.indexOf('(');
         String n = "";
@@ -188,7 +219,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
                     if (maxLoop < 0) {
                         return null;
                     }
-                    return toBasicStyles(z, defaultVariant, maxLoop - 1);
+                    return toBasicStyles(z, basicTrueStyles, defaultVariant, maxLoop - 1);
                 }
                 return NTextStyles.PLAIN;
             }
@@ -197,10 +228,38 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
             case PLAIN: {
                 return NTextStyles.of(NTextStyle.of(st, 0));
             }
-            case FORE_COLOR:
+            case FORE_COLOR: {
+                Color c = getVarValAsColor(n);
+                if(c!=null){
+                    return NTextStyles.of(NTextStyle.of(st, c.getRGB()));
+                }
+                Integer ii = NLiteral.of(n).asInt().orNull();
+                if (ii == null) {
+                    ii = getVarValAsInt(n);
+                }
+                if (basicTrueStyles) {
+                    return toBasicStyles(NTextStyles.of(NTextStyle.foregroundTrueColor(DefaultNTextFormatTheme.foregroundSimpleToTrueColor(ii))), basicTrueStyles);
+                }
+            }
+            case BACK_COLOR: {
+                Color c = getVarValAsColor(n);
+                if(c!=null){
+                    return NTextStyles.of(NTextStyle.of(st, c.getRGB()));
+                }
+                Integer ii = NLiteral.of(n).asInt().orNull();
+                if (ii == null) {
+                    ii = getVarValAsInt(n);
+                }
+                if (basicTrueStyles) {
+                    return toBasicStyles(NTextStyles.of(NTextStyle.backgroundTrueColor(DefaultNTextFormatTheme.backgroundSimpleToTrueColor(ii))), basicTrueStyles);
+                }
+            }
             case FORE_TRUE_COLOR:
-            case BACK_COLOR:
             case BACK_TRUE_COLOR: {
+                Color c = getVarValAsColor(n);
+                if(c!=null){
+                    return NTextStyles.of(NTextStyle.of(st, c.getRGB()));
+                }
                 Integer ii = NLiteral.of(n).asInt().orNull();
                 if (ii == null) {
                     ii = getVarValAsInt(n);
@@ -212,7 +271,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
                 if (ii == null) {
                     ii = getVarValAsInt(n);
                 }
-                return toBasicStyles(NTextStyle.of(st, ii), maxLoop);
+                return toBasicStyles(NTextStyle.of(st, ii), basicTrueStyles, maxLoop);
             }
         }
     }

@@ -7,6 +7,7 @@ import net.thevpc.nuts.text.*;
 public class DefaultNTextTransformerContext implements NTextTransformerContext {
     private NTitleSequence sequence;
     private NTextTransformer defaultTransformer;
+    private NTextTransformConfig config;
 
     public DefaultNTextTransformerContext(NTextTransformerContext o) {
         this.sequence = o.getTitleSequence();
@@ -17,6 +18,7 @@ public class DefaultNTextTransformerContext implements NTextTransformerContext {
         if (config == null) {
             config = new NTextTransformConfig();
         }
+        this.config = config;
         this.defaultTransformer = new DefaultNTextTransformer(config, workspace);
         this.sequence = config.getTitleNumberSequence();
         if (sequence == null) {
@@ -25,6 +27,10 @@ public class DefaultNTextTransformerContext implements NTextTransformerContext {
     }
 
     public DefaultNTextTransformerContext() {
+    }
+
+    public NTextTransformConfig getConfig() {
+        return config;
     }
 
     @Override

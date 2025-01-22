@@ -71,6 +71,7 @@ public final class NConstants {
     public static final class Apps {
         public static final String AUTO_COMPLETE_CANDIDATE_PREFIX = "```error Candidate```: ";
     }
+
     /**
      * name constants
      *
@@ -566,12 +567,12 @@ public final class NConstants {
         /**
          * nuts api id
          */
-        public static final String NUTS_API = NUTS_GROUP_ID+":"+NUTS_API_ARTIFACT_ID;
-        public static final String NUTS_APP = NUTS_GROUP_ID+":"+NUTS_APP_ARTIFACT_ID;
+        public static final String NUTS_API = NUTS_GROUP_ID + ":" + NUTS_API_ARTIFACT_ID;
+        public static final String NUTS_APP = NUTS_GROUP_ID + ":" + NUTS_APP_ARTIFACT_ID;
         /**
          * nuts runtime id
          */
-        public static final String NUTS_RUNTIME = NUTS_GROUP_ID+":"+NUTS_RUNTIME_ARTIFACT_ID;
+        public static final String NUTS_RUNTIME = NUTS_GROUP_ID + ":" + NUTS_RUNTIME_ARTIFACT_ID;
         /**
          * nuts shell id
          */
@@ -654,6 +655,28 @@ public final class NConstants {
          * latest version (inherited from maven)
          */
         public static final char SILENT = '\u001E';//record separator
+
+        public static final Set<String> NAMES = Collections.unmodifiableSet(
+                new HashSet<>(Arrays.asList(
+                        "nuts-text-format",
+                        "ntf"
+                ))
+        );
+
+        public static final String MIME_TYPE = "text/x-ntf";
+
+        public static final Set<String> MIME_TYPES = Collections.unmodifiableSet(
+                new HashSet<>(Arrays.asList(
+                        "text/x-nuts-text-format",
+                        "text/x-ntf",
+                        "text/nuts-text-format",
+                        "text/ntf",
+                        "application/x-nuts-text-format",
+                        "application/x-ntf",
+                        "application/nuts-text-format",
+                        "application/ntf"
+                ))
+        );
 
         /**
          * private constructor

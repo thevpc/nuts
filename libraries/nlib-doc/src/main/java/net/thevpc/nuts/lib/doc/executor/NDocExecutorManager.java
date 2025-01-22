@@ -2,6 +2,7 @@ package net.thevpc.nuts.lib.doc.executor;
 
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.lib.doc.context.NDocContext;
 import net.thevpc.nuts.lib.doc.executor.expr.NDocExprEvaluator;
 import net.thevpc.nuts.lib.doc.mimetype.MimeTypeConstants;
@@ -14,7 +15,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -38,7 +38,7 @@ public class NDocExecutorManager {
         this.context = context;
     }
 
-    public NOptional<NDocExecutor> getExecutor(Path path, String mimeTypesString) {
+    public NOptional<NDocExecutor> getExecutor(NPath path, String mimeTypesString) {
         String[] mimeTypesArray = mimeTypesString == null ? FileProcessorUtils.splitMimeTypes(context.getMimeTypeResolver().resolveMimetype(path.toString()))
                 : FileProcessorUtils.splitMimeTypes(mimeTypesString);
         for (String mimeType : mimeTypesArray) {
@@ -150,10 +150,10 @@ public class NDocExecutorManager {
         return this;
     }
 
-    public String executeRegularFile(Path path, String mimeTypesString) {
-        Path absolutePath = context.toAbsolutePath(path);
-        Path parentPath = absolutePath.getParent();
-        if (!Files.isRegularFile(absolutePath)) {
+    public String executeRegularFile(NPath path, String mimeTypesString) {
+        NPath absolutePath = context.toAbsolutePath(path);
+        NPath parentPath = absolutePath.getParent();
+        if (!absolutePath.isRegularFile()) {
             throw new NIllegalArgumentException(NMsg.ofC("no a file : %s", path));
         }
         NDocExecutor proc = getExecutor(path, mimeTypesString).get();
@@ -166,7 +166,7 @@ public class NDocExecutorManager {
             } else {
                 context.getLog().debug("file", "[" + proc + "] [" + mimeTypesString + "] execute path : " + s1 + " = " + s2);
             }
-            try (InputStream in = Files.newInputStream(absolutePath)) {
+            try (InputStream in = absolutePath.getInputStream()) {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 proc.processStream(in, out,
                         context.newChild()
@@ -176,6 +176,7 @@ public class NDocExecutorManager {
                                 .setVar("source", absolutePath.toString())
                                 .setVar("dir", parentPath.toString())
                                 .setVar("cwd", System.getProperty("user.dir"))
+                                .setVar("projectRoot", context.getProjectRoot())
                 );
                 return out.toString();
             }

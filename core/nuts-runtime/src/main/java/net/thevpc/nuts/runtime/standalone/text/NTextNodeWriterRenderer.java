@@ -107,7 +107,7 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
             case STYLED: {
                 DefaultNTextStyled s = (DefaultNTextStyled) node;
                 NTextStyles styles = s.getStyles();
-                NTextStyles format = txt.getTheme().toBasicStyles(styles);
+                NTextStyles format = txt.getTheme().toBasicStyles(styles,ctx.isBasicTrueStyles());
                 NTextStyles s2 = formats.append(format);
                 writeNode(s2, s.getChild(), ctx);
                 break;
@@ -115,7 +115,7 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
             case TITLE: {
                 DefaultNTextTitle s = (DefaultNTextTitle) node;
                 NTextStyles s2 = formats.append(txt.getTheme().toBasicStyles(
-                        NTextStyles.of(NTextStyle.title(s.getLevel()))
+                        NTextStyles.of(NTextStyle.title(s.getLevel())),ctx.isBasicTrueStyles()
                 ));
                 if (ctx.isProcessTitleNumbers()) {
                     NTitleSequence seq = ctx.getTitleNumberSequence();

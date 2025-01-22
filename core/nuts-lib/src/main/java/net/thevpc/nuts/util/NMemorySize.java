@@ -668,18 +668,24 @@ public class NMemorySize implements Serializable {
     }
 
     public NMemorySize withSmallestUnit(NMemoryUnit smallestUnit) {
-        NMemorySize d = new NMemorySize(toUnitsArray(), smallestUnit, largestUnit, iec);
-        if (this.bytes != d.bytes || this.bits != d.bits) {
-            throw new IllegalArgumentException("unexpected");
+        if (smallestUnit == getSmallestUnit()) {
+            return this;
         }
+        NMemorySize d = new NMemorySize(toUnitsArray(), smallestUnit, largestUnit, iec);
+//        if (this.bytes != d.bytes || this.bits != d.bits) {
+//            throw new IllegalArgumentException("unexpected");
+//        }
         return d;
     }
 
     public NMemorySize withLargestUnit(NMemoryUnit largestUnit) {
-        NMemorySize d = new NMemorySize(toUnitsArray(), smallestUnit, largestUnit, iec);
-        if (this.bytes != d.bytes || this.bits != d.bits) {
-            throw new IllegalArgumentException("unexpected");
+        if (smallestUnit == getLargestUnit()) {
+            return this;
         }
+        NMemorySize d = new NMemorySize(toUnitsArray(), smallestUnit, largestUnit, iec);
+//        if (this.bytes != d.bytes || this.bits != d.bits) {
+//            throw new IllegalArgumentException("unexpected");
+//        }
         return d;
     }
 
@@ -763,14 +769,14 @@ public class NMemorySize implements Serializable {
     public NMemorySize normalize() {
         long[] values = toUnitsArray();
         NMemoryUnit[] mUnits = NMemoryUnit.values();
-        for (int i = 0; i < mUnits.length-1; i++) {
+        for (int i = 0; i < mUnits.length - 1; i++) {
             NMemoryUnit value = mUnits[i];
-            long mul=i==0?8:KB;
-            for (int j = i; j <mUnits.length; j++) {
+            long mul = i == 0 ? 8 : KB;
+            for (int j = i; j < mUnits.length; j++) {
                 if (!normalizeNegativeUnit(values, value, mUnits[j], mul)) {
                     break;
                 }
-                mul*=KB;
+                mul *= KB;
             }
         }
         NMemoryUnit[] memUnits = mUnits;
@@ -844,14 +850,14 @@ public class NMemorySize implements Serializable {
         NStreamTokenizer st = new NStreamTokenizer(new StringReader(value));
         try {
             int r = st.nextToken();
-            switch (r){
-                case  NToken.TT_NUMBER:
-                case  NToken.TT_FLOAT:
-                case  NToken.TT_INT:
-                case  NToken.TT_LONG:
-                case  NToken.TT_BIG_DECIMAL:
-                case  NToken.TT_BIG_INT:
-                case  NToken.TT_DOUBLE:{
+            switch (r) {
+                case NToken.TT_NUMBER:
+                case NToken.TT_FLOAT:
+                case NToken.TT_INT:
+                case NToken.TT_LONG:
+                case NToken.TT_BIG_DECIMAL:
+                case NToken.TT_BIG_INT:
+                case NToken.TT_DOUBLE: {
                     Number nval = st.nval;
                     StringBuilder sb = new StringBuilder();
                     while (true) {
@@ -895,5 +901,20 @@ public class NMemorySize implements Serializable {
                 "erroneous memory size : %s",
                 String.valueOf(finalValue1)
         ));
+    }
+
+    public NMemorySize reduceToLargestUnit() {
+        return withSmallestUnit(getLargestUnit());
+    }
+
+    public NMemorySize reduceToSmallestUnit() {
+        return withSmallestUnit(getSmallestUnit());
+    }
+
+    public NMemorySize reduceToUnit(NMemoryUnit unit) {
+        if (unit == null) {
+            return this;
+        }
+        return new NMemorySize(toUnitsArray(), unit, unit, iec);
     }
 }

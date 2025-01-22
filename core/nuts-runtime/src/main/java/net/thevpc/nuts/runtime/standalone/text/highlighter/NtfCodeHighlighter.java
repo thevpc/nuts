@@ -24,20 +24,11 @@ public class NtfCodeHighlighter implements NCodeHighlighter {
         if(s==null){
             return NConstants.Support.DEFAULT_SUPPORT;
         }
-        switch (s){
-            case "ntf":
-            case "nuts-text-format":
-            case "text/x-nuts-text-format":
-            case "text/x-ntf":
-            case "text/nuts-text-format":
-            case "text/ntf":
-            case "application/x-nuts-text-format":
-            case "application/x-ntf":
-            case "application/nuts-text-format":
-            case "application/ntf":
-            {
-                return NConstants.Support.DEFAULT_SUPPORT;
-            }
+        if(NConstants.Ntf.MIME_TYPES.contains(s)){
+            return NConstants.Support.DEFAULT_SUPPORT;
+        }
+        if(NConstants.Ntf.NAMES.contains(s)){
+            return NConstants.Support.DEFAULT_SUPPORT;
         }
         return NConstants.Support.NO_SUPPORT;
     }

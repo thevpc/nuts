@@ -514,7 +514,7 @@ public class FilePath implements NPathSPI {
     }
 
     @Override
-    public int getLocationItemsCount(NPath basePath) {
+    public int getNameCount(NPath basePath) {
         return value.getNameCount();
     }
 
@@ -565,7 +565,7 @@ public class FilePath implements NPathSPI {
     }
 
     @Override
-    public List<String> getLocationItems(NPath basePath) {
+    public List<String> getNames(NPath basePath) {
         int nameCount = value.getNameCount();
         String[] names = new String[nameCount];
         for (int i = 0; i < nameCount; i++) {
@@ -865,14 +865,7 @@ public class FilePath implements NPathSPI {
     public NPath toRelativePath(NPath basePath, NPath parentPath) {
         String child = basePath.getLocation();
         String parent = parentPath.getLocation();
-        if (child.startsWith(parent)) {
-            child = child.substring(parent.length());
-            if (child.startsWith("/") || child.startsWith("\\")) {
-                child = child.substring(1);
-            }
-            return NPath.of(child);
-        }
-        return null;
+        return NPath.of(NIOUtils.toRelativePath(child, parent));
     }
 
     @Override
@@ -884,4 +877,20 @@ public class FilePath implements NPathSPI {
     public byte[] getDigest(NPath basePath, String algo) {
         return null;
     }
+
+    @Override
+    public boolean startsWith(NPath basePath, String other) {
+        return startsWith(basePath,NPath.of(other));
+    }
+
+    @Override
+    public boolean startsWith(NPath basePath, NPath other) {
+        return toRelativePath(basePath,other)!=null;
+    }
+
+    @Override
+    public int compareTo(NPath basePath, NPath other) {
+        return basePath.toString().compareTo(other.toString());
+    }
+
 }

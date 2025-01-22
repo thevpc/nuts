@@ -2,20 +2,8 @@ package net.thevpc.nuts.lib.doc.executor.expr;
 
 import net.thevpc.nuts.expr.*;
 import net.thevpc.nuts.lib.doc.context.NDocContext;
-import net.thevpc.nuts.lib.doc.executor.expr.fct.FormatDate;
-import net.thevpc.nuts.lib.doc.executor.expr.fct.LoadPages;
-import net.thevpc.nuts.lib.doc.executor.expr.fct.PageContentToHtml;
-import net.thevpc.nuts.lib.doc.executor.expr.fct.PageToHtml;
-import net.thevpc.nuts.lib.doc.util.FileProcessorUtils;
-import net.thevpc.nuts.lib.doc.util.StringUtils;
-import net.thevpc.nuts.util.NLiteral;
+import net.thevpc.nuts.lib.doc.executor.expr.fct.*;
 import net.thevpc.nuts.util.NOptional;
-
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
 
 public class NDocExprEvaluator implements net.thevpc.nuts.lib.doc.executor.NDocExprEvaluator {
     public static final String NODC_CONTEXT_VAR_NAME = "ndoc";
@@ -32,136 +20,18 @@ public class NDocExprEvaluator implements net.thevpc.nuts.lib.doc.executor.NDocE
                 return NOptional.of(v);
             }
         });
-        rootDecls.declareFunction("exec", new NExprFct() {
-            @Override
-            public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
-                if (args.size() != 1) {
-                    throw new IllegalStateException(name + " : invalid arguments count");
-                }
-                NDocContext fcontext = fcontext(context);
-                String pathString = (String) args.get(0).getValue().orNull();
-                Path path = Paths.get(pathString);
-                return fcontext.getExecutorManager().executeRegularFile(path, null);
-            }
-        });
-
-        rootDecls.declareFunction("println", new NExprFct() {
-            @Override
-            public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
-                NDocContext fcontext = fcontext(context);
-
-                List<String> all = new ArrayList<>();
-                for (NExprNodeValue arg : args) {
-                    all.add(String.valueOf(arg.getValue().orNull()));
-                }
-                StringBuilder sb = new StringBuilder();
-                if (!all.isEmpty()) {
-                    if (all.size() == 1) {
-                        sb.append(all.get(0)).append("\n");
-                    } else {
-                        sb.append(String.join(", ", all)).append("\n");
-                    }
-                }
-                fcontext.getLog().debug("eval", name + "(" + StringUtils.toLiteralString(sb.toString()) + ")");
-                return sb.toString();
-            }
-        });
-
-        rootDecls.declareFunction("print", new NExprFct() {
-            @Override
-            public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
-                NDocContext fcontext = fcontext(context);
-
-                List<String> all = new ArrayList<>();
-                for (NExprNodeValue arg : args) {
-                    all.add(String.valueOf(arg.getValue().orNull()));
-                }
-                StringBuilder sb = new StringBuilder();
-                if (!all.isEmpty()) {
-                    if (all.size() == 1) {
-                        sb.append(all.get(0));
-                    } else {
-                        sb.append(String.join(", ", all));
-                    }
-                }
-                fcontext.getLog().debug("eval", name + "(" + StringUtils.toLiteralString(sb.toString()) + ")");
-                return sb.toString();
-            }
-        });
-
-        rootDecls.declareFunction("string", new NExprFct() {
-            @Override
-            public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
-                if (args.size() != 1) {
-                    throw new IllegalStateException(name + " : invalid arguments count");
-                }
-                NDocContext fcontext = fcontext(context);
-
-                String str = (String) args.get(0).getValue().orNull();
-                fcontext.getLog().debug("eval", name + "(" + StringUtils.toLiteralString(str) + ")");
-                return NLiteral.of(str).toStringLiteral();
-            }
-        });
-
-        rootDecls.declareFunction("processFile", new NExprFct() {
-            @Override
-            public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
-                if (args.size() != 1) {
-                    throw new IllegalStateException(name + " : invalid arguments count");
-                }
-                NDocContext fcontext = fcontext(context);
-
-                String str = (String) args.get(0).getValue().orNull();
-                String path = FileProcessorUtils.toAbsolute(str, fcontext.getWorkingDirRequired());
-                Path opath = Paths.get(path);
-                fcontext.getLog().debug("eval", name + "(" + StringUtils.toLiteralString(opath) + ")");
-                fcontext.getProcessorManager().processSourceRegularFile(opath, null);
-                return "";
-            }
-        });
-
-        rootDecls.declareFunction("loadFile", new NExprFct() {
-            @Override
-            public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
-                if (args.size() != 1) {
-                    throw new IllegalStateException(name + " : invalid arguments count");
-                }
-                NDocContext fcontext = fcontext(context);
-                String str = (String) args.get(0).getValue().orNull();
-                fcontext.getLog().debug("eval", name + "(" + StringUtils.toLiteralString(str) + ")");
-                return FileProcessorUtils.loadString(
-                        Paths.get(FileProcessorUtils.toAbsolute(str, fcontext.getWorkingDirRequired()))
-                );
-            }
-        });
-
-        rootDecls.declareFunction("include", new NExprFct() {
-            @Override
-            public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
-                if (args.size() != 1) {
-                    throw new IllegalStateException(name + " : invalid arguments count");
-                }
-                NDocContext fcontext = fcontext(context);
-
-                String str = (String) args.get(0).getValue().orNull();
-                String path = FileProcessorUtils.toAbsolute(str, fcontext.getWorkingDirRequired());
-                Path opath = Paths.get(path);
-                fcontext.getLog().debug("eval", name + "(" + StringUtils.toLiteralString(opath) + ")");
-                try (InputStream in = Files.newInputStream(opath)) {
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    fcontext.getProcessorManager().processStream(in, out, fcontext.getMimeTypeResolver().resolveMimetype(opath.toString()));
-                    return out.toString();
-                } catch (IOException io) {
-                    throw new UncheckedIOException(io);
-                }
-            }
-        });
-
-        declareFunction(new LoadPages());
-        declareFunction(new PageToHtml());
-        declareFunction(new PageContentToHtml());
-        declareFunction(new FormatDate());
-
+        declareFunction(new ExecFct());
+        declareFunction(new PrintlnFct());
+        declareFunction(new PrintFct());
+        declareFunction(new StringFct());
+        declareFunction(new ProcessFileFct());
+        declareFunction(new LoadFileFct());
+        declareFunction(new IncludeFct());
+        declareFunction(new LoadPagesFct());
+        declareFunction(new PageToHtmlFct());
+        declareFunction(new PageContentToHtmlFct());
+        declareFunction(new FormatDateFct());
+        declareFunction(new FileContentLengthString());
     }
 
     @Override
@@ -170,6 +40,7 @@ public class NDocExprEvaluator implements net.thevpc.nuts.lib.doc.executor.NDocE
         NExprMutableDeclarations decl = rootDecls.newMutableDeclarations();
         decl.declareConstant(NODC_CONTEXT_VAR_NAME, fcontext);
         decl.declareConstant("cwd", System.getProperty("user.dir"));
+        decl.declareConstant("projectRoot", fcontext.getProjectRoot());
         decl.declareConstant("dir", fcontext.getWorkingDir().orNull());
         NExprDeclarations decl2 = decl.newDeclarations(new NExprEvaluator() {
             @Override
@@ -193,10 +64,10 @@ public class NDocExprEvaluator implements net.thevpc.nuts.lib.doc.executor.NDocE
         });
         NExprNode nExprNode = decl2.parse(content).get();
         NOptional<Object> eval = nExprNode.eval(decl2);
-        if(!eval.isPresent()){
+        if (!eval.isPresent()) {
             eval = nExprNode.eval(decl2);
         }
-        return  eval.get();
+        return eval.get();
     }
 
     @Override
@@ -204,8 +75,8 @@ public class NDocExprEvaluator implements net.thevpc.nuts.lib.doc.executor.NDocE
         return "NExpr";
     }
 
-    protected void declareFunction(BaseNexprNExprFct d){
-        rootDecls.declareFunction(d.getName(),d);
+    protected void declareFunction(BaseNexprNExprFct d) {
+        rootDecls.declareFunction(d.getName(), d);
     }
 
     private static NDocContext fcontext(NExprDeclarations context) {

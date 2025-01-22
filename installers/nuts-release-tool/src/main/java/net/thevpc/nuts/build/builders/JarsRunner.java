@@ -5,13 +5,9 @@ import net.thevpc.nuts.build.util.AbstractRunner;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NMaps;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.*;
 
 import net.thevpc.nuts.build.util.Mvn;
-import net.thevpc.nuts.build.util.MvnArtifactType;
 
 public class JarsRunner extends AbstractRunner {
 
@@ -26,7 +22,11 @@ public class JarsRunner extends AbstractRunner {
 
     @Override
     public void configureAfterOptions() {
-        setRemoteSshConnexion(context().user + "@thevpc.net");
+        context().setRemoteTheVpcSshConnexion(
+                NStringUtils.firstNonBlank(NMsg.ofV(
+                        NStringUtils.trim(context().vars.get("PROD_SSH_CONNEXION"))
+                        , context().varMapper()).toString(),context().getRemoteTheVpcSshUser() + "@thevpc.net")
+        );
     }
 
 
@@ -46,16 +46,26 @@ public class JarsRunner extends AbstractRunner {
                 cmdLine.withNextFlag((v, a) -> context().productionMode = v);
                 return true;
             }
-            case "--stable-version": {
-                cmdLine.withNextEntry((v, a) -> context().nutsStableVersion = v);
+
+            case "--stable-api-version": {
+                cmdLine.withNextEntry((v, a) -> context().nutsStableApiVersion = v);
+                return true;
+            }
+            case "--stable-app-version": {
+                cmdLine.withNextEntry((v, a) -> context().nutsStableAppVersion = v);
                 return true;
             }
             case "--stable-runtime-version": {
-                cmdLine.withNextEntry((v, a) -> context().runtimeStableVersion = v);
+                cmdLine.withNextEntry((v, a) -> context().nutsStableRuntimeVersion = v);
                 return true;
             }
-            case "--remote-user": {
-                cmdLine.withNextEntry((v, a) -> context().user = v);
+
+            case "--remote-ssh-user": {
+                cmdLine.withNextEntry((v, a) -> context().remoteTheVpcSshUser = v);
+                return true;
+            }
+            case "--remote-ssh-host": {
+                cmdLine.withNextEntry((v, a) -> context().remoteTheVpcSshUser = v);
                 return true;
             }
 //            case "build-jars": {
@@ -78,30 +88,42 @@ public class JarsRunner extends AbstractRunner {
     }
 
     private void runNutsPublishMaven() {
-        echo("**** publish $nuts maven...", NMaps.of("nuts", NMsg.ofStyled("nuts", NTextStyle.keyword())));
+        echoV("**** publish $nuts maven...", NMaps.of("nuts", NMsg.ofStyledKeyword("nuts")));
         String nutsFolder = Mvn.folder(NId.get("net.thevpc:nuts").get());
         upload(localMvn().resolve(nutsFolder), removeMvn().resolve(nutsFolder));
-        remoteCopyFolder(removeMvn().resolve(nutsFolder), removeThevpcMaven().resolve(nutsFolder));
+        remoteCopyFolder(removeMvn().resolve(nutsFolder), remoteThevpcMavenPath().resolve(nutsFolder));
     }
 
     private void runNutsPublishPreview() {
-        echo("**** publish $nuts preview...", NMaps.of("nuts", NMsg.ofStyled("nuts", NTextStyle.keyword())));
-        NId nid = NWorkspace.of().getApiId();
-        remoteCopyFile(localMvn().resolve(Mvn.file(nid, MvnArtifactType.JAR)), remoteTheVpcNuts().resolve("nuts-preview.jar"));
+        echoV("**** publish $nuts preview...", NMaps.of("nuts", NMsg.ofStyledKeyword("nuts")));
+        NPath latestJarPath = localMvn().resolve(Mvn.jar(NWorkspace.of().getAppId()));
+        latestJarPath.copyTo(context().websiteProjectFolder.resolve("src/resources/download").resolve(latestJarPath.getName()));
+        latestJarPath.copyTo(context().websiteProjectFolder.resolve("src/resources/download").resolve("nuts-preview.jar"));
+        remoteMkdirs(remoteTheVpcNutsPath().toString());
+        remoteCopyFile(latestJarPath, remoteTheVpcNutsPath().resolve("nuts-preview.jar"));
     }
 
 
     private void runNutsPublishStable() {
-        echo("**** publish $nuts stable...", NMaps.of("nuts", NMsg.ofStyled("nuts", NTextStyle.keyword())));
-        String stableVersion = context().nutsStableVersion;
-        String jarName = "nuts-" + stableVersion + ".jar";
-        NAssert.requireNonBlank(stableVersion,"nutsStableVersion");
-        NPath.of("https://repo1.maven.org/maven2/net/thevpc/nuts/nuts/" + stableVersion + "/"+jarName)
-                        .copyTo(context().root.resolve("installers/nuts-release-tool/dist").resolve(jarName));
+        echoV("**** publish $nuts stable...", NMaps.of("nuts", NMsg.ofStyledKeyword("nuts")));
+        NAssert.requireNonBlank(context().nutsStableAppVersion,"nutsAppStableVersion");
+        String jarName = NWorkspace.of().getAppId().getArtifactId() + "-"+context().nutsStableAppVersion + ".jar";
+//        NPath.of("https://repo1.maven.org/maven2/" + Mvn.jar(NWorkspace.of().getAppId().builder().setVersion(context().nutsStableVersion).build()))
+//                        .copyTo(context().nutsRootFolder.resolve("installers/nuts-release-tool/dist").resolve(jarName));
 
+        NPath localJarStable = context().websiteProjectFolder.resolve("src/resources/download").resolve(jarName);
+        if(!localJarStable.isRegularFile()){
+            throw new NIllegalArgumentException(NMsg.ofC("unable to find nuts stable jar at : %s", localJarStable));
+        }
+//        NPath.of("https://thevpc.net/maven/" + Mvn.jar(NWorkspace.of().getAppId().builder().setVersion(context().nutsStableAppVersion).build()))
+//                        .copyTo(localJarStable);
+
+        localJarStable.copyTo(context().websiteProjectFolder.resolve("src/resources/download").resolve("nuts-stable.jar"));
+
+        remoteMkdirs(remoteTheVpcNutsPath().toString());
         upload(
-                context().root.resolve("installers/nuts-release-tool/dist").resolve(jarName)
-                , remoteTheVpcNuts().resolve("nuts-stable.jar")
+                localJarStable
+                , remoteTheVpcNutsPath().resolve("nuts-stable.jar")
         );
     }
 

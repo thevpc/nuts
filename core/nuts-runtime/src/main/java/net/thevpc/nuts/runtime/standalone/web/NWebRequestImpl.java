@@ -1,12 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.web;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.web.*;
 
@@ -17,19 +15,17 @@ import java.util.*;
 public class NWebRequestImpl implements NWebRequest {
     private String url;
     private NHttpMethod method;
-    private Map<String, List<String>> headers;
+    private DefaultNWebHeaders headers=new DefaultNWebHeaders();
     private Map<String, List<String>> parameters;
     private NInputSource body;
     private boolean oneWay;
     private Integer readTimeout;
     private Integer connectTimeout;
-    private NSession session;
     private List<NWebRequestBody> parts = new ArrayList<>();
     private DefaultNWebCli cli;
 
-    public NWebRequestImpl(DefaultNWebCli cli, NSession session, NHttpMethod method) {
+    public NWebRequestImpl(DefaultNWebCli cli, NHttpMethod method) {
         this.cli = cli;
-        this.session = session;
         this.method = method == null ? NHttpMethod.GET : method;
     }
 
@@ -164,8 +160,24 @@ public class NWebRequestImpl implements NWebRequest {
         return this;
     }
 
+    public NWebRequest addCookies(NWebCookie[] cookies) {
+        if (cookies != null) {
+            for (NWebCookie cookie : cookies) {
+                addCookie(cookie);
+            }
+        }
+        return this;
+    }
+
+    public NWebRequest addCookie(NWebCookie cookie) {
+        if (cookie != null) {
+            addHeader("Cookie", cookie.getName() + "=" + cookie.getValue());
+        }
+        return this;
+    }
+
     @Override
-    public NWebRequestImpl setUrl(String url) {
+    public NWebRequest setUrl(String url) {
         this.url = url;
         return this;
     }
@@ -182,28 +194,38 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest get() {
+    public NWebRequest GET() {
         return setMethod(NHttpMethod.GET);
     }
 
     @Override
-    public NWebRequest post() {
+    public NWebRequest POST() {
         return setMethod(NHttpMethod.POST);
     }
 
     @Override
-    public NWebRequest patch() {
+    public NWebRequest PATCH() {
         return setMethod(NHttpMethod.PATCH);
     }
 
     @Override
-    public NWebRequest options() {
+    public NWebRequest OPTIONS() {
         return setMethod(NHttpMethod.OPTIONS);
     }
 
     @Override
-    public NWebRequest head() {
+    public NWebRequest HEAD() {
         return setMethod(NHttpMethod.HEAD);
+    }
+
+    @Override
+    public NWebRequest trace() {
+        return setMethod(NHttpMethod.TRACE);
+    }
+
+    @Override
+    public NWebRequest trace(String url) {
+        return trace().setUrl(url);
     }
 
     @Override
@@ -212,48 +234,73 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest put() {
+    public NWebRequest PUT() {
         return setMethod(NHttpMethod.PUT);
     }
 
     @Override
-    public NWebRequest delete() {
+    public NWebRequest DELETE() {
         return setMethod(NHttpMethod.DELETE);
     }
 
     @Override
+    public NWebRequest GET(String url) {
+        return GET().setUrl(url);
+    }
+
+    @Override
+    public NWebRequest POST(String url) {
+        return POST().setUrl(url);
+    }
+
+    @Override
+    public NWebRequest PATCH(String url) {
+        return PATCH().setUrl(url);
+    }
+
+    @Override
+    public NWebRequest OPTIONS(String url) {
+        return OPTIONS().setUrl(url);
+    }
+
+    @Override
+    public NWebRequest HEAD(String url) {
+        return HEAD().setUrl(url);
+    }
+
+    @Override
+    public NWebRequest connect(String url) {
+        return connect().setUrl(url);
+    }
+
+    @Override
+    public NWebRequest PUT(String url) {
+        return PUT().setUrl(url);
+    }
+
+    @Override
+    public NWebRequest DELETE(String url) {
+        return DELETE().setUrl(url);
+    }
+
+    @Override
     public String getHeader(String name) {
-        if (headers != null) {
-            List<String> values = headers.get(name);
-            if (values != null) {
-                for (String value : values) {
-                    return value;
-                }
-            }
-        }
-        return null;
+        return headers.getFirst(name);
     }
 
     @Override
     public List<String> getHeaders(String name) {
-        List<String> all = new ArrayList<>();
-        if (headers != null) {
-            List<String> values = headers.get(name);
-            if (values != null) {
-                all.addAll(values);
-            }
-        }
-        return all;
+        return headers.getOrEmpty(name);
     }
 
     @Override
     public Map<String, List<String>> getHeaders() {
-        return headers;
+        return headers.toMap();
     }
 
     @Override
     public NWebRequest setHeaders(Map<String, List<String>> headers) {
-        this.headers = headers == null ? new HashMap<>() : headers;
+        this.headers.clear();
         return this;
     }
 
@@ -373,12 +420,7 @@ public class NWebRequestImpl implements NWebRequest {
 
     @Override
     public NWebRequestImpl addHeader(String name, String value) {
-        if (name != null && value != null) {
-            if (this.headers == null) {
-                this.headers = new LinkedHashMap<>();
-            }
-            this.headers.computeIfAbsent(name, s -> new ArrayList<>()).add(value);
-        }
+        this.headers.addHeader(name, value, DefaultNWebHeaders.Mode.ALWAYS);
         return this;
     }
 
@@ -386,17 +428,9 @@ public class NWebRequestImpl implements NWebRequest {
     public NWebRequestImpl setHeader(String name, String value) {
         if (name != null) {
             if (value != null) {
-                if (this.headers == null) {
-                    this.headers = new LinkedHashMap<>();
-                }
-                List<String> list = this.headers.computeIfAbsent(name, s -> new ArrayList<>());
-                list.clear();
-                list.add(value);
+                this.headers.addHeader(name, value, DefaultNWebHeaders.Mode.ALWAYS);
             } else {
-                if (this.headers != null) {
-                    List<String> list = this.headers.computeIfAbsent(name, s -> new ArrayList<>());
-                    list.clear();
-                }
+                this.headers.removeHeader(name);
             }
         }
         return this;
@@ -522,23 +556,23 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest setFormUrlEncoded(Map<String,String> m) {
+    public NWebRequest setFormUrlEncoded(Map<String, String> m) {
         setContentTypeFormUrlEncoded();
-        StringBuilder sb=new StringBuilder();
-        if(m!=null){
-            boolean first=true;
+        StringBuilder sb = new StringBuilder();
+        if (m != null) {
+            boolean first = true;
             for (Map.Entry<String, String> e : m.entrySet()) {
-                if(first){
-                    first=false;
-                }else{
+                if (first) {
+                    first = false;
+                } else {
                     sb.append("&");
                 }
                 try {
                     sb
-                            .append(URLEncoder.encode(NStringUtils.trim(e.getKey()),"UTF-8"))
+                            .append(URLEncoder.encode(NStringUtils.trim(e.getKey()), "UTF-8"))
                             .append("=")
-                            .append(URLEncoder.encode(NStringUtils.trim(e.getValue()),"UTF-8"))
-                            ;
+                            .append(URLEncoder.encode(NStringUtils.trim(e.getValue()), "UTF-8"))
+                    ;
                 } catch (UnsupportedEncodingException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -613,8 +647,8 @@ public class NWebRequestImpl implements NWebRequest {
         return cli.run(this);
     }
 
-    public String getEffectiveUrl(){
-        return cli.formatURL(this,true);
+    public String getEffectiveUrl() {
+        return cli.formatURL(this, true);
     }
 
     @Override
@@ -626,8 +660,8 @@ public class NWebRequestImpl implements NWebRequest {
     public NMsg toMsg() {
         return NMsg.ofC("%s %s",
                 method == null ? NHttpMethod.GET : method,
-                NMsg.ofStyled(getEffectiveUrl(), NTextStyle.path())
-                );
+                NMsg.ofStyledPath(getEffectiveUrl())
+        );
     }
 }
 

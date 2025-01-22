@@ -1,6 +1,7 @@
 package net.thevpc.nuts.web;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.Time;
@@ -43,6 +44,14 @@ public class NHttpUrlEncoder {
             return encode(String.valueOf(any));
         }
         throw new IllegalArgumentException("unsupported object format of type " + any.getClass().getName() + " : " + any);
+    }
+
+    public static String decode(String any) {
+        try {
+            return URLDecoder.decode(any, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static String encode(String any) {

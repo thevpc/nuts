@@ -8,14 +8,13 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStream;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -293,7 +292,7 @@ public class InvalidFilePath implements NPathSPI {
     }
 
     @Override
-    public int getLocationItemsCount(NPath basePath) {
+    public int getNameCount(NPath basePath) {
         List<String> pa = asPathArray();
         return pa.size() == 0 ? 1 : pa.size();
     }
@@ -315,7 +314,7 @@ public class InvalidFilePath implements NPathSPI {
     }
 
     @Override
-    public List<String> getLocationItems(NPath basePath) {
+    public List<String> getNames(NPath basePath) {
         return asPathArray();
     }
 
@@ -434,6 +433,15 @@ public class InvalidFilePath implements NPathSPI {
     public boolean isEqOrDeepChildOf(NPath basePath,NPath other) {
         return toRelativePath(basePath, other)!=null;
     }
+    @Override
+    public boolean startsWith(NPath basePath, String other) {
+        return startsWith(basePath,NPath.of(other));
+    }
+
+    @Override
+    public boolean startsWith(NPath basePath, NPath other) {
+        return toRelativePath(basePath,other)!=null;
+    }
 
     @Override
     public boolean isLocal(NPath basePath) {
@@ -444,18 +452,16 @@ public class InvalidFilePath implements NPathSPI {
     public NPath toRelativePath(NPath basePath, NPath parentPath) {
         String child=basePath.getLocation();
         String parent=parentPath.getLocation();
-        if (child.startsWith(parent)) {
-            child = child.substring(parent.length());
-            if (child.startsWith("/") || child.startsWith("\\")) {
-                child = child.substring(1);
-            }
-            return NPath.of(child);
-        }
-        return null;
+        return NPath.of(NIOUtils.toRelativePath(child, parent));
     }
 
     @Override
     public byte[] getDigest(NPath basePath, String algo) {
         return null;
+    }
+
+    @Override
+    public int compareTo(NPath basePath, NPath other) {
+        return basePath.toString().compareTo(other.toString());
     }
 }

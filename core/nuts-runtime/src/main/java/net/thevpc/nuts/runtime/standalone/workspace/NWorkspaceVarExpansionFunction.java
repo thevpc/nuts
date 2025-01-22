@@ -48,7 +48,7 @@ public class NWorkspaceVarExpansionFunction implements Function<String, String> 
             case "home.run":
                 return str(NWorkspace.of().getHomeLocation(NStoreType.RUN));
             case "workspace.hash-name":
-                return workspace.getHashName();
+                return workspace.getDigestName();
             case "workspace.name":
                 return workspace.getName();
             case "workspace.location":

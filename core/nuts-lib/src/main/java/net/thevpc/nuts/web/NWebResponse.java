@@ -11,6 +11,8 @@ public interface NWebResponse {
 
     NMsg getMsg();
 
+    List<String> getHeaders(String name);
+
     Map<String, List<String>> getHeaders();
 
     NInputSource getContent();
@@ -23,13 +25,15 @@ public interface NWebResponse {
 
     <T> T getContentAsJson(Class<T> clz);
 
-    Map<?,?> getContentAsJsonMap();
+    Map<?, ?> getContentAsJsonMap();
 
     List<?> getContentAsJsonList();
 
     String getContentAsString();
 
     byte[] getContentAsBytes();
+
+    NWebCookie[] getCookies();
 
     boolean isError();
 

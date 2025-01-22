@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
@@ -45,19 +45,60 @@ public class CoreSecurityUtils {
 
     public static final String ENV_KEY_PASSPHRASE = "passphrase";
     public static final String DEFAULT_PASSPHRASE = NHex.fromBytes("It's completely nuts!!".getBytes());
+    public String cypherAlgo = "DES/CBC/PKCS5Padding";
+    public String digestAlgo = "SHA-256";
+    private int hashSize;
+    public static final CoreSecurityUtils INSTANCE = new CoreSecurityUtils().detectBestAlgo();
 
-    public static char[] defaultDecryptChars(char[] data, String passphrase) {
+    public CoreSecurityUtils() {
+        setComplexity(32);
+    }
+
+    public CoreSecurityUtils detectBestAlgo() {
+        try {
+            setComplexity(32);
+            encryptString("a", "a");
+            return this;
+        } catch (Exception ex) {
+        }
+        try {
+            setComplexity(16);
+            encryptString("a", "a");
+            return this;
+        } catch (Exception ex) {
+        }
+
+        encryptString("a", "a");
+        return this;
+    }
+
+    private void setComplexity(int c) {
+        switch (c) {
+            case 16: {
+                hashSize = 16;
+                cypherAlgo = "AES/ECB/PKCS5Padding";
+                digestAlgo = "MD5";
+                return;
+            }
+            case 32: {
+                hashSize = 32;
+                cypherAlgo = "AES/ECB/PKCS5Padding";
+                digestAlgo = "SHA-256";
+                return;
+            }
+        }
+        throw new IllegalArgumentException("invalid complexity ");
+    }
+
+    public char[] defaultDecryptChars(char[] data, String passphrase) {
         return decryptString(new String(data), passphrase).toCharArray();
-//        return CoreIOUtils.bytesToChars(CoreSecurityUtils.httpDecrypt(CoreIOUtils.charsToBytes(data), passphrase));
     }
 
-    public static char[] defaultEncryptChars(char[] data, String passphrase) {
+    public char[] defaultEncryptChars(char[] data, String passphrase) {
         return encryptString(new String(data), passphrase).toCharArray();
-//        byte[] bytes = httpEncrypt(CoreIOUtils.charsToBytes(data), passphrase);
-//        return CoreIOUtils.bytesToChars(bytes);
     }
 
-    public static char[] defaultHashChars(char[] data, String passphrase) {
+    public char[] defaultHashChars(char[] data, String passphrase) {
         return defaultEncryptChars(NDigestUtils.evalSHA1(data), passphrase);
     }
 
@@ -90,39 +131,39 @@ public class CoreSecurityUtils {
 //        }
 //    }
 
-    private static String encryptString(String strToEncrypt, String secret) {
+    private String encryptString(String strToEncrypt, String secret) {
         try {
             //strToEncrypt must be multiple of 16 (bug in jdk11)
             byte[] bytes = strToEncrypt.getBytes(StandardCharsets.UTF_8);
-            int v=bytes.length;
-            ByteArrayOutputStream out=new ByteArrayOutputStream();
+            int v = bytes.length;
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
             out.write((v >>> 24) & 0xFF);
             out.write((v >>> 16) & 0xFF);
-            out.write((v >>>  8) & 0xFF);
-            out.write((v >>>  0) & 0xFF);
+            out.write((v >>> 8) & 0xFF);
+            out.write((v >>> 0) & 0xFF);
             out.write(bytes);
-            int s=v+4;
-            while(s%16!=0){
+            int s = v + 4;
+            while (s % 16 != 0) {
                 out.write(0);
                 s++;
             }
-            bytes=out.toByteArray();
+            bytes = out.toByteArray();
 
             KeyInfo k = createKeyInfo(secret);
-            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            Cipher cipher = Cipher.getInstance(cypherAlgo);
             cipher.init(Cipher.ENCRYPT_MODE, k.secretKey);
             return Base64.getEncoder().encodeToString(cipher.doFinal(bytes));
         } catch (NException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("encryption failed"),ex);
+            throw new NIllegalArgumentException(NMsg.ofPlain("encryption failed"), ex);
         }
     }
 
-    private static String decryptString(String strToDecrypt, String secret) {
+    private String decryptString(String strToDecrypt, String secret) {
         try {
             KeyInfo k = createKeyInfo(secret);
-            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            Cipher cipher = Cipher.getInstance(cypherAlgo);
             cipher.init(Cipher.DECRYPT_MODE, k.secretKey);
             byte[] bytes = cipher.doFinal(Base64.getDecoder().decode(strToDecrypt));
 
@@ -133,13 +174,13 @@ public class CoreSecurityUtils {
             int ch4 = bytes[3] & 0xff;
             if ((ch1 | ch2 | ch3 | ch4) < 0)
                 throw new EOFException();
-            int v= ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
-            bytes=Arrays.copyOfRange(bytes,4,4+v);
+            int v = ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
+            bytes = Arrays.copyOfRange(bytes, 4, 4 + v);
             return new String(bytes);
         } catch (NException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("decryption failed"),ex);
+            throw new NIllegalArgumentException(NMsg.ofPlain("decryption failed"), ex);
         }
     }
 
@@ -149,7 +190,7 @@ public class CoreSecurityUtils {
         byte[] key;
     }
 
-    private static KeyInfo createKeyInfo(String password) {
+    private KeyInfo createKeyInfo(String password) {
         if (password == null || password.length() == 0) {
             password = "password";
         }
@@ -157,11 +198,11 @@ public class CoreSecurityUtils {
         KeyInfo k = new KeyInfo();
         try {
             k.key = password.getBytes(StandardCharsets.UTF_8);
-            sha = MessageDigest.getInstance("SHA-256");
+            sha = MessageDigest.getInstance(digestAlgo);
             k.key = sha.digest(k.key);
             k.secretKey = new SecretKeySpec(k.key, "AES");
         } catch (NoSuchAlgorithmException ex) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("encryption key building failed"),ex);
+            throw new NIllegalArgumentException(NMsg.ofPlain("encryption key building failed"), ex);
         }
         return k;
     }

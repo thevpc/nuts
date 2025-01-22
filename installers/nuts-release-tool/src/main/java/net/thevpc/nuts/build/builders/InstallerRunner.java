@@ -11,6 +11,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 
 import net.thevpc.nuts.io.NPath;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 
 /**
@@ -33,7 +34,6 @@ public class InstallerRunner extends AbstractRunner {
 
     @Override
     public void configureAfterOptions() {
-        context().NUTS_WEBSITE_BASE = context().root.resolve("documentation/website");
         NUTS_JAVA_HOME.update(context()).ensureDirectory();
         NUTS_INSTALLER_BUILD_JAVA_HOME.update(context()).ensureDirectory();
         NUTS_GRAALVM_DIR.update(context()).ensureDirectory();
@@ -75,31 +75,31 @@ public class InstallerRunner extends AbstractRunner {
     @Override
     public void run() {
         NativeBuilder r = new NativeBuilder();
-        r.setJpackageHome(NUTS_INSTALLER_BUILD_JAVA_HOME.update(context()).getValue());
-        r.setGraalvmHome(NUTS_GRAALVM_DIR.update(context()).getValue());
-        r.setJre8Linux64(INSTALLER_JRE8_LINUX64.update(context()).getValue());
-        r.setJre8Linux32(INSTALLER_JRE8_LINUX32.update(context()).getValue());
-        r.setJre8Windows64(INSTALLER_JRE8_WINDOWS64.update(context()).getValue());
-        r.setJre8Windows32(INSTALLER_JRE8_WINDOWS32.update(context()).getValue());
-        r.setJre8Mac64(INSTALLER_JRE8_MAC64.update(context()).getValue());
+        r.setJpackageHome(NUTS_INSTALLER_BUILD_JAVA_HOME.update(context()).ensureDirectory().getValue());
+        r.setGraalvmHome(NUTS_GRAALVM_DIR.update(context()).ensureDirectory().getValue());
+        r.setJre8Linux64(INSTALLER_JRE8_LINUX64.update(context()).ensureRegularFile().getValue());
+        r.setJre8Linux32(INSTALLER_JRE8_LINUX32.update(context()).ensureRegularFile().getValue());
+        r.setJre8Windows64(INSTALLER_JRE8_WINDOWS64.update(context()).ensureRegularFile().getValue());
+        r.setJre8Windows32(INSTALLER_JRE8_WINDOWS32.update(context()).ensureRegularFile().getValue());
+        r.setJre8Mac64(INSTALLER_JRE8_MAC64.update(context()).ensureRegularFile().getValue());
         r.setVendor("thevpc");
-        r.setCopyright("(c) 2024 thevpc");
-        r.setIcons(Arrays.asList(context().root.resolve("documentation/media/nuts-icon.icns")));
+        r.setCopyright("(c) 2018-"+ LocalDate.now().getYear() +" thevpc");
+        r.setIcons(Arrays.asList(context().nutsRootFolder.resolve("documentation/media/nuts-icon.icns")));
 
-        NPath sharedDistFolder = context().root.resolve("installers/nuts-release-tool").resolve("dist");
+        NPath sharedDistFolder = context().nutsRootFolder.resolve("installers/nuts-release-tool").resolve("dist");
         if (buildInstaller) {
             r.setSupported(NativeBuilder.PackageType.PORTABLE);
             if(buildNative){
                 r.addSupported(NativeBuilder.PackageType.NATIVE,NativeBuilder.PackageType.BIN,NativeBuilder.PackageType.JRE_BUNDLE);
             }
             r.setMainClass("net.thevpc.nuts.installer.NutsInstaller");
-            r.setProjectFolder(context().root.resolve("installers/nuts-installer"), null, null);
+            r.setProjectFolder(context().nutsRootFolder.resolve("installers/nuts-installer"), null, null);
             r.setDist(sharedDistFolder);
             r.setProfilingArgs(new String[0]);
             r.build();
             if (context().publish) {
                 for (NPath nPath : r.getGeneratedFiles()) {
-                    upload(nPath,remoteTheVpcNuts().resolve(nPath.getName()).toString());
+                    upload(nPath, remoteTheVpcNutsPath().resolve(nPath.getName()).toString());
                 }
             }
         }
@@ -109,14 +109,14 @@ public class InstallerRunner extends AbstractRunner {
             if(buildNative){
                 r.addSupported(NativeBuilder.PackageType.NATIVE,NativeBuilder.PackageType.BIN,NativeBuilder.PackageType.JRE_BUNDLE);
             }
-            r.setMainClass("net.thevpc.nuts.Nuts");
-            r.setProjectFolder(context().root.resolve("installers/nuts-portable"), null, "nuts-portable-$version-shaded.jar");
+            r.setMainClass("net.thevpc.nuts.NutsApp");
+            r.setProjectFolder(context().nutsRootFolder.resolve("core/nuts-app-full"), null, "nuts-app-full-$version.jar");
             r.setDist(sharedDistFolder);
             r.setProfilingArgs(new String[]{"--sandbox","--verbose"});
             r.build();
             if (context().publish) {
                 for (NPath nPath : r.getGeneratedFiles()) {
-                    upload(nPath,remoteTheVpcNuts().resolve(nPath.getName()).toString());
+                    upload(nPath, remoteTheVpcNutsPath().resolve(nPath.getName()).toString());
                 }
             }
         }

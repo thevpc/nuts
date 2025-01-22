@@ -3,7 +3,7 @@ package test;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.lib.doc.context.NDocContext;
-import net.thevpc.nuts.lib.doc.processor.impl.DollarBracket2VarStreamProcessor;
+import net.thevpc.nuts.lib.doc.processor.base.TagStreamProcessor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +20,7 @@ public class DollarBracket2VarStreamProcessorTest {
                 "-w", "test6");
         ws.runWith(()->{
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            DollarBracket2VarStreamProcessor.INSTANCE.processStream(
+            TagStreamProcessor.DOLLAR_BARACKET2.processStream(
                     new ByteArrayInputStream(template.getBytes()),
                     out,
                     new NDocContext()

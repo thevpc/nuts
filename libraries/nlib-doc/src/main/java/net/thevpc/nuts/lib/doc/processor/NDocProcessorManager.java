@@ -1,23 +1,22 @@
 package net.thevpc.nuts.lib.doc.processor;
 
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.lib.doc.DefaultNDocPathTranslator;
+import net.thevpc.nuts.lib.doc.context.DefaultNDocPathTranslator;
 import net.thevpc.nuts.lib.doc.context.NDocContext;
-import net.thevpc.nuts.lib.doc.executor.NDocExprEvaluator;
 import net.thevpc.nuts.lib.doc.mimetype.MimeTypeConstants;
+import net.thevpc.nuts.lib.doc.processor.base.TagStreamProcessor;
 import net.thevpc.nuts.lib.doc.processor.impl.*;
 import net.thevpc.nuts.lib.doc.util.FileProcessorUtils;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -28,11 +27,17 @@ public class NDocProcessorManager {
     public static final StreamToProcessor DEFAULT_PROCESSOR = new StreamToProcessor(new CopyStreamProcessor());
 
     static {
-        registerGlobalProcessorByMimeType(DollarVarStreamProcessor.INSTANCE, MimeTypeConstants.PLACEHOLDER_DOLLARS);
-        registerGlobalProcessorByMimeType(Bracket2VarStreamProcessor.INSTANCE,"text/html");
-        registerGlobalProcessorByMimeType(DollarBracket2VarStreamProcessor.INSTANCE,
+        registerGlobalProcessorByMimeType(TagStreamProcessor.DOLLAR, MimeTypeConstants.PLACEHOLDER_DOLLAR);
+        registerGlobalProcessorByMimeType(TagStreamProcessor.BARACKET2, MimeTypeConstants.PLACEHOLDER_BRACKET2);
+        registerGlobalProcessorByMimeType(TagStreamProcessor.DOLLAR_BARACKET2, MimeTypeConstants.PLACEHOLDER_DOLLAR_BRACKET2);
+        registerGlobalProcessorByMimeType(TagStreamProcessor.LT_PERCENT, MimeTypeConstants.PLACEHOLDER_LT_PERCENT);
+
+        registerGlobalProcessorByMimeType(TagStreamProcessor.BARACKET2, "text/html","text/markdown","text/x-shellscript", "application/x-shellscript");
+        for (String mimeType : NConstants.Ntf.MIME_TYPES) {
+            registerGlobalProcessorByMimeType(TagStreamProcessor.BARACKET2, mimeType);
+        }
+        registerGlobalProcessorByMimeType(TagStreamProcessor.DOLLAR_BARACKET2,
                 MimeTypeConstants.ANY_TEXT,
-                "application/x-shellscript",
                 "application/json",
                 "application/javascript",
                 "application/java"
@@ -152,23 +157,27 @@ public class NDocProcessorManager {
         return this;
     }
 
-    public void processResourceTree(Path path, Predicate<Path> filter) {
+    public void processResourceTree(NPath path, Predicate<NPath> filter) {
         if (!context.getRootDir().isPresent()) {
             context.setRootDir(path.toString());
         }
-        Path path0 = context.toAbsolutePath(path);
-        if (Files.isRegularFile(path0)) {
+        if (!path.exists()) {
+            context.getLog().warn("file", NMsg.ofC("source file not found %s", path).toString());
+            return;
+        }
+        NPath path0 = context.toAbsolutePath(path);
+        if (path0.isRegularFile()) {
             if (filter == null || filter.test(path0)) {
                 getProcessorExact(MimeTypeConstants.ANY_TYPE).processPath(path, null, context);
             }
-        } else if (Files.isDirectory(path)) {
-            try (Stream<Path> stream = Files.walk(path0).filter(x -> Files.isRegularFile(x))) {
+        } else if (path.isDirectory()) {
+            try (NStream<NPath> stream = path0.walk().filter(x -> x.isRegularFile())) {
                 stream.forEach(x -> {
                     if (filter == null || filter.test(x)) {
                         try {
                             String p = context.getPathTranslator().translatePath(x.toString());
-                            if(p!=null) {
-                                NCp.of().from(NPath.of(x)).to(NPath.of(p)).setMkdirs(true).run();
+                            if (p != null) {
+                                NCp.of().from(x).to(NPath.of(p)).setMkdirs(true).run();
                                 //getProcessorExact(MimeTypeConstants.ANY_TYPE).processPath(x, null, context);
                             }
                         } catch (Exception ex) {
@@ -176,18 +185,16 @@ public class NDocProcessorManager {
                         }
                     }
                 });
-            } catch (IOException e) {
-                throw new NIOException(e);
             }
         } else {
             throw new NIOException(NMsg.ofC("unsupported path %s", path));
         }
     }
 
-    public void processSourceRegularFile(Path path, String mimeType) {
-        Path absolutePath = context.toAbsolutePath(path);
-        Path parentPath = absolutePath.getParent();
-        if (!Files.isRegularFile(absolutePath)) {
+    public void processSourceRegularFile(NPath path, String mimeType) {
+        NPath absolutePath = context.toAbsolutePath(path);
+        NPath parentPath = absolutePath.getParent();
+        if (!absolutePath.isRegularFile()) {
             throw new NIllegalArgumentException(NMsg.ofC("unsupported file : %s", path.toString()));
         }
         String[] mimeTypes = mimeType == null ? FileProcessorUtils.splitMimeTypes(context.getMimeTypeResolver().resolveMimetype(path.toString()))
@@ -218,40 +225,79 @@ public class NDocProcessorManager {
             }
         }
     }
-    public void processSourceTree(Path path, String targetFolder, Predicate<Path> filter) {
-        Path opath;
-        try {
-            opath = path.toRealPath();
-        } catch (IOException ex) {
-            throw new NIOException(ex);
+    public void processSourceRegularFile(NPath path, String mimeType,OutputStream out) {
+        NPath absolutePath = context.toAbsolutePath(path);
+        NPath parentPath = absolutePath.getParent();
+        if (!absolutePath.isRegularFile()) {
+            throw new NIllegalArgumentException(NMsg.ofC("unsupported file : %s", path.toString()));
         }
-        if (Files.isDirectory(opath)) {
+        String[] mimeTypes = mimeType == null ? FileProcessorUtils.splitMimeTypes(context.getMimeTypeResolver().resolveMimetype(path.toString()))
+                : FileProcessorUtils.splitMimeTypes(mimeType);
+        String contextName1 = NStringUtils.firstNonBlank(context.getContextName(), "file");
+        for (String mimeType0 : mimeTypes) {
+            NDocProcessor proc = null;
+            try {
+                proc = getProcessor(mimeType0);
+            } catch (Exception ex) {
+                context.getLog().error(contextName1, "error resolving processor for mimetype " + mimeType0 + " and file : " + path.toString() + ". " + ex.toString());
+            }
+            if (proc != null) {
+                String s1 = path.toString();
+                String s2 = absolutePath.toString();
+                if (s1.equals(s2)) {
+                    context.getLog().debug(contextName1, "[" + proc + "] [" + NStringUtils.firstNonBlank(mimeType, "no-mimetype") + "] process path : " + s1);
+                } else {
+                    context.getLog().debug(contextName1, "[" + proc + "] [" + NStringUtils.firstNonBlank(mimeType, "no-mimetype") + "] process path : " + s1 + " = " + s2);
+                }
+                try(InputStream in=path.getInputStream()) {
+                    proc.processStream(in, out,
+                            context.newChild()
+                                    .setUserParentProperties(true)
+                                    .setWorkingDir(parentPath.toString())
+                                    .setSourcePath(absolutePath.toString())
+                    );
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+                return;
+            }
+        }
+    }
+
+    public void processSourceTree(NPath path, String targetFolder, Predicate<NPath> filter) {
+        NPath opath = path.normalize();
+        if (!opath.exists()) {
+            context.getLog().warn("file", NMsg.ofC("source file not found %s", opath).toString());
+            return;
+        } else if (opath.isDirectory()) {
             context.setWorkingDir(opath.toString());
             if (targetFolder != null) {
-                context.setPathTranslator(new DefaultNDocPathTranslator(opath, Paths.get(targetFolder)));
+                context.setPathTranslator(new DefaultNDocPathTranslator(opath, NPath.of(targetFolder)));
             }
         } else {
-            Path ppath = opath.getParent();
+            NPath ppath = opath.getParent();
             context.setWorkingDir(ppath.toString());
             if (targetFolder != null) {
-                context.setPathTranslator(new DefaultNDocPathTranslator(opath, ppath));
+                context.setPathTranslator(new DefaultNDocPathTranslator(ppath,NPath.of(targetFolder) ));
             }
         }
         processSourceTree(opath, filter);
     }
 
-    public void processSourceTree(Path path, Predicate<Path> filter) {
+    public void processSourceTree(NPath path, Predicate<NPath> filter) {
         if (!context.getRootDir().isPresent()) {
             context.setRootDir(path.toString());
         }
-        Path path0 = context.toAbsolutePath(path);
-        if (Files.isRegularFile(path0)) {
+        NPath path0 = context.toAbsolutePath(path);
+        if (!path0.exists()) {
+            context.getLog().warn("file", NMsg.ofC("source file not found %s", path0).toString());
+            return;
+        } else if (path0.isRegularFile()) {
             if (filter == null || filter.test(path0)) {
                 processSourceRegularFile(path, null);
             }
-        } else if (Files.isDirectory(path)) {
-            try (Stream<Path> stream = Files.walk(path0).filter(x -> Files.isRegularFile(x))) {
-
+        } else if (path.isDirectory()) {
+            try (NStream<NPath> stream = path0.walk().filter(x -> x.isRegularFile())) {
                 stream.forEach(x -> {
                     if (filter == null || filter.test(x)) {
                         try {
@@ -261,28 +307,24 @@ public class NDocProcessorManager {
                         }
                     }
                 });
-            } catch (IOException e) {
-                throw new NIOException(e);
             }
         } else {
             throw new NIOException(NMsg.ofC("unsupported path %s", path));
         }
     }
 
-    public void processResourceTree(Path path, String targetFolder, Predicate<Path> filter) {
-        Path opath;
-        try {
-            opath = path.toRealPath();
-        } catch (IOException ex) {
-            throw new NIOException(ex);
-        }
-        if (Files.isDirectory(opath)) {
+    public void processResourceTree(NPath path, String targetFolder, Predicate<NPath> filter) {
+        NPath opath = path.normalize();
+        if (!opath.exists()) {
+            context.getLog().warn("file", NMsg.ofC("source file not found %s", opath).toString());
+            return;
+        } else if (opath.isDirectory()) {
             context.setWorkingDir(opath.toString());
             if (targetFolder != null) {
-                context.setPathTranslator(new DefaultNDocPathTranslator(opath, Paths.get(targetFolder)));
+                context.setPathTranslator(new DefaultNDocPathTranslator(opath, NPath.of(targetFolder)));
             }
         } else {
-            Path ppath = opath.getParent();
+            NPath ppath = opath.getParent();
             context.setWorkingDir(ppath.toString());
             if (targetFolder != null) {
                 context.setPathTranslator(new DefaultNDocPathTranslator(opath, ppath));
@@ -291,34 +333,35 @@ public class NDocProcessorManager {
         processResourceTree(opath, filter);
     }
 
-    public void processFiles(Path path, Predicate<Path> filter) {
-        Path path0 = context.toAbsolutePath(path);
-        if (Files.isRegularFile(path0)) {
+    public void processFiles(NPath path, Predicate<NPath> filter) {
+        NPath path0 = context.toAbsolutePath(path);
+        if (!path0.exists()) {
+            context.getLog().warn("file", NMsg.ofC("source file not found %s", path0).toString());
+            return;
+        } else if (path0.isRegularFile()) {
             if (filter == null || filter.test(path0)) {
                 processSourceRegularFile(path0, null);
             }
-        } else if (Files.isDirectory(path0)) {
-            try (Stream<Path> stream = Files.list(path0)) {
+        } else if (path0.isDirectory()) {
+            try (Stream<NPath> stream = path0.list().stream()) {
                 stream.filter(filter)
                         .forEach(x -> {
-                            if (Files.isRegularFile(x)) {
+                            if (x.isRegularFile()) {
                                 if (filter == null || filter.test(x)) {
                                     processSourceRegularFile(path0, null);
                                 }
                             }
                         });
-            } catch (IOException e) {
-                throw new NIOException(e);
             }
         } else {
             throw new NIOException(NMsg.ofC("unsupported path %s", path));
         }
     }
 
-    public NOptional<NDocProcessor> resolveFileProcessor(Path path, String mimeType) {
-        Path absolutePath = context.toAbsolutePath(path);
-        Path parentPath = absolutePath.getParent();
-        if (!Files.isRegularFile(absolutePath)) {
+    public NOptional<NDocProcessor> resolveFileProcessor(NPath path, String mimeType) {
+        NPath absolutePath = context.toAbsolutePath(path);
+        NPath parentPath = absolutePath.getParent();
+        if (!absolutePath.isRegularFile()) {
             return NOptional.ofNamedEmpty(NMsg.ofC("processor not found for %s and %s", path, mimeType));
         }
         String[] mimeTypes = mimeType == null ? FileProcessorUtils.splitMimeTypes(context.getMimeTypeResolver().resolveMimetype(path.toString()))

@@ -27,7 +27,7 @@ public class NBackup implements NApplication {
     @Override
     public void run() {
         NSession session = NSession.get().get();
-        session.out().println(NMsg.ofC("%s Backup Tool.", NMsg.ofStyled("Nuts", NTextStyle.keyword())));
+        session.out().println(NMsg.ofC("%s Backup Tool.", NMsg.ofStyledKeyword("Nuts")));
         NApp.of().processCmdLine(new NCmdLineRunner() {
 
             @Override
@@ -163,7 +163,7 @@ public class NBackup implements NApplication {
                         if (NBlankable.isBlank(config.getLocalPath())) {
                             cmdLine.throwMissingArgument("--local");
                         }
-                        session.out().println(NMsg.ofC("Using local path %s", NMsg.ofStyled(config.getLocalPath(), NTextStyle.path())));
+                        session.out().println(NMsg.ofC("Using local path %s", NMsg.ofStyledPath(config.getLocalPath())));
                         for (DecoratedPath path : config.getPaths()) {
                             get(path, config, session);
                         }
@@ -192,9 +192,9 @@ public class NBackup implements NApplication {
                         localPath};
                 NPath.of(localPath).getParent().mkdirs();
                 session.out().println(NMsg.ofC("[%s] Backup %s from %s.",
-                        NMsg.ofStyled(config.getRemoteServer(), NTextStyle.warn()),
-                        NMsg.ofStyled(name, NTextStyle.keyword()),
-                        NMsg.ofStyled(remotePath, NTextStyle.path())
+                        NMsg.ofStyledWarn(config.getRemoteServer()),
+                        NMsg.ofStyledKeyword(name),
+                        NMsg.ofStyledPath(remotePath)
                 ));
                 session.out().println(NCmdLine.of(cmd));
                 NExecCmd.of().addCommand(cmd).failFast().run();

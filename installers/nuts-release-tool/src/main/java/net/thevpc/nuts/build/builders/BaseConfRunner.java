@@ -9,7 +9,7 @@ import net.thevpc.nuts.build.util.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMsg;
 
 /**
@@ -17,35 +17,16 @@ import net.thevpc.nuts.util.NMsg;
  */
 public class BaseConfRunner extends AbstractRunner {
 
-    @Override
-    public void configureAfterOptions() {
-        if (NBlankable.isBlank(context().root)) {
-            context().root = NPath.ofUserDirectory().normalize();
-        }
-        if (!isValidRoot(context().root)) {
-            throw new NIllegalArgumentException(NMsg.ofC("invalid nuts repository root %s", context().root));
-        }
-    }
-
-    private boolean isValidRoot(NPath NUTS_ROOT_BASE) {
-        if (!NUTS_ROOT_BASE.resolve("pom.xml").isRegularFile()) {
-            return false;
-        }
-        NId id = NDescriptorParser.of()
-                .setDescriptorStyle(NDescriptorStyle.MAVEN)
-                .parse(NUTS_ROOT_BASE.resolve("pom.xml")).get().getId();
-        if (!id.getShortName().endsWith("net.thevpc.nuts.builders:nuts-builder")) {
-            return false;
-        }
-        return true;
-    }
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
         NArg c = cmdLine.peek().orNull();
         switch (c.key()) {
             case "--root": {
-                cmdLine.withNextEntry((v, a) -> context().root = NPath.of(v).toAbsolute().normalize());
+                cmdLine.withNextEntry((v, a) -> {
+                    //already processed
+                    //context().root = NPath.of(v).toAbsolute().normalize()
+                });
                 return true;
             }
             case "--conf": {
@@ -54,7 +35,7 @@ public class BaseConfRunner extends AbstractRunner {
             }
             case "--debug": {
                 cmdLine.withNextFlag((v, a)
-                        -> context().NUTS_DEBUG_ARG = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
+                        -> context().nutsDebugArg = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
                 );
                 return true;
             }
@@ -81,16 +62,37 @@ public class BaseConfRunner extends AbstractRunner {
 
     @Override
     public void configureBeforeOptions(NCmdLine cmdLine) {
-        NPath conf = NPath.of("nuts-release.conf");
+        cmdLine.lookupNextEntry((a, c) -> {
+            NPath newRoot = NPath.of(a).toAbsolute().normalize();
+            NReleaseUtils.ensureNutsRepoFolder(newRoot);
+            context().nutsRootFolder = newRoot;
+        }, "--root");
+        if (context().nutsRootFolder == null) {
+            NPath newRoot = NPath.ofUserDirectory();
+            NReleaseUtils.ensureNutsRepoFolder(newRoot);
+            context().nutsRootFolder = newRoot;
+        }
+        NPath conf = context().nutsRootFolder.resolve("installers/nuts-release-tool/nuts-release.conf");
         if (conf.exists()) {
             context().loadConfig(conf, cmdLine);
         } else {
-            throw new IllegalArgumentException(conf.toAbsolute() + " does not exist. Current directory must contain nuts-release.conf");
+            throw new NIllegalArgumentException(NMsg.ofC("missing %s", conf));
         }
+        context().websiteProjectFolder = context().nutsRootFolder.resolve("documentation/website");
+        context().repositoryProjectFolder = context().nutsRootFolder.resolve("documentation/repo");
+        context().setVar("root", context().nutsRootFolder.toString());
+    }
+
+    @Override
+    public void configureAfterOptions() {
+        NAssert.requireNonBlank(context().nutsStableApiVersion, "nutsStableApiVersion");
+        NAssert.requireNonBlank(context().nutsStableAppVersion, "nutsStableAppVersion");
+        NAssert.requireNonBlank(context().nutsStableRuntimeVersion, "nutsStableRuntimeVersion");
     }
 
     @Override
     public void run() {
+
     }
 
 

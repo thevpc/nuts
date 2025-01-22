@@ -4,8 +4,8 @@ Network Updatable Things Services
      __        __    
   /\ \ \ _  __/ /______
  /  \/ / / / / __/ ___/
-/ /\  / /_/ / /_(__  )   dev version 0.8.5.0 (accessible on thevpc.net)
-\_\ \/\__,_/\__/____/    production version 0.8.5.0 (accessible on maven central)
+/ /\  / /_/ / /_(__  )   dev version 0.8.5.0 
+\_\ \/\__,_/\__/____/    production version 0.8.5.0 
 </pre>
 
 Website : [https://thevpc.github.io/nuts](https://thevpc.github.io/nuts)
@@ -34,8 +34,7 @@ nuts --version
 It should show a result in the format : nuts-api-version/nuts-runtime-version
 
 ```
-0.8.5/0.8.5.0
-```
+0.8.5/0.8.5.0```
 
 ## Installing Nuts Preview (Development, recommended for testing)
 
@@ -47,12 +46,6 @@ First you need to download nuts-preview.jar
 
 ```
 wget https://thevpc.net/nuts/nuts-preview.jar -O nuts.jar
-```
-
-Then you must run, in a terminal, the following command
-
-```
-java -jar nuts.jar -Zy -r=+preview 
 ```
 
 That’s it, now you must relaunch the terminal window (close the terminal and start it again).
@@ -71,13 +64,7 @@ The very same procedure applies whether you already have an existing version of 
 First you need to download nuts-stable.jar
 
 ```
-wget wget https://repo1.maven.org/maven2/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar -O nuts.jar
-```
-
-If you want a shorter link, use this one!
-
-```
-wget https://thevpc.net/nuts/nuts-stable.jar -O nuts.jar
+wget https://thevpc.net/nuts/nuts-stable.jar -O nuts-stable.jar
 ```
 
 Then you must run, in a terminal, one of the following commands:
@@ -85,13 +72,7 @@ Then you must run, in a terminal, one of the following commands:
 Run this command to reset the configuration or when you are installing the very first time
 
 ```
-java -jar nuts.jar -Zy
-```
-
-Or run this command when you want to reinstall nuts from scratch without resetting the configuration
-
-```
-java -jar nuts.jar -Ny
+java -jar nuts-stable.jar -Zy
 ```
 
 That’s it, now you must relaunch the terminal window (close the terminal and start it again).

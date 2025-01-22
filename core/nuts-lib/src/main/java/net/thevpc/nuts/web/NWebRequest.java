@@ -22,19 +22,41 @@ public interface NWebRequest extends NMsgFormattable {
 
     NWebRequest setMethod(NHttpMethod method);
 
-    NWebRequest get();
+    NWebRequest GET();
 
-    NWebRequest post();
+    NWebRequest POST();
 
-    NWebRequest patch();
+    NWebRequest PATCH();
 
-    NWebRequest options();
-    NWebRequest head();
+    NWebRequest OPTIONS();
+
+    NWebRequest HEAD();
+
     NWebRequest connect();
 
-    NWebRequest put();
+    NWebRequest trace();
 
-    NWebRequest delete();
+    NWebRequest trace(String url);
+
+    NWebRequest PUT();
+
+    NWebRequest DELETE();
+
+    NWebRequest GET(String url);
+
+    NWebRequest POST(String url);
+
+    NWebRequest PATCH(String url);
+
+    NWebRequest OPTIONS(String url);
+
+    NWebRequest HEAD(String url);
+
+    NWebRequest connect(String url);
+
+    NWebRequest PUT(String url);
+
+    NWebRequest DELETE(String url);
 
     String getHeader(String name);
 
@@ -96,7 +118,7 @@ public interface NWebRequest extends NMsgFormattable {
 
     String getContentLanguage();
 
-    NWebRequest setFormUrlEncoded(Map<String,String> m) ;
+    NWebRequest setFormUrlEncoded(Map<String, String> m);
 
     String getContentType();
 
@@ -122,7 +144,7 @@ public interface NWebRequest extends NMsgFormattable {
 
     NWebRequest addPart(String name, String value);
 
-    NWebRequest addPart(String name, String fileName,String contentType, NInputSource body);
+    NWebRequest addPart(String name, String fileName, String contentType, NInputSource body);
 
     String getEffectiveUrl();
 

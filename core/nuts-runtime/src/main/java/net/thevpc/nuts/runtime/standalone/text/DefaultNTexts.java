@@ -663,6 +663,10 @@ public class DefaultNTexts implements NTexts {
         return new DefaultNTextInclude(workspace, "" + sep, value);
     }
 
+    public NOptional<NTextFormatTheme> getTheme(String name){
+        return shared.getTheme(name);
+    }
+
     @Override
     public NTextFormatTheme getTheme() {
         return shared.getTheme();
@@ -976,7 +980,7 @@ public class DefaultNTexts implements NTexts {
         }
         // start by processing includes
         if (config.isProcessIncludes()) {
-            NTextTransformConfig iconfig = new NTextTransformConfig();
+            NTextTransformConfig iconfig = config.copy();
             iconfig.setProcessIncludes(true);
             iconfig.setImportClassLoader(config.getImportClassLoader());
             NTextTransformerContext c = new DefaultNTextTransformerContext(iconfig, workspace);
@@ -995,7 +999,7 @@ public class DefaultNTexts implements NTexts {
             int level = resolveRootLevel(text);
             if (level != rootLevel) {
                 int offset = rootLevel - level;
-                NTextTransformerContext c = new DefaultNTextTransformerContext(new NTextTransformConfig(), workspace);
+                NTextTransformerContext c = new DefaultNTextTransformerContext(config, workspace);
                 text = transform(text, (text1, context) -> {
                     if (text1.getType() == NTextType.TITLE) {
                         NTextTitle t = (NTextTitle) text1;

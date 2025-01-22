@@ -25,13 +25,19 @@
   }, {
     "pattern":"\\Qnet/thevpc/nuts/installer/introduction.html\\E"
   }, {
+    "pattern":"\\Qnet/thevpc/nuts/installer/keyboard.png\\E"
+  }, {
     "pattern":"\\Qnet/thevpc/nuts/installer/license.txt\\E"
   }, {
     "pattern":"\\Qnet/thevpc/nuts/installer/nuts-icon.png\\E"
   }, {
     "pattern":"\\Qnet/thevpc/nuts/installer/nuts-logo.png\\E"
   }, {
+    "pattern":"\\Qnet/thevpc/nuts/installer/package-companions.html\\E"
+  }, {
     "pattern":"\\Qnet/thevpc/nuts/installer/stop.png\\E"
+  }, {
+    "pattern":"\\Qnet/thevpc/nuts/installer/summary-success.html\\E"
   }, {
     "pattern":"java.base:\\Qjdk/internal/icu/impl/data/icudt74b/nfkc.nrm\\E"
   }, {

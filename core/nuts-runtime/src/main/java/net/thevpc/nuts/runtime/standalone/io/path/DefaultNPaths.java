@@ -15,7 +15,7 @@
 //import net.thevpc.nuts.spi.NPathSPI;
 //import net.thevpc.nuts.io.NPaths;
 //import net.thevpc.nuts.spi.NSupportLevelContext;
-//import net.thevpc.nuts.util.NIOUtils;
+//import net.thevpc.nuts.io.NIOUtils;
 //import net.thevpc.nuts.util.NMsg;
 //import net.thevpc.nuts.util.NStringBuilder;
 //

@@ -15,10 +15,9 @@ import net.thevpc.nuts.lib.doc.javadoc.MdDoclet;
 import net.thevpc.nuts.lib.doc.javadoc.MdDocletConfig;
 import net.thevpc.nuts.lib.doc.mimetype.DefaultNDocMimeTypeResolver;
 import net.thevpc.nuts.lib.doc.mimetype.NDocMimeTypeResolver;
-import net.thevpc.nuts.lib.doc.pages.MdToHtml;
+import net.thevpc.nuts.lib.doc.processor.html.PageToHtmlUtils;
 import net.thevpc.nuts.lib.doc.processor.*;
-import net.thevpc.nuts.lib.doc.util.FileProcessorUtils;
-import net.thevpc.nuts.lib.doc.util.StringUtils;
+import net.thevpc.nuts.lib.doc.util.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
@@ -28,9 +27,6 @@ import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -46,11 +42,11 @@ public class NDocContext {
     public static final String WORKING_DIR = "workingDir";
     public static final String SOURCE_PATH = "sourcePath";
     public static final String PROJECT_FILENAME = "project.nexpr";
-    private MdToHtml rootMdToHtml = new MdToHtml();
+    private PageToHtmlUtils rootPageToHtmlUtils = new PageToHtmlUtils();
 
     private final Map<String, Object> vars = new HashMap<>();
     private NDocContext parent;
-    private MdToHtml mdToHtml;
+    private PageToHtmlUtils pageToHtmlUtils;
     private Function<String, Object> customVarEvaluator;
     private NDocMimeTypeResolver mimeTypeResolver;
     private String sourcePath;
@@ -63,6 +59,7 @@ public class NDocContext {
     private String currentMimeType;
     private NDocExecutorManager executorManager;
     private NDocProcessorManager processorManager;
+    private String projectRoot;
 
     public NDocContext() {
         executorManager = new NDocExecutorManager(this);
@@ -88,6 +85,13 @@ public class NDocContext {
                         .log(NMsg.ofC("%s : %s", title, message));
             }
 
+            @Override
+            public void warn(String title, String message) {
+                log().verb(NLogVerb.WARNING).level(Level.WARNING)
+                        .log(NMsg.ofC("%s : %s", title, message));
+
+            }
+
             private NLogOp log() {
                 if (logOp == null) {
                     logOp = NLog.of(NDocContext.class)
@@ -104,25 +108,25 @@ public class NDocContext {
         this.parent = parent;
     }
 
-    public MdToHtml md2Html() {
-        if (mdToHtml != null) {
-            return mdToHtml;
+    public PageToHtmlUtils md2Html() {
+        if (pageToHtmlUtils != null) {
+            return pageToHtmlUtils;
         }
         if (parent != null) {
             parent.md2Html();
         }
-        return rootMdToHtml;
+        return rootPageToHtmlUtils;
     }
 
     public NDocProcessorManager getProcessorManager() {
         return processorManager;
     }
 
-    private static Path workingPath(Path p) {
-        if (Files.isDirectory(p)) {
+    private static NPath workingPath(NPath p) {
+        if (p.isDirectory()) {
             return p;
         }
-        Path pp = p.getParent();
+        NPath pp = p.getParent();
         if (pp == null) {
             throw new IllegalArgumentException("Unsupported");
         }
@@ -162,6 +166,20 @@ public class NDocContext {
             return parent.getContextName();
         }
         return null;
+    }
+
+    public String getProjectRoot() {
+        if (projectRoot != null) {
+            return projectRoot;
+        }
+        if (parent != null) {
+            return parent.getProjectRoot();
+        }
+        return null;
+    }
+
+    public void setProjectRoot(String projectRoot) {
+        this.projectRoot = projectRoot;
     }
 
     public NDocExecutorManager getExecutorManager() {
@@ -377,13 +395,13 @@ public class NDocContext {
 //        getProcessorManager().
 //    }
 
-    public void executeProjectFile(Path path, String mimeTypesString) {
+    public void executeProjectFile(NPath path, String mimeTypesString) {
         getExecutorManager().executeRegularFile(path, mimeTypesString);
     }
 
 
-    public Path toAbsolutePath(Path path) {
-        return FileProcessorUtils.toRealPath(path, Paths.get(getWorkingDirRequired()));
+    public NPath toAbsolutePath(NPath path) {
+        return FileProcessorUtils.toRealPath(path, NPath.of(getWorkingDirRequired()));
     }
 
     public String executeString(String source, String mimeType) {
@@ -473,12 +491,12 @@ public class NDocContext {
         return this;
     }
 
-    public NDocContext setPathTranslator(Path from, Path to) {
+    public NDocContext setPathTranslator(NPath from, NPath to) {
         return setPathTranslator(new DefaultNDocPathTranslator(from, to));
     }
 
-    public NDocContext setTargetPath(Path to) {
-        return setPathTranslator(new DefaultNDocPathTranslator(Paths.get(getWorkingDirRequired()), to));
+    public NDocContext setTargetPath(NPath to) {
+        return setPathTranslator(new DefaultNDocPathTranslator(NPath.of(getWorkingDirRequired()), to));
     }
 
     public String getCurrentMimeType() {
@@ -502,14 +520,16 @@ public class NDocContext {
         List<String> resourcePaths = new ArrayList<>();
         NPath oProjectDirPath = null;
         if (!projectFolderSpecified) {
-
+            setProjectRoot(System.getProperty("user.dir"));
         } else {
             oProjectDirPath = NPath.of(projectPath).normalize();
+            setProjectRoot(oProjectDirPath.toString());
             NPath oProjectFile = oProjectDirPath.resolve(getProjectFileName());
-            if (!oProjectFile.isRegularFile()) {
-                throw new NIllegalArgumentException(NMsg.ofC("invalid project, missing project.nexpr : %s", oProjectDirPath));
+            if (oProjectFile.isRegularFile()) {
+                initScripts.add(oProjectFile.toString());
+            } else {
+                //throw new NIllegalArgumentException(NMsg.ofC("invalid project, missing project.nexpr : %s", oProjectDirPath));
             }
-            initScripts.add(oProjectFile.toString());
             for (NPath script : oProjectDirPath.resolve("scripts").list().stream().sorted(Comparator.comparing(x -> x.getName())).collect(Collectors.toList())) {
                 if (!Objects.equals(getProjectFileName(), script.getName())) {
                     initScripts.add(oProjectFile.toString());
@@ -531,22 +551,21 @@ public class NDocContext {
                 initScripts.add(toAbsolutePath(path, oProjectDirPath).toString());
             }
         }
-        initScripts=new ArrayList<>(new LinkedHashSet<>(initScripts));
+        initScripts = new ArrayList<>(new LinkedHashSet<>(initScripts));
 
         if (config.getSourcePaths() != null) {
             for (String path : config.getSourcePaths()) {
                 sourcePaths.add(toAbsolutePath(path, oProjectDirPath).toString());
             }
         }
-        sourcePaths=new ArrayList<>(new LinkedHashSet<>(sourcePaths));
+        sourcePaths = new ArrayList<>(new LinkedHashSet<>(sourcePaths));
 
         if (config.getResourcePaths() != null) {
             for (String path : config.getResourcePaths()) {
                 resourcePaths.add(toAbsolutePath(path, oProjectDirPath).toString());
             }
         }
-        resourcePaths=new ArrayList<>(new LinkedHashSet<>(resourcePaths));
-
+        resourcePaths = new ArrayList<>(new LinkedHashSet<>(resourcePaths));
 
 
         if (sourcePaths.isEmpty()) {
@@ -585,24 +604,24 @@ public class NDocContext {
         }
 
         for (String initScript : initScripts) {
-            Path fpath = Paths.get(initScript).toAbsolutePath();
+            NPath fpath = NPath.of(initScript).toAbsolute();
             this.setWorkingDir(workingPath(fpath).toString());
             this.executeProjectFile(fpath, scriptType);
         }
 
 
-        FileProcessorUtils.mkdirs(Paths.get(targetFolder));
+        FileProcessorUtils.mkdirs(NPath.of(targetFolder));
 
         if (config.getResourcePaths() != null) {
             for (String path : new LinkedHashSet<>(config.getResourcePaths())) {
-                getProcessorManager().processResourceTree(Paths.get(path), targetFolder, config.getPathFilter());
+                getProcessorManager().processResourceTree(NPath.of(path), targetFolder, config.getPathFilter());
             }
         }
 
         runJavadoc(config);
 
         for (String path : sourcePaths) {
-            getProcessorManager().processSourceTree(Paths.get(path), targetFolder, config.getPathFilter());
+            getProcessorManager().processSourceTree(NPath.of(path), targetFolder, config.getPathFilter());
         }
     }
 
@@ -662,14 +681,10 @@ public class NDocContext {
     }
 
     private String resolvePath(String path) {
-        try {
-            return Paths.get(path).toRealPath().toString();
-        } catch (IOException ex) {
-            throw new NIOException(ex);
-        }
+        return NPath.of(path).toAbsolute().normalize().toString();
     }
 
-    public void processSourceTree(Path path, Predicate<Path> filter) {
+    public void processSourceTree(NPath path, Predicate<NPath> filter) {
         getProcessorManager().processSourceTree(path, filter);
     }
 }

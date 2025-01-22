@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
@@ -135,14 +134,6 @@ public interface NPathSPI {
     boolean isName(NPath basePath);
 
     /**
-     * return path items count
-     *
-     * @param basePath basePath
-     * @return path items count
-     */
-    int getLocationItemsCount(NPath basePath);
-
-    /**
      * true if this is the root of the path file system. good examples are: '/'
      * , 'C:\' and 'http://myserver/'
      *
@@ -175,7 +166,7 @@ public interface NPathSPI {
 
     NPath subpath(NPath basePath, int beginIndex, int endIndex);
 
-    List<String> getLocationItems(NPath basePath);
+    List<String> getNames(NPath basePath);
 
     void moveTo(NPath basePath, NPath other, NPathOption... options);
 
@@ -187,5 +178,13 @@ public interface NPathSPI {
 
     byte[] getDigest(NPath basePath, String algo);
 
-    boolean isEqOrDeepChildOf(NPath basePath,NPath other);
+    boolean isEqOrDeepChildOf(NPath basePath, NPath other);
+
+    boolean startsWith(NPath basePath, String other);
+
+    boolean startsWith(NPath basePath, NPath other);
+
+    int compareTo(NPath basePath, NPath other);
+
+    int getNameCount(NPath basePath);
 }

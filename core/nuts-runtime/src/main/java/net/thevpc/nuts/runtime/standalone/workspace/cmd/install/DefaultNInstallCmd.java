@@ -473,7 +473,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
                         if (session.isPlainTrace()) {
                             if (!NIO.of().getDefaultTerminal().ask()
                                     .forBoolean(NMsg.ofC("%s %s and its dependencies... Continue installation?",
-                                            NMsg.ofStyled("failed to install", NTextStyle.error()),
+                                            NMsg.ofStyledError("failed to install"),
                                             info.id))
                                     .setDefaultValue(true)
                                     .getBooleanValue()) {

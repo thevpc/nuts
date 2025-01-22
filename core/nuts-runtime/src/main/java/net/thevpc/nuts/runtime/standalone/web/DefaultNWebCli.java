@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.web;
 
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NInputSourceBuilder;
@@ -21,10 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.channels.InterruptedByTimeoutException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @NComponentScope(NScopeType.PROTOTYPE)
@@ -34,10 +31,120 @@ public class DefaultNWebCli implements NWebCli {
     private Function<NWebResponse, NWebResponse> responsePostProcessor;
     private Integer readTimeout;
     private Integer connectTimeout;
-    private NSession session;
+    private DefaultNWebHeaders headers = new DefaultNWebHeaders();
 
-    public DefaultNWebCli(NSession session) {
-        this.session = session;
+    public DefaultNWebCli() {
+        headers.addHeader("User-Agent", "nwebcli/" + NWorkspace.of().getRuntimeId().getVersion(), DefaultNWebHeaders.Mode.ALWAYS);
+    }
+
+    @Override
+    public NWebCookie[] getCookies() {
+        List<String> li = headers.getOrEmpty("Cookie");
+        return li.stream().map(x -> new DefaultNWebCookie(x)).toArray(NWebCookie[]::new);
+    }
+
+    @Override
+    public NWebCli addHeader(String name, String value) {
+        headers.addHeader(name, value, DefaultNWebHeaders.Mode.ALWAYS);
+        return this;
+    }
+
+    @Override
+    public NWebCli setHeader(String name, String value) {
+        headers.addHeader(name, value, DefaultNWebHeaders.Mode.REPLACE);
+        return this;
+    }
+
+    @Override
+    public NWebCli removeHeader(String name, String value) {
+        headers.removeHeader(name, value);
+        return this;
+    }
+
+    @Override
+    public NWebCli removeHeader(String name) {
+        headers.removeHeader(name);
+        return this;
+    }
+
+    @Override
+    public boolean containsHeader(String name) {
+        return headers.containsHeader(name);
+    }
+
+    @Override
+    public boolean containsCookie(String cookieName) {
+        List<String> li = headers.getOrEmpty("Cookie");
+        return li.stream().map(x -> new DefaultNWebCookie(x)).anyMatch(x -> Objects.equals(x.getName(), cookieName));
+    }
+
+    public Map<String, List<String>> getHeaders() {
+        return headers.toMap();
+    }
+
+    @Override
+    public NWebCli clearHeaders() {
+        headers.clear();
+        return this;
+    }
+
+    public NWebCli clearCookies() {
+        headers.removeHeader("Cookie");
+        return this;
+    }
+
+    public NWebCli removeCookies(NWebCookie[] cookies) {
+        if (cookies != null) {
+            for (NWebCookie cookie : cookies) {
+                removeCookie(cookie);
+            }
+        }
+        return this;
+    }
+
+    public NWebCli removeCookie(NWebCookie cookie) {
+        if (cookie != null) {
+            for (String s : headers.getOrEmpty("Cookie")) {
+                if (Objects.equals(new DefaultNWebCookie(s).getName(), cookie.getName())) {
+                    headers.removeHeader("Cookie", s);
+                }
+            }
+        }
+        return this;
+    }
+
+    public NWebCli removeCookie(String cookieName) {
+        if (cookieName != null) {
+            for (String s : headers.getOrEmpty("Cookie")) {
+                if (Objects.equals(new DefaultNWebCookie(s).getName(), cookieName)) {
+                    headers.removeHeader("Cookie", s);
+                }
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NWebCli addCookie(NWebCookie cookie) {
+        if (cookie != null) {
+            for (String s : headers.getOrEmpty("Cookie")) {
+                if (Objects.equals(new DefaultNWebCookie(s).getName(), cookie.getName())) {
+                    headers.removeHeader("Cookie", s);
+                }
+            }
+            headers.addHeader("Cookie", DefaultNWebCookie.formatCookie(cookie), DefaultNWebHeaders.Mode.ALWAYS);
+        }
+        return this;
+    }
+
+    @Override
+    public NWebCli addCookies(NWebCookie[] cookies) {
+        if (cookies != null) {
+            for (NWebCookie cookie : cookies) {
+                addCookie(cookie);
+            }
+        }
+        return this;
     }
 
     @Override
@@ -64,57 +171,102 @@ public class DefaultNWebCli implements NWebCli {
 
     @Override
     public NWebRequest req() {
-        return new NWebRequestImpl(this, session, NHttpMethod.GET);
+        return new NWebRequestImpl(this, NHttpMethod.GET);
     }
 
     @Override
     public NWebRequest req(NHttpMethod method) {
-        return new NWebRequestImpl(this, session, method);
+        return new NWebRequestImpl(this, method);
     }
 
     @Override
-    public NWebRequest get() {
-        return req().get();
+    public NWebRequest GET() {
+        return req().GET();
     }
 
     @Override
-    public NWebRequest post() {
-        return req().post();
+    public NWebRequest POST() {
+        return req().POST();
     }
 
     @Override
-    public NWebRequest put() {
-        return req().put();
+    public NWebRequest PUT() {
+        return req().PUT();
     }
 
     @Override
-    public NWebRequest delete() {
-        return req().delete();
+    public NWebRequest DELETE() {
+        return req().DELETE();
     }
 
     @Override
-    public NWebRequest patch() {
-        return req().patch();
+    public NWebRequest PATCH() {
+        return req().PATCH();
     }
 
     @Override
-    public NWebRequest options() {
-        return req().options();
+    public NWebRequest OPTIONS() {
+        return req().OPTIONS();
     }
 
     @Override
-    public NWebRequest head() {
-        return req().head();
+    public NWebRequest HEAD() {
+        return req().HEAD();
     }
 
     @Override
-    public NWebRequest connect() {
+    public NWebRequest CONNECT() {
         return req().connect();
     }
 
     @Override
-    public NWebRequest trace() {
-        return null;
+    public NWebRequest TRACE() {
+        return req().trace();
+    }
+
+    @Override
+    public NWebRequest GET(String path) {
+        return req().GET(path);
+    }
+
+    @Override
+    public NWebRequest POST(String path) {
+        return req().POST(path);
+    }
+
+    @Override
+    public NWebRequest PUT(String path) {
+        return req().PUT(path);
+    }
+
+    @Override
+    public NWebRequest DELETE(String path) {
+        return req().DELETE(path);
+    }
+
+    @Override
+    public NWebRequest PATCH(String path) {
+        return req().PATCH(path);
+    }
+
+    @Override
+    public NWebRequest OPTIONS(String path) {
+        return req().OPTIONS(path);
+    }
+
+    @Override
+    public NWebRequest HEAD(String path) {
+        return req().HEAD(path);
+    }
+
+    @Override
+    public NWebRequest CONNECT(String path) {
+        return req().connect(path);
+    }
+
+    @Override
+    public NWebRequest TRACE(String path) {
+        return req().trace(path);
     }
 
     public String formatURL(NWebRequest r, boolean safe) {
@@ -201,20 +353,12 @@ public class DefaultNWebCli implements NWebCli {
                 if (connectTimeout1 != null) {
                     uc.setConnectTimeout(connectTimeout1);
                 }
-                Map<String, List<String>> headers = new LinkedHashMap<>();
-                Map<String, List<String>> rHeaders = r.getHeaders();
-                if (rHeaders != null) {
-                    for (Map.Entry<String, List<String>> e : rHeaders.entrySet()) {
-                        if (e.getKey() != null && e.getValue() != null) {
-                            headers.computeIfAbsent(e.getKey(), g -> new ArrayList<>())
-                                    .addAll(e.getValue());
-                        }
-                    }
-                }
-                for (Map.Entry<String, List<String>> e : headers.entrySet()) {
-                    for (String s : e.getValue()) {
-                        uc.setRequestProperty(e.getKey(), s);
-                    }
+                DefaultNWebHeaders headers = new DefaultNWebHeaders();
+                headers.addHeadersMulti(r.getHeaders(), DefaultNWebHeaders.Mode.ALWAYS);
+                headers.addHeadersMulti(this.headers.toMap(), DefaultNWebHeaders.Mode.IF_EMPTY);
+
+                for (Map.Entry<String, List<String>> e : headers.toMap().entrySet()) {
+                    _writeHeader(uc, e.getKey(), e.getValue());
                 }
                 uc.setRequestMethod(method.toString());
                 uc.setUseCaches(false);
@@ -255,8 +399,7 @@ public class DefaultNWebCli implements NWebCli {
                         uc.getResponseCode(),
                         NMsg.ofPlain(NStringUtils.trim(uc.getResponseMessage())),
                         uc.getHeaderFields(),
-                        bytes,
-                        session
+                        bytes
                 );
                 if (responsePostProcessor != null) {
                     NWebResponse newResp = responsePostProcessor.apply(httpResponse);
@@ -264,6 +407,7 @@ public class DefaultNWebCli implements NWebCli {
                         httpResponse = newResp;
                     }
                 }
+                addCookies(httpResponse.getCookies());
                 return httpResponse;
             } finally {
                 if (r.isOneWay()) {
@@ -286,6 +430,28 @@ public class DefaultNWebCli implements NWebCli {
         } catch (IOException ex) {
             throw new UncheckedIOException("error loading " + spec + " (" + ex.getMessage() + ")", ex);
         }
+    }
+
+    private void _writeHeader(HttpURLConnection uc, String name, List<String> values) {
+        if (values == null || values.isEmpty()) {
+            return;
+        }
+        // Sets the general request property. If a property with
+        // the key already exists, overwrite its value with the new value.
+        //NOTE: HTTP requires all request properties which can legally have
+        // multiple instances with the same key to use a comma-separated list
+        // syntax which enables multiple properties to be appended into a single property.
+        //
+        switch (name.toUpperCase()) {
+            case "COOKIE": {
+                uc.setRequestProperty(name, String.join(" ; ", values));
+                return;
+            }
+        }
+        for (String s : values) {
+            uc.setRequestProperty(name, s);
+        }
+
     }
 
     @Override
@@ -312,6 +478,10 @@ public class DefaultNWebCli implements NWebCli {
 
     public int getSupportLevel(NSupportLevelContext context) {
         return NConstants.Support.DEFAULT_SUPPORT;
+    }
+
+    public static String UNIFORM_HEADER(String h) {
+        return NStringUtils.trim(h).toUpperCase();
     }
 
 }

@@ -7,6 +7,7 @@ import net.thevpc.nuts.lib.md.util.MdElementAndChildrenList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -30,7 +31,7 @@ public class TestDocusaurusParser {
                 "  nsh --help\n" +
                 "  ``` \n" +
                 "  you will get more details on nuts or on the tool (here nsh)\n";
-        MdParser parser = MdFactory.createParser("docusaurus", new StringReader(s));
+        MdParser parser = MdFactory.createParser(MdFactory.MIMETYPE_DOCUSAURUS, new StringReader(s));
         MdElement e = parser.parse();
         System.out.println(e);
     }
@@ -293,9 +294,22 @@ public class TestDocusaurusParser {
                 "/net/thevpc/nuts/nuts/$NVER/nuts-$NVER.jar && java -jar \\\n" +
                 "      nuts-$NVER.jar -Zy && . ~/.bashrc\n" +
                 "```\n";
-        MdParser parser = MdFactory.createParser("docusaurus", new StringReader(s));
+        MdParser parser = MdFactory.createParser(MdFactory.MIMETYPE_DOCUSAURUS, new StringReader(s));
         MdElement e = parser.parse();
         System.out.println(e);
     }
 
+    @Test
+    public void testRemoveMe() {
+        try {
+            MdParser parser = MdFactory.createParser(null,new FileReader(
+                    "/home/vpc/xprojects/nuts/nuts-community/documentation/website/src/include/documentation/01-intro/.folder-info.md"
+            ));
+            MdElement p = parser.parse();
+            System.out.println(p);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }

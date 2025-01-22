@@ -1,6 +1,7 @@
 package net.thevpc.nuts.lib.md.util;
 
 import net.thevpc.nuts.lib.md.*;
+import net.thevpc.nuts.lib.md.base.MdAbstractElement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ public class MdElementAndChildrenList {
 
     public MdElement build() {
         MdElementAndChildren b = currPath.get(0).build();
-        ((MdAbstractElement)b.e).setFrontMatter(frontMatter);
+        ((MdAbstractElement)b.e).setPreambleHeader(frontMatter);
         return b.e;
     }
 

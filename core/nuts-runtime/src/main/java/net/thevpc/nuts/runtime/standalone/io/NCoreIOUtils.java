@@ -9,11 +9,10 @@ import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NHex;
-import net.thevpc.nuts.util.NIOUtils;
+import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.Channels;
@@ -29,6 +28,20 @@ import java.util.function.Function;
 import java.util.logging.Level;
 
 public class NCoreIOUtils {
+    public static String toRelativePath(String child, String parent) {
+        if (child.startsWith(parent)) {
+            child = child.substring(parent.length());
+            if (child.startsWith("/") || child.startsWith("\\")) {
+                child = child.substring(1);
+            }
+            if(child.isEmpty()){
+                return "/";
+            }
+            return child;
+        }
+        return null;
+    }
+
     public static String getURLDigest(URL url, NLog bLog) {
         if (url != null) {
             File ff = toFile(url);

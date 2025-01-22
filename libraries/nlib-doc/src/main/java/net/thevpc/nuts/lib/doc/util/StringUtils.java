@@ -5,6 +5,8 @@
  */
 package net.thevpc.nuts.lib.doc.util;
 
+import net.thevpc.nuts.io.NPath;
+
 import java.io.File;
 import java.nio.file.Path;
 
@@ -29,6 +31,9 @@ public class StringUtils {
         }
         if (o instanceof Path) {
             return "\"" + StringUtils.escapeString(String.valueOf(((Path)o).toString())) + "\"";
+        }
+        if (o instanceof NPath) {
+            return "\"" + StringUtils.escapeString(String.valueOf(((NPath)o).toString())) + "\"";
         }
         if (o instanceof Character) {
             return "\'" + StringUtils.escapeString(String.valueOf(o)) + "\'";

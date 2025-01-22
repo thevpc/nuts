@@ -3,6 +3,8 @@ package net.thevpc.nuts.web;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 public interface NWebCli extends NComponent {
@@ -20,25 +22,73 @@ public interface NWebCli extends NComponent {
 
     NWebRequest req(NHttpMethod method);
 
+    NWebCookie[] getCookies();
+
+
+    NWebCli setHeader(String name, String value);
+
+    NWebCli addHeader(String name, String value);
+
+    NWebCli removeHeader(String name, String value);
+
+    NWebCli removeHeader(String name);
+
+    boolean containsHeader(String name);
+
+    Map<String, List<String>> getHeaders();
+
+    NWebCli clearHeaders();
+
+    NWebCli clearCookies();
+
+    NWebCli removeCookies(NWebCookie[] cookies);
+
+    NWebCli removeCookie(NWebCookie cookie);
+
+    boolean containsCookie(String cookieName);
+    NWebCli removeCookie(String cookieName);
+
+    NWebCli addCookies(NWebCookie[] cookies);
+
+    NWebCli addCookie(NWebCookie cookie);
+
     NWebRequest req();
 
-    NWebRequest get();
+    NWebRequest GET();
 
-    NWebRequest post();
+    NWebRequest GET(String path);
 
-    NWebRequest put();
+    NWebRequest POST();
 
-    NWebRequest delete();
+    NWebRequest POST(String path);
 
-    NWebRequest patch();
+    NWebRequest PUT();
 
-    NWebRequest options();
+    NWebRequest PUT(String path);
 
-    NWebRequest head();
+    NWebRequest DELETE();
 
-    NWebRequest connect();
+    NWebRequest DELETE(String path);
 
-    NWebRequest trace();
+    NWebRequest PATCH();
+
+    NWebRequest PATCH(String path);
+
+    NWebRequest OPTIONS();
+
+    NWebRequest OPTIONS(String path);
+
+    NWebRequest HEAD();
+
+    NWebRequest HEAD(String path);
+
+    NWebRequest CONNECT();
+
+    NWebRequest CONNECT(String path);
+
+    NWebRequest TRACE();
+
+    NWebRequest TRACE(String path);
 
     Integer getReadTimeout();
 

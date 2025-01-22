@@ -104,7 +104,7 @@ public class NDescriptorUtils {
             CoreNIdUtils.checkValidEffectiveId(effectiveDescriptor.getId());
             for (NDependency dependency : effectiveDescriptor.getDependencies()) {
                 if (!CoreNIdUtils.isValidEffectiveId(dependency.toId())) {
-                    NMsg errMsg = NMsg.ofJ("{0} is using dependency {1} which defines an unresolved variable. This is a potential bug.",
+                    NMsg errMsg = NMsg.ofC("%s is using dependency %s which defines an unresolved variable. This is a potential bug.",
                             effectiveDescriptor.getId(),
                             dependency
                     );
@@ -124,7 +124,7 @@ public class NDescriptorUtils {
                     // so just log a warning, this is not an error but a very bad practice from the dependency maintainer!
                     NLogOp.of(NDescriptorUtils.class)
                             .verb(NLogVerb.WARNING).level(Level.FINE)
-                            .log(NMsg.ofJ("{0} is using standard-dependency {1} which defines an unresolved variable. This is a potential bug.",
+                            .log(NMsg.ofC("%s is using standard-dependency %s which defines an unresolved variable. This is a potential bug.",
                                     effectiveDescriptor.getId(),
                                     dependency
                             ));

@@ -10,7 +10,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathExtensionType;
 import net.thevpc.nuts.io.NPathNameParts;
 import net.thevpc.nuts.runtime.standalone.io.util.NPathParts;
-import net.thevpc.nuts.util.NIOUtils;
+import net.thevpc.nuts.io.NIOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

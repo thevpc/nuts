@@ -31,7 +31,7 @@ net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNIndexStoreFactory
 net.thevpc.nuts.runtime.standalone.security.DefaultNAuthenticationAgent
 net.thevpc.nuts.runtime.standalone.log.DefaultNLogs
 net.thevpc.nuts.runtime.standalone.workspace.list.DefaultNWorkspaceList
-net.thevpc.nuts.runtime.standalone.xtra.hashname.DefaultNHashName
+net.thevpc.nuts.runtime.standalone.xtra.hashname.DefaultNDigestName
 net.thevpc.nuts.runtime.standalone.repository.DefaultNRepositoryDB
 net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmd
 net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNAddUserCmd

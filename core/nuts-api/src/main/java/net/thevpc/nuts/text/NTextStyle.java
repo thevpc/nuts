@@ -110,9 +110,80 @@ public class NTextStyle implements NEnum {
     public static NTextStyle title(int variant) {
         return of(NTextStyleType.TITLE, variant);
     }
+    public static NTextStyle title1() {
+        return title(1);
+    }
+
+    public static NTextStyle title2() {
+        return title(2);
+    }
+
+    public static NTextStyle title3() {
+        return title(3);
+    }
+
+    public static NTextStyle title4() {
+        return title(4);
+    }
+
+    public static NTextStyle title5() {
+        return title(5);
+    }
+
+    public static NTextStyle title6() {
+        return title(6);
+    }
+
+    public static NTextStyle title7() {
+        return title(7);
+    }
+
+    public static NTextStyle title8() {
+        return title(8);
+    }
+
+    public static NTextStyle title9() {
+        return title(9);
+    }
 
     public static NTextStyle secondary(int variant) {
         return of(NTextStyleType.SECONDARY, variant);
+    }
+
+    public static NTextStyle secondary1() {
+        return secondary(1);
+    }
+
+    public static NTextStyle secondary2() {
+        return secondary(2);
+    }
+
+    public static NTextStyle secondary3() {
+        return secondary(3);
+    }
+
+    public static NTextStyle secondary4() {
+        return secondary(4);
+    }
+
+    public static NTextStyle secondary5() {
+        return secondary(5);
+    }
+
+    public static NTextStyle secondary6() {
+        return secondary(6);
+    }
+
+    public static NTextStyle secondary7() {
+        return secondary(7);
+    }
+
+    public static NTextStyle secondary8() {
+        return secondary(8);
+    }
+
+    public static NTextStyle secondary9() {
+        return secondary(9);
     }
 
     public static NTextStyle error() {
@@ -168,7 +239,7 @@ public class NTextStyle implements NEnum {
     }
 
     public static NTextStyle striked() {
-        return of(NTextStyleType.STRIKED);
+        return striked(0);
     }
 
     public static NTextStyle striked(int variant) {

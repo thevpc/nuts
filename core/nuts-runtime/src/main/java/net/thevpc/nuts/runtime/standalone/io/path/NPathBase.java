@@ -517,4 +517,13 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         return deleteOnDispose;
     }
 
+    protected static NPath unwrapPath(NPath other) {
+        if (other instanceof NCompressedPathBase) {
+            other = ((NCompressedPathBase) other).getBase();
+        }
+        if (other instanceof NCompressedPath) {
+            other = ((NCompressedPath) other).getBase();
+        }
+        return other;
+    }
 }

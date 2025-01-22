@@ -353,6 +353,14 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @return next argument
      */
     NOptional<NArg> nextFlag();
+    /**
+     * next argument with string value. equivalent to
+     * next(NArgType.ENTRY,names)
+     *
+     * @param names names
+     * @return next argument
+     */
+    NOptional<NArg> nextEntry(String... names);
 
     /**
      * consume next argument with boolean value and run {@code consumer}
@@ -382,14 +390,6 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
 
     boolean withNextOptionalEntry(NArgProcessor<NOptional<String>> consumer, String... names);
 
-    /**
-     * next argument with string value. equivalent to
-     * next(NArgType.ENTRY,names)
-     *
-     * @param names names
-     * @return next argument
-     */
-    NOptional<NArg> nextEntry(String... names);
 
     /**
      * consume next argument with string value and run {@code consumer}
@@ -669,5 +669,118 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     NCmdLine forEachPeek(NCmdLineConsumer action, NCmdLineContext context);
 
     NCmdLine forEachPeek(NCmdLineConsumer action);
+
+    NCmdLine copy();
+
+    /// /////////////////////// LOOKUPS
+
+    /**
+     * search for the given named flag without consuming ar altering the current Commandline.
+     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
+     * @param consumer consumer to call when the argument is found
+     * @return true if found and the consumer is invoked
+     */
+    boolean lookupNextFlag(NArgProcessor<Boolean> consumer);
+
+    /**
+     * search for the given named flag without consuming ar altering the current Commandline.
+     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
+     * @param consumer consumer to call when the argument is found
+     * @return true if found and the consumer is invoked
+     */
+    boolean lookupNextOptionalFlag(NArgProcessor<NOptional<Boolean>> consumer);
+
+
+
+    /**
+     * search for the given named flag without consuming ar altering the current Commandline.
+     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
+     * @param consumer consumer to call when the argument is found
+     * @return true if found and the consumer is invoked
+     */
+    boolean lookupNextOptionalFlag(NArgProcessor<NOptional<Boolean>> consumer, String... names);
+
+    /**
+     * search for the given named flag without consuming ar altering the current Commandline.
+     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
+     * @param consumer consumer to call when the argument is found
+     * @return true if found and the consumer is invoked
+     */
+    boolean lookupNextTrueFlag(NArgProcessor<Boolean> consumer);
+
+    /**
+     * search for the given named flag without consuming ar altering the current Commandline.
+     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
+     * @param consumer consumer to call when the argument is found
+     * @return true if found and the consumer is invoked
+     */
+    boolean lookupNextFlag(NArgProcessor<Boolean> consumer, String... names);
+
+    /**
+     * search for the given named flag without consuming ar altering the current Commandline.
+     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
+     * @param consumer consumer to call when the argument is found
+     * @return true if found and the consumer is invoked
+     */
+    boolean lookupNextTrueFlag(NArgProcessor<Boolean> consumer, String... names);
+
+
+    /**
+     * search for the given named flag without consuming ar altering the current Commandline.
+     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
+     * @param consumer consumer to call when the argument is found
+     * @return true if found and the consumer is invoked
+     */
+    boolean lookupNextOptionalEntry(NArgProcessor<NOptional<String>> consumer);
+
+    /**
+     * search for the given named flag without consuming ar altering the current Commandline.
+     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
+     * @param consumer consumer to call when the argument is found
+     * @return true if found and the consumer is invoked
+     */
+    boolean lookupNextOptionalEntry(NArgProcessor<NOptional<String>> consumer, String... names);
+
+
+    /**
+     * search for the given named flag without consuming ar altering the current Commandline.
+     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
+     * @param consumer consumer to call when the argument is found
+     * @return true if found and the consumer is invoked
+     */
+    boolean lookupNextEntry(NArgProcessor<String> consumer);
+
+    /**
+     * search for the given named flag without consuming ar altering the current Commandline.
+     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
+     * @param consumer consumer to call when the argument is found
+     * @return true if found and the consumer is invoked
+     */
+    boolean lookupNextEntry(NArgProcessor<String> consumer, String... names);
+
+
+    /**
+     * search for the given named flag without consuming ar altering the current Commandline.
+     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
+     * @param consumer consumer to call when the argument is found
+     * @return true if found and the consumer is invoked
+     */
+    boolean lookupNextEntryValue(NArgProcessor<NLiteral> consumer);
+
+    /**
+     * search for the given named flag without consuming ar altering the current Commandline.
+     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
+     * @param consumer consumer to call when the argument is found
+     * @return true if found and the consumer is invoked
+     */
+    boolean lookupNextEntryValue(NArgProcessor<NLiteral> consumer, String... names);
+
+    /**
+     * search for the given named flag without consuming ar altering the current Commandline.
+     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
+     * @param consumer consumer to call when the argument is found
+     * @return true if found and the consumer is invoked
+     */
+    boolean lookupNextValue(NArgProcessor<NLiteral> consumer);
 
 }

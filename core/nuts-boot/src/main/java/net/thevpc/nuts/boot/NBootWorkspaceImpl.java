@@ -573,7 +573,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 if (!NBootUtils.isBlank(options.getWorkspace())) {
                     throw new NBootException(NBootMsg.ofPlain("you cannot specify '--workspace' in sandbox mode"));
                 }
-                if (!NBootUtils.sameEnum(options.getStoreStrategy(), "STANDALONE")) {
+                if (!NBootUtils.isBlank(options.getStoreStrategy())  && !NBootUtils.sameEnum(options.getStoreStrategy(), "STANDALONE")) {
                     throw new NBootException(NBootMsg.ofPlain("you cannot specify '--exploded' in sandbox mode"));
                 }
                 if (NBootUtils.firstNonNull(options.getSystem(), false)) {
@@ -1112,21 +1112,21 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
     }
 
     public NBootWorkspace runWorkspace() {
-        if (NBootUtils.firstNonNull(options.getCommandHelp(), false)) {
-            NBootWorkspaceHelper.runCommandHelp(options, bLog);
-        } else if (NBootUtils.firstNonNull(options.getCommandVersion(), false)) {
-            NBootWorkspaceHelper.runCommandVersion(() -> getApiDigestOrInternal(), options, bLog);
-        } else {
-            if (hasUnsatisfiedRequirements()) {
-                runNewProcess();
-                return this;
-            }
-            NWorkspaceBase ws = this.getWorkspace();
-            try {
+        try {
+            if (NBootUtils.firstNonNull(options.getCommandHelp(), false)) {
+                NBootWorkspaceHelper.runCommandHelp(options, bLog);
+            } else if (NBootUtils.firstNonNull(options.getCommandVersion(), false)) {
+                NBootWorkspaceHelper.runCommandVersion(() -> getApiDigestOrInternal(), options, bLog);
+            } else {
+                if (hasUnsatisfiedRequirements()) {
+                    runNewProcess();
+                    return this;
+                }
+                NWorkspaceBase ws = this.getWorkspace();
                 ws.runBootCommand();
-            } catch (Exception ex) {
-                throw doLogException(ex);
             }
+        } catch (Exception ex) {
+            throw doLogException(ex);
         }
         return this;
     }

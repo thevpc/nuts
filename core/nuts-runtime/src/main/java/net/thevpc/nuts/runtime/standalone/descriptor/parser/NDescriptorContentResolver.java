@@ -9,7 +9,7 @@ import net.thevpc.nuts.spi.NDescriptorContentParserComponent;
 import net.thevpc.nuts.spi.NDescriptorContentParserContext;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
-import net.thevpc.nuts.util.NIOUtils;
+import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.util.NMsg;
 
 import java.nio.file.Path;

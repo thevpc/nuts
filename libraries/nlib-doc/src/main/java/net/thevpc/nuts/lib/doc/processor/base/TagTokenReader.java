@@ -1,6 +1,6 @@
 package net.thevpc.nuts.lib.doc.processor.base;
 
-import net.thevpc.nuts.util.NCharReader;
+import net.thevpc.nuts.io.NCharReader;
 
 import java.io.IOException;
 

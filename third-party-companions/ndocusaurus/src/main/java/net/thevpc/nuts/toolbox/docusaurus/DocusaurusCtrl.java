@@ -15,6 +15,7 @@ import net.thevpc.nuts.lib.doc.context.NDocContext;
 import net.thevpc.nuts.lib.doc.mimetype.DefaultNDocMimeTypeResolver;
 import net.thevpc.nuts.lib.doc.mimetype.MimeTypeConstants;
 import net.thevpc.nuts.lib.doc.util.FileProcessorUtils;
+import net.thevpc.nuts.util.NComparator;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.*;
@@ -70,24 +71,20 @@ public class DocusaurusCtrl {
     }
 
     public void run() {
-        Path base = null;
-        try {
-            base = Paths.get(project.getDocusaurusBaseFolder()).toAbsolutePath().normalize().toRealPath();
-        } catch (IOException e) {
-            throw new UncheckedIOException("invalid Docusaurus Base Folder: " + project.getDocusaurusBaseFolder(), e);
-        }
+        NPath base = null;
+            base = NPath.of(project.getDocusaurusBaseFolder()).toAbsolute().normalize();
         boolean genSidebarMenu = project.getConfigDocusaurusExtra()
                 .asObject().orElse(NObjectElement.ofEmpty())
                 .getBooleanByPath("generateSidebarMenu")
                 .orElse(false);
-        Path basePath = base;
-        Path preProcessor = getPreProcessorBaseDir();
+        NPath basePath = base;
+        NPath preProcessor = getPreProcessorBaseDir();
         NSession session = NSession.of();
-        if (preProcessor != null && Files.isDirectory(preProcessor)) {
+        if (preProcessor != null && preProcessor.isDirectory()) {
 //            Files.walk(base).filter(x->Files.isDirectory(base))
-            Path docs = basePath.resolve("docs");
-            if (Files.isDirectory(basePath.resolve("node_modules"))
-                    && Files.isRegularFile(basePath.resolve("docusaurus.config.js"))) {
+            NPath docs = basePath.resolve("docs");
+            if (basePath.resolve("node_modules").isDirectory()
+                    && basePath.resolve("docusaurus.config.js").isRegularFile()) {
                 session.out().print(NMsg.ofC("clear folder %s%n", docs));
                 deletePathChildren(docs);
             }
@@ -125,12 +122,7 @@ public class DocusaurusCtrl {
                 session.out().print(NMsg.ofC("\tusing release folder : %s%n", project.getPhysicalDocsFolderBasePath()));
                 session.out().print(NMsg.ofC("\tusing config folder  : %s%n", project.getPhysicalDocsFolderConfigPath()));
             }
-            try {
-                Files.write(base.resolve("sidebars.js"), s.getBytes());
-            } catch (IOException e) {
-                throw new NIOException(NMsg.ofC("%s", e));
-            }
-//            System.out.println(s);
+            base.resolve("sidebars.js").writeString(s);
         }
         if (isBuildPdf() && !project.getConfigAsciiDoctor().getStringByPath("path").isEmpty()) {
             Docusaurus2Asciidoctor d2a = new Docusaurus2Asciidoctor(project);
@@ -145,13 +137,8 @@ public class DocusaurusCtrl {
             String copyBuildPath = project.getConfigCustom().getStringByPath("copyBuildPath")
                     .get();
             if (copyBuildPath != null && copyBuildPath.length() > 0) {
-                String fromPath = null;
-                try {
-                    fromPath = base.resolve("build").toRealPath().toString();
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-                Path toPath = FileProcessorUtils.toAbsolute(Paths.get(copyBuildPath), base);
+                String fromPath = base.resolve("build").normalize().toString();
+                NPath toPath = FileProcessorUtils.toAbsolute(NPath.of(copyBuildPath), base);
                 deleteFolderIfFound(toPath, "index.html", "404.html", "sitemap.xml");
                 NDocContext nDocContext = new NDocContext()
                         .setWorkingDir(fromPath)
@@ -160,10 +147,10 @@ public class DocusaurusCtrl {
                 nDocContext.run(
                         new NDocProjectConfig()
                                 .setTargetFolder(toPath.toString())
-                                .addSource(Paths.get(fromPath).toAbsolutePath().toString())
+                                .addSource(NPath.of(fromPath).toAbsolute().toString())
                 );
                 nDocContext
-                        .processSourceTree(Paths.get(fromPath), null);
+                        .processSourceTree(NPath.of(fromPath), null);
             }
         }
         if (isStartWebSite()) {
@@ -197,28 +184,28 @@ public class DocusaurusCtrl {
         return npm;
     }
 
-    private void runNativeCommand(Path workFolder, String... cmd) {
+    private void runNativeCommand(NPath workFolder, String... cmd) {
         NExecCmd.of()
                 .setExecutionType(NExecutionType.EMBEDDED)
-                .addCommand(cmd).setDirectory(NPath.of(workFolder))
+                .addCommand(cmd).setDirectory(workFolder)
                 .failFast().getResultCode();
     }
 
-    public void runCommand(Path workFolder, boolean yes, String... cmd) {
+    public void runCommand(NPath workFolder, boolean yes, String... cmd) {
         NSession.of().copy().setConfirm(yes ? NConfirmationMode.YES : NConfirmationMode.ERROR)
                 .runWith(() -> {
-                    NExecCmd.of().addCommand(cmd).setDirectory(NPath.of(workFolder))
+                    NExecCmd.of().addCommand(cmd).setDirectory(workFolder)
                             .setExecutionType(NExecutionType.EMBEDDED)
                             .failFast().getResultCode();
                 });
     }
 
-    private boolean deleteFolderIfFound(Path toPath, String... names) {
-        if (!Files.isDirectory(toPath)) {
+    private boolean deleteFolderIfFound(NPath toPath, String... names) {
+        if (!toPath.isDirectory()) {
             return false;
         }
         for (String name : names) {
-            if (!Files.isRegularFile(toPath.resolve(name))) {
+            if (!toPath.resolve(name).isRegularFile()) {
                 return false;
             }
         }
@@ -226,32 +213,20 @@ public class DocusaurusCtrl {
         return true;
     }
 
-    private void deletePathChildren(Path path) {
-        if (Files.isDirectory(path)) {
-            try {
-                Files.list(path).forEach(
-                        x -> deletePath(x)
-                );
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
+    private void deletePathChildren(NPath path) {
+        if (path.isDirectory()) {
+            path.list().forEach(
+                    x -> deletePath(x)
+            );
         }
     }
 
-    private void deletePath(Path toPath) {
-        try {
-            Files.walk(toPath)
-                    .sorted(Comparator.reverseOrder())
-                    .forEach(x -> {
-                        try {
-                            Files.delete(x);
-                        } catch (IOException e) {
-                            throw new UncheckedIOException(e);
-                        }
-                    });
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+    private void deletePath(NPath toPath) {
+        toPath.walk()
+                .sorted(NComparator.of(Comparator.<NPath>reverseOrder()))
+                .forEach(x -> {
+                    x.delete();
+                });
     }
 
     private Path getTargetBaseDir() {
@@ -259,8 +234,8 @@ public class DocusaurusCtrl {
                 ;
     }
 
-    public Path getPreProcessorBaseDir() {
-        return Paths.get(project.getDocusaurusBaseFolder()).resolve(".dir-template");
+    public NPath getPreProcessorBaseDir() {
+        return NPath.of(project.getDocusaurusBaseFolder()).resolve(".dir-template");
     }
 
     public boolean isAutoInstallNutsPackages() {

@@ -7,6 +7,7 @@ package net.thevpc.nuts.lib.md.asciidoctor;
 
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.lib.md.*;
+import net.thevpc.nuts.lib.md.base.AbstractMdWriter;
 import net.thevpc.nuts.lib.md.util.MdUtils;
 
 import java.io.OutputStream;

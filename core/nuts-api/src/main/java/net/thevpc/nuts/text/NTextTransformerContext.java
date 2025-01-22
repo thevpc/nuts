@@ -1,6 +1,8 @@
 package net.thevpc.nuts.text;
 
 public interface NTextTransformerContext {
+    NTextTransformConfig getConfig();
+
     NTitleSequence getTitleSequence();
 
     NTextTransformerContext setTitleSequence(NTitleSequence sequence);

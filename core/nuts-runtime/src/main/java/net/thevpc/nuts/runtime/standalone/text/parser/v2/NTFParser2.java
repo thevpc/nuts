@@ -26,7 +26,12 @@ public class NTFParser2 extends AbstractNTextNodeParser {
             "#######",
             "########",
             "#########",
-            "##########"
+            "##########",
+            "###########",
+            "############",
+            "#############",
+            "##############",
+            "###############"
     };
 
     enum StepEnum {
@@ -192,8 +197,8 @@ public class NTFParser2 extends AbstractNTextNodeParser {
                                                             ret.set(p);
                                                         }
                                                     })
-                                            .onFullMatch(SHARPS[simpleLvl] + "($|[^#])",
-                                                    mode == StepEnum.SIMPLE_STYLE,
+                                            .onFullMatch((simpleLvl<SHARPS.length?SHARPS[simpleLvl]:"") + "($|[^#])",
+                                                    simpleLvl<SHARPS.length && mode == StepEnum.SIMPLE_STYLE,
                                                     m -> {
                                                         wasNewLine = false;
                                                         q.read(SHARPS[simpleLvl].length()); //ignore extra

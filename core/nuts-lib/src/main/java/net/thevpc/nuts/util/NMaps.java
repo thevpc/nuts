@@ -1,6 +1,7 @@
 package net.thevpc.nuts.util;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class NMaps {
@@ -174,4 +175,25 @@ public class NMaps {
         m.put(a9, b9);
         return m;
     }
+
+    public static <K, V> NLRUMap<K, V> ofLRU(int maxEntries) {
+        return new NLRUMap<>(maxEntries);
+    }
+
+    public static <K, V> NListValueMap<K, V> ofListValue() {
+        return new NListValueMap<>();
+    }
+
+    public static <K, V> NListValueMap<K, V> ofListValue(Map<K, List<V>> map) {
+        return new NListValueMap<>(map);
+    }
+
+    public static <T> Map<String, T> ofCaseInsensitiveKeyMap() {
+        return new NCaseInsensitiveStringMap<>();
+    }
+
+    public static <T> Map<String, T> ofCaseInsensitiveKeyMap(Map<String, T> other) {
+        return new NCaseInsensitiveStringMap<>(other);
+    }
+
 }

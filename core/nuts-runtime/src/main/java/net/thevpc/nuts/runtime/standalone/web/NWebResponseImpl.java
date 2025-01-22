@@ -1,32 +1,33 @@
 package net.thevpc.nuts.runtime.standalone.web;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.web.NWebCookie;
 import net.thevpc.nuts.web.NWebResponse;
 import net.thevpc.nuts.web.NWebResponseException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public class NWebResponseImpl implements NWebResponse {
     private int code;
     private NMsg msg;
-    private Map<String, List<String>> headers;
+    private DefaultNWebHeaders headers=new DefaultNWebHeaders();
     private NInputSource content;
     private NMsg userMessage;
-    private NSession session;
 
-    public NWebResponseImpl(int code, NMsg msg, Map<String, List<String>> headers, NInputSource content, NSession session) {
+    public NWebResponseImpl(int code, NMsg msg, Map<String, List<String>> headers, NInputSource content) {
         this.code = code;
         this.msg = msg;
-        this.headers = headers;
+        this.headers.addHeadersMulti(headers, DefaultNWebHeaders.Mode.ALWAYS);
         this.content = content;
-        this.session = session;
     }
 
     @Override
@@ -40,8 +41,18 @@ public class NWebResponseImpl implements NWebResponse {
     }
 
     @Override
+    public List<String> getHeaders(String name) {
+        List<String> u = headers.getOrEmpty(name);
+        if (u == null) {
+            return new ArrayList<>();
+        } else {
+            return new ArrayList<>(u);
+        }
+    }
+
+    @Override
     public Map<String, List<String>> getHeaders() {
-        return headers;
+        return headers.toMap();
     }
 
     @Override
@@ -103,6 +114,10 @@ public class NWebResponseImpl implements NWebResponse {
         return content.readBytes();
     }
 
+    public NWebCookie[] getCookies() {
+        return getHeaders("Set-Cookie").stream().map(DefaultNWebCookie::new).toArray(NWebCookie[]::new);
+    }
+
     @Override
     public boolean isError() {
         return code >= 400;
@@ -130,12 +145,10 @@ public class NWebResponseImpl implements NWebResponse {
     @Override
     public String getContentType() {
         if (headers != null) {
-            List<String> list = headers.get("Content-Type");
-            if (list != null) {
-                for (String s : list) {
-                    if (s != null && !s.isEmpty()) {
-                        return s;
-                    }
+            List<String> list = headers.getOrEmpty("Content-Type");
+            for (String s : list) {
+                if (s != null && !s.isEmpty()) {
+                    return s;
                 }
             }
         }

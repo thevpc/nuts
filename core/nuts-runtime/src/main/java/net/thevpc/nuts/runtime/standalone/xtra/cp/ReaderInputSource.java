@@ -4,8 +4,8 @@ import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.io.NContentMetadata;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.io.util.AbstractNInputSource;
-import net.thevpc.nuts.util.NIOUtils;
-import net.thevpc.nuts.util.ReaderInputStream;
+import net.thevpc.nuts.io.NIOUtils;
+import net.thevpc.nuts.io.ReaderInputStream;
 
 import java.io.IOException;
 import java.io.InputStream;

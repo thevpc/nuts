@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-{{:include $'$cwd/src/include/template/v1/01-preamble.html'}}
+{{:include $'$projectRoot/src/include/template/v1/01-preamble.html'}}
 
 <!-- Document Wrapper   
 =============================== -->
 <div id="main-wrapper">
     {{:: pageId='blog'}}
-    {{:include $'$cwd/src/include/template/v1/11-header.html'}}
+    {{:include $'$projectRoot/src/include/template/v1/11-header.html'}}
 
     <!-- Content
     ============================ -->
@@ -16,7 +16,7 @@
         ============================ -->
         <div class="idocs-navigation bg-light">
             <ul class="nav flex-column ">
-                {{:for pageLevel1,pageLevel1Index:loadPages($'$cwd/src/include/$pageId')}}
+                {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/$pageId')}}
                 <!-- {{pageLevel1}} -->
                 <li class="nav-item"><a class="nav-link" href="#{{pageLevel1.id}}" style="font-size:x-small">{{formatDate(pageLevel1.publishDate)}} {{pageLevel1.title}}</a>
                     {{:: allPagesLevel2=loadPages(pageLevel1)}}
@@ -50,11 +50,12 @@
         <div class="idocs-content">
             <div class="container">
                 <h1>Recent Blog</h1>
-                {{:for pageLevel1,pageLevel1Index:loadPages($'$cwd/src/include/$pageId')}}
+                {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/$pageId')}}
                     <!--{{pageLevel1}}-->
                     <section id="{{pageLevel1.id}}">
-                        <header>
-                            <h2 ><a href="#{{pageLevel1.id}}">{{pageLevel1.title}}</a></h2>
+                        <h2 style="margin-bottom: 0;"><a href="#{{pageLevel1.id}}">{{pageLevel1.title}}</a></h2>
+                        <h4 style="margin: 0;font-style: italic">{{pageLevel1.subTitle}}</h4>
+                        <header style="margin-left: 50px">
                             <div class="container_mt6G margin-vert--md" style="font-size: medium">
                                 <time>{{formatDate(pageLevel1.publishDate)}}</time>
                                 · One min read
@@ -77,7 +78,6 @@
                                 </div>
                             </div>
                         </header>
-                        <h3 >{{pageLevel1.subTitle}}</h3>
                         {{pageContentToHtml(pageLevel1,formatDate(pageLevel1.publishDate))}}
                     </section>
                     <hr class="divider">
@@ -89,9 +89,9 @@
     </div>
     <!-- Content end -->
 
-    {{:include $'$cwd/src/include/template/v1/12-footer.html'}}
+    {{:include $'$projectRoot/src/include/template/v1/12-footer.html'}}
 </div>
 <!-- Document Wrapper end -->
 
-{{:include $'$cwd/src/include/template/v1/99-epilog.html'}}
+{{:include $'$projectRoot/src/include/template/v1/99-epilog.html'}}
 </html>

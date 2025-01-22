@@ -37,6 +37,10 @@ public class Mvn {
         return localMaven() + "/" + file(id, type);
     }
 
+    public static String jar(NId id) {
+        return file(id, MvnArtifactType.JAR);
+    }
+
     public static String file(NId id, MvnArtifactType type) {
         String g = id.getGroupId().replace(".", "/");
         String a = id.getArtifactId();

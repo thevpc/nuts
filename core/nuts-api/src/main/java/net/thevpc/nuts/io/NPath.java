@@ -49,7 +49,7 @@ import java.util.function.Function;
  *
  * @app.category Input Output
  */
-public interface NPath extends NInputSource, NOutputTarget, NWorkspaceProvider {
+public interface NPath extends NInputSource, NOutputTarget, NWorkspaceProvider,Comparable<NPath> {
 
     static NPath of(URL path) {
         return NIO.of().createPath(path);
@@ -383,13 +383,6 @@ public interface NPath extends NInputSource, NOutputTarget, NWorkspaceProvider {
     boolean isName();
 
     /**
-     * return path items count
-     *
-     * @return path items count
-     */
-    int getLocationItemsCount();
-
-    /**
      * true if this is the root of the path file system. good examples are: '/'
      * , 'C:\' and 'http://myserver/'
      *
@@ -449,7 +442,7 @@ public interface NPath extends NInputSource, NOutputTarget, NWorkspaceProvider {
 
     String getLocationItem(int index);
 
-    List<String> getLocationItems();
+    List<String> getNames();
 
     void moveTo(NPath other, NPathOption... options);
 
@@ -495,4 +488,12 @@ public interface NPath extends NInputSource, NOutputTarget, NWorkspaceProvider {
     boolean isDeleteOnDispose();
 
     boolean isEqOrDeepChildOf(NPath other);
+
+    boolean startsWith(NPath other);
+
+    boolean startsWith(String other);
+
+    int getNameCount();
+
+    int compareTo(NPath other);
 }

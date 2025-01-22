@@ -9,7 +9,6 @@ import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.util.NArrays;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NOptional;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,7 +25,6 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
 
     protected NPath INIT_FOLDER;
     protected NPath CURRENT_FOLDER;
-    private String remoteSshConnexion;
     private boolean timestampTrace = true;
     private boolean preferRsync = true;
     private boolean explodedUpload = true;
@@ -262,9 +260,19 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
         trace(message, new HashMap<>());
     }
 
-    public void echo(String message, Map<String, ?> vars) {
+    public void echo(NMsg msg) {
+        NPrintStream out = NSession.of().out();
+        out.println(msg);
+    }
+
+    public void echoV(String message, Map<String, ?> vars) {
         NPrintStream out = NSession.of().out();
         out.println(NMsg.ofV(message, vars));
+    }
+
+    public void echoC(String message, Object... vars) {
+        NPrintStream out = NSession.of().out();
+        out.println(NMsg.ofC(message, vars));
     }
 
     public void echo(String message) {
@@ -301,14 +309,7 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
         CURRENT_FOLDER = p;
     }
 
-    public NOptional<String> getRemoteSshConnexion() {
-        return NOptional.of(remoteSshConnexion);
-    }
 
-    public AbstractRunner setRemoteSshConnexion(String remoteSshConnexion) {
-        this.remoteSshConnexion = remoteSshConnexion;
-        return this;
-    }
 
 
     private String _parentPath(String toRemote) {
@@ -353,7 +354,7 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
     }
 
     public void remoteExec(String command) {
-        ssh(getRemoteSshConnexion().get(), command);
+        ssh(context().getRemoteTheVpcSshConnexion().get(), command);
     }
 
     public void remoteKill(long pid) {
@@ -361,7 +362,7 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
     }
 
     public JpsResult[] remoteJps() {
-        String jps = sshAsString(getRemoteSshConnexion().get(), "jps", "-lmv");
+        String jps = sshAsString(context().getRemoteTheVpcSshConnexion().get(), "jps", "-lmv");
         String[] rows = jps.split("\n");
         List<JpsResult> results = new ArrayList<>();
         for (String row : rows) {
@@ -390,11 +391,11 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
         return results.toArray(new JpsResult[0]);
     }
 
-    protected NPath removeThevpcMaven() {
+    protected NPath remoteThevpcMavenPath() {
         return NPath.of(context().home + "/srv/maven-thevpc/");
     }
 
-    protected NPath remoteTheVpcNuts() {
+    protected NPath remoteTheVpcNutsPath() {
 //        return NPath.of(context().home + "/srv/tomcat-a/webapps-thevpc/ROOT/nuts/", session);
         return NPath.of(context().home + "/srv/tomcat-a/domain-webapps/thevpc.net/ROOT/nuts/");
     }
@@ -410,7 +411,7 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
 
     public void pushIdFiles(String... ids) {
         NPath m2Path = localMvn();
-        NPath mavenThevpc = removeThevpcMaven();
+        NPath mavenThevpc = remoteThevpcMavenPath();
         class PathWithPrio {
 
             String p;
@@ -460,7 +461,7 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
                         remoteMkdirs(rto);
                         rto = NPath.of(rto).getParent().toString();
                     }
-                    scpOrRsync(p.toString(), getRemoteSshConnexion().get() + ":" + rto);
+                    scpOrRsync(p.toString(), context().getRemoteTheVpcSshConnexion().get() + ":" + rto);
                 }
             } else {
                 String rto = to;
@@ -471,7 +472,7 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
 //                log(NMsg.ofC("##upload## %s to %s",
 //                        NMsg.ofStyled(rfrom0, NTextStyle.path()),
 //                        NMsg.ofStyled(connexion() + ":" + rto, NTextStyle.path())));
-                scpOrRsync(rfrom0, getRemoteSshConnexion().get() + ":" + rto);
+                scpOrRsync(rfrom0, context().getRemoteTheVpcSshConnexion().get() + ":" + rto);
             }
         } else {
             String rto = NPath.of(to).toString();
@@ -479,12 +480,12 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
                 remoteMkdirs(rto);
                 rto = NPath.of(rto).getParent().toString();
             }
-            scpOrRsync(rfrom, remoteSshConnexion + ":" + rto);
+            scpOrRsync(rfrom, context().getRemoteTheVpcSshConnexion().get() + ":" + rto);
         }
     }
 
     public void remoteMkdirs(String path) {
-        rexec("mkdir","-p",path);
+        rexec("mkdir", "-p", path);
     }
 
     private void scpOrRsync(String from, String to) {
@@ -499,7 +500,7 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
         NExecCmd.of().system()
                 .addCommand(
                         "ssh",
-                        remoteSshConnexion,
+                        context().getRemoteTheVpcSshConnexion().get(),
                         NCmdLineFormat.of(NCmdLine.of(command)).format().filteredText()
                 )
                 .failFast()

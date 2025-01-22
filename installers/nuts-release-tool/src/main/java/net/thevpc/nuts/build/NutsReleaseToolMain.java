@@ -1,10 +1,10 @@
 package net.thevpc.nuts.build;
 
-import net.thevpc.nuts.NApp;
-import net.thevpc.nuts.NApplication;
-import net.thevpc.nuts.NConfirmationMode;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.build.builders.*;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
 
 public class NutsReleaseToolMain implements NApplication {
 
@@ -15,6 +15,7 @@ public class NutsReleaseToolMain implements NApplication {
     @Override
     public void run() {
         NSession session = NSession.of();
+        NPath currentDir = NPath.ofUserDirectory();
         //always yes!!
         session.copy().setConfirm(NConfirmationMode.YES)
                 .runWith(() -> {
@@ -22,8 +23,8 @@ public class NutsReleaseToolMain implements NApplication {
                             new BaseConfRunner(),
                             new JarsRunner(),
                             new ReposRunner(),
-                            new SiteRunner(),
-                            new InstallerRunner(session)
+                            new InstallerRunner(session),
+                            new SiteRunner()
                     );
                     nutsBuildRunner.run(
                             NApp.of().getCmdLine()

@@ -263,7 +263,7 @@ public class NApiUtilsRPI {
                     if (fm != null) {
                         fm = NMsg.ofNtf(NTextBuilder.of().append(fm, NTextStyle.error()).build());
                     } else {
-                        fm = NMsg.ofStyled(m, NTextStyle.error());
+                        fm = NMsg.ofStyledError(m);
                     }
                 } catch (Exception ex2) {
                     NLogOp.of(NApplications.class).level(Level.FINE).error(ex2).log(

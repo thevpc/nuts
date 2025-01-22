@@ -11,6 +11,7 @@ import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
+import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStream;
 
@@ -252,8 +253,8 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
     }
 
     @Override
-    public int getLocationItemsCount(NPath basePath) {
-        return ref.getLocationItemsCount();
+    public int getNameCount(NPath basePath) {
+        return ref.getNameCount();
     }
 
     @Override
@@ -269,6 +270,16 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
     @Override
     public boolean isEqOrDeepChildOf(NPath basePath, NPath other) {
         return ref.isEqOrDeepChildOf(other);
+    }
+
+    @Override
+    public boolean startsWith(NPath basePath, String other) {
+        return ref.startsWith(other);
+    }
+
+    @Override
+    public boolean startsWith(NPath basePath, NPath other) {
+        return ref.startsWith(other);
     }
 
     @Override
@@ -290,8 +301,8 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
     }
 
     @Override
-    public List<String> getLocationItems(NPath basePath) {
-        return ref.getLocationItems();
+    public List<String> getNames(NPath basePath) {
+        return ref.getNames();
     }
 
     @Override
@@ -313,14 +324,7 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
     public NPath toRelativePath(NPath basePath, NPath parentPath) {
         String child = basePath.getLocation();
         String parent = parentPath.getLocation();
-        if (child.startsWith(parent)) {
-            child = child.substring(parent.length());
-            if (child.startsWith("/") || child.startsWith("\\")) {
-                child = child.substring(1);
-            }
-            return NPath.of(child);
-        }
-        return null;
+        return NPath.of(NIOUtils.toRelativePath(child, parent));
     }
 
     private static class MyPathFormat implements NFormatSPI {
@@ -357,5 +361,10 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
     @Override
     public byte[] getDigest(NPath basePath, String algo) {
         return ref.getDigest();
+    }
+
+    @Override
+    public int compareTo(NPath basePath, NPath other) {
+        return ref.compareTo(other);
     }
 }

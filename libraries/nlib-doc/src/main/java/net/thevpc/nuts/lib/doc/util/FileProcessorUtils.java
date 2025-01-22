@@ -1,23 +1,20 @@
 package net.thevpc.nuts.lib.doc.util;
 
+import net.thevpc.nuts.io.NPath;
+
 import java.io.*;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.charset.Charset;
 import java.nio.file.Paths;
 
 public class FileProcessorUtils {
     
-    public static void mkdirs(Path parent) {
+    public static void mkdirs(NPath parent) {
         if (parent == null) {
             return;
         }
-        if (!Files.isDirectory(parent)) {
-            try {
-                Files.createDirectories(parent);
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
+        if (!parent.isDirectory()) {
+            parent.mkdirs();
         }
     }
 
@@ -56,29 +53,25 @@ public class FileProcessorUtils {
         return f.getPath();
     }
     
-    public static Path toRealPath(Path path, Path workingDir) {
-        try {
-            return toAbsolutePath(path, workingDir).toRealPath();
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
+    public static NPath toRealPath(NPath path, NPath workingDir) {
+        return toAbsolutePath(path, workingDir).normalize();
     }
     
-    public static Path toAbsolutePath(Path path, Path workingDir) {
+    public static NPath toAbsolutePath(NPath path, NPath workingDir) {
         if(!path.isAbsolute()){
-            return workingDir.resolve(path).toAbsolutePath().normalize();
+            return workingDir.resolve(path).toAbsolute().normalize();
         }
         return path;
     }
     
-    public static Path toAbsolute(Path pathString, Path workingDir) {
+    public static NPath toAbsolute(NPath pathString, NPath workingDir) {
         if(pathString.isAbsolute()){
             return pathString.normalize();
         }
         if(workingDir==null){
-            workingDir=Paths.get(System.getProperty("user.dir"));
+            workingDir=NPath.of(System.getProperty("user.dir"));
         }
-        return workingDir.resolve(pathString).toAbsolutePath().normalize();
+        return workingDir.resolve(pathString).toAbsolute().normalize();
     }
 
     public static String toAbsolute(String pathString, String workingDir) {
@@ -93,16 +86,12 @@ public class FileProcessorUtils {
     
     private static final char[] HEXARR = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
     
-    public static String loadString(Path s) {
+    public static String loadString(NPath s) {
         return loadString(s, null);
     }
     
-    public static String loadString(Path s, String encoding) {
-        try(InputStream in=Files.newInputStream(s)){
-            return loadString(in, encoding);
-        }catch(IOException ex){
-            throw new UncheckedIOException(ex);
-        }
+    public static String loadString(NPath s, String encoding) {
+        return s.readString(encoding==null?null:Charset.forName(encoding));
     }
     
     public static String loadString(InputStream s, String encoding) {

@@ -1,6 +1,5 @@
 package net.thevpc.nuts.toolbox.docusaurus;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementEntry;
 import net.thevpc.nuts.elem.NElements;
@@ -292,10 +291,10 @@ public class DocusaurusProject {
             for (NElementEntry member : a.asObject().get()) {
                 DocusaurusFileOrFolder[] cc = LJSON_to_DocusaurusFileOrFolder_list(member.getValue(), root);
                 String rootPath = root.getPath();
-                Path parentPath = detectFileParent(cc);
+                NPath parentPath = detectFileParent(cc);
                 if (parentPath == null) {
                     if (rootPath != null) {
-                        parentPath = Paths.get(rootPath);
+                        parentPath = NPath.of(rootPath);
                     } else {
                         parentPath = detectFileParent(cc);
                     }
@@ -315,10 +314,10 @@ public class DocusaurusProject {
         }
     }
 
-    public Path detectFileParent(DocusaurusFileOrFolder[] f) {
-        LinkedHashSet<Path> valid = new LinkedHashSet<>();
+    public NPath detectFileParent(DocusaurusFileOrFolder[] f) {
+        LinkedHashSet<NPath> valid = new LinkedHashSet<>();
         for (DocusaurusFileOrFolder child : f) {
-            Path path = detectFile(child);
+            NPath path = detectFile(child);
             if (path != null) {
                 valid.add(path.getParent());
             }
@@ -329,7 +328,7 @@ public class DocusaurusProject {
         return null;
     }
 
-    public Path detectFile(DocusaurusFileOrFolder f) {
+    public NPath detectFile(DocusaurusFileOrFolder f) {
         if (f instanceof DocusaurusFolder) {
             return detectFileParent(((DocusaurusFolder) f).getChildren());
         }
@@ -348,28 +347,28 @@ public class DocusaurusProject {
         );
     }
 
-    public MdElement resolveFolderContent(Path path) {
+    public MdElement resolveFolderContent(NPath path) {
         if (path == null) {
             return null;
         }
-        Path in = path.resolve(DocusaurusFolder.FOLDER_INFO_NAME);
-        if (Files.isRegularFile(in)) {
+        NPath in = path.resolve(DocusaurusFolder.FOLDER_INFO_NAME);
+        if (in.isRegularFile()) {
             DocusaurusFile baseContent = (DocusaurusFile) DocusaurusFolder.ofFileOrFolder(in, getPhysicalDocsFolderBasePath(), getPhysicalDocsFolderConfigPath(), -1);
             return baseContent == null ? null : baseContent.getContent();
         }
         return null;
     }
 
-    public Path getPhysicalDocsFolderBasePath() {
-        return Paths.get(this.docusaurusBaseFolder).resolve("docs").toAbsolutePath();
+    public NPath getPhysicalDocsFolderBasePath() {
+        return NPath.of(this.docusaurusBaseFolder).resolve("docs").toAbsolute();
     }
 
-    public Path getPhysicalDocsFolderConfigPath() {
-        return Paths.get(this.docusaurusBaseFolder).resolve("docs").toAbsolutePath();
+    public NPath getPhysicalDocsFolderConfigPath() {
+        return NPath.of(this.docusaurusBaseFolder).resolve("docs").toAbsolute();
     }
 
     public DocusaurusFolder getPhysicalDocsFolder() {
-        Path docs = getPhysicalDocsFolderBasePath();
+        NPath docs = getPhysicalDocsFolderBasePath();
         DocusaurusFolder root = (DocusaurusFolder) DocusaurusFolder.ofFileOrFolder(docs, docs, getPhysicalDocsFolderConfigPath());
         return root;
     }

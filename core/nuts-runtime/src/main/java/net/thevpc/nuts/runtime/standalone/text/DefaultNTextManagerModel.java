@@ -49,6 +49,7 @@ import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NOsFamily;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.BufferedReader;
@@ -68,17 +69,19 @@ public class DefaultNTextManagerModel {
     private final Map<String, NCodeHighlighter> highlighters = new HashMap<>();
     private final Map<String, NCodeHighlighter> _cachedHighlighters = new HashMap<>();
     private String styleThemeName;
-    private NTextFormatTheme styleTheme;
+    //    private NTextFormatTheme styleTheme;
     private NTextFormatTheme defaultTheme;
     private NElementFactoryService elementFactoryService;
     private NElementStreamFormat jsonMan;
     private NElementStreamFormat yamlMan;
     private NElementStreamFormat xmlMan;
+    private Map<String, NTextFormatTheme> cachedThemes = new HashMap<>();
 
     public DefaultNTextManagerModel(NWorkspace workspace) {
         this.workspace = workspace;
     }
-    public void loadExtensions(){
+
+    public void loadExtensions() {
         List<NCodeHighlighter> all = NExtensions.of().createComponents(NCodeHighlighter.class, null);
         for (NCodeHighlighter h : all) {
             highlighters.put(h.getId().toLowerCase(), h);
@@ -113,49 +116,75 @@ public class DefaultNTextManagerModel {
     }
 
 
-    public NTextFormatTheme createTheme(String y) {
-        y = y == null ? "" : y.trim();
+    public NTextFormatTheme getDefaultTheme() {
+        if (defaultTheme == null) {
+            if (NWorkspace.of().getOsFamily() == NOsFamily.WINDOWS) {
+                //dark blue and red are very ugly under windows, replace them with green tones !
+                defaultTheme = new NTextFormatThemeWrapper(new NTextFormatPropertiesTheme("grass", null, workspace));
+            } else {
+                defaultTheme = new DefaultNTextFormatTheme(workspace);
+            }
+        }
+        return defaultTheme;
+    }
+
+    public NTextFormatTheme loadTheme(String y) {
+        y = NStringUtils.trim(y);
         if (NBlankable.isBlank(y)) {
             y = "default";
         }
+        NTextFormatTheme t = cachedThemes.get(y);
+        if (t != null) {
+            return t;
+        }
         if ("default".equals(y)) {
             //default always refers to this implementation
-            if (defaultTheme == null) {
-                if (NWorkspace.of().getOsFamily() == NOsFamily.WINDOWS) {
-                    //dark blue and red are very ugly under windows, replace them with green tones !
-                    defaultTheme = new NTextFormatThemeWrapper(new NTextFormatPropertiesTheme("grass", null, workspace));
-                } else {
-                    defaultTheme = new DefaultNTextFormatTheme(workspace);
-                }
-            }
-            return defaultTheme;
+            t = getDefaultTheme();
+            cachedThemes.put(y, t);
+            return t;
         } else {
-            return new NTextFormatThemeWrapper(new NTextFormatPropertiesTheme(y, null, workspace));
+            t = new NTextFormatThemeWrapper(new NTextFormatPropertiesTheme(y, null, workspace));
+            cachedThemes.put(y, t);
+            return t;
         }
     }
 
-    public NTextFormatTheme getTheme() {
-        if (styleTheme == null) {
+    public NOptional<NTextFormatTheme> getTheme(String name) {
+        if (NBlankable.isBlank(name)) {
+            return NOptional.ofNamedEmpty(NMsg.ofC("theme"));
+        }
+        if (NBlankable.isBlank(name)) {
             if (styleThemeName == null) {
                 NBootOptions bootOptions = NWorkspaceExt.of().getModel().bootModel.getBootUserOptions();
                 styleThemeName = bootOptions.getTheme().orNull();
             }
-            styleTheme = createTheme(styleThemeName);
+            name = styleThemeName;
+            if (NBlankable.isBlank(name)) {
+                name = "default";
+            }
         }
-        return styleTheme;
+        try {
+            return NOptional.of(loadTheme(name));
+        } catch (Exception ex) {
+            return NOptional.ofNamedEmpty(NMsg.ofC("theme %s", name));
+        }
+    }
+
+    public NTextFormatTheme getTheme() {
+        return getTheme("").orElse(getDefaultTheme());
     }
 
     public void setTheme(NTextFormatTheme styleTheme) {
-        this.styleTheme = styleTheme;
+        if (styleTheme != null) {
+            cachedThemes.put(styleTheme.getName(), styleTheme);
+            styleThemeName = styleTheme.getName();
+        } else {
+            styleThemeName = "default";
+        }
     }
 
     public void setTheme(String styleThemeName) {
-        if (styleThemeName == null || styleThemeName.trim().isEmpty()) {
-            styleThemeName = "default";
-        }
-        styleThemeName = styleThemeName.trim();
-        styleTheme = createTheme(styleThemeName);
-        this.styleThemeName = styleThemeName;
+        this.styleThemeName = loadTheme(styleThemeName).getName();
     }
 
     public NCodeHighlighter getCodeHighlighter(String highlighterId) {

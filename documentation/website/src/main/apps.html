@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-{{:include $'$cwd/src/include/template/v1/01-preamble.html'}}
+{{:include $'$projectRoot/src/include/template/v1/01-preamble.html'}}
 
 <!-- Document Wrapper   
 =============================== -->
 <div id="main-wrapper">
     {{:: pageId='apps'}}
-    {{:include $'$cwd/src/include/template/v1/11-header.html'}}
+    {{:include $'$projectRoot/src/include/template/v1/11-header.html'}}
 
     <!-- Content
     ============================ -->
@@ -16,7 +16,7 @@
         ============================ -->
         <div class="idocs-navigation bg-light">
             <ul class="nav flex-column ">
-                {{:for pageLevel1,pageLevel1Index:loadPages($'$cwd/src/include/$pageId')}}
+                {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/$pageId')}}
                 <li class="nav-item"><a class="nav-link" href="#{{pageLevel1.id}}">{{pageLevel1Index+1}} {{pageLevel1.title}}</a>
                     {{:: allPagesLevel2=loadPages(pageLevel1)}}
                     {{:if (allPagesLevel2.size)>0}}
@@ -47,7 +47,7 @@
         <div class="idocs-content">
             <div class="container">
 
-                {{:for pageLevel1,pageLevel1Index:loadPages($'$cwd/src/include/$pageId')}}
+                {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/$pageId')}}
                     <!--{{pageLevel1}}-->
                     <section id="{{pageLevel1.id}}">
                         {{pageToHtml(pageLevel1,(pageLevel1Index+1))}}
@@ -75,9 +75,9 @@
     </div>
     <!-- Content end -->
 
-    {{:include $'$cwd/src/include/template/v1/12-footer.html'}}
+    {{:include $'$projectRoot/src/include/template/v1/12-footer.html'}}
 </div>
 <!-- Document Wrapper end -->
 
-{{:include $'$cwd/src/include/template/v1/99-epilog.html'}}
+{{:include $'$projectRoot/src/include/template/v1/99-epilog.html'}}
 </html>

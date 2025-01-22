@@ -3,7 +3,11 @@ package net.thevpc.nuts.runtime.standalone.text.theme;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.text.NTextFormatTheme;
 import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTextStyleType;
 import net.thevpc.nuts.text.NTextStyles;
+import net.thevpc.nuts.util.NColors;
+
+import java.awt.*;
 
 public class DefaultNTextFormatTheme implements NTextFormatTheme {
 
@@ -43,36 +47,95 @@ public class DefaultNTextFormatTheme implements NTextFormatTheme {
     public String getName() {
         return "default";
     }
+
     private NWorkspace ws;
+
+    public static int foregroundSimpleToTrueColor(int color) {
+        if (color >= 0 && color < FG.length) {
+            color = FG[color];
+        }
+        if (color < 0) {
+            color = -color;
+        }
+        color = color % 255;
+        Color c = NColors.ansiToColor(color);
+        int rgb = c.getRGB();
+        return rgb;
+    }
+
+    public static int backgroundSimpleToTrueColor(int color) {
+        if (color >= 0 && color < BG.length) {
+            color = BG[color];
+        }
+        if (color < 0) {
+            color = -color;
+        }
+        color = color % 255;
+        Color c = NColors.ansiToColor(color);
+        int rgb = c.getRGB();
+        return rgb;
+    }
 
     public DefaultNTextFormatTheme(NWorkspace ws) {
         this.ws = ws;
     }
 
     @Override
-    public NTextStyles toBasicStyles(NTextStyles styles) {
+    public NTextStyles toBasicStyles(NTextStyles styles, boolean basicTrueStyles) {
         NTextStyles ret = NTextStyles.PLAIN;
         if (styles != null) {
             for (NTextStyle style : styles) {
-                ret = ret.append(toBasicStyles(style));
+                ret = ret.append(toBasicStyles(style, basicTrueStyles));
             }
         }
         return ret;
     }
 
+    public NTextStyles toBasicStyles(NTextStyle style, boolean basicTrueStyles) {
+        if (style == null) {
+            return NTextStyles.PLAIN;
+        }
+        if(style.getType().isBasic(basicTrueStyles)) {
+            return NTextStyles.of(style);
+        }
+        NTextStyles y = toBasicStyles0(style, basicTrueStyles);
+        if(basicTrueStyles) {
+            for (NTextStyle yy : y) {
+                switch (yy.getType()) {
+                    case FORE_COLOR:
+                    case BACK_COLOR: {
+                        System.out.println("why");
+                    }
+                }
+            }
+        }
+        return y;
+    }
+
     /**
      * this is the default theme!
      *
-     * @param style textNodeStyle
+     * @param style           textNodeStyle
+     * @param basicTrueStyles
      * @return NutsTextNode
      */
-    public NTextStyles toBasicStyles(NTextStyle style) {
+    public NTextStyles toBasicStyles0(NTextStyle style, boolean basicTrueStyles) {
         if (style == null) {
             return NTextStyles.PLAIN;
         }
         switch (style.getType()) {
-            case FORE_COLOR: //will be called by recursion
-            case BACK_COLOR:
+            case FORE_COLOR:{
+                if(basicTrueStyles){
+                    return NTextStyles.of(NTextStyle.foregroundTrueColor(foregroundSimpleToTrueColor(style.getVariant())));
+                }
+                return NTextStyles.of(style);
+            }
+            case BACK_COLOR:{
+                if(basicTrueStyles){
+                    return NTextStyles.of(NTextStyle.backgroundTrueColor(backgroundSimpleToTrueColor(style.getVariant())));
+                }
+                return NTextStyles.of(style);
+            }
             case FORE_TRUE_COLOR:
             case BACK_TRUE_COLOR:
             case UNDERLINED:
@@ -84,14 +147,13 @@ public class DefaultNTextFormatTheme implements NTextFormatTheme {
                 return NTextStyles.of(style);
             }
             case PRIMARY: {
-
-                return toBasicStyles(NTextStyle.foregroundColor(mapColor(style.getVariant())));
+                return toBasicStyles(NTextStyle.foregroundColor(mapColor(style.getVariant())), basicTrueStyles);
             }
             case SECONDARY: {
-                return toBasicStyles(NTextStyle.backgroundColor(mapColor(style.getVariant())));
+                return toBasicStyles(NTextStyle.backgroundColor(mapColor(style.getVariant())), basicTrueStyles);
             }
             case TITLE: {
-                return toBasicStyles(NTextStyle.primary(style.getVariant()))
+                return toBasicStyles(NTextStyle.primary(style.getVariant()), basicTrueStyles)
                         .append(NTextStyle.underlined());
             }
             case KEYWORD: {
@@ -99,9 +161,9 @@ public class DefaultNTextFormatTheme implements NTextFormatTheme {
                 return toBasicStyles(NTextStyle.foregroundColor(
                         x == 0 ? DARK_BLUE
                                 : x == 1 ? DARK_SKY
-                                        : x == 2 ? DARK_VIOLET
-                                                : BRIGHT_VIOLET
-                ));
+                                : x == 2 ? DARK_VIOLET
+                                : BRIGHT_VIOLET
+                ), basicTrueStyles);
             }
 
             case OPTION: {
@@ -109,75 +171,75 @@ public class DefaultNTextFormatTheme implements NTextFormatTheme {
                 return toBasicStyles(NTextStyle.foregroundColor(
                         x == 0 ? DARK_SKY
                                 : x == 1 ? 66
-                                        : x == 2 ? 102
-                                                : 138
-                ));
+                                : x == 2 ? 102
+                                : 138
+                ), basicTrueStyles);
             }
 
             case ERROR: {
-                return NTextStyles.of(NTextStyle.foregroundColor(DARK_RED));
+                return toBasicStyles(NTextStyle.foregroundColor(DARK_RED),basicTrueStyles);
             }
             case SUCCESS: {
-                return NTextStyles.of(NTextStyle.foregroundColor(DARK_GREEN));
+                return toBasicStyles(NTextStyle.foregroundColor(DARK_GREEN),basicTrueStyles);
             }
             case WARN: {
-                return NTextStyles.of(NTextStyle.foregroundColor(DARK_YELLOW));
+                return toBasicStyles(NTextStyle.foregroundColor(DARK_YELLOW),basicTrueStyles);
             }
             case INFO: {
-                return NTextStyles.of(NTextStyle.foregroundColor(DARK_SKY));
+                return toBasicStyles(NTextStyle.foregroundColor(DARK_SKY),basicTrueStyles);
             }
 
             case CONFIG: {
-                return NTextStyles.of(NTextStyle.foregroundColor(DARK_VIOLET));
+                return toBasicStyles(NTextStyle.foregroundColor(DARK_VIOLET),basicTrueStyles);
             }
             case DATE:
             case NUMBER:
             case BOOLEAN: {
-                return toBasicStyles(NTextStyle.foregroundColor(DARK_VIOLET));
+                return toBasicStyles(NTextStyle.foregroundColor(DARK_VIOLET), basicTrueStyles);
             }
 
             case STRING: {
-                return toBasicStyles(NTextStyle.foregroundColor(DARK_GREEN));
+                return toBasicStyles(NTextStyle.foregroundColor(DARK_GREEN), basicTrueStyles);
             }
 
             case COMMENTS: {
-                return toBasicStyles(NTextStyle.foregroundColor(DARK_GRAY));
+                return toBasicStyles(NTextStyle.foregroundColor(DARK_GRAY), basicTrueStyles);
             }
 
             case SEPARATOR: {
-                return toBasicStyles(NTextStyle.foregroundColor(208));
+                return toBasicStyles(NTextStyle.foregroundColor(208), basicTrueStyles);
             }
 
             case OPERATOR: {
-                return toBasicStyles(NTextStyle.foregroundColor(208));
+                return toBasicStyles(NTextStyle.foregroundColor(208), basicTrueStyles);
             }
 
             case INPUT: {
-                return toBasicStyles(NTextStyle.foregroundColor(BRIGHT_YELLOW));
+                return toBasicStyles(NTextStyle.foregroundColor(BRIGHT_YELLOW), basicTrueStyles);
             }
 
             case FAIL: {
-                return toBasicStyles(NTextStyle.foregroundColor(124));
+                return toBasicStyles(NTextStyle.foregroundColor(124), basicTrueStyles);
             }
 
             case DANGER: {
-                return toBasicStyles(NTextStyle.foregroundColor(124));
+                return toBasicStyles(NTextStyle.foregroundColor(124), basicTrueStyles);
             }
 
             case VAR: {
-                return toBasicStyles(NTextStyle.foregroundColor(190));
+                return toBasicStyles(NTextStyle.foregroundColor(190), basicTrueStyles);
             }
 
             case PALE: {
-                return toBasicStyles(NTextStyle.foregroundColor(250));
+                return toBasicStyles(NTextStyle.foregroundColor(250), basicTrueStyles);
             }
 
             case VERSION: {
-                return toBasicStyles(NTextStyle.foregroundColor(220));
+                return toBasicStyles(NTextStyle.foregroundColor(220), basicTrueStyles);
             }
 
             case PATH: {
-                return toBasicStyles(NTextStyle.foregroundColor(114));
+                return toBasicStyles(NTextStyle.foregroundColor(114), basicTrueStyles);
             }
         }
         throw new IllegalArgumentException("invalid text node style " + style);

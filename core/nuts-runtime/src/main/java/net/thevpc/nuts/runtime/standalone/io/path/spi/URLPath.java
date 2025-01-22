@@ -15,10 +15,7 @@ import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.web.NWebCli;
 
 import java.io.File;
@@ -433,7 +430,7 @@ public class URLPath implements NPathSPI {
         }
         if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
             NWebCli best = NExtensions.of().createComponent(NWebCli.class, url).get();
-            return best.req().get().setUrl(url.toString()).run().getContent().getInputStream();
+            return best.req().GET().setUrl(url.toString()).run().getContent().getInputStream();
         }
         try {
             return url.openStream();
@@ -605,12 +602,12 @@ public class URLPath implements NPathSPI {
     }
 
     @Override
-    public int getLocationItemsCount(NPath basePath) {
+    public int getNameCount(NPath basePath) {
         String location = getLocation(basePath);
         if (NBlankable.isBlank(location)) {
             return 0;
         }
-        return NPath.of(location).getLocationItemsCount();
+        return NPath.of(location).getNameCount();
     }
 
     @Override
@@ -653,8 +650,8 @@ public class URLPath implements NPathSPI {
     }
 
     @Override
-    public List<String> getLocationItems(NPath basePath) {
-        return NPath.of(getLocation(basePath)).getLocationItems();
+    public List<String> getNames(NPath basePath) {
+        return NPath.of(getLocation(basePath)).getNames();
     }
 
     @Override
@@ -706,18 +703,12 @@ public class URLPath implements NPathSPI {
     public NPath toRelativePath(NPath basePath, NPath parentPath) {
         String child = basePath.getLocation();
         String parent = parentPath.getLocation();
-        if (child.startsWith(parent)) {
-            child = child.substring(parent.length());
-            if (child.startsWith("/") || child.startsWith("\\")) {
-                child = child.substring(1);
-            }
-            return NPath.of(child);
-        }
-        return null;
+        return NPath.of(NIOUtils.toRelativePath(child, parent));
     }
+
     @Override
-    public boolean isEqOrDeepChildOf(NPath basePath,NPath other) {
-        return toRelativePath(basePath, other)!=null;
+    public boolean isEqOrDeepChildOf(NPath basePath, NPath other) {
+        return toRelativePath(basePath, other) != null;
     }
 
     private CacheInfo loadCacheInfo() {
@@ -895,7 +886,22 @@ public class URLPath implements NPathSPI {
     }
 
     @Override
+    public boolean startsWith(NPath basePath, String other) {
+        return startsWith(basePath, NPath.of(other));
+    }
+
+    @Override
+    public boolean startsWith(NPath basePath, NPath other) {
+        return toRelativePath(basePath,other)!=null;
+    }
+
+    @Override
     public byte[] getDigest(NPath basePath, String algo) {
         return null;
+    }
+
+    @Override
+    public int compareTo(NPath basePath, NPath other) {
+        return basePath.toString().compareTo(other.toString());
     }
 }

@@ -105,6 +105,8 @@ public interface NTexts extends NComponent {
 
     NTextInclude ofInclude(String value, char sep);
 
+    NOptional<NTextFormatTheme> getTheme(String name);
+
     NTextFormatTheme getTheme();
 
     NTexts setTheme(NTextFormatTheme theme);

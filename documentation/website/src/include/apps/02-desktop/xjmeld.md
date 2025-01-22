@@ -4,9 +4,9 @@ title: JMeld
 ---
 
 
-## G0009- jedit (JEdit Text Editor)
+## G0009- JMeld (A visual diff and merge tool)
 ```
-  nuts install org.jedit:jedit
+  nuts install org.jmeld:jmeld
 # Example of usage
-  nuts jedit
+  nuts jmeld
 ```

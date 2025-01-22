@@ -123,7 +123,7 @@ public class NativeBuilder {
 
 
     private List<NPath> createDistPortableJar() {
-        echo("**** [$id] create $v...", NMaps.of("id",appId,"v", NMsg.ofStyled("jar", NTextStyle.keyword())));
+        echo("**** [$id] create $v...", NMaps.of("id",appId,"v", NMsg.ofStyledKeyword("jar")));
         NPath targetFolder = dist.resolve(evalNameNoVersion(null, "jar", null));
         if (targetFolder.isDirectory()) {
             targetFolder.deleteTree();
@@ -134,11 +134,12 @@ public class NativeBuilder {
         NPath f = targetFolder.resolve(distJar.getName());
         installerJarPath.copyTo(f);
         installerJarPath.copyTo(distJar);
+        installerJarPath.copyTo(dist.resolve(installerJarPath.getName()));
         return Arrays.asList(f);
     }
 
     private List<NPath> createDistNativeGraalVMBin() {
-        echo("**** [$id] create $v (GraalVM)...", NMaps.of("id",appId,"v", NMsg.ofStyled("native-image", NTextStyle.keyword())));
+        echo("**** [$id] create $v (GraalVM)...", NMaps.of("id",appId,"v", NMsg.ofStyledKeyword("native-image")));
         List<NPath> ret = new ArrayList<>();
 
         BinPlatform platform = currentPlatform();
@@ -277,7 +278,7 @@ public class NativeBuilder {
     }
 
     private List<NPath> createDistJPackageRPM() {
-        echo("**** [$id] create $v (JPackage)...", NMaps.of("id",appId,"v", NMsg.ofStyled("rpm", NTextStyle.keyword())));
+        echo("**** [$id] create $v (JPackage)...", NMaps.of("id",appId,"v", NMsg.ofStyledKeyword("rpm")));
         NPath targetFolder = dist.resolve(evalNameNoVersion(evalCurrentBinPlatform(), "rpm", null)
         );
         BinPlatform platform = currentPlatform();
@@ -304,7 +305,9 @@ public class NativeBuilder {
                 .run();
         NPath rpmFile = targetFolder.list().stream().filter(x -> x.getName().startsWith(evalName(null, null, null)))
                 .findFirst().get();
-        return Arrays.asList(rpmFile);
+        NPath nexName = dist.resolve(appName + "-linux64-rpm-" + version + ".rpm");
+        rpmFile.copyTo(nexName);
+        return Arrays.asList(nexName);
     }
 
     private List<NPath> createDistNativeJar2appAllBin() {
@@ -339,7 +342,7 @@ public class NativeBuilder {
     private List<NPath> createDistNativeJar2app(BinPlatform platform) {
         echo("**** [$id] create $v $p (Jar2App)...",
                 NMaps.of("id",appId,
-                        "v", NMsg.ofStyled("bin", NTextStyle.keyword())
+                        "v", NMsg.ofStyledKeyword("bin")
                         , "p", platform
                 )
         );
@@ -401,7 +404,7 @@ public class NativeBuilder {
     private List<NPath> createDistNativePackrWithJava(BinPlatform platform) {
         echo("**** [$id] create $v $p (Packr)...",
                 NMaps.of("id",appId,
-                        "v", NMsg.ofStyled("bin-with-java", NTextStyle.keyword())
+                        "v", NMsg.ofStyledKeyword("bin-with-java")
                         , "p", platform
                 )
         );
