@@ -16,6 +16,8 @@ public interface InstallerContext {
 
     void onExitButton();
 
+    void applyPlaf();
+
     JFrame getFrame();
 
     JButton getNextButton();
@@ -39,10 +41,9 @@ public interface InstallerContext {
     Map<String, Object> getVars();
 
 
-
     public void startLoading();
 
     public void stopLoading(int index);
 
-    public void setDarkMode(boolean darkMode) ;
+    public void setDarkMode(boolean darkMode);
 }

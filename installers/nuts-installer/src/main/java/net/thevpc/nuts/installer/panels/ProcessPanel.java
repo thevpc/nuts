@@ -52,9 +52,9 @@ public class ProcessPanel extends AbstractInstallPanel {
                     try {
                         processImpl();
                         processed = true;
-                        if(getInstallerContext().isInstallFailed()){
+                        if (getInstallerContext().isInstallFailed()) {
 
-                        }else {
+                        } else {
                             getInstallerContext().setInstallFailed(false);
                             getInstallerContext().getCancelButton().setEnabled(false);
                             getInstallerContext().getExitButton().setEnabled(false);
@@ -90,6 +90,9 @@ public class ProcessPanel extends AbstractInstallPanel {
         if (id.optionVerbose) {
             command.add("--verbose");
         }
+        if (id.optionVerboseFile) {
+            command.add("--log-file-verbose");
+        }
         if (id.optionSwitch) {
             command.add("--switch");
         }
@@ -113,9 +116,9 @@ public class ProcessPanel extends AbstractInstallPanel {
             command.addAll(id.otherOptions);
         }
 
-        printStdOut("Start installation...\n");
+        printlnStdOutAndErr("Start installation...");
         try {
-            printStdOut("Download " + id.getInstallVersion().location + "\n");
+            printlnStdOutAndErr("Download " + id.getInstallVersion().location);
             nutsJar = Utils.downloadFile(id.getInstallVersion().location, "nuts-" + (id.getInstallVersion().stable ? "stable-" : "preview-"), ".jar", null);
             boolean someError = false;
             try {
@@ -123,30 +126,91 @@ public class ProcessPanel extends AbstractInstallPanel {
                     someError = true;
                     return;
                 }
-
-                if (!id.recommendedIds.isEmpty()) {
+                printlnStdOut("");
+                printlnStdOut("");
+                printlnStdOut("---------------------------");
+                int max = id.recommendedIds.size();
+                int count = 0;
+                if (max > 0) {
+                    ArrayList<App> succeeded = new ArrayList<>();
+                    ArrayList<App> failed = new ArrayList<>();
                     for (App recommendedId : id.recommendedIds) {
-                        printStdOut("Install " + recommendedId.getId() + "...\n");
-                        if (runNutsCommand("install", recommendedId.getId()) != 0) {
-                            someError = true;
-                            return;
+                        if (runCompanionInstallation(recommendedId, id)) {
+                            succeeded.add(recommendedId);
+                            count++;
+                        } else {
+                            failed.add(recommendedId);
                         }
                     }
+                    if (count < id.recommendedIds.size()) {
+                        someError = true;
+                    }
+                    if (!failed.isEmpty()) {
+                        printlnStdOutAndErr("Unable to install " + failed.size() + "/" + max + " application(s) : " + failed.stream().map(x -> x.getId()).collect(Collectors.toList()));
+                    }
+                    if (!succeeded.isEmpty()) {
+                        printlnStdOutAndErr("Succeeded to install " + succeeded.size() + "/" + max + " application(s) : " + succeeded.stream().map(x -> x.getId()).collect(Collectors.toList()));
+                    }
+
                 }
             } finally {
                 if (someError) {
-                    printStdOut("Installation cancelled.");
+                    printlnStdOutAndErr("Installation cancelled with error.");
                 } else {
-                    printStdOut("Installation complete.");
+                    printlnStdOutAndErr("Installation complete.");
                 }
             }
         } catch (Exception ex) {
-            printStdOut("Installation failed : " + ex);
-            printStdErr("Installation failed : " + ex);
+            printlnStdOutAndErr("Installation failed : " + ex);
+            printlnStdOutAndErr("Installation failed : " + ex);
             getInstallerContext().setInstallFailed(true);
         }
     }
 
+
+    private boolean runCompanionInstallation(App recommendedId, InstallData id) {
+        printlnStdOutAndErr("");
+        printlnStdOutAndErr("");
+        printlnStdOutAndErr("---------------------------");
+        printlnStdOutAndErr("Install " + recommendedId.getId() + "...\n");
+        java.util.List<String> appCommand = new ArrayList<>();
+        boolean someError = false;
+        if (id.workspace != null && id.workspace.trim().length() > 0) {
+            appCommand.add("-w");
+            appCommand.add(id.workspace.trim());
+        }
+        if (id.optionVerbose) {
+            appCommand.add("--verbose");
+        }
+        if (id.optionVerboseFile) {
+            appCommand.add("--log-file-verbose");
+        }
+        appCommand.add("--theme=horizon");
+        appCommand.add("install");
+        appCommand.add(recommendedId.getId());
+        try {
+            int u = runNutsCommand(appCommand.toArray(new String[0]));
+            if (u != 0) {
+                someError = true;
+            }
+        } finally {
+            if (someError) {
+                printlnStdOutAndErr("Installation of " + recommendedId.getId() + " cancelled with error.");
+            } else {
+                printlnStdOutAndErr("Installation of " + recommendedId.getId() + " complete.");
+            }
+        }
+        return !someError;
+    }
+
+    private void printlnStdOutAndErr(String str) {
+        printStdOut(str+"\n");
+        printStdErr(str+"\n");
+    }
+
+    private void printlnStdErr(String str) {
+        printStdErr(str+"\n");
+    }
 
     private void printStdErr(String str) {
         StringBuilder sb = new StringBuilder(logLabel.getText());
@@ -162,6 +226,11 @@ public class ProcessPanel extends AbstractInstallPanel {
             }
         }
         logLabel.setText(sb.toString());
+    }
+
+    private void printlnStdOut(String str) {
+        SwingUtilities.invokeLater(() -> ansiTermPane.appendANSI(str));
+        SwingUtilities.invokeLater(() -> ansiTermPane.appendANSI("\n"));
     }
 
     private void printStdOut(String str) {

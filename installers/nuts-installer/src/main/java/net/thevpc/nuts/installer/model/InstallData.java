@@ -13,6 +13,7 @@ public class InstallData {
     public boolean optionZ;
     public boolean optionS;
     public boolean optionVerbose;
+    public boolean optionVerboseFile;
     public boolean optionk;
     public boolean optionSwitch;
     public List<String> otherOptions=new ArrayList<>();
@@ -21,6 +22,17 @@ public class InstallData {
     public String java;
     public Set<App> recommendedIds=new LinkedHashSet<>();
 
+    public String[] cmdline;
+    public String defaultWorkspace;
+    public String defaultNutsOptions;
+    public String defaultJavaHome;
+    public boolean defaultAcceptTerms;
+    public boolean defaultVerbose;
+    public boolean defaultVerboseFile;
+    public boolean defaultSwitch;
+    public boolean defaultStandalone;
+    public boolean defaultReset;
+
     public static InstallData of(InstallerContext context){
         InstallData c=(InstallData) context.getVars().get(InstallData.class.getName());
         if(c==null){
@@ -28,6 +40,94 @@ public class InstallData {
             context.getVars().put(InstallData.class.getName(),c);
         }
         return c;
+    }
+
+    public boolean isOptionVerboseFile() {
+        return optionVerboseFile;
+    }
+
+    public void setOptionVerboseFile(boolean optionVerboseFile) {
+        this.optionVerboseFile = optionVerboseFile;
+    }
+
+    public boolean isDefaultVerboseFile() {
+        return defaultVerboseFile;
+    }
+
+    public void setDefaultVerboseFile(boolean defaultVerboseFile) {
+        this.defaultVerboseFile = defaultVerboseFile;
+    }
+
+    public String getDefaultJavaHome() {
+        return defaultJavaHome;
+    }
+
+    public void setDefaultJavaHome(String defaultJavaHome) {
+        this.defaultJavaHome = defaultJavaHome;
+    }
+
+    public boolean isDefaultAcceptTerms() {
+        return defaultAcceptTerms;
+    }
+
+    public void setDefaultAcceptTerms(boolean defaultAcceptTerms) {
+        this.defaultAcceptTerms = defaultAcceptTerms;
+    }
+
+    public String getDefaultNutsOptions() {
+        return defaultNutsOptions;
+    }
+
+    public void setDefaultNutsOptions(String defaultNutsOptions) {
+        this.defaultNutsOptions = defaultNutsOptions;
+    }
+
+    public boolean isDefaultSwitch() {
+        return defaultSwitch;
+    }
+
+    public void setDefaultSwitch(boolean defaultSwitch) {
+        this.defaultSwitch = defaultSwitch;
+    }
+
+    public boolean isDefaultStandalone() {
+        return defaultStandalone;
+    }
+
+    public void setDefaultStandalone(boolean defaultStandalone) {
+        this.defaultStandalone = defaultStandalone;
+    }
+
+    public boolean isDefaultReset() {
+        return defaultReset;
+    }
+
+    public void setDefaultReset(boolean defaultReset) {
+        this.defaultReset = defaultReset;
+    }
+
+    public boolean isDefaultVerbose() {
+        return defaultVerbose;
+    }
+
+    public void setDefaultVerbose(boolean defaultVerbose) {
+        this.defaultVerbose = defaultVerbose;
+    }
+
+    public String[] getCmdline() {
+        return cmdline;
+    }
+
+    public void setCmdline(String[] cmdline) {
+        this.cmdline = cmdline;
+    }
+
+    public String getDefaultWorkspace() {
+        return defaultWorkspace;
+    }
+
+    public void setDefaultWorkspace(String defaultWorkspace) {
+        this.defaultWorkspace = defaultWorkspace;
     }
 
     public boolean isInstallStable() {

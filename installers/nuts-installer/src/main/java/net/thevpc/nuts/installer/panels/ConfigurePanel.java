@@ -1,5 +1,6 @@
 package net.thevpc.nuts.installer.panels;
 
+import net.thevpc.nuts.installer.InstallerContext;
 import net.thevpc.nuts.installer.model.InstallData;
 import net.thevpc.nuts.installer.util.GBC;
 import net.thevpc.nuts.installer.util.ProcessUtils;
@@ -33,7 +34,7 @@ public class ConfigurePanel extends AbstractInstallPanel {
         otherOptionsLabel = new JLabel("Other Options");
         otherOptions = new JTextArea("");
 
-        optionVerbose.setToolTipText("Verbose Mode enable extra trale/logging messages that could be helpful when something does not run as expected.");
+        optionVerbose.setToolTipText("Verbose Mode enable extra trace/logging messages that could be helpful when something does not run as expected.");
         optionLogFileVerbose.setToolTipText("Messages are stored to log file");
         optionZReset.setToolTipText("Reset Workspace will delete any existing installation files.");
         optionSStandalone.setToolTipText("Standalone Mode will force all files to be stored in a single root folder.");
@@ -57,16 +58,23 @@ public class ConfigurePanel extends AbstractInstallPanel {
         gbox.add(otherOptionsLabel, gc.nextLine());
         gbox.add(new JScrollPane(otherOptions), gc.nextLine().setFill(GridBagConstraints.BOTH).setWeight(1, 1));
         add(UIHelper.margins(gbox, 10));
+    }
+
+    @Override
+    public void onAdd(InstallerContext installerContext, int pageIndex) {
+        super.onAdd(installerContext, pageIndex);
         resetDefaults();
     }
 
     private void resetDefaults() {
-        optionSwitch.setSelected(true);
-        optionVerbose.setSelected(false);
-        optionZReset.setSelected(true);
-        optionSStandalone.setSelected(false);
-        optionWorkspace.setText("");
-        otherOptions.setText("");
+        InstallData id = InstallData.of(getInstallerContext());
+        optionSwitch.setSelected(id.isDefaultSwitch());
+        optionVerbose.setSelected(id.isDefaultVerbose());
+        optionLogFileVerbose.setSelected(id.isDefaultVerboseFile());
+        optionZReset.setSelected(id.isDefaultReset());
+        optionSStandalone.setSelected(id.isDefaultStandalone());
+        optionWorkspace.setText(id.getDefaultWorkspace()==null?"":id.getDefaultWorkspace());
+        otherOptions.setText(id.getDefaultNutsOptions());
     }
 
     @Override
@@ -75,6 +83,7 @@ public class ConfigurePanel extends AbstractInstallPanel {
         id.optionZ = optionZReset.isSelected();
         id.optionS = optionSStandalone.isSelected();
         id.optionVerbose = optionVerbose.isSelected();
+        id.optionVerboseFile = optionLogFileVerbose.isSelected();
         id.optionSwitch = optionSwitch.isSelected();
         if (optionWorkspace.getText().trim().length() > 0) {
             id.workspace = optionWorkspace.getText().trim();

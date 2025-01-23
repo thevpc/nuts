@@ -99,8 +99,15 @@ public class JarsRunner extends AbstractRunner {
         NPath latestJarPath = localMvn().resolve(Mvn.jar(NWorkspace.of().getAppId()));
         latestJarPath.copyTo(context().websiteProjectFolder.resolve("src/resources/download").resolve(latestJarPath.getName()));
         latestJarPath.copyTo(context().websiteProjectFolder.resolve("src/resources/download").resolve("nuts-preview.jar"));
+        boolean previewIsStable = NWorkspace.of().getRuntimeId().getVersion().toString().equals(context().nutsStableRuntimeVersion);
+        if(previewIsStable){
+            latestJarPath.copyTo(context().websiteProjectFolder.resolve("src/resources/download").resolve("nuts-stable.jar"));
+        }
         remoteMkdirs(remoteTheVpcNutsPath().toString());
         remoteCopyFile(latestJarPath, remoteTheVpcNutsPath().resolve("nuts-preview.jar"));
+        if(previewIsStable){
+            remoteCopyFile(latestJarPath, remoteTheVpcNutsPath().resolve("nuts-stable.jar"));
+        }
     }
 
 

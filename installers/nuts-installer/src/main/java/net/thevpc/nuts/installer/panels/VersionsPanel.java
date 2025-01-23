@@ -166,7 +166,7 @@ public class VersionsPanel extends AbstractInstallPanel {
         });
         RequestQueryInfo ri = new RequestQueryInfo();
         RequestQuery q = new RequestQuery();
-        q.setId("net.thevpc.nuts:nuts#RELEASE");
+        q.setId("net.thevpc.nuts:nuts-app#RELEASE");
         ri.setQ(q);
         Map info = null;
         Properties metadata = new Properties();

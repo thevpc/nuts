@@ -14,8 +14,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class PackagesPanel extends AbstractInstallPanel {
@@ -127,7 +131,53 @@ public class PackagesPanel extends AbstractInstallPanel {
         } catch (Exception e) {
             //
         }
+        try {
+            PackageButtonInfo[] onlineButtons = getOnlineButtons2();
+            if (onlineButtons != null) {
+                all.addAll(Arrays.asList(onlineButtons));
+                return all.toArray(new PackageButtonInfo[0]);
+            }
+        } catch (Exception e) {
+            //
+        }
         all.addAll(Arrays.asList(getDefaultButtons()));
+        return all.toArray(new PackageButtonInfo[0]);
+    }
+
+    protected PackageButtonInfo[] getOnlineButtons2() {
+        List<PackageButtonInfo> all = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new URL("https://thevpc.github.io/nuts/RECOMMENDATIONS").openStream()))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (line.length() > 0) {
+                    if (
+                            line.startsWith(";")
+                                    || line.startsWith("-")
+                                    || line.startsWith("#")
+                    ) {
+                        //just ignore
+                    } else {
+                        String[] split = line.split(",");
+                        if (split.length >= 5) {
+                            all.add(new PackageButtonInfo(
+                                    new App(split[0]),
+                                    split[1],
+                                    split[2],
+                                    "gui".equalsIgnoreCase(split[3]) || "true".equals(split[3]),
+                                    split[4],
+                                    false
+                            ));
+                        }
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            if (!all.isEmpty()) {
+                return all.toArray(new PackageButtonInfo[0]);
+            }
+            throw new IllegalArgumentException(ex);
+        }
         return all.toArray(new PackageButtonInfo[0]);
     }
 
@@ -185,46 +235,6 @@ public class PackagesPanel extends AbstractInstallPanel {
 
     protected PackageButtonInfo[] getDefaultButtons() {
         java.util.List<PackageButtonInfo> all = new ArrayList<>();
-        all.add(new PackageButtonInfo(new App("org.jedit:jedit"), "JEdit", "Text Editor", true,
-                "https://raw.githubusercontent.com/thevpc/nuts-public/master/org/jedit/jedit/5.6.0/jedit-icon48.png"
-                , false));
-        all.add(new PackageButtonInfo(new App("org.jd:jd-gui"), "Java Decompiler", "Java Decompiler", true,
-                "http://java-decompiler.github.io/img/Icon_java_64.png"
-                , false));
-        all.add(new PackageButtonInfo(new App("com.mucommander:mucommander"), "Mu-Commander", "File Explorer", true,
-                "https://raw.githubusercontent.com/thevpc/nuts-public/master/com/mucommander/mucommander/1.1.0-1/mucommander-icon.png"
-                , false));
-        all.add(new PackageButtonInfo(new App("net.thevpc.pnote:pnote"), "Pangaea Note", "Note Taking Application", true,
-                "https://raw.githubusercontent.com/thevpc/pangaea-note/master/docs/img/icon.png"
-                , false));
-        all.add(new PackageButtonInfo(new App("net.thevpc.netbeans-launcher:netbeans-launcher"), "Netbeans Launcher", "Netbeans IDE Launcher", true,
-                "https://raw.githubusercontent.com/thevpc/netbeans-launcher/master/docs/img/icon.png"
-                , false));
-        all.add(new PackageButtonInfo(new App("net.thevpc.kifkif:kifkif"), "Kifkif", "Files and Folders Duplicate Finder", true,
-                "https://raw.githubusercontent.com/thevpc/kifkif/master/docs/img/icon.png"
-                , false));
-        all.add(new PackageButtonInfo(new App("io.github.jiashunx:masker-flappybird"), "Flappy Bird", "Flappy Bird Game", true,
-                "https://upload.wikimedia.org/wikipedia/en/0/0a/Flappy_Bird_icon.png"
-                , false));
-        all.add(new PackageButtonInfo(new App("org.jmeld:jmeld"), "JMeld", "A visual diff and merge tool", true,
-                "https://raw.githubusercontent.com/albfan/jmeld/master/res/jmeld-component.png"
-                , false));
-        all.add(new PackageButtonInfo(new App("com.jgoodies:jdiskreport"), "JDisk Report", "A visual Disk Analyzer", true,
-                "https://www.jgoodies.com/wp-content/uploads/2012/04/o1960.jpg"
-                , false));
-        all.add(new PackageButtonInfo(new App("org.jd:jd-gui"), "Java Decompiler", "A visual Java Decompiler", true,
-                "https://raw.githubusercontent.com/java-decompiler/jd-gui/master/app/src/main/resources/org/jd/gui/images/jd_icon_128.png"
-                , false));
-        all.add(new PackageButtonInfo(new App("jpass:jpass"), "JPass", "Password Manager", true,
-                "https://raw.githubusercontent.com/gaborbata/jpass/master/resources/bannerReadMe.png"
-                , false));
-        all.add(new PackageButtonInfo(new App("org.omegat:omegat"), "OmegaT", "The free translation memory tool", true,
-                "https://lingenio.de/wp-content/uploads/2016/08/2016-CAT-tool-CAT-tools-OmegaT.jpg"
-                , false));
-        all.add(new PackageButtonInfo(new App("eu.binjr:binjr-core"), "Bonjour", "Time Series Dashboard", true,
-                "https://binjr.eu/assets/images/binjr_title.png"
-                , false));
-//        all.add(new PackageButtonInfo("<companions>", "Pangaea Note", "Note Taking Application", true, null, false));
         return all.toArray(new PackageButtonInfo[0]);
     }
 
@@ -288,7 +298,7 @@ public class PackagesPanel extends AbstractInstallPanel {
                 c.weighty = 1;
                 c.gridx = col;
                 c.gridy = row;
-                a.label=new JLabel(a.title);
+                a.label = new JLabel(a.title);
                 a.label.setFont(new Font("arial", Font.PLAIN, 10));
                 a.label.setToolTipText(button.desc);
                 panel.add(a.label, c);

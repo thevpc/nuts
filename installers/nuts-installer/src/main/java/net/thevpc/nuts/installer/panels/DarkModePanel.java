@@ -2,6 +2,7 @@ package net.thevpc.nuts.installer.panels;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import net.thevpc.nuts.installer.InstallerContext;
 import net.thevpc.nuts.installer.connector.RequestQuery;
 import net.thevpc.nuts.installer.connector.RequestQueryInfo;
 import net.thevpc.nuts.installer.connector.SimpleRecommendationConnector;
@@ -66,23 +67,35 @@ public class DarkModePanel extends AbstractInstallPanel {
         a.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                ButtonInfo ii = ButtonInfo.of ((JComponent) e.getSource());
-                jep.setText(ii.html);
-                InstallData id = InstallData.of(getInstallerContext());
-                id.darkMode = darkModeButton.isSelected();
-                if (id.darkMode) {
-                    FlatDarkLaf.setup();
-                } else {
-                    FlatLightLaf.setup();
-                }
-                JFrame f = getInstallerContext().getFrame();
-                if(f!=null) {
-                    SwingUtilities.updateComponentTreeUI(f);
-                }
-                getInstallerContext().setDarkMode(id.darkMode);
+                applyPlaf();
             }
         });
         return a;
+    }
+
+    private void applyPlaf() {
+        InstallData id = InstallData.of(getInstallerContext());
+        id.darkMode = darkModeButton.isSelected();
+
+        ButtonInfo ii = ButtonInfo.of(id.darkMode ? darkModeButton : lightModeButton);
+        jep.setText(ii.html);
+        if (id.darkMode) {
+            FlatDarkLaf.setup();
+        } else {
+            FlatLightLaf.setup();
+        }
+        SwingUtilities.invokeLater(() -> {
+            SwingUtilities.updateComponentTreeUI(this);
+        });
+        getInstallerContext().applyPlaf();
+        getInstallerContext().setDarkMode(id.darkMode);
+    }
+
+    @Override
+    public void onAdd(InstallerContext installerContext, int pageIndex) {
+        super.onAdd(installerContext, pageIndex);
+        darkModeButton.setSelected(InstallData.of(getInstallerContext()).isDarkMode());
+        applyPlaf();
     }
 
     @Override
@@ -97,6 +110,7 @@ public class DarkModePanel extends AbstractInstallPanel {
         if (!lightModeButton.isSelected() && !darkModeButton.isSelected()) {
             lightModeButton.setSelected(true);
         }
+        applyPlaf();
         getInstallerContext().getExitButton().setEnabled(false);
         getInstallerContext().getCancelButton().setEnabled(true);
     }

@@ -1,5 +1,6 @@
 package net.thevpc.nuts.installer.panels;
 
+import net.thevpc.nuts.installer.InstallerContext;
 import net.thevpc.nuts.installer.model.InstallData;
 import net.thevpc.nuts.installer.util.*;
 
@@ -70,6 +71,12 @@ public class JavaPanel extends AbstractInstallPanel {
     }
 
     private void resetDefaults() {
+    }
+
+    @Override
+    public void onAdd(InstallerContext installerContext, int pageIndex) {
+        super.onAdd(installerContext, pageIndex);
+        javaPathField.setText(InstallData.of(getInstallerContext()).getDefaultJavaHome());
     }
 
     @Override

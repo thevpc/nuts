@@ -1,5 +1,7 @@
 package net.thevpc.nuts.installer.panels;
 
+import net.thevpc.nuts.installer.InstallerContext;
+import net.thevpc.nuts.installer.model.InstallData;
 import net.thevpc.nuts.installer.util.UIHelper;
 import net.thevpc.nuts.installer.util.Utils;
 
@@ -8,28 +10,29 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-public class LicensePanel extends AbstractInstallPanel{
+public class LicensePanel extends AbstractInstallPanel {
     JRadioButton accept;
     JRadioButton doNotAccept;
+
     public LicensePanel() {
         super(new BorderLayout());
-        JTextArea a=new JTextArea();
+        JTextArea a = new JTextArea();
         a.setEditable(false);
-        add(UIHelper.titleLabel("Please read the following license agreement carefully"),BorderLayout.PAGE_START);
-        add(UIHelper.margins(new JScrollPane(a),10),BorderLayout.CENTER);
+        add(UIHelper.titleLabel("Please read the following license agreement carefully"), BorderLayout.PAGE_START);
+        add(UIHelper.margins(new JScrollPane(a), 10), BorderLayout.CENTER);
         Box b = Box.createVerticalBox();
         accept = new JRadioButton("I accept the terms of this license agreement.");
         doNotAccept = new JRadioButton("I do not accept the terms of this license agreement.");
         doNotAccept.setSelected(true);
-        ButtonGroup bg=new ButtonGroup();
+        ButtonGroup bg = new ButtonGroup();
         bg.add(accept);
         bg.add(doNotAccept);
-        b.add(Box.createRigidArea(new Dimension(0,5)));
+        b.add(Box.createRigidArea(new Dimension(0, 5)));
         b.add(accept);
-        b.add(Box.createRigidArea(new Dimension(0,5)));
+        b.add(Box.createRigidArea(new Dimension(0, 5)));
         b.add(doNotAccept);
-        b.add(Box.createRigidArea(new Dimension(0,5)));
-        add(UIHelper.margins(b,10),BorderLayout.PAGE_END);
+        b.add(Box.createRigidArea(new Dimension(0, 5)));
+        add(UIHelper.margins(b, 10), BorderLayout.PAGE_END);
         ItemListener il = new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
@@ -38,12 +41,20 @@ public class LicensePanel extends AbstractInstallPanel{
         };
         accept.addItemListener(il);
         doNotAccept.addItemListener(il);
-        a.setText(Utils.loadString("license.txt",null));
+        a.setText(Utils.loadString("license.txt", null));
     }
 
     private void updateStatus() {
-
+        if(getInstallerContext().getNextButton()==null){
+            return;
+        }
         getInstallerContext().getNextButton().setEnabled(accept.isSelected() && getInstallerContext().hasNext(getPageIndex()));
+    }
+
+    @Override
+    public void onAdd(InstallerContext installerContext, int pageIndex) {
+        super.onAdd(installerContext, pageIndex);
+        accept.setSelected(InstallData.of(installerContext).isDefaultAcceptTerms());
     }
 
     @Override
