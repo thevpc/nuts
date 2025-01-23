@@ -3,6 +3,9 @@ package net.thevpc.nuts.installer.panels;
 import net.thevpc.nuts.installer.model.App;
 import net.thevpc.nuts.installer.model.InstallData;
 import net.thevpc.nuts.installer.util.*;
+import net.thevpc.nuts.boot.swing.AnsiTermPane;
+import net.thevpc.nuts.boot.swing.UIHelper;
+import net.thevpc.nuts.boot.swing.WizardPageBase;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +15,7 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ProcessPanel extends AbstractInstallPanel {
+public class ProcessPanel extends WizardPageBase {
     AnsiTermPane ansiTermPane;
     boolean processed;
     JLabel logLabel = new JLabel();
@@ -33,7 +36,7 @@ public class ProcessPanel extends AbstractInstallPanel {
 
     @Override
     public void onPrevious() {
-        getInstallerContext().setInstallFailed(false);
+        InstallData.of(getInstallerContext()).setInstallFailed(false);
         processed = false;
     }
 
@@ -43,7 +46,7 @@ public class ProcessPanel extends AbstractInstallPanel {
         getInstallerContext().getExitButton().setEnabled(false);
         getInstallerContext().getCancelButton().setEnabled(true);
         if (!processed) {
-            getInstallerContext().setInstallFailed(false);
+            InstallData.of(getInstallerContext()).setInstallFailed(false);
             getInstallerContext().getPreviousButton().setEnabled(false);
             getInstallerContext().getNextButton().setEnabled(false);
             new Thread(new Runnable() {
@@ -52,15 +55,15 @@ public class ProcessPanel extends AbstractInstallPanel {
                     try {
                         processImpl();
                         processed = true;
-                        if (getInstallerContext().isInstallFailed()) {
+                        if (InstallData.of(getInstallerContext()).isInstallFailed()) {
 
                         } else {
-                            getInstallerContext().setInstallFailed(false);
+                            InstallData.of(getInstallerContext()).setInstallFailed(false);
                             getInstallerContext().getCancelButton().setEnabled(false);
                             getInstallerContext().getExitButton().setEnabled(false);
                         }
                     } catch (Exception ex) {
-                        getInstallerContext().setInstallFailed(true);
+                        InstallData.of(getInstallerContext()).setInstallFailed(true);
                         ex.printStackTrace();
                     } finally {
                         getInstallerContext().getPreviousButton().setEnabled(true);
@@ -163,7 +166,7 @@ public class ProcessPanel extends AbstractInstallPanel {
         } catch (Exception ex) {
             printlnStdOutAndErr("Installation failed : " + ex);
             printlnStdOutAndErr("Installation failed : " + ex);
-            getInstallerContext().setInstallFailed(true);
+            InstallData.of(getInstallerContext()).setInstallFailed(true);
         }
     }
 

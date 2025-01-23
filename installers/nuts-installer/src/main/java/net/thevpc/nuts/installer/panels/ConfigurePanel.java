@@ -1,16 +1,17 @@
 package net.thevpc.nuts.installer.panels;
 
-import net.thevpc.nuts.installer.InstallerContext;
+import net.thevpc.nuts.boot.swing.WizardPageBase;
+import net.thevpc.nuts.boot.swing.Wizard;
 import net.thevpc.nuts.installer.model.InstallData;
-import net.thevpc.nuts.installer.util.GBC;
 import net.thevpc.nuts.installer.util.ProcessUtils;
-import net.thevpc.nuts.installer.util.UIHelper;
+import net.thevpc.nuts.boot.swing.UIHelper;
+import net.thevpc.nuts.boot.swing.GBC;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
 
-public class ConfigurePanel extends AbstractInstallPanel {
+public class ConfigurePanel extends WizardPageBase {
     JTextField optionWorkspace;
     JCheckBox optionVerbose;
     JCheckBox optionSwitch;
@@ -45,10 +46,10 @@ public class ConfigurePanel extends AbstractInstallPanel {
         otherOptions.setToolTipText("You can specify here other options that are supported by nuts commandline parser. See documentation for more details.");
         add(UIHelper.titleLabel("Please select installation options"), BorderLayout.PAGE_START);
         JPanel gbox = new JPanel(new GridBagLayout());
-        GBC gc = new GBC().setAnchor(GridBagConstraints.NORTHWEST)
-                .setFill(GridBagConstraints.HORIZONTAL)
-                .setInsets(5, 5, 5, 5);
-        gbox.add(optionZReset, gc.setGrid(0, 0));
+        GBC gc = GBC.of().anchorNorthWest()
+                .fillHorizontal()
+                .insets(5);
+        gbox.add(optionZReset, gc.at(0, 0));
         gbox.add(optionSStandalone, gc.nextLine());
         gbox.add(optionSwitch, gc.nextLine());
         gbox.add(optionVerbose, gc.nextLine());
@@ -56,12 +57,12 @@ public class ConfigurePanel extends AbstractInstallPanel {
         gbox.add(customWorkspaceLabel, gc.nextLine());
         gbox.add(optionWorkspace, gc.nextLine());
         gbox.add(otherOptionsLabel, gc.nextLine());
-        gbox.add(new JScrollPane(otherOptions), gc.nextLine().setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+        gbox.add(new JScrollPane(otherOptions), gc.nextLine().fillBoth().weight(1, 1));
         add(UIHelper.margins(gbox, 10));
     }
 
     @Override
-    public void onAdd(InstallerContext installerContext, int pageIndex) {
+    public void onAdd(Wizard installerContext, int pageIndex) {
         super.onAdd(installerContext, pageIndex);
         resetDefaults();
     }

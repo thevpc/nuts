@@ -1,4 +1,4 @@
-package net.thevpc.nuts.lib.nswing;
+package net.thevpc.nuts.boot.swing;
 
 import java.awt.*;
 import java.util.regex.Matcher;

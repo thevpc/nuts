@@ -1,12 +1,13 @@
 package net.thevpc.nuts.installer.panels;
 
-import net.thevpc.nuts.installer.util.UIHelper;
+import net.thevpc.nuts.boot.swing.UIHelper;
 import net.thevpc.nuts.installer.util.Utils;
+import net.thevpc.nuts.boot.swing.WizardPageBase;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class IntroductionPanel extends AbstractInstallPanel{
+public class IntroductionPanel extends WizardPageBase {
     JEditorPane jep;
     public IntroductionPanel() {
         super(new BorderLayout());

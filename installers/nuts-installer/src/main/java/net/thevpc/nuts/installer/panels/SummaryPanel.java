@@ -1,12 +1,14 @@
 package net.thevpc.nuts.installer.panels;
 
-import net.thevpc.nuts.installer.util.UIHelper;
+import net.thevpc.nuts.installer.model.InstallData;
+import net.thevpc.nuts.boot.swing.UIHelper;
 import net.thevpc.nuts.installer.util.Utils;
+import net.thevpc.nuts.boot.swing.WizardPageBase;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class SummaryPanel extends AbstractInstallPanel {
+public class SummaryPanel extends WizardPageBase {
     JEditorPane jep;
 
     public SummaryPanel() {
@@ -20,7 +22,7 @@ public class SummaryPanel extends AbstractInstallPanel {
 
     @Override
     public void onShow() {
-        if (!getInstallerContext().isInstallFailed()) {
+        if (!InstallData.of(getInstallerContext()).isInstallFailed()) {
             jep.setText(Utils.loadString("summary-success.html", Utils.getVarsConverter(getInstallerContext())));
         } else {
             jep.setText(Utils.loadString("summary-error.html", Utils.getVarsConverter(getInstallerContext())));

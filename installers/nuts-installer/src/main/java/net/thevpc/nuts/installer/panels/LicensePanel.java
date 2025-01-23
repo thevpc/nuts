@@ -1,8 +1,9 @@
 package net.thevpc.nuts.installer.panels;
 
-import net.thevpc.nuts.installer.InstallerContext;
+import net.thevpc.nuts.boot.swing.WizardPageBase;
+import net.thevpc.nuts.boot.swing.Wizard;
 import net.thevpc.nuts.installer.model.InstallData;
-import net.thevpc.nuts.installer.util.UIHelper;
+import net.thevpc.nuts.boot.swing.UIHelper;
 import net.thevpc.nuts.installer.util.Utils;
 
 import javax.swing.*;
@@ -10,7 +11,7 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-public class LicensePanel extends AbstractInstallPanel {
+public class LicensePanel extends WizardPageBase {
     JRadioButton accept;
     JRadioButton doNotAccept;
 
@@ -52,7 +53,7 @@ public class LicensePanel extends AbstractInstallPanel {
     }
 
     @Override
-    public void onAdd(InstallerContext installerContext, int pageIndex) {
+    public void onAdd(Wizard installerContext, int pageIndex) {
         super.onAdd(installerContext, pageIndex);
         accept.setSelected(InstallData.of(installerContext).isDefaultAcceptTerms());
     }

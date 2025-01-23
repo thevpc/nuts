@@ -1,8 +1,11 @@
 package net.thevpc.nuts.installer.panels;
 
-import net.thevpc.nuts.installer.InstallerContext;
+import net.thevpc.nuts.boot.swing.UIHelper;
+import net.thevpc.nuts.boot.swing.WizardPageBase;
+import net.thevpc.nuts.boot.swing.Wizard;
 import net.thevpc.nuts.installer.model.InstallData;
 import net.thevpc.nuts.installer.util.*;
+import net.thevpc.nuts.boot.swing.GBC;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,12 +13,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.StringReader;
 import java.util.function.Consumer;
 
-public class JavaPanel extends AbstractInstallPanel {
+public class JavaPanel extends WizardPageBase {
     JTextField javaPathField = new JTextField();
     JButton javaPathButton = new JButton("...");
     JTextArea javaResultLabel = new JTextArea();
@@ -44,15 +45,15 @@ public class JavaPanel extends AbstractInstallPanel {
         });
         add(UIHelper.titleLabel("Please select JRE Location to run nuts"), BorderLayout.PAGE_START);
         JPanel gbox = new JPanel(new GridBagLayout());
-        GBC gc = new GBC()
-                .setAnchor(GridBagConstraints.NORTHWEST)
-                .setFill(GridBagConstraints.HORIZONTAL)
-                .setWeight(1,0)
-                .setInsets(5, 5, 5, 5);
-        gbox.add(new JLabel("Java Executable Location"), gc.setGrid(0, 0));
+        GBC gc = GBC
+                .of().anchorNorthWest()
+                .fillHorizontal()
+                .weight(1,0)
+                .insets(5);
+        gbox.add(new JLabel("Java Executable Location"), gc.at(0, 0));
         gbox.add(jPanel(), gc.nextLine());
         javaResultLabel.setEditable(false);
-        gbox.add(javaResultLabelScroll=new JScrollPane(javaResultLabel), gc.nextLine().setWeight(1,2).setFill(GridBagConstraints.BOTH));
+        gbox.add(javaResultLabelScroll=new JScrollPane(javaResultLabel), gc.nextLine().weight(1,2).fillBoth());
         add(UIHelper.margins(gbox, 10));
         resetDefaults();
         javaPathField.addFocusListener(new FocusAdapter() {
@@ -74,7 +75,7 @@ public class JavaPanel extends AbstractInstallPanel {
     }
 
     @Override
-    public void onAdd(InstallerContext installerContext, int pageIndex) {
+    public void onAdd(Wizard installerContext, int pageIndex) {
         super.onAdd(installerContext, pageIndex);
         javaPathField.setText(InstallData.of(getInstallerContext()).getDefaultJavaHome());
     }

@@ -1,4 +1,4 @@
-package net.thevpc.nuts.lib.nswing;
+package net.thevpc.nuts.boot.swing;
 
 import javax.swing.*;
 import javax.swing.text.Document;

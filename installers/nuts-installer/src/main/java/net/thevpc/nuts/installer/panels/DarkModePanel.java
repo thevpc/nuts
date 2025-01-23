@@ -2,26 +2,19 @@ package net.thevpc.nuts.installer.panels;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
-import net.thevpc.nuts.installer.InstallerContext;
-import net.thevpc.nuts.installer.connector.RequestQuery;
-import net.thevpc.nuts.installer.connector.RequestQueryInfo;
-import net.thevpc.nuts.installer.connector.SimpleRecommendationConnector;
+import net.thevpc.nuts.boot.swing.WizardPageBase;
+import net.thevpc.nuts.boot.swing.Wizard;
 import net.thevpc.nuts.installer.model.ButtonInfo;
 import net.thevpc.nuts.installer.model.InstallData;
-import net.thevpc.nuts.installer.model.VerInfo;
-import net.thevpc.nuts.installer.util.UIHelper;
-import net.thevpc.nuts.installer.util.Utils;
+import net.thevpc.nuts.boot.swing.UIHelper;
+import net.thevpc.nuts.installer.util.UiHelper2;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.StringReader;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
 
-public class DarkModePanel extends AbstractInstallPanel {
+public class DarkModePanel extends WizardPageBase {
     ButtonGroup bg;
     JPanel panel;
     JEditorPane jep;
@@ -39,8 +32,8 @@ public class DarkModePanel extends AbstractInstallPanel {
         panel.setPreferredSize(new Dimension(2 * w, w));
         panel.setMaximumSize(new Dimension(2 * w, w));
         bg = new ButtonGroup();
-        lightModeButton = add2(new ButtonInfo("Light Mode", "<html><body>Selected <strong>light mode</strong></body></html>", new Color(251, 251, 240), Color.GREEN, UIHelper.getCheckedImageIcon(false), UIHelper.getCheckedImageIcon(true)));
-        darkModeButton = add2(new ButtonInfo("Dark Mode", "<html><body>Selected <strong>dark mode</strong></body></html>", new Color(35, 37, 38), Color.ORANGE, UIHelper.getCheckedImageIcon(false), UIHelper.getCheckedImageIcon(true)));
+        lightModeButton = add2(new ButtonInfo("Light Mode", "<html><body>Selected <strong>light mode</strong></body></html>", new Color(251, 251, 240), Color.GREEN, UiHelper2.getCheckedImageIcon(false), UiHelper2.getCheckedImageIcon(true)));
+        darkModeButton = add2(new ButtonInfo("Dark Mode", "<html><body>Selected <strong>dark mode</strong></body></html>", new Color(35, 37, 38), Color.ORANGE, UiHelper2.getCheckedImageIcon(false), UiHelper2.getCheckedImageIcon(true)));
         darkModeButton.setForeground(Color.WHITE);
         JPanel jp = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -92,7 +85,7 @@ public class DarkModePanel extends AbstractInstallPanel {
     }
 
     @Override
-    public void onAdd(InstallerContext installerContext, int pageIndex) {
+    public void onAdd(Wizard installerContext, int pageIndex) {
         super.onAdd(installerContext, pageIndex);
         darkModeButton.setSelected(InstallData.of(getInstallerContext()).isDarkMode());
         applyPlaf();

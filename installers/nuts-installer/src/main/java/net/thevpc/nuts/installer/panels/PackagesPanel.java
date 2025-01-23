@@ -1,14 +1,15 @@
 package net.thevpc.nuts.installer.panels;
 
 import net.thevpc.nuts.installer.model.App;
-import net.thevpc.nuts.installer.model.ButtonInfo;
 import net.thevpc.nuts.installer.model.InstallData;
 import net.thevpc.nuts.installer.NutsInstaller;
 import net.thevpc.nuts.installer.connector.RequestQuery;
 import net.thevpc.nuts.installer.connector.RequestQueryInfo;
 import net.thevpc.nuts.installer.connector.SimpleRecommendationConnector;
-import net.thevpc.nuts.installer.util.UIHelper;
+import net.thevpc.nuts.boot.swing.UIHelper;
+import net.thevpc.nuts.installer.util.UiHelper2;
 import net.thevpc.nuts.installer.util.Utils;
+import net.thevpc.nuts.boot.swing.WizardPageBase;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,13 +17,12 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PackagesPanel extends AbstractInstallPanel {
+public class PackagesPanel extends WizardPageBase {
     private final ItemListener buttonInfoItemListener;
     //    private final MouseAdapter buttonInfoMouseListener;
     private final JScrollPane jsp;
@@ -346,7 +346,7 @@ public class PackagesPanel extends AbstractInstallPanel {
             imageOk = Toolkit.getDefaultToolkit().getImage(r);
         }
         imageOk = UIHelper.getFixedSizeImage(imageOk, 32, 32, false);
-        return new ImageIcon(UIHelper.getCheckedImage(imageOk, checked, 12));
+        return new ImageIcon(UiHelper2.getCheckedImage(imageOk, checked, 12));
     }
 
     @Override

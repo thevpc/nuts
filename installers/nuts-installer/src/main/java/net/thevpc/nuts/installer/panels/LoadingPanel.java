@@ -1,13 +1,12 @@
 package net.thevpc.nuts.installer.panels;
 
-import net.thevpc.nuts.installer.util.UIHelper;
+import net.thevpc.nuts.boot.swing.UIHelper;
+import net.thevpc.nuts.boot.swing.WizardPageBase;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
-public class LoadingPanel extends AbstractInstallPanel {
+public class LoadingPanel extends WizardPageBase {
     JProgressBar progressBar;
     public LoadingPanel() {
         super(new BorderLayout());

@@ -15,6 +15,7 @@
         <module>nuts-app</module>
         <module>nuts-app-full</module>
         <module>nuts-runtime</module>
+        <module>nuts-boot-swing</module>
     </modules>
     <properties>
     </properties>

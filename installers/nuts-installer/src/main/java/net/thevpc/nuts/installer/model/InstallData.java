@@ -1,6 +1,6 @@
 package net.thevpc.nuts.installer.model;
 
-import net.thevpc.nuts.installer.InstallerContext;
+import net.thevpc.nuts.boot.swing.Wizard;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -32,14 +32,23 @@ public class InstallData {
     public boolean defaultSwitch;
     public boolean defaultStandalone;
     public boolean defaultReset;
+    public boolean installFailed;
 
-    public static InstallData of(InstallerContext context){
+    public static InstallData of(Wizard context){
         InstallData c=(InstallData) context.getVars().get(InstallData.class.getName());
         if(c==null){
             c=new InstallData();
             context.getVars().put(InstallData.class.getName(),c);
         }
         return c;
+    }
+
+    public boolean isInstallFailed() {
+        return installFailed;
+    }
+
+    public void setInstallFailed(boolean installFailed) {
+        this.installFailed = installFailed;
     }
 
     public boolean isOptionVerboseFile() {

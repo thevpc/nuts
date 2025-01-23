@@ -1,12 +1,14 @@
 package net.thevpc.nuts.installer.panels;
 
-import net.thevpc.nuts.installer.InstallerContext;
+import net.thevpc.nuts.boot.swing.WizardPageBase;
+import net.thevpc.nuts.boot.swing.Wizard;
 import net.thevpc.nuts.installer.model.ButtonInfo;
 import net.thevpc.nuts.installer.model.InstallData;
 import net.thevpc.nuts.installer.connector.RequestQuery;
 import net.thevpc.nuts.installer.connector.RequestQueryInfo;
 import net.thevpc.nuts.installer.connector.SimpleRecommendationConnector;
-import net.thevpc.nuts.installer.util.UIHelper;
+import net.thevpc.nuts.boot.swing.UIHelper;
+import net.thevpc.nuts.installer.util.UiHelper2;
 import net.thevpc.nuts.installer.util.Utils;
 import net.thevpc.nuts.installer.model.VerInfo;
 
@@ -19,7 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
-public class VersionsPanel extends AbstractInstallPanel {
+public class VersionsPanel extends WizardPageBase {
     ButtonGroup bg;
     JPanel panel;
     JEditorPane jep;
@@ -31,16 +33,16 @@ public class VersionsPanel extends AbstractInstallPanel {
     Color greenBg = new Color(161, 205, 161);
     Color orangeBg = new Color(255, 224, 101);
     Color redBg = new Color(255, 100, 101);
-    ButtonInfo stableButtonInfo = new ButtonInfo("Stable", "Stable", greenBg, greenFg, UIHelper.getCheckedImageIcon(false), UIHelper.getCheckedImageIcon(true));
-    ButtonInfo previewButtonInfo = new ButtonInfo("Preview", "Preview", orangeBg, orangeFg, UIHelper.getCheckedImageIcon(false), UIHelper.getCheckedImageIcon(true));
-    ButtonInfo errorButtonInfo = new ButtonInfo("Not Available", "<html><body>Unable to resolve stable version. Please Check your internet connexion</body></html>", redBg, redFg, UIHelper.getStopImageIcon(false), UIHelper.getStopImageIcon(true));
+    ButtonInfo stableButtonInfo = new ButtonInfo("Stable", "Stable", greenBg, greenFg, UiHelper2.getCheckedImageIcon(false), UiHelper2.getCheckedImageIcon(true));
+    ButtonInfo previewButtonInfo = new ButtonInfo("Preview", "Preview", orangeBg, orangeFg, UiHelper2.getCheckedImageIcon(false), UiHelper2.getCheckedImageIcon(true));
+    ButtonInfo errorButtonInfo = new ButtonInfo("Not Available", "<html><body>Unable to resolve stable version. Please Check your internet connexion</body></html>", redBg, redFg, UiHelper2.getStopImageIcon(false), UiHelper2.getStopImageIcon(true));
 
     public VersionsPanel() {
         super(new BorderLayout());
     }
 
     @Override
-    public void onAdd(InstallerContext installerContext, int pageIndex) {
+    public void onAdd(Wizard installerContext, int pageIndex) {
         super.onAdd(installerContext, pageIndex);
         add(UIHelper.titleLabel("Please select the version you want to install locally"), BorderLayout.PAGE_START);
         GridLayout gg = new GridLayout(1, 2);

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.installer.util;
 
 import net.thevpc.nuts.installer.model.InstallData;
-import net.thevpc.nuts.installer.InstallerContext;
+import net.thevpc.nuts.boot.swing.Wizard;
 import net.thevpc.nuts.installer.NutsInstaller;
 
 import java.io.ByteArrayOutputStream;
@@ -78,7 +78,7 @@ public class Utils {
         throw new RuntimeException("cannot download " + url);
     }
 
-    public static Function<String, String> getVarsConverter(InstallerContext context) {
+    public static Function<String, String> getVarsConverter(Wizard context) {
         return new Function<String, String>() {
             @Override
             public String apply(String s) {

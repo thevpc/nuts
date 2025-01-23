@@ -1,12 +1,9 @@
-package net.thevpc.nuts.installer;
+package net.thevpc.nuts.boot.swing;
 
 import javax.swing.*;
 import java.util.Map;
-import java.util.function.Function;
 
-public interface InstallerContext {
-
-    JPanel createBottom();
+public interface Wizard {
 
     void onNextButton();
 
@@ -30,10 +27,6 @@ public interface InstallerContext {
 
     int getPagesCount();
 
-    boolean isInstallFailed();
-
-    NutsInstaller setInstallFailed(boolean installFailed);
-
     boolean hasNext(int pageIndex);
 
     boolean hasPrevious(int pageIndex);
@@ -41,9 +34,9 @@ public interface InstallerContext {
     Map<String, Object> getVars();
 
 
-    public void startLoading();
+    void startLoading();
 
-    public void stopLoading(int index);
+    void stopLoading(int index);
 
-    public void setDarkMode(boolean darkMode);
+    void setDarkMode(boolean darkMode);
 }

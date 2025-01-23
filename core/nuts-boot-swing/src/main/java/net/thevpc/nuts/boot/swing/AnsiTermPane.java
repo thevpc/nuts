@@ -1,4 +1,4 @@
-package net.thevpc.nuts.lib.nswing;
+package net.thevpc.nuts.boot.swing;
 
 import javax.swing.*;
 import javax.swing.text.*;
@@ -6,8 +6,6 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * thanks to https://stackoverflow.com/questions/6913983/jtextpane-removing-first-line
@@ -44,7 +42,6 @@ public class AnsiTermPane extends JTextPane {
     public void setDarkMode(boolean darkMode) {
         ansiColors.cResetBackground = getBackground();
         ansiColors.setDarkMode(darkMode);
-        ;
         setFont(new Font("Courier New", Font.PLAIN, 14));
         setForeground(ansiColors.cResetForeground);
         setBackground(ansiColors.preferredBackground);
@@ -114,14 +111,14 @@ public class AnsiTermPane extends JTextPane {
                     new OutputStream() {
                         @Override
                         public void write(int b) throws IOException {
-                            UI.withinGUI(() -> {
+                            UIHelper.withinGUI(() -> {
                                 appendANSI(String.valueOf((char) b));
                             });
                         }
 
                         @Override
                         public void write(byte[] b, int off, int len) throws IOException {
-                            UI.withinGUI(() -> {
+                            UIHelper.withinGUI(() -> {
                                 appendANSI(new String(b, off, len));
                             });
                         }

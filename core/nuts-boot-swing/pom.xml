@@ -3,13 +3,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.thevpc.nuts.lib</groupId>
-    <artifactId>nlib-swing</artifactId>
+    <groupId>net.thevpc.nuts</groupId>
+    <artifactId>nuts-boot-swing</artifactId>
     <version>0.8.5.0</version>
     <packaging>jar</packaging>
-    <name>Nuts Community Library for Swing Support</name>
+    <name>Nuts Community Base Library for Swing Support</name>
     <url>https://github.com/thevpc/nuts</url>
-    <description>Swing Lib</description>
+    <description>Swing Lib Without Nuts dependencies</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -50,21 +50,13 @@
         <license>
             <name>GNU LESSER GENERAL PUBLIC LICENSE Version</name>
             <url>https://www.gnu.org/licenses/lgpl-3.0.en.html</url>
+
         </license>
     </licenses>
 
     <dependencies>
-        <dependency>
-            <groupId>net.thevpc.nuts</groupId>
-            <artifactId>nuts-lib</artifactId>
-            <version>0.8.5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.8.2</version>
-            <scope>test</scope>
-        </dependency>
+        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts-boot</artifactId><version>0.8.5</version></dependency><dependency>
+        <groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter-api</artifactId><version>5.8.2</version><scope>test</scope></dependency>
     </dependencies>
     <distributionManagement>
         <snapshotRepository>

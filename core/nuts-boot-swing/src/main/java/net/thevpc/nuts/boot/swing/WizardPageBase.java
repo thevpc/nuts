@@ -1,29 +1,27 @@
-package net.thevpc.nuts.installer.panels;
-
-import net.thevpc.nuts.installer.InstallerContext;
+package net.thevpc.nuts.boot.swing;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class AbstractInstallPanel extends JPanel {
-    private InstallerContext installerContext;
+public class WizardPageBase extends JPanel {
+    private Wizard installerContext;
     private int pageIndex;
-    public AbstractInstallPanel(LayoutManager layout, boolean isDoubleBuffered) {
+    public WizardPageBase(LayoutManager layout, boolean isDoubleBuffered) {
         super(layout, isDoubleBuffered);
     }
 
-    public AbstractInstallPanel(LayoutManager layout) {
+    public WizardPageBase(LayoutManager layout) {
         super(layout);
     }
 
-    public AbstractInstallPanel(boolean isDoubleBuffered) {
+    public WizardPageBase(boolean isDoubleBuffered) {
         super(isDoubleBuffered);
     }
 
-    public AbstractInstallPanel() {
+    public WizardPageBase() {
     }
 
-    public void onAdd(InstallerContext installerContext,int pageIndex){
+    public void onAdd(Wizard installerContext, int pageIndex){
         this.installerContext=installerContext;
         this.pageIndex=pageIndex;
     }
@@ -32,7 +30,7 @@ public class AbstractInstallPanel extends JPanel {
         return pageIndex;
     }
 
-    public InstallerContext getInstallerContext() {
+    public Wizard getInstallerContext() {
         return installerContext;
     }
 

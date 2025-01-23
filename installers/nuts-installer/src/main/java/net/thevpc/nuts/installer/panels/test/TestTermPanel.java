@@ -1,22 +1,14 @@
 package net.thevpc.nuts.installer.panels.test;
 
-import net.thevpc.nuts.installer.model.App;
 import net.thevpc.nuts.installer.model.InstallData;
-import net.thevpc.nuts.installer.panels.AbstractInstallPanel;
-import net.thevpc.nuts.installer.util.AnsiTermPane;
-import net.thevpc.nuts.installer.util.StreamGobbler;
-import net.thevpc.nuts.installer.util.UIHelper;
-import net.thevpc.nuts.installer.util.Utils;
+import net.thevpc.nuts.boot.swing.WizardPageBase;
+import net.thevpc.nuts.boot.swing.UIHelper;
+import net.thevpc.nuts.boot.swing.AnsiTermPane;
 
 import javax.swing.*;
 import java.awt.*;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-public class TestTermPanel extends AbstractInstallPanel {
+public class TestTermPanel extends WizardPageBase {
     AnsiTermPane ansiTermPane;
 
     public TestTermPanel() {
