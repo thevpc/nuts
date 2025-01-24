@@ -21,6 +21,11 @@
     <link rel="stylesheet" type="text/css" href="assets/vendor/highlight.js/styles/github.css"/>
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-landing.css"/>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Smooch+Sans:wght@100..900&display=swap" rel="stylesheet">
+
 </head>
 
 <body data-spy="scroll" data-target=".idocs-navigation" data-offset="125">
@@ -53,7 +58,7 @@
             <div class="container-landing">
 
                 <header class="hero hero-primary">
-                    <div class="container"><h1 class="hero_title">
+                    <div class="container feature-anim-right"><h1 class="hero_title">
                         <img src="assets/images/nuts-icon.png" alt="" width="128">Nuts</h1>
                         <p class="hero_subtitle">The Java Package Manager</p>
                         <img src="https://thevpc.net/nuts/images/pixel.gif?q=nuts-gsite" alt="">
@@ -63,29 +68,30 @@
             </div>
             <main>
                 <section>
+                    <!------------------- -->
                     <div class="container">
                         <div class="row">
                             <div class="col col--4">
-                                <div class="text--center">
-                                    <img src="assets/images/slim-jar.png"></div>
-                                <h3>No Fat Jar</h3>
-                                <p>Developers, forget about big jars, uber jars and fats jars hassle. You do not need to
-                                    bother
-                                    about packaging your dependencies along with your application.</p></div>
+                                <div class="text--center"><img class="feature-anim-down" src="assets/images/slim-jar.png"><div class="glow-wrap"><i class="glow"></i></div></div>
+                                <h3 class="feature-title">No Fat Jar</h3>
+                                <p>Developers, forget about <i>big jars</i>, <i>uber jars</i> and <i>fat jars</i> hassle. <strong>You do not need</strong> <i> to
+                                    bother about packaging your dependencies</i> along with your application. Dependencies will be downloaded automatically on install time.</p>
+                                Your <code>pom.xml</code> would never be lighter.
+                            </div>
                             <div class="col col--4">
-                                <div class="text--center"><img src="assets/images/package.png"></div>
-                                <h3>Any application</h3>
-                                <p>Install any java application with a simple `nuts install your-package`. dependencies
+                                <div class="text--center"><img class="feature-anim-down" src="assets/images/package.png"><div class="glow-wrap"><i class="glow"></i></div></div>
+                                <h3 class="feature-title">Any application</h3>
+                                <p>Install any java application with a command as simple as : <span style="font-family: 'Courier New'; font-weight: bolder; color: #3a3a3a">nuts install <span style="font-family: 'Courier New'; font-weight: bolder; color: #5e1700">&lt;your-package&gt;</span></span>. Dependencies
                                     are
-                                    shared across all installed applications and you still can install multiple versions
+                                    shared across all installed applications and you still can install and run <strong>multiple versions</strong>
                                     of the
-                                    same application.</p></div>
+                                    same application.</p>
+                                <p>All <code>maven</code> built applications are already <code>nuts</code> aware.</p>
+                            </div>
                             <div class="col col--4">
-                                <div class="text--center"><img src="assets/images/gear.png"></div>
-                                <h3>Automate your operations</h3>
-                                <p>Take advantage of the Nuts toolbox that offers GNU binutils equivalent tools
-                                    (bash,ls, cp,
-                                    and more), and extend them to support json and xml outputs to help automation.</p>
+                                <div class="text--center"><img class="feature-anim-down" src="assets/images/gear.png"><div class="glow-wrap"><i class="glow"></i></div></div>
+                                <h3 class="feature-title">Automate</h3>
+                                <p>Take advantage of <strong>nuts toolbox</strong> which offers a <strong>java based and portable GNU binutils</strong> implementation (<code>bash</code>, <code>ls</code>, <code>cp</code>, etc.), and extend them to support <strong>JSON</strong> and <strong>XML</strong> (and more) output formats to help automation using portable, idempotent, predictable, scriptable and debuggable commands.</p>
                             </div>
                         </div>
                     </div>

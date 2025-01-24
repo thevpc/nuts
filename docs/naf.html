@@ -21,6 +21,11 @@
     <link rel="stylesheet" type="text/css" href="assets/vendor/highlight.js/styles/github.css"/>
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" type="text/css" href="assets/css/stylesheet.css"/>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Smooch+Sans:wght@100..900&display=swap" rel="stylesheet">
+
 </head>
 
 <body data-spy="scroll" data-target=".idocs-navigation" data-offset="125">
@@ -593,73 +598,73 @@ Automatic-Module-Name: yourgroupid.yourartifactid.YourClass
 <p class="md-phrase"><mark class="md-code md-code-``` ">NOptional</mark> is extensively used in Nuts Package Manager itself.</p>
 <H4 class="md-title-2"> Non Null Assertion</H4>
 Java has a builtin null Check mechanism but it does not enable customized messages or exceptions. Optional are described as per Java's (c) Documentation "A container object which may or may not contain a non-null value". NOptional is more of an Object Wrapper than addes several useful null related operators like '??' '?.' and '!' in typescript. 
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="id080512be27eb4774b03f9078b9da0c0b0-tab" data-toggle="tab" href="#id080512be27eb4774b03f9078b9da0c0b0" role="tab" aria-controls="id080512be27eb4774b03f9078b9da0c0b0" aria-selected="false">windows</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="id080512be27eb4774b03f9078b9da0c0b1-tab" data-toggle="tab" href="#id080512be27eb4774b03f9078b9da0c0b1" role="tab" aria-controls="id080512be27eb4774b03f9078b9da0c0b1" aria-selected="false">java</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link active" id="id080512be27eb4774b03f9078b9da0c0b2-tab" data-toggle="tab" href="#id080512be27eb4774b03f9078b9da0c0b2" role="tab" aria-controls="id080512be27eb4774b03f9078b9da0c0b2" aria-selected="true">NAF</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="id080512be27eb4774b03f9078b9da0c0b3-tab" data-toggle="tab" href="#id080512be27eb4774b03f9078b9da0c0b3" role="tab" aria-controls="id080512be27eb4774b03f9078b9da0c0b3" aria-selected="false"></a></li>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="id9d9852d06a7342898bb1322815b210f00-tab" data-toggle="tab" href="#id9d9852d06a7342898bb1322815b210f00" role="tab" aria-controls="id9d9852d06a7342898bb1322815b210f00" aria-selected="false">windows</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="id9d9852d06a7342898bb1322815b210f01-tab" data-toggle="tab" href="#id9d9852d06a7342898bb1322815b210f01" role="tab" aria-controls="id9d9852d06a7342898bb1322815b210f01" aria-selected="false">java</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="id9d9852d06a7342898bb1322815b210f02-tab" data-toggle="tab" href="#id9d9852d06a7342898bb1322815b210f02" role="tab" aria-controls="id9d9852d06a7342898bb1322815b210f02" aria-selected="true">NAF</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="id9d9852d06a7342898bb1322815b210f03-tab" data-toggle="tab" href="#id9d9852d06a7342898bb1322815b210f03" role="tab" aria-controls="id9d9852d06a7342898bb1322815b210f03" aria-selected="false"></a></li>
 </ul>
-<div class="tab-content my-3"><div class="tab-pane fade show " id="id080512be27eb4774b03f9078b9da0c0b0" role="tabpanel" aria-labelledby="id080512be27eb4774b03f9078b9da0c0b0-tab"><pre class="md-code md-code-``` typescript"><code class="typescript"> 
+<div class="tab-content my-3"><div class="tab-pane fade show " id="id9d9852d06a7342898bb1322815b210f00" role="tabpanel" aria-labelledby="id9d9852d06a7342898bb1322815b210f00-tab"><pre class="md-code md-code-``` typescript"><code class="typescript"> 
     if(stringWord==null){
         throw new Exception("missing user name");
     }
     stringWord!.toUpperCase()
 </code></pre></div>
-<div class="tab-pane fade show " id="id080512be27eb4774b03f9078b9da0c0b1" role="tabpanel" aria-labelledby="id080512be27eb4774b03f9078b9da0c0b1-tab"><pre class="md-code md-code-``` java"><code class="java">
+<div class="tab-pane fade show " id="id9d9852d06a7342898bb1322815b210f01" role="tabpanel" aria-labelledby="id9d9852d06a7342898bb1322815b210f01-tab"><pre class="md-code md-code-``` java"><code class="java">
     if(stringWord==null){
         throw new IllegalArgumentException("missing user name");
     }
     stringWord.toUpperCase()
 </code></pre></div>
-<div class="tab-pane fade show active" id="id080512be27eb4774b03f9078b9da0c0b2" role="tabpanel" aria-labelledby="id080512be27eb4774b03f9078b9da0c0b2-tab"><pre class="md-code md-code-``` java"><code class="java"> 
+<div class="tab-pane fade show active" id="id9d9852d06a7342898bb1322815b210f02" role="tabpanel" aria-labelledby="id9d9852d06a7342898bb1322815b210f02-tab"><pre class="md-code md-code-``` java"><code class="java"> 
     NOptional.ofNamed(stringWord,"user name").get().toUpperCase();
     // will throw an IllegalArgumentException|NIllegalArgumentException with "missing user name" message;
 </code></pre></div>
-<div class="tab-pane fade show " id="id080512be27eb4774b03f9078b9da0c0b3" role="tabpanel" aria-labelledby="id080512be27eb4774b03f9078b9da0c0b3-tab">#
+<div class="tab-pane fade show " id="id9d9852d06a7342898bb1322815b210f03" role="tabpanel" aria-labelledby="id9d9852d06a7342898bb1322815b210f03-tab">#
 #
  Nullish Coalescing
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="id8947a913464441e98f1dfa13d28ae79b0-tab" data-toggle="tab" href="#id8947a913464441e98f1dfa13d28ae79b0" role="tab" aria-controls="id8947a913464441e98f1dfa13d28ae79b0" aria-selected="false">windows</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="id8947a913464441e98f1dfa13d28ae79b1-tab" data-toggle="tab" href="#id8947a913464441e98f1dfa13d28ae79b1" role="tab" aria-controls="id8947a913464441e98f1dfa13d28ae79b1" aria-selected="false">java</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link active" id="id8947a913464441e98f1dfa13d28ae79b2-tab" data-toggle="tab" href="#id8947a913464441e98f1dfa13d28ae79b2" role="tab" aria-controls="id8947a913464441e98f1dfa13d28ae79b2" aria-selected="true">NAF</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="id8947a913464441e98f1dfa13d28ae79b3-tab" data-toggle="tab" href="#id8947a913464441e98f1dfa13d28ae79b3" role="tab" aria-controls="id8947a913464441e98f1dfa13d28ae79b3" aria-selected="false"></a></li>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="id75af2625e2d5423c96ddb9b3c2e914530-tab" data-toggle="tab" href="#id75af2625e2d5423c96ddb9b3c2e914530" role="tab" aria-controls="id75af2625e2d5423c96ddb9b3c2e914530" aria-selected="false">windows</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="id75af2625e2d5423c96ddb9b3c2e914531-tab" data-toggle="tab" href="#id75af2625e2d5423c96ddb9b3c2e914531" role="tab" aria-controls="id75af2625e2d5423c96ddb9b3c2e914531" aria-selected="false">java</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="id75af2625e2d5423c96ddb9b3c2e914532-tab" data-toggle="tab" href="#id75af2625e2d5423c96ddb9b3c2e914532" role="tab" aria-controls="id75af2625e2d5423c96ddb9b3c2e914532" aria-selected="true">NAF</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="id75af2625e2d5423c96ddb9b3c2e914533-tab" data-toggle="tab" href="#id75af2625e2d5423c96ddb9b3c2e914533" role="tab" aria-controls="id75af2625e2d5423c96ddb9b3c2e914533" aria-selected="false"></a></li>
 </ul>
-<div class="tab-content my-3"><div class="tab-pane fade show " id="id8947a913464441e98f1dfa13d28ae79b0" role="tabpanel" aria-labelledby="id8947a913464441e98f1dfa13d28ae79b0-tab"><pre class="md-code md-code-``` typescript"><code class="typescript"> 
+<div class="tab-content my-3"><div class="tab-pane fade show " id="id75af2625e2d5423c96ddb9b3c2e914530" role="tabpanel" aria-labelledby="id75af2625e2d5423c96ddb9b3c2e914530-tab"><pre class="md-code md-code-``` typescript"><code class="typescript"> 
     var roadNumber=road.number??10;
 </code></pre></div>
-<div class="tab-pane fade show " id="id8947a913464441e98f1dfa13d28ae79b1" role="tabpanel" aria-labelledby="id8947a913464441e98f1dfa13d28ae79b1-tab"><pre class="md-code md-code-``` java"><code class="java">
+<div class="tab-pane fade show " id="id75af2625e2d5423c96ddb9b3c2e914531" role="tabpanel" aria-labelledby="id75af2625e2d5423c96ddb9b3c2e914531-tab"><pre class="md-code md-code-``` java"><code class="java">
     Number roadNumber=road.number!=null?road.number:10;
 </code></pre></div>
-<div class="tab-pane fade show active" id="id8947a913464441e98f1dfa13d28ae79b2" role="tabpanel" aria-labelledby="id8947a913464441e98f1dfa13d28ae79b2-tab"><pre class="md-code md-code-``` java"><code class="java"> 
+<div class="tab-pane fade show active" id="id75af2625e2d5423c96ddb9b3c2e914532" role="tabpanel" aria-labelledby="id75af2625e2d5423c96ddb9b3c2e914532-tab"><pre class="md-code md-code-``` java"><code class="java"> 
     Number roadNumber=NOptional.of(road.number).orElse(10);
 </code></pre></div>
-<div class="tab-pane fade show " id="id8947a913464441e98f1dfa13d28ae79b3" role="tabpanel" aria-labelledby="id8947a913464441e98f1dfa13d28ae79b3-tab">#
+<div class="tab-pane fade show " id="id75af2625e2d5423c96ddb9b3c2e914533" role="tabpanel" aria-labelledby="id75af2625e2d5423c96ddb9b3c2e914533-tab">#
 #
  Optional Chaining
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="id16ae319772c44f83ba5b97dbfe9105690-tab" data-toggle="tab" href="#id16ae319772c44f83ba5b97dbfe9105690" role="tab" aria-controls="id16ae319772c44f83ba5b97dbfe9105690" aria-selected="false">windows</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="id16ae319772c44f83ba5b97dbfe9105691-tab" data-toggle="tab" href="#id16ae319772c44f83ba5b97dbfe9105691" role="tab" aria-controls="id16ae319772c44f83ba5b97dbfe9105691" aria-selected="false">java</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link active" id="id16ae319772c44f83ba5b97dbfe9105692-tab" data-toggle="tab" href="#id16ae319772c44f83ba5b97dbfe9105692" role="tab" aria-controls="id16ae319772c44f83ba5b97dbfe9105692" aria-selected="true">NAF</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="id16ae319772c44f83ba5b97dbfe9105693-tab" data-toggle="tab" href="#id16ae319772c44f83ba5b97dbfe9105693" role="tab" aria-controls="id16ae319772c44f83ba5b97dbfe9105693" aria-selected="false"></a></li>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="id55f5fa894eb8469f813f71b427dc465b0-tab" data-toggle="tab" href="#id55f5fa894eb8469f813f71b427dc465b0" role="tab" aria-controls="id55f5fa894eb8469f813f71b427dc465b0" aria-selected="false">windows</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="id55f5fa894eb8469f813f71b427dc465b1-tab" data-toggle="tab" href="#id55f5fa894eb8469f813f71b427dc465b1" role="tab" aria-controls="id55f5fa894eb8469f813f71b427dc465b1" aria-selected="false">java</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="id55f5fa894eb8469f813f71b427dc465b2-tab" data-toggle="tab" href="#id55f5fa894eb8469f813f71b427dc465b2" role="tab" aria-controls="id55f5fa894eb8469f813f71b427dc465b2" aria-selected="true">NAF</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="id55f5fa894eb8469f813f71b427dc465b3-tab" data-toggle="tab" href="#id55f5fa894eb8469f813f71b427dc465b3" role="tab" aria-controls="id55f5fa894eb8469f813f71b427dc465b3" aria-selected="false"></a></li>
 </ul>
-<div class="tab-content my-3"><div class="tab-pane fade show " id="id16ae319772c44f83ba5b97dbfe9105690" role="tabpanel" aria-labelledby="id16ae319772c44f83ba5b97dbfe9105690-tab"><pre class="md-code md-code-``` typescript"><code class="typescript"> 
+<div class="tab-content my-3"><div class="tab-pane fade show " id="id55f5fa894eb8469f813f71b427dc465b0" role="tabpanel" aria-labelledby="id55f5fa894eb8469f813f71b427dc465b0-tab"><pre class="md-code md-code-``` typescript"><code class="typescript"> 
     var roadNumber=app?.person?.address?.road?.number;
 </code></pre></div>
-<div class="tab-pane fade show " id="id16ae319772c44f83ba5b97dbfe9105691" role="tabpanel" aria-labelledby="id16ae319772c44f83ba5b97dbfe9105691-tab"><pre class="md-code md-code-``` java"><code class="java">
+<div class="tab-pane fade show " id="id55f5fa894eb8469f813f71b427dc465b1" role="tabpanel" aria-labelledby="id55f5fa894eb8469f813f71b427dc465b1-tab"><pre class="md-code md-code-``` java"><code class="java">
     Number roadNumber=(app!=null &amp;&amp; app.person!=null &amp;&amp; app.person.road!=null)? app.person.address.road.number:null;
 </code></pre></div>
-<div class="tab-pane fade show active" id="id16ae319772c44f83ba5b97dbfe9105692" role="tabpanel" aria-labelledby="id16ae319772c44f83ba5b97dbfe9105692-tab"><pre class="md-code md-code-``` java"><code class="java"> 
+<div class="tab-pane fade show active" id="id55f5fa894eb8469f813f71b427dc465b2" role="tabpanel" aria-labelledby="id55f5fa894eb8469f813f71b427dc465b2-tab"><pre class="md-code md-code-``` java"><code class="java"> 
     Number roadNumber=NOptional.of(app).then(v-&gt;v.person).then(v-&gt;v.road).then(v-&gt;v.number).orNull();
 </code></pre></div>
-<div class="tab-pane fade show " id="id16ae319772c44f83ba5b97dbfe9105693" role="tabpanel" aria-labelledby="id16ae319772c44f83ba5b97dbfe9105693-tab">#
+<div class="tab-pane fade show " id="id55f5fa894eb8469f813f71b427dc465b3" role="tabpanel" aria-labelledby="id55f5fa894eb8469f813f71b427dc465b3-tab">#
 #
  Combining Optional Chaining
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="id22f36c2f20af421da75a84e80bd7c03b0-tab" data-toggle="tab" href="#id22f36c2f20af421da75a84e80bd7c03b0" role="tab" aria-controls="id22f36c2f20af421da75a84e80bd7c03b0" aria-selected="false">typescript</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="id22f36c2f20af421da75a84e80bd7c03b1-tab" data-toggle="tab" href="#id22f36c2f20af421da75a84e80bd7c03b1" role="tab" aria-controls="id22f36c2f20af421da75a84e80bd7c03b1" aria-selected="false">java</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link active" id="id22f36c2f20af421da75a84e80bd7c03b2-tab" data-toggle="tab" href="#id22f36c2f20af421da75a84e80bd7c03b2" role="tab" aria-controls="id22f36c2f20af421da75a84e80bd7c03b2" aria-selected="true">NAF</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="id22f36c2f20af421da75a84e80bd7c03b3-tab" data-toggle="tab" href="#id22f36c2f20af421da75a84e80bd7c03b3" role="tab" aria-controls="id22f36c2f20af421da75a84e80bd7c03b3" aria-selected="false"></a></li>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idc6a110f758864e38a431150b6d4be00f0-tab" data-toggle="tab" href="#idc6a110f758864e38a431150b6d4be00f0" role="tab" aria-controls="idc6a110f758864e38a431150b6d4be00f0" aria-selected="false">typescript</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="idc6a110f758864e38a431150b6d4be00f1-tab" data-toggle="tab" href="#idc6a110f758864e38a431150b6d4be00f1" role="tab" aria-controls="idc6a110f758864e38a431150b6d4be00f1" aria-selected="false">java</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="idc6a110f758864e38a431150b6d4be00f2-tab" data-toggle="tab" href="#idc6a110f758864e38a431150b6d4be00f2" role="tab" aria-controls="idc6a110f758864e38a431150b6d4be00f2" aria-selected="true">NAF</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="idc6a110f758864e38a431150b6d4be00f3-tab" data-toggle="tab" href="#idc6a110f758864e38a431150b6d4be00f3" role="tab" aria-controls="idc6a110f758864e38a431150b6d4be00f3" aria-selected="false"></a></li>
 </ul>
-<div class="tab-content my-3"><div class="tab-pane fade show " id="id22f36c2f20af421da75a84e80bd7c03b0" role="tabpanel" aria-labelledby="id22f36c2f20af421da75a84e80bd7c03b0-tab"><pre class="md-code md-code-``` typescript"><code class="typescript"> 
+<div class="tab-content my-3"><div class="tab-pane fade show " id="idc6a110f758864e38a431150b6d4be00f0" role="tabpanel" aria-labelledby="idc6a110f758864e38a431150b6d4be00f0-tab"><pre class="md-code md-code-``` typescript"><code class="typescript"> 
     var roadNumber=app?.person?.address!.road?.number??0;
 </code></pre></div>
-<div class="tab-pane fade show " id="id22f36c2f20af421da75a84e80bd7c03b1" role="tabpanel" aria-labelledby="id22f36c2f20af421da75a84e80bd7c03b1-tab"><pre class="md-code md-code-``` java"><code class="java">
+<div class="tab-pane fade show " id="idc6a110f758864e38a431150b6d4be00f1" role="tabpanel" aria-labelledby="idc6a110f758864e38a431150b6d4be00f1-tab"><pre class="md-code md-code-``` java"><code class="java">
     Address address=(app!=null &amp;&amp; app.person!=null)?app.person.address:null;
     if(address==null){
        throw new IllegalArgumentException("missing address"); 
@@ -668,10 +673,10 @@ Java has a builtin null Check mechanism but it does not enable customized messag
         &amp;&amp; address.road!=null)
         ? address.road.number:0;
 </code></pre></div>
-<div class="tab-pane fade show active" id="id22f36c2f20af421da75a84e80bd7c03b2" role="tabpanel" aria-labelledby="id22f36c2f20af421da75a84e80bd7c03b2-tab"><pre class="md-code md-code-``` java"><code class="java"> 
+<div class="tab-pane fade show active" id="idc6a110f758864e38a431150b6d4be00f2" role="tabpanel" aria-labelledby="idc6a110f758864e38a431150b6d4be00f2-tab"><pre class="md-code md-code-``` java"><code class="java"> 
     Number roadNumber=NOptional.of(app).then(v-&gt;v.person).then(v-&gt;v.address).get().then(v-&gt;v.road).then(v-&gt;v.number).orElse(0);
 </code></pre></div>
-<div class="tab-pane fade show " id="id22f36c2f20af421da75a84e80bd7c03b3" role="tabpanel" aria-labelledby="id22f36c2f20af421da75a84e80bd7c03b3-tab"></div>
+<div class="tab-pane fade show " id="idc6a110f758864e38a431150b6d4be00f3" role="tabpanel" aria-labelledby="idc6a110f758864e38a431150b6d4be00f3-tab"></div>
 </div>
 
 </div>
@@ -743,7 +748,7 @@ supported formats/protocols are:
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-01-23-013332
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-01-24-164230
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>

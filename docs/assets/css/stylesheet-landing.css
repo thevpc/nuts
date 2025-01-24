@@ -3018,3 +3018,41 @@ input:-internal-autofill-selected {
 }
 
 
+/* ----------------------- */
+
+
+
+
+.feature-anim-down:hover {
+  cursor: pointer;
+  transform: rotate(0deg) scale(1) translateY(10px);
+  transition: .5s all ease;
+  z-index: 400;
+}
+
+
+.feature-anim-right:hover {
+  cursor: pointer;
+  transform: rotate(0deg) scale(1) translateX(50px);
+  transition: 2s all ease;
+  z-index: 400;
+}
+
+.feature-title{
+  color: #00508a;
+  text-align: center;
+  font-family: ZeroesTwo;
+  /*font-family: "Smooch Sans", serif;*/
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-weight: bolder;
+}
+
+/*------------ */
+
+.smooch-sans-nuts {
+  font-family: "Smooch Sans", serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}

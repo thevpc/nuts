@@ -1,12 +1,7 @@
 ---
 id: installation-prod
-title: Installation in Production
-sidebar_label: Installation in Production
+title: Production Env
 ---
-
-
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
 
 
 Installation of `nuts` in production is based on stable `nuts` binaries that are released according to a semi-annual schedule. Stable versions are deployed to maven-central and hence are made accessible very easily to all users.
@@ -79,8 +74,7 @@ __for production (using wget):__
 This will reset/delete any previous nuts installation before installing the latest version.
 Removing the `Z` modifier (replace `-Zy` by `-y`) flag if you do not want to reset the workspace.
 ```
-$ wget https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
-    0.8.3/nuts-0.8.3.jar -qO nuts.jar
+$ wget https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 ```
@@ -89,8 +83,7 @@ __for production (using curl):__
 This will reset/delete any previous nuts installation before installing the latest version.
 Removing the `Z` modifier (replace `-Zy` by `-y`) flag if you do not want to reset the workspace.
 ```
-$ curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
-    0.8.3/nuts-0.8.3.jar -o nuts.jar
+$ curl -sOL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 ```
@@ -111,13 +104,12 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="macos">
 
 ```
-$ curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
-    0.8.3/nuts-0.8.3.jar -o nuts.jar
+$ curl -sOL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 ```
 
-MacOS Systems installation is based on **bash** shell. First launch will configure "~/.bashrc" so that **nuts** and other companion tool commands will be available in any future terminal instances.
+MacOS Systems installation is based on **zsh** shell. First launch will configure "~/.zshrc" so that **nuts** and other companion tool commands will be available in any future terminal instances.
 Using **```nuts```** on MacOS system should be seamless. A simple bash terminal (MacOs Terminal App) is already a nuts-aware terminal.
 
 :::tip
@@ -130,9 +122,7 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="wget">
 
 ```
-  $ wget https://github.com/thevpc/vpc-public-maven/raw/master/\
-     net/vpc/app/nuts/nuts/0.8.3/nuts-0.8.3.jar \
-     -O nuts.jar
+  $ wget https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
   $  java -jar nuts.jar -y
 ```
 
@@ -147,8 +137,7 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="curl">
 
 ```
-$ curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
-    0.8.3/nuts-0.8.3.jar -o nuts.jar
+$ curl -sOL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 ```
@@ -189,7 +178,7 @@ nuts --version
 It should show a result in the format : nuts-api-version/nuts-impl-version
 
 ```
-0.8.3/0.8.3.1
+{{stableApiVersion}}/{{stableRuntimeVersion}}
 ```
 
 ## Run a command

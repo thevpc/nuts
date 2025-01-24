@@ -46,8 +46,8 @@ __(using wget):__
 This will reuse any previous nuts installation before installing the latest version.
 
 ```
-$ wget https://thevpc.net/nuts/nuts-stable.jar -qO nuts-stable.jar
-$ java -jar nuts-stable.jar -y
+$ wget https://thevpc.net/nuts/nuts-stable.jar -qO nuts.jar
+$ java -jar nuts.jar -y
 $ exit
 ```
 
@@ -55,8 +55,8 @@ __(using curl):__
 This will reuse any previous nuts installation before installing the latest version.
 
 ```
-$ curl -sOL https://thevpc.net/nuts/nuts-stable.jar -o nuts-stable.jar
-$ java -jar nuts-stable.jar -Zy
+$ curl -sOL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
+$ java -jar nuts.jar -Zy
 $ exit
 ```
 
@@ -77,12 +77,12 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="macos">
 
 ```
-$ curl -sOL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
+$ curl -sOL https://thevpc.net/nuts/nuts.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 ```
 
-MacOS Systems installation is based on **bash** shell. First launch will configure "~/.bashrc" so that **nuts** and other companion tool commands will be available in any future terminal instances.
+MacOS Systems installation is based on **zsh** shell. First launch will configure "~/.zshrc" so that **nuts** and other companion tool commands will be available in any future terminal instances.
 Using **```nuts```** on MacOS system should be seamless. A simple bash terminal (MacOs Terminal App) is already a nuts-aware terminal.
 
 :::tip

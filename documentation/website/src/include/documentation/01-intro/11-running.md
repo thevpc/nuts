@@ -24,7 +24,7 @@ Then, all executable classes (public with static void main method) are enumerate
 groupId:artifactId#version
 ```
 
-for instance, to install ```netbeans-launcher``` (which is a simple UI helping launch of multiple instances of netbeans), you can issue
+for instance, to install (and run) ```netbeans-launcher``` (which is a simple UI helping launch of multiple instances of netbeans), you can issue
 
 ```bash
   nuts net.thevpc.app:netbeans-launcher#1.2.2
@@ -36,7 +36,7 @@ You do agree that this can be of some cumbersome to type. So you can simplify it
   nuts netbeans-launcher
 ```
 
-In this form, **```nuts```** will auto-detect both the ```groupId``` and the ```version```. The group id is detected if it is already imported (we will see later how to import a groupId). 
+In this form, **```nuts```** will auto-detect both the ```groupId``` and the ```version```. The group id is detected if it is already **imported** (we will see later how to import a groupId). 
 By default, there is a couple of groupIds that are automatically imported :
 
   + ```net.thevpc``` (contains various applications of the author)

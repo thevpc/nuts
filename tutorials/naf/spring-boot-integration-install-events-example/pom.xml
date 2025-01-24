@@ -11,7 +11,7 @@
     <groupId>net.thevpc.nuts.tutorial</groupId>
     <artifactId>nuts-spring-boot-integration-install-events-example</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Nuts Community Tutorial :: Spring Boot Install Events Example Project</name>
+    <name>Nuts Community Tutorial :: Spring Boot Install Events Example</name>
     <description>nuts-spring-boot-integration-install-events-example</description>
     <properties>
         <java.version>1.8</java.version>

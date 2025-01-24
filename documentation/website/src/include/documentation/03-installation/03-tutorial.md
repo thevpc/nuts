@@ -5,9 +5,6 @@ sidebar_label: Tutorial
 ---
 
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-
 ## GUI Installation
 You can install `nuts` using a gui installer. Multiple targets are available.
 You may select a portable installer (a jar that you can double click as far as you have a valid java+ runtime installed and configured in your environment).

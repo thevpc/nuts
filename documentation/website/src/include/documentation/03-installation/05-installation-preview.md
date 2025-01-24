@@ -1,12 +1,7 @@
 ---
 id: installation-preview
-title: Installation (Preview Mode)
-sidebar_label: Installation (Dev Mode)
+title: Preview Env
 ---
-
-
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
 
 
 Installation of `nuts` for preview/test/evaluation or simply for personal use is based on a rolling `nuts` binaries version that is released a faster pace than the production version (generally a semi-monthly schedule). Versions are not rock solid but still they are "very" usable and more importantly they include all latest features. Preview releases are deployed to a development repository and hence are made accessible using a repository swith option.
@@ -105,7 +100,7 @@ $ java -jar nuts.jar -Zy
 $ exit
 ```
 
-MacOS Systems installation is based on **bash** shell. First launch will configure "~/.bashrc" so that **nuts** and other companion tool commands will be available in any future terminal instances.
+MacOS Systems installation is based on **zsh** shell. First launch will configure "~/.zshrc" so that **nuts** and other companion tool commands will be available in any future terminal instances.
 Using **```nuts```** on MacOS system should be seamless. A simple bash terminal (MacOs Terminal App) is already a nuts-aware terminal.
 
 :::tip
