@@ -49,7 +49,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.211-b12, mixed mode)
 
 download [nuts-preview.jar](https://thevpc.net/nuts/nuts-preview.jar)
 ```
-java -jar nuts-preview.jar -r=+preview -Zy
+java -jar nuts-preview.jar -Zy
 ```
 
 On Windows systems, first launch will create a new **```nuts```** Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.

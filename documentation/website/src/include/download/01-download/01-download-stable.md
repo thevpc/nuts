@@ -22,7 +22,7 @@ values={[
 download manually [https://thevpc.net/nuts/nuts-stable.jar](https://thevpc.net/nuts/nuts-stable.jar)
 
 ```
-java -jar nuts-stable.jar  -Zy
+java -jar nuts.jar  -Zy
 ```
 
 On Windows systems, first launch will create a new **```nuts```** Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.

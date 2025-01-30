@@ -21,7 +21,7 @@ values={[
 download manually [https://thevpc.net/nuts/nuts-preview.jar](https://thevpc.net/nuts/nuts-preview.jar)
 
 ```
-java -jar nuts-preview.jar  -Zy
+java -jar nuts.jar  -Zy
 ```
 
 On Windows systems, first launch will create a new **```nuts```** Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.
@@ -45,8 +45,8 @@ __(using wget):__
 This will reuse any previous nuts installation before installing the latest version.
 
 ```
-$ wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts-preview.jar
-$ java -jar nuts-preview.jar -y
+$ wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
+$ java -jar nuts.jar -y
 $ exit
 ```
 
@@ -54,8 +54,8 @@ __(using curl):__
 This will reuse any previous nuts installation before installing the latest version.
 
 ```
-$ curl -sOL https://thevpc.net/nuts/nuts-preview.jar -o nuts-preview.jar
-$ java -jar nuts-preview.jar -Zy
+$ curl -sOL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar
+$ java -jar nuts.jar -Zy
 $ exit
 ```
 

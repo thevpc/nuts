@@ -674,7 +674,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             //now that config is prepared proceed to any cleanup
             if (resetHardFlag) {
                 //force loading version early, it will be used later-on
-                bLog.log(isAskConfirm(getOptions())?Level.OFF:Level.WARNING, "WARNING", NBootMsg.ofPlain("reset hard all workspaces"));
+                bLog.log(isAskConfirm(getOptions()) ? Level.OFF : Level.WARNING, "WARNING", NBootMsg.ofPlain("reset hard all workspaces"));
                 if (lastWorkspaceOptions != null) {
                     revalidateLocations(lastWorkspaceOptions, workspaceName, immediateLocation, isolationLevel);
                 }
@@ -693,7 +693,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 }
             } else if (resetFlag) {
                 //force loading version early, it will be used later-on
-                bLog.log(isAskConfirm(getOptions())?Level.OFF:Level.WARNING, "WARNING", NBootMsg.ofPlain("reset workspace"));
+                bLog.log(isAskConfirm(getOptions()) ? Level.OFF : Level.WARNING, "WARNING", NBootMsg.ofPlain("reset workspace"));
                 if (dryFlag) {
                     //
                 } else {
@@ -708,7 +708,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                     NBootUtils.ndiUndo(bLog);
                 }
             } else if (NBootUtils.firstNonNull(options.getRecover(), false)) {
-                bLog.log(isAskConfirm(getOptions())?Level.OFF:Level.WARNING, "WARNING", NBootMsg.ofPlain("recover workspace."));
+                bLog.log(isAskConfirm(getOptions()) ? Level.OFF : Level.WARNING, "WARNING", NBootMsg.ofPlain("recover workspace."));
                 if (dryFlag) {
                     //bLog.log(Level.INFO, "DEBUG", NBootMsg.ofPlain("[dry] [recover] delete CACHE/TEMP workspace folders"));
                 } else {
@@ -750,12 +750,22 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             //as long as there are no applications to run, will exit before creating workspace
             if (
                     NBootUtils.isEmptyList(options.getApplicationArguments())
-                            && NBootUtils.firstNonNull(options.getSkipBoot(), false) && (NBootUtils.firstNonNull(options.getRecover(), false) || (resetFlag || resetHardFlag))) {
+                            && NBootUtils.firstNonNull(options.getSkipBoot(), false)
+                            && (NBootUtils.firstNonNull(options.getRecover(), false) || (resetFlag || resetHardFlag))
+            ) {
                 if (isPlainTrace()) {
-                    if (countDeleted > 0) {
-                        bLog.warn(NBootMsg.ofC("workspace erased : %s", options.getWorkspace()));
+                    if (resetHardFlag) {
+                        if (countDeleted > 0) {
+                            bLog.warn(NBootMsg.ofC("nuts hard reset successfully"));
+                        } else {
+                            bLog.warn(NBootMsg.ofC("nuts hard reset did not require to delete any file. system is clean."));
+                        }
                     } else {
-                        bLog.warn(NBootMsg.ofC("workspace is not erased because it does not exist : %s", options.getWorkspace()));
+                        if (countDeleted > 0) {
+                            bLog.warn(NBootMsg.ofC("workspace erased : %s", options.getWorkspace()));
+                        } else {
+                            bLog.warn(NBootMsg.ofC("workspace is not erased because it does not exist : %s", options.getWorkspace()));
+                        }
                     }
                 }
                 throw new NBootException(NBootMsg.ofPlain(""), 0);
@@ -952,8 +962,8 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
         return false;
     }
 
-    private boolean isAskConfirm(NBootOptionsInfo o){
-        return NBootUtils.sameEnum(NBootUtils.enumName(NBootUtils.firstNonNull(o.getConfirm(), "ASK")),"ASK");
+    private boolean isAskConfirm(NBootOptionsInfo o) {
+        return NBootUtils.sameEnum(NBootUtils.enumName(NBootUtils.firstNonNull(o.getConfirm(), "ASK")), "ASK");
     }
 
     private boolean isPlainTrace() {

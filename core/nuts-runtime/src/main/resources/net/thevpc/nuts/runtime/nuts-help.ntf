@@ -568,6 +568,11 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
  ```sh --reset  or -Z``` (defaults to ```bool false```)
       reset (delete) ```sh nuts``` workspace folder before starting the workspace. All user configuration will not be deleted.
 
+ ```sh --hard-reset``` (defaults to ```bool false```)
+      hard reset (delete) all of ```sh nuts``` workspaces and any configuration file. All user configuration will not be deleted.
+      a common usage is to hard-reset nuts and exit using ```sh -Qy --hard-reset``` which will silently hard-reset configuration and exit.
+      if ```sh -Q``` is not used, after resetting, a new workspace will be bootstrapping
+
  ```sh --skip-boot  or -Q``` (defaults to ```bool false```)
       do not load workspace. This is helpful when used with ```sh --reset  or -Z```, aka ```sh -QZ```,  in which case,
       ```sh nuts``` is completely uninstalled from your system (called ```warn kill mode```).
@@ -792,3 +797,25 @@ nuts ls
             run the ls command (either defined as a custom command or system command).
             Note that installing nsh will also install somme custom commands, including ```sh ls```
             which refers to ```nsh nsh -c ls```, too
+
+###) special command native-exec
+Nuts Boot can be used to run native commands by using native-exec as very first argument.
+native-exec allows running any command until it exits without error (zero status) or a maximum run count is reached
+
+```sh
+nuts native-exec <options>... <command>...
+```
+
+ ```sh --min-time=<time>``` (defaults to ```period 0ms```)
+      if the running command exits before ```min-time```, the application ends with error
+      time can be suffixed with 'ms' (for milliseconds) or 's' for seconds
+
+ ```sh --wait-time=<time>``` (defaults to ```period 0ms```)
+      time to wait before rerunning the same command
+      time can be suffixed with 'ms' (for milliseconds) or 's' for seconds
+
+
+ ```sh --max-count=<time>``` (defaults to ```int 1```)
+      if the running command exits before ```min-time```, the application ends with error
+      time can be suffixed with 'ms' (for milliseconds) or 's' for seconds
+

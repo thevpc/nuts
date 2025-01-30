@@ -66,7 +66,6 @@ public final class NBootUtils {
             "yyyy-MM-dd HH:mm:ss",
             "yyyy-MM-dd'T'HH:mm:ss.SSSX"
     };
-    public static final String DELETE_FOLDERS_HEADER = "ATTENTION ! You are about to delete nuts workspace files.";
     private static final char[] BASE16_CHARS = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
     public static final URL urlOf(String any) {
@@ -2033,7 +2032,7 @@ public final class NBootUtils {
                                         NBootMsg.ofC("do you confirm deleting %s [y/n/c] (default 'n') ?", directory).toString(),
                                         null, readline, bLog
                                 );
-                            }else {
+                            } else {
                                 // Level.OFF is to force logging in all cases
                                 bLog.with().level(Level.OFF).verbWarning().log(NBootMsg.ofC("do you confirm deleting %s [y/n/c] (default 'n') ? : ", directory));
                                 line = readline.get();
@@ -2041,7 +2040,7 @@ public final class NBootUtils {
                         }
                     }
                 }
-                if (line!=null && line.equals(line.toUpperCase()) && parseBoolean(line)!=null) {
+                if (line != null && line.equals(line.toUpperCase()) && parseBoolean(line) != null) {
                     refForceAll.setForce(parseBoolean(line));
                 } else if ("c".equalsIgnoreCase(line)) {
                     throw new NBootCancelException();
@@ -2177,26 +2176,29 @@ public final class NBootUtils {
         if (firstNonNull(optionsCopy.getBot(), false) || !isGraphicalDesktopEnvironment()) {
             optionsCopy.setGui(false);
         }
-        return deleteAndConfirmAll(folders.toArray(new Path[0]), force, DELETE_FOLDERS_HEADER, bLog, optionsCopy, readline);
+        return deleteAndConfirmAll(folders.toArray(new Path[0]), force,
+                "ATTENTION ! You are about to delete nuts workspace files."
+                , bLog, optionsCopy, readline);
     }
 
-    private static String _confirm(NBootOptionsInfo o){
+    private static String _confirm(NBootOptionsInfo o) {
         return enumName(firstNonNull(o.getConfirm(), "ASK"));
     }
+
     /**
      * @param readline
      */
-    public static long deleteStoreLocationsHard(NBootOptionsInfo lastBootOptions, NBootOptionsInfo o,
+    public static long deleteStoreLocationsHard(NBootOptionsInfo lastBootOptions, NBootOptionsInfo bOptions,
                                                 NBootLog bLog, Supplier<String> readline) {
-        String confirm = _confirm(o);
+        String confirm = _confirm(bOptions);
         if (sameEnum(confirm, "ASK")
-                && !sameEnum(enumName(firstNonNull(o.getOutputFormat(), "PLAIN")), "PLAIN")) {
+                && !sameEnum(enumName(firstNonNull(bOptions.getOutputFormat(), "PLAIN")), "PLAIN")) {
             throw new NBootException(
                     NBootMsg.ofPlain("unable to switch to interactive mode for non plain text output format. "
                             + "You need to provide default response (-y|-n) for resetting/recovering workspace. "
                             + "You was asked to confirm deleting folders as part as recover/reset option."), 255);
         }
-        bLog.with().level(Level.FINEST).verbWarning().log(NBootMsg.ofC("delete all workspace location(s)"));
+        bLog.with().level(Level.FINEST).verbWarning().log(NBootMsg.ofC("hard reset nuts to remove all workspaces and all configuration files."));
         boolean force = false;
         switch (confirm) {
             case "ASK": {
@@ -2213,6 +2215,25 @@ public final class NBootUtils {
             }
         }
         LinkedHashSet<Path> folders = new LinkedHashSet<>();
+
+        Boolean sys = firstNonNull(bOptions.getSystem(), false);
+        NBootPlatformHome hh = (sys ?
+                NBootPlatformHome.ofSystem(bOptions.getStoreLayout()) :
+                NBootPlatformHome.of(bOptions.getStoreLayout()));
+        folders.add(Paths.get(hh.getHome()).resolve("ws"));
+
+
+
+
+
+        for (String storeFolder : NBootPlatformHome.storeTypes()) {
+            folders.add(Paths.get(hh.getStore(
+                    storeFolder
+            )));
+        }
+
+        ///  current WS
+
         if (lastBootOptions != null) {
             folders.add(Paths.get(lastBootOptions.getWorkspace()));
             for (Object ovalue : NBootPlatformHome.storeTypes()) {
@@ -2232,19 +2253,32 @@ public final class NBootUtils {
                 }
             }
         }
-        for (String ovalue : NBootPlatformHome.storeTypes()) {
+
+        folders.add(Paths.get(bOptions.getWorkspace()));
+        for (Object ovalue : NBootPlatformHome.storeTypes()) {
             if (ovalue != null) {
-                NBootHomeLocation nBootHomeLocation = NBootHomeLocation.of(null, ovalue);
-                if (nBootHomeLocation != null && nBootHomeLocation.getStoreLocation() != null) {
-                    folders.add(Paths.get(nBootHomeLocation.getStoreLocation()));
+                if (ovalue instanceof String) {
+                    String p = getStoreLocationPath(bOptions, (String) ovalue);
+                    if (p != null) {
+                        folders.add(Paths.get(p));
+                    }
+                } else if (ovalue instanceof Path) {
+                    folders.add(((Path) ovalue));
+                } else if (ovalue instanceof File) {
+                    folders.add(((File) ovalue).toPath());
+                } else {
+                    throw new NBootException(NBootMsg.ofC("unsupported path type : %s", ovalue));
                 }
             }
         }
-        NBootOptionsInfo optionsCopy = o.copy();
+
+        NBootOptionsInfo optionsCopy = bOptions.copy();
         if (firstNonNull(optionsCopy.getBot(), false) || !isGraphicalDesktopEnvironment()) {
             optionsCopy.setGui(false);
         }
-        return deleteAndConfirmAll(folders.toArray(new Path[0]), force, DELETE_FOLDERS_HEADER, bLog, optionsCopy, readline);
+        return deleteAndConfirmAll(folders.stream().sorted().toArray(Path[]::new), force,
+                "ATTENTION ! You are about to delete workspaces and all nuts configuration files."
+                , bLog, optionsCopy, readline);
     }
 
 

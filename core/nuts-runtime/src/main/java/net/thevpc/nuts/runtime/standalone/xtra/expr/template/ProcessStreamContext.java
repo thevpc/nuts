@@ -63,13 +63,13 @@ public class ProcessStreamContext implements Cloneable{
     }
 
     public Object eval(String expr) {
-        return context.parse(expr).get().eval(context);
+        return context.parse(expr).get().eval(context).get();
     }
 
     public Object eval(NExprNode expr) {
         if (expr == null) {
             return null;
         }
-        return expr.eval(context);
+        return expr.eval(context).get();
     }
 }

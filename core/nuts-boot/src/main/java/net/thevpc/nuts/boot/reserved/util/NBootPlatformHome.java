@@ -18,7 +18,6 @@ public class NBootPlatformHome {
     private final boolean system;
     private final Function<String, String> env;
     private final Function<String, String> props;
-    private final String wsPrefix = "ws";
     private final String sysPrefix = "system";
 
 

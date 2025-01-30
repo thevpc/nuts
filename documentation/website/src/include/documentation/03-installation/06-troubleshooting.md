@@ -34,6 +34,15 @@ To run nuts in reset mode type :
 nuts -Z
 ```
 
+## hard-reset mode
+**hard-reset mode** will delete all nuts configuration files including all workspaces. 
+This is quite a radical action to run. Do not ever invoke this unless your are really knowing what you are doing. 
+To run nuts in reset mode type :
+
+```
+nuts --hard-reset
+```
+
 ## kill mode
 **kill mode** is a special variant of reset mode where workspace will not be recreated after deletion. 
 This can be achieved by using a combination of reset mode and --skip-boot (-Q) option. Do not ever
@@ -44,10 +53,15 @@ To run nuts in kill mode type :
 nuts -ZQ
 ```
 
+To can run hard-reset in kill mode too :
+```
+nuts -Q --hard-reset
+```
+
 ## After invoking reset mode
 After invoking reset mode, nuts shell launchers (installed by nuts settings) will not be available anymore. 
 PATH environment will point (temporarily) to a non existing folder. You should use the jar based invocation at least once to reinstall these commands.
 
 ```
-java -jar nuts-0.8.5.jar
+java -jar nuts.jar
 ```
