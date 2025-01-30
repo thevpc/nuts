@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 import net.thevpc.nuts.NConfigItem;
 import net.thevpc.nuts.NUserConfig;
 
-public class NWorkspaceConfigSecurity extends NConfigItem {
+public class NWorkspaceConfigSecurity extends NConfigItem implements Cloneable {
     private static final long serialVersionUID = 2;
 
     private boolean secure = false;
@@ -35,5 +35,20 @@ public class NWorkspaceConfigSecurity extends NConfigItem {
     public NWorkspaceConfigSecurity setUsers(NUserConfig[] users) {
         this.users = users;
         return this;
+    }
+
+    public NWorkspaceConfigSecurity copy() {
+        try {
+            NWorkspaceConfigSecurity copy = (NWorkspaceConfigSecurity) clone();
+            if (copy.users != null) {
+                copy.users = new NUserConfig[copy.users.length];
+                for (int i = 0; i < users.length; i++) {
+                    copy.users[i] = users[i].copy();
+                }
+            }
+            return copy;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

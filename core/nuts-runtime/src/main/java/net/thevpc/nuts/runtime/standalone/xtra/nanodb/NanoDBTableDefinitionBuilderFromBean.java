@@ -68,19 +68,19 @@ public class NanoDBTableDefinitionBuilderFromBean<T> {
         return this;
     }
 
-    public NanoDBTableFile<T> getOrCreate(){
+    public NanoDBTableStore<T> getOrCreate(){
         String name=this.name;
         if(NBlankable.isBlank(name)){
             name=cls.getSimpleName();
         }
-        NanoDBTableFile t = db.findTable(name);
+        NanoDBTableStore t = db.findTable(name);
         if(t!=null){
             return t;
         }
         return create();
     }
 
-    public NanoDBTableFile<T> create(){
+    public NanoDBTableStore<T> create(){
         NanoDBTableDefinition<T> t = build();
         return db.createTable(t);
     }

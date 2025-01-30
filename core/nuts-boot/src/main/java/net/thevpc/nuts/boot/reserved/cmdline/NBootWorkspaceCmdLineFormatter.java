@@ -523,6 +523,9 @@ public class NBootWorkspaceCmdLineFormatter {
         fillOption("--reset", "-Z", options.getReset(), false, arguments, false);
         fillOption("--recover", "-z", options.getRecover(), false, arguments, false);
         fillOption("--dry", "-D", options.getDry(), false, arguments, false);
+        if (isApiVersionOrAfter(V085)) {
+            fillOption("--reset-hard", null, options.getResetHard(), false, arguments, false);
+        }
         if (isApiVersionOrAfter(V084)) {
             fillOption("--stacktrace", null, options.getShowStacktrace(), false, arguments, false);
         }

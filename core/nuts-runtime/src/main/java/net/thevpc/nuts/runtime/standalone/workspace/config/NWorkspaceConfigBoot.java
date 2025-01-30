@@ -12,13 +12,13 @@
  * <br>
  * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
@@ -32,12 +32,13 @@ import net.thevpc.nuts.NStoreStrategy;
 import net.thevpc.nuts.NStoreType;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author thevpc
  * @since 0.5.4
  */
-public final class NWorkspaceConfigBoot extends NConfigItem {
+public final class NWorkspaceConfigBoot extends NConfigItem implements Cloneable {
 
     private static final long serialVersionUID = 830;
     private String uuid = null;
@@ -162,7 +163,25 @@ public final class NWorkspaceConfigBoot extends NConfigItem {
         return this;
     }
 
-    public static class ExtensionConfig extends NConfigItem {
+    public NWorkspaceConfigBoot copy() {
+        try {
+            NWorkspaceConfigBoot cloned = (NWorkspaceConfigBoot) clone();
+            if (cloned.storeLocations != null) {
+                cloned.storeLocations = new LinkedHashMap<>(cloned.storeLocations);
+            }
+            if (cloned.homeLocations != null) {
+                cloned.homeLocations = new LinkedHashMap<>(cloned.homeLocations);
+            }
+            if (cloned.extensions != null) {
+                cloned.extensions = extensions.stream().map(x -> x.copy()).collect(Collectors.toList());
+            }
+            return cloned;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static class ExtensionConfig extends NConfigItem implements Cloneable {
         private NId id;
         private boolean enabled;
         private String dependencies;
@@ -214,6 +233,14 @@ public final class NWorkspaceConfigBoot extends NConfigItem {
                     && Objects.equals(id, that.id)
                     && Objects.equals(dependencies, that.dependencies)
                     ;
+        }
+
+        public ExtensionConfig copy() {
+            try {
+                return (ExtensionConfig) clone();
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

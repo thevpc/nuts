@@ -297,6 +297,13 @@ public class DefaultNBootOptions implements NBootOptions {
     private final Boolean reset;
 
     /**
+     * @since 0.8.5
+     * reset ALL workspaces
+     * option-type : runtime (available only for the current workspace instance)
+     */
+    private final Boolean resetHard;
+
+    /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private final Boolean commandVersion;
@@ -456,7 +463,7 @@ public class DefaultNBootOptions implements NBootOptions {
                                NId runtimeId, String javaCommand, String javaOptions, String workspace,
                                String outLinePrefix, String errLinePrefix, String name, Boolean installCompanions,
                                Boolean skipWelcome, Boolean skipBoot, Boolean system, Boolean gui,
-                               Boolean dry, Boolean showStacktrace, Boolean recover, Boolean reset, Boolean commandVersion, Boolean commandHelp, Boolean inherited, Boolean switchWorkspace, Boolean cached, Boolean indexed, Boolean transitive, Boolean bot, NIsolationLevel isolationLevel, Boolean initLaunchers, Boolean initScripts, Boolean initPlatforms, Boolean initJava, List<String> excludedExtensions, List<String> repositories, String userName,
+                               Boolean dry, Boolean showStacktrace, Boolean recover, Boolean reset, Boolean resetHard, Boolean commandVersion, Boolean commandHelp, Boolean inherited, Boolean switchWorkspace, Boolean cached, Boolean indexed, Boolean transitive, Boolean bot, NIsolationLevel isolationLevel, Boolean initLaunchers, Boolean initScripts, Boolean initPlatforms, Boolean initJava, List<String> excludedExtensions, List<String> repositories, String userName,
                                char[] credentials, NTerminalMode terminalMode, Boolean readOnly,
                                Boolean trace, String progressOptions, String dependencySolver,
                                NLogConfig logConfig, NConfirmationMode confirm, NContentType outputFormat,
@@ -516,6 +523,7 @@ public class DefaultNBootOptions implements NBootOptions {
         this.classLoaderSupplier = classLoaderSupplier;
         this.recover = recover;
         this.reset = reset;
+        this.resetHard = resetHard;
         this.commandVersion = commandVersion;
         this.commandHelp = commandHelp;
         this.debug = debug;
@@ -807,6 +815,10 @@ public class DefaultNBootOptions implements NBootOptions {
         return NOptional.ofNamed(reset, "reset");
     }
 
+    public NOptional<Boolean> getResetHard() {
+        return NOptional.ofNamed(resetHard, "resetHard");
+    }
+
     @Override
     public NOptional<Boolean> getCommandVersion() {
         return NOptional.ofNamed(commandVersion, "commandVersion");
@@ -1061,6 +1073,7 @@ public class DefaultNBootOptions implements NBootOptions {
         r.setExecutorOptions(this.getExecutorOptions().orNull());
         r.setRecover(this.getRecover().orNull());
         r.setReset(this.getReset().orNull());
+        r.setResetHard(this.getResetHard().orNull());
         r.setCommandVersion(this.getCommandVersion().orNull());
         r.setCommandHelp(this.getCommandHelp().orNull());
         r.setDebug(this.getDebug().orNull());

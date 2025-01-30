@@ -37,11 +37,11 @@ import java.util.List;
 public class NBootDeleteFilesContextBootImpl implements NBootDeleteFilesContextBoot {
 
     private final List<Path> ignoreDeletion = new ArrayList<>();
-    private boolean force;
+    private Boolean force;
 
     @Override
-    public boolean isForce() {
-        return force;
+    public boolean isForce(boolean force) {
+        return this.force!=null && this.force.equals(force);
     }
 
     @Override

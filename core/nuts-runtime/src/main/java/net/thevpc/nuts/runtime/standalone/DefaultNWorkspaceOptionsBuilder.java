@@ -257,6 +257,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     private Boolean reset;
 
     /**
+     * @since 0.8.5
+     * reset ALL workspaces
+     * option-type : runtime (available only for the current workspace instance)
+     */
+    private Boolean resetHard;
+
+    /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private Boolean commandVersion;
@@ -1125,6 +1132,19 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         return this;
     }
 
+
+    @Override
+    public NOptional<Boolean> getResetHard() {
+        return NOptional.ofNamed(resetHard,"resetHard");
+    }
+
+    @Override
+    public NWorkspaceOptionsBuilder setResetHard(Boolean resetHard) {
+        this.resetHard = resetHard;
+        return this;
+    }
+
+
     @Override
     public NOptional<Boolean> getCommandVersion() {
         return NOptional.ofNamed(commandVersion,"commandVersion");
@@ -1465,6 +1485,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         this.setExecutorOptions(other.getExecutorOptions().orNull());
         this.setRecover(other.getRecover().orNull());
         this.setReset(other.getReset().orNull());
+        this.setResetHard(other.getResetHard().orNull());
         this.setCommandVersion(other.getCommandVersion().orNull());
         this.setCommandHelp(other.getCommandHelp().orNull());
         this.setDebug(other.getDebug().orNull());
@@ -1568,6 +1589,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         this.setExecutorOptions(other.getExecutorOptions());
         this.setRecover(other.getRecover());
         this.setReset(other.getReset());
+        this.setResetHard(other.getResetHard());
         this.setCommandVersion(other.getCommandVersion());
         this.setCommandHelp(other.getCommandHelp());
         this.setDebug(other.getDebug());
@@ -1732,6 +1754,9 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
             }
             if (other.getReset().isPresent()) {
                 this.setReset(other.getReset().orNull());
+            }
+            if (other.getResetHard().isPresent()) {
+                this.setResetHard(other.getResetHard().orNull());
             }
             if (other.getCommandVersion().isPresent()) {
                 this.setCommandVersion(other.getCommandVersion().orNull());
@@ -1999,7 +2024,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
                 getRunAs().orNull(), getCreationTime().orNull(), getExpireTime().orNull(),
                 getInstallCompanions().orNull(), getSkipWelcome().orNull(), getSkipBoot().orNull(),
                 getSystem().orNull(), getGui().orNull(), getReadOnly().orNull(), getTrace().orNull(),
-                getDry().orNull(), getShowStacktrace().orNull(), getRecover().orNull(), getReset().orNull(), getCommandVersion().orNull(),
+                getDry().orNull(), getShowStacktrace().orNull(), getRecover().orNull(), getReset().orNull(), getResetHard().orNull(), getCommandVersion().orNull(),
                 getCommandHelp().orNull(), getCommandHelp().orNull(), getSwitchWorkspace().orNull(), getCached().orNull(),
                 getIndexed().orNull(), getTransitive().orNull(), getBot().orNull(), getSkipErrors().orNull(),
                 getIsolationLevel().orNull(), getInitLaunchers().orNull(), getInitScripts().orNull(), getInitPlatforms().orNull(),

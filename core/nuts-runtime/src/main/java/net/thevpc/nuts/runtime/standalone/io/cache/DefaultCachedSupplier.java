@@ -7,7 +7,7 @@ import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.NLocationKey;
+import net.thevpc.nuts.NLocationKey;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NBlankable;

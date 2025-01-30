@@ -295,6 +295,13 @@ public final class NBootOptionsInfo {
     private Boolean reset;
 
     /**
+     * @since 0.8.5
+     * reset ALL workspaces
+     * option-type : runtime (available only for the current workspace instance)
+     */
+    private Boolean resetHard;
+
+    /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private Boolean commandVersion;
@@ -1141,6 +1148,13 @@ public final class NBootOptionsInfo {
         return this;
     }
 
+    public Boolean getResetHard() {
+        return resetHard;
+    }
+
+    public void setResetHard(Boolean resetHard) {
+        this.resetHard = resetHard;
+    }
 
     public Boolean getReset() {
         return reset;
@@ -1498,6 +1512,7 @@ public final class NBootOptionsInfo {
         this.setExecutorOptions(other.getExecutorOptions());
         this.setRecover(other.getRecover());
         this.setReset(other.getReset());
+        this.setResetHard(other.getResetHard());
         this.setCommandVersion(other.getCommandVersion());
         this.setCommandHelp(other.getCommandHelp());
         this.setDebug(other.getDebug());
@@ -1649,6 +1664,9 @@ public final class NBootOptionsInfo {
             }
             if (o.getReset() != null) {
                 this.setReset(o.getReset());
+            }
+            if (o.getResetHard() != null) {
+                this.setResetHard(o.getResetHard());
             }
             if (o.getCommandVersion() != null) {
                 this.setCommandVersion(o.getCommandVersion());
@@ -1963,6 +1981,7 @@ public final class NBootOptionsInfo {
         setExecutionType(null);
         setRunAs(null);
         setReset(null);
+        setResetHard(null);
         setRecover(null);
         setDry(null);
         setShowStacktrace(null);

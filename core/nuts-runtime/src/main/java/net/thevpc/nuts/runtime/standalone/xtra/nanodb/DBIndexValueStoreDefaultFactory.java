@@ -1,5 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
+import net.thevpc.nuts.runtime.standalone.xtra.nanodb.file.DBIndexValueFileStore;
+
 public class DBIndexValueStoreDefaultFactory implements DBIndexValueStoreFactory{
     @Override
     public DBIndexValueStore create(NanoDBIndex index, Object indexKey) {

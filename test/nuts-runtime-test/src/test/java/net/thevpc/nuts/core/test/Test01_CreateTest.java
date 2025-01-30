@@ -8,10 +8,10 @@ package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.concurrent.NLockBuilder;
 import net.thevpc.nuts.expr.NGlob;
 import net.thevpc.nuts.format.NCmdLineFormat;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
-import net.thevpc.nuts.concurrent.NLocks;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.expr.NExprs;
@@ -234,7 +234,7 @@ public class Test01_CreateTest {
             Assertions.assertNotNull(c);
         }
         {
-            NLocks c = NLocks.of();
+            NLockBuilder c = NLockBuilder.of();
             Assertions.assertNotNull(c);
         }
         {

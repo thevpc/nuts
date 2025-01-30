@@ -2,10 +2,12 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NBootOptions;
-import net.thevpc.nuts.runtime.standalone.NWsConfDB;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions;
 import net.thevpc.nuts.runtime.standalone.io.cache.CachedSupplier;
+import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
+import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStoreInMemory;
+import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStoreOnDisk;
 import net.thevpc.nuts.util.NLRUMap;
 import net.thevpc.nuts.runtime.standalone.util.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.util.filters.DefaultNFilterModel;
@@ -25,7 +27,7 @@ import java.util.Stack;
 
 public class NWorkspaceModel {
     public NWorkspace workspace;
-    public InheritableThreadLocal<Stack<NSession>> sessionScopes=new InheritableThreadLocal<>();
+    public InheritableThreadLocal<Stack<NSession>> sessionScopes = new InheritableThreadLocal<>();
     public NSession initSession;
     public DefaultNBootModel bootModel;
     public DefaultNWorkspaceSecurityModel securityModel;
@@ -51,30 +53,34 @@ public class NWorkspaceModel {
     public String apiDigest;
     public String installationDigest;
     public SafeRecommendationConnector recomm;
-    public List<String> recommendedCompanions=new ArrayList<>();
+    public List<String> recommendedCompanions = new ArrayList<>();
     public NPropertiesHolder properties = new NPropertiesHolder();
     public NVersion askedApiVersion;
     public NId askedRuntimeId;
     public NBootOptions bOption0;
-    public NWsConfDB confDB;
-    public NLRUMap<NId, CachedSupplier<NDefinition>> cachedDefs=new NLRUMap<>(100);
+    public NLRUMap<NId, CachedSupplier<NDefinition>> cachedDefs = new NLRUMap<>(100);
     public DefaultNExtensions extensions;
+    public NWorkspaceStore store;
 
     public NWorkspaceModel(NWorkspace workspace, NBootOptions bOption0) {
         this.workspace = workspace;
-        recomm =new SafeRecommendationConnector(new SimpleRecommendationConnector(workspace));
-        this.confDB=new NWsConfDB(workspace);
+        if (bOption0.getIsolationLevel().orNull() == NIsolationLevel.MEMORY) {
+            this.store = new NWorkspaceStoreInMemory(workspace);
+        } else {
+            this.store = new NWorkspaceStoreOnDisk(workspace);
+        }
+        this.recomm = new SafeRecommendationConnector(new SimpleRecommendationConnector(workspace));
         this.bOption0 = bOption0;
         // initialized here because they just do nothing...
         this.commandModel = new DefaultCustomCommandsModel(workspace);
         this.importModel = new DefaultImportModel(workspace);
         this.eventsModel = new DefaultNWorkspaceEventModel(workspace);
         this.repositoryModel = new DefaultNRepositoryModel(workspace);
-        this.extensions= new DefaultNExtensions(this);
-        this.bootModel = new DefaultNBootModel(workspace,this,bOption0);
+        this.extensions = new DefaultNExtensions(this);
+        this.bootModel = new DefaultNBootModel(workspace, this, bOption0);
     }
 
-    public void init(){
+    public void init() {
         askedApiVersion = bOption0.getApiVersion().orNull();
         askedRuntimeId = bOption0.getRuntimeId().orNull();
         if (askedRuntimeId == null) {

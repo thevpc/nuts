@@ -1,21 +1,19 @@
 package net.thevpc.nuts.runtime.standalone.lock;
 
-import net.thevpc.nuts.concurrent.NLocks;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.concurrent.NLockBuilder;
 import net.thevpc.nuts.NWorkspace;
 
 import java.io.File;
 import java.nio.file.Path;
 
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
+import net.thevpc.nuts.io.NPath;
 
-public abstract class AbstractNLocks implements NLocks {
+public abstract class AbstractNLockBuilder implements NLockBuilder {
     private NWorkspace workspace;
     private Object source;
     private Object resource;
 
-    public AbstractNLocks(NWorkspace workspace) {
+    public AbstractNLockBuilder(NWorkspace workspace) {
         this.workspace = workspace;
     }
 
@@ -31,25 +29,31 @@ public abstract class AbstractNLocks implements NLocks {
     }
 
     @Override
-    public NLocks setSource(Object source) {
+    public NLockBuilder setSource(Object source) {
         this.source=source;
         return this;
     }
 
     @Override
-    public NLocks setResource(File source) {
+    public NLockBuilder setResource(File source) {
         this.resource=source;
         return this;
     }
 
     @Override
-    public NLocks setResource(Path source) {
+    public NLockBuilder setResource(Path source) {
         this.resource=source;
         return this;
     }
 
     @Override
-    public NLocks setResource(Object source) {
+    public NLockBuilder setResource(NPath source) {
+        this.resource=source;
+        return this;
+    }
+
+    @Override
+    public NLockBuilder setResource(Object source) {
         this.resource=source;
         return this;
     }

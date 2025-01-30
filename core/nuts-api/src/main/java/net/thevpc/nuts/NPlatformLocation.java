@@ -36,7 +36,7 @@ import java.util.Objects;
  * @app.category Config
  * @since 0.5.4
  */
-public class NPlatformLocation extends NConfigItem {
+public class NPlatformLocation extends NConfigItem implements Cloneable {
 
     public static final long serialVersionUID = 3;
     private final NId id;
@@ -165,5 +165,14 @@ public class NPlatformLocation extends NConfigItem {
                 ", version='" + version + '\'' +
                 ", priority=" + priority +
                 '}';
+    }
+
+    public NPlatformLocation copy() {
+        try {
+            NPlatformLocation cloned = (NPlatformLocation) clone();
+            return cloned;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

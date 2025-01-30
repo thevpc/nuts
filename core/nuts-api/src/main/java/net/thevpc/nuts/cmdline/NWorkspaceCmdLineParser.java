@@ -1145,6 +1145,23 @@ public final class NWorkspaceCmdLineParser {
                             return NOptional.of(newArgs.stream().map(NArg::of).collect(Collectors.toList()));
                         }
                     }
+                    case "--reset-hard": {
+                        a = cmdLine.nextFlag().get();
+                        if (active) {
+                            if (options != null) {
+                                if (a.getBooleanValue().get()) {
+                                    options.setResetHard(true);
+                                    options.setRecover(false);
+                                }
+                            }
+                            return NOptional.of(Collections.singletonList(a));
+                        } else {
+                            List<String> newArgs = new ArrayList<>();
+                            newArgs.addAll(Arrays.asList(cmdLine.toStringArray()));
+                            cmdLine.skipAll();
+                            return NOptional.of(newArgs.stream().map(NArg::of).collect(Collectors.toList()));
+                        }
+                    }
                     case "-z":
                     case "--recover": {
                         a = cmdLine.nextFlag().get();
@@ -1307,6 +1324,18 @@ public final class NWorkspaceCmdLineParser {
                         if (active) {
                             if (options != null) {
                                 options.setIsolationLevel(a.getBooleanValue().get() ? NIsolationLevel.SANDBOX : null);
+                            }
+                            return NOptional.of(Collections.singletonList(a));
+                        } else {
+                            return NOptional.of(Collections.singletonList(a));
+                        }
+                    }
+                    //@since 0.8.5
+                    case "--in-memory": {
+                        a = cmdLine.nextFlag().get();
+                        if (active) {
+                            if (options != null) {
+                                options.setIsolationLevel(a.getBooleanValue().get() ? NIsolationLevel.MEMORY : null);
                             }
                             return NOptional.of(Collections.singletonList(a));
                         } else {

@@ -25,13 +25,17 @@
  */
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.NId;
+import net.thevpc.nuts.NIsolationLevel;
+import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 /**
@@ -41,9 +45,9 @@ import java.util.concurrent.locks.Lock;
  * @app.category Input Output
  * @since 0.5.8
  */
-public interface NLocks extends NComponent {
-    static NLocks of() {
-        return NExtensions.of(NLocks.class);
+public interface NLockBuilder extends NComponent {
+    static NLockBuilder of() {
+        return NExtensions.of(NLockBuilder.class);
     }
 
     /**
@@ -54,13 +58,15 @@ public interface NLocks extends NComponent {
      */
     Object getSource();
 
+    NLockBuilder setResource(NPath source);
+
     /**
      * update source
      *
      * @param source source
      * @return {@code this} instance
      */
-    NLocks setSource(Object source);
+    NLockBuilder setSource(Object source);
 
     /**
      * lock resource represents the lock it self.
@@ -76,7 +82,7 @@ public interface NLocks extends NComponent {
      * @param source resource
      * @return {@code this} instance
      */
-    NLocks setResource(File source);
+    NLockBuilder setResource(File source);
 
     /**
      * update resource
@@ -84,7 +90,7 @@ public interface NLocks extends NComponent {
      * @param source resource
      * @return {@code this} instance
      */
-    NLocks setResource(Path source);
+    NLockBuilder setResource(Path source);
 
     /**
      * update resource
@@ -92,7 +98,7 @@ public interface NLocks extends NComponent {
      * @param source resource
      * @return {@code this} instance
      */
-    NLocks setResource(Object source);
+    NLockBuilder setResource(Object source);
 
 
     /**
@@ -100,41 +106,7 @@ public interface NLocks extends NComponent {
      *
      * @return new {@link Lock} instance
      */
-    NLock create();
+    NLock build();
 
-    /**
-     * create lock object for the given source and resource
-     *
-     * @param runnable runnable
-     * @param <T>      result type
-     * @return result
-     */
-    <T> T call(Callable<T> runnable);
 
-    /**
-     * create lock object for the given source and resource
-     *
-     * @param runnable runnable
-     * @param <T>      result type
-     * @param time     time
-     * @param unit     unit
-     * @return result
-     */
-    <T> T call(Callable<T> runnable, long time, TimeUnit unit);
-
-    /**
-     * create lock object for the given source and resource
-     *
-     * @param runnable runnable
-     */
-    void run(Runnable runnable);
-
-    /**
-     * create lock object for the given source and resource
-     *
-     * @param runnable runnable
-     * @param time     time
-     * @param unit     unit
-     */
-    void run(Runnable runnable, long time, TimeUnit unit);
 }

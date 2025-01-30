@@ -8,6 +8,7 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepositoryModel;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
+import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NExecutionContextBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.config.*;
 import net.thevpc.nuts.spi.NDependencySolver;
@@ -29,6 +30,8 @@ public interface NWorkspaceExt {
     static NWorkspaceExt of(NWorkspace ws) {
         return ((NWorkspaceExt)ws);
     }
+
+    NWorkspaceStore store();
 
     NText getWelcomeText();
 

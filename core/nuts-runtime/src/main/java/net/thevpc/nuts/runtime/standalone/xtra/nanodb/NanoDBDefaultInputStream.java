@@ -5,7 +5,7 @@ import net.thevpc.nuts.io.NIOException;
 
 import java.io.*;
 
-class NanoDBDefaultInputStream implements NanoDBInputStream {
+public class NanoDBDefaultInputStream implements NanoDBInputStream {
     private DataInputStream in;
     private NWorkspace workspace;
 

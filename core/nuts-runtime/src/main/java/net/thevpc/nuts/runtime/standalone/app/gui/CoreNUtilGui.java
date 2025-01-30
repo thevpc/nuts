@@ -34,7 +34,25 @@ public final class CoreNUtilGui {
         }
     }
 
-    public static String inputString(NMsg message, NMsg title) {
+    public static class GuiResult {
+        Object value;
+        boolean rememberMe;
+
+        public GuiResult(Object value, boolean rememberMe) {
+            this.value = value;
+            this.rememberMe = rememberMe;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+        public boolean isRememberMe() {
+            return rememberMe;
+        }
+    }
+
+    public static GuiResult inputString(NMsg message, NMsg title, boolean rememberMe) {
         try {
             NTexts text = NTexts.of();
             if (title == null) {
@@ -47,16 +65,17 @@ public final class CoreNUtilGui {
             if (line == null) {
                 line = "";
             }
-            return line;
+            return new GuiResult(line, rememberMe && false);
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
             NSession session = NSession.get().get();
             session.err().println(NMsg.ofC("[Graphical Environment Unsupported] %s", title));
-            return session.getTerminal().readLine(NMsg.ofPlain(message.toString()));
+            String line = session.getTerminal().readLine(NMsg.ofPlain(message.toString()));
+            return new GuiResult(line, rememberMe && false);
         }
     }
 
-    public static String inputPassword(NMsg message, NMsg title) {
+    public static GuiResult inputPassword(NMsg message, NMsg title, boolean rememberMe) {
         if (title == null) {
             title = NMsg.ofC("Nuts Package Manager - %s", Nuts.getVersion());
         }
@@ -77,14 +96,17 @@ public final class CoreNUtilGui {
                     javax.swing.JOptionPane.YES_NO_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE,
                     null, options, options[1]);
             if (option == 0) {
-                return new String(pass.getPassword());
+                return new GuiResult(new String(pass.getPassword()), rememberMe && false);
             }
-            return "";
+            return new GuiResult("", rememberMe && false);
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
             NSession session = NSession.get().get();
             session.err().println(NMsg.ofC("[Graphical Environment Unsupported] %s", title));
-            return session.getTerminal().readLine(NMsg.ofPlain(message.toString()));
+            return new GuiResult(
+                    session.getTerminal().readLine(NMsg.ofPlain(message.toString())),
+                    rememberMe && false
+            );
         }
     }
 

@@ -1,7 +1,5 @@
-package net.thevpc.nuts.runtime.standalone;
+package net.thevpc.nuts;
 
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringUtils;
@@ -14,20 +12,39 @@ public class NLocationKey {
     private String repoUuid;
     private NStoreType storeType;
 
-    public static NLocationKey of(NStoreType storeType,NId id,String name) {
-        return new NLocationKey(storeType, id, name, null);
-    }
-    public static NLocationKey of(NStoreType storeType,NId id,String name, String repoUuid) {
-        return new NLocationKey(storeType, id, name, repoUuid);
-    }
-    public static NLocationKey ofCache(NId id,String name, String repoUuid) {
-        return new NLocationKey(NStoreType.CACHE, id, name, repoUuid);
+    public static NLocationKey of(NStoreType storeType, NId id, String name) {
+        return new NLocationKey(storeType, id, null, name);
     }
 
-    public NLocationKey(NStoreType storeType, NId id, String name, String repoUuid) {
-        if(NBlankable.isBlank(name)){
+    public static NLocationKey of(NStoreType storeType, NId id, String repoUuid, String name) {
+        return new NLocationKey(storeType, id, repoUuid, name);
+    }
+
+    public static NLocationKey ofCache(NId id, String repoUuid, String name) {
+        return new NLocationKey(NStoreType.CACHE, id, repoUuid, name);
+    }
+
+    public static NLocationKey ofCacheFaced(NId id, String repoUuid, String faceName) {
+        return ofFaced(NStoreType.CACHE, id, repoUuid, faceName);
+    }
+
+    public static NLocationKey ofFaced(NStoreType storeType, NId id, String repoUuid, String faceName) {
+        return new NLocationKey(storeType, id, repoUuid, NWorkspace.of().getDefaultIdFilename(id.builder().setFace(faceName).build()));
+    }
+
+    public static NLocationKey ofConf(NId id, String repoUuid, String name) {
+        return new NLocationKey(NStoreType.CONF, id, repoUuid, name);
+    }
+
+    public static NLocationKey ofConfFaced(NId id, String repoUuid, String faceName) {
+        return ofFaced(NStoreType.CONF, id, repoUuid, faceName);
+    }
+
+
+    public NLocationKey(NStoreType storeType, NId id, String repoUuid, String name) {
+        if (NBlankable.isBlank(name)) {
             this.name = null;
-        }else {
+        } else {
             NAssert.requireTrue(name.matches("[a-zA-Z0-9._-]+"), "name matches [a-zA-Z0-9._-]+");
             this.name = name;
         }
@@ -69,9 +86,9 @@ public class NLocationKey {
     @Override
     public String toString() {
         return "NLocationKey{" +
-                "name='" + name + '\'' +
+                "name=" + NStringUtils.formatStringLiteral(name) +
                 ", id=" + id +
-                ", repoUuid='" + repoUuid + '\'' +
+                ", repoUuid=" + NStringUtils.formatStringLiteral(repoUuid) +
                 ", storeType=" + storeType +
                 '}';
     }

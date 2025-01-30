@@ -195,6 +195,14 @@ public interface NBootOptionsBuilder extends NBootOptions, NComponent {
      */
     NBootOptionsBuilder setReset(Boolean reset);
 
+    /**
+     * set resetHard flag.
+     * Reset hard is used at boot time to reset ALL of nuts workspaces
+     * @param resetHard resetHard flag
+     * @return {@code this}
+     */
+    NBootOptionsBuilder setResetHard(Boolean resetHard);
+
     NBootOptionsBuilder setCommandVersion(Boolean version);
 
     NBootOptionsBuilder setCommandHelp(Boolean help);

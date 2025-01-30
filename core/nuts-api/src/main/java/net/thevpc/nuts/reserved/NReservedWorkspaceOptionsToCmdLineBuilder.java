@@ -530,6 +530,9 @@ public class NReservedWorkspaceOptionsToCmdLineBuilder {
         fillOption("--reset", "-Z", options.getReset().orNull(), false, arguments, false);
         fillOption("--recover", "-z", options.getRecover().orNull(), false, arguments, false);
         fillOption("--dry", "-D", options.getDry().orNull(), false, arguments, false);
+        if (isApiVersionOrAfter(V085)) {
+            fillOption("--reset-hard", null, options.getReset().orNull(), false, arguments, false);
+        }
         if (isApiVersionOrAfter(V084)) {
             fillOption("--stacktrace", null, options.getShowStacktrace().orNull(), false, arguments, false);
         }

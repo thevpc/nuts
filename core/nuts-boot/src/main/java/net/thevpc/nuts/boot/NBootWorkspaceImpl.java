@@ -186,7 +186,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             bootOptions.setName(workspaceName);
         }
         boolean system = NBootUtils.firstNonNull(bootOptions.getSystem(), false);
-        if (NBootUtils.sameEnum(sandboxMode, "SANDBOX")) {
+        if (NBootUtils.sameEnum(sandboxMode, "SANDBOX") || NBootUtils.sameEnum(sandboxMode, "MEMORY")) {
             bootOptions.setStoreStrategy("STANDALONE");
             bootOptions.setRepositoryStoreStrategy("EXPLODED");
             system = false;
@@ -517,7 +517,9 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                         NBootUtils.sameEnum(isolationLevel, "SYSTEM") ? "" :
                                 NBootUtils.sameEnum(isolationLevel, "USER") ? " (user mode)" :
                                         NBootUtils.sameEnum(isolationLevel, "CONFINED") ? " (confined mode)" :
-                                                NBootUtils.sameEnum(isolationLevel, "SANDBOX") ? " (sandbox mode)" : " (unsupported mode " + isolationLevel + ")",
+                                                NBootUtils.sameEnum(isolationLevel, "SANDBOX") ? " (sandbox mode)" :
+                                                        NBootUtils.sameEnum(isolationLevel, "MEMORY") ? " (in-memory mode)"
+                                                                : " (unsupported mode " + isolationLevel + ")",
                         getApiDigestOrInternal()));
                 bLog.log(Level.CONFIG, "START", NBootMsg.ofPlain("boot-class-path:"));
                 for (String s : NBootUtils.split(System.getProperty("java.class.path"), File.pathSeparator, true, true)) {
@@ -553,6 +555,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             NBootOptionsInfo lastConfigLoaded = null;
             String lastNutsWorkspaceJsonConfigPath = null;
             boolean immediateLocation = false;
+            boolean resetHardFlag = NBootUtils.firstNonNull(options.getResetHard(), false);
             boolean resetFlag = NBootUtils.firstNonNull(options.getReset(), false);
             boolean dryFlag = NBootUtils.firstNonNull(options.getDry(), false);
             String _ws = options.getWorkspace();
@@ -573,13 +576,37 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 if (!NBootUtils.isBlank(options.getWorkspace())) {
                     throw new NBootException(NBootMsg.ofPlain("you cannot specify '--workspace' in sandbox mode"));
                 }
-                if (!NBootUtils.isBlank(options.getStoreStrategy())  && !NBootUtils.sameEnum(options.getStoreStrategy(), "STANDALONE")) {
+                if (!NBootUtils.isBlank(options.getStoreStrategy()) && !NBootUtils.sameEnum(options.getStoreStrategy(), "STANDALONE")) {
                     throw new NBootException(NBootMsg.ofPlain("you cannot specify '--exploded' in sandbox mode"));
                 }
                 if (NBootUtils.firstNonNull(options.getSystem(), false)) {
                     throw new NBootException(NBootMsg.ofPlain("you cannot specify '--global' in sandbox mode"));
                 }
                 options.setWorkspace(lastNutsWorkspaceJsonConfigPath);
+//            }else if (NBootUtils.sameEnum(isolationLevel, "MEMORY")) {
+//                Path t = null;
+//                try {
+//                    t = Files.createTempDirectory("nuts-memory-" + Instant.now().toString().replace(':', '-'));
+//                } catch (IOException e) {
+//                    throw new NBootException(NBootMsg.ofPlain("unable to create temporary/sandbox folder"), e);
+//                }
+//                lastNutsWorkspaceJsonConfigPath = t.toString();
+//                immediateLocation = true;
+//                workspaceName = t.getFileName().toString();
+//                resetFlag = false; //no need for reset
+//                if (NBootUtils.firstNonNull(options.getSystem(), false)) {
+//                    throw new NBootException(NBootMsg.ofPlain("you cannot specify option '--global' in in-memory mode"));
+//                }
+//                if (!NBootUtils.isBlank(options.getWorkspace())) {
+//                    throw new NBootException(NBootMsg.ofPlain("you cannot specify '--workspace' in in-memory mode"));
+//                }
+//                if (!NBootUtils.isBlank(options.getStoreStrategy())  && !NBootUtils.sameEnum(options.getStoreStrategy(), "STANDALONE")) {
+//                    throw new NBootException(NBootMsg.ofPlain("you cannot specify '--exploded' in in-memory mode"));
+//                }
+//                if (NBootUtils.firstNonNull(options.getSystem(), false)) {
+//                    throw new NBootException(NBootMsg.ofPlain("you cannot specify '--global' in in-memory mode"));
+//                }
+//                options.setWorkspace(lastNutsWorkspaceJsonConfigPath);
             } else {
                 if (!NBootUtils.sameEnum(isolationLevel, "SYSTEM") && NBootUtils.firstNonNull(options.getSystem(), false)) {
                     if (NBootUtils.firstNonNull(options.getReset(), false)) {
@@ -623,7 +650,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 options.setName(lastConfigLoaded.getName());
                 options.setUuid(lastConfigLoaded.getUuid());
                 NBootOptionsInfo curr;
-                if (!resetFlag) {
+                if (!resetFlag && !resetHardFlag) {
                     curr = options;
                 } else {
                     lastWorkspaceOptions = new NBootOptionsInfo();
@@ -645,33 +672,46 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             revalidateLocations(options, workspaceName, immediateLocation, isolationLevel);
             long countDeleted = 0;
             //now that config is prepared proceed to any cleanup
-            if (resetFlag) {
+            if (resetHardFlag) {
                 //force loading version early, it will be used later-on
+                bLog.log(isAskConfirm(getOptions())?Level.OFF:Level.WARNING, "WARNING", NBootMsg.ofPlain("reset hard all workspaces"));
                 if (lastWorkspaceOptions != null) {
                     revalidateLocations(lastWorkspaceOptions, workspaceName, immediateLocation, isolationLevel);
-                    if (dryFlag) {
-                        bLog.log(Level.INFO, "DEBUG", NBootMsg.ofPlain("[dry] [reset] delete ALL workspace folders and configurations"));
-                    } else {
-                        bLog.log(Level.CONFIG, "WARNING", NBootMsg.ofPlain("reset workspace"));
-                        getFallbackCache(NBootId.RUNTIME_ID, true, true);
-                        countDeleted = NBootUtils.deleteStoreLocations(lastWorkspaceOptions, getOptions(), true, bLog, NBootPlatformHome.storeTypes(), () -> scanner.nextLine());
-                        NBootUtils.ndiUndo(bLog);
-                    }
+                }
+                if (dryFlag) {
+                    //
                 } else {
-                    if (dryFlag) {
-                        bLog.log(Level.INFO, "DEBUG", NBootMsg.ofPlain("[dry] [reset] delete ALL workspace folders and configurations"));
+                    if (lastWorkspaceOptions != null) {
+//                        getFallbackCache(NBootId.RUNTIME_ID, true, true);
+                        countDeleted = NBootUtils.deleteStoreLocationsHard(lastWorkspaceOptions, getOptions(), bLog, () -> scanner.nextLine());
+                        NBootUtils.ndiUndo(bLog);
                     } else {
-                        bLog.log(Level.CONFIG, "WARNING", NBootMsg.ofPlain("reset workspace"));
-                        getFallbackCache(NBootId.RUNTIME_ID, false, true);
-                        countDeleted = NBootUtils.deleteStoreLocations(options, getOptions(), true, bLog, NBootPlatformHome.storeTypes(), () -> scanner.nextLine());
+//                        getFallbackCache(NBootId.RUNTIME_ID, false, true);
+                        countDeleted = NBootUtils.deleteStoreLocationsHard(lastWorkspaceOptions, getOptions(), bLog, () -> scanner.nextLine());
                         NBootUtils.ndiUndo(bLog);
                     }
                 }
-            } else if (NBootUtils.firstNonNull(options.getRecover(), false)) {
+            } else if (resetFlag) {
+                //force loading version early, it will be used later-on
+                bLog.log(isAskConfirm(getOptions())?Level.OFF:Level.WARNING, "WARNING", NBootMsg.ofPlain("reset workspace"));
                 if (dryFlag) {
-                    bLog.log(Level.INFO, "DEBUG", NBootMsg.ofPlain("[dry] [recover] delete CACHE/TEMP workspace folders"));
+                    //
                 } else {
-                    bLog.log(Level.CONFIG, "WARNING", NBootMsg.ofPlain("recover workspace."));
+                    if (lastWorkspaceOptions != null) {
+                        revalidateLocations(lastWorkspaceOptions, workspaceName, immediateLocation, isolationLevel);
+                        getFallbackCache(NBootId.RUNTIME_ID, true, true);
+                        countDeleted = NBootUtils.deleteStoreLocations(lastWorkspaceOptions, getOptions(), true, bLog, NBootPlatformHome.storeTypes(), () -> scanner.nextLine());
+                    } else {
+                        getFallbackCache(NBootId.RUNTIME_ID, false, true);
+                        countDeleted = NBootUtils.deleteStoreLocations(options, getOptions(), true, bLog, NBootPlatformHome.storeTypes(), () -> scanner.nextLine());
+                    }
+                    NBootUtils.ndiUndo(bLog);
+                }
+            } else if (NBootUtils.firstNonNull(options.getRecover(), false)) {
+                bLog.log(isAskConfirm(getOptions())?Level.OFF:Level.WARNING, "WARNING", NBootMsg.ofPlain("recover workspace."));
+                if (dryFlag) {
+                    //bLog.log(Level.INFO, "DEBUG", NBootMsg.ofPlain("[dry] [recover] delete CACHE/TEMP workspace folders"));
+                } else {
                     List<Object> folders = new ArrayList<>();
                     folders.add("CACHE");
                     folders.add("TEMP");
@@ -685,21 +725,21 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 }
             }
             if (options.getExtensionsSet() == null) {
-                if (lastWorkspaceOptions != null && !resetFlag) {
+                if (lastWorkspaceOptions != null && !resetFlag && !resetHardFlag) {
                     options.setExtensionsSet(NBootUtils.firstNonNull(lastWorkspaceOptions.getExtensionsSet(), Collections.emptySet()));
                 } else {
                     options.setExtensionsSet(Collections.emptySet());
                 }
             }
             if (options.getHomeLocations() == null) {
-                if (lastWorkspaceOptions != null && !resetFlag) {
+                if (lastWorkspaceOptions != null && !resetFlag && !resetHardFlag) {
                     options.setHomeLocations(NBootUtils.firstNonNull(lastWorkspaceOptions.getHomeLocations(), Collections.emptyMap()));
                 } else {
                     options.setHomeLocations(Collections.emptyMap());
                 }
             }
             if (options.getStoreLayout() == null) {
-                if (lastWorkspaceOptions != null && !resetFlag) {
+                if (lastWorkspaceOptions != null && !resetFlag && !resetHardFlag) {
                     options.setStoreLayout(NBootUtils.firstNonNull(lastWorkspaceOptions.getStoreLayout(), NBootPlatformHome.currentOsFamily()));
                 } else {
                     options.setHomeLocations(Collections.emptyMap());
@@ -710,7 +750,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             //as long as there are no applications to run, will exit before creating workspace
             if (
                     NBootUtils.isEmptyList(options.getApplicationArguments())
-                            && NBootUtils.firstNonNull(options.getSkipBoot(), false) && (NBootUtils.firstNonNull(options.getRecover(), false) || resetFlag)) {
+                            && NBootUtils.firstNonNull(options.getSkipBoot(), false) && (NBootUtils.firstNonNull(options.getRecover(), false) || (resetFlag || resetHardFlag))) {
                 if (isPlainTrace()) {
                     if (countDeleted > 0) {
                         bLog.warn(NBootMsg.ofC("workspace erased : %s", options.getWorkspace()));
@@ -780,7 +820,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 if (options.getRuntimeId() == null) {
                     //load from local lib folder
                     NBootId runtimeId = null;
-                    if (!resetFlag && !NBootUtils.firstNonNull(options.getRecover(), false)) {
+                    if (!resetFlag && !resetHardFlag && !NBootUtils.firstNonNull(options.getRecover(), false)) {
                         runtimeId = NReservedMavenUtilsBoot.resolveLatestMavenId(NBootId.of(NBootConstants.Ids.NUTS_RUNTIME), (rtVersion) -> rtVersion.getValue().startsWith(apiVersion + "."), bLog, Collections.singletonList(NBootRepositoryLocation.of("nuts@" + options.getStoreType("LIB") + File.separatorChar + NBootConstants.Folders.ID)), options, cache);
                     }
                     if (runtimeId == null) {
@@ -811,7 +851,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                     Path nutsRuntimeCacheConfigPath = Paths.get(options.getStoreType("CONF") + File.separator + NBootConstants.Folders.ID).resolve(NBootUtils.resolveIdPath(bootApiId)).resolve(NBootConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
                     try {
                         boolean cacheLoaded = false;
-                        if (!NBootUtils.firstNonNull(options.getRecover(), false) && !resetFlag && NBootUtils.isFileAccessible(nutsRuntimeCacheConfigPath, options.getExpireTime(), bLog)) {
+                        if (!NBootUtils.firstNonNull(options.getRecover(), false) && !resetFlag && !resetHardFlag && NBootUtils.isFileAccessible(nutsRuntimeCacheConfigPath, options.getExpireTime(), bLog)) {
                             try {
                                 Map<String, Object> obj = NBootJsonParser.parse(nutsRuntimeCacheConfigPath);
                                 bLog.log(Level.CONFIG, "READ", NBootMsg.ofC("loaded %s file : %s", nutsRuntimeCacheConfigPath.getFileName(), nutsRuntimeCacheConfigPath.toString()));
@@ -910,6 +950,10 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             return true;
         }
         return false;
+    }
+
+    private boolean isAskConfirm(NBootOptionsInfo o){
+        return NBootUtils.sameEnum(NBootUtils.enumName(NBootUtils.firstNonNull(o.getConfirm(), "ASK")),"ASK");
     }
 
     private boolean isPlainTrace() {

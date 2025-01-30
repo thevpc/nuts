@@ -59,6 +59,10 @@ public interface NOptional<T> extends NBlankable {
         return ofError(errorMessage==null?null:()->errorMessage, null);
     }
 
+    static <T> NOptional<T> ofError(NMsg errorMessage, Throwable throwable) {
+        return ofError(errorMessage==null?null:()->errorMessage, throwable);
+    }
+
     static <T> NOptional<T> ofError(Supplier<NMsg> errorMessage, Throwable throwable) {
         return new NReservedOptionalError<>(errorMessage, throwable);
     }

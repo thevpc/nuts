@@ -33,7 +33,7 @@ import java.nio.file.Path;
  */
 public interface NBootDeleteFilesContextBoot {
 
-    boolean isForce();
+    boolean isForce(boolean force);
 
     void setForce(boolean value);
 

@@ -61,9 +61,17 @@ public class CoreNUtils {
             = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
             .withZone(ZoneId.systemDefault());
     public static final String[] COLOR_NAMES = new TreeSet<String>(Arrays.asList(
-            "Maroon", "Brown", "Olive", "Teal", "Navy", "Black", "Red", "Orange", "Yellow", "Lime", "Green", "Cyan", "Blue", "Purple", "Magenta", "Grey", "Pink",
-            "Apricot", "Beige", "Mint", "Lavender", "White", "Turquoise", "Aqua", "Aquamarine", "Gold", "Coral", "Tomato", "Firebrick",
-            "Crimson", "Salmon", "Moccasin", "PeachPuff", "Khaki", "Cornsilk", "Bisque", "Wheat", "Tan", "Peru", "Chocolate", "Sienna", "Snow", "Azure", "Ivory", "Linen", "Silver", "Gray"
+            "Maroon", "Brown", "Olive", "Teal", "Navy", "Black", "Red", "Orange", "Yellow", "Lime", "Green", "Cyan", "Blue", "Purple",
+            "Magenta", "Grey", "Pink", "Apricot", "Beige", "Mint", "Lavender", "White", "Turquoise", "Aqua", "Aquamarine", "Gold",
+            "Coral", "Tomato", "Firebrick", "Crimson", "Salmon", "Moccasin", "PeachPuff", "Khaki", "Cornsilk", "Bisque", "Wheat",
+            "Tan", "Peru", "Chocolate", "Sienna", "Snow", "Azure", "Ivory", "Linen", "Silver", "Gray", "Fuchsia", "NavyBlue", "DarkBlue",
+            "DarkGreen", "DeepSkyBlue", "DodgerBlue", "SpringGreen", "DarkCyan", "LightSeaGreen", "DarkTurquoise", "MediumSpringGreen",
+            "DarkRed", "DeepPink", "BlueViolet", "Orange", "MediumPurple", "SlateBlue", "RoyalBlue", "Chartreuse", "DarkSeaGreen",
+            "PaleTurquoise", "SteelBlue", "CornflowerBlue", "CadetBlue", "SkyBlue", "PaleGreen", "SeaGreen", "MediumTurquoise",
+            "DarkSlateGray", "DarkMagenta", "DarkViolet", "LightPink", "Plum", "LightSlateGrey","LightSlateBlue","DarkOliveGreen",
+            "LightSkyBlue","MediumVioletRed","DarkOrange","IndianRed","HotPink","MediumOrchid","DarkGoldenrod","LightSalmon",
+            "RosyBrown","DarkKhaki","NavajoWhite","LightSteelBlue","LightCyan","GreenYellow","Orchid","Violet","LightGoldenrod",
+            "Tan","MistyRose","Thistle","LightYellow","Honeydew","LightCoral","PaleVioletRed","SandyBrown"
     )).toArray(new String[0]);
     public static final int LOCK_TIME = 3;
     public static final TimeUnit LOCK_TIME_UNIT = TimeUnit.SECONDS;

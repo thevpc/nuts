@@ -47,6 +47,7 @@ import net.thevpc.nuts.spi.NTerminalSpec;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -373,7 +374,22 @@ public class DefaultNBootModel implements NBootModel {
                         DefaultNArg a = new DefaultNArg(property);
                         if (a.isActive()) {
                             String key = a.getKey().asString().orElse("");
-                            this.customBootOptions.put(key, NLiteral.of(a.getStringValue().orElse(null)));
+                            String v = a.getStringValue().orElse(null);
+                            if(a.isEnabled()) {
+                                this.customBootOptions.put(key, NLiteral.of(v));
+                            }else if(NBlankable.isBlank(v)){
+                                this.customBootOptions.put(key, NLiteral.of(false));
+                            }else{
+                                NOptional<Boolean> b = NLiteral.of(v).asBoolean();
+                                if(b.isPresent()){
+                                    this.customBootOptions.put(key, NLiteral.of(!b.get()));
+                                }else{
+                                    // this is a bad example,
+                                    // ---!helpful=4
+                                    // so wil propagate ! to the value
+                                    this.customBootOptions.put(key, NLiteral.of("!"+v));
+                                }
+                            }
                         }
                     }
                 }

@@ -1,7 +1,8 @@
-package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
+package net.thevpc.nuts.runtime.standalone.xtra.nanodb.file;
 
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.runtime.standalone.xtra.nanodb.*;
 import net.thevpc.nuts.util.NStream;
 
 import java.io.*;
@@ -9,7 +10,7 @@ import java.nio.channels.FileChannel;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
-public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
+public class NanoDBTableStoreFile<T> implements NanoDBTableStore<T> {
     public static final String NANODB_TABLE_0_8_1 = "nanodb-table-0.8.1";
     private final Object tableLock = new Object();
     private final NanoDBSerializer<T> serializer;
@@ -23,7 +24,7 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
     private FileChannel readChannel;
     private Class<T> rowType;
 
-    public NanoDBTableFile(Class<T> rowType,File dir, String tableName
+    public NanoDBTableStoreFile(Class<T> rowType, File dir, String tableName
             , NanoDBSerializer<T> serializer
             , NanoDB db
             , NanoDBIndexDefinition<T>[] indexDefinitions, NWorkspace workspace
@@ -86,6 +87,10 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
             }
             if (writeStream == null) {
                 try {
+                    File p = tableFile.getParentFile();
+                    if(p!=null){
+                        p.mkdirs();
+                    }
                     writeStream = new NanoDBDefaultOutputStream(new FileOutputStream(tableFile, true), workspace);
                 } catch (FileNotFoundException e) {
                     throw new NIOException(e);
@@ -142,7 +147,7 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
         return new Iterable<T>() {
             @Override
             public Iterator<T> iterator() {
-                return NanoDBTableFile.this.iterator();
+                return NanoDBTableStoreFile.this.iterator();
             }
         };
     }
@@ -279,11 +284,8 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
                 if (data != null) {
                     return data;
                 }
-                NanoDBIndex fi = db.createIndexFor(
-                        def.getIndexType(),
-                        db.getSerializers().findSerializer(def.getIndexType(), def.isNullable()),
-                        getIndexFile()
-                );
+                NanoDBIndex fi = new NanoDBDefaultIndex<T>(workspace,def.getIndexType(),db.getSerializers().findSerializer(def.getIndexType(), def.isNullable()),
+                        new DBIndexValueStoreDefaultFactory(), new HashMap<>(), getIndexFile());
                 fi.load();
                 data = fi;
                 return fi;

@@ -32,5 +32,5 @@ package net.thevpc.nuts.util;
  */
 public interface NAskParser<T> {
 
-    T parse(Object response, T defaultValue, NAsk<T> question);
+    T parse(NAskParseContext<T> context);
 }

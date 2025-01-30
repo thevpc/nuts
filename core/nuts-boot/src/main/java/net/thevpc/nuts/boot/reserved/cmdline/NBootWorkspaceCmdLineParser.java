@@ -1123,6 +1123,24 @@ public final class NBootWorkspaceCmdLineParser {
                             return (newArgs.stream().map(NBootArg::of).collect(Collectors.toList()));
                         }
                     }
+                    case "--reset-hard": {
+                        a = cmdLine.nextFlag();
+                        if (active) {
+                            if (options != null) {
+                                if (a.getBooleanValue()) {
+                                    options.setResetHard(true);
+                                    options.setRecover(false);
+                                }
+                            }
+                            return (Collections.singletonList(a));
+                        } else {
+                            //TODO : why consume all the rest??
+                            List<String> newArgs = new ArrayList<>();
+                            newArgs.addAll(Arrays.asList(cmdLine.toStringArray()));
+                            cmdLine.skipAll();
+                            return (newArgs.stream().map(NBootArg::of).collect(Collectors.toList()));
+                        }
+                    }
                     case "-z":
                     case "--recover": {
                         a = cmdLine.nextFlag();
@@ -1282,6 +1300,18 @@ public final class NBootWorkspaceCmdLineParser {
                         if (active) {
                             if (options != null) {
                                 options.setIsolationLevel(a.getBooleanValue() ? "SANDBOX" : null);
+                            }
+                            return (Collections.singletonList(a));
+                        } else {
+                            return (Collections.singletonList(a));
+                        }
+                    }
+                    //@since 0.8.5
+                    case "--in-memory": {
+                        a = cmdLine.nextFlag();
+                        if (active) {
+                            if (options != null) {
+                                options.setIsolationLevel(a.getBooleanValue() ? "MEMORY" : null);
                             }
                             return (Collections.singletonList(a));
                         } else {

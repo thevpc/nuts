@@ -19,12 +19,13 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 
-public class DefaultFileNLock implements NLock {
+public class DefaultFileNLock extends AbstractNLock {
 
     private static TimePeriod FIVE_MINUTES = new TimePeriod(5, TimeUnit.MINUTES);
     private Path path;
     private Object lockedObject;
     private NWorkspace workspace;
+    private Thread ownerThread;
 
     public DefaultFileNLock(Path path, Object lockedObject, NWorkspace workspace) {
         this.path = path;
@@ -40,6 +41,17 @@ public class DefaultFileNLock implements NLock {
     }
 
     @Override
+    public boolean isLocked() {
+        return Files.exists(path);
+    }
+
+
+    @Override
+    public boolean isHeldByCurrentThread() {
+        return isLocked() && Thread.currentThread() == ownerThread;
+    }
+
+    @Override
     public void lockInterruptibly() throws InterruptedException {
         TimePeriod tp = getDefaultTimePeriod();
         if (!tryLockInterruptibly(tp.getCount(), tp.getUnit())) {
@@ -49,10 +61,18 @@ public class DefaultFileNLock implements NLock {
 
     @Override
     public synchronized void lock() {
-        TimePeriod tp = getDefaultTimePeriod();
-        if (!tryLock(tp.getCount(), tp.getUnit())) {
-            throw new NLockAcquireException(null, lockedObject, this, null);
-        }
+        long now = System.currentTimeMillis();
+        PollTime ptime = preferredPollTime(now, TimeUnit.SECONDS);
+        do {
+            if (tryLockImmediately()) {
+                return;
+            }
+            try {
+                Thread.sleep(ptime.minTimeToSleep);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        } while (true);
     }
 
     public void checkFree() {
@@ -71,6 +91,8 @@ public class DefaultFileNLock implements NLock {
             Files.delete(path);
         } catch (IOException ex) {
             throw new NLockReleaseException(null, lockedObject, this, ex);
+        } finally {
+            ownerThread = null;
         }
     }
 
@@ -83,7 +105,7 @@ public class DefaultFileNLock implements NLock {
         return tryLock(p.getCount(), p.getUnit());
     }
 
-    private class PollTime {
+    protected class PollTime {
 
         long timeMs;
         long minTimeToSleep;
@@ -205,6 +227,7 @@ public class DefaultFileNLock implements NLock {
                                         + "time=" + now.getTime() + "\n"
                                         + "date=" + now + "\n"
                         ).getBytes());
+                ownerThread = Thread.currentThread();
                 return true;
             }
         } catch (IOException ex) {
@@ -216,5 +239,13 @@ public class DefaultFileNLock implements NLock {
     @Override
     public Condition newCondition() {
         throw new NUnsupportedOperationException(NMsg.ofPlain("unsupported Lock.newCondition"));
+    }
+
+    @Override
+    protected void reunlock() {
+    }
+
+    @Override
+    protected void relock() {
     }
 }

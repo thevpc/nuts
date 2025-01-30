@@ -51,7 +51,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
     @Override
     public PathInfo[] writeShortcut(FreeDesktopEntry descriptor, NPath path, boolean doOverride, NId id) {
         path = NPath.of(ensureName(path == null ? null : path.toString(), descriptor.getOrCreateDesktopEntry().getName(), "desktop"));
-        PathInfo.Status s = tryWrite(descriptor, path);
+        PathInfo.Status s = tryWrite(descriptor, path, "UpdateScript");
         return new PathInfo[]{new PathInfo("desktop-shortcut", id, path, s)};
     }
 
@@ -72,7 +72,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         folder4shortcuts.mkdirs();
         NPath shortcutFile =folder4shortcuts.resolve(desktopFileName);
         all.add(new PathInfo("desktop-icon", id,
-                shortcutFile, tryWrite(descriptor, shortcutFile)));
+                shortcutFile, tryWrite(descriptor, shortcutFile, "UpdateScript")));
 
         List<String> categories = new ArrayList<>(root.getCategories());
         if (categories.isEmpty()) {
@@ -109,7 +109,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
             ByteArrayOutputStream b = new ByteArrayOutputStream();
             tr.transform(new DOMSource(dom), new StreamResult(b));
             NPath menuFile = folder4menus.resolve(menuFileName);
-            all.add(new PathInfo("desktop-menu", id, menuFile, CoreIOUtils.tryWrite(b.toByteArray(), menuFile)));
+            all.add(new PathInfo("desktop-menu", id, menuFile, CoreIOUtils.tryWrite(b.toByteArray(), menuFile, "UpdateScript")));
         } catch (ParserConfigurationException | TransformerException ex) {
             throw new RuntimeException(ex);
         }
@@ -214,9 +214,9 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
     }
 
 
-    public PathInfo.Status tryWrite(FreeDesktopEntry file, NPath out) {
+    public PathInfo.Status tryWrite(FreeDesktopEntry file, NPath out, String rememberMeKey) {
         out.mkParentDirs();
-        return CoreIOUtils.tryWrite(writeAsString(file).getBytes(), out);
+        return CoreIOUtils.tryWrite(writeAsString(file).getBytes(), out, rememberMeKey);
     }
 
     public String writeAsString(FreeDesktopEntry file) {

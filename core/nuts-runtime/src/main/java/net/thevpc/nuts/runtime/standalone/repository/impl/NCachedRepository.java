@@ -28,8 +28,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NSpeedQualifier;
 import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.concurrent.NLock;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.concurrent.NLocks;
+import net.thevpc.nuts.concurrent.NLockBuilder;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NCp;
@@ -160,7 +161,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         try {
             boolean lockEnabled = isLockEnabled();
             res = lockEnabled ?
-                    NLocks.of().setSource(id.builder().setFaceDescriptor().build()).call(nOptionalCallable)
+                            NLock.ofId(id.builder().setFaceDescriptor().build()).callWith(nOptionalCallable)
                     : nOptionalCallable.call();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -298,7 +299,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         try {
             boolean lockEnabled = isLockEnabled();
             res = lockEnabled ?
-                    NLocks.of().setSource(id.builder().setFaceContent().build()).call(nOptionalCallable)
+                    NLock.ofId(id.builder().setFaceContent().build()).callWith(nOptionalCallable)
                     : nOptionalCallable.call();
         } catch (RuntimeException e) {
             throw e;

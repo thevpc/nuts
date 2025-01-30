@@ -258,6 +258,13 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     private Boolean reset;
 
     /**
+     * @since 0.8.5
+     * reset ALL workspaces
+     * option-type : runtime (available only for the current workspace instance)
+     */
+    private Boolean resetHard;
+
+    /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private Boolean commandVersion;
@@ -485,7 +492,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
                 getOutputFormatOptions().orNull(), getCustomOptions().orNull(), getApiVersion().orNull(), getRuntimeId().orNull(), getJavaCommand().orNull(),
                 getJavaOptions().orNull(), getWorkspace().orNull(), getOutLinePrefix().orNull(), getErrLinePrefix().orNull(),
                 getName().orNull(), getInstallCompanions().orNull(), getSkipWelcome().orNull(), getSkipBoot().orNull(),
-                getSystem().orNull(), getGui().orNull(), getDry().orNull(), getShowStacktrace().orNull(), getRecover().orNull(), getReset().orNull(), getCommandVersion().orNull(), getCommandHelp().orNull(), getCommandHelp().orNull(), getSwitchWorkspace().orNull(), getCached().orNull(), getCached().orNull(), getTransitive().orNull(), getBot().orNull(),
+                getSystem().orNull(), getGui().orNull(), getDry().orNull(), getShowStacktrace().orNull(), getRecover().orNull(), getReset().orNull(), getResetHard().orNull(), getCommandVersion().orNull(), getCommandHelp().orNull(), getCommandHelp().orNull(), getSwitchWorkspace().orNull(), getCached().orNull(), getCached().orNull(), getTransitive().orNull(), getBot().orNull(),
                 getIsolationLevel().orNull(), getInitLaunchers().orNull(), getInitScripts().orNull(), getInitPlatforms().orNull(),
                 getInitJava().orNull(), getExcludedExtensions().orNull(), getRepositories().orNull(), getUserName().orNull(),
                 getCredentials().orNull(), getTerminalMode().orNull(), getReadOnly().orNull(), getTrace().orNull(), getProgressOptions().orNull(),
@@ -538,6 +545,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.setExecutorOptions(other.getExecutorOptions().orNull());
         this.setRecover(other.getRecover().orNull());
         this.setReset(other.getReset().orNull());
+        this.setResetHard(other.getResetHard().orNull());
         this.setCommandVersion(other.getCommandVersion().orNull());
         this.setCommandHelp(other.getCommandHelp().orNull());
         this.setDebug(other.getDebug().orNull());
@@ -622,6 +630,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.setExecutorOptions(other.getExecutorOptions().orNull());
         this.setRecover(other.getRecover().orNull());
         this.setReset(other.getReset().orNull());
+        this.setResetHard(other.getResetHard().orNull());
         this.setCommandVersion(other.getCommandVersion().orNull());
         this.setCommandHelp(other.getCommandHelp().orNull());
         this.setDebug(other.getDebug().orNull());
@@ -874,6 +883,9 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         if (other.getReset().isPresent()) {
             this.setReset(other.getReset().orNull());
         }
+        if (other.getResetHard().isPresent()) {
+            this.setResetHard(other.getResetHard().orNull());
+        }
         if (other.getCommandVersion().isPresent()) {
             this.setCommandVersion(other.getCommandVersion().orNull());
         }
@@ -1099,6 +1111,9 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         if (other.getReset().isPresent()) {
             this.setReset(other.getReset().orNull());
         }
+        if (other.getResetHard().isPresent()) {
+            this.setResetHard(other.getResetHard().orNull());
+        }
         if (other.getCommandVersion().isPresent()) {
             this.setCommandVersion(other.getCommandVersion().orNull());
         }
@@ -1310,6 +1325,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         r.setExecutorOptions(this.getExecutorOptions().orNull());
         r.setRecover(this.getRecover().orNull());
         r.setReset(this.getReset().orNull());
+        r.setResetHard(this.getResetHard().orNull());
         r.setCommandVersion(this.getCommandVersion().orNull());
         r.setCommandHelp(this.getCommandHelp().orNull());
         r.setDebug(this.getDebug().orNull());
@@ -2090,6 +2106,25 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     }
 
     @Override
+    public NOptional<Boolean> getResetHard() {
+        return NOptional.ofNamed(resetHard, "resetHard");
+    }
+
+
+
+    /**
+     * set reset hard
+     *
+     * @param resetHard new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NBootOptionsBuilder setResetHard(Boolean resetHard) {
+        this.resetHard = resetHard;
+        return this;
+    }
+
+    @Override
     public NOptional<Boolean> getCommandVersion() {
         return NOptional.ofNamed(commandVersion, "commandVersion");
     }
@@ -2447,6 +2482,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.setExecutorOptions(other.getExecutorOptions());
         this.setRecover(other.getRecover());
         this.setReset(other.getReset());
+        this.setResetHard(other.getResetHard());
         this.setCommandVersion(other.getCommandVersion());
         this.setCommandHelp(other.getCommandHelp());
         this.setDebug(other.getDebug());
@@ -2532,6 +2568,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
 
         return this;
     }
+
     private List<NClassLoaderNode> convertNodes(List<NBootClassLoaderNode> dependencies) {
         return dependencies == null ? null : dependencies.stream().map(this::convertNode).collect(Collectors.toList());
     }
@@ -2550,6 +2587,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
                 children == null ? null : children.toArray(new NClassLoaderNode[0])
         );
     }
+
     @Override
     public NBootOptionsBuilder setCmdLine(String cmdLine) {
         setCmdLine(NCmdLine.parseDefault(cmdLine).get().toStringArray());
@@ -2814,6 +2852,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         b.setExecutorOptions(this.getExecutorOptions().orNull());
         b.setRecover(this.getRecover().orNull());
         b.setReset(this.getReset().orNull());
+        b.setResetHard(this.getResetHard().orNull());
         b.setCommandVersion(this.getCommandVersion().orNull());
         b.setCommandHelp(this.getCommandHelp().orNull());
         b.setDebug(this.getDebug().orNull());

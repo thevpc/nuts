@@ -127,7 +127,7 @@ public final class NBootUtils {
         }
         for (int i = 0; i < charArray1.length; i++) {
             char c1 = charArray1[i];
-            char c2 = charArray1[i];
+            char c2 = charArray2[i];
             if (c1 == '-') {
                 c1 = '_';
             } else {
@@ -136,7 +136,7 @@ public final class NBootUtils {
             if (c2 == '-') {
                 c2 = '_';
             } else {
-                c2 = Character.toUpperCase(c1);
+                c2 = Character.toUpperCase(c2);
             }
             if (c1 != c2) {
                 return false;
@@ -1985,7 +1985,7 @@ public final class NBootUtils {
                 if (Files.exists(child)) {
                     if (!headerWritten) {
                         headerWritten = true;
-                        if (!force && !refForceAll.isForce()) {
+                        if (!force && !refForceAll.isForce(true)) {
                             if (header != null) {
                                 if (!firstNonNull(bOptions.getBot(), false)) {
                                     bLog.with().level(Level.WARNING).verbWarning().log(NBootMsg.ofC("%s", header));
@@ -2002,45 +2002,47 @@ public final class NBootUtils {
 
     private static long deleteAndConfirm(Path directory, boolean force, NBootDeleteFilesContextBoot refForceAll,
                                          NBootLog bLog, NBootOptionsInfo bOptions, Supplier<String> readline) {
+        String confirm = _confirm(bOptions);
+        boolean bot = firstNonNull(bOptions.getBot(), false);
+        boolean gui = firstNonNull(bOptions.getGui(), false);
         if (Files.exists(directory)) {
-            if (!force && !refForceAll.isForce() && refForceAll.accept(directory)) {
+            if (!force && !refForceAll.isForce(true) && refForceAll.accept(directory)) {
                 String line = null;
-                if (!firstNonNull(bOptions.getBot(), false)) {
-                    if (sameEnum(firstNonNull(bOptions.getConfirm(), "ASK"), "YES")) {
+                if (bot) {
+                    if (sameEnum(confirm, "YES")) {
                         line = "y";
                     } else {
                         throw new NBootException(NBootMsg.ofPlain("failed to delete files in --bot mode without auto confirmation"));
                     }
                 } else {
-                    if (firstNonNull(bOptions.getGui(), false)) {
-                        line = inputString(
-                                NBootMsg.ofC("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory).toString(),
-                                null, readline, bLog
-                        );
-                    } else {
-                        String cc = firstNonNull(bOptions.getConfirm(), "ASK");
-                        switch (cc) {
-                            case "YES": {
-                                line = "y";
-                                break;
-                            }
-                            case "NO": {
-                                line = "n";
-                                break;
-                            }
-                            case "ERROR": {
-                                throw new NBootException(NBootMsg.ofPlain("error response"));
-                            }
-                            case "ASK": {
+                    switch (confirm) {
+                        case "YES": {
+                            line = "y";
+                            break;
+                        }
+                        case "NO": {
+                            line = "n";
+                            break;
+                        }
+                        case "ERROR": {
+                            throw new NBootException(NBootMsg.ofPlain("error response"));
+                        }
+                        case "ASK": {
+                            if (gui) {
+                                line = inputString(
+                                        NBootMsg.ofC("do you confirm deleting %s [y/n/c] (default 'n') ?", directory).toString(),
+                                        null, readline, bLog
+                                );
+                            }else {
                                 // Level.OFF is to force logging in all cases
-                                bLog.with().level(Level.OFF).verbWarning().log(NBootMsg.ofC("do you confirm deleting %s [y/n/c/a] (default 'n') ? : ", directory));
+                                bLog.with().level(Level.OFF).verbWarning().log(NBootMsg.ofC("do you confirm deleting %s [y/n/c] (default 'n') ? : ", directory));
                                 line = readline.get();
                             }
                         }
                     }
                 }
-                if ("a".equalsIgnoreCase(line) || "all".equalsIgnoreCase(line)) {
-                    refForceAll.setForce(true);
+                if (line!=null && line.equals(line.toUpperCase()) && parseBoolean(line)!=null) {
+                    refForceAll.setForce(parseBoolean(line));
                 } else if ("c".equalsIgnoreCase(line)) {
                     throw new NBootCancelException();
                 } else if (!firstNonNull(parseBoolean(line), false)) {
@@ -2125,7 +2127,7 @@ public final class NBootUtils {
         if (lastBootOptions == null) {
             return 0;
         }
-        String confirm = enumName(firstNonNull(o.getConfirm(), "ASK"));
+        String confirm = _confirm(o);
         if (sameEnum(confirm, "ASK")
                 && !sameEnum(enumId(firstNonNull(o.getOutputFormat(), "PLAIN")), "PLAIN")) {
             throw new NBootException(
@@ -2177,6 +2179,74 @@ public final class NBootUtils {
         }
         return deleteAndConfirmAll(folders.toArray(new Path[0]), force, DELETE_FOLDERS_HEADER, bLog, optionsCopy, readline);
     }
+
+    private static String _confirm(NBootOptionsInfo o){
+        return enumName(firstNonNull(o.getConfirm(), "ASK"));
+    }
+    /**
+     * @param readline
+     */
+    public static long deleteStoreLocationsHard(NBootOptionsInfo lastBootOptions, NBootOptionsInfo o,
+                                                NBootLog bLog, Supplier<String> readline) {
+        String confirm = _confirm(o);
+        if (sameEnum(confirm, "ASK")
+                && !sameEnum(enumName(firstNonNull(o.getOutputFormat(), "PLAIN")), "PLAIN")) {
+            throw new NBootException(
+                    NBootMsg.ofPlain("unable to switch to interactive mode for non plain text output format. "
+                            + "You need to provide default response (-y|-n) for resetting/recovering workspace. "
+                            + "You was asked to confirm deleting folders as part as recover/reset option."), 255);
+        }
+        bLog.with().level(Level.FINEST).verbWarning().log(NBootMsg.ofC("delete all workspace location(s)"));
+        boolean force = false;
+        switch (confirm) {
+            case "ASK": {
+                break;
+            }
+            case "YES": {
+                force = true;
+                break;
+            }
+            case "NO":
+            case "ERROR": {
+                bLog.with().level(Level.WARNING).verbWarning().log(NBootMsg.ofPlain("reset cancelled (applied '--no' argument)"));
+                throw new NBootCancelException();
+            }
+        }
+        LinkedHashSet<Path> folders = new LinkedHashSet<>();
+        if (lastBootOptions != null) {
+            folders.add(Paths.get(lastBootOptions.getWorkspace()));
+            for (Object ovalue : NBootPlatformHome.storeTypes()) {
+                if (ovalue != null) {
+                    if (ovalue instanceof String) {
+                        String p = getStoreLocationPath(lastBootOptions, (String) ovalue);
+                        if (p != null) {
+                            folders.add(Paths.get(p));
+                        }
+                    } else if (ovalue instanceof Path) {
+                        folders.add(((Path) ovalue));
+                    } else if (ovalue instanceof File) {
+                        folders.add(((File) ovalue).toPath());
+                    } else {
+                        throw new NBootException(NBootMsg.ofC("unsupported path type : %s", ovalue));
+                    }
+                }
+            }
+        }
+        for (String ovalue : NBootPlatformHome.storeTypes()) {
+            if (ovalue != null) {
+                NBootHomeLocation nBootHomeLocation = NBootHomeLocation.of(null, ovalue);
+                if (nBootHomeLocation != null && nBootHomeLocation.getStoreLocation() != null) {
+                    folders.add(Paths.get(nBootHomeLocation.getStoreLocation()));
+                }
+            }
+        }
+        NBootOptionsInfo optionsCopy = o.copy();
+        if (firstNonNull(optionsCopy.getBot(), false) || !isGraphicalDesktopEnvironment()) {
+            optionsCopy.setGui(false);
+        }
+        return deleteAndConfirmAll(folders.toArray(new Path[0]), force, DELETE_FOLDERS_HEADER, bLog, optionsCopy, readline);
+    }
+
 
     public static long deleteAndConfirmAll(Path[] folders, boolean force, String header,
                                            NBootLog bLog, NBootOptionsInfo bOptions, Supplier<String> readline) {
@@ -2839,7 +2909,7 @@ public final class NBootUtils {
     }
 
 
-    public static int processThrowable(Throwable ex, String[] args, NBootOptionsInfo bootOptions,NBootLog bootLog) {
+    public static int processThrowable(Throwable ex, String[] args, NBootOptionsInfo bootOptions, NBootLog bootLog) {
         if (ex == null) {
             return 0;
         } else {
@@ -2857,9 +2927,8 @@ public final class NBootUtils {
     }
 
 
-
     public static boolean resolveGui(NBootOptionsInfo bo) {
-        if(bo==null){
+        if (bo == null) {
             return false;
         }
         if (bo.getBot() != null && bo.getBot()) {
@@ -2919,8 +2988,8 @@ public final class NBootUtils {
         }
     }
 
-    public static int exitIfError(Throwable ex, String[] args, NBootOptionsInfo bootOptions,NBootLog bootLog) {
-        int code = processThrowable(ex, args, bootOptions,bootLog);
+    public static int exitIfError(Throwable ex, String[] args, NBootOptionsInfo bootOptions, NBootLog bootLog) {
+        int code = processThrowable(ex, args, bootOptions, bootLog);
         if (code != 0) {
             System.exit(code);
         }
@@ -2936,7 +3005,7 @@ public final class NBootUtils {
 
 
     public static boolean resolveShowStackTrace(NBootOptionsInfo bo) {
-        if(bo==null){
+        if (bo == null) {
             return true;
         }
         if (bo.getShowStacktrace() != null) {

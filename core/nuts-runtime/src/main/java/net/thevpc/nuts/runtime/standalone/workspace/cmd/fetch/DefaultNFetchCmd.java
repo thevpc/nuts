@@ -2,12 +2,11 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.fetch;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.elem.NElements;
 
 
-import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.NLocationKey;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
@@ -15,7 +14,6 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.dependency.NDependencyScopes;
@@ -44,14 +42,14 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     public NPath getResultContent() {
         try {
             NDefinition def = fetchDefinition(getId(), copy().setContent(true).setEffective(false), true, false);
-            if(def.getDescriptor().isNoContent()){
+            if (def.getDescriptor().isNoContent()) {
                 return null;
             }
-            if(!def.getContent().isPresent()){
+            if (!def.getContent().isPresent()) {
                 if (!isFailFast()) {
                     return null;
                 }
-                throw new NNotFoundException(getId(),NMsg.ofC("missing content for %s",getId()));
+                throw new NNotFoundException(getId(), NMsg.ofC("missing content for %s", getId()));
             }
             return def.getContent().get();
         } catch (NNotFoundException ex) {
@@ -173,9 +171,10 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     }
 
     public NDefinition fetchDefinitionNoCache(NId id, NFetchCmd options, boolean includeContent, boolean includeInstallInfo) {
-        long startTime = System.currentTimeMillis(); boolean idOptional=id.toDependency().isOptional();
+        long startTime = System.currentTimeMillis();
+        boolean idOptional = id.toDependency().isOptional();
         NWorkspace workspace = getWorkspace();
-        NSession session= workspace.currentSession();
+        NSession session = workspace.currentSession();
         NWorkspaceUtils wu = NWorkspaceUtils.of(workspace);
         CoreNIdUtils.checkLongId(id);
 //        checkSession();
@@ -293,7 +292,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                                     NRepositorySPI installedRepositorySPI = wu.repoSPI(installedRepository);
 
                                     DefaultNDefinition finalFoundDefinition = foundDefinition;
-                                    session.copy().setConfirm(NConfirmationMode.YES).runWith(()->{
+                                    session.copy().setConfirm(NConfirmationMode.YES).runWith(() -> {
                                         installedRepositorySPI.deploy()
                                                 .setId(finalFoundDefinition.getId())
                                                 .setDescriptor(finalFoundDefinition.getDescriptor())
@@ -398,20 +397,9 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
         boolean executable = nutsDescriptor.isExecutable();
         boolean nutsApp = nutsDescriptor.isApplication();
         if (jar.getName().toLowerCase().endsWith(".jar") && jar.isRegularFile()) {
-            NPath cachePath = NWorkspace.of().getStoreLocation(nutsDescriptor.getId(), NStoreType.CACHE)
-                    .resolve(NWorkspace.of().getDefaultIdFilename(nutsDescriptor.getId()
-                                    .builder()
-                                    .setFace("info.cache")
-                                    .build()
-                            )
-                    );
             Map<String, String> map = null;
-            NElements elem = NElements.of();
             try {
-                if (cachePath.isRegularFile()) {
-                    map = elem
-                            .json().parse(cachePath, Map.class);
-                }
+                map = (Map<String, String>) ((NWorkspaceExt)workspace).store().loadLocationKey(NLocationKey.ofCacheFaced(nutsDescriptor.getId(),null,"info.cache"),Map.class );
             } catch (Exception ex) {
                 //
             }
@@ -431,9 +419,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                         map = new LinkedHashMap<>();
                         map.put("executable", String.valueOf(executable));
                         map.put("nutsApplication", String.valueOf(nutsApp));
-                        elem.json().setValue(map)
-                                .setNtf(false)
-                                .print(cachePath);
+                        ((NWorkspaceExt)workspace).store().saveLocationKey(NLocationKey.ofCacheFaced(nutsDescriptor.getId(),null,"info.cache"),map);
                     } catch (Exception ex) {
                         //
                     }
@@ -453,38 +439,30 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     }
 
     protected DefaultNDefinition fetchDescriptorAsDefinition(NId id, NFetchStrategy nutsFetchModes, NFetchMode mode, NRepository repo) {
-        NSession session=getWorkspace().currentSession();
+        NSession session = getWorkspace().currentSession();
         NWorkspaceExt dws = NWorkspaceExt.of();
         boolean withCache = !(repo instanceof DefaultNInstalledRepository) && session.isCached();
         NPath cachePath = null;
         NWorkspaceUtils wu = NWorkspaceUtils.of(getWorkspace());
-        NElements elem = NElements.of();
         if (withCache) {
-            cachePath = NWorkspace.of().getStoreLocation(id, NStoreType.CACHE, repo.getUuid())
-                    .resolve(NWorkspace.of().getDefaultIdFilename(id.builder().setFace("def.cache").build()));
-            if (cachePath.isRegularFile()) {
-                try {
-                    if (CoreIOUtils.isObsoletePath(cachePath)) {
+            try {
+                DefaultNDefinition d = (DefaultNDefinition) ((NWorkspaceExt) workspace).store().loadLocationKey(
+                        NLocationKey.ofCacheFaced(id, repo.getUuid(), "def.cache"),
+                        DefaultNDefinition.class
+                );
+                if (d != null) {
+                    NRepository repositoryById = workspace.findRepositoryById(d.getRepositoryUuid()).orNull();
+                    NRepository repositoryByName = workspace.findRepositoryByName(d.getRepositoryName()).orNull();
+                    if (repositoryById == null || repositoryByName == null) {
                         //this is invalid cache!
                         cachePath.delete();
                     } else {
-                        DefaultNDefinition d = elem
-                                .json().parse(cachePath, DefaultNDefinition.class);
-                        if (d != null) {
-                            NRepository repositoryById = workspace.findRepositoryById(d.getRepositoryUuid()).orNull();
-                            NRepository repositoryByName = workspace.findRepositoryByName(d.getRepositoryName()).orNull();
-                            if (repositoryById == null || repositoryByName == null) {
-                                //this is invalid cache!
-                                cachePath.delete();
-                            } else {
-                                NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NLogVerb.CACHE, "fetch definition", 0);
-                                return d;
-                            }
-                        }
+                        NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NLogVerb.CACHE, "fetch definition", 0);
+                        return d;
                     }
-                } catch (Exception ex) {
-                    //
                 }
+            } catch (Exception ex) {
+                //just ignore....
             }
         }
 
@@ -549,8 +527,10 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
             );
             if (withCache) {
                 try {
-                    elem.json().setValue(result)
-                            .setNtf(false).print(cachePath);
+                    ((NWorkspaceExt) workspace).store().saveLocationKey(
+                            NLocationKey.ofCacheFaced(id, repo.getUuid(), "def.cache"),
+                            result
+                    );
                 } catch (Exception ex) {
                     //
                 }

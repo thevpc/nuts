@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -36,7 +38,7 @@ import java.util.Objects;
  * @app.category SPI Base
  * @since 0.5.4
  */
-public class NCommandFactoryConfig extends NConfigItem {
+public class NCommandFactoryConfig extends NConfigItem implements Cloneable {
     private static final long serialVersionUID = 1;
 
     /**
@@ -163,5 +165,17 @@ public class NCommandFactoryConfig extends NConfigItem {
                 ", priority=" + priority +
                 ", parameters=" + parameters +
                 '}';
+    }
+
+    public NCommandFactoryConfig copy() {
+        try {
+            NCommandFactoryConfig cloned = (NCommandFactoryConfig) clone();
+            if (parameters != null) {
+                cloned.parameters = new LinkedHashMap<>(parameters);
+            }
+            return cloned;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

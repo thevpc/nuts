@@ -14,6 +14,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptOp
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base.BaseSystemNdi;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NAskParseContext;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NAsk;
 import net.thevpc.nuts.util.NAskParser;
@@ -84,7 +85,10 @@ public class AnyNixNdi extends BaseSystemNdi {
                     .setHintMessage(NMsg.ofPlain("you must enter your confirmation"))
                     .setParser(new NAskParser<Boolean>() {
                         @Override
-                        public Boolean parse(Object response, Boolean defaultValue, NAsk<Boolean> question) {
+                        public Boolean parse(NAskParseContext<Boolean> context) {
+                            Object response=context.response();
+                            NAsk<Boolean> question=context.question();
+                            Boolean defaultValue=question.getDefaultValue();
                             if (response instanceof Boolean) {
                                 return (Boolean) response;
                             }

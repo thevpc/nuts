@@ -2,8 +2,10 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
-import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBTableFile;
+import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBTableStore;
 import net.thevpc.nuts.io.NIOUtils;
+import net.thevpc.nuts.runtime.standalone.xtra.nanodb.file.NanoDBOnDisk;
+import net.thevpc.nuts.runtime.standalone.xtra.nanodb.file.NanoDBTableStoreFile;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -19,11 +21,11 @@ public class Test26_NanoDBTest {
     @Test
     public void test1() {
         for (String s : new String[]{"", "a", "ab", "abc"}) {
-            TestUtils.println("getUTFLength(\"" + s + "\")=" + NanoDBTableFile.getUTFLength(s));
+            TestUtils.println("getUTFLength(\"" + s + "\")=" + NanoDBTableStoreFile.getUTFLength(s));
         }
-        TestUtils.println("getUTFLength(\"Hammadi\")=" + NanoDBTableFile.getUTFLength("Hammadi"));
-        NanoDB db = new NanoDB(TestUtils.initFolder(".test-bd").toFile());
-        NanoDBTableFile<Person> test = db.tableBuilder(Person.class).setNullable(false).addAllFields().addIndices("id").create();
+        TestUtils.println("getUTFLength(\"Hammadi\")=" + NanoDBTableStoreFile.getUTFLength("Hammadi"));
+        NanoDB db = new NanoDBOnDisk(TestUtils.initFolder(".test-bd").toFile());
+        NanoDBTableStore<Person> test = db.tableBuilder(Person.class).setNullable(false).addAllFields().addIndices("id").create();
         test.add(new Person(1, "Hammadi"));
         test.add(new Person(2, "Hammadi"));
         test.add(new Person(1, "Hammadi"));
@@ -42,8 +44,8 @@ public class Test26_NanoDBTest {
         File dir = TestUtils.initFolder(".test-db-perf").toFile();
         long from = System.currentTimeMillis();
         NIOUtils.delete(dir);
-        try (NanoDB db = new NanoDB(dir)) {
-            NanoDBTableFile<Person> test = db.tableBuilder(Person.class).setNullable(false).addIndices("id").create();
+        try (NanoDB db = new NanoDBOnDisk(dir)) {
+            NanoDBTableStore<Person> test = db.tableBuilder(Person.class).setNullable(false).addIndices("id").create();
             int c = 1000;
             for (int i = 0; i < c * 10; i++) {
                 test.add(new Person(i % 10, "Hammadi"));

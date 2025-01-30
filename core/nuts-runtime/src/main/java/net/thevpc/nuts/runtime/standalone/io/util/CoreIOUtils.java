@@ -28,11 +28,11 @@ import net.thevpc.nuts.*;
 
 
 import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
-import net.thevpc.nuts.runtime.standalone.repository.index.CacheDB;
 import net.thevpc.nuts.runtime.standalone.text.ExtendedFormatAware;
 import net.thevpc.nuts.runtime.standalone.text.ExtendedFormatAwarePrintWriter;
 import net.thevpc.nuts.runtime.standalone.text.RawOutputStream;
@@ -43,7 +43,7 @@ import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
-import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBTableFile;
+import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBTableStore;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.*;
@@ -357,8 +357,8 @@ public class CoreIOUtils {
                 throw ex;
             }
         }
-        NanoDB cachedDB = CacheDB.of();
-        NanoDBTableFile<CachedURL> cacheTable
+        NanoDB cachedDB = NWorkspaceExt.of().store().cacheDB();
+        NanoDBTableStore<CachedURL> cacheTable
                 = cachedDB.tableBuilder(CachedURL.class).setNullable(false)
                 .addAllFields()
                 .addIndices("url")
@@ -616,15 +616,15 @@ public class CoreIOUtils {
         return path1.substring(0, latestSlash + 1);
     }
 
-    public static PathInfo.Status tryWriteStatus(byte[] content, NPath out) {
-        return tryWrite(content, out, DoWhenExist.IGNORE, DoWhenNotExists.IGNORE);
+    public static PathInfo.Status tryWriteStatus(byte[] content, NPath out, String rememberMeKey) {
+        return tryWrite(content, out, DoWhenExist.IGNORE, DoWhenNotExists.IGNORE, rememberMeKey);
     }
 
-    public static PathInfo.Status tryWrite(byte[] content, NPath out) {
-        return tryWrite(content, out, DoWhenExist.ASK, DoWhenNotExists.CREATE);
+    public static PathInfo.Status tryWrite(byte[] content, NPath out, String rememberMeKey) {
+        return tryWrite(content, out, DoWhenExist.ASK, DoWhenNotExists.CREATE, rememberMeKey);
     }
 
-    public static PathInfo.Status tryWrite(byte[] content, NPath out, /*boolean doNotWrite*/ DoWhenExist doWhenExist, DoWhenNotExists doWhenNotExist) {
+    public static PathInfo.Status tryWrite(byte[] content, NPath out, /*boolean doNotWrite*/ DoWhenExist doWhenExist, DoWhenNotExists doWhenNotExist, String rememberMeKey) {
         NAssert.requireNonNull(doWhenExist, "doWhenExist");
         NAssert.requireNonNull(doWhenNotExist, "doWhenNotExist");
 //        System.err.println("[DEBUG] try write "+out);
@@ -691,6 +691,7 @@ public class CoreIOUtils {
                 case ASK: {
                     if (NAsk.of()
                             .setDefaultValue(true)
+                            .setRememberMeKey(rememberMeKey==null?null:("Override."+rememberMeKey))
                             .forBoolean(NMsg.ofC("override %s ?",
                                     NText.ofStyled(
                                             betterPath(out.toString()), NTextStyle.path()

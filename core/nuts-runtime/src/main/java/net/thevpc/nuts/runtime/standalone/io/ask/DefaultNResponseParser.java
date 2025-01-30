@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.DefaultNArg;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
+import net.thevpc.nuts.util.NAskParseContext;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NAsk;
 import net.thevpc.nuts.util.NAskParser;
@@ -19,7 +20,10 @@ public class DefaultNResponseParser<T> implements NAskParser<T> {
     }
 
     @Override
-    public T parse(Object response, T defaultValue, NAsk<T> question) {
+    public T parse(NAskParseContext<T> context) {
+        Object response=context.response();
+        NAsk<T> question=context.question();
+        T defaultValue=question.getDefaultValue();
         if (response == null || ((response instanceof String) && response.toString().length() == 0)) {
             response = defaultValue;
         }

@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone;
 
+import net.thevpc.nuts.NLocationKey;
 import net.thevpc.nuts.NWorkspace;
 
 import net.thevpc.nuts.io.NPath;
@@ -24,7 +25,7 @@ public class NWsConfDB {
                 path.delete();
             }
         } else {
-            path.writeString(value);
+            path.mkParentDirs().writeString(value);
         }
     }
 }

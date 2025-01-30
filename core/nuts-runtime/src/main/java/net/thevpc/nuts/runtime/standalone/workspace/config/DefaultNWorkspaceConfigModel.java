@@ -58,12 +58,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledReposit
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.*;
-import net.thevpc.nuts.runtime.standalone.workspace.config.compat.CompatUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.NVersionCompat;
-import net.thevpc.nuts.runtime.standalone.workspace.config.compat.v502.NVersionCompat502;
-import net.thevpc.nuts.runtime.standalone.workspace.config.compat.v506.NVersionCompat506;
-import net.thevpc.nuts.runtime.standalone.workspace.config.compat.v507.NVersionCompat507;
-import net.thevpc.nuts.runtime.standalone.workspace.config.compat.v803.NVersionCompat803;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.security.NAuthenticationAgent;
 import net.thevpc.nuts.spi.*;
@@ -99,7 +94,7 @@ public class DefaultNWorkspaceConfigModel {
     private final NWorkspaceStoredConfig storedConfig = new NWorkspaceStoredConfigImpl();
     private final ClassLoader bootClassLoader;
     private final List<URL> bootClassWorldURLs;
-//    private final Function<String, String> pathExpansionConverter;
+    //    private final Function<String, String> pathExpansionConverter;
     private final WorkspaceSystemTerminalAdapter workspaceSystemTerminalAdapter;
     private final List<NPathFactorySPI> pathFactories = new ArrayList<>();
     private final NPathFactorySPI invalidPathFactory;
@@ -202,11 +197,8 @@ public class DefaultNWorkspaceConfigModel {
         NWorkspaceUtils.of(getWorkspace()).checkReadOnly();
         boolean ok = false;
         NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.SAVE, "save");
-        NPath apiVersionSpecificLocation = NWorkspace.of().getStoreLocation(getWorkspace().getApiId(), NStoreType.CONF);
-        NElements elem = NElements.of();
         if (force || storeModelBootChanged) {
 
-            Path file = NWorkspace.of().getWorkspaceLocation().toPath().get().resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
             storeModelBoot.setConfigVersion(DefaultNWorkspace.VERSION_WS_CONFIG_BOOT);
             if (storeModelBoot.getExtensions() != null) {
                 for (NWorkspaceConfigBoot.ExtensionConfig extension : storeModelBoot.getExtensions()) {
@@ -214,17 +206,14 @@ public class DefaultNWorkspaceConfigModel {
                     extension.setConfigVersion(null);
                 }
             }
-            elem.json().setValue(storeModelBoot)
-                    .setNtf(false).print(file);
+            workspace.store().saveWorkspaceConfigBoot(storeModelBoot);
             storeModelBootChanged = false;
             ok = true;
         }
 
-        NPath configVersionSpecificLocation = NWorkspace.of().getStoreLocation(getWorkspace().getApiId(), NStoreType.CONF);
         if (force || storeModelSecurityChanged) {
             storeModelSecurity.setUsers(configUsers.isEmpty() ? null : configUsers.values().toArray(new NUserConfig[0]));
 
-            NPath file = configVersionSpecificLocation.resolve(CoreNConstants.Files.WORKSPACE_SECURITY_CONFIG_FILE_NAME);
             storeModelSecurity.setConfigVersion(current().getApiVersion());
             if (storeModelSecurity.getUsers() != null) {
                 for (NUserConfig extension : storeModelSecurity.getUsers()) {
@@ -232,8 +221,7 @@ public class DefaultNWorkspaceConfigModel {
                     extension.setConfigVersion(null);
                 }
             }
-            elem.json().setValue(storeModelSecurity)
-                    .setNtf(false).print(file);
+            workspace.store().saveConfigSecurity(storeModelSecurity);
             storeModelSecurityChanged = false;
             ok = true;
         }
@@ -247,7 +235,6 @@ public class DefaultNWorkspaceConfigModel {
                             .map(x -> x.config().getRepositoryRef()).collect(Collectors.toList())
             );
 
-            NPath file = configVersionSpecificLocation.resolve(CoreNConstants.Files.WORKSPACE_MAIN_CONFIG_FILE_NAME);
             storeModelMain.setConfigVersion(current().getApiVersion());
             if (storeModelMain.getCommandFactories() != null) {
                 for (NCommandFactoryConfig item : storeModelMain.getCommandFactories()) {
@@ -267,14 +254,12 @@ public class DefaultNWorkspaceConfigModel {
                     item.setConfigVersion(null);
                 }
             }
-            elem.json().setValue(storeModelMain)
-                    .setNtf(false).print(file);
+            workspace.store().saveConfigMain(storeModelMain);
             storeModelMainChanged = false;
             ok = true;
         }
 
         if (force || storeModelApiChanged) {
-            NPath afile = apiVersionSpecificLocation.resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
             storeModelApi.setConfigVersion(current().getApiVersion());
             if (storeModelSecurity.getUsers() != null) {
                 for (NUserConfig item : storeModelSecurity.getUsers()) {
@@ -282,18 +267,13 @@ public class DefaultNWorkspaceConfigModel {
                     item.setConfigVersion(null);
                 }
             }
-            elem.json().setValue(storeModelApi)
-                    .setNtf(false).print(afile);
+            workspace.store().saveConfigApi(storeModelApi);
             storeModelApiChanged = false;
             ok = true;
         }
         if (force || storeModelRuntimeChanged) {
-            NPath runtimeVersionSpecificLocation = NWorkspace.of().getStoreLocation(NStoreType.CONF)
-                    .resolve(NConstants.Folders.ID).resolve(NWorkspace.of().getDefaultIdBasedir(getWorkspace().getRuntimeId()));
-            NPath afile = runtimeVersionSpecificLocation.resolve(NConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
             storeModelRuntime.setConfigVersion(current().getApiVersion());
-            elem.json().setValue(storeModelRuntime)
-                    .setNtf(false).print(afile);
+            workspace.store().saveConfigRuntime(storeModelRuntime);
             storeModelRuntimeChanged = false;
             ok = true;
         }
@@ -318,64 +298,6 @@ public class DefaultNWorkspaceConfigModel {
         return save(true);
     }
 
-    public NWorkspaceBootConfig loadBootConfig(String _ws, boolean system, boolean followLinks) {
-        String _ws0 = _ws;
-        String effWorkspaceName = null;
-        String lastConfigPath = null;
-        NWorkspaceConfigBoot lastConfigLoaded = null;
-        boolean defaultLocation = false;
-        NPlatformHome plocs = NPlatformHome.of(null, system);
-        if (_ws != null && _ws.matches("[a-z-]+://.*")) {
-            //this is a protocol based workspace
-            //String protocol=ws.substring(0,ws.indexOf("://"));
-            effWorkspaceName = "remote-bootstrap";
-            lastConfigPath = plocs.getWorkspaceLocation(CoreNUtils.resolveValidWorkspaceName(effWorkspaceName));
-            lastConfigLoaded = parseBootConfig(NPath.of(lastConfigPath));
-            defaultLocation = true;
-            return new DefaultNWorkspaceBootConfig(_ws0, lastConfigPath, effWorkspaceName, defaultLocation, lastConfigLoaded);
-        } else if (followLinks) {
-            defaultLocation = CoreNUtils.isValidWorkspaceName(_ws);
-            int maxDepth = 36;
-            for (int i = 0; i < maxDepth; i++) {
-                lastConfigPath
-                        = CoreNUtils.isValidWorkspaceName(_ws)
-                        ? plocs.getWorkspaceLocation(CoreNUtils.resolveValidWorkspaceName(_ws)
-                ) : NIOUtils.getAbsolutePath(_ws);
-
-                NWorkspaceConfigBoot configLoaded = parseBootConfig(NPath.of(lastConfigPath));
-                if (configLoaded == null) {
-                    //not loaded
-                    break;
-                }
-                if (NBlankable.isBlank(configLoaded.getWorkspace())) {
-                    lastConfigLoaded = configLoaded;
-                    break;
-                }
-                _ws = configLoaded.getWorkspace();
-                if (i >= maxDepth - 1) {
-                    throw new NIllegalArgumentException(NMsg.ofPlain("cyclic workspace resolution"));
-                }
-            }
-            if (lastConfigLoaded == null) {
-                return null;
-            }
-            effWorkspaceName = CoreNUtils.resolveValidWorkspaceName(_ws);
-            return new DefaultNWorkspaceBootConfig(_ws0, lastConfigPath, effWorkspaceName, defaultLocation, lastConfigLoaded);
-        } else {
-            defaultLocation = CoreNUtils.isValidWorkspaceName(_ws);
-            lastConfigPath
-                    = CoreNUtils.isValidWorkspaceName(_ws)
-                    ? plocs.getWorkspaceLocation(CoreNUtils.resolveValidWorkspaceName(_ws)
-            ) : NIOUtils.getAbsolutePath(_ws);
-
-            lastConfigLoaded = parseBootConfig(NPath.of(lastConfigPath));
-            if (lastConfigLoaded == null) {
-                return null;
-            }
-            effWorkspaceName = CoreNUtils.resolveValidWorkspaceName(_ws);
-            return new DefaultNWorkspaceBootConfig(_ws0, lastConfigPath, effWorkspaceName, defaultLocation, lastConfigLoaded);
-        }
-    }
 
     public boolean isExcludedExtension(String extensionId, NWorkspaceOptions options) {
         if (extensionId != null && options != null) {
@@ -601,12 +523,12 @@ public class DefaultNWorkspaceConfigModel {
                 cConfig.setRuntimeId(effOptions.getRuntimeId().orNull());
             }
             if (cConfig.getRuntimeBootDescriptor() == null) {
-                cConfig.setRuntimeBootDescriptor(effOptions.getRuntimeBootDescriptor().map(x->new DefaultNDescriptorBuilder().setAll(x).build()).orNull());
+                cConfig.setRuntimeBootDescriptor(effOptions.getRuntimeBootDescriptor().map(x -> new DefaultNDescriptorBuilder().setAll(x).build()).orNull());
             }
             if (cConfig.getExtensionBootDescriptors() == null) {
-                cConfig.setExtensionBootDescriptors(effOptions.getExtensionBootDescriptors().map(x->
-                                x.stream().map(y->y==null?null:new DefaultNDescriptorBuilder().setAll(y).build()).collect(Collectors.toList())
-                                )
+                cConfig.setExtensionBootDescriptors(effOptions.getExtensionBootDescriptors().map(x ->
+                                x.stream().map(y -> y == null ? null : new DefaultNDescriptorBuilder().setAll(y).build()).collect(Collectors.toList())
+                        )
                         .orNull());
             }
             if (cConfig.getBootRepositories() == null) {
@@ -616,7 +538,7 @@ public class DefaultNWorkspaceConfigModel {
 
             setCurrentConfig(cConfig.build(NWorkspace.of().getWorkspaceLocation()));
 
-            NVersionCompat compat = createNutsVersionCompat(Nuts.getVersion());
+            NVersionCompat compat = NVersionCompat.of(Nuts.getVersion(), workspace);
             NId apiId = workspace.getApiId();
             NWorkspaceConfigApi aconfig = compat.parseApiConfig(apiId);
             NId toImportOlderId = null;
@@ -1006,17 +928,13 @@ public class DefaultNWorkspaceConfigModel {
                 })
                 .collect(Collectors.toList());
     }
+
     public NPath getRepositoriesRoot() {
         return NWorkspace.of().getStoreLocation(NStoreType.CONF).resolve(NConstants.Folders.REPOSITORIES);
     }
 
     public NPath getTempRepositoriesRoot() {
         return NWorkspace.of().getStoreLocation(NStoreType.TEMP).resolve(NConstants.Folders.REPOSITORIES);
-    }
-
-    public boolean isValidWorkspaceFolder() {
-        Path file = NWorkspace.of().getWorkspaceLocation().toPath().get().resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
-        return Files.isRegularFile(file);
     }
 
     public NAuthenticationAgent createAuthenticationAgent(String authenticationAgent) {
@@ -1111,8 +1029,8 @@ public class DefaultNWorkspaceConfigModel {
             this.storeModelMain.setRepositories(new ArrayList<>());
             for (NRepositoryRef ref : refsToLoad) {
                 workspace.addRepository(
-                                NRepositoryUtils.refToOptions(ref)
-                        );
+                        NRepositoryUtils.refToOptions(ref)
+                );
             }
         }
 
@@ -1380,50 +1298,14 @@ public class DefaultNWorkspaceConfigModel {
     }
 
     private NWorkspaceConfigBoot parseBootConfig() {
-        return parseBootConfig(NWorkspace.of().getWorkspaceLocation());
+        return NWorkspaceExt.of().store().loadWorkspaceConfigBoot();
     }
 
-    private NWorkspaceConfigBoot parseBootConfig(NPath path) {
-        Path file = path.toPath().get().resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
-        byte[] bytes = CompatUtils.readAllBytes(file);
-        if (bytes == null) {
-            return null;
-        }
-        try {
-            Map<String, Object> a_config0 = NElements.of().json().parse(bytes, Map.class);
-            NVersion version = NVersion.get((String) a_config0.get("configVersion")).ifBlankEmpty().orNull();
-            if (version == null) {
-                version = NVersion.get((String) a_config0.get("createApiVersion")).ifBlankEmpty().orNull();
-                if (version == null) {
-                    version = Nuts.getVersion();
-                }
-            }
-            return createNutsVersionCompat(version).parseConfig(bytes);
-        } catch (Exception ex) {
-            _LOGOP().level(Level.SEVERE).verb(NLogVerb.FAIL)
-                    .log(NMsg.ofC("erroneous workspace config file. Unable to load file %s : %s",
-                            file, ex));
-            throw new NIOException(NMsg.ofC("unable to load config file %s", file), ex);
-        }
-    }
-
-    private NVersionCompat createNutsVersionCompat(NVersion apiVersion) {
-        int buildNumber = CoreNUtils.getApiVersionOrdinalNumber(apiVersion);
-        if (buildNumber >= 803) {
-            return new NVersionCompat803(workspace,apiVersion);
-        } else if (buildNumber >= 507) {
-            return new NVersionCompat507(workspace,apiVersion);
-        } else if (buildNumber >= 506) {
-            return new NVersionCompat506(workspace,apiVersion);
-        } else {
-            return new NVersionCompat502(workspace,apiVersion);
-        }
-    }
 
     public NRepositoryLocation[] resolveBootRepositoriesBootSelectionArray() {
         List<NRepositoryLocation> defaults = new ArrayList<>();
         for (NAddRepositoryOptions d : workspace.getDefaultRepositories()) {
-            defaults.add(NRepositoryLocation.of(d.getName(), (String)null));
+            defaults.add(NRepositoryLocation.of(d.getName(), (String) null));
         }
         return resolveBootRepositoriesList().resolve(defaults.toArray(new NRepositoryLocation[0]),
                 NRepositoryDB.of()

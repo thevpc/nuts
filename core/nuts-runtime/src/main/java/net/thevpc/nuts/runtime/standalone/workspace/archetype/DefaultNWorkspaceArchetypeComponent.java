@@ -11,14 +11,14 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
@@ -28,7 +28,6 @@ import java.util.*;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-
 
 
 import net.thevpc.nuts.io.NPath;
@@ -64,7 +63,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
             } else {
                 def.put(NPath.of(d.getLocation()).toAbsolute().toString(), d);
             }
-            defaults.add(NRepositoryLocation.of(d.getName(), (String)null));
+            defaults.add(NRepositoryLocation.of(d.getName(), (String) null));
         }
         NWorkspaceExt.of().getModel().configModel.getStoredConfigMain().setEnablePreviewRepositories(NSession.of().isPreviewRepo());
         NWorkspaceExt.of().getModel().configModel.invalidateStoreModelMain();
@@ -125,10 +124,17 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 
     @Override
     public void startWorkspace() {
+        NIsolationLevel nIsolationLevel = workspace.getBootOptions().getIsolationLevel().orNull();
+        if(nIsolationLevel == NIsolationLevel.MEMORY){
+            return;
+        }
+        boolean isolated = nIsolationLevel == NIsolationLevel.SANDBOX
+                || nIsolationLevel == NIsolationLevel.CONFINED
+                ;
 //        boolean initializePlatforms = boot.getBootOptions().getInitPlatforms().ifEmpty(false).get(session);
 //        boolean initializeJava = boot.getBootOptions().getInitJava().ifEmpty(initializePlatforms).get(session);
-        boolean initializeScripts = workspace.getBootOptions().getInitScripts().orElse(true);
-        boolean initializeLaunchers = workspace.getBootOptions().getInitLaunchers().orElse(true);
+        boolean initializeScripts = workspace.getBootOptions().getInitScripts().orElse(!isolated);
+        boolean initializeLaunchers = workspace.getBootOptions().getInitLaunchers().orElse(!isolated);
         boolean installCompanions = workspace.getBootOptions().getInstallCompanions().orElse(false);
 
 //        if (initializeJava) {
@@ -137,6 +143,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 //            //at least add current vm
 //            NWorkspaceUtils.of().installCurrentJVM();
 //        }
+
         if (initializeScripts || initializeLaunchers || installCompanions) {
             NId api = NFetchCmd.of().setId(workspace.getApiId()).setFailFast(false).getResultId();
             if (api != null) {

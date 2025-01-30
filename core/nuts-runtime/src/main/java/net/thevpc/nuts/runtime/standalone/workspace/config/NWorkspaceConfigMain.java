@@ -32,13 +32,14 @@ import net.thevpc.nuts.NRepositoryRef;
 import net.thevpc.nuts.runtime.NutsRuntimeConfigConstants;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
  * @author thevpc
  * @since 0.5.4
  */
-public final class NWorkspaceConfigMain extends NConfigItem {
+public final class NWorkspaceConfigMain extends NConfigItem implements Cloneable {
 
     private static final long serialVersionUID = 4;
 
@@ -108,4 +109,27 @@ public final class NWorkspaceConfigMain extends NConfigItem {
         return commandFactories;
     }
 
+    public NWorkspaceConfigMain copy(){
+        try {
+            NWorkspaceConfigMain cloned = (NWorkspaceConfigMain) clone();
+            if(repositories!=null){
+                cloned.repositories=repositories.stream().map(NRepositoryRef::copy).collect(Collectors.toList());
+            }
+            if(commandFactories!=null){
+                cloned.commandFactories=commandFactories.stream().map(x->x.copy()).collect(Collectors.toList());
+            }
+            if(env!=null){
+                cloned.env=new LinkedHashMap<>(env);
+            }
+            if(platforms!=null){
+                cloned.platforms=platforms.stream().map(x->x.copy()).collect(Collectors.toList());
+            }
+            if(imports!=null){
+                cloned.imports=new ArrayList<>(imports);
+            }
+            return cloned;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

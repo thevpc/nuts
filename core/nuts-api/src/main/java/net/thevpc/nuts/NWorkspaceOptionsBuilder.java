@@ -214,6 +214,8 @@ public interface NWorkspaceOptionsBuilder extends NWorkspaceOptions, NComponent 
      */
     NWorkspaceOptionsBuilder setReset(Boolean reset);
 
+    NWorkspaceOptionsBuilder setResetHard(Boolean resetHard);
+
     NWorkspaceOptionsBuilder setCommandVersion(Boolean version);
 
     NWorkspaceOptionsBuilder setCommandHelp(Boolean help);

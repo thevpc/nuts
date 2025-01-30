@@ -191,4 +191,7 @@ public interface NAsk<T> extends NCmdLineConfigurable {
     @Override
     NAsk<T> configure(boolean skipUnsupported, String... args);
 
+    String getRememberMeKey();
+
+    NAsk<T> setRememberMeKey(String rememberMeKey);
 }

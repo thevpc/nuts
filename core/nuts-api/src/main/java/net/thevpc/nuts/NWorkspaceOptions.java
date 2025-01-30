@@ -459,6 +459,8 @@ public interface NWorkspaceOptions extends Serializable {
 
     NOptional<Boolean> getReset();
 
+    NOptional<Boolean> getResetHard();
+
 
     NOptional<Boolean> getCommandVersion();
 

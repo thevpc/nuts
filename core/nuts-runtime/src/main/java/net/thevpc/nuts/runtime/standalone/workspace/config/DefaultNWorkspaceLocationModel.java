@@ -101,6 +101,13 @@ public class DefaultNWorkspaceLocationModel {
     }
 
 
+    public NPath getStoreLocation(NLocationKey locationKey) {
+        NPath u = getStoreLocation(locationKey.getId(), locationKey.getStoreType(), locationKey.getRepoUuid());
+        if(!NBlankable.isBlank(locationKey.getName())){
+            u=u.resolve(locationKey.getName());
+        }
+        return u;
+    }
     public NPath getStoreLocation(NId id, NStoreType folderType, String repositoryIdOrName) {
         if (repositoryIdOrName == null) {
             return getStoreLocation(id, folderType);

@@ -35,7 +35,9 @@ public enum NIsolationLevel implements NEnum {
     SYSTEM,
     USER,
     CONFINED,
-    SANDBOX;
+    SANDBOX,
+    MEMORY
+    ;
     private final String id;
 
     NIsolationLevel() {

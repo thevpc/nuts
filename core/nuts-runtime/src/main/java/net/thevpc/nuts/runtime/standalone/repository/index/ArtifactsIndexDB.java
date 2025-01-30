@@ -3,18 +3,19 @@ package net.thevpc.nuts.runtime.standalone.repository.index;
 
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBDefaultIndexDefinition;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBTableDefinition;
-import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBTableFile;
+import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBTableStore;
 
 public class ArtifactsIndexDB {
     public static final String DEFAULT_ARTIFACT_TABLE_NAME = "Artifacts";
     //    private String tableName;
 //    private NanoDB db;
 //    private NutsWorkspace ws;
-    private final NanoDBTableFile<NId> table;
+    private final NanoDBTableStore<NId> table;
 
 
     public ArtifactsIndexDB(String tableName, NanoDB db) {
@@ -28,7 +29,7 @@ public class ArtifactsIndexDB {
         synchronized (NWorkspace.of()) {
             ArtifactsIndexDB o = (ArtifactsIndexDB) NWorkspace.of().getProperties().get(ArtifactsIndexDB.class.getName());
             if (o == null) {
-                o = new ArtifactsIndexDB(DEFAULT_ARTIFACT_TABLE_NAME, CacheDB.of());
+                o = new ArtifactsIndexDB(DEFAULT_ARTIFACT_TABLE_NAME, NWorkspaceExt.of().store().cacheDB());
                 NWorkspace.of().getProperties().put(ArtifactsIndexDB.class.getName(), o);
             }
             return o;

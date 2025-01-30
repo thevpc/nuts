@@ -7,7 +7,8 @@ package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.concurrent.NLocks;
+import net.thevpc.nuts.concurrent.NLock;
+import net.thevpc.nuts.concurrent.NLockBuilder;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
@@ -446,7 +447,7 @@ public class NRepositoryFolderHelper {
                 return descFile;
             }
         }
-        return NLocks.of().setSource(descFile).call(() -> {
+        return NLock.ofId(id).callWith(() -> {
 
             NDescriptorFormat.of(desc).setNtf(false).print(descFile);
             byte[] bytes = NDigest.of().sha1().setSource(desc).computeString().getBytes();
@@ -496,7 +497,7 @@ public class NRepositoryFolderHelper {
                 return pckFile;
             }
         }
-        return NLocks.of().setSource(pckFile).call(() -> {
+        return NLock.ofId(id).callWith(() -> {
             NCp.of().from(content)
                     .to(pckFile).addOptions(NPathOption.SAFE).run();
             NCp.of().from(
@@ -516,7 +517,7 @@ public class NRepositoryFolderHelper {
         }
         NPath localFolder = getLongIdLocalFile(command.getId().builder().setFaceContent().build());
         if (localFolder != null && localFolder.exists()) {
-            if (NLocks.of().setSource(localFolder).call(() -> {
+            if (NLock.of(localFolder).callWith(() -> {
                 localFolder.deleteTree();
                 return false;
             })) {

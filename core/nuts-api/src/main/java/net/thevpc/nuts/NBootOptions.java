@@ -452,6 +452,8 @@ public interface NBootOptions  {
 
     NOptional<Boolean> getReset();
 
+    NOptional<Boolean> getResetHard();
+
 
     NOptional<Boolean> getCommandVersion();
 

@@ -65,7 +65,9 @@ public interface NExprDeclarations {
 
     NExprLiteralNode ofLiteral(Object a);
 
-    NExprVar ofConst(String name,Object a);
+    NExprVar ofConst(String name, Object a);
 
     NExprInterpolatedStrNode ofInterpolatedStr(String a);
+
+    NExprTemplate ofTemplate();
 }

@@ -247,7 +247,7 @@ public class DefaultNRepositoryModel {
                 options.setEnabled(true);
             } else if (conf == null) {
                 options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder));
-                conf = loadRepository(NPath.of(options.getLocation()).resolve(NConstants.Files.REPOSITORY_CONFIG_FILE_NAME), options.getName());
+                conf = loadRepository(options);
                 if (conf == null) {
                     if (options.isFailSafe()) {
                         return null;
@@ -327,73 +327,14 @@ public class DefaultNRepositoryModel {
         return addRepository(options);
     }
 
-    public NRepositoryConfig loadRepository(NPath file, String name) {
-        NRepositoryConfig conf = null;
-        if (file.isRegularFile() && file.getPermissions().contains(NPathPermission.CAN_READ)) {
-            byte[] bytes = file.readBytes();
-            try {
-                NElements elem = NElements.of();
-                Map<String, Object> a_config0 = elem.json().parse(bytes, Map.class);
-                NVersion version = NVersion.get((String) a_config0.get("configVersion")).orNull();
-                if (version == null || version.isBlank()) {
-                    version = workspace.getApiVersion();
-                }
-                int buildNumber = CoreNUtils.getApiVersionOrdinalNumber(version);
-                if (buildNumber < 506) {
-
-                }
-                conf = elem.json().parse(file, NRepositoryConfig.class);
-            } catch (RuntimeException ex) {
-                if (NWorkspace.of().getBootOptions().getRecover().orElse(false)) {
-                    onLoadRepositoryError(file, name, null, ex);
-                } else {
-                    throw ex;
-                }
-            }
-        }
-        return conf;
+    public NRepositoryConfig loadRepository(NAddRepositoryOptions options) {
+        return ((NWorkspaceExt)workspace).store().loadRepoConfig(options.getLocation(),options.getName());
     }
 
     public NRepositorySPI toRepositorySPI(NRepository repo) {
         return (NRepositorySPI) repo;
     }
 
-    private void onLoadRepositoryError(NPath file, String name, String uuid, Throwable ex) {
-        if (workspace.isReadOnly()) {
-            throw new NIOException(NMsg.ofC("error loading repository %s", file), ex);
-        }
-        String fileName = "nuts-repository" + (name == null ? "" : ("-") + name) + (uuid == null ? "" : ("-") + uuid) + "-" + Instant.now().toString();
-        _LOG().with().level(Level.SEVERE).verb(NLogVerb.FAIL).log(
-                NMsg.ofJ("erroneous repository config file. Unable to load file {0} : {1}", file, ex));
-        NPath logError = NWorkspace.of().getStoreLocation(getWorkspace().getApiId(), NStoreType.LOG)
-                .resolve("invalid-config");
-        try {
-            logError.mkParentDirs();
-        } catch (Exception ex1) {
-            throw new NIOException(NMsg.ofC("unable to log repository error while loading config file %s : %s", file, ex1), ex);
-        }
-        NPath newfile = logError.resolve(fileName + ".json");
-        _LOG().with().level(Level.SEVERE).verb(NLogVerb.FAIL)
-                .log(NMsg.ofJ("erroneous repository config file will be replaced by a fresh one. Old config is copied to {0}", newfile));
-        try {
-            Files.move(file.toPath().get(), newfile.toPath().get());
-        } catch (IOException e) {
-            throw new NIOException(NMsg.ofC("nable to load and re-create repository config file %s : %s", file, e), ex);
-        }
 
-        try (PrintStream o = new PrintStream(logError.resolve(fileName + ".error").getOutputStream())) {
-            o.printf("workspace.path:%s%n", NWorkspace.of().getWorkspaceLocation());
-            o.printf("repository.path:%s%n", file);
-            o.printf("workspace.options:%s%n", workspace.getBootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(false)));
-            for (NStoreType location : NStoreType.values()) {
-                o.printf("location." + location.id() + ":%s%n", NWorkspace.of().getStoreLocation(location));
-            }
-            o.printf("java.class.path:%s%n", System.getProperty("java.class.path"));
-            o.println();
-            ex.printStackTrace(o);
-        } catch (Exception ex2) {
-            //ignore
-        }
-    }
 
 }

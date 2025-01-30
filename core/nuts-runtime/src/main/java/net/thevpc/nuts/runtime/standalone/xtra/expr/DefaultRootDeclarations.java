@@ -384,9 +384,4 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
         return all;
     }
 
-    public int[] getOperatorPrecedences() {
-        return ops.values().stream().map(NExprOpDeclaration::getPrecedence)
-                .sorted().distinct().mapToInt(x -> x).toArray();
-    }
-
 }

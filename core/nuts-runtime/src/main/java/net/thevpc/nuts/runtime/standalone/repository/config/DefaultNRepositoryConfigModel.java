@@ -4,7 +4,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
@@ -397,12 +396,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         if (force || (!NWorkspace.of().isReadOnly() && isConfigurationChanged())) {
             NWorkspaceUtils.of(getWorkspace()).checkReadOnly();
             repository.security().checkAllowed(NConstants.Permissions.SAVE, "save");
-            NPath file = getStoreLocation().resolve(NConstants.Files.REPOSITORY_CONFIG_FILE_NAME);
-            boolean created = false;
-            if (!file.exists()) {
-                created = true;
-            }
-            getStoreLocation().mkdirs();
+
             config.setConfigVersion(DefaultNWorkspace.VERSION_REPOSITORY_CONFIG);
             if (config.getEnv() != null && config.getEnv().isEmpty()) {
                 config.setEnv(null);
@@ -413,9 +407,8 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
 //            if (NutsBlankable.isBlank(config.getConfigVersion())) {
 //                config.setConfigVersion(repository.getWorkspace().getApiVersion());
 //            }
-            NElements.of().json().setValue(config)
-                    .setNtf(false)
-                    .print(file);
+            boolean created=((NWorkspaceExt)workspace).store().saveRepoConfig(repository,config);
+
             configurationChanged = false;
             if (_LOG().isLoggable(Level.CONFIG)) {
                 if (created) {
@@ -455,7 +448,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         return ok;
     }
 
-    public void save(NSession session) {
+    public void save() {
         save(true);
     }
 

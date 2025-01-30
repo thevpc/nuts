@@ -1,7 +1,8 @@
-package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
+package net.thevpc.nuts.runtime.standalone.xtra.nanodb.file;
 
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.runtime.standalone.xtra.nanodb.*;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.*;
@@ -19,7 +20,7 @@ public class NanoDBDefaultIndex<T> extends NanoDBAbstractIndex<T> {
     private Class<T> keyType;
     private NWorkspace workspace;
 
-    public NanoDBDefaultIndex(NWorkspace workspace,Class<T> keyType, NanoDBSerializer<T> ser, DBIndexValueStoreFactory storeFactory, Map<T, DBIndexValueStore> index, File file) {
+    public NanoDBDefaultIndex(NWorkspace workspace, Class<T> keyType, NanoDBSerializer<T> ser, DBIndexValueStoreFactory storeFactory, Map<T, DBIndexValueStore> index, File file) {
         super(ser);
         this.keyType = keyType;
         this.index = index;

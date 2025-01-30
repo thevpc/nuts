@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
 import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.template.NExprDeclarationsTemplateImpl;
 import net.thevpc.nuts.util.NFunction;
 import net.thevpc.nuts.util.NFunction2;
 import net.thevpc.nuts.util.NOptional;
@@ -124,5 +125,10 @@ public abstract class NExprDeclarationsBase implements NExprDeclarations {
     @Override
     public NExprInterpolatedStrNode ofInterpolatedStr(String a) {
         return new DefaultNExprInterpolatedStrNode(a);
+    }
+
+    @Override
+    public NExprTemplate ofTemplate() {
+        return new NExprDeclarationsTemplateImpl(this);
     }
 }

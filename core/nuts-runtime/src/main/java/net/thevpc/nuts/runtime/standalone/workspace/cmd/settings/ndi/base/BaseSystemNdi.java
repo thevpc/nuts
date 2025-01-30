@@ -578,7 +578,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         byte[] newContent = (String.join(sh.newlineString(), newFileContentRows)).getBytes();
 //        String newContentString = new String(newContent);
 //        PathInfo.Status s = NdiUtils.tryWriteStatus(newContent, filePath,session);
-        return new PathInfo(type, id, filePath, CoreIOUtils.tryWrite(newContent, filePath));
+        return new PathInfo(type, id, filePath, CoreIOUtils.tryWrite(newContent, filePath, "UpdateScript"));
     }
 
     public PathInfo removeFileCommented2Lines(String type, NId id, NPath filePath, String commentLine, boolean force, NShellFamily shellFamily) {

@@ -57,11 +57,11 @@ import java.util.stream.Collectors;
 public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions {
 
     public static NWorkspaceOptions BLANK = new DefaultNWorkspaceOptions(
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
             null, null,
             null,
             null, null, null,
-            null, null, null, null,null);
+            null, null, null, null, null);
 
     private static final long serialVersionUID = 1;
     /**
@@ -259,6 +259,13 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
     private final Boolean reset;
 
     /**
+     * @since 0.8.5
+     * reset ALL workspaces
+     * option-type : runtime (available only for the current workspace instance)
+     */
+    private final Boolean resetHard;
+
+    /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private final Boolean commandVersion;
@@ -424,7 +431,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
                                     NTerminalMode terminalMode, NFetchStrategy fetchStrategy, NRunAs runAs,
                                     Instant creationTime, Instant expireTime, Boolean installCompanions, Boolean skipWelcome,
                                     Boolean skipBoot, Boolean system, Boolean gui, Boolean readOnly,
-                                    Boolean trace, Boolean dry, Boolean showStacktrace, Boolean recover, Boolean reset, Boolean commandVersion,
+                                    Boolean trace, Boolean dry, Boolean showStacktrace, Boolean recover, Boolean reset, Boolean resetHard, Boolean commandVersion,
                                     Boolean commandHelp, Boolean inherited, Boolean switchWorkspace, Boolean cached,
                                     Boolean indexed, Boolean transitive, Boolean bot, Boolean skipErrors,
                                     NIsolationLevel isolationLevel, Boolean initLaunchers, Boolean initScripts, Boolean initPlatforms, Boolean initJava, InputStream stdin, PrintStream stdout, PrintStream stderr,
@@ -478,6 +485,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
         this.classLoaderSupplier = classLoaderSupplier;
         this.recover = recover;
         this.reset = reset;
+        this.resetHard = resetHard;
         this.commandVersion = commandVersion;
         this.commandHelp = commandHelp;
         this.debug = debug;
@@ -515,9 +523,9 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
     }
 
     public NBootOptionsInfo toBootOptionsInfo() {
-        NBootOptionsInfo r=new NBootOptionsInfo();
-        r.setApiVersion(this.getApiVersion().map(x->x.toString()).orNull());
-        r.setRuntimeId(this.getRuntimeId().map(x->x.toString()).orNull());
+        NBootOptionsInfo r = new NBootOptionsInfo();
+        r.setApiVersion(this.getApiVersion().map(x -> x.toString()).orNull());
+        r.setRuntimeId(this.getRuntimeId().map(x -> x.toString()).orNull());
         r.setJavaCommand(this.getJavaCommand().orNull());
         r.setJavaOptions(this.getJavaOptions().orNull());
         r.setWorkspace(this.getWorkspace().orNull());
@@ -529,15 +537,15 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
         r.setGui(this.getGui().orNull());
         r.setUserName(this.getUserName().orNull());
         r.setCredentials(this.getCredentials().orNull());
-        r.setTerminalMode(this.getTerminalMode().map(x->x.id()).orNull());
+        r.setTerminalMode(this.getTerminalMode().map(x -> x.id()).orNull());
         r.setReadOnly(this.getReadOnly().orNull());
         r.setTrace(this.getTrace().orNull());
         r.setProgressOptions(this.getProgressOptions().orNull());
         {
             NLogConfig c = this.getLogConfig().orNull();
             NBootLogConfig v = null;
-            if(c!=null){
-                v=new NBootLogConfig();
+            if (c != null) {
+                v = new NBootLogConfig();
                 v.setLogFileBase(c.getLogFileBase());
                 v.setLogFileLevel(c.getLogFileLevel());
                 v.setLogFileFilter(c.getLogFileFilter());
@@ -550,11 +558,11 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
             }
             r.setLogConfig(v);
         }
-        r.setConfirm(this.getConfirm().map(x->x.id()).orNull());
-        r.setConfirm(this.getConfirm().map(x->x.id()).orNull());
-        r.setOutputFormat(this.getOutputFormat().map(x->x.id()).orNull());
+        r.setConfirm(this.getConfirm().map(x -> x.id()).orNull());
+        r.setConfirm(this.getConfirm().map(x -> x.id()).orNull());
+        r.setOutputFormat(this.getOutputFormat().map(x -> x.id()).orNull());
         r.setOutputFormatOptions(this.getOutputFormatOptions().orNull());
-        r.setOpenMode(this.getOpenMode().map(x->x.id()).orNull());
+        r.setOpenMode(this.getOpenMode().map(x -> x.id()).orNull());
         r.setCreationTime(this.getCreationTime().orNull());
         r.setDry(this.getDry().orNull());
         r.setShowStacktrace(this.getShowStacktrace().orNull());
@@ -562,19 +570,20 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
         r.setExecutorOptions(this.getExecutorOptions().orNull());
         r.setRecover(this.getRecover().orNull());
         r.setReset(this.getReset().orNull());
+        r.setResetHard(this.getResetHard().orNull());
         r.setCommandVersion(this.getCommandVersion().orNull());
         r.setCommandHelp(this.getCommandHelp().orNull());
         r.setDebug(this.getDebug().orNull());
         r.setInherited(this.getInherited().orNull());
-        r.setExecutionType(this.getExecutionType().map(x->x.id()).orNull());
-        r.setRunAs(this.getRunAs().map(x->x.toString()).orNull());
+        r.setExecutionType(this.getExecutionType().map(x -> x.id()).orNull());
+        r.setRunAs(this.getRunAs().map(x -> x.toString()).orNull());
         r.setArchetype(this.getArchetype().orNull());
-        r.setStoreStrategy(this.getStoreStrategy().map(x->x.id()).orNull());
+        r.setStoreStrategy(this.getStoreStrategy().map(x -> x.id()).orNull());
         {
             Map<NHomeLocation, String> c = this.getHomeLocations().orNull();
-            Map<NBootHomeLocation, String> v =null;
-            if(c!=null){
-                v=new HashMap<>();
+            Map<NBootHomeLocation, String> v = null;
+            if (c != null) {
+                v = new HashMap<>();
                 for (Map.Entry<NHomeLocation, String> e : c.entrySet()) {
                     v.put(NBootHomeLocation.of(
                             e.getKey().getOsFamily().id(),
@@ -586,19 +595,19 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
         }
         {
             Map<NStoreType, String> c = this.getStoreLocations().orNull();
-            Map<String, String> v =null;
-            if(c!=null){
-                v=new HashMap<>();
+            Map<String, String> v = null;
+            if (c != null) {
+                v = new HashMap<>();
                 for (Map.Entry<NStoreType, String> e : c.entrySet()) {
                     v.put(e.getKey().id(), e.getValue());
                 }
             }
             r.setStoreLocations(v);
         }
-        r.setStoreLayout(this.getStoreLayout().map(x->x.toString()).orNull());
-        r.setStoreStrategy(this.getStoreStrategy().map(x->x.toString()).orNull());
-        r.setRepositoryStoreStrategy(this.getRepositoryStoreStrategy().map(x->x.toString()).orNull());
-        r.setFetchStrategy(this.getFetchStrategy().map(x->x.toString()).orNull());
+        r.setStoreLayout(this.getStoreLayout().map(x -> x.toString()).orNull());
+        r.setStoreStrategy(this.getStoreStrategy().map(x -> x.toString()).orNull());
+        r.setRepositoryStoreStrategy(this.getRepositoryStoreStrategy().map(x -> x.toString()).orNull());
+        r.setFetchStrategy(this.getFetchStrategy().map(x -> x.toString()).orNull());
         r.setCached(this.getCached().orNull());
         r.setIndexed(this.getIndexed().orNull());
         r.setTransitive(this.getTransitive().orNull());
@@ -615,20 +624,20 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
         r.setApplicationArguments(this.getApplicationArguments().orNull());
         r.setCustomOptions(this.getCustomOptions().orNull());
         r.setExpireTime(this.getExpireTime().orNull());
-        r.setErrors(this.getErrors().isNotPresent()?new ArrayList<>():this.getErrors().get().stream().map(x->x.toString()).collect(Collectors.toList()));
+        r.setErrors(this.getErrors().isNotPresent() ? new ArrayList<>() : this.getErrors().get().stream().map(x -> x.toString()).collect(Collectors.toList()));
         r.setSkipErrors(this.getSkipErrors().orNull());
         r.setSwitchWorkspace(this.getSwitchWorkspace().orNull());
         r.setLocale(this.getLocale().orNull());
         r.setTheme(this.getTheme().orNull());
         r.setDependencySolver(this.getDependencySolver().orNull());
-        r.setIsolationLevel(this.getIsolationLevel().map(x->x.id()).orNull());
+        r.setIsolationLevel(this.getIsolationLevel().map(x -> x.id()).orNull());
         r.setInitLaunchers(this.getInitLaunchers().orNull());
         r.setInitJava(this.getInitJava().orNull());
         r.setInitScripts(this.getInitScripts().orNull());
         r.setInitPlatforms(this.getInitPlatforms().orNull());
-        r.setDesktopLauncher(this.getDesktopLauncher().map(x->x.id()).orNull());
-        r.setMenuLauncher(this.getMenuLauncher().map(x->x.id()).orNull());
-        r.setUserLauncher(this.getUserLauncher().map(x->x.id()).orNull());
+        r.setDesktopLauncher(this.getDesktopLauncher().map(x -> x.id()).orNull());
+        r.setMenuLauncher(this.getMenuLauncher().map(x -> x.id()).orNull());
+        r.setUserLauncher(this.getUserLauncher().map(x -> x.id()).orNull());
         r.setSharedInstance(this.getSharedInstance().orNull());
         r.setPreviewRepo(this.getPreviewRepo().orNull());
         return r;
@@ -876,6 +885,11 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
     @Override
     public NOptional<Boolean> getReset() {
         return NOptional.ofNamed(reset, "reset");
+    }
+
+    @Override
+    public NOptional<Boolean> getResetHard() {
+        return NOptional.ofNamed(resetHard, "resetHard");
     }
 
     @Override

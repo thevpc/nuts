@@ -4,7 +4,7 @@ import net.thevpc.nuts.NConfigItem;
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NVersion;
 
-public class NWorkspaceConfigApi extends NConfigItem {
+public class NWorkspaceConfigApi extends NConfigItem implements Cloneable{
     private static final long serialVersionUID = 3;
 
     private NVersion apiVersion = null;
@@ -53,5 +53,13 @@ public class NWorkspaceConfigApi extends NConfigItem {
     public NWorkspaceConfigApi setJavaOptions(String javaOptions) {
         this.javaOptions = javaOptions;
         return this;
+    }
+
+    public NWorkspaceConfigApi copy() {
+        try {
+            return (NWorkspaceConfigApi) clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

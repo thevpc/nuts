@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.ask;
 
 import net.thevpc.nuts.*;
 
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
@@ -15,9 +16,7 @@ import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.*;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class DefaultNAsk<T> implements NAsk<T> {
 
@@ -29,7 +28,8 @@ public class DefaultNAsk<T> implements NAsk<T> {
     private List<Object> acceptedValues;
     private NMsg hintMessage;
     private T defaultValue;
-    private boolean resetLine=true;
+    private String rememberMeKey;
+    private boolean resetLine = true;
     private Class<T> valueType;
     private NAskFormat<T> format;
     private NAskParser<T> parser;
@@ -45,9 +45,30 @@ public class DefaultNAsk<T> implements NAsk<T> {
         this.out = out;
     }
 
+    public String getRememberMeKey() {
+        return rememberMeKey;
+    }
+
+    public NAsk<T> setRememberMeKey(String rememberMeKey) {
+        this.rememberMeKey = rememberMeKey;
+        return this;
+    }
+
     private T execute() {
-        NSession session= workspace.currentSession();
-        if (!traceConfirmation && (this.getValueType().equals(Boolean.class) || this.getValueType().equals(Boolean.TYPE))) {
+        NSession session = workspace.currentSession();
+        NAskCache askCache = NApp.of().getOrComputeProperty(NAskCache.class.getName(), NScopeType.SESSION, () -> new NAskCache());
+        if (rememberMeKey != null) {
+            Object o = askCache.get(rememberMeKey);
+            if (o != null) {
+                try {
+                    return (T) o;
+                } catch (Exception e) {
+                    //
+                    askCache.remove(rememberMeKey);
+                }
+            }
+        }
+        if (!traceConfirmation && isBooleanType()) {
             switch (session.getConfirm().orDefault()) {
                 case YES: {
                     return (T) Boolean.TRUE;
@@ -101,6 +122,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
         if (_acceptedValues == null) {
             _acceptedValues = new ArrayList<>();
         }
+        String alwaysKey = null;
         while (true) {
             NPrintStream out = this.out;
             ByteArrayOutputStream bos = null;
@@ -127,7 +149,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
                 out.print(getHintMessage());
                 out.print(")");
             } else {
-                if (_acceptedValues.size() > 0) {
+                if (!_acceptedValues.isEmpty()) {
                     if (first) {
                         first = false;
                         out.print(" (");
@@ -157,7 +179,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
                     throw new NCancelException();
                 }
             }
-            if (this.getValueType().equals(Boolean.class) || this.getValueType().equals(Boolean.TYPE)) {
+            if (isBooleanType()) {
                 switch (session.getConfirm().orDefault()) {
                     case YES: {
                         out.flush();
@@ -171,6 +193,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
                     }
                 }
             }
+            boolean always = false;
             if (password) {
                 char[] v;
                 if (extraInfo) {
@@ -179,11 +202,13 @@ public class DefaultNAsk<T> implements NAsk<T> {
                     if (gui) {
                         out.print(NMsg.ofC("\t Please enter value or ```error %s``` to cancel : ", "cancel!"));
                         out.flush();
-                        String v0 = showGuiInput(bos.toString(), true);
-                        if (v0 == null) {
-                            v0 = "";
+                        CoreNUtilGui.GuiResult v0 = showGuiInput(bos.toString(), true, rememberMeKey != null);
+                        if (v0 == null || v0.getValue() ==null) {
+                            v = new char[0];
+                        }else {
+                            v = ((String)v0.getValue()).toCharArray();
                         }
-                        v = v0.toCharArray();
+                        always=v0!=null && v0.isRememberMe();
                     } else {
                         v = terminal.readPassword(NMsg.ofC("\t Please enter value or ```error %s``` to cancel : ", "cancel!"));
                     }
@@ -192,11 +217,13 @@ public class DefaultNAsk<T> implements NAsk<T> {
                     if (gui) {
                         out.print(" ");
                         out.flush();
-                        String v0 = showGuiInput(bos.toString(), true);
-                        if (v0 == null) {
-                            v0 = "";
+                        CoreNUtilGui.GuiResult v0 = showGuiInput(bos.toString(), true, rememberMeKey != null);
+                        if (v0 == null || v0.getValue() ==null) {
+                            v = new char[0];
+                        }else {
+                            v = ((String)v0.getValue()).toCharArray();
                         }
-                        v = v0.toCharArray();
+                        always=v0!=null && v0.isRememberMe();
                     } else {
                         v = terminal.readPassword(NMsg.ofPlain(" "));
                     }
@@ -208,6 +235,9 @@ public class DefaultNAsk<T> implements NAsk<T> {
                     if (this.validator != null) {
                         v = (char[]) this.validator.validate((T) v, this);
                     }
+                    if (always && rememberMeKey != null) {
+                        askCache.set(rememberMeKey, v);
+                    }
                     return (T) v;
                 } catch (NCancelException ex) {
                     throw ex;
@@ -215,39 +245,56 @@ public class DefaultNAsk<T> implements NAsk<T> {
                     out.println(NMsg.ofC("```error ERROR``` : %s", ex));
                 }
             } else {
-                String v;
+                String responseStr;
                 if (extraInfo) {
                     out.print("?\n");
                     out.flush();
                     if (gui) {
                         out.print(NMsg.ofC("\t Please enter value or ```error %s``` to cancel : ", "cancel!"));
                         out.flush();
-                        String v0 = showGuiInput(bos.toString(), false);
-                        if (v0 == null) {
-                            v0 = "";
+                        CoreNUtilGui.GuiResult v0 = showGuiInput(bos.toString(), false, rememberMeKey != null);
+                        if (v0 == null || v0.getValue() ==null) {
+                            responseStr = "";
+                        }else {
+                            responseStr = ((String)v0.getValue());
                         }
-                        v = v0;
+                        always=v0!=null && v0.isRememberMe();
                     } else {
-                        v = terminal.readLine(NMsg.ofC("\t Please enter value or ```error %s``` to cancel : ", "cancel!"));
+                        responseStr = terminal.readLine(NMsg.ofC("\t Please enter value or ```error %s``` to cancel : ", "cancel!"));
+                        if (responseStr != null) {
+                            CoreNUtilGui.GuiResult n = parseGuiResult(responseStr);
+                            responseStr = (String) n.getValue();
+                            always = n.isRememberMe();
+                        }
                     }
                 } else {
                     out.flush();
                     if (gui) {
                         out.print(" ? : ");
                         out.flush();
-                        String v0 = showGuiInput(bos.toString(), false);
-                        if (v0 == null) {
-                            v0 = "";
+                        CoreNUtilGui.GuiResult v0 = showGuiInput(bos.toString(), false, rememberMeKey != null);
+                        if (v0 == null || v0.getValue() ==null) {
+                            responseStr = "";
+                        }else {
+                            responseStr = ((String)v0.getValue());
                         }
-                        v = v0;
                     } else {
-                        v = terminal.readLine(NMsg.ofPlain(" ? : "));
+                        responseStr = terminal.readLine(NMsg.ofPlain(" ? : "));
+                    }
+                    if (responseStr != null) {
+                        CoreNUtilGui.GuiResult n = parseGuiResult(responseStr);
+                        responseStr = (String) n.getValue();
+                        always = n.isRememberMe();
                     }
                 }
                 try {
-                    T parsed = p.parse(v, this.getDefaultValue(), this);
+                    NAskParseContext<T> cc = new MyNAskParseContext<T>(responseStr, this);
+                    T parsed = p.parse(cc);
                     if (this.validator != null) {
                         parsed = this.validator.validate(parsed, this);
+                    }
+                    if (always && rememberMeKey != null) {
+                        askCache.set(rememberMeKey, parsed);
                     }
                     return parsed;
                 } catch (NCancelException ex) {
@@ -260,8 +307,27 @@ public class DefaultNAsk<T> implements NAsk<T> {
         }
     }
 
-    private String showGuiInput(String str, boolean pwd) {
-        NSession session= workspace.currentSession();
+    private CoreNUtilGui.GuiResult parseGuiResult(String responseStr){
+        if (responseStr != null) {
+            if (isBooleanType()) {
+                if (responseStr.equals("a")) {
+                    return new CoreNUtilGui.GuiResult("true",true);
+                } else if (responseStr.startsWith("!!")) {
+                    responseStr = responseStr.substring(2);
+                    return new CoreNUtilGui.GuiResult(responseStr,true);
+                } else if (responseStr.equals(responseStr.toUpperCase())) {
+                    return new CoreNUtilGui.GuiResult(responseStr,true);
+                }
+            } else if (responseStr.startsWith("!!")) {
+                responseStr = responseStr.substring(2);
+                return new CoreNUtilGui.GuiResult(responseStr,true);
+            }
+        }
+        return new CoreNUtilGui.GuiResult(responseStr,false);
+    }
+
+    private CoreNUtilGui.GuiResult showGuiInput(String str, boolean pwd, boolean rememberMe) {
+        NSession session = workspace.currentSession();
         String ft = NText.of(str).filteredText();
         NMsg title = NMsg.ofC("Nuts Package Manager - %s", session.getWorkspace().getApiId().getVersion());
         if (NApp.of().getId().orNull() != null) {
@@ -280,9 +346,9 @@ public class DefaultNAsk<T> implements NAsk<T> {
             }
         }
         if (password) {
-            return CoreNUtilGui.inputPassword(NMsg.ofNtf(str), title);
+            return CoreNUtilGui.inputPassword(NMsg.ofNtf(str), title,rememberMe);
         } else {
-            return CoreNUtilGui.inputString(NMsg.ofNtf(str), title);
+            return CoreNUtilGui.inputString(NMsg.ofNtf(str), title,rememberMe);
         }
     }
 
@@ -343,7 +409,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
         K[] values = enumType.getEnumConstants();
         return ((NAsk<K>) this).setValueType(enumType)
                 .setMessage(msg)
-                .setAcceptedValues(Arrays.asList((Object[])values));
+                .setAcceptedValues(Arrays.asList((Object[]) values));
     }
 
     @Override
@@ -470,7 +536,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
      */
     @Override
     public final NAsk<T> configure(boolean skipUnsupported, String... args) {
-        return NCmdLineConfigurable.configure(this, skipUnsupported, args,"question");
+        return NCmdLineConfigurable.configure(this, skipUnsupported, args, "question");
     }
 
     @Override
@@ -494,5 +560,48 @@ public class DefaultNAsk<T> implements NAsk<T> {
         return false;
     }
 
+    private boolean isBooleanType() {
+        return (this.getValueType().equals(Boolean.class) || this.getValueType().equals(Boolean.TYPE));
+    }
 
+
+    private static class MyNAskParseContext<T> implements NAskParseContext<T> {
+        private final Object response;
+        private final NAsk<T> question;
+
+        public MyNAskParseContext(String response, NAsk<T> question) {
+            this.response = response;
+            this.question = question;
+        }
+
+        @Override
+        public Object response() {
+            return response;
+        }
+
+        @Override
+        public NAsk<T> question() {
+            return question;
+        }
+    }
+
+    public static class NAskCache {
+        Map<String, Object> cachedResponses = new HashMap<>();
+
+        public Object get(String id) {
+            return cachedResponses.get(id);
+        }
+
+        public void remove(String id) {
+            cachedResponses.remove(id);
+        }
+
+        public void set(String id, Object value) {
+            if (value != null) {
+                cachedResponses.put(id, value);
+            } else {
+                cachedResponses.remove(id);
+            }
+        }
+    }
 }
