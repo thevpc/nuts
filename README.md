@@ -46,7 +46,7 @@ Please note that ```nuts``` rolling version (which is the most recent version) i
 First you need to download nuts-preview.jar
 
 ```
-wget https://thevpc.net/nuts/nuts-preview.jar -O nuts.jar
+curl -sOL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar && java -jar nuts.jar -Zy
 ```
 
 That’s it, now you must relaunch the terminal window (close the terminal and start it again).
@@ -65,15 +65,7 @@ The very same procedure applies whether you already have an existing version of 
 First you need to download nuts-stable.jar
 
 ```
-wget https://thevpc.net/nuts/nuts-stable.jar -O nuts.jar
-```
-
-Then you must run, in a terminal, one of the following commands:
-
-Run this command to reset the configuration or when you are installing the very first time
-
-```
-java -jar nuts.jar -Zy
+curl -sOL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar && java -jar nuts.jar -Zy
 ```
 
 That’s it, now you must relaunch the terminal window (close the terminal and start it again).
