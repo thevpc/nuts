@@ -63,6 +63,11 @@
         <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts-lib</artifactId><version>0.8.5.0</version></dependency>
         <dependency><groupId>net.thevpc.nuts.lib</groupId><artifactId>nlib-doc</artifactId><version>0.8.5.0</version></dependency>
         <dependency><groupId>net.thevpc.nuts.toolbox</groupId><artifactId>ndocusaurus</artifactId><version>0.8.5.0</version></dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>2.2</version>
+        </dependency>
     </dependencies>
 
     <build>

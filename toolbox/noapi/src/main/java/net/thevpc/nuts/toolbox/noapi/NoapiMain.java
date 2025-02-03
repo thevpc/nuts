@@ -23,7 +23,7 @@ public class NoapiMain implements NApplication {
     private List<NoapiCmdData> data = new ArrayList<>();
 
     public static void main(String[] args) {
-        new NoapiMain().runAndExit(args);
+        new NoapiMain().run(args);
     }
 
     @Override

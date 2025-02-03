@@ -17,6 +17,7 @@ import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.toolbox.noapi.model.FieldInfo;
 import net.thevpc.nuts.toolbox.noapi.model.SupportedTargetType;
 import net.thevpc.nuts.toolbox.noapi.model.TypeInfo;
+import net.thevpc.nuts.util.NStringUtils;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
@@ -158,7 +159,7 @@ public class NoApiUtils {
         }
         if (o.getRef() != null) {
             return o.getRef() + descSep;
-        } else if (o.getUserType().equals("object")) {
+        } else if ("object".equals(o.getUserType())) {
             StringBuilder sb = new StringBuilder("{");
             for (FieldInfo p : o.getFields()) {
                 sb.append("\n").append(indent).append("  ").append(p.name).append(": ").append(toCode(p.schema, includeDesc, indent + "  ", msg));
@@ -168,7 +169,7 @@ public class NoApiUtils {
             return sb.toString();
         } else {
             String type = o.getUserType();
-            switch (o.getUserType()) {
+            switch (NStringUtils.trim(o.getUserType())) {
                 case "string":
                 case "enum": {
                     if (!NBlankable.isBlank(o.getMinLength()) && !NBlankable.isBlank(o.getMaxLength())) {

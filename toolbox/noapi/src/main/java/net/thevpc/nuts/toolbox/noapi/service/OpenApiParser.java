@@ -147,7 +147,8 @@ public class OpenApiParser {
                     NObjectElement prop = p.getValue().asObject().get();
                     ff.description = prop.getString("description").orNull();
                     ff.summary = prop.getString("summary").orNull();
-                    ff.example = prop.getString("example").orNull();
+                    NElement example = prop.get("example").orNull();
+                    ff.example = example==null?null:example.toString();
                     ff.required = requiredSet.contains(ff.name);
                     ff.schema = parseOneType(prop, null, session, allTypes);
                     tt.getFields().add(ff);
