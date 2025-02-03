@@ -1,5 +1,6 @@
 package net.thevpc.nuts.lib.doc.executor.nsh;
 
+import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.lib.doc.executor.NDocExprEvaluator;
@@ -55,11 +56,12 @@ public class NshEvaluator implements NDocExprEvaluator {
     @Override
     public Object eval(String content, NDocContext context) {
         NShellContext ctx = shell.createInlineContext(shell.getRootContext(), context.getSourcePath().orElse("nsh"), new String[0]);
-        NSession session = NSession.of();
-        session.setTerminal(NTerminal.ofMem());
-        ctx.setSession(session);
-        shell.executeScript(content, ctx);
-        return session.out().toString();
+        NSession session = NSession.of().copy().setTerminal(NTerminal.ofMem());
+        return session.callWith(()->{
+            ctx.setSession(session);
+            shell.executeScript(content, ctx);
+            return NOut.out().toString();
+        });
     }
 
     @Override

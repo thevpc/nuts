@@ -1,5 +1,6 @@
 package net.thevpc.nuts.tutorial.lib;
 
+import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.util.NMsg;
@@ -14,7 +15,7 @@ public class ExamplesOfZip {
 
     public void executeCompress() {
         NSession session = NSession.of();
-        session.out().println("Example of ## Compress ##");
+        NOut.println("Example of ## Compress ##");
         NPath example = NPath.ofUserDirectory().resolve("example");
         if (example.isDirectory()) {
             NCompress.of()
@@ -27,10 +28,10 @@ public class ExamplesOfZip {
 
     public void executeUncompress() {
         NSession session = NSession.of();
-        session.out().println("Example of ## Uncompress ##");
+        NOut.println("Example of ## Uncompress ##");
         NPath example = NPath.ofUserDirectory().resolve("example.zip");
         if (example.isRegularFile()) {
-            session.out().println(NMsg.ofC("Listing %s", example));
+            NOut.println(NMsg.ofC("Listing %s", example));
             NUncompress.of()
                     .setSource(example)
                     .visit(new NUncompressVisitor() {
@@ -41,12 +42,12 @@ public class ExamplesOfZip {
 
                         @Override
                         public boolean visitFile(String path, InputStream inputStream) {
-                            session.out().println(path);
+                            NOut.println(path);
                             return true;
                         }
                     })
                     .run();
-            session.out().println(NMsg.ofC("Uncompressing %s", example));
+            NOut.println(NMsg.ofC("Uncompressing %s", example));
             NUncompress.of()
                     .setSource(example)
                     .setTarget(example.resolveSibling("example-uncompressed"))

@@ -45,8 +45,8 @@ public final class NutsApp {
      */
     @SuppressWarnings("UseSpecificCatch")
     public static void main(String[] args) {
-        NBootWorkspace bws = NBootWorkspace.of(args);
         try {
+            NBootWorkspace bws = NBootWorkspace.of(args);
             bws.runWorkspace();
         } catch (Exception ex) {
             NBootWorkspace.exitOnError(ex);

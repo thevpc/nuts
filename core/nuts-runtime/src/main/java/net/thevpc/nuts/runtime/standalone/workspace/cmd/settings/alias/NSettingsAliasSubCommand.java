@@ -83,7 +83,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                                     ))
                     ).println();
                 } else {
-                    session.out().println(
+                    NOut.println(
                             r.stream().map(x -> new AliasInfo(x)).collect(Collectors.toList())
                     );
                 }

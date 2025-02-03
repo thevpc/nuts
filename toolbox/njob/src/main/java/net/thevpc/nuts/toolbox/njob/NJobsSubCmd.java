@@ -95,7 +95,7 @@ public class NJobsSubCmd {
         if (cmd.isExecMode()) {
             service.jobs().addJob(t);
             if (session.isPlainTrace()) {
-                session.out().println(NMsg.ofC("job %s (%s) added.",
+                NOut.println(NMsg.ofC("job %s (%s) added.",
                         NText.ofStyled(t.getId(), NTextStyle.primary5()),
                         t.getName()
                 ));

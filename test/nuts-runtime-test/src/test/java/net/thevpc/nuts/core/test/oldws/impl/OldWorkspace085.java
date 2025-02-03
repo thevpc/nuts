@@ -2,6 +2,7 @@ package net.thevpc.nuts.core.test.oldws.impl;
 
 import net.thevpc.nuts.NExecCmd;
 import net.thevpc.nuts.NExecutionType;
+import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.core.test.oldws.OldWorkspace;
 import net.thevpc.nuts.io.NCp;
@@ -17,7 +18,7 @@ public class OldWorkspace085 extends OldWorkspace {
 
 
     public void upgrade() {
-        NSession.of().out().println(NMsg.ofC("updating workspace %s in %s", version, ws));
+        NOut.println(NMsg.ofC("updating workspace %s in %s", version, ws));
         NExecCmd.of().setExecutionType(NExecutionType.SYSTEM)
                 .addCommand(resolveJavaFile(), "-jar", resolveJarFile().getPath())
                 .addCommand("--yes")
@@ -30,7 +31,7 @@ public class OldWorkspace085 extends OldWorkspace {
     @Override
     public void installWs() {
         downloadNutsJar();
-        NSession.of().out().println(NMsg.ofC("booting workspace %s in %s", version, ws));
+        NOut.println(NMsg.ofC("booting workspace %s in %s", version, ws));
         NExecCmd.of().setExecutionType(NExecutionType.SYSTEM)
                 .addCommand(resolveJavaFile(), "-jar", resolveJarFile().getPath())
                 .addCommand("--desktop-launcher=unsupported")
@@ -65,7 +66,7 @@ public class OldWorkspace085 extends OldWorkspace {
 
     private void downloadNutsJar() {
         String url = "https://thevpc.net/maven/net/thevpc/nuts/nuts-app/" + version + "/nuts-app-" + version + ".jar";
-        NSession.of().out().println(NMsg.ofC("downloading %s to %s", NPath.of(url), resolveJarFile()));
+        NOut.println(NMsg.ofC("downloading %s to %s", NPath.of(url), resolveJarFile()));
         NCp.of().from(NPath.of(url))
                 .to(resolveJarFile())
                 .run();

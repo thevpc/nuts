@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.nsh.options;
 
-import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.toolbox.nsh.err.NShellException;
 import net.thevpc.nuts.toolbox.nsh.nshell.NShellOptions;
@@ -11,10 +11,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DefaultNShellOptionsParser implements NShellOptionsParser {
-    private NSession session;
 
-    public DefaultNShellOptionsParser(NSession session) {
-        this.session = session;
+    public DefaultNShellOptionsParser() {
     }
 
     protected NShellOptions createOptions() {
@@ -201,7 +199,7 @@ public class DefaultNShellOptionsParser implements NShellOptionsParser {
 
     protected void parseUnsupportedNextArgument(List<String> args, NShellOptions options) {
         NCmdLine a = NCmdLine.of(args);
-        if (session.configureFirst(a)) {
+        if (NSession.of().configureFirst(a)) {
             //replace remaining...
             args.clear();
             args.addAll(Arrays.asList(a.toStringArray()));

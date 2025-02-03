@@ -39,7 +39,7 @@ public class Test03_CreateLayoutTest {
                 )
         );
         for (NStoreType value : NStoreType.values()) {
-            NSession.of().out().println(NMsg.ofC("%s %s", value, NWorkspace.of().getStoreLocation(value)));
+            NOut.println(NMsg.ofC("%s %s", value, NWorkspace.of().getStoreLocation(value)));
         }
 
         TestUtils.openExistingTestWorkspace(
@@ -110,7 +110,7 @@ public class Test03_CreateLayoutTest {
         File base = NWorkspace.of().getLocation().toFile().get();
         TestUtils.println(new File(base, "config").getPath());
         for (NStoreType value : NStoreType.values()) {
-            NSession.of().out().println(NMsg.ofC("%s %s", value, NWorkspace.of().getStoreLocation(value)));
+            NOut.println(NMsg.ofC("%s %s", value, NWorkspace.of().getStoreLocation(value)));
         }
         Assertions.assertEquals(
                 NPath.of(base).resolve("bin"),

@@ -42,7 +42,7 @@ public class DefaultNLicenseInternalExecutable extends DefaultInternalNExecutabl
         }
 
         NText licenseString = NWorkspaceExt.of().getLicenseText();
-        session.out().println(licenseString);
+        NOut.println(licenseString);
         return NExecutionException.SUCCESS;
     }
 

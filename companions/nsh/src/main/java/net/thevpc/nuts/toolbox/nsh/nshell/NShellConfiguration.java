@@ -44,7 +44,6 @@ import java.util.function.Supplier;
  */
 public class NShellConfiguration {
 
-    private NSession session;
     private NId appId;
     private String[] args;
     private String serviceName;
@@ -70,15 +69,6 @@ public class NShellConfiguration {
      */
     private Boolean includeExternalExecutor;
     private Supplier<NMsg> headerMessageSupplier;
-
-    public NSession getSession() {
-        return session;
-    }
-
-    public NShellConfiguration setSession(NSession session) {
-        this.session = session;
-        return this;
-    }
 
     public String[] getArgs() {
         return args;

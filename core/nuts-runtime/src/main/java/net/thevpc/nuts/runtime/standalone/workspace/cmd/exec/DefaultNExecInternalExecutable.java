@@ -5,10 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
-import net.thevpc.nuts.NExecCmd;
-import net.thevpc.nuts.NExecutionException;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
@@ -42,7 +39,7 @@ public class DefaultNExecInternalExecutable extends DefaultInternalNExecutableCo
     public void dryExecute() {
         NSession session = workspace.currentSession();
         if (NAppUtils.processHelpOptions(args)) {
-            session.out().println("[dry] ==show-help==");
+            NOut.println("[dry] ##show-help##");
             return;
         }
 

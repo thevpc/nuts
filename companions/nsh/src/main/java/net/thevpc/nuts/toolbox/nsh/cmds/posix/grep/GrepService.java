@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.posix.grep;
 
+import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NExecutionException;
@@ -100,7 +101,7 @@ public class GrepService {
         }
         grepResultCollectorImpl.flush();
         if (options.summary) {
-            session.out().println(
+            NOut.println(
                     NMaps.of(
                             "files", grepResultCollectorImpl.getFilesCount(),
                             "match", grepResultCollectorImpl.getMatchCount(),

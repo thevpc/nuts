@@ -108,11 +108,11 @@ public class AutocompleteCommand extends NShellBuiltinDefault {
                 for (String o : new TreeSet<String>((Set) p.keySet())) {
                     if (o.startsWith("-")) {
                         // option
-                        session.out().println(NMsg.ofC("%s", text.ofStyled(o, NTextStyle.primary4())));
+                        NOut.println(NMsg.ofC("%s", text.ofStyled(o, NTextStyle.primary4())));
                     } else if (o.startsWith("<")) {
-                        session.out().println(NMsg.ofC("%s", text.ofStyled(o, NTextStyle.primary1())));
+                        NOut.println(NMsg.ofC("%s", text.ofStyled(o, NTextStyle.primary1())));
                     } else {
-                        session.out().println(NMsg.ofC("%s",
+                        NOut.println(NMsg.ofC("%s",
                                 text.ofStyled(o, NTextStyle.pale())
                         ));
                     }
@@ -120,7 +120,7 @@ public class AutocompleteCommand extends NShellBuiltinDefault {
                 break;
             }
             default: {
-                session.out().println(p);
+                NOut.println(p);
             }
         }
     }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.thevpc.nuts.NApp;
 import net.thevpc.nuts.NApplication;
+import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -55,8 +56,7 @@ public class CustomCliA implements NApplication {
             @Override
             public void run(NCmdLine cmdLine, NCmdLineContext context) {
                 if (clean) {
-                    NSession session = NSession.get().get();
-                    session.out().println("cleaned!");
+                    NOut.println("cleaned!");
                 }
             }
         });

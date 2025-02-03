@@ -2,6 +2,7 @@ package net.thevpc.nuts.core.test.oldws.impl;
 
 import net.thevpc.nuts.NExecCmd;
 import net.thevpc.nuts.NExecutionType;
+import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.core.test.oldws.OldWorkspace;
 import net.thevpc.nuts.io.NCp;
@@ -17,7 +18,7 @@ public class OldWorkspace083 extends OldWorkspace {
 
 
     public void upgrade() {
-        NSession.of().out().println(NMsg.ofC("updating workspace %s in %s", version, ws));
+        NOut.println(NMsg.ofC("updating workspace %s in %s", version, ws));
         NExecCmd.of().setExecutionType(NExecutionType.SYSTEM)
                 .addCommand(resolveJavaFile(), "-jar", resolveJarFile().getPath())
                 .addCommand("--yes")
@@ -30,7 +31,7 @@ public class OldWorkspace083 extends OldWorkspace {
     @Override
     public void installWs() {
         downloadNutsJar();
-        NSession.of().out().println(NMsg.ofC("booting workspace %s in %s", version, ws));
+        NOut.println(NMsg.ofC("booting workspace %s in %s", version, ws));
         NExecCmd.of().setExecutionType(NExecutionType.SYSTEM)
                 .addCommand(resolveJavaFile(), "-jar", resolveJarFile().getPath())
                 //disable creating of bashrc, etc...
@@ -51,7 +52,7 @@ public class OldWorkspace083 extends OldWorkspace {
     }
 
     private void downloadNutsJar() {
-        NSession.of().out().println(NMsg.ofC("downloading %s to %s", NPath.of("https://thevpc.net/maven/net/thevpc/nuts/nuts/" + version + "/nuts-" + version + ".jar"), resolveJarFile()));
+        NOut.println(NMsg.ofC("downloading %s to %s", NPath.of("https://thevpc.net/maven/net/thevpc/nuts/nuts/" + version + "/nuts-" + version + ".jar"), resolveJarFile()));
         NCp.of().from(NPath.of("https://thevpc.net/maven/net/thevpc/nuts/nuts/" + version + "/nuts-" + version + ".jar"))
                 .to(resolveJarFile())
                 .run();

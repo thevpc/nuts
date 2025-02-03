@@ -1065,7 +1065,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                     for (LocaleOrRemote cnf : result) {
                         if (cnf.local != null) {
                             for (Map.Entry<String, LocalMysqlDatabaseConfig> db : cnf.local.getDatabases().entrySet()) {
-                                session.out().println(NMsg.ofC("%s",
+                                NOut.println(NMsg.ofC("%s",
                                         toObject(db.getKey(), cnf.name, db.getValue(), describe, true, service.getSession())
                                 ));
                             }

@@ -400,7 +400,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         }
         if (CoreNUtils.isCustomFalse("---perf")) {
             if (session.isPlainOut()) {
-                session.out().println(NMsg.ofC("%s workspace loaded in %s",
+                NOut.println(NMsg.ofC("%s workspace loaded in %s",
                         NMsg.ofCode("nuts"),
                         getCreationDuration()
 
@@ -742,7 +742,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     private void displayRecommendations(Object r) {
         Map<String, Object> a = new HashMap<>();
         a.put("recommendations", r);
-        NSession.of().out().println(a);
+        NOut.println(a);
     }
 
     private URL getApiURL() {
@@ -1001,14 +1001,14 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             if (session.isPlainTrace()) {
                 NTexts text = NTexts.of();
                 if (strategy0 == InstallStrategy0.UPDATE) {
-                    session.out().resetLine().println(NMsg.ofC("%s %s ...",
+                    NOut.resetLine().println(NMsg.ofC("%s %s ...",
                             text.ofStyled("update", NTextStyle.warn()),
                             def.getId().getLongId()
                     ));
                 } else if (strategy0 == InstallStrategy0.REQUIRE) {
                     reinstall = def.getInstallInformation().get().getInstallStatus().isRequired();
                     if (reinstall) {
-                        //session.out().println("re-requiring  " + id().formatter().set(def.getId().getLongNameId()).format() + " ...");
+                        //NOut.println("re-requiring  " + id().formatter().set(def.getId().getLongNameId()).format() + " ...");
                     } else {
                         //session.out().println("requiring  " + id().formatter().set(def.getId().getLongNameId()).format() + " ...");
                     }

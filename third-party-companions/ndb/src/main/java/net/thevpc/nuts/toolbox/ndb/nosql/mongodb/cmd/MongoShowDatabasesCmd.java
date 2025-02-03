@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.ndb.nosql.mongodb.cmd;
 
+import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
@@ -34,8 +35,7 @@ public class MongoShowDatabasesCmd extends ShowDatabasesCmd<NMongoConfig> {
                         return x.asObject().get().get("name").get();
                     })
                     .collect(Collectors.toList());
-            NSession session = NSession.get().get();
-            session.out().println(databases);
+            NOut.println(databases);
         });
     }
 

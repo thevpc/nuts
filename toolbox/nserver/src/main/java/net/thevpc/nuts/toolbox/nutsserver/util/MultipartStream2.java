@@ -276,20 +276,19 @@ public class MultipartStream2 {
      * string, plus 4 characters for CR/LF and double dash, plus at least one
      * byte of data. Too small a buffer size setting will degrade performance.
      *
-     * @param input The <code>InputStream</code> to serve as a data source.
-     * @param boundary The token used for dividing the stream into
-     * <code>encapsulations</code>.
-     * @param bufSize The size of the buffer to be used, in bytes.
+     * @param input     The <code>InputStream</code> to serve as a data source.
+     * @param boundary  The token used for dividing the stream into
+     *                  <code>encapsulations</code>.
+     * @param bufSize   The size of the buffer to be used, in bytes.
      * @param pNotifier The notifier, which is used for calling the progress
-     * listener, if any.
-     * @param session session
+     *                  listener, if any.
      * @throws IllegalArgumentException If the buffer size is too small
      * @since 1.3.1
      */
     public MultipartStream2(InputStream input,
                             byte[] boundary,
                             int bufSize,
-                            ProgressNotifier pNotifier, NSession session) {
+                            ProgressNotifier pNotifier) {
 
         if (boundary == null) {
             throw new NIllegalArgumentException(NMsg.ofPlain("boundary may not be null"));
@@ -333,7 +332,7 @@ public class MultipartStream2 {
     MultipartStream2(InputStream input,
                      byte[] boundary,
                      ProgressNotifier pNotifier, NSession session) {
-        this(input, boundary, DEFAULT_BUFSIZE, pNotifier,session);
+        this(input, boundary, DEFAULT_BUFSIZE, pNotifier);
     }
 
     // --------------------------------------------------------- Public methods
@@ -553,8 +552,7 @@ public class MultipartStream2 {
      * <br>
      * Arbitrary large amounts of data can be processed by this method using a
      * constant size buffer. (see {@link
-     * #MultipartStream2(InputStream, byte[], int,
-     * MultipartStream2.ProgressNotifier, NSession) constructor}).
+     * #MultipartStream2(InputStream, byte[], int, ProgressNotifier) constructor}).
      *
      * @param output The <code>Stream</code> to write data into. May be null, in
      * which case this method is equivalent to {@link #discardBodyData()}.

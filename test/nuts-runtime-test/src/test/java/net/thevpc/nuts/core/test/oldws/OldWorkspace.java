@@ -2,6 +2,7 @@ package net.thevpc.nuts.core.test.oldws;
 
 import net.thevpc.nuts.NExecCmd;
 import net.thevpc.nuts.NExecutionType;
+import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.core.test.oldws.impl.OldWorkspace083;
 import net.thevpc.nuts.core.test.oldws.impl.OldWorkspace084;
@@ -34,7 +35,7 @@ public abstract class OldWorkspace {
     }
 
     public void reset() {
-        NSession.of().out().println("reset workspace " + ws);
+        NOut.println("reset workspace " + ws);
         NIOUtils.delete(ws);
     }
 
@@ -60,7 +61,7 @@ public abstract class OldWorkspace {
     public abstract void upgrade();
 
     public void showVersion() {
-        NSession.of().out().println(NMsg.ofC("show workspace version %s", version));
+        NOut.println(NMsg.ofC("show workspace version %s", version));
         NExecCmd.of().setExecutionType(NExecutionType.SYSTEM)
                 .addCommand(resolveJavaFile(), "-jar", resolveJarFile().getPath())
                 .addCommand("version")

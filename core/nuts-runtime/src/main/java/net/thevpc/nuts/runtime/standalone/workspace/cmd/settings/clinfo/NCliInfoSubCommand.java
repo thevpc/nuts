@@ -42,12 +42,12 @@ public class NCliInfoSubCommand extends AbstractNSettingsSubCommand {
 
     private void doSaveCliId(String value) {
         NSession session=workspace.currentSession();
-        session.out().println(NCliInfo.saveCliId(value));
-        session.out().println("cli-id updated.");
+        NOut.println(NCliInfo.saveCliId(value));
+        NOut.println("cli-id updated.");
     }
 
     private void doLoadCliId() {
         NSession session=workspace.currentSession();
-        session.out().println(NCliInfo.loadCliId());
+        NOut.println(NCliInfo.loadCliId());
     }
 }

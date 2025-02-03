@@ -177,7 +177,7 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
         //                .grabOutputString()
         //                .getOutputString()
         ;
-//        session.out().println(out.trim());
+//        NOut.println(out.trim());
     }
 
     public String execAsString(String... cmd) {
@@ -229,13 +229,11 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
     }
 
     public void trace(String message, Map<String, ?> vars) {
-        NSession session = NSession.of();
-        NPrintStream out = session.out();
-        out.print("[trace ]");
+        NOut.print("[trace ]");
         if (timestampTrace) {
-            out.print("[" + new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date()) + "] ");
+            NOut.print("[" + new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date()) + "] ");
         }
-        out.println(NMsg.ofV(message, vars));
+        NOut.println(NMsg.ofV(message, vars));
     }
 
     public void traceCmd(String... cmdLine) {
@@ -244,16 +242,15 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
 
     public void trace(NCmdLine cmdLine) {
         NSession session = NSession.of();
-        NPrintStream out = session.out();
         if (session.isDry()) {
-            out.print("[dry] ");
+            NOut.print("[dry] ");
         } else {
-            out.print("[trace] ");
+            NOut.print("[trace] ");
         }
         if (timestampTrace) {
-            out.print("[" + new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date()) + "] ");
+            NOut.print("[" + new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date()) + "] ");
         }
-        out.println(cmdLine);
+        NOut.println(cmdLine);
     }
 
     public void trace(String message) {
@@ -261,23 +258,19 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
     }
 
     public void echo(NMsg msg) {
-        NPrintStream out = NSession.of().out();
-        out.println(msg);
+        NOut.println(msg);
     }
 
     public void echoV(String message, Map<String, ?> vars) {
-        NPrintStream out = NSession.of().out();
-        out.println(NMsg.ofV(message, vars));
+        NOut.println(NMsg.ofV(message, vars));
     }
 
     public void echoC(String message, Object... vars) {
-        NPrintStream out = NSession.of().out();
-        out.println(NMsg.ofC(message, vars));
+        NOut.println(NMsg.ofC(message, vars));
     }
 
     public void echo(String message) {
-        NPrintStream out = NSession.of().out();
-        out.println(NMsg.ofV(message, new HashMap<>()));
+        NOut.println(NMsg.ofV(message, new HashMap<>()));
     }
 
     public void sleep(int seconds) {
@@ -302,7 +295,6 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
 
     public void cd(NPath p) {
         NSession session = NSession.of();
-        NPrintStream out = session.out();
         if (session.isDry() || session.isTrace()) {
             traceCmd("cd", String.valueOf(p));
         }

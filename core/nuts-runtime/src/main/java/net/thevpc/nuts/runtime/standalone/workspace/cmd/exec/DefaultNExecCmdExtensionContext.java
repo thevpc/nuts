@@ -55,7 +55,7 @@ public class DefaultNExecCmdExtensionContext implements NExecCmdExtensionContext
             }
             case INHERIT:
             case PIPE: {
-                hout = new MyOutHolder(session, session.out().asOutputStream(), false, null);
+                hout = new MyOutHolder(session, NOut.asOutputStream(), false, null);
                 break;
             }
             case STREAM: {

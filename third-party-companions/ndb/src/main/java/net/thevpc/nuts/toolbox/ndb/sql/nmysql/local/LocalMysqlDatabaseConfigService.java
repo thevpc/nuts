@@ -40,7 +40,7 @@ public class LocalMysqlDatabaseConfigService {
 
     public LocalMysqlDatabaseConfigService remove() {
         mysql.getConfig().getDatabases().remove(name);
-        session.out().println(NMsg.ofC("%s app removed.", getBracketsPrefix(getFullName())));
+        NOut.println(NMsg.ofC("%s app removed.", getBracketsPrefix(getFullName())));
         return this;
     }
 
@@ -81,7 +81,7 @@ public class LocalMysqlDatabaseConfigService {
         password = new String(credentials);
         if (path.endsWith(".sql")) {
             if (session.isPlainTrace()) {
-                session.out().println(NMsg.ofC("%s create archive %s", getDatabaseName(), path));
+                NOut.println(NMsg.ofC("%s create archive %s", getDatabaseName(), path));
             }
 
             NExecCmd cmd = NExecCmd.of()
@@ -106,7 +106,7 @@ public class LocalMysqlDatabaseConfigService {
             }
         } else {
             if (session.isPlainTrace()) {
-                session.out().println(NMsg.ofC("%s create archive %s", getBracketsPrefix(getDatabaseName()),
+                NOut.println(NMsg.ofC("%s create archive %s", getBracketsPrefix(getDatabaseName()),
                         NTexts.of()
                         .ofStyled(path, NTextStyle.path())));
             }
@@ -122,7 +122,7 @@ public class LocalMysqlDatabaseConfigService {
                     //                    .inheritIO()
                     .grabAll();
             if (session.isPlainTrace()) {
-                session.out().println(NMsg.ofC("%s    [exec] %s", getBracketsPrefix(getDatabaseName()),
+                NOut.println(NMsg.ofC("%s    [exec] %s", getBracketsPrefix(getDatabaseName()),
                         NExecCmdFormat.of(cmd).setEnvReplacer(envEntry -> {
                             if ("CMD_PWD".equals(envEntry.getName())) {
                                 return "****";
@@ -151,7 +151,7 @@ public class LocalMysqlDatabaseConfigService {
 
         if (path.endsWith(".sql")) {
             if (session.isPlainTrace()) {
-                session.out().println(NMsg.ofC("%s restore archive %s", getBracketsPrefix(getDatabaseName()), path));
+                NOut.println(NMsg.ofC("%s restore archive %s", getBracketsPrefix(getDatabaseName()), path));
             }
             int result = NExecCmd.of()
                     .system()
@@ -169,7 +169,7 @@ public class LocalMysqlDatabaseConfigService {
             return new RestoreResult(path, result, false);
         } else {
             if (session.isPlainTrace()) {
-                session.out().println(NMsg.ofC("%s restore archive %s", getBracketsPrefix(getDatabaseName()), path));
+                NOut.println(NMsg.ofC("%s restore archive %s", getBracketsPrefix(getDatabaseName()), path));
             }
 
             int result = NExecCmd.of()

@@ -41,9 +41,9 @@ public class SshFileOutputStream2 extends OutputStream {
         tempOS.close();
         NSession session = workspace.currentSession();
         try (SShConnection connection = new SShConnection(path
-                ,session.in()
-                ,session.out().asOutputStream()
-                ,session.err().asOutputStream()
+                , session.in()
+                , session.out().asOutputStream()
+                , session.err().asOutputStream()
                 , session
 
         )) {

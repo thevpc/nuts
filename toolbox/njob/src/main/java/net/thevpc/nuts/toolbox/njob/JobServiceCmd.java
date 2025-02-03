@@ -98,22 +98,22 @@ public class JobServiceCmd {
             long jobsCount = service.jobs().findMonthJobs(null).count();
             long allJobsCount = service.jobs().findLastJobs(null, -1, null, null, null, null, null).count();
             NTexts text = NTexts.of();
-            session.out().print(NMsg.ofC("%s open task%s\n", text.ofStyled("" + tasksCount, NTextStyle.primary1()), tasksCount == 1 ? "" : "s"));
-            session.out().print(NMsg.ofC("%s job%s %s\n", text.ofStyled("" + allJobsCount, NTextStyle.primary1()), allJobsCount == 1 ? "" : "s",
+            NOut.print(NMsg.ofC("%s open task%s\n", text.ofStyled("" + tasksCount, NTextStyle.primary1()), tasksCount == 1 ? "" : "s"));
+            NOut.print(NMsg.ofC("%s job%s %s\n", text.ofStyled("" + allJobsCount, NTextStyle.primary1()), allJobsCount == 1 ? "" : "s",
                     allJobsCount == 0 ? ""
                             : text.ofBuilder()
                             .append("(")
                             .append("" + jobsCount, NTextStyle.primary1())
                             .append(" this month)")
             ));
-            session.out().print(NMsg.ofC("%s project%s\n", text.ofStyled("" + projectsCount, NTextStyle.primary1()), projectsCount == 1 ? "" : "s"));
+            NOut.print(NMsg.ofC("%s project%s\n", text.ofStyled("" + projectsCount, NTextStyle.primary1()), projectsCount == 1 ? "" : "s"));
         }
     }
 
     protected void showCustomHelp(String name) {
         NTexts text = NTexts.of();
         NPath p = NPath.of("classpath:/net/thevpc/nuts/toolbox/" + name + ".ntf");
-        session.out().println(
+        NOut.println(
                 text.transform(text.parser().parse(p), new NTextTransformConfig()
                         .setCurrentDir(p.getParent())
                         .setImportClassLoader(getClass().getClassLoader())
@@ -319,7 +319,7 @@ public class JobServiceCmd {
         NTexts text = NTexts.of();
 
         NId appId = NApp.of().getId().get();
-        session.out().print(NMsg.ofC(
+        NOut.print(NMsg.ofC(
                 "%s interactive mode. type %s to quit.%n",
                 text.ofStyled(appId.getArtifactId() + " " + appId.getVersion(), NTextStyle.primary1()),
                 text.ofStyled("q", NTextStyle.error())
@@ -342,7 +342,7 @@ public class JobServiceCmd {
                 break;
             } else if (line.trim().equals("err") || line.trim().equals("show-error") || line.trim().equals("show error")) {
                 if (lastError != null) {
-                    lastError.printStackTrace(session.out().asPrintStream());
+                    lastError.printStackTrace(NOut.asPrintStream());
                 }
             } else {
                 NCmdLine cmd = NCmdLine.parseDefault(line).get();
@@ -351,7 +351,7 @@ public class JobServiceCmd {
                     lastError = null;
                     boolean b = runCommands(cmd);
                     if (!b) {
-                        session.out().println("```error command not found```");
+                        NOut.println("```error command not found```");
                     }
                 } catch (Exception ex) {
                     lastError = ex;

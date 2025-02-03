@@ -198,7 +198,6 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
             //Logger.getLogger(NutsJLineTerminal.class.getName()).log(Level.SEVERE, null, ex);
             throw new UncheckedIOException(new IOException("unable to create JLine system terminal: " + ex.getMessage(), ex));
         }
-        NSession session = getWorkspace().currentSession();
         reader = LineReaderBuilder.builder()
                 .completer(new NJLineCompleter(getWorkspace(), this))
                 .highlighter(new Highlighter() {
@@ -231,7 +230,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
         reader.unsetOpt(LineReader.Option.INSERT_TAB);
         reader.setVariable(LineReader.HISTORY_FILE, NWorkspace.of().getWorkspaceLocation().resolve("history").normalize().toPath().get());
         if (reader instanceof LineReaderImpl) {
-            ((LineReaderImpl) reader).setHistory(new NJLineHistory(reader, session, this));
+            ((LineReaderImpl) reader).setHistory(new NJLineHistory(reader, this));
         }
         this.out = NPrintStream.of(
                 new TransparentPrintStream(

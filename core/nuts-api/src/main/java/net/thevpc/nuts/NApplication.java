@@ -150,7 +150,7 @@ package net.thevpc.nuts;
  *         // (and not in autoComplete mode)
  *         if (cmdLine.isExecMode()) {
  *             //do the good staff here
- *             session.out().println(NMsg.ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
+ *             NOut.println(NMsg.ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
  *         }
  *     }
  * }
@@ -210,7 +210,7 @@ package net.thevpc.nuts;
  *         // (and not in autoComplete mode)
  *         if (cmdLine.isExecMode()) {
  *             //do the good staff here
- *             session.out().println(NMsg.ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
+ *             NOut.println(NMsg.ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
  *         }
  *     }
  * }
@@ -257,7 +257,7 @@ package net.thevpc.nuts;
  *         // (and not in autoComplete mode)
  *         if (cmdLine.isExecMode()) {
  *             //do the good staff here
- *             session.out().println(NMsg.ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
+ *             NOut.println(NMsg.ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
  *         }
  *     }
  * }

@@ -30,8 +30,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
             context.sendError(400, "invalid NShellCommandNode arguments : " + getName() + " . invalid format.");
             return;
         }
-        NSession session = context.getSession();
-        MultipartStreamHelper stream = new MultipartStreamHelper(context.getRequestBody(), boundary, session);
+        MultipartStreamHelper stream = new MultipartStreamHelper(context.getRequestBody(), boundary);
         NDescriptor descriptor = null;
         String receivedContentHash = null;
         InputStream content = null;

@@ -89,14 +89,14 @@ image::images/nuts-components.png[scaledwidth=80%]
     session.setConfirm(NConfirmationMode.ASK);
     session.setOutputFormat(NContentType.XML);
 
-    session.out().println("Hello");
-    session.out().printlnf("Hello");
+    NOut.println("Hello");
+    NOut.printlnf("Hello");
 
-    session.out().println(Arrays.asList("Hello"));
-    session.out().printlnf("Hello %s","world");
-    session.out().println(NMsg.ofC("Hello %s","world"));
-    session.out().println(NMsg.ofJ("Hello {0}","world"));
-    session.out().println(NMsg.ofV("Hello $v",NMaps.of("v","world"));
+    NOut.println(Arrays.asList("Hello"));
+    NOut.printlnf("Hello %s","world");
+    NOut.println(NMsg.ofC("Hello %s","world"));
+    NOut.println(NMsg.ofJ("Hello {0}","world"));
+    NOut.println(NMsg.ofV("Hello $v",NMaps.of("v","world"));
 ```
 
 
@@ -109,13 +109,13 @@ image::images/nuts-components.png[scaledwidth=80%]
     session.setConfirm(NConfirmationMode.ASK);
     session.setOutputFormat(NContentType.XML);
 
-    session.out().println("Hello");
-    session.out().printlnf("Hello");
-    session.out().println(Arrays.asList("Hello"));
-    session.out().printlnf("Hello %s","world");
-    session.out().println(NMsg.ofC("Hello %s","world"));
-    session.out().println(NMsg.ofJ("Hello {0}","world"));
-    session.out().println(NMsg.ofV("Hello $v",NMaps.of("v","world"));
+    NOut.println("Hello");
+    NOut.printlnf("Hello");
+    NOut.println(Arrays.asList("Hello"));
+    NOut.printlnf("Hello %s","world");
+    NOut.println(NMsg.ofC("Hello %s","world"));
+    NOut.println(NMsg.ofJ("Hello {0}","world"));
+    NOut.println(NMsg.ofV("Hello $v",NMaps.of("v","world"));
 ```
 
 <<<
@@ -125,11 +125,11 @@ image::images/nuts-components.png[scaledwidth=80%]
 ```java
     Nuts.openWorkspace("-Z","-S","y","--json").setSharedInstance();
     NSession session=NSession.of();
-    session.out().println("Hello");
-    session.out().printlnf("Hello");
+    NOut.println("Hello");
+    NOut.printlnf("Hello");
 
-    session.out().println(Arrays.asList("Hello"));
-    session.out().printlnf("Hello");
+    NOut.println(Arrays.asList("Hello"));
+    NOut.printlnf("Hello");
 
     session.err()....;
     session.in()....;
@@ -154,7 +154,7 @@ image::images/nuts-components.png[scaledwidth=80%]
         .setLatest(true)
         .setDistinct(true).getResultDefinitions();
     for(NDefinition d:defs){
-       session.out().println(d.getInstallInformation()
+       NOut.println(d.getInstallInformation()
        .getInstallFolder());
     }
 ```
@@ -176,11 +176,11 @@ image::images/nuts-components.png[scaledwidth=80%]
 
 ```java
     NSession session=...;
-    session.out().printlnf("#Hello1# ##Hello2## ##:_:Hello3## ");
-    session.out().printlnf("```java public static class MyClass {}```");
-    session.out().printlnf("```js public static class MyClass {}```");
-    session.out().printlnf("```xml <a>hello</a>```");
-    session.out().printlnf("```json {a:'hello'}```");
+    NOut.printlnf("#Hello1# ##Hello2## ##:_:Hello3## ");
+    NOut.printlnf("```java public static class MyClass {}```");
+    NOut.printlnf("```js public static class MyClass {}```");
+    NOut.printlnf("```xml <a>hello</a>```");
+    NOut.printlnf("```json {a:'hello'}```");
 ```
 
 <<<
@@ -197,7 +197,7 @@ image::images/nuts-components.png[scaledwidth=80%]
     session.setOutputFormat(NContentType.PLAIN).out().printlnf(Arrays.asList(customer1,customer2,customer3))
     session.setOutputFormat(NContentType.XML).out().printlnf(Arrays.asList(customer1,customer2,customer3))
     session.setOutputFormat(NContentType.PROPS).out().printlnf(Arrays.asList(customer1,customer2,customer3))
-    session.out().printlnf(Arrays.asList(customer1,customer2,customer3))
+    NOut.printlnf(Arrays.asList(customer1,customer2,customer3))
 ```
 
 === Format API
@@ -207,7 +207,7 @@ image::images/nuts-components.png[scaledwidth=80%]
     Object a,b,c,d; ...
     NMutableTableModel m = NMutableTableModel.of();
     m.newRow().addCells(a,b,c,d);
-    session.out().printlnf(m);
+    NOut.printlnf(m);
 ```
 
 <<<
@@ -324,8 +324,7 @@ public class AppExample implements NApplication {
 
     @Override
     public void run() {
-        NPrintStream out = NSession.of().out();
-        out.println("Hello ##World##");
+        NOut.println("Hello ##World##");
     }
 }
 ```

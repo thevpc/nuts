@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.ndb.sql.sqlbase.cmd;
 
+import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
@@ -64,7 +65,7 @@ public class SqlShowSchemaCmd<C extends NdbConfig> extends NdbCmd<C> {
         SqlDB sqlDB = SqlHelper.computeSchema(eq, (SqlSupport<C>) getSupport(), options);
         NSession session = NSession.get().get();
         if (path == null) {
-            session.out().println(sqlDB);
+            NOut.println(sqlDB);
         } else {
             NElements.of().setContentType(session.getOutputFormat().orDefault()).setNtf(false).print(path);
         }

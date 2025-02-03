@@ -61,7 +61,7 @@ public class AnyNixNdi extends BaseSystemNdi {
         NSession session = workspace.currentSession();
         if (Arrays.stream(updatedPaths).anyMatch(x -> x.getStatus() != PathInfo.Status.DISCARDED) && session.isTrace()) {
             if (session.isPlainTrace()) {
-                session.out().resetLine().println(NMsg.ofC("%s %s to point to workspace %s",
+                NOut.resetLine().println(NMsg.ofC("%s %s to point to workspace %s",
                         session.isYes() ?
                                 factory.ofStyled("force updating", NTextStyle.warn().append(NTextStyle.underlined())) :
                                 factory.ofStyled("force updating", NTextStyle.warn())

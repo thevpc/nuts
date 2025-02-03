@@ -1,6 +1,7 @@
 package net.thevpc.nuts.toolbox.ndb.nosql.mongodb.cmd;
 
 import com.mongodb.client.FindIterable;
+import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
@@ -52,8 +53,7 @@ public class MongoFindCmd extends FindCmd<NMongoConfig> {
             r.forEach(x -> {
                 values.add(x);
             });
-            NSession session = NSession.get().get();
-            session.out().println(values);
+            NOut.println(values);
         });
     }
 }

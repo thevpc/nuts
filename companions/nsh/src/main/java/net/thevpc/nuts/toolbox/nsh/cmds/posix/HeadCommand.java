@@ -92,7 +92,7 @@ public class HeadCommand extends NShellBuiltinDefault {
                 String line = null;
                 int count = 0;
                 while (count < max && (line = r.readLine()) != null) {
-                    session.out().println(line);
+                    NOut.println(line);
                     count++;
                 }
             } finally {

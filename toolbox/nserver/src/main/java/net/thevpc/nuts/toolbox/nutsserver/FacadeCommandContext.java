@@ -58,10 +58,6 @@ public class FacadeCommandContext implements NHttpServletFacadeContext {
         this.path = path;
     }
 
-    public NSession getSession() {
-        return workspace.currentSession();
-    }
-
     public String getPath() {
         return path;
     }

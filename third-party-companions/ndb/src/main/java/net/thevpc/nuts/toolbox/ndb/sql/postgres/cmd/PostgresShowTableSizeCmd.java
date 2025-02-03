@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.ndb.sql.postgres.cmd;
 
+import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -117,7 +118,7 @@ public class PostgresShowTableSizeCmd extends NdbCmd<NPostgresConfig> {
                 totalColumns
         ));
         NSession session = NSession.get().get();
-        session.out().println(rr);
+        NOut.println(rr);
         //SqlHelper.callSqlAndWaitGet("")
     }
 }

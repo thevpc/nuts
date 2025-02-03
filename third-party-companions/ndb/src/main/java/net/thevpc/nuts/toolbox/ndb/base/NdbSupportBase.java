@@ -286,8 +286,7 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
     }
 
     public NExecCmd run(NExecCmd cmd) {
-        NSession session = getWorkspace().currentSession();
-        session.out().println(cmd);
+        NOut.out().println(cmd);
         cmd.run();
         return cmd;
     }

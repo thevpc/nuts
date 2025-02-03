@@ -31,7 +31,7 @@ public class SearchFacadeCommand extends AbstractFacadeCommand {
             context.sendError(400, "Invalid NShellCommandNode Arguments : " + getName() + " . Invalid format.");
             return;
         }
-        MultipartStreamHelper stream = new MultipartStreamHelper(context.getRequestBody(), boundary, context.getSession());
+        MultipartStreamHelper stream = new MultipartStreamHelper(context.getRequestBody(), boundary);
         boolean transitive = true;
         String root = null;
         String pattern = null;

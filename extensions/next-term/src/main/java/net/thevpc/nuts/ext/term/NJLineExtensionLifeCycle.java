@@ -22,7 +22,6 @@ public class NJLineExtensionLifeCycle implements NExtensionLifeCycle {
 
     @Override
     public void onInitExtension(NWorkspaceExtension extension) {
-        NSession session=workspace.currentSession();
         NIO.of().setSystemTerminal(new NJLineTerminal(workspace));
     }
 

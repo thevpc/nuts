@@ -246,7 +246,7 @@ public class Test04_NTFTest {
 
     private static void writeColors(String s) {
         TestUtils.println(s);
-        NSession.of().out().println(s);
+        NOut.println(s);
     }
 
 //    @Test
@@ -1324,7 +1324,7 @@ public class Test04_NTFTest {
     @Test
     public void test42() {
         String str = "##{pale:2024-06-07 23:28:39.328}##\u001E ##{config:CONFIG}##\u001E ##{info:START  }##\u001E : start ```sh nuts``` ```primary3 ##{version:0.8.4}##\u001E``` at 2024-06-07 23:28:28.660";
-        NSession.of().out().println(str);
+        NOut.println(str);
         NText parsed = NText.of(str);
         TestUtils.println(parsed);
 //        Assertions.assertEquals(NTextType.LIST, parsed.getType());

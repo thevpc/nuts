@@ -37,7 +37,6 @@ import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NDefaultSupportLevelContext;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.toolbox.nsh.autocomplete.NshAutoCompleter;
 import net.thevpc.nuts.toolbox.nsh.cmdresolver.DefaultNShellCommandTypeResolver;
 import net.thevpc.nuts.toolbox.nsh.cmdresolver.NCommandTypeResolver;
@@ -94,6 +93,10 @@ public class NShell {
     private String serviceName = null;
     private Supplier<NMsg> headerMessageSupplier = null;
 
+    public NShell() {
+        this(new NShellConfiguration());
+    }
+
     public NShell(NShellConfiguration configuration) {
         if (configuration == null) {
             configuration = new NShellConfiguration();
@@ -111,7 +114,7 @@ public class NShell {
 
         args = resolveArgs(session, args);
         this.appId = appId;
-        this.bootStartMillis = session == null ? null : NApp.of().getStartTime();
+        this.bootStartMillis = NApp.of().getStartTime();
         this.session = session;
         //super.setCwd(workspace.getConfigManager().getCwd());
         if (this.appId == null) {
@@ -158,7 +161,7 @@ public class NShell {
             this.history = history;
         }
         if (shellOptionsParser == null) {
-            shellOptionsParser = new DefaultNShellOptionsParser(session);
+            shellOptionsParser = new DefaultNShellOptionsParser();
         }
         this.options = shellOptionsParser.parse(args);
         if (externalExecutor == null) {

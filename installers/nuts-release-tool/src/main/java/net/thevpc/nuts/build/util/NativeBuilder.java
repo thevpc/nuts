@@ -118,7 +118,7 @@ public class NativeBuilder {
     }
 
     public void echo(String message, Map<String, ?> vars) {
-        NSession.of().out().println(NMsg.ofV(message, vars));
+        NOut.println(NMsg.ofV(message, vars));
     }
 
 

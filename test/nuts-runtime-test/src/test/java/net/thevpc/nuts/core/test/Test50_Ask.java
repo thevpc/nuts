@@ -15,6 +15,6 @@ public class Test50_Ask {
         char[] youDontLike = NAsk.of()
                 .forPassword(NMsg.ofC("Ask me something %s", "you dont like"))
                 .getValue();
-        NSession.of().out().println(new String(youDontLike));
+        NOut.println(new String(youDontLike));
     }
 }

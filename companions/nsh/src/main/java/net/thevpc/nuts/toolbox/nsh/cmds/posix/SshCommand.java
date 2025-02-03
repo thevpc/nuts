@@ -99,7 +99,7 @@ public class SshCommand extends NShellBuiltinDefault {
         ShellHelper.WsSshListener listener = new ShellHelper.WsSshListener(session);
         try (SShConnection sshSession = new SShConnection(o.address,
                 session.in(),
-                session.out().asOutputStream(),
+                NOut.asOutputStream(),
                 session.err().asOutputStream(),
                 session)
                 .addListener(listener)) {

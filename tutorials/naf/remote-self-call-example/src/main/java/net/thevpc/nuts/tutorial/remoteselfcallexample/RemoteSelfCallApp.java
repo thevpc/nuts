@@ -103,7 +103,7 @@ public class RemoteSelfCallApp implements NApplication {
                                     .getGrabbedAllString()
                     );
                     log(NMsg.ofC("received"));
-                    session.out().println(e);
+                    NOut.println(e);
                     break;
                 }
                 case "on-call-self": {
@@ -118,9 +118,8 @@ public class RemoteSelfCallApp implements NApplication {
     }
 
     private void log(NMsg m) {
-        NSession session = NSession.of();
         String hostName = NWorkspace.of().getHostName();
-        session.out().println(NMsg.ofC("[%s] %s", hostName, m));
+        NOut.println(NMsg.ofC("[%s] %s", hostName, m));
     }
 
 }

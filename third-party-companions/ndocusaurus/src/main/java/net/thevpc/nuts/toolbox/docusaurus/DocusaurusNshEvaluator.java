@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.docusaurus;
 
+import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.lib.doc.context.NDocContext;
@@ -60,7 +61,7 @@ public class DocusaurusNshEvaluator implements NDocExprEvaluator {
                                     context.getSourcePath().orElseGet(() -> "nsh"), new String[0]
                             );
                             shell.executeScript(content, ctx);
-                            return NSession.of().out().toString();
+                            return NOut.out().toString();
                         }
                 );
 

@@ -6,6 +6,7 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.*;
@@ -123,18 +124,17 @@ public class Test13_TerminalModeTest {
     public void testBuilder(){
         NText c = NText.ofCode("java", "public static void main(String[] args){}")
                 .highlight();
-        NSession session = NSession.of();
-        session.out().println(c);
+        NOut.println(c);
 
         NText word_static = c.builder().substring(7, 13);
-        session.out().println(word_static);
+        NOut.println(word_static);
         Assertions.assertEquals("##{keyword:static}##\u001E",word_static.toString());
 
         NText portion_npar = c.builder().substring(22, 24);
-        session.out().println(portion_npar);
+        NOut.println(portion_npar);
         Assertions.assertEquals("n##{separator:(}##\u001E",portion_npar.toString());
         NText rep=c.builder().replace(23,24, NText.ofStyled("()(", NTextStyle.danger())).build();
-        session.out().println(rep);
+        NOut.println(rep);
         Assertions.assertEquals("##{keyword:public}##\u001E ##{keyword:static}##\u001E ##{keyword:void}##\u001E main##{danger:()(}##\u001EString##{separator:[}##\u001E##{separator:]}##\u001E args##{separator:)}##\u001E##{separator:{}##\u001E##{separator:}}##\u001E",
                 rep.toString());
     }

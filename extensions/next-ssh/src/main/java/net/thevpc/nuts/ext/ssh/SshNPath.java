@@ -84,7 +84,7 @@ class SshNPath implements NPathSPI {
         NSession session = workspace.currentSession();
         return new SShConnection(path
                 , session.in()
-                , session.out().asOutputStream()
+                , NOut.asOutputStream()
                 , session.err().asOutputStream()
                 , session
         )
@@ -95,7 +95,7 @@ class SshNPath implements NPathSPI {
         NSession session = workspace.currentSession();
         return new SShConnection(path
                 , session.in()
-                , session.out().asOutputStream()
+                , NOut.asOutputStream()
                 , NIO.ofNullRawOutputStream()
                 , session
         ).grabOutputString()

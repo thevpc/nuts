@@ -79,12 +79,12 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         }
         NSession session = workspace.currentSession();
         if (showCommand || CoreNUtils.isShowCommand()) {
-            if (session.out().getTerminalMode() == NTerminalMode.FORMATTED) {
-                session.out().print(NMsg.ofC("%s ", NText.ofStyled("[exec]", NTextStyle.primary4())));
-                session.out().println(NText.ofCode("system", pb.getCommandString()));
+            if (NOut.getTerminalMode() == NTerminalMode.FORMATTED) {
+                NOut.print(NMsg.ofC("%s ", NText.ofStyled("[exec]", NTextStyle.primary4())));
+                NOut.println(NText.ofCode("system", pb.getCommandString()));
             } else {
-                session.out().print("exec ");
-                session.out().println(NMsg.ofPlain(pb.getCommandString()));
+                NOut.print("exec ");
+                NOut.println(NMsg.ofPlain(pb.getCommandString()));
             }
         }
         return new ProcessExecHelper(definition, pb, workspace, session.out(), in, out, err, dry);

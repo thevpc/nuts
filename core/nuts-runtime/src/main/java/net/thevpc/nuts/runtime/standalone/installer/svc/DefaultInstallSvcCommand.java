@@ -360,7 +360,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         if (verbose) {
             NSession session = workspace.currentSession();
             if (session.isTrace()) {
-                session.out().println(NMsg.ofC("[DEBUG] %s", msg));
+                NOut.println(NMsg.ofC("[DEBUG] %s", msg));
             }
         }
     }
@@ -381,7 +381,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         NSession session = workspace.currentSession();
         for (String line : SvcHelper.splitLines(msg)) {
             if (session.isTrace()) {
-                session.out().println(NMsg.ofC("[INFO ] %s", line));
+                NOut.println(NMsg.ofC("[INFO ] %s", line));
             }
         }
     }
@@ -390,7 +390,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         NSession session = workspace.currentSession();
         for (String line : SvcHelper.splitLines(msg)) {
             if (session.isTrace()) {
-                session.out().println(NMsg.ofC("[WARN ] %s", line));
+                NOut.println(NMsg.ofC("[WARN ] %s", line));
             }
         }
     }
@@ -399,7 +399,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         NSession session = workspace.currentSession();
         for (String line : SvcHelper.splitLines(msg)) {
             if (session.isTrace()) {
-                session.out().println(NMsg.ofC("[ERROR ] %s", line));
+                NOut.println(NMsg.ofC("[ERROR ] %s", line));
             }
         }
     }

@@ -4,7 +4,6 @@
  */
 package net.thevpc.nuts.build.builders;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.build.util.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -63,7 +62,7 @@ public class InstallerRunner extends AbstractRunner {
         return false;
     }
 
-    public InstallerRunner(NSession session) {
+    public InstallerRunner() {
         super();
     }
 

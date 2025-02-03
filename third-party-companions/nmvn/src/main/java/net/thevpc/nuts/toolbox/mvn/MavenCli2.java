@@ -1,6 +1,7 @@
 package net.thevpc.nuts.toolbox.mvn;
 
 import net.thevpc.nuts.NApp;
+import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.NSession;
 import org.apache.maven.cli.MavenCli;
 
@@ -93,7 +94,7 @@ public class MavenCli2 {
             out.flush();
             return t;
         } else {
-            return cli.doMain(args, wd, session.out().asPrintStream(), session.err().asPrintStream());
+            return cli.doMain(args, wd, NOut.asPrintStream(), session.err().asPrintStream());
         }
     }
 

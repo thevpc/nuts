@@ -2,6 +2,7 @@ package net.thevpc.nuts.tutorial.customshell.cmd;
 
 import java.util.HashMap;
 
+import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -100,13 +101,12 @@ public class Hello extends NShellBuiltinBase {
     @Override
     protected void main(NCmdLine cmdLine, NShellExecutionContext ctx) {
         Options o = ctx.getOptions();
-        NSession session = ctx.getSession();
         if (o.complex) {
             // print any object (it can be a simple string of course)
             // it will be formatted according to your "output format" (aka json, or any thing else)
             // you can try running your app with
             // nuts my-shell --json -c hello --complex --who=NoneOfYourBusiness
-            session.out().print(new HashMap.SimpleEntry<String, String>(
+            NOut.print(new HashMap.SimpleEntry<String, String>(
                     "hello",
                     o.who == null ? System.getProperty("user.home") : o.who
             ));
@@ -118,7 +118,7 @@ public class Hello extends NShellBuiltinBase {
             // '###' for another color
             // you can see NTF for more details on coloring
             // or just issue "nuts help --ntf" in your commandline
-            session.out().println(NMsg.ofC("hello ##%s##", o.who == null ? System.getProperty("user.home") : o.who));
+            NOut.println(NMsg.ofC("hello ##%s##", o.who == null ? System.getProperty("user.home") : o.who));
         }
     }
 

@@ -79,14 +79,14 @@ public class NSettingsLogSubCommand extends AbstractNSettingsSubCommand {
         } else if (cmdLine.next("get log level","log level").isPresent()) {
             if (cmdLine.isExecMode()) {
                 Logger rootLogger = Logger.getLogger("");
-                session.out().println(rootLogger.getLevel());
+                NOut.println(rootLogger.getLevel());
             }
         } else if (cmdLine.next("install log").isPresent()) {
             if (cmdLine.isExecMode()) {
                 if(session.isPlainOut()) {
                     for (NInstallLogRecord r : NWorkspaceExt.of().getInstalledRepository().findLog()) {
                         NTexts txt = NTexts.of();
-                        session.out().print(
+                        NOut.print(
                                 NMsg.ofC("%s %s %s %s %s %s %s%n",
                                         r.getDate(),
                                         r.getUser(),
@@ -101,7 +101,7 @@ public class NSettingsLogSubCommand extends AbstractNSettingsSubCommand {
                         );
                     }
                 }else{
-                    session.out().println(
+                    NOut.println(
                             NWorkspaceExt.of().getInstalledRepository().findLog().toList()
                     );
                 }

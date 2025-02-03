@@ -126,32 +126,40 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
         if (userOptionsUnparsed == null) {
             userOptionsUnparsed = new NBootArguments();
         }
-        this.unparsedOptions = userOptionsUnparsed;
         NBootOptionsInfo userOptions = new NBootOptionsInfo();
-        userOptions.setStdin(userOptionsUnparsed.getIn());
-        userOptions.setStdout(userOptionsUnparsed.getOut());
-        userOptions.setStderr(userOptionsUnparsed.getErr());
-        userOptions.setCreationTime(userOptionsUnparsed.getStartTime());
-        InputStream in = userOptions.getStdin();
-        scanner = new Scanner(in == null ? System.in : in);
-        this.bLog = new NBootLog(userOptions);
-        String[] args = userOptionsUnparsed.getArgs();
-        NBootWorkspaceCmdLineParser.parseNutsArguments(args == null ? new String[0] : args, userOptions);
-        if (NBootUtils.firstNonNull(userOptions.getSkipErrors(), false)) {
-            StringBuilder errorMessage = new StringBuilder();
-            if (userOptions.getErrors() != null) {
-                for (String s : userOptions.getErrors()) {
-                    errorMessage.append(s).append("\n");
+        try {
+            this.unparsedOptions = userOptionsUnparsed;
+            userOptions.setStdin(userOptionsUnparsed.getIn());
+            userOptions.setStdout(userOptionsUnparsed.getOut());
+            userOptions.setStderr(userOptionsUnparsed.getErr());
+            userOptions.setCreationTime(userOptionsUnparsed.getStartTime());
+            InputStream in = userOptions.getStdin();
+            scanner = new Scanner(in == null ? System.in : in);
+            this.bLog = new NBootLog(userOptions);
+            String[] args = userOptionsUnparsed.getArgs();
+            NBootWorkspaceCmdLineParser.parseNutsArguments(args == null ? new String[0] : args, userOptions);
+            if (NBootUtils.firstNonNull(userOptions.getSkipErrors(), false)) {
+                StringBuilder errorMessage = new StringBuilder();
+                if (userOptions.getErrors() != null) {
+                    for (String s : userOptions.getErrors()) {
+                        errorMessage.append(s).append("\n");
+                    }
                 }
+                errorMessage.append("Try 'nuts --help' for more information.");
+                bLog.warn(NBootMsg.ofC("Skipped Error : %s", errorMessage));
             }
-            errorMessage.append("Try 'nuts --help' for more information.");
-            bLog.warn(NBootMsg.ofC("Skipped Error : %s", errorMessage));
+            if (userOptionsUnparsed.getAppArgs() != null) {
+                userOptions.getApplicationArguments().addAll(Arrays.asList(userOptionsUnparsed.getAppArgs()));
+            }
+            this.options = userOptions.copy();
+            this.postInit();
+        } catch (Exception e) {
+            NBootErrorInfoList li = new NBootErrorInfoList();
+            li.add(new NReservedErrorInfo(null, null, null, NBootUtils.getErrorMessage(e), e));
+            NBootOptionsInfo currOptions = options == null ? userOptions : options;
+            logError(new URL[0], li, currOptions);
+            throw new NBootException(NBootMsg.ofC("unable to initialize boot %s#%s : %s", NBootConstants.Ids.NUTS_API, currOptions.getApiVersion(), e));
         }
-        if (userOptionsUnparsed.getAppArgs() != null) {
-            userOptions.getApplicationArguments().addAll(Arrays.asList(userOptionsUnparsed.getAppArgs()));
-        }
-        this.options = userOptions.copy();
-        this.postInit();
     }
 
     public NBootArguments getBootArguments() {
@@ -354,7 +362,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 NBootRepositoryLocation.of("nuts@" + options.getStoreType("LIB") + File.separator + NBootConstants.Folders.ID), bLog, false, options.getExpireTime(), errorList);
         if (file == null) {
             errorList.insert(0, new NReservedErrorInfo(null, null, null, "unable to load nuts " + options.getApiVersion(), null));
-            logError(null, errorList);
+            logError(null, errorList, options);
             throw new NBootException(NBootMsg.ofC("unable to load %s#%s", NBootConstants.Ids.NUTS_API, options.getApiVersion()));
         }
 
@@ -1134,7 +1142,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             NBootMsg errorMessage = NBootMsg.ofC("unable to boot nuts workspace because the installed binaries are incompatible with the current nuts bootstrap version %s\nusing '-N' command line flag should fix the problem", NBootWorkspaceImpl.NUTS_BOOT_VERSION);
             errorList.insert(0, new NReservedErrorInfo(null, null, null, errorMessage + ": " + ex, ex));
             exceptionRunnable = () -> {
-                logError(finalBootClassWorldURLs, errorList);
+                logError(finalBootClassWorldURLs, errorList, options);
                 throw new NBootException(errorMessage, ex);
             };
             exceptionRunnable.run();
@@ -1143,7 +1151,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             errorList.insert(0, new NReservedErrorInfo(null, null, null, message + " : " + ex, ex));
             URL[] finalBootClassWorldURLs1 = bootClassWorldURLs;
             exceptionRunnable = () -> {
-                logError(finalBootClassWorldURLs1, errorList);
+                logError(finalBootClassWorldURLs1, errorList, options);
                 if (ex instanceof NBootException) {
                     throw (NBootException) ex;
                 }
@@ -1225,49 +1233,70 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
         bLog.error(NBootMsg.ofPlain(message));
     }
 
-    private void logError(URL[] bootClassWorldURLs, NBootErrorInfoList ths) {
+    private void logError(URL[] bootClassWorldURLs, NBootErrorInfoList ths, NBootOptionsInfo options) {
+        if (options == null) {
+            options = this.options;
+        }
+        if (options == null) {
+            options = new NBootOptionsInfo();
+        }
+        boolean showStackTrace = NBootUtils.resolveShowStackTrace(options);
+        boolean showGui = NBootUtils.resolveGui(options);
+
         String workspace = options.getWorkspace();
         Map<String, String> rbc_locations = options.getStoreLocations();
         if (rbc_locations == null) {
             rbc_locations = new HashMap<>();
         }
-        bLog.error(NBootMsg.ofC("unable to bootstrap nuts (digest %s):", getApiDigestOrInternal()));
+        String apiDigestOrInternal = getApiDigestOrInternal();
+        if ("<internal>".equals(apiDigestOrInternal)) {
+            apiDigestOrInternal = null;
+        }
+        if (!showStackTrace) {
+            bLog.error(NBootMsg.ofC("unable to bootstrap nuts %s %s", NUTS_BOOT_VERSION, NBootUtils.isBlank(apiDigestOrInternal) ? "" : ("(digest " + apiDigestOrInternal + ")")));
+            for (NReservedErrorInfo e : ths.list()) {
+                bLog.error(NBootMsg.ofC("%s", e.toString()));
+            }
+            return;
+        }
+        bLog.error(NBootMsg.ofC("unable to bootstrap nuts %s %s", NUTS_BOOT_VERSION, NBootUtils.isBlank(apiDigestOrInternal) ? "" : ("(digest " + apiDigestOrInternal + ")")));
         if (!ths.list().isEmpty()) {
             bLog.error(NBootMsg.ofC("%s", ths.list().get(0)));
         }
         bLog.error(NBootMsg.ofPlain("here after current environment info:"));
-        bLog.error(NBootMsg.ofC("  nuts-boot-api-version            : %s", NBootUtils.firstNonNull(options.getApiVersion(), "<?> Not Found!")));
-        bLog.error(NBootMsg.ofC("  nuts-boot-runtime                : %s", NBootUtils.firstNonNull(options.getRuntimeId(), "<?> Not Found!")));
-        bLog.error(NBootMsg.ofC("  nuts-boot-repositories           : %s", NBootUtils.firstNonNull(options.getBootRepositories(), "<?> Not Found!")));
+        bLog.error(NBootMsg.ofC("  nuts-boot-version                : %s", NUTS_BOOT_VERSION));
+        bLog.error(NBootMsg.ofC("  nuts-boot-api-version            : %s", NBootUtils.desc(options.getApiVersion())));
+        bLog.error(NBootMsg.ofC("  nuts-boot-runtime                : %s", NBootUtils.desc(options.getRuntimeId())));
+        bLog.error(NBootMsg.ofC("  nuts-boot-repositories           : %s", NBootUtils.desc(options.getBootRepositories())));
         bLog.error(NBootMsg.ofC("  workspace-location               : %s", NBootUtils.firstNonNull(workspace, "<default-location>")));
-        bLog.error(NBootMsg.ofC("  nuts-store-bin                   : %s", rbc_locations.get("BIN")));
-        bLog.error(NBootMsg.ofC("  nuts-store-conf                  : %s", rbc_locations.get("CONF")));
-        bLog.error(NBootMsg.ofC("  nuts-store-var                   : %s", rbc_locations.get("VAR")));
-        bLog.error(NBootMsg.ofC("  nuts-store-log                   : %s", rbc_locations.get("LOG")));
-        bLog.error(NBootMsg.ofC("  nuts-store-temp                  : %s", rbc_locations.get("TEMP")));
-        bLog.error(NBootMsg.ofC("  nuts-store-cache                 : %s", rbc_locations.get("CACHE")));
-        bLog.error(NBootMsg.ofC("  nuts-store-run                   : %s", rbc_locations.get("RUN")));
-        bLog.error(NBootMsg.ofC("  nuts-store-lib                   : %s", rbc_locations.get("LIB")));
+        bLog.error(NBootMsg.ofC("  nuts-store-bin                   : %s", NBootUtils.desc(rbc_locations.get("BIN"))));
+        bLog.error(NBootMsg.ofC("  nuts-store-conf                  : %s", NBootUtils.desc(rbc_locations.get("CONF"))));
+        bLog.error(NBootMsg.ofC("  nuts-store-var                   : %s", NBootUtils.desc(rbc_locations.get("VAR"))));
+        bLog.error(NBootMsg.ofC("  nuts-store-log                   : %s", NBootUtils.desc(rbc_locations.get("LOG"))));
+        bLog.error(NBootMsg.ofC("  nuts-store-temp                  : %s", NBootUtils.desc(rbc_locations.get("TEMP"))));
+        bLog.error(NBootMsg.ofC("  nuts-store-cache                 : %s", NBootUtils.desc(rbc_locations.get("CACHE"))));
+        bLog.error(NBootMsg.ofC("  nuts-store-run                   : %s", NBootUtils.desc(rbc_locations.get("RUN"))));
+        bLog.error(NBootMsg.ofC("  nuts-store-lib                   : %s", NBootUtils.desc(rbc_locations.get("LIB"))));
         bLog.error(NBootMsg.ofC("  nuts-store-strategy              : %s", NBootUtils.desc(options.getStoreStrategy())));
         bLog.error(NBootMsg.ofC("  nuts-store-layout                : %s", NBootUtils.desc(options.getStoreLayout())));
-        bLog.error(NBootMsg.ofC("  nuts-boot-args                   : %s", asCmdLine(this.options, null)));
-        bLog.error(NBootMsg.ofC("  nuts-app-args                    : %s", NBootUtils.nonNullStrList(this.options.getApplicationArguments())));
-        bLog.error(NBootMsg.ofC("  option-read-only                 : %s", NBootUtils.firstNonNull(this.options.getReadOnly(), false)));
-        bLog.error(NBootMsg.ofC("  option-trace                     : %s", NBootUtils.firstNonNull(this.options.getTrace(), false)));
-        bLog.error(NBootMsg.ofC("  option-progress                  : %s", NBootUtils.desc(this.options.getProgressOptions())));
-        bLog.error(NBootMsg.ofC("  option-open-mode                 : %s", NBootUtils.desc(NBootUtils.firstNonNull(this.options.getOpenMode(), "OPEN_OR_CREATE"))));
+        bLog.error(NBootMsg.ofC("  nuts-boot-args                   : %s", asCmdLine(options, null)));
+        bLog.error(NBootMsg.ofC("  nuts-app-args                    : %s", NBootUtils.nonNullStrList(options.getApplicationArguments())));
+        bLog.error(NBootMsg.ofC("  option-read-only                 : %s", NBootUtils.firstNonNull(options.getReadOnly(), false)));
+        bLog.error(NBootMsg.ofC("  option-trace                     : %s", NBootUtils.firstNonNull(options.getTrace(), false)));
+        bLog.error(NBootMsg.ofC("  option-progress                  : %s", NBootUtils.desc(options.getProgressOptions())));
+        bLog.error(NBootMsg.ofC("  option-open-mode                 : %s", NBootUtils.desc(NBootUtils.firstNonNull(options.getOpenMode(), "OPEN_OR_CREATE"))));
 
-        NBootClassLoaderNode rtn = this.options.getRuntimeBootDependencyNode();
+        NBootClassLoaderNode rtn = options.getRuntimeBootDependencyNode();
         String rtHash = "";
         if (rtn != null) {
             rtHash = NBootUtils.getURLDigest(rtn.getURL(), bLog);
         }
-        bLog.error(NBootMsg.ofC("  nuts-runtime-digest                : %s", rtHash));
+        bLog.error(NBootMsg.ofC("  nuts-runtime-digest              : %s", NBootUtils.desc(rtHash)));
 
         if (bootClassWorldURLs == null || bootClassWorldURLs.length == 0) {
-            bLog.error(NBootMsg.ofC("  nuts-runtime-classpath           : %s", "<none>"));
+            bLog.error(NBootMsg.ofC("  nuts-runtime-classpath           : %s", "<undefined>"));
         } else {
-            bLog.error(NBootMsg.ofC("  nuts-runtime-hash                : %s", "<none>"));
+            bLog.error(NBootMsg.ofC("  nuts-runtime-hash                : %s", "<undefined>"));
             for (int i = 0; i < bootClassWorldURLs.length; i++) {
                 URL bootClassWorldURL = bootClassWorldURLs[i];
                 if (i == 0) {
@@ -1278,7 +1307,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             }
         }
         bLog.error(NBootMsg.ofC("  java-version                     : %s", System.getProperty("java.version")));
-        bLog.error(NBootMsg.ofC("  java-executable                  : %s", NBootUtils.resolveJavaCommand(null)));
+        bLog.error(NBootMsg.ofC("  java-executable                  : %s", NBootUtils.desc(NBootUtils.resolveJavaCommand(null))));
         bLog.error(NBootMsg.ofC("  java-class-path                  : %s", System.getProperty("java.class.path")));
         bLog.error(NBootMsg.ofC("  java-library-path                : %s", System.getProperty("java.library.path")));
         bLog.error(NBootMsg.ofC("  os-name                          : %s", System.getProperty("os.name")));
@@ -1288,15 +1317,15 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
         bLog.error(NBootMsg.ofC("  user-home                        : %s", System.getProperty("user.home")));
         bLog.error(NBootMsg.ofC("  user-dir                         : %s", System.getProperty("user.dir")));
         bLog.error(NBootMsg.ofPlain(""));
-        NBootLogConfig logConfig = this.options.getLogConfig();
+        NBootLogConfig logConfig = options.getLogConfig();
         if (logConfig == null || logConfig.getLogTermLevel() == null || (logConfig.getLogFileLevel() != null && logConfig.getLogFileLevel().intValue() > Level.FINEST.intValue())) {
             bLog.error(NBootMsg.ofPlain("If the problem persists you may want to get more debug info by adding '--verbose' arguments."));
         }
-        if (!NBootUtils.firstNonNull(this.options.getReset(), false) && !NBootUtils.firstNonNull(this.options.getRecover(), false) && this.options.getExpireTime() == null) {
+        if (!NBootUtils.firstNonNull(options.getReset(), false) && !NBootUtils.firstNonNull(options.getRecover(), false) && options.getExpireTime() == null) {
             bLog.error(NBootMsg.ofPlain("You may also enable recover mode to ignore existing cache info with '--recover' and '--expire' arguments."));
             bLog.error(NBootMsg.ofPlain("Here is the proper command : "));
             bLog.error(NBootMsg.ofPlain("  java -jar nuts.jar --verbose --recover --expire [...]"));
-        } else if (!NBootUtils.firstNonNull(this.options.getReset(), false) && NBootUtils.firstNonNull(this.options.getRecover(), false) && this.options.getExpireTime() == null) {
+        } else if (!NBootUtils.firstNonNull(options.getReset(), false) && NBootUtils.firstNonNull(options.getRecover(), false) && options.getExpireTime() == null) {
             bLog.error(NBootMsg.ofPlain("You may also enable full reset mode to ignore existing configuration with '--reset' argument."));
             bLog.error(NBootMsg.ofPlain("ATTENTION: this will delete all your nuts configuration. Use it at your own risk."));
             bLog.error(NBootMsg.ofPlain("Here is the proper command : "));

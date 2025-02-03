@@ -51,7 +51,7 @@ class WrapperNAuthenticationAgent {
         if (x <= 0) {
             if (NWorkspace.of().getBootOptions().getRecover().orElse(false)) {
                 //All stored passwords will be reset to 'secret'
-                NSession.of().err().println("```error RECOVER MODE : Password could no be parsed due a change in encryption spec. WIll use new default agent```");
+                NErr.println("```error RECOVER MODE : Password could no be parsed due a change in encryption spec. WIll use new default agent```");
                 return null;
             }
             throw new NSecurityException(NMsg.ofPlain("credential id must start with authentication agent id"));

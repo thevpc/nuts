@@ -218,7 +218,7 @@ public class CorePlatformUtils {
                     }
                 }
             } catch (Exception e) {
-                NSession.of().err().println(NMsg.ofC("error: %s", CoreStringUtils.exceptionToMessage(e)));
+                NErr.println(NMsg.ofC("error: %s", CoreStringUtils.exceptionToMessage(e)));
             }
         }
         Map<String, String> m = new HashMap<>();

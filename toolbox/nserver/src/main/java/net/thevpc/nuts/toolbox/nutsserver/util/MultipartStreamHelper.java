@@ -29,7 +29,6 @@ package net.thevpc.nuts.toolbox.nutsserver.util;
 import net.thevpc.nuts.NException;
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 
 import java.io.*;
 import java.util.Iterator;
@@ -40,18 +39,16 @@ import java.util.Iterator;
 public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
 
     private MultipartStream2 stream;
-    private NSession session;
 
     public MultipartStreamHelper(InputStream input,
-                                 String contentType, NSession session) {
-        this.session = session;
+                                 String contentType) {
         stream = new MultipartStream2(
-                input, resolveBoundaryFromContentType(contentType, session), MultipartStream2.DEFAULT_BUFSIZE,
-                null, session
+                input, resolveBoundaryFromContentType(contentType), MultipartStream2.DEFAULT_BUFSIZE,
+                null
         );
     }
 
-    private static byte[] resolveBoundaryFromContentType(String contentType, NSession session) {
+    private static byte[] resolveBoundaryFromContentType(String contentType) {
         //multipart/form-data; boundary=1597f5e92b6
         for (String s : contentType.split(";")) {
             s = s.trim();
@@ -97,7 +94,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
                                         }
                                         return itemInputStream.read();
                                     }
-                                }, session
+                                }
                         );
                     }
                 }

@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.ndb.nosql.mongodb.cmd;
 
+import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
@@ -27,7 +28,7 @@ public class MongoCreateIndexCmd extends CreateIndexCmd<NMongoConfig> {
                 }
             }
             NSession session = NSession.get().get();
-            session.out().println(mongoCollection.createIndex(docSet));
+            NOut.println(mongoCollection.createIndex(docSet));
         });
     }
 

@@ -70,12 +70,12 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                 .flatMap(NLiteral::asBoolean)
                 .orElse(false)) {
 
-            if (session.out().getTerminalMode() == NTerminalMode.FORMATTED) {
-                session.out().print(NMsg.ofC("%s ", NText.ofStyled("[exec]", NTextStyle.primary4())));
-                session.out().println(NText.of(commandOut));
+            if (NOut.getTerminalMode() == NTerminalMode.FORMATTED) {
+                NOut.print(NMsg.ofC("%s ", NText.ofStyled("[exec]", NTextStyle.primary4())));
+                NOut.println(NText.of(commandOut));
             } else {
-                session.out().print("exec ");
-                session.out().println(commandOut);
+                NOut.print("exec ");
+                NOut.println(commandOut);
             }
         }
         return new NExecHelper(pb, workspace, session.out());

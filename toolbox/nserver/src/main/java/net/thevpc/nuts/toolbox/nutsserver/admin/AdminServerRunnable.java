@@ -120,7 +120,6 @@ public class AdminServerRunnable implements NServer, Runnable {
                         @Override
                         public void run() {
                             String[] args = {NConstants.Ids.NUTS_SHELL};
-                            NShell cli = null;
                             try {
                                 try {
                                     PrintStream out = new PrintStream(finalAccept.getOutputStream());
@@ -131,16 +130,18 @@ public class AdminServerRunnable implements NServer, Runnable {
                                                     finalAccept.getInputStream(),
                                                     eout, eout)
                                     );
-                                    cli = new NShell(
-                                            new NShellConfiguration()
-                                                    .setSession(session)
-                                                    .setAppId(NId.getForClass(AdminServerRunnable.class).get())
-                                                    .setServiceName(serverId)
-                                                    .setArgs(new String[0])
-                                    );
-                                    cli.getRootContext().builtins().unset("connect");
-                                    cli.getRootContext().builtins().set(new StopServerBuiltin2(finalServerSocket));
-                                    cli.run();
+                                    invokerSession.runWith(()->{
+                                        NShell cli = null;
+                                        cli = new NShell(
+                                                new NShellConfiguration()
+                                                        .setAppId(NId.getForClass(AdminServerRunnable.class).get())
+                                                        .setServiceName(serverId)
+                                                        .setArgs(new String[0])
+                                        );
+                                        cli.getRootContext().builtins().unset("connect");
+                                        cli.getRootContext().builtins().set(new StopServerBuiltin2(finalServerSocket));
+                                        cli.run();
+                                    });
                                 } finally {
                                     finalAccept.close();
                                 }

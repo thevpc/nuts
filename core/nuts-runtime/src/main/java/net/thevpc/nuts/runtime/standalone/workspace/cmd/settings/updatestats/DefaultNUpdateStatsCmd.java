@@ -74,17 +74,17 @@ public class DefaultNUpdateStatsCmd extends AbstractNUpdateStatsCmd {
                     throw new NIllegalArgumentException(NMsg.ofPlain("unsupported repository folder"));
                 }
                 if (session.isPlainTrace()) {
-                    session.out().resetLine().println(NMsg.ofC("[%s] updated stats %s", NWorkspace.of().getWorkspaceLocation(), repositoryPath));
+                    NOut.resetLine().println(NMsg.ofC("[%s] updated stats %s", NWorkspace.of().getWorkspaceLocation(), repositoryPath));
                 }
             }
         }
         if (!processed) {
             if (session.isPlainTrace()) {
-                session.out().resetLine().println(NMsg.ofC("%s updating workspace stats", NWorkspace.of().getWorkspaceLocation()));
+                NOut.resetLine().println(NMsg.ofC("%s updating workspace stats", NWorkspace.of().getWorkspaceLocation()));
             }
             for (NRepository repo : workspace.getRepositories()) {
                 if (session.isPlainTrace()) {
-                    session.out().resetLine().println(NMsg.ofC("%s updating stats %s", NWorkspace.of().getWorkspaceLocation(), repo));
+                    NOut.resetLine().println(NMsg.ofC("%s updating stats %s", NWorkspace.of().getWorkspaceLocation(), repo));
                 }
                 NWorkspaceUtils.of(workspace).repoSPI(repo).updateStatistics()
                         //                        .setFetchMode(NutsFetchMode.LOCAL)

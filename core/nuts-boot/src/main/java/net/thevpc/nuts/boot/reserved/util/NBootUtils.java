@@ -246,13 +246,13 @@ public final class NBootUtils {
 
     public static String desc(Object s) {
         if (s == null) {
-            return "<EMPTY>";
+            return "<undefined>";
         }
         String ss
                 =
                 (s instanceof Enum) ? enumName(((Enum<?>) s).name())
                         : s.toString().trim();
-        return ss.isEmpty() ? "<EMPTY>" : ss;
+        return ss.isEmpty() ? "<undefined>" : ss;
     }
 
     public static String coalesce(Object... all) {
@@ -3063,4 +3063,113 @@ public final class NBootUtils {
     }
 
 
+    public static String damerauLevenshteinClosest(double threshold, String str1, String[] dictionary) {
+        if (threshold > 1) {
+            threshold = 1;
+        }
+        if (threshold < 0) {
+            threshold = 0;
+        }
+        double bestRelativeDistance = -1;
+        String bestResult = null;
+        if (str1 == null) {
+            str1 = "";
+        }
+        for (String s : dictionary) {
+            if (s == null) {
+                s = "";
+            }
+            double u = computeOptionSimilarity(str1, s);
+            if (u >= threshold) {
+                if (bestResult == null || u > bestRelativeDistance) {
+                    bestResult = s;
+                    bestRelativeDistance = u;
+                }
+            }
+        }
+        return bestResult;
+    }
+
+    // Damerau-Levenshtein distance function
+    public static int damerauLevenshtein(String s1, String s2) {
+        int len1 = s1.length();
+        int len2 = s2.length();
+        int[][] dp = new int[len1 + 1][len2 + 1];
+
+        for (int i = 0; i <= len1; i++) dp[i][0] = i;
+        for (int j = 0; j <= len2; j++) dp[0][j] = j;
+
+        for (int i = 1; i <= len1; i++) {
+            for (int j = 1; j <= len2; j++) {
+                int cost = (s1.charAt(i - 1) == s2.charAt(j - 1)) ? 0 : 1;
+                dp[i][j] = Math.min(Math.min(
+                                dp[i - 1][j] + 1,      // Deletion
+                                dp[i][j - 1] + 1),     // Insertion
+                        dp[i - 1][j - 1] + cost // Substitution
+                );
+                if (i > 1 && j > 1 && s1.charAt(i - 1) == s2.charAt(j - 2) && s1.charAt(i - 2) == s2.charAt(j - 1)) {
+                    dp[i][j] = Math.min(dp[i][j], dp[i - 2][j - 2] + cost);
+                }
+            }
+        }
+        return dp[len1][len2];
+    }
+
+
+    public static double tokenSimilarity(String[] tokens1, String[] tokens2) {
+        if (tokens1.length == 0 || tokens2.length == 0) return 0.0;
+
+        double totalScore = 0;
+        int totalComparisons = 0;
+
+        for (String token1 : tokens1) {
+            int minDistance = Integer.MAX_VALUE;
+            String bestMatch = "";
+
+            for (String token2 : tokens2) {
+                int distance = damerauLevenshtein(token1, token2);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    bestMatch = token2;
+                }
+            }
+            double maxLength = Math.max(token1.length(), bestMatch.length());
+            double similarity = maxLength == 0 ? 1.0 : 1.0 - (double) minDistance / maxLength;
+            totalScore += similarity;
+            totalComparisons++;
+        }
+
+        return totalComparisons == 0 ? 0.0 : totalScore / totalComparisons;
+    }
+
+    public static double fuzzyJaccardSimilarity(String[] tokens1, String[] tokens2) {
+        if (tokens1.length == 0 || tokens2.length == 0) return 0.0;
+
+        Set<String> set1 = new HashSet<>(Arrays.asList(tokens1));
+        Set<String> set2 = new HashSet<>(Arrays.asList(tokens2));
+        double intersection = 0;
+        double union = set1.size() + set2.size();
+        for (String token1 : set1) {
+            double bestMatchScore = 0.0;
+            for (String token2 : set2) {
+                int distance = damerauLevenshtein(token1, token2);
+                double maxLen = Math.max(token1.length(), token2.length());
+                double similarity = maxLen == 0 ? 1.0 : 1.0 - (double) distance / maxLen;
+
+                if (similarity > bestMatchScore) {
+                    bestMatchScore = similarity;
+                }
+            }
+            intersection += bestMatchScore;
+        }
+        return intersection / union;
+    }
+
+    public static double computeOptionSimilarity(String word1, String word2) {
+        String[] tokens1 = split(word1, " ;,\n\r\t|-_", true, true).toArray(new String[0]);
+        String[] tokens2 = split(word2, " ;,\n\r\t|-_", true, true).toArray(new String[0]);
+        double tokenEditSimilarity = tokenSimilarity(tokens1, tokens2);
+        double fuzzyJaccardSimilarity = fuzzyJaccardSimilarity(tokens1, tokens2);
+        return (tokenEditSimilarity * 0.6) + (fuzzyJaccardSimilarity * 0.4);
+    }
 }

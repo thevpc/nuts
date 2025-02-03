@@ -35,7 +35,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
         if (s != null) {
             NSession session = repository.getWorkspace().currentSession();
             if (s.exists()) {
-                session.out().println(NMsg.ofC("```error deleting``` %s folder %s ...",
+                NOut.println(NMsg.ofC("```error deleting``` %s folder %s ...",
                         NText.ofStyledPrimary1("cache")
                         , s));
                 if (force
@@ -94,7 +94,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
         if (sstoreLocation != null) {
             NTexts factory = NTexts.of();
             if (sstoreLocation.exists()) {
-                session.out().println(NMsg.ofC("```error deleting``` %s for workspace %s folder %s ...",
+                NOut.println(NMsg.ofC("```error deleting``` %s for workspace %s folder %s ...",
                         factory.ofStyled(folder.id(), NTextStyle.primary1()),
                         factory.ofStyled(session.getWorkspace().getName(), NTextStyle.primary1()),
                         factory.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
@@ -117,7 +117,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
             NTexts factory = NTexts.of();
             NSession session = workspace.currentSession();
             if (sstoreLocation.exists()) {
-                session.out().println(NMsg.ofC("```error deleting``` %s for repository %s folder %s ...",
+                NOut.println(NMsg.ofC("```error deleting``` %s for repository %s folder %s ...",
                         factory.ofStyled(folder.id(), NTextStyle.primary1()),
                         factory.ofStyled(repository.getName(), NTextStyle.primary1()),
                         factory.ofStyled(sstoreLocation.toString(), NTextStyle.path())));

@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.imports;
 
+import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
 
@@ -29,7 +30,7 @@ public class NSettingsImportSubCommand extends AbstractNSettingsSubCommand {
             cmdLine.setCommandName("config list imports").throwUnexpectedArgument();
             if (cmdLine.isExecMode()) {
                 for (String imp : (NWorkspace.of().getAllImports())) {
-                    session.out().println(NMsg.ofPlain(imp));
+                    NOut.println(NMsg.ofPlain(imp));
                 }
             }
             return true;

@@ -11,42 +11,38 @@ public class ExamplesOfExec {
     }
 
     public void executeSomeCommand() {
-        NSession session = NSession.of();
-        session.out().println("Example of ## Exec ##");
+        NOut.println("Example of ## Exec ##");
         int result = NExecCmd.of()
                 .addCommand("ls", "-l")
                 .system()
                 .run()
                 .getResultCode();
-        session.out().println(NMsg.ofC("result was %s", result));
+        NOut.println(NMsg.ofC("result was %s", result));
     }
 
     public void executeSomeCommandRedirect() {
-        NSession session = NSession.of();
-        session.out().println("Example of ## Exec with String Grab ##");
+        NOut.println("Example of ## Exec with String Grab ##");
         String result = NExecCmd.of()
                 .addCommand("ls", "-l")
                 .system()
                 .run()
                 .getGrabbedAllString();
-        session.out().println(NMsg.ofC("result was %s", result));
+        NOut.println(NMsg.ofC("result was %s", result));
     }
 
     public void executeSshCommand() {
-        NSession session = NSession.of();
         String result = NExecCmd.of()
                 .setTarget("ssh://remoteUserName:remoteUserPassword@192.168.1.98")
                 .addCommand("hostname", "-I")
                 .system()
                 .getGrabbedAllString();
-        session.out().println(result);
-        session.out().println(NMsg.ofC("result was %s", result));
+        NOut.println(result);
+        NOut.println(NMsg.ofC("result was %s", result));
 
     }
 
     public void executeSshSudoCommand() {
-        NSession session = NSession.of();
-        session.out().println("Example of ## Exec ssh command ##");
+        NOut.println("Example of ## Exec ssh command ##");
         String result = NExecCmd.of()
                 .setTarget("ssh://remoteUserName:remoteUserPassword@192.168.1.98")
                 .addCommand("hostname", "-I")
@@ -55,6 +51,6 @@ public class ExamplesOfExec {
                 .sudo()
                 .setIn(NExecInput.ofString("sudoPassword\n"))
                 .getGrabbedAllString();
-        session.out().println(NMsg.ofC("result was %s", result));
+        NOut.println(NMsg.ofC("result was %s", result));
     }
 }

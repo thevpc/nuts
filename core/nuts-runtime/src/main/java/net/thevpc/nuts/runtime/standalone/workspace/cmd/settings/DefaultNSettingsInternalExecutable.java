@@ -97,9 +97,8 @@ public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutab
             }
         } while (cmd.hasNext());
         if (empty) {
-            NPrintStream out = NSession.of().err();
-            out.println("missing settings command");
-            out.println("type for more help : nuts settings -h");
+            NErr.println("missing settings command");
+            NErr.println("type for more help : nuts settings -h");
             throw new NExecutionException(NMsg.ofPlain("missing settings command"), NExecutionException.ERROR_1);
         }
         return NExecutionException.SUCCESS;

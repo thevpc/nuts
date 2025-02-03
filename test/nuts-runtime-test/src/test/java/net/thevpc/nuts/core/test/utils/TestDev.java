@@ -16,7 +16,7 @@ public class TestDev {
     void test() {
         NText s = NText.of(NMsg.ofC("%s", "Hello"));
 
-        NSession.of().out().println(NMsg.ofC("%s", "Hello"));
-        NSession.of().out().println(NMsg.ofC("%s", NMsg.ofPlain("Hello")));
+        NOut.println(NMsg.ofC("%s", "Hello"));
+        NOut.println(NMsg.ofC("%s", NMsg.ofPlain("Hello")));
     }
 }

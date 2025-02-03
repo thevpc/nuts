@@ -477,11 +477,11 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
                                             info.id))
                                     .setDefaultValue(true)
                                     .getBooleanValue()) {
-                                session.out().resetLine().println(NMsg.ofC("%s ```error installation cancelled with error:``` %s%n", info.id, ex));
+                                NOut.resetLine().println(NMsg.ofC("%s ```error installation cancelled with error:``` %s%n", info.id, ex));
                                 result = new NDefinition[0];
                                 return this;
                             } else {
-                                session.out().resetLine().println(NMsg.ofC("%s ```error installation cancelled with error:``` %s%n", info.id, ex));
+                                NOut.resetLine().println(NMsg.ofC("%s ```error installation cancelled with error:``` %s%n", info.id, ex));
                             }
                         } else {
                             throw ex;

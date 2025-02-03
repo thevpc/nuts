@@ -36,7 +36,7 @@ public class Test10_ExecURLTest {
 //                .setRepositoryFilter(NRepositoryFilters.of().byName("maven"))
 //                .setFetchStrategy(NFetchStrategy.REMOTE)
                 .setLatest(true);
-        NSession.of().out().println(q.getResultQueryPlan());
+        NOut.println(q.getResultQueryPlan());
         List<NId> nutsIds = q
                 .getResultIds()
                 .toList();
@@ -86,7 +86,7 @@ public class Test10_ExecURLTest {
         String result = NExecCmd.of()
                 .addCommand("info")
                 .getGrabbedAllString();
-            NSession.of().out().println(result);
+            NOut.println(result);
         Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
     }
 
@@ -133,7 +133,7 @@ public class Test10_ExecURLTest {
                 .addCommand("com.cts.nuts.enterprise.postgres:pgcli")
                 .addCommand("list", "-i")
                 .getGrabbedAllString();
-        NSession.of().out().println(result);
+        NOut.println(result);
         Assertions.assertFalse(result.contains("[0m"), "Message should not contain terminal format");
     }
 

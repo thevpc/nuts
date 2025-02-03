@@ -112,7 +112,7 @@ public class HistoryCommand extends NShellBuiltinDefault {
                     String historyElement = history.get(i);
                     result.put(String.valueOf(offset + i + 1), historyElement);
                 }
-                session.out().println(result);
+                NOut.println(result);
                 break;
             }
             case CLEAR: {

@@ -168,7 +168,7 @@ public class NTasksSubCmd {
             }
             service.tasks().addTask(t);
             if (session.isPlainTrace()) {
-                session.out().println(NMsg.ofC("task %s (%s) added.",
+                NOut.println(NMsg.ofC("task %s (%s) added.",
                         NText.ofStyledPrimary5(t.getId()),
                         t.getName()
                 ));
@@ -409,7 +409,7 @@ public class NTasksSubCmd {
             for (NTask task : new LinkedHashSet<>(d.tasks)) {
                 service.tasks().updateTask(task);
                 if (session.isPlainTrace()) {
-                    session.out().println(NMsg.ofC("task %s (%s) updated.",
+                    NOut.println(NMsg.ofC("task %s (%s) updated.",
                             text.ofStyled(task.getId(), NTextStyle.primary5()),
                             text.ofStyled(task.getName(), NTextStyle.primary1())
                     ));
@@ -614,7 +614,7 @@ public class NTasksSubCmd {
                         .setBorder("spaces")
                         .setValue(m).println();
             } else {
-                session.out().print(r.collect(Collectors.toList()));
+                NOut.print(r.collect(Collectors.toList()));
             }
         }
     }

@@ -214,8 +214,7 @@ public class NWorkspaceUtils {
     }
 
     public <T> NIterator<T> decoratePrint(NIterator<T> it, NFetchDisplayOptions displayOptions) {
-        final NPrintStream out = NSession.of().out();
-        return new NPrintIterator<>(it, workspace, out, displayOptions);
+        return new NPrintIterator<>(it, workspace, NOut.out(), displayOptions);
     }
 
     public Events events() {
@@ -226,7 +225,7 @@ public class NWorkspaceUtils {
         NSession session = workspace.currentSession();
         try {
             if (session.isPlainTrace()) {
-                session.out().resetLine().println("looking for java installations in default locations...");
+                NOut.resetLine().println("looking for java installations in default locations...");
             }
             List<NPlatformLocation> found = workspace.searchSystemPlatforms(NPlatformFamily.JAVA).toList();
             int someAdded = 0;
@@ -237,13 +236,13 @@ public class NWorkspaceUtils {
             }
             if (session.isPlainTrace()) {
                 if (someAdded == 0) {
-                    session.out().println(NMsg.ofC("%s java installation locations found...", NMsg.ofStyledError("no new")));
+                    NOut.println(NMsg.ofC("%s java installation locations found...", NMsg.ofStyledError("no new")));
                 } else if (someAdded == 1) {
-                    session.out().println(NMsg.ofC("%s new java installation location added...", NMsg.ofStyledPrimary2("1")));
+                    NOut.println(NMsg.ofC("%s new java installation location added...", NMsg.ofStyledPrimary2("1")));
                 } else {
-                    session.out().println(NMsg.ofC("%s new java installation locations added...", NMsg.ofStyledPrimary2("" + someAdded)));
+                    NOut.println(NMsg.ofC("%s new java installation locations added...", NMsg.ofStyledPrimary2("" + someAdded)));
                 }
-                session.out().println("you can always add another installation manually using 'nuts settings add java' command.");
+                NOut.println("you can always add another installation manually using 'nuts settings add java' command.");
             }
             if (!workspace.isReadOnly()) {
                 workspace.saveConfig();
@@ -265,7 +264,7 @@ public class NWorkspaceUtils {
         NSession session = workspace.currentSession();
         try {
             if (session.isPlainTrace()) {
-                session.out().resetLine().println("configuring current JVM...");
+                NOut.resetLine().println("configuring current JVM...");
             }
             NPlatformLocation found0 = workspace.resolvePlatform(NPlatformFamily.JAVA, NPath.of(System.getProperty("java.home")), null).orNull();
             NPlatformLocation[] found = found0 == null ? new NPlatformLocation[0] : new NPlatformLocation[]{found0};
@@ -277,7 +276,7 @@ public class NWorkspaceUtils {
             }
             if (session.isPlainTrace()) {
                 if (someAdded == 0) {
-                    session.out().println(NMsg.ofC("%s java installation locations found...", NMsg.ofStyledError("no new")));
+                    NOut.println(NMsg.ofC("%s java installation locations found...", NMsg.ofStyledError("no new")));
                 }
             }
             if (!workspace.isReadOnly()) {

@@ -41,7 +41,7 @@ public class DefaultNUndeployCmd extends AbstractNUndeployCmd {
             addResult(id);
         }
         if (session.isTrace()) {
-            session.out().println(result);
+            NOut.println(result);
         }
         return this;
     }

@@ -3,8 +3,6 @@ package net.thevpc.nuts.build;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.build.builders.*;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NOptional;
 
 public class NutsReleaseToolMain implements NApplication {
 
@@ -23,7 +21,7 @@ public class NutsReleaseToolMain implements NApplication {
                             new BaseConfRunner(),
                             new JarsRunner(),
                             new ReposRunner(),
-                            new InstallerRunner(session),
+                            new InstallerRunner(),
                             new SiteRunner()
                     );
                     nutsBuildRunner.run(

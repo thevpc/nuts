@@ -47,10 +47,8 @@ public class NJLineCmdLineHistory implements NCmdLineHistory {
     private int lastLoaded = 0;
     private int nbEntriesInFile = 0;
     private int offset = 0;
-    private NSession session;
 
-    public NJLineCmdLineHistory(NSession session) {
-        this.session = session;
+    public NJLineCmdLineHistory() {
     }
 
     private void internalClear() {

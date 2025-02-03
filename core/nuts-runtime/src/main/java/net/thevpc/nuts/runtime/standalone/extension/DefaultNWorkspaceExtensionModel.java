@@ -505,7 +505,7 @@ public class DefaultNWorkspaceExtensionModel {
             if (u != null) {
                 NSession session=getWorkspace().currentSession();
                 if (session.isPlainTrace()) {
-                    session.out().println(NMsg.ofC("extensions %s unloaded", u));
+                    NOut.println(NMsg.ofC("extensions %s unloaded", u));
                 }
                 loadedExtensionIds.remove(u);
                 unloadedExtensions.add(u);

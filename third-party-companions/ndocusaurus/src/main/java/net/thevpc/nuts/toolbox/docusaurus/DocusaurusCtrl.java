@@ -85,11 +85,11 @@ public class DocusaurusCtrl {
             NPath docs = basePath.resolve("docs");
             if (basePath.resolve("node_modules").isDirectory()
                     && basePath.resolve("docusaurus.config.js").isRegularFile()) {
-                session.out().print(NMsg.ofC("clear folder %s%n", docs));
+                NOut.print(NMsg.ofC("clear folder %s%n", docs));
                 deletePathChildren(docs);
             }
 
-            session.out().print(NMsg.ofC("process template %s -> %s%n", preProcessor, getTargetBaseDir()));
+            NOut.print(NMsg.ofC("process template %s -> %s%n", preProcessor, getTargetBaseDir()));
             NDocProjectConfig config = new NDocProjectConfig()
                     .setProjectPath(preProcessor.toString())
                     .setTargetFolder(getTargetBaseDir().toString())
@@ -118,21 +118,21 @@ public class DocusaurusCtrl {
                     root.toJSON(1)
                     + "\n};";
             if (session.isPlainOut()) {
-                session.out().print(NMsg.ofC("build sidebar %s%n", base.resolve("sidebars.js")));
-                session.out().print(NMsg.ofC("\tusing release folder : %s%n", project.getPhysicalDocsFolderBasePath()));
-                session.out().print(NMsg.ofC("\tusing config folder  : %s%n", project.getPhysicalDocsFolderConfigPath()));
+                NOut.print(NMsg.ofC("build sidebar %s%n", base.resolve("sidebars.js")));
+                NOut.print(NMsg.ofC("\tusing release folder : %s%n", project.getPhysicalDocsFolderBasePath()));
+                NOut.print(NMsg.ofC("\tusing config folder  : %s%n", project.getPhysicalDocsFolderConfigPath()));
             }
             base.resolve("sidebars.js").writeString(s);
         }
         if (isBuildPdf() && !project.getConfigAsciiDoctor().getStringByPath("path").isEmpty()) {
             Docusaurus2Asciidoctor d2a = new Docusaurus2Asciidoctor(project);
-            session.out().print(NMsg.ofC("build adoc file : %s%n", d2a.getAdocFile()));
+            NOut.print(NMsg.ofC("build adoc file : %s%n", d2a.getAdocFile()));
             d2a.createAdocFile();
-            session.out().print(NMsg.ofC("build pdf  file : %s%n", d2a.getPdfFile()));
+            NOut.print(NMsg.ofC("build pdf  file : %s%n", d2a.getPdfFile()));
             d2a.createPdfFile();
         }
         if (isBuildWebSite()) {
-            session.out().print(NMsg.ofC("build website%n"));
+            NOut.print(NMsg.ofC("build website%n"));
             runNativeCommand(base, getEffectiveNpmCommandPath(), "run-script", "build");
             String copyBuildPath = project.getConfigCustom().getStringByPath("copyBuildPath")
                     .get();

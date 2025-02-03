@@ -27,6 +27,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
@@ -110,14 +111,14 @@ public class DirNameCommand extends NShellBuiltinDefault {
                 for (int i = 0; i < results.size(); i++) {
                     String name = results.get(i);
                     if (i > 0) {
-                        session.out().print(options.sep);
+                        NOut.print(options.sep);
                     }
-                    session.out().print(name);
+                    NOut.print(name);
                 }
                 break;
             }
             default: {
-                session.out().println(results);
+                NOut.println(results);
             }
         }
     }

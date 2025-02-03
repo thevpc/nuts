@@ -1034,7 +1034,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
 
     public static CharacterizedExecFile characterizeForExec(NInputSource contentFile, List<String> execOptions) {
         String classifier = null;//TODO how to get classifier?
-        CharacterizedExecFile c = new CharacterizedExecFile(NSession.of());
+        CharacterizedExecFile c = new CharacterizedExecFile();
         try {
             c.setStreamOrPath(contentFile);
             c.setContentFile(CoreIOUtils.toPathInputSource(contentFile, c.getTemps(), true));

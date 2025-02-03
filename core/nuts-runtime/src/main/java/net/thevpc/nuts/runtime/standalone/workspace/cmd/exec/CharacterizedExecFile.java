@@ -20,10 +20,8 @@ public class CharacterizedExecFile implements AutoCloseable {
     private List<Path> temps = new ArrayList<>();
     private NDescriptor descriptor;
     private NId executor;
-    private NSession session;
 
-    public CharacterizedExecFile(NSession session) {
-        this.session = session;
+    public CharacterizedExecFile() {
     }
 
     public void addTemp(Path f) {
@@ -72,15 +70,6 @@ public class CharacterizedExecFile implements AutoCloseable {
 
     public CharacterizedExecFile setExecutor(NId executor) {
         this.executor = executor;
-        return this;
-    }
-
-    public NSession getSession() {
-        return session;
-    }
-
-    public CharacterizedExecFile setSession(NSession session) {
-        this.session = session;
         return this;
     }
 

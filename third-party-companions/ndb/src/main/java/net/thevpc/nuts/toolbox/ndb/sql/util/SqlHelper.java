@@ -40,7 +40,7 @@ public class SqlHelper implements Closeable {
                     @Override
                     public List<Object> run(SqlHelper h, NSession session) {
                         if (forceShowSQL != null && forceShowSQL) {
-                            session.out().println(NMsg.ofCode("sql", sql));
+                            NOut.println(NMsg.ofCode("sql", sql));
                         }
                         return h.runSQL2(sql);
                     }
@@ -367,7 +367,7 @@ public class SqlHelper implements Closeable {
         }
         for (String s : sqlList) {
             if (showSQL) {
-                session.out().println(NMsg.ofCode("sql", s));
+                NOut.println(NMsg.ofCode("sql", s));
             }
             try {
                 List<Object> a = runSQL2(s);
@@ -379,12 +379,12 @@ public class SqlHelper implements Closeable {
                                     .out().println(a);
                         } else {
                             for (Object o : a) {
-                                session.out().println(o);
+                                NOut.println(o);
                             }
                         }
                     }
                 } else {
-                    session.out().println(a);
+                    NOut.println(a);
                 }
             } catch (Exception e) {
                 session.err().println(NMsg.ofC("Error : %s", e));

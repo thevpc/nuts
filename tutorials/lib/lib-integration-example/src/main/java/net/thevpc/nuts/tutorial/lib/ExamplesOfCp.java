@@ -1,5 +1,6 @@
 package net.thevpc.nuts.tutorial.lib;
 
+import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NCp;
@@ -17,8 +18,7 @@ public class ExamplesOfCp {
     }
 
     public void executeSomeCommand() {
-        NSession session = NSession.of();
-        session.out().println("Example of ## Cp ##");
+        NOut.println("Example of ## Cp ##");
         NCp.of()
                 .from(NPath.of("http://www.google.com"))
                 .to(NPath.of("example.txt"))
@@ -27,15 +27,14 @@ public class ExamplesOfCp {
     }
 
     public void executeCustomMonitor() {
-        NSession session = NSession.of();
-        session.out().println("Example of ## Cp ##");
+        NOut.println("Example of ## Cp ##");
         NCp.of()
                 .from(NPath.of("http://www.google.com"))
                 .to(NPath.of("example.txt"))
                 .setProgressMonitor(new NProgressListener() {
                     @Override
                     public boolean onProgress(NProgressEvent event) {
-                        session.out().println(NMsg.ofC("some progress %s %s",
+                        NOut.println(NMsg.ofC("some progress %s %s",
                                 event.isIndeterminate() ? "?" : new DecimalFormat("0.00%").format(event.getProgress())
                                 , event.getMessage()));
                         return true;

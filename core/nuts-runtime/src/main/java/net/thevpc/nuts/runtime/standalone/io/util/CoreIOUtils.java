@@ -647,7 +647,7 @@ public class CoreIOUtils {
                     out.mkParentDirs();
                     out.writeBytes(content);
                     if (session.isPlainTrace()) {
-                        session.out().resetLine().println(NMsg.ofC("create file %s", out));
+                        NOut.resetLine().println(NMsg.ofC("create file %s", out));
                     }
                     return PathInfo.Status.CREATED;
                 }
@@ -662,7 +662,7 @@ public class CoreIOUtils {
                         out.mkParentDirs();
                         out.writeBytes(content);
                         if (session.isPlainTrace()) {
-                            session.out().resetLine().println(NMsg.ofC("create file %s", out));
+                            NOut.resetLine().println(NMsg.ofC("create file %s", out));
                         }
                         return PathInfo.Status.CREATED;
                     } else {
@@ -684,7 +684,7 @@ public class CoreIOUtils {
                 case OVERRIDE: {
                     out.writeBytes(content);
                     if (session.isPlainTrace()) {
-                        session.out().resetLine().println(NMsg.ofC("update file %s", out));
+                        NOut.resetLine().println(NMsg.ofC("update file %s", out));
                     }
                     return PathInfo.Status.OVERRIDDEN;
                 }
@@ -699,7 +699,7 @@ public class CoreIOUtils {
                             ).getBooleanValue()) {
                         out.writeBytes(content);
                         if (session.isPlainTrace()) {
-                            session.out().resetLine().println(NMsg.ofC("update file %s", out));
+                            NOut.resetLine().println(NMsg.ofC("update file %s", out));
                         }
                         return PathInfo.Status.OVERRIDDEN;
                     } else {

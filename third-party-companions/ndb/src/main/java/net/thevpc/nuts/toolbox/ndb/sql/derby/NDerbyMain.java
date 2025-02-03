@@ -90,7 +90,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
                 NTexts factory = NTexts.of();
                 if (cmdLine.isExecMode()) {
                     if (new DerbyService(session).isRunning()) {
-                        session.out().println(NMsg.ofC("derby is %s on port %s",
+                        NOut.println(NMsg.ofC("derby is %s on port %s",
                                 factory.ofStyled("already running", NTextStyle.warn()),
                                 factory.ofStyled("" + effectivePort, NTextStyle.number())
                         ));
@@ -101,11 +101,11 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
                 NTexts factory = NTexts.of();
                 if (cmdLine.isExecMode()) {
                     if (!new DerbyService(session).isRunning()) {
-                        session.out().println(NMsg.ofC("derby is %s on port %s",
+                        NOut.println(NMsg.ofC("derby is %s on port %s",
                                 factory.ofStyled("already stopped", NTextStyle.warn()),
                                 factory.ofStyled("" + effectivePort, NTextStyle.number())
                         ));
-                        session.out().println(NMsg.ofC("derby is %s", factory.ofStyled("already stopped", NTextStyle.warn())));
+                        NOut.println(NMsg.ofC("derby is %s", factory.ofStyled("already stopped", NTextStyle.warn())));
                         throw new NExecutionException(NMsg.ofC("derby is already stopped on port %d", effectivePort), NExecutionException.ERROR_3);
                     }
                 }
@@ -194,9 +194,9 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
         NTexts factory = NTexts.of();
         if (cmdLine.isExecMode()) {
             if (new DerbyService(session).isRunning()) {
-                session.out().println(NMsg.ofC("derby is %s", factory.ofStyled("running", NTextStyle.primary1())));
+                NOut.println(NMsg.ofC("derby is %s", factory.ofStyled("running", NTextStyle.primary1())));
             } else {
-                session.out().println(NMsg.ofC("derby is %s", factory.ofStyled("stopped", NTextStyle.error())));
+                NOut.println(NMsg.ofC("derby is %s", factory.ofStyled("stopped", NTextStyle.error())));
             }
         }
     }
@@ -282,7 +282,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
                     }
                 }
             } else {
-                session.out().println(DerbyUtils.getRunningInstances(session));
+                NOut.println(DerbyUtils.getRunningInstances(session));
             }
         }
     }
@@ -298,7 +298,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
         }
         if (args.isExecMode()) {
             DerbyService srv = new DerbyService(session);
-            session.out().println(srv.findVersions());
+            NOut.println(srv.findVersions());
         }
     }
 

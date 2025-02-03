@@ -105,7 +105,7 @@ public class NProjectsSubCmd {
         if (cmd.isExecMode()) {
             service.projects().addProject(t);
             if (session.isPlainTrace()) {
-                session.out().println(NMsg.ofC("project %s (%s) added.",
+                NOut.println(NMsg.ofC("project %s (%s) added.",
                         NText.ofStyledPrimary5(t.getId()),
                         t.getName()
                 ));
@@ -224,7 +224,7 @@ public class NProjectsSubCmd {
                 }
                 service.projects().updateProject(project);
                 if (session.isPlainTrace()) {
-                    session.out().println(NMsg.ofC("project %s (%s) updated.",
+                    NOut.println(NMsg.ofC("project %s (%s) updated.",
                             text.ofStyled(project.getId(), NTextStyle.primary5()),
                             text.ofStyled(project.getName(), NTextStyle.primary1())
                     ));
@@ -233,7 +233,7 @@ public class NProjectsSubCmd {
             if (d.mergeTo != null) {
                 service.projects().mergeProjects(d.mergeTo, d.projects.stream().map(x -> x.getId()).toArray(String[]::new));
                 if (session.isPlainTrace()) {
-                    session.out().println(NMsg.ofC("projects merged to %s.",
+                    NOut.println(NMsg.ofC("projects merged to %s.",
                             NTexts.of()
                                     .ofStyled(d.mergeTo, NTextStyle.primary5())
                     ));
@@ -346,7 +346,7 @@ public class NProjectsSubCmd {
                         .setBorder("spaces")
                         .setValue(m).println(session.out());
             } else {
-                session.out().print(r.collect(Collectors.toList()));
+                NOut.print(r.collect(Collectors.toList()));
             }
         }
     }

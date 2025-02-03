@@ -449,7 +449,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 int namesSize = Arrays.stream(result).mapToInt(x -> x.getPath().getName().length()).max().orElse(1);
                 for (PathInfo ndiScriptInfo : result) {
                     NTexts txt = NTexts.of();
-                    session.out().resetLine().println(NMsg.ofC(
+                    NOut.resetLine().println(NMsg.ofC(
                             "%s script %-" + namesSize + "s for %s"
                                     + " at %s",
                             (ndiScriptInfo.getStatus() == PathInfo.Status.OVERRIDDEN)
@@ -463,7 +463,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 }
 
             } else {
-                session.out().println(result);
+                NOut.println(result);
             }
         }
     }

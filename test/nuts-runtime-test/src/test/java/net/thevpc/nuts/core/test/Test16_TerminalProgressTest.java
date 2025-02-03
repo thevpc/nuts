@@ -24,6 +24,7 @@
  */
 package net.thevpc.nuts.core.test;
 
+import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
@@ -77,17 +78,16 @@ public class Test16_TerminalProgressTest {
     public void test3() {
         CProgressBar rr = new CProgressBar();
         rr.setMinPeriod(-1);
-        NSession session = NSession.of();
         for (String formatter : rr.getFormatterNames()) {
             rr.setFormatter(formatter);
             for (int i = 0; i < 100; i++) {
 //                System.out.printf("%2d ::" + rr.progress(i) + "\n", i);
-                session.out().println(NMsg.ofC("%2d ::" + rr.progress(i), i));
+                NOut.println(NMsg.ofC("%2d ::" + rr.progress(i), i));
             }
             for (int i = 0; i < 12; i++) {
                 int finalI = i;
                 rr.setIndeterminatePosition((CProgressBar bar, int size) -> finalI % size);
-                System.out.printf("%2d ::" + rr.progress(-1) + "\n", i);
+                NOut.println(NMsg.ofC("%2d ::" + rr.progress(-1), i));
 //                try {
 //                    Thread.sleep(1000);
 //                } catch (InterruptedException ex) {

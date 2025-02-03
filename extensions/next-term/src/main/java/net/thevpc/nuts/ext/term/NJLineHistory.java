@@ -14,11 +14,9 @@ import java.time.Instant;
 import java.util.*;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.cmdline.NCmdLineHistoryEntry;
-import net.thevpc.nuts.NSession;
 
 class NJLineHistory implements History {
 
-    private NSession session;
     public static final int DEFAULT_HISTORY_SIZE = 500;
     public static final int DEFAULT_HISTORY_FILE_SIZE = 10000;
 
@@ -27,10 +25,9 @@ class NJLineHistory implements History {
     private int index = 0;
     private LineReader reader;
 
-    public NJLineHistory(LineReader reader, NSession session, NJLineTerminal terminal) {
-        this.session = session;
+    public NJLineHistory(LineReader reader, NJLineTerminal terminal) {
         this.terminal = terminal;
-        defaultHistory = new NJLineCmdLineHistory(session);
+        defaultHistory = new NJLineCmdLineHistory();
         attach(reader);
     }
 

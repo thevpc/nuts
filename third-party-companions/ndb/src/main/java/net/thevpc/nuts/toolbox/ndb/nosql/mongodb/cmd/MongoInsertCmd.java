@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.ndb.nosql.mongodb.cmd;
 
+import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
@@ -27,8 +28,7 @@ public class MongoInsertCmd extends InsertCmd<NMongoConfig> {
                     d.putAll(Document.parse(s));
                 }
             }
-            NSession session = NSession.get().get();
-            session.out().println(mongoCollection.insertOne(d));
+            NOut.println(mongoCollection.insertOne(d));
         });
     }
 }

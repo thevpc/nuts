@@ -124,7 +124,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
             switch (session.getOutputFormat().orDefault()) {
                 case PLAIN: {
                     for (Result nid : result) {
-                        session.out().resetLine().println(NMsg.ofC(
+                        NOut.resetLine().println(NMsg.ofC(
                                 "%s deployed successfully as %s to %s",
                                 nid.source,
                                 nid.id,
@@ -134,7 +134,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
                     break;
                 }
                 default: {
-                    session.out().println(result);
+                    NOut.println(result);
                 }
             }
         }

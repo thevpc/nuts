@@ -141,13 +141,13 @@ public class NMvnMain implements NApplication {
                 int r = cli.doMain(args);
                 String s = cli.getResultString();
                 if (s.contains("BUILD SUCCESS")) {
-                    session.out().println("{'result':'success'}");
+                    NOut.println("{'result':'success'}");
                     return 0;
                 } else {
                     if (r == 0) {
                         r = 1;
                     }
-                    session.out().println("{'result':'error'}");
+                    NOut.println("{'result':'error'}");
                 }
                 return r;
             } catch (Exception ex) {

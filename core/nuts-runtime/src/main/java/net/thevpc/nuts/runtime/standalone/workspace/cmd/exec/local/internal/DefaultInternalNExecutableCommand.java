@@ -34,7 +34,7 @@ public abstract class DefaultInternalNExecutableCommand extends AbstractNExecuta
 
     protected void showDefaultHelp() {
         NSession session = workspace.currentSession();
-        session.out().println(getHelpText());
+        NOut.println(getHelpText());
     }
 
 
@@ -59,12 +59,12 @@ public abstract class DefaultInternalNExecutableCommand extends AbstractNExecuta
     public void dryExecute() {
         NSession session = workspace.currentSession();
         if (NAppUtils.processHelpOptions(args)) {
-            session.out().println("[dry] ==show-help==");
+            NOut.println("[dry] ==show-help==");
             return;
         }
         NTexts text = NTexts.of();
         if (session.isPlainOut()) {
-            session.out().println(NMsg.ofC("[dry] %s%n",
+            NOut.println(NMsg.ofC("[dry] %s%n",
                     text.ofBuilder()
                             .append("internal", NTextStyle.pale())
                             .append(" ")
@@ -73,7 +73,7 @@ public abstract class DefaultInternalNExecutableCommand extends AbstractNExecuta
                             .append(NCmdLine.of(args))
             ));
         } else {
-            session.out().println(NMsg.ofC(
+            NOut.println(NMsg.ofC(
                             "[dry] %s",
                             text.ofBuilder()
                                     .append("internal", NTextStyle.pale())

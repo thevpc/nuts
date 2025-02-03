@@ -1,6 +1,7 @@
 package net.thevpc.nuts.build;
 
 import net.thevpc.nuts.NApp;
+import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.build.util.AbstractRunner;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -45,13 +46,12 @@ public class NutsReleaseToolRunner {
 
     public void run(NCmdLine args) {
         NChronometer chrono = NChronometer.startNow();
-        NSession session = NSession.of();
-        session.out().println("Process started");
+        NOut.println("Process started");
         configure(args);
         for (AbstractRunner runner : runners) {
             runner.run();
         }
-        session.out().println("Process finished in " + chrono.stop());
+        NOut.println("Process finished in " + chrono.stop());
     }
 
 

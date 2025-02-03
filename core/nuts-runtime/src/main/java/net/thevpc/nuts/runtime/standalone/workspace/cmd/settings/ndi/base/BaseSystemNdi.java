@@ -237,7 +237,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 f.delete();
                 NSession session = workspace.currentSession();
                 if (session.isPlainTrace()) {
-                    session.out().println(NMsg.ofC("tool %s removed.", factory.ofStyled(CoreIOUtils.betterPath(f.toString()), NTextStyle.path())));
+                    NOut.println(NMsg.ofC("tool %s removed.", factory.ofStyled(CoreIOUtils.betterPath(f.toString()), NTextStyle.path())));
                 }
             }
         }
@@ -250,7 +250,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         PathInfo[] v = createBootScripts(options);
         NSession session = workspace.currentSession();
         if (session.isPlainTrace()) {
-            session.out().println(NMsg.ofC("```sh nuts``` switched to workspace %s to point to %s",
+            NOut.println(NMsg.ofC("```sh nuts``` switched to workspace %s to point to %s",
                     options.getWorkspaceLocation(),
                     options.getNutsApiVersion()
             ));

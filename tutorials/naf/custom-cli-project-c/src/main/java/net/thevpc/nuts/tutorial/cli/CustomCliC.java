@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.thevpc.nuts.NApp;
 import net.thevpc.nuts.NApplication;
+import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.cmdline.NArg;
@@ -23,7 +24,6 @@ public class CustomCliC implements NApplication {
 
     @Override
     public void run() {
-        NSession session = NSession.get().get();
         NCmdLine cmdLine = NApp.of().getCmdLine();
         NRef<Boolean> boolOption = NRef.of(false);
         NRef<String> stringOption = NRef.ofNull();
@@ -44,7 +44,7 @@ public class CustomCliC implements NApplication {
                         break;
                     }
                     default: {
-                        session.configureLast(cmdLine);
+                        NSession.of().configureLast(cmdLine);
                     }
                 }
             } else {
@@ -55,7 +55,7 @@ public class CustomCliC implements NApplication {
         // (and not in autoComplete mode)
         if (cmdLine.isExecMode()) {
             //do the good staff here
-            session.out().println(NMsg.ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
+            NOut.println(NMsg.ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
         }
     }
 

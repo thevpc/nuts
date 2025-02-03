@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.thevpc.nuts.NSession;
 
 /**
  * Created by vpc on 1/23/17.
@@ -46,11 +45,9 @@ public class ItemStreamInfo {
 
     private Map<String, List<String>> headers = new HashMap<>();
     private InputStream content;
-    private NSession session;
 
-    public ItemStreamInfo(InputStream header, InputStream content, NSession session) throws IOException {
+    public ItemStreamInfo(InputStream header, InputStream content) throws IOException {
         this.content = content;
-        this.session = session;
         BufferedReader r = new BufferedReader(new InputStreamReader(header));
         String line = null;
         while ((line = r.readLine()) != null) {

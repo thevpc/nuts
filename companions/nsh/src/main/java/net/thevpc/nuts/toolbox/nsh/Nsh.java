@@ -41,7 +41,6 @@ public class Nsh implements NApplication {
     public void onInstallApplication() {
         NLogOp log = NLogOp.of(Nsh.class);
         log.level(Level.CONFIG).verb(NLogVerb.START).log(NMsg.ofPlain("[nsh] Installation..."));
-        NSession session = NSession.get().get();
         NApp.of().processCmdLine(new NCmdLineRunner() {
             @Override
             public void init(NCmdLine cmdLine, NCmdLineContext context) {
@@ -50,6 +49,7 @@ public class Nsh implements NApplication {
 
             @Override
             public void run(NCmdLine cmdLine, NCmdLineContext context) {
+                NSession session = NSession.of();
                 if (session.isTrace() || session.isYes()) {
                     log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofC("[nsh] activating options trace=%s yes=%s", session.isTrace(), session.isYes()));
                 }
@@ -68,13 +68,12 @@ public class Nsh implements NApplication {
 //        );
 //        session.getWorkspace().io().term().enableRichTerm(session);
 
-                NShell c = new NShell(new NShellConfiguration().setSession(session)
+                NShell c = new NShell(new NShellConfiguration()
                         .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
                 );
                 NShellBuiltin[] commands = c.getRootContext().builtins().getAll();
                 Set<String> reinstalled = new TreeSet<>();
                 Set<String> firstInstalled = new TreeSet<>();
-                NSession sessionCopy = session.copy();
                 for (NShellBuiltin command : commands) {
                     if (!CONTEXTUAL_BUILTINS.contains(command.getName())) {
                         // avoid recursive definition!
@@ -105,13 +104,13 @@ public class Nsh implements NApplication {
                 if (session.isPlainTrace()) {
                     NTexts factory = NTexts.of();
                     if (!firstInstalled.isEmpty()) {
-                        session.out().println(NMsg.ofC("registered %s nsh commands : %s",
+                        NOut.println(NMsg.ofC("registered %s nsh commands : %s",
                                 factory.ofStyled("" + firstInstalled.size(), NTextStyle.primary3()),
                                 factory.ofStyled(String.join(", ", firstInstalled), NTextStyle.primary3())
                         ));
                     }
                     if (!reinstalled.isEmpty()) {
-                        session.out().println(NMsg.ofC("re-registered %s nsh commands : %s",
+                        NOut.println(NMsg.ofC("re-registered %s nsh commands : %s",
                                 factory.ofStyled("" + reinstalled.size(), NTextStyle.primary3()),
                                 factory.ofStyled(String.join(", ", reinstalled), NTextStyle.primary3())
                         ));
@@ -185,14 +184,13 @@ public class Nsh implements NApplication {
     public void run() {
 
         //before loading NShell check if we need to activate rich term
-        NSession session = NSession.get().get();
-        DefaultNShellOptionsParser options = new DefaultNShellOptionsParser(session);
+        DefaultNShellOptionsParser options = new DefaultNShellOptionsParser();
         NShellOptions o = options.parse(NApp.of().getCmdLine().toStringArray());
 
 //        if (o.isEffectiveInteractive()) {
 //            session.getWorkspace().io().term().enableRichTerm(session);
 //        }
-        new NShell(new NShellConfiguration().setSession(session)
+        new NShell(new NShellConfiguration()
                 .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
         ).run();
     }

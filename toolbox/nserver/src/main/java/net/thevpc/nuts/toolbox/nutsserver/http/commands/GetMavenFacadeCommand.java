@@ -26,7 +26,6 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
 //        System.out.println("get-mvn " + uri.toString());
         List<String> split = NServerUtils.split(uri.toString(), "/");
         String n = split.get(split.size() - 1);
-        NSession session = context.getSession();
         if (n.endsWith(".pom")) {
             if (split.size() >= 4) {
                 NId id = NIdBuilder.of().setArtifactId(split.get(split.size() - 3))

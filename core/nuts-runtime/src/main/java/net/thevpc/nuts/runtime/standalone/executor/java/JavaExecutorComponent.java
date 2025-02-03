@@ -428,7 +428,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 cmdLine.add(joptions.getMainClass());
                 cmdLine.addAll(joptions.getAppArgs());
 
-                session.out().println(NMsg.ofC("[dry] %s",
+                NOut.println(NMsg.ofC("[dry] %s",
                         text.ofBuilder()
                                 .append("exec", NTextStyle.pale())
                                 .append(" ")
@@ -439,7 +439,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
             //we must make a copy not to alter caller session
 
             if (session.out() != null) {
-                session.out().resetLine();
+                NOut.resetLine();
             }
             DefaultNClassLoader classLoader;
             Throwable th = null;

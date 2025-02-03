@@ -922,4 +922,70 @@ public class NStringUtils {
         }
         return -1;
     }
+
+    public static String levenshteinClosest(double threshold, String str1, String... dictionary) {
+        if (threshold > 1) {
+            threshold = 1;
+        }
+        if (threshold < 0) {
+            threshold = 0;
+        }
+        double bestRelativeDistance = -1;
+        String bestResult = null;
+        if (str1 == null) {
+            str1 = "";
+        }
+        for (String s : dictionary) {
+            if (s == null) {
+                s = "";
+            }
+            int l = Math.max(s.length(), str1.length());
+            int u = levenshteinDistance(str1, s);
+            double relativeDistance = (l == 0) ? (u == 0 ? 0 : 1) : ((double) u) / l;
+            if (relativeDistance >= threshold) {
+                if (bestResult == null || relativeDistance < bestRelativeDistance) {
+                    bestResult = s;
+                    bestRelativeDistance = relativeDistance;
+                }
+            }
+        }
+        return bestResult;
+    }
+
+    public static int levenshteinDistance(String str1, String str2) {
+        if (str1 == null) {
+            str1 = "";
+        }
+        if (str2 == null) {
+            str2 = "";
+        }
+        if (str1.isEmpty()) {
+            return str2.length();
+        }
+        if (str2.isEmpty()) {
+            return str1.length();
+        }
+        int[][] dp = new int[str1.length() + 1][str2.length() + 1];
+        for (int i = 0; i <= str1.length(); i++) {
+            for (int j = 0; j <= str2.length(); j++) {
+                if (i == 0) {
+                    dp[i][j] = j;
+                } else if (j == 0) {
+                    dp[i][j] = i;
+                } else {
+                    int v1 = dp[i - 1][j - 1] + (str1.charAt(i - 1) == str2.charAt(j - 1) ? 0 : 1);
+                    int v2 = dp[i - 1][j] + 1;
+                    int v3 = dp[i][j - 1] + 1;
+                    if (v2 < v1) {
+                        v1 = v2;
+                    }
+                    if (v3 < v1) {
+                        v1 = v3;
+                    }
+                    dp[i][j] = v1;
+                }
+            }
+        }
+        return dp[str1.length()][str2.length()];
+    }
 }

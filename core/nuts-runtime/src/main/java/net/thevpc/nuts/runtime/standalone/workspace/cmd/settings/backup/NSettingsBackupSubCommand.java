@@ -146,7 +146,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                         .to(NPath.of(platformHomeFolder))
                         .setSkipRoot(true).run();
                 if (session.isPlainTrace()) {
-                    session.out().println(NMsg.ofC("restore %s to %s", file, platformHomeFolder));
+                    NOut.println(NMsg.ofC("restore %s to %s", file, platformHomeFolder));
                 }
             }
             return true;

@@ -182,7 +182,7 @@ public class WorkspaceService {
             result.sort(Comparator.comparing(ProjectConfig::getId));
             if (session.isPlainOut()) {
                 for (ProjectConfig p2 : result) {
-                    session.out().println(
+                    NOut.println(
                             formatProjectConfig(session, p2)
                     );
                 }
@@ -238,7 +238,7 @@ public class WorkspaceService {
 
             int scanned = scan(toScan, interactive);
             if (session.isPlainOut()) {
-                session.out().println(NMsg.ofC("##SUMMARY## : %s projects scanned", scanned));
+                NOut.println(NMsg.ofC("##SUMMARY## : %s projects scanned", scanned));
             }
         }
     }
@@ -261,7 +261,7 @@ public class WorkspaceService {
         if (cmdLine.isExecMode()) {
             int scanned = find(toScan, where);
             if (session.isPlainOut()) {
-                session.out().println(NMsg.ofC("##SUMMARY## : %s projects scanned", scanned));
+                NOut.println(NMsg.ofC("##SUMMARY## : %s projects scanned", scanned));
             }
         }
     }
@@ -412,7 +412,7 @@ public class WorkspaceService {
             }
             if (progress && session.isPlainOut()) {
                 maxSize = Math.max(maxSize, projectService.getConfig().getId().length());
-                session.out().resetLine().print(NMsg.ofC("(%s / %s) %s", (i + 1), all.size(), _StringUtils.alignLeft(projectService.getConfig().getId(), maxSize)));
+                NOut.resetLine().print(NMsg.ofC("(%s / %s) %s", (i + 1), all.size(), _StringUtils.alignLeft(projectService.getConfig().getId(), maxSize)));
             }
             d.local = projectService.detectLocalVersion();
             d.remote = d.local == null ? null : projectService.detectRemoteVersion();
@@ -451,7 +451,7 @@ public class WorkspaceService {
             ddd.add(d);
         }
         if (all.size() > 0) {
-            session.out().println("");
+            NOut.println("");
         }
 
         Collections.sort(ddd);
@@ -511,7 +511,7 @@ public class WorkspaceService {
                     }
                     switch (tf.ofPlain(p2.status).filteredText()) {
                         case "new": {
-                            session.out().print(NMsg.ofC("[%s] %s : %s",
+                            NOut.print(NMsg.ofC("[%s] %s : %s",
                                     tfactory.ofStyled("new", NTextStyle.primary3()),
                                     p2.id,
                                     tfactory.ofStyled(p2.local, NTextStyle.primary2())
@@ -519,7 +519,7 @@ public class WorkspaceService {
                             break;
                         }
                         case "commitable": {
-                            session.out().print(NMsg.ofC("[%s] %s : %s - %s",
+                            NOut.print(NMsg.ofC("[%s] %s : %s - %s",
                                     tfactory.ofStyled("commitable", NTextStyle.primary4()),
                                     p2.id,
                                     tfactory.ofStyled(p2.local, NTextStyle.primary2()),
@@ -528,26 +528,26 @@ public class WorkspaceService {
                             break;
                         }
                         case "dirty": {
-                            session.out().print(NMsg.ofC("[```error dirty```] %s : ```error %s``` - %s", p2.id, p2.local, p2.remote));
+                            NOut.print(NMsg.ofC("[```error dirty```] %s : ```error %s``` - %s", p2.id, p2.local, p2.remote));
                             printDiffResults("  ", session.out(), p2.details);
                             break;
                         }
                         case "old": {
-                            session.out().print(NMsg.ofC("[%s] %s : ```error %s``` - %s",
+                            NOut.print(NMsg.ofC("[%s] %s : ```error %s``` - %s",
                                     tfactory.ofStyled("old", NTextStyle.primary2()),
                                     p2.id, p2.local, p2.remote));
                             break;
                         }
                         case "invalid": {
-                            session.out().print(NMsg.ofC("[```error invalid```invalid ] %s : ```error %s``` - %s", p2.id, p2.local, p2.remote));
+                            NOut.print(NMsg.ofC("[```error invalid```invalid ] %s : ```error %s``` - %s", p2.id, p2.local, p2.remote));
                             break;
                         }
                         case "uptodate": {
-                            session.out().print(NMsg.ofC("[uptodate] %s : %s", p2.id, p2.local));
+                            NOut.print(NMsg.ofC("[uptodate] %s : %s", p2.id, p2.local));
                             break;
                         }
                         default: {
-                            session.out().print(NMsg.ofC("[%s] %s : %s - %s", status, p2.id, p2.local, p2.remote));
+                            NOut.print(NMsg.ofC("[%s] %s : %s - %s", status, p2.id, p2.local, p2.remote));
                             break;
                         }
                     }

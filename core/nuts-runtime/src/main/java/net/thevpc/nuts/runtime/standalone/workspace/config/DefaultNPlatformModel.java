@@ -62,7 +62,7 @@ public class DefaultNPlatformModel {
             list.add(location);
             if (notify) {
                 if (session.isPlainTrace()) {
-                    session.out().resetLine().println(NMsg.ofC("%s %s %s (%s) %s at %s",
+                    NOut.resetLine().println(NMsg.ofC("%s %s %s (%s) %s at %s",
                             NText.ofStyledSuccess("install"),
                             location.getId().getShortName(),
                             location.getPackaging(),

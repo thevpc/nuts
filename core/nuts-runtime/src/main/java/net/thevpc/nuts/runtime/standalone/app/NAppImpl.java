@@ -251,14 +251,13 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
                 .setNormalize(true)
                 .setFlatten(true)
         );
-        NPrintStream out = NSession.of().out();
         if (h == null) {
-            out.println(NMsg.ofC("Help is %s.", NMsg.ofStyledError("missing")));
+            NOut.println(NMsg.ofC("Help is %s.", NMsg.ofStyledError("missing")));
         } else {
-            out.println(h);
+            NOut.println(h);
         }
         //need flush if the help is syntactically incorrect
-        out.flush();
+        NOut.flush();
     }
 
     @Override
@@ -577,11 +576,10 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
                 throw new NExecutionException(NMsg.ofPlain("candidate cannot be null"), NExecutionException.ERROR_2);
             }
             String d = value.getDisplay();
-            NPrintStream out = NSession.of().out();
             if (Objects.equals(v, d) || d == null) {
-                out.println(NMsg.ofC("%s", NConstants.Apps.AUTO_COMPLETE_CANDIDATE_PREFIX + NCmdLineUtils.escapeArgument(v)));
+                NOut.println(NMsg.ofC("%s", NConstants.Apps.AUTO_COMPLETE_CANDIDATE_PREFIX + NCmdLineUtils.escapeArgument(v)));
             } else {
-                out.println(NMsg.ofC("%s", NConstants.Apps.AUTO_COMPLETE_CANDIDATE_PREFIX + NCmdLineUtils.escapeArgument(v) + " " + NCmdLineUtils.escapeArgument(d)));
+                NOut.println(NMsg.ofC("%s", NConstants.Apps.AUTO_COMPLETE_CANDIDATE_PREFIX + NCmdLineUtils.escapeArgument(v) + " " + NCmdLineUtils.escapeArgument(d)));
             }
             return c;
         }
