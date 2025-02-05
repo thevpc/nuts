@@ -425,4 +425,5 @@ public class NBootRepositoryLocation implements Comparable<NBootRepositoryLocati
             throw new RuntimeException(e);
         }
     }
+
 }

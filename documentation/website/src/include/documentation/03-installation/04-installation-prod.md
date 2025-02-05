@@ -83,7 +83,7 @@ __for production (using curl):__
 This will reset/delete any previous nuts installation before installing the latest version.
 Removing the `Z` modifier (replace `-Zy` by `-y`) flag if you do not want to reset the workspace.
 ```
-$ curl -sOL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
+$ curl -sL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 ```
@@ -104,7 +104,7 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="macos">
 
 ```
-$ curl -sOL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
+$ curl -sL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 ```
@@ -137,7 +137,7 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="curl">
 
 ```
-$ curl -sOL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
+$ curl -sL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 ```

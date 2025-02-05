@@ -6,7 +6,7 @@ sidebar_label: nuts
 category: Settings / Package Manager
 hmi: Commandline
 website: https://thevpc.github.com/nuts
-installCommand: curl -sOL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar && java -jar nuts.jar -Zy
+installCommand: curl -sL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar && java -jar nuts.jar -Zy
 exampleCommand: nuts install jedit
 ---
 

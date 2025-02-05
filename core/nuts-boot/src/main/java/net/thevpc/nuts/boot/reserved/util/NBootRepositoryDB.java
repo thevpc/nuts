@@ -11,36 +11,68 @@ public class NBootRepositoryDB {
     private final Map<String, NBootAddRepositoryOptions> defaultRepositoriesByLocation = new LinkedHashMap<>();
     private final Map<String, String> aliasToBase = new LinkedHashMap<>();
     private final Map<String, Set<String>> baseToAliases = new LinkedHashMap<>();
-    private static final NBootRepositoryDB instance=new NBootRepositoryDB();
-    public static NBootRepositoryDB of(){return instance;};
+    private static final NBootRepositoryDB instance = new NBootRepositoryDB();
+
+    public static NBootRepositoryDB of() {
+        return instance;
+    }
+
+    ;
 
     public NBootRepositoryDB() {
-        reg(false, "system", NBootAddRepositoryOptions.ORDER_SYSTEM_LOCAL, "nuts@" + NBootUtils.getNativePath(
+        reg(new String[]{NBootConstants.RepoTags.LOCAL}, "system", NBootAddRepositoryOptions.ORDER_SYSTEM_LOCAL, "nuts@" + NBootUtils.getNativePath(
                         NBootPlatformHome.SYSTEM.getWorkspaceStore(
                                 "LIB",
                                 NBootConstants.Names.DEFAULT_WORKSPACE_NAME) + "/" + NBootConstants.Folders.ID
                 )
         );
-        reg(false, "maven", NBootAddRepositoryOptions.ORDER_USER_LOCAL, "maven@");
-        reg(false, "maven-central", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://repo.maven.apache.org/maven2");
-        reg(false, "jcenter", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://jcenter.bintray.com");
-        reg(false, "jboss", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://repository.jboss.org/nexus/content/repositories/releases");
-        reg(false, "clojars", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://repo.clojars.org");
-        reg(false, "atlassian", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://packages.atlassian.com/maven/public");
-        reg(false, "atlassian-snapshot", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://packages.atlassian.com/maven/public-snapshot");
-        reg(false, "oracle", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://maven.oracle.com");
-        reg(false, "google", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://maven.google.com");
-        reg(false, "spring", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://repo.spring.io/release", "spring-framework");
-        reg(false, "maven-thevpc-git", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://raw.githubusercontent.com/thevpc/vpc-public-maven/master", "vpc-public-maven");
-        reg(false, "nuts-public", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@dotfilefs:https://raw.githubusercontent.com/thevpc/nuts-public/master", "vpc-public-nuts", "nuts-thevpc-git");
-        reg(true, "nuts-preview", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@dotfilefs:https://raw.githubusercontent.com/thevpc/nuts-preview/master", "preview");
-        reg(true, "thevpc-goodies", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "nuts@htmlfs:https://thevpc.net/maven-goodies", "goodies");
-        reg(true, "thevpc", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@htmlfs:https://thevpc.net/maven", "dev");
+        reg(new String[]{NBootConstants.RepoTags.MAIN}, "maven", NBootAddRepositoryOptions.ORDER_USER_LOCAL, "maven@");
+        reg(new String[]{NBootConstants.RepoTags.MAIN}, "maven-central", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://repo.maven.apache.org/maven2");
+        reg(new String[]{}, "jcenter", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://jcenter.bintray.com");
+        reg(new String[]{}, "jboss", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://repository.jboss.org/nexus/content/repositories/releases");
+        reg(new String[]{}, "clojars", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://repo.clojars.org");
+        reg(new String[]{}, "atlassian", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://packages.atlassian.com/maven/public");
+        reg(new String[]{}, "atlassian-snapshot", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://packages.atlassian.com/maven/public-snapshot");
+        reg(new String[]{}, "oracle", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://maven.oracle.com");
+        reg(new String[]{}, "google", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://maven.google.com");
+        reg(new String[]{}, "spring", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://repo.spring.io/release", "spring-framework");
+        reg(new String[]{}, "maven-thevpc-git", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://raw.githubusercontent.com/thevpc/vpc-public-maven/master", "vpc-public-maven");
+        reg(new String[]{}, "nuts-public", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@dotfilefs:https://raw.githubusercontent.com/thevpc/nuts-public/master", "vpc-public-nuts", "nuts-thevpc-git");
+        reg(new String[]{NBootConstants.RepoTags.PREVIEW}, "thevpc", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@htmlfs:https://thevpc.net/maven", "dev");
+        reg(new String[]{NBootConstants.RepoTags.PREVIEW}, "nuts-preview", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@dotfilefs:https://raw.githubusercontent.com/thevpc/nuts-preview/master", "preview");
+        reg(new String[]{NBootConstants.RepoTags.PREVIEW}, "thevpc-goodies", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "nuts@htmlfs:https://thevpc.net/maven-goodies", "goodies");
     }
 
 
+    public Set<String> findByAnyTag(String... tags) {
+        Set<String> ok = new LinkedHashSet<>();
+        for (Map.Entry<String, NBootAddRepositoryOptions> e : defaultRepositoriesByName.entrySet()) {
+            String[] u = e.getValue().getConfig().getTags();
+            boolean found = tags.length==0;
+            if (!found && u != null) {
+                for (String u0 : u) {
+                    for (String t : tags) {
+                        if (t.equals(u0)) {
+                            found = true;
+                        }
+                        if (found) {
+                            break;
+                        }
+                    }
+                    if (found) {
+                        break;
+                    }
+                }
+            }
+            if (found) {
+                ok.add(e.getKey());
+            }
+        }
+        return ok;
+    }
+
     public Set<String> findAllNamesByName(String name) {
-        if(name==null || name.isEmpty()){
+        if (name == null || name.isEmpty()) {
             return Collections.emptySet();
         }
         Set<String> a = baseToAliases.get(name);
@@ -78,7 +110,7 @@ public class NBootRepositoryDB {
         return null;
     }
 
-    private void reg(boolean preview, String name, int order, String url, String... names) {
+    private void reg(String[] tags, String name, int order, String url, String... names) {
         NBootRepositoryLocation location = NBootRepositoryLocation.of(url);
         NBootUtils.requireNonBlank(location.getLocationType(), "locationType");
         NBootAddRepositoryOptions options = new NBootAddRepositoryOptions()
@@ -92,7 +124,7 @@ public class NBootRepositoryDB {
                                 .setLocation(
                                         location
                                 )
-                                .setTags(preview ? new String[]{NBootConstants.RepoTags.PREVIEW} : new String[0])
+                                .setTags(tags == null ? new String[0] : tags)
                 );
         defaultRepositoriesByName.put(name, options);
         defaultRepositoriesByLocation.put(url, options);

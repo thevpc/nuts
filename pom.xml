@@ -12,14 +12,7 @@
         <module>core</module>
         <module>libraries</module>
         <module>extensions</module>
-        <module>companions</module>
-        <module>third-party-companions</module>
-        <module>toolbox</module>
-        <module>incubating</module>
         <module>test/nuts-runtime-test</module>
-<!--        <module>test/nuts-shaded-test</module>-->
-<!--        <module>web-toolbox</module>-->
-        <module>tutorials</module>
         <module>installers</module>
     </modules>
     <properties>

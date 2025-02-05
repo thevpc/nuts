@@ -20,18 +20,22 @@ public class TomcatWebServerHtmlfsParser extends AbstractHtmlfsParser {
 
     @Override
     public NCallableSupport<List<String>> parseHtmlTomcat(byte[] bytes) {
+        boolean expectDirListing = false;
         boolean expectTomcat = false;
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))) {
             String line = null;
             while ((line = br.readLine()) != null) {
-                if (line.contains("<hr class=\"line\"><h3>Apache Tomcat")) {
+                if (line.trim().matches("<hr class=\"line\"><h3>[^<>]+</h3></body>")) {
                     expectTomcat = true;
+                }
+                if (line.trim().matches("<title>Directory Listing For.*")) {
+                    expectDirListing = true;
                 }
             }
         } catch (Exception e) {
             //ignore
         }
-        if (!expectTomcat) {
+        if (!expectTomcat || !expectDirListing) {
             Supplier<NMsg> msg = () -> NMsg.ofInvalidValue("tomcat repo");
             return NCallableSupport.invalid(msg);
         }

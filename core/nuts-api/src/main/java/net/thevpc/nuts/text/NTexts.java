@@ -121,8 +121,6 @@ public interface NTexts extends NComponent {
 
     List<NCodeHighlighter> getCodeHighlighters();
 
-    NText of(NText t);
-
     NText of(String t);
 
     NTextParser parser();

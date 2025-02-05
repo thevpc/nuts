@@ -33,11 +33,13 @@ import net.thevpc.nuts.ext.NExtensions;
  */
 public interface NRepositoryFilters extends NTypedFilters<NRepositoryFilter> {
     static NRepositoryFilters of() {
-       return NExtensions.of(NRepositoryFilters.class);
+        return NExtensions.of(NRepositoryFilters.class);
     }
 
     NRepositoryFilter bySelector(String... names);
+
     NRepositoryFilter byName(String... names);
+
     NRepositoryFilter byNameSelector(String... names);
 
     NRepositoryFilter byUuid(String... uuids);

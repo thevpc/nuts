@@ -400,13 +400,20 @@ public class NReservedMavenUtilsBoot {
                     //ignore
                 }
             }
+            return depsSet;
+        }else{
+            return null;
         }
-        return depsSet;
     }
 
     static List<NBootVersion> detectVersionsFromMetaData(String mavenMetadata, NBootLog bLog) {
         List<NBootVersion> all = new ArrayList<>();
         try {
+            String urlType = "";
+            if (mavenMetadata.startsWith("dotfilefs:")) {
+                urlType = "dotfilefs";
+                mavenMetadata = mavenMetadata.substring("dotfilefs:".length());
+            }
             URL runtimeMetadata = NBootUtils.urlOf(mavenMetadata);
             DocumentBuilderFactory factory
                     = DocumentBuilderFactory.newInstance();

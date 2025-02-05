@@ -30,7 +30,7 @@ We start by opening a new terminal (term, konsole or whatever you prefer) then d
 On linux/MacOS system we issue :
 
 ```
-curl -sOL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar && java -jar nuts.jar -Zy
+curl -sL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar && java -jar nuts.jar -Zy
 ```
 
 You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.

@@ -1,1 +1,0 @@
-This folder contains some tutorial projects

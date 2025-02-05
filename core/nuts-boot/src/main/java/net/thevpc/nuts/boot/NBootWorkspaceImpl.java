@@ -27,10 +27,7 @@ package net.thevpc.nuts.boot;
 import net.thevpc.nuts.NExceptionBootAware;
 import net.thevpc.nuts.NExceptionWithExitCodeBase;
 import net.thevpc.nuts.NWorkspaceBase;
-import net.thevpc.nuts.boot.reserved.cmdline.NBootCmdLine;
-import net.thevpc.nuts.boot.reserved.cmdline.NBootWorkspaceCmdLineFormatter;
-import net.thevpc.nuts.boot.reserved.cmdline.NBootWorkspaceCmdLineParser;
-import net.thevpc.nuts.boot.reserved.cmdline.NBootWorkspaceOptionsConfig;
+import net.thevpc.nuts.boot.reserved.cmdline.*;
 import net.thevpc.nuts.boot.reserved.util.*;
 import net.thevpc.nuts.boot.reserved.util.NReservedErrorInfo;
 import net.thevpc.nuts.boot.reserved.util.NBootErrorInfoList;
@@ -69,6 +66,7 @@ import java.util.stream.Stream;
  * @since 0.5.4
  */
 public final class NBootWorkspaceImpl implements NBootWorkspace {
+    public static final boolean DEFAULT_PREVIEW = true;
     private final Instant creationTime = Instant.now();
     private NBootOptionsInfo options;
     private final NBootLog bLog;
@@ -288,9 +286,37 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
         NBootRepositoryLocation[] result;
         if (old.length == 0) {
             //no previous config, use defaults!
-            result = bootRepositoriesSelector.resolve(new NBootRepositoryLocation[]{
-                    NBootRepositoryLocation.of("maven", "maven", "maven")
-            }, repositoryDB);
+            List<NBootRepositoryLocation> drs = new ArrayList<>();
+            List<String> tags = new ArrayList<>();
+            tags.add(NBootConstants.RepoTags.MAIN);
+            if (options.getPreviewRepo() != null) {
+                if (options.getPreviewRepo()) {
+                    tags.add(NBootConstants.RepoTags.PREVIEW);
+                }
+            } else if (DEFAULT_PREVIEW) {
+                tags.add(NBootConstants.RepoTags.PREVIEW);
+            }
+            for (String s : repositoryDB.findByAnyTag(NBootConstants.RepoTags.MAIN, NBootConstants.RepoTags.PREVIEW)) {
+                if ("maven".equals(s)) {
+                    for (String customOption : options.getCustomOptions()) {
+                        NBootArg a = new NBootArg(customOption);
+                        if ("---m2".equals(a.key())) {
+                            if (a.isActive()) {
+                                boolean m2 = a.isEnabled()
+                                        ? NBootUtils.parseBoolean(a.getValue(), true, true)
+                                        : !NBootUtils.parseBoolean(a.getValue(), true, false);
+                                if (!m2) {
+                                    continue;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                    continue;
+                }
+                drs.add(NBootRepositoryLocation.of(s, repositoryDB));
+            }
+            result = drs.toArray(new NBootRepositoryLocation[0]);
         } else {
             result = bootRepositoriesSelector.resolve(Arrays.stream(old).map(x -> NBootRepositoryLocation.of(x.getName(), x.getUrl())).toArray(NBootRepositoryLocation[]::new), repositoryDB);
         }
@@ -346,6 +372,9 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
 //        } else {
         parsedBootRuntimeRepositories = rr;
 //        }
+        bLog.log(Level.FINE, "START", NBootMsg.ofC("resolve boot repositories to load nuts-runtime as %s",
+                parsedBootRuntimeRepositories
+        ));
         return rr;
     }
 

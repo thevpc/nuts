@@ -102,6 +102,8 @@ public final class NBootConstants {
          * repo preview tag is used to help switching on or off dev/alpha/beta repositories
          */
         public static final String PREVIEW = "preview";
+        public static final String MAIN = "main";
+        public static final String LOCAL = "local";
 
 
         /**

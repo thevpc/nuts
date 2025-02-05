@@ -525,7 +525,7 @@
                                 </div>
                                 <div class="mb-4">
                                     <span class="badge badge-info">INSTALLATION COMMAND</span>
-                                    <pre><code>curl -sOL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar && java -jar nuts.jar -Zy</code></pre>
+                                    <pre><code>curl -sL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar && java -jar nuts.jar -Zy</code></pre>
                                     <span class="badge badge-info">EXAMPLE COMMAND</span>
                                     <pre><code>nuts install jedit</code></pre>
                                 </div>
@@ -897,36 +897,6 @@ NUTS CREATE OPTIONS:
                             <div class="text-card">
                                 <pre>
 
-<span style="color: #0000A3" class="">##)  
-ncode:
-
-
-</span>simple file/java class finder (incubating)
-
-<span style="color: #005078" class="">###)  
-SYNOPSIS:
-
-
-</span><span style="color: #000055" class="">ncode</span> <path> ...
- 
-
-<span style="color: #000055" class="">ncode</span> <span style="color: #005078" class="">-</span>[!][i]t name [folder/file-list] 
-find java type with name 'name' in folder/file list
-
-<span style="color: #000055" class="">ncode</span> <span style="color: #005078" class="">-</span>[!][i]f name [folder/file-list]
-find file with path 'name' in folder/file list
-
-<span style="color: #005078" class="">###)  
-EXAMPLES:
-
-
-</span><span style="color: #000055" class="">ncode</span> <span style="color: #005078" class="">-t</span> String . foo.zip
-search for type which name contains 'String' (case sensitive) in folders . and foo.zip
-<span style="color: #000055" class="">ncode</span> <span style="color: #005078" class="">-it</span> String . foo.zip
-search for type which name contains 'String' or 'STRING' (case insensitive) in both folder . and foo.zip
-<span style="color: #000055" class="">ncode</span> <span style="color: #005078" class="">-t</span> ^java.lang.String$ . foo.zip
-search for type which exact name 'java.lang.String' in folder . and file foo.zip
-
 </pre>
                             </div>
                         </div>
@@ -962,24 +932,6 @@ search for type which exact name 'java.lang.String' in folder . and file foo.zip
                             <div class="text-card">
                                 <pre>
 
-<span style="color: #0000A3" class="">##)  
-ndiff:
-
-
-</span>diff folders/files/jars (incubating)
-
-<span style="color: #005078" class="">###)  
-SYNOPSIS:
-
-
-</span><span style="color: #000055" class="">ndiff</span> <path1> <path2>
- 
-
-show differences
-
-***) EXAMPLE
-
-nuts ndiff my-app-v1.jar my-app-v2.jar
 </pre>
                             </div>
                         </div>
@@ -1015,12 +967,6 @@ nuts ndiff my-app-v1.jar my-app-v2.jar
                             <div class="text-card">
                                 <pre>
 
-<span style="color: #000055" class="">ndoc</span> is a documentation tool
-
-`ndoc` is a simple templating tool. It is used to generate statically Nuts website from
-markdown documents.
-`ndoc` can also be embedded as a library (as `net.thevpc.nuts.lib:nlib-doc#0.8.5.0`)
-
 </pre>
                             </div>
                         </div>
@@ -1055,42 +1001,6 @@ markdown documents.
                             </div>
                             <div class="text-card">
                                 <pre>
-
-<span style="color: #0000A3" class="">##)  
-njob:
-
-
-</span>is a productivity tool to follow you tasks
-
-<span style="color: #005078" class="">###)  
-INSTALL
-
-
-</span>nuts install njob
-
-
-<span style="color: #005078" class="">###)  
-EXAMPLE OF USAGE
-
-
-</span>
-nuts njob tasks add 'I will buy milk' --on afternoon
-
-
-<span style="color: #005078" class="">###)  
-SYNOPSIS:
-
-
-</span><span style="color: #000055" class="">njob</span> tasks | jobs | projects | summary...
-    manage tasks, jobs, projects
-    a project aggregates multiple jobs
-    a job aggregates multiple tasks
-    a task has a status and priority
-
-
-
-
-
 
 </pre>
                             </div>
@@ -2253,7 +2163,7 @@ nuts ntomcat --start
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-02-03-103812
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-02-05-222816
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>

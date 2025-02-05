@@ -9,10 +9,6 @@
     <version>0.8.5.0</version>
     <packaging>pom</packaging>
     <modules>
-        <module>nlib-md</module>
-        <module>nlib-servlet</module>
-        <module>nlib-talk-agent</module>
-        <module>nlib-doc</module>
         <module>nlib-tomcat-classloader</module>
         <module>nlib-spring-boot</module>
         <module>nlib-swing</module>

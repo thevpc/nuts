@@ -49,7 +49,6 @@ public class Test18_PathTest {
 
     @Test
     public void testPathCreation() {
-
         TestUtils.println(NPath.of("./"));
         TestUtils.println(NPath.of("."));
         TestUtils.println(NPath.of(".."));

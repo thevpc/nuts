@@ -38,10 +38,8 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.io.NIOUtils;
-import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,10 +54,17 @@ import java.util.Map;
 public class MavenFolderRepository extends NFolderRepositoryBase {
 
     private MvnClient wrapper;
+    private boolean disableMe;
 
     public MavenFolderRepository(NAddRepositoryOptions options, NWorkspace workspace, NRepository parentRepository) {
         super(options, workspace, parentRepository,null,false, NConstants.RepoTypes.MAVEN,false);
         repoIter = new MavenRepoIter(this);
+        if("maven-local".equals(options.getName())) {
+            NLiteral enableM2 = getWorkspace().getCustomBootOption("---m2").orNull();
+            if(enableM2!=null){
+                disableMe=!enableM2.isNull() && !enableM2.asBoolean().orElse(true);
+            }
+        }
     }
 
     protected NLog _LOG(){
@@ -68,6 +73,9 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
 
     @Override
     public NIterator<NId> searchCore(final NIdFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode) {
+        if(disableMe){
+            return NIterator.ofEmpty();
+        }
         if (!acceptedFetchNoCache(fetchMode)) {
             return null;
         }
@@ -89,6 +97,9 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
     }
 
     public NIterator<NId> findNonSingleVersionImpl(final NId id, NIdFilter idFilter, NFetchMode fetchMode) {
+        if(disableMe){
+            return NIterator.ofEmpty();
+        }
         MavenSolrSearchCommand cmd = new MavenSolrSearchCommand(this);
         NIterator<NId> aa = cmd.search(idFilter, new NId[]{id}, fetchMode);
         if (aa != null) {
@@ -126,6 +137,9 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
     }
 
     public NPath fetchContentCoreUsingWrapper(NId id, NDescriptor descriptor, NFetchMode fetchMode) {
+        if(disableMe){
+            return null;
+        }
         if (wrapper == null) {
             wrapper = getWrapper();
         }
@@ -177,6 +191,9 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
     }
 
     public NDescriptor fetchDescriptorCore(NId id, NFetchMode fetchMode) {
+        if(disableMe){
+            throw new NNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
+        }
         if (!acceptedFetchNoCache(fetchMode)) {
             throw new NNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
         }

@@ -161,7 +161,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         try {
             boolean lockEnabled = isLockEnabled();
             res = lockEnabled ?
-                            NLock.ofId(id.builder().setFaceDescriptor().build()).callWith(nOptionalCallable)
+                    NLock.ofId(id.builder().setFaceDescriptor().build()).callWith(nOptionalCallable)
                     : nOptionalCallable.call();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -195,9 +195,9 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         if (fetchMode != NFetchMode.REMOTE) {
             if (lib.isReadEnabled()) {
                 all.add(NIteratorBuilder.of(
-                                lib.searchVersions(id, idFilter, true)
+                                        lib.searchVersions(id, idFilter, true)
                                 ).named("searchVersionInLib(" + getName() + ")")
-                        .build()
+                                .build()
 
                 );
             }
@@ -270,11 +270,21 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         NPath c = null;
         Callable<NOptional<NPath>> nOptionalCallable = () -> {
             if (cache.isWriteEnabled()) {
+                NPath c2 = null;
+                RuntimeException impl2Ex = null;
                 NPath cachePath = cache.getLongIdLocalFile(id);
-                NPath c2 = fetchContentCore(id, descriptor, fetchMode);
+                try {
+                    c2 = fetchContentCore(id, descriptor, fetchMode);
+                } catch (RuntimeException ex) {
+                    impl2Ex = ex;
+                }
                 if (c2 != null) {
                     NCp.of().from(c2).to(cachePath).run();
                     return NOptional.of(cachePath.setUserCache(true).setUserTemporary(false));
+                } else if (impl2Ex instanceof NNotFoundException) {
+                    return NOptional.ofNamedEmpty(id.toString());
+                } else if (impl2Ex != null) {
+                    return NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), impl2Ex);
                 } else {
                     return NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), new NNotFoundException(id));
                 }
@@ -288,6 +298,8 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                 }
                 if (c2 != null) {
                     return NOptional.of(c2);
+                } else if (impl2Ex instanceof NNotFoundException) {
+                    return NOptional.ofNamedEmpty(id.toString());
                 } else if (impl2Ex != null) {
                     return NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), impl2Ex);
                 } else {
@@ -301,10 +313,8 @@ public class NCachedRepository extends AbstractNRepositoryBase {
             res = lockEnabled ?
                     NLock.ofId(id.builder().setFaceContent().build()).callWith(nOptionalCallable)
                     : nOptionalCallable.call();
-        } catch (RuntimeException e) {
-            throw e;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            res=NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), e);
         }
 
         if (res.isPresent()) {

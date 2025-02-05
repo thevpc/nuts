@@ -901,6 +901,10 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
                 cmdLine.withNextFlag((v, r) -> this.setLatest(v));
                 return true;
             }
+            case "--repo": {
+                cmdLine.withNextEntry((v, r) -> this.setRepositoryFilter(NRepositoryFilters.of().bySelector(NStringUtils.split(v,";,|",true,true).toArray(new String[0]))));
+                return true;
+            }
             case "--distinct": {
                 cmdLine.withNextFlag((v, r) -> this.setDistinct(v));
                 return true;

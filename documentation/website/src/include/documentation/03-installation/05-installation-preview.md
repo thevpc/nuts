@@ -95,7 +95,7 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="macos">
 
 ```
-$ curl -sOL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar
+$ curl -sL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 ```
@@ -129,7 +129,7 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="curl">
 
 ```
-$ curl -sOL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar
+$ curl -sL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar
 $ java -jar nuts.jar -r=+preview -Zy
 $ exit
 ```
