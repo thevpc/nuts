@@ -1,5 +1,8 @@
 package net.thevpc.nuts.io;
 
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NStringUtils;
+
 import java.util.Objects;
 
 public class NPathNameParts {
@@ -53,6 +56,34 @@ public class NPathNameParts {
 
     public String getFullExtension() {
         return fullExtension;
+    }
+
+    public String toName() {
+        return baseName + extension;
+    }
+
+    public String toName(String pattern) {
+        return NMsg.ofV(pattern,
+                s -> {
+                    switch (NStringUtils.trim(s).toLowerCase()) {
+                        case "name":
+                            return toName();
+                        case "base":
+                        case "basename":
+                        case "base-name":
+                            return getBaseName();
+                        case "ext":
+                        case "extension":
+                            return getExtension();
+                        case "fullext":
+                        case "full-ext":
+                        case "full-extension":
+                        case "fullextension":
+                            return getFullExtension();
+                    }
+                    return null;
+                }
+        ).toString();
     }
 
     @Override
