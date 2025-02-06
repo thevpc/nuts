@@ -9,8 +9,9 @@ public class DefaultNExprVarDeclaration implements NExprVarDeclaration {
     private String name;
     private NExprVar impl;
     private NWorkspace workspace;
+    private NExprVar v;
 
-    public DefaultNExprVarDeclaration(NWorkspace workspace,String name, NExprVar impl) {
+    public DefaultNExprVarDeclaration(NWorkspace workspace, String name, NExprVar impl) {
         this.workspace = workspace;
         this.name = name;
         this.impl = impl;
@@ -28,6 +29,24 @@ public class DefaultNExprVarDeclaration implements NExprVarDeclaration {
 
     @Override
     public Object set(Object value, NExprDeclarations context) {
-        return impl.set(name, value,  context);
+        return impl.set(name, value, context);
+    }
+
+    @Override
+    public NExprVar asVar() {
+        if (v == null) {
+            v = new NExprVar() {
+                @Override
+                public Object get(String name, NExprDeclarations context) {
+                    return DefaultNExprVarDeclaration.this.get(context);
+                }
+
+                @Override
+                public Object set(String name, Object value, NExprDeclarations context) {
+                    return DefaultNExprVarDeclaration.this.set(value, context);
+                }
+            };
+        }
+        return v;
     }
 }

@@ -296,7 +296,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     }
 
     private NPathNameParts rebuildSmartParts(NLiteral[] vals, int split) {
-        String fe = concatSmartParts(vals, split + 1, vals.length);
+        String fe = concatSmartParts(vals, split, vals.length);
         String e = fe.startsWith(".")?fe.substring(1):fe;
 
         return new NPathNameParts(

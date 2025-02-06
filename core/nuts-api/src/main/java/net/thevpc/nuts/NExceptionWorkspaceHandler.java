@@ -32,14 +32,14 @@ import net.thevpc.nuts.spi.NComponent;
 /**
  * This interface defines how exit application exceptions/throwables are handled
  */
-public interface NApplicationExceptionHandler extends NComponent {
+public interface NExceptionWorkspaceHandler extends NComponent {
     /**
      * return a new instance of {@code NApplicationExceptionHandler}
      *
      * @return a new instance of {@code NApplicationExceptionHandler}
      */
-    static NApplicationExceptionHandler of() {
-       return NExtensions.of(NApplicationExceptionHandler.class);
+    static NExceptionWorkspaceHandler of() {
+       return NExtensions.of(NExceptionWorkspaceHandler.class);
     }
 
     /**

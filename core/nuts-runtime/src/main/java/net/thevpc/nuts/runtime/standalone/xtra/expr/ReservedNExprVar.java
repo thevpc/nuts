@@ -4,9 +4,11 @@ import net.thevpc.nuts.expr.NExprDeclarations;
 import net.thevpc.nuts.expr.NExprVar;
 
 public class ReservedNExprVar implements NExprVar {
+    private String name;
     private Object value;
 
-    public ReservedNExprVar(Object value) {
+    public ReservedNExprVar(String name,Object value) {
+        this.name = name;
         this.value = value;
     }
 

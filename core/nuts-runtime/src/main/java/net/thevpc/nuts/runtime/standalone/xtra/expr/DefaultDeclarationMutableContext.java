@@ -40,6 +40,17 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
     }
 
     @Override
+    public NExprVar getOrDeclareVar(String name, Object value) {
+        NExprVarDeclaration o = getVar(name).orNull();
+        if(o!=null){
+            return o.asVar();
+        }
+        NExprVarDeclaration e = declareVar(name);
+        e.set(value,this);
+        return e.asVar();
+    }
+
+    @Override
     public NOptional<NExprFctDeclaration> getFunction(String name, NExprNodeValue... args) {
         DecInfo<NExprFctDeclaration> f = userFunctions.get(name);
         if (f != null) {

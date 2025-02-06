@@ -8,7 +8,7 @@ import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.expr.*;
 
-import java.util.Arrays;
+import java.util.*;
 
 public abstract class NExprDeclarationsBase implements NExprDeclarations {
     protected NWorkspace workspace;
@@ -121,6 +121,42 @@ public abstract class NExprDeclarationsBase implements NExprDeclarations {
     public NExprVar ofConst(String name, Object a) {
         return exprs.newConst(name, a);
     }
+
+    @Override
+    public NExprVar ofVar(String name, Object a) {
+        return exprs.newVar(name, a);
+    }
+
+    @Override
+    public NExprVar getOrDeclareVar(String name, Object a) {
+        return null;
+    }
+
+    @Override
+    public NOptional<NExprFctDeclaration> getFunction(String fctName, NExprNodeValue... args) {
+        return null;
+    }
+
+    @Override
+    public NOptional<NExprConstructDeclaration> getConstruct(String constructName, NExprNodeValue... args) {
+        return null;
+    }
+
+    @Override
+    public NOptional<NExprOpDeclaration> getOperator(String opName, NExprOpType type, NExprNodeValue... args) {
+        return null;
+    }
+
+    @Override
+    public List<NExprOpDeclaration> getOperators() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public NOptional<NExprVarDeclaration> getVar(String varName) {
+        return null;
+    }
+
 
     @Override
     public NExprInterpolatedStrNode ofInterpolatedStr(String a) {

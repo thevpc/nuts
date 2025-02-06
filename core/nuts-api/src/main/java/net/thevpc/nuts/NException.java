@@ -28,21 +28,8 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.reserved.util.NBootLog;
 import net.thevpc.nuts.boot.reserved.util.NBootUtils;
-import net.thevpc.nuts.elem.NArrayElementBuilder;
-import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.format.NContentType;
-import net.thevpc.nuts.io.NIO;
-import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NStringUtils;
-import net.thevpc.nuts.util.NUtils;
-
-import java.io.PrintStream;
-import java.util.logging.Level;
 
 /**
  * Base Nuts Exception. Parent of all Nuts defined Exceptions.
@@ -148,7 +135,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
 
     public int processThrowable(NBootOptionsInfo options, NBootLog bLog) {
         if (this.session != null) {
-            return this.session.callWith(() -> NApplicationExceptionHandler.of().processThrowable(options.getApplicationArguments().toArray(new String[0]), this));
+            return this.session.callWith(() -> NExceptionWorkspaceHandler.of().processThrowable(options.getApplicationArguments().toArray(new String[0]), this));
         } else {
             return NBootUtils.processThrowable(this, bLog, true, NBootUtils.resolveShowStackTrace(options), NBootUtils.resolveGui(options));
         }

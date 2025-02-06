@@ -76,14 +76,16 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
     }
 
     public void writeNode(NText node, NTextTransformConfig ctx) {
-        writeNode(NTextStyles.of(), node, ctx);
+        writeNode(NTextStyles.of(), node, ctx, null);
     }
 
-    private void writeNode(NTextStyles formats, NText node, NTextTransformConfig ctx) {
+    private void writeNode(NTextStyles formats, NText node, NTextTransformConfig ctx, NTexts txt) {
         if (formats == null) {
             formats = NTextStyles.of();
         }
-        NTexts txt = NTexts.of();
+        if (txt == null) {
+            txt = NTexts.of();
+        }
         switch (node.getType()) {
             case PLAIN: {
                 NTextPlain p = (NTextPlain) node;
@@ -93,14 +95,14 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
             case LIST: {
                 NTextList s = (NTextList) node;
                 for (NText n : s) {
-                    writeNode(formats, n, ctx);
+                    writeNode(formats, n, ctx, txt);
                 }
                 break;
             }
             case BUILDER: {
                 NTextBuilder s = (NTextBuilder) node;
                 for (NText n : s.getChildren()) {
-                    writeNode(formats, n, ctx);
+                    writeNode(formats, n, ctx, txt);
                 }
                 break;
             }
@@ -109,7 +111,7 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
                 NTextStyles styles = s.getStyles();
                 NTextStyles format = txt.getTheme().toBasicStyles(styles,ctx.isBasicTrueStyles());
                 NTextStyles s2 = formats.append(format);
-                writeNode(s2, s.getChild(), ctx);
+                writeNode(s2, s.getChild(), ctx, txt);
                 break;
             }
             case TITLE: {
@@ -128,14 +130,14 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
                             txt.ofPlain(a.toString() + " "),
                             s.getChild()
                     );
-                    writeNode(s2, sWithTitle, ctx);
+                    writeNode(s2, sWithTitle, ctx, txt);
                     writeRaw("\n");
                 } else {
                     NText sWithTitle = txt.ofList(
                             txt.ofPlain(CoreStringUtils.fillString('#', s.getLevel()) + ") "),
                             s.getChild()
                     );
-                    writeNode(s2, sWithTitle, ctx);
+                    writeNode(s2, sWithTitle, ctx, txt);
                     writeRaw("\n");
                 }
                 break;
@@ -159,7 +161,7 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
                 writeNode(formats,
                         txt.ofStyled(child,
                                 NTextStyles.of(NTextStyle.underlined())
-                        ), ctx);
+                        ), ctx, txt);
                 writeRaw(formats, "see: " + ((NTextLink) node).getText(), ctx.isFiltered());
                 break;
             }
@@ -174,7 +176,7 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
                                 )
                                 ,
                                 NTextStyles.of(NTextStyle.warn())
-                        ), ctx);
+                        ), ctx, txt);
                 break;
             }
             case CODE: {
@@ -183,7 +185,7 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
                     writeRaw(formats, node1.getText(), true);
                 } else {
                     NText cn = node1.highlight();
-                    writeNode(formats, cn, ctx);
+                    writeNode(formats, cn, ctx, txt);
                 }
                 break;
             }

@@ -303,7 +303,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
             if (f != null) {
                 return f.apply(a, b);
             }
-            throw new IllegalArgumentException("not found a "+name+" b");
+            throw new IllegalArgumentException("not found infix operator '"+name+"'");
         }
     }
 
@@ -322,7 +322,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
             if (f != null) {
                 return f.apply(a);
             }
-            throw new IllegalArgumentException("not found a "+name);
+            throw new IllegalArgumentException("not found prefix operator '"+name+"'");
         }
     }
 
@@ -340,7 +340,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
             if (f != null) {
                 return f.apply(a);
             }
-            throw new IllegalArgumentException("not found "+name+" a");
+            throw new IllegalArgumentException("not found postfix operator '"+name+"'");
         }
     }
 

@@ -25,10 +25,10 @@
 package net.thevpc.nuts;
 
 
-import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.time.NClock;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMsg;
 
 import java.lang.reflect.Constructor;
@@ -71,22 +71,6 @@ public final class NApplications {
         return m;
     }
 
-
-    /**
-     * run the given application and call System.exit(?)
-     *
-     * @param application application
-     * @param args        arguments
-     */
-    public static void runApplicationAndExit(NApplication application, String[] args) {
-        try {
-            application.run(args);
-        } catch (Exception ex) {
-            System.exit(NApplications.processThrowable(ex));
-            return;
-        }
-        System.exit(0);
-    }
 
     /**
      * creates application instance by calling
@@ -161,31 +145,61 @@ public final class NApplications {
     /**
      * run application with given life cycle.
      *
-     * @param applicationInstance application
-     * @param nutsArgs            nuts arguments
-     * @param args                application arguments
+     * @param options NApplicationRunOptions
      */
-    public static void runApplication(NApplication applicationInstance, String[] nutsArgs, String[] args) {
-        NClock now = NClock.now();
-        NWorkspace ws = NWorkspace.get().orNull();
-        if (ws == null) {
-            ws = Nuts.openInheritedWorkspace(nutsArgs, args);
-            NWorkspace finalWs = ws;
-            ws.runWith(() -> {
-                NApp a = NApp.of();
-                a.setArguments(args);
-                a.prepare(new NAppInitInfo(args, applicationInstance.getClass(), now));
-                runApplication(applicationInstance);
-            });
-        } else {
-            ws.runWith(() -> {
-                NApp.of().prepare(new NAppInitInfo(args, applicationInstance.getClass(), now));
-                runApplication(applicationInstance);
-            });
+    public static void runApplication(NAppRunOptions options) {
+        NApplicationHandleMode m = options.getHandleMode() == null ? NApplicationHandleMode.HANDLE : options.getHandleMode();
+        try {
+            NClock now = NClock.now();
+            NAssert.requireNonNull(options, "options");
+            String[] args = options.getArgs() == null ? new String[0] : options.getArgs();
+            NApplication applicationInstance = NAssert.requireNonNull(options.getApplicationInstance(), "applicationInstance");
+            NWorkspace ws = NWorkspace.get().orNull();
+            if (ws == null) {
+                ws = Nuts.openInheritedWorkspace(options.getNutsArgs(), args);
+                ws.runWith(() -> {
+                    NApp a = NApp.of();
+                    a.setArguments(args);
+                    a.prepare(new NAppInitInfo(args, applicationInstance.getClass(), now));
+                    runApplication(applicationInstance);
+                });
+            } else {
+                ws.runWith(() -> {
+                    NApp.of().prepare(new NAppInitInfo(args, applicationInstance.getClass(), now));
+                    runApplication(applicationInstance);
+                });
+            }
+            switch (m) {
+                case EXIT: {
+                    System.exit(0);
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            switch (m) {
+                case PROPAGATE: {
+                    NExceptionHandler.of(e).propagate();
+                    break;
+                }
+                case EXIT: {
+                    NExceptionHandler.of(e).handleFatal();
+                    break;
+                }
+                case HANDLE: {
+                    NExceptionHandler.of(e).handle();
+                    break;
+                }
+                default: {
+                    if (e instanceof RuntimeException) {
+                        throw (RuntimeException) e;
+                    }
+                    throw new RuntimeException(e);
+                }
+            }
         }
     }
 
-    public static void runApplication(NApplication applicationInstance) {
+    private static void runApplication(NApplication applicationInstance) {
         NWorkspace ws = NWorkspace.get().orNull();
         if (ws == null) {
             ws = Nuts.openInheritedWorkspace(new String[0], new String[0]);
@@ -236,27 +250,5 @@ public final class NApplications {
             throw new NExecutionException(NMsg.ofC("unsupported execution mode %s", NApp.of().getMode()), NExecutionException.ERROR_255);
         });
     }
-
-    /**
-     * process throwable and extract exit code
-     *
-     * @param ex throwable
-     * @return exit code
-     */
-    public static int processThrowable(Throwable ex) {
-        return processThrowable(ex, null);
-    }
-
-    /**
-     * process throwable and return exit code
-     *
-     * @param ex  exception
-     * @param out out stream
-     * @return exit code
-     */
-    public static int processThrowable(Throwable ex, NLog out) {
-        return NApiUtilsRPI.processThrowable(ex, out);
-    }
-
 
 }

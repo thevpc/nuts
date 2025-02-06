@@ -44,11 +44,17 @@ public interface NExprs extends NComponent {
         return of().newVar(name);
     }
 
+    static NExprVar ofVar(String name,Object value) {
+        return of().newVar(name,value);
+    }
+
     static NExprVar ofConst(String name, Object value) {
         return of().newConst(name, value);
     }
 
     NExprVar newVar(String var);
+
+    NExprVar newVar(String var,Object value);
 
     NExprVar newConst(String name, Object value);
 

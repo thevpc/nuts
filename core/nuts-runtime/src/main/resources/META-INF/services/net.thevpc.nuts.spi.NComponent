@@ -124,7 +124,7 @@ net.thevpc.nuts.runtime.standalone.util.reflect.NReflectMapperImpl
 
 net.thevpc.nuts.runtime.standalone.dependency.solver.DefaultNDependencySolvers
 
-net.thevpc.nuts.runtime.standalone.xtra.throwables.DefaultNApplicationExceptionHandler
+net.thevpc.nuts.runtime.standalone.xtra.throwables.DefaultNExceptionWorkspaceHandler
 
 net.thevpc.nuts.runtime.standalone.util.reflect.DefaultNReflectRepository
 

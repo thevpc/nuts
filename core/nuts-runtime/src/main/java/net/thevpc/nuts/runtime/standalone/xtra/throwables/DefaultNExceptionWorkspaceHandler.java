@@ -9,12 +9,10 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.util.NMsg;
@@ -25,9 +23,9 @@ import java.io.PrintStream;
 import java.util.logging.Level;
 
 @NComponentScope(NScopeType.SESSION)
-public class DefaultNApplicationExceptionHandler implements NApplicationExceptionHandler {
+public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHandler {
 
-    public DefaultNApplicationExceptionHandler() {
+    public DefaultNExceptionWorkspaceHandler() {
 
     }
 

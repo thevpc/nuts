@@ -52,7 +52,7 @@ Welcome to nuts. Yeah, it is working...
 
 Now we will install `jedit`, a tremendous underrated text editor. So in your terminal type:
 
-```
+```bash
 nuts install org.jedit:jedit
 ```
 

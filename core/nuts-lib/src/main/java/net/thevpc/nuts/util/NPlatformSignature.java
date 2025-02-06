@@ -1,5 +1,7 @@
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.reflect.NReflectUtils;
+
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -99,11 +101,12 @@ public class NPlatformSignature {
             return b.append(')').toString();
         }
     }
+
     private String strOfType(Type t) {
-        if(t instanceof Class) {
+        if (t instanceof Class) {
             return ((Class) t).getName();
         }
-        return t.toString();
+        return t == null ? "null" : t.toString();
     }
 
     @Override
@@ -116,5 +119,52 @@ public class NPlatformSignature {
     @Override
     public int hashCode() {
         return Objects.hash(Arrays.hashCode(types), vararg);
+    }
+
+    public boolean matches(NPlatformSignature other) {
+        int mySize = this.size();
+        boolean vararg1 = isVararg();
+        if (vararg1 && other.size() == mySize - 1) {
+            for (int i = 0; i < mySize - 1; i++) {
+                if (!typeMatches(types[i], other.types[i], false)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        if (mySize != other.size()) {
+            return false;
+        }
+        for (int i = 0; i < mySize; i++) {
+            if (!typeMatches(types[i], other.types[i], vararg1 && i == mySize - 1)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean typeMatches(Type a, Type b, boolean varArg) {
+        if (a == null) {
+            return true;
+        }
+        if (b == null) {
+            return true;
+        }
+        if (a instanceof Class
+                && b instanceof Class
+        ) {
+            Class<?> ca = (Class<?>) a;
+            Class<?> cb = (Class<?>) b;
+            if (ca.isPrimitive() || cb.isPrimitive()) {
+                return typeMatches(NReflectUtils.toBoxedType(ca).orElse(ca), NReflectUtils.toBoxedType(cb).orElse(cb), false);
+            }
+            if (ca.isAssignableFrom(cb)) {
+                return true;
+            }
+            if (varArg && ca.isArray() && typeMatches(ca.getComponentType(), cb, false)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

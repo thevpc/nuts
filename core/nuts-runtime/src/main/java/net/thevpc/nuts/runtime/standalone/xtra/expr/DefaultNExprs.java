@@ -28,7 +28,12 @@ public class DefaultNExprs implements NExprs {
     }
 
     public NExprVar newVar(String var) {
-        return new ReservedNExprVar(var);
+        return new ReservedNExprVar(var,null);
+    }
+
+    @Override
+    public NExprVar newVar(String var, Object value) {
+        return new ReservedNExprVar(var,value);
     }
 
     public NExprVar newConst(String name, Object value) {

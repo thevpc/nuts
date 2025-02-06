@@ -305,7 +305,7 @@ public interface NApplication {
      * @param args arguments
      */
     default void runAndExit(String[] args) {
-        NApplications.runApplicationAndExit(this, args);
+        run(NAppRunOptions.ofExit(args));
     }
 
     /**
@@ -316,7 +316,15 @@ public interface NApplication {
      * @param args application arguments. should not be null or contain nulls
      */
     default void run(String[] args) {
-        NApplications.runApplication(this, null, args);
+        run(NAppRunOptions.of(args));
+    }
+
+    default void run(NAppRunOptions args) {
+        if (args == null) {
+            args = new NAppRunOptions();
+        }
+        args.setApplicationInstance(this);
+        NApplications.runApplication(args);
     }
 
     /**

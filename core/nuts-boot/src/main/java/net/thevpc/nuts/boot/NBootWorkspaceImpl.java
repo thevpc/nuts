@@ -296,7 +296,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             } else if (DEFAULT_PREVIEW) {
                 tags.add(NBootConstants.RepoTags.PREVIEW);
             }
-            for (String s : repositoryDB.findByAnyTag(NBootConstants.RepoTags.MAIN, NBootConstants.RepoTags.PREVIEW)) {
+            for (String s : repositoryDB.findByAnyTag(tags.toArray(new String[0]))) {
                 if ("maven".equals(s)) {
                     for (String customOption : options.getCustomOptions()) {
                         NBootArg a = new NBootArg(customOption);
@@ -312,7 +312,6 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                             break;
                         }
                     }
-                    continue;
                 }
                 drs.add(NBootRepositoryLocation.of(s, repositoryDB));
             }

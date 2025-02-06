@@ -8,10 +8,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class NUtils {
-    static NOptional<NExceptionBase> resolveExceptionBase(Throwable th) {
+    public static NOptional<NExceptionBase> resolveExceptionBase(Throwable th) {
         return NReservedLangUtils.findThrowable(th, NExceptionBase.class, null);
     }
-    static NOptional<NExceptionWithExitCodeBase> resolveWithExitCodeExceptionBase(Throwable th) {
+    public static NOptional<NExceptionWithExitCodeBase> resolveWithExitCodeExceptionBase(Throwable th) {
         return NReservedLangUtils.findThrowable(th, NExceptionWithExitCodeBase.class, null);
     }
 

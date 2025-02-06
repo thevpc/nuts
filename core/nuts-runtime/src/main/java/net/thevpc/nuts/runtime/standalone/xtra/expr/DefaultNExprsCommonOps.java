@@ -5,13 +5,14 @@ import net.thevpc.nuts.expr.NExprOpType;
 import net.thevpc.nuts.util.NPlatformSignature;
 import net.thevpc.nuts.util.*;
 
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class DefaultNExprsCommonOps {
     private final Map<NExprCommonOpAndType, NPlatformSignatureMap<Object>> commonOps = new HashMap<>();
@@ -339,7 +340,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return true;
                         }
-                        return !Objects.equals(a,b);
+                        return !Objects.equals(a, b);
                     }
                 }
         );
@@ -1080,7 +1081,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return a;
                         }
-                        return String.valueOf(a)+String.valueOf(b);
+                        return String.valueOf(a) + String.valueOf(b);
                     }
                 }
         );
@@ -2013,14 +2014,25 @@ public class DefaultNExprsCommonOps {
     }
 
     private void declareNot() {
-        declare1(NExprCommonOp.NOT, NExprOpType.PREFIX, NPlatformSignature.of(Byte.class),
+        declare1(NExprCommonOp.NOT, NExprOpType.PREFIX, NPlatformSignature.of(Object.class),
                 new NFunction<Object, Object>() {
                     @Override
                     public Object apply(Object a) {
                         if (a == null) {
                             return true;
                         }
-                        return NLiteral.of(a).asByte().get() == 0;
+                        Boolean u = NLiteral.of(a).asBoolean().orNull();
+                        if (u != null) {
+                            return !u;
+                        }
+                        Number n = NLiteral.of(a).asNumber().orNull();
+                        if (n != null) {
+                            return n.doubleValue() == 0;
+                        }
+                        if (a instanceof CharSequence) {
+                            return ((CharSequence) a).length() == 0;
+                        }
+                        return a != null;
                     }
                 }
         );
@@ -2744,6 +2756,19 @@ public class DefaultNExprsCommonOps {
 
     public NOptional<NFunction2<?, ?, ?>> findFunction2(NExprCommonOp op, NExprOpType type, NPlatformSignature sig) {
         NAssert.requireTrue(sig.size() == 2, "sig size");
+        if(sig.getType(0)==null||sig.getType(1)==null){
+            List<Object> acceptable = commonOps.entrySet().stream().filter(x -> x.getKey().getType() == type && x.getKey().getOp() == op)
+                    .flatMap(x -> x.getValue().toMap().entrySet().stream().filter(y->y.getKey().matches(sig)))
+                    .collect(Collectors.toList());
+            if(acceptable.size()==1){
+                return NOptional.of((NFunction2)acceptable.get(0));
+            }
+            if(acceptable.size()==0){
+                return NOptional.ofNamedEmpty(sig.toString());
+            }
+            return NOptional.of((NFunction2)acceptable.get(0));
+        }
+
         NPlatformSignatureMap<Object> sm = commonOps.get(new NExprCommonOpAndType(op, type));
         if (sm != null) {
             NOptional<Object> v = sm.get(sig);
@@ -2756,6 +2781,19 @@ public class DefaultNExprsCommonOps {
 
     public NOptional<NFunction<?, ?>> findFunction1(NExprCommonOp op, NExprOpType type, NPlatformSignature sig) {
         NAssert.requireTrue(sig.size() == 1, "sig size");
+        Type t = sig.getType(0);
+        if(t==null){
+            List<Object> acceptable = commonOps.entrySet().stream().filter(x -> x.getKey().getType() == type && x.getKey().getOp() == op)
+                    .flatMap(x -> x.getValue().toMap().values().stream())
+                    .collect(Collectors.toList());
+            if(acceptable.size()==1){
+                return NOptional.of((NFunction)acceptable.get(0));
+            }
+            if(acceptable.size()==0){
+                return NOptional.ofNamedEmpty(sig.toString());
+            }
+            return NOptional.of((NFunction)acceptable.get(0));
+        }
         NPlatformSignatureMap<Object> sm = commonOps.get(new NExprCommonOpAndType(op, type));
         if (sm != null) {
             NOptional<Object> v = sm.get(sig);

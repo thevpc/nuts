@@ -156,10 +156,13 @@ public class NutsSpringBootConfiguration {
 
     @Bean
     public CommandLineRunner nutsCommandLineRunner(ApplicationArguments applicationArguments) {
-        return args -> NApplications.runApplication(nutsApplication(),
-                resolveNutsArgs(),
-                applicationArguments.getSourceArgs()
-        );
+        return args -> NApplications.runApplication(
+                new NAppRunOptions()
+                        .setApplicationInstance(nutsApplication())
+                        .setNutsArgs(resolveNutsArgs())
+                        .setArgs(applicationArguments.getSourceArgs())
+                        .setHandleMode(NApplicationHandleMode.PROPAGATE))
+        ;
     }
 
     private String[] resolveNutsArgs(){

@@ -21,7 +21,7 @@ public class DefaultNExprNodeValue implements NExprNodeValue {
     @Override
     public NOptional<Object> getValue() {
         if (value != null) {
-            return NOptional.of(value);
+            return value;
         }
         return value = node.eval(boundContext);
     }

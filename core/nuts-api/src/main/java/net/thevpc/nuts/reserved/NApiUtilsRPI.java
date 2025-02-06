@@ -152,69 +152,6 @@ public class NApiUtilsRPI {
         }
     }
 
-    public static int processThrowable(Throwable ex, String[] args,NBootOptionsInfo bootOptions) {
-        if (ex == null) {
-            return 0;
-        }
-        NSession session = NSessionAwareExceptionBase.resolveSession(ex).orNull();
-        if (session != null) {
-            return (NApplicationExceptionHandler.of()
-                    .processThrowable(args, ex));
-        }
-        if(bootOptions==null) {
-            bootOptions = new NBootOptionsInfo();
-            NBootWorkspaceCmdLineParser.parseNutsArguments(args, bootOptions);
-        }
-        return processThrowable(ex, null, true, resolveShowStackTrace(bootOptions), resolveGui(bootOptions));
-    }
-
-    public int exitIfError(Throwable ex, String[] args,NBootOptionsInfo bootOptions) {
-        int code = processThrowable(ex, args,bootOptions);
-        if(code!=0){
-            System.exit(code);
-        }
-        return code;
-    }
-
-    public int exitIfError(int code) {
-        if(code!=0){
-            System.exit(code);
-        }
-        return code;
-    }
-
-    /**
-     * process Throwable and return exit code
-     *
-     * @param ex exception
-     * @param out out stream
-     * @return exit code
-     */
-    public static int processThrowable(Throwable ex, NLog out) {
-        if (ex == null) {
-            return 0;
-        }
-        NSession session = NSessionAwareExceptionBase.resolveSession(ex).orNull();
-        NWorkspaceOptionsBuilder bo = null;
-        if (session != null) {
-            bo = NWorkspace.of().getBootOptions().builder().toWorkspaceOptions().builder();
-            return processThrowable(ex, out, true, resolveShowStackTrace(bo), resolveGui(bo));
-        } else {
-            //load inherited
-            String nutsArgs = NStringUtils.trim(
-                    NStringUtils.trim(System.getProperty("nuts.boot.args"))
-                    + " " + NStringUtils.trim(System.getProperty("nuts.args"))
-            );
-            try {
-                NBootOptionsInfo options = new NBootOptionsInfo();
-                NBootWorkspaceCmdLineParser.parseNutsArguments(NCmdLine.parseDefault(nutsArgs).get().toStringArray(), options);
-                return processThrowable(ex, null, true, resolveShowStackTrace(options), resolveGui(options));
-            } catch (Exception e) {
-                //any, ignore...
-            }
-            return 254;
-        }
-    }
 
     public static boolean resolveGui(NWorkspaceOptions bo) {
         if (bo.getBot().orElse(false)) {
@@ -383,6 +320,7 @@ public class NApiUtilsRPI {
         }
         return (errorCode);
     }
+
 
     public static boolean isGraphicalDesktopEnvironment() {
         return NReservedLangUtils.isGraphicalDesktopEnvironment();

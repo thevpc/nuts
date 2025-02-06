@@ -15,6 +15,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 /**
  * @author thevpc
  */
@@ -82,36 +84,22 @@ public class Test31_PathParts {
 
     @Test
     public void test06() {
-        String[] s = d("a1.2");
-        Assertions.assertArrayEquals(new String[]{"a1.2", ""}, s);
-        s = d("a1.2.a");
-        Assertions.assertArrayEquals(new String[]{"a1.2", "a"}, s);
-        s = d("");
-        Assertions.assertArrayEquals(new String[]{"", ""}, s);
-        s = d(".");
-        Assertions.assertArrayEquals(new String[]{"", ""}, s);
-        s = d("a");
-        Assertions.assertArrayEquals(new String[]{"a", ""}, s);
-        s = d("a.");
-        Assertions.assertArrayEquals(new String[]{"a", ""}, s);
-        s = d(".a");
-        Assertions.assertArrayEquals(new String[]{"", "a"}, s);
-        s = d(".1");
-        Assertions.assertArrayEquals(new String[]{"", "1"}, s);
-        s = d("a.1");
-        Assertions.assertArrayEquals(new String[]{"a", "1"}, s);
-        s = d("1.1");
-        Assertions.assertArrayEquals(new String[]{"1.1", ""}, s);
-        s = d("1.a1");
-        Assertions.assertArrayEquals(new String[]{"1", "a1"}, s);
-        s = d("1.1a");
-        Assertions.assertArrayEquals(new String[]{"1", "1a"}, s);
-        s = d("1.3af");
-        Assertions.assertArrayEquals(new String[]{"1", "3af"}, s);
-        s = d("a1.2s");
-        Assertions.assertArrayEquals(new String[]{"a1", "2s"}, s);
-        s = d("a.config.json");
-        Assertions.assertArrayEquals(new String[]{"a.config", "json"}, s);
+        Assertions.assertArrayEquals(new String[]{"a1.2", "", ""}, d("a1.2"));
+        Assertions.assertArrayEquals(new String[]{"a1.2", "a", ".a"}, d("a1.2.a"));
+        Assertions.assertArrayEquals(new String[]{"", "", ""}, d(""));
+        Assertions.assertArrayEquals(new String[]{"", "", "."}, d("."));
+        Assertions.assertArrayEquals(new String[]{"a", "", ""}, d("a"));
+        Assertions.assertArrayEquals(new String[]{"a", "", "."}, d("a."));
+        Assertions.assertArrayEquals(new String[]{"", "a", ".a"}, d(".a"));
+        Assertions.assertArrayEquals(new String[]{"", "1", ".1"}, d(".1"));
+        Assertions.assertArrayEquals(new String[]{"a", "1", ".1"}, d("a.1"));
+        Assertions.assertArrayEquals(new String[]{"1.1", "", ""}, d("1.1"));
+        Assertions.assertArrayEquals(new String[]{"1", "a1", ".a1"}, d("1.a1"));
+        Assertions.assertArrayEquals(new String[]{"1", "1a", ".1a"}, d("1.1a"));
+        Assertions.assertArrayEquals(new String[]{"1", "3af", ".3af"}, d("1.3af"));
+        Assertions.assertArrayEquals(new String[]{"a1", "2s", ".2s"}, d("a1.2s"));
+        Assertions.assertArrayEquals(new String[]{"a.config", "json", ".json"}, d("a.config.json"));
+        Assertions.assertArrayEquals(new String[]{"some-value-1.8-20250206-external", "pdf", ".pdf"}, d("some-value-1.8-20250206-external.pdf"));
     }
 
     @Test
@@ -129,16 +117,16 @@ public class Test31_PathParts {
         Assertions.assertEquals(NPathNameParts.ofShort("a", ""), NIOUtils.getPathNameParts("a.", NPathExtensionType.SHORT));
 
 
-
     }
 
     private String[] d(String n) {
         NPath p = NPath.of(n);
         if (p == null) {
-            return new String[]{"", ""};
+            return new String[]{"", "", ""};
         }
         NPathNameParts nameParts = p.getNameParts(NPathExtensionType.SMART);
-        return new String[]{nameParts.getBaseName(), nameParts.getExtension()};
+        String[] strings = {nameParts.getBaseName(), nameParts.getExtension(), nameParts.getFullExtension()};
+        return strings;
     }
 
 
