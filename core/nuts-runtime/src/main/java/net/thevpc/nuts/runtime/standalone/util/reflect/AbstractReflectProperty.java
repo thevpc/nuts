@@ -47,7 +47,7 @@ public abstract class AbstractReflectProperty implements NReflectProperty {
 
     protected final void init(String name, NReflectType declaringType, Object cleanInstance, Type propertyType, NReflectPropertyDefaultValueStrategy defaultValueStrategy) {
         this.name = name;
-        this.cleanInstanceValue = cleanInstance == null ? ReflectUtils.getDefaultValue(propertyType) : read(cleanInstance);
+        this.cleanInstanceValue = cleanInstance == null ? ReflectUtils.getDefaultValue(propertyType) : isRead()?read(cleanInstance):null;
         this.declaringType = declaringType;
         NReflectType nReflectType = declaringType.getRepository().getType(propertyType)
                 .replaceVars(t -> declaringType.getActualTypeArgument(t).orElse(t));

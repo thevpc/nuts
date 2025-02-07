@@ -83,4 +83,5 @@ public class NOptionalErrorException extends NException {
     public NOptionalErrorException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
+
 }

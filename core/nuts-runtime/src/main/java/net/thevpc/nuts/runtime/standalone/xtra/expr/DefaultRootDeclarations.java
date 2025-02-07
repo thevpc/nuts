@@ -46,11 +46,11 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
                         String n = w.getName();
                         NReflectType t = reflectRepository.getType(instance.getClass());
                         NOptional<NReflectProperty> property = t.getProperty(n);
-                        if(property.isPresent()) {
+                        if(property.isPresent() && property.get().isRead()) {
                             return property.get().read(instance);
                         }
                         NOptional<NReflectMethod> method = t.getMethod(n, NSignature.of());
-                        if(method.isPresent()){
+                        if(method.isPresent() && method.get().isAccessible()){
                             return method.get().invoke(instance);
                         }
                         throw new IllegalArgumentException("property not found "+instance+"."+b);

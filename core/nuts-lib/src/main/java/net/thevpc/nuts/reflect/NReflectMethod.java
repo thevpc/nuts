@@ -32,6 +32,8 @@ public interface NReflectMethod {
 
     String getName();
 
+    boolean isAccessible();
+
     NReflectParameter[] getParameters();
 
     Object invoke(Object instance, Object... args);

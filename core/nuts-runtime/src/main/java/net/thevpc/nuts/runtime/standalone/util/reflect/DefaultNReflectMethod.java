@@ -16,10 +16,22 @@ public class DefaultNReflectMethod implements NReflectMethod {
     private NReflectType declaringType;
     private NReflectParameter[] cachedParams;
     private NSignature signature;
+    private boolean accessible;
 
     public DefaultNReflectMethod(Method method, NReflectType declaringType) {
         this.method = method;
+        try {
+            method.setAccessible(true);
+            accessible=true;
+        }catch (Exception e){
+            //ignore
+        }
         this.declaringType = declaringType;
+    }
+
+    @Override
+    public boolean isAccessible() {
+        return accessible;
     }
 
     @Override

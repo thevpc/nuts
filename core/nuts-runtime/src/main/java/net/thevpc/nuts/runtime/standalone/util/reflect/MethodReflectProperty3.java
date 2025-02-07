@@ -39,13 +39,27 @@ public class MethodReflectProperty3 extends AbstractReflectProperty {
 
     private Field read;
     private Method write;
+    private boolean readAccessible;
+    private boolean writeAccessible;
 
     public MethodReflectProperty3(String name, Field read, Method write, Object cleanInstance, NReflectType type, NReflectPropertyDefaultValueStrategy defaultValueStrategy) {
-        this.read = read;
-        this.read.setAccessible(true);
+        if (read != null) {
+            this.read = read;
+            try {
+                this.read.setAccessible(true);
+                readAccessible = true;
+            } catch (Exception e) {
+                //
+            }
+        }
         if (write != null) {
             this.write = write;
-            this.write.setAccessible(true);
+            try {
+                this.write.setAccessible(true);
+                writeAccessible=true;
+            }catch (Exception e){
+                //
+            }
         }
         init(name,type, cleanInstance, read.getGenericType(),defaultValueStrategy);
     }
@@ -53,16 +67,19 @@ public class MethodReflectProperty3 extends AbstractReflectProperty {
 
     @Override
     public boolean isRead() {
-        return true;
+        return readAccessible;
     }
 
     @Override
     public boolean isWrite() {
-        return write != null;
+        return writeAccessible;
     }
 
     @Override
     public Object read(Object instance) {
+        if(!readAccessible){
+            throw new IllegalArgumentException("illegal-access in read mode");
+        }
         try {
             return read.get(instance);
         } catch (IllegalAccessException ex) {
@@ -72,6 +89,9 @@ public class MethodReflectProperty3 extends AbstractReflectProperty {
 
     @Override
     public void write(Object instance, Object value) {
+        if(!writeAccessible){
+            throw new IllegalArgumentException("illegal-access in write mode");
+        }
         try {
             write.invoke(instance, value);
         } catch (IllegalAccessException ex) {

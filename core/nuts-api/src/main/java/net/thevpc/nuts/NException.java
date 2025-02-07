@@ -71,7 +71,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
      *                indicates that the cause is nonexistent or unknown.)
      */
     public NException(NMsg message, Throwable cause) {
-        super(NException.messageToString(message), cause);
+        super(message==null?"error occurred":message.toString(), cause);
         this.session = NSession.get().orNull();
         this.formattedMessage = NException.validateFormattedMessage(message);
     }

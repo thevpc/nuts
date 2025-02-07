@@ -39,13 +39,25 @@ public class MethodReflectProperty2 extends AbstractReflectProperty {
 
     private Method read;
     private Field write;
+    private boolean readAccessible;
+    private boolean writeAccessible;
 
     public MethodReflectProperty2(String name, Method read, Field write, Object cleanInstance, NReflectType type, NReflectPropertyDefaultValueStrategy defaultValueStrategy) {
         this.read = read;
-        this.read.setAccessible(true);
+        try {
+            this.read.setAccessible(true);
+            readAccessible=true;
+        }catch (Exception e){
+            //
+        }
         if (write != null) {
             this.write = write;
-            this.write.setAccessible(true);
+            try {
+                this.write.setAccessible(true);
+                writeAccessible=true;
+            }catch (Exception e){
+                //
+            }
         }
         init(name,type, cleanInstance, read.getGenericReturnType(),defaultValueStrategy);
     }
@@ -62,6 +74,9 @@ public class MethodReflectProperty2 extends AbstractReflectProperty {
 
     @Override
     public Object read(Object instance) {
+        if(!readAccessible){
+            throw new IllegalArgumentException("illegal-access in read mode");
+        }
         try {
             return read.invoke(instance);
         } catch (IllegalAccessException ex) {
@@ -73,6 +88,9 @@ public class MethodReflectProperty2 extends AbstractReflectProperty {
 
     @Override
     public void write(Object instance, Object value) {
+        if(!writeAccessible){
+            throw new IllegalArgumentException("illegal-access in write mode");
+        }
         try {
             write.set(instance, value);
         } catch (IllegalAccessException ex) {

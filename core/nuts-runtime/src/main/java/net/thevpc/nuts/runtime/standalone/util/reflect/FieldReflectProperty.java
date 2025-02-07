@@ -37,10 +37,18 @@ import java.lang.reflect.Modifier;
 public class FieldReflectProperty extends AbstractReflectProperty {
 
     private Field field;
+    private boolean accessible;
 
     public FieldReflectProperty(Field field, Object cleanInstance, NReflectType declaringType, NReflectPropertyDefaultValueStrategy defaultValueStrategy) {
-        this.field = field;
-        field.setAccessible(true);
+        if (field != null) {
+            this.field = field;
+            try {
+                field.setAccessible(true);
+                accessible = true;
+            } catch (Exception e) {
+                //ignore
+            }
+        }
         init(field.getName(),declaringType, cleanInstance, field.getGenericType(),defaultValueStrategy);
     }
 
@@ -48,12 +56,12 @@ public class FieldReflectProperty extends AbstractReflectProperty {
 
     @Override
     public boolean isRead() {
-        return true;
+        return accessible;
     }
 
     @Override
     public boolean isWrite() {
-        return !Modifier.isFinal(field.getModifiers());
+        return  accessible && !Modifier.isFinal(field.getModifiers());
     }
 
     @Override

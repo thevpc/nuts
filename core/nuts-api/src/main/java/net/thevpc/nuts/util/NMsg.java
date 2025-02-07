@@ -26,9 +26,9 @@
  */
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.NExceptionHandler;
 import net.thevpc.nuts.format.NMsgFormattable;
 import net.thevpc.nuts.text.*;
-import net.thevpc.nuts.reserved.NReservedLangUtils;
 
 import java.text.MessageFormat;
 import java.util.*;
@@ -77,9 +77,9 @@ public class NMsg {
             return NMsg.ofC("invalid %s", valueName);
         }
         if (NBlankable.isBlank(valueName)) {
-            return ofC("invalid value : %s", NReservedLangUtils.getErrorMessage(throwable));
+            return ofC("invalid value : %s", NExceptionHandler.getErrorMessage(throwable));
         }
-        return ofC("invalid %s : %s", valueName, NReservedLangUtils.getErrorMessage(throwable));
+        return ofC("invalid %s : %s", valueName, NExceptionHandler.getErrorMessage(throwable));
     }
 
     private static NMsg of(NTextFormatType format, Object message, Object[] params, NTextStyles styles, String codeLang, Level level) {
@@ -258,6 +258,9 @@ public class NMsg {
         if (o instanceof NMsgFormattable) {
             return ((NMsgFormattable) o).toMsg();
         }
+        if (o instanceof Throwable) {
+            return NExceptionHandler.getErrorMessage((Throwable) o);
+        }
         return o;
     }
 
@@ -340,7 +343,7 @@ public class NMsg {
                     return String.valueOf(message); //ignore any style
                 }
             }
-            return "NMsg{" + "message=" + message + ", style=" + format + ", params=" + Arrays.toString(params) + '}';
+            return "NMsg{" + "message=" + message + ", style=" + format + ", params=" + Arrays.toString(_preFormatArr(params)) + '}';
 
         } catch (Exception e) {
             List<Object> a = new ArrayList<>();

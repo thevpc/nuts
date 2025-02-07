@@ -41,7 +41,7 @@ and here is how to compile/generate the website and documentation (assuming you 
 
 ```bash
 cd installers/nuts-release-tool
-java -jar target/nuts-release-tool-0.8.4.0.jar
+java -jar target/nuts-release-tool-$0.8.5.0.jar
 ```
 
 You can now play with your development version of nuts using the generated `nuts-dev` script.
@@ -103,7 +103,7 @@ The repository is organized in several folders described here after:
 * **[web-toolbox]**   : contains a suite of web applications that are based on `nuts` and that complement `nuts` features. This includes `nwar`, a servlet implementation to serve `nuts` workspaces.
 * **[documentation]** : contains the sources of `nuts`'s documentations
   * **[website]**                     : contains the sources of `nuts`'s docusaurus based website.
-  * **[website/.dir-template]**       : contains the effective sources of `nuts`'s documentation (used to create the website as well). To be more precise, the website is built using a two steps process: first we pre-process the markdown files with template processing (using `ntemplate`) that will handle things like `nuts` version variables, documentation structure etc and hence prepare the `docusaurus` base folder. And then, we run `docusaurus` to generate the effective `html`/`js` for the statically compiled website.
+  * **[website/.dir-template]**       : contains the effective sources of `nuts`'s documentation (used to create the website as well). To be more precise, the website is built using a two steps process: first we pre-process the markdown files with template processing (using `ndoc`) that will handle things like `nuts` version variables, documentation structure etc and hence prepare the `docusaurus` base folder. And then, we run `docusaurus` to generate the effective `html`/`js` for the statically compiled website.
   * **[presentations]**               : contains several presentations about `nuts`
   * **[media]**                       : contains images/logos/icons
 
@@ -183,7 +183,7 @@ nuts -w test --debug=5010 my-app
     * njob (a task list commandline tool)
     * noapi (a tool that generated pdf from OpenAPI documentation)
     * nserver (a tool that runs a `nuts` web repository)
-    * ntemplate  (a tool that generates folders and files from templates)
+    * ndoc  (a tool that generates folders and files from templates)
     * nversion (a tool that parses jars, zips, pom files and folders to detect versions)
     * `nuts` Installer (a Swing GUI Installer App)
     * `nuts` Store (a JavaFX GUI App for installing apps using `nuts` without commandline)

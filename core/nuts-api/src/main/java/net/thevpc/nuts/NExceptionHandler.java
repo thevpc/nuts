@@ -172,7 +172,7 @@ public class NExceptionHandler {
         setSession(NSessionAwareExceptionBase.resolveSession(ex).orNull());
         messageFormatted = NSessionAwareExceptionBase.resolveSessionAwareExceptionBase(ex).map(NSessionAwareExceptionBase::getFormattedMessage)
                 .orNull();
-        messageString = NReservedLangUtils.getErrorMessage(ex);
+        messageString = NExceptionHandler.getErrorMessage(ex);
         if (getOut() == null) {
             if (getSession() != null) {
                 try {
@@ -342,5 +342,13 @@ public class NExceptionHandler {
 
     public void handleFatal() {
         System.exit(showError().getCode());
+    }
+
+    public static String getErrorMessage(Throwable ex) {
+        String m = ex.getMessage();
+        if (m == null || m.length() < 5) {
+            m = ex.toString();
+        }
+        return m;
     }
 }
