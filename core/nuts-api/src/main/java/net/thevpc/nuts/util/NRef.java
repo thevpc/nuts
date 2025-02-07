@@ -26,8 +26,9 @@
 package net.thevpc.nuts.util;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
-public class NRef<T> {
+public class NRef<T> implements Supplier<T> {
 
     private T value;
     private boolean set;

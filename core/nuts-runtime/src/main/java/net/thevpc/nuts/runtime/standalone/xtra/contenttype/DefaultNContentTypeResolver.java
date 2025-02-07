@@ -55,8 +55,9 @@ import java.util.*;
 public class DefaultNContentTypeResolver implements NContentTypeResolver {
 
     private NWorkspace workspace;
+
     public DefaultNContentTypeResolver(NWorkspace workspace) {
-        this.workspace=workspace;
+        this.workspace = workspace;
     }
 
     public NCallableSupport<String> probeContentType(NPath path) {
@@ -114,6 +115,39 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
         } catch (IOException e) {
             //ignore
         }
+        if (NWorkspace.of().getOsFamily().isPosix()) {
+            if (contentType == null) {
+                try {
+                    String c = NExecCmd.of("file", "--mime-type", file.toString())
+                            .failFast()
+                            .getGrabbedOutString();
+                    if (c != null) {
+                        int i = c.lastIndexOf(':');
+                        if (i > 0) {
+                            contentType = c.substring(i + 1).trim();
+                        }
+                    }
+                } catch (Exception e) {
+                    //ignore
+                }
+            }
+            if (contentType == null) {
+                try {
+                    String c = NExecCmd.of("xdg-mime", "query", "filetype", file.toString())
+                            .failFast()
+                            .getGrabbedOutString();
+                    if (c != null) {
+                        int i = c.indexOf(':');
+                        if (i > 0) {
+                            contentType = c.substring(i + 1).trim();
+                        }
+                    }
+                } catch (Exception e) {
+                    //ignore
+                }
+            }
+        }
+
         if (contentType != null) {
             switch (contentType) {
                 case "application/zip": {
@@ -147,10 +181,10 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
                     break;
                 }
                 case "text/plain": {
-                    if(file.getFileName().toString().endsWith(".hl")){
+                    if (file.getFileName().toString().endsWith(".hl")) {
                         return "text/x-hl";
                     }
-                    if(file.getFileName().toString().endsWith(".ntf")){
+                    if (file.getFileName().toString().endsWith(".ntf")) {
                         return "text/x-ntf";
                     }
                     break;
@@ -175,7 +209,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
         if (contentType != null) {
             return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, contentType);
         }
-        return NCallableSupport.invalid(() ->NMsg.ofInvalidValue("content-type"));
+        return NCallableSupport.invalid(() -> NMsg.ofInvalidValue("content-type"));
     }
 
     @Override
@@ -195,7 +229,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
         return NConstants.Support.DEFAULT_SUPPORT;
     }
 
-    public DefaultNContentTypeResolverModel model(){
+    public DefaultNContentTypeResolverModel model() {
         synchronized (workspace) {
             return NApp.of().getOrComputeProperty(
                     DefaultNContentTypeResolverModel.class.getName(), NScopeType.WORKSPACE,
@@ -203,7 +237,8 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
             );
         }
     }
-    public static class DefaultNContentTypeResolverModel{
+
+    public static class DefaultNContentTypeResolverModel {
         private Map<String, Set<String>> contentTypesToExtensions;
         private Map<String, Set<String>> extensionsToContentType;
 

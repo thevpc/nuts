@@ -1,8 +1,8 @@
 #!/bin/bash
-rm -Rf /home/vpc/.config/nuts/
-rm -Rf /home/vpc/.local/share/nuts/
-rm -Rf /home/vpc/.local/bin/nuts/
-rm -Rf /home/vpc/.local/lib/nuts/
-rm -Rf /home/vpc/.local/log/nuts/
-rm -Rf /home/vpc/.local/state/nuts/
-rm -Rf /home/vpc/xprojects/nuts/nuts-community/test/nuts-runtime-test/runtime/test
+rm -Rf $HOME/.config/nuts/
+rm -Rf $HOME/.local/share/nuts/
+rm -Rf $HOME/.local/bin/nuts/
+rm -Rf $HOME/.local/lib/nuts/
+rm -Rf $HOME/.local/log/nuts/
+rm -Rf $HOME/.local/state/nuts/
+rm -Rf $HOME/xprojects/nuts/nuts-community/nuts/test/nuts-runtime-test/runtime/test

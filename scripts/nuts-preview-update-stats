@@ -1,2 +1,2 @@
 #!/bin/bash
-nuts settings update stats /home/vpc/xprojects/nuts/nuts-preview/
+nuts settings update stats $HOME/xprojects/nuts/nuts-preview/
