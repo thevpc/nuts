@@ -504,6 +504,16 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
+    public boolean withFirst(NCmdLineProcessor... consumers) {
+        for (NCmdLineProcessor consumer : consumers) {
+            if(consumer.process(this)) {
+               return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public NOptional<NLiteral> nextEntryValue() {
         return nextEntryValue(new String[0]);
     }
@@ -1388,6 +1398,24 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
+    public NCmdLine forEachPeek(NCmdLineProcessor ...actions) {
+        NAssert.requireTrue(actions.length>0,()->NMsg.ofC("missing actions"));
+        while(hasNext()){
+            boolean some=false;
+            for (NCmdLineProcessor action : actions) {
+                if(action.process(this)){
+                    some=true;
+                    break;
+                }
+            }
+            if(!some){
+                throwUnexpectedArgument();
+            }
+        }
+        return this;
+    }
+
+    @Override
     public NCmdLine forEachPeek(NCmdLineConsumer action, NCmdLineContext context) {
         NAssert.requireNonNull(action, "action");
         if (context == null) {
@@ -1430,6 +1458,127 @@ public class DefaultNCmdLine implements NCmdLine {
             }
         }
         return this;
+    }
+
+    @Override
+    public NCmdLineNamedAction with(String... names) {
+        boolean acceptable0=false;
+        for (String name : names) {
+            String[] nameSeqArray = NStringUtils.split(name, " ").toArray(new String[0]);
+            boolean acceptable=true;
+            for (int i = 0; i < nameSeqArray.length; i++) {
+                NOptional<NArg> c = get(i);
+                if(!c.isPresent() || !c.get().key().equals(nameSeqArray[i])){
+                    acceptable=false;
+                }
+            }
+            if(acceptable){
+                acceptable0=true;
+                break;
+            }
+        }
+        boolean finalAcceptable = acceptable0;
+        return new NCmdLineNamedAction() {
+            public boolean isAcceptable(){
+                return finalAcceptable;
+            }
+            @Override
+            public boolean consumeFlag(NArgProcessor<Boolean> consumer) {
+                if(!finalAcceptable){
+                    return false;
+                }
+                NOptional<NArg> v = next(NArgType.FLAG, names);
+                if (v.isPresent()) {
+                    NArg a = v.get();
+                    if (a.isActive()) {
+                        consumer.run(a.getBooleanValue().get(), a);
+                        return true;
+                    }
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public boolean consumeOptionalFlag(NArgProcessor<NOptional<Boolean>> consumer) {
+                if(!finalAcceptable){
+                    return false;
+                }
+                NOptional<NArg> v = next(NArgType.FLAG, names);
+                if (v.isPresent()) {
+                    NArg a = v.get();
+                    if (a.isActive()) {
+                        consumer.run(a.getBooleanValue(), a);
+                        return true;
+                    }
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public boolean consumeTrueFlag(NArgProcessor<Boolean> consumer) {
+                if(!finalAcceptable){
+                    return false;
+                }
+                return consumeFlag((value, arg) -> {
+                    if (value) {
+                        consumer.run(true, arg);
+                    }
+                });
+            }
+
+            @Override
+            public boolean consumeOptionalEntry(NArgProcessor<NOptional<String>> consumer) {
+                if(!finalAcceptable){
+                    return false;
+                }
+                NOptional<NArg> v = next(NArgType.ENTRY, names);
+                if (v.isPresent()) {
+                    NArg a = v.get();
+                    if (a.isActive()) {
+                        consumer.run(a.getStringValue(), a);
+                        return true;
+                    }
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public boolean consumeEntry(NArgProcessor<String> consumer) {
+                if(!finalAcceptable){
+                    return false;
+                }
+                NOptional<NArg> v = next(NArgType.ENTRY, names);
+                if (v.isPresent()) {
+                    NArg a = v.get();
+                    if (a.isActive()) {
+                        consumer.run(a.getStringValue().get(), a);
+                        return true;
+                    }
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public boolean consumeEntryValue(NArgProcessor<NLiteral> consumer) {
+                if(!finalAcceptable){
+                    return false;
+                }
+                NOptional<NArg> v = next(NArgType.ENTRY, names);
+                if (v.isPresent()) {
+                    NArg a = v.get();
+                    if (a.isActive()) {
+                        consumer.run(a.getValue(), a);
+                        return true;
+                    }
+                    return true;
+                }
+                return false;
+            }
+        };
     }
 
     /// ///////////////////////////////// LOOKUPS

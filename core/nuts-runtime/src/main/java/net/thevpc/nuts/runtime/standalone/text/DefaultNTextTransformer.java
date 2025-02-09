@@ -16,7 +16,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class DefaultNTextTransformer implements NTextTransformer {
-    private final NTexts txt;
+    private final NTexts txts;
     private final NTextTransformConfig config;
     private final NWorkspace workspace;
     private final NWorkspaceVarExpansionFunction d;
@@ -24,7 +24,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
     public DefaultNTextTransformer(NTextTransformConfig config, NWorkspace workspace) {
         this.workspace = workspace;
         this.config = config;
-        txt = NTexts.of();
+        txts = NTexts.of();
         d = NWorkspaceVarExpansionFunction.of();
     }
 
@@ -70,7 +70,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
 //                    if (all.size() == all2.size()) {
 //                        return text;
 //                    }
-                    text= txt.ofList(all2);
+                    text= txts.ofList(all2);
                 }
                 return mapApplyThemeAndFilter(text);
             }
@@ -91,7 +91,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
                     if (all.size() == all2.size()) {
                         return text;
                     }
-                    return txt.ofList(all2);
+                    return txts.ofList(all2);
                 } else {
                     return text;
                 }
@@ -102,7 +102,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
                 if (config.isFlatten()) {
                     text = flatten(str);
                 } else {
-                    text = txt.ofPlain(str);
+                    text = txts.ofPlain(str);
                 }
                 return text;
             }
@@ -116,7 +116,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
                             if (isNewline(x)) {
                                 cc.add(x);
                             } else {
-                                cc.add(txt.ofStyled(x, t.getStyles()));
+                                cc.add(txts.ofStyled(x, t.getStyles()));
                             }
                         }
                     }else {
@@ -124,7 +124,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
                             if (isNewline(x)) {
                                 return x;
                             }
-                            return txt.ofStyled(x, t.getStyles());
+                            return txts.ofStyled(x, t.getStyles());
                         }));
                     }
                 }else{
@@ -139,11 +139,11 @@ public class DefaultNTextTransformer implements NTextTransformer {
                     })).collect(Collectors.toList()));
                 }else{
                     if (config.isApplyTheme()) {
-                        NTextFormatTheme theme = NTexts.of().getTheme(config.getThemeName()).orElse(NTexts.of().getTheme());
+                        NTextFormatTheme theme = txts.getTheme(config.getThemeName()).orElse(txts.getTheme());
                         NTextStyles basicStyles = theme.toBasicStyles(t.getStyles(),config.isBasicTrueStyles());
                         return compressTxt(cc.stream().map(x->mapTxt(x, y -> {
                             if(y.getType() == NTextType.STYLED){
-                                return txt.ofStyled(((NTextStyled) y).getChild(), basicStyles);
+                                return txts.ofStyled(((NTextStyled) y).getChild(), basicStyles);
                             }
                             if(y.getType() == NTextType.PLAIN){
                                 //newline
@@ -151,8 +151,10 @@ public class DefaultNTextTransformer implements NTextTransformer {
                             }
                             throw new IllegalArgumentException("unexpected...");
                         })).collect(Collectors.toList()));
+                    }else{
+                        return txts.ofStyled(compressTxt(cc), t.getStyles());
                     }
-                    return compressTxt(cc);
+                    //return compressTxt(cc);
                 }
             }
             case LINK: {
@@ -164,7 +166,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
                         if (isNewline(p)) {
                             return p;
                         }
-                        return txt.ofLink(p.getText());
+                        return txts.ofLink(p.getText());
                     });
                 }
                 if (config.isNormalize()) {
@@ -173,7 +175,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
                             return x;
                         }
                         String lnk = ((NTextLink) x).getText();
-                        return txt.ofStyled(lnk, NTextStyle.underlined());
+                        return txts.ofStyled(lnk, NTextStyle.underlined());
                     });
                 }
                 return mapApplyThemeAndFilter(text);
@@ -199,14 +201,14 @@ public class DefaultNTextTransformer implements NTextTransformer {
                         prefix = CoreStringUtils.fillString('#', level) + ") ";
                     }
                     List<NText> li = new ArrayList<>();
-                    li.add(txt.ofPlain(prefix + " "));
+                    li.add(txts.ofPlain(prefix + " "));
                     if (config.isFlatten()) {
                         li.addAll(asList(t.getChild()));
                     } else {
                         li.add(t.getChild());
                     }
-                    li.add(txt.ofPlain("\n"));
-                    text = txt.ofStyled(txt.ofList(li), NTextStyle.primary(level));
+                    li.add(txts.ofPlain("\n"));
+                    text = txts.ofStyled(txts.ofList(li), NTextStyle.primary(level));
                 }
                 return mapApplyThemeAndFilter(text);
             }
@@ -219,9 +221,9 @@ public class DefaultNTextTransformer implements NTextTransformer {
                     if (cmd != null && cmd.length() > 0) {
                         String p = cmd.next().flatMap(NArg::asString).orNull();
                         NPath newP = resolveRelativePath(p, config.getCurrentDir());
-                        NText n = txt.parser().parse(newP);
+                        NText n = txts.parser().parse(newP);
                         //do not continue
-                        return txt.transform(n, config.copy()
+                        return txts.transform(n, config.copy()
                                 .setProcessIncludes(true)
                                 .setCurrentDir(newP.getParent())
                                 .setImportClassLoader(config.getImportClassLoader())
@@ -236,7 +238,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
                     text = t.highlight();
                     // We have no insurance that highlight is not using special nodes so
                     // we enforce flattening
-                    text = txt.transform(text, context.getConfig().copy()
+                    text = txts.transform(text, context.getConfig().copy()
                             .setFlatten(true)
                             .setNormalize(config.isNormalize())
                             .setProcessVars(config.isProcessVars())
@@ -244,13 +246,13 @@ public class DefaultNTextTransformer implements NTextTransformer {
                     );
                 }
                 if (config.isApplyTheme()) {
-                    NTextFormatTheme theme = NTexts.of().getTheme(config.getThemeName()).orElse(NTexts.of().getTheme());
+                    NTextFormatTheme theme = txts.getTheme(config.getThemeName()).orElse(txts.getTheme());
                     text = mapTxt(text, x -> {
                         if (x.getType() == NTextType.STYLED) {
                             NTextStyled y = (NTextStyled) x;
                             NTextStyles basicStyles = theme.toBasicStyles(y.getStyles(),config.isBasicTrueStyles());
                             if(!y.getStyles().equals(basicStyles)){
-                                return txt.ofStyled(y.getChild(), basicStyles);
+                                return txts.ofStyled(y.getChild(), basicStyles);
                             }
                             return x;
                         }
@@ -273,13 +275,13 @@ public class DefaultNTextTransformer implements NTextTransformer {
             });
         }else{
             if (config.isApplyTheme()) {
-                NTextFormatTheme theme = NTexts.of().getTheme(config.getThemeName()).orElse(NTexts.of().getTheme());
+                NTextFormatTheme theme = txts.getTheme(config.getThemeName()).orElse(txts.getTheme());
                 text = mapTxt(text, x -> {
                     if (x.getType() == NTextType.STYLED) {
                         NTextStyled y = (NTextStyled) x;
                         NTextStyles basicStyles = theme.toBasicStyles(y.getStyles(),config.isBasicTrueStyles());
                         if(!y.getStyles().equals(basicStyles)){
-                            return txt.ofStyled(y.getChild(), basicStyles);
+                            return txts.ofStyled(y.getChild(), basicStyles);
                         }
                         return x;
                     }
@@ -295,7 +297,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
     }
 
     private NText compressTxt(List<NText> li) {
-        return li.isEmpty() ? null : li.size() == 1 ? li.get(0) : txt.ofList(li);
+        return li.isEmpty() ? null : li.size() == 1 ? li.get(0) : txts.ofList(li);
     }
 
     private boolean isNewline(String c) {
@@ -326,7 +328,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
     private NText applyFlatStyle(NText tt, NTextStyles styles) {
         List<NText> li = new ArrayList<>();
         for (NText c : asList(tt)) {
-            li.add(txt.ofStyled(c, styles));
+            li.add(txts.ofStyled(c, styles));
         }
         return compressTxt(li);
     }
@@ -348,7 +350,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
     private NText flatten(String tt) {
         List<NText> li = new ArrayList<>();
         for (String line : CoreStringUtils.splitOnNewlines(tt)) {
-            li.add(txt.ofPlain(line));
+            li.add(txts.ofPlain(line));
         }
         return compressTxt(li);
     }

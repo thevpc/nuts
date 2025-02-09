@@ -127,7 +127,10 @@ public class NTFParser2 extends AbstractNTextNodeParser {
                             NStringMatchResult n1 = q.peekString("}##", fully);
                             if (n1.mode() == NMatchType.FULL_MATCH) {
                                 q.read(n1.count());
-                                return pushUpCompositeStyle();
+                                NText nText = pushUpCompositeStyle();
+                                if(nText!=null) {
+                                    return nText;
+                                }
                             } else if (n1.mode() == NMatchType.NO_MATCH) {
                                 buffer.append(q.read());
                             } else {
@@ -357,7 +360,11 @@ public class NTFParser2 extends AbstractNTextNodeParser {
 //                                    if(containsNewline(buffer.toString().toCharArray())) {
 //                                        q.readNewLine(true);
 //                                    }
-                                    return pushUpCode();
+                                    NText nText = pushUpCode();
+                                    if(nText!=null){
+                                        return nText;
+                                    }
+                                    break;
                                 }
                                 case NO_MATCH: {
                                     wasNewLine = false;
@@ -535,6 +542,14 @@ public class NTFParser2 extends AbstractNTextNodeParser {
                 b++;
                 visitor.visit(n);
             } else {
+                if(q.hasNext()){
+                    n = readFully();
+                    if(n!=null){
+                        visitor.visit(n);
+                    }else {
+                        throw new IllegalArgumentException("parseRemaining failed because readFull returns null whereas the stream is not empty?");
+                    }
+                }
                 break;
             }
         }

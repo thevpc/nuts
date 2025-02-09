@@ -1,7 +1,6 @@
 ---
-id: tutorial
-title: Tutorial
-sidebar_label: Tutorial
+id: gui-installation
+title: GUI Installation
 ---
 
 

@@ -1332,4 +1332,12 @@ public class Test04_NTFTest {
 //        Assertions.assertEquals(NTextType.TITLE, ((NTextList) parsed).get(0).getType());
 //        Assertions.assertEquals(NTextType.TITLE, ((NTextList) parsed).get(1).getType());
     }
+
+    @Test
+    public void test43(){
+        String str = "##{keyword:##{keyword:mkdir}##\u001E}##\u001E ##{option:##{option:-p}##\u001E}##\u001E /home/vpc/.m2/repository/net/thevpc/nuts";
+        NOut.println(str);
+        NText parsed = NText.of(str);
+        TestUtils.println(parsed);
+    }
 }

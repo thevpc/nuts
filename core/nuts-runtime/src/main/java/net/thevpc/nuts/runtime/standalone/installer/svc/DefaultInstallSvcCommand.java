@@ -356,12 +356,9 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         return true;
     }
 
-    private void logVerbose(String msg) {
+    private void logVerbose(NMsg msg) {
         if (verbose) {
-            NSession session = workspace.currentSession();
-            if (session.isTrace()) {
-                NOut.println(NMsg.ofC("[DEBUG] %s", msg));
-            }
+            NTrace.println(NMsg.ofC("[DEBUG] %s", msg));
         }
     }
 
@@ -378,29 +375,20 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
     }
 
     private void logInfo(String msg) {
-        NSession session = workspace.currentSession();
         for (String line : SvcHelper.splitLines(msg)) {
-            if (session.isTrace()) {
-                NOut.println(NMsg.ofC("[INFO ] %s", line));
-            }
+            NTrace.println(NMsg.ofC("[INFO ] %s", line));
         }
     }
 
     private void logWarn(String msg) {
-        NSession session = workspace.currentSession();
         for (String line : SvcHelper.splitLines(msg)) {
-            if (session.isTrace()) {
-                NOut.println(NMsg.ofC("[WARN ] %s", line));
-            }
+            NTrace.println(NMsg.ofC("[WARN ] %s", line));
         }
     }
 
     private void logError(String msg) {
-        NSession session = workspace.currentSession();
         for (String line : SvcHelper.splitLines(msg)) {
-            if (session.isTrace()) {
-                NOut.println(NMsg.ofC("[ERROR ] %s", line));
-            }
+            NTrace.println(NMsg.ofC("[ERROR ] %s", line));
         }
     }
 
@@ -415,26 +403,26 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
     @Override
     public NOsServiceType getSystemServiceType() {
         if (systemServiceType == null) {
-            logVerbose("Checking if systemctl is available...");
+            logVerbose(NMsg.ofC("Checking if systemctl is available..."));
             try {
                 runSystemCommand("systemctl", "--version");
-                logVerbose("[SUCCESS] found valid systemctl...");
+                logVerbose(NMsg.ofC("[SUCCESS] found valid systemctl..."));
                 systemServiceType = NOsServiceType.SYSTEMD;
             } catch (Exception e) {
                 //
             }
-            logVerbose("[FAIL   ] systemctl not found...");
+            logVerbose(NMsg.ofC("[FAIL   ] systemctl not found..."));
             if (systemServiceType == null) {
-                logVerbose("Checking if initd is available...");
+                logVerbose(NMsg.ofC("Checking if initd is available..."));
                 try {
                     if (new File("/etc/init.d/").isDirectory()) {
-                        logVerbose("[SUCCESS] found valid initd...");
+                        logVerbose(NMsg.ofC("[SUCCESS] found valid initd..."));
                         systemServiceType = NOsServiceType.INITD;
                     }
                 } catch (Exception e) {
                     //
                 }
-                logVerbose("[FAIL   ] initd not found...");
+                logVerbose(NMsg.ofC("[FAIL   ] initd not found..."));
             }
             if (systemServiceType == null) {
                 systemServiceType = NOsServiceType.UNSUPPORTED;
@@ -444,7 +432,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
     }
 
     private void runSystemCommand(String... cmd) {
-        logVerbose("[RUNNING COMMAND] " + formatCommand(cmd));
+        logVerbose(NMsg.ofC("[RUNNING COMMAND] %s", NCmdLine.of(cmd)));
         ProcessBuilder processBuilder = new ProcessBuilder(cmd);
         processBuilder.inheritIO();
         Process p = null;
@@ -452,7 +440,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         try {
             p = processBuilder.start();
             if ((ret = p.waitFor()) == 0) {
-                logVerbose("[RUNNING COMMAND] COMMAND SUCCEEDED : code " + ret);
+                logVerbose(NMsg.ofC("[RUNNING COMMAND] COMMAND SUCCEEDED : code %s", ret));
                 return;
             }
         } catch (IOException e) {
@@ -460,7 +448,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         } catch (InterruptedException e) {
             throw new UncheckedIOException(new IOException(e));
         }
-        logVerbose("[RUNNING COMMAND] COMMAND FAILED : code " + ret);
+        logVerbose(NMsg.ofC("[RUNNING COMMAND] COMMAND FAILED : code %s", ret));
         throw new NExecutionException(NMsg.ofC("run command returned %s", ret), ret);
     }
 
@@ -470,7 +458,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
 
     private void createFileFromTemplate(String resource0, String file) {
         String resource = "/net/thevpc/nuts/runtime/svc/" + resource0;
-        logVerbose("[FILE] CREATE FILE " + resource);
+        logVerbose(NMsg.ofC("[FILE] CREATE FILE %s",NMsg.ofStyledPath(resource)));
         String lineSeparator = System.getProperty("line.separator");
         if (getClass().getResource(resource) == null) {
             throw new RuntimeException("resource not found " + resource);
@@ -482,7 +470,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
                     for (String line2 : SvcHelper.splitLines(vars.replaceVars(line))) {
                         bw.write(line2);
                         bw.write(lineSeparator);
-                        logVerbose("[FILE] " + line2);
+                        logVerbose(NMsg.ofC("[FILE] %s",NMsg.ofStyledPath(line2)));
                     }
                 }
             }
@@ -617,18 +605,18 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
     }
 
     private void runAsRoot(ScriptBuilder script) {
-        logVerbose("[ROOT-SCRIPT] " + script.name + " (" + script.description + ")");
+        logVerbose(NMsg.ofC("[ROOT-SCRIPT] %s (%s)",NMsg.ofStyledPrimary1(script.name),script.description));
         File tempFile = null;
         try {
             tempFile = File.createTempFile("script-", ".root");
             try (PrintStream out = new PrintStream(tempFile)) {
                 for (String s : script.lines()) {
                     out.println(s);
-                    logVerbose("[ROOT-SCRIPT] " + s);
+                    logVerbose(NMsg.ofC("[ROOT-SCRIPT] %s", s));
                 }
             }
             tempFile.setExecutable(true);
-            logVerbose("[ROOT-SCRIPT] start ");
+            logVerbose(NMsg.ofC("[ROOT-SCRIPT] start "));
             runSystemCommandAsRoot(tempFile.getPath());
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);

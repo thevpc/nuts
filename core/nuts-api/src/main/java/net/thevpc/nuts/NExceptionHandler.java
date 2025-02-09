@@ -194,7 +194,7 @@ public class NExceptionHandler {
                     // This is kind of odd, so will ignore message fm
                     messageFormatted = null;
                 } else {
-                    setOut(NLog.NULL);
+                    //setOut(NLog.NULL);
                 }
             }
         } else {
@@ -286,22 +286,35 @@ public class NExceptionHandler {
                     }
                 });
             } else {
-                if (out == null) {
-                    out = NLog.NULL;
-                }
-                NLogOp logOp = out.with().level(Level.OFF).verb(NLogVerb.FAIL);
-                if (messageFormatted != null) {
-                    logOp.log(messageFormatted);
-                } else {
-                    logOp.log(NMsg.ofPlain(messageString));
-                }
-                if (stacktrace) {
-                    logOp.log(NMsg.ofPlain("---------------"));
-                    logOp.log(NMsg.ofPlain(">  STACKTRACE :"));
-                    logOp.log(NMsg.ofPlain("---------------"));
-                    logOp.log(NMsg.ofPlain(
-                            NStringUtils.stacktrace(ex)
-                    ));
+                if (out != null) {
+                    NLogOp logOp = out.with().level(Level.OFF).verb(NLogVerb.FAIL);
+                    if (messageFormatted != null) {
+                        logOp.log(messageFormatted);
+                    } else {
+                        logOp.log(NMsg.ofPlain(messageString));
+                    }
+                    if (stacktrace) {
+                        logOp.log(NMsg.ofPlain("---------------"));
+                        logOp.log(NMsg.ofPlain(">  STACKTRACE :"));
+                        logOp.log(NMsg.ofPlain("---------------"));
+                        logOp.log(NMsg.ofPlain(
+                                NStringUtils.stacktrace(ex)
+                        ));
+                    }
+                }else{
+                    if (messageFormatted != null) {
+                        System.err.println(messageFormatted);
+                    } else {
+                        System.err.println(NMsg.ofPlain(messageString));
+                    }
+                    if (stacktrace) {
+                        System.err.println(NMsg.ofPlain("---------------"));
+                        System.err.println(NMsg.ofPlain(">  STACKTRACE :"));
+                        System.err.println(NMsg.ofPlain("---------------"));
+                        System.err.println(NMsg.ofPlain(
+                                NStringUtils.stacktrace(ex)
+                        ));
+                    }
                 }
             }
         }

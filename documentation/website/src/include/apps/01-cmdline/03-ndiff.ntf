@@ -9,4 +9,4 @@ installCommand: nuts install ndiff
 ---
 
 
-{{include($"$root/toolbox/ndiff/src/main/resources/net/thevpc/nuts/toolbox/ndiff.ntf"}}
+{{include($"$root/../nuts-incubating-tools/ndiff/src/main/resources/net/thevpc/nuts/toolbox/ndiff.ntf"}}

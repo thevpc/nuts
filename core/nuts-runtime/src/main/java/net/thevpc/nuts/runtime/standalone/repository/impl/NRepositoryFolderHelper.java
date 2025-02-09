@@ -449,7 +449,7 @@ public class NRepositoryFolderHelper {
         }
         return NLock.ofId(id).callWith(() -> {
 
-            NDescriptorFormat.of(desc).setNtf(false).print(descFile);
+            NDescriptorFormat.ofPlain(desc).print(descFile);
             byte[] bytes = NDigest.of().sha1().setSource(desc).computeString().getBytes();
             NCp.of()
                     .from(NInputSource.of(

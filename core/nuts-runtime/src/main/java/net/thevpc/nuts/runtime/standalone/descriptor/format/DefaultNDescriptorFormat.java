@@ -70,15 +70,12 @@ public class DefaultNDescriptorFormat extends DefaultFormatBase<NDescriptorForma
     public void print(NPrintStream out) {
         if (isNtf()) {
             ByteArrayOutputStream os=new ByteArrayOutputStream();
-            NElements.of()
-                    .setNtf(true).json()
-                    .setValue(desc).setCompact(isCompact())
+            NElements.ofNtfJson(desc).setCompact(isCompact())
                     .print(os);
             NTextCode r = NText.ofCode("json", os.toString());
             out.print(r);
         } else {
-            NElements.of().setNtf(false).json()
-                    .setValue(desc).setCompact(isCompact())
+            NElements.ofPlainJson(desc).setCompact(isCompact())
                     .print(out);
         }
     }

@@ -268,9 +268,9 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 if (def.getId().equalsShortId(session.getWorkspace().getApiId())) {
                     extraStartWithAppArgs.addAll(ncmdLine.toStringList());
                 }
-                String bootArgumentsString = NCmdLineFormat.of(ncmdLine
+                String bootArgumentsString = NCmdLineFormat.ofPlain(ncmdLine
                         .add(executionContext.getDefinition().getId().getLongName())
-                        ).setShellFamily(NShellFamily.SH).setNtf(false).toString();
+                        ).setShellFamily(NShellFamily.SH).toString();
                 if (!NBlankable.isBlank(bootArgumentsString)) {
                     osEnv.put("NUTS_BOOT_ARGS", bootArgumentsString);
                     joptions.getJvmArgs().add("-Dnuts.boot.args=" + bootArgumentsString);

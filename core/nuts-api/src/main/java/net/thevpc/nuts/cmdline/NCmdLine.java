@@ -362,6 +362,8 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      */
     NOptional<NArg> nextEntry(String... names);
 
+    boolean withFirst(NCmdLineProcessor ...consumers);
+
     /**
      * consume next argument with boolean value and run {@code consumer}
      *
@@ -423,6 +425,8 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     boolean withNextEntryValue(NArgProcessor<NLiteral> consumer, String... names);
 
     boolean withNextValue(NArgProcessor<NLiteral> consumer);
+
+    NCmdLineNamedAction with(String... names);
 
     /**
      * next argument as entry (key=value). equivalent to
@@ -669,6 +673,8 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     NCmdLine forEachPeek(NCmdLineConsumer action, NCmdLineContext context);
 
     NCmdLine forEachPeek(NCmdLineConsumer action);
+
+    NCmdLine forEachPeek(NCmdLineProcessor ...actions);
 
     NCmdLine copy();
 

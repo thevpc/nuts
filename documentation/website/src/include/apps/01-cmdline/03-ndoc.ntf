@@ -10,4 +10,4 @@ exampleCommand: nuts ndiff my-app-v1.jar my-app-v2.jar
 ---
 
 
-{{include($"$root/toolbox/ndoc/src/main/resources/net/thevpc/nuts/toolbox/ndoc.ntf"}}
+{{include($"$root/../ndoc/ndoc/src/main/resources/net/thevpc/nuts/toolbox/ndoc.ntf"}}

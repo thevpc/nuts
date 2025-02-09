@@ -10,4 +10,4 @@ exampleCommand: ncode -t String . foo.zip
 ---
 
 
-{{include($"$root/toolbox/ncode/src/main/resources/net/thevpc/nuts/toolbox/ncode.ntf"}}
+{{include($"$root/../nuts-incubating-tools/ncode/src/main/resources/net/thevpc/nuts/toolbox/ncode.ntf"}}

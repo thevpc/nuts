@@ -54,8 +54,20 @@ import java.util.function.Predicate;
 public interface NElements extends NContentTypeFormat {
 
 
+    static NElements of(Object any) {
+        return of().setValue(any);
+    }
+
     static NElements of() {
        return NExtensions.of(NElements.class);
+    }
+
+    static NElements ofPlainJson(Object any) {
+       return of().setValue(any).setNtf(false).json();
+    }
+
+    static NElements ofNtfJson(Object any) {
+       return of().setValue(any).setNtf(true).json();
     }
 
     /**

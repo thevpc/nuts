@@ -40,6 +40,10 @@ import net.thevpc.nuts.NShellFamily;
  */
 public interface NCmdLineFormat extends NFormat {
 
+    static NCmdLineFormat ofPlain(NCmdLine value) {
+        return of().setNtf(false).setValue(value);
+    }
+
     static NCmdLineFormat of(NCmdLine value) {
         return of().setValue(value);
     }

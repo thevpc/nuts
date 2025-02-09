@@ -97,8 +97,8 @@ public abstract class AbstractNUndeployCmd extends NWorkspaceCmdBase<NUndeployCm
         result.add(id);
         NSession session=workspace.currentSession();
         if (session.isTrace()) {
-            if (session.getOutputFormat() == null || session.getOutputFormat().orDefault() == NContentType.PLAIN) {
-                if (session.getOutputFormat() == null || session.getOutputFormat().orDefault() == NContentType.PLAIN) {
+            if (session.getOutputFormat().orNull() == null || session.getOutputFormat().orDefault() == NContentType.PLAIN) {
+                if (session.getOutputFormat().orNull() == null || session.getOutputFormat().orDefault() == NContentType.PLAIN) {
                     session.getTerminal().out().println(NMsg.ofC("Nuts %s undeployed successfully", id));
                 }
             }
