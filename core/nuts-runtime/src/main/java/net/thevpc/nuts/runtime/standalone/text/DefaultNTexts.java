@@ -424,7 +424,7 @@ public class DefaultNTexts implements NTexts {
         if (e != null) {
             return e.ofText(t, this, workspace);
         }
-        NFormat nFormat = NFormats.of().ofFormat(c).orNull();
+        NFormat nFormat = NFormats.of().ofFormat(t).orNull();
         if (nFormat != null) {
             return (nFormat.setNtf(true).format());
         }

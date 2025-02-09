@@ -167,12 +167,12 @@
                     
                     <ul class="nav flex-column">
                         
-                        <li class="nav-item"><a class="nav-link" href="#installation-preview">2.1 Preview Env</a>
+                        <li class="nav-item"><a class="nav-link" href="#installation-preview">2.1 Personal Use (Default)</a>
                             
                             
                         </li>
                         
-                        <li class="nav-item"><a class="nav-link" href="#installation-prod">2.2 Production Env</a>
+                        <li class="nav-item"><a class="nav-link" href="#installation-prod">2.2 Production Use</a>
                             
                             
                         </li>
@@ -661,9 +661,9 @@ nuts --exec -Xms1G -Xmx2G ./my-app.jar argument-1 argument-2
                         
                             <!--pageLevel2-->
                             <section id="installation-preview" >
-                                <h3 class="main-section2"><a href="#Installation">2.1 Preview Env</a></h3>
+                                <h3 class="main-section2"><a href="#Installation">2.1 Personal Use (Default)</a></h3>
                                 <div class="text-card">
-                                <p class="md-phrase">Installation of <mark class="md-code md-code-` ">nuts</mark> for preview/test/evaluation or simply for personal use is based on a rolling <mark class="md-code md-code-` ">nuts</mark> binaries version that is released a faster pace than the production version (generally a semi-monthly schedule). Versions are not rock solid but still they are "very" usable and more importantly they include all latest features. Preview releases are deployed to a development repository and hence are made accessible using a repository swith option.</p>
+                                <p class="md-phrase">This is mostly the recommanded installation mode if you are not sure what mode suits you the best. Preview mode helps you using the most uptodate/bug free version and with newest features as well. Installation of <mark class="md-code md-code-` ">nuts</mark> for preview/test/evaluation or simply for personal use is based on a rolling <mark class="md-code md-code-` ">nuts</mark> binaries version that is released a faster pace than the production version (generally a semi-monthly schedule). Versions are not rock solid but still they are "very" usable and more importantly they include all latest features. Preview releases are deployed to a development repository and hence are made accessible using a repository swith option.</p>
 <H4 class="md-title-2"> System Requirements</H4>
 <p class="md-phrase">Here are all <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> requirements :</p>
 <ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">Java</b> : <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> requires a valid Java Runtime Environment (JRE) or Java Development Kit (JDK) version <b class="md-bold">8</b> or above to execute. Please note that you need to update your 1.8 version to the latest update (update 150+)</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">System Memory</b>: <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> memory footprint is very little and has no minimum RAM requirements.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Disk</b>: 5Mo on the disk are required for the <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> installation itself. In addition to that, additional disk space will be used for your local Nuts workspace. The size of your local workspace will vary depending on usage but expect at least 500MB.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Operating System</b>: <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> is able to run on any java enabled Operating System including all recent versions of Windows, Linux and MacOS.</p></li></ul>
@@ -713,7 +713,7 @@ Supported Windows systems include Window 7 and later.
 
 </div>
 </div>
-<div class="tab-pane fade show active" id="idi11" role="tabpanel" aria-labelledby="idi11-tab"><b class="md-bold">for testing or development (using wget):</b>
+<div class="tab-pane fade show active" id="idi11" role="tabpanel" aria-labelledby="idi11-tab"><b class="md-bold">for testing or development (using curl):</b>
 This will reset/delete any previous nuts installation before installing the latest version. Removing the 
 <mark class="md-code md-code-` ">Z</mark>
  modifier (replace 
@@ -721,9 +721,9 @@ This will reset/delete any previous nuts installation before installing the late
  by 
 <mark class="md-code md-code-` ">-y</mark>
 ) flag if you do not want to reset the workspace.
+ 
 <pre class="md-code md-code-``` "><code class="">
-$ wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
-$ java -jar nuts.jar -r=+preview -Zy
+$ curl -sL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar &amp;&amp; java -jar nuts.jar -ZyS
 $ exit
 </code></pre>
 Linux Systems installation is based on bash shell. First launch will configure "~/.bashrc" so that 
@@ -756,7 +756,7 @@ MacOS Systems installation is based on
 </div>
 <div class="tab-pane fade show " id="idi13" role="tabpanel" aria-labelledby="idi13-tab"><pre class="md-code md-code-``` "><code class="">
 $ wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
-$ java -jar nuts.jar -r=+preview -Zy
+$ java -jar nuts.jar -Zy
 $ exit
 </code></pre>
 <div class="alert alert-success mb-4">Any bash terminal application is a nuts-aware terminal.
@@ -765,7 +765,7 @@ $ exit
 </div>
 <div class="tab-pane fade show " id="idi14" role="tabpanel" aria-labelledby="idi14-tab"><pre class="md-code md-code-``` "><code class="">
 $ curl -sL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar
-$ java -jar nuts.jar -r=+preview -Zy
+$ java -jar nuts.jar -Zy
 $ exit
 </code></pre>
 <div class="alert alert-success mb-4">Any bash terminal application is a nuts-aware terminal.
@@ -806,7 +806,7 @@ Several commands are available, and you can always manually run any java and non
                         
                             <!--pageLevel2-->
                             <section id="installation-prod" >
-                                <h3 class="main-section2"><a href="#Installation">2.2 Production Env</a></h3>
+                                <h3 class="main-section2"><a href="#Installation">2.2 Production Use</a></h3>
                                 <div class="text-card">
                                 <p class="md-phrase">Installation of <mark class="md-code md-code-` ">nuts</mark> in production is based on stable <mark class="md-code md-code-` ">nuts</mark> binaries that are released according to a semi-annual schedule. Stable versions are deployed to maven-central and hence are made accessible very easily to all users. Releases include most of the time updates to the core nuts api (and bootstrap). Update/Fix releases can occur to fix blocking/serious/security issues is faster pace.</p>
 <H4 class="md-title-2"> System Requirements</H4>
@@ -4122,7 +4122,7 @@ EXAMPLES
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-02-09-220018
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-02-09-222502
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>

@@ -1,9 +1,9 @@
 ---
 id: installation-preview
-title: Preview Env
+title: Personal Use (Default)
 ---
 
-
+This is mostly the recommanded installation mode if you are not sure what mode suits you the best. Preview mode helps you using the most uptodate/bug free version and with newest features as well.
 Installation of `nuts` for preview/test/evaluation or simply for personal use is based on a rolling `nuts` binaries version that is released a faster pace than the production version (generally a semi-monthly schedule). Versions are not rock solid but still they are "very" usable and more importantly they include all latest features. Preview releases are deployed to a development repository and hence are made accessible using a repository swith option.
 
 ## System Requirements
@@ -69,13 +69,12 @@ Any of the created shortcuts for windows is a nuts-aware terminal.
 </TabItem>
 <TabItem value="linux">
 
-__for testing or development (using wget):__
+__for testing or development (using curl):__
 This will reset/delete any previous nuts installation before installing the latest version.
 Removing the `Z` modifier (replace `-Zy` by `-y`) flag if you do not want to reset the workspace.
-
+ 
 ```
-$ wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
-$ java -jar nuts.jar -r=+preview -Zy
+$ curl -sL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar && java -jar nuts.jar -ZyS
 $ exit
 ```
 
@@ -114,7 +113,7 @@ Any bash terminal application is a nuts-aware terminal.
 
 ```
 $ wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
-$ java -jar nuts.jar -r=+preview -Zy
+$ java -jar nuts.jar -Zy
 $ exit
 ```
 
@@ -130,7 +129,7 @@ Any bash terminal application is a nuts-aware terminal.
 
 ```
 $ curl -sL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar
-$ java -jar nuts.jar -r=+preview -Zy
+$ java -jar nuts.jar -Zy
 $ exit
 ```
 
