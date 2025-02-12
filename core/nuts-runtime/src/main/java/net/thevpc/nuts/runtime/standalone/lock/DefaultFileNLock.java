@@ -7,7 +7,9 @@ import net.thevpc.nuts.concurrent.NLockBarrierException;
 import net.thevpc.nuts.concurrent.NLockReleaseException;
 
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.util.TimePeriod;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
@@ -63,7 +65,13 @@ public class DefaultFileNLock extends AbstractNLock {
     public synchronized void lock() {
         long now = System.currentTimeMillis();
         PollTime ptime = preferredPollTime(now, TimeUnit.SECONDS);
+        long lastLog=System.currentTimeMillis();
         do {
+            long now2 = System.currentTimeMillis();
+            if(now2-lastLog>30000){
+                NLog.of(DefaultFileNLock.class).warn(NMsg.ofC("Lock file duration is excessive. waiting for %s for %s", NDuration.ofMillis(now2-now),path));
+                lastLog=now2;
+            }
             if (tryLockImmediately()) {
                 return;
             }

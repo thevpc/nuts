@@ -193,21 +193,25 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                 () -> {
                     List<NId> ret = new ArrayList<>();
                     session.getTerminal().printProgress(NMsg.ofC("looking for versions of %s at %s", id, foldersFileUrl.toCompressedForm()));
-                    return NIterator.of(
-                            foldersFileUrl.stream().filter(
-                                    NPath::isDirectory
-                            ).withDesc(NEDesc.of("isDirectory")).map(versionFolder -> {
-                                String versionName = versionFolder.getName();
-                                NId expectedId = NIdBuilder.of(groupId, artifactId).setVersion(versionName).build();
-                                if (isValidArtifactVersionFolder(expectedId, versionFolder)) {
-                                    final NId nutsId = id.builder().setVersion(versionFolder.getName()).build();
-                                    if (idFilter == null || idFilter.acceptId(nutsId)) {
-                                        return expectedId;
+                    try {
+                        return NIterator.of(
+                                foldersFileUrl.stream().filter(
+                                        NPath::isDirectory
+                                ).withDesc(NEDesc.of("isDirectory")).map(versionFolder -> {
+                                    String versionName = versionFolder.getName();
+                                    NId expectedId = NIdBuilder.of(groupId, artifactId).setVersion(versionName).build();
+                                    if (isValidArtifactVersionFolder(expectedId, versionFolder)) {
+                                        final NId nutsId = id.builder().setVersion(versionFolder.getName()).build();
+                                        if (idFilter == null || idFilter.acceptId(nutsId)) {
+                                            return expectedId;
+                                        }
                                     }
-                                }
-                                return null;
-                            }).filterNonNull().iterator()
-                    ).withDesc(NEDesc.of("findNonSingleVersion"));
+                                    return null;
+                                }).filterNonNull().iterator()
+                        ).withDesc(NEDesc.of("findNonSingleVersion"));
+                    }catch (UncheckedIOException | NIOException ex) {
+                        return NIterator.ofEmpty();
+                    }
                 }
                 , () -> NElements.of().ofObject()
                         .set("type", "NonSingleVersion")
