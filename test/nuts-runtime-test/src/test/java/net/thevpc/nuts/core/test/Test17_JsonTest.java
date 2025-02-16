@@ -32,6 +32,9 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 import org.junit.jupiter.api.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  * @author thevpc
@@ -40,7 +43,7 @@ public class Test17_JsonTest {
 
     @BeforeAll
     public static void init() {
-        TestUtils.openNewTestWorkspace("-byZSKk");
+        TestUtils.openNewMinTestWorkspace("-byZSKk");
     }
 
     @Test
@@ -223,4 +226,10 @@ public class Test17_JsonTest {
 
     }
 
+    @Test
+    public void test3()  {
+        Map<String,String> m=new HashMap<>();
+        m.put("é","à");
+        NElements.ofPlainJson(m).println();
+    }
 }
