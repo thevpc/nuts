@@ -118,7 +118,11 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
             exception = exceptionFactory.createException(m, null);
         }
         if (exception == null) {
-            exception = new NNoSuchElementException(m);
+            if (NWorkspace.get().isPresent()) {
+                exception = new NNoSuchElementException(m);
+            } else {
+                exception = new NoSuchElementException(m.toString());
+            }
         }
         throw exception;
     }

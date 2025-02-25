@@ -1,6 +1,7 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.NWorkspace;
 
 import java.util.Collection;
 import java.util.function.Supplier;
@@ -66,7 +67,10 @@ public class NAssert {
     }
 
     private static RuntimeException creatIllegalArgumentException(NMsg m) {
-        throw new NIllegalArgumentException(m);
+        if(NWorkspace.get().isPresent()){
+            throw new NIllegalArgumentException(m);
+        }
+        throw new IllegalArgumentException(m.toString());
     }
 
     // NO SESSION

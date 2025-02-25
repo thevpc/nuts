@@ -36,6 +36,24 @@ import java.util.stream.Stream;
 
 public interface NCallableSupport<T> {
 
+    static <T> NCallableSupport<T> resolveNamed(Collection<NCallableSupport<T>> source, String name) {
+        return resolveNamed(source, name == null ? null : NMsg.ofC("could not resolve %s", name));
+    }
+
+    static <T> NCallableSupport<T> resolve(Collection<NCallableSupport<T>> source, NMsg emptyMessage) {
+        if (source == null) {
+            return invalid(emptyMessage);
+        }
+        return resolve(source.stream(), emptyMessage == null ? null : () -> emptyMessage);
+    }
+
+    static <T> NCallableSupport<T> resolveNamed(Collection<NCallableSupport<T>> source, NMsg name) {
+        if (source == null) {
+            return invalid(NMsg.ofC("could not resolve %s", name));
+        }
+        return resolve(source.stream(), name == null ? null : () -> NMsg.ofC("could not resolve %s", name));
+    }
+
     static <T> NCallableSupport<T> resolve(Collection<NCallableSupport<T>> source, Supplier<NMsg> emptyMessage) {
         if (source == null) {
             return invalid(emptyMessage);
@@ -49,6 +67,25 @@ public interface NCallableSupport<T> {
         }
         return resolveSupplier(source.map(x -> () -> x), emptyMessage);
     }
+
+    static <T> NCallableSupport<T> resolveNamed(Stream<NCallableSupport<T>> source, String name) {
+        return resolveNamed(source, name == null ? null : NMsg.ofC("could not resolve %s", name));
+    }
+
+    static <T> NCallableSupport<T> resolve(Stream<NCallableSupport<T>> source, NMsg emptyMessage) {
+        if (source == null) {
+            return invalid(emptyMessage);
+        }
+        return resolve(source, emptyMessage == null ? null : () -> emptyMessage);
+    }
+
+    static <T> NCallableSupport<T> resolveNamed(Stream<NCallableSupport<T>> source, NMsg name) {
+        if (source == null) {
+            return invalid(NMsg.ofC("could not resolve %s", name));
+        }
+        return resolve(source, name == null ? null : () -> NMsg.ofC("could not resolve %s", name));
+    }
+
 
     static <T> NCallableSupport<T> resolveSupplier(Collection<Supplier<NCallableSupport<T>>> source, Supplier<NMsg> emptyMessage) {
         if (source == null) {
@@ -111,7 +148,7 @@ public interface NCallableSupport<T> {
 
     @SuppressWarnings("unchecked")
     static <T> NCallableSupport<T> invalid(NMsg emptyMessage) {
-        return new DefaultNCallableSupport<>(null, NConstants.Support.NO_SUPPORT, emptyMessage==null?null:()->emptyMessage);
+        return new DefaultNCallableSupport<>(null, NConstants.Support.NO_SUPPORT, emptyMessage == null ? null : () -> emptyMessage);
     }
 
     static <T> boolean isValid(NCallableSupport<T> s) {
