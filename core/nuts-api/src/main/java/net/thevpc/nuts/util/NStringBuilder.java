@@ -3,10 +3,13 @@ package net.thevpc.nuts.util;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.security.SecureRandom;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Spliterators;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
+import java.util.stream.StreamSupport;
 
 public class NStringBuilder implements CharSequence, NBlankable {
     private StringBuilder data;
@@ -16,11 +19,11 @@ public class NStringBuilder implements CharSequence, NBlankable {
     }
 
     public NStringBuilder(String value) {
-        data = new StringBuilder(value);
+        data = new StringBuilder(value==null?"":value);
     }
 
     public NStringBuilder(CharSequence value) {
-        data = new StringBuilder(value);
+        data = value==null?new StringBuilder():new StringBuilder(value);
     }
 
     public NStringBuilder(int capacity) {
@@ -726,15 +729,21 @@ public class NStringBuilder implements CharSequence, NBlankable {
     }
 
     public NStringBuilder indent(String prefix) {
+        return indent(prefix,false);
+    }
+    public NStringBuilder indent(String prefix,boolean skipFirstLine) {
         if (prefix == null || prefix.isEmpty()) {
             return this;
         }
         char[] charArray = data.toString().toCharArray();
         boolean wasNewLine = true;
         data.setLength(0);
+        boolean firstLine=true;
         for (int i = 0; i < charArray.length; i++) {
             if (wasNewLine) {
-                data.append(prefix);
+                if(!firstLine || !skipFirstLine) {
+                    data.append(prefix);
+                }
             }
             char c = charArray[i];
             if (c == '\r') {
@@ -747,10 +756,12 @@ public class NStringBuilder implements CharSequence, NBlankable {
                     data.append(prefix);
                 }
                 wasNewLine = true;
+                firstLine=false;
             } else if (c == '\n') {
-                data.append('\r');
+                data.append('\n');
                 data.append(prefix);
                 wasNewLine = true;
+                firstLine=false;
             } else {
                 data.append(c);
                 wasNewLine = false;
@@ -760,7 +771,23 @@ public class NStringBuilder implements CharSequence, NBlankable {
     }
 
     public NStream<String> lines() {
-        return null;
+        StringBuilder data2=new StringBuilder(data);
+        return NStream.of(new Iterator<String>(){
+            String nextLine=null;
+            @Override
+            public boolean hasNext() {
+                if(data2.length()==0){
+                    return false;
+                }
+                nextLine = readLine(data2);
+                return nextLine!=null;
+            }
+
+            @Override
+            public String next() {
+                return nextLine;
+            }
+        });
     }
 
     public String readLine() {
