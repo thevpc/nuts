@@ -38,9 +38,9 @@ public class NBootRepositoryDB {
         reg(new String[]{}, "spring", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://repo.spring.io/release", "spring-framework");
         reg(new String[]{}, "maven-thevpc-git", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://raw.githubusercontent.com/thevpc/vpc-public-maven/master", "vpc-public-maven");
         reg(new String[]{}, "nuts-public", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@dotfilefs:https://raw.githubusercontent.com/thevpc/nuts-public/master", "vpc-public-nuts", "nuts-thevpc-git");
-        reg(new String[]{NBootConstants.RepoTags.PREVIEW}, "thevpc", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@htmlfs:https://thevpc.net/maven", "dev");
+        reg(new String[]{NBootConstants.RepoTags.PREVIEW}, "thevpc", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@htmlfs:https://maven.thevpc.net", "dev");
         reg(new String[]{NBootConstants.RepoTags.PREVIEW}, "nuts-preview", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@dotfilefs:https://raw.githubusercontent.com/thevpc/nuts-preview/master", "preview");
-        reg(new String[]{NBootConstants.RepoTags.PREVIEW}, "thevpc-goodies", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "nuts@htmlfs:https://thevpc.net/maven-goodies", "goodies");
+        reg(new String[]{NBootConstants.RepoTags.PREVIEW}, "thevpc-goodies", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "nuts@htmlfs:https://maven-goodies.thevpc.net", "goodies");
     }
 
 

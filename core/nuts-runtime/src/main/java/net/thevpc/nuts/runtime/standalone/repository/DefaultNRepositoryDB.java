@@ -142,7 +142,7 @@ public class DefaultNRepositoryDB implements NRepositoryDB {
                 .setOrder(NAddRepositoryOptions.ORDER_USER_REMOTE)
                 .setConfig(
                         new NRepositoryConfig()
-                                .setLocation(NRepositoryLocation.of("maven@htmlfs:https://thevpc.net/maven"))
+                                .setLocation(NRepositoryLocation.of("maven@htmlfs:https://maven.thevpc.net"))
                                 .setTags(new String[]{NConstants.RepoTags.PREVIEW})
                 ), "dev");
         reg(new NAddRepositoryOptions().setName("thevpc-goodies")
@@ -150,7 +150,7 @@ public class DefaultNRepositoryDB implements NRepositoryDB {
                 .setOrder(NAddRepositoryOptions.ORDER_USER_REMOTE)
                 .setConfig(
                         new NRepositoryConfig()
-                                .setLocation(NRepositoryLocation.of("maven@htmlfs:https://thevpc.net/maven-goodies"))
+                                .setLocation(NRepositoryLocation.of("maven@htmlfs:https://maven-goodies.thevpc.net"))
                 ), "thevpc-goodies", "goodies");
         reg(new NAddRepositoryOptions()
                 .setName(NConstants.Names.DEFAULT_REPOSITORY_NAME)

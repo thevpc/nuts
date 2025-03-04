@@ -740,11 +740,6 @@ public class NStringBuilder implements CharSequence, NBlankable {
         data.setLength(0);
         boolean firstLine=true;
         for (int i = 0; i < charArray.length; i++) {
-            if (wasNewLine) {
-                if(!firstLine || !skipFirstLine) {
-                    data.append(prefix);
-                }
-            }
             char c = charArray[i];
             if (c == '\r') {
                 if (i + 1 < charArray.length && charArray[i + 1] == '\n') {
@@ -753,16 +748,19 @@ public class NStringBuilder implements CharSequence, NBlankable {
                     data.append('\n');
                 } else {
                     data.append('\r');
-                    data.append(prefix);
                 }
                 wasNewLine = true;
                 firstLine=false;
             } else if (c == '\n') {
                 data.append('\n');
-                data.append(prefix);
                 wasNewLine = true;
                 firstLine=false;
             } else {
+                if (wasNewLine) {
+                    if(!firstLine || !skipFirstLine) {
+                        data.append(prefix);
+                    }
+                }
                 data.append(c);
                 wasNewLine = false;
             }

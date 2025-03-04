@@ -11,37 +11,45 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.runtime.standalone.format.json;
+package net.thevpc.nuts.runtime.standalone.format.tson;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.NParseException;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
-import net.thevpc.nuts.util.NHex;
+import net.thevpc.nuts.runtime.standalone.format.json.ReaderLocation;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.tson.*;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * @author thevpc
  */
-public class DefaultJsonElementFormat implements NElementStreamFormat {
+public class DefaultTsonElementFormat implements NElementStreamFormat {
 
     private NWorkspace ws;
 
-    public DefaultJsonElementFormat(NWorkspace ws) {
+    public DefaultTsonElementFormat(NWorkspace ws) {
         this.ws = ws;
     }
 
@@ -53,172 +61,147 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
     }
 
     public void write(NPrintStream out, NElement data, boolean compact) {
-        write(out, data, compact ? null : "");
+        TsonWriter w = Tson.writer();
+        w.setOptionCompact(compact);
+        w.write(out.asPrintStream(), toTson(data));
     }
 
-    private void write(NPrintStream out, NElement data, String indent) {
+    public TsonElement toTson(NElement elem) {
+        throw new IllegalArgumentException("not implemented");
+    }
 
-        switch (data.type()) {
+    private NElementAnnotation toNElemAnn(TsonAnnotation elem) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    private NElement toNElem(TsonElement elem) {
+        NElements txt = NElements.of();
+        switch (elem.type()) {
             case NULL: {
-                out.print("null");
-                break;
+                TsonAnnotation[] annotations = elem.annotations();
+                NPrimitiveElement u = txt.ofNull();
+                if (annotations.length > 0) {
+                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
+                }
+                return u;
+            }
+            case BYTE: {
+                TsonAnnotation[] annotations = elem.annotations();
+                NPrimitiveElement u = txt.ofByte(elem.byteValue());
+                if (annotations.length > 0) {
+                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
+                }
+                return u;
+            }
+            case SHORT: {
+                TsonAnnotation[] annotations = elem.annotations();
+                NPrimitiveElement u = txt.ofShort(elem.shortValue());
+                if (annotations.length > 0) {
+                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
+                }
+                return u;
+            }
+            case CHAR: {
+                TsonAnnotation[] annotations = elem.annotations();
+                NPrimitiveElement u = txt.ofChar(elem.charValue());
+                if (annotations.length > 0) {
+                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
+                }
+                return u;
+            }
+            case INT: {
+                TsonAnnotation[] annotations = elem.annotations();
+                NPrimitiveElement u = txt.ofInt(elem.intValue());
+                if (annotations.length > 0) {
+                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
+                }
+                return u;
+            }
+            case LONG: {
+                TsonAnnotation[] annotations = elem.annotations();
+                NPrimitiveElement u = txt.ofLong(elem.longValue());
+                if (annotations.length > 0) {
+                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
+                }
+                return u;
+            }
+            case FLOAT: {
+                TsonAnnotation[] annotations = elem.annotations();
+                NPrimitiveElement u = txt.ofFloat(elem.floatValue());
+                if (annotations.length > 0) {
+                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
+                }
+                return u;
+            }
+            case DOUBLE: {
+                TsonAnnotation[] annotations = elem.annotations();
+                NPrimitiveElement u = txt.ofDouble(elem.doubleValue());
+                if (annotations.length > 0) {
+                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
+                }
+                return u;
+            }
+            case BIG_INT: {
+                TsonAnnotation[] annotations = elem.annotations();
+                NPrimitiveElement u = txt.ofBigInteger(elem.bigIntegerValue());
+                if (annotations.length > 0) {
+                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
+                }
+                return u;
+            }
+            case BIG_DECIMAL: {
+                TsonAnnotation[] annotations = elem.annotations();
+                NPrimitiveElement u = txt.ofBigDecimal(elem.bigDecimalValue());
+                if (annotations.length > 0) {
+                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
+                }
+                return u;
+            }
+            case STRING: {
+                TsonAnnotation[] annotations = elem.annotations();
+                NPrimitiveElement u = txt.ofString(elem.stringValue());
+                if (annotations.length > 0) {
+                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
+                }
+                return u;
             }
             case BOOLEAN: {
-                out.print(data.asBoolean().orElse(false));
-                break;
-            }
-            case BYTE:
-            case SHORT:
-            case INTEGER:
-            case LONG:{
-                out.print(data.asNumber().orElse(0));
-                break;
-            }
-            case FLOAT:
-            case DOUBLE: {
-                out.print(data.asNumber().orElse(0.0));
-                break;
-            }
-            case INSTANT:
-            case STRING:
-//            case NUTS_STRING:
-            {
-                StringBuilder sb = new StringBuilder("\"");
-                final String str = data.asString().orElse("");
-                char[] chars = str.toCharArray();
-
-                for (int i = 0; i < chars.length; i++) {
-                    char c = chars[i];
-                    if (c < 32) {
-                        switch (c) {
-                            case '\n': {
-                                sb.append('\\').append('n');
-                                break;
-                            }
-                            case '\f': {
-                                sb.append('\\').append('f');
-                                break;
-                            }
-                            case '\t': {
-                                sb.append('\\').append('t');
-                                break;
-                            }
-                            case '\r': {
-                                sb.append('\\').append('r');
-                                break;
-                            }
-                            case '\b': {
-                                sb.append('\\').append('b');
-                                break;
-                            }
-                            default: {
-                                sb.append('\\');
-                                sb.append('u');
-                                sb.append(NHex.toHexChar((c >> 12) & 0xF));
-                                sb.append(NHex.toHexChar((c >> 8) & 0xF));
-                                sb.append(NHex.toHexChar((c >> 4) & 0xF));
-                                sb.append(NHex.toHexChar(c & 0xF));
-                            }
-                        }
-                    } else {
-                        switch (c) {
-                            case '\\': {
-                                sb.append(c).append(c);
-                                break;
-                            }
-                            case '"': {
-                                sb.append('\\').append('"');
-                                break;
-                            }
-                            default: {
-                                if (c > 0x007e) {
-                                    sb.append('\\');
-                                    sb.append('u');
-                                    sb.append(NHex.toHexChar((c >> 12) & 0xF));
-                                    sb.append(NHex.toHexChar((c >> 8) & 0xF));
-                                    sb.append(NHex.toHexChar((c >> 4) & 0xF));
-                                    sb.append(NHex.toHexChar(c & 0xF));
-                                } else {
-                                    sb.append(c);
-                                }
-                            }
-                        }
-                    }
+                TsonAnnotation[] annotations = elem.annotations();
+                NPrimitiveElement u = txt.ofBoolean(elem.booleanValue());
+                if (annotations.length > 0) {
+                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
                 }
-                sb.append('\"');
-                out.print(sb);
-                break;
+                return u;
             }
-
+            case REGEX: {
+                TsonAnnotation[] annotations = elem.annotations();
+                NPrimitiveElement u = txt.ofRegex(elem.stringValue());
+                if (annotations.length > 0) {
+                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
+                }
+                return u;
+            }
+            case NAME: {
+                TsonAnnotation[] annotations = elem.annotations();
+                NPrimitiveElement u = txt.ofName(elem.stringValue());
+                if (annotations.length > 0) {
+                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
+                }
+                return u;
+            }
             case ARRAY: {
-                NArrayElement arr = data.asArray().get();
-                if (arr.size() == 0) {
-                    out.print("[]");
-                } else {
-                    out.print('[');
-                    boolean first = true;
-                    String indent2 = indent + "  ";
-                    for (NElement e : arr.items()) {
-                        if (first) {
-                            first = false;
-                        } else {
-                            out.print(',');
-                        }
-                        if (indent != null) {
-                            out.print('\n');
-                            out.print(indent2);
-                            write(out, e, indent2);
-                        } else {
-                            write(out, e, null);
-                        }
-                    }
-                    if (indent != null) {
-                        out.print('\n');
-                        out.print(indent);
-                    }
-                    out.print(']');
+                TsonAnnotation[] annotations = elem.annotations();
+                TsonArray array = elem.toArray();
+                TsonElementHeader header = array.header();
+
+                NPrimitiveElement u = txt.ofName(elem.stringValue());
+                if (annotations.length > 0) {
+                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
                 }
-                break;
-            }
-            case OBJECT: {
-                NObjectElement obj = data.asObject().get();
-                if (obj.size() == 0) {
-                    out.print("{}");
-                } else {
-                    out.print('{');
-                    boolean first = true;
-                    String indent2 = indent + "  ";
-                    for (NElementEntry e : obj.entries()) {
-                        if (first) {
-                            first = false;
-                        } else {
-                            out.print(',');
-                        }
-                        if (indent != null) {
-                            out.print('\n');
-                            out.print(indent2);
-                            write(out, e.getKey(), indent2);
-                            out.print(':');
-                            out.print(' ');
-                            write(out, e.getValue(), indent2);
-                        } else {
-                            write(out, e.getKey(), null);
-                            out.print(':');
-                            write(out, e.getValue(), null);
-                        }
-                    }
-                    if (indent != null) {
-                        out.print('\n');
-                        out.print(indent);
-                    }
-                    out.print('}');
-                }
-                break;
-            }
-            default: {
-                throw new IllegalArgumentException("unsupported");
+                return u;
             }
         }
+        throw new IllegalArgumentException("not implemented");
     }
 
     @Override

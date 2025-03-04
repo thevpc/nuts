@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.NArrayElement;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementAnnotation;
 import net.thevpc.nuts.elem.NElementType;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NOptional;
@@ -44,8 +45,8 @@ public abstract class AbstractNArrayElement
         extends AbstractNNavigatableElement
         implements NArrayElement {
 
-    public AbstractNArrayElement(NWorkspace workspace) {
-        super(NElementType.ARRAY, workspace);
+    public AbstractNArrayElement(NElementAnnotation[] annotations, NWorkspace workspace) {
+        super(NElementType.ARRAY, annotations, workspace);
     }
 
     @Override

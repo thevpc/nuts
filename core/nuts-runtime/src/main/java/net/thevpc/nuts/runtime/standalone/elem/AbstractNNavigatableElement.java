@@ -10,8 +10,8 @@ import java.math.BigInteger;
 import java.time.Instant;
 
 public abstract class AbstractNNavigatableElement extends AbstractNElement implements NNavigatableElement {
-    public AbstractNNavigatableElement(NElementType type, NWorkspace workspace) {
-        super(type, workspace);
+    public AbstractNNavigatableElement(NElementType type, NElementAnnotation[] annotations, NWorkspace workspace) {
+        super(type, annotations,workspace);
     }
     @Override
     public NOptional<String> getStringByPath(String... keys) {

@@ -52,8 +52,8 @@ public class OldWorkspace083 extends OldWorkspace {
     }
 
     private void downloadNutsJar() {
-        NOut.println(NMsg.ofC("downloading %s to %s", NPath.of("https://thevpc.net/maven/net/thevpc/nuts/nuts/" + version + "/nuts-" + version + ".jar"), resolveJarFile()));
-        NCp.of().from(NPath.of("https://thevpc.net/maven/net/thevpc/nuts/nuts/" + version + "/nuts-" + version + ".jar"))
+        NOut.println(NMsg.ofC("downloading %s to %s", NPath.of("https://maven.thevpc.net/net/thevpc/nuts/nuts/" + version + "/nuts-" + version + ".jar"), resolveJarFile()));
+        NCp.of().from(NPath.of("https://maven.thevpc.net/net/thevpc/nuts/nuts/" + version + "/nuts-" + version + ".jar"))
                 .to(resolveJarFile())
                 .run();
     }

@@ -6,7 +6,7 @@ stableAppId=net.thevpc.nuts:nuts-app#0.8.5
 stableAppVersion=0.8.5
 stableRuntimeId=net.thevpc.nuts:nuts-runtime#0.8.5.0
 stableRuntimeVersion=0.8.5.0
-stableJarLocation=https://thevpc.net/maven/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar
+stableJarLocation=https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar
 
 latestApiId=net.thevpc.nuts:nuts#0.8.5
 latestApiVersion=0.8.5
@@ -14,7 +14,7 @@ latestAppId=net.thevpc.nuts:nuts-app#0.8.5
 latestAppVersion=0.8.5
 latestRuntimeId=net.thevpc.nuts:nuts-runtime#0.8.5.0
 latestRuntimeVersion=0.8.5.0
-latestJarLocation=https://thevpc.net/maven/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar
+latestJarLocation=https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar
 
 
 apiId=net.thevpc.nuts:nuts#0.8.5
@@ -23,5 +23,5 @@ appId=net.thevpc.nuts:nuts-app#0.8.5
 appVersion=0.8.5
 runtimeId=net.thevpc.nuts:nuts-runtime#0.8.5.0
 runtimeVersion=0.8.5.0
-jarLocation=https://thevpc.net/maven/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar
+jarLocation=https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar
 

@@ -65,7 +65,7 @@ public class OldWorkspace085 extends OldWorkspace {
     }
 
     private void downloadNutsJar() {
-        String url = "https://thevpc.net/maven/net/thevpc/nuts/nuts-app/" + version + "/nuts-app-" + version + ".jar";
+        String url = "https://maven.thevpc.net/net/thevpc/nuts/nuts-app/" + version + "/nuts-app-" + version + ".jar";
         NOut.println(NMsg.ofC("downloading %s to %s", NPath.of(url), resolveJarFile()));
         NCp.of().from(NPath.of(url))
                 .to(resolveJarFile())

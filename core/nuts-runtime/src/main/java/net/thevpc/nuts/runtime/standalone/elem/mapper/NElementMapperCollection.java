@@ -1,10 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementAnnotation;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.reflect.NReflectType;
+import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementHeader;
 import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNArrayElement;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryService;
@@ -34,7 +36,7 @@ public class NElementMapperCollection implements NElementMapper {
     public NElement createElement(Object o, Type typeOfSrc, NElementFactoryContext context) {
         Collection<Object> coll = (Collection) o;
         List<NElement> collect = coll.stream().map(x -> context.objectToElement(x, null)).collect(Collectors.toList());
-        return new DefaultNArrayElement(collect, context.getWorkspace());
+        return new DefaultNArrayElement(collect, DefaultNElementHeader.EMPTY,new NElementAnnotation[0], context.getWorkspace());
     }
 
     public Collection fillObject(NElement o, Collection coll, Type elemType, Type to, NElementFactoryContext context) {

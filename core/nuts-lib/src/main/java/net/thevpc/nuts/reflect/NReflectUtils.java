@@ -10,6 +10,37 @@ public class NReflectUtils {
     private NReflectUtils() {
     }
 
+    public static boolean isValidIdentifier(String anyType, String extraWordChars) {
+        if (anyType == null) {
+            return false;
+        }
+        char[] chars = anyType.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            char c = chars[i];
+            if (i == 0) {
+                if (c == '_' || c == '-' || c == '.') {
+                    return false;
+                }
+                if (!Character.isJavaIdentifierStart(c)) {
+                    if ((extraWordChars == null || extraWordChars.indexOf(c) < 0)) {
+                        return false;
+                    }
+                }
+            }
+            if (!Character.isJavaIdentifierPart(c)) {
+                if ((extraWordChars == null || extraWordChars.indexOf(c) < 0)) {
+                    return false;
+                }
+            }
+            if (i == chars.length - 1) {
+                if (c == '_' || c == '-' || c == '.') {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     public static Object getDefaultValue(Class<?> anyType) {
         NAssert.requireNonNull(anyType, "type");
         switch (anyType.getName()) {

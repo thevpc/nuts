@@ -194,9 +194,9 @@ public class Test18_PathTest {
             TestUtils.println(nutsPath);
             children.add(nutsPath.toString());
         }
-//        Assertions.assertTrue(children.contains("htmlfs:https://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.3"));
-//        Assertions.assertTrue(children.contains("https://thevpc.net/maven/net/thevpc/nuts/nuts/maven-metadata-local.xml"));
-//        Assertions.assertTrue(children.contains("htmlfs:https://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.2"));
+//        Assertions.assertTrue(children.contains("htmlfs:https://maven.thevpc.net/net/thevpc/nuts/nuts/0.8.3"));
+//        Assertions.assertTrue(children.contains("https://maven.thevpc.net/net/thevpc/nuts/nuts/maven-metadata-local.xml"));
+//        Assertions.assertTrue(children.contains("htmlfs:https://maven.thevpc.net/net/thevpc/nuts/nuts/0.8.2"));
 //        TestUtils.println("------------ WALK ----------");
 //        s.walk(1).forEach(x -> {
 //            TestUtils.println(x);

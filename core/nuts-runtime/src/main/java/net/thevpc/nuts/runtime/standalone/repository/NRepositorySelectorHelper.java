@@ -284,7 +284,7 @@ public class NRepositorySelectorHelper {
 //                        .setOrder(NAddRepositoryOptions.ORDER_USER_REMOTE)
 //                        .setConfig(
 //                                new NRepositoryConfig()
-//                                        .setLocation(NRepositoryLocation.of("maven@htmlfs:https://thevpc.net/maven"))
+//                                        .setLocation(NRepositoryLocation.of("maven@htmlfs:https://maven.thevpc.net"))
 //                                        .setTags(new String[]{NConstants.RepoTags.PREVIEW})
 //                        );
 //            }
@@ -295,7 +295,7 @@ public class NRepositorySelectorHelper {
 //                        .setOrder(NAddRepositoryOptions.ORDER_USER_REMOTE)
 //                        .setConfig(
 //                                new NRepositoryConfig()
-//                                        .setLocation(NRepositoryLocation.of("maven@htmlfs:https://thevpc.net/maven-goodies"))
+//                                        .setLocation(NRepositoryLocation.of("maven@htmlfs:https://maven-goodies.thevpc.net"))
 //                        );
 //            }
         }

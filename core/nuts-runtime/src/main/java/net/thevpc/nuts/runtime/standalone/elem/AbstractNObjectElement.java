@@ -25,9 +25,7 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.NWorkspace;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementType;
-import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -40,8 +38,8 @@ import java.util.List;
  * @author thevpc
  */
 public abstract class AbstractNObjectElement extends AbstractNNavigatableElement implements NObjectElement {
-    public AbstractNObjectElement(NWorkspace workspace) {
-        super(NElementType.OBJECT,workspace);
+    public AbstractNObjectElement(NElementAnnotation[] annotations,NWorkspace workspace) {
+        super(NElementType.OBJECT,annotations,workspace);
     }
 
     @Override

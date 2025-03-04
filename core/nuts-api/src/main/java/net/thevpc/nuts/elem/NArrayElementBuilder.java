@@ -304,4 +304,23 @@ public interface NArrayElementBuilder extends NElementBuilder {
      * @return new array instance
      */
     NArrayElement build();
+
+
+    NArrayElementBuilder addAnnotations(List<NElementAnnotation> annotations);
+    NArrayElementBuilder addAnnotation(NElementAnnotation annotation);
+    NArrayElementBuilder addAnnotationAt(int index,NElementAnnotation annotation);
+    NArrayElementBuilder removeAnnotationAt(int index);
+    NArrayElementBuilder clearAnnotations();
+
+    NArrayElementBuilder addArgs(List<NElement> args) ;
+    NArrayElementBuilder addArg(NElement arg) ;
+    NArrayElementBuilder addArgAt(int index, NElement arg) ;
+    NArrayElementBuilder removeArgAt(int index) ;
+    NArrayElementBuilder clearArgs() ;
+    List<NElement> getArgs();
+    String getName() ;
+    NArrayElementBuilder setName(String name) ;
+    boolean isHasArgs() ;
+    NArrayElementBuilder setHasArgs(boolean hasArgs);
+
 }

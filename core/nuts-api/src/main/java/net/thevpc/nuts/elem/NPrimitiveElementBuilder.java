@@ -2,7 +2,7 @@
  * ====================================================================
  * Nuts : Network Updatable Things Service
  * (universal package manager)
- * <br>
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
@@ -20,21 +20,35 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
+ * <br> ====================================================================
  */
 package net.thevpc.nuts.elem;
 
+import java.util.List;
+
 /**
- * primitive values implementation of Nuts Element type. Nuts Element types are
- * generic JSON like parsable objects.
- *
  * @author thevpc
- * @app.category Elements
- * @since 0.5.6
  */
-public interface NPrimitiveElement extends NElement {
+public interface NPrimitiveElementBuilder extends NElementBuilder {
+    NPrimitiveElementBuilder addAnnotations(List<NElementAnnotation> annotations);
 
-    NPrimitiveElementBuilder builder();
+    NPrimitiveElementBuilder addAnnotation(NElementAnnotation annotation);
 
+    NPrimitiveElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
+
+    NPrimitiveElementBuilder removeAnnotationAt(int index);
+
+    NPrimitiveElementBuilder clearAnnotations();
+
+    List<NElementAnnotation> getAnnotations();
+
+    NPrimitiveElement build();
+
+    Object getValue();
+
+    NPrimitiveElementBuilder setValue(Object value);
+
+    NPrimitiveElementBuilder setInt(int value);
+
+    NPrimitiveElementBuilder setByte(byte value);
 }

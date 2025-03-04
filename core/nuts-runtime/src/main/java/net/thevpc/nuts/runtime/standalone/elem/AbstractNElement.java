@@ -11,14 +11,14 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
@@ -34,6 +34,9 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author thevpc
@@ -42,10 +45,17 @@ public abstract class AbstractNElement implements NElement {
 
     protected transient NWorkspace workspace;
     private NElementType type;
+    private NElementAnnotation[] annotations;
 
-    public AbstractNElement(NElementType type, NWorkspace workspace) {
+    public AbstractNElement(NElementType type, NElementAnnotation[] annotations, NWorkspace workspace) {
         this.type = type;
         this.workspace = workspace;
+        this.annotations = annotations;
+    }
+
+    @Override
+    public List<NElementAnnotation> annotations() {
+        return annotations == null ? Collections.emptyList() : Arrays.asList(annotations);
     }
 
     @Override
@@ -55,7 +65,7 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public NOptional<NElement> resolve(String pattern) {
-        return NOptional.ofNamedSingleton(resolveAll(pattern),"resolvable "+pattern);
+        return NOptional.ofNamedSingleton(resolveAll(pattern), "resolvable " + pattern);
     }
 
     @Override
@@ -185,7 +195,7 @@ public abstract class AbstractNElement implements NElement {
         switch (type()) {
             case FLOAT:
             case DOUBLE:
-            case BIG_DECIMAL:{
+            case BIG_DECIMAL: {
                 return true;
             }
         }
@@ -196,8 +206,7 @@ public abstract class AbstractNElement implements NElement {
     public boolean isBigNumber() {
         switch (type()) {
             case BIG_DECIMAL:
-            case BIG_INTEGER:
-            {
+            case BIG_INTEGER: {
                 return true;
             }
         }
@@ -206,12 +215,12 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public boolean isBigDecimal() {
-        return type()==NElementType.BIG_DECIMAL;
+        return type() == NElementType.BIG_DECIMAL;
     }
 
     @Override
     public boolean isBigInt() {
-        return type()==NElementType.BIG_INTEGER;
+        return type() == NElementType.BIG_INTEGER;
     }
 
     @Override

@@ -37,6 +37,8 @@ import net.thevpc.nuts.time.NProgressFactory;
 import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
@@ -59,15 +61,15 @@ public interface NElements extends NContentTypeFormat {
     }
 
     static NElements of() {
-       return NExtensions.of(NElements.class);
+        return NExtensions.of(NElements.class);
     }
 
     static NElements ofPlainJson(Object any) {
-       return of().setValue(any).setNtf(false).json();
+        return of().setValue(any).setNtf(false).json();
     }
 
     static NElements ofNtfJson(Object any) {
-       return of().setValue(any).setNtf(true).json();
+        return of().setValue(any).setNtf(true).json();
     }
 
     /**
@@ -351,7 +353,9 @@ public interface NElements extends NContentTypeFormat {
      * @return array element
      */
     NArrayElementBuilder ofArray();
+
     NArrayElement ofEmptyArray();
+
     NObjectElement ofEmptyObject();
 
     //    public NutsPrimitiveElement forNutsString(NutsString str) {
@@ -360,6 +364,10 @@ public interface NElements extends NContentTypeFormat {
     NPrimitiveElement ofBoolean(String value);
 
     NPrimitiveElement ofBoolean(boolean value);
+
+    NPrimitiveElement ofRegex(String value);
+
+    NPrimitiveElement ofName(String value);
 
     NPrimitiveElement ofString(String str);
 
@@ -387,11 +395,19 @@ public interface NElements extends NContentTypeFormat {
 
     NPrimitiveElement ofByte(Byte value);
 
+    NPrimitiveElement ofShort(Short value);
+
+    NPrimitiveElement ofChar(Character value);
+
     NPrimitiveElement ofDouble(Double value);
 
     NPrimitiveElement ofFloat(Short value);
 
     NPrimitiveElement ofNumber(Number value);
+
+    NPrimitiveElement ofBigDecimal(BigDecimal value);
+
+    NPrimitiveElement ofBigInteger(BigInteger value);
 
     Predicate<Class<?>> getIndestructibleObjects();
 
@@ -403,11 +419,11 @@ public interface NElements extends NContentTypeFormat {
 
     <T> NElements setMapper(Class<T> type, NElementMapper<T> mapper);
 
-    boolean isLogProgress() ;
+    boolean isLogProgress();
 
     NElements setLogProgress(boolean logProgress);
 
-    boolean isTraceProgress() ;
+    boolean isTraceProgress();
 
     NElements setTraceProgress(boolean traceProgress);
 

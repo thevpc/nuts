@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,15 +10,15 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * <p>
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
@@ -37,6 +37,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.elem.mapper.*;
 import net.thevpc.nuts.runtime.standalone.format.xml.NElementFactoryXmlDocument;
 import net.thevpc.nuts.runtime.standalone.format.xml.NElementFactoryXmlElement;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -117,7 +118,7 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
 
     public DefaultNElementFactoryService(NWorkspace workspace) {
         typesRepository = NWorkspaceUtils.of(workspace).getReflectRepository();
-        this.workspace=workspace;
+        this.workspace = workspace;
         addDefaultMapper(Boolean.class, F_BOOLEANS);
         addDefaultMapper(boolean.class, F_BOOLEANS);
         addDefaultMapper(byte.class, F_NUMBERS);
@@ -196,7 +197,7 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
 
     public final void addDefaultMapper(Class cls, NElementMapper instance) {
         defaultMappers.put(cls, instance);
-        setCoreMapper(cls,instance);
+        setCoreMapper(cls, instance);
     }
 
     public final void setCoreMapper(Class cls, NElementMapper instance) {
@@ -222,7 +223,7 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
             return F_NULL;
         }
         Class cls = ReflectUtils.getRawClass(type);
-        if(NSession.class.isAssignableFrom(cls)){
+        if (NSession.class.isAssignableFrom(cls)) {
             throw new NIllegalArgumentException(NMsg.ofC(
                     "%s is not serializable", type
             ));
@@ -253,64 +254,64 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
         if (o == null || o.type() == NElementType.NULL) {
             return F_NULL.createObject(o, to, context);
         }
-        if(to==null){
-            switch (o.type()){
-                case OBJECT:{
-                    to=Map.class;
+        if (to == null) {
+            switch (o.type()) {
+                case OBJECT: {
+                    to = Map.class;
                     break;
                 }
-                case ARRAY:{
-                    to=List.class;
+                case ARRAY: {
+                    to = List.class;
                     break;
                 }
-                case STRING:{
-                    to=String.class;
+                case STRING: {
+                    to = String.class;
                     break;
                 }
-                case INTEGER:{
-                    to=Integer.class;
+                case INTEGER: {
+                    to = Integer.class;
                     break;
                 }
-                case FLOAT:{
-                    to=Float.class;
+                case FLOAT: {
+                    to = Float.class;
                     break;
                 }
-                case DOUBLE:{
-                    to=Double.class;
+                case DOUBLE: {
+                    to = Double.class;
                     break;
                 }
-                case BOOLEAN:{
-                    to=Boolean.class;
+                case BOOLEAN: {
+                    to = Boolean.class;
                     break;
                 }
-                case INSTANT:{
-                    to=Instant.class;
+                case INSTANT: {
+                    to = Instant.class;
                     break;
                 }
-                case BIG_DECIMAL:{
-                    to=BigDecimal.class;
+                case BIG_DECIMAL: {
+                    to = BigDecimal.class;
                     break;
                 }
-                case BIG_INTEGER:{
-                    to=BigInteger.class;
+                case BIG_INTEGER: {
+                    to = BigInteger.class;
                     break;
                 }
-                case LONG:{
-                    to=Long.class;
+                case LONG: {
+                    to = Long.class;
                     break;
                 }
-                case BYTE:{
-                    to=Byte.class;
+                case BYTE: {
+                    to = Byte.class;
                     break;
                 }
-                case SHORT:{
-                    to=Short.class;
+                case SHORT: {
+                    to = Short.class;
                     break;
                 }
-                case NULL:{
+                case NULL: {
                     return null;
                 }
-                default:{
+                default: {
                     throw new NUnsupportedEnumException(o.type());
                 }
             }
@@ -403,11 +404,12 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
             for (int i = 0; i < length; i++) {
                 preloaded.add(context.objectToElement(Array.get(array, i), null));
             }
-            return new DefaultNArrayElement(preloaded,context.getWorkspace());
+            return new DefaultNArrayElement(preloaded, DefaultNElementHeader.EMPTY, new NElementAnnotation[0], context.getWorkspace());
         } else {
             return new DefaultNArrayElement(
                     Arrays.stream((Object[]) array).map(x -> context.objectToElement(x, null)).collect(Collectors.toList())
-                    ,context.getWorkspace()
+                    ,DefaultNElementHeader.EMPTY,new NElementAnnotation[0]
+                    , context.getWorkspace()
             );
         }
     }

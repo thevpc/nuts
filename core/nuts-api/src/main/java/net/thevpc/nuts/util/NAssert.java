@@ -4,6 +4,7 @@ import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.NWorkspace;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class NAssert {
@@ -67,7 +68,7 @@ public class NAssert {
     }
 
     private static RuntimeException creatIllegalArgumentException(NMsg m) {
-        if(NWorkspace.get().isPresent()){
+        if (NWorkspace.get().isPresent()) {
             throw new NIllegalArgumentException(m);
         }
         throw new IllegalArgumentException(m.toString());
@@ -90,6 +91,28 @@ public class NAssert {
             throw creatIllegalArgumentException(createMessage(msg));
         }
         return object;
+    }
+
+    public static <T> T requireEquals(T a, T b, Supplier<NMsg> msg) {
+        if (!Objects.equals(a, b)) {
+            throw creatIllegalArgumentException(createMessage(msg));
+        }
+        return a;
+    }
+
+    public static <T> T requireNotEquals(T a, T b, String name) {
+        return requireNotEquals(a, b, () -> NMsg.ofC("%s non equality failed", createName(name)));
+    }
+
+    public static <T> T requireNotEquals(T a, T b, Supplier<NMsg> msg) {
+        if (Objects.equals(a, b)) {
+            throw creatIllegalArgumentException(createMessage(msg));
+        }
+        return a;
+    }
+
+    public static <T> T requireEquals(T a, T b, String name) {
+        return requireEquals(a, b, () -> NMsg.ofC("%s equality failed", createName(name)));
     }
 
 

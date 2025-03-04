@@ -400,20 +400,28 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     public NPrimitiveElement ofBoolean(boolean value) {
         //TODO: perhaps we can optimize this
         if (value) {
-            return new DefaultNPrimitiveElement(NElementType.BOOLEAN, true, workspace);
+            return new DefaultNPrimitiveElement(NElementType.BOOLEAN, true, null, workspace);
         } else {
-            return new DefaultNPrimitiveElement(NElementType.BOOLEAN, false, workspace);
+            return new DefaultNPrimitiveElement(NElementType.BOOLEAN, false, null, workspace);
         }
     }
 
     public NPrimitiveElement ofString(String str) {
-        return str == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.STRING, str, workspace);
+        return str == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.STRING, str, null, workspace);
+    }
+
+    public NPrimitiveElement ofRegex(String str) {
+        return str == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.REGEX, str, null, workspace);
+    }
+
+    public NPrimitiveElement ofName(String str) {
+        return str == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.NAME, str, null, workspace);
     }
 
     @Override
     public NCustomElement ofCustom(Object object) {
         NAssert.requireNonNull(object, "custom element");
-        return new DefaultNCustomElement(object, workspace);
+        return new DefaultNCustomElement(object, null, workspace);
     }
 
     @Override
@@ -428,28 +436,28 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     @Override
     public NPrimitiveElement ofInstant(Instant instant) {
-        return instant == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.INSTANT, instant, workspace);
+        return instant == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.INSTANT, instant, null, workspace);
     }
 
     @Override
     public NPrimitiveElement ofFloat(Float value) {
-        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.FLOAT, value, workspace);
+        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.FLOAT, value, null, workspace);
     }
 
     @Override
     public NPrimitiveElement ofInt(Integer value) {
-        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.INTEGER, value, workspace);
+        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.INTEGER, value, null, workspace);
     }
 
     @Override
     public NPrimitiveElement ofLong(Long value) {
-        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.LONG, value, workspace);
+        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.LONG, value, null, workspace);
     }
 
     @Override
     public NPrimitiveElement ofNull() {
         //perhaps we can optimize this?
-        return new DefaultNPrimitiveElement(NElementType.NULL, null, workspace);
+        return new DefaultNPrimitiveElement(NElementType.NULL, null, null, workspace);
     }
 
     @Override
@@ -493,7 +501,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
         if (value == null) {
             return ofNull();
         }
-        return new DefaultNPrimitiveElement(NElementType.INSTANT, value.toInstant(), workspace);
+        return new DefaultNPrimitiveElement(NElementType.INSTANT, value.toInstant(), null, workspace);
     }
 
     @Override
@@ -501,22 +509,48 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
         if (value == null) {
             return ofNull();
         }
-        return new DefaultNPrimitiveElement(NElementType.INSTANT, DefaultNLiteral.parseInstant(value).get(), workspace);
+        return new DefaultNPrimitiveElement(NElementType.INSTANT, DefaultNLiteral.parseInstant(value).get(), null, workspace);
     }
 
     @Override
     public NPrimitiveElement ofByte(Byte value) {
-        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.BYTE, value, workspace);
+        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.BYTE, value, null, workspace);
+    }
+
+    @Override
+    public NPrimitiveElement ofShort(Short value) {
+        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.SHORT, value, null, workspace);
+    }
+
+    @Override
+    public NPrimitiveElement ofChar(Character value) {
+        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.CHAR, value, null, workspace);
     }
 
     @Override
     public NPrimitiveElement ofDouble(Double value) {
-        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.DOUBLE, value, workspace);
+        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.DOUBLE, value, null, workspace);
     }
 
     @Override
     public NPrimitiveElement ofFloat(Short value) {
-        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.SHORT, value, workspace);
+        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.SHORT, value, null, workspace);
+    }
+
+    @Override
+    public NPrimitiveElement ofBigDecimal(BigDecimal value) {
+        if (value == null) {
+            return ofNull();
+        }
+        return new DefaultNPrimitiveElement(NElementType.BIG_DECIMAL, value, null, workspace);
+    }
+
+    @Override
+    public NPrimitiveElement ofBigInteger(BigInteger value) {
+        if (value == null) {
+            return ofNull();
+        }
+        return new DefaultNPrimitiveElement(NElementType.BIG_INTEGER, value, null, workspace);
     }
 
     @Override
@@ -526,24 +560,24 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
         }
         switch (value.getClass().getName()) {
             case "java.lang.Byte":
-                return new DefaultNPrimitiveElement(NElementType.BYTE, value, workspace);
+                return new DefaultNPrimitiveElement(NElementType.BYTE, value, null, workspace);
             case "java.lang.Short":
-                return new DefaultNPrimitiveElement(NElementType.SHORT, value, workspace);
+                return new DefaultNPrimitiveElement(NElementType.SHORT, value, null, workspace);
             case "java.lang.Integer":
-                return new DefaultNPrimitiveElement(NElementType.INTEGER, value, workspace);
+                return new DefaultNPrimitiveElement(NElementType.INTEGER, value, null, workspace);
             case "java.lang.Long":
-                return new DefaultNPrimitiveElement(NElementType.LONG, value, workspace);
+                return new DefaultNPrimitiveElement(NElementType.LONG, value, null, workspace);
             case "java.math.BigInteger":
-                return new DefaultNPrimitiveElement(NElementType.BIG_INTEGER, value, workspace);
+                return new DefaultNPrimitiveElement(NElementType.BIG_INTEGER, value, null, workspace);
             case "java.lang.float":
-                return new DefaultNPrimitiveElement(NElementType.FLOAT, value, workspace);
+                return new DefaultNPrimitiveElement(NElementType.FLOAT, value, null, workspace);
             case "java.lang.Double":
-                return new DefaultNPrimitiveElement(NElementType.DOUBLE, value, workspace);
+                return new DefaultNPrimitiveElement(NElementType.DOUBLE, value, null, workspace);
             case "java.math.BigDecimal":
-                return new DefaultNPrimitiveElement(NElementType.BIG_DECIMAL, value, workspace);
+                return new DefaultNPrimitiveElement(NElementType.BIG_DECIMAL, value, null, workspace);
         }
         // ???
-        return new DefaultNPrimitiveElement(NElementType.FLOAT, value, workspace);
+        return new DefaultNPrimitiveElement(NElementType.FLOAT, value, null, workspace);
     }
 
     public Predicate<Class<?>> getIndestructibleObjects() {
@@ -598,7 +632,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
                 return model.getXmlMan();
             }
             case TSON: {
-                throw new NUnsupportedEnumException(contentType);
+                return model.getTsonMan();
             }
         }
         throw new NIllegalArgumentException(NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
@@ -606,7 +640,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     private DefaultNElementFactoryContext createFactoryContext() {
         NReflectRepository reflectRepository = NWorkspaceUtils.of(workspace).getReflectRepository();
-        DefaultNElementFactoryContext c = new DefaultNElementFactoryContext(workspace,this, reflectRepository);
+        DefaultNElementFactoryContext c = new DefaultNElementFactoryContext(workspace, this, reflectRepository);
         switch (getContentType()) {
             case XML:
             case JSON:

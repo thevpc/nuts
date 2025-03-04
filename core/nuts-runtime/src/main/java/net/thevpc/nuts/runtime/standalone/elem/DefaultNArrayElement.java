@@ -43,16 +43,24 @@ import java.util.stream.Stream;
 public class DefaultNArrayElement extends AbstractNArrayElement {
 
     private final NElement[] values;
+    private final NElementHeader header;
 
-    public DefaultNArrayElement(Collection<NElement> values, NWorkspace workspace) {
-        super(workspace);
+    public DefaultNArrayElement(Collection<NElement> values, NElementHeader header, NElementAnnotation[] annotations, NWorkspace workspace) {
+        super(annotations, workspace);
         this.values = values.toArray(new NElement[0]);
+        this.header = header;
     }
 
 
-    public DefaultNArrayElement(NElement[] values, NWorkspace workspace) {
-        super(workspace);
+    public DefaultNArrayElement(NElement[] values, NElementHeader header, NElementAnnotation[] annotations, NWorkspace workspace) {
+        super(annotations, workspace);
         this.values = Arrays.copyOf(values, values.length);
+        this.header = header;
+    }
+
+    @Override
+    public NElementHeader header() {
+        return header;
     }
 
     @Override

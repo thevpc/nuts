@@ -24,10 +24,19 @@
  */
 package net.thevpc.nuts.elem;
 
+import java.util.List;
+
 /**
  * @author thevpc
  */
 public interface NElementBuilder {
     NElementType type();
+    NElementBuilder addAnnotations(List<NElementAnnotation> annotations);
+    NElementBuilder addAnnotation(NElementAnnotation annotation);
+    NElementBuilder addAnnotationAt(int index,NElementAnnotation annotation);
+    NElementBuilder removeAnnotationAt(int index);
+    NElementBuilder clearAnnotations();
+    List<NElementAnnotation> getAnnotations();
+
     NElement build();
 }

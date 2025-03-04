@@ -76,6 +76,9 @@ public enum NElementType implements NEnum {
      * string element
      */
     STRING(true, false),
+    REGEX(true, false),
+    NAME(true, false),
+    CHAR(true, false),
 
     /**
      * date element
@@ -96,8 +99,7 @@ public enum NElementType implements NEnum {
     /**
      * custom object that is not destructed. Cannot be null or primitive
      */
-    CUSTOM(false, false)
-    ;
+    CUSTOM(false, false);
 
     /**
      * true if private type

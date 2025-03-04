@@ -24,29 +24,61 @@
  */
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NOptional;
+
+import java.time.Instant;
+import java.util.Collection;
 import java.util.stream.Stream;
 
 /**
- * Object implementation of Nuts Element type. Nuts Element types are generic
+ * Array implementation of Nuts Element type. Nuts Element types are generic
  * JSON like parsable objects.
  *
  * @author thevpc
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NObjectElement extends NNavigatableElement, Iterable<NElementEntry> {
-    static NObjectElement ofEmpty() {
-        return NElements.of().ofEmptyObject();
-    }
+public interface NElementHeader extends Iterable<NElement>, NBlankable {
+    String name();
+    boolean isArgs();
+    /**
+     * array items
+     *
+     * @return array items
+     */
+    Collection<NElement> args();
 
-    Stream<NElementEntry> stream();
-
-    NElementHeader header();
+    Stream<NElement> stream();
 
     /**
-     * return new builder initialized with this instance
+     * element at index
      *
-     * @return new builder initialized with this instance
+     * @param index index
+     * @return element at index
      */
-    NObjectElementBuilder builder();
+    NOptional<NElement> get(int index);
+
+    NOptional<String> getString(int index);
+
+    NOptional<Boolean> getBoolean(int index);
+
+    NOptional<Byte> getByte(int index);
+
+    NOptional<Short> getShort(int index);
+
+    NOptional<Integer> getInt(int index);
+
+    NOptional<Long> getLong(int index);
+
+    NOptional<Float> getFloat(int index);
+
+    NOptional<Double> getDouble(int index);
+
+    NOptional<Instant> getInstant(int index);
+
+    NOptional<NArrayElement> getArray(int index);
+
+    NOptional<NObjectElement> getObject(int index);
+
 }

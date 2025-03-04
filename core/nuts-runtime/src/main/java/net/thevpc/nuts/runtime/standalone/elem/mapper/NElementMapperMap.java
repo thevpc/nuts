@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryService;
+import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementHeader;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNObjectElement;
 import net.thevpc.nuts.util.NMsg;
 
@@ -45,7 +46,7 @@ public class NElementMapperMap implements NElementMapper<Map> {
                 m.add(new DefaultNElementEntry(k, v));
             }
         }
-        return new DefaultNObjectElement(m, context.getWorkspace());
+        return new DefaultNObjectElement(m, DefaultNElementHeader.EMPTY,new NElementAnnotation[0],context.getWorkspace());
     }
 
     public Map fillObject(NElement o, Map all, Type elemType1, Type elemType2, Type to, NElementFactoryContext context) {

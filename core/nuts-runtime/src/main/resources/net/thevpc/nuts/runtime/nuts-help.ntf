@@ -476,7 +476,7 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
       ```sh --repos=-https://jcenter.bintray.com ```
       ```sh --repos=jcenter=https://jcenter.bintray.com ```
       ```sh --repos=jcenter=maven@https://jcenter.bintray.com ```
-      ```sh --repos==dev=maven@htmlfs:https://thevpc.net/maven ```
+      ```sh --repos==dev=maven@htmlfs:https://maven.thevpc.net ```
 
       the prefix operator (+,-,=) when specified defines whether the repository is
         to include (+), to exclude (-) or to replace (=) ie all existing repositories will be
@@ -514,7 +514,7 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
                     ```kw vpc-public-nuts```
                                             : maven repository at ```path https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master```
                     ```kw dev```
-                    ```kw thevpc```         : maven repository at ```path https://thevpc.net/maven```
+                    ```kw thevpc```         : maven repository at ```path https://maven.thevpc.net```
       The repository types supported are:
                     ```kw maven```          standard maven repository
                     ```kw nuts```           standard nuts repository

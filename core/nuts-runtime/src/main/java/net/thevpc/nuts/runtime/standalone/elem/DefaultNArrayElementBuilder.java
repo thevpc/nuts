@@ -11,14 +11,14 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
@@ -42,12 +42,124 @@ public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
 
     private final List<NElement> values = new ArrayList<>();
     private transient NWorkspace workspace;
+    private final List<NElementAnnotation> annotations = new ArrayList<>();
+    private final List<NElement> args = new ArrayList<>();
+    private String name;
+    private boolean hasArgs;
 
     public DefaultNArrayElementBuilder(NWorkspace workspace) {
         this.workspace = workspace;
-        if(workspace==null){
+        if (workspace == null) {
             throw new NullPointerException();
         }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public NArrayElementBuilder setName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public boolean isHasArgs() {
+        return hasArgs;
+    }
+
+    public NArrayElementBuilder setHasArgs(boolean hasArgs) {
+        this.hasArgs = hasArgs;
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder addArgs(List<NElement> args) {
+        if (args != null) {
+            for (NElement a : args) {
+                if (a != null) {
+                    this.args.add(a);
+                }
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder addArg(NElement arg) {
+        if (arg != null) {
+            this.args.add(arg);
+        }
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder addArgAt(int index, NElement arg) {
+        if (arg != null) {
+            args.add(index, arg);
+        }
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder removeArgAt(int index) {
+        args.remove(index);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder clearArgs() {
+        args.clear();
+        return this;
+    }
+
+    @Override
+    public List<NElement> getArgs() {
+        return Collections.unmodifiableList(args);
+    }
+
+    @Override
+    public NArrayElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
+        if (annotations != null) {
+            for (NElementAnnotation a : annotations) {
+                if (a != null) {
+                    this.annotations.add(a);
+                }
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder addAnnotation(NElementAnnotation annotation) {
+        if (annotation != null) {
+            annotations.add(annotation);
+        }
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder addAnnotationAt(int index, NElementAnnotation annotation) {
+        if (annotation != null) {
+            annotations.add(index, annotation);
+        }
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder removeAnnotationAt(int index) {
+        annotations.remove(index);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder clearAnnotations() {
+        annotations.clear();
+        return this;
+    }
+
+    @Override
+    public List<NElementAnnotation> getAnnotations() {
+        return Collections.unmodifiableList(annotations);
     }
 
     @Override
@@ -79,7 +191,7 @@ public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
 
     @Override
     public NArrayElementBuilder addAll(NElement[] value) {
-        if(value!=null) {
+        if (value != null) {
             for (NElement e : value) {
                 add(e);
             }
@@ -89,7 +201,7 @@ public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
 
     @Override
     public NArrayElementBuilder addAll(Collection<NElement> value) {
-        if(value!=null) {
+        if (value != null) {
             for (NElement e : value) {
                 add(e);
             }
@@ -267,7 +379,9 @@ public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
 
     @Override
     public NArrayElement build() {
-        return new DefaultNArrayElement(values, workspace);
+        return new DefaultNArrayElement(values,
+                DefaultNElementHeader.of(name, hasArgs, args),
+                annotations.toArray(new NElementAnnotation[0]), workspace);
     }
 
     @Override

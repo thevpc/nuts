@@ -34,6 +34,7 @@ import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryService;
 import net.thevpc.nuts.runtime.standalone.elem.NElementFactoryService;
 import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
 import net.thevpc.nuts.runtime.standalone.format.json.DefaultJsonElementFormat;
+import net.thevpc.nuts.runtime.standalone.format.tson.DefaultTsonElementFormat;
 import net.thevpc.nuts.runtime.standalone.text.highlighter.CustomStyleCodeHighlighter;
 import net.thevpc.nuts.runtime.standalone.text.theme.DefaultNTextFormatTheme;
 import net.thevpc.nuts.runtime.standalone.text.theme.NTextFormatPropertiesTheme;
@@ -75,6 +76,7 @@ public class DefaultNTextManagerModel {
     private NElementStreamFormat jsonMan;
     private NElementStreamFormat yamlMan;
     private NElementStreamFormat xmlMan;
+    private NElementStreamFormat tsonMan;
     private Map<String, NTextFormatTheme> cachedThemes = new HashMap<>();
 
     public DefaultNTextManagerModel(NWorkspace workspace) {
@@ -300,6 +302,12 @@ public class DefaultNTextManagerModel {
             xmlMan = new DefaultXmlNElementStreamFormat();
         }
         return xmlMan;
+    }
+    public NElementStreamFormat getTsonMan() {
+        if (tsonMan == null) {
+            tsonMan = new DefaultTsonElementFormat(workspace);
+        }
+        return tsonMan;
     }
 
     public NWorkspace getWorkspace() {

@@ -14,9 +14,11 @@ public class DefaultNObjectElement extends AbstractNObjectElement {
     private List<NElementEntry> values = new ArrayList<>();
     private Map<NElement, List<Integer>> indexes = new HashMap<>();
     private NElements elements;
+    private NElementHeader header;
 
-    public DefaultNObjectElement(List<NElementEntry> values, NWorkspace workspace) {
-        super(workspace);
+    public DefaultNObjectElement(List<NElementEntry> values, NElementHeader header, NElementAnnotation[] annotations, NWorkspace workspace) {
+        super(annotations,workspace);
+        this.header=header;
         if (values != null) {
             for (NElementEntry e : values) {
                 NElement key = e.getKey();
@@ -27,6 +29,11 @@ public class DefaultNObjectElement extends AbstractNObjectElement {
                 }
             }
         }
+    }
+
+    @Override
+    public NElementHeader header() {
+        return header;
     }
 
     @Override

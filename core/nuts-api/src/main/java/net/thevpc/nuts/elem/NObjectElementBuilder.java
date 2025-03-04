@@ -205,4 +205,23 @@ public interface NObjectElementBuilder extends NElementBuilder {
      * @return this {@code this} instance
      */
     NObjectElementBuilder addAll(NObjectElementBuilder other);
+
+    NObjectElementBuilder addAnnotations(List<NElementAnnotation> annotations);
+    NObjectElementBuilder addAnnotation(NElementAnnotation annotation);
+    NObjectElementBuilder addAnnotationAt(int index,NElementAnnotation annotation);
+    NObjectElementBuilder removeAnnotationAt(int index);
+    NObjectElementBuilder clearAnnotations();
+
+
+    NObjectElementBuilder addArgs(List<NElement> args) ;
+    NObjectElementBuilder addArg(NElement arg) ;
+    NObjectElementBuilder addArgAt(int index, NElement arg) ;
+    NObjectElementBuilder removeArgAt(int index) ;
+    NObjectElementBuilder clearArgs() ;
+    List<NElement> getArgs();
+
+    String getName() ;
+    NObjectElementBuilder setName(String name) ;
+    boolean isHasArgs() ;
+    NObjectElementBuilder setHasArgs(boolean hasArgs);
 }
