@@ -5,7 +5,6 @@ import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -21,6 +20,23 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
             message = () -> NMsg.ofMissingValue();
         }
         this.message = message;
+    }
+
+    public NOptional<T> withMessage(Supplier<NMsg> message) {
+        return new NReservedOptionalEmpty<>(message);
+    }
+
+    public NOptional<T> withMessage(NMsg message) {
+        return new NReservedOptionalEmpty<>(message == null ? (() -> NMsg.ofMissingValue()) : () -> message);
+    }
+
+    public NOptional<T> withName(NMsg name) {
+        return new NReservedOptionalEmpty<>(name == null ? (() -> NMsg.ofMissingValue()) : () -> NMsg.ofMissingValue(name));
+    }
+
+    @Override
+    public NOptional<T> withName(String name) {
+        return new NReservedOptionalEmpty<>(name == null ? (() -> NMsg.ofMissingValue()) : () -> NMsg.ofMissingValue(name));
     }
 
     @Override
@@ -118,11 +134,7 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
             exception = exceptionFactory.createException(m, null);
         }
         if (exception == null) {
-            if (NWorkspace.get().isPresent()) {
-                exception = new NNoSuchElementException(m);
-            } else {
-                exception = new NoSuchElementException(m.toString());
-            }
+            exception= NExceptionHandler.ofSafeNoSuchElementException(m);
         }
         throw exception;
     }

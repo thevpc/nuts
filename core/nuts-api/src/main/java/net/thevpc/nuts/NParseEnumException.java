@@ -62,7 +62,7 @@ public class NParseEnumException extends NException {
                         : message
         );
         if (enumType == null || (!Enum.class.isAssignableFrom(enumType) && !NEnum.class.isAssignableFrom(enumType))) {
-            throw new NIllegalArgumentException(NMsg.ofC("failed creating NutsParseEnumException for %s", (enumType == null ? null : enumType.getName())));
+            throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC("failed creating NutsParseEnumException for %s", (enumType == null ? null : enumType.getName())));
         }
         this.enumType = enumType;
         this.invalidValue = invalidValue;

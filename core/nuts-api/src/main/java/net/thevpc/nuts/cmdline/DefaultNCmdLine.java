@@ -24,12 +24,11 @@
  */
 package net.thevpc.nuts.cmdline;
 
-import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.NExceptionHandler;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.reserved.util.NReservedSimpleCharQueue;
 import net.thevpc.nuts.text.NTextBuilder;
-import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
@@ -831,9 +830,9 @@ public class DefaultNCmdLine implements NCmdLine {
     @Override
     public void throwError(NMsg message) {
         if (NBlankable.isBlank(commandName)) {
-            throw new NIllegalArgumentException(message);
+            throw NExceptionHandler.ofSafeIllegalArgumentException(message);
         }
-        throw new NIllegalArgumentException(NMsg.ofC("%s : %s", commandName, message));
+        throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC("%s : %s", commandName, message));
     }
 
     @Override
@@ -843,7 +842,7 @@ public class DefaultNCmdLine implements NCmdLine {
             m.append(commandName).append(" : ");
         }
         m.append(message);
-        throw new NIllegalArgumentException(NMsg.ofNtf(m.build().toString()));
+        throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofNtf(m.build().toString()));
     }
 
     private NArgCandidate[] resolveRecommendations(NArgType expectValue, String[] names, int autoCompleteCurrentWordIndex) {

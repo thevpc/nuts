@@ -34,28 +34,28 @@ import java.util.stream.Stream;
 
 public interface CallableSupport<T> {
 
-    static <T> CallableSupport<T> resolve(Collection<CallableSupport<T>> source, Supplier<String> emptyMessage) {
+    static <T> CallableSupport<T> resolve(Collection<CallableSupport<T>> source, Supplier<NMsg> emptyMessage) {
         if (source == null) {
             return invalid(emptyMessage);
         }
         return resolve(source.stream(), emptyMessage);
     }
 
-    static <T> CallableSupport<T> resolve(Stream<CallableSupport<T>> source, Supplier<String> emptyMessage) {
+    static <T> CallableSupport<T> resolve(Stream<CallableSupport<T>> source, Supplier<NMsg> emptyMessage) {
         if (source == null) {
             return invalid(emptyMessage);
         }
         return resolveSupplier(source.map(x -> () -> x), emptyMessage);
     }
 
-    static <T> CallableSupport<T> resolveSupplier(Collection<Supplier<CallableSupport<T>>> source, Supplier<String> emptyMessage) {
+    static <T> CallableSupport<T> resolveSupplier(Collection<Supplier<CallableSupport<T>>> source, Supplier<NMsg> emptyMessage) {
         if (source == null) {
             return invalid(emptyMessage);
         }
         return resolveSupplier(source.stream(), emptyMessage);
     }
 
-    static <T> CallableSupport<T> resolveSupplier(Stream<Supplier<CallableSupport<T>>> source, Supplier<String> emptyMessage) {
+    static <T> CallableSupport<T> resolveSupplier(Stream<Supplier<CallableSupport<T>>> source, Supplier<NMsg> emptyMessage) {
         Object[] track = new Object[2];
         if (source != null) {
             source.forEach(i -> {
@@ -88,7 +88,7 @@ public interface CallableSupport<T> {
         return of(supportLevel, value, null);
     }
 
-    static <T> CallableSupport<T> of(int supportLevel, T value, Supplier<String> emptyMessage) {
+    static <T> CallableSupport<T> of(int supportLevel, T value, Supplier<NMsg> emptyMessage) {
         return supportLevel <= 0 ? invalid(emptyMessage) : new DefaultCallableSupport<>(() -> value, supportLevel, emptyMessage);
     }
 
@@ -96,14 +96,14 @@ public interface CallableSupport<T> {
         return of(supportLevel, supplier, null);
     }
 
-    static <T> CallableSupport<T> of(int supportLevel, Supplier<T> supplier, Supplier<String> emptyMessage) {
+    static <T> CallableSupport<T> of(int supportLevel, Supplier<T> supplier, Supplier<NMsg> emptyMessage) {
         return (supportLevel <= 0 || supplier == null) ? invalid(emptyMessage)
                 : new DefaultCallableSupport<>(supplier, supportLevel, emptyMessage)
                 ;
     }
 
     @SuppressWarnings("unchecked")
-    static <T> CallableSupport<T> invalid(Supplier<String> emptyMessage) {
+    static <T> CallableSupport<T> invalid(Supplier<NMsg> emptyMessage) {
         return new DefaultCallableSupport<>(null, NConstants.Support.NO_SUPPORT, emptyMessage);
     }
 

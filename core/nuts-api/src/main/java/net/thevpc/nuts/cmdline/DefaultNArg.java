@@ -24,6 +24,7 @@
  */
 package net.thevpc.nuts.cmdline;
 
+import net.thevpc.nuts.NExceptionHandler;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NLiteral;
@@ -32,7 +33,6 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
-import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -227,7 +227,7 @@ public class DefaultNArg implements NArg {
     @Override
     public NArg required() {
         if (image == null) {
-            throw new NoSuchElementException("missing value");
+            throw NExceptionHandler.ofSafeNoSuchElementException(NMsg.ofPlain("missing value"));
         }
         return this;
     }

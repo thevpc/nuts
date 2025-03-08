@@ -1,10 +1,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
-import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -438,7 +435,7 @@ public class NPlatformHome {
                 }
             }
         }
-        throw new NIllegalArgumentException(NMsg.ofC("unsupported getDefaultPlatformHomeFolderBase %s/%s", platformOsFamily, location));
+        throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC("unsupported getDefaultPlatformHomeFolderBase %s/%s", platformOsFamily, location));
     }
 
     public String getWindowsProgramFiles() {
@@ -524,7 +521,7 @@ public class NPlatformHome {
         for (NStoreType location : NStoreType.values()) {
             String platformHomeFolder = getWorkspaceLocation(location, homeLocations, workspaceLocation);
             if (NBlankable.isBlank(platformHomeFolder)) {
-                throw new NIllegalArgumentException(NMsg.ofC("missing Home for %s", location.id()));
+                throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC("missing Home for %s", location.id()));
             }
             homes[location.ordinal()] = platformHomeFolder;
         }
@@ -536,7 +533,7 @@ public class NPlatformHome {
             for (Map.Entry<NStoreType, String> e : baseLocations.entrySet()) {
                 NStoreType loc = e.getKey();
                 if (loc == null) {
-                    throw new NIllegalArgumentException(NMsg.ofPlain("null location"));
+                    throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofPlain("null location"));
                 }
                 storeLocations.put(loc, e.getValue());
             }

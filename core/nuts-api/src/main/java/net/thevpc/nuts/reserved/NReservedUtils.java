@@ -225,7 +225,7 @@ public final class NReservedUtils {
 
     public static boolean acceptVersion(NVersion one, NVersion other) {
         if (!other.isSingleValue()) {
-            throw new NIllegalArgumentException(NMsg.ofC("expected single value version: %s", other));
+            throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC("expected single value version: %s", other));
         }
         List<NVersionInterval> ii = one.intervals().get();
         if (ii.isEmpty()) {

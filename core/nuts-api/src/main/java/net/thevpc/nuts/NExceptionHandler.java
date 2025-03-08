@@ -23,6 +23,7 @@ import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
 import net.thevpc.nuts.util.NUtils;
 
+import java.util.NoSuchElementException;
 import java.util.logging.Level;
 
 public class NExceptionHandler {
@@ -89,6 +90,35 @@ public class NExceptionHandler {
     }
 
     public NExceptionHandler() {
+    }
+
+    public static RuntimeException ofSafeIllegalArgumentException(NMsg e) {
+        if (!NWorkspace.get().isPresent()) {
+            return new IllegalArgumentException(e.toString());
+        }
+        return new NIllegalArgumentException(e);
+    }
+
+    public static RuntimeException ofSafeIllegalArgumentException(NMsg message, Throwable ex) {
+        if (!NWorkspace.get().isPresent()) {
+            return new IllegalArgumentException(message.toString(), ex);
+        }
+        return new NIllegalArgumentException(message, ex);
+    }
+
+    public static RuntimeException ofSafeNoSuchElementException(NMsg message) {
+        if (!NWorkspace.get().isPresent()) {
+            return new NoSuchElementException(message.toString());
+        }
+        return new NNoSuchElementException(message);
+
+    }
+
+    public static RuntimeException ofSafeUnsupportedEnumException(Enum e) {
+        if (!NWorkspace.get().isPresent()) {
+            return new NoSuchElementException("unsupported enum value " + e);
+        }
+        return new NUnsupportedEnumException(e);
     }
 
 

@@ -5,7 +5,8 @@
  */
 package net.thevpc.nuts.util;
 
-import java.util.NoSuchElementException;
+import net.thevpc.nuts.NExceptionHandler;
+
 import java.util.function.Supplier;
 
 /**
@@ -17,9 +18,9 @@ import java.util.function.Supplier;
 public class DefaultCallableSupport<T> implements CallableSupport<T> {
     private final Supplier<T> value;
     private final int supportLevel;
-    private final Supplier<String> emptyMessage;
+    private final Supplier<NMsg> emptyMessage;
 
-    public DefaultCallableSupport(Supplier<T> value, int supportLevel, Supplier<String> emptyMessage) {
+    public DefaultCallableSupport(Supplier<T> value, int supportLevel, Supplier<NMsg> emptyMessage) {
         this.value = value;
         if (this.value == null && supportLevel > 0) {
             throw new IllegalArgumentException("null callable requires invalid support");
@@ -27,18 +28,18 @@ public class DefaultCallableSupport<T> implements CallableSupport<T> {
             throw new IllegalArgumentException("non null callable requires valid support");
         }
         this.supportLevel = supportLevel;
-        this.emptyMessage = emptyMessage == null ? () -> "not found" : emptyMessage;
+        this.emptyMessage = emptyMessage == null ? () -> NMsg.ofMissingValue() : emptyMessage;
     }
 
     public T call() {
         if (isValid()) {
             return value.get();
         } else {
-            String m = emptyMessage.get();
-            if(m==null){
-                m="not found";
+            NMsg m = emptyMessage.get();
+            if (m == null) {
+                m = NMsg.ofMissingValue();
             }
-            throw new NoSuchElementException(m);
+            throw NExceptionHandler.ofSafeNoSuchElementException(m);
         }
     }
 
@@ -51,6 +52,10 @@ public class DefaultCallableSupport<T> implements CallableSupport<T> {
         if (isValid()) {
             return NOptional.ofCallable(() -> value.get());
         }
-        return NOptional.ofEmpty(()->NMsg.ofPlain(emptyMessage.get()));
+        NMsg m = emptyMessage.get();
+        if (m == null) {
+            m = NMsg.ofMissingValue();
+        }
+        return NOptional.ofEmpty(m);
     }
 }

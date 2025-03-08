@@ -20,7 +20,7 @@ public interface NOptional<T> extends NBlankable {
     }
 
     static <T> NOptional<T> ofNamedEmpty(NMsg message) {
-        return ofEmpty(NMsg.ofC("missing %s", message==null?"value":message));
+        return ofEmpty(NMsg.ofC("missing %s", message == null ? "value" : message));
     }
 
     static <T> NOptional<T> ofNamedError(NMsg message) {
@@ -40,7 +40,7 @@ public interface NOptional<T> extends NBlankable {
     }
 
     static <T> NOptional<T> ofEmpty() {
-        return ofEmpty((Supplier<NMsg>)null);
+        return ofEmpty((Supplier<NMsg>) null);
     }
 
     static <T> NOptional<T> ofEmpty(Supplier<NMsg> emptyMessage) {
@@ -48,7 +48,7 @@ public interface NOptional<T> extends NBlankable {
     }
 
     static <T> NOptional<T> ofEmpty(NMsg emptyMessage) {
-        return new NReservedOptionalEmpty<>(()->emptyMessage);
+        return new NReservedOptionalEmpty<>(() -> emptyMessage);
     }
 
     static <T> NOptional<T> ofError(Supplier<NMsg> errorMessage) {
@@ -56,15 +56,19 @@ public interface NOptional<T> extends NBlankable {
     }
 
     static <T> NOptional<T> ofError(NMsg errorMessage) {
-        return ofError(errorMessage==null?null:()->errorMessage, null);
+        return ofError(errorMessage == null ? null : () -> errorMessage, null);
     }
 
     static <T> NOptional<T> ofError(NMsg errorMessage, Throwable throwable) {
-        return ofError(errorMessage==null?null:()->errorMessage, throwable);
+        return ofError(errorMessage == null ? null : () -> errorMessage, throwable);
     }
 
     static <T> NOptional<T> ofError(Supplier<NMsg> errorMessage, Throwable throwable) {
         return new NReservedOptionalError<>(errorMessage, throwable);
+    }
+
+    static <T> NOptional<T> ofError(Throwable throwable) {
+        return new NReservedOptionalError<>(null, throwable);
     }
 
     static <T> NOptional<T> of(T value) {
@@ -77,16 +81,20 @@ public interface NOptional<T> extends NBlankable {
 
     static <T> NOptional<T> ofCallable(NCallable<T> value) {
         NAssert.requireNonNull(value, "callable");
-        return new NReservedOptionalValidCallable<>(value);
+        return new NReservedOptionalValidCallable<>(()->NOptional.of(value.call()));
     }
 
     static <T> NOptional<T> ofSupplier(Supplier<T> value) {
         NAssert.requireNonNull(value, "supplier");
-        return new NReservedOptionalValidCallable<>(() -> value.get());
+        return new NReservedOptionalValidCallable<>(()->NOptional.of(value.get()));
     }
 
     static <T> NOptional<T> ofNamed(T value, String name) {
         return of(value, () -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value")));
+    }
+
+    static <T> NOptional<T> ofNamed(T value, NMsg name) {
+        return of(value, () -> NMsg.ofC("missing %s", name == null ? "value" : name));
     }
 
     static <T> NOptional<T> of(T value, Supplier<NMsg> emptyMessage) {
@@ -213,7 +221,7 @@ public interface NOptional<T> extends NBlankable {
     <V> NOptional<V> mapIfNotError(Function<T, V> mapper);
 
     <V> NOptional<V> map(Function<T, V> mapper);
-    
+
     /**
      * handy method to 'denull' expressions and handle things like <code>a?.b()?.c</code>
      * That is not possible in the Java Programming Language.
@@ -221,7 +229,8 @@ public interface NOptional<T> extends NBlankable {
      * <pre>
      * NOptional.of(a).then(x->x.b()).then(x->x.c).get()
      * </pre>
-     * @param <V> final result
+     *
+     * @param <V>    final result
      * @param mapper function to apply
      * @return null if this optional is null or empty otherwise, maps using mapper
      */
@@ -329,14 +338,22 @@ public interface NOptional<T> extends NBlankable {
      * @return true if this is either error or empty value
      */
     boolean isNotPresent();
-    
+
     NOptionalType getType();
 
     Supplier<NMsg> getMessage();
 
+    NOptional<T> withMessage(Supplier<NMsg> message);
+
+    NOptional<T> withMessage(NMsg message);
+
+    NOptional<T> withName(NMsg name);
+
+    NOptional<T> withName(String name);
+
     NOptional<T> withExceptionFactory(ExceptionFactory exceptionFactory);
 
-    interface ExceptionFactory{
+    interface ExceptionFactory {
         RuntimeException createException(NMsg message, Throwable e);
     }
 }

@@ -9,7 +9,6 @@ import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
-import java.util.NoSuchElementException;
 import java.util.function.Supplier;
 
 /**
@@ -39,7 +38,7 @@ public class DefaultNCallableSupport<T> implements NCallableSupport<T> {
             return value.get();
         } else {
             NMsg nMsg = NApiUtilsRPI.resolveValidErrorMessage(() -> emptyMessage.get());
-            throw new NNoSuchElementException(nMsg);
+            throw NExceptionHandler.ofSafeNoSuchElementException(nMsg);
         }
     }
 

@@ -8,7 +8,6 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.util.NMsg;
 
-import java.util.NoSuchElementException;
 import java.util.function.Supplier;
 
 /**
@@ -37,7 +36,7 @@ public class DefaultNRunnableSupport implements NRunnableSupport {
             value.run();
         } else {
             NMsg nMsg = NApiUtilsRPI.resolveValidErrorMessage(() -> emptyMessage.get());
-            throw new NNoSuchElementException(nMsg);
+            throw NExceptionHandler.ofSafeNoSuchElementException(nMsg);
         }
     }
 

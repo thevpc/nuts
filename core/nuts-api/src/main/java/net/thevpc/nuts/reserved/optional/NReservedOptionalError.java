@@ -19,10 +19,26 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
 
     public NReservedOptionalError(Supplier<NMsg> message, Throwable error) {
         if (message == null) {
-            message = () -> NMsg.ofInvalidValue(error, null);
+            message = () -> NMsg.ofInvalidValue(error);
         }
         this.message = message;
         this.error = error;
+    }
+
+    public NOptional<T> withMessage(Supplier<NMsg> message) {
+        return new NReservedOptionalEmpty<>(message);
+    }
+
+    public NOptional<T> withMessage(NMsg message) {
+        return new NReservedOptionalEmpty<>(message == null ? (() -> NMsg.ofInvalidValue(error)) : () -> message);
+    }
+
+    public NOptional<T> withName(NMsg name) {
+        return new NReservedOptionalEmpty<>(name == null ? (() -> NMsg.ofInvalidValue(error)) : () -> NMsg.ofInvalidValue(error, name));
+    }
+
+    public NOptional<T> withName(String name) {
+        return new NReservedOptionalEmpty<>(name == null ? (() -> NMsg.ofInvalidValue(error)) : () -> NMsg.ofInvalidValue(error, name));
     }
 
     @Override

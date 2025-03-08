@@ -47,7 +47,7 @@ public class NMsg {
     private final NTextStyles styles;
 
     public static NMsg ofMissingValue() {
-        return ofMissingValue(null);
+        return ofMissingValue((String) null);
     }
 
     public static NMsg ofMissingValue(String valueName) {
@@ -57,12 +57,19 @@ public class NMsg {
         return NMsg.ofC("missing %s", valueName);
     }
 
+    public static NMsg ofMissingValue(NMsg valueName) {
+        if (NBlankable.isBlank(valueName)) {
+            return NMsg.ofPlain("missing value");
+        }
+        return NMsg.ofC("missing %s", valueName);
+    }
+
     public static NMsg ofInvalidValue() {
-        return ofInvalidValue(null, null);
+        return ofInvalidValue(null, (String)null);
     }
 
     public static NMsg ofInvalidValue(Throwable throwable) {
-        return ofInvalidValue(throwable, null);
+        return ofInvalidValue(throwable, (String)null);
     }
 
     public static NMsg ofInvalidValue(String valueName) {
@@ -70,6 +77,19 @@ public class NMsg {
     }
 
     public static NMsg ofInvalidValue(Throwable throwable, String valueName) {
+        if (throwable == null) {
+            if (NBlankable.isBlank(valueName)) {
+                return NMsg.ofPlain("invalid value");
+            }
+            return NMsg.ofC("invalid %s", valueName);
+        }
+        if (NBlankable.isBlank(valueName)) {
+            return ofC("invalid value : %s", NExceptionHandler.getErrorMessage(throwable));
+        }
+        return ofC("invalid %s : %s", valueName, NExceptionHandler.getErrorMessage(throwable));
+    }
+
+    public static NMsg ofInvalidValue(Throwable throwable, NMsg valueName) {
         if (throwable == null) {
             if (NBlankable.isBlank(valueName)) {
                 return NMsg.ofPlain("invalid value");

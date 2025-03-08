@@ -1,11 +1,10 @@
 package net.thevpc.nuts.reserved.optional;
 
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NOptionalErrorException;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
+import java.util.NoSuchElementException;
 import java.util.function.Supplier;
 
 public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImpl<T> implements Cloneable {
@@ -23,11 +22,11 @@ public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImp
     }
 
     public T orDefault() {
-        if(defaultValue == null){
+        if (defaultValue == null) {
             return null;
         }
         NOptional<T> o = defaultValue.get();
-        if(o==null){
+        if (o == null) {
             return null;
         }
         return o.orDefault();
@@ -35,11 +34,11 @@ public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImp
 
     @Override
     public NOptional<T> orDefaultOptional() {
-        if(defaultValue == null){
+        if (defaultValue == null) {
             return null;
         }
         NOptional<T> o = defaultValue.get();
-        if(o==null){
+        if (o == null) {
             return NOptional.ofEmpty(getMessage());
         }
         return o.orDefaultOptional();
@@ -57,6 +56,7 @@ public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImp
         }
         return m;
     }
+
     protected void throwError(Supplier<NMsg> message, Supplier<NMsg> message0) {
         if (message == null) {
             message = message0;
@@ -67,6 +67,9 @@ public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImp
         Supplier<NMsg> finalMessage = message;
         NMsg eMsg = NApiUtilsRPI.resolveValidErrorMessage(() -> finalMessage == null ? null : finalMessage.get());
         NMsg m = prepareMessage(eMsg);
+        if (!NWorkspace.get().isPresent()) {
+            throw new NoSuchElementException(m.toString());
+        }
         throw new NOptionalErrorException(m);
     }
 
@@ -78,15 +81,16 @@ public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImp
     @Override
     public NOptional<T> withDefault(Supplier<T> value) {
         NReservedOptionalThrowable<T> c = (NReservedOptionalThrowable<T>) clone();
-        c.defaultValue = value==null?null:()->NOptional.of(value.get());
+        c.defaultValue = value == null ? null : () -> NOptional.of(value.get());
         return c;
     }
+
     @Override
     public NOptional<T> withDefaultOptional(Supplier<NOptional<T>> value) {
         NReservedOptionalThrowable<T> c = (NReservedOptionalThrowable<T>) clone();
-        c.defaultValue = value==null?null:()->{
+        c.defaultValue = value == null ? null : () -> {
             NOptional<T> i = value.get();
-            if(i==null){
+            if (i == null) {
                 return NOptional.ofEmpty(getMessage());
             }
             return this;
@@ -97,7 +101,7 @@ public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImp
     @Override
     public NOptional<T> withDefault(T value) {
         NReservedOptionalThrowable<T> c = (NReservedOptionalThrowable<T>) clone();
-        c.defaultValue = value==null?null:() -> NOptional.of(value);
+        c.defaultValue = value == null ? null : () -> NOptional.of(value);
         return c;
     }
 

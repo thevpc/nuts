@@ -109,7 +109,7 @@ public final class NApplications {
                                 return appType.cast(o);
                             }
                         } else {
-                            throw new NIllegalArgumentException(NMsg.ofC("createApplicationInstance must return %s", appType.getName()));
+                            throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC("createApplicationInstance must return %s", appType.getName()));
                         }
                         break;
                     }
@@ -133,13 +133,13 @@ public final class NApplications {
             if (c instanceof Error) {
                 throw (Error) c;
             }
-            throw new NIllegalArgumentException(NMsg.ofC("unable to instantiate application %s", appType.getName()), ex);
+            throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC("unable to instantiate application %s", appType.getName()), ex);
         } catch (IllegalAccessException ex) {
-            throw new NIllegalArgumentException(NMsg.ofC("illegal access to default constructor for %s", appType.getName()), ex);
+            throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC("illegal access to default constructor for %s", appType.getName()), ex);
         } catch (InvocationTargetException ex) {
-            throw new NIllegalArgumentException(NMsg.ofC("invocation exception for %s", appType.getName()), ex);
+            throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC("invocation exception for %s", appType.getName()), ex);
         }
-        throw new NIllegalArgumentException(NMsg.ofC("missing application constructor for %s from of : \n\t static createApplicationInstance(NSession,String[])\n\t Constructor(NSession,String[])\n\t Constructor()", appType.getName()));
+        throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC("missing application constructor for %s from of : \n\t static createApplicationInstance(NSession,String[])\n\t Constructor(NSession,String[])\n\t Constructor()", appType.getName()));
     }
 
     /**
