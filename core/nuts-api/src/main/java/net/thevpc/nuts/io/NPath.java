@@ -308,6 +308,21 @@ public interface NPath extends NInputSource, NOutputTarget, NWorkspaceProvider,C
 
     NPath deleteTree();
 
+    /**
+     * ensure that the folder or the file exists and is empty.
+     * If the file or the folder does not exist it will be created
+     * If the file or the folder does exist it will be emptied
+     * @return current path
+     */
+    NPath ensureEmptyDirectory();
+    /**
+     * ensure that the folder or the file exists and is empty.
+     * If the file or the folder does not exist it will be created
+     * If the file or the folder does exist it will be emptied
+     * @return current path
+     */
+    NPath ensureEmptyFile();
+
     NPath delete(boolean recurse);
 
     NPath mkdir(boolean parents);

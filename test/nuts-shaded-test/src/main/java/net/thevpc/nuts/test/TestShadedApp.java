@@ -11,7 +11,7 @@ import net.thevpc.nuts.io.NTerminalMode;
  */
 public class TestShadedApp implements NApplication {
     public static void main(String[] args) {
-        new TestShadedApp().runAndExit(args);
+        new TestShadedApp().run(NAppRunOptions.ofExit(args));
     }
 
     @Override

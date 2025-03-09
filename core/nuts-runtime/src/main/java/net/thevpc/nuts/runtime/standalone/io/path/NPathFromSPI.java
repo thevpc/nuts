@@ -219,6 +219,37 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
+    public NPath ensureEmptyDirectory() {
+        if (exists()) {
+            if (isDirectory()) {
+                try (NStream<NPath> stream = stream()) {
+                    stream.forEach(x -> {
+                        x.deleteTree();
+                    });
+                }
+            } else {
+                deleteTree();
+                mkdirs();
+            }
+        } else {
+            mkdir(true);
+        }
+        return this;
+    }
+
+    @Override
+    public NPath ensureEmptyFile() {
+        mkParentDirs();
+        if (exists()) {
+            if (!isRegularFile()) {
+                deleteTree();
+            }
+        }
+        writeBytes(new byte[0]);
+        return this;
+    }
+
+    @Override
     public NPath delete(boolean recurse) {
         base.delete(this, recurse);
         return this;

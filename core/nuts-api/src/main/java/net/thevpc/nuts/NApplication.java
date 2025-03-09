@@ -54,7 +54,7 @@ package net.thevpc.nuts;
  * public class MyApplication1 implements NApplication {
  *     public static void main(String[] args) {
  *         // just create an instance and call runAndExit in the main method
- *         new MyApplication1().runAndExit(args);
+ *         new MyApplication1().run(NAppRunOptions.ofExit(args));
  *     }
  *
  *     public void run() {
@@ -108,7 +108,7 @@ package net.thevpc.nuts;
  * public class MyApplication2 implements NApplication {
  *     public static void main(String[] args) {
  *         // just create an instance and call runAndExit in the main method
- *         new MyApplication2().runAndExit(args);
+ *         new MyApplication2().run(NAppRunOptions.ofExit(args));
  *     }
  *
  *     // do the main staff in launch method
@@ -174,7 +174,7 @@ package net.thevpc.nuts;
  * public class MyApplication3 implements NApplication {
  *     public static void main(String[] args) {
  *         // just create an instance and call runAndExit in the main method
- *         new MyApplication3().runAndExit(args);
+ *         new MyApplication3().run(NAppRunOptions.ofExit(args));
  *     }
  *
  *     // do the main staff in launch method
@@ -233,7 +233,7 @@ package net.thevpc.nuts;
  * public class MyApplication4 implements NApplication {
  *     public static void main(String[] args) {
  *         // just create an instance and call runAndExit in the main method
- *         new MyApplication4().runAndExit(args);
+ *         new MyApplication4().run(NAppRunOptions.ofExit(args));
  *     }
  *
  *     // do the main staff in launch method
@@ -281,7 +281,7 @@ public interface NApplication {
      * @since 0.7.1
      */
     static <T extends NApplication> void main(Class<T> appType, String[] args) {
-        NApplications.createApplicationInstance(appType, args).run(args);
+        NApplications.createApplicationInstance(appType, args).run(NAppRunOptions.of(args));
     }
 
     /**
@@ -296,16 +296,7 @@ public interface NApplication {
      * @since 0.7.1
      */
     static <T extends NApplication> void mainWithExit(Class<T> appType, String[] args) {
-        NApplications.createApplicationInstance(appType, args).runAndExit(args);
-    }
-
-    /**
-     * run the application and <strong>EXIT</strong> process
-     *
-     * @param args arguments
-     */
-    default void runAndExit(String[] args) {
-        run(NAppRunOptions.ofExit(args));
+        NApplications.createApplicationInstance(appType, args).run(NAppRunOptions.ofExit(args));
     }
 
     /**
@@ -315,10 +306,6 @@ public interface NApplication {
      *
      * @param args application arguments. should not be null or contain nulls
      */
-    default void run(String[] args) {
-        run(NAppRunOptions.of(args));
-    }
-
     default void run(NAppRunOptions args) {
         if (args == null) {
             args = new NAppRunOptions();

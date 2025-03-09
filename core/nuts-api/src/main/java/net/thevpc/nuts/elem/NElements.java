@@ -68,8 +68,60 @@ public interface NElements extends NContentTypeFormat {
         return of().setValue(any).setNtf(false).json();
     }
 
+    static NElements ofPlainProps(Object any) {
+        return of().setValue(any).setNtf(false).setContentType(NContentType.PROPS);
+    }
+
+    static NElements ofPlainXml(Object any) {
+        return of().setValue(any).setNtf(false).setContentType(NContentType.XML);
+    }
+
+    static NElements ofPlainTree(Object any) {
+        return of().setValue(any).setNtf(false).setContentType(NContentType.TREE);
+    }
+
+    static NElements ofPlain(Object any) {
+        return of().setValue(any).setNtf(false).setContentType(NContentType.PLAIN);
+    }
+
+    static NElements ofPlainTson(Object any) {
+        return of().setValue(any).setNtf(false).setContentType(NContentType.TSON);
+    }
+
+    static NElements ofPlainYaml(Object any) {
+        return of().setValue(any).setNtf(false).setContentType(NContentType.YAML);
+    }
+
+    static NElements ofPlainTable(Object any) {
+        return of().setValue(any).setNtf(false).setContentType(NContentType.TABLE);
+    }
+
     static NElements ofNtfJson(Object any) {
         return of().setValue(any).setNtf(true).json();
+    }
+
+    static NElements ofNtfProps(Object any) {
+        return of().setValue(any).setNtf(true).setContentType(NContentType.PROPS);
+    }
+
+    static NElements ofNtfXml(Object any) {
+        return of().setValue(any).setNtf(true).setContentType(NContentType.XML);
+    }
+
+    static NElements ofNtfTree(Object any) {
+        return of().setValue(any).setNtf(true).setContentType(NContentType.TREE);
+    }
+
+    static NElements ofNtfTson(Object any) {
+        return of().setValue(any).setNtf(true).setContentType(NContentType.TSON);
+    }
+
+    static NElements ofNtfYaml(Object any) {
+        return of().setValue(any).setNtf(true).setContentType(NContentType.YAML);
+    }
+
+    static NElements ofNtfTable(Object any) {
+        return of().setValue(any).setNtf(true).setContentType(NContentType.TABLE);
     }
 
     /**

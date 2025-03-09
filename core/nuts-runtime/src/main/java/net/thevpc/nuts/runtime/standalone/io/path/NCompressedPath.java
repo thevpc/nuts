@@ -67,6 +67,18 @@ public class NCompressedPath extends NPathBase {
     }
 
     @Override
+    public NPath ensureEmptyDirectory() {
+        base.ensureEmptyDirectory();
+        return this;
+    }
+
+    @Override
+    public NPath ensureEmptyFile() {
+        base.ensureEmptyFile();
+        return this;
+    }
+
+    @Override
     public String getContentEncoding() {
         return base.getContentEncoding();
     }

@@ -18,7 +18,7 @@ public class NAppRunOptions {
         return new NAppRunOptions().setArgs(args).setHandleMode(NApplicationHandleMode.PROPAGATE);
     }
     public static NAppRunOptions ofExit(String[] args) {
-        return new NAppRunOptions().setHandleMode(NApplicationHandleMode.EXIT);
+        return new NAppRunOptions().setArgs(args).setHandleMode(NApplicationHandleMode.EXIT);
     }
 
     public static NAppRunOptions of(NApplication application, String[] args) {
@@ -33,7 +33,7 @@ public class NAppRunOptions {
         return new NAppRunOptions().setApplicationInstance(application).setArgs(args).setHandleMode(NApplicationHandleMode.PROPAGATE);
     }
     public static NAppRunOptions ofExit(NApplication application,String[] args) {
-        return new NAppRunOptions().setApplicationInstance(application).setHandleMode(NApplicationHandleMode.EXIT);
+        return new NAppRunOptions().setArgs(args).setApplicationInstance(application).setHandleMode(NApplicationHandleMode.EXIT);
     }
 
 
