@@ -242,3 +242,4 @@ core/nuts-app-full/target
 /documentation/website/dist/
 /libraries/nlib-doc/target
 /core/nuts-boot-swing/target
+/core/nuts-app-full/src/dist/nuts-app-full-0.8.5.jar
