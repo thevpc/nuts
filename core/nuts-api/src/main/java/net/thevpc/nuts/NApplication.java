@@ -281,7 +281,7 @@ public interface NApplication {
      * @since 0.7.1
      */
     static <T extends NApplication> void main(Class<T> appType, String[] args) {
-        NApplications.createApplicationInstance(appType, args).run(NAppRunOptions.of(args));
+        NApplications.createApplicationInstance(appType, args).main(NMainArgs.of(args));
     }
 
     /**
@@ -296,7 +296,7 @@ public interface NApplication {
      * @since 0.7.1
      */
     static <T extends NApplication> void mainWithExit(Class<T> appType, String[] args) {
-        NApplications.createApplicationInstance(appType, args).run(NAppRunOptions.ofExit(args));
+        NApplications.createApplicationInstance(appType, args).main(NMainArgs.ofExit(args));
     }
 
     /**
@@ -306,9 +306,9 @@ public interface NApplication {
      *
      * @param args application arguments. should not be null or contain nulls
      */
-    default void run(NAppRunOptions args) {
+    default void main(NMainArgs args) {
         if (args == null) {
-            args = new NAppRunOptions();
+            args = new NMainArgs();
         }
         args.setApplicationInstance(this);
         NApplications.runApplication(args);

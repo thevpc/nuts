@@ -157,7 +157,7 @@ public class NutsSpringBootConfiguration {
     @Bean
     public CommandLineRunner nutsCommandLineRunner(ApplicationArguments applicationArguments) {
         return args -> NApplications.runApplication(
-                new NAppRunOptions()
+                new NMainArgs()
                         .setApplicationInstance(nutsApplication())
                         .setNutsArgs(resolveNutsArgs())
                         .setArgs(applicationArguments.getSourceArgs())

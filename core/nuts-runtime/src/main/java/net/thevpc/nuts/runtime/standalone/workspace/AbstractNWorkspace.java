@@ -82,6 +82,12 @@ public abstract class AbstractNWorkspace implements NWorkspace {
     }
 
     @Override
+    public NWorkspace share() {
+        NScopedWorkspace.setSharedWorkspaceInstance(this);
+        return this;
+    }
+
+    @Override
     public NWorkspace setSharedInstance() {
         NScopedWorkspace.setSharedWorkspaceInstance(this);
         return this;

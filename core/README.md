@@ -18,7 +18,7 @@ This folder contains main/core nuts implementation
 # nut (app)
     Nuts Application with minimum dependencies. Relies only on nut-boot. All required classes will be loaded on the fly.
     depends on nut-boot.
-    will download and load nuts-api, nuts-lib and nuts-runtime
+    will download and load nuts, nuts-lib and nuts-runtime
 
 # nut-full (app)
     Nuts Application with all required dependencies statically linked. 

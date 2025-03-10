@@ -147,7 +147,7 @@ public final class NApplications {
      *
      * @param options NApplicationRunOptions
      */
-    public static void runApplication(NAppRunOptions options) {
+    public static void runApplication(NMainArgs options) {
         NApplicationHandleMode m = options.getHandleMode() == null ? NApplicationHandleMode.HANDLE : options.getHandleMode();
         try {
             NClock now = NClock.now();

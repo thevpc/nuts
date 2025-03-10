@@ -68,6 +68,7 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
     }
 
     NWorkspace setSharedInstance();
+    NWorkspace share();
 
     boolean isSharedInstance();
 

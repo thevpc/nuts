@@ -231,6 +231,7 @@
 /installers/nuts-release-tool/dist
 /installers/nuts-portable/src/dist/nuts-portable-0.8.4.0.jar
 core/nuts-api/target
+core/nuts/target
 core/nuts-app/target
 core/nuts-app-full/target
 /installers/nuts-portable/target
@@ -243,3 +244,5 @@ core/nuts-app-full/target
 /libraries/nlib-doc/target
 /core/nuts-boot-swing/target
 /core/nuts-app-full/src/dist/nuts-app-full-0.8.5.jar
+/incubating/ndexer/target
+/tutorials/naf/spring-boot-integration-hello-world-example/target/

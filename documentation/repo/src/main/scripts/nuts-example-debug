@@ -2,7 +2,7 @@
 export NUTS_RT_VERSION={{runtimeVersion}}
 export NUTS_APP_VERSION={{appVersion}}
 export NUTS_API_VERSION={{apiVersion}}
-export TWS="$HOME/xprojects/nuts/nuts-community/test/nuts-runtime-test/runtime/test/Test23_PerfTest_testPerfLocalNoSystem"
+export TWS="$HOME/xprojects/nuts-world/nuts/test/nuts-runtime-test/runtime/test/Test23_PerfTest_testPerfLocalNoSystem"
 export NUTS_APP_JAR="${TWS}/lib/id/net/thevpc/nuts/nuts-app/${NUTS_APP_VERSION}/nuts-app-${NUTS_APP_VERSION}.jar"
 export NUTS_FILE="${TWS}/lib/id/net/thevpc/nuts/toolbox/nsh/${NUTS_RT_VERSION}/nsh-${NUTS_RT_VERSION}.jar"
 export NUTS_JAVA_HOME="{{NUTS_JAVA_HOME}}"
@@ -17,12 +17,12 @@ export NUTS_STORE="${TWS}/bin/id/net/thevpc/nuts/toolbox/nsh/${NUTS_RT_VERSION}"
 NUTS_DEBUG_ARG="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
 
 
-cd $HOME/xprojects/nuts/nuts-community/nuts/test/nuts-runtime-test
+cd $HOME/xprojects/nuts-world/nuts/nuts/test/nuts-runtime-test
 echo "${NUTS_JAVA_HOME}/bin/java" \
  $NUTS_DEBUG_ARG \
  "-Dnuts.boot.args=-w=${TWS} --color=filtered --log-finest -r=-maven-central,-system -P=%n -k -K -y --plain -L=en_US --!init-launchers --!init-platforms --!init-java --!init-scripts --desktop-launcher=never --menu-launcher=never --user-launcher=never --isolation-level=system net.thevpc.nuts.toolbox:nsh#${NUTS_RT_VERSION}" \
  "-classpath" \
- "${TWS}/lib/id/net/thevpc/nuts/toolbox/nsh/${NUTS_RT_VERSION}/nsh-${NUTS_RT_VERSION}.jar:${TWS}/lib/id/net/thevpc/nuts/nuts-api/${NUTS_API_VERSION}/nuts-api-${NUTS_API_VERSION}.jar:${TWS}/lib/id/net/thevpc/nuts/nuts-lib/${NUTS_RT_VERSION}/nuts-lib-${NUTS_RT_VERSION}.jar:${TWS}/lib/id/net/thevpc/nuts/ext/next-ssh/${NUTS_RT_VERSION}/next-ssh-${NUTS_RT_VERSION}.jar:${TWS}/lib/id/com/jcraft/jsch/0.1.55/jsch-0.1.55.jar" \
+ "${TWS}/lib/id/net/thevpc/nuts/toolbox/nsh/${NUTS_RT_VERSION}/nsh-${NUTS_RT_VERSION}.jar:${TWS}/lib/id/net/thevpc/nuts/nuts/${NUTS_API_VERSION}/nuts-${NUTS_API_VERSION}.jar:${TWS}/lib/id/net/thevpc/nuts/nuts-lib/${NUTS_RT_VERSION}/nuts-lib-${NUTS_RT_VERSION}.jar:${TWS}/lib/id/net/thevpc/nuts/ext/next-ssh/${NUTS_RT_VERSION}/next-ssh-${NUTS_RT_VERSION}.jar:${TWS}/lib/id/com/jcraft/jsch/0.1.55/jsch-0.1.55.jar" \
  "net.thevpc.nuts.toolbox.nsh.Nsh" \
  "--nuts-exec-mode=install"
 
@@ -31,6 +31,6 @@ echo "${NUTS_JAVA_HOME}/bin/java" \
  $NUTS_DEBUG_ARG \
  "-Dnuts.boot.args=-w=${TWS} --color=filtered --log-finest -r=-maven-central,-system -P=%n -k -K -y --plain -L=en_US --!init-launchers --!init-platforms --!init-java --!init-scripts --desktop-launcher=never --menu-launcher=never --user-launcher=never --isolation-level=system net.thevpc.nuts.toolbox:nsh#${NUTS_RT_VERSION}" \
  "-classpath" \
- "${TWS}/lib/id/net/thevpc/nuts/toolbox/nsh/${NUTS_RT_VERSION}/nsh-${NUTS_RT_VERSION}.jar:${TWS}/lib/id/net/thevpc/nuts/nuts-api/${NUTS_API_VERSION}/nuts-api-${NUTS_API_VERSION}.jar:${TWS}/lib/id/net/thevpc/nuts/lib/nuts-lib/${NUTS_RT_VERSION}/nuts-lib-${NUTS_RT_VERSION}.jar:${TWS}/lib/id/net/thevpc/nuts/ext/next-ssh/${NUTS_RT_VERSION}/next-ssh-${NUTS_RT_VERSION}.jar:${TWS}/lib/id/net/thevpc/nuts/nuts-lib/${NUTS_RT_VERSION}/nuts-lib-${NUTS_RT_VERSION}.jar:${TWS}/lib/id/com/jcraft/jsch/0.1.55/jsch-0.1.55.jar" \
+ "${TWS}/lib/id/net/thevpc/nuts/toolbox/nsh/${NUTS_RT_VERSION}/nsh-${NUTS_RT_VERSION}.jar:${TWS}/lib/id/net/thevpc/nuts/nuts/${NUTS_API_VERSION}/nuts-${NUTS_API_VERSION}.jar:${TWS}/lib/id/net/thevpc/nuts/lib/nuts-lib/${NUTS_RT_VERSION}/nuts-lib-${NUTS_RT_VERSION}.jar:${TWS}/lib/id/net/thevpc/nuts/ext/next-ssh/${NUTS_RT_VERSION}/next-ssh-${NUTS_RT_VERSION}.jar:${TWS}/lib/id/net/thevpc/nuts/nuts-lib/${NUTS_RT_VERSION}/nuts-lib-${NUTS_RT_VERSION}.jar:${TWS}/lib/id/com/jcraft/jsch/0.1.55/jsch-0.1.55.jar" \
  "net.thevpc.nuts.toolbox.nsh.Nsh" \
  "--nuts-exec-mode=install"

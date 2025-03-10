@@ -51,6 +51,6 @@ public class NSwingUtils {
     }
     public static void setSharedWorkspaceInstance(){
         NWorkspace workspace = NWorkspace.of();
-        SwingUtilities.invokeLater(workspace::setSharedInstance);
+        SwingUtilities.invokeLater(workspace::share);
     }
 }
