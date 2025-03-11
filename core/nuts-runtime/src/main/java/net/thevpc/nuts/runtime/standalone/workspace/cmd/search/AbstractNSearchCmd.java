@@ -749,7 +749,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<String[]> getResultStrings(String[] columns) {
-        NFetchDisplayOptions oo = new NFetchDisplayOptions(workspace);
+        NFetchDisplayOptions oo = new NFetchDisplayOptions();
         oo.addDisplay(columns);
         oo.setIdFormat(getDisplayOptions().getIdFormat());
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))

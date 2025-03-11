@@ -13,7 +13,7 @@ class NElementTreeModel implements NTreeModel {
 
     public NElementTreeModel(NWorkspace ws, NText rootName, Object destructredObject, NSession session, XNodeFormatter format) {
         this.root = new XNode(null, destructredObject, 
-                ((destructredObject instanceof List) || (destructredObject instanceof Map))?rootName:null, session, format);
+                ((destructredObject instanceof List) || (destructredObject instanceof Map))?rootName:null, format);
     }
 
     public NElementTreeModel(XNode node) {

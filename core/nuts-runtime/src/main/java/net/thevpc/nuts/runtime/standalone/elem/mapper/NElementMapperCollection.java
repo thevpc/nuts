@@ -36,7 +36,7 @@ public class NElementMapperCollection implements NElementMapper {
     public NElement createElement(Object o, Type typeOfSrc, NElementFactoryContext context) {
         Collection<Object> coll = (Collection) o;
         List<NElement> collect = coll.stream().map(x -> context.objectToElement(x, null)).collect(Collectors.toList());
-        return new DefaultNArrayElement(collect, DefaultNElementHeader.EMPTY,new NElementAnnotation[0], context.getWorkspace());
+        return new DefaultNArrayElement(collect, DefaultNElementHeader.EMPTY,new NElementAnnotation[0]);
     }
 
     public Collection fillObject(NElement o, Collection coll, Type elemType, Type to, NElementFactoryContext context) {

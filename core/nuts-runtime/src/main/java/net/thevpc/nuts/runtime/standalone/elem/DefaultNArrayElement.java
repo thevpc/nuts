@@ -26,7 +26,6 @@ package net.thevpc.nuts.runtime.standalone.elem;
 
 import java.time.Instant;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
@@ -45,15 +44,15 @@ public class DefaultNArrayElement extends AbstractNArrayElement {
     private final NElement[] values;
     private final NElementHeader header;
 
-    public DefaultNArrayElement(Collection<NElement> values, NElementHeader header, NElementAnnotation[] annotations, NWorkspace workspace) {
-        super(annotations, workspace);
+    public DefaultNArrayElement(Collection<NElement> values, NElementHeader header, NElementAnnotation[] annotations) {
+        super(annotations);
         this.values = values.toArray(new NElement[0]);
         this.header = header;
     }
 
 
-    public DefaultNArrayElement(NElement[] values, NElementHeader header, NElementAnnotation[] annotations, NWorkspace workspace) {
-        super(annotations, workspace);
+    public DefaultNArrayElement(NElement[] values, NElementHeader header, NElementAnnotation[] annotations) {
+        super(annotations);
         this.values = Arrays.copyOf(values, values.length);
         this.header = header;
     }

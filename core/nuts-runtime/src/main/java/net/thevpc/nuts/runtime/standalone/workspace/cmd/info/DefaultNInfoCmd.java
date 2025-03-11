@@ -57,7 +57,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         Object oldRepos = s.map.get("repos");
         if (oldRepos instanceof String) {
             Map<String, Object> repositories = new LinkedHashMap<>();
-            for (NRepository repository : workspace.getRepositories()) {
+            for (NRepository repository : NWorkspace.of().getRepositories()) {
                 repositories.put(repository.getName(), buildRepoRepoMap(repository, true, null));
             }
             return repositories;
@@ -80,7 +80,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
             if(v!=null){
                 return v;
             }
-            NRepository repo = workspace.findRepository(s).orNull();
+            NRepository repo = NWorkspace.of().findRepository(s).orNull();
             if (repo != null) {
                 return buildRepoRepoMap(repo, true, null);
             }
@@ -89,7 +89,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
     };
 
     public DefaultNInfoCmd(NWorkspace workspace) {
-        super(workspace, "info");
+        super("info");
         mapSupplier = buildMapSupplier();
     }
 
@@ -144,7 +144,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
 
     @Override
     public void print(NPrintStream w) {
-        NSession session=workspace.currentSession();
+        NSession session=NSession.of();
         List<String> args = new ArrayList<>();
         args.add("--escape-text=false");
         if (isFancy()) {
@@ -197,7 +197,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session = workspace.currentSession();
+        NSession session=NSession.of();
         NArg a = cmdLine.peek().get();
         if (a == null) {
             return false;
@@ -459,7 +459,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         props.put("creation-started", () ->  NWorkspace.of().getCreationStartTime());
         props.put("creation-finished", () ->  NWorkspace.of().getCreationFinishTime());
         props.put("creation-within", () ->  CoreTimeUtils.formatPeriodMilli(NWorkspace.of().getCreationDuration()).trim());
-        props.put("repositories-count", () ->  (workspace.getRepositories().size()));
+        props.put("repositories-count", () ->  (NWorkspace.of().getRepositories().size()));
         return props;
     }
 
@@ -504,8 +504,9 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
     private Map<String, Object> buildWorkspaceMap(boolean deep) {
         String prefix = null;
         FilteredMap props = new FilteredMap(filter);
-        NSession session = workspace.currentSession();
-        NBootOptions options = NWorkspace.of().getBootOptions();
+        NSession session=NSession.of();
+        NWorkspace workspace = NWorkspace.of();
+        NBootOptions options = workspace.getBootOptions();
         Set<String> extraKeys = new TreeSet<>(extraProperties.keySet());
 
         props.put("name", stringValue(session.getWorkspace().getName()));
@@ -514,7 +515,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         props.put("nuts-api-id", session.getWorkspace().getApiId());
         props.put("nuts-runtime-id", session.getWorkspace().getRuntimeId());
         props.put("nuts-app-id", NApp.of().getId().orNull());
-        List<URL> cl = NWorkspace.of().getBootClassWorldURLs();
+        List<URL> cl = workspace.getBootClassWorldURLs();
         List<NPath> runtimeClassPath = new ArrayList<>();
         if (cl != null) {
             for (URL url : cl) {
@@ -535,13 +536,13 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
                 txt.ofBuilder().appendJoined(";", runtimeClassPath)
         );
         props.put("nuts-workspace-id", txt.ofStyled(stringValue(session.getWorkspace().getUuid()), NTextStyle.path()));
-        props.put("nuts-store-layout", NWorkspace.of().getStoreLayout());
-        props.put("nuts-store-strategy", NWorkspace.of().getStoreStrategy());
-        props.put("nuts-repo-store-strategy", NWorkspace.of().getRepositoryStoreStrategy());
+        props.put("nuts-store-layout", workspace.getStoreLayout());
+        props.put("nuts-store-strategy", workspace.getStoreStrategy());
+        props.put("nuts-repo-store-strategy", workspace.getRepositoryStoreStrategy());
         props.put("nuts-global", options.getSystem().orNull());
-        props.put("nuts-workspace", NWorkspace.of().getWorkspaceLocation());
+        props.put("nuts-workspace", workspace.getWorkspaceLocation());
         for (NStoreType folderType : NStoreType.values()) {
-            props.put("nuts-workspace-" + folderType.id(), NWorkspace.of().getStoreLocation(folderType));
+            props.put("nuts-workspace-" + folderType.id(), workspace.getStoreLocation(folderType));
         }
         props.put("nuts-open-mode", options.getOpenMode().orNull());
         props.put("nuts-isolation-level", options.getIsolationLevel().orNull());
@@ -596,12 +597,12 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
                 )
 
         );
-        NWorkspaceTerminalOptions b = NWorkspace.of().getBootTerminal();
+        NWorkspaceTerminalOptions b = workspace.getBootTerminal();
         props.put("sys-terminal-flags", b.getFlags());
-        NTerminalMode terminalMode = NWorkspace.of().getBootOptions().getTerminalMode().orElse(NTerminalMode.DEFAULT);
+        NTerminalMode terminalMode = workspace.getBootOptions().getTerminalMode().orElse(NTerminalMode.DEFAULT);
         props.put("sys-terminal-mode", terminalMode);
         props.put("java-version", NVersion.get(System.getProperty("java.version")).get());
-        props.put("platform", NWorkspace.of().getPlatform());
+        props.put("platform", workspace.getPlatform());
         props.put("java-home", NPath.of(System.getProperty("java.home")));
         props.put("java-executable", NPath.of(NJavaSdkUtils.of(NWorkspace.get().get()).resolveJavaCommandByHome(null)));
         props.put("java-classpath",
@@ -618,10 +619,10 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
                                 .collect(Collectors.toList())
                 )
         );
-        props.put("os-name", NWorkspace.of().getOs());
-        props.put("os-family", (NWorkspace.of().getOsFamily()));
-        if (NWorkspace.of().getOsDist() != null) {
-            props.put("os-dist", (NWorkspace.of().getOsDist()));
+        props.put("os-name", workspace.getOs());
+        props.put("os-family", (workspace.getOsFamily()));
+        if (workspace.getOsDist() != null) {
+            props.put("os-dist", (workspace.getOsDist()));
         }
         props.put("os-arch", workspace.getArch());
         props.put("os-arch-family", workspace.getArchFamily());
@@ -639,16 +640,16 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         props.put("user-home", NPath.ofUserHome());
         props.put("user-dir", NPath.ofUserDirectory());
         props.put("command-line-long",
-                NWorkspace.of().getBootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(false))
+                workspace.getBootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(false))
         );
-        props.put("command-line-short", NWorkspace.of().getBootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(true)));
-        props.put("inherited", NWorkspace.of().getBootOptions().getInherited().orElse(false));
+        props.put("command-line-short", workspace.getBootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(true)));
+        props.put("inherited", workspace.getBootOptions().getInherited().orElse(false));
         // nuts-boot-args must always be parsed in bash format
         props.put("inherited-nuts-boot-args", NCmdLineFormat.of(NCmdLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH)).format());
         props.put("inherited-nuts-args", NCmdLineFormat.of(NCmdLine.of(System.getProperty("nuts.args"), NShellFamily.SH)).format());
-        props.put("creation-started", NWorkspace.of().getCreationStartTime());
-        props.put("creation-finished", NWorkspace.of().getCreationFinishTime());
-        props.put("creation-within", CoreTimeUtils.formatPeriodMilli(NWorkspace.of().getCreationDuration()).trim());
+        props.put("creation-started", workspace.getCreationStartTime());
+        props.put("creation-finished", workspace.getCreationFinishTime());
+        props.put("creation-within", CoreTimeUtils.formatPeriodMilli(workspace.getCreationDuration()).trim());
         props.put("repositories-count", (workspace.getRepositories().size()));
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.get(extraKey));

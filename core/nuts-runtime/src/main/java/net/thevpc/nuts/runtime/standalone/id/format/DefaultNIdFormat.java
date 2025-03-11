@@ -29,8 +29,8 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
     private Set<String> omittedProperties = new HashSet<>();
     private NId id;
 
-    public DefaultNIdFormat(NWorkspace workspace) {
-        super(workspace, "id-format");
+    public DefaultNIdFormat() {
+        super("id-format");
     }
 
     public NIdFormat setNtf(boolean ntf) {

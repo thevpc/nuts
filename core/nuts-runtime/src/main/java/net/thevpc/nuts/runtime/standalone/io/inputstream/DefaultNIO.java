@@ -209,7 +209,7 @@ public class DefaultNIO implements NIO {
         if (path == null) {
             return null;
         }
-        return new NPathFromSPI(workspace, path);
+        return new NPathFromSPI(path);
     }
 
     @Override

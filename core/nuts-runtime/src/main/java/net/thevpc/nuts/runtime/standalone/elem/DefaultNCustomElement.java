@@ -24,7 +24,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.elem;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NOptional;
@@ -40,8 +39,8 @@ class DefaultNCustomElement extends AbstractNElement implements NCustomElement {
 
     private final Object value;
 
-    DefaultNCustomElement(Object value, NElementAnnotation[] annotations, NWorkspace workspace) {
-        super(NElementType.CUSTOM, annotations,workspace);
+    DefaultNCustomElement(Object value, NElementAnnotation[] annotations) {
+        super(NElementType.CUSTOM, annotations);
         this.value = value;
     }
 
@@ -118,6 +117,6 @@ class DefaultNCustomElement extends AbstractNElement implements NCustomElement {
 
     @Override
     public NCustomElementBuilder builder() {
-        return new DefaultNCustomElementBuilder(workspace).addAnnotations(annotations()).setValue(value);
+        return new DefaultNCustomElementBuilder().addAnnotations(annotations()).setValue(value);
     }
 }

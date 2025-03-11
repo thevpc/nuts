@@ -24,7 +24,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.elem;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NOptional;
 
@@ -39,16 +38,11 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
     private final List<NElementEntry> values = new ArrayList<>();
     private final List<NElementAnnotation> annotations = new ArrayList<>();
 
-    private transient NWorkspace workspace;
     private String name;
     private boolean hasArgs;
     private final List<NElement> args = new ArrayList<>();
 
-    public DefaultNObjectElementBuilder(NWorkspace workspace) {
-        if (workspace == null) {
-            throw new NullPointerException();
-        }
-        this.workspace = workspace;
+    public DefaultNObjectElementBuilder() {
     }
 
     public String getName() {
@@ -425,7 +419,7 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
     public NObjectElement build() {
         return new DefaultNObjectElement(values,
                 DefaultNElementHeader.of(name, hasArgs, args),
-                annotations.toArray(new NElementAnnotation[0]), workspace);
+                annotations.toArray(new NElementAnnotation[0]));
     }
 
     @Override

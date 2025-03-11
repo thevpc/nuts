@@ -24,7 +24,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.elem;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NOptional;
@@ -44,8 +43,8 @@ import java.util.Objects;
 class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveElement {
     private final NLiteral value;
 
-    DefaultNPrimitiveElement(NElementType type, Object value, NElementAnnotation[] annotations, NWorkspace workspace) {
-        super(type, annotations, workspace);
+    DefaultNPrimitiveElement(NElementType type, Object value, NElementAnnotation[] annotations) {
+        super(type, annotations);
         this.value = NLiteral.of(value);
     }
 
@@ -244,6 +243,6 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
 
     @Override
     public NPrimitiveElementBuilder builder() {
-        return new DefaultNPrimitiveElementBuilder(workspace).addAnnotations(annotations()).setValue(value);
+        return new DefaultNPrimitiveElementBuilder().addAnnotations(annotations()).setValue(value);
     }
 }

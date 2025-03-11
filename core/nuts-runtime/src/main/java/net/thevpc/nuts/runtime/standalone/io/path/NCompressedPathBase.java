@@ -30,7 +30,7 @@ public class NCompressedPathBase extends NPathBase {
     private final NPath base;
 
     public NCompressedPathBase(NPath base) {
-        super(base.getWorkspace());
+        super();
         this.base = base;
         this.compressedForm = compressUrl(base.toString());
         this.formattedCompressedForm = NText.ofStyled(compressedForm, NTextStyle.path());
@@ -41,7 +41,7 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     public NCompressedPathBase(NPath base, String compressedForm, NText formattedCompressedForm) {
-        super(base.getWorkspace());
+        super();
         this.compressedForm = compressedForm;
         this.formattedCompressedForm = formattedCompressedForm;
         this.base = base;
@@ -448,7 +448,7 @@ public class NCompressedPathBase extends NPathBase {
         private final NCompressedPathBase p;
 
         public MyPathFormat(NCompressedPathBase p) {
-            super(p.getWorkspace(), "path");
+            super("path");
             this.p = p;
         }
 

@@ -1,17 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
-import net.thevpc.nuts.NIllegalArgumentException;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NOptional;
 
-import java.lang.reflect.Type;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,10 +10,8 @@ public class DefaultNCustomElementBuilder implements NCustomElementBuilder {
     private Object value;
     private final List<NElementAnnotation> annotations = new ArrayList<>();
 
-    private transient NWorkspace workspace;
 
-    public DefaultNCustomElementBuilder(NWorkspace workspace) {
-        this.workspace = workspace;
+    public DefaultNCustomElementBuilder() {
     }
 
     @Override
@@ -83,7 +71,7 @@ public class DefaultNCustomElementBuilder implements NCustomElementBuilder {
 
     @Override
     public NCustomElement build() {
-        return new DefaultNCustomElement(value, annotations.toArray(new NElementAnnotation[0]), workspace);
+        return new DefaultNCustomElement(value, annotations.toArray(new NElementAnnotation[0]));
     }
 
     @Override

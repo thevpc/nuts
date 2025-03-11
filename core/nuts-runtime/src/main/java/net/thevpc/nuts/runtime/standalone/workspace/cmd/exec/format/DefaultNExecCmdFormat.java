@@ -29,7 +29,7 @@ public class DefaultNExecCmdFormat extends DefaultFormatBase<NExecCmdFormat> imp
     private NExecCmd value;
 
     public DefaultNExecCmdFormat(NWorkspace workspace) {
-        super(workspace, "exec-command");
+        super("exec-command");
     }
 
     @Override

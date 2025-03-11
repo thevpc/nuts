@@ -20,7 +20,7 @@ public class DefaultNCmdLineFormat extends DefaultFormatBase<NCmdLineFormat> imp
     private NCmdLineFormatStrategy formatStrategy = NCmdLineFormatStrategy.DEFAULT;
 
     public DefaultNCmdLineFormat(NWorkspace workspace) {
-        super(workspace, "commandLine");
+        super("commandLine");
     }
 
     public NCmdLineFormat setNtf(boolean ntf) {

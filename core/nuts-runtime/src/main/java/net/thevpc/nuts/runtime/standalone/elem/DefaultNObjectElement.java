@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -16,8 +15,8 @@ public class DefaultNObjectElement extends AbstractNObjectElement {
     private NElements elements;
     private NElementHeader header;
 
-    public DefaultNObjectElement(List<NElementEntry> values, NElementHeader header, NElementAnnotation[] annotations, NWorkspace workspace) {
-        super(annotations,workspace);
+    public DefaultNObjectElement(List<NElementEntry> values, NElementHeader header, NElementAnnotation[] annotations) {
+        super(annotations);
         this.header=header;
         if (values != null) {
             for (NElementEntry e : values) {

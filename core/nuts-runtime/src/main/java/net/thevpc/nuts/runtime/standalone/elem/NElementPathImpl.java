@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementEntry;
 import net.thevpc.nuts.elem.NElements;
@@ -11,10 +10,8 @@ import java.util.*;
 
 public class NElementPathImpl {
     private List<Item> items = new ArrayList<>();
-    private NWorkspace workspace;
 
-    public NElementPathImpl(String pattern, NWorkspace workspace) {
-        this.workspace = workspace;
+    public NElementPathImpl(String pattern) {
         NStreamTokenizer tit = new NStreamTokenizer(pattern);
         tit.wordChar('*');
         while (tit.hasNext()) {
@@ -86,7 +83,7 @@ public class NElementPathImpl {
                     break;
                 }
                 default: {
-                    Arrays.stream(e).map(x -> new NElementOrEntry(-1, x, workspace)).flatMap(x->{
+                    Arrays.stream(e).map(x -> new NElementOrEntry(-1, x)).flatMap(x->{
                         if(item.depth==ItemDepth.CHILD){
                             return x.children().stream().filter(item::accept);
                         }
@@ -190,20 +187,17 @@ public class NElementPathImpl {
         int index;
         NElement key;
         NElement value;
-        NWorkspace nWorkspace;
 
-        public NElementOrEntry(int index, NElement value, NWorkspace nWorkspace) {
+        public NElementOrEntry(int index, NElement value) {
             this.index = index;
             this.key = NElements.of().ofInt(index);
             this.value = value;
-            this.nWorkspace = nWorkspace;
         }
 
-        public NElementOrEntry(int index, NElementEntry entry, NWorkspace nWorkspace) {
+        public NElementOrEntry(int index, NElementEntry entry) {
             this.index = index;
             this.key = entry.getKey();
             this.value = entry.getValue();
-            this.nWorkspace = nWorkspace;
         }
 
         List<NElementOrEntry> children() {
@@ -211,13 +205,13 @@ public class NElementPathImpl {
             if (value.isArray()) {
                 int i = 0;
                 for (NElement item : value.asArray().get().items()) {
-                    all.add(new NElementOrEntry(i, item, nWorkspace));
+                    all.add(new NElementOrEntry(i, item));
                     i++;
                 }
             } else if (value.isObject()) {
                 int i = 0;
                 for (NElementEntry item : value.asObject().get().entries()) {
-                    all.add(new NElementOrEntry(i, item, nWorkspace));
+                    all.add(new NElementOrEntry(i, item));
                     i++;
                 }
             }

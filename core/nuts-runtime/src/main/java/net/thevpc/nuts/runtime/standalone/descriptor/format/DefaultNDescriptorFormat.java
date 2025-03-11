@@ -19,7 +19,7 @@ public class DefaultNDescriptorFormat extends DefaultFormatBase<NDescriptorForma
     private NDescriptor desc;
 
     public DefaultNDescriptorFormat(NWorkspace workspace) {
-        super(workspace, "descriptor-format");
+        super("descriptor-format");
     }
 
     public NDescriptorFormat setNtf(boolean ntf) {

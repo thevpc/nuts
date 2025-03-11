@@ -5,7 +5,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.format.plain;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NPrintStream;
@@ -19,8 +18,8 @@ import net.thevpc.nuts.text.NText;
  */
 public class DefaultSearchFormatPlain extends DefaultSearchFormatBase {
 
-    public DefaultSearchFormatPlain(NWorkspace workspace, NPrintStream writer, NFetchDisplayOptions options) {
-        super(workspace, writer, NContentType.PLAIN, options);
+    public DefaultSearchFormatPlain(NPrintStream writer, NFetchDisplayOptions options) {
+        super(writer, NContentType.PLAIN, options);
     }
 
     @Override

@@ -15,13 +15,11 @@ import net.thevpc.nuts.io.NPrintStream;
  */
 public abstract class DefaultFormatBase0<T> implements NCmdLineConfigurable {
 
-    protected final NWorkspace workspace;
 //    private NSession session;
     private final String name;
     private boolean ntf=true;
 
-    public DefaultFormatBase0(NWorkspace workspace, String name) {
-        this.workspace = workspace;
+    public DefaultFormatBase0(String name) {
         this.name = name;
     }
 //    public DefaultFormatBase0(NSession session, String name) {
@@ -31,9 +29,6 @@ public abstract class DefaultFormatBase0<T> implements NCmdLineConfigurable {
 //    }
 
 
-    public NWorkspace getWorkspace() {
-        return workspace;
-    }
 
 //    public PrintWriter getValidPrintWriter(Writer out) {
 //        checkSession();
@@ -48,7 +43,7 @@ public abstract class DefaultFormatBase0<T> implements NCmdLineConfigurable {
 
     public NPrintStream getValidPrintStream(NPrintStream out) {
         if (out == null) {
-            NSession session=workspace.currentSession();
+            NSession session=NSession.of();
             out = session.getTerminal().getOut();
         }
         return out;

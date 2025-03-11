@@ -31,12 +31,11 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
     private NVersion version;
 
     public DefaultNVersionFormat(NWorkspace workspace) {
-        super(workspace, "version");
+        super("version");
     }
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session=workspace.currentSession();
         NArg aa = cmdLine.peek().get();
         if (aa == null) {
             return false;
@@ -58,7 +57,7 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
                 return true;
             }
             default: {
-                if (session.configureFirst(cmdLine)) {
+                if (NSession.of().configureFirst(cmdLine)) {
                     return true;
                 }
             }
@@ -104,7 +103,7 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
 
     @Override
     public void print(NPrintStream out) {
-        NSession session=workspace.currentSession();
+        NSession session=NSession.of();
         if (!isNtf()) {
             out = out.setTerminalMode(NTerminalMode.FILTERED);
         }
@@ -135,6 +134,7 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
         if (extraProperties != null) {
             extraKeys = new TreeSet(extraProperties.keySet());
         }
+        NWorkspace workspace = NWorkspace.of();
         props.put("nuts-api-version", workspace.getApiVersion().toString());
         props.put("nuts-runtime-version", workspace.getRuntimeId().getVersion().toString());
         if (all) {

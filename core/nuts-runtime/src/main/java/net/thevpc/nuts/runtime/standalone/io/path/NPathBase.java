@@ -29,8 +29,8 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     private DefaultNPathMetadata omd = new DefaultNPathMetadata(this);
     private boolean deleteOnDispose;
 
-    public NPathBase(NWorkspace workspace) {
-        super(workspace);
+    public NPathBase() {
+        super();
     }
 
     @Override
@@ -357,7 +357,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         private final NPathBase p;
 
         public PathFormat(NPathBase p) {
-            super(p.workspace, "path");
+            super("path");
             this.p = p;
         }
 

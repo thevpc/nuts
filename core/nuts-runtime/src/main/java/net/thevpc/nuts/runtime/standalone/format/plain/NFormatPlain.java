@@ -38,8 +38,8 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
     private Object value;
     private boolean compact;
 
-    public NFormatPlain(NWorkspace workspace) {
-        super(workspace, NContentType.PLAIN.id() + "-format");
+    public NFormatPlain() {
+        super(NContentType.PLAIN.id() + "-format");
     }
 
     @Override

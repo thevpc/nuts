@@ -8,7 +8,6 @@ package net.thevpc.nuts.runtime.standalone.format.xml;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
@@ -33,8 +32,8 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
     private NCodeHighlighter codeFormat;
     NTexts txt;
 
-    public DefaultSearchFormatXml(NWorkspace workspace, NPrintStream writer, NFetchDisplayOptions options) {
-        super(workspace, writer, NContentType.XML, options);
+    public DefaultSearchFormatXml(NPrintStream writer, NFetchDisplayOptions options) {
+        super(writer, NContentType.XML, options);
         txt = NTexts.of();
         codeFormat = NTexts.of().getCodeHighlighter("xml");
     }

@@ -38,7 +38,7 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
     private Map<String, String> multilineProperties = new HashMap<>();
 
     public DefaultNPropertiesFormat(NWorkspace workspace) {
-        super(workspace, "props-format");
+        super("props-format");
     }
 
     @Override

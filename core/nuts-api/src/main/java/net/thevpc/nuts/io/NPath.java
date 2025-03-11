@@ -49,7 +49,7 @@ import java.util.function.Function;
  *
  * @app.category Input Output
  */
-public interface NPath extends NInputSource, NOutputTarget, NWorkspaceProvider,Comparable<NPath> {
+public interface NPath extends NInputSource, NOutputTarget,Comparable<NPath> {
 
     static NPath of(URL path) {
         return NIO.of().createPath(path);

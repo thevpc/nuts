@@ -9,7 +9,6 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.format.NTreeFormat;
@@ -20,7 +19,6 @@ import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
-import net.thevpc.nuts.text.NTexts;
 
 /**
  * @author thevpc
@@ -43,8 +41,8 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
         }
     };
 
-    public DefaultSearchFormatTree(NWorkspace workspace, NPrintStream writer, NFetchDisplayOptions options) {
-        super(workspace, writer, NContentType.TREE, options);
+    public DefaultSearchFormatTree(NPrintStream writer, NFetchDisplayOptions options) {
+        super(writer, NContentType.TREE, options);
     }
 
     @Override

@@ -44,10 +44,8 @@ public class NFetchDisplayOptions {
 
     private NIdFormat idFormat;
     private List<NDisplayProperty> displays = new ArrayList<>();
-    private NWorkspace workspace;
 
-    public NFetchDisplayOptions(NWorkspace workspace) {
-        this.workspace = workspace;
+    public NFetchDisplayOptions() {
         this.idFormat = NIdFormat.of();
         this.idFormat.setHighlightImportedGroupId(true);
         this.idFormat.setOmitOtherProperties(true);

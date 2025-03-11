@@ -29,7 +29,7 @@ public class NCompressedPath extends NPathBase {
     private final NCompressedPathHelper compressedPathHelper;
 
     public NCompressedPath(NPath base, NCompressedPathHelper compressedPathHelper) {
-        super(base.getWorkspace());
+        super();
         this.base = base;
         this.formattedCompressedForm = compressedPathHelper.toCompressedString(base);
         this.compressedForm = this.formattedCompressedForm.filteredText();
@@ -413,7 +413,7 @@ public class NCompressedPath extends NPathBase {
         private final NCompressedPath p;
 
         public MyPathFormat(NCompressedPath p) {
-            super(p.getWorkspace(), "path");
+            super("path");
             this.p = p;
         }
 

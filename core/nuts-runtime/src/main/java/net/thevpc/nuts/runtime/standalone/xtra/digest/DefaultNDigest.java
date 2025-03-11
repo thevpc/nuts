@@ -132,7 +132,7 @@ public class DefaultNDigest implements NDigest {
 
     @Override
     public NDigest setSource(NDescriptor source) {
-        this.setSource0(source == null ? null : new NDescriptorInputSource(source, workspace));
+        this.setSource0(source == null ? null : new NDescriptorInputSource(source));
         return this;
     }
 
@@ -281,8 +281,8 @@ public class DefaultNDigest implements NDigest {
     public class NDescriptorInputSource extends AbstractMultiReadNInputSource {
         private final NDescriptor source;
 
-        public NDescriptorInputSource(NDescriptor source, NWorkspace workspace) {
-            super(workspace);
+        public NDescriptorInputSource(NDescriptor source) {
+            super();
             this.source = source;
         }
 

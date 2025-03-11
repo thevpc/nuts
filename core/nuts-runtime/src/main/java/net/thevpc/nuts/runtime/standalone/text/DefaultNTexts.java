@@ -1291,7 +1291,7 @@ public class DefaultNTexts implements NTexts {
 
     @Override
     public <T> NFormat createFormat(T object, NTextFormat<T> format) {
-        return new DefaultFormatBase<NFormat>(workspace, "NTextFormat") {
+        return new DefaultFormatBase<NFormat>("NTextFormat") {
             @Override
             public void print(NPrintStream out) {
                 NText u = format.toText(object);

@@ -24,7 +24,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.elem;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 
 import java.util.ArrayList;
@@ -41,17 +40,12 @@ import java.util.stream.Collectors;
 public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
 
     private final List<NElement> values = new ArrayList<>();
-    private transient NWorkspace workspace;
     private final List<NElementAnnotation> annotations = new ArrayList<>();
     private final List<NElement> args = new ArrayList<>();
     private String name;
     private boolean hasArgs;
 
-    public DefaultNArrayElementBuilder(NWorkspace workspace) {
-        this.workspace = workspace;
-        if (workspace == null) {
-            throw new NullPointerException();
-        }
+    public DefaultNArrayElementBuilder() {
     }
 
     public String getName() {
@@ -381,7 +375,7 @@ public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
     public NArrayElement build() {
         return new DefaultNArrayElement(values,
                 DefaultNElementHeader.of(name, hasArgs, args),
-                annotations.toArray(new NElementAnnotation[0]), workspace);
+                annotations.toArray(new NElementAnnotation[0]));
     }
 
     @Override

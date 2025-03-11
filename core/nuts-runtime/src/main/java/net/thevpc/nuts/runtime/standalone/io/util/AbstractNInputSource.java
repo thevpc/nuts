@@ -19,14 +19,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class AbstractNInputSource implements NInputSource {
-    protected NWorkspace workspace;
 
-    public AbstractNInputSource(NWorkspace workspace) {
-        this.workspace = workspace;
-    }
-
-    public NWorkspace getWorkspace() {
-        return workspace;
+    public AbstractNInputSource() {
     }
 
     @Override

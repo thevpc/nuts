@@ -29,8 +29,8 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
     private NTableFormat table;
     private NMutableTableModel model;
 
-    public DefaultSearchFormatTable(NWorkspace workspace, NPrintStream writer, NFetchDisplayOptions options) {
-        super(workspace, writer, NContentType.TABLE, options);
+    public DefaultSearchFormatTable(NPrintStream writer, NFetchDisplayOptions options) {
+        super(writer, NContentType.TABLE, options);
     }
 
     public NMutableTableModel getTableModel() {
@@ -43,7 +43,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
             table = NTableFormat.of();
             model = NMutableTableModel.of();
             table.setValue(model);
-            NSession session = getWorkspace().currentSession();
+            NSession session = NSession.of();
             if (session.getOutputFormatOptions() != null) {
                 for (String outputFormatOption : session.getOutputFormatOptions()) {
                     if (outputFormatOption != null) {

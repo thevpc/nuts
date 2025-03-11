@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.elem;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NToken;
 import net.thevpc.nuts.io.NIOException;
@@ -85,10 +84,9 @@ public class NElementPathFilter {
      * aa.bb.cc aa[bb].cc
      *
      * @param jpath path
-     * @param workspace session
      * @return element path
      */
-    public static NElementPath compile(String jpath, NWorkspace workspace) {
+    public static NElementPath compile(String jpath) {
         NStreamTokenizer st = new NStreamTokenizer(new StringReader(jpath));
         st.resetSyntax();
         st.wordChars(33, 255);
@@ -102,12 +100,12 @@ public class NElementPathFilter {
                 switch (st.ttype) {
                     case NToken.TT_WORD: {
                         wasNotDotName = true;
-                        q.queue.add(new SubItemJsonPath(st.sval, workspace));
+                        q.queue.add(new SubItemJsonPath(st.sval));
                         break;
                     }
                     case '.': {
                         if (!wasNotDotName) {
-                            q.queue.add(new SubItemJsonPath("*", workspace));
+                            q.queue.add(new SubItemJsonPath("*"));
                         }
                         wasNotDotName = false;
                         break;
@@ -117,9 +115,9 @@ public class NElementPathFilter {
                         st.pushBack();
                         String p = compile_readArrItem(st);
                         if (p.isEmpty()) {
-                            q.queue.add(new ArrItemCollectorJsonPath(workspace));
+                            q.queue.add(new ArrItemCollectorJsonPath());
                         } else {
-                            q.queue.add(new SubItemJsonPath(p, workspace));
+                            q.queue.add(new SubItemJsonPath(p));
                         }
                         break;
                     }
@@ -171,12 +169,9 @@ public class NElementPathFilter {
     }
 
     private static class ArrItemCollectorJsonPath implements NElementPath {
-
-        private final NWorkspace workspace;
         private final NElements builder;
 
-        public ArrItemCollectorJsonPath(NWorkspace workspace) {
-            this.workspace = workspace;
+        public ArrItemCollectorJsonPath() {
             builder = NElements.of();
         }
 
@@ -202,8 +197,8 @@ public class NElementPathFilter {
 
         private final String pattern;
 
-        public SubItemJsonPath(String subItem, NWorkspace workspace) {
-            super(workspace);
+        public SubItemJsonPath(String subItem) {
+            super();
             this.pattern = subItem;
         }
 
@@ -373,10 +368,8 @@ public class NElementPathFilter {
 
     private static abstract class AbstractJsonPath implements NElementPath {
 
-        NWorkspace workspace;
+        public AbstractJsonPath() {
 
-        public AbstractJsonPath(NWorkspace workspace) {
-            this.workspace = workspace;
         }
 
         public abstract List<NElement> filter(NElement element);

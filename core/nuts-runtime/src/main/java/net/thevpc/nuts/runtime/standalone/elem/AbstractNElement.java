@@ -24,7 +24,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.elem;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
@@ -43,13 +42,11 @@ import java.util.List;
  */
 public abstract class AbstractNElement implements NElement {
 
-    protected transient NWorkspace workspace;
     private NElementType type;
     private NElementAnnotation[] annotations;
 
-    public AbstractNElement(NElementType type, NElementAnnotation[] annotations, NWorkspace workspace) {
+    public AbstractNElement(NElementType type, NElementAnnotation[] annotations) {
         this.type = type;
-        this.workspace = workspace;
         this.annotations = annotations;
     }
 

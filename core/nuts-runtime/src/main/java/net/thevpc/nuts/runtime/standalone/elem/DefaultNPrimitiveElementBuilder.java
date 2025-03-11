@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.NIllegalArgumentException;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
@@ -20,11 +19,9 @@ public class DefaultNPrimitiveElementBuilder implements NPrimitiveElementBuilder
     private Object value;
     private final List<NElementAnnotation> annotations = new ArrayList<>();
 
-    private transient NWorkspace workspace;
     private NElementType type;
 
-    public DefaultNPrimitiveElementBuilder(NWorkspace workspace) {
-        this.workspace = workspace;
+    public DefaultNPrimitiveElementBuilder() {
         this.type = NElementType.NULL;
     }
 
@@ -173,7 +170,7 @@ public class DefaultNPrimitiveElementBuilder implements NPrimitiveElementBuilder
 
     @Override
     public NPrimitiveElement build() {
-        return new DefaultNPrimitiveElement(type, value, annotations.toArray(new NElementAnnotation[0]), workspace);
+        return new DefaultNPrimitiveElement(type, value, annotations.toArray(new NElementAnnotation[0]));
     }
 
     @Override

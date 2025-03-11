@@ -1457,7 +1457,7 @@ public class DefaultNWorkspaceConfigModel {
             if (s instanceof NPath) {
                 return (NPath) s;
             }
-            return new NPathFromSPI(workspace, s);
+            return new NPathFromSPI(s);
         }
         return null;
     }

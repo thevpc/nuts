@@ -27,7 +27,7 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
     private Set<String> queryPropertiesOmitted = new HashSet<>();
 
     public DefaultNDependencyFormat(NWorkspace workspace) {
-        super(workspace, "dependency-format");
+        super("dependency-format");
     }
 
     public NDependencyFormat setNtf(boolean ntf) {

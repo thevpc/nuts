@@ -8,7 +8,6 @@ package net.thevpc.nuts.runtime.standalone.format.props;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NContentType;
@@ -24,8 +23,8 @@ import net.thevpc.nuts.util.NPropsTransformer;
  */
 public class DefaultSearchFormatProps extends DefaultSearchFormatBase {
 
-    public DefaultSearchFormatProps(NWorkspace workspace, NPrintStream writer, NFetchDisplayOptions options) {
-        super(workspace, writer, NContentType.PROPS,options);
+    public DefaultSearchFormatProps(NPrintStream writer, NFetchDisplayOptions options) {
+        super(writer, NContentType.PROPS,options);
     }
 
     @Override

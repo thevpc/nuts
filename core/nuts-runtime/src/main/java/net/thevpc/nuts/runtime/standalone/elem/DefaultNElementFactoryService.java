@@ -404,12 +404,11 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
             for (int i = 0; i < length; i++) {
                 preloaded.add(context.objectToElement(Array.get(array, i), null));
             }
-            return new DefaultNArrayElement(preloaded, DefaultNElementHeader.EMPTY, new NElementAnnotation[0], context.getWorkspace());
+            return new DefaultNArrayElement(preloaded, DefaultNElementHeader.EMPTY, new NElementAnnotation[0]);
         } else {
             return new DefaultNArrayElement(
                     Arrays.stream((Object[]) array).map(x -> context.objectToElement(x, null)).collect(Collectors.toList())
                     ,DefaultNElementHeader.EMPTY,new NElementAnnotation[0]
-                    , context.getWorkspace()
             );
         }
     }

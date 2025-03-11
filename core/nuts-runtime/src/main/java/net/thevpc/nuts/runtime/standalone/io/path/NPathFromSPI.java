@@ -1,9 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
-import net.thevpc.nuts.*;
-
 
 import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.NPathSPIHelper;
@@ -28,8 +27,8 @@ public class NPathFromSPI extends NPathBase {
     private final NPathSPI base;
     private List<String> items;
 
-    public NPathFromSPI(NWorkspace workspace, NPathSPI base) {
-        super(workspace);
+    public NPathFromSPI(NPathSPI base) {
+        super();
         this.base = base;
     }
 
@@ -39,7 +38,7 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public NPath copy() {
-        return new NPathFromSPI(workspace, base).copyExtraFrom(this);
+        return new NPathFromSPI(base).copyExtraFrom(this);
     }
 
     @Override
@@ -274,14 +273,16 @@ public class NPathFromSPI extends NPathBase {
     }
 
     public NPath expandPath(Function<String, String> resolver) {
-        resolver = new EffectiveResolver(resolver, workspace);
+        resolver = new EffectiveResolver(resolver);
         String s = StringPlaceHolderParser.replaceDollarPlaceHolders(toString(), resolver);
         if (s.length() > 0) {
             if (s.startsWith("~")) {
                 if (s.equals("~~")) {
+                    NWorkspace workspace = NWorkspace.of();
                     NPath nutsHome = workspace.getHomeLocation(NStoreType.CONF);
                     return nutsHome.normalize();
                 } else if (s.startsWith("~~") && s.length() > 2 && (s.charAt(2) == '/' || s.charAt(2) == '\\')) {
+                    NWorkspace workspace = NWorkspace.of();
                     NPath nutsHome = workspace.getHomeLocation(NStoreType.CONF);
                     return nutsHome.resolve(s.substring(3)).normalize();
                 } else if (s.equals("~")) {
@@ -542,10 +543,9 @@ public class NPathFromSPI extends NPathBase {
     private static class EffectiveResolver implements Function<String, String> {
         NWorkspaceVarExpansionFunction fallback;
         Function<String, String> resolver;
-        NWorkspace workspace;
 
-        public EffectiveResolver(Function<String, String> resolver, NWorkspace workspace) {
-            this.workspace = workspace;
+        public EffectiveResolver(Function<String, String> resolver) {
+            this.resolver = resolver;
             fallback = NWorkspaceVarExpansionFunction.of();
         }
 

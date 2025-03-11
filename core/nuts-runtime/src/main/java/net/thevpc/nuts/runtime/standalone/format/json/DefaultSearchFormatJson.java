@@ -5,7 +5,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.format.json;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
@@ -28,8 +27,8 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
     NTexts txt;
     private NCodeHighlighter codeFormat;
 
-    public DefaultSearchFormatJson(NWorkspace workspace, NPrintStream writer, NFetchDisplayOptions options) {
-        super(workspace, writer, NContentType.JSON, options);
+    public DefaultSearchFormatJson(NPrintStream writer, NFetchDisplayOptions options) {
+        super(writer, NContentType.JSON, options);
         txt = NTexts.of();
         codeFormat = NTexts.of().getCodeHighlighter("json");
     }

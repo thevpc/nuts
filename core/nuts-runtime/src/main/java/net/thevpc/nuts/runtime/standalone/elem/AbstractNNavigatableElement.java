@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NOptional;
@@ -10,8 +9,8 @@ import java.math.BigInteger;
 import java.time.Instant;
 
 public abstract class AbstractNNavigatableElement extends AbstractNElement implements NNavigatableElement {
-    public AbstractNNavigatableElement(NElementType type, NElementAnnotation[] annotations, NWorkspace workspace) {
-        super(type, annotations,workspace);
+    public AbstractNNavigatableElement(NElementType type, NElementAnnotation[] annotations) {
+        super(type, annotations);
     }
     @Override
     public NOptional<String> getStringByPath(String... keys) {

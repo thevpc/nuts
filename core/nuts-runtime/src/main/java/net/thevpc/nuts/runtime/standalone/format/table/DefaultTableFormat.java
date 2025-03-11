@@ -113,7 +113,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     private boolean visibleHeader = true;
 
     public DefaultTableFormat(NWorkspace workspace) {
-        super(workspace, "table-format");
+        super("table-format");
     }
 
     public static Set<String> getAvailableTableBorders() {
@@ -155,7 +155,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
         return null;
     }
 
-    public static void formatAndHorizontalAlign(StringBuilder sb, NPositionType a, int columns, NTexts tf, NSession session) {
+    public static void formatAndHorizontalAlign(StringBuilder sb, NPositionType a, int columns, NTexts tf) {
         int length = tf.of(sb.toString()).textLength();
         switch (a) {
             case FIRST: {
@@ -298,8 +298,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     public void print(NPrintStream w) {
         NPrintStream out = getValidPrintStream(w);
         NStringBuilder line = new NStringBuilder();
-        NSession session=workspace.currentSession();
-        List<Row> rows = rebuild(session);
+        List<Row> rows = rebuild();
         if (rows.size() > 0) {
             List<DefaultCell> cells = rows.get(0).cells;
             if ((getSeparator(NTableSeparator.FIRST_ROW_START)
@@ -405,7 +404,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
         return dc.isHeader() ? defaultHeaderFormatter : defaultCellFormatter;
     }
 
-    private List<Row> rebuild(NSession session) {
+    private List<Row> rebuild() {
         NTexts metrics = NTexts.of();
         List<Row> rows1 = new ArrayList<>();
         NTableModel model = getModel();
@@ -498,8 +497,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                         formatter,
                         formatter.getVerticalAlign(r0, c0, cvalue),
                         formatter.getHorizontalAlign(r0, c0, cvalue),
-                        metrics,
-                        session
+                        metrics
                 ));
                 cell.cw = cell.getRendered().columns;
                 cell.ch = cell.getRendered().rows;
@@ -583,7 +581,6 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     }
 
     private NTableModel createTableModel(Object o) {
-        NSession session=workspace.currentSession();
         if (o == null) {
             return NMutableTableModel.of();
         }
@@ -597,7 +594,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
         }
         o = _elems().setIndestructibleFormat().destruct(o);
         if (o instanceof Collection) {
-            return _model2(o, session);
+            return _model2(o);
         }
         if (o instanceof Map) {
             NMutableTableModel model = NMutableTableModel.of();
@@ -646,7 +643,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
             }
             case ARRAY: {
 
-                return _model2(elem,session);
+                return _model2(elem);
             }
             default: {
                 throw new NUnsupportedArgumentException(NMsg.ofC("unsupported %s", elem.type()));
@@ -654,7 +651,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
         }
     }
 
-    public NMutableTableModel _model2(Object obj, NSession session) {
+    public NMutableTableModel _model2(Object obj) {
         NMutableTableModel model = NMutableTableModel.of();
         List<SimpleRow> rows=resolveColumnsFromRows(obj);
         List<String> titles=new ArrayList<>();
@@ -864,18 +861,12 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
         NTexts metrics;
         NPositionType valign;
         NPositionType halign;
-        NWorkspace ws;
-        NSession session;
 
-        private RenderedCell(NTexts metrics, NSession session) {
-            this.session = session;
+        private RenderedCell(NTexts metrics) {
             this.metrics = metrics;
-            this.ws = session.getWorkspace();
         }
 
-        public RenderedCell(int c, int r, Object o, String str, NTableCellFormat formatter, NPositionType valign, NPositionType halign, NTexts metrics, NSession session) {
-            this.session = session;
-            this.ws = session.getWorkspace();
+        public RenderedCell(int c, int r, Object o, String str, NTableCellFormat formatter, NPositionType valign, NPositionType halign, NTexts metrics) {
             this.formatter = formatter;
             this.metrics = metrics;
             this.valign = valign;
@@ -937,7 +928,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                 }
                 rendered0[i] = sb.toString().toCharArray();
             }
-            RenderedCell c = new RenderedCell(metrics, session);
+            RenderedCell c = new RenderedCell(metrics);
             c.rendered = rendered0;
             c.columns = columns + other.columns;
             c.rows = rendered0.length;
@@ -969,7 +960,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                 }
                 rendered0[i + rendered.length] = sb.toString().toCharArray();
             }
-            RenderedCell c = new RenderedCell(metrics, session);
+            RenderedCell c = new RenderedCell(metrics);
             c.rendered = rendered0;
             c.columns = columns + other.columns;
             c.rows = rendered0.length;
@@ -983,7 +974,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                     rendered0[row + r][col + c] = other.rendered[r][c];
                 }
             }
-            RenderedCell c = new RenderedCell(metrics, session);
+            RenderedCell c = new RenderedCell(metrics);
             c.rendered = rendered0;
             c.columns = columns;
             c.rows = rows;
@@ -995,7 +986,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
             for (int i = 0; i < rendered0.length; i++) {
                 System.arraycopy(rendered[i + row], col, rendered0[i], 0, toCol - col);
             }
-            RenderedCell c = new RenderedCell(metrics, session);
+            RenderedCell c = new RenderedCell(metrics);
             c.rendered = rendered0;
             c.columns = columns;
             c.rows = rows;
@@ -1015,7 +1006,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                                 int x = columns - min;
                                 StringBuilder s = new StringBuilder();
                                 s.append(chars);
-                                formatAndHorizontalAlign(s, halign, columns, metrics, session);
+                                formatAndHorizontalAlign(s, halign, columns, metrics);
                                 rendered0[i] = s.toString().toCharArray();
                             } else {
                                 rendered0[i] = rendered[i];
@@ -1039,7 +1030,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                                 int x = columns - min;
                                 StringBuilder s = new StringBuilder();
                                 s.append(chars);
-                                formatAndHorizontalAlign(s, halign, columns, metrics, session);
+                                formatAndHorizontalAlign(s, halign, columns, metrics);
                                 rendered0[i] = s.toString().toCharArray();
                             } else {
                                 rendered0[i] = rendered[i];
@@ -1059,7 +1050,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                                 int x = columns - min;
                                 StringBuilder s = new StringBuilder();
                                 s.append(chars);
-                                formatAndHorizontalAlign(s, halign, columns, metrics, session);
+                                formatAndHorizontalAlign(s, halign, columns, metrics);
                                 rendered0[i] = s.toString().toCharArray();
                             } else {
                                 rendered0[i] = rendered[i];
@@ -1080,7 +1071,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
 //                    Arrays.fill(rendered0[i],0,columns,' ');
 //                }
 //            }
-            RenderedCell c = new RenderedCell(metrics, session);
+            RenderedCell c = new RenderedCell(metrics);
             c.rendered = rendered0;
             c.columns = columns;
             c.rows = rows;
@@ -1094,7 +1085,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                 rendered0[i] = new char[rendered[i].length];
                 System.arraycopy(rendered[i], 0, rendered0[i], 0, rendered[i].length);
             }
-            RenderedCell c = new RenderedCell(metrics, session);
+            RenderedCell c = new RenderedCell(metrics);
             c.rendered = rendered0;
             c.columns = columns;
             c.rows = rows;

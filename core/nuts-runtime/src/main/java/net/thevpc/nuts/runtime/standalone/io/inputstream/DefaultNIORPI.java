@@ -10,6 +10,7 @@ import net.thevpc.nuts.runtime.standalone.io.ask.DefaultNAsk;
 import net.thevpc.nuts.runtime.standalone.io.printstream.*;
 import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNSessionTerminalFrom;
 import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNTerminalFromSystem;
+import net.thevpc.nuts.runtime.standalone.io.util.AbstractNInputSource;
 import net.thevpc.nuts.runtime.standalone.io.util.NInputStreamSource;
 import net.thevpc.nuts.runtime.standalone.text.SimpleWriterOutputStream;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
@@ -174,6 +175,55 @@ public class DefaultNIORPI implements NIORPI {
     @Override
     public NInputSource ofInputSource(Reader inputStream) {
         return ofInputSource(inputStream, null);
+    }
+
+    @Override
+    public NInputSource ofInputSource(NInputStreamProvider inputStream) {
+        return ofInputSource(inputStream, null);
+    }
+
+    @Override
+    public NInputSource ofInputSource(NInputStreamProvider inputStreamProvider, NContentMetadata metadata) {
+        if (inputStreamProvider == null) {
+            return null;
+        }
+        if (inputStreamProvider instanceof NInputSource) {
+            if(metadata==null){
+                return (NInputSource) inputStreamProvider;
+            }
+            NInputSource o = (NInputSource) inputStreamProvider;
+            return new AbstractNInputSource() {
+                @Override
+                public boolean isMultiRead() {
+                    return o.isMultiRead();
+                }
+
+                @Override
+                public boolean isKnownContentLength() {
+                    return o.isKnownContentLength();
+                }
+
+                @Override
+                public long getContentLength() {
+                    return o.getContentLength();
+                }
+
+                @Override
+                public NContentMetadata getMetaData() {
+                    return metadata;
+                }
+
+                @Override
+                public InputStream getInputStream() {
+                    return o.getInputStream();
+                }
+            };
+        }
+        if(metadata==null){
+            DefaultNContentMetadata metadata2 = new DefaultNContentMetadata(NMsg.ofPlain("Provider"), null, null, null, null);
+            return new inputStreamProviderToNInputSourceAdapter(metadata2, inputStreamProvider);
+        }
+        return new inputStreamProviderToNInputSourceAdapter(metadata, inputStreamProvider);
     }
 
     @Override
@@ -354,5 +404,41 @@ public class DefaultNIORPI implements NIORPI {
             return u == null ? Collections.emptyList() : Arrays.asList(u);
         }
         return Collections.emptyList();
+    }
+
+    private class inputStreamProviderToNInputSourceAdapter extends AbstractNInputSource {
+        private final NContentMetadata metadata2;
+        private final NInputStreamProvider inputStreamProvider;
+
+        public inputStreamProviderToNInputSourceAdapter(NContentMetadata metadata2, NInputStreamProvider inputStreamProvider) {
+            super();
+            this.metadata2 = metadata2;
+            this.inputStreamProvider = inputStreamProvider;
+        }
+
+        @Override
+        public boolean isMultiRead() {
+            return false;
+        }
+
+        @Override
+        public boolean isKnownContentLength() {
+            return false;
+        }
+
+        @Override
+        public long getContentLength() {
+            return -1;
+        }
+
+        @Override
+        public NContentMetadata getMetaData() {
+            return metadata2;
+        }
+
+        @Override
+        public InputStream getInputStream() {
+            return inputStreamProvider.getInputStream();
+        }
     }
 }

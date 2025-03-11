@@ -1,12 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.AbstractMultiReadNInputSource;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.*;
@@ -247,7 +244,7 @@ public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPri
         private NByteArrayPrintStream value;
 
         public MyAbstractMultiReadNInputSource(NByteArrayPrintStream value) {
-            super(value.workspace);
+            super();
             this.value = value;
         }
 

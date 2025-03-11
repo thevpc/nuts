@@ -48,7 +48,7 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
     public DefaultNQueryBaseOptions(NWorkspace workspace, String name) {
         super(workspace, name);
 //        this.session=ws.createSession();
-        displayOptions = new NFetchDisplayOptions(workspace);
+        displayOptions = new NFetchDisplayOptions();
         NSession s = workspace.currentSession();
         this.fetchStrategy=s.getFetchStrategy().orNull();
         this.transitive=s.getTransitive().orNull();

@@ -9,7 +9,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTexts;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,8 +21,8 @@ import java.nio.file.Path;
  */
 public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormatBase0<T> implements NFormat {
 
-    public DefaultFormatBase(NWorkspace ws, String name) {
-        super(ws, name);
+    public DefaultFormatBase(String name) {
+        super(name);
     }
     
 //    @Override
@@ -46,7 +45,7 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
     @Override
     public NPrintStream getValidPrintStream(NPrintStream out) {
         if (out == null) {
-            NSession session=workspace.currentSession();
+            NSession session=NSession.of();
             out = session.getTerminal().getOut();
         }
         return out;
@@ -84,13 +83,13 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
 
     @Override
     public void print() {
-        NSession session=workspace.currentSession();
+        NSession session=NSession.of();
         print(session.getTerminal());
     }
 
     @Override
     public void println() {
-        NSession session=workspace.currentSession();
+        NSession session=NSession.of();
         println(session.getTerminal());
     }
 
@@ -149,7 +148,7 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
 
     @Override
     public void print(NTerminal terminal) {
-        NSession session=workspace.currentSession();
+        NSession session=NSession.of();
         print(terminal == null ? session.getTerminal().out() : terminal.out());
     }
 
@@ -204,7 +203,7 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
 
     @Override
     public void println(NTerminal terminal) {
-        NSession session=workspace.currentSession();
+        NSession session=NSession.of();
         println(terminal == null ? session.getTerminal().out() : terminal.out());
     }
 

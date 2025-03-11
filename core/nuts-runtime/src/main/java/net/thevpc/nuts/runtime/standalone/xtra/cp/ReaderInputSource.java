@@ -18,7 +18,7 @@ class ReaderInputSource extends AbstractNInputSource {
     private NContentMetadata md;
 
     public ReaderInputSource(NWorkspace workspace, Reader reader) {
-        super(workspace);
+        super();
         this.reader = reader;
         this.in = new ReaderInputStream(reader, null);
     }

@@ -13,7 +13,7 @@ public class NFormatFromSPI extends DefaultFormatBase<NFormat> {
     private final NFormatSPI spi;
 
     public NFormatFromSPI(NFormatSPI spi, NWorkspace nWorkspace) {
-        super(nWorkspace, spi.getName());
+        super(spi.getName());
         this.spi = spi;
     }
 

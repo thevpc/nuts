@@ -68,7 +68,7 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
     private NContentType outputFormat;
 
     public DefaultNObjectFormat(NWorkspace workspace) {
-        super(workspace, "object-format");
+        super("object-format");
     }
 
     @Override
@@ -153,7 +153,7 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
     }
 
     public NContentTypeFormat getBase() {
-        NSession session=workspace.currentSession();
+        NSession session=NSession.of();
         NContentTypeFormat base = createObjectFormat();
         base.configure(true, NWorkspace.of().getBootOptions().getOutputFormatOptions().orElseGet(Collections::emptyList).toArray(new String[0]));
         base.configure(true, session.getOutputFormatOptions().toArray(new String[0]));
@@ -161,7 +161,7 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
     }
 
     public NContentTypeFormat createObjectFormat() {
-        NSession session=workspace.currentSession();
+        NSession session=NSession.of();
         Object value = getValue();
         String formatMode = getFormatMode();
         String type2 = formatMode == null ? "" : NNameFormat.CLASS_NAME.format(NStringUtils.trim(formatMode));
@@ -258,7 +258,7 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
                 return ee;
             }
             case PLAIN: {
-                NFormatPlain ee = new NFormatPlain(workspace).setCompact(isCompact()).setNtf(isNtf());
+                NFormatPlain ee = new NFormatPlain().setCompact(isCompact()).setNtf(isNtf());
                 ee.setValue(value);
                 return ee;
             }

@@ -18,7 +18,6 @@ import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NStringUtils;
 
 public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implements NTreeFormat {
@@ -43,19 +42,19 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
     private boolean omitEmptyRoot = true;
     private XNodeFormatter xNodeFormatter = new XNodeFormatter() {
         @Override
-        public NText[] getMultilineArray(NText key, Object value, NSession session) {
+        public NText[] getMultilineArray(NText key, Object value) {
             return DefaultNTreeFormat.this.getMultilineArray(key, value);
         }
 
         @Override
-        public NText stringValue(Object o, NSession session) {
+        public NText stringValue(Object o) {
             return getNodeFormat().format(o, -1);
         }
 
     };
 
     public DefaultNTreeFormat(NWorkspace workspace) {
-        super(workspace, "tree-format");
+        super("tree-format");
         formatter = TO_STRING_FORMATTER;
         linkFormatter = CorePlatformUtils.SUPPORTS_UTF_ENCODING ? LINK_UNICODE_FORMATTER : LINK_ASCII_FORMATTER;
     }
@@ -65,7 +64,7 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
     }
 
     public DefaultNTreeFormat(NWorkspace workspace, NTreeModel tree, NTreeNodeFormat formatter, NTreeLinkFormat linkFormatter) {
-        super(workspace, "tree");
+        super("tree");
         if (formatter == null) {
             formatter = TO_STRING_FORMATTER;
         }
@@ -110,7 +109,6 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
 
     @Override
     public NTreeModel getModel() {
-        NSession session = workspace.currentSession();
         if (tree instanceof NTreeModel) {
 //        if(tree instanceof NutsTreeModel){
             return (NTreeModel) tree;
@@ -120,7 +118,7 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
                 .setIndestructibleFormat()
                 .destruct(tree);
         return new NElementTreeModel(
-                XNode.root(destructredObject, rootName, session, xNodeFormatter)
+                XNode.root(destructredObject, rootName, xNodeFormatter)
         );
     }
 

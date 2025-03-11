@@ -1514,7 +1514,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     @Override
     public NArrayElementBuilder eout() {
         if (eout == null) {
-            eout = new DefaultNArrayElementBuilder(workspace);
+            eout = new DefaultNArrayElementBuilder();
         }
         return eout;
     }

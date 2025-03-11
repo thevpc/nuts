@@ -4,7 +4,7 @@ import net.thevpc.nuts.NWorkspace;
 
 public abstract class AbstractSingleReadNInputSource extends AbstractNInputSource{
     public AbstractSingleReadNInputSource(NWorkspace workspace) {
-        super(workspace);
+        super();
     }
 
     @Override
