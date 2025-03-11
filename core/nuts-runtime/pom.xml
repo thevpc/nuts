@@ -323,4 +323,7 @@
             </build>
         </profile>
     </profiles>
+    <repositories>
+        <repository><id>thevpc</id><url>https://maven.thevpce.tn</url></repository>
+    </repositories>
 </project>
