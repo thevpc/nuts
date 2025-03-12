@@ -4,6 +4,7 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.util.NMsgTemplate;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.NOptional;
 
 import java.io.PrintStream;
 import java.util.logging.Logger;
@@ -13,6 +14,8 @@ public interface NProgressMonitors extends NComponent {
         return NExtensions.of(NProgressMonitors.class);
     }
 
+
+    NOptional<NProgressMonitor> currentMonitor();
 
     NProgressMonitor ofSilent();
 

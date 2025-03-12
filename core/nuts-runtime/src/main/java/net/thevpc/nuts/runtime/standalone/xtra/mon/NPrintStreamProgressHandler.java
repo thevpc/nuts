@@ -20,10 +20,10 @@ public class NPrintStreamProgressHandler implements NProgressHandler {
      *
      * @param messageFormat
      */
-    public NPrintStreamProgressHandler(NMsgTemplate messageFormat, NPrintStream printStream, NSession session) {
+    public NPrintStreamProgressHandler(NMsgTemplate messageFormat, NPrintStream printStream) {
         this.messageFormat = JLogProgressHandler.resolveFormat(messageFormat);
         if (printStream == null) {
-            printStream = session.out();
+            printStream = NSession.of().out();
         }
         this.printStream = printStream;
 

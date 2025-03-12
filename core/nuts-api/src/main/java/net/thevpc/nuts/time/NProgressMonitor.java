@@ -1,6 +1,8 @@
 package net.thevpc.nuts.time;
 
+import net.thevpc.nuts.util.NCallable;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
 
 /**
  * @author Taha Ben Salah (taha.bensalah@gmail.com)
@@ -8,6 +10,19 @@ import net.thevpc.nuts.util.NMsg;
  */
 public interface NProgressMonitor {
     double INDETERMINATE_PROGRESS = Double.NaN;
+
+    static NOptional<NProgressMonitor> get() {
+        return NProgressMonitors.of().currentMonitor();
+    }
+
+    static NProgressMonitor of() {
+        NProgressMonitors monitors = NProgressMonitors.of();
+        NOptional<NProgressMonitor> m = monitors.currentMonitor();
+        if (m.isPresent()) {
+            return m.get();
+        }
+        return monitors.ofSilent();
+    }
 
     NProgressMonitor start();
 
@@ -22,6 +37,7 @@ public interface NProgressMonitor {
     NProgressMonitor undoComplete(NMsg message);
 
     NProgressMonitor cancel();
+
     NProgressMonitor undoCancel();
 
     NProgressMonitor cancel(NMsg message);
@@ -91,6 +107,7 @@ public interface NProgressMonitor {
     NProgressMonitor setProgress(double progress, NMsg message);
 
     NProgressMonitor setIndeterminate();
+
     NProgressMonitor setIndeterminate(NMsg message);
 
     NProgressMonitor setProgress(long i, long max);
@@ -98,6 +115,7 @@ public interface NProgressMonitor {
     NProgressMonitor setProgress(long i, long max, NMsg message);
 
     NProgressMonitor setProgress(long i, long maxi, long j, long maxj);
+
     NProgressMonitor setProgress(long i, long maxi, long j, long maxj, NMsg message);
 
     NProgressMonitor inc();
@@ -129,4 +147,12 @@ public interface NProgressMonitor {
     NProgressMonitor[] split(double... weight);
 
     boolean isSilent();
+
+    void runWithAll(Runnable... runnable);
+
+    void runWithAll(Runnable[] runnable, double[] weights);
+
+    void runWith(Runnable runnable);
+
+    <T> T callWith(NCallable<T> runnable);
 }

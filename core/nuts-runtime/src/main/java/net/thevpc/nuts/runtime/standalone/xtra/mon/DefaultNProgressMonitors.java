@@ -1,6 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.NMsgTemplate;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NPrintStream;
@@ -8,25 +12,35 @@ import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.time.NProgressHandler;
 import net.thevpc.nuts.time.NProgressMonitors;
 import net.thevpc.nuts.time.NProgressMonitor;
+import net.thevpc.nuts.util.NOptional;
 
 import java.io.PrintStream;
+import java.util.Stack;
 import java.util.logging.Logger;
 
+@NComponentScope(NScopeType.WORKSPACE)
 public class DefaultNProgressMonitors implements NProgressMonitors {
-    private NSession session;
 
-    public DefaultNProgressMonitors(NSession session) {
-        this.session = session;
+    public DefaultNProgressMonitors() {
     }
 
     @Override
     public NProgressMonitor ofSilent() {
         return new DefaultProgressMonitor(null,
                 new SilentProgressHandler(),
-                null, getSession()
+                null
         );
     }
 
+    @Override
+    public NOptional<NProgressMonitor> currentMonitor() {
+        NWorkspaceModel m = NWorkspaceExt.of().getModel();
+        Stack<NProgressMonitor> u = m.currentProgressMonitors.get();
+        if (u == null || u.isEmpty()) {
+            return NOptional.ofNamedEmpty("current progress monitor");
+        }
+        return NOptional.of(u.peek());
+    }
 
     @Override
     public boolean isSilent(NProgressMonitor monitor) {
@@ -42,7 +56,6 @@ public class DefaultNProgressMonitors implements NProgressMonitors {
         }
         return mon;
     }
-
 
     @Override
     public NProgressMonitor ofLogger(NMsgTemplate message, long freq) {
@@ -79,7 +92,7 @@ public class DefaultNProgressMonitors implements NProgressMonitors {
     public NProgressMonitor ofPrintStream(NMsgTemplate messageFormat, PrintStream printStream) {
         return new DefaultProgressMonitor(null,
                 new PrintStreamProgressHandler(messageFormat, printStream),
-                null, getSession()
+                null
         );
     }
 
@@ -91,8 +104,8 @@ public class DefaultNProgressMonitors implements NProgressMonitors {
     @Override
     public NProgressMonitor ofPrintStream(NMsgTemplate messageFormat, NPrintStream printStream) {
         return new DefaultProgressMonitor(null,
-                new NPrintStreamProgressHandler(messageFormat, printStream, getSession()),
-                null, getSession()
+                new NPrintStreamProgressHandler(messageFormat, printStream),
+                null
         );
     }
 
@@ -100,7 +113,7 @@ public class DefaultNProgressMonitors implements NProgressMonitors {
     public NProgressMonitor ofLogger(NMsgTemplate messageFormat, Logger printStream) {
         return new DefaultProgressMonitor(null,
                 new JLogProgressHandler(messageFormat, printStream),
-                null, getSession()
+                null
         );
     }
 
@@ -141,12 +154,12 @@ public class DefaultNProgressMonitors implements NProgressMonitors {
 
     @Override
     public NProgressMonitor ofOut() {
-        return ofPrintStream(null, getSession().out());
+        return ofPrintStream(null, NSession.of().out());
     }
 
     @Override
     public NProgressMonitor ofErr() {
-        return ofPrintStream(null, getSession().err());
+        return ofPrintStream(null, NSession.of().err());
     }
 
     @Override
@@ -159,7 +172,7 @@ public class DefaultNProgressMonitors implements NProgressMonitors {
         if (monitor == null) {
             return ofSilent();
         }
-        return new DefaultProgressMonitor(null, monitor, null, session);
+        return new DefaultProgressMonitor(null, monitor, null);
     }
 
     @Override
@@ -170,9 +183,6 @@ public class DefaultNProgressMonitors implements NProgressMonitors {
         return monitor;
     }
 
-    private NSession getSession() {
-        return session;
-    }
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {

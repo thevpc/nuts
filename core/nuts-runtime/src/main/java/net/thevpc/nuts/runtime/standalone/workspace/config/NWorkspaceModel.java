@@ -8,6 +8,7 @@ import net.thevpc.nuts.runtime.standalone.io.cache.CachedSupplier;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStoreInMemory;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStoreOnDisk;
+import net.thevpc.nuts.time.NProgressMonitor;
 import net.thevpc.nuts.util.NLRUMap;
 import net.thevpc.nuts.runtime.standalone.util.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.util.filters.DefaultNFilterModel;
@@ -61,6 +62,7 @@ public class NWorkspaceModel {
     public NLRUMap<NId, CachedSupplier<NDefinition>> cachedDefs = new NLRUMap<>(100);
     public DefaultNExtensions extensions;
     public NWorkspaceStore store;
+    public InheritableThreadLocal<Stack<NProgressMonitor>> currentProgressMonitors = new InheritableThreadLocal<>();
 
     public NWorkspaceModel(NWorkspace workspace, NBootOptions bOption0) {
         this.workspace = workspace;

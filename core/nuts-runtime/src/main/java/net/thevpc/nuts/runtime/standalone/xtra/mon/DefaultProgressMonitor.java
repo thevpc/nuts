@@ -1,9 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
 import net.thevpc.nuts.NIllegalArgumentException;
-import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
+import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NCallable;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.time.*;
 
 import java.util.*;
@@ -12,17 +15,90 @@ public class DefaultProgressMonitor implements NProgressMonitor {
     public static final NMsg EMPTY_MESSAGE = NMsg.ofPlain("");
     private List<NProgressListener> listeners = new ArrayList<>();
     private DefaultNProgressMonitorModel model = new DefaultNProgressMonitorModel();
-    private NSession session;
     private boolean strictComputationMonitor = true;
     private NProgressHandler spi;
     private NProgressMonitorInc incrementor;// = new DeltaProgressMonitorInc(1E-2);
 
 
-    public DefaultProgressMonitor(String id, NProgressHandler spi, NProgressMonitorInc incrementor, NSession session) {
+    public DefaultProgressMonitor(String id, NProgressHandler spi, NProgressMonitorInc incrementor) {
         model.setId(id == null ? UUID.randomUUID().toString() : id);
         this.spi = spi;
         this.incrementor = incrementor;
-        this.session = session;
+    }
+
+    @Override
+    public void runWithAll(Runnable... runnables) {
+        NProgressMonitor mon = NProgressMonitor.of();
+        mon.start();
+        runnables = Arrays.stream(runnables).filter(x -> x != null).toArray(Runnable[]::new);
+        NProgressMonitor[] mons = mon.split(runnables.length);
+        for (int i = 0; i < mons.length; i++) {
+            mons[i].runWith(runnables[i]);
+        }
+        mon.complete();
+    }
+
+    @Override
+    public void runWithAll(Runnable[] runnables, double[] weights) {
+        NAssert.requireEquals(runnables.length, weights.length, "runWithAll");
+        int count = 0;
+        for (int i = 0; i < runnables.length; i++) {
+            if (runnables[i] != null) {
+                count++;
+            }
+        }
+        Runnable[] runnables2 = new Runnable[count];
+        double[] weights2 = new double[count];
+        count = 0;
+        for (int i = 0; i < runnables.length; i++) {
+            if (runnables[i] != null) {
+                runnables2[i] = runnables[i];
+                weights2[i] = weights[i];
+                count++;
+            }
+        }
+        NProgressMonitor mon = NProgressMonitor.of();
+        mon.start();
+        NProgressMonitor[] mons = mon.split(weights2);
+        for (int i = 0; i < mons.length; i++) {
+            mons[i].runWith(runnables2[i]);
+        }
+        mon.complete();
+    }
+
+    @Override
+    public void runWith(Runnable runnable) {
+        NWorkspaceModel m = NWorkspaceExt.of().getModel();
+        Stack<NProgressMonitor> u = m.currentProgressMonitors.get();
+        if (u == null) {
+            u = new Stack<>();
+            m.currentProgressMonitors.set(u);
+        }
+        u.push(this);
+        start();
+        try {
+            runnable.run();
+            complete();
+        } finally {
+            complete();
+            u.pop();
+        }
+    }
+
+    @Override
+    public <T> T callWith(NCallable<T> runnable) {
+        NWorkspaceModel m = NWorkspaceExt.of().getModel();
+        Stack<NProgressMonitor> u = m.currentProgressMonitors.get();
+        if (u == null) {
+            u = new Stack<>();
+            m.currentProgressMonitors.set(u);
+        }
+        u.push(this);
+        try {
+            return runnable.call();
+        } finally {
+            u.pop();
+        }
     }
 
     @Override
@@ -355,7 +431,7 @@ public class DefaultProgressMonitor implements NProgressMonitor {
     }
 
     private void fireEvent(NProgressEventType state, String propertyName, Object oldValue) {
-        spi.onEvent(new DefaultNProgressHandlerEvent(state, propertyName, model, session));
+        spi.onEvent(new DefaultNProgressHandlerEvent(state, propertyName, model, NSession.of()));
         for (NProgressListener listener : getListeners()) {
             switch (state) {
                 case START: {
@@ -453,7 +529,7 @@ public class DefaultProgressMonitor implements NProgressMonitor {
     @Override
     public final NProgressMonitor inc(NMsg message) {
         NProgressMonitorInc incrementor = this.incrementor;
-        NAssert.requireNonNull(incrementor,"incrementor");
+        NAssert.requireNonNull(incrementor, "incrementor");
         double oldProgress = getProgress();
         double newProgress = incrementor.inc(oldProgress);
         setProgress(newProgress, message);
@@ -507,18 +583,18 @@ public class DefaultProgressMonitor implements NProgressMonitor {
 
     @Override
     public NProgressMonitor translate(long index, long max) {
-        return new DefaultProgressMonitor(null, new ProgressMonitorTranslator(this, 1.0 / max, index * (1.0 / max)), null, session);
+        return new DefaultProgressMonitor(null, new ProgressMonitorTranslator(this, 1.0 / max, index * (1.0 / max)), null);
     }
 
     @Override
     public NProgressMonitor translate(long i, long imax, long j, long jmax) {
-        return new DefaultProgressMonitor(null, new ProgressMonitorTranslator(this, 1.0 / (imax * jmax), ((1.0 * i * imax) + j) / (imax * jmax)), null, session);
+        return new DefaultProgressMonitor(null, new ProgressMonitorTranslator(this, 1.0 / (imax * jmax), ((1.0 * i * imax) + j) / (imax * jmax)), null);
     }
 
     @Override
     public NProgressMonitor stepInto(NMsg message) {
         final NProgressMonitorInc incrementor = getIncrementor();
-        NAssert.requireNonNull(incrementor,"incrementor");
+        NAssert.requireNonNull(incrementor, "incrementor");
         double a = getProgress();
         double b = incrementor.inc(a);
         if (message != null) {
@@ -534,7 +610,7 @@ public class DefaultProgressMonitor implements NProgressMonitor {
 
     @Override
     public NProgressMonitor temporize(long freq) {
-        return new DefaultProgressMonitor(null, new FreqProgressHandler(this, freq), null, session);
+        return new DefaultProgressMonitor(null, new FreqProgressHandler(this, freq), null);
     }
 
     @Override
@@ -552,7 +628,7 @@ public class DefaultProgressMonitor implements NProgressMonitor {
 
     @Override
     public NProgressMonitor translate(double factor, double start) {
-        return new DefaultProgressMonitor(null, new ProgressMonitorTranslator(this, factor, start), null, session);
+        return new DefaultProgressMonitor(null, new ProgressMonitorTranslator(this, factor, start), null);
     }
 
     /**
