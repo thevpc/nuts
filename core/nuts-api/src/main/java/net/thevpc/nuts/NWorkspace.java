@@ -68,6 +68,7 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
     }
 
     NWorkspace setSharedInstance();
+
     NWorkspace share();
 
     boolean isSharedInstance();
@@ -281,6 +282,7 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
     NPath getStoreLocation(NStoreType folderType, String repositoryIdOrName);
 
     NPath getStoreLocation(NId id, NStoreType folderType, String repositoryIdOrName);
+
     NPath getStoreLocation(NLocationKey nLocationKey);
 
     NStoreStrategy getStoreStrategy();

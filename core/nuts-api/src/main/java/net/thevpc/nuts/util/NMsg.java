@@ -65,11 +65,11 @@ public class NMsg {
     }
 
     public static NMsg ofInvalidValue() {
-        return ofInvalidValue(null, (String)null);
+        return ofInvalidValue(null, (String) null);
     }
 
     public static NMsg ofInvalidValue(Throwable throwable) {
-        return ofInvalidValue(throwable, (String)null);
+        return ofInvalidValue(throwable, (String) null);
     }
 
     public static NMsg ofInvalidValue(String valueName) {
@@ -394,6 +394,10 @@ public class NMsg {
     }
 
     public NMsg asSevere() {
+        return withLevel(Level.SEVERE);
+    }
+
+    public NMsg asError() {
         return withLevel(Level.SEVERE);
     }
 
