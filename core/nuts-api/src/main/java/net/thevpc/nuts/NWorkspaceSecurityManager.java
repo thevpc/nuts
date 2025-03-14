@@ -30,7 +30,6 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.security.NAuthenticationAgent;
 import net.thevpc.nuts.spi.NComponent;
 
-import javax.security.auth.callback.CallbackHandler;
 import java.util.List;
 
 /**
@@ -68,15 +67,6 @@ public interface NWorkspaceSecurityManager extends NComponent {
      * @return {@code this} instance
      */
     NWorkspaceSecurityManager login(String username, char[] password);
-
-    /**
-     * impersonate user and log as a distinct user with the given credentials and stack
-     * user name so that it can be retrieved using @{code getCurrentLoginStack()}.
-     *
-     * @param handler security handler
-     * @return {@code this} instance
-     */
-    NWorkspaceSecurityManager login(CallbackHandler handler);
 
     /**
      * log out from last logged in user (if any) and pop out from user name stack.

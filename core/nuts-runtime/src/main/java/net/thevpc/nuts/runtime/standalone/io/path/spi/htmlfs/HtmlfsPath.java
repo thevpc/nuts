@@ -137,37 +137,32 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         return NPath.of(PREFIX + ref.resolveSibling(path));
     }
 
+    
     public boolean isSymbolicLink(NPath basePath) {
         return false;
     }
 
     @Override
-    public boolean isOther(NPath basePath) {
-        return false;
-    }
-
-    @Override
-    public boolean isDirectory(NPath basePath) {
+    public NPathType type(NPath basePath) {
         if (NBlankable.isBlank(basePath.getLocation()) || basePath.getLocation().endsWith("/")
                 || this.url.endsWith("/")
         ) {
-            return true;
+            return NPathType.DIRECTORY;
         }
         String t = getContentType(basePath);
         //text/html;charset=UTF-8
         if (t != null) {
             if (t.endsWith("text/html")) {
-                return true;
+                return NPathType.DIRECTORY;
             }
-            return t.startsWith("text/html;");
+            if(t.startsWith("text/html;")) {
+                return NPathType.DIRECTORY;
+            }
+            return NPathType.FILE;
         }
-        return false;
+        return NPathType.OTHER;
     }
 
-    @Override
-    public boolean isRegularFile(NPath basePath) {
-        return false;
-    }
 
     @Override
     public boolean exists(NPath basePath) {

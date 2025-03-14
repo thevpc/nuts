@@ -26,7 +26,6 @@ package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.*;
 
-import javax.security.auth.callback.*;
 
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NUser;
@@ -135,11 +134,6 @@ public class DefaultNWorkspaceSecurityManager implements NWorkspaceSecurityManag
         return model.getCurrentUsername();
     }
 
-    @Override
-    public NWorkspaceSecurityManager login(CallbackHandler handler) {
-        model.login(handler);
-        return this;
-    }
 
     @Override
     public NAuthenticationAgent getAuthenticationAgent(String authenticationAgentId) {

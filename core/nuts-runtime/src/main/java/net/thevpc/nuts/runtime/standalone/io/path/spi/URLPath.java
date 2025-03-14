@@ -270,7 +270,7 @@ public class URLPath implements NPathSPI {
             return f.type();
         }
         if (exists(basePath)) {
-            return NPathType.UNKNOWN;
+            return NPathType.OTHER;
         }
         return NPathType.NOT_FOUND;
     }

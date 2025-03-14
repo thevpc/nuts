@@ -126,36 +126,23 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
     }
 
 
-    public boolean isSymbolicLink(NPath basePath) {
-        return false;
-    }
-
     @Override
-    public boolean isOther(NPath basePath) {
-        return false;
-    }
-
-    @Override
-    public boolean isDirectory(NPath basePath) {
+    public NPathType type(NPath basePath) {
         if (NBlankable.isBlank(basePath.getLocation()) || basePath.getLocation().endsWith("/")) {
-            return true;
+            return NPathType.DIRECTORY;
         }
         String t = getContentType(basePath);
         //text/html;charset=UTF-8
         if (t != null) {
             if (t.endsWith("text/html")) {
-                return true;
+                return NPathType.DIRECTORY;
             }
             if (t.startsWith("text/html;")) {
-                return true;
+                return NPathType.DIRECTORY;
             }
+            return NPathType.FILE;
         }
-        return false;
-    }
-
-    @Override
-    public boolean isRegularFile(NPath basePath) {
-        return ref.isRegularFile();
+        return NPathType.NOT_FOUND;
     }
 
     @Override

@@ -33,12 +33,11 @@ import net.thevpc.nuts.NUserConfig;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.*;
+import net.thevpc.nuts.security.*;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
-import net.thevpc.nuts.security.NLoginException;
-import net.thevpc.nuts.security.NAuthenticationAgent;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
@@ -46,12 +45,6 @@ import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
-import javax.security.auth.Subject;
-import javax.security.auth.callback.*;
-import javax.security.auth.login.LoginContext;
-import javax.security.auth.login.LoginException;
-import java.io.IOException;
-import java.security.Principal;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
@@ -61,7 +54,7 @@ import java.util.logging.Level;
  */
 public class DefaultNWorkspaceSecurityModel {
 
-    private final ThreadLocal<Stack<LoginContext>> loginContextStack = new ThreadLocal<>();
+    private final ThreadLocal<Stack<DefaultNLoginContext>> loginContextStack = new ThreadLocal<>();
     private final DefaultNWorkspace workspace;
     private final WrapperNAuthenticationAgent agent;
     private final Map<String, NAuthorizations> authorizations = new HashMap<>();
@@ -82,23 +75,23 @@ public class DefaultNWorkspaceSecurityModel {
     }
 
     public void login(final String username, final char[] password) {
-        login(new CallbackHandler() {
-
-            @Override
-            public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-                for (Callback callback : callbacks) {
-                    if (callback instanceof NameCallback) {
-                        NameCallback nameCallback = (NameCallback) callback;
-                        nameCallback.setName(username);
-                    } else if (callback instanceof PasswordCallback) {
-                        PasswordCallback passwordCallback = (PasswordCallback) callback;
-                        passwordCallback.setPassword(password);
-                    } else {
-                        throw new UnsupportedCallbackException(callback, "the submitted Callback is unsupported");
-                    }
+        NUserConfig registeredUser = NWorkspaceExt.of()
+                .getConfigModel()
+                .getUser(username);
+        if (registeredUser != null) {
+            try {
+                checkCredentials(registeredUser.getCredentials().toCharArray(), password);
+                Stack<DefaultNLoginContext> r = loginContextStack.get();
+                if(r==null){
+                    r=new Stack<>();
                 }
+                r.push(new DefaultNLoginContext(username));
+                return;
+            } catch (Exception ex) {
+                //
             }
-        });
+        }
+        throw new NLoginException(NMsg.ofC("Authentication failed for %s",username));
     }
 
 
@@ -164,16 +157,11 @@ public class DefaultNWorkspaceSecurityModel {
 
 
     public void logout() {
-        Stack<LoginContext> r = loginContextStack.get();
+        Stack<DefaultNLoginContext> r = loginContextStack.get();
         if (r == null || r.isEmpty()) {
             throw new NLoginException(NMsg.ofPlain("not logged in"));
         }
-        try {
-            LoginContext loginContext = r.pop();
-            loginContext.logout();
-        } catch (LoginException ex) {
-            throw new NLoginException(NMsg.ofPlain("login failed"), ex);
-        }
+        r.pop();
     }
 
 
@@ -292,16 +280,10 @@ public class DefaultNWorkspaceSecurityModel {
 
     public String[] getCurrentLoginStack() {
         List<String> logins = new ArrayList<String>();
-        Stack<LoginContext> c = loginContextStack.get();
+        Stack<DefaultNLoginContext> c = loginContextStack.get();
         if (c != null) {
-            for (LoginContext loginContext : c) {
-                Subject subject = loginContext.getSubject();
-                if (subject != null) {
-                    for (Principal principal : subject.getPrincipals()) {
-                        logins.add(principal.getName());
-                        break;
-                    }
-                }
+            for (DefaultNLoginContext loginContext : c) {
+                logins.add(loginContext.getUserName());
             }
         }
         if (logins.isEmpty()) {
@@ -324,56 +306,17 @@ public class DefaultNWorkspaceSecurityModel {
             return NConstants.Users.ADMIN;
         }
         String name = null;
-        Subject currentSubject = getLoginSubject();
+        DefaultNLoginContext currentSubject = getLoginContext();
         if (currentSubject != null) {
-            for (Principal principal : currentSubject.getPrincipals()) {
-                name = principal.getName();
-                if (!NBlankable.isBlank(name)) {
-                    if (!NBlankable.isBlank(name)) {
-                        return name;
-                    }
-                }
-            }
+            return currentSubject.getUserName();
         }
         return NConstants.Users.ANONYMOUS;
     }
 
-    private Subject getLoginSubject() {
-        LoginContext c = getLoginContext();
-        if (c == null) {
-            return null;
-        }
-        return c.getSubject();
-    }
 
 
-    public void login(CallbackHandler handler) {
-        NWorkspaceLoginModule.configure(workspace.currentSession()); //initialize it
-        //        if (!NutsConstants.Misc.USER_ANONYMOUS.equals(getCurrentLogin())) {
-        //            throw new NutsLoginException("Already logged in");
-        //        }
-        LoginContext login;
-        try {
-            login = CorePlatformUtils.runWithinLoader(new Callable<LoginContext>() {
-
-                public LoginContext call() throws Exception {
-                    return new LoginContext("nuts", handler);
-                }
-            }, NWorkspaceLoginModule.class.getClassLoader());
-            login.login();
-        } catch (LoginException ex) {
-            throw new NLoginException(NMsg.ofPlain("login failed"), ex);
-        }
-        Stack<LoginContext> r = loginContextStack.get();
-        if (r == null) {
-            r = new Stack<>();
-            loginContextStack.set(r);
-        }
-        r.push(login);
-    }
-
-    private LoginContext getLoginContext() {
-        Stack<LoginContext> c = loginContextStack.get();
+    private DefaultNLoginContext getLoginContext() {
+        Stack<DefaultNLoginContext> c = loginContextStack.get();
         if (c == null) {
             return null;
         }

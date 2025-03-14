@@ -26,10 +26,11 @@
  */
 package net.thevpc.nuts.spi;
 
+import net.thevpc.nuts.NUnsupportedOperationException;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.util.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,49 +38,19 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.List;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
 public interface NPathSPI {
 
     NStream<NPath> list(NPath basePath);
 
-    NFormatSPI formatter(NPath basePath);
-
-    String getName(NPath basePath);
-
-    String getProtocol(NPath basePath);
-
-    NPath resolve(NPath basePath, String path);
-
-    NPath resolve(NPath basePath, NPath path);
-
-    NPath resolveSibling(NPath basePath, String path);
-
-    NPath resolveSibling(NPath basePath, NPath path);
-
-    NOptional<URL> toURL(NPath basePath);
-
-    NOptional<Path> toPath(NPath basePath);
-
     NPathType type(NPath basePath);
-
-    boolean isLocal(NPath basePath);
 
     boolean exists(NPath basePath);
 
     long getContentLength(NPath basePath);
 
-    String getContentEncoding(NPath basePath);
-
-    String getContentType(NPath basePath);
-
-    String getCharset(NPath basePath);
-
     String toString();
-
-    String getLocation(NPath basePath);
 
     InputStream getInputStream(NPath basePath, NPathOption... options);
 
@@ -89,31 +60,243 @@ public interface NPathSPI {
 
     void mkdir(boolean parents, NPath basePath);
 
-    Instant getLastModifiedInstant(NPath basePath);
+    /**
+     * return the root associated to this path
+     *
+     * @param basePath basePath
+     * @return root or this
+     */
+    NPath getRoot(NPath basePath);
 
-    Instant getLastAccessInstant(NPath basePath);
 
-    Instant getCreationInstant(NPath basePath);
+    NPath toRelativePath(NPath basePath, NPath parentPath);
 
-    NPath getParent(NPath basePath);
 
-    NPath toAbsolute(NPath basePath, NPath rootPath);
+    /// ////////////////////////////////////////////////
+    /// DEFAULT IMPLEMENTATIONS
 
-    NPath normalize(NPath basePath);
+    default List<String> getNames(NPath basePath) {
+        String location = getLocation(basePath);
+        return NStringUtils.split(location, "/", true, true);
+    }
 
-    boolean isAbsolute(NPath basePath);
+    default boolean isLocal(NPath basePath) {
+        return true;
+    }
 
-    String owner(NPath basePath);
 
-    String group(NPath basePath);
+    default String getLocation(NPath basePath) {
+        String str = toString();
+        int u = str.indexOf(':');
+        if (u > 0) {
+            String p = str.substring(0, u);
+            if (p.matches("[a-zA-Z][a-zA-Z-_0-9]*")) {
+                String a = str.substring(u + 1);
+                if (a.startsWith("//")) {
+                    return a.substring(1);
+                }
+                return a;
+            }
+        }
+        return str;
+    }
 
-    Set<NPathPermission> getPermissions(NPath basePath);
+    default String getProtocol(NPath basePath) {
+        String str = toString();
+        int u = str.indexOf(':');
+        if (u > 0) {
+            String p = str.substring(0, u);
+            if (p.matches("[a-zA-Z][a-zA-Z-_0-9]*")) {
+                return p;
+            }
+        }
+        return null;
+    }
 
-    void setPermissions(NPath basePath, NPathPermission... permissions);
+    default NFormatSPI formatter(NPath basePath) {
+        return new NFormatSPI() {
+            @Override
+            public String getName() {
+                return "path";
+            }
 
-    void addPermissions(NPath basePath, NPathPermission... permissions);
+            @Override
+            public void print(NPrintStream out) {
+                out.print(basePath.toString());
+            }
 
-    void removePermissions(NPath basePath, NPathPermission... permissions);
+            @Override
+            public boolean configureFirst(NCmdLine cmdLine) {
+                return false;
+            }
+        };
+    }
+
+    default NPath toAbsolute(NPath basePath, NPath rootPath) {
+        if (isAbsolute(basePath)) {
+            return basePath;
+        }
+        if (rootPath == null) {
+            return basePath.normalize();
+        }
+        return rootPath.toAbsolute().resolve(basePath);
+    }
+
+    default boolean isAbsolute(NPath basePath) {
+        return true;
+    }
+
+    default String getName(NPath basePath) {
+        List<String> n = getNames(basePath);
+        return n.isEmpty() ? "" : n.get(n.size() - 1);
+    }
+
+
+    default NPath resolve(NPath basePath, String path) {
+        if (NBlankable.isBlank(path)) {
+            return basePath;
+        }
+        return resolve(basePath, NPath.of(path));
+    }
+
+    default NPath resolve(NPath basePath, NPath path) {
+        if (NBlankable.isBlank(path)) {
+            return basePath;
+        }
+        if (path.isAbsolute()) {
+            return path;
+        }
+        NPath root = basePath;
+        for (String item : path.getNames()) {
+            root = root.resolve(item);
+        }
+        return root;
+    }
+
+    default NPath resolveSibling(NPath basePath, String path) {
+        NPath parent = basePath.getParent();
+        return parent.resolve(path);
+    }
+
+    default NPath resolveSibling(NPath basePath, NPath path) {
+        NPath parent = basePath.getParent();
+        return parent.resolve(path);
+    }
+
+
+    default NOptional<URL> toURL(NPath basePath) {
+        return NOptional.ofNamedEmpty("url");
+    }
+
+    default NOptional<Path> toPath(NPath basePath) {
+        return NOptional.ofNamedEmpty("path");
+    }
+
+
+    default NPath normalize(NPath basePath) {
+        if (isRoot(basePath)) {
+            return basePath;
+        }
+        List<String> names = getNames(basePath);
+        NPath root = getRoot(basePath);
+        List<String> newNames = new ArrayList<>();
+        for (String item : names) {
+            switch (item) {
+                case ".": {
+                    break;
+                }
+                case "..": {
+                    if (newNames.size() > 0) {
+                        newNames.remove(newNames.size() - 1);
+                    }
+                    break;
+                }
+                default: {
+                    newNames.add(item);
+                }
+            }
+        }
+        if (newNames.size() != names.size()) {
+            for (String item : newNames) {
+                root = root.resolve(item);
+            }
+            return root;
+        }
+        return basePath;
+    }
+
+    default NPath getParent(NPath basePath) {
+        if (isRoot(basePath)) {
+            return basePath;
+        }
+        List<String> names = getNames(basePath);
+        List<String> items = names.subList(0, names.size() - 1);
+        NPath root = getRoot(basePath);
+        for (String item : items) {
+            root = root.resolve(item);
+        }
+        return root;
+    }
+
+
+    default String getContentEncoding(NPath basePath) {
+        return null;
+    }
+
+    default String getContentType(NPath basePath) {
+        return null;
+    }
+
+    default String getCharset(NPath basePath) {
+        return null;
+    }
+
+    default Instant getLastModifiedInstant(NPath basePath) {
+        return null;
+    }
+
+    default Instant getLastAccessInstant(NPath basePath) {
+        return null;
+    }
+
+    default Instant getCreationInstant(NPath basePath) {
+        return null;
+    }
+
+    default String owner(NPath basePath) {
+        return null;
+    }
+
+    default String group(NPath basePath) {
+        return null;
+    }
+
+    default Set<NPathPermission> getPermissions(NPath basePath) {
+        return Collections.emptySet();
+    }
+
+    default void setPermissions(NPath basePath, NPathPermission... permissions) {
+        throw new NUnsupportedOperationException(NMsg.ofC("permissions are not supported"));
+    }
+
+    default void addPermissions(NPath basePath, NPathPermission... permissions) {
+        throw new NUnsupportedOperationException(NMsg.ofC("permissions are not supported"));
+    }
+
+    default void removePermissions(NPath basePath, NPathPermission... permissions) {
+        throw new NUnsupportedOperationException(NMsg.ofC("permissions are not supported"));
+    }
+
+    /**
+     * true if this is the root of the path file system. good examples are: '/'
+     * , 'C:\' and 'http://myserver/'
+     *
+     * @param basePath basePath
+     * @return true if this is the root of the path file system
+     */
+    default boolean isRoot(NPath basePath) {
+        return getNames(basePath).isEmpty();
+    }
 
     /**
      * return true if this path is a simple name that do not contain '/' or
@@ -123,24 +306,39 @@ public interface NPathSPI {
      * @return true if this path is a simple name that do not contain '/' or
      * equivalent
      */
-    boolean isName(NPath basePath);
+    default boolean isName(NPath basePath) {
+        if (getNameCount(basePath) > 1) {
+            return false;
+        }
+        String v = toString();
+        switch (v) {
+            case "/":
+            case "\\":
+            case ".":
+            case "..": {
+                return false;
+            }
+        }
+        for (char c : v.toCharArray()) {
+            switch (c) {
+                case '/':
+                case '\\': {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
-    /**
-     * true if this is the root of the path file system. good examples are: '/'
-     * , 'C:\' and 'http://myserver/'
-     *
-     * @param basePath basePath
-     * @return true if this is the root of the path file system
-     */
-    boolean isRoot(NPath basePath);
+    default NPath subpath(NPath basePath, int beginIndex, int endIndex) {
+        List<String> items = getNames(basePath).subList(beginIndex, endIndex);
+        NPath root = getRoot(basePath);
+        for (String item : items) {
+            root = root.resolve(item);
+        }
+        return root;
+    }
 
-    /**
-     * return the root associated to this path
-     *
-     * @param basePath basePath
-     * @return root or this
-     */
-    NPath getRoot(NPath basePath);
 
     /**
      * Return a Stream that is lazily populated with Path by walking the file
@@ -154,17 +352,50 @@ public interface NPathSPI {
      * @return a Stream that is lazily populated with Path by walking the file
      * tree rooted at a given starting file
      */
-    NStream<NPath> walk(NPath basePath, int maxDepth, NPathOption[] options);
+    default NStream<NPath> walk(NPath basePath, int maxDepth, NPathOption[] options) {
+        return NStream.of(new Iterator<NPath>() {
+            Stack<NPath> stack = new Stack<>();
+            NPath curr = null;
 
-    NPath subpath(NPath basePath, int beginIndex, int endIndex);
+            {
+                stack.push(basePath);
+            }
 
-    List<String> getNames(NPath basePath);
+            @Override
+            public boolean hasNext() {
+                if (!stack.isEmpty()) {
+                    NPath currentPath = stack.pop();
+                    if (currentPath.isDirectory()) {
+                        if (maxDepth > 0) {
+                            for (NPath nPath : currentPath.list()) {
+                                stack.push(nPath);
+                            }
+                        }
+                    }
+                    curr = currentPath;
+                    return true;
+                } else {
+                    curr = null;
+                    return false;
+                }
+            }
 
-    NPath toRelativePath(NPath basePath, NPath parentPath);
+            @Override
+            public NPath next() {
+                return curr;
+            }
+        });
+    }
 
-    int getNameCount(NPath basePath);
+    /**
+     * @param basePath base path
+     * @return
+     */
+    default int getNameCount(NPath basePath) {
+        return getNames(basePath).size();
+    }
 
-    default NPath toCompressedForm(NPath basePath){
+    default NPath toCompressedForm(NPath basePath) {
         return null;
     }
 

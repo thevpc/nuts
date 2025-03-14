@@ -52,7 +52,7 @@ public class InvalidFilePath implements NPathSPI {
 
     @Override
     public NPathType type(NPath basePath) {
-        return NPathType.UNKNOWN;
+        return NPathType.NOT_FOUND;
     }
 
     @Override

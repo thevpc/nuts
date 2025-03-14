@@ -108,33 +108,6 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         return NPath.of(PREFIX + ref.resolveSibling(path));
     }
 
-    public boolean isSymbolicLink(NPath basePath) {
-        return "symlink".equals(_type());
-    }
-
-    @Override
-    public boolean isOther(NPath basePath) {
-        switch (_type()) {
-            case "dir":
-            case "file":
-            case "symlink":
-            case "": {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public boolean isDirectory(NPath basePath) {
-        return "dir".equals(_type());
-    }
-
-    @Override
-    public boolean isRegularFile(NPath basePath) {
-        return "file".equals(_type());
-    }
-
     @Override
     public boolean exists(NPath basePath) {
         if (info != null) {
@@ -303,6 +276,17 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
             return (Info) o;
         }
         return null;
+    }
+
+    @Override
+    public NPathType type(NPath basePath) {
+        switch (_type()){
+            case "dir":return NPathType.DIRECTORY;
+            case "file":return NPathType.FILE;
+            case "symlink":return NPathType.SYMBOLIC_LINK;
+            case "":return NPathType.NOT_FOUND;
+        }
+        return NPathType.OTHER;
     }
 
     private String _type() {

@@ -225,7 +225,7 @@ public class NResourcePath implements NPathSPI {
         if(u!=null){
             return u.type();
         }
-        return exists(basePath)?NPathType.UNKNOWN:NPathType.NOT_FOUND;
+        return exists(basePath)?NPathType.OTHER:NPathType.NOT_FOUND;
     }
 
     @Override

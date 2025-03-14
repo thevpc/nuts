@@ -13,8 +13,7 @@ public enum NPathType implements NEnum {
     BLOCK,
     FILE,
     OTHER,
-    NOT_FOUND,
-    UNKNOWN
+    NOT_FOUND
     ;
 
     /**
