@@ -6,14 +6,13 @@ import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSystemTerminal;
-import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
+import net.thevpc.nuts.runtime.standalone.time.CProgressBar;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.spi.NSystemTerminalBaseImpl;
 import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyles;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.InputStream;

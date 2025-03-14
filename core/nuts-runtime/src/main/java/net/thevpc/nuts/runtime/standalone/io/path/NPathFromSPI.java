@@ -308,22 +308,22 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public boolean isOther() {
-        return base.isOther(this);
+        return base.type(this) == NPathType.OTHER;
     }
 
     @Override
     public boolean isSymbolicLink() {
-        return base.isSymbolicLink(this);
+        return base.type(this) == NPathType.SYMBOLIC_LINK;
     }
 
     @Override
     public boolean isDirectory() {
-        return base.isDirectory(this);
+        return base.type(this) == NPathType.DIRECTORY;
     }
 
     @Override
     public boolean isRegularFile() {
-        return base.isRegularFile(this);
+        return base.type(this) == NPathType.FILE;
     }
 
     @Override
@@ -396,7 +396,7 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public NPath toRelative(NPath parentPath) {
-        return base.toRelativePath(this, parentPath);
+        return base.toRelativePath(this, unwrapPath(parentPath));
     }
 
     @Override
@@ -578,12 +578,17 @@ public class NPathFromSPI extends NPathBase {
         if (other == null) {
             return false;
         }
-        return base.isEqOrDeepChildOf(this, unwrapPath(other));
+        return toRelative(other) != null;
+    }
+
+    @Override
+    public NPathType type() {
+        return base.type(this);
     }
 
     @Override
     public boolean startsWith(NPath other) {
-        return base.startsWith(this, unwrapPath(other));
+        return base.toRelativePath(this, unwrapPath(other)) != null;
     }
 
     @Override
@@ -597,7 +602,7 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public boolean startsWith(String other) {
-        return base.startsWith(this, other);
+        return base.toRelativePath(this, NPath.of(other)) != null;
     }
 
 }

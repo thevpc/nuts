@@ -189,7 +189,7 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
                 NLiteral count = NLiteral.of(formatParams != null ? formatParams.get("count") : null);
                 RollingFileService fs = new RollingFileService(
                         (NPath) value,
-                        count.isInt() ? count.asInt().get() : 3,
+                        count.asInt().isPresent() ? count.asInt().get() : 3,
                         session
                 );
                 value = fs.roll();

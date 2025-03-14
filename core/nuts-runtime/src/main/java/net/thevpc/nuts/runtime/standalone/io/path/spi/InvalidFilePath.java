@@ -51,6 +51,11 @@ public class InvalidFilePath implements NPathSPI {
     }
 
     @Override
+    public NPathType type(NPath basePath) {
+        return NPathType.UNKNOWN;
+    }
+
+    @Override
     public String getProtocol(NPath basePath) {
         return "";
     }
@@ -113,26 +118,6 @@ public class InvalidFilePath implements NPathSPI {
         } catch (Exception ex) {
             return NOptional.ofNamedError(NMsg.ofC("not an path %s", value));
         }
-    }
-
-    @Override
-    public boolean isSymbolicLink(NPath basePath) {
-        return false;
-    }
-
-    @Override
-    public boolean isOther(NPath basePath) {
-        return false;
-    }
-
-    @Override
-    public boolean isDirectory(NPath basePath) {
-        return false;
-    }
-
-    @Override
-    public boolean isRegularFile(NPath basePath) {
-        return false;
     }
 
     public boolean exists(NPath basePath) {
@@ -428,19 +413,6 @@ public class InvalidFilePath implements NPathSPI {
     @Override
     public void walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
 
-    }
-    @Override
-    public boolean isEqOrDeepChildOf(NPath basePath,NPath other) {
-        return toRelativePath(basePath, other)!=null;
-    }
-    @Override
-    public boolean startsWith(NPath basePath, String other) {
-        return startsWith(basePath,NPath.of(other));
-    }
-
-    @Override
-    public boolean startsWith(NPath basePath, NPath other) {
-        return toRelativePath(basePath,other)!=null;
     }
 
     @Override

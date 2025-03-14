@@ -135,23 +135,8 @@ public class GenericFilePath implements NPathSPI {
     }
 
     @Override
-    public boolean isSymbolicLink(NPath basePath) {
-        return false;
-    }
-
-    @Override
-    public boolean isOther(NPath basePath) {
-        return false;
-    }
-
-    @Override
-    public boolean isDirectory(NPath basePath) {
-        return false;
-    }
-
-    @Override
-    public boolean isRegularFile(NPath basePath) {
-        return false;
+    public NPathType type(NPath basePath) {
+        return NPathType.NOT_FOUND;
     }
 
     public boolean exists(NPath basePath) {
@@ -558,21 +543,6 @@ public class GenericFilePath implements NPathSPI {
             return NConstants.Support.NO_SUPPORT;
         }
 
-    }
-
-    @Override
-    public boolean isEqOrDeepChildOf(NPath basePath, NPath other) {
-        return toRelativePath(basePath, other) != null;
-    }
-
-    @Override
-    public boolean startsWith(NPath basePath, String other) {
-        return startsWith(basePath,NPath.of(other));
-    }
-
-    @Override
-    public boolean startsWith(NPath basePath, NPath other) {
-        return toRelativePath(basePath,other)!=null;
     }
 
     @Override

@@ -3,15 +3,11 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NTreeVisitor;
-import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NPathOption;
-import net.thevpc.nuts.io.NPathPermission;
-import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
-import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStream;
 
@@ -115,23 +111,9 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
         return ref.toPath();
     }
 
-    public boolean isSymbolicLink(NPath basePath) {
-        return false;
-    }
-
     @Override
-    public boolean isOther(NPath basePath) {
-        return false;
-    }
-
-    @Override
-    public boolean isDirectory(NPath basePath) {
-        return ref.isDirectory();
-    }
-
-    @Override
-    public boolean isRegularFile(NPath basePath) {
-        return ref.isRegularFile();
+    public NPathType type(NPath basePath) {
+        return ref.type();
     }
 
     @Override
@@ -265,21 +247,6 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
     @Override
     public boolean isLocal(NPath basePath) {
         return ref.isLocal();
-    }
-
-    @Override
-    public boolean isEqOrDeepChildOf(NPath basePath, NPath other) {
-        return ref.isEqOrDeepChildOf(other);
-    }
-
-    @Override
-    public boolean startsWith(NPath basePath, String other) {
-        return ref.startsWith(other);
-    }
-
-    @Override
-    public boolean startsWith(NPath basePath, NPath other) {
-        return ref.startsWith(other);
     }
 
     @Override

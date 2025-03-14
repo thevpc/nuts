@@ -3,9 +3,8 @@ package net.thevpc.nuts.runtime.standalone.io.terminal;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminal;
-import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
+import net.thevpc.nuts.runtime.standalone.time.CProgressBar;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NAsk;
 

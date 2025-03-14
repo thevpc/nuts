@@ -269,15 +269,15 @@ public class NElementPathFilter {
                                 if (vir.indexOf('-') > 0) {
                                     String[] inter = vir.split("-");
                                     if (inter.length == 2
-                                            && NLiteral.of(inter[0]).isInt()
-                                            && NLiteral.of(inter[1]).isInt()) {
+                                            && NLiteral.of(inter[0]).asInt().isPresent()
+                                            && NLiteral.of(inter[1]).asInt().isPresent()) {
                                         int a = Integer.parseInt(inter[0]);
                                         int b = Integer.parseInt(inter[1]);
                                         ors.add(new NElementNameMatcherValueInterval(a, b));
                                     }
                                 } else {
-                                    if (NLiteral.of(vir).isInt()) {
-                                        int a = Integer.parseInt(vir);
+                                    if (NLiteral.of(vir).asInt().isPresent()) {
+                                        int a = NLiteral.of(vir).asInt().get();
                                         ors.add(new NElementNameMatcherValue(a));
                                     }
                                 }
@@ -325,8 +325,8 @@ public class NElementPathFilter {
                     if (s.startsWith(":#")) {
                         s = s.substring(2);
                         return createIndexValueInervalMatcher(s);
-                    } else if (NLiteral.of(s).isInt()) {
-                        return new NElementIndexMatcherForValue(Integer.parseInt(s));
+                    } else if (NLiteral.of(s).asInt().isPresent()) {
+                        return new NElementIndexMatcherForValue(NLiteral.of(s).asInt().get());
                     } else if (s.matches("[0-9][0-9,-]+")) {
                         return createIndexValueInervalMatcher(s);
                     } else {
@@ -343,13 +343,13 @@ public class NElementPathFilter {
                 if (vir.length() > 0) {
                     if (vir.indexOf('-') > 0) {
                         String[] inter = vir.split("-");
-                        if (inter.length == 2 && NLiteral.of(inter[0]).isInt() && NLiteral.of(inter[1]).isInt()) {
+                        if (inter.length == 2 && NLiteral.of(inter[0]).asInt().isPresent() && NLiteral.of(inter[1]).asInt().isPresent()) {
                             int a = Integer.parseInt(inter[0]);
                             int b = Integer.parseInt(inter[1]);
                             ors.add(new NElementIndexMatcherValueInterval(a, b));
                         }
                     } else {
-                        if (NLiteral.of(vir).isInt()) {
+                        if (NLiteral.of(vir).asInt().isPresent()) {
                             ors.add(new NElementIndexMatcherForValue(Integer.parseInt(vir)));
                         }
                     }

@@ -13,7 +13,7 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
-import net.thevpc.nuts.runtime.standalone.io.progress.SingletonNInputStreamProgressFactory;
+import net.thevpc.nuts.runtime.standalone.time.SingletonNInputStreamProgressFactory;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.spi.NUncompressPackaging;
 import net.thevpc.nuts.time.NProgressFactory;

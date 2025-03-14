@@ -3,14 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thevpc.nuts.runtime.standalone.io.progress;
+package net.thevpc.nuts.runtime.standalone.time;
 
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.util.BytesSizeFormat;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.time.NProgressEvent;
 import net.thevpc.nuts.time.NProgressListener;
 
@@ -19,84 +21,77 @@ import java.text.DecimalFormat;
 /**
  * @author thevpc
  */
-public class DefaultNCountProgressListener implements NProgressListener/*, NutsOutputStreamTransparentAdapter*/ {
+public class TraceNProgressListener implements NProgressListener/*, NutsOutputStreamTransparentAdapter*/ {
+    private static DecimalFormat df = new DecimalFormat("##0.00");
 
     private NPrintStream out;
     private int minLength;
+    private CProgressBar bar;
+    private boolean optionsProcessed = false;
+    private ProgressOptions options;
+    private NLog logger;
 
-    public DefaultNCountProgressListener() {
-    }
-
-//    @Override
-//    public OutputStream baseOutputStream() {
-//        return out;
-//    }
-
-    public DecimalFormat df(NProgressEvent event) {
-        return new DecimalFormat("##0.00");
-    }
-
-    public BytesSizeFormat mf(NProgressEvent event) {
-        return new BytesSizeFormat("BTD1F");
+    public TraceNProgressListener() {
+//        this.session = session;
     }
 
     @Override
     public boolean onProgress(NProgressEvent event) {
-        switch (event.getState()){
-            case START:{
+        switch (event.getState()) {
+            case START: {
+                bar = CProgressBar.of();
                 this.out = event.getSession().getTerminal().err();
+                this.logger= NLog.of(TraceNProgressListener.class);
                 if (event.getSession().isPlainOut()) {
                     onProgress0(event, false);
                 }
-                break;
+                return true;
             }
-            case COMPLETE:{
+            case COMPLETE: {
                 if (event.getSession().isPlainOut()) {
-                    onProgress0(event, true);
-//            out.println();
+                    boolean b = onProgress0(event, true);
+                    out.resetLine();
+                    return b;
+                    //out.println();
                 }
-                break;
+                return false;
             }
-            case PROGRESS:{
+            default: {
                 if (event.getSession().isPlainOut()) {
                     return onProgress0(event, false);
                 }
-                break;
+                return false;
             }
         }
-        return true;
     }
 
     public boolean onProgress0(NProgressEvent event, boolean end) {
+        if (!optionsProcessed) {
+            optionsProcessed = true;
+            options = event.getSession().callWith(()->ProgressOptions.of());
+        }
         double partialSeconds = event.getPartialDuration().getTimeAsDoubleSeconds();
         if (event.getCurrentCount() == 0 || partialSeconds > 0.5 || event.getCurrentCount() == event.getMaxValue()) {
             NTexts text = NTexts.of();
-            out.resetLine();
             double globalSeconds = event.getDuration().getTimeAsDoubleSeconds();
             long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.getCurrentCount() / globalSeconds);
             long partialSpeed = partialSeconds == 0 ? 0 : (long) (event.getPartialCount() / partialSeconds);
             double percent = event.getProgress();
-            if (event.isIndeterminate()) {
-                percent = end ? 100 : 0;
-            }
-//            int x = (int) (20.0 / 100.0 * percent);
 
             NTextBuilder formattedLine = text.ofBuilder();
-            CProgressBar cp= CProgressBar.of();
+            NText p = bar.progress(event.isIndeterminate() ? -1 : (int) (event.getProgress()));
+            if (p == null || p.isEmpty()) {
+                return false;
+            }
+            formattedLine.append(p);
+            BytesSizeFormat mf = new BytesSizeFormat("BTD1F");
 
-            formattedLine.append(cp.progress((int)percent));
-//            if (x > 0) {
-//                formattedLine.append(text.forStyled(
-//                        CoreStringUtils.fillString("*", x),
-//                        NutsTextStyle.primary1()
-//                ));
-//            }
-//            CoreStringUtils.fillString(' ', 20 - x, formattedLine);
-//            formattedLine.append("]");
-            BytesSizeFormat mf = mf(event);
-            DecimalFormat df = df(event);
-            formattedLine.append(" ").append(text.ofStyled(String.format("%6s", df.format(percent)), NTextStyle.config())).append("% ");
-            formattedLine.append(" ").append(text.ofStyled(mf.formatString(partialSpeed), NTextStyle.config())).append("/s");
+            if(Double.isNaN(percent)){
+                formattedLine.append(" ").append(text.ofStyled(String.format("%6s", ""), NTextStyle.config())).append("  ");
+            }else {
+                formattedLine.append(" ").append(text.ofStyled(String.format("%6s", df.format(percent)), NTextStyle.config())).append("% ");
+            }
+            formattedLine.append(" ").append(text.ofStyled(String.format("%6s", mf.formatString(partialSpeed)), NTextStyle.config())).append("/s");
             if (event.getMaxValue() < 0) {
                 if (globalSpeed == 0) {
                     formattedLine.append(" ( -- )");
@@ -117,8 +112,7 @@ public class DefaultNCountProgressListener implements NProgressListener/*, NutsO
             } else {
                 minLength = length;
             }
-            out.print(ff);
-            out.flush();
+            bar.printProgress2(formattedLine.build(),out);
             return true;
         }
         return false;

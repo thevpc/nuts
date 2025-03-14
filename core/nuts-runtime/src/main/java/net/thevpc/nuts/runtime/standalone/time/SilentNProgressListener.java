@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.standalone.io.progress;
+package net.thevpc.nuts.runtime.standalone.time;
 
 import net.thevpc.nuts.time.NProgressEvent;
 import net.thevpc.nuts.time.NProgressListener;

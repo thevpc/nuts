@@ -257,27 +257,22 @@ public class URLPath implements NPathSPI {
         });
     }
 
-    public boolean isSymbolicLink(NPath basePath) {
-        NPath f = asFilePath(basePath);
-        return f != null && f.isSymbolicLink();
-    }
-
     @Override
-    public boolean isOther(NPath basePath) {
-        NPath f = asFilePath(basePath);
-        return f != null && f.isOther();
-    }
-
-    @Override
-    public boolean isDirectory(NPath basePath) {
+    public NPathType type(NPath basePath) {
         if (toString().endsWith("/")) {
-            return exists(basePath);
+            if (exists(basePath)) {
+                return NPathType.DIRECTORY;
+            }
+            return NPathType.NOT_FOUND;
         }
         NPath f = asFilePath(basePath);
         if (f != null) {
-            return f.isDirectory();
+            return f.type();
         }
-        return false;
+        if (exists(basePath)) {
+            return NPathType.UNKNOWN;
+        }
+        return NPathType.NOT_FOUND;
     }
 
     @Override
@@ -302,18 +297,6 @@ public class URLPath implements NPathSPI {
         }
         NPath f = asFilePath(basePath);
         return f != null && f.isLocal();
-    }
-
-    @Override
-    public boolean isRegularFile(NPath basePath) {
-        NPath f = asFilePath(basePath);
-        if (f != null) {
-            return f.isRegularFile();
-        }
-        if (!toString().endsWith("/")) {
-            return exists(basePath);
-        }
-        return false;
     }
 
     @Override
@@ -706,11 +689,6 @@ public class URLPath implements NPathSPI {
         return NPath.of(NIOUtils.toRelativePath(child, parent));
     }
 
-    @Override
-    public boolean isEqOrDeepChildOf(NPath basePath, NPath other) {
-        return toRelativePath(basePath, other) != null;
-    }
-
     private CacheInfo loadCacheInfo() {
         try {
             URLConnection uu = url.openConnection();
@@ -883,16 +861,6 @@ public class URLPath implements NPathSPI {
             }
             return NConstants.Support.NO_SUPPORT;
         }
-    }
-
-    @Override
-    public boolean startsWith(NPath basePath, String other) {
-        return startsWith(basePath, NPath.of(other));
-    }
-
-    @Override
-    public boolean startsWith(NPath basePath, NPath other) {
-        return toRelativePath(basePath,other)!=null;
     }
 
     @Override

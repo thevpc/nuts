@@ -42,7 +42,7 @@ import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.log.NLogUtils;
 import net.thevpc.nuts.reserved.NScopedWorkspace;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNArrayElementBuilder;
-import net.thevpc.nuts.runtime.standalone.io.progress.ProgressOptions;
+import net.thevpc.nuts.runtime.standalone.time.ProgressOptions;
 import net.thevpc.nuts.runtime.standalone.io.terminal.AbstractNTerminal;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NPropertiesHolder;

@@ -17,6 +17,8 @@ public interface NProgressMonitors extends NComponent {
 
     NOptional<NProgressMonitor> currentMonitor();
 
+    NProgressRunner ofRunner();
+
     NProgressMonitor ofSilent();
 
     NProgressMonitor[] ofSilent(int count);

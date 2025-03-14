@@ -27,12 +27,11 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.format.NTreeVisitor;
-import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NPathOption;
-import net.thevpc.nuts.io.NPathPermission;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStream;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
@@ -40,6 +39,7 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 
 public interface NPathSPI {
 
@@ -59,21 +59,13 @@ public interface NPathSPI {
 
     NPath resolveSibling(NPath basePath, NPath path);
 
-    NPath toCompressedForm(NPath basePath);
-
     NOptional<URL> toURL(NPath basePath);
 
     NOptional<Path> toPath(NPath basePath);
 
-    boolean isSymbolicLink(NPath basePath);
-
-    boolean isOther(NPath basePath);
-
-    boolean isDirectory(NPath basePath);
+    NPathType type(NPath basePath);
 
     boolean isLocal(NPath basePath);
-
-    boolean isRegularFile(NPath basePath);
 
     boolean exists(NPath basePath);
 
@@ -168,23 +160,81 @@ public interface NPathSPI {
 
     List<String> getNames(NPath basePath);
 
-    void moveTo(NPath basePath, NPath other, NPathOption... options);
-
-    void copyTo(NPath basePath, NPath other, NPathOption... options);
-
-    void walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options);
-
     NPath toRelativePath(NPath basePath, NPath parentPath);
 
-    byte[] getDigest(NPath basePath, String algo);
-
-    boolean isEqOrDeepChildOf(NPath basePath, NPath other);
-
-    boolean startsWith(NPath basePath, String other);
-
-    boolean startsWith(NPath basePath, NPath other);
-
-    int compareTo(NPath basePath, NPath other);
-
     int getNameCount(NPath basePath);
+
+    default NPath toCompressedForm(NPath basePath){
+        return null;
+    }
+
+
+    default void moveTo(NPath basePath, NPath other, NPathOption... options) {
+        copyTo(basePath, other, options);
+        delete(basePath, true);
+    }
+
+    default void copyTo(NPath basePath, NPath other, NPathOption... options) {
+        try (InputStream in = basePath.getInputStream(options)) {
+            try (OutputStream out = other.getOutputStream(options)) {
+                byte[] buffer = new byte[400 * 1024];
+                int len;
+                long count = 0;
+                try {
+                    while ((len = in.read(buffer)) > 0) {
+                        count += len;
+                        out.write(buffer, 0, len);
+                    }
+                } catch (IOException ex) {
+                    throw new NIOException(ex);
+                }
+            }
+        } catch (Exception e) {
+            throw new NIOException(e);
+        }
+    }
+
+    default void walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
+        Stack<NPath> stack = new Stack<>();
+        Stack<Boolean> visitedStack = new Stack<>();
+
+        stack.push(basePath);
+        visitedStack.push(false);
+
+        while (!stack.isEmpty()) {
+            NPath currentPath = stack.pop();
+            boolean visited = visitedStack.pop();
+
+            if (visited) {
+                visitor.postVisitDirectory(currentPath, null);
+                continue;
+            }
+
+            if (currentPath.isDirectory()) {
+                visitor.preVisitDirectory(currentPath);
+                stack.push(currentPath);
+                visitedStack.push(true);
+                try {
+                    if (maxDepth > 0) {
+                        for (NPath nPath : currentPath.list()) {
+                            stack.push(nPath);
+                            visitedStack.push(false); // Mark children for pre-visit first
+                        }
+                    }
+                } catch (RuntimeException e) {
+                    visitor.postVisitDirectory(currentPath, e);
+                }
+            } else {
+                visitor.visitFile(currentPath);
+            }
+        }
+    }
+
+    default int compareTo(NPath basePath, NPath other) {
+        return toString().compareTo(basePath.toString());
+    }
+
+    default byte[] getDigest(NPath basePath, String algo) {
+        return null;
+    }
 }

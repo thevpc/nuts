@@ -213,7 +213,7 @@ public class DefaultNArrayElement extends AbstractNArrayElement {
             } else {
                 return Collections.emptyList();
             }
-        } else if (s.isInt()) {
+        } else if (s.asInt().isPresent()) {
             index = s.asInt().get();
         } else {
             return Collections.emptyList();

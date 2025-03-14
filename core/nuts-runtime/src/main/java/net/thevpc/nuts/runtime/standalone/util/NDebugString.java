@@ -59,7 +59,7 @@ public class NDebugString {
                             if (na.getKey().isBoolean()) {
                                 boolean v = na.getKey().asBoolean().get();
                                 d.setEnabled(na.isNegated() != v);
-                            } else if (na.getKey().isInt()) {
+                            } else if (na.getKey().asInt().isPresent()) {
                                 d.setPort(na.getKey().asInt().get());
                             } else {
                                 d.options.add(na);

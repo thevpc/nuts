@@ -129,7 +129,7 @@ public class NFormattedTextParts {
                             d = s.substring(c + 1);
                         }
                         NLiteral dl = NLiteral.of(d);
-                        if (dl.isInt()) {
+                        if (dl.asInt().isPresent()) {
                             if (dl.asInt().get() == index) {
                                 return s;
                             }

@@ -220,35 +220,20 @@ public class NResourcePath implements NPathSPI {
     }
 
     @Override
-    public boolean isSymbolicLink(NPath basePath) {
-        NPath up = toURLPath();
-        return up != null && up.isSymbolicLink();
-    }
-
-    @Override
-    public boolean isOther(NPath basePath) {
-        NPath up = toURLPath();
-        return up != null && up.isOther();
-    }
-
-    @Override
-    public boolean isDirectory(NPath basePath) {
-        NPath up = toURLPath();
-        return up != null && up.isDirectory();
+    public NPathType type(NPath basePath) {
+        NPath u = toURLPath();
+        if(u!=null){
+            return u.type();
+        }
+        return exists(basePath)?NPathType.UNKNOWN:NPathType.NOT_FOUND;
     }
 
     @Override
     public boolean isLocal(NPath basePath) {
-        return toURLPath().isLocal();
+        NPath u = toURLPath();
+        return u != null && u.isLocal();
     }
 
-    @Override
-    public boolean isRegularFile(NPath basePath) {
-        NPath up = toURLPath();
-        return up != null && up.isRegularFile();
-    }
-
-    @Override
     public boolean exists(NPath basePath) {
         NPath up = toURLPath();
         if (up == null) {
@@ -614,10 +599,6 @@ public class NResourcePath implements NPathSPI {
             return NConstants.Support.NO_SUPPORT;
         }
     }
-    @Override
-    public boolean isEqOrDeepChildOf(NPath basePath,NPath other) {
-        return toRelativePath(basePath, other)!=null;
-    }
 
     private class NResourceCompressedPath implements NCompressedPathHelper {
         @Override
@@ -626,15 +607,6 @@ public class NResourcePath implements NPathSPI {
                     ids.stream().map(x -> NId.get(x.getArtifactId()).get()).toArray(NId[]::new)
             );
         }
-    }
-    @Override
-    public boolean startsWith(NPath basePath, String other) {
-        return startsWith(basePath,NPath.of(other));
-    }
-
-    @Override
-    public boolean startsWith(NPath basePath, NPath other) {
-        return toRelativePath(basePath,other)!=null;
     }
 
     @Override

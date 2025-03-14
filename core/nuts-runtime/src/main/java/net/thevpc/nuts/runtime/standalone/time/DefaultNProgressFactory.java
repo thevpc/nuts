@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.standalone.io.progress;
+package net.thevpc.nuts.runtime.standalone.time;
 
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.time.NProgressFactory;

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thevpc.nuts.runtime.standalone.io.progress;
+package net.thevpc.nuts.runtime.standalone.time;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
@@ -11,7 +11,6 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.time.NProgressEvent;
 import net.thevpc.nuts.time.NProgressFactory;
 import net.thevpc.nuts.time.NProgressListener;

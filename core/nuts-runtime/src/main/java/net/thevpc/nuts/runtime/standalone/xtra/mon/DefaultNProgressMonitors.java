@@ -1,10 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.runtime.standalone.time.NDefaultProgressRunner;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
+import net.thevpc.nuts.time.NProgressRunner;
 import net.thevpc.nuts.util.NMsgTemplate;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NPrintStream;
@@ -22,6 +24,11 @@ import java.util.logging.Logger;
 public class DefaultNProgressMonitors implements NProgressMonitors {
 
     public DefaultNProgressMonitors() {
+    }
+
+    @Override
+    public NProgressRunner ofRunner() {
+        return new NDefaultProgressRunner();
     }
 
     @Override

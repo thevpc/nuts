@@ -269,38 +269,13 @@ class SshNPath implements NPathSPI {
 //        }
 //        return NPath.of(toString(), session);
 //    }
-    @Override
-    public boolean isSymbolicLink(NPath basePath) {
-        return detectType(basePath) == SshFileType.SYMBOLIC_LINK;
-    }
-
-    @Override
-    public boolean isOther(NPath basePath) {
-        SshFileType t = detectType(basePath);
-        if (t == null) {
-            return false;
-        }
-        switch (t) {
-            case DIRECTORY:
-            case FILE:
-            case SYMBOLIC_LINK: {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public boolean isDirectory(NPath basePath) {
-        return detectType(basePath) == SshFileType.DIRECTORY;
-    }
 
     @Override
     public boolean isLocal(NPath basePath) {
         return false;
     }
 
-    public SshFileType detectType(NPath basePath) {
+    public NPathType type(NPath basePath) {
         try (SShConnection c = prepareSshConnexionGrab()) {
             int i = c.execStringCommand("file -b -E " + path.getPath());
             if (i > 0) {
@@ -309,44 +284,29 @@ class SshNPath implements NPathSPI {
             String s = c.getOutputString();
             s = s.trim();
             if (s.startsWith("directory")) {
-                return SshFileType.DIRECTORY;
+                return NPathType.DIRECTORY;
             }
             if (s.startsWith("fifo (named pipe)")) {
-                return SshFileType.NAMED_PIPE;
+                return NPathType.NAMED_PIPE;
             }
             if (s.startsWith("character special")) {
-                return SshFileType.CHARACTER;
+                return NPathType.CHARACTER;
             }
             if (s.startsWith("symbolic link")) {
-                return SshFileType.SYMBOLIC_LINK;
+                return NPathType.SYMBOLIC_LINK;
             }
             if (s.startsWith("block special")) {
-                return SshFileType.BLOCK;
+                return NPathType.BLOCK;
             }
-            return SshFileType.FILE;
+            return NPathType.FILE;
         } catch (Exception e) {
-            return null;
+            return NPathType.NOT_FOUND;
         }
-    }
-
-    private static enum SshFileType {
-        DIRECTORY,
-        NAMED_PIPE,
-        CHARACTER,
-        SYMBOLIC_LINK,
-        BLOCK,
-        FILE,
-        UNKNOWN
-    }
-
-    @Override
-    public boolean isRegularFile(NPath basePath) {
-        return "file".equals(detectType(basePath));
     }
 
     @Override
     public boolean exists(NPath basePath) {
-        return detectType(basePath) != null;
+        return type(basePath) != NPathType.NOT_FOUND;
     }
 
     @Override
@@ -440,11 +400,11 @@ class SshNPath implements NPathSPI {
 
     @Override
     public InputStream getInputStream(NPath basePath, NPathOption... options) {
-        SshFileType ft = detectType(basePath);
-        if (ft == null) {
+        NPathType ft = type(basePath);
+        if (ft == NPathType.NOT_FOUND) {
             throw new NIOException(NMsg.ofC("path not found %s", basePath));
         }
-        if (ft == SshFileType.DIRECTORY) {
+        if (ft == NPathType.DIRECTORY) {
             throw new NIOException(NMsg.ofC("cannot open directory %s", basePath));
         }
 
@@ -784,23 +744,8 @@ class SshNPath implements NPathSPI {
         return b;
     }
 
-    @Override
-    public boolean isEqOrDeepChildOf(NPath basePath, NPath other) {
-        return toRelativePath(basePath, other) != null;
-    }
-
     private static String joinPathString(List<String> a) {
         return "/" + String.join("/", a);
-    }
-
-    @Override
-    public boolean startsWith(NPath basePath, String other) {
-        return startsWith(basePath,NPath.of(other));
-    }
-
-    @Override
-    public boolean startsWith(NPath basePath, NPath other) {
-        return toRelativePath(basePath,other)!=null;
     }
 
     @Override

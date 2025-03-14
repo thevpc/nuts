@@ -122,7 +122,7 @@ public class NMsgTemplate {
                                 nsIntString=String.valueOf(currentIndex);
                             }
                             NLiteral lit = NLiteral.of(nsIntString);
-                            if (lit.isInt()) {
+                            if (lit.asInt().isPresent()) {
                                 nsInt = lit.asInt().get();
                             }
                             if (nsInt != null) {

@@ -244,6 +244,11 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
+    public NPathType type() {
+        return base.type();
+    }
+
+    @Override
     public boolean isRegularFile() {
         return base.isRegularFile();
     }

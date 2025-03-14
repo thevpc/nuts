@@ -51,6 +51,11 @@ public class NCompressedPath extends NPathBase {
     }
 
     @Override
+    public NPathType type() {
+        return base.type();
+    }
+
+    @Override
     public int compareTo(NPath other) {
         if (other == null) {
             return 1;

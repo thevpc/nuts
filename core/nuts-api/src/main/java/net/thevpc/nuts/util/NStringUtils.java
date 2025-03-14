@@ -988,4 +988,28 @@ public class NStringUtils {
         }
         return dp[str1.length()][str2.length()];
     }
+
+    public static String pjoin(String delimiter, String... items) {
+        NStringBuilder builder = new NStringBuilder();
+        if (delimiter == null) {
+            delimiter = "";
+        }
+        if (delimiter.isEmpty()) {
+            for (String string : items) {
+                if (string != null && string.length() >= 0) {
+                    builder.append(string);
+                }
+            }
+        } else {
+            for (String string : items) {
+                if (string != null && string.length() >= 0) {
+                    if (!(builder.endsWith(delimiter) || string.startsWith(delimiter))) {
+                        builder.append(delimiter);
+                    }
+                    builder.append(string);
+                }
+            }
+        }
+        return builder.toString();
+    }
 }

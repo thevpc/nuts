@@ -149,31 +149,29 @@ public class FilePath implements NPathSPI {
     }
 
     @Override
-    public boolean isSymbolicLink(NPath basePath) {
+    public NPathType type(NPath basePath) {
+        if(Files.isDirectory(value)){
+            return NPathType.DIRECTORY;
+        }
+        if(Files.isRegularFile(value)){
+            return NPathType.FILE;
+        }
         PosixFileAttributes a = getUattr();
-        return a != null && a.isSymbolicLink();
-    }
-
-    @Override
-    public boolean isOther(NPath basePath) {
-        PosixFileAttributes a = getUattr();
-        return a != null && a.isOther();
-    }
-
-    @Override
-    public boolean isDirectory(NPath basePath) {
-        return Files.isDirectory(value);
+        if(a != null){
+            if(a.isSymbolicLink()) {
+                return NPathType.SYMBOLIC_LINK;
+            }
+            if(a.isOther()) {
+                return NPathType.OTHER;
+            }
+        }
+        return exists(basePath) ? NPathType.UNKNOWN : NPathType.NOT_FOUND;
     }
 
     @Override
     public boolean isLocal(NPath basePath) {
         //how about NFS?
         return true;
-    }
-
-    @Override
-    public boolean isRegularFile(NPath basePath) {
-        return Files.isRegularFile(value);
     }
 
     public boolean exists(NPath basePath) {
@@ -869,23 +867,8 @@ public class FilePath implements NPathSPI {
     }
 
     @Override
-    public boolean isEqOrDeepChildOf(NPath basePath,NPath other) {
-        return toRelativePath(basePath, other)!=null;
-    }
-
-    @Override
     public byte[] getDigest(NPath basePath, String algo) {
         return null;
-    }
-
-    @Override
-    public boolean startsWith(NPath basePath, String other) {
-        return startsWith(basePath,NPath.of(other));
-    }
-
-    @Override
-    public boolean startsWith(NPath basePath, NPath other) {
-        return toRelativePath(basePath,other)!=null;
     }
 
     @Override

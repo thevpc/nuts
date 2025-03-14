@@ -157,7 +157,7 @@ public class DefaultNPlatformModel {
                         int a = sVersion.indexOf('.');
                         if (a > 0) {
                             NLiteral p = NLiteral.of(sVersion.substring(0, a));
-                            if (p.isInt() && p.asInt().get() == 1) {
+                            if (p.asInt().isPresent() && p.asInt().get() == 1) {
                                 String sVersion2 = sVersion.substring(a + 1);
                                 NVersion version2 = NVersion.get(sVersion2).get();
                                 if (versionFilter.acceptVersion(version2)) {

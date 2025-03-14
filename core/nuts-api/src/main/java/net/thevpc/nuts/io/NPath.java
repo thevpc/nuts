@@ -344,6 +344,8 @@ public interface NPath extends NInputSource, NOutputTarget,Comparable<NPath> {
 
     boolean isSymbolicLink();
 
+    NPathType type();
+
     boolean isDirectory();
 
     boolean isRegularFile();

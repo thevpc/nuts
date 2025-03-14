@@ -103,7 +103,7 @@ net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIO
 net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIORPI
 net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNLibPaths
 net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest
-net.thevpc.nuts.runtime.standalone.io.progress.DefaultNInputStreamMonitor
+net.thevpc.nuts.runtime.standalone.time.DefaultNInputStreamMonitor
 net.thevpc.nuts.runtime.standalone.lock.DefaultNLockBuilder
 net.thevpc.nuts.runtime.standalone.xtra.cp.DefaultNCp
 net.thevpc.nuts.runtime.standalone.xtra.ps.DefaultNPs
