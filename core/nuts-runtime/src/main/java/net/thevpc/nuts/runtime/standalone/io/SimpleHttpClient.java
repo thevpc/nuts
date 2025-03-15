@@ -8,7 +8,6 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.time.Instant;
@@ -101,7 +100,7 @@ public class SimpleHttpClient {
         NPath info = NPath.of(url);
         this.contentEncoding = info.getContentEncoding();
         this.contentType = info.getContentType();
-        this.contentLength = info.getContentLength();
+        this.contentLength = info.contentLength();
         this.lastModified = info.getLastModifiedInstant();
     }
 

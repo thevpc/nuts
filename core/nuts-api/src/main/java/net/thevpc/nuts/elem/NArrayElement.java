@@ -28,6 +28,7 @@ import net.thevpc.nuts.util.NOptional;
 
 import java.time.Instant;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Stream;
 
 /**
@@ -82,7 +83,18 @@ public interface NArrayElement extends NNavigatableElement, Iterable<NElement> {
 
     NOptional<NObjectElement> getObject(int index);
 
-    NElementHeader header();
+    String name() ;
+
+    boolean isNamed() ;
+
+    boolean isWithArgs() ;
+
+    List<NElement> args() ;
+
+    int argsCount() ;
+
+    NElement argAt(int index) ;
+
     /**
      * return new builder initialized with this instance
      *

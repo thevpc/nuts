@@ -20,12 +20,12 @@ public class NSupplierIteratorJ<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        return NElements.of().ofObject()
+        return NElements.of().ofObjectBuilder()
                 .set("type", "Supplier")
                 .set("template",
                         NEDesc.describeResolveOr(from, () -> {
                             NElement t = name.get();
-                            return NElements.of().ofObject().set("type", "compiled")
+                            return NElements.of().ofObjectBuilder().set("type", "compiled")
                                     .addAll(t == null ? null : t.asObject().orNull())
                                     .build();
                         })

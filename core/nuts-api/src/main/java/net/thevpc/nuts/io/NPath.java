@@ -356,7 +356,7 @@ public interface NPath extends NInputSource, NOutputTarget,Comparable<NPath> {
 
     boolean exists();
 
-    long getContentLength();
+    long contentLength();
 
     Instant getLastModifiedInstant();
 
@@ -376,7 +376,7 @@ public interface NPath extends NInputSource, NOutputTarget,Comparable<NPath> {
 
     NPath toAbsolute(NPath basePath);
 
-    NPath toRelative(NPath basePath);
+    NOptional<NPath> toRelative(NPath basePath);
 
     String owner();
 

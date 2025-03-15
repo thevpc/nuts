@@ -217,7 +217,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
             @Override
             public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
                 NLiteral v = NLiteral.of(args.get(0).getValue().orNull());
-                if (v.isNumber()) {
+                if (v.asNumber().isPresent()) {
                     if (v.isBigDecimal()) {
                         return v.asBigDecimal().get().abs();
                     }

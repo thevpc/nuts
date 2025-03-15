@@ -1273,7 +1273,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     private NElement toQueryPlan(NIterator it) {
         NElements elem = NElements.of();
         return
-                elem.ofObject()
+                elem.ofObjectBuilder()
                         .set("SearchQueryPlan",
                                 NEDesc.describeResolveOrDestruct(it))
                         .build();

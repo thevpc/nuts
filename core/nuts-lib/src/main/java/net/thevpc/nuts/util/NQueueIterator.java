@@ -45,10 +45,10 @@ public class NQueueIterator<T> extends NIteratorBase<T> {
     @Override
     public NElement describe() {
         return NElements.of()
-                .ofObject()
+                .ofObjectBuilder()
                 .set("type","Queue")
                 .set("items",
-                        NElements.of().ofArray()
+                        NElements.of().ofArrayBuilder()
                                 .addAll(
                                         new ArrayList<>(children)
                                                 .stream().map(

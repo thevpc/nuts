@@ -5,7 +5,6 @@ import net.thevpc.nuts.elem.NElementAnnotation;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNArrayElement;
-import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementHeader;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -32,7 +31,7 @@ public class NElementMapperIterator implements NElementMapper<Iterator> {
         while (nl.hasNext()) {
             values.add(context.objectToElement(nl.next(), null));
         }
-        return new DefaultNArrayElement(values, DefaultNElementHeader.EMPTY,new NElementAnnotation[0]);
+        return new DefaultNArrayElement(null,null,values,new NElementAnnotation[0]);
     }
 
     @Override

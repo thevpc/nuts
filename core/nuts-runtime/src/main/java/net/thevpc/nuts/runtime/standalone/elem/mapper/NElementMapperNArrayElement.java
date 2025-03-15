@@ -20,6 +20,6 @@ public class NElementMapperNArrayElement extends NElementMapperNElement {
         if (o.type() == NElementType.ARRAY) {
             return o.asArray().get();
         }
-        return context.elem().ofArray().add(o).build();
+        return context.elem().ofArrayBuilder().add(o).build();
     }
 }

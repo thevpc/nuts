@@ -23,7 +23,7 @@ public class DirtyLuceneIndexParser extends NIteratorBase<String> implements Clo
 
     @Override
     public NElement describe() {
-        return NElements.of().ofObject()
+        return NElements.of().ofObjectBuilder()
                 .set("type","ScanLucene")
                 .set("source",source0.toString())
                 .build();

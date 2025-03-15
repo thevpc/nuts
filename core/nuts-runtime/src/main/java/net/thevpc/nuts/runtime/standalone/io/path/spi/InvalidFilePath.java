@@ -8,7 +8,6 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStream;
@@ -64,8 +63,7 @@ public class InvalidFilePath implements NPathSPI {
         return workspace;
     }
 
-    @Override
-    public NPath resolve(NPath basePath, String path) {
+    private NPath resolve(NPath basePath, String path) {
         String b = value;
         if (b.endsWith("/") || b.endsWith("\\")) {
             return NPath.of(b + path);
@@ -78,8 +76,7 @@ public class InvalidFilePath implements NPathSPI {
         return resolve(basePath, path == null ? null : path.toString());
     }
 
-    @Override
-    public NPath resolveSibling(NPath basePath, String path) {
+    private NPath resolveSibling(NPath basePath, String path) {
         if (path == null || path.isEmpty()) {
             return getParent(basePath);
         }
@@ -124,7 +121,7 @@ public class InvalidFilePath implements NPathSPI {
         return false;
     }
 
-    public long getContentLength(NPath basePath) {
+    public long contentLength(NPath basePath) {
         return -1;
     }
 
@@ -248,7 +245,7 @@ public class InvalidFilePath implements NPathSPI {
     }
 
     @Override
-    public boolean isName(NPath basePath) {
+    public Boolean isName(NPath basePath) {
         List<String> pa = asPathArray();
         if (pa.size() == 0) {
             return true;
@@ -277,19 +274,14 @@ public class InvalidFilePath implements NPathSPI {
     }
 
     @Override
-    public int getNameCount(NPath basePath) {
+    public Integer getNameCount(NPath basePath) {
         List<String> pa = asPathArray();
         return pa.size() == 0 ? 1 : pa.size();
     }
 
     @Override
-    public boolean isRoot(NPath basePath) {
+    public Boolean isRoot(NPath basePath) {
         return asPathArray().size() == 0 && (value.contains("/") || value.contains("\\"));
-    }
-
-    @Override
-    public NStream<NPath> walk(NPath basePath, int maxDepth, NPathOption[] options) {
-        return NStream.ofEmpty();
     }
 
     @Override
@@ -390,14 +382,10 @@ public class InvalidFilePath implements NPathSPI {
     }
 
     @Override
-    public void moveTo(NPath basePath, NPath other, NPathOption... options) {
+    public boolean moveTo(NPath basePath, NPath other, NPathOption... options) {
         throw new NIOException(NMsg.ofC("unable to move %s",this));
     }
 
-    @Override
-    public void copyTo(NPath basePath, NPath other, NPathOption... options) {
-        throw new NIOException(NMsg.ofC("unable to copy %s",this));
-    }
     @Override
     public NPath getRoot(NPath basePath) {
         if(isRoot(basePath)){
@@ -409,31 +397,10 @@ public class InvalidFilePath implements NPathSPI {
         }
         return null;
     }
-
-    @Override
-    public void walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
-
-    }
-
     @Override
     public boolean isLocal(NPath basePath) {
         return true;
     }
 
-    @Override
-    public NPath toRelativePath(NPath basePath, NPath parentPath) {
-        String child=basePath.getLocation();
-        String parent=parentPath.getLocation();
-        return NPath.of(NIOUtils.toRelativePath(child, parent));
-    }
 
-    @Override
-    public byte[] getDigest(NPath basePath, String algo) {
-        return null;
-    }
-
-    @Override
-    public int compareTo(NPath basePath, NPath other) {
-        return basePath.toString().compareTo(other.toString());
-    }
 }

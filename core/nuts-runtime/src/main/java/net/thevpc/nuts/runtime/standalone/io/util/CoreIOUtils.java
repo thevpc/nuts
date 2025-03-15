@@ -382,7 +382,7 @@ public class CoreIOUtils {
         }
 
         NPath header = NPath.of(path);
-        long size = header.getContentLength();
+        long size = header.contentLength();
         Instant lastModifiedInstant = header.getLastModifiedInstant();
         long lastModified = lastModifiedInstant == null ? 0 : lastModifiedInstant.toEpochMilli();
 
@@ -415,7 +415,7 @@ public class CoreIOUtils {
                         ccu.url = path;
                         ccu.path = s;
                         ccu.sha1 = NDigestUtils.evalSHA1Hex(outPath);
-                        long newSize = outPath.getContentLength();
+                        long newSize = outPath.contentLength();
                         ccu.size = newSize;
                         ccu.lastModified = finalLastModified;
                         NPath newLocalPath = urlContent.resolve(s);

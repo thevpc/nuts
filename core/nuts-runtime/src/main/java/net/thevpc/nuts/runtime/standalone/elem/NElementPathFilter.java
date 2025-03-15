@@ -38,7 +38,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- *
  * @author thevpc
  */
 public class NElementPathFilter {
@@ -177,14 +176,14 @@ public class NElementPathFilter {
 
         @Override
         public List<NElement> filter(NElement element) {
-            NArrayElementBuilder aa = builder.ofArray();
+            NArrayElementBuilder aa = builder.ofArrayBuilder();
             aa.add(element);
             return aa.items();
         }
 
         @Override
         public List<NElement> filter(List<NElement> elements) {
-            NArrayElementBuilder aa = builder.ofArray();
+            NArrayElementBuilder aa = builder.ofArrayBuilder();
             for (NElement element : elements) {
                 aa.add(element);
             }
@@ -219,19 +218,31 @@ public class NElementPathFilter {
                     NElement value = arr.get(i);
                     if (indexMatcher.matches(value, i, len, matchContext)) {
                         result.add(value);
+                    } else if (indexMatcher.matches(value, i, len, matchContext)) {
+                        result.add(value);
                     }
                 }
                 return result;
             } else if (element.type() == NElementType.OBJECT) {
                 List<NElement> result = new ArrayList<>();
-                Collection<NElementEntry> aa0 = element.asObject().get().entries();
+                Collection<NElement> aa0 = element.asObject().get().children();
                 int len = aa0.size();
                 int index = 0;
                 Map<String, Object> matchContext = new HashMap<>();
                 NElementNameMatcher nameMatcher = matchesName(pattern);
-                for (NElementEntry se : aa0) {
-                    if (nameMatcher.matches(index, se.getKey(), len, matchContext)) {
-                        result.add(se.getValue());
+                NElementIndexMatcher indexMatcher = matchesIndex(pattern);
+                for (NElement e : aa0) {
+                    if (e instanceof NElementEntry) {
+                        NElementEntry se = (NElementEntry) e;
+                        if (nameMatcher.matches(index, se.getKey(), len, matchContext)) {
+                            result.add(se.getValue());
+                        } else if (indexMatcher.matches(e, index, len, matchContext)) {
+                            result.add(e);
+                        }
+                    } else {
+                        if (indexMatcher.matches(e, index, len, matchContext)) {
+                            result.add(e);
+                        }
                     }
                     index++;
                 }

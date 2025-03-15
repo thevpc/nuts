@@ -220,52 +220,60 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
             }
             case OBJECT: {
                 Element obj = doc.createElement(TAG_OBJECT);
-                for (NElementEntry ne : elem.asObject().get().entries()) {
-                    final NElementType kt = ne.getKey().type();
-                    boolean complexKey = kt == NElementType.ARRAY || kt == NElementType.OBJECT
-                            || (kt == NElementType.STRING && isComplexString(ne.getKey().asString().get()));
-                    if (complexKey) {
-                        Element entry = doc.createElement(TAG_ENTRY);
-                        Element ek = (Element) createObject(ne.getKey(), NElement.class, context);
-                        ek.setAttribute(ATTRIBUTE_ENTRY_KEY, null);
-                        entry.appendChild(ek);
-                        Element ev = (Element) createObject(ne.getValue(), NElement.class, context);
-                        ev.setAttribute(ATTRIBUTE_ENTRY_VALUE, null);
-                        entry.appendChild(ev);
-                        obj.appendChild(entry);
-                    } else {
-                        String tagName
-                                = ne.getKey().type() == NElementType.BOOLEAN ? ne.getKey().asString().get()
-                                : ne.getKey().type().id();
-                        Element entryElem = (Element) doc.createElement(tagName);
-                        if (ne.getKey().type() != NElementType.BOOLEAN && ne.getKey().type() != NElementType.NULL) {
-                            entryElem.setAttribute(ATTRIBUTE_KEY, ne.getKey().asString().get());
+                for (NElement nn : elem.asObject().get().children()) {
+                    if(nn instanceof NElementEntry){
+                        NElementEntry ne = (NElementEntry) nn;
+                        final NElementType kt = ne.getKey().type();
+                        boolean complexKey = kt == NElementType.ARRAY || kt == NElementType.OBJECT
+                                || (kt == NElementType.STRING && isComplexString(ne.getKey().asString().get()));
+                        if (complexKey) {
+                            Element entry = doc.createElement(TAG_ENTRY);
+                            Element ek = (Element) createObject(ne.getKey(), NElement.class, context);
+                            ek.setAttribute(ATTRIBUTE_ENTRY_KEY, null);
+                            entry.appendChild(ek);
+                            Element ev = (Element) createObject(ne.getValue(), NElement.class, context);
+                            ev.setAttribute(ATTRIBUTE_ENTRY_VALUE, null);
+                            entry.appendChild(ev);
+                            obj.appendChild(entry);
+                        } else {
+                            String tagName
+                                    = ne.getKey().type() == NElementType.BOOLEAN ? ne.getKey().asString().get()
+                                    : ne.getKey().type().id();
+                            Element entryElem = (Element) doc.createElement(tagName);
+                            if (ne.getKey().type() != NElementType.BOOLEAN && ne.getKey().type() != NElementType.NULL) {
+                                entryElem.setAttribute(ATTRIBUTE_KEY, ne.getKey().asString().get());
+                            }
+                            switch (ne.getValue().type()) {
+                                case ARRAY:
+                                case OBJECT: {
+                                    Element ev = (Element) createObject(ne.getValue(), NElement.class, context);
+                                    ev.setAttribute(ATTRIBUTE_ENTRY_VALUE, null);
+                                    entryElem.appendChild(ev);
+                                    obj.appendChild(entryElem);
+                                    break;
+                                }
+                                case NULL: {
+                                    entryElem.setAttribute(ATTRIBUTE_VALUE_TYPE, ne.getValue().type().id());
+                                    obj.appendChild(entryElem);
+                                    break;
+                                }
+                                case STRING: {
+                                    entryElem.setAttribute(ATTRIBUTE_VALUE, ne.getValue().asString().get());
+                                    obj.appendChild(entryElem);
+                                    break;
+                                }
+                                default: {
+                                    entryElem.setAttribute(ATTRIBUTE_VALUE, ne.getValue().asString().get());
+                                    entryElem.setAttribute(ATTRIBUTE_VALUE_TYPE, ne.getValue().type().id());
+                                    obj.appendChild(entryElem);
+                                    break;
+                                }
+                            }
                         }
-                        switch (ne.getValue().type()) {
-                            case ARRAY:
-                            case OBJECT: {
-                                Element ev = (Element) createObject(ne.getValue(), NElement.class, context);
-                                ev.setAttribute(ATTRIBUTE_ENTRY_VALUE, null);
-                                entryElem.appendChild(ev);
-                                obj.appendChild(entryElem);
-                                break;
-                            }
-                            case NULL: {
-                                entryElem.setAttribute(ATTRIBUTE_VALUE_TYPE, ne.getValue().type().id());
-                                obj.appendChild(entryElem);
-                                break;
-                            }
-                            case STRING: {
-                                entryElem.setAttribute(ATTRIBUTE_VALUE, ne.getValue().asString().get());
-                                obj.appendChild(entryElem);
-                                break;
-                            }
-                            default: {
-                                entryElem.setAttribute(ATTRIBUTE_VALUE, ne.getValue().asString().get());
-                                entryElem.setAttribute(ATTRIBUTE_VALUE_TYPE, ne.getValue().type().id());
-                                obj.appendChild(entryElem);
-                                break;
-                            }
+                    }else{
+                        Node c = createObject(nn, Element.class, context);
+                        if (c != null) {
+                            obj.appendChild(c);
                         }
                     }
                 }
@@ -362,15 +370,15 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
         }
     }
 
-    public boolean isSimpleObject(NObjectElement obj) {
-        for (NElementEntry attribute : obj.entries()) {
-            final NElementType tt = attribute.getKey().type();
-            if (tt == NElementType.OBJECT || tt == NElementType.ARRAY) {
-                return false;
-            }
-        }
-        return true;
-    }
+//    public boolean isSimpleObject(NObjectElement obj) {
+//        for (NElement attribute : obj.children()) {
+//            final NElementType tt = attribute.getKey().type();
+//            if (tt == NElementType.OBJECT || tt == NElementType.ARRAY) {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
 
     private boolean isComplexString(String string) {
         return string.contains("\n") || string.length() > 120;
@@ -517,7 +525,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
         NodeInfo ni = new NodeInfo(element);
 //special object
         String tagName = element.getTagName();
-        NObjectElementBuilder obj = elements.ofObject();
+        NObjectElementBuilder obj = elements.ofObjectBuilder();
         int content = 0;
         int nonContent = 0;
         if (includeTagName) {
@@ -569,7 +577,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
         NElements elements = NElements.of();
         if (node instanceof Attr) {
             Attr at = (Attr) node;
-            return elements.ofObject().set(at.getName(), context.objectToElement(at.getValue(), String.class)).build();
+            return elements.ofObjectBuilder().set(at.getName(), context.objectToElement(at.getValue(), String.class)).build();
         }
         if (node instanceof CDATASection) {
             CDATASection d = (CDATASection) node;
@@ -584,7 +592,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
         switch (ni.type) {
             case TAG_ARRAY: {
                 if (element.getAttributes().getLength() == 0) {
-                    NArrayElementBuilder obj = elements.ofArray();
+                    NArrayElementBuilder obj = elements.ofArrayBuilder();
                     NodeList nodes = element.getChildNodes();
                     for (int i = 0; i < nodes.getLength(); i++) {
                         Node n = (Node) nodes.item(i);

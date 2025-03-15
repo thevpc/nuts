@@ -27,13 +27,13 @@ package net.thevpc.nuts.runtime.standalone.elem;
 import java.time.Instant;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -42,24 +42,22 @@ import java.util.stream.Stream;
 public class DefaultNArrayElement extends AbstractNArrayElement {
 
     private final NElement[] values;
-    private final NElementHeader header;
+    private String name;
+    private List<NElement> args;
 
-    public DefaultNArrayElement(Collection<NElement> values, NElementHeader header, NElementAnnotation[] annotations) {
+    public DefaultNArrayElement(String name, List<NElement> args, Collection<NElement> values, NElementAnnotation[] annotations) {
         super(annotations);
         this.values = values.toArray(new NElement[0]);
-        this.header = header;
+        this.name = name;
+        this.args = args;
     }
 
 
-    public DefaultNArrayElement(NElement[] values, NElementHeader header, NElementAnnotation[] annotations) {
+    public DefaultNArrayElement(String name, List<NElement> args, NElement[] values, NElementAnnotation[] annotations) {
         super(annotations);
         this.values = Arrays.copyOf(values, values.length);
-        this.header = header;
-    }
-
-    @Override
-    public NElementHeader header() {
-        return header;
+        this.name = name;
+        this.args = args;
     }
 
     @Override
@@ -144,7 +142,7 @@ public class DefaultNArrayElement extends AbstractNArrayElement {
     @Override
     public NArrayElementBuilder builder() {
         return NElements.of()
-                .ofArray()
+                .ofArrayBuilder()
                 .set(this);
     }
 
@@ -159,28 +157,19 @@ public class DefaultNArrayElement extends AbstractNArrayElement {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 41 * hash + Arrays.deepHashCode(this.values);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        DefaultNArrayElement nElements = (DefaultNArrayElement) o;
+        return Objects.deepEquals(values, nElements.values)
+                && Objects.equals(name, nElements.name)
+                && Objects.equals(args, nElements.args)
+                ;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final DefaultNArrayElement other = (DefaultNArrayElement) obj;
-        if (!Arrays.deepEquals(this.values, other.values)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), Arrays.hashCode(values), name, args);
     }
 
     @Override
@@ -190,7 +179,7 @@ public class DefaultNArrayElement extends AbstractNArrayElement {
 
     @Override
     public boolean isBlank() {
-        return values.length == 0;
+        return values.length == 0 && NBlankable.isBlank(name) && (args == null || args.isEmpty());
     }
 
     @Override
@@ -227,12 +216,31 @@ public class DefaultNArrayElement extends AbstractNArrayElement {
     }
 
     @Override
-    public Collection<NElementEntry> entries() {
-        return IntStream.range(0, size())
-                .boxed()
-                .map(x -> new DefaultNElementEntry(
-                        NElements.of().ofString(String.valueOf(x)),
-                        get(x).orNull()
-                )).collect(Collectors.toList());
+    public Collection<NElement> children() {
+        return Arrays.asList(values);
+    }
+
+    public String name() {
+        return name;
+    }
+
+    public boolean isNamed() {
+        return name != null;
+    }
+
+    public boolean isWithArgs() {
+        return args != null;
+    }
+
+    public List<NElement> args() {
+        return args == null ? null : Collections.unmodifiableList(args);
+    }
+
+    public int argsCount() {
+        return args == null ? null : args.size();
+    }
+
+    public NElement argAt(int index) {
+        return args == null ? null : args.get(index);
     }
 }

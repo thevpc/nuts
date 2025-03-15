@@ -92,6 +92,7 @@ public enum NElementType implements NEnum {
      * array element
      */
     ARRAY(false, false),
+    ENTRY(false, false),
     /**
      * object (list of key/val) element
      */
@@ -99,7 +100,31 @@ public enum NElementType implements NEnum {
     /**
      * custom object that is not destructed. Cannot be null or primitive
      */
-    CUSTOM(false, false);
+    CUSTOM(false, false),
+    PAIR(false, false),
+    DATETIME(true, false),
+    DATE(true, false),
+    TIME(true, false),
+    BINARY_STREAM(true, false),
+    CHAR_STREAM(true, false),
+    DOUBLE_COMPLEX(true, true),
+    FLOAT_COMPLEX(true, true),
+    BIG_COMPLEX(true, true),
+    UPLET(false, true),
+    MATRIX(false, false),
+    ALIAS(false, false),
+
+
+    // Missing types to support TSON types
+    // will be added incrementally
+    // these would be supported as primitives
+
+    // this zould not be supported (will be removed from tson)
+
+    // these are compund types
+    OP(false, false),
+
+    ;
 
     /**
      * true if private type

@@ -21,7 +21,7 @@ public class NIteratorFromJavaIterator<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        return NElements.of().ofObject()
+        return NElements.of().ofObjectBuilder()
                 .set("type", "Collector")
                 .set("name", name)
                 .set("base", NEDesc.describeResolveOrDestruct(base))

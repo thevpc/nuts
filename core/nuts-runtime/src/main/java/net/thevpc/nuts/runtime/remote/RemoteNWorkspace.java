@@ -22,7 +22,7 @@ public abstract class RemoteNWorkspace extends AbstractNWorkspace {
     public NElement createCall(String commandName, NElement body) {
         try (NTalkClient cli = new NTalkClient()) {
             NElements e = NElements.of().json();
-            NObjectElement q = e.ofObject()
+            NObjectElement q = e.ofObjectBuilder()
                     .set("cmd", commandName)
                     .set("body", body).build();
             NText json = e.setValue(q).format();
@@ -43,7 +43,7 @@ public abstract class RemoteNWorkspace extends AbstractNWorkspace {
 
     public NElement createCall(String commandName, String callId, NElement body) {
         NElements e = NElements.of();
-        return e.ofObject()
+        return e.ofObjectBuilder()
                 .set(
                         "cmd",
                         e.ofString(commandName))

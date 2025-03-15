@@ -406,9 +406,9 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
                 ));
             } else {
-                session.eout().add(data.elems.ofObject()
+                session.eout().add(data.elems.ofObjectBuilder()
                         .set("workspace-loaded-in",
-                                data.elems.ofObject()
+                                data.elems.ofObjectBuilder()
                                         .set("ms", this.getCreationDuration().toMillis())
                                         .set("text", CoreTimeUtils.formatPeriodMilli(this.getCreationDuration()))
                                         .build()

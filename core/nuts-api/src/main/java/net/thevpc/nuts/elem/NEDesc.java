@@ -74,7 +74,7 @@ public interface NEDesc extends Supplier<NElement> {
             return (NObjectElement) e;
         }
         return NElements.of()
-                .ofObject()
+                .ofObjectBuilder()
                 .set("value", e)
                 .build();
     }

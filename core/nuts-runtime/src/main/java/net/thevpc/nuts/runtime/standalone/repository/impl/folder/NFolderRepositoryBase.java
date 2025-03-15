@@ -213,7 +213,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                         return NIterator.ofEmpty();
                     }
                 }
-                , () -> NElements.of().ofObject()
+                , () -> NElements.of().ofObjectBuilder()
                         .set("type", "NonSingleVersion")
                         .set("path", foldersFileUrl.toString())
                         .build()
@@ -247,7 +247,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                         }
                         return ret.iterator();
                     }
-                    , () -> NElements.of().ofObject()
+                    , () -> NElements.of().ofObjectBuilder()
                             .set("type", "SingleVersion")
                             .set("path", metadataURL.toString())
                             .build()

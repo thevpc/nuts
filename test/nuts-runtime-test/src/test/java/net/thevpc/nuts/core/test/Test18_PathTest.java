@@ -43,7 +43,7 @@ public class Test18_PathTest {
 
     @BeforeAll
     public static void init() {
-        TestUtils.openNewTestWorkspace();
+        TestUtils.openNewMinTestWorkspace();
     }
 
 

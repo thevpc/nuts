@@ -6,10 +6,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.elem.NArrayElement;
-import net.thevpc.nuts.elem.NElementEntry;
-import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.format.NPropertiesFormat;
 import net.thevpc.nuts.io.NPrintStream;
@@ -90,20 +87,28 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
                 fillMap(ns, v, map);
             }
         }else if(entryValue instanceof NObjectElement){
-            for (NElementEntry entry : ((NObjectElement) entryValue)) {
-                Object k = entry.getKey();
-                NText ns= entryKey.isEmpty()?stringValue(k): entryKey.builder().append(".").append(stringValue(k));
-                Object v = entry.getValue();
-                fillMap(ns, v,map);
+            int i=0;
+            for (NElement item : ((NObjectElement) entryValue)) {
+                if(item instanceof NElementEntry){
+                    NElementEntry entry=(NElementEntry) item;
+                    Object k = entry.getKey();
+                    NText ns= entryKey.isEmpty()?stringValue(k): entryKey.builder().append(".").append(stringValue(k));
+                    Object v = entry.getValue();
+                    fillMap(ns, v,map);
+                }else {
+                    NText ns = entryKey.builder().append("[").append(stringValue(i+1)).append("]");
+                    fillMap(ns, item, map);
+                    i++;
+                }
             }
-        }else if(entryValue instanceof List){
-            List<Object> objects = (List<Object>) entryValue;
+        }else if(entryValue instanceof NArrayElement){
+            NArrayElement objects = (NArrayElement) entryValue;
             for (int i = 0; i < objects.size(); i++) {
                 NText ns = entryKey.builder().append("[").append(stringValue(i+1)).append("]");
                 fillMap(ns, objects.get(i), map);
             }
-        }else if(entryValue instanceof NArrayElement){
-            NArrayElement objects = (NArrayElement) entryValue;
+        }else if(entryValue instanceof List){
+            List<Object> objects = (List<Object>) entryValue;
             for (int i = 0; i < objects.size(); i++) {
                 NText ns = entryKey.builder().append("[").append(stringValue(i+1)).append("]");
                 fillMap(ns, objects.get(i), map);

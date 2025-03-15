@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
@@ -30,10 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.elem.NArrayElement;
-import net.thevpc.nuts.elem.NElementEntry;
-import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 
@@ -67,8 +64,8 @@ public class XNode {
     public XNode(NText key, Object destructedObject, NText title, XNodeFormatter format) {
         if (destructedObject instanceof Map && ((Map) destructedObject).size() == 1) {
             value = ((Map) destructedObject).entrySet().toArray()[0];
-        }else if (destructedObject instanceof NObjectElement && ((NObjectElement) destructedObject).size() == 1) {
-            value = ((NObjectElement) destructedObject).entries().toArray()[0];
+        } else if (destructedObject instanceof NObjectElement && ((NObjectElement) destructedObject).size() == 1) {
+            value = ((NObjectElement) destructedObject).children().toArray()[0];
         } else {
             this.value = destructedObject;
         }
@@ -89,9 +86,9 @@ public class XNode {
         }
         NText _title = resolveTitle();
         NText titleOrValueAsElement = null;
-        if(getChildren()==null || getChildren().isEmpty()){
+        if (getChildren() == null || getChildren().isEmpty()) {
             titleOrValueAsElement = format.stringValue(_title != null ? _title : value);
-        }else{
+        } else {
             titleOrValueAsElement = format.stringValue(_title);
         }
         if (key == null) {
@@ -113,7 +110,7 @@ public class XNode {
             return null;
         }
         if (isMapEntry(this.value)) {
-            if(value instanceof Map.Entry){
+            if (value instanceof Map.Entry) {
                 return format.stringValue(((Map.Entry) value).getKey());
             }
             return format.stringValue(((NElementEntry) value).getKey());
@@ -170,31 +167,32 @@ public class XNode {
         }
         return null;
     }
-    
+
     private static boolean isList(Object value) {
-        if(value instanceof List){
+        if (value instanceof List) {
             return true;
         }
-        if(value instanceof NArrayElement){
+        if (value instanceof NArrayElement) {
             return true;
         }
         return false;
     }
+
     private static boolean isMapEntry(Object value) {
-        if(value instanceof Map.Entry){
+        if (value instanceof Map.Entry) {
             return true;
         }
-        if(value instanceof NElementEntry){
+        if (value instanceof NElementEntry) {
             return true;
         }
         return false;
     }
 
     private static boolean isMap(Object value) {
-        if(value instanceof Map){
+        if (value instanceof Map) {
             return true;
         }
-        if(value instanceof NObjectElement){
+        if (value instanceof NObjectElement) {
             return true;
         }
         return false;
@@ -225,14 +223,19 @@ public class XNode {
         if (value instanceof NObjectElement) {
             NObjectElement m = (NObjectElement) value;
             List<XNode> all = new ArrayList<>();
-            for (NElementEntry me : m) {
-                NText keyStr = format.stringValue(me.getKey());
-                NText[] map = format.getMultilineArray(keyStr, me.getValue());
-                if (map == null) {
-                    all.add(entryNode(keyStr, me.getValue(), format));
+            for (NElement e : m) {
+                if (e instanceof NElementEntry) {
+                    NElementEntry me = (NElementEntry) e;
+                    NText keyStr = format.stringValue(me.getKey());
+                    NText[] map = format.getMultilineArray(keyStr, me.getValue());
+                    if (map == null) {
+                        all.add(entryNode(keyStr, me.getValue(), format));
+                    } else {
+                        all.add(entryNode(keyStr, NElements.of()
+                                .toElement(Arrays.asList(map)), format));
+                    }
                 } else {
-                    all.add(entryNode(keyStr, NElements.of()
-                            .toElement(Arrays.asList(map)), format));
+                    all.add(node(e, format));
                 }
             }
             return all;

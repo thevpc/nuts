@@ -88,19 +88,10 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         return PROTOCOL;
     }
 
-    @Override
-    public NPath resolve(NPath basePath, String path) {
-        return NPath.of(PREFIX + ref.resolve(path));
-    }
 
     @Override
     public NPath resolve(NPath basePath, NPath path) {
         return NPath.of(PREFIX + ref.resolve(path));
-    }
-
-    @Override
-    public NPath resolveSibling(NPath basePath, String path) {
-        return NPath.of(PREFIX + ref.resolveSibling(path));
     }
 
     @Override
@@ -117,7 +108,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     }
 
     @Override
-    public long getContentLength(NPath basePath) {
+    public long contentLength(NPath basePath) {
         Info o = _fileInfo();
         if (o != null) {
             return o.size;
@@ -195,12 +186,12 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     }
 
     @Override
-    public boolean isName(NPath basePath) {
+    public Boolean isName(NPath basePath) {
         return false;
     }
 
     @Override
-    public boolean isRoot(NPath basePath) {
+    public Boolean isRoot(NPath basePath) {
         Info f = _fileInfo();
         if (f != null) {
             if (!"dir".equals(f.type)) {
@@ -225,26 +216,15 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         return NPath.of(PREFIX + ref.getRoot());
     }
 
-    @NUseDefault
     @Override
-    public NStream<NPath> walk(NPath basePath, int maxDepth, NPathOption[] options) {
-        return null;
-    }
-
-    @Override
-    public void copyTo(NPath basePath, NPath other, NPathOption... options) {
+    public boolean copyTo(NPath basePath, NPath other, NPathOption... options) {
         NPath p = getDownloadPath();
         if (p != null) {
             p.copyTo(other, options);
         } else {
             NCp.of().from(basePath).to(other).addOptions(options).run();
         }
-    }
-
-    @NUseDefault
-    @Override
-    public void walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
-
+        return true;
     }
 
     private Object load() {

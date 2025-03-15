@@ -21,7 +21,7 @@ public class RemoteNExecCmd extends AbstractNExecCmd {
         NElements e = NElements.of();
         return getWorkspace().remoteCall(
                 getWorkspace().createCall("workspace.which",
-                        e.ofObject()
+                        e.ofObjectBuilder()
                                 .build()
                 ),
                 NExecutableInformation.class
@@ -35,7 +35,7 @@ public class RemoteNExecCmd extends AbstractNExecCmd {
         try {
             int r = getWorkspace().remoteCall(
                     getWorkspace().createCall("workspace.exec",
-                            e.ofObject()
+                            e.ofObjectBuilder()
                                     .set("dry", session.isDry())
                                     .set("failFast", failFast)
                                     .build()

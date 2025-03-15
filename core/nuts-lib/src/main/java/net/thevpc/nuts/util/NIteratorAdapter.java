@@ -30,7 +30,7 @@ public class NIteratorAdapter<T> extends NIteratorBase<T> {
     public NElement describe() {
         NElement a = info.get();
         if(!a.isObject()){
-            a= NElements.of().ofObject().set("name",a).build();
+            a= NElements.of().ofObjectBuilder().set("name",a).build();
         }
         return NEDesc.describeResolveOrDestructAsObject(base)
                 .builder()

@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.reflect.NReflectRepository;
-import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
+import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementEntry;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -45,6 +45,7 @@ public class NElementMapperNamedElement implements NElementMapper<NElementEntry>
         return new DefaultNElementEntry(
                 (NElement) map.get("key"),
                 (NElement) map.get("value")
+                , new NElementAnnotation[0]
         );
     }
 

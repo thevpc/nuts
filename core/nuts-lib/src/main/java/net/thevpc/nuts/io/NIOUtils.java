@@ -2,16 +2,12 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NUnexpectedException;
-import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.io.NPathExtensionType;
-import net.thevpc.nuts.io.NPathNameParts;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -19,12 +15,43 @@ import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 
 public class NIOUtils {
 
     public static final int DEFAULT_BUFFER_SIZE = 1024;
+
+    public static String normalizePath(String names) {
+        String string = String.join("/", normalizePathNames(NStringUtils.split(names, "/\\", false, true)));
+        if (names != null && (names.startsWith("/") || names.startsWith("\\"))) {
+            return "/" + string;
+        }
+        return string;
+    }
+
+    public static List<String> normalizePathNames(List<String> names) {
+        List<String> newNames = new ArrayList<>();
+        for (String item : names) {
+            switch (item) {
+                case ".": {
+                    break;
+                }
+                case "..": {
+                    if (newNames.size() > 0) {
+                        newNames.remove(newNames.size() - 1);
+                    }
+                    break;
+                }
+                default: {
+                    newNames.add(item);
+                }
+            }
+        }
+        return newNames;
+    }
 
     public static String toRelativePath(String child, String parent) {
         if (child.startsWith(parent)) {
@@ -32,13 +59,14 @@ public class NIOUtils {
             if (child.startsWith("/") || child.startsWith("\\")) {
                 child = child.substring(1);
             }
-            if(child.isEmpty()){
+            if (child.isEmpty()) {
                 return "/";
             }
             return child;
         }
         return null;
     }
+
     public static boolean isValidFileNameChar(char c) {
         switch (c) {
             case '"':
@@ -433,7 +461,7 @@ public class NIOUtils {
                 String n = name == null ? "" : name;
                 int i = n.lastIndexOf('.');
                 if (i < 0) {
-                    return new NPathNameParts(n, "", "",NPathExtensionType.SHORT);
+                    return new NPathNameParts(n, "", "", NPathExtensionType.SHORT);
                 }
                 return new NPathNameParts(n.substring(0, i), n.substring(i + 1), n.substring(i), NPathExtensionType.SHORT);
             }

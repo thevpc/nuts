@@ -105,19 +105,10 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         return PROTOCOL;
     }
 
-    @Override
-    public NPath resolve(NPath basePath, String path) {
-        return NPath.of(PREFIX + ref.resolve(path));
-    }
 
     @Override
     public NPath resolve(NPath basePath, NPath path) {
         return NPath.of(PREFIX + ref.resolve(path));
-    }
-
-    @Override
-    public NPath resolveSibling(NPath basePath, String path) {
-        return NPath.of(PREFIX + ref.resolveSibling(path));
     }
 
     @Override
@@ -173,7 +164,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
     }
 
     @Override
-    public boolean isName(NPath basePath) {
+    public Boolean isName(NPath basePath) {
         return false;
     }
 
@@ -184,19 +175,6 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         }
         return NPath.of(PREFIX + ref.getRoot());
     }
-
-    @NUseDefault
-    @Override
-    public NStream<NPath> walk(NPath basePath, int maxDepth, NPathOption[] options) {
-        return null;
-    }
-
-    @NUseDefault
-    @Override
-    public void walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
-
-    }
-
 
     private List<String> parseHtml(String baseUrl) {
         boolean folders = true;

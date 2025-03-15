@@ -270,9 +270,9 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
                     return rebuildSmartParts(vals, i);
                 }
                 NLiteral v2 = vals[i + 1];
-                if (v2.isNumber()) {
+                if (v2.asNumber().isPresent()) {
                     //check if the part before is also a number
-                    if (i > 0 && vals[i - 1].isNumber()) {
+                    if (i > 0 && vals[i - 1].asNumber().isPresent()) {
                         if (i + 1 == vals.length - 1) {
                             return rebuildSmartParts(vals, i + 2);
                         } else if (vals[i + 1].asString().get().equals(".")) {

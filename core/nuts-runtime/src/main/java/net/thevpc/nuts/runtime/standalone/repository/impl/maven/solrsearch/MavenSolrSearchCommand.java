@@ -138,10 +138,10 @@ public class MavenSolrSearchCommand {
                             }
                         };
                     }
-                }, () -> NElements.of().ofObject().set("url", query.toString()).build());
+                }, () -> NElements.of().ofObjectBuilder().set("url", query.toString()).build());
                 return it.filter(y->idFilter==null||idFilter.acceptId(y),
                         ()->
-                                        NElements.of().ofObject().set(
+                                        NElements.of().ofObjectBuilder().set(
                                         "filterBy", NElements.of().ofString(idFilter==null?"true":idFilter.toString())
                                 ).build()
                         )

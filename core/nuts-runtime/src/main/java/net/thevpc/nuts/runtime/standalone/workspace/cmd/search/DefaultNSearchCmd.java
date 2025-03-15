@@ -609,7 +609,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                                                     .setFetchMode(repoAndMode.getFetchMode())
                                                     .getResult())
                                             .named(
-                                                    elems.ofObject()
+                                                    elems.ofObjectBuilder()
                                                             .set("description", "searchVersions")
                                                             .set("repository", repoAndMode.getRepository().getName())
                                                             .set("filter", NEDesc.describeResolveOrDestruct(filter))
@@ -660,7 +660,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                                         .setFetchMode(repoAndMode.getFetchMode())
                                         .getResult()).safeIgnore()
                                 .named(
-                                        elems.ofObject()
+                                        elems.ofObjectBuilder()
                                                 .set("description", "searchRepository")
                                                 .set("repository", repoAndMode.getRepository().getName())
                                                 .set("fetchMode", repoAndMode.getFetchMode().id())

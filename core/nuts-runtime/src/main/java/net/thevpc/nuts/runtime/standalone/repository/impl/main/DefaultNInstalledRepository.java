@@ -82,7 +82,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                 ws,
                 NPath.of(bOptions.getStoreType(NStoreType.LIB).get()).resolve(NConstants.Folders.ID)
                 , false,
-                "lib", NElements.of().ofObject().set("repoKind", "lib").build()
+                "lib", NElements.of().ofObjectBuilder().set("repoKind", "lib").build()
         );
         configModel = new InstalledRepositoryConfigModel(workspace, this);
     }

@@ -20,6 +20,7 @@ import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.format.NIterableFormat;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.runtime.standalone.format.tson.DefaultSearchFormatTson;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
@@ -141,6 +142,11 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     @Override
     public NElements json() {
         return setContentType(NContentType.JSON);
+    }
+
+    @Override
+    public NElements tson() {
+        return setContentType(NContentType.TSON);
     }
 
     @Override
@@ -355,6 +361,15 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     public NElementEntry ofEntry(NElement key, NElement value) {
         return new DefaultNElementEntry(
                 key == null ? ofNull() : key,
+                value == null ? ofNull() : value,
+                new NElementAnnotation[0]
+        );
+    }
+
+    @Override
+    public NElementEntryBuilder ofEntryBuilder(NElement key, NElement value) {
+        return new DefaultNElementEntryBuilder(
+                key == null ? ofNull() : key,
                 value == null ? ofNull() : value
         );
     }
@@ -364,23 +379,23 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 //        return new DefaultNPrimitiveElementBuilder(session);
 //    }
     @Override
-    public NObjectElementBuilder ofObject() {
+    public NObjectElementBuilder ofObjectBuilder() {
         return new DefaultNObjectElementBuilder();
     }
 
     @Override
-    public NArrayElementBuilder ofArray() {
+    public NArrayElementBuilder ofArrayBuilder() {
         return new DefaultNArrayElementBuilder();
     }
 
     @Override
     public NArrayElement ofEmptyArray() {
-        return ofArray().build();
+        return ofArrayBuilder().build();
     }
 
     @Override
     public NObjectElement ofEmptyObject() {
-        return ofObject().build();
+        return ofObjectBuilder().build();
     }
 
     @Override
@@ -553,6 +568,16 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     @Override
+    public NUpletElementBuilder ofUpletBuilder() {
+        return new DefaultNUpletElementBuilder();
+    }
+
+    @Override
+    public NUpletElement ofEmptyUplet() {
+        return ofUpletBuilder().build();
+    }
+
+    @Override
     public NPrimitiveElement ofNumber(Number value) {
         if (value == null) {
             return ofNull();
@@ -598,6 +623,8 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
         switch (getContentType()) {
             case JSON:
                 return new DefaultSearchFormatJson(writer, new NFetchDisplayOptions());
+            case TSON:
+                return new DefaultSearchFormatTson(writer, new NFetchDisplayOptions());
             case XML:
                 return new DefaultSearchFormatXml(writer, new NFetchDisplayOptions());
             case PLAIN:
@@ -700,5 +727,10 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     public NElements setProgressFactory(NProgressFactory progressFactory) {
         this.progressFactory = progressFactory;
         return this;
+    }
+
+    @Override
+    public NMatrixElementBuilder ofMatrixBuilder() {
+        throw new NUnsupportedOperationException(NMsg.ofC("not implemented yet ofMatrixBuilder()"));
     }
 }

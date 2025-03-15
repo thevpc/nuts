@@ -25,7 +25,6 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.reserved.rpi.NIORPI;
 
 import java.io.*;
@@ -109,7 +108,7 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
 
     boolean isKnownContentLength();
 
-    long getContentLength();
+    long contentLength();
 
     Stream<String> getLines(Charset cs);
 

@@ -76,14 +76,14 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
                 fout.flush();
             } else {
                 if (fm != null) {
-                    session.eout().add(NElements.of().ofObject()
+                    session.eout().add(NElements.of().ofObjectBuilder()
                             .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().orNull()))
                             .set("error", NText.of(fm).filteredText())
                             .build()
                     );
                     if (showTrace) {
-                        session.eout().add(NElements.of().ofObject().set("errorTrace",
-                                NElements.of().ofArray().addAll(NStringUtils.stacktraceArray(throwable)).build()
+                        session.eout().add(NElements.of().ofObjectBuilder().set("errorTrace",
+                                NElements.of().ofArrayBuilder().addAll(NStringUtils.stacktraceArray(throwable)).build()
                         ).build());
                     }
                     NArrayElementBuilder e = session.eout();
@@ -93,13 +93,13 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
                     }
                     fout.flush();
                 } else {
-                    session.eout().add(NElements.of().ofObject()
+                    session.eout().add(NElements.of().ofObjectBuilder()
                             .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().orNull()))
                             .set("error", m)
                             .build());
                     if (showTrace) {
-                        session.eout().add(NElements.of().ofObject().set("errorTrace",
-                                NElements.of().ofArray().addAll(NStringUtils.stacktraceArray(throwable)).build()
+                        session.eout().add(NElements.of().ofObjectBuilder().set("errorTrace",
+                                NElements.of().ofArrayBuilder().addAll(NStringUtils.stacktraceArray(throwable)).build()
                         ).build());
                     }
                     NArrayElementBuilder e = session.eout();

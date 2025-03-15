@@ -41,7 +41,7 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
     @Override
     public NElement createElement(Object src, Type typeOfSrc, NElementFactoryContext context) {
         NReflectType m = defaultNutsElementFactoryService.getTypesRepository().getType(typeOfSrc);
-        NObjectElementBuilder obj = context.elem().ofObject();
+        NObjectElementBuilder obj = context.elem().ofObjectBuilder();
         for (NReflectProperty property : m.getProperties()) {
             final Object v = property.read(src);
             if (!property.isDefaultValue(v)) {

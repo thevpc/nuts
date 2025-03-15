@@ -86,21 +86,6 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
     }
 
     @Override
-    public NPath resolve(NPath basePath, String path) {
-        if (NBlankable.isBlank(path)) {
-            return basePath;
-        }
-        if (!path.endsWith("/")) {
-            return ref.resolve(path);
-        }
-        String a = PREFIX + ref.resolve(path);
-        if (!a.endsWith("/")) {
-            a += "/";
-        }
-        return NPath.of(new HtmlfsPath(a, workspace));
-    }
-
-    @Override
     public NPath resolve(NPath basePath, NPath path) {
         if (NBlankable.isBlank(path)) {
             return basePath;
@@ -109,21 +94,6 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
             return ref.resolve(path);
         }
         return NPath.of(PREFIX + ref.resolve(path));
-    }
-
-    @Override
-    public NPath resolveSibling(NPath basePath, String path) {
-        if (NBlankable.isBlank(path)) {
-            return basePath;
-        }
-        if (!path.endsWith("/")) {
-            return ref.resolve(path);
-        }
-        String a = PREFIX + ref.resolveSibling(path);
-        if (!a.endsWith("/")) {
-            a += "/";
-        }
-        return NPath.of(new HtmlfsPath(a, workspace));
     }
 
     @Override
@@ -193,7 +163,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
     }
 
     @Override
-    public boolean isName(NPath basePath) {
+    public Boolean isName(NPath basePath) {
         return false;
     }
 
@@ -203,18 +173,6 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
             return basePath;
         }
         return NPath.of(PREFIX + ref.getRoot());
-    }
-
-    @NUseDefault
-    @Override
-    public NStream<NPath> walk(NPath basePath, int maxDepth, NPathOption[] options) {
-        return null;
-    }
-
-    @NUseDefault
-    @Override
-    public void walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
-
     }
 
     public final HtmlfsParser[] PARSERS() {

@@ -159,25 +159,6 @@ public class URLPath implements NPathSPI {
     }
 
     @Override
-    public NPath resolve(NPath basePath, String path) {
-        if (url == null) {
-            NPathParts p = new NPathParts(toString());
-            String u = p.getFile();
-            if (!u.endsWith("/") && !path.startsWith("/")) {
-                u += "/";
-            }
-            u += path;
-            return rebuildURLPath(rebuildURLString(p.getProtocol(), p.getAuthority(), u, p.getRef()));
-        }
-        String u = url.getFile();
-        if (!u.endsWith("/") && !path.startsWith("/")) {
-            u += "/";
-        }
-        u += path;
-        return rebuildURLPath(rebuildURLString(url.getProtocol(), url.getAuthority(), u, url.getRef()));
-    }
-
-    @Override
     public NPath resolve(NPath basePath, NPath path) {
         if (url == null) {
             NPathParts p = new NPathParts(toString());
@@ -199,7 +180,6 @@ public class URLPath implements NPathSPI {
     }
 
 
-    @Override
     public NPath resolveSibling(NPath basePath, String path) {
         if (url == null) {
             NPathParts p = new NPathParts(toString());
@@ -260,10 +240,10 @@ public class URLPath implements NPathSPI {
     @Override
     public NPathType type(NPath basePath) {
         if (toString().endsWith("/")) {
-            if (exists(basePath)) {
+            //if (exists(basePath)) {
                 return NPathType.DIRECTORY;
-            }
-            return NPathType.NOT_FOUND;
+            //}
+            //return NPathType.NOT_FOUND;
         }
         NPath f = asFilePath(basePath);
         if (f != null) {
@@ -325,13 +305,13 @@ public class URLPath implements NPathSPI {
     }
 
     @Override
-    public long getContentLength(NPath basePath) {
+    public long contentLength(NPath basePath) {
         if (url == null) {
             return -1;
         }
         NPath f = asFilePath(basePath);
         if (f != null) {
-            return f.getContentLength();
+            return f.contentLength();
         }
         try {
             CacheInfo a = cachedHeader.getValue();
@@ -580,12 +560,12 @@ public class URLPath implements NPathSPI {
     }
 
     @Override
-    public boolean isName(NPath basePath) {
+    public Boolean isName(NPath basePath) {
         return false;
     }
 
     @Override
-    public int getNameCount(NPath basePath) {
+    public Integer getNameCount(NPath basePath) {
         String location = getLocation(basePath);
         if (NBlankable.isBlank(location)) {
             return 0;
@@ -594,7 +574,7 @@ public class URLPath implements NPathSPI {
     }
 
     @Override
-    public boolean isRoot(NPath basePath) {
+    public Boolean isRoot(NPath basePath) {
         String loc = getLocation(basePath);
         if (NBlankable.isBlank(loc)) {
             return false;
@@ -621,8 +601,8 @@ public class URLPath implements NPathSPI {
         if (f != null) {
             return f.walk(maxDepth, options);
         }
-        //should we implement other protocols ?
-        return NStream.ofEmpty();
+        // fallback to default implementation
+        return null;
     }
 
     @Override
@@ -638,55 +618,8 @@ public class URLPath implements NPathSPI {
     }
 
     @Override
-    public void moveTo(NPath basePath, NPath other, NPathOption... options) {
+    public boolean moveTo(NPath basePath, NPath other, NPathOption... options) {
         throw new NIOException(NMsg.ofC("unable to move %s", this));
-    }
-
-    @Override
-    public void copyTo(NPath basePath, NPath other, NPathOption... options) {
-        NCp.of().from(basePath).to(other).addOptions(options).run();
-    }
-
-    @Override
-    public void walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
-        for (NPath x : walk(basePath, maxDepth, options)) {
-            if (x.isDirectory()) {
-                NTreeVisitResult r = visitor.preVisitDirectory(x);
-                switch (r) {
-                    case CONTINUE: {
-                        break;
-                    }
-                    case TERMINATE: {
-                        return;
-                    }
-                    case SKIP_SIBLINGS:
-                    case SKIP_SUBTREE: {
-                        throw new NIllegalArgumentException(NMsg.ofC("unsupported %s", r));
-                    }
-                }
-            } else if (x.isRegularFile()) {
-                NTreeVisitResult r = visitor.visitFile(x);
-                switch (r) {
-                    case CONTINUE: {
-                        break;
-                    }
-                    case TERMINATE: {
-                        return;
-                    }
-                    case SKIP_SIBLINGS:
-                    case SKIP_SUBTREE: {
-                        throw new NIllegalArgumentException(NMsg.ofC("unsupported %s", r));
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    public NPath toRelativePath(NPath basePath, NPath parentPath) {
-        String child = basePath.getLocation();
-        String parent = parentPath.getLocation();
-        return NPath.of(NIOUtils.toRelativePath(child, parent));
     }
 
     private CacheInfo loadCacheInfo() {
@@ -863,13 +796,4 @@ public class URLPath implements NPathSPI {
         }
     }
 
-    @Override
-    public byte[] getDigest(NPath basePath, String algo) {
-        return null;
-    }
-
-    @Override
-    public int compareTo(NPath basePath, NPath other) {
-        return basePath.toString().compareTo(other.toString());
-    }
 }

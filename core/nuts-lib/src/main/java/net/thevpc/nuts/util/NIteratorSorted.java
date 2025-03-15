@@ -26,7 +26,7 @@ class NIteratorSorted<T> extends NIteratorBase<T> {
         return NEDesc.describeResolveOrDestructAsObject(base)
                 .builder()
                 .set("sort",
-                        NElements.of().ofObject()
+                        NElements.of().ofObjectBuilder()
                                 .set("comparator", NEDesc.describeResolveOrDestruct(c))
                                 .set("distinct", removeDuplicates)
                                 .build()

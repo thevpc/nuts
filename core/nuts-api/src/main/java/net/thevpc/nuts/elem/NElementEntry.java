@@ -31,7 +31,7 @@ package net.thevpc.nuts.elem;
  * @author thevpc
  * @app.category Format
  */
-public interface NElementEntry {
+public interface NElementEntry extends NElement {
 
     /**
      * element name

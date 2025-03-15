@@ -76,19 +76,10 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
         return ref.getProtocol();
     }
 
-    @Override
-    public NPath resolve(NPath basePath, String path) {
-        return ref.resolve(path);
-    }
 
     @Override
     public NPath resolve(NPath basePath, NPath path) {
         return ref.resolve(path);
-    }
-
-    @Override
-    public NPath resolveSibling(NPath basePath, String path) {
-        return ref.resolveSibling(path);
     }
 
     @Override
@@ -122,8 +113,8 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
     }
 
     @Override
-    public long getContentLength(NPath basePath) {
-        return ref.getContentLength();
+    public long contentLength(NPath basePath) {
+        return ref.contentLength();
     }
 
     public String getContentEncoding(NPath basePath) {
@@ -230,17 +221,17 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
     }
 
     @Override
-    public boolean isName(NPath basePath) {
+    public Boolean isName(NPath basePath) {
         return ref.isName();
     }
 
     @Override
-    public int getNameCount(NPath basePath) {
+    public Integer getNameCount(NPath basePath) {
         return ref.getNameCount();
     }
 
     @Override
-    public boolean isRoot(NPath basePath) {
+    public Boolean isRoot(NPath basePath) {
         return ref.isRoot();
     }
 
@@ -259,7 +250,7 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
 
     @Override
     public NStream<NPath> walk(NPath basePath, int maxDepth, NPathOption[] options) {
-        return ref.walk(maxDepth, options);
+        return null;
     }
 
     @Override
@@ -273,26 +264,23 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
     }
 
     @Override
-    public void moveTo(NPath basePath, NPath other, NPathOption... options) {
+    public boolean moveTo(NPath basePath, NPath other, NPathOption... options) {
         ref.moveTo(other);
+        return true;
     }
 
     @Override
-    public void copyTo(NPath basePath, NPath other, NPathOption... options) {
+    public boolean copyTo(NPath basePath, NPath other, NPathOption... options) {
         ref.copyTo(other);
+        return true;
     }
 
     @Override
-    public void walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
-        ref.walkDfs(visitor, maxDepth, options);
+    public boolean walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
+        return false;
     }
 
-    @Override
-    public NPath toRelativePath(NPath basePath, NPath parentPath) {
-        String child = basePath.getLocation();
-        String parent = parentPath.getLocation();
-        return NPath.of(NIOUtils.toRelativePath(child, parent));
-    }
+
 
     private static class MyPathFormat implements NFormatSPI {
 
@@ -331,7 +319,7 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
     }
 
     @Override
-    public int compareTo(NPath basePath, NPath other) {
+    public Integer compareTo(NPath basePath, NPath other) {
         return ref.compareTo(other);
     }
 }

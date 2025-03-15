@@ -303,7 +303,7 @@ public class DefaultNDigest implements NDigest {
         }
 
         @Override
-        public long getContentLength() {
+        public long contentLength() {
             return NDescriptorFormat.of(source)
                     .setNtf(false)
                     .format().filteredText().getBytes().length;

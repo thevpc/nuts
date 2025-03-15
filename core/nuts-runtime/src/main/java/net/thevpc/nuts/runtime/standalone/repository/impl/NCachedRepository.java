@@ -30,7 +30,6 @@ import net.thevpc.nuts.NSpeedQualifier;
 import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.concurrent.NLock;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.concurrent.NLockBuilder;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NCp;
@@ -69,10 +68,10 @@ public class NCachedRepository extends AbstractNRepositoryBase {
     public NCachedRepository(NAddRepositoryOptions options, NWorkspace workspace, NRepository parent, NSpeedQualifier speed, boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
         super(options, workspace, parent, speed, supportedMirroring, repositoryType, supportsDeploy);
         cache = new NRepositoryFolderHelper(this, this.workspace, config().getStoreLocation(NStoreType.CACHE).resolve(NConstants.Folders.ID), true,
-                "cache", NElements.of().ofObject().set("repoKind", "cache").build()
+                "cache", NElements.of().ofObjectBuilder().set("repoKind", "cache").build()
         );
         lib = new NRepositoryFolderHelper(this, this.workspace, config().getStoreLocation(NStoreType.LIB).resolve(NConstants.Folders.ID), false,
-                "lib", NElements.of().ofObject().set("repoKind", "lib").build()
+                "lib", NElements.of().ofObjectBuilder().set("repoKind", "lib").build()
         );
         mirroring = new NRepositoryMirroringHelper(this, cache);
     }

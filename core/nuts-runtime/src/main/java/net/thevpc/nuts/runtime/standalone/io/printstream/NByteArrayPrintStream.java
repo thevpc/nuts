@@ -268,7 +268,7 @@ public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPri
         }
 
         @Override
-        public long getContentLength() {
+        public long contentLength() {
             return value.out2().size();
         }
     }

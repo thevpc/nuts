@@ -60,7 +60,7 @@ public class NTextUtils {
         } else if (o instanceof NArrayElement) {
             o = ((NArrayElement) o).items();
         } else if (o instanceof NObjectElement) {
-            Collection<NElementEntry> c = ((NObjectElement) o).entries();
+            Collection<NElement> c = ((NObjectElement) o).children();
             Object[] a = c.toArray();
             if (a.length == 0) {
                 return txt.ofBlank();

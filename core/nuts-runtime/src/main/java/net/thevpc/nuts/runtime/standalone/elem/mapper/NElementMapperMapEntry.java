@@ -15,7 +15,7 @@ public class NElementMapperMapEntry implements NElementMapper<Map.Entry> {
     @Override
     public NElement createElement(Map.Entry o, Type typeOfSrc, NElementFactoryContext context) {
         Map.Entry je = (Map.Entry) o;
-        return context.elem().ofObject()
+        return context.elem().ofObjectBuilder()
                 .set("key", context.objectToElement(je.getKey(), null))
                 .set("value", context.objectToElement(je.getValue(), null))
                 .build();

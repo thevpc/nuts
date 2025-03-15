@@ -34,16 +34,14 @@ import java.util.stream.Collectors;
 
 
 /**
- *
  * @author thevpc
  */
 public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
 
     private final List<NElement> values = new ArrayList<>();
     private final List<NElementAnnotation> annotations = new ArrayList<>();
-    private final List<NElement> args = new ArrayList<>();
+    private List<NElement> args;
     private String name;
-    private boolean hasArgs;
 
     public DefaultNArrayElementBuilder() {
     }
@@ -57,12 +55,18 @@ public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
         return this;
     }
 
-    public boolean isHasArgs() {
-        return hasArgs;
+    public boolean isWithArgs() {
+        return args != null;
     }
 
-    public NArrayElementBuilder setHasArgs(boolean hasArgs) {
-        this.hasArgs = hasArgs;
+    public NArrayElementBuilder setWithArgs(boolean hasArgs) {
+        if (hasArgs) {
+            if (args == null) {
+                args = new ArrayList<>();
+            }
+        } else {
+            args = null;
+        }
         return this;
     }
 
@@ -71,6 +75,9 @@ public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
         if (args != null) {
             for (NElement a : args) {
                 if (a != null) {
+                    if (this.args == null) {
+                        this.args = new ArrayList<>();
+                    }
                     this.args.add(a);
                 }
             }
@@ -81,6 +88,9 @@ public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
     @Override
     public NArrayElementBuilder addArg(NElement arg) {
         if (arg != null) {
+            if (this.args == null) {
+                this.args = new ArrayList<>();
+            }
             this.args.add(arg);
         }
         return this;
@@ -89,6 +99,9 @@ public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
     @Override
     public NArrayElementBuilder addArgAt(int index, NElement arg) {
         if (arg != null) {
+            if (this.args == null) {
+                this.args = new ArrayList<>();
+            }
             args.add(index, arg);
         }
         return this;
@@ -96,13 +109,17 @@ public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
 
     @Override
     public NArrayElementBuilder removeArgAt(int index) {
-        args.remove(index);
+        if (this.args != null) {
+            args.remove(index);
+        }
         return this;
     }
 
     @Override
     public NArrayElementBuilder clearArgs() {
-        args.clear();
+        if (this.args != null) {
+            args.clear();
+        }
         return this;
     }
 
@@ -373,8 +390,7 @@ public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
 
     @Override
     public NArrayElement build() {
-        return new DefaultNArrayElement(values,
-                DefaultNElementHeader.of(name, hasArgs, args),
+        return new DefaultNArrayElement(name, args, values,
                 annotations.toArray(new NElementAnnotation[0]));
     }
 

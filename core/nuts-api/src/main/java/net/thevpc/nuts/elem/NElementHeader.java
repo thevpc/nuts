@@ -41,7 +41,7 @@ import java.util.stream.Stream;
  */
 public interface NElementHeader extends Iterable<NElement>, NBlankable {
     String name();
-    boolean isArgs();
+    boolean isWithArgs();
     /**
      * array items
      *
@@ -49,7 +49,6 @@ public interface NElementHeader extends Iterable<NElement>, NBlankable {
      */
     Collection<NElement> args();
 
-    Stream<NElement> stream();
 
     /**
      * element at index
@@ -57,28 +56,29 @@ public interface NElementHeader extends Iterable<NElement>, NBlankable {
      * @param index index
      * @return element at index
      */
-    NOptional<NElement> get(int index);
+    NOptional<NElement> getArg(int index);
 
-    NOptional<String> getString(int index);
+    NOptional<String> getStringArg(int index);
 
-    NOptional<Boolean> getBoolean(int index);
+    NOptional<Boolean> getBooleanArg(int index);
 
-    NOptional<Byte> getByte(int index);
+    NOptional<Byte> getByteArg(int index);
 
-    NOptional<Short> getShort(int index);
+    NOptional<Short> getShortArg(int index);
 
-    NOptional<Integer> getInt(int index);
+    NOptional<Integer> getIntArg(int index);
 
-    NOptional<Long> getLong(int index);
+    NOptional<Long> getLongArg(int index);
 
-    NOptional<Float> getFloat(int index);
+    NOptional<Float> getFloatArg(int index);
 
-    NOptional<Double> getDouble(int index);
+    NOptional<Double> getDoubleArg(int index);
 
-    NOptional<Instant> getInstant(int index);
+    NOptional<Instant> getInstantArg(int index);
 
-    NOptional<NArrayElement> getArray(int index);
+    NOptional<NArrayElement> getArrayArg(int index);
 
-    NOptional<NObjectElement> getObject(int index);
+    NOptional<NObjectElement> getObjectArg(int index);
 
+    Stream<NElement> stream();
 }

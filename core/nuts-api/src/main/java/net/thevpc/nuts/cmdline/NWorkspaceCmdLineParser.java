@@ -1514,7 +1514,7 @@ public final class NWorkspaceCmdLineParser {
                 .setExpandSimpleOptions(true)
                 .registerSpecialSimpleOption("-version");
         while (cmdLine.hasNext()) {
-            if (nextNutsArgument(cmdLine,  options).isNotPresent()) {
+            if (nextNutsArgument(cmdLine, options).isNotPresent()) {
                 //some error occurred!
                 cmdLine.skip();
             }

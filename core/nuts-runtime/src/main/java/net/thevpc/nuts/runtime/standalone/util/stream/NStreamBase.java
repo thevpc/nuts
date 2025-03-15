@@ -363,7 +363,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
         Set<Map.Entry<K, List<T>>> entries = (Set) it.collect(Collectors.groupingBy(classifier)).entrySet();
         return new NStreamFromNIterator<Map.Entry<K, List<T>>>(
                 nutsBase, NIterator.of(entries.iterator()).withDesc(
-                () -> NElements.of().ofObject()
+                () -> NElements.of().ofObjectBuilder()
                         .set("type", "GroupBy")
                         .set("groupBy", NFunction.of(classifier).describe())
                         .set("base", iterator().describe())

@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
@@ -22,49 +22,44 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.elem;
+package net.thevpc.nuts.runtime.standalone.elem;
 
-import java.util.Objects;
+import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NStringUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- *
  * @author thevpc
  */
-public class DefaultNElementEntry implements NElementEntry {
+public abstract class AbstractNUpletElement
+        extends AbstractNNavigatableElement
+        implements NUpletElement {
 
-    private final NElement key;
-    private final NElement value;
-
-    public DefaultNElementEntry(NElement key, NElement value) {
-        this.key = key;
-        this.value = value;
-    }
-
-    @Override
-    public NElement getKey() {
-        return key;
-    }
-
-    @Override
-    public NElement getValue() {
-        return value;
+    public AbstractNUpletElement(NElementAnnotation[] annotations) {
+        super(NElementType.ARRAY, annotations);
     }
 
     @Override
     public String toString() {
-        return "DefaultNElementEntry{" + key + " : " + value + '}';
+        return "[" + items().stream().map(Object::toString).collect(Collectors.joining(", ")) + "]";
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DefaultNElementEntry that = (DefaultNElementEntry) o;
-        return Objects.equals(key, that.key) && Objects.equals(value, that.value);
+    public NOptional<Object> asObjectAt(int index) {
+        return get(index).map(x -> x);
     }
 
+
     @Override
-    public int hashCode() {
-        return Objects.hash(key, value);
+    public List<NElement> resolveAll(String pattern) {
+        pattern = NStringUtils.trimToNull(pattern);
+        NElementPathImpl pp = new NElementPathImpl(pattern);
+        NElement[] nElements = pp.resolveReversed(this);
+        return new ArrayList<>(Arrays.asList(nElements));
     }
 }

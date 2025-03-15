@@ -24,6 +24,8 @@
  */
 package net.thevpc.nuts.elem;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Stream;
 
 /**
@@ -34,14 +36,12 @@ import java.util.stream.Stream;
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NObjectElement extends NNavigatableElement, Iterable<NElementEntry> {
+public interface NObjectElement extends NNavigatableElement, Iterable<NElement> {
     static NObjectElement ofEmpty() {
         return NElements.of().ofEmptyObject();
     }
 
-    Stream<NElementEntry> stream();
-
-    NElementHeader header();
+    Stream<NElement> stream();
 
     /**
      * return new builder initialized with this instance
@@ -49,4 +49,18 @@ public interface NObjectElement extends NNavigatableElement, Iterable<NElementEn
      * @return new builder initialized with this instance
      */
     NObjectElementBuilder builder();
+
+
+
+    String name() ;
+
+    boolean isNamed() ;
+
+    boolean isWithArgs() ;
+
+    List<NElement> args() ;
+
+    int argsCount() ;
+
+    NElement argAt(int index) ;
 }

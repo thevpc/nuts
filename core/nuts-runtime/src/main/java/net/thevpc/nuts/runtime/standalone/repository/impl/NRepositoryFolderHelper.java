@@ -8,7 +8,6 @@ package net.thevpc.nuts.runtime.standalone.repository.impl;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.concurrent.NLock;
-import net.thevpc.nuts.concurrent.NLockBuilder;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
@@ -272,7 +271,7 @@ public class NRepositoryFolderHelper {
                         return NIteratorBuilder.emptyIterator();
                     },
                     () -> NElements.of()
-                            .ofObject()
+                            .ofObjectBuilder()
                             .set("type", "searchSingleVersion")
                             .set("repository", repo == null ? null : repo.getName())
                             .set("id", id.toString())

@@ -408,7 +408,7 @@ public class SimpleYaml implements NElementStreamFormat {
                 case LITERAL:
                     return a.getElement();
                 case OBJECT_ELEMENT: {
-                    NObjectElementBuilder obj = builder().ofObject().add(a.getEntry());
+                    NObjectElementBuilder obj = builder().ofObjectBuilder().add(a.getEntry());
                     while (true) {
                         readNewLine();
                         int newIndent = peekIndent();
@@ -429,7 +429,7 @@ public class SimpleYaml implements NElementStreamFormat {
                     return obj.build();
                 }
                 case ARRAY_ELEMENT: {
-                    NArrayElementBuilder arr = builder().ofArray().add(a.getElement());
+                    NArrayElementBuilder arr = builder().ofArrayBuilder().add(a.getElement());
                     while (true) {
                         readNewLine();
                         int newIndent = peekIndent();

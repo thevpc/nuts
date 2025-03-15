@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.DefaultNElementEntry;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.util.NMsg;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -16,7 +13,6 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
 
     @Override
     public Object destruct(NElementBuilder src, Type typeOfSrc, NElementFactoryContext context) {
-        NSession session = context.getSession();
         switch (src.type()) {
             case ARRAY: {
                 return src.build().asArray()
@@ -26,20 +22,26 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
             case OBJECT: {
                 Set<Object> visited = new HashSet<>();
                 boolean map = true;
-                List<Map.Entry<Object, Object>> all = new ArrayList<>();
-                for (NElementEntry nElementEntry : src.build().asObject().get().entries()) {
-                    Object k = context.destruct(nElementEntry.getKey(), null);
-                    Object v = context.destruct(nElementEntry.getValue(), null);
-                    if (map && visited.contains(k)) {
-                        map = false;
-                    } else {
-                        visited.add(k);
+                List<Object> all = new ArrayList<>();
+                for (NElement item : src.build().asObject().get().children()) {
+                    if(map && item instanceof NElementEntry) {
+                        NElementEntry nElementEntry = (NElementEntry) item;
+                        Object k = context.destruct(nElementEntry.getKey(), null);
+                        Object v = context.destruct(nElementEntry.getValue(), null);
+                        if (map && visited.contains(k)) {
+                            map = false;
+                        } else {
+                            visited.add(k);
+                        }
+                        all.add(new AbstractMap.SimpleEntry<>(k, v));
+                    }else {
+                        all.add(context.destruct(item, null));
                     }
-                    all.add(new AbstractMap.SimpleEntry<>(k, v));
                 }
                 if (map) {
                     LinkedHashMap<Object, Object> m = new LinkedHashMap<>();
-                    for (Map.Entry<Object, Object> entry : all) {
+                    for (Object item : all) {
+                        Map.Entry<Object, Object> entry=(Map.Entry<Object, Object>) item;
                         m.put(entry.getKey(), entry.getValue());
                     }
                     return m;
@@ -47,7 +49,7 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
                 return all;
             }
             case CUSTOM: {
-
+                return src.build().asCustom().get();
             }
             default: {
                 return context.objectToElement(src, NPrimitiveElement.class);
@@ -57,7 +59,6 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
 
     @Override
     public NElement createElement(NElementBuilder src, Type typeOfSrc, NElementFactoryContext context) {
-        NSession session = context.getSession();
         if(src.type().isPrimitive()){
             return src.build();
         }
@@ -74,33 +75,29 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
                     children.add(v2);
                 }
                 if(someChange){
-                    return context.elem().ofArray().addAll(children.toArray(new NElement[0])).build();
+                    return context.elem().ofArrayBuilder().addAll(children.toArray(new NElement[0])).build();
                 }
                 return src.build();
             }
             case OBJECT:{
                 NObjectElement obj = src.build().asObject().get();
-                List<NElementEntry> children=new ArrayList<>(obj.size());
-                boolean someChange=false;
-                for (NElementEntry e : obj) {
+                List<NElement> children = new ArrayList<>(obj.size());
+                boolean someChange = false;
+                for (NElement e : obj) {
                     boolean someChange0;
-                    NElement k2 = context.objectToElement(e.getKey(), null);
-                    someChange0=k2!=e.getKey();
-                    NElement v2 = context.objectToElement(e.getValue(), null);
-                    if(!someChange0){
-                        someChange0=v2!=e.getValue();
-                    }
-                    if(someChange0) {
+                    NElement k2 = context.objectToElement(e, null);
+                    someChange0 = k2 != e;
+                    if (someChange0) {
                         if (!someChange) {
                             someChange = true;
                         }
-                        children.add(new DefaultNElementEntry(k2, v2));
-                    }else{
+                        children.add(k2);
+                    } else {
                         children.add(e);
                     }
                 }
-                if(someChange){
-                    NObjectElementBuilder obj2 = context.elem().ofObject();
+                if (someChange) {
+                    NObjectElementBuilder obj2 = context.elem().ofObjectBuilder();
                     obj2.addAll(children.toArray(new NElementEntry[0]));
                     return obj2.build();
                 }
@@ -119,61 +116,6 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
 
     @Override
     public NElementBuilder createObject(NElement src, Type typeOfResult, NElementFactoryContext context) {
-        NSession session = context.getSession();
-        if(src.type().isPrimitive()){
-            return NElements.of()
-                    .ofObject()
-                    .set("value",src);
-        }
-        switch (src.type()){
-            case ARRAY:{
-                NArrayElement arr = src.asArray().get();
-                List<NElement> children=new ArrayList<>(arr.size());
-                boolean someChange=false;
-                for (NElement c : arr) {
-                    NElement v2 = context.objectToElement(c, null);
-                    if(!someChange){
-                        someChange=v2!=c;
-                    }
-                    children.add(v2);
-                }
-                if(someChange){
-                    return context.elem().ofArray().addAll(children.toArray(new NElement[0]));
-                }
-                return src.asArray().get().builder();
-            }
-            case OBJECT:{
-                NObjectElement obj = src.asObject().get();
-                List<NElementEntry> children=new ArrayList<>(obj.size());
-                boolean someChange=false;
-                for (NElementEntry e : obj) {
-                    boolean someChange0;
-                    NElement k2 = context.objectToElement(e.getKey(), null);
-                    someChange0=k2!=e.getKey();
-                    NElement v2 = context.objectToElement(e.getValue(), null);
-                    if(!someChange0){
-                        someChange0=v2!=e.getValue();
-                    }
-                    if(someChange0) {
-                        if (!someChange) {
-                            someChange = true;
-                        }
-                        children.add(new DefaultNElementEntry(k2, v2));
-                    }else{
-                        children.add(e);
-                    }
-                }
-                if(someChange){
-                    NObjectElementBuilder obj2 = context.elem().ofObject();
-                    obj2.addAll(children.toArray(new NElementEntry[0]));
-                    return obj2;
-                }
-                return src.asObject().get().builder();
-            }
-            case CUSTOM:{
-                throw new NIllegalArgumentException(NMsg.ofPlain("unsupported"));
-            }
-        }
-        throw new NIllegalArgumentException(NMsg.ofPlain("unsupported"));
+        return createElement(src.builder(), typeOfResult, context).builder();
     }
 }

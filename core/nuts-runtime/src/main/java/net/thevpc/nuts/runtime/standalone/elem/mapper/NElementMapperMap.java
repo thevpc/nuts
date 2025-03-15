@@ -2,8 +2,8 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementEntry;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryService;
-import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementHeader;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNObjectElement;
 import net.thevpc.nuts.util.NMsg;
 
@@ -37,31 +37,31 @@ public class NElementMapperMap implements NElementMapper<Map> {
     @Override
     public NElement createElement(Map o, Type typeOfSrc, NElementFactoryContext context) {
         Map je = (Map) o;
-        List<NElementEntry> m = new ArrayList<>();
+        List<NElement> m = new ArrayList<>();
         if (je != null) {
             for (Object e0 : je.entrySet()) {
                 Map.Entry e = (Map.Entry) e0;
                 NElement k = context.objectToElement(e.getKey(), null);
                 NElement v = context.objectToElement(e.getValue(), null);
-                m.add(new DefaultNElementEntry(k, v));
+                m.add(new DefaultNElementEntry(k, v, new NElementAnnotation[0]));
             }
         }
-        return new DefaultNObjectElement(m, DefaultNElementHeader.EMPTY,new NElementAnnotation[0]);
+        return new DefaultNObjectElement(null, null, m, new NElementAnnotation[0]);
     }
 
     public Map fillObject(NElement o, Map all, Type elemType1, Type elemType2, Type to, NElementFactoryContext context) {
-        NSession session = context.getSession();
         if (o.type() == NElementType.OBJECT) {
-            for (NElementEntry kv : o.asObject().get().entries()) {
+            for (NElement ee : o.asObject().get().children()) {
+                NElementEntry kv = (NElementEntry) ee;
                 NElement k = kv.getKey();
                 NElement v = kv.getValue();
                 all.put(context.elementToObject(k, elemType1), context.elementToObject(v, elemType2));
             }
         } else if (o.type() == NElementType.ARRAY) {
             for (NElement ee : o.asArray().get().items()) {
-                NObjectElement kv = ee.asObject().get();
-                NElement k = kv.get("key").orNull();
-                NElement v = kv.get("value").orNull();
+                NElementEntry kv = (NElementEntry) ee;
+                NElement k = kv.getKey();
+                NElement v = kv.getValue();
                 all.put(context.elementToObject(k, elemType1), context.elementToObject(v, elemType2));
             }
         } else {

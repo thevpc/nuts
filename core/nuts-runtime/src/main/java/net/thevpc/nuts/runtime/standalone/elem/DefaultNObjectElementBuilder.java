@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
  */
 public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
 
-    private final List<NElementEntry> values = new ArrayList<>();
+    private final List<NElement> values = new ArrayList<>();
     private final List<NElementAnnotation> annotations = new ArrayList<>();
 
     private String name;
@@ -54,7 +54,7 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
         return this;
     }
 
-    public boolean isHasArgs() {
+    public boolean isWithArgs() {
         return hasArgs;
     }
 
@@ -66,9 +66,9 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
 
     @Override
     public NObjectElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
-        if(annotations!=null){
+        if (annotations != null) {
             for (NElementAnnotation a : annotations) {
-                if(a!=null){
+                if (a != null) {
                     this.annotations.add(a);
                 }
             }
@@ -78,7 +78,7 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
 
     @Override
     public NObjectElementBuilder addAnnotation(NElementAnnotation annotation) {
-        if(annotation!=null){
+        if (annotation != null) {
             annotations.add(annotation);
         }
         return this;
@@ -86,8 +86,8 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
 
     @Override
     public NObjectElementBuilder addAnnotationAt(int index, NElementAnnotation annotation) {
-        if(annotation!=null){
-            annotations.add(index,annotation);
+        if (annotation != null) {
+            annotations.add(index, annotation);
         }
         return this;
     }
@@ -111,9 +111,9 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
 
     @Override
     public NObjectElementBuilder addArgs(List<NElement> args) {
-        if(args!=null){
+        if (args != null) {
             for (NElement a : args) {
-                if(a!=null){
+                if (a != null) {
                     this.args.add(a);
                 }
             }
@@ -123,7 +123,7 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
 
     @Override
     public NObjectElementBuilder addArg(NElement arg) {
-        if(arg!=null){
+        if (arg != null) {
             this.args.add(arg);
         }
         return this;
@@ -131,8 +131,8 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
 
     @Override
     public NObjectElementBuilder addArgAt(int index, NElement arg) {
-        if(arg!=null){
-            args.add(index,arg);
+        if (arg != null) {
+            args.add(index, arg);
         }
         return this;
     }
@@ -156,13 +156,22 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
 
 
     @Override
-    public Collection<NElementEntry> children() {
+    public Collection<NElement> children() {
         return values;
     }
 
     @Override
     public List<NElement> getAll(NElement s) {
-        return values.stream().filter(x -> Objects.equals(x.getKey(), s)).map(NElementEntry::getValue).collect(Collectors.toList());
+        List<NElement> ret = new ArrayList<>();
+        for (NElement x : values) {
+            if (x instanceof NElementEntry) {
+                NElementEntry e = (NElementEntry) x;
+                if (Objects.equals(e.getKey(), s)) {
+                    ret.add(e.getValue());
+                }
+            }
+        }
+        return ret;
     }
 
     @Override
@@ -187,7 +196,7 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
 
     @Override
     public NObjectElementBuilder add(NElement name, NElement value) {
-        values.add(new DefaultNElementEntry(denull(name), denull(value)));
+        values.add(new DefaultNElementEntry(denull(name), denull(value), new NElementAnnotation[0]));
         return this;
     }
 
@@ -196,13 +205,19 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
         name = denull(name);
         value = denull(value);
         for (int i = 0; i < values.size(); i++) {
-            NElement k = values.get(i).getKey();
-            if (Objects.equals(k, name)) {
-                values.set(i, new DefaultNElementEntry(name, value));
+            NElement nElement = values.get(i);
+            if (nElement instanceof NElementEntry) {
+                NElement k = ((NElementEntry) nElement).getKey();
+                if (Objects.equals(k, name)) {
+                    values.set(i, new DefaultNElementEntry(name, value, new NElementAnnotation[0]));
+                    return this;
+                }
+            } else if (Objects.equals(nElement, name)) {
+                values.set(i, new DefaultNElementEntry(name, value, new NElementAnnotation[0]));
                 return this;
             }
         }
-        values.add(new DefaultNElementEntry(name, value));
+        values.add(new DefaultNElementEntry(name, value, new NElementAnnotation[0]));
         return this;
     }
 
@@ -235,7 +250,14 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
     public NObjectElementBuilder remove(NElement name) {
         name = denull(name);
         for (int i = 0; i < values.size(); i++) {
-            if (Objects.equals(values.get(i).getKey(), name)) {
+            NElement nElement = values.get(i);
+            if (nElement instanceof NElementEntry) {
+                NElement k = ((NElementEntry) nElement).getKey();
+                if (Objects.equals(k, name)) {
+                    values.remove(i);
+                    return this;
+                }
+            } else if (Objects.equals(nElement, name)) {
                 values.remove(i);
                 return this;
             }
@@ -247,7 +269,13 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
     public NObjectElementBuilder removeAll(NElement name) {
         name = denull(name);
         for (int i = values.size() - 1; i >= 0; i--) {
-            if (Objects.equals(values.get(i).getKey(), name)) {
+            NElement nElement = values.get(i);
+            if (nElement instanceof NElementEntry) {
+                NElement k = ((NElementEntry) nElement).getKey();
+                if (Objects.equals(k, name)) {
+                    values.remove(i);
+                }
+            } else if (Objects.equals(nElement, name)) {
                 values.remove(i);
             }
         }
@@ -332,8 +360,8 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
     public NObjectElementBuilder setAll(NObjectElementBuilder other) {
         clear();
         if (other != null) {
-            for (NElementEntry entry : other.children()) {
-                set(entry);
+            for (NElement entry : other.children()) {
+                add(entry);
             }
         }
         return this;
@@ -342,7 +370,7 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
     @Override
     public NObjectElementBuilder addAll(NObjectElement other) {
         if (other != null) {
-            for (NElementEntry entry : other) {
+            for (NElement entry : other) {
                 add(entry);
             }
         }
@@ -352,17 +380,17 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
     @Override
     public NObjectElementBuilder add(NObjectElementBuilder other) {
         if (other != null) {
-            for (NElementEntry child : other.children()) {
-                add(child.getKey(), child.getValue());
+            for (NElement child : other.children()) {
+                add(child);
             }
         }
         return this;
     }
 
     @Override
-    public NObjectElementBuilder add(NElementEntry entry) {
+    public NObjectElementBuilder add(NElement entry) {
         if (entry != null) {
-            add(entry.getKey(), entry.getValue());
+            values.add(entry);
         }
         return this;
     }
@@ -376,9 +404,9 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
     }
 
     @Override
-    public NObjectElementBuilder addAll(NElementEntry... entries) {
+    public NObjectElementBuilder addAll(NElement... entries) {
         if (entries != null) {
-            for (NElementEntry entry : entries) {
+            for (NElement entry : entries) {
                 add(entry);
             }
         }
@@ -408,7 +436,7 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
     @Override
     public NObjectElementBuilder addAll(NObjectElementBuilder other) {
         if (other != null) {
-            for (NElementEntry entry : other.build()) {
+            for (NElement entry : other.build()) {
                 add(entry);
             }
         }
@@ -417,17 +445,14 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
 
     @Override
     public NObjectElement build() {
-        return new DefaultNObjectElement(values,
-                DefaultNElementHeader.of(name, hasArgs, args),
+        return new DefaultNObjectElement(name, hasArgs? args:null,values,
                 annotations.toArray(new NElementAnnotation[0]));
     }
 
     @Override
     public String toString() {
         return "{" + children().stream().map(x
-                -> x.getKey()
-                + ":"
-                + x.getValue().toString()
+                -> x.toString()
         ).collect(Collectors.joining(", ")) + "}";
     }
 

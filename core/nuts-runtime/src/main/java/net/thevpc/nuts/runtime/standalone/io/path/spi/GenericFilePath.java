@@ -68,8 +68,7 @@ public class GenericFilePath implements NPathSPI {
     }
 
 
-    @Override
-    public NPath resolve(NPath basePath, String path) {
+    private NPath resolve(NPath basePath, String path) {
         NPathPartList newParts = NPathPartParser.parseParts(path);
         if (newParts.isEmpty()) {
             return basePath;
@@ -85,8 +84,7 @@ public class GenericFilePath implements NPathSPI {
         return resolve(basePath, path == null ? null : path.toString());
     }
 
-    @Override
-    public NPath resolveSibling(NPath basePath, String path) {
+    private NPath resolveSibling(NPath basePath, String path) {
         if (path == null || path.isEmpty()) {
             return getParent(basePath);
         }
@@ -143,7 +141,7 @@ public class GenericFilePath implements NPathSPI {
         return false;
     }
 
-    public long getContentLength(NPath basePath) {
+    public long contentLength(NPath basePath) {
         return -1;
     }
 
@@ -339,7 +337,7 @@ public class GenericFilePath implements NPathSPI {
     }
 
     @Override
-    public boolean isName(NPath basePath) {
+    public Boolean isName(NPath basePath) {
         if (parts.size() == 0) {
             return true;
         }
@@ -362,7 +360,7 @@ public class GenericFilePath implements NPathSPI {
     }
 
     @Override
-    public int getNameCount(NPath basePath) {
+    public Integer getNameCount(NPath basePath) {
         if (parts.isEmpty()) {
             return 1;
         }
@@ -376,7 +374,7 @@ public class GenericFilePath implements NPathSPI {
     }
 
     @Override
-    public boolean isRoot(NPath basePath) {
+    public Boolean isRoot(NPath basePath) {
         if (parts.isEmpty()) {
             return true;
         }
@@ -384,11 +382,6 @@ public class GenericFilePath implements NPathSPI {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public NStream<NPath> walk(NPath basePath, int maxDepth, NPathOption[] options) {
-        return NStream.ofEmpty();
     }
 
     @Override
@@ -463,13 +456,8 @@ public class GenericFilePath implements NPathSPI {
     }
 
     @Override
-    public void moveTo(NPath basePath, NPath other, NPathOption... options) {
+    public boolean moveTo(NPath basePath, NPath other, NPathOption... options) {
         throw new NIOException(NMsg.ofC("unable to move %s", this));
-    }
-
-    @Override
-    public void copyTo(NPath basePath, NPath other, NPathOption... options) {
-        throw new NIOException(NMsg.ofC("unable to copy %s", this));
     }
 
     @Override
@@ -485,20 +473,8 @@ public class GenericFilePath implements NPathSPI {
     }
 
     @Override
-    public void walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
-
-    }
-
-    @Override
     public boolean isLocal(NPath basePath) {
         return true;
-    }
-
-    @Override
-    public NPath toRelativePath(NPath basePath, NPath parentPath) {
-        String child = basePath.getLocation();
-        String parent = parentPath.getLocation();
-        return NPath.of(NIOUtils.toRelativePath(child, parent));
     }
 
     public static class GenericPathFactory implements NPathFactorySPI {
@@ -545,13 +521,4 @@ public class GenericFilePath implements NPathSPI {
 
     }
 
-    @Override
-    public byte[] getDigest(NPath basePath, String algo) {
-        return null;
-    }
-
-    @Override
-    public int compareTo(NPath basePath, NPath other) {
-        return basePath.toString().compareTo(other.toString());
-    }
 }

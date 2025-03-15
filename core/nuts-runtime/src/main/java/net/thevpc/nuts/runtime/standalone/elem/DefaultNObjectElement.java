@@ -10,34 +10,27 @@ import java.util.stream.Stream;
 
 public class DefaultNObjectElement extends AbstractNObjectElement {
 
-    private List<NElementEntry> values = new ArrayList<>();
-    private Map<NElement, List<Integer>> indexes = new HashMap<>();
+    private List<NElement> values = new ArrayList<>();
     private NElements elements;
-    private NElementHeader header;
+    private String name;
+    private List<NElement> args;
 
-    public DefaultNObjectElement(List<NElementEntry> values, NElementHeader header, NElementAnnotation[] annotations) {
+    public DefaultNObjectElement(String name, List<NElement> args, List<NElement> values, NElementAnnotation[] annotations) {
         super(annotations);
-        this.header=header;
+        this.name = name;
+        this.args = args;
         if (values != null) {
-            for (NElementEntry e : values) {
-                NElement key = e.getKey();
-                if (key != null && e.getValue() != null) {
-                    int index = this.values.size();
-                    this.values.add(new DefaultNElementEntry(key, e.getValue()));
-                    indexes.computeIfAbsent(key, x -> new ArrayList<>()).add(index);
+            for (NElement e : values) {
+                if (e != null) {
+                    this.values.add(e);
                 }
             }
         }
     }
 
     @Override
-    public NElementHeader header() {
-        return header;
-    }
-
-    @Override
-    public Iterator<NElementEntry> iterator() {
-        return entries().iterator();
+    public Iterator<NElement> iterator() {
+        return children().iterator();
     }
 
     @Override
@@ -57,21 +50,26 @@ public class DefaultNObjectElement extends AbstractNObjectElement {
 
     @Override
     public List<NElement> getAll(NElement s) {
-        List<Integer> integers = indexes.get(s);
-        if (integers == null) {
-            return new ArrayList<>();
+        List<NElement> ret = new ArrayList<>();
+        for (NElement x : values) {
+            if (x instanceof NElementEntry) {
+                NElementEntry e = (NElementEntry) x;
+                if (Objects.equals(e.getKey(), s)) {
+                    ret.add(e.getValue());
+                }
+            }
         }
-        return integers.stream().map(x -> values.get(x).getValue()).collect(Collectors.toList());
+        return ret;
     }
 
 
     @Override
-    public Collection<NElementEntry> entries() {
+    public Collection<NElement> children() {
         return new ArrayList<>(values);
     }
 
     @Override
-    public Stream<NElementEntry> stream() {
+    public Stream<NElement> stream() {
         return values.stream();
     }
 
@@ -82,7 +80,7 @@ public class DefaultNObjectElement extends AbstractNObjectElement {
 
     @Override
     public NObjectElementBuilder builder() {
-        return NElements.of().ofObject().set(this);
+        return NElements.of().ofObjectBuilder().set(this);
     }
 
     @Override
@@ -117,7 +115,7 @@ public class DefaultNObjectElement extends AbstractNObjectElement {
 
     @Override
     public String toString() {
-        return "{" + entries().stream().map(x -> x.getKey() + ":" + x.getValue().toString()).collect(Collectors.joining(", ")) + "}";
+        return "{" + children().stream().map(x -> x.toString()).collect(Collectors.joining(", ")) + "}";
     }
 
     @Override
@@ -127,9 +125,35 @@ public class DefaultNObjectElement extends AbstractNObjectElement {
 
     @Override
     public NOptional<Object> asObjectAt(int index) {
-        if(index>=0 && index<values.size()) {
+        if (index >= 0 && index < values.size()) {
             return NOptional.of(values.get(index));
         }
-        return NOptional.ofEmpty(()-> NMsg.ofC("invalid object at %s",index));
+        return NOptional.ofEmpty(() -> NMsg.ofC("invalid object at %s", index));
     }
+
+
+    public String name() {
+        return name;
+    }
+
+    public boolean isNamed() {
+        return name != null;
+    }
+
+    public boolean isWithArgs() {
+        return args != null;
+    }
+
+    public List<NElement> args() {
+        return args == null ? null : Collections.unmodifiableList(args);
+    }
+
+    public int argsCount() {
+        return args == null ? null : args.size();
+    }
+
+    public NElement argAt(int index) {
+        return args == null ? null : args.get(index);
+    }
+
 }

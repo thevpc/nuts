@@ -1,7 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.DefaultNElementEntry;
 import net.thevpc.nuts.elem.*;
 
 import java.lang.reflect.Type;
@@ -15,7 +13,6 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
 
     @Override
     public Object destruct(NElement src, Type typeOfSrc, NElementFactoryContext context) {
-        NSession session = context.getSession();
         switch (src.type()) {
             case ARRAY: {
                 return src.asArray().get().items().stream().map(x -> context.destruct(x, null)).collect(Collectors.toList());
@@ -23,20 +20,27 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
             case OBJECT: {
                 Set<Object> visited = new HashSet<>();
                 boolean map = true;
-                List<Map.Entry<Object, Object>> all = new ArrayList<>();
-                for (NElementEntry nElementEntry : src.asObject().get().entries()) {
-                    Object k = context.destruct(nElementEntry.getKey(), null);
-                    Object v = context.destruct(nElementEntry.getValue(), null);
-                    if (map && visited.contains(k)) {
-                        map = false;
+                List<Object> all = new ArrayList<>();
+                for (NElement nElement : src.asObject().get().children()) {
+                    if (map && nElement instanceof NElementEntry) {
+                        NElementEntry nElementEntry = (NElementEntry) nElement;
+                        Object k = context.destruct(nElementEntry.getKey(), null);
+                        Object v = context.destruct(nElementEntry.getValue(), null);
+                        if (visited.contains(k)) {
+                            map = false;
+                        } else {
+                            visited.add(k);
+                        }
+                        all.add(new AbstractMap.SimpleEntry<>(k, v));
                     } else {
-                        visited.add(k);
+                        Object k = context.destruct(nElement, null);
+                        all.add(k);
                     }
-                    all.add(new AbstractMap.SimpleEntry<>(k, v));
                 }
                 if (map) {
                     LinkedHashMap<Object, Object> m = new LinkedHashMap<>();
-                    for (Map.Entry<Object, Object> entry : all) {
+                    for (Object item : all) {
+                        Map.Entry<Object, Object> entry = (Map.Entry<Object, Object>) item;
                         m.put(entry.getKey(), entry.getValue());
                     }
                     return m;
@@ -44,7 +48,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                 return all;
             }
             case CUSTOM: {
-
+                return src.asCustom().get();
             }
             default: {
                 return context.objectToElement(src, NPrimitiveElement.class);
@@ -54,58 +58,53 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
 
     @Override
     public NElement createElement(NElement src, Type typeOfSrc, NElementFactoryContext context) {
-        NSession session = context.getSession();
-        if(src.type().isPrimitive()){
+        if (src.type().isPrimitive()) {
             return src;
         }
-        switch (src.type()){
-            case ARRAY:{
+        switch (src.type()) {
+            case ARRAY: {
                 NArrayElement arr = src.asArray().get();
-                List<NElement> children=new ArrayList<>(arr.size());
-                boolean someChange=false;
+                List<NElement> children = new ArrayList<>(arr.size());
+                boolean someChange = false;
                 for (NElement c : arr) {
                     NElement v2 = context.objectToElement(c, null);
-                    if(!someChange){
-                        someChange=v2!=c;
+                    if (!someChange) {
+                        someChange = v2 != c;
                     }
                     children.add(v2);
                 }
-                if(someChange){
-                    return context.elem().ofArray().addAll(children.toArray(new NElement[0])).build();
+                if (someChange) {
+                    return context.elem().ofArrayBuilder().addAll(children.toArray(new NElement[0])).build();
                 }
                 return src;
             }
-            case OBJECT:{
+            case OBJECT: {
                 NObjectElement obj = src.asObject().get();
-                List<NElementEntry> children=new ArrayList<>(obj.size());
-                boolean someChange=false;
-                for (NElementEntry e : obj) {
+                List<NElement> children = new ArrayList<>(obj.size());
+                boolean someChange = false;
+                for (NElement e : obj) {
                     boolean someChange0;
-                    NElement k2 = context.objectToElement(e.getKey(), null);
-                    someChange0=k2!=e.getKey();
-                    NElement v2 = context.objectToElement(e.getValue(), null);
-                    if(!someChange0){
-                        someChange0=v2!=e.getValue();
-                    }
-                    if(someChange0) {
+                    NElement k2 = context.objectToElement(e, null);
+                    someChange0 = k2 != e;
+                    if (someChange0) {
                         if (!someChange) {
                             someChange = true;
                         }
-                        children.add(new DefaultNElementEntry(k2, v2));
-                    }else{
+                        children.add(k2);
+                    } else {
                         children.add(e);
                     }
                 }
-                if(someChange){
-                    NObjectElementBuilder obj2 = context.elem().ofObject();
-                    obj2.addAll(children.toArray(new NElementEntry[0]));
+                if (someChange) {
+                    NObjectElementBuilder obj2 = context.elem().ofObjectBuilder();
+                    obj2.addAll(children.toArray(new NElement[0]));
                     return obj2.build();
                 }
                 return src;
             }
-            case CUSTOM:{
+            case CUSTOM: {
                 Object v1 = src.asCustom().get().getValue();
-                if(context.getIndestructibleObjects()!=null && context.getIndestructibleObjects().test(v1.getClass())){
+                if (context.getIndestructibleObjects() != null && context.getIndestructibleObjects().test(v1.getClass())) {
                     return src;
                 }
                 return context.objectToElement(v1, null);

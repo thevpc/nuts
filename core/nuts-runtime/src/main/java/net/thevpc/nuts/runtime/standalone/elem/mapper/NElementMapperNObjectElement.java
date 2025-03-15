@@ -20,6 +20,6 @@ public class NElementMapperNObjectElement extends NElementMapperNElement {
         if (o.type() == NElementType.OBJECT) {
             return o.asObject().get();
         }
-        return context.elem().ofObject().set("value", o).build();
+        return context.elem().ofObjectBuilder().set("value", o).build();
     }
 }

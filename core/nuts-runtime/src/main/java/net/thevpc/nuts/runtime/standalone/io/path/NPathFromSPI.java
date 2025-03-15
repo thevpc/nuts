@@ -11,10 +11,7 @@ import net.thevpc.nuts.runtime.standalone.util.reflect.NUseDefaultUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceVarExpansionFunction;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.util.*;
 
 import java.io.*;
 import java.net.URL;
@@ -68,7 +65,23 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public String getLocation() {
-        return base.getLocation(this);
+        String p = base.getLocation(this);
+        if (p != null) {
+            return p;
+        }
+        String str = toString();
+        int u = str.indexOf(':');
+        if (u > 0) {
+            String ss = str.substring(0, u);
+            if (ss.matches("[a-zA-Z][a-zA-Z-_0-9]*")) {
+                String a = str.substring(u + 1);
+                if (a.startsWith("//")) {
+                    return a.substring(1);
+                }
+                return a;
+            }
+        }
+        return str;
     }
 
     @Override
@@ -76,12 +89,22 @@ public class NPathFromSPI extends NPathBase {
         if (NBlankable.isBlank(other)) {
             return this;
         }
-        return base.resolve(this, other);
+        NPath p = base.resolve(this, NPath.of(other));
+        if (p != null) {
+            return p;
+        }
+        String old = toString();
+        return NPath.of(NStringUtils.pjoin("/", old, other));
     }
 
     @Override
     public NPath resolve(NPath other) {
-        return base.resolve(this, other);
+        NPath p = base.resolve(this, other);
+        if (p != null) {
+            return p;
+        }
+        String old = toString();
+        return NPath.of(NStringUtils.pjoin("/", old, other.getLocation()));
     }
 
     @Override
@@ -89,17 +112,25 @@ public class NPathFromSPI extends NPathBase {
         if (NBlankable.isBlank(other)) {
             return getParent();
         }
-        return base.resolveSibling(this, other);
+        return resolveSibling(NPath.of(other));
     }
 
     @Override
     public NPath resolveSibling(NPath other) {
-        return base.resolveSibling(this, other);
+        if (NBlankable.isBlank(other)) {
+            return getParent();
+        }
+        NPath p = base.resolveSibling(this, other);
+        if (p != null) {
+            return p;
+        }
+        NPath parent = getParent();
+        return parent.resolve(other);
     }
 
     @Override
     public byte[] readBytes(NPathOption... options) {
-        long len = getContentLength();
+        long len = this.contentLength();
         int readSize = 1024;
         if (len < 0) {
             //unknown size!
@@ -342,8 +373,8 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
-    public long getContentLength() {
-        return base.getContentLength(this);
+    public long contentLength() {
+        return base.contentLength(this);
     }
 
     @Override
@@ -363,7 +394,20 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public NPath getParent() {
-        return base.getParent(this);
+        NPath p = base.getParent(this);
+        if (p != null) {
+            return p;
+        }
+        if (isRoot()) {
+            return this;
+        }
+        List<String> names = getNames();
+        List<String> items = names.subList(0, names.size() - 1);
+        NPath root = getRoot();
+        for (String item : items) {
+            root = root.resolve(item);
+        }
+        return root;
     }
 
     @Override
@@ -373,7 +417,23 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public NPath normalize() {
-        return base.normalize(this);
+        NPath p = base.normalize(this);
+        if (p != null) {
+            return p;
+        }
+        if (isRoot()) {
+            return this;
+        }
+        List<String> names = getNames();
+        NPath root = getRoot();
+        List<String> newNames = NIOUtils.normalizePathNames(names);
+        if (newNames.size() != names.size()) {
+            for (String item : newNames) {
+                root = root.resolve(item);
+            }
+            return root;
+        }
+        return this;
     }
 
     @Override
@@ -391,12 +451,14 @@ public class NPathFromSPI extends NPathBase {
         if (base.isAbsolute(this)) {
             return this;
         }
-        return base.toAbsolute(this, rootPath);
-    }
-
-    @Override
-    public NPath toRelative(NPath parentPath) {
-        return base.toRelativePath(this, unwrapPath(parentPath));
+        NPath p = base.toAbsolute(this, rootPath);
+        if (p != null) {
+            return p;
+        }
+        if (rootPath == null) {
+            return normalize();
+        }
+        return rootPath.toAbsolute().resolve(this);
     }
 
     @Override
@@ -434,17 +496,49 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public boolean isName() {
-        return base.isName(this);
+        Boolean b = base.isName(this);
+        if (b == null) {
+            if (getNameCount() > 1) {
+                return false;
+            }
+            String v = toString();
+            switch (v) {
+                case "/":
+                case "\\":
+                case ".":
+                case "..": {
+                    return false;
+                }
+            }
+            for (char c : v.toCharArray()) {
+                switch (c) {
+                    case '/':
+                    case '\\': {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        return b;
     }
 
     @Override
     public int getNameCount() {
-        return base.getNameCount(this);
+        Integer r = base.getNameCount(this);
+        if (r != 0) {
+            return r;
+        }
+        return getNames().size();
     }
 
     @Override
     public boolean isRoot() {
-        return base.isRoot(this);
+        Boolean b = base.isRoot(this);
+        if (b != null) {
+            return b;
+        }
+        return getNameCount() == 0;
     }
 
     @Override
@@ -460,13 +554,26 @@ public class NPathFromSPI extends NPathBase {
                 NPath.class, int.class, NPathOption[].class)) {
             return NPathSPIHelper.walk(this, maxDepth, options1);
         } else {
-            return base.walk(this, maxDepth, options);
+            NStream<NPath> walked = base.walk(this, maxDepth, options);
+            if (walked != null) {
+                return walked;
+            }
+            return NPathSPIHelper.walk(this, maxDepth, options1);
         }
     }
 
     @Override
     public NPath subpath(int beginIndex, int endIndex) {
-        return base.subpath(this, beginIndex, endIndex);
+        NPath subpath = base.subpath(this, beginIndex, endIndex);
+        if (subpath != null) {
+            return subpath;
+        }
+        List<String> items = getNames().subList(beginIndex, endIndex);
+        NPath root = getRoot();
+        for (String item : items) {
+            root = root.resolve(item);
+        }
+        return root;
     }
 
     @Override
@@ -478,18 +585,31 @@ public class NPathFromSPI extends NPathBase {
     public List<String> getNames() {
         if (items == null) {
             items = base.getNames(this);
+            if (items == null) {
+                String location = getLocation();
+                items = NStringUtils.split(location, "/", true, true);
+            }
         }
-        return items == null ? Collections.emptyList() : items;
+        return items;
     }
 
     @Override
     public void moveTo(NPath other, NPathOption... options) {
-        base.moveTo(this, other);
+        if (!base.moveTo(this, other)) {
+            copyTo(other, options);
+            delete(true);
+        }
     }
 
     @Override
     public void copyTo(NPath other, NPathOption... options) {
-        base.copyTo(this, other, options);
+        if (!base.copyTo(this, other, options)) {
+            try (InputStream in = this.getInputStream(options)) {
+                NCp.of().from(in).to(other).addOptions(options).run();
+            } catch (Exception e) {
+                throw new NIOException(e);
+            }
+        }
     }
 
     @Override
@@ -511,7 +631,42 @@ public class NPathFromSPI extends NPathBase {
                 NPath.class, NTreeVisitor.class, int.class, NPathOption[].class)) {
             NPathSPIHelper.walkDfs(this, visitor, maxDepth, options);
         } else {
-            base.walkDfs(this, visitor, maxDepth, options);
+            boolean r = base.walkDfs(this, visitor, maxDepth, options);
+            if (!r) {
+                Stack<NPath> stack = new Stack<>();
+                Stack<Boolean> visitedStack = new Stack<>();
+
+                stack.push(this);
+                visitedStack.push(false);
+
+                while (!stack.isEmpty()) {
+                    NPath currentPath = stack.pop();
+                    boolean visited = visitedStack.pop();
+
+                    if (visited) {
+                        visitor.postVisitDirectory(currentPath, null);
+                        continue;
+                    }
+
+                    if (currentPath.isDirectory()) {
+                        visitor.preVisitDirectory(currentPath);
+                        stack.push(currentPath);
+                        visitedStack.push(true);
+                        try {
+                            if (maxDepth > 0) {
+                                for (NPath nPath : currentPath.list()) {
+                                    stack.push(nPath);
+                                    visitedStack.push(false); // Mark children for pre-visit first
+                                }
+                            }
+                        } catch (RuntimeException e) {
+                            visitor.postVisitDirectory(currentPath, e);
+                        }
+                    } else {
+                        visitor.visitFile(currentPath);
+                    }
+                }
+            }
         }
         return this;
     }
@@ -578,7 +733,7 @@ public class NPathFromSPI extends NPathBase {
         if (other == null) {
             return false;
         }
-        return toRelative(other) != null;
+        return !toRelative(other).isPresent();
     }
 
     @Override
@@ -587,8 +742,21 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
+    public NOptional<NPath> toRelative(NPath parentPath) {
+        NOptional<NPath> r = base.toRelative(this, unwrapPath(parentPath));
+        if (r != null) {
+            return r;
+        }
+        //default impl
+        String child = getLocation();
+        String parent = parentPath.getLocation();
+        return NOptional.ofNamed(NPath.of(NIOUtils.toRelativePath(child, parent)), "relative path");
+    }
+
+
+    @Override
     public boolean startsWith(NPath other) {
-        return base.toRelativePath(this, unwrapPath(other)) != null;
+        return toRelative(unwrapPath(other)) != null;
     }
 
     @Override
@@ -596,13 +764,17 @@ public class NPathFromSPI extends NPathBase {
         if (other == null) {
             return 1;
         }
-        return base.compareTo(this, unwrapPath(other));
+        Integer r = base.compareTo(this, unwrapPath(other));
+        if (r != null) {
+            return r;
+        }
+        return toString().compareTo(other.toString());
     }
 
 
     @Override
     public boolean startsWith(String other) {
-        return base.toRelativePath(this, NPath.of(other)) != null;
+        return toRelative(NPath.of(other)) != null;
     }
 
 }

@@ -27,12 +27,10 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NUnsupportedOperationException;
-import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.util.*;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
@@ -48,7 +46,7 @@ public interface NPathSPI {
 
     boolean exists(NPath basePath);
 
-    long getContentLength(NPath basePath);
+    long contentLength(NPath basePath);
 
     String toString();
 
@@ -69,15 +67,16 @@ public interface NPathSPI {
     NPath getRoot(NPath basePath);
 
 
-    NPath toRelativePath(NPath basePath, NPath parentPath);
-
-
     /// ////////////////////////////////////////////////
     /// DEFAULT IMPLEMENTATIONS
 
+    default NOptional<NPath> toRelative(NPath basePath, NPath parentPath) {
+        return null;
+    }
+
+
     default List<String> getNames(NPath basePath) {
-        String location = getLocation(basePath);
-        return NStringUtils.split(location, "/", true, true);
+        return null;
     }
 
     default boolean isLocal(NPath basePath) {
@@ -86,60 +85,19 @@ public interface NPathSPI {
 
 
     default String getLocation(NPath basePath) {
-        String str = toString();
-        int u = str.indexOf(':');
-        if (u > 0) {
-            String p = str.substring(0, u);
-            if (p.matches("[a-zA-Z][a-zA-Z-_0-9]*")) {
-                String a = str.substring(u + 1);
-                if (a.startsWith("//")) {
-                    return a.substring(1);
-                }
-                return a;
-            }
-        }
-        return str;
+        return null;
     }
 
     default String getProtocol(NPath basePath) {
-        String str = toString();
-        int u = str.indexOf(':');
-        if (u > 0) {
-            String p = str.substring(0, u);
-            if (p.matches("[a-zA-Z][a-zA-Z-_0-9]*")) {
-                return p;
-            }
-        }
         return null;
     }
 
     default NFormatSPI formatter(NPath basePath) {
-        return new NFormatSPI() {
-            @Override
-            public String getName() {
-                return "path";
-            }
-
-            @Override
-            public void print(NPrintStream out) {
-                out.print(basePath.toString());
-            }
-
-            @Override
-            public boolean configureFirst(NCmdLine cmdLine) {
-                return false;
-            }
-        };
+        return null;
     }
 
     default NPath toAbsolute(NPath basePath, NPath rootPath) {
-        if (isAbsolute(basePath)) {
-            return basePath;
-        }
-        if (rootPath == null) {
-            return basePath.normalize();
-        }
-        return rootPath.toAbsolute().resolve(basePath);
+        return null;
     }
 
     default boolean isAbsolute(NPath basePath) {
@@ -147,35 +105,12 @@ public interface NPathSPI {
     }
 
     default String getName(NPath basePath) {
-        List<String> n = getNames(basePath);
-        return n.isEmpty() ? "" : n.get(n.size() - 1);
+        return null;
     }
 
-
-    default NPath resolve(NPath basePath, String path) {
-        if (NBlankable.isBlank(path)) {
-            return basePath;
-        }
-        return resolve(basePath, NPath.of(path));
-    }
 
     default NPath resolve(NPath basePath, NPath path) {
-        if (NBlankable.isBlank(path)) {
-            return basePath;
-        }
-        if (path.isAbsolute()) {
-            return path;
-        }
-        NPath root = basePath;
-        for (String item : path.getNames()) {
-            root = root.resolve(item);
-        }
-        return root;
-    }
-
-    default NPath resolveSibling(NPath basePath, String path) {
-        NPath parent = basePath.getParent();
-        return parent.resolve(path);
+        return null;
     }
 
     default NPath resolveSibling(NPath basePath, NPath path) {
@@ -194,48 +129,11 @@ public interface NPathSPI {
 
 
     default NPath normalize(NPath basePath) {
-        if (isRoot(basePath)) {
-            return basePath;
-        }
-        List<String> names = getNames(basePath);
-        NPath root = getRoot(basePath);
-        List<String> newNames = new ArrayList<>();
-        for (String item : names) {
-            switch (item) {
-                case ".": {
-                    break;
-                }
-                case "..": {
-                    if (newNames.size() > 0) {
-                        newNames.remove(newNames.size() - 1);
-                    }
-                    break;
-                }
-                default: {
-                    newNames.add(item);
-                }
-            }
-        }
-        if (newNames.size() != names.size()) {
-            for (String item : newNames) {
-                root = root.resolve(item);
-            }
-            return root;
-        }
-        return basePath;
+        return null;
     }
 
     default NPath getParent(NPath basePath) {
-        if (isRoot(basePath)) {
-            return basePath;
-        }
-        List<String> names = getNames(basePath);
-        List<String> items = names.subList(0, names.size() - 1);
-        NPath root = getRoot(basePath);
-        for (String item : items) {
-            root = root.resolve(item);
-        }
-        return root;
+        return null;
     }
 
 
@@ -294,11 +192,12 @@ public interface NPathSPI {
      * @param basePath basePath
      * @return true if this is the root of the path file system
      */
-    default boolean isRoot(NPath basePath) {
-        return getNames(basePath).isEmpty();
+    default Boolean isRoot(NPath basePath) {
+        return null;
     }
 
     /**
+     * return null to ask for default implementation
      * return true if this path is a simple name that do not contain '/' or
      * equivalent
      *
@@ -306,37 +205,12 @@ public interface NPathSPI {
      * @return true if this path is a simple name that do not contain '/' or
      * equivalent
      */
-    default boolean isName(NPath basePath) {
-        if (getNameCount(basePath) > 1) {
-            return false;
-        }
-        String v = toString();
-        switch (v) {
-            case "/":
-            case "\\":
-            case ".":
-            case "..": {
-                return false;
-            }
-        }
-        for (char c : v.toCharArray()) {
-            switch (c) {
-                case '/':
-                case '\\': {
-                    return false;
-                }
-            }
-        }
-        return true;
+    default Boolean isName(NPath basePath) {
+        return null;
     }
 
     default NPath subpath(NPath basePath, int beginIndex, int endIndex) {
-        List<String> items = getNames(basePath).subList(beginIndex, endIndex);
-        NPath root = getRoot(basePath);
-        for (String item : items) {
-            root = root.resolve(item);
-        }
-        return root;
+        return null;
     }
 
 
@@ -353,46 +227,15 @@ public interface NPathSPI {
      * tree rooted at a given starting file
      */
     default NStream<NPath> walk(NPath basePath, int maxDepth, NPathOption[] options) {
-        return NStream.of(new Iterator<NPath>() {
-            Stack<NPath> stack = new Stack<>();
-            NPath curr = null;
-
-            {
-                stack.push(basePath);
-            }
-
-            @Override
-            public boolean hasNext() {
-                if (!stack.isEmpty()) {
-                    NPath currentPath = stack.pop();
-                    if (currentPath.isDirectory()) {
-                        if (maxDepth > 0) {
-                            for (NPath nPath : currentPath.list()) {
-                                stack.push(nPath);
-                            }
-                        }
-                    }
-                    curr = currentPath;
-                    return true;
-                } else {
-                    curr = null;
-                    return false;
-                }
-            }
-
-            @Override
-            public NPath next() {
-                return curr;
-            }
-        });
+        return null;
     }
 
     /**
      * @param basePath base path
      * @return
      */
-    default int getNameCount(NPath basePath) {
-        return getNames(basePath).size();
+    default Integer getNameCount(NPath basePath) {
+        return null;
     }
 
     default NPath toCompressedForm(NPath basePath) {
@@ -400,69 +243,29 @@ public interface NPathSPI {
     }
 
 
-    default void moveTo(NPath basePath, NPath other, NPathOption... options) {
-        copyTo(basePath, other, options);
-        delete(basePath, true);
+    default boolean moveTo(NPath basePath, NPath other, NPathOption... options) {
+        return false;
     }
 
-    default void copyTo(NPath basePath, NPath other, NPathOption... options) {
-        try (InputStream in = basePath.getInputStream(options)) {
-            try (OutputStream out = other.getOutputStream(options)) {
-                byte[] buffer = new byte[400 * 1024];
-                int len;
-                long count = 0;
-                try {
-                    while ((len = in.read(buffer)) > 0) {
-                        count += len;
-                        out.write(buffer, 0, len);
-                    }
-                } catch (IOException ex) {
-                    throw new NIOException(ex);
-                }
-            }
-        } catch (Exception e) {
-            throw new NIOException(e);
-        }
+    default boolean copyTo(NPath basePath, NPath other, NPathOption... options) {
+        return false;
     }
 
-    default void walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
-        Stack<NPath> stack = new Stack<>();
-        Stack<Boolean> visitedStack = new Stack<>();
-
-        stack.push(basePath);
-        visitedStack.push(false);
-
-        while (!stack.isEmpty()) {
-            NPath currentPath = stack.pop();
-            boolean visited = visitedStack.pop();
-
-            if (visited) {
-                visitor.postVisitDirectory(currentPath, null);
-                continue;
-            }
-
-            if (currentPath.isDirectory()) {
-                visitor.preVisitDirectory(currentPath);
-                stack.push(currentPath);
-                visitedStack.push(true);
-                try {
-                    if (maxDepth > 0) {
-                        for (NPath nPath : currentPath.list()) {
-                            stack.push(nPath);
-                            visitedStack.push(false); // Mark children for pre-visit first
-                        }
-                    }
-                } catch (RuntimeException e) {
-                    visitor.postVisitDirectory(currentPath, e);
-                }
-            } else {
-                visitor.visitFile(currentPath);
-            }
-        }
+    /**
+     * return true if implemented
+     *
+     * @param basePath basePath
+     * @param visitor  visitor
+     * @param maxDepth maxDepth
+     * @param options  options
+     * @return true if implemented, false to trigger default implementation
+     */
+    default boolean walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
+        return false;
     }
 
-    default int compareTo(NPath basePath, NPath other) {
-        return toString().compareTo(basePath.toString());
+    default Integer compareTo(NPath basePath, NPath other) {
+        return null;
     }
 
     default byte[] getDigest(NPath basePath, String algo) {

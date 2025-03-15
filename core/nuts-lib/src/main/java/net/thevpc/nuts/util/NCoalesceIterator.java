@@ -25,10 +25,10 @@ public class NCoalesceIterator<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        return NElements.of().ofObject()
+        return NElements.of().ofObjectBuilder()
                 .set("type", "Coalesce")
                 .set("items",
-                        NElements.of().ofArray()
+                        NElements.of().ofArrayBuilder()
                                 .addAll(
                                         new ArrayList<>(children)
                                                 .stream().map(

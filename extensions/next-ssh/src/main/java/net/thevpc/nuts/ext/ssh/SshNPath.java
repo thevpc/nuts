@@ -182,7 +182,6 @@ class SshNPath implements NPathSPI {
         return "ssh";
     }
 
-    @Override
     public NPath resolve(NPath basePath, String path) {
         NConnexionString c = this.path.copy();
         if (NBlankable.isBlank(path)) {
@@ -205,8 +204,7 @@ class SshNPath implements NPathSPI {
         return resolve(basePath, path.getLocation());
     }
 
-    @Override
-    public NPath resolveSibling(NPath basePath, String path) {
+    private NPath resolveSibling(NPath basePath, String path) {
         NConnexionString c = this.path.copy();
         if (NBlankable.isBlank(path)) {
             return basePath;
@@ -310,7 +308,7 @@ class SshNPath implements NPathSPI {
     }
 
     @Override
-    public long getContentLength(NPath basePath) {
+    public long contentLength(NPath basePath) {
         try (SShConnection c = prepareSshConnexionGrab()) {
             c.grabOutputString();
             int i = c.execStringCommand("ls -l " + path.getPath());
@@ -495,12 +493,12 @@ class SshNPath implements NPathSPI {
     }
 
     @Override
-    public boolean isName(NPath basePath) {
+    public Boolean isName(NPath basePath) {
         return false;
     }
 
     @Override
-    public int getNameCount(NPath basePath) {
+    public Integer getNameCount(NPath basePath) {
         String location = getLocation(basePath);
         if (NBlankable.isBlank(location)) {
             return 0;
@@ -509,7 +507,7 @@ class SshNPath implements NPathSPI {
     }
 
     @Override
-    public boolean isRoot(NPath basePath) {
+    public Boolean isRoot(NPath basePath) {
         String loc = getLocation(basePath);
         if (NBlankable.isBlank(loc)) {
             return false;
@@ -578,7 +576,7 @@ class SshNPath implements NPathSPI {
     }
 
     @Override
-    public void moveTo(NPath basePath, NPath other, NPathOption... options) {
+    public boolean moveTo(NPath basePath, NPath other, NPathOption... options) {
         if (other.toString().startsWith("ssh:")) {
             NConnexionString sp = NConnexionString.of(other.toString()).get();
             if (
@@ -592,51 +590,19 @@ class SshNPath implements NPathSPI {
                 if (r != 0) {
                     throw new NIOException(NMsg.ofC("unable to move %s", this));
                 }
-                return;
+                return true;
             }
         }
         copyTo(basePath, other, options);
         delete(basePath, true);
+        return true;
     }
 
     @Override
-    public void copyTo(NPath basePath, NPath other, NPathOption... options) {
-        NCp.of().from(basePath).to(other).run();
-    }
-
-    @Override
-    public void walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
-        for (NPath x : walk(basePath, maxDepth, options)) {
-            if (x.isDirectory()) {
-                NTreeVisitResult r = visitor.preVisitDirectory(x);
-                switch (r) {
-                    case CONTINUE: {
-                        break;
-                    }
-                    case TERMINATE: {
-                        return;
-                    }
-                    case SKIP_SIBLINGS:
-                    case SKIP_SUBTREE: {
-                        throw new NIllegalArgumentException(NMsg.ofC("unsupported %s", r));
-                    }
-                }
-            } else if (x.isRegularFile()) {
-                NTreeVisitResult r = visitor.visitFile(x);
-                switch (r) {
-                    case CONTINUE: {
-                        break;
-                    }
-                    case TERMINATE: {
-                        return;
-                    }
-                    case SKIP_SIBLINGS:
-                    case SKIP_SUBTREE: {
-                        throw new NIllegalArgumentException(NMsg.ofC("unsupported %s", r));
-                    }
-                }
-            }
-        }
+    public boolean copyTo(NPath basePath, NPath other, NPathOption... options) {
+        //TODO check if the two files are on the same ssh filesystem ?
+        NCp.of().from(basePath).to(other).addOptions(options).run();
+        return true;
     }
 
     @Override
@@ -650,20 +616,6 @@ class SshNPath implements NPathSPI {
         if (o == null || getClass() != o.getClass()) return false;
         SshNPath that = (SshNPath) o;
         return Objects.equals(path, that.path);
-    }
-
-    @Override
-    public NPath toRelativePath(NPath basePath, NPath parentPath) {
-        String child = basePath.getLocation();
-        String parent = parentPath.getLocation();
-        if (child.startsWith(parent)) {
-            child = child.substring(parent.length());
-            if (child.startsWith("/") || child.startsWith("\\")) {
-                child = child.substring(1);
-            }
-            return NPath.of(child);
-        }
-        return null;
     }
 
     @Override
@@ -748,8 +700,4 @@ class SshNPath implements NPathSPI {
         return "/" + String.join("/", a);
     }
 
-    @Override
-    public int compareTo(NPath basePath, NPath other) {
-        return basePath.toString().compareTo(other.toString());
-    }
 }

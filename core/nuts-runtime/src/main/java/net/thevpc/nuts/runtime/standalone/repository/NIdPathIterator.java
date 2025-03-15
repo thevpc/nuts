@@ -30,8 +30,6 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NIteratorBase;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.util.NMsg;
 
@@ -83,7 +81,7 @@ public class NIdPathIterator extends NIteratorBase<NId> {
 
     @Override
     public NElement describe() {
-        return NElements.of().ofObject()
+        return NElements.of().ofObjectBuilder()
                 .set("type", "ScanPath")
                 .set("repository", repository == null ? null : repository.getName())
                 .set("filter", NEDesc.describeResolveOrDestruct(filter))

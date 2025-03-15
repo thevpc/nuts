@@ -639,7 +639,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                 return createTableModel(_elems().toElement(a));
             }
             case OBJECT: {
-                return createTableModel(_elems().toElement(elem.asObject().get().entries()));
+                return createTableModel(_elems().toElement(elem.asObject().get().children()));
             }
             case ARRAY: {
 
@@ -726,14 +726,21 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
             switch (value.type()) {
                 case OBJECT: {
                     SimpleRow e = new SimpleRow();
-                    for (NElementEntry nutsNamedValue : value.asObject().get().entries()) {
-                        NElement k = nutsNamedValue.getKey();
-                        if (!k.isString()) {
-                            k = _elems().ofString(
-                                    k.toString()
-                            );
+                    int column = 1;
+                    for (NElement ne : value.asObject().get().children()) {
+                        if(ne instanceof NElementEntry){
+                            NElementEntry nee=(NElementEntry) ne;
+                            NElement k = nee.getKey();
+                            if (!k.isString()) {
+                                k = _elems().ofString(
+                                        k.toString()
+                                );
+                            }
+                            e.cells.add(resolveColumnsFromCell(k.asString().get(), nee.getValue()));
+                        }else{
+                            e.cells.add(resolveColumnsFromCell("COL " + column,ne));
                         }
-                        e.cells.add(resolveColumnsFromCell(k.asString().get(), nutsNamedValue.getValue()));
+                        column++;
                     }
                     return e;
                 }

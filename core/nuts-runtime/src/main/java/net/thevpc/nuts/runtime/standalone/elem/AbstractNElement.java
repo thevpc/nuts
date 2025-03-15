@@ -36,6 +36,7 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author thevpc
@@ -384,4 +385,15 @@ public abstract class AbstractNElement implements NElement {
         return NLiteral.of(asObjectAt(index).orNull());
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        AbstractNElement that = (AbstractNElement) o;
+        return type == that.type && Objects.deepEquals(annotations, that.annotations);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, Arrays.hashCode(annotations));
+    }
 }

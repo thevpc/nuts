@@ -74,7 +74,6 @@ public class FilePath implements NPathSPI {
         return "";
     }
 
-    @Override
     public NPath resolve(NPath basePath, String path) {
         if (NBlankable.isBlank(path)) {
             return fastPath(value, getWorkspace());
@@ -102,7 +101,6 @@ public class FilePath implements NPathSPI {
         return resolve(basePath, path.toString());
     }
 
-    @Override
     public NPath resolveSibling(NPath basePath, String path) {
         if (path == null) {
             return getParent(basePath);
@@ -150,18 +148,18 @@ public class FilePath implements NPathSPI {
 
     @Override
     public NPathType type(NPath basePath) {
-        if(Files.isDirectory(value)){
+        if (Files.isDirectory(value)) {
             return NPathType.DIRECTORY;
         }
-        if(Files.isRegularFile(value)){
+        if (Files.isRegularFile(value)) {
             return NPathType.FILE;
         }
         PosixFileAttributes a = getUattr();
-        if(a != null){
-            if(a.isSymbolicLink()) {
+        if (a != null) {
+            if (a.isSymbolicLink()) {
                 return NPathType.SYMBOLIC_LINK;
             }
-            if(a.isOther()) {
+            if (a.isOther()) {
                 return NPathType.OTHER;
             }
         }
@@ -178,7 +176,7 @@ public class FilePath implements NPathSPI {
         return Files.exists(value);
     }
 
-    public long getContentLength(NPath basePath) {
+    public long contentLength(NPath basePath) {
         try {
             return Files.size(value);
         } catch (IOException e) {
@@ -487,7 +485,7 @@ public class FilePath implements NPathSPI {
     }
 
     @Override
-    public boolean isName(NPath basePath) {
+    public Boolean isName(NPath basePath) {
         if (value.getNameCount() > 1) {
             return false;
         }
@@ -512,25 +510,25 @@ public class FilePath implements NPathSPI {
     }
 
     @Override
-    public int getNameCount(NPath basePath) {
+    public Integer getNameCount(NPath basePath) {
         return value.getNameCount();
     }
 
     @Override
-    public boolean isRoot(NPath basePath) {
+    public Boolean isRoot(NPath basePath) {
         return value.getNameCount() == 0;
     }
 
     @Override
     public NPath getRoot(NPath basePath) {
-        if (isRoot(basePath)) {
+        if (value.getNameCount() == 0) {
             return basePath;
         }
-        NPath parent = basePath.getParent();
-        if (parent == null) {
+        Path root = value.getRoot();
+        if (root == null) {
             return null;
         }
-        return parent.getRoot();
+        return NPath.of(root);
     }
 
     @Override
@@ -573,7 +571,7 @@ public class FilePath implements NPathSPI {
     }
 
     @Override
-    public void moveTo(NPath basePath, NPath other, NPathOption... options) {
+    public boolean moveTo(NPath basePath, NPath other, NPathOption... options) {
         Path f = other.toPath().orNull();
         if (f != null) {
             try {
@@ -585,15 +583,17 @@ public class FilePath implements NPathSPI {
             copyTo(basePath, other, options);
             delete(basePath, true);
         }
+        return true;
     }
 
     @Override
-    public void copyTo(NPath basePath, NPath other, NPathOption... options) {
+    public boolean copyTo(NPath basePath, NPath other, NPathOption... options) {
         NCp.of().from(fastPath(value, workspace)).to(other).addOptions(options).run();
+        return true;
     }
 
     @Override
-    public void walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
+    public boolean walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
         Set<FileVisitOption> foptions = new HashSet<>();
         for (NPathOption option : options) {
             switch (option) {
@@ -644,6 +644,7 @@ public class FilePath implements NPathSPI {
         } catch (IOException e) {
             throw new NIOException(e);
         }
+        return true;
     }
 
     private String getSep() {
@@ -857,23 +858,6 @@ public class FilePath implements NPathSPI {
             return NConstants.Support.NO_SUPPORT;
         }
 
-    }
-
-    @Override
-    public NPath toRelativePath(NPath basePath, NPath parentPath) {
-        String child = basePath.getLocation();
-        String parent = parentPath.getLocation();
-        return NPath.of(NIOUtils.toRelativePath(child, parent));
-    }
-
-    @Override
-    public byte[] getDigest(NPath basePath, String algo) {
-        return null;
-    }
-
-    @Override
-    public int compareTo(NPath basePath, NPath other) {
-        return basePath.toString().compareTo(other.toString());
     }
 
 }

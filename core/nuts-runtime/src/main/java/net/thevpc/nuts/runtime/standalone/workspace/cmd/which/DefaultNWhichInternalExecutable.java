@@ -75,7 +75,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
 
                             } else {
                                 NOut.println(
-                                        elem.ofObject()
+                                        elem.ofObjectBuilder()
                                                 .set("name", arg)
                                                 .set("type", "system-command")
                                                 .set("description", p.getDescription())
@@ -94,7 +94,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                                 ));
                             } else {
                                 NOut.println(
-                                        elem.ofObject()
+                                        elem.ofObjectBuilder()
                                                 .set("name", arg)
                                                 .set("type", "alias")
                                                 .set("description", p.getDescription())
@@ -121,7 +121,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                                 ));
                             } else {
                                 NOut.println(
-                                        elem.ofObject()
+                                        elem.ofObjectBuilder()
                                                 .set("name", arg)
                                                 .set("type", "artifact")
                                                 .set("id", p.getId().toString())
@@ -139,7 +139,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                                 ));
                             } else {
                                 NOut.println(
-                                        elem.ofObject()
+                                        elem.ofObjectBuilder()
                                                 .set("name", arg)
                                                 .set("type", "internal-command")
                                                 .set("description", p.getDescription())
@@ -156,7 +156,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                                 ));
                             } else {
                                 NOut.println(
-                                        elem.ofObject()
+                                        elem.ofObjectBuilder()
                                                 .set("name", arg)
                                                 .set("type", "unknown-command")
                                                 .build()
@@ -175,7 +175,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                     out.println(NMsg.ofC("%s : %s", factory.ofStyled(arg, NTextStyle.primary4()), factory.ofStyled("not found", NTextStyle.error())));
                 } else {
                     session.eout().add(
-                            elem.ofObject()
+                            elem.ofObjectBuilder()
                                     .set("name", arg)
                                     .set("type", "not-found")
                                     .build()

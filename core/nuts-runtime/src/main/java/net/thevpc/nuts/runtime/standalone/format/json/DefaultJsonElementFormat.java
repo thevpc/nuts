@@ -11,14 +11,14 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
@@ -70,7 +70,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
             case BYTE:
             case SHORT:
             case INTEGER:
-            case LONG:{
+            case LONG: {
                 out.print(data.asNumber().orElse(0));
                 break;
             }
@@ -188,7 +188,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                     out.print('{');
                     boolean first = true;
                     String indent2 = indent + "  ";
-                    for (NElementEntry e : obj.entries()) {
+                    for (NElement e : obj.children()) {
                         if (first) {
                             first = false;
                         } else {
@@ -197,14 +197,24 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                         if (indent != null) {
                             out.print('\n');
                             out.print(indent2);
-                            write(out, e.getKey(), indent2);
-                            out.print(':');
-                            out.print(' ');
-                            write(out, e.getValue(), indent2);
+                            if (e instanceof NElementEntry) {
+                                NElementEntry ee = (NElementEntry) e;
+                                write(out, ee.getKey(), indent2);
+                                out.print(':');
+                                out.print(' ');
+                                write(out, ee.getValue(), indent2);
+                            } else {
+                                write(out, e, indent2);
+                            }
                         } else {
-                            write(out, e.getKey(), null);
-                            out.print(':');
-                            write(out, e.getValue(), null);
+                            if (e instanceof NElementEntry) {
+                                NElementEntry ee = (NElementEntry) e;
+                                write(out, ee.getKey(), null);
+                                out.print(':');
+                                write(out, ee.getValue(), null);
+                            } else {
+                                write(out, e, null);
+                            }
                         }
                     }
                     if (indent != null) {
@@ -323,7 +333,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
         }
 
         private NElement readJsonArray() {
-            NArrayElementBuilder array = builder().ofArray();
+            NArrayElementBuilder array = builder().ofArrayBuilder();
             readNext();
             skipWhiteSpaceAndComments();
             if (readChar(']')) {
@@ -347,7 +357,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
 
         private NElement readJsonObject() {
             NSession session = context.getSession();
-            NObjectElementBuilder object = builder().ofObject();
+            NObjectElementBuilder object = builder().ofObjectBuilder();
             readNext();
             skipWhiteSpaceAndComments();
             if (readChar('}')) {

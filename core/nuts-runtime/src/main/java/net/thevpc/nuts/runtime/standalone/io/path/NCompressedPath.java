@@ -245,8 +245,8 @@ public class NCompressedPath extends NPathBase {
     }
 
     @Override
-    public long getContentLength() {
-        return base.getContentLength();
+    public long contentLength() {
+        return base.contentLength();
     }
 
     @Override
@@ -303,7 +303,7 @@ public class NCompressedPath extends NPathBase {
     }
 
     @Override
-    public NPath toRelative(NPath basePath) {
+    public NOptional<NPath> toRelative(NPath basePath) {
         return base.toRelative(basePath);
     }
 

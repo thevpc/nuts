@@ -2,6 +2,8 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementType;
+import net.thevpc.nuts.io.NInputStreamProvider;
+import net.thevpc.nuts.io.NReaderProvider;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.ParameterizedType;
@@ -80,11 +82,33 @@ public class DefaultNLiteral implements NLiteral {
                 case "java.util.Date":
                 case "java.time.Instant":
                     return NElementType.INSTANT;
+                case "java.time.LocalDateTime":
+                    return NElementType.DATETIME;
+                case "java.time.LocalDate":
+                    return NElementType.DATE;
+                case "java.time.LocalTime":
+                    return NElementType.TIME;
                 case "java.lang.Boolean":
                     return NElementType.BOOLEAN;
+                case "net.thevpc.nuts.elem.NDComplex":
+                    return NElementType.DOUBLE_COMPLEX;
+                case "net.thevpc.nuts.elem.NFComplex":
+                    return NElementType.FLOAT_COMPLEX;
+                case "net.thevpc.nuts.elem.NBComplex":
+                    return NElementType.BIG_COMPLEX;
+                case "net.thevpc.nuts.elem.NName":
+                    return NElementType.NAME;
+                case "net.thevpc.nuts.elem.NAliasName":
+                    return NElementType.ALIAS;
             }
             if (value instanceof Number) {
                 return NElementType.FLOAT;
+            }
+            if (value instanceof NInputStreamProvider) {
+                return NElementType.BINARY_STREAM;
+            }
+            if (value instanceof NReaderProvider) {
+                return NElementType.CHAR_STREAM;
             }
             if (value instanceof CharSequence) {
                 return NElementType.STRING;
@@ -648,10 +672,10 @@ public class DefaultNLiteral implements NLiteral {
                 }
             }
             if (value instanceof NElement) {
-                return ((NElement)value).asObjectAt(index);
+                return ((NElement) value).asObjectAt(index);
             }
         }
-        return NOptional.ofEmpty(()-> NMsg.ofC("invalid object at %s",index));
+        return NOptional.ofEmpty(() -> NMsg.ofC("invalid object at %s", index));
     }
 
     @Override
@@ -769,6 +793,11 @@ public class DefaultNLiteral implements NLiteral {
             case LONG:
             case FLOAT:
             case DOUBLE:
+            case BIG_COMPLEX:
+            case BIG_INTEGER:
+            case BIG_DECIMAL:
+            case DOUBLE_COMPLEX:
+            case FLOAT_COMPLEX:
                 return true;
             case STRING: {
                 String s = asString().get();
@@ -841,10 +870,10 @@ public class DefaultNLiteral implements NLiteral {
 
     @Override
     public <ET> NOptional<ET> asType(Type expectedType) {
-        if(expectedType instanceof Class<?>){
+        if (expectedType instanceof Class<?>) {
             return (NOptional<ET>) asType((Class<?>) expectedType);
         }
-        if(expectedType instanceof ParameterizedType){
+        if (expectedType instanceof ParameterizedType) {
             return (NOptional<ET>) asType(((ParameterizedType) expectedType).getRawType());
         }
         return NOptional.ofError(() -> NMsg.ofC("unsupported type %s", expectedType));

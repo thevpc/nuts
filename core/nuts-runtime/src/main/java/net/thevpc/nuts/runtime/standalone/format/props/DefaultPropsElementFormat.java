@@ -11,33 +11,27 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
 package net.thevpc.nuts.runtime.standalone.format.props;
 
-import net.thevpc.nuts.NParseException;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NUnsupportedOperationException;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
-import net.thevpc.nuts.runtime.standalone.format.json.ReaderLocation;
 import net.thevpc.nuts.util.NHex;
 import net.thevpc.nuts.util.NMsg;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
@@ -77,7 +71,7 @@ public class DefaultPropsElementFormat implements NElementStreamFormat {
             case BYTE:
             case SHORT:
             case INTEGER:
-            case LONG:{
+            case LONG: {
                 out.print(data.asNumber().orElse(0));
                 break;
             }
@@ -189,11 +183,10 @@ public class DefaultPropsElementFormat implements NElementStreamFormat {
             }
             case OBJECT: {
                 NObjectElement obj = data.asObject().get();
-                if (obj.size() == 0) {
-                } else {
+                if (obj.size() > 0) {
                     boolean first = true;
                     String indent2 = indent + "  ";
-                    for (NElementEntry e : obj.entries()) {
+                    for (NElement e : obj.children()) {
                         if (first) {
                             first = false;
                         } else {
@@ -202,14 +195,24 @@ public class DefaultPropsElementFormat implements NElementStreamFormat {
                         if (indent != null) {
                             out.print('\n');
                             out.print(indent2);
-                            write(out, e.getKey(), indent2);
-                            out.print(':');
-                            out.print(' ');
-                            write(out, e.getValue(), indent2);
+                            if (e instanceof NElementEntry) {
+                                NElementEntry ee = (NElementEntry) e;
+                                write(out, ee.getKey(), indent2);
+                                out.print(':');
+                                out.print(' ');
+                                write(out, ee.getValue(), indent2);
+                            } else {
+                                write(out, e, indent2);
+                            }
                         } else {
-                            write(out, e.getKey(), null);
-                            out.print(':');
-                            write(out, e.getValue(), null);
+                            if (e instanceof NElementEntry) {
+                                NElementEntry ee = (NElementEntry) e;
+                                write(out, ee.getKey(), null);
+                                out.print(':');
+                                write(out, ee.getValue(), null);
+                            } else {
+                                write(out, e, null);
+                            }
                         }
                     }
                     if (indent != null) {

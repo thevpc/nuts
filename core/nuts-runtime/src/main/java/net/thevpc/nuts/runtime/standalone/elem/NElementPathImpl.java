@@ -190,14 +190,14 @@ public class NElementPathImpl {
 
         public NElementOrEntry(int index, NElement value) {
             this.index = index;
-            this.key = NElements.of().ofInt(index);
-            this.value = value;
-        }
-
-        public NElementOrEntry(int index, NElementEntry entry) {
-            this.index = index;
-            this.key = entry.getKey();
-            this.value = entry.getValue();
+            if(value instanceof NElementEntry){
+                NElementEntry ee=(NElementEntry) value;
+                this.key = ee.getKey();
+                this.value = ee.getValue();
+            }else{
+                this.key = NElements.of().ofInt(index);
+                this.value = value;
+            }
         }
 
         List<NElementOrEntry> children() {
@@ -210,7 +210,7 @@ public class NElementPathImpl {
                 }
             } else if (value.isObject()) {
                 int i = 0;
-                for (NElementEntry item : value.asObject().get().entries()) {
+                for (NElement item : value.asObject().get().children()) {
                     all.add(new NElementOrEntry(i, item));
                     i++;
                 }

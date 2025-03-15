@@ -12,13 +12,13 @@
  * <br>
  * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
@@ -40,7 +40,7 @@ import java.util.Map;
 public interface NObjectElementBuilder extends NElementBuilder {
 
     static NObjectElementBuilder of() {
-        return NElements.of().ofObject();
+        return NElements.of().ofObjectBuilder();
     }
 
     /**
@@ -73,7 +73,9 @@ public interface NObjectElementBuilder extends NElementBuilder {
     NObjectElementBuilder add(String name, String value);
 
     NObjectElementBuilder addAll(Map<NElement, NElement> other);
+
     NObjectElementBuilder addAll(List<NElementEntry> other);
+
     NObjectElementBuilder setAll(Map<NElement, NElement> other);
 
     /**
@@ -90,6 +92,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
      * @return this {@code this} instance
      */
     NObjectElementBuilder remove(String name);
+
     NObjectElementBuilder removeAll(String name);
 
     /**
@@ -106,7 +109,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
      *
      * @return object attributes
      */
-    Collection<NElementEntry> children();
+    Collection<NElement> children();
 
     public List<NElement> getAll(NElement s);
 
@@ -152,7 +155,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
      * @param entry other entry
      * @return this {@code this} instance
      */
-    NObjectElementBuilder add(NElementEntry entry);
+    NObjectElementBuilder add(NElement entry);
 
     NObjectElementBuilder set(NElementEntry entry);
 
@@ -187,7 +190,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
      * @param entries other entry
      * @return this {@code this} instance
      */
-    NObjectElementBuilder addAll(NElementEntry... entries);
+    NObjectElementBuilder addAll(NElement... entries);
 
     /**
      * set all properties from the given {@code other} instance.
@@ -207,21 +210,33 @@ public interface NObjectElementBuilder extends NElementBuilder {
     NObjectElementBuilder addAll(NObjectElementBuilder other);
 
     NObjectElementBuilder addAnnotations(List<NElementAnnotation> annotations);
+
     NObjectElementBuilder addAnnotation(NElementAnnotation annotation);
-    NObjectElementBuilder addAnnotationAt(int index,NElementAnnotation annotation);
+
+    NObjectElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
+
     NObjectElementBuilder removeAnnotationAt(int index);
+
     NObjectElementBuilder clearAnnotations();
 
 
-    NObjectElementBuilder addArgs(List<NElement> args) ;
-    NObjectElementBuilder addArg(NElement arg) ;
-    NObjectElementBuilder addArgAt(int index, NElement arg) ;
-    NObjectElementBuilder removeArgAt(int index) ;
-    NObjectElementBuilder clearArgs() ;
+    NObjectElementBuilder addArgs(List<NElement> args);
+
+    NObjectElementBuilder addArg(NElement arg);
+
+    NObjectElementBuilder addArgAt(int index, NElement arg);
+
+    NObjectElementBuilder removeArgAt(int index);
+
+    NObjectElementBuilder clearArgs();
+
     List<NElement> getArgs();
 
-    String getName() ;
-    NObjectElementBuilder setName(String name) ;
-    boolean isHasArgs() ;
+    String getName();
+
+    NObjectElementBuilder setName(String name);
+
+    boolean isWithArgs();
+
     NObjectElementBuilder setHasArgs(boolean hasArgs);
 }

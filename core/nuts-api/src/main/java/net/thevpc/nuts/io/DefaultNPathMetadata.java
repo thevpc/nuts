@@ -79,7 +79,7 @@ public class DefaultNPathMetadata {
 
     public NOptional<Long> getContentLength() {
         return NOptional.ofNamed(contentLength, "contentLength")
-                .orElseOf(() -> path.getContentLength())
+                .orElseOf(() -> path.contentLength())
                 ;
     }
 

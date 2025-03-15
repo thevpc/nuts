@@ -108,11 +108,11 @@ public class DefaultNUninstallCmd extends AbstractNUninstallCmd {
                 out.resetLine().println(msg);
             } else {
                 NElements elem = NElements.of();
-                session.eout().add(elem.ofObject()
+                session.eout().add(elem.ofObjectBuilder()
                         .set("command", "warning")
                         .set("artifact-kind", skind)
                         .set("action-warning", saction)
-                        .set("artifacts", elem.ofArray().addAll(
+                        .set("artifacts", elem.ofArrayBuilder().addAll(
                                 all.stream().map(Object::toString).toArray(String[]::new)
                         ).build())
                         .build()

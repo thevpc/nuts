@@ -144,6 +144,8 @@ public interface NElements extends NContentTypeFormat {
 
     NElements json();
 
+    NElements tson();
+
     /**
      * return current value to format.
      *
@@ -392,19 +394,21 @@ public interface NElements extends NContentTypeFormat {
     //    NutsElementEntryBuilder forEntry();
     NElementEntry ofEntry(NElement key, NElement value);
 
+    NElementEntryBuilder ofEntryBuilder(NElement key, NElement value);
+
     /**
      * create object element builder (mutable)
      *
      * @return object element
      */
-    NObjectElementBuilder ofObject();
+    NObjectElementBuilder ofObjectBuilder();
 
     /**
      * create array element builder (mutable)
      *
      * @return array element
      */
-    NArrayElementBuilder ofArray();
+    NArrayElementBuilder ofArrayBuilder();
 
     NArrayElement ofEmptyArray();
 
@@ -482,4 +486,10 @@ public interface NElements extends NContentTypeFormat {
     NProgressFactory getProgressFactory();
 
     NElements setProgressFactory(NProgressFactory progressFactory);
+
+    NUpletElementBuilder ofUpletBuilder();
+
+    NUpletElement ofEmptyUplet();
+
+    NMatrixElementBuilder ofMatrixBuilder();
 }

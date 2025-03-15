@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
@@ -54,20 +53,20 @@ public class Test08_ElementTest {
     public void test1() {
         NElements e = NElements.of();
         NElement p
-                = e.ofArray()
+                = e.ofArrayBuilder()
                 .add(
-                        e.ofObject().set("first",
-                                        e.ofObject()
+                        e.ofObjectBuilder().set("first",
+                                        e.ofObjectBuilder()
                                                 .set("name", e.ofString("first name"))
                                                 .set("valid", e.ofTrue())
                                                 .set("children",
-                                                        e.ofArray().add(
-                                                                        e.ofObject()
+                                                        e.ofArrayBuilder().add(
+                                                                        e.ofObjectBuilder()
                                                                                 .set("path", e.ofString("path1"))
                                                                                 .set("color", e.ofString("red"))
                                                                                 .build())
                                                                 .add(
-                                                                        e.ofObject()
+                                                                        e.ofObjectBuilder()
                                                                                 .set("path", e.ofString("path2"))
                                                                                 .set("color", e.ofString("green"))
                                                                                 .build()
@@ -76,19 +75,19 @@ public class Test08_ElementTest {
                                                 .build()
                                 )
                                 .build()
-                ).add(e.ofObject().set("second",
-                        e.ofObject()
+                ).add(e.ofObjectBuilder().set("second",
+                        e.ofObjectBuilder()
                                 .set("name", e.ofString("second name"))
                                 .set("valid", e.ofTrue())
                                 .set("children",
-                                        e.ofArray().add(
-                                                        e.ofObject()
+                                        e.ofArrayBuilder().add(
+                                                        e.ofObjectBuilder()
                                                                 .set("path", e.ofString("path3"))
                                                                 .set("color", e.ofString("yellow"))
                                                                 .build()
                                                 )
                                                 .add(
-                                                        e.ofObject()
+                                                        e.ofObjectBuilder()
                                                                 .set("path", e.ofString("path4"))
                                                                 .set("color", e.ofString("magenta"))
                                                                 .build()
@@ -228,7 +227,7 @@ public class Test08_ElementTest {
 
         //styled element are destructed to strings
         NElement q = e.toElement(h);
-        NElement expected=e.ofObject()
+        NElement expected=e.ofObjectBuilder()
                 .set("a","13")
                 .set("b","Hello").build();
         Assertions.assertEquals(expected,q);
@@ -237,7 +236,7 @@ public class Test08_ElementTest {
         //prevent styled element to be destructed
         e.setIndestructibleObjects(c->c instanceof Class && NTextStyled.class.isAssignableFrom((Class<?>) c));
         q = e.toElement(h);
-        expected=e.ofObject()
+        expected=e.ofObjectBuilder()
                 .set("a","13")
                 .set("b",
                         e.ofCustom(NText.ofStyled("Hello", NTextStyle.success()))
@@ -246,14 +245,14 @@ public class Test08_ElementTest {
 
         //destruct custom elements
         e.setIndestructibleObjects(null);
-        NObjectElement b = e.ofObject()
+        NObjectElement b = e.ofObjectBuilder()
                 .set("a", "13")
                 .set("b",
                         e.ofCustom(NText.ofStyled("Hello", NTextStyle.success()))
                 ).build();
 
         q = e.toElement(b);
-        expected=e.ofObject()
+        expected=e.ofObjectBuilder()
                 .set("a","13")
                 .set("b","Hello").build();
         Assertions.assertEquals(expected,q);

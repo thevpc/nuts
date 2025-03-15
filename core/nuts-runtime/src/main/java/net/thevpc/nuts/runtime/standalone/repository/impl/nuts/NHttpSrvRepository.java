@@ -311,7 +311,7 @@ public class NHttpSrvRepository extends NCachedRepository {
 
         @Override
         public NElement describe() {
-            return NElements.of().ofObject()
+            return NElements.of().ofObjectBuilder()
                     .set("type", "ScanArchetypeCatalog")
                     .set("source", source0.toString())
                     .build();

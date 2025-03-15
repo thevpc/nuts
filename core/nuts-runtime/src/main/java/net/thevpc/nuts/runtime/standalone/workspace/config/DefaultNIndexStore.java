@@ -81,7 +81,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
                     }
                 },
                 ()-> NElements.of()
-                        .ofObject()
+                        .ofObjectBuilder()
                         .set("type","SearchIndexVersions")
                         .set("source", getIndexURL().resolve( NConstants.Folders.ID).resolve( "allVersions").toString())
                         .build()
@@ -111,7 +111,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
                     }
                 },
                 ()-> NElements.of()
-                        .ofObject().set("type","SearchIndexPackages")
+                        .ofObjectBuilder().set("type","SearchIndexPackages")
                         .set("source", getIndexURL().resolve(NConstants.Folders.ID).toString())
                         .set("filter", NEDesc.describeResolveOrToString(filter))
                         .build()

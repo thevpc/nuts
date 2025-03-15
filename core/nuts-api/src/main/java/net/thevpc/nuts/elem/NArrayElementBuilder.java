@@ -38,7 +38,7 @@ import java.util.List;
 public interface NArrayElementBuilder extends NElementBuilder {
 
     static NArrayElementBuilder of() {
-        return NElements.of().ofArray();
+        return NElements.of().ofArrayBuilder();
     }
 
     /**
@@ -320,7 +320,7 @@ public interface NArrayElementBuilder extends NElementBuilder {
     List<NElement> getArgs();
     String getName() ;
     NArrayElementBuilder setName(String name) ;
-    boolean isHasArgs() ;
-    NArrayElementBuilder setHasArgs(boolean hasArgs);
+    boolean isWithArgs() ;
+    NArrayElementBuilder setWithArgs(boolean hasArgs);
 
 }

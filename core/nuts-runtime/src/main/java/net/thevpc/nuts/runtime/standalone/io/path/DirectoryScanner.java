@@ -230,7 +230,7 @@ public class DirectoryScanner {
                 for (int i = t.length - 1; i >= 0; i--) {
                     stack.push(t[i]);
                 }
-                if (w.matchesSubPath(pop.toRelative(root))) {
+                if (w.matchesSubPath(pop.toRelative(root).orNull())) {
                     return pop;
                 }
             }

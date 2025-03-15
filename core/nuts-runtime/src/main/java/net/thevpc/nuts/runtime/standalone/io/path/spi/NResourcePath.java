@@ -169,23 +169,9 @@ public class NResourcePath implements NPathSPI {
     }
 
     @Override
-    public NPath resolve(NPath basePath, String path) {
-        return NPath.of(new NResourcePath(rebuildURL(
-                NPath.of(location).resolve(path).toString()
-                , ids.toArray(new NId[0])), workspace));
-    }
-
-    @Override
     public NPath resolve(NPath basePath, NPath path) {
         return NPath.of(new NResourcePath(rebuildURL(
                 NPath.of(location).resolve(path).toString()
-                , ids.toArray(new NId[0])), workspace));
-    }
-
-    @Override
-    public NPath resolveSibling(NPath basePath, String path) {
-        return NPath.of(new NResourcePath(rebuildURL(
-                NPath.of(location).resolveSibling(path).toString()
                 , ids.toArray(new NId[0])), workspace));
     }
 
@@ -243,12 +229,12 @@ public class NResourcePath implements NPathSPI {
     }
 
     @Override
-    public long getContentLength(NPath basePath) {
+    public long contentLength(NPath basePath) {
         NPath up = toURLPath();
         if (up == null) {
             return -1;
         }
-        return up.getContentLength();
+        return up.contentLength();
     }
 
     @Override
@@ -397,12 +383,12 @@ public class NResourcePath implements NPathSPI {
     }
 
     @Override
-    public boolean isName(NPath basePath) {
+    public Boolean isName(NPath basePath) {
         return false;
     }
 
     @Override
-    public int getNameCount(NPath basePath) {
+    public Integer getNameCount(NPath basePath) {
         String location = getLocation(basePath);
         if (NBlankable.isBlank(location)) {
             return 0;
@@ -411,7 +397,7 @@ public class NResourcePath implements NPathSPI {
     }
 
     @Override
-    public boolean isRoot(NPath basePath) {
+    public Boolean isRoot(NPath basePath) {
         String loc = getLocation(basePath);
         if (NBlankable.isBlank(loc)) {
             return false;
@@ -450,32 +436,8 @@ public class NResourcePath implements NPathSPI {
     }
 
     @Override
-    public void moveTo(NPath basePath, NPath other, NPathOption... options) {
+    public boolean moveTo(NPath basePath, NPath other, NPathOption... options) {
         throw new NIOException(NMsg.ofC("unable to move %s", this));
-    }
-
-    @Override
-    public void copyTo(NPath basePath, NPath other, NPathOption... options) {
-        NCp.of().from(basePath).to(other).addOptions(options).run();
-    }
-
-    @Override
-    public void walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
-        toURLPath().walkDfs(visitor, maxDepth, options);
-    }
-
-    @Override
-    public NPath toRelativePath(NPath basePath, NPath parentPath) {
-        String child = basePath.getLocation();
-        String parent = parentPath.getLocation();
-        if (child.startsWith(parent)) {
-            child = child.substring(parent.length());
-            if (child.startsWith("/") || child.startsWith("\\")) {
-                child = child.substring(1);
-            }
-            return NPath.of(child);
-        }
-        return null;
     }
 
     @Override
@@ -609,13 +571,4 @@ public class NResourcePath implements NPathSPI {
         }
     }
 
-    @Override
-    public byte[] getDigest(NPath basePath, String algo) {
-        return null;
-    }
-
-    @Override
-    public int compareTo(NPath basePath, NPath other) {
-        return basePath.toString().compareTo(other.toString());
-    }
 }
