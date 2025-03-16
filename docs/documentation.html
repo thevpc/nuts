@@ -417,7 +417,7 @@
                     <section id="Introduction" >
                         <h2 class="main-section1"><a href="#Introduction">1 Introducing Nuts</a></h2>
                         <div class="text-card">
-                        <p class="md-phrase"><mark class="md-code md-code-` ">nuts</mark> is a powerful and versatile open-source package manager designed to simplify software dependency management and enhance development workflows across a wide range of projects.  Whether you're working on a small personal project or a large-scale enterprise application, <mark class="md-code md-code-` ">nuts</mark> offers a streamlined and efficient way to manage libraries, tools, and dependencies, enabling you to focus on building and innovating. With its intuitive interface and robust features, <mark class="md-code md-code-` ">nuts</mark> supports seamless integration into existing workflows, providing flexibility and scalability for developers of all levels. Basically, it is what npm is for Javascript and pip for Python. However, <mark class="md-code md-code-` ">nuts</mark> presents several unique features that make it suitable for other technologies as well. This documentation is your gateway to understanding and utilizing the full potential of <mark class="md-code md-code-` ">nuts</mark>, covering everything from installation and basic setup to advanced usage patterns and customization options. For additional resources, detailed guides, and further insights into how Nuts can empower your development process, visit <a href="#other-resources" class="md-link">this link</a>. Let’s dive in and explore what makes <mark class="md-code md-code-` ">nuts</mark> a game-changer for modern development!</p>
+                        <p class="md-phrase"><mark class="md-code md-code-` ">nuts</mark> is a powerful and versatile open-source package manager designed to simplify software dependency management and enhance development workflows across a wide range of projects.  Whether you're working on a small personal project or a large-scale enterprise application, <mark class="md-code md-code-` ">nuts</mark> offers a streamlined and efficient way to manage libraries, tools, and dependencies, enabling you to focus on building and innovating. With its intuitive interface and robust features, <mark class="md-code md-code-` ">nuts</mark> supports seamless integration into existing workflows, providing flexibility and scalability for developers of all levels. Basically, It's what npm is for Javascript and pip for Python. However, <mark class="md-code md-code-` ">nuts</mark> presents several unique features that make it suitable for other technologies as well. This documentation is your gateway to understanding and utilizing the full potential of <mark class="md-code md-code-` ">nuts</mark>, covering everything from installation and basic setup to advanced usage patterns and customization options. For additional resources, detailed guides, and further insights into how Nuts can empower your development process, visit <a href="#other-resources" class="md-link">this link</a>. Let’s dive in and explore what makes <mark class="md-code md-code-` ">nuts</mark> a game-changer for modern development!</p>
 
                         </div>
                         
@@ -461,7 +461,7 @@ Moreover, in a world of containers and devops, deployments of Java(TM) applicati
 
 <H4 class="md-title-3"> Package manager</H4>
 <p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> uses this dependency resolution to help install, update, remove and search for applications. To be able to use an  application, it has to be installed and configured with all of its dependencies. This is the main goal of <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b>. When we ask to install tomcat, for instance, it will search for the best version in registered repositories, download it, and configure it to be ready for execution. The best version is not always the the latest one. Actually it would be the  latest valid one, thus the latest one that matches some constraints.   Constraints include the version of the running java (tomcat 8 works on java 7 but not 6 for instance), the running operating  system (windows, linux, ... to help selecting the proper binaries), may be the hardware architecture or even the  operating distribution (for linux based systems). Constraints will filter the search result to include the best, the most  accurate version to install. Installation also would configure the installed application and even may run another  artifact to help this configuration.</p>
-<p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> also handles search for newer versions and update the installed application at request. Updating a software does not  necessarily delete the older version. Both version can coexist and it is up to the user the decide whether or  not to retain both versions. Indeed, one of the key features of <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> is the ability to install and hence run multiple versions  of the same software in parallel. You would never see an error message telling you can't install that software because a  dependency of it is installed with different version. All software and all libraries can coexist peacefully.</p>
+<p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> also handles search for newer versions and update the installed application at request. Updating a software does not  necessarily delete the older version. Both version can coexist and It's up to the user the decide whether or  not to retain both versions. Indeed, one of the key features of <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> is the ability to install and hence run multiple versions  of the same software in parallel. You would never see an error message telling you can't install that software because a  dependency of It's installed with different version. All software and all libraries can coexist peacefully.</p>
 <p class="md-phrase">Software artifacts are stored in repositories. <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> can handle multiple repositories, remote and local ones.  Installed software are stored in special local repositories. Supported repositories include maven repositories and github  repositories. Actually a fresh installation of <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> is configured with maven central repository so that, you already have access  to thousands of installable artifacts.</p>
 At some point, you may need to uninstall an artifact and that's to undo the artifact installation.   Installation will help you choose between uninstalling binaries only and keeping data/config files or remove permanently  all of the artifact files. In all ways, uninstalling will not affect other artifacts that use the same dependencies if ever. 
  
@@ -513,7 +513,7 @@ The command also installs all necessary dependencies you need to run Docusaurus.
 <p class="md-phrase">We used the flags <mark class="md-code md-code-``` ">-y</mark> to auto-confirm and <mark class="md-code md-code-``` ">-z</mark> to ignore cached binaries (combined here as <mark class="md-code md-code-``` ">-zy</mark>). These flags are optional and are used here to demonstrate some of Nuts' available options. The installation process may take several minutes, as it involves downloading all required dependencies, companions, and tools.</p>
 You should then see this message
 <pre class="md-code md-code-``` "><code class="">
-Welcome to nuts. Yeah, it is working...
+Welcome to nuts. Yeah, It's working...
 </code></pre>
 <p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> is well installed, just restart your terminal.</p>
 <p class="md-phrase">Now we will install <mark class="md-code md-code-` ">jedit</mark>, a tremendous underrated text editor. So in your terminal type:</p>
@@ -585,7 +585,7 @@ You do agree that this can be of some cumbersome to type. So you can simplify it
 <pre class="md-code md-code-``` bash"><code class="bash">
   nuts netbeans-launcher
 </code></pre>
-<p class="md-phrase">In this form, <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> will auto-detect both the <mark class="md-code md-code-``` ">groupId</mark> and the <mark class="md-code md-code-``` ">version</mark>. The group id is detected if it is already <b class="md-bold">imported</b> (we will see later how to import a groupId).  By default, there is a couple of groupIds that are automatically imported :</p>
+<p class="md-phrase">In this form, <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> will auto-detect both the <mark class="md-code md-code-``` ">groupId</mark> and the <mark class="md-code md-code-``` ">version</mark>. The group id is detected if It's already <b class="md-bold">imported</b> (we will see later how to import a groupId).  By default, there is a couple of groupIds that are automatically imported :</p>
 <ul class="md-ul"><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-``` net">.thevpc</code> (contains various applications of the author)</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-``` net">.thevpc.nuts.toolbox</code> (contains various companion tools of <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b>, such as <mark class="md-code md-code-``` ">nsh</mark>, ...)</p></li></ul>
 <p class="md-phrase">And it turns out, hopefully, that netbeans-launcher belongs to an imported groupId, so we can omit it. Besides, if no version is provided, <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> will also auto-detect the best version to execute. If the application is already installed, the version you choose to install will be resolved. If you have not installed any, the most recent version, obviously, will be detected for you.</p>
 
@@ -609,7 +609,7 @@ Now we have two versions installed, the last one always is considered default on
   # or
   nuts netbeans-launcher#1.2.0 &amp;
 </code></pre>
-Actually, when you have many versions installed for the same artifact and you try to run it without specifying the version, the last one installed will be considered. To be more precise, an artifact has a default version when it is installed. This default version is considered when no explicit version is typed. In our example, when we type 
+Actually, when you have many versions installed for the same artifact and you try to run it without specifying the version, the last one installed will be considered. To be more precise, an artifact has a default version when It's installed. This default version is considered when no explicit version is typed. In our example, when we type
 <pre class="md-code md-code-``` "><code class="">
   nuts netbeans-launcher &amp;
 </code></pre>
@@ -655,7 +655,7 @@ nuts --exec -Xms1G -Xmx2G ./my-app.jar argument-1 argument-2
                     <section id="Installation" >
                         <h2 class="main-section1"><a href="#Installation">2 Installation</a></h2>
                         <div class="text-card">
-                        <p class="md-phrase"><mark class="md-code md-code-` ">nuts</mark> is a package manager for the Java Platform. Basically, it is what npm is for Javascript and pip for Python. However, <mark class="md-code md-code-` ">nuts</mark> presents several concepts that make it suitable for other technologies as well. </p>
+                        <p class="md-phrase"><mark class="md-code md-code-` ">nuts</mark> is a package manager for the Java Platform. Basically, It's what npm is for Javascript and pip for Python. However, <mark class="md-code md-code-` ">nuts</mark> presents several concepts that make it suitable for other technologies as well. </p>
 
                         </div>
                         
@@ -1111,7 +1111,7 @@ CMD java -jar nuts.jar -y net.thevpc.nuts.toolbox:noapi
                             <section id="troubleshooting" >
                                 <h3 class="main-section2"><a href="#Installation">2.5 Troubleshooting</a></h3>
                                 <div class="text-card">
-                                Whenever installation fails, it is more likely there is a mis-configuration or invalid libraries bundles used. You may have to options to circumvent this which are two levels or workspace reinitialization.
+                                Whenever installation fails, It's more likely there is a mis-configuration or invalid libraries bundles used. You may have to options to circumvent this which are two levels or workspace reinitialization.
 <H4 class="md-title-2"> recover mode</H4>
 <p class="md-phrase"><b class="md-bold">recover mode</b> will apply best efforts to correct configuration without losing them. It will delete all cached data and  libraries for them to be downloaded later and searches for a valid nuts installation binaries to run (it will actually  do a forced update). To run nuts in recover mode type :</p>
 <pre class="md-code md-code-``` "><code class="">
@@ -1194,7 +1194,7 @@ nuts nsh
 As a matter of fact, there are a couple of imports automatically defined 'net.thevpc' and 'net.thevpc.toolbox' 
 
 <H4 class="md-title-2"> Aliases</H4>
-<p class="md-phrase">Aliases help you define your own command by calling existing artifacts and defining some arguments as well. It is very similar to shell aliases where you define <mark class="md-code md-code-` ">ll</mark> as an alias to <code class="md-code md-code-` ">/bin/ls -l</code> for example.</p>
+<p class="md-phrase">Aliases help you define your own command by calling existing artifacts and defining some arguments as well. It's very similar to shell aliases where you define <mark class="md-code md-code-` ">ll</mark> as an alias to <code class="md-code md-code-` ">/bin/ls -l</code> for example.</p>
 <pre class="md-code md-code-``` bash"><code class="bash">
 nuts net.thevpc.toolbox.nsh:nsh#0.8.5.0
 # becomes
@@ -1441,7 +1441,7 @@ When one types
 <pre class="md-code md-code-``` "><code class="">
 nuts netbeans-command
 </code></pre>
-it is actually equivalent to
+It's actually equivalent to
 <pre class="md-code md-code-``` "><code class="">
 nuts exec netbeans-command
 </code></pre>
@@ -1473,7 +1473,7 @@ nuts netbeans-command
 is running an external command which is net.thevpc.app:netbeans-launcher#1.2.2 artifact.
 
 <H4 class="md-title-4"> 1.2 External Files & URLs</H4>
-<p class="md-phrase">You can run any jar file using <b class="md-bold">nuts</b> as far as it fulfills two points : the files must contain a supported descriptor (if it is compiled with maven, it already has the supported descriptor) and the file should be typed as a path (it must contain a '/' or '' separator)</p>
+<p class="md-phrase">You can run any jar file using <b class="md-bold">nuts</b> as far as it fulfills two points : the files must contain a supported descriptor (if It's compiled with maven, it already has the supported descriptor) and the file should be typed as a path (it must contain a '/' or '' separator)</p>
 <pre class="md-code md-code-``` "><code class="">
 wget -N https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/netbeans-launcher/1.2.2/netbeans-launcher-1.2.2.jar
 nuts ./netbeans-launcher-1.2.2.jar
@@ -1491,7 +1491,7 @@ me@linux:~&gt; nuts --spawn ls
 </code></pre>
 
 <H4 class="md-title-3"> 2.2 embedded</H4>
-In this type the command will try not to spawn a new process but load in the current vm the commmand to run (as far as it is a java command)
+In this type the command will try not to spawn a new process but load in the current vm the commmand to run (as far as It's a java command)
 <pre class="md-code md-code-``` "><code class="">
 me@linux:~&gt; nuts --embedded ls
 </code></pre>
@@ -1631,7 +1631,7 @@ When one types
 <pre class="md-code md-code-``` "><code class="">
 nuts netbeans-command
 </code></pre>
-it is actually equivalent to
+It's actually equivalent to
 <pre class="md-code md-code-``` "><code class="">
 nuts exec netbeans-command
 </code></pre>
@@ -1663,7 +1663,7 @@ nuts netbeans-command
 is running an external command which is net.thevpc.app:netbeans-launcher#1.2.2 artifact.
 
 <H4 class="md-title-4"> 1.2 External Files & URLs</H4>
-<p class="md-phrase">You can run any jar file using <b class="md-bold">nuts</b> as far as it fulfills two points : the files must contain a supported descriptor (if it is compiled with maven, it already has the supported descriptor) and the file should be typed as a path (it must contain a '/' or '' separator)</p>
+<p class="md-phrase">You can run any jar file using <b class="md-bold">nuts</b> as far as it fulfills two points : the files must contain a supported descriptor (if It's compiled with maven, it already has the supported descriptor) and the file should be typed as a path (it must contain a '/' or '' separator)</p>
 <pre class="md-code md-code-``` "><code class="">
 wget -N https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/netbeans-launcher/1.2.2/netbeans-launcher-1.2.2.jar
 nuts ./netbeans-launcher-1.2.2.jar
@@ -1681,7 +1681,7 @@ me@linux:~&gt; nuts --spawn ls
 </code></pre>
 
 <H4 class="md-title-3"> 2.2 embedded</H4>
-In this type the command will try not to spawn a new process but load in the current vm the commmand to run (as far as it is a java command)
+In this type the command will try not to spawn a new process but load in the current vm the commmand to run (as far as It's a java command)
 <pre class="md-code md-code-``` "><code class="">
 me@linux:~&gt; nuts --embedded ls
 </code></pre>
@@ -3919,7 +3919,7 @@ repositories-count       = 5
                                 <div class="text-card">
                                 This command will show 
 <b class="md-bold">nuts</b>
- version. It is helpful to note that 
+ version. It's helpful to note that
 <b class="md-bold">nuts</b>
  has a couple of components : api and impl. api is the 
 <b class="md-bold">nuts</b>
@@ -4034,7 +4034,7 @@ me@linux:~&gt; nuts license
  and libraries for runtime execution. Nuts is the ultimate companion for
  maven (and other build managers) as it helps installing all package
  dependencies at runtime. Nuts is not tied to java and is a good choice
- to share shell scripts and other 'Things' . It is based on an extensible
+ to share shell scripts and other 'Things' . It's based on an extensible
  architecture to help supporting a large range of sub managers / repositories.
  
  Copyright (C) 2016-2019 Taha BEN SALAH

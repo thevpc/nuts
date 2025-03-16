@@ -5,7 +5,7 @@ sidebar_label: Troubleshooting
 ---
 
 
-Whenever installation fails, it is more likely there is a mis-configuration or invalid libraries bundles used. You may have to options
+Whenever installation fails, It's more likely there is a mis-configuration or invalid libraries bundles used. You may have to options
 to circumvent this which are two levels or workspace reinitialization.
 
 ## recover mode

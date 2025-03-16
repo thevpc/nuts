@@ -7,7 +7,7 @@
  * for runtime execution. Nuts is the ultimate companion for maven (and other
  * build managers) as it helps installing all package dependencies at runtime.
  * Nuts is not tied to java and is a good choice to share shell scripts and
- * other 'things' . Its based on an extensible architecture to help supporting a
+ * other 'things' . It's based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
  * <p>
@@ -448,7 +448,7 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
     void addCommandFactory(NCommandFactoryConfig commandFactory);
 
     /**
-     * unregister an existing commandFactory. If it is not found, a NutsIllegalArgumentException is thrown
+     * unregister an existing commandFactory. If It's not found, a NutsIllegalArgumentException is thrown
      *
      * @param commandFactoryId commandFactoryId
      */

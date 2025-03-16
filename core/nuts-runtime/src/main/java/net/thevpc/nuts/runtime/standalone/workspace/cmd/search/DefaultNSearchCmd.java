@@ -7,7 +7,7 @@
  * for runtime execution. Nuts is the ultimate companion for maven (and other
  * build managers) as it helps installing all package dependencies at runtime.
  * Nuts is not tied to java and is a good choice to share shell scripts and
- * other 'things' . Its based on an extensible architecture to help supporting a
+ * other 'things' . It's based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
  * <p>
@@ -551,7 +551,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                         if (nutsId.getArtifactId().equals("nuts")) {
                             nutsId2.add(nutsId.builder().setGroupId("net.thevpc.nuts").build());
                         } else {
-                            //check if it is already installed
+                            //check if It's already installed
                             List<NId> installedIds = Collections.emptyList();
                             if (!nutsId.getArtifactId().contains("*")) {
                                 NRepositorySPI repoSPI = wu

@@ -60,7 +60,7 @@ public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutabl
             NOut.resetLine().println(NWorkspaceExt.of().getWelcomeText());
         } else {
             Map<String, Object> welcome = new LinkedHashMap<>();
-            welcome.put("message", "Welcome to nuts. Yeah, it is working...");
+            welcome.put("message", "Welcome to nuts. Yeah, It's working...");
             welcome.put("name", NText.ofStyledPrimary1("nuts"));
             welcome.put("long-name", "Network Updatable Things Services");
             welcome.put("description", "The Free and Open Source Package Manager for Java (TM) and other Things ...");

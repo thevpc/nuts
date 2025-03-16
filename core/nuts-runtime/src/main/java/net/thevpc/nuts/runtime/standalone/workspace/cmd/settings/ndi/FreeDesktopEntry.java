@@ -77,7 +77,7 @@ public class FreeDesktopEntry {
         private String comment;
 
         /**
-         * Path to an executable file on disk used to determine if the program is actually installed. If the path is not an absolute path, the file is looked up in the $PATH environment variable. If the file is not present or if it is not executable, the entry may be ignored (not be used in menus, for example).
+         * Path to an executable file on disk used to determine if the program is actually installed. If the path is not an absolute path, the file is looked up in the $PATH environment variable. If the file is not present or if It's not executable, the entry may be ignored (not be used in menus, for example).
          */
         private String tryExec;
 
@@ -170,12 +170,12 @@ public class FreeDesktopEntry {
         private List<String> notShowIn = new ArrayList<>();
 
         /**
-         * If true, it is KNOWN that the application will send a "remove" message when started with the DESKTOP_STARTUP_ID environment variable set. If false, it is KNOWN that the application does not work with startup notification at all (does not shown any window, breaks even when using StartupWMClass, etc.). If absent, a reasonable handling is up to implementations (assuming false, using StartupWMClass, etc.). (See the Startup Notification Protocol Specification for more details).
+         * If true, It's KNOWN that the application will send a "remove" message when started with the DESKTOP_STARTUP_ID environment variable set. If false, It's KNOWN that the application does not work with startup notification at all (does not shown any window, breaks even when using StartupWMClass, etc.). If absent, a reasonable handling is up to implementations (assuming false, using StartupWMClass, etc.). (See the Startup Notification Protocol Specification for more details).
          */
         private boolean startNotify;
 
         /**
-         * If specified, it is known that the application will map at least one window with the given string as its WM class or WM name hint (see the Startup Notification Protocol Specification for more details).
+         * If specified, It's known that the application will map at least one window with the given string as its WM class or WM name hint (see the Startup Notification Protocol Specification for more details).
          */
         private String startupWMClass;
 

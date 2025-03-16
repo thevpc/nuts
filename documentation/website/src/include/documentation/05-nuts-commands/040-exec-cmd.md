@@ -10,7 +10,7 @@ When one types
 ```
 nuts netbeans-command
 ```
-it is actually equivalent to
+It's actually equivalent to
 ```
 nuts exec netbeans-command
 ```
@@ -35,7 +35,7 @@ nuts netbeans-command
 is running an external command which is net.thevpc.app:netbeans-launcher#1.2.2 artifact.
 
 #### 1.2 External Files & URLs
-You can run any jar file using **nuts** as far as it fulfills two points : the files must contain a supported descriptor (if it is compiled with maven, it already has the supported descriptor) and the file should be typed as a path (it must contain a '/' or '\' separator)
+You can run any jar file using **nuts** as far as it fulfills two points : the files must contain a supported descriptor (if It's compiled with maven, it already has the supported descriptor) and the file should be typed as a path (it must contain a '/' or '\' separator)
 
 ```
 wget -N https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/netbeans-launcher/1.2.2/netbeans-launcher-1.2.2.jar
@@ -55,7 +55,7 @@ Internal commands are not affected by this mode and are executed, always, in the
 me@linux:~> nuts --spawn ls
 ```
 ### 2.2 embedded
-In this type the command will try not to spawn a new process but load in the current vm the commmand to run (as far as it is a java command)
+In this type the command will try not to spawn a new process but load in the current vm the commmand to run (as far as It's a java command)
 ```
 me@linux:~> nuts --embedded ls
 ```

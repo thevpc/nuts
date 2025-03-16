@@ -157,7 +157,7 @@ public final class NConstants {
         /**
          * id classifier (equivalent to maven classifier). The classifier
          * distinguishes artifacts that were built from the same POM but differ
-         * in content. It is some optional and arbitrary string that - if
+         * in content. It's some optional and arbitrary string that - if
          * present - is appended to the artifact name just after the version
          * number.
          */

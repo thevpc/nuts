@@ -7,7 +7,7 @@
  * for runtime execution. Nuts is the ultimate companion for maven (and other
  * build managers) as it helps installing all package dependencies at runtime.
  * Nuts is not tied to java and is a good choice to share shell scripts and
- * other 'things' . Its based on an extensible architecture to help supporting a
+ * other 'things' . It's based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
  * <p>
@@ -514,7 +514,7 @@ public final class NBootUtils {
         }
     }
 
-    public static void ndiUndo(NBootLog bLog) {
+    public static void ndiUndo(NBootLog bLog, String wsName, boolean update) {
         //need to unset settings configuration.
         //what is the safest way to do so?
         String os = NBootPlatformHome.currentOsFamily();
@@ -536,22 +536,24 @@ public final class NBootUtils {
             // and will consider the latest version of it.
             // this is helpful if we are playing with multiple workspaces. The default workspace will always be
             // accessible when deleting others
-            String latestDefaultVersion = null;
-            try {
-                Path nbase = Paths.get(System.getProperty("user.home")).resolve(".local/share/nuts/apps/" + NBootConstants.Names.DEFAULT_WORKSPACE_NAME + "/id/net/thevpc/nuts/nuts");
-                if (Files.isDirectory(nbase)) {
-                    latestDefaultVersion = Files.list(nbase).filter(f -> Files.exists(f.resolve(".nuts-bashrc")))
-                            .map(x -> sysrcFile.getFileName().toString()).min((o1, o2) -> NBootVersion.of(o2).compareTo(NBootVersion.of(o1)))
-                            .orElse(null);
+            if (update && !Objects.equals(NBootConstants.Names.DEFAULT_WORKSPACE_NAME, wsName)) {
+                String latestDefaultVersion = null;
+                try {
+                    Path nbase = Paths.get(System.getProperty("user.home")).resolve(".local/share/nuts/apps/" + NBootConstants.Names.DEFAULT_WORKSPACE_NAME + "/id/net/thevpc/nuts/nuts");
+                    if (Files.isDirectory(nbase)) {
+                        latestDefaultVersion = Files.list(nbase).filter(f -> Files.exists(f.resolve(".nuts-bashrc")))
+                                .map(x -> sysrcFile.getFileName().toString()).min((o1, o2) -> NBootVersion.of(o2).compareTo(NBootVersion.of(o1)))
+                                .orElse(null);
+                    }
+                    if (latestDefaultVersion != null) {
+                        ndiAddFileLine(sysrcFile, "net.thevpc.nuts configuration",
+                                "source " + nbase.resolve(latestDefaultVersion).resolve(".nuts-bashrc"),
+                                true, "#!.*", "#!/bin/sh", bLog);
+                    }
+                } catch (Exception e) {
+                    //ignore
+                    bLog.with().level(Level.FINEST).verbFail().log(NBootMsg.ofC("unable to undo NDI : %s", e.toString()));
                 }
-                if (latestDefaultVersion != null) {
-                    ndiAddFileLine(sysrcFile, "net.thevpc.nuts configuration",
-                            "source " + nbase.resolve(latestDefaultVersion).resolve(".nuts-bashrc"),
-                            true, "#!.*", "#!/bin/sh", bLog);
-                }
-            } catch (Exception e) {
-                //ignore
-                bLog.with().level(Level.FINEST).verbFail().log(NBootMsg.ofC("unable to undo NDI : %s", e.toString()));
             }
         }
     }
@@ -2221,9 +2223,6 @@ public final class NBootUtils {
                 NBootPlatformHome.ofSystem(bOptions.getStoreLayout()) :
                 NBootPlatformHome.of(bOptions.getStoreLayout()));
         folders.add(Paths.get(hh.getHome()).resolve("ws"));
-
-
-
 
 
         for (String storeFolder : NBootPlatformHome.storeTypes()) {

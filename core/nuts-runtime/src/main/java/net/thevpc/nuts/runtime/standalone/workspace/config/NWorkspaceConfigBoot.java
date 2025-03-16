@@ -7,7 +7,7 @@
  * for runtime execution. Nuts is the ultimate companion for maven (and other
  * build managers) as it helps installing all package dependencies at runtime.
  * Nuts is not tied to java and is a good choice to share shell scripts and
- * other 'things' . Its based on an extensible architecture to help supporting a
+ * other 'things' . It's based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
  * <p>
@@ -47,7 +47,7 @@ public final class NWorkspaceConfigBoot extends NConfigItem implements Cloneable
     private String workspace = null;
     private String bootRepositories = null;
 
-    // folder types and layout types are exploded so that it is easier
+    // folder types and layout types are exploded so that It's easier
     // to extract from json file even though no json library is available
     // via simple regexp
     private Map<NStoreType, String> storeLocations = null;

@@ -45,7 +45,7 @@ The installation process may take several minutes, as it involves downloading al
 You should then see this message
 
 ```
-Welcome to nuts. Yeah, it is working...
+Welcome to nuts. Yeah, It's working...
 ```
 
 **```nuts```** is well installed, just restart your terminal.

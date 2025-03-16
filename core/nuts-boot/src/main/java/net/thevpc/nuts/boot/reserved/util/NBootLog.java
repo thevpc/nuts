@@ -152,19 +152,19 @@ public class NBootLog {
     }
 
     public boolean isLoggableTerm(Level lvl) {
+        if (options.getBot() != null) {
+            if (options.getBot()) {
+                return false;
+            }
+        }
         if (lvl.intValue() == Level.OFF.intValue()) {
             //this is a special case where we do log in all cases!
             return true;
         }
         if (options == null || options.getLogConfig() == null) {
-            if (lvl.intValue() == Level.SEVERE.intValue()) {
+            if (lvl.intValue() >= Level.WARNING.intValue()) {
                 //this is a special case where we do log in all cases!
                 return true;
-            }
-        }
-        if (options.getBot() != null) {
-            if (options.getBot()) {
-                return false;
             }
         }
         return lvl.intValue() >= cachedTermLogLevel;

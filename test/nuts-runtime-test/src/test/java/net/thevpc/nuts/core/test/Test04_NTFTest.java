@@ -461,7 +461,7 @@ public class Test04_NTFTest {
 //                            "```\n" +
 //                            "For Help, type ```sh nuts help```\n" +
 //                            "\n" +
-//                            "Welcome to ```sh nuts```. Yeah, it is ###working###...";
+//                            "Welcome to ```sh nuts```. Yeah, It's ###working###...";
 //            writeColors(t_string);
 //        }
 //    }
@@ -735,7 +735,7 @@ public class Test04_NTFTest {
 //        writeColors("```!include classpath:/net/thevpc/nuts/runtime/includes/standard-header.ntf```\n" +
 //                "\n" +
 //                "```sh ntf``` aka ##nuts text format## is a markdown like text format enabling colored text styles.\n" +
-//                "```sh ntf``` is the standard format used in the standard output and standard error. It is as\n" +
+//                "```sh ntf``` is the standard format used in the standard output and standard error. It's as\n" +
 //                " well the standard format used in help manuals.\n" +
 //                "\n" +
 //                "type (```sh nuts help --colors```) to display this help\n" +
@@ -744,7 +744,7 @@ public class Test04_NTFTest {
 //                "### \\# \\\u001E \\\\ \\' ### are special characters\n" +
 //                "### : { and } ### are also spacial character inside \\# styles\n" +
 //                "###\\#### defines primary styles\n" +
-//                "###\\\u001E### is a 'nop' character. it is used as a separator when required. It is not displayed.\n" +
+//                "###\\\u001E### is a 'nop' character. It's used as a separator when required. It's not displayed.\n" +
 //                "###\\`\\`\\`Text\\`\\`\\`### defines verbatim text\n" +
 //                "###\\`\\`\\`lang code-bloc\\`\\`\\`### defines formatted code in the given language/format (such as sh, java, json, ...)\n" +
 //                "###\\\\### You can escape special characters using ###\\\\### character\n" +

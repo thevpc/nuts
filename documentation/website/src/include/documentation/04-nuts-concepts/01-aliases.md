@@ -28,7 +28,7 @@ nuts nsh
 As a matter of fact, there are a couple of imports automatically defined 'net.thevpc' and 'net.thevpc.toolbox' 
 
 ## Aliases
-Aliases help you define your own command by calling existing artifacts and defining some arguments as well. It is very similar to shell aliases where you define `ll` as an alias to `/bin/ls -l` for example.
+Aliases help you define your own command by calling existing artifacts and defining some arguments as well. It's very similar to shell aliases where you define `ll` as an alias to `/bin/ls -l` for example.
 
 ```bash
 nuts net.thevpc.toolbox.nsh:nsh#0.8.5.0

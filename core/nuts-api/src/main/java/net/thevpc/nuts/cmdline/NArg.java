@@ -7,7 +7,7 @@
  * for runtime execution. Nuts is the ultimate companion for maven (and other
  * build managers) as it helps installing all package dependencies at runtime.
  * Nuts is not tied to java and is a good choice to share shell scripts and
- * other 'things' . Its based on an extensible architecture to help supporting a
+ * other 'things' . It's based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  *
  * <br>
@@ -108,7 +108,7 @@ public interface NArg extends NLiteral {
      * </ul>
      * where name is any valid identifier
      *
-     * @return true if the argument is enable and false if it is commented
+     * @return true if the argument is enable and false if It's commented
      */
     boolean isActive();
 
@@ -120,7 +120,7 @@ public interface NArg extends NLiteral {
      * </ul>
      * where name is any valid identifier
      *
-     * @return true if the argument is enable and false if it is commented
+     * @return true if the argument is enable and false if It's commented
      */
     boolean isInactive();
 

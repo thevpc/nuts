@@ -12,7 +12,7 @@ The repository is organized in several folders described here after:
 * **[core]**          : contains the core of `nuts` package manager (and the only required pieces for `nuts` to work). Practically this contains the Bootstrap (and API) project (called `nuts`) and the Runtime (Implementation) project (called `nuts-runtime`)
 * **[docs]**          : contains a generated (using docusaurus) website that is deployed to github pages (https://thevpc.github.io/nuts/)
 * **[extensions]**           : contains some `nuts` extensions/plugins. as an example it includes and extension for nuts terminal features implemented using `jline` library
-* **[incubating]**    : ignore this for the moment :), it is a work in progress and an attempt to simplify `nuts` installation process and other frozen features. Still very embryonic.
+* **[incubating]**    : ignore this for the moment :), It's a work in progress and an attempt to simplify `nuts` installation process and other frozen features. Still very embryonic.
 * **[installers]**    : native image generators, gui installers and repository website generator goes here. 
 * **[libraries]**           : contains a suite of libraries that are based on `nuts` and that can be used by other applications. This includes markdown parsers, ssh support, etc...
 * **[test]**          : contains unit test projects
@@ -116,7 +116,7 @@ You can search for files than contains some text or jars that contain some class
 **ntalk-agent** is a client-to-client communication broker used for sharing **nuts** workspaces
 
 ### **nclown**
-**nclown** is an angular web application frontend for **```nuts```**. It helps navigating, searching and installing artifacts. It is intended to be a web admin tool as well.
+**nclown** is an angular web application frontend for **```nuts```**. It helps navigating, searching and installing artifacts. It's intended to be a web admin tool as well.
 
 ### **nserver**
 **nserver** is a standalone application that runs a small http server that will expose a workspace as a remote repository to other **nuts** installations. This is the simplest way to mirror a workspace and share artifacts between networked nodes.
@@ -138,7 +138,7 @@ All you have to do is to add this library to your application and configure your
 Basically this is the simplest way to include **nserver** into your web application.
 
 ### **nlib-doc**
-This library provides helper methods to manipulate maven pom.xml and generate simple Java files while supporting **```nuts```** concepts. It is used in other tools that are meant to generate maven projects.
+This library provides helper methods to manipulate maven pom.xml and generate simple Java files while supporting **```nuts```** concepts. It's used in other tools that are meant to generate maven projects.
 
 ### **nlib-talkagent**
 This library provides support for client to client communication

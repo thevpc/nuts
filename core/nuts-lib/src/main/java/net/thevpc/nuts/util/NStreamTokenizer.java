@@ -112,7 +112,7 @@ public class NStreamTokenizer {
     /**
      * The next character to be considered by the nextToken method.  May also
      * be NEED_CHAR to indicate that a new character should be read, or SKIP_LF
-     * to indicate that a new character should be read and, if it is a '\n'
+     * to indicate that a new character should be read and, if It's a '\n'
      * character, it should be discarded and a second new character should be
      * read.
      */
@@ -1182,7 +1182,7 @@ public class NStreamTokenizer {
                 ctype = nextToken();
                 return true;
             } else {
-                /* Now see if it is still a single line comment */
+                /* Now see if It's still a single line comment */
                 if ((commonCharTypes['/'] & CT_COMMENT) != 0) {
                     sb.append((char) c);
                     while ((c = readChar()) != '\n' && c != '\r' && c >= 0) {

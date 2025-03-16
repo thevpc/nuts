@@ -22,5 +22,5 @@ This folder contains main/core nuts implementation
 
 # nut-full (app)
     Nuts Application with all required dependencies statically linked. 
-    No classes will be loaded (unless it is a community extension).
+    No classes will be loaded (unless It's a community extension).
     Does no any dependency.

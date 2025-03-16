@@ -75,7 +75,7 @@ public final class NWorkspaceConfigBoot502 implements Serializable {
     private String bootJavaCommand = null;
     private String bootJavaOptions = null;
 
-    // folder types and layout types are exploded so that it is easier
+    // folder types and layout types are exploded so that It's easier
     // to extract from json file even though no json library is available
     // via simple regexp
     private String programsStoreLocation = null;

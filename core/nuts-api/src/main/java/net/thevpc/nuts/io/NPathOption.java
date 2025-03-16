@@ -96,7 +96,7 @@ public enum NPathOption implements NEnum {
     APPEND,
 
     /**
-     * If the file already exists and it is opened for {@link #WRITE}
+     * If the file already exists and It's opened for {@link #WRITE}
      * access, then its length is truncated to 0. This option is ignored
      * if the file is opened only for {@link #READ} access.
      */

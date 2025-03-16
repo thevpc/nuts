@@ -200,7 +200,7 @@ public interface NNonBlockingInputStream extends Closeable {
      *
      * <br>
      * Note that while some implementations of {@code InputStream} will return
-     * the total number of bytes in the stream, many will not. It is never
+     * the total number of bytes in the stream, many will not. It's never
      * correct to use the return value of this method to allocate a buffer
      * intended to hold all data in this stream.
      *

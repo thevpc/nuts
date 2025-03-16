@@ -216,7 +216,7 @@ package net.thevpc.nuts;
  * }
  * </pre>
  * <p>
- * and yet another good way to use it is :
+ * and yet another good way to use It's :
  * <pre>
  *     package org.example.test;
  *

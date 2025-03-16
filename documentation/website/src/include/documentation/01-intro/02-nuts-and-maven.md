@@ -76,10 +76,10 @@ accurate version to install. Installation also would configure the installed app
 artifact to help this configuration.
 
 **```nuts```** also handles search for newer versions and update the installed application at request. Updating a software does not 
-necessarily delete the older version. Both version can coexist and it is up to the user the decide whether or 
+necessarily delete the older version. Both version can coexist and It's up to the user the decide whether or 
 not to retain both versions. Indeed, one of the key features of **```nuts```** is the ability to install and hence run multiple versions 
 of the same software in parallel. You would never see an error message telling you can't install that software because a 
-dependency of it is installed with different version. All software and all libraries can coexist peacefully.
+dependency of It's installed with different version. All software and all libraries can coexist peacefully.
 
 Software artifacts are stored in repositories. **```nuts```** can handle multiple repositories, remote and local ones. 
 Installed software are stored in special local repositories. Supported repositories include maven repositories and github 

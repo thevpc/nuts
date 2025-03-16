@@ -7,7 +7,7 @@
  * for runtime execution. Nuts is the ultimate companion for maven (and other
  * build managers) as it helps installing all package dependencies at runtime.
  * Nuts is not tied to java and is a good choice to share shell scripts and
- * other 'things' . Its based on an extensible architecture to help supporting a
+ * other 'things' . It's based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  *
  * <br>
@@ -29,7 +29,7 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 
 /**
- * Tree Format handles terminal output in Tree format. It is one of the many
+ * Tree Format handles terminal output in Tree format. It's one of the many
  * formats supported bu nuts such as plain,table, xml, json. To use Tree format,
  * given an instance ws of Nuts Workspace you can :
  * <pre>

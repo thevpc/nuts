@@ -7,7 +7,7 @@
  * for runtime execution. Nuts is the ultimate companion for maven (and other
  * build managers) as it helps installing all package dependencies at runtime.
  * Nuts is not tied to java and is a good choice to share shell scripts and
- * other 'things' . Its based on an extensible architecture to help supporting a
+ * other 'things' . It's based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
  * <p>
@@ -102,7 +102,7 @@ public class NBPlusTree<K extends Comparable<K>, V> extends AbstractMap<K, V> {
             }
         }
 
-        /* Return node if it is a LeafNode object,
+        /* Return node if It's a LeafNode object,
 		   otherwise repeat the search function a level down */
         Node<K, V> child = node.child(i);
         if (child.isLeaf()) {

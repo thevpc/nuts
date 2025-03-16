@@ -7,7 +7,7 @@
  * for runtime execution. Nuts is the ultimate companion for maven (and other
  * build managers) as it helps installing all package dependencies at runtime.
  * Nuts is not tied to java and is a good choice to share shell scripts and
- * other 'things' . Its based on an extensible architecture to help supporting a
+ * other 'things' . It's based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
  * <p>
@@ -86,7 +86,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
                                         || !nr.config().getLocationPath().isDirectory()
                         )
                 ) {
-                    //runtime disable system repo if it is not accessible.
+                    //runtime disable system repo if It's not accessible.
                     nr.setEnabled(false);
                 }
                 def.remove(sloc);

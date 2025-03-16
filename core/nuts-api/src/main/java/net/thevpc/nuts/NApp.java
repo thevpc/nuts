@@ -106,7 +106,7 @@ public interface NApp extends NComponent {
     /**
      * Retrieves the main application class associated with this {@code NApp} instance.
      *
-     * @return a {@code Class<?>} representing the main application class, or {@code null} if it is not defined.
+     * @return a {@code Class<?>} representing the main application class, or {@code null} if It's not defined.
      */
     Class<?> getAppClass();
 

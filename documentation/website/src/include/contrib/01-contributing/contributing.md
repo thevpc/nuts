@@ -11,7 +11,7 @@ sidebar_label: Contributing
   branch before submitting your pull request. If it doesn't merge cleanly with
   master you may be asked to rebase your changes.
 
-- Commits should be as small as possible, while ensuring that each commit is
+- Commits should be as small as possible, while ensuring that each commIt's
   correct independently (i.e., each commit should compile and pass tests).
 
 - Don't put sub-module updates in your pull request unless they are to landed

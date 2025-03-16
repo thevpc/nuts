@@ -7,7 +7,7 @@
  * for runtime execution. Nuts is the ultimate companion for maven (and other
  * build managers) as it helps installing all package dependencies at runtime.
  * Nuts is not tied to java and is a good choice to share shell scripts and
- * other 'things' . Its based on an extensible architecture to help supporting a
+ * other 'things' . It's based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
  *
@@ -154,7 +154,7 @@ public class Test17_JsonTest {
                                 "            '@docusaurus/preset-classic',\n" +
                                 "            {\n" +
                                 "                docs: {\n" +
-                                "                    // It is recommended to set document id as docs home page (`docs/` path).\n" +
+                                "                    // It's recommended to set document id as docs home page (`docs/` path).\n" +
                                 "                    homePageId: 'IntroAboutTheDocument',\n" +
                                 "                    sidebarPath: require.resolve('./sidebars.js'),\n" +
                                 "                    // Please change this to your repo.\n" +

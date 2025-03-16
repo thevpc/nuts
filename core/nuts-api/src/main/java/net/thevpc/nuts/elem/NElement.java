@@ -7,7 +7,7 @@
  * for runtime execution. Nuts is the ultimate companion for maven (and other
  * build managers) as it helps installing all package dependencies at runtime.
  * Nuts is not tied to java and is a good choice to share shell scripts and
- * other 'things' . Its based on an extensible architecture to help supporting a
+ * other 'things' . It's based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
  * <p>
@@ -34,7 +34,7 @@ import java.util.List;
  * Nuts Element types are generic JSON like parsable objects. elements are a superset of JSON actually
  * that support multiple structured elements including json, xml, etc...
  * Elements are used to provide a convenient way to manipulate structured elements regardless of the underlying
- * format. Hence it is used for converting from json to xml as an example among many other use cases in the NAF
+ * format. Hence It's used for converting from json to xml as an example among many other use cases in the NAF
  * (Nuts Application Framework)
  *
  * @author thevpc

@@ -181,7 +181,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
 //
 //        /* Only cache the binary content if there is some content
 //         * available one of the following is true:
-//         * a) It is a class file since the binary content is only cached
+//         * a) It's a class file since the binary content is only cached
 //         *    until the class has been loaded
 //         *    or
 //         * b) The file needs conversion to address encoding issues (see

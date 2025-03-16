@@ -7,7 +7,7 @@
  * for runtime execution. Nuts is the ultimate companion for maven (and other
  * build managers) as it helps installing all package dependencies at runtime.
  * Nuts is not tied to java and is a good choice to share shell scripts and
- * other 'things' . Its based on an extensible architecture to help supporting a
+ * other 'things' . It's based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
  * <p>
@@ -430,7 +430,7 @@ public interface NWorkspaceOptions extends Serializable {
 
     /**
      * if true, workspace configuration are non modifiable.
-     * However cache stills modifiable so that it is possible to load external libraries.
+     * However cache stills modifiable so that It's possible to load external libraries.
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
      *

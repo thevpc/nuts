@@ -15,4 +15,4 @@
         option is switched to ```sh false```
 
     ```sh --//... or -//... ```
-        option is discarded (and all of its parameters). Though, it is up to the application to add such behavior.
+        option is discarded (and all of its parameters). Though, It's up to the application to add such behavior.

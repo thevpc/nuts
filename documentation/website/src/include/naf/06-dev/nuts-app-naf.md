@@ -7,7 +7,7 @@ sidebar_label: Your first Application using NAF
 
 # Using Nuts Application Framework (NAF)
 
-Using ```nuts``` is transparent as we have seen so far. It is transparent both at build time and runtime.
+Using ```nuts``` is transparent as we have seen so far. It's transparent both at build time and runtime.
 However, ```nuts``` can provide our application a set of unique helpful features, such as install and uninstall hooks, comprehensive command line support and so on.
 
 To create your first ```NAF``` application, you will need to add nuts as a dependency and change your `pom.xml` as follows:

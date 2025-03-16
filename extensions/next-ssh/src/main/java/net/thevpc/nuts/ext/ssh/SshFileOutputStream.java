@@ -103,7 +103,7 @@ public class SshFileOutputStream extends OutputStream {
         if (ptimestamp) {
             command = "T" + (lastModified / 1000) + " 0";
             // The access time should be sent here,
-            // but it is not accessible with JavaAPI ;-<
+            // but It's not accessible with JavaAPI ;-<
             command += (" " + (lastModified / 1000) + " 0\n");
             out.write(command.getBytes());
             out.flush();

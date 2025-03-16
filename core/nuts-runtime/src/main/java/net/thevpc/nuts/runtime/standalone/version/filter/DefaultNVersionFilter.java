@@ -118,7 +118,7 @@ public class DefaultNVersionFilter extends AbstractVersionFilter implements NExp
 
     public String toExpr() {
         return "id.version.matches("
-                //this will escape `"' if it is present
+                //this will escape `"' if It's present
                 + NStringUtils.formatStringLiteral(
                 //this will create '...' value
                 NStringUtils.formatStringLiteral(toString(), NQuoteType.SIMPLE),

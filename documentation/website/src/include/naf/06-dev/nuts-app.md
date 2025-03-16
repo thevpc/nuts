@@ -127,12 +127,12 @@ nuts -y com my-app-1.0.0-SNAPSHOT.jar
 
 As we can see, `nuts` provides the simplest and the most elegant way to deploy your application.
 
-One question though. what happens if we define multiple main methods (in multiple public classes). It is handled as well
+One question though. what happens if we define multiple main methods (in multiple public classes). It's handled as well
 by ```nuts``` seamlessly. It just asks, at runtime, for the appropriate class to run.
 
 # Using Nuts Application Framework
 
-Using ```nuts``` is transparent as we have seen so far. It is transparent both at build time and runtime.
+Using ```nuts``` is transparent as we have seen so far. It's transparent both at build time and runtime.
 However, ```nuts``` can provide our application a set of unique helpful features, such as install and uninstall hooks,
 comprehensive command line support and so on.
 

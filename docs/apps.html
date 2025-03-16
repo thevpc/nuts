@@ -542,7 +542,7 @@ only libraries required for the current environment. Nuts is unique in that it r
 descriptor formats to solve dependency graph, and does not, whatsoever, have any requirement on existing
 maven created packages.
 
-Nuts stands for <span style="color: #000055" class="">Network Updatable Things Services</span> tool. It is designed to support multiple package formats and even
+Nuts stands for <span style="color: #000055" class="">Network Updatable Things Services</span> tool. It's designed to support multiple package formats and even
 multiple languages (platforms like dotnet and python), even-though, the current implementation supports only java.
 <span style="color: #000055" class="">nuts</span> artifacts are  stored  into repositories. A  <span style="text-decoration: underline" class="">repository</span>  may be local for  storing local <span style="color: #000055" class="">nuts</span>
 or remote for accessing  remote artifacts (good examples  are  remote maven  repositories). It may
@@ -750,13 +750,13 @@ NUTS CREATE OPTIONS:
       <span style="color: #000055" class="">macos</span>      : always use macos layout (even if running on windows)
 
       Data folders of nuts are :
-        apps     : executable binaries folder. Equivalent to linux's '/bin' folder. It is defined as
+        apps     : executable binaries folder. Equivalent to linux's '/bin' folder. It's defined as
                         "base directory relative to which reusable executable applications and scripts should be written"
-        lib      : non executable binaries (libraries) folder. Equivalent to linux's '/usr/lib' folder. It is defined as
+        lib      : non executable binaries (libraries) folder. Equivalent to linux's '/usr/lib' folder. It's defined as
                         "base directory relative to which reusable libraries should be written"
         config   : configuration/settings files folder. equivalent to XDG spec's XDG_CONFIG_HOME folder defined as
                         "base directory relative to which user-specific configuration files should be written"
-        var      : data files folder. More or less related to XDG spec's XDG_DATA_HOME folder. It is defined as
+        var      : data files folder. More or less related to XDG spec's XDG_DATA_HOME folder. It's defined as
                         "the base directory relative to which user-specific non executable data files should be stored"
         log      : log/trace files folder. Equivalent to XDG_LOG_HOME a non standard XDG variable defined as
                         "the base directory relative to which application non-essential data for trace and monitoring
@@ -842,7 +842,7 @@ NUTS CREATE OPTIONS:
  <span style="color: #005078" class="">--switch</span>  (default is <span style="color: #000055" class="">false</span>)
       When creating a new workspace, by default, only default workspace (<span style="color: #005078" class="">--workspace</span>="") updates .bashrc file
       (or equivalent, according to the current installed and used shell) to point to that workspace. So that, when you
-      type <span style="color: #000055" class="">nuts</span> it is that workspace that is used. You can change choose to "switch" the binding to the currently
+      type <span style="color: #000055" class="">nuts</span> It's that workspace that is used. You can change choose to "switch" the binding to the currently
       created workspace by arming this flag.
 
  <span style="color: #005078" class="">--init-scripts</span>  (default is <span style="color: #000055" class="">true</span> for default archetype)
@@ -1160,7 +1160,7 @@ NUTS CREATE OPTIONS:
       defines open mode of the workspace. three values are accepted :
       <span style="color: #000055" class="">open-or-create</span> or <span style="color: #000055" class="">rw</span> or <span style="color: #000055" class="">on</span> or <span style="color: #000055" class="">oc</span> :
                     this is the default, if the workspace exists, it will be opened ;
-                    if it is not it will be created then opened.
+                    if It's not it will be created then opened.
       <span style="color: #000055" class="">open-existing</span> or <span style="color: #000055" class="">r</span>   or <span style="color: #000055" class="">o</span> :
                     will open existing workspace of fail
       <span style="color: #000055" class="">create-new</span> or <span style="color: #000055" class="">w</span> or <span style="color: #000055" class="">c</span> or <span style="color: #000055" class="">n</span> :
@@ -1524,7 +1524,7 @@ nuts ndiff my-app-v1.jar my-app-v2.jar
 
 <span style="color: #000055" class="">ndoc</span> is a documentation tool
 
-`ndoc` is a simple templating tool. It is used to generate statically Nuts website from
+`ndoc` is a simple templating tool. It's used to generate statically Nuts website from
 markdown documents.
 `ndoc` can also be embedded as a library (as `net.thevpc.nuts.lib:nlib-doc#0.8.5.0`)
 

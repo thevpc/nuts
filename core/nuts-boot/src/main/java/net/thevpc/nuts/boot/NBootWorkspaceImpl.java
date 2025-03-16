@@ -7,7 +7,7 @@
  * for runtime execution. Nuts is the ultimate companion for maven (and other
  * build managers) as it helps installing all package dependencies at runtime.
  * Nuts is not tied to java and is a good choice to share shell scripts and
- * other 'things' . Its based on an extensible architecture to help supporting a
+ * other 'things' . It's based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
  * <p>
@@ -717,15 +717,8 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 if (dryFlag) {
                     //
                 } else {
-                    if (lastWorkspaceOptions != null) {
-//                        getFallbackCache(NBootId.RUNTIME_ID, true, true);
-                        countDeleted = NBootUtils.deleteStoreLocationsHard(lastWorkspaceOptions, getOptions(), bLog, () -> scanner.nextLine());
-                        NBootUtils.ndiUndo(bLog);
-                    } else {
-//                        getFallbackCache(NBootId.RUNTIME_ID, false, true);
-                        countDeleted = NBootUtils.deleteStoreLocationsHard(lastWorkspaceOptions, getOptions(), bLog, () -> scanner.nextLine());
-                        NBootUtils.ndiUndo(bLog);
-                    }
+                    countDeleted = NBootUtils.deleteStoreLocationsHard(lastWorkspaceOptions, getOptions(), bLog, () -> scanner.nextLine());
+                    NBootUtils.ndiUndo(bLog, null, false);
                 }
             } else if (resetFlag) {
                 //force loading version early, it will be used later-on
@@ -741,7 +734,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                         getFallbackCache(NBootId.RUNTIME_ID, false, true);
                         countDeleted = NBootUtils.deleteStoreLocations(options, getOptions(), true, bLog, NBootPlatformHome.storeTypes(), () -> scanner.nextLine());
                     }
-                    NBootUtils.ndiUndo(bLog);
+                    NBootUtils.ndiUndo(bLog, workspaceName, true);
                 }
             } else if (NBootUtils.firstNonNull(options.getRecover(), false)) {
                 bLog.log(isAskConfirm(getOptions()) ? Level.OFF : Level.WARNING, "WARNING", NBootMsg.ofPlain("recover workspace."));
@@ -786,22 +779,27 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             //as long as there are no applications to run, will exit before creating workspace
             if (
                     NBootUtils.isEmptyList(options.getApplicationArguments())
-                            && NBootUtils.firstNonNull(options.getSkipBoot(), false)
-                            && (NBootUtils.firstNonNull(options.getRecover(), false) || (resetFlag || resetHardFlag))
+                            && NBootUtils.firstNonNull(options.getSkipBoot(), true)
+                            && resetHardFlag
             ) {
                 if (isPlainTrace()) {
-                    if (resetHardFlag) {
-                        if (countDeleted > 0) {
-                            bLog.warn(NBootMsg.ofC("nuts hard reset successfully"));
-                        } else {
-                            bLog.warn(NBootMsg.ofC("nuts hard reset did not require to delete any file. system is clean."));
-                        }
+                    if (countDeleted > 0) {
+                        bLog.warn(NBootMsg.ofC("nuts hard reset successfully"));
                     } else {
-                        if (countDeleted > 0) {
-                            bLog.warn(NBootMsg.ofC("workspace erased : %s", options.getWorkspace()));
-                        } else {
-                            bLog.warn(NBootMsg.ofC("workspace is not erased because it does not exist : %s", options.getWorkspace()));
-                        }
+                        bLog.warn(NBootMsg.ofC("nuts hard reset did not require to delete any file. system is clean."));
+                    }
+                }
+                throw new NBootException(NBootMsg.ofPlain(""), 0);
+            }else if (
+                    NBootUtils.isEmptyList(options.getApplicationArguments())
+                            && NBootUtils.firstNonNull(options.getSkipBoot(), false)
+                            && (NBootUtils.firstNonNull(options.getRecover(), false) || resetFlag)
+            ) {
+                if (isPlainTrace()) {
+                    if (countDeleted > 0) {
+                        bLog.warn(NBootMsg.ofC("workspace erased : %s", options.getWorkspace()));
+                    } else {
+                        bLog.warn(NBootMsg.ofC("workspace is not erased because it does not exist : %s", options.getWorkspace()));
                     }
                 }
                 throw new NBootException(NBootMsg.ofPlain(""), 0);

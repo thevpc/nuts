@@ -7,7 +7,7 @@
  * for runtime execution. Nuts is the ultimate companion for maven (and other
  * build managers) as it helps installing all package dependencies at runtime.
  * Nuts is not tied to java and is a good choice to share shell scripts and
- * other 'things' . Its based on an extensible architecture to help supporting a
+ * other 'things' . It's based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
  * <p>
@@ -113,7 +113,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     public <T extends NComponent> NOptional<T> createComponent(Class<T> type, Object supportCriteria) {
         NSession session = workspace.currentSession();
         NSupportLevelContext context = new NDefaultSupportLevelContext(supportCriteria);
-        // should handle NApp specifically because it is the root for resolving scoped properties
+        // should handle NApp specifically because It's the root for resolving scoped properties
         // TODO should it, or should it not??
 
         switch (type.getName()) {

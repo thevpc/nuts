@@ -20,7 +20,7 @@ me@linux:~> nuts license
  and libraries for runtime execution. Nuts is the ultimate companion for
  maven (and other build managers) as it helps installing all package
  dependencies at runtime. Nuts is not tied to java and is a good choice
- to share shell scripts and other 'Things' . It is based on an extensible
+ to share shell scripts and other 'Things' . It's based on an extensible
  architecture to help supporting a large range of sub managers / repositories.
  
  Copyright (C) 2016-2019 Taha BEN SALAH

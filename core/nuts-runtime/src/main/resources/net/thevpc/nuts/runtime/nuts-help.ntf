@@ -7,7 +7,7 @@ only libraries required for the current environment. Nuts is unique in that it r
 descriptor formats to solve dependency graph, and does not, whatsoever, have any requirement on existing
 maven created packages.
 
-Nuts stands for ##Network Updatable Things Services## tool. It is designed to support multiple package formats and even
+Nuts stands for ##Network Updatable Things Services## tool. It's designed to support multiple package formats and even
 multiple languages (platforms like dotnet and python), even-though, the current implementation supports only java.
 ```sh nuts``` artifacts are  stored  into repositories. A  ##:_:repository##  may be local for  storing local ```sh nuts```
 or remote for accessing  remote artifacts (good examples  are  remote maven  repositories). It may
@@ -199,13 +199,13 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
       ```kw macos```      : always use macos layout (even if running on windows)
 
       Data folders of nuts are :
-        apps     : executable binaries folder. Equivalent to linux's '/bin' folder. It is defined as
+        apps     : executable binaries folder. Equivalent to linux's '/bin' folder. It's defined as
                         "base directory relative to which reusable executable applications and scripts should be written"
-        lib      : non executable binaries (libraries) folder. Equivalent to linux's '/usr/lib' folder. It is defined as
+        lib      : non executable binaries (libraries) folder. Equivalent to linux's '/usr/lib' folder. It's defined as
                         "base directory relative to which reusable libraries should be written"
         config   : configuration/settings files folder. equivalent to XDG spec's XDG_CONFIG_HOME folder defined as
                         "base directory relative to which user-specific configuration files should be written"
-        var      : data files folder. More or less related to XDG spec's XDG_DATA_HOME folder. It is defined as
+        var      : data files folder. More or less related to XDG spec's XDG_DATA_HOME folder. It's defined as
                         "the base directory relative to which user-specific non executable data files should be stored"
         log      : log/trace files folder. Equivalent to XDG_LOG_HOME a non standard XDG variable defined as
                         "the base directory relative to which application non-essential data for trace and monitoring
@@ -291,7 +291,7 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
  ```sh --switch ``` (default is ```kw false```)
       When creating a new workspace, by default, only default workspace (```sh --workspace=""```) updates ```path .bashrc``` file
       (or equivalent, according to the current installed and used shell) to point to that workspace. So that, when you
-      type ```sh nuts``` it is that workspace that is used. You can change choose to "switch" the binding to the currently
+      type ```sh nuts``` It's that workspace that is used. You can change choose to "switch" the binding to the currently
       created workspace by arming this flag.
 
  ```sh --init-scripts ``` (default is ```kw true``` for default archetype)
@@ -609,7 +609,7 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
       defines open mode of the workspace. three values are accepted :
       ```kw open-or-create``` or ```kw rw``` or ```kw on``` or ```kw oc``` :
                     this is the default, if the workspace exists, it will be opened ;
-                    if it is not it will be created then opened.
+                    if It's not it will be created then opened.
       ```kw open-existing``` or ```kw r```   or ```kw o``` :
                     will open existing workspace of fail
       ```kw create-new``` or ```kw w``` or ```kw c``` or ```kw n``` :

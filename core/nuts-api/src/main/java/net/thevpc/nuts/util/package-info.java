@@ -4,7 +4,7 @@
  * and libraries for runtime execution.
  * <br>
  * <strong>nuts</strong> stands for <strong>Network Updatable Things Services</strong> tool.
- * It is a <strong>Package Manager</strong> for (mainly) Java
+ * It's a <strong>Package Manager</strong> for (mainly) Java
  * and non Java world. It helps discovering, downloading, assembling and executing  remote artifacts (packages) in
  * a very handy way.
  * <br>

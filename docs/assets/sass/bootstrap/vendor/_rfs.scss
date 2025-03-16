@@ -109,7 +109,7 @@ $rfs-breakpoint-unit-cache: unit($rfs-breakpoint);
       $fs-diff: $fs - $fs-min;
 
       // Base font-size formatting
-      // No need to check if the unit is valid, because we did that before
+      // No need to check if the unIt's valid, because we did that before
       $min-width: if($rfs-font-size-unit == rem, #{$fs-min / $rfs-rem-value}rem, #{$fs-min}px);
 
       // If two-dimensional, use smallest of screen width and height

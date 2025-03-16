@@ -3689,7 +3689,7 @@
 
     /**
      * This modifier is used to move the `arrowElement` of the popper to make
-     * sure it is positioned between the reference element and its popper element.
+     * sure It's positioned between the reference element and its popper element.
      * It will read the outer size of the `arrowElement` node to detect how many
      * pixels of conjunction are needed.
      *
@@ -3937,7 +3937,7 @@
 
     /**
      * Callback called when the popper is created.<br />
-     * By default, it is set to no-op.<br />
+     * By default, It's set to no-op.<br />
      * Access Popper.js instance with `data.instance`.
      * @prop {onCreate}
      */
@@ -3947,7 +3947,7 @@
      * Callback called when the popper is updated. This callback is not called
      * on the initialization/creation of the popper, but only on subsequent
      * updates.<br />
-     * By default, it is set to no-op.<br />
+     * By default, It's set to no-op.<br />
      * Access Popper.js instance with `data.instance`.
      * @prop {onUpdate}
      */

@@ -28,7 +28,7 @@ public class NLRUMap<A, B> extends LinkedHashMap<A, B> {
      * <br>
      *
      * @param eldest the <code>Entry</code> in question; this implementation
-     * doesn't care what it is, since the implementation is only dependent on
+     * doesn't care what It's, since the implementation is only dependent on
      * the size of the cache
      * @return {@code true} if the oldest
      * @see java.util.LinkedHashMap#removeEldestEntry(Map.Entry)

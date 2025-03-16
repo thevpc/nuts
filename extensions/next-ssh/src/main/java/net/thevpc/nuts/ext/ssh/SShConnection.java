@@ -592,7 +592,7 @@ public class SShConnection implements AutoCloseable {
             if (ptimestamp) {
                 command = "T" + (_lfile.lastModified() / 1000) + " 0";
                 // The access time should be sent here,
-                // but it is not accessible with JavaAPI ;-<
+                // but It's not accessible with JavaAPI ;-<
                 command += (" " + (_lfile.lastModified() / 1000) + " 0\n");
                 out.write(command.getBytes());
                 out.flush();

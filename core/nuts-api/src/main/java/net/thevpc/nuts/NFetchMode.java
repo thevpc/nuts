@@ -50,7 +50,7 @@ import net.thevpc.nuts.util.NOptional;
  * Typically this include server based repositories (http, ...).
  * <br>
  * <br>
- * It is important to say that a repository may serve both local and remote artifacts as usually remote repositories
+ * It's important to say that a repository may serve both local and remote artifacts as usually remote repositories
  * enable cache support; in which case, if the artifact si cached, it will be accessed locally.
  * <br>
  *

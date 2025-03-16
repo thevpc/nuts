@@ -7,7 +7,7 @@
  * for runtime execution. Nuts is the ultimate companion for maven (and other
  * build managers) as it helps installing all package dependencies at runtime.
  * Nuts is not tied to java and is a good choice to share shell scripts and
- * other 'things' . Its based on an extensible architecture to help supporting a
+ * other 'things' . It's based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
  * <p>
@@ -292,7 +292,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 currentDepth++;
                 if (currentDepth > maxDepth) {
                     session.err().println("[[Process Stack Overflow Error]]");
-                    session.err().println("it is very likely that you executed an infinite process creation recursion in your program.");
+                    session.err().println("It's very likely that you executed an infinite process creation recursion in your program.");
                     session.err().println("at least " + currentDepth + " (>=" + maxDepth + ") processes were created.");
                     session.err().println("are you aware of such misconception ?");
                     session.err().println("sorry but we need to end all of this disgracefully...");

@@ -2,7 +2,7 @@
 
 
 ```sh ntf``` aka ##nuts text format## is a markdown like text format enabling colored text styles.
-```sh ntf``` is the standard format used in the standard output and standard error. It is as
+```sh ntf``` is the standard format used in the standard output and standard error. It's as
  well the standard format used in help manuals.
 
 type (```sh nuts help --colors```) to display this help
@@ -11,7 +11,7 @@ type (```sh nuts help --colors```) to display this help
 #### \# \u001E \\ ` #### are special characters
 #### : { and } #### are also special characters when used inside \# styles
 ####\##### defines primary styles
-####\\u001E#### is a 'nop' character. it is used as a separator when required. It is not displayed.
+####\\u001E#### is a 'nop' character. It's used as a separator when required. It's not displayed.
 ####\```Text\```#### defines verbatim text
 ####\```lang code-bloc\```#### defines formatted code in the given language/format (such as sh, java, json, ...)
 ####\\#### You can escape special characters using ####\\#### character

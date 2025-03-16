@@ -7,7 +7,7 @@
  * for runtime execution. Nuts is the ultimate companion for maven (and other
  * build managers) as it helps installing all package dependencies at runtime.
  * Nuts is not tied to java and is a good choice to share shell scripts and
- * other 'things' . Its based on an extensible architecture to help supporting a
+ * other 'things' . It's based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
  * <p>
@@ -464,28 +464,28 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     NOptional<NArg> next(NArgType expectValue, String... names);
 
     /**
-     * next argument if it exists and it is a non option. Return null in all
+     * next argument if it exists and It's a non option. Return null in all
      * other cases.
      *
-     * @return next argument if it exists and it is a non option
+     * @return next argument if it exists and It's a non option
      */
     NOptional<NArg> nextNonOption();
 
     /**
-     * next argument if it exists and it is a non option. Return null in all
+     * next argument if it exists and It's a non option. Return null in all
      * other cases.
      *
      * @param name argument specification (may be null)
-     * @return next argument if it exists and it is a non option
+     * @return next argument if it exists and It's a non option
      */
     NOptional<NArg> nextNonOption(NArgName name);
 
     /**
-     * next argument if it exists and it is a non option. Return null in all
+     * next argument if it exists and It's a non option. Return null in all
      * other cases.
      *
      * @param name argument specification (may be null)
-     * @return next argument if it exists and it is a non option
+     * @return next argument if it exists and It's a non option
      */
     NOptional<NArg> nextNonOption(String name);
 

@@ -36,7 +36,7 @@ You do agree that this can be of some cumbersome to type. So you can simplify it
   nuts netbeans-launcher
 ```
 
-In this form, **```nuts```** will auto-detect both the ```groupId``` and the ```version```. The group id is detected if it is already **imported** (we will see later how to import a groupId). 
+In this form, **```nuts```** will auto-detect both the ```groupId``` and the ```version```. The group id is detected if It's already **imported** (we will see later how to import a groupId). 
 By default, there is a couple of groupIds that are automatically imported :
 
   + ```net.thevpc``` (contains various applications of the author)
@@ -68,7 +68,7 @@ you can run either, using it's version
   # or
   nuts netbeans-launcher#1.2.0 &
 ```
-Actually, when you have many versions installed for the same artifact and you try to run it without specifying the version, the last one installed will be considered. To be more precise, an artifact has a default version when it is installed. This default version is considered when no explicit version is typed.
+Actually, when you have many versions installed for the same artifact and you try to run it without specifying the version, the last one installed will be considered. To be more precise, an artifact has a default version when It's installed. This default version is considered when no explicit version is typed.
 In our example, when we type 
 ```
   nuts netbeans-launcher &

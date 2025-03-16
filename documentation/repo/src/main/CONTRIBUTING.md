@@ -61,7 +61,7 @@ not use deprecated features (in java9+) in nuts source code (examples : js nasho
   branch before submitting your pull request. If it doesn't merge cleanly with
   master you may be asked to rebase your changes.
 
-- Commits should be as small as possible, while ensuring that each commit is
+- Commits should be as small as possible, while ensuring that each commIt's
   correct independently (i.e., each commit should compile and pass tests).
 
 - Don't put sub-module updates in your pull request unless they are to landed
@@ -95,7 +95,7 @@ The repository is organized in several folders described here after:
 * **[companions]**    : contains the 'companion' aka main applications bundled with `nuts` (mainly `nsh`).
 * **[docs]**          : contains a generated (using docusaurus) web site that is deployed to github pages (https://thevpc.github.io/nuts/)
 * **[extensions]**    : contains some `nuts` extensions/plugins. as an example it includes and extension for nuts terminal features implemented using `jline` library
-* **[incubating]**    : ignore this for the moment :), it is a work in progress and an attempt to simplify `nuts` installation process and other frozen features. Still very embryonic.
+* **[incubating]**    : ignore this for the moment :), It's a work in progress and an attempt to simplify `nuts` installation process and other frozen features. Still very embryonic.
 * **[libraries]**     : contains a suite of libraries that are based on `nuts` and that can be used by other applications. This includes markdown parsers, ssh support, etc...
 * **[test]**          : contains unit test projects
 * **[toolbox]**       : contains a suite of applications that are based on `nuts` and that complement `nuts` features. This includes `nsh` the shell companion

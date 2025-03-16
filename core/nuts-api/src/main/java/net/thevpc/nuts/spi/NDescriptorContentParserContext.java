@@ -41,7 +41,7 @@ public interface NDescriptorContentParserContext {
     /**
      * command line options that can be parsed to
      * configure parsing options.
-     * A good example of it is the --all-mains option that can be passed
+     * A good example of It's the --all-mains option that can be passed
      * as executor option which will be catched by parser to force resolution
      * of all main classes even though a Main-Class attribute is visited in the MANIFEST.MF
      * file.

@@ -423,7 +423,7 @@ public interface NBootOptions  {
 
     /**
      * if true, workspace configuration are non modifiable.
-     * However cache stills modifiable so that it is possible to load external libraries.
+     * However cache stills modifiable so that It's possible to load external libraries.
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
      *

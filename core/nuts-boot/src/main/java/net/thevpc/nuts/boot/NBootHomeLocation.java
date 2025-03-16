@@ -35,7 +35,7 @@ import java.util.Objects;
 
 /**
  * NutsHomeLocation is a compound enumeration that associates OS family to store location.
- * It is used as a key to define path layout for a given OsFamily and a StoreLocation.
+ * It's used as a key to define path layout for a given OsFamily and a StoreLocation.
  *
  * @author thevpc
  * @app.category Base
@@ -137,7 +137,7 @@ public class NBootHomeLocation {
 
     /**
      * Returns the name of this pseudo enum constant as a concatenation ('_' separated) of OsFamily and StoreLocation.
-     * if any of osFamily or storeLocation is null, it is replaced by 'SYSTEM'
+     * if any of osFamily or storeLocation is null, It's replaced by 'SYSTEM'
      *
      * @return the name of this pseudo enum constant
      */
@@ -147,7 +147,7 @@ public class NBootHomeLocation {
 
     /**
      * Returns the id of this pseudo enum constant as a concatenation ('-' separated) of OsFamily and StoreLocation ids.
-     * if any of osFamily or storeLocation is null, it is replaced by 'system'
+     * if any of osFamily or storeLocation is null, It's replaced by 'system'
      *
      * @return the id of this pseudo enum constant
      */
