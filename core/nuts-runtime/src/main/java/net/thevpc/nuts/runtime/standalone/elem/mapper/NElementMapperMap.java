@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementEntry;
+import net.thevpc.nuts.runtime.standalone.elem.DefaultNPairElement;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryService;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNObjectElement;
 import net.thevpc.nuts.util.NMsg;
@@ -43,7 +43,7 @@ public class NElementMapperMap implements NElementMapper<Map> {
                 Map.Entry e = (Map.Entry) e0;
                 NElement k = context.objectToElement(e.getKey(), null);
                 NElement v = context.objectToElement(e.getValue(), null);
-                m.add(new DefaultNElementEntry(k, v, new NElementAnnotation[0]));
+                m.add(new DefaultNPairElement(k, v, new NElementAnnotation[0]));
             }
         }
         return new DefaultNObjectElement(null, null, m, new NElementAnnotation[0]);
@@ -52,16 +52,16 @@ public class NElementMapperMap implements NElementMapper<Map> {
     public Map fillObject(NElement o, Map all, Type elemType1, Type elemType2, Type to, NElementFactoryContext context) {
         if (o.type() == NElementType.OBJECT) {
             for (NElement ee : o.asObject().get().children()) {
-                NElementEntry kv = (NElementEntry) ee;
-                NElement k = kv.getKey();
-                NElement v = kv.getValue();
+                NPairElement kv = (NPairElement) ee;
+                NElement k = kv.key();
+                NElement v = kv.value();
                 all.put(context.elementToObject(k, elemType1), context.elementToObject(v, elemType2));
             }
         } else if (o.type() == NElementType.ARRAY) {
             for (NElement ee : o.asArray().get().items()) {
-                NElementEntry kv = (NElementEntry) ee;
-                NElement k = kv.getKey();
-                NElement v = kv.getValue();
+                NPairElement kv = (NPairElement) ee;
+                NElement k = kv.key();
+                NElement v = kv.value();
                 all.put(context.elementToObject(k, elemType1), context.elementToObject(v, elemType2));
             }
         } else {

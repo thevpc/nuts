@@ -17,10 +17,8 @@ import java.util.logging.Level;
 public class DefaultNLogs implements NLogs {
 
     private final DefaultNLogModel model;
-    private final NSession session;
 
     public DefaultNLogs(NSession session) {
-        this.session = session;
         this.model = ((NWorkspaceExt) (session.getWorkspace())).getModel().logModel;
     }
 
@@ -58,7 +56,7 @@ public class DefaultNLogs implements NLogs {
 
     @Override
     public NLog createLogger(Class<?> clazz) {
-        return model.createLogger(clazz, session);
+        return model.createLogger(clazz);
     }
 
     @Override

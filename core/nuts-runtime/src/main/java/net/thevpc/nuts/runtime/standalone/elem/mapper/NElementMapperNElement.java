@@ -14,6 +14,13 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
     @Override
     public Object destruct(NElement src, Type typeOfSrc, NElementFactoryContext context) {
         switch (src.type()) {
+            case PAIR:{
+                NPairElement p = src.asPair().get();
+                return new AbstractMap.SimpleEntry<Object, Object>(
+                        context.defaultDestruct(p.key(), NElement.class),
+                        context.defaultDestruct(p.value(), NElement.class)
+                );
+            }
             case ARRAY: {
                 return src.asArray().get().items().stream().map(x -> context.destruct(x, null)).collect(Collectors.toList());
             }
@@ -22,10 +29,10 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                 boolean map = true;
                 List<Object> all = new ArrayList<>();
                 for (NElement nElement : src.asObject().get().children()) {
-                    if (map && nElement instanceof NElementEntry) {
-                        NElementEntry nElementEntry = (NElementEntry) nElement;
-                        Object k = context.destruct(nElementEntry.getKey(), null);
-                        Object v = context.destruct(nElementEntry.getValue(), null);
+                    if (map && nElement instanceof NPairElement) {
+                        NPairElement nPairElement = (NPairElement) nElement;
+                        Object k = context.destruct(nPairElement.key(), null);
+                        Object v = context.destruct(nPairElement.value(), null);
                         if (visited.contains(k)) {
                             map = false;
                         } else {
@@ -62,6 +69,18 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
             return src;
         }
         switch (src.type()) {
+            case PAIR: {
+                NPairElement p = src.asPair().get();
+                NElement k = p.key();
+                NElement v = p.value();
+                boolean someChange0;
+                NElement k2 = context.objectToElement(k, null);
+                NElement v2 = context.objectToElement(v, null);
+                if (k2 == k || v2 == v) {
+                    return p.builder().setKey(k2).setValue(v2).build();
+                }
+                return p;
+            }
             case ARRAY: {
                 NArrayElement arr = src.asArray().get();
                 List<NElement> children = new ArrayList<>(arr.size());

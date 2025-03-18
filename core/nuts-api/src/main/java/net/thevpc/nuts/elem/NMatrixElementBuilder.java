@@ -320,7 +320,7 @@ public interface NMatrixElementBuilder extends NElementBuilder {
     List<NElement> getArgs();
     String getName() ;
     NMatrixElementBuilder setName(String name) ;
-    boolean isWithArgs() ;
+    boolean isParametrized() ;
     NMatrixElementBuilder setHasArgs(boolean hasArgs);
 
 }

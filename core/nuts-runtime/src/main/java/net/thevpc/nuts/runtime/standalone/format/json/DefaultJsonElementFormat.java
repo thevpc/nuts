@@ -197,21 +197,21 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                         if (indent != null) {
                             out.print('\n');
                             out.print(indent2);
-                            if (e instanceof NElementEntry) {
-                                NElementEntry ee = (NElementEntry) e;
-                                write(out, ee.getKey(), indent2);
+                            if (e instanceof NPairElement) {
+                                NPairElement ee = (NPairElement) e;
+                                write(out, ee.key(), indent2);
                                 out.print(':');
                                 out.print(' ');
-                                write(out, ee.getValue(), indent2);
+                                write(out, ee.value(), indent2);
                             } else {
                                 write(out, e, indent2);
                             }
                         } else {
-                            if (e instanceof NElementEntry) {
-                                NElementEntry ee = (NElementEntry) e;
-                                write(out, ee.getKey(), null);
+                            if (e instanceof NPairElement) {
+                                NPairElement ee = (NPairElement) e;
+                                write(out, ee.key(), null);
                                 out.print(':');
-                                write(out, ee.getValue(), null);
+                                write(out, ee.value(), null);
                             } else {
                                 write(out, e, null);
                             }

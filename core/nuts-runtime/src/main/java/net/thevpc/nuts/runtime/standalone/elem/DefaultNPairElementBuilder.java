@@ -1,37 +1,28 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
-import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NOptional;
 
-import java.lang.reflect.Type;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DefaultNElementEntryBuilder implements NElementEntryBuilder {
+public class DefaultNPairElementBuilder implements NPairElementBuilder {
     private NElement key;
     private NElement value;
     private final List<NElementAnnotation> annotations = new ArrayList<>();
 
-    public DefaultNElementEntryBuilder() {
+    public DefaultNPairElementBuilder() {
         key = NElements.of().ofNull();
         value = NElements.of().ofNull();
     }
 
-    public DefaultNElementEntryBuilder(NElement key, NElement value) {
-        this.key = key==null?NElements.of().ofNull():key;
-        this.value = value==null?NElements.of().ofNull():value;
+    public DefaultNPairElementBuilder(NElement key, NElement value) {
+        this.key = key == null ? NElements.of().ofNull() : key;
+        this.value = value == null ? NElements.of().ofNull() : value;
     }
 
     @Override
-    public NElementEntryBuilder addAnnotations(List<NElementAnnotation> annotations) {
+    public NPairElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
         if (annotations != null) {
             for (NElementAnnotation a : annotations) {
                 if (a != null) {
@@ -42,19 +33,27 @@ public class DefaultNElementEntryBuilder implements NElementEntryBuilder {
         return this;
     }
 
-    public NElementEntryBuilder setValue(NElement value) {
+    public NPairElementBuilder setValue(NElement value) {
         this.value = value == null ? NElements.of().ofNull() : value;
         return this;
     }
 
-    public NElementEntryBuilder setKey(NElement key) {
+    public NPairElementBuilder copyFrom(NPairElement other) {
+        if (other != null) {
+            setKey(other.key());
+            setValue(other.value());
+        }
+        return this;
+    }
+
+    public NPairElementBuilder setKey(NElement key) {
         this.key = key == null ? NElements.of().ofNull() : key;
         return this;
     }
 
 
     @Override
-    public NElementEntryBuilder addAnnotation(NElementAnnotation annotation) {
+    public NPairElementBuilder addAnnotation(NElementAnnotation annotation) {
         if (annotation != null) {
             annotations.add(annotation);
         }
@@ -62,7 +61,7 @@ public class DefaultNElementEntryBuilder implements NElementEntryBuilder {
     }
 
     @Override
-    public NElementEntryBuilder addAnnotationAt(int index, NElementAnnotation annotation) {
+    public NPairElementBuilder addAnnotationAt(int index, NElementAnnotation annotation) {
         if (annotation != null) {
             annotations.add(index, annotation);
         }
@@ -70,13 +69,13 @@ public class DefaultNElementEntryBuilder implements NElementEntryBuilder {
     }
 
     @Override
-    public NElementEntryBuilder removeAnnotationAt(int index) {
+    public NPairElementBuilder removeAnnotationAt(int index) {
         annotations.remove(index);
         return this;
     }
 
     @Override
-    public NElementEntryBuilder clearAnnotations() {
+    public NPairElementBuilder clearAnnotations() {
         annotations.clear();
         return this;
     }
@@ -87,13 +86,13 @@ public class DefaultNElementEntryBuilder implements NElementEntryBuilder {
     }
 
     @Override
-    public NElementEntry build() {
-        return new DefaultNElementEntry(key, value, annotations.toArray(new NElementAnnotation[0]));
+    public NPairElement build() {
+        return new DefaultNPairElement(key, value, annotations.toArray(new NElementAnnotation[0]));
     }
 
     @Override
     public NElementType type() {
-        return NElementType.ENTRY;
+        return NElementType.PAIR;
     }
 
     @Override

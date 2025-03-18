@@ -32,7 +32,7 @@ import static net.thevpc.nuts.runtime.standalone.util.CoreStringUtils.stringValu
 import net.thevpc.nuts.NUnsupportedOperationException;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementEntry;
+import net.thevpc.nuts.elem.NPairElement;
 import net.thevpc.nuts.util.NMsg;
 
 /**
@@ -62,9 +62,9 @@ public class NFormatUtils {
                 dest.put(prefix, stringValue(value.asPrimitive().get().getRaw()));
                 break;
             }
-            case ENTRY: {
-                NElementEntry ee = (NElementEntry) value;
-                putAllInProps(prefix + ee.getKey(), dest, ee.getValue());
+            case PAIR: {
+                NPairElement ee = (NPairElement) value;
+                putAllInProps(prefix + ee.key(), dest, ee.value());
                 break;
             }
             case OBJECT: {
@@ -75,9 +75,9 @@ public class NFormatUtils {
                 }
                 int i = 0;
                 for (NElement e : value.asObject().get().children()) {
-                    if (e instanceof NElementEntry) {
-                        NElementEntry ee = (NElementEntry) e;
-                        putAllInProps(prefix + ee.getKey(), dest, ee.getValue());
+                    if (e instanceof NPairElement) {
+                        NPairElement ee = (NPairElement) e;
+                        putAllInProps(prefix + ee.key(), dest, ee.value());
                     } else {
                         putAllInProps(prefix + (i + 1), dest, e);
                         i++;

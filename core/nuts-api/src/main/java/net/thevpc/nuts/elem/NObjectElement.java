@@ -24,7 +24,6 @@
  */
 package net.thevpc.nuts.elem;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -56,11 +55,13 @@ public interface NObjectElement extends NNavigatableElement, Iterable<NElement> 
 
     boolean isNamed() ;
 
-    boolean isWithArgs() ;
+    boolean isParametrized() ;
 
-    List<NElement> args() ;
+    List<NElement> params() ;
 
-    int argsCount() ;
+    int paramsCount() ;
 
-    NElement argAt(int index) ;
+    NElement param(int index) ;
+
+    Stream<NPairElement> pairs();
 }

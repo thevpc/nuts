@@ -28,7 +28,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NBootOptions;
 import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.spi.NScopeType;
@@ -47,7 +46,7 @@ import java.util.logging.Logger;
 public class DefaultNLogModel {
     private static Handler[] EMPTY = new Handler[0];
     private NWorkspace workspace;
-    private NPrintStream out;
+//    private NPrintStream out;
     private Handler consoleHandler;
     private Handler fileHandler;
     private NLogConfig logConfig = new NLogConfig();
@@ -70,7 +69,7 @@ public class DefaultNLogModel {
             logConfig.setLogFileBase(lc.getLogFileBase());
             logConfig.setLogFileSize(lc.getLogFileSize());
         }
-        out = ((NWorkspaceExt) ws).getModel().bootModel.getSystemTerminal().err();
+//        out = ((NWorkspaceExt) ws).getModel().bootModel.getSystemTerminal().err();
     }
 
     public List<Handler> getHandlers() {
@@ -117,7 +116,7 @@ public class DefaultNLogModel {
     }
 
 
-    public NLog createLogger(Class clazz, NSession session) {
+    public NLog createLogger(Class clazz) {
         Map<String, NLog> loaded = loaded();
         NLog y = loaded.get(clazz.getName());
         if (y == null) {
@@ -185,20 +184,19 @@ public class DefaultNLogModel {
     public void updateTermHandler(LogRecord record) {
         NSession session = NLogUtils.resolveSession(record, workspace);
         NPrintStream out = session.err();
-        if (out != this.out || consoleHandler == null) {
-            this.out = out;
-            if (consoleHandler != null) {
-                if (consoleHandler instanceof NLogConsoleHandler) {
-                    ((NLogConsoleHandler) consoleHandler).setOutputStream(out, false);
-                    consoleHandler.setLevel(logConfig.getLogTermLevel());
-                } else {
-                    consoleHandler.flush(); // do not close!!
-                    consoleHandler.setLevel(logConfig.getLogTermLevel());
+        if (consoleHandler != null) {
+            if (consoleHandler instanceof NLogConsoleHandler) {
+                NLogConsoleHandler ch = (NLogConsoleHandler) consoleHandler;
+                if (out != ch.out()) {
+                    ch.setOutputStream(out, false);
                 }
             } else {
-                consoleHandler = new NLogConsoleHandler(out, false,workspace);
-                consoleHandler.setLevel(logConfig.getLogTermLevel());
+                consoleHandler.flush(); // do not close!!
             }
+            consoleHandler.setLevel(logConfig.getLogTermLevel());
+        } else {
+            consoleHandler = new NLogConsoleHandler(out, false,workspace);
+            consoleHandler.setLevel(logConfig.getLogTermLevel());
         }
     }
 

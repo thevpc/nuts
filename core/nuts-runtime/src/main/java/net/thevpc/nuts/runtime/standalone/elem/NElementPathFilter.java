@@ -232,10 +232,10 @@ public class NElementPathFilter {
                 NElementNameMatcher nameMatcher = matchesName(pattern);
                 NElementIndexMatcher indexMatcher = matchesIndex(pattern);
                 for (NElement e : aa0) {
-                    if (e instanceof NElementEntry) {
-                        NElementEntry se = (NElementEntry) e;
-                        if (nameMatcher.matches(index, se.getKey(), len, matchContext)) {
-                            result.add(se.getValue());
+                    if (e instanceof NPairElement) {
+                        NPairElement se = (NPairElement) e;
+                        if (nameMatcher.matches(index, se.key(), len, matchContext)) {
+                            result.add(se.value());
                         } else if (indexMatcher.matches(e, index, len, matchContext)) {
                             result.add(e);
                         }

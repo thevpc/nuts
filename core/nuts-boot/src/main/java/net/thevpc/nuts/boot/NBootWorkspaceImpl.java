@@ -790,7 +790,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                     }
                 }
                 throw new NBootException(NBootMsg.ofPlain(""), 0);
-            }else if (
+            } else if (
                     NBootUtils.isEmptyList(options.getApplicationArguments())
                             && NBootUtils.firstNonNull(options.getSkipBoot(), false)
                             && (NBootUtils.firstNonNull(options.getRecover(), false) || resetFlag)
@@ -1173,8 +1173,12 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             };
             exceptionRunnable.run();
         } catch (Throwable ex) {
-            NBootMsg message = NBootMsg.ofPlain("unable to locate valid nuts-runtime package");
-            errorList.insert(0, new NReservedErrorInfo(null, null, null, message + " : " + ex, ex));
+            NBootMsg message = NBootMsg.ofPlain("unable to bootstrap nuts workspace");
+            if (ex instanceof NBootException) {
+                errorList.insert(0, new NReservedErrorInfo(null, null, null, ex.getMessage(), ex));
+            } else {
+                errorList.insert(0, new NReservedErrorInfo(null, null, null, message + " : " + ex, ex));
+            }
             URL[] finalBootClassWorldURLs1 = bootClassWorldURLs;
             exceptionRunnable = () -> {
                 logError(finalBootClassWorldURLs1, errorList, options);
@@ -1278,6 +1282,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
         if ("<internal>".equals(apiDigestOrInternal)) {
             apiDigestOrInternal = null;
         }
+        bLog.setOptions(options);
         if (!showStackTrace) {
             bLog.error(NBootMsg.ofC("unable to bootstrap nuts %s %s", NUTS_BOOT_VERSION, NBootUtils.isBlank(apiDigestOrInternal) ? "" : ("(digest " + apiDigestOrInternal + ")")));
             for (NReservedErrorInfo e : ths.list()) {

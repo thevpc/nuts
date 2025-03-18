@@ -1184,17 +1184,17 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
 
     @Override
     public NPrintStream out() {
-        return terminal.out();
+        return terminal==null?null:terminal.out();
     }
 
     @Override
     public InputStream in() {
-        return terminal.in();
+        return terminal==null?null:terminal.in();
     }
 
     @Override
     public NPrintStream err() {
-        return terminal.err();
+        return terminal==null?null:terminal.err();
     }
 
     @Override

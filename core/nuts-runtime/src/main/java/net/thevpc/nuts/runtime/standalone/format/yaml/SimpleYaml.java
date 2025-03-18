@@ -82,7 +82,7 @@ public class SimpleYaml implements NElementStreamFormat {
             return new Node(NodeType.ARRAY_ELEMENT, value);
         }
 
-        private static Node forObjectElement(NElementEntry value) {
+        private static Node forObjectElement(NPairElement value) {
             return new Node(NodeType.OBJECT_ELEMENT, value);
         }
 
@@ -94,8 +94,8 @@ public class SimpleYaml implements NElementStreamFormat {
             return (NElement) value;
         }
 
-        public NElementEntry getEntry() {
-            return (NElementEntry) value;
+        public NPairElement getEntry() {
+            return (NPairElement) value;
         }
 
         public Object getValue() {
@@ -516,7 +516,7 @@ public class SimpleYaml implements NElementStreamFormat {
                         readNewLine();
                         skipWhiteSpace();
                         NElement v = readNode(indent, true).getElement();
-                        return Node.forObjectElement(builder().ofEntry(li, v));
+                        return Node.forObjectElement(builder().ofPair(li, v));
                     } else if (current == '\n' || current == ';') {
                         readNewLine();
                         int newIndent = peekIndent();
@@ -531,7 +531,7 @@ public class SimpleYaml implements NElementStreamFormat {
                             readNewLine();
                             skipWhiteSpace();
                             NElement v = readNode(newIndent, true).getElement();
-                            return Node.forObjectElement(builder().ofEntry(li, v));
+                            return Node.forObjectElement(builder().ofPair(li, v));
                         } else {
                             NElement li = readNode(indent, true).getElement();
                             skipWhiteSpace();
@@ -542,7 +542,7 @@ public class SimpleYaml implements NElementStreamFormat {
                             readNewLine();
                             skipWhiteSpace();
                             NElement v = readNode(indent, true).getElement();
-                            return Node.forObjectElement(builder().ofEntry(li, v));
+                            return Node.forObjectElement(builder().ofPair(li, v));
                         }
                     } else {
                         readerReset();
@@ -564,14 +564,14 @@ public class SimpleYaml implements NElementStreamFormat {
                             if (newIndent > indent) {
                                 skipWhiteSpace();
                                 NElement v = readElement(newIndent);
-                                return Node.forObjectElement(builder().ofEntry(li, v));
+                                return Node.forObjectElement(builder().ofPair(li, v));
                             } else {
-                                return Node.forObjectElement(builder().ofEntry(li, builder().ofString("")));
+                                return Node.forObjectElement(builder().ofPair(li, builder().ofString("")));
                             }
                         } else {
                             Node n = readNode(indent, true);
                             NElement v = n.getElement();
-                            return Node.forObjectElement(builder().ofEntry(li, v));
+                            return Node.forObjectElement(builder().ofPair(li, v));
                         }
                     }
                     return Node.forLiteral(li);

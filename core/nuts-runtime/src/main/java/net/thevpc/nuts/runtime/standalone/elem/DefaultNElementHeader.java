@@ -58,7 +58,7 @@
 //    }
 //
 //    @Override
-//    public boolean isWithArgs() {
+//    public boolean isParametrized() {
 //        return hasArgs;
 //    }
 //

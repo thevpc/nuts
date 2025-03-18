@@ -89,11 +89,11 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
         }else if(entryValue instanceof NObjectElement){
             int i=0;
             for (NElement item : ((NObjectElement) entryValue)) {
-                if(item instanceof NElementEntry){
-                    NElementEntry entry=(NElementEntry) item;
-                    Object k = entry.getKey();
+                if(item instanceof NPairElement){
+                    NPairElement entry=(NPairElement) item;
+                    Object k = entry.key();
                     NText ns= entryKey.isEmpty()?stringValue(k): entryKey.builder().append(".").append(stringValue(k));
-                    Object v = entry.getValue();
+                    Object v = entry.value();
                     fillMap(ns, v,map);
                 }else {
                     NText ns = entryKey.builder().append("[").append(stringValue(i+1)).append("]");

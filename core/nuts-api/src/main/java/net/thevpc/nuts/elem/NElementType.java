@@ -39,80 +39,79 @@ public enum NElementType implements NEnum {
     /**
      * null element
      */
-    NULL(true, false),
+    NULL,
     /**
      * integer/long (number) element
      */
-    LONG(true, true),
+    LONG,
     /**
      * integer/long (number) element
      */
-    INTEGER(true, true),
+    INTEGER,
     /**
      * integer/long (number) element
      */
-    SHORT(true, true),
+    SHORT,
     /**
      * integer/long (number) element
      */
-    BYTE(true, true),
+    BYTE,
     /**
      * float/double (number) element
      */
-    FLOAT(true, true),
+    FLOAT,
     /**
      * float/double (number) element
      */
-    BIG_INTEGER(true, true),
+    BIG_INTEGER,
     /**
      * float/double (number) element
      */
-    BIG_DECIMAL(true, true),
+    BIG_DECIMAL,
     /**
      * float/double (number) element
      */
-    DOUBLE(true, true),
+    DOUBLE,
     /**
      * string element
      */
-    STRING(true, false),
-    REGEX(true, false),
-    NAME(true, false),
-    CHAR(true, false),
+    STRING,
+    REGEX,
+    NAME,
+    CHAR,
 
     /**
      * date element
      */
-    INSTANT(true, false),
+    INSTANT,
     /**
      * boolean element
      */
-    BOOLEAN(true, false),
+    BOOLEAN,
     /**
      * array element
      */
-    ARRAY(false, false),
-    ENTRY(false, false),
+    ARRAY,
     /**
      * object (list of key/val) element
      */
-    OBJECT(false, false),
+    OBJECT,
     /**
      * custom object that is not destructed. Cannot be null or primitive
      */
-    CUSTOM(false, false),
-    PAIR(false, false),
-    DATETIME(true, false),
-    DATE(true, false),
-    TIME(true, false),
-    BINARY_STREAM(true, false),
-    CHAR_STREAM(true, false),
-    DOUBLE_COMPLEX(true, true),
-    FLOAT_COMPLEX(true, true),
-    BIG_COMPLEX(true, true),
-    UPLET(false, true),
-    MATRIX(false, false),
-    ALIAS(false, false),
+    CUSTOM,
+    PAIR,
+    DATETIME,
+    DATE,
+    TIME,
+    BINARY_STREAM,
+    CHAR_STREAM,
+    DOUBLE_COMPLEX,
+    FLOAT_COMPLEX,
+    BIG_COMPLEX,
+    UPLET,
+    MATRIX,
+    ALIAS,
 
 
     // Missing types to support TSON types
@@ -122,25 +121,28 @@ public enum NElementType implements NEnum {
     // this zould not be supported (will be removed from tson)
 
     // these are compund types
-    OP(false, false),
+    OP,
+
+    NAMED_ARRAY,
+    NAMED_PARAMETRIZED_ARRAY,
+    NAMED_OBJECT,
+    NAMED_PARAMETRIZED_OBJECT,
+    NAMED_UPLET,
+    NAMED_MATRIX,
+    NAMED_PARAMETRIZED_MATRIX,
+    PARAMETRIZED_MATRIX,
+    PARAMETRIZED_ARRAY,
+    PARAMETRIZED_OBJECT,
 
     ;
-
-    /**
-     * true if private type
-     */
-    private final boolean primitive;
-    private final boolean nbr;
 
     /**
      * lower-cased identifier for the enum entry
      */
     private final String id;
 
-    NElementType(boolean primitive, boolean nbr) {
+    NElementType() {
         this.id = NNameFormat.ID_NAME.format(name());
-        this.primitive = primitive;
-        this.nbr = nbr;
     }
 
     public static NOptional<NElementType> parse(String value) {
@@ -148,7 +150,51 @@ public enum NElementType implements NEnum {
     }
 
     public boolean isNumber() {
-        return nbr;
+        switch (this) {
+            case BYTE:
+            case SHORT:
+            case INTEGER:
+            case LONG:
+            case FLOAT:
+            case DOUBLE:
+            case DOUBLE_COMPLEX:
+            case FLOAT_COMPLEX:
+            case BIG_INTEGER:
+            case BIG_COMPLEX:
+            case BIG_DECIMAL:
+                return true;
+            case NULL:
+            case BINARY_STREAM:
+            case CHAR_STREAM:
+            case STRING:
+            case CHAR:
+            case BOOLEAN:
+            case NAME:
+            case ALIAS:
+            case DATETIME:
+            case DATE:
+            case TIME:
+            case REGEX:
+            case MATRIX:
+            case PAIR:
+            case OP:
+            case ARRAY:
+            case OBJECT:
+            case UPLET:
+            case CUSTOM:
+            case NAMED_ARRAY:
+            case NAMED_PARAMETRIZED_ARRAY:
+            case NAMED_OBJECT:
+            case NAMED_PARAMETRIZED_OBJECT:
+            case NAMED_UPLET:
+            case NAMED_MATRIX:
+            case NAMED_PARAMETRIZED_MATRIX:
+            case PARAMETRIZED_MATRIX:
+            case PARAMETRIZED_ARRAY:
+            case PARAMETRIZED_OBJECT:
+                return false;
+        }
+        return false;
     }
 
     /**
@@ -165,7 +211,53 @@ public enum NElementType implements NEnum {
      *
      * @return true if private type
      */
+
     public boolean isPrimitive() {
-        return primitive;
+        switch (this) {
+            case BYTE:
+            case SHORT:
+            case INTEGER:
+            case LONG:
+            case FLOAT:
+            case DOUBLE:
+            case DOUBLE_COMPLEX:
+            case FLOAT_COMPLEX:
+            case BIG_INTEGER:
+            case BIG_COMPLEX:
+            case BIG_DECIMAL:
+            case NULL:
+            case BINARY_STREAM:
+            case CHAR_STREAM:
+            case STRING:
+            case CHAR:
+            case BOOLEAN:
+            case NAME:
+            case ALIAS:
+            case DATETIME:
+            case DATE:
+            case TIME:
+            case REGEX:
+                return true;
+            case MATRIX:
+            case PAIR:
+            case OP:
+            case ARRAY:
+            case OBJECT:
+            case UPLET:
+            case CUSTOM:
+            case NAMED_ARRAY:
+            case NAMED_PARAMETRIZED_ARRAY:
+            case NAMED_OBJECT:
+            case NAMED_PARAMETRIZED_OBJECT:
+            case NAMED_UPLET:
+            case NAMED_MATRIX:
+            case NAMED_PARAMETRIZED_MATRIX:
+            case PARAMETRIZED_MATRIX:
+            case PARAMETRIZED_ARRAY:
+            case PARAMETRIZED_OBJECT:
+                return false;
+        }
+        return false;
     }
+
 }

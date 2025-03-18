@@ -27,7 +27,7 @@
 /lib/nlib-tomcat-classloader/target/
 /lib/nlib-ssh/target/
 /extensions/next-ssh/target/
-/lib/nlib-md/target/
+/lib/nmarkdown/target/
 /lsp/conf/
 /lsp/log/
 /lsp/log/*.log
@@ -84,7 +84,7 @@
 /lib/nlib-tomcat-classloader/nlib-tomcat-classloader.iml
 /lib/nlib-ssh/nlib-ssh.iml
 /lib/nlib-servlet/nlib-servlet.iml
-/lib/nlib-md/nlib-md.iml
+/lib/nmarkdown/nmarkdown.iml
 /.~lock.DEV_VERSION_TRACKING.xlsx#
 /incubating/nutsc/build
 /incubating/nutsc/dist
@@ -129,7 +129,7 @@
 /installers/deprecated/izpack/nuts-installer-panels/target/
 /installers/deprecated/izpack/nuts-installer/target/
 /extensions/next-term/target/
-/libraries/nlib-md/target/
+/libraries/nmarkdown/target/
 /libraries/nlib-servlet/target/
 /libraries/nlib-ssh/target/
 /libraries/nlib-talk-agent/target/
@@ -153,7 +153,7 @@
 /tutorials/ugly-jar-projects/dependency-project/dependency-project.iml
 /tutorials/nsh/custom-shell-project/custom-shell-project.iml
 /tutorials/ugly-jar-projects/assembly-project/assembly-project.iml
-/libraries/nlib-md/nlib-md.iml
+/libraries/nmarkdown/nmarkdown.iml
 /extensions/next-term/next-term.iml
 /third-party-companions/ndocusaurus/ndocusaurus.iml
 /third-party-companions/ndb/ndb.iml
@@ -241,7 +241,7 @@ core/nuts-app-full/target
 /core/nuts-lib/target
 
 /documentation/website/dist/
-/libraries/nlib-doc/target
+/libraries/ndoc-lib/target
 /core/nuts-boot-swing/target
 /core/nuts-app-full/src/dist/nuts-app-full-0.8.5.jar
 /incubating/ndexer/target

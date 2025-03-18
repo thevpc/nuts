@@ -79,6 +79,7 @@ public class DefaultNLogOp implements NLogOp {
                     level,
                     verb,
                     m,
+                    NLogUtils.filterLogText(m),
                     time,
                     error
             );

@@ -40,7 +40,7 @@ public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
 
     private final List<NElement> values = new ArrayList<>();
     private final List<NElementAnnotation> annotations = new ArrayList<>();
-    private List<NElement> args;
+    private List<NElement> params;
     private String name;
 
     public DefaultNArrayElementBuilder() {
@@ -55,17 +55,17 @@ public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
         return this;
     }
 
-    public boolean isWithArgs() {
-        return args != null;
+    public boolean isParametrized() {
+        return params != null;
     }
 
-    public NArrayElementBuilder setWithArgs(boolean hasArgs) {
+    public NArrayElementBuilder setParametrized(boolean hasArgs) {
         if (hasArgs) {
-            if (args == null) {
-                args = new ArrayList<>();
+            if (params == null) {
+                params = new ArrayList<>();
             }
         } else {
-            args = null;
+            params = null;
         }
         return this;
     }
@@ -75,10 +75,10 @@ public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
         if (args != null) {
             for (NElement a : args) {
                 if (a != null) {
-                    if (this.args == null) {
-                        this.args = new ArrayList<>();
+                    if (this.params == null) {
+                        this.params = new ArrayList<>();
                     }
-                    this.args.add(a);
+                    this.params.add(a);
                 }
             }
         }
@@ -88,10 +88,10 @@ public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
     @Override
     public NArrayElementBuilder addArg(NElement arg) {
         if (arg != null) {
-            if (this.args == null) {
-                this.args = new ArrayList<>();
+            if (this.params == null) {
+                this.params = new ArrayList<>();
             }
-            this.args.add(arg);
+            this.params.add(arg);
         }
         return this;
     }
@@ -99,33 +99,33 @@ public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
     @Override
     public NArrayElementBuilder addArgAt(int index, NElement arg) {
         if (arg != null) {
-            if (this.args == null) {
-                this.args = new ArrayList<>();
+            if (this.params == null) {
+                this.params = new ArrayList<>();
             }
-            args.add(index, arg);
+            params.add(index, arg);
         }
         return this;
     }
 
     @Override
     public NArrayElementBuilder removeArgAt(int index) {
-        if (this.args != null) {
-            args.remove(index);
+        if (this.params != null) {
+            params.remove(index);
         }
         return this;
     }
 
     @Override
     public NArrayElementBuilder clearArgs() {
-        if (this.args != null) {
-            args.clear();
+        if (this.params != null) {
+            params.clear();
         }
         return this;
     }
 
     @Override
-    public List<NElement> getArgs() {
-        return Collections.unmodifiableList(args);
+    public List<NElement> getParams() {
+        return Collections.unmodifiableList(params);
     }
 
     @Override
@@ -390,7 +390,7 @@ public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
 
     @Override
     public NArrayElement build() {
-        return new DefaultNArrayElement(name, args, values,
+        return new DefaultNArrayElement(name, params, values,
                 annotations.toArray(new NElementAnnotation[0]));
     }
 
@@ -417,6 +417,9 @@ public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
 
     @Override
     public NElementType type() {
-        return NElementType.ARRAY;
+        return name == null && params == null ? NElementType.ARRAY
+                : name == null && params != null ? NElementType.PARAMETRIZED_ARRAY
+                : name != null && params == null ? NElementType.NAMED_ARRAY
+                : NElementType.NAMED_PARAMETRIZED_ARRAY;
     }
 }

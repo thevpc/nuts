@@ -83,6 +83,14 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public NOptional<NPairElement> asPair() {
+        if (this instanceof NPairElement) {
+            return NOptional.of((NPairElement) this);
+        }
+        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to pair: %s", type().id(), this));
+    }
+
+    @Override
     public NOptional<NNavigatableElement> asNavigatable() {
         if (this instanceof NNavigatableElement) {
             return NOptional.of((NNavigatableElement) this);
@@ -231,6 +239,12 @@ public abstract class AbstractNElement implements NElement {
     public boolean isArray() {
         NElementType t = type();
         return t == NElementType.ARRAY;
+    }
+
+    @Override
+    public boolean isPair() {
+        NElementType t = type();
+        return t == NElementType.PAIR;
     }
 
     @Override

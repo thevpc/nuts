@@ -1960,7 +1960,7 @@ public final class NBootWorkspaceCmdLineParser {
             case "":
                 return null;
         }
-        throw new NBootException(NBootMsg.ofC("unable to parse value for NutsStoreStrategy : %s", s));
+        throw new NBootException(NBootMsg.ofC("unable to parse value for NSupportMode : %s", s));
     }
 
     private static String parseStoreType(String s) {
@@ -2009,7 +2009,7 @@ public final class NBootWorkspaceCmdLineParser {
             case "":
                 return null;
         }
-        throw new NBootException(NBootMsg.ofC("unable to parse value for NutsStoreStrategy : %s", s));
+        throw new NBootException(NBootMsg.ofC("unable to parse value for NTerminalMode : %s", s));
     }
 
 

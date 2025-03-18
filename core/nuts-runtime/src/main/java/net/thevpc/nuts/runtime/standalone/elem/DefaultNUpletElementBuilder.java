@@ -40,7 +40,7 @@ public class DefaultNUpletElementBuilder implements NUpletElementBuilder {
 
     private final List<NElement> values = new ArrayList<>();
     private final List<NElementAnnotation> annotations = new ArrayList<>();
-    private List<NElement> args;
+    private List<NElement> params;
     private String name;
 
     public DefaultNUpletElementBuilder() {
@@ -55,17 +55,17 @@ public class DefaultNUpletElementBuilder implements NUpletElementBuilder {
         return this;
     }
 
-    public boolean isWithArgs() {
-        return args != null;
+    public boolean isParametrized() {
+        return params != null;
     }
 
-    public NUpletElementBuilder setWithArgs(boolean hasArgs) {
+    public NUpletElementBuilder setParametrized(boolean hasArgs) {
         if (hasArgs) {
-            if (args == null) {
-                args = new ArrayList<>();
+            if (params == null) {
+                params = new ArrayList<>();
             }
         } else {
-            args = null;
+            params = null;
         }
         return this;
     }
@@ -73,18 +73,18 @@ public class DefaultNUpletElementBuilder implements NUpletElementBuilder {
 
     public NUpletElementBuilder addAt(int index, NElement arg) {
         if (arg != null) {
-            if (this.args == null) {
-                this.args = new ArrayList<>();
+            if (this.params == null) {
+                this.params = new ArrayList<>();
             }
-            args.add(index, arg);
+            params.add(index, arg);
         }
         return this;
     }
 
     @Override
     public NUpletElementBuilder removeAt(int index) {
-        if (this.args != null) {
-            args.remove(index);
+        if (this.params != null) {
+            params.remove(index);
         }
         return this;
     }
@@ -368,6 +368,7 @@ public class DefaultNUpletElementBuilder implements NUpletElementBuilder {
 
     @Override
     public NElementType type() {
-        return NElementType.ARRAY;
+        return name == null ? NElementType.UPLET
+                : NElementType.NAMED_UPLET;
     }
 }

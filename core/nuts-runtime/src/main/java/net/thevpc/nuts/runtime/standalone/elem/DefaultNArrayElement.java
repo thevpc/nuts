@@ -27,10 +27,8 @@ package net.thevpc.nuts.runtime.standalone.elem;
 import java.time.Instant;
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.*;
+import net.thevpc.tson.TsonElementType;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -39,25 +37,36 @@ import java.util.stream.Stream;
 /**
  * @author thevpc
  */
-public class DefaultNArrayElement extends AbstractNArrayElement {
+public class DefaultNArrayElement extends AbstractNNavigatableElement
+        implements NArrayElement {
 
     private final NElement[] values;
     private String name;
-    private List<NElement> args;
+    private List<NElement> params;
 
-    public DefaultNArrayElement(String name, List<NElement> args, Collection<NElement> values, NElementAnnotation[] annotations) {
-        super(annotations);
+    public DefaultNArrayElement(String name, List<NElement> params, Collection<NElement> values, NElementAnnotation[] annotations) {
+        super(
+                name == null && params == null ? NElementType.ARRAY
+                        : name == null && params != null ? NElementType.PARAMETRIZED_ARRAY
+                        : name != null && params == null ? NElementType.NAMED_ARRAY
+                        : NElementType.NAMED_PARAMETRIZED_ARRAY,
+                annotations);
         this.values = values.toArray(new NElement[0]);
         this.name = name;
-        this.args = args;
+        this.params = params;
     }
 
 
-    public DefaultNArrayElement(String name, List<NElement> args, NElement[] values, NElementAnnotation[] annotations) {
-        super(annotations);
+    public DefaultNArrayElement(String name, List<NElement> params, NElement[] values, NElementAnnotation[] annotations) {
+        super(
+                name == null && params == null ? NElementType.ARRAY
+                        : name == null && params != null ? NElementType.PARAMETRIZED_ARRAY
+                        : name != null && params == null ? NElementType.NAMED_ARRAY
+                        : NElementType.NAMED_PARAMETRIZED_ARRAY,
+                annotations);
         this.values = Arrays.copyOf(values, values.length);
         this.name = name;
-        this.args = args;
+        this.params = params;
     }
 
     @Override
@@ -163,13 +172,13 @@ public class DefaultNArrayElement extends AbstractNArrayElement {
         DefaultNArrayElement nElements = (DefaultNArrayElement) o;
         return Objects.deepEquals(values, nElements.values)
                 && Objects.equals(name, nElements.name)
-                && Objects.equals(args, nElements.args)
+                && Objects.equals(params, nElements.params)
                 ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), Arrays.hashCode(values), name, args);
+        return Objects.hash(super.hashCode(), Arrays.hashCode(values), name, params);
     }
 
     @Override
@@ -179,7 +188,7 @@ public class DefaultNArrayElement extends AbstractNArrayElement {
 
     @Override
     public boolean isBlank() {
-        return values.length == 0 && NBlankable.isBlank(name) && (args == null || args.isEmpty());
+        return values.length == 0 && NBlankable.isBlank(name) && (params == null || params.isEmpty());
     }
 
     @Override
@@ -228,19 +237,34 @@ public class DefaultNArrayElement extends AbstractNArrayElement {
         return name != null;
     }
 
-    public boolean isWithArgs() {
-        return args != null;
+    public boolean isParametrized() {
+        return params != null;
     }
 
-    public List<NElement> args() {
-        return args == null ? null : Collections.unmodifiableList(args);
+    public List<NElement> params() {
+        return params == null ? null : Collections.unmodifiableList(params);
     }
 
-    public int argsCount() {
-        return args == null ? null : args.size();
+    public int paramsCount() {
+        return params == null ? null : params.size();
     }
 
-    public NElement argAt(int index) {
-        return args == null ? null : args.get(index);
+    public NElement param(int index) {
+        return params == null ? null : params.get(index);
+    }
+
+
+    @Override
+    public NOptional<Object> asObjectAt(int index) {
+        return get(index).map(x -> x);
+    }
+
+
+    @Override
+    public List<NElement> resolveAll(String pattern) {
+        pattern = NStringUtils.trimToNull(pattern);
+        NElementPathImpl pp = new NElementPathImpl(pattern);
+        NElement[] nElements = pp.resolveReversed(this);
+        return new ArrayList<>(Arrays.asList(nElements));
     }
 }

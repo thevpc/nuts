@@ -29,6 +29,7 @@ import net.thevpc.nuts.NBootOptions;
 
 import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.format.NFormats;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryService;
 import net.thevpc.nuts.runtime.standalone.elem.NElementFactoryService;
@@ -47,6 +48,7 @@ import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.spi.NDefaultSupportLevelContext;
 import net.thevpc.nuts.text.NTextFormatTheme;
 import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NOsFamily;
@@ -78,6 +80,8 @@ public class DefaultNTextManagerModel {
     private NElementStreamFormat xmlMan;
     private NElementStreamFormat tsonMan;
     private Map<String, NTextFormatTheme> cachedThemes = new HashMap<>();
+    public NTexts defaultNTexts;
+    public NFormats defaultNFormats;
 
     public DefaultNTextManagerModel(NWorkspace workspace) {
         this.workspace = workspace;

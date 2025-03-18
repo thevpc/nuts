@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementEntry;
+import net.thevpc.nuts.elem.NPairElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.util.NToken;
 import net.thevpc.nuts.util.NStreamTokenizer;
@@ -190,10 +190,10 @@ public class NElementPathImpl {
 
         public NElementOrEntry(int index, NElement value) {
             this.index = index;
-            if(value instanceof NElementEntry){
-                NElementEntry ee=(NElementEntry) value;
-                this.key = ee.getKey();
-                this.value = ee.getValue();
+            if(value instanceof NPairElement){
+                NPairElement ee=(NPairElement) value;
+                this.key = ee.key();
+                this.value = ee.value();
             }else{
                 this.key = NElements.of().ofInt(index);
                 this.value = value;

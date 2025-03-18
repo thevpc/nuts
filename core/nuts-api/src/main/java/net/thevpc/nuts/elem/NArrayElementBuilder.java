@@ -317,10 +317,10 @@ public interface NArrayElementBuilder extends NElementBuilder {
     NArrayElementBuilder addArgAt(int index, NElement arg) ;
     NArrayElementBuilder removeArgAt(int index) ;
     NArrayElementBuilder clearArgs() ;
-    List<NElement> getArgs();
+    List<NElement> getParams();
     String getName() ;
     NArrayElementBuilder setName(String name) ;
-    boolean isWithArgs() ;
-    NArrayElementBuilder setWithArgs(boolean hasArgs);
+    boolean isParametrized() ;
+    NArrayElementBuilder setParametrized(boolean hasArgs);
 
 }

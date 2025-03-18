@@ -87,13 +87,13 @@ public interface NArrayElement extends NNavigatableElement, Iterable<NElement> {
 
     boolean isNamed() ;
 
-    boolean isWithArgs() ;
+    boolean isParametrized() ;
 
-    List<NElement> args() ;
+    List<NElement> params() ;
 
-    int argsCount() ;
+    int paramsCount() ;
 
-    NElement argAt(int index) ;
+    NElement param(int index) ;
 
     /**
      * return new builder initialized with this instance

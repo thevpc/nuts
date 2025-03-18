@@ -17,8 +17,8 @@ public class NLogRecord extends LogRecord implements NSessionProvider{
      */
     private long time;
 
-    public NLogRecord(NSession session, Level level, NLogVerb verb, NMsg msg, long time, Throwable thrown) {
-        super(level, NText.of(msg).filteredText());
+    public NLogRecord(NSession session, Level level, NLogVerb verb, NMsg msg, String filteredText,long time, Throwable thrown) {
+        super(level, filteredText);
         this.nmsg = msg;
         this.verb = verb;
         this.session = session;

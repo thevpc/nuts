@@ -358,8 +358,8 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     @Override
-    public NElementEntry ofEntry(NElement key, NElement value) {
-        return new DefaultNElementEntry(
+    public NPairElement ofPair(NElement key, NElement value) {
+        return new DefaultNPairElement(
                 key == null ? ofNull() : key,
                 value == null ? ofNull() : value,
                 new NElementAnnotation[0]
@@ -367,8 +367,8 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     @Override
-    public NElementEntryBuilder ofEntryBuilder(NElement key, NElement value) {
-        return new DefaultNElementEntryBuilder(
+    public NPairElementBuilder ofPairBuilder(NElement key, NElement value) {
+        return new DefaultNPairElementBuilder(
                 key == null ? ofNull() : key,
                 value == null ? ofNull() : value
         );
@@ -391,6 +391,11 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     @Override
     public NArrayElement ofEmptyArray() {
         return ofArrayBuilder().build();
+    }
+
+    @Override
+    public NArrayElementBuilder ofArray(NElement... items) {
+        return ofArrayBuilder().addAll(items);
     }
 
     @Override

@@ -113,7 +113,7 @@ public class XNode {
             if (value instanceof Map.Entry) {
                 return format.stringValue(((Map.Entry) value).getKey());
             }
-            return format.stringValue(((NElementEntry) value).getKey());
+            return format.stringValue(((NPairElement) value).key());
         }
         if (isMap(this.value)) {
 //            Object bestElement = null;
@@ -158,8 +158,8 @@ public class XNode {
             Object v = ((Map.Entry) value).getValue();
             return getAsList(v);
         }
-        if (value instanceof NElementEntry) {
-            Object v = ((NElementEntry) value).getValue();
+        if (value instanceof NPairElement) {
+            Object v = ((NPairElement) value).value();
             return getAsList(v);
         }
         if (isList(value) || isMap(value)) {
@@ -182,7 +182,7 @@ public class XNode {
         if (value instanceof Map.Entry) {
             return true;
         }
-        if (value instanceof NElementEntry) {
+        if (value instanceof NPairElement) {
             return true;
         }
         return false;
@@ -224,12 +224,12 @@ public class XNode {
             NObjectElement m = (NObjectElement) value;
             List<XNode> all = new ArrayList<>();
             for (NElement e : m) {
-                if (e instanceof NElementEntry) {
-                    NElementEntry me = (NElementEntry) e;
-                    NText keyStr = format.stringValue(me.getKey());
-                    NText[] map = format.getMultilineArray(keyStr, me.getValue());
+                if (e instanceof NPairElement) {
+                    NPairElement me = (NPairElement) e;
+                    NText keyStr = format.stringValue(me.key());
+                    NText[] map = format.getMultilineArray(keyStr, me.value());
                     if (map == null) {
-                        all.add(entryNode(keyStr, me.getValue(), format));
+                        all.add(entryNode(keyStr, me.value(), format));
                     } else {
                         all.add(entryNode(keyStr, NElements.of()
                                 .toElement(Arrays.asList(map)), format));

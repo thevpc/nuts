@@ -41,7 +41,7 @@ import java.util.stream.Stream;
  */
 public interface NElementHeader extends Iterable<NElement>, NBlankable {
     String name();
-    boolean isWithArgs();
+    boolean isParametrized();
     /**
      * array items
      *

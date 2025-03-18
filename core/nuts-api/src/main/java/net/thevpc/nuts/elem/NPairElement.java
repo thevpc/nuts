@@ -31,19 +31,21 @@ package net.thevpc.nuts.elem;
  * @author thevpc
  * @app.category Format
  */
-public interface NElementEntry extends NElement {
+public interface NPairElement extends NElement {
 
     /**
      * element name
      *
      * @return element name
      */
-    NElement getKey();
+    NElement key();
 
     /**
      * element value
      *
      * @return value
      */
-    NElement getValue();
+    NElement value();
+
+    NPairElementBuilder builder();
 }

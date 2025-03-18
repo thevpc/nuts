@@ -82,7 +82,7 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
     private static final NElementMapper F_PATH = new NElementMapperPath();
     private static final NElementMapper F_FILE = new NElementMapperFile();
     private static final NElementMapper F_ITERATOR = new NElementMapperIterator();
-    private static final NElementMapper F_NAMED_ELEM = new NElementMapperNamedElement();
+//    private static final NElementMapper F_NPAIR_ELEM = new NElementMapperPairElement();
     private static final NElementMapper F_MAPENTRY = new NElementMapperMapEntry();
     private static final NElementMapper F_XML_ELEMENT = new NElementFactoryXmlElement();
     private static final NElementMapper F_XML_DOCUMENT = new NElementFactoryXmlDocument();
@@ -164,7 +164,7 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
         addDefaultMapper(NArrayElementBuilder.class, new NElementMapperNElementBuilder());
         addDefaultMapper(NObjectElementBuilder.class, new NElementMapperNElementBuilder());
         addDefaultMapper(NElement.class, new NElementMapperNElement());
-        addDefaultMapper(NElementEntry.class, F_NAMED_ELEM);
+//        addDefaultMapper(NPairElement.class, F_NPAIR_ELEM);
         addDefaultMapper(NCmdLine.class, new NElementMapperCmdLine());
 //        addDefaultMapper(NText.class, new NElementMapperNString());
         addDefaultMapper(NText.class, new NElementMapperNText());

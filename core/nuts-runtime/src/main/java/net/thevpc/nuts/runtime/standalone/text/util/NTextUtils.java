@@ -76,20 +76,20 @@ public class NTextUtils {
                     )
                     .append("}");
 
-        } else if (o instanceof NElementEntry) {
-            NElementEntry ne = (NElementEntry) o;
+        } else if (o instanceof NPairElement) {
+            NPairElement ne = (NPairElement) o;
             NTextBuilder sb = NTextBuilder.of();
-            sb.append(stringValueFormatted(ne.getKey(), escapeString));
+            sb.append(stringValueFormatted(ne.key(), escapeString));
             sb.append("=");
-            if (ne.getValue().type() == NElementType.STRING) {
+            if (ne.value().type() == NElementType.STRING) {
                 sb.append(
                         txt.of(
-                                NStringUtils.formatStringLiteral(stringValueFormatted(ne.getValue(), escapeString).toString(), NQuoteType.DOUBLE)
+                                NStringUtils.formatStringLiteral(stringValueFormatted(ne.value(), escapeString).toString(), NQuoteType.DOUBLE)
                         ));
 //            } else if (ne.getValue().type() == NutsElementType.NUTS_STRING) {
 //                sb.append(ne.getValue().asNutsString());
             } else {
-                sb.append(stringValueFormatted(ne.getValue(), escapeString));
+                sb.append(stringValueFormatted(ne.value(), escapeString));
             }
             o = sb.toString();
         } else if (o instanceof Map.Entry) {

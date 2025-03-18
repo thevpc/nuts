@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 
-
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.io.NPrintStream;
@@ -27,16 +26,29 @@ public class NLogConsoleHandler extends StreamHandler {
     public synchronized void setOutputStream(NPrintStream out, boolean closable) throws SecurityException {
         flush();
         this.out = out;
-        if (closable) {
-            super.setOutputStream(out.asPrintStream());
-        } else {
-            super.setOutputStream(new PrintStream(out.asPrintStream()) {
+        if (out == null) {
+            super.setOutputStream(new PrintStream(System.err) {
                 @Override
                 public void close() {
                     //
                 }
             });
+        }else {
+            if (closable) {
+                super.setOutputStream(out.asPrintStream());
+            } else {
+                super.setOutputStream(new PrintStream(out.asPrintStream()) {
+                    @Override
+                    public void close() {
+                        //
+                    }
+                });
+            }
         }
+    }
+
+    public NPrintStream out() {
+        return out;
     }
 
     @Override
@@ -44,7 +56,7 @@ public class NLogConsoleHandler extends StreamHandler {
         if (!super.isLoggable(record)) {
             return false;
         }
-        NSession session = NLogUtils.resolveSession(record,this.workspace);
+        NSession session = NLogUtils.resolveSession(record, this.workspace);
         if (session.isBot()) {
             return false;
         }

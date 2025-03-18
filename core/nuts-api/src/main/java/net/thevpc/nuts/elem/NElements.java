@@ -392,9 +392,9 @@ public interface NElements extends NContentTypeFormat {
     <T> T fromElement(NElement o, Class<T> to);
 
     //    NutsElementEntryBuilder forEntry();
-    NElementEntry ofEntry(NElement key, NElement value);
+    NPairElement ofPair(NElement key, NElement value);
 
-    NElementEntryBuilder ofEntryBuilder(NElement key, NElement value);
+    NPairElementBuilder ofPairBuilder(NElement key, NElement value);
 
     /**
      * create object element builder (mutable)
@@ -492,4 +492,6 @@ public interface NElements extends NContentTypeFormat {
     NUpletElement ofEmptyUplet();
 
     NMatrixElementBuilder ofMatrixBuilder();
+
+    NArrayElementBuilder ofArray(NElement ... items);
 }

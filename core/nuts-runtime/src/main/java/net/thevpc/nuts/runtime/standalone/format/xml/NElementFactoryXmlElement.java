@@ -221,50 +221,50 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
             case OBJECT: {
                 Element obj = doc.createElement(TAG_OBJECT);
                 for (NElement nn : elem.asObject().get().children()) {
-                    if(nn instanceof NElementEntry){
-                        NElementEntry ne = (NElementEntry) nn;
-                        final NElementType kt = ne.getKey().type();
+                    if(nn instanceof NPairElement){
+                        NPairElement ne = (NPairElement) nn;
+                        final NElementType kt = ne.key().type();
                         boolean complexKey = kt == NElementType.ARRAY || kt == NElementType.OBJECT
-                                || (kt == NElementType.STRING && isComplexString(ne.getKey().asString().get()));
+                                || (kt == NElementType.STRING && isComplexString(ne.key().asString().get()));
                         if (complexKey) {
                             Element entry = doc.createElement(TAG_ENTRY);
-                            Element ek = (Element) createObject(ne.getKey(), NElement.class, context);
+                            Element ek = (Element) createObject(ne.key(), NElement.class, context);
                             ek.setAttribute(ATTRIBUTE_ENTRY_KEY, null);
                             entry.appendChild(ek);
-                            Element ev = (Element) createObject(ne.getValue(), NElement.class, context);
+                            Element ev = (Element) createObject(ne.value(), NElement.class, context);
                             ev.setAttribute(ATTRIBUTE_ENTRY_VALUE, null);
                             entry.appendChild(ev);
                             obj.appendChild(entry);
                         } else {
                             String tagName
-                                    = ne.getKey().type() == NElementType.BOOLEAN ? ne.getKey().asString().get()
-                                    : ne.getKey().type().id();
+                                    = ne.key().type() == NElementType.BOOLEAN ? ne.key().asString().get()
+                                    : ne.key().type().id();
                             Element entryElem = (Element) doc.createElement(tagName);
-                            if (ne.getKey().type() != NElementType.BOOLEAN && ne.getKey().type() != NElementType.NULL) {
-                                entryElem.setAttribute(ATTRIBUTE_KEY, ne.getKey().asString().get());
+                            if (ne.key().type() != NElementType.BOOLEAN && ne.key().type() != NElementType.NULL) {
+                                entryElem.setAttribute(ATTRIBUTE_KEY, ne.key().asString().get());
                             }
-                            switch (ne.getValue().type()) {
+                            switch (ne.value().type()) {
                                 case ARRAY:
                                 case OBJECT: {
-                                    Element ev = (Element) createObject(ne.getValue(), NElement.class, context);
+                                    Element ev = (Element) createObject(ne.value(), NElement.class, context);
                                     ev.setAttribute(ATTRIBUTE_ENTRY_VALUE, null);
                                     entryElem.appendChild(ev);
                                     obj.appendChild(entryElem);
                                     break;
                                 }
                                 case NULL: {
-                                    entryElem.setAttribute(ATTRIBUTE_VALUE_TYPE, ne.getValue().type().id());
+                                    entryElem.setAttribute(ATTRIBUTE_VALUE_TYPE, ne.value().type().id());
                                     obj.appendChild(entryElem);
                                     break;
                                 }
                                 case STRING: {
-                                    entryElem.setAttribute(ATTRIBUTE_VALUE, ne.getValue().asString().get());
+                                    entryElem.setAttribute(ATTRIBUTE_VALUE, ne.value().asString().get());
                                     obj.appendChild(entryElem);
                                     break;
                                 }
                                 default: {
-                                    entryElem.setAttribute(ATTRIBUTE_VALUE, ne.getValue().asString().get());
-                                    entryElem.setAttribute(ATTRIBUTE_VALUE_TYPE, ne.getValue().type().id());
+                                    entryElem.setAttribute(ATTRIBUTE_VALUE, ne.value().asString().get());
+                                    entryElem.setAttribute(ATTRIBUTE_VALUE_TYPE, ne.value().type().id());
                                     obj.appendChild(entryElem);
                                     break;
                                 }

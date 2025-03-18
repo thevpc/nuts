@@ -218,10 +218,11 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
     private void initWorkspace(NBootOptions initialBootOptions0) {
         Objects.requireNonNull(initialBootOptions0, () -> "boot options could not be null");
+        this.LOG = new DefaultNLog(this, DefaultNWorkspace.class, true);
         InitWorkspaceData data = new InitWorkspaceData();
         data.initialBootOptions = initialBootOptions0.readOnly();
         try {
-            this.wsModel = new NWorkspaceModel(this, data.initialBootOptions);
+            this.wsModel = new NWorkspaceModel(this, data.initialBootOptions,this.LOG);
             this.runWith(() -> {
                 this.wsModel.init();
                 _preloadWorkspace(data);
@@ -254,7 +255,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     }
 
     private void _preloadWorkspace(InitWorkspaceData data) {
-        this.LOG = new DefaultNLog(this, DefaultNWorkspace.class, true);
         data.effectiveBootOptions = this.wsModel.bootModel.getBootEffectiveOptions();
         this.wsModel.configModel = new DefaultNWorkspaceConfigModel(this);
         String workspaceLocation = data.effectiveBootOptions.getWorkspace().orNull();
@@ -263,7 +263,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         ClassLoader bootClassLoader = data.effectiveBootOptions.getClassWorldLoader().orNull();
         this.wsModel.extensionModel = new DefaultNWorkspaceExtensionModel(this, bootFactory,
                 data.effectiveBootOptions.getExcludedExtensions().orElse(Collections.emptyList()));
-        this.wsModel.logModel = new DefaultNLogModel(this, data.effectiveBootOptions, data.initialBootOptions);
         this.wsModel.filtersModel = new DefaultNFilterModel(this);
         this.wsModel.installedRepository = new DefaultNInstalledRepository(this, data.effectiveBootOptions);
         this.wsModel.envModel = new DefaultNWorkspaceEnvManagerModel(this);
@@ -2832,7 +2831,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
     @Override
     public NBootOptions getBootOptions() {
-        return getConfigModel().getBootModel().getBootEffectiveOptions();
+        return getBootModel().getBootEffectiveOptions();
     }
 
     @Override

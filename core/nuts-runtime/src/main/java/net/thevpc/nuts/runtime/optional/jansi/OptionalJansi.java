@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -82,7 +83,7 @@ public class OptionalJansi {
         return null;
     }
 
-    public static void fillAnsiFlags(List<String> flags) {
+    public static void fillAnsiFlags(Set<String> flags) {
         boolean tty=flags.contains("tty");
         if(isAvailable()) {
             flags.add("jansi");

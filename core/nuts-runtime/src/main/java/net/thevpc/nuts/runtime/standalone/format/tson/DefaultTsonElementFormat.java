@@ -110,7 +110,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 }
                 return u;
             }
-            case INT: {
+            case INTEGER: {
                 TsonAnnotation[] annotations = elem.annotations();
                 NPrimitiveElement u = elems.ofInt(elem.intValue());
                 if (annotations.length > 0) {
@@ -142,7 +142,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 }
                 return u;
             }
-            case BIG_INT: {
+            case BIG_INTEGER: {
                 TsonAnnotation[] annotations = elem.annotations();
                 NPrimitiveElement u = elems.ofBigInteger(elem.bigIntegerValue());
                 if (annotations.length > 0) {
@@ -200,8 +200,8 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 if(array.isNamed()) {
                     u.setName(array.name());
                 }
-                if(array.isWithArgs()) {
-                    u.addArgs(array.args().toList().stream().map(x -> toNElem(x)).collect(Collectors.toList()));
+                if(array.isParametrized()) {
+                    u.addArgs(array.params().toList().stream().map(x -> toNElem(x)).collect(Collectors.toList()));
                 }
                 if (annotations.length > 0) {
                     return u.addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
@@ -218,8 +218,8 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 if(obj.isNamed()) {
                     u.setName(obj.name());
                 }
-                if(obj.isWithArgs()) {
-                    u.addArgs(obj.args().toList().stream().map(x -> toNElem(x)).collect(Collectors.toList()));
+                if(obj.isParametrized()) {
+                    u.addArgs(obj.params().toList().stream().map(x -> toNElem(x)).collect(Collectors.toList()));
                 }
                 if (annotations.length > 0) {
                     return u.addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
@@ -229,7 +229,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
             case PAIR:{
                 TsonAnnotation[] annotations = elem.annotations();
                 TsonPair pair = elem.toPair();
-                NElementEntryBuilder b = elems.ofEntryBuilder(toNElem(pair.key()), toNElem(pair.key()));
+                NPairElementBuilder b = elems.ofPairBuilder(toNElem(pair.key()), toNElem(pair.key()));
                 if (annotations.length > 0) {
                     return b.addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
                 }

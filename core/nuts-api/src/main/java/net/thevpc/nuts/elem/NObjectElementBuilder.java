@@ -74,7 +74,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     NObjectElementBuilder addAll(Map<NElement, NElement> other);
 
-    NObjectElementBuilder addAll(List<NElementEntry> other);
+    NObjectElementBuilder addAll(List<NPairElement> other);
 
     NObjectElementBuilder setAll(Map<NElement, NElement> other);
 
@@ -157,7 +157,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
      */
     NObjectElementBuilder add(NElement entry);
 
-    NObjectElementBuilder set(NElementEntry entry);
+    NObjectElementBuilder set(NPairElement entry);
 
     /**
      * create a immutable instance of {@link NObjectElement} representing
@@ -230,13 +230,13 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     NObjectElementBuilder clearArgs();
 
-    List<NElement> getArgs();
+    List<NElement> getParams();
 
     String getName();
 
     NObjectElementBuilder setName(String name);
 
-    boolean isWithArgs();
+    boolean isParametrized();
 
-    NObjectElementBuilder setHasArgs(boolean hasArgs);
+    NObjectElementBuilder setParametrized(boolean hasArgs);
 }

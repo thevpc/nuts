@@ -24,10 +24,10 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
                 boolean map = true;
                 List<Object> all = new ArrayList<>();
                 for (NElement item : src.build().asObject().get().children()) {
-                    if(map && item instanceof NElementEntry) {
-                        NElementEntry nElementEntry = (NElementEntry) item;
-                        Object k = context.destruct(nElementEntry.getKey(), null);
-                        Object v = context.destruct(nElementEntry.getValue(), null);
+                    if(map && item instanceof NPairElement) {
+                        NPairElement nPairElement = (NPairElement) item;
+                        Object k = context.destruct(nPairElement.key(), null);
+                        Object v = context.destruct(nPairElement.value(), null);
                         if (map && visited.contains(k)) {
                             map = false;
                         } else {
@@ -98,7 +98,7 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
                 }
                 if (someChange) {
                     NObjectElementBuilder obj2 = context.elem().ofObjectBuilder();
-                    obj2.addAll(children.toArray(new NElementEntry[0]));
+                    obj2.addAll(children.toArray(new NPairElement[0]));
                     return obj2.build();
                 }
                 return src.build();

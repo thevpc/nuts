@@ -28,6 +28,8 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.tson.TsonElementType;
 
 import java.time.Instant;
 import java.util.*;
@@ -37,15 +39,39 @@ import java.util.stream.Stream;
 /**
  * @author thevpc
  */
-public class DefaultNUpletElement extends AbstractNUpletElement {
+public class DefaultNUpletElement extends AbstractNNavigatableElement
+        implements NUpletElement {
 
     private final NElement[] values;
     private String name;
 
-    public DefaultNUpletElement(String name,Collection<NElement> values, NElementAnnotation[] annotations) {
-        super(annotations);
+    public DefaultNUpletElement(String name, Collection<NElement> values, NElementAnnotation[] annotations) {
+        super(name == null ? NElementType.UPLET
+                        : NElementType.NAMED_UPLET,
+                annotations);
         this.values = values.toArray(new NElement[0]);
         this.name = name;
+    }
+
+    public DefaultNUpletElement(String name, NElement[] values, NElementAnnotation[] annotations) {
+        super(name == null ? NElementType.UPLET
+                : NElementType.NAMED_UPLET, annotations);
+        this.values = Arrays.copyOf(values, values.length);
+        this.name = name;
+    }
+
+    @Override
+    public NOptional<Object> asObjectAt(int index) {
+        return get(index).map(x -> x);
+    }
+
+
+    @Override
+    public List<NElement> resolveAll(String pattern) {
+        pattern = NStringUtils.trimToNull(pattern);
+        NElementPathImpl pp = new NElementPathImpl(pattern);
+        NElement[] nElements = pp.resolveReversed(this);
+        return new ArrayList<>(Arrays.asList(nElements));
     }
 
     @Override
@@ -63,11 +89,6 @@ public class DefaultNUpletElement extends AbstractNUpletElement {
         return Arrays.asList(values);
     }
 
-    public DefaultNUpletElement(String name, NElement[] values, NElementAnnotation[] annotations) {
-        super(annotations);
-        this.values = Arrays.copyOf(values, values.length);
-        this.name = name;
-    }
 
     @Override
     public Collection<NElement> children() {

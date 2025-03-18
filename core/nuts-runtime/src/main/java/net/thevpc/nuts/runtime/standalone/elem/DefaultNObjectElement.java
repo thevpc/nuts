@@ -3,22 +3,28 @@ package net.thevpc.nuts.runtime.standalone.elem;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class DefaultNObjectElement extends AbstractNObjectElement {
+public class DefaultNObjectElement extends AbstractNNavigatableElement implements NObjectElement {
 
     private List<NElement> values = new ArrayList<>();
     private NElements elements;
     private String name;
-    private List<NElement> args;
+    private List<NElement> params;
 
-    public DefaultNObjectElement(String name, List<NElement> args, List<NElement> values, NElementAnnotation[] annotations) {
-        super(annotations);
+    public DefaultNObjectElement(String name, List<NElement> params, List<NElement> values, NElementAnnotation[] annotations) {
+        super(
+                name == null && params == null ? NElementType.OBJECT
+                        : name == null && params != null ? NElementType.PARAMETRIZED_OBJECT
+                        : name != null && params == null ? NElementType.NAMED_OBJECT
+                        : NElementType.NAMED_PARAMETRIZED_OBJECT,
+                annotations);
         this.name = name;
-        this.args = args;
+        this.params = params;
         if (values != null) {
             for (NElement e : values) {
                 if (e != null) {
@@ -26,6 +32,11 @@ public class DefaultNObjectElement extends AbstractNObjectElement {
                 }
             }
         }
+    }
+
+    @Override
+    public Stream<NPairElement> pairs() {
+        return values.stream().filter(NElement::isPair).map(x->x.asPair().get());
     }
 
     @Override
@@ -52,10 +63,10 @@ public class DefaultNObjectElement extends AbstractNObjectElement {
     public List<NElement> getAll(NElement s) {
         List<NElement> ret = new ArrayList<>();
         for (NElement x : values) {
-            if (x instanceof NElementEntry) {
-                NElementEntry e = (NElementEntry) x;
-                if (Objects.equals(e.getKey(), s)) {
-                    ret.add(e.getValue());
+            if (x instanceof NPairElement) {
+                NPairElement e = (NPairElement) x;
+                if (Objects.equals(e.key(), s)) {
+                    ret.add(e.value());
                 }
             }
         }
@@ -140,20 +151,27 @@ public class DefaultNObjectElement extends AbstractNObjectElement {
         return name != null;
     }
 
-    public boolean isWithArgs() {
-        return args != null;
+    public boolean isParametrized() {
+        return params != null;
     }
 
-    public List<NElement> args() {
-        return args == null ? null : Collections.unmodifiableList(args);
+    public List<NElement> params() {
+        return params == null ? null : Collections.unmodifiableList(params);
     }
 
-    public int argsCount() {
-        return args == null ? null : args.size();
+    public int paramsCount() {
+        return params == null ? null : params.size();
     }
 
-    public NElement argAt(int index) {
-        return args == null ? null : args.get(index);
+    public NElement param(int index) {
+        return params == null ? null : params.get(index);
     }
 
+    @Override
+    public List<NElement> resolveAll(String pattern) {
+        pattern = NStringUtils.trimToNull(pattern);
+        NElementPathImpl pp = new NElementPathImpl(pattern);
+        NElement[] nElements = pp.resolveReversed(this);
+        return new ArrayList<>(Arrays.asList(nElements));
+    }
 }

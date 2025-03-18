@@ -72,6 +72,8 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable, NLi
      */
     NOptional<NObjectElement> asObject();
 
+    NOptional<NPairElement> asPair();
+
     /**
      * cast this element to {@link NObjectElement} or throw
      * ClassCastException
@@ -90,6 +92,7 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable, NLi
 
     /**
      * true if can be cast to a custom element
+     *
      * @return true if can be cast to a custom element
      */
     boolean isCustom();
@@ -104,18 +107,21 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable, NLi
 
     /**
      * return true if this element can be cast to {@link NPrimitiveElement}
+     *
      * @return true if this element can be cast to {@link NPrimitiveElement}
      */
     boolean isPrimitive();
 
     /**
      * return true if this element can be cast to {@link NObjectElement}
+     *
      * @return true if this element can be cast to {@link NObjectElement}
      */
     boolean isObject();
 
     /**
      * return true if this element can be cast to {@link NArrayElement}
+     *
      * @return true if this element can be cast to {@link NArrayElement}
      */
     boolean isArray();
@@ -149,4 +155,6 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable, NLi
     boolean isBlank();
 
     NElementBuilder builder();
+
+    boolean isPair();
 }

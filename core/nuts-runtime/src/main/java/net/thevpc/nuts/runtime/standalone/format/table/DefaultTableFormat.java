@@ -29,7 +29,7 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementEntry;
+import net.thevpc.nuts.elem.NPairElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.io.NIOException;
@@ -728,15 +728,15 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                     SimpleRow e = new SimpleRow();
                     int column = 1;
                     for (NElement ne : value.asObject().get().children()) {
-                        if(ne instanceof NElementEntry){
-                            NElementEntry nee=(NElementEntry) ne;
-                            NElement k = nee.getKey();
+                        if(ne instanceof NPairElement){
+                            NPairElement nee=(NPairElement) ne;
+                            NElement k = nee.key();
                             if (!k.isString()) {
                                 k = _elems().ofString(
                                         k.toString()
                                 );
                             }
-                            e.cells.add(resolveColumnsFromCell(k.asString().get(), nee.getValue()));
+                            e.cells.add(resolveColumnsFromCell(k.asString().get(), nee.value()));
                         }else{
                             e.cells.add(resolveColumnsFromCell("COL " + column,ne));
                         }

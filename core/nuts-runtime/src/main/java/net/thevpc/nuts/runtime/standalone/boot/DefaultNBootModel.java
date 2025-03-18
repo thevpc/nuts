@@ -39,6 +39,7 @@ import net.thevpc.nuts.runtime.standalone.io.terminal.*;
 import net.thevpc.nuts.io.NullOutputStream;
 import net.thevpc.nuts.runtime.standalone.session.DefaultNSession;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NativeImageHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.spi.NDefaultTerminalSpec;
@@ -79,19 +80,20 @@ public class DefaultNBootModel implements NBootModel {
     private NSystemTerminalRef systemTerminal;
     private NWorkspaceModel workspaceModel;
 
-    public DefaultNBootModel(NWorkspace workspace, NWorkspaceModel workspaceModel,NBootOptions bOption0) {
+    public DefaultNBootModel(NWorkspace workspace, NWorkspaceModel workspaceModel, NBootOptions bOption0, NLog LOG) {
         this.workspace = workspace;
+        this.LOG = LOG;
         this.workspaceModel = workspaceModel;
         this.bOptions = bOption0.readOnly();
         this.effOptions = bOption0.readOnly();
-        this.bootSession = new DefaultNSession(workspace,null)
+        this.bootSession = new DefaultNSession(workspace, null)
                 .setAll(effOptions);
     }
 
     public void init() {
         this.initializing = true;
         NativeImageHelper.prepare(this.workspace);
-        this.bootTerminal = detectAnsiTerminalSupport(NOsFamily.getCurrent(), effOptions, true);
+        this.bootTerminal = detectAnsiTerminalSupport(effOptions, true, ((DefaultNWorkspace) workspace).LOG);
         workspaceModel.uuid = effOptions.getUuid().orNull();
         workspaceModel.name = Paths.get(effOptions.getWorkspace().get()).getFileName().toString();
         DefaultSystemTerminal sys = new DefaultSystemTerminal(workspace, new DefaultNSystemTerminalBaseBoot(this));
@@ -101,8 +103,9 @@ public class DefaultNBootModel implements NBootModel {
         this.nullOutputStream = NullOutputStream.INSTANCE;
     }
 
-    public static NWorkspaceTerminalOptions detectAnsiTerminalSupport(NOsFamily os, NBootOptions bOption, boolean boot) {
-        List<String> flags = new ArrayList<>();
+    public static NWorkspaceTerminalOptions detectAnsiTerminalSupport(NBootOptions bOption, boolean boot, NLog log) {
+        NOsFamily os = NOsFamily.getCurrent();
+        LinkedHashSet<String> flags = new LinkedHashSet<>();
         boolean tty = false;
         boolean customOut = false;
         boolean customErr = false;
@@ -202,6 +205,7 @@ public class DefaultNBootModel implements NBootModel {
                 flags.add("raw");
             }
         }
+        log.info(NMsg.ofC("detected terminal flags %s", flags));
         return new NWorkspaceTerminalOptions(stdIn, stdOut, stdErr, flags.toArray(new String[0]));
     }
 
@@ -221,7 +225,7 @@ public class DefaultNBootModel implements NBootModel {
 //    }
 
     public void onInitializeWorkspace() {
-        this.bootTerminal = detectAnsiTerminalSupport(NOsFamily.getCurrent(), effOptions, false);
+        this.bootTerminal = detectAnsiTerminalSupport(effOptions, false, LOG);
     }
 
     public void setSystemTerminal(NSystemTerminalBase terminal) {
@@ -375,19 +379,19 @@ public class DefaultNBootModel implements NBootModel {
                         if (a.isActive()) {
                             String key = a.getKey().asString().orElse("");
                             String v = a.getStringValue().orElse(null);
-                            if(a.isEnabled()) {
+                            if (a.isEnabled()) {
                                 this.customBootOptions.put(key, NLiteral.of(v));
-                            }else if(NBlankable.isBlank(v)){
+                            } else if (NBlankable.isBlank(v)) {
                                 this.customBootOptions.put(key, NLiteral.of(false));
-                            }else{
+                            } else {
                                 NOptional<Boolean> b = NLiteral.of(v).asBoolean();
-                                if(b.isPresent()){
+                                if (b.isPresent()) {
                                     this.customBootOptions.put(key, NLiteral.of(!b.get()));
-                                }else{
+                                } else {
                                     // this is a bad example,
                                     // ---!helpful=4
                                     // so wil propagate ! to the value
-                                    this.customBootOptions.put(key, NLiteral.of("!"+v));
+                                    this.customBootOptions.put(key, NLiteral.of("!" + v));
                                 }
                             }
                         }

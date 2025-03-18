@@ -5,6 +5,7 @@ import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogRecord;
 import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -63,11 +64,24 @@ public class NLogUtils {
 //        h.setThrown(record.getThrown());
 //        return h;
 //    }
+    public static String filterLogText(NMsg msg) {
+        if (msg == null) {
+            return null;
+        }
+        try {
+            return NText.of(msg).filteredText();
+        } catch (Exception e) {
+            return msg.toString();
+        }
+    }
+
     public static NLogRecord toNutsLogRecord(LogRecord record, NSession session) {
         if (record instanceof NLogRecord) {
             return (NLogRecord) record;
         }
         Level lvl = record.getLevel();
+        NMsg jMsg = NMsg.ofJ(record.getMessage(),
+                record.getParameters());
         NLogRecord h = new NLogRecord(
                 session, lvl,
                 lvl.intValue() <= Level.SEVERE.intValue() ? NLogVerb.FAIL :
@@ -75,8 +89,8 @@ public class NLogUtils {
                                 lvl.intValue() <= Level.INFO.intValue() ? NLogVerb.INFO :
                                         lvl.intValue() <= Level.FINE.intValue() ? NLogVerb.DEBUG :
                                                 NLogVerb.DEBUG,
-                NMsg.ofJ(record.getMessage(),
-                        record.getParameters()),
+                jMsg,
+                filterLogText(jMsg),
                 record.getMillis(),
                 record.getThrown()
         );
