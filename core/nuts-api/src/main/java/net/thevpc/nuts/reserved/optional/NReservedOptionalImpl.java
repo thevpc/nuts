@@ -1,6 +1,7 @@
 package net.thevpc.nuts.reserved.optional;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -13,7 +14,15 @@ import java.util.function.Supplier;
 
 public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneable {
     private ExceptionFactory exceptionFactory;
+    private static ExceptionFactory defaultExceptionFactory;
 
+    public static ExceptionFactory getDefaultExceptionFactory() {
+        return defaultExceptionFactory;
+    }
+
+    public static void setDefaultExceptionFactory(ExceptionFactory defaultExceptionFactory) {
+        NReservedOptionalImpl.defaultExceptionFactory = defaultExceptionFactory;
+    }
 
     public NReservedOptionalImpl() {
     }
@@ -395,4 +404,8 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     public ExceptionFactory getExceptionFactory() {
         return exceptionFactory;
     }
+
+
+
+
 }

@@ -1,23 +1,9 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NExceptionBase;
-import net.thevpc.nuts.NExceptionWithExitCodeBase;
-import net.thevpc.nuts.reserved.NReservedLangUtils;
-
 import java.util.Arrays;
 import java.util.List;
 
 public class NUtils {
-    public static NOptional<NExceptionBase> resolveExceptionBase(Throwable th) {
-        return NReservedLangUtils.findThrowable(th, NExceptionBase.class, null);
-    }
-    public static NOptional<NExceptionWithExitCodeBase> resolveWithExitCodeExceptionBase(Throwable th) {
-        return NReservedLangUtils.findThrowable(th, NExceptionWithExitCodeBase.class, null);
-    }
-
-    public static NOptional<Integer> resolveExitCode(Throwable th) {
-        return resolveWithExitCodeExceptionBase(th).map(NExceptionWithExitCodeBase::getExitCode);
-    }
 
     public static <T> T firstNonNull(T a, T b) {
         if (a != null) {

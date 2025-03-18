@@ -1,6 +1,6 @@
 package net.thevpc.nuts.reserved.optional;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -41,14 +41,14 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
 
     @Override
     public T get() {
-        throwError(message, this.message);
+        throwError(message);
         //never reached!
         return null;
     }
 
     @Override
     public T get(Supplier<NMsg> message) {
-        throwError(message, this.message);
+        throwError(message);
         //never reached!
         return null;
     }
@@ -118,26 +118,34 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
         return super.clone();
     }
 
-    protected void throwError(Supplier<NMsg> message, Supplier<NMsg> message0) {
-        if (message == null) {
-            message = message0;
+    protected void throwError(Supplier<NMsg> preferredMessage) {
+        if (preferredMessage == null) {
+            preferredMessage = message;
         }
-        if (message == null) {
-            message = NMsg::ofMissingValue;
+        if (preferredMessage == null) {
+            preferredMessage = NMsg::ofMissingValue;
         }
-        Supplier<NMsg> finalMessage = message;
+        Supplier<NMsg> finalMessage = preferredMessage;
         NMsg eMsg = NApiUtilsRPI.resolveValidErrorMessage(() -> finalMessage == null ? null : finalMessage.get());
         NMsg m = prepareMessage(eMsg);
         RuntimeException exception = null;
         ExceptionFactory exceptionFactory = getExceptionFactory();
         if (exceptionFactory != null) {
-            exception = exceptionFactory.createException(m, null);
+            exception = exceptionFactory.createEmptyException(m);
         }
         if (exception == null) {
-            exception= NExceptionHandler.ofSafeNoSuchElementException(m);
+            exceptionFactory = NOptional.getDefaultExceptionFactory();
+            if (exceptionFactory != null) {
+                exception = exceptionFactory.createEmptyException(m);
+            }
+        }
+        if (exception == null) {
+            if (!NWorkspace.get().isPresent()) {
+                exception = new NEmptyOptionalException(preferredMessage.get());
+            } else {
+                exception = new NDetachedEmptyOptionalException(preferredMessage.get());
+            }
         }
         throw exception;
     }
-
-
 }

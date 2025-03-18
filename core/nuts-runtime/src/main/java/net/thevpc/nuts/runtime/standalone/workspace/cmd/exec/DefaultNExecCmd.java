@@ -345,7 +345,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                 }
             } catch (Exception ex) {
                 String p = getExtraErrorMessage();
-                int exceptionExitCode = NUtils.resolveExitCode(ex).orElse(NExecutionException.ERROR_255);
+                int exceptionExitCode = NExceptionHandler.resolveExitCode(ex).orElse(NExecutionException.ERROR_255);
                 if (exceptionExitCode != NExecutionException.SUCCESS) {
                     if (!NBlankable.isBlank(p)) {
                         resultException = new NExecutionException(

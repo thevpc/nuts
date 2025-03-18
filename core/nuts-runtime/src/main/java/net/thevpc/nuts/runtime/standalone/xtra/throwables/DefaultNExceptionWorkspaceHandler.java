@@ -17,7 +17,6 @@ import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
-import net.thevpc.nuts.util.NUtils;
 
 import java.io.PrintStream;
 import java.util.logging.Level;
@@ -42,7 +41,7 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
 
         boolean showGui = NApiUtilsRPI.resolveGui(bo);
         boolean showTrace = NApiUtilsRPI.resolveShowStackTrace(bo);
-        int errorCode = NUtils.resolveExitCode(throwable).orElse(204);
+        int errorCode = NExceptionHandler.resolveExitCode(throwable).orElse(204);
         NMsg fm = NSessionAwareExceptionBase.resolveSessionAwareExceptionBase(throwable)
                 .map(NSessionAwareExceptionBase::getFormattedMessage).orNull();
         String m = throwable.getMessage();

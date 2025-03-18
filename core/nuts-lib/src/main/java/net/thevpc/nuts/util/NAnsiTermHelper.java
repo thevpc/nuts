@@ -24,15 +24,12 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.spi;
+package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyles;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NColor;
-import net.thevpc.nuts.util.NLiteral;
 
 import java.util.List;
 

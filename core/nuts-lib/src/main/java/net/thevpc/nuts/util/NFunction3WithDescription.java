@@ -1,25 +1,24 @@
-package net.thevpc.nuts.reserved.util;
+package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.util.NFunction2;
 
-public class NFunction2WithDescription<A,B,V> implements NFunction2<A,B,V> {
-    private final NFunction2<A,B,V> base;
+public class NFunction3WithDescription<A, B, C, V> implements NFunction3<A, B, C, V> {
+    private final NFunction3<A, B, C, V> base;
     private NEDesc description;
 
-    public NFunction2WithDescription(NFunction2<A,B,V> base, NEDesc description) {
+    public NFunction3WithDescription(NFunction3<A, B, C, V> base, NEDesc description) {
         this.base = base;
         this.description = description;
     }
 
     @Override
-    public V apply(A a,B b) {
-        return base.apply(a,b);
+    public V apply(A a, B b, C c) {
+        return base.apply(a,b,c);
     }
 
     @Override
-    public NFunction2<A,B, V> withDesc(NEDesc description) {
+    public NFunction3<A, B, C, V> withDesc(NEDesc description) {
         this.description = description;
         return this;
     }

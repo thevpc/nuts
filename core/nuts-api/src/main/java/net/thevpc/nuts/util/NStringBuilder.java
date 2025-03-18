@@ -1,5 +1,6 @@
 package net.thevpc.nuts.util;
 
+import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.security.SecureRandom;
@@ -555,7 +556,7 @@ public class NStringBuilder implements CharSequence, NBlankable {
         try {
             return data.toString().getBytes(charsetName);
         } catch (UnsupportedEncodingException e) {
-            throw new UncheckedException(e);
+            throw new UncheckedIOException(e);
         }
     }
 

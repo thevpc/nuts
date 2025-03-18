@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.boot;
 
+import net.thevpc.nuts.NDetachedExceptionBase;
 import net.thevpc.nuts.NExceptionWithExitCodeBase;
 import net.thevpc.nuts.boot.reserved.util.NBootMsg;
 
@@ -37,7 +38,7 @@ import net.thevpc.nuts.boot.reserved.util.NBootMsg;
  * @app.category Exceptions
  * @since 0.5.4
  */
-public class NBootException extends RuntimeException implements NExceptionWithExitCodeBase {
+public class NBootException extends RuntimeException implements NExceptionWithExitCodeBase, NDetachedExceptionBase {
 
     private final int exitCode;
 

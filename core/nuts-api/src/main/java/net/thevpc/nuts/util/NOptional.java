@@ -1,10 +1,7 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.reserved.optional.NReservedOptionalEmpty;
-import net.thevpc.nuts.reserved.optional.NReservedOptionalError;
-import net.thevpc.nuts.reserved.optional.NReservedOptionalValidCallable;
-import net.thevpc.nuts.reserved.optional.NReservedOptionalValidValue;
+import net.thevpc.nuts.reserved.optional.*;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -14,6 +11,32 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public interface NOptional<T> extends NBlankable {
+
+    /**
+     * return the default ExceptionFactory used for generating exceptions
+     * thrown when NOptional::get fails.
+     * When null default implementation falls back to one of
+     * NEmptyOptionalException, NErrorOptionalException (when in NWorkspace context)
+     * NDetachedEmptyOptionalException, NDetachedErrorOptionalException (when no NWorkspace context can be resolved)
+     *
+     * @return default ExceptionFactory
+     */
+    static ExceptionFactory getDefaultExceptionFactory() {
+        return NReservedOptionalImpl.getDefaultExceptionFactory();
+    }
+
+    /**
+     * set the default ExceptionFactory used for generating exceptions
+     * thrown when NOptional::get fails.
+     * When null default implementation falls back to one of
+     * NEmptyOptionalException, NErrorOptionalException (when in NWorkspace context)
+     * NDetachedEmptyOptionalException, NDetachedErrorOptionalException (when no NWorkspace context can be resolved)
+     *
+     * @return default ExceptionFactory
+     */
+    static void setDefaultExceptionFactory(ExceptionFactory defaultExceptionFactory) {
+        NReservedOptionalImpl.setDefaultExceptionFactory(defaultExceptionFactory);
+    }
 
     static <T> NOptional<T> ofNamedEmpty(String name) {
         return ofEmpty(() -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value")));
@@ -81,12 +104,12 @@ public interface NOptional<T> extends NBlankable {
 
     static <T> NOptional<T> ofCallable(NCallable<T> value) {
         NAssert.requireNonNull(value, "callable");
-        return new NReservedOptionalValidCallable<>(()->NOptional.of(value.call()));
+        return new NReservedOptionalValidCallable<>(() -> NOptional.of(value.call()));
     }
 
     static <T> NOptional<T> ofSupplier(Supplier<T> value) {
         NAssert.requireNonNull(value, "supplier");
-        return new NReservedOptionalValidCallable<>(()->NOptional.of(value.get()));
+        return new NReservedOptionalValidCallable<>(() -> NOptional.of(value.get()));
     }
 
     static <T> NOptional<T> ofNamed(T value, String name) {
@@ -354,6 +377,8 @@ public interface NOptional<T> extends NBlankable {
     NOptional<T> withExceptionFactory(ExceptionFactory exceptionFactory);
 
     interface ExceptionFactory {
-        RuntimeException createException(NMsg message, Throwable e);
+        RuntimeException createEmptyException(NMsg message);
+
+        RuntimeException createErrorException(NMsg message, Throwable e);
     }
 }

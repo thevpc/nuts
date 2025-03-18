@@ -32,10 +32,8 @@ import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NLiteral;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.NOsFamily;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.File;
 import java.io.IOException;

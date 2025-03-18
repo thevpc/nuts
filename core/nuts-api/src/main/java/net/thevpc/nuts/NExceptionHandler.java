@@ -21,7 +21,6 @@ import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
-import net.thevpc.nuts.util.NUtils;
 
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
@@ -111,7 +110,13 @@ public class NExceptionHandler {
             return new NoSuchElementException(message.toString());
         }
         return new NNoSuchElementException(message);
+    }
 
+    public static RuntimeException ofSafeUnexpectedException(NMsg message) {
+        if (!NWorkspace.get().isPresent()) {
+            return new NoSuchElementException(message.toString());
+        }
+        return new NNoSuchElementException(message);
     }
 
     public static RuntimeException ofSafeUnsupportedEnumException(Enum e) {
@@ -119,6 +124,18 @@ public class NExceptionHandler {
             return new NoSuchElementException("unsupported enum value " + e);
         }
         return new NUnsupportedEnumException(e);
+    }
+
+    public static NOptional<NExceptionBase> resolveExceptionBase(Throwable th) {
+        return NReservedLangUtils.findThrowable(th, NExceptionBase.class, null);
+    }
+
+    public static NOptional<NExceptionWithExitCodeBase> resolveWithExitCodeExceptionBase(Throwable th) {
+        return NReservedLangUtils.findThrowable(th, NExceptionWithExitCodeBase.class, null);
+    }
+
+    public static NOptional<Integer> resolveExitCode(Throwable th) {
+        return resolveWithExitCodeExceptionBase(th).map(NExceptionWithExitCodeBase::getExitCode);
     }
 
 
@@ -194,7 +211,7 @@ public class NExceptionHandler {
             setCode(0);
             return this;
         }
-        int errorCode = NUtils.resolveExitCode(ex).orElse(204);
+        int errorCode = resolveExitCode(ex).orElse(204);
         setCode(errorCode);
         if (errorCode == 0) {
             return this;
@@ -242,7 +259,7 @@ public class NExceptionHandler {
         if (ex == null) {
             return this;
         }
-        NOptional<NExceptionWithExitCodeBase> u = NUtils.resolveWithExitCodeExceptionBase(ex);
+        NOptional<NExceptionWithExitCodeBase> u = resolveWithExitCodeExceptionBase(ex);
         if (u.isPresent()) {
             NExceptionWithExitCodeBase o = u.get();
             if (o instanceof RuntimeException) {

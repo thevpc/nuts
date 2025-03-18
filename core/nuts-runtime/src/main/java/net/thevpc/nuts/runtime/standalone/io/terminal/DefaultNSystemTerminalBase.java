@@ -15,6 +15,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyles;
+import net.thevpc.nuts.util.NAnsiTermHelper;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.*;

@@ -2,10 +2,10 @@ package net.thevpc.nuts.reserved.optional;
 
 import java.util.Objects;
 
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NOptionalErrorException;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -15,14 +15,14 @@ import net.thevpc.nuts.util.NOptionalType;
 public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> implements Cloneable {
 
     private Supplier<NMsg> message;
-    private Throwable error;
+    private Throwable cause;
 
-    public NReservedOptionalError(Supplier<NMsg> message, Throwable error) {
+    public NReservedOptionalError(Supplier<NMsg> message, Throwable cause) {
         if (message == null) {
-            message = () -> NMsg.ofInvalidValue(error);
+            message = () -> NMsg.ofInvalidValue(cause);
         }
         this.message = message;
-        this.error = error;
+        this.cause = cause;
     }
 
     public NOptional<T> withMessage(Supplier<NMsg> message) {
@@ -30,15 +30,15 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
     }
 
     public NOptional<T> withMessage(NMsg message) {
-        return new NReservedOptionalEmpty<>(message == null ? (() -> NMsg.ofInvalidValue(error)) : () -> message);
+        return new NReservedOptionalEmpty<>(message == null ? (() -> NMsg.ofInvalidValue(cause)) : () -> message);
     }
 
     public NOptional<T> withName(NMsg name) {
-        return new NReservedOptionalEmpty<>(name == null ? (() -> NMsg.ofInvalidValue(error)) : () -> NMsg.ofInvalidValue(error, name));
+        return new NReservedOptionalEmpty<>(name == null ? (() -> NMsg.ofInvalidValue(cause)) : () -> NMsg.ofInvalidValue(cause, name));
     }
 
     public NOptional<T> withName(String name) {
-        return new NReservedOptionalEmpty<>(name == null ? (() -> NMsg.ofInvalidValue(error)) : () -> NMsg.ofInvalidValue(error, name));
+        return new NReservedOptionalEmpty<>(name == null ? (() -> NMsg.ofInvalidValue(cause)) : () -> NMsg.ofInvalidValue(cause, name));
     }
 
     @Override
@@ -54,17 +54,18 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
 
     @Override
     public Throwable getError() {
-        return error;
+        return cause;
     }
 
     @Override
     public T get() {
-        return get(this.message);
+        throwError(message);
+        return null;
     }
 
     @Override
     public T get(Supplier<NMsg> message) {
-        throwError(message, this.message);
+        throwError(message);
         //never reached!
         return null;
     }
@@ -114,24 +115,33 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
         return super.clone();
     }
 
-    protected void throwError(Supplier<NMsg> message, Supplier<NMsg> message0) {
-        if (message == null) {
-            message = message0;
+    protected void throwError(Supplier<NMsg> preferredMessage) {
+        if (preferredMessage == null) {
+            preferredMessage = message;
         }
-        if (message == null) {
-            message = () -> NMsg.ofMissingValue();
+        if (preferredMessage == null) {
+            preferredMessage = NMsg::ofMissingValue;
         }
-        Supplier<NMsg> finalMessage = message;
+        Supplier<NMsg> finalMessage = preferredMessage;
         NMsg eMsg = NApiUtilsRPI.resolveValidErrorMessage(() -> finalMessage == null ? null : finalMessage.get());
         NMsg m = prepareMessage(eMsg);
-
-        ExceptionFactory exceptionFactory = getExceptionFactory();
         RuntimeException exception = null;
+        ExceptionFactory exceptionFactory = getExceptionFactory();
         if (exceptionFactory != null) {
-            exception = exceptionFactory.createException(m, null);
+            exception = exceptionFactory.createErrorException(m, cause);
         }
         if (exception == null) {
-            exception = new NOptionalErrorException(m, error);
+            exceptionFactory = NOptional.getDefaultExceptionFactory();
+            if (exceptionFactory != null) {
+                exception = exceptionFactory.createErrorException(m, cause);
+            }
+        }
+        if (exception == null) {
+            if (!NWorkspace.get().isPresent()) {
+                exception = new NErrorOptionalException(preferredMessage.get(), cause);
+            } else {
+                exception = new NDetachedErrorOptionalException(preferredMessage.get(), cause);
+            }
         }
         throw exception;
     }

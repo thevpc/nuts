@@ -4,7 +4,6 @@ import net.thevpc.nuts.elem.NElementDescribable;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.reserved.util.NFunction3WithDescription;
 
 public interface NFunction3<A, B, C, V> extends NElementDescribable<NFunction3<A, B, C, V>> {
     V apply(A a, B b, C c);

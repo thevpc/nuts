@@ -1,4 +1,4 @@
-package net.thevpc.nuts;
+package net.thevpc.nuts.util;
 
 /**
  * simple interface that mean that the object is a fixed state

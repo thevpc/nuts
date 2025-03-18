@@ -4,7 +4,6 @@ import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.util.*;
 
-import java.util.NoSuchElementException;
 import java.util.function.Supplier;
 
 public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImpl<T> implements Cloneable {
@@ -55,22 +54,6 @@ public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImp
             m = NMsg.ofMissingValue();
         }
         return m;
-    }
-
-    protected void throwError(Supplier<NMsg> message, Supplier<NMsg> message0) {
-        if (message == null) {
-            message = message0;
-        }
-        if (message == null) {
-            message = () -> NMsg.ofMissingValue();
-        }
-        Supplier<NMsg> finalMessage = message;
-        NMsg eMsg = NApiUtilsRPI.resolveValidErrorMessage(() -> finalMessage == null ? null : finalMessage.get());
-        NMsg m = prepareMessage(eMsg);
-        if (!NWorkspace.get().isPresent()) {
-            throw new NoSuchElementException(m.toString());
-        }
-        throw new NOptionalErrorException(m);
     }
 
     @Override
