@@ -214,7 +214,7 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
 
     @Override
     public String toString() {
-        return String.valueOf(value);
+        return NLiteral.of(value).toString();
     }
 
     @Override

@@ -587,6 +587,7 @@ public class DefaultNLiteral implements NLiteral {
         switch (type()) {
             case NULL:
                 return "null";
+            case CHAR:
             case STRING:
                 return NStringUtils.formatStringLiteral(asString().get(), NQuoteType.DOUBLE);
             case BOOLEAN:
@@ -601,6 +602,9 @@ public class DefaultNLiteral implements NLiteral {
             case DOUBLE:
                 return String.valueOf(asNumber().get());
             case INSTANT:
+            case TIME:
+            case DATE:
+            case DATETIME:
                 return NStringUtils.formatStringLiteral(asInstant().get().toString(), NQuoteType.DOUBLE);
         }
         return asString().get();

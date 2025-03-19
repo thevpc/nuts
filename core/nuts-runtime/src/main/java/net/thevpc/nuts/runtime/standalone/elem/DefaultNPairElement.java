@@ -79,7 +79,7 @@ public class DefaultNPairElement extends AbstractNElement implements NPairElemen
 
     @Override
     public String toString() {
-        return "DefaultNElementEntry{" + key + " : " + value + '}';
+        return String.valueOf(key) + " : " + String.valueOf(value);
     }
 
     @Override
@@ -94,4 +94,5 @@ public class DefaultNPairElement extends AbstractNElement implements NPairElemen
     public int hashCode() {
         return Objects.hash(key, value);
     }
+
 }
