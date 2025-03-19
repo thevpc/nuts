@@ -1184,17 +1184,17 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
 
     @Override
     public NPrintStream out() {
-        return terminal==null?null:terminal.out();
+        return terminal == null ? null : terminal.out();
     }
 
     @Override
     public InputStream in() {
-        return terminal==null?null:terminal.in();
+        return terminal == null ? null : terminal.in();
     }
 
     @Override
     public NPrintStream err() {
-        return terminal==null?null:terminal.err();
+        return terminal == null ? null : terminal.err();
     }
 
     @Override
@@ -1312,7 +1312,12 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
             return false;
         }
         //TODO, should we cache this?
-        return callWith(() -> ProgressOptions.of().isEnabled());
+        return callWith(() -> {
+            NTerminalMode terminalMode = out().getTerminalMode();
+            return ProgressOptions.of().getEnabled().orElse(
+                    terminalMode != NTerminalMode.FILTERED
+            );
+        });
     }
 
     @Override

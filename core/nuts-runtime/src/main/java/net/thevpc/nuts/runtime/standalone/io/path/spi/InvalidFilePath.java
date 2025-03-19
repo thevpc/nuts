@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NFormatSPI;
@@ -63,7 +62,7 @@ public class InvalidFilePath implements NPathSPI {
         return workspace;
     }
 
-    private NPath resolve(NPath basePath, String path) {
+    public NPath resolve(NPath basePath, String path) {
         String b = value;
         if (b.endsWith("/") || b.endsWith("\\")) {
             return NPath.of(b + path);
@@ -71,12 +70,7 @@ public class InvalidFilePath implements NPathSPI {
         return NPath.of(b + "/" + path);
     }
 
-    @Override
-    public NPath resolve(NPath basePath, NPath path) {
-        return resolve(basePath, path == null ? null : path.toString());
-    }
-
-    private NPath resolveSibling(NPath basePath, String path) {
+    public NPath resolveSibling(NPath basePath, String path) {
         if (path == null || path.isEmpty()) {
             return getParent(basePath);
         }
@@ -84,11 +78,6 @@ public class InvalidFilePath implements NPathSPI {
             return NPath.of("/" + path);
         }
         return getParent(basePath).resolve(path);
-    }
-
-    @Override
-    public NPath resolveSibling(NPath basePath, NPath path) {
-        return resolveSibling(basePath, path == null ? null : path.toString());
     }
 
     @Override

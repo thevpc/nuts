@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNClassLoader;
 import net.thevpc.nuts.runtime.standalone.io.path.NCompressedPath;
@@ -169,14 +168,14 @@ public class NResourcePath implements NPathSPI {
     }
 
     @Override
-    public NPath resolve(NPath basePath, NPath path) {
+    public NPath resolve(NPath basePath, String path) {
         return NPath.of(new NResourcePath(rebuildURL(
                 NPath.of(location).resolve(path).toString()
                 , ids.toArray(new NId[0])), workspace));
     }
 
     @Override
-    public NPath resolveSibling(NPath basePath, NPath path) {
+    public NPath resolveSibling(NPath basePath, String path) {
         return NPath.of(new NResourcePath(rebuildURL(
                 NPath.of(location).resolveSibling(path).toString()
                 , ids.toArray(new NId[0])), workspace));

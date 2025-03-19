@@ -4,8 +4,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.format.NTreeVisitResult;
-import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.NPathParts;
@@ -159,7 +157,7 @@ public class URLPath implements NPathSPI {
     }
 
     @Override
-    public NPath resolve(NPath basePath, NPath path) {
+    public NPath resolve(NPath basePath, String path) {
         if (url == null) {
             NPathParts p = new NPathParts(toString());
             String spath = path.toString().replace("\\", "/");
@@ -206,11 +204,6 @@ public class URLPath implements NPathSPI {
             u += spath;
         }
         return rebuildURLPath(rebuildURLString(url.getProtocol(), url.getAuthority(), u, url.getRef()));
-    }
-
-    @Override
-    public NPath resolveSibling(NPath basePath, NPath path) {
-        return resolveSibling(basePath, path.toString());
     }
 
     @Override

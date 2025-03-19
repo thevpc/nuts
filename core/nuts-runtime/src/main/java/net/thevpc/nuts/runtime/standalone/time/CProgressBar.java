@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.time;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
@@ -257,7 +258,7 @@ public class CProgressBar {
     }
 
     public CProgressBar() {
-        this( -1);
+        this(-1);
     }
 
     public CProgressBar(int determinateSize) {
@@ -589,16 +590,21 @@ public class CProgressBar {
     }
 
     public void printProgress(int percent, NText msg, NPrintStream out) {
-        NText p = progress(percent, msg);
-        if (p == null || p.isEmpty()) {
-            return;
-        }
         Level armedLogLevel = options.getArmedLogLevel();
         if (armedLogLevel != null) {
+            NText p = progress(percent, msg, true);
+            if (p == null || p.isEmpty()) {
+                return;
+            }
             logger.with().verb(NLogVerb.PROGRESS)
                     .level(armedLogLevel)
                     .log(NMsg.ofNtf(p));
         } else {
+            NTerminalMode m = out.getTerminalMode();
+            NText p = progress(percent, msg, m == NTerminalMode.FILTERED);
+            if (p == null || p.isEmpty()) {
+                return;
+            }
             synchronized (CProgressBar.class) {
                 out.resetLine();
                 out.print(p);
@@ -610,8 +616,9 @@ public class CProgressBar {
         if (p == null || p.isEmpty()) {
             return;
         }
+        boolean forceNewline=out.getTerminalMode() == NTerminalMode.FILTERED;
         Level armedLogLevel = options.getArmedLogLevel();
-        if (options.isArmedNewline()) {
+        if (options.isArmedNewline() || forceNewline) {
             out.print("\n");
         } else if (armedLogLevel != null) {
             logger.with().verb(NLogVerb.PROGRESS)
@@ -625,7 +632,7 @@ public class CProgressBar {
         }
     }
 
-    public NText progress(int percent, NText msg) {
+    public NText progress(int percent, NText msg, boolean forceNewline) {
         NTexts txt = NTexts.of();
         NTextBuilder sb = txt.ofBuilder();
         if (maxMessage < columns) {
@@ -640,7 +647,7 @@ public class CProgressBar {
         if (armedLogLevel == null) {
             if (isPrefixMoveLineStart()) {
                 if (options.isArmedNewline()) {
-                    if (!isSuffixMoveLineStart()) {
+                    if (!isSuffixMoveLineStart() || forceNewline) {
                         sb.append("\n");
                     }
                 } else {
@@ -657,7 +664,7 @@ public class CProgressBar {
         sb.append(msg);
         sb.append(CoreStringUtils.fillString(' ', maxMessage - s2));
         if (isSuffixMoveLineStart()) {
-            if (armedLogLevel == null && options.isArmedNewline()) {
+            if ((armedLogLevel == null && options.isArmedNewline()) || forceNewline) {
                 sb.append("\n");
             }
         }

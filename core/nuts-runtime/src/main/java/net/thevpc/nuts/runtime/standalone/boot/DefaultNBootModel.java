@@ -205,7 +205,6 @@ public class DefaultNBootModel implements NBootModel {
                 flags.add("raw");
             }
         }
-        log.info(NMsg.ofC("detected terminal flags %s", flags));
         return new NWorkspaceTerminalOptions(stdIn, stdOut, stdErr, flags.toArray(new String[0]));
     }
 

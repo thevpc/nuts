@@ -25,8 +25,6 @@
 package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
 
@@ -47,8 +45,13 @@ public interface NElementAnnotation extends NBlankable {
 
     int size();
 
-    NElement arg(int index);
+    NElement param(int index);
 
-    NElement[] args();
+    List<NElement> params();
 
+    List<NElement> children();
+
+    boolean isParametrized();
+
+    boolean isNamed() ;
 }

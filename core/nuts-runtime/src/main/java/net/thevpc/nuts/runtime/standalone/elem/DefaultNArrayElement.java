@@ -162,7 +162,20 @@ public class DefaultNArrayElement extends AbstractNNavigatableElement
 
     @Override
     public String toString() {
-        return "[" + items().stream().map(Object::toString).collect(Collectors.joining(", ")) + "]";
+        StringBuilder sb = new StringBuilder();
+        sb.append(annotations().stream().map(x -> x.toString()).collect(Collectors.joining(" ")));
+        if(sb.length()>0)
+        {
+            sb.append(" ");
+        }
+        if (isNamed()) {
+            sb.append(name);
+        }
+        if (isParametrized()) {
+            sb.append("(").append(params().stream().map(x -> x.toString()).collect(Collectors.joining(", "))).append(")");
+        }
+        sb.append("[").append(children().stream().map(x -> x.toString()).collect(Collectors.joining(", "))).append("]");
+        return sb.toString();
     }
 
     @Override
@@ -225,7 +238,7 @@ public class DefaultNArrayElement extends AbstractNNavigatableElement
     }
 
     @Override
-    public Collection<NElement> children() {
+    public List<NElement> children() {
         return Arrays.asList(values);
     }
 

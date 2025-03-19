@@ -89,7 +89,7 @@ public class NPathFromSPI extends NPathBase {
         if (NBlankable.isBlank(other)) {
             return this;
         }
-        NPath p = base.resolve(this, NPath.of(other));
+        NPath p = base.resolve(this, other);
         if (p != null) {
             return p;
         }
@@ -99,7 +99,7 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public NPath resolve(NPath other) {
-        NPath p = base.resolve(this, other);
+        NPath p = base.resolve(this, other.getLocation());
         if (p != null) {
             return p;
         }
@@ -112,7 +112,12 @@ public class NPathFromSPI extends NPathBase {
         if (NBlankable.isBlank(other)) {
             return getParent();
         }
-        return resolveSibling(NPath.of(other));
+        NPath p = base.resolveSibling(this, other);
+        if (p != null) {
+            return p;
+        }
+        NPath parent = getParent();
+        return parent.resolve(other);
     }
 
     @Override
@@ -120,7 +125,7 @@ public class NPathFromSPI extends NPathBase {
         if (NBlankable.isBlank(other)) {
             return getParent();
         }
-        NPath p = base.resolveSibling(this, other);
+        NPath p = base.resolveSibling(this, other.getLocation());
         if (p != null) {
             return p;
         }

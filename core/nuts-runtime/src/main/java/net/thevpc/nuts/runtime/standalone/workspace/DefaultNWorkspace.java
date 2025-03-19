@@ -255,6 +255,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     }
 
     private void _preloadWorkspace(InitWorkspaceData data) {
+        LOG.debug(NMsg.ofC("detected terminal flags %s", this.wsModel.bootModel.getBootTerminal().getFlags()));
         data.effectiveBootOptions = this.wsModel.bootModel.getBootEffectiveOptions();
         this.wsModel.configModel = new DefaultNWorkspaceConfigModel(this);
         String workspaceLocation = data.effectiveBootOptions.getWorkspace().orNull();
@@ -282,7 +283,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         this.wsModel.location = data.effectiveBootOptions.getWorkspace().orNull();
 
         this.wsModel.bootModel.onInitializeWorkspace();
-
         NSystemTerminalBase termb = wsModel.extensions
                 .createComponent(NSystemTerminalBase.class).get();
         data.terminals = NIO.of();

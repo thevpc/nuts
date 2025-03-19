@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
@@ -17,6 +16,7 @@ import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
 
         @Override
         public int getSupportLevel(NSupportLevelContext context) {
-            String path= context.getConstraints();
+            String path = context.getConstraints();
             if (path.startsWith(PREFIX)) {
                 return NConstants.Support.DEFAULT_SUPPORT;
             }
@@ -107,12 +107,12 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
 
 
     @Override
-    public NPath resolve(NPath basePath, NPath path) {
+    public NPath resolve(NPath basePath, String path) {
         return NPath.of(PREFIX + ref.resolve(path));
     }
 
     @Override
-    public NPath resolveSibling(NPath basePath, NPath path) {
+    public NPath resolveSibling(NPath basePath, String path) {
         return NPath.of(PREFIX + ref.resolveSibling(path));
     }
 
@@ -181,7 +181,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         boolean files = true;
         List<String> all = new ArrayList<>();
         InputStream foldersFileStream = null;
-        String dotFilesUrl = baseUrl + "/" + CoreNConstants.Files.DOT_FILES;
+        String dotFilesUrl = NStringUtils.pjoin("/", baseUrl, CoreNConstants.Files.DOT_FILES);
         NSession session = workspace.currentSession();
         NVersion versionString = NVersion.get("0.5.5").get();
         try {
@@ -242,7 +242,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         if (versionString.compareTo("0.5.7") < 0) {
             if (folders) {
                 String[] foldersFileContent = null;
-                String dotFolderUrl = baseUrl + "/" + CoreNConstants.Files.DOT_FOLDERS;
+                String dotFolderUrl = NStringUtils.pjoin("/", baseUrl, CoreNConstants.Files.DOT_FOLDERS);
                 try (InputStream stream = NInputStreamMonitor.of().setSource(NPath.of(dotFolderUrl))
                         .create()) {
                     foldersFileContent = StringTokenizerUtils.splitNewLine(NIOUtils.loadString(stream, true))
@@ -280,6 +280,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
             sb.append(p.ref);
             return sb.build();
         }
+
         @Override
         public String getName() {
             return "path";

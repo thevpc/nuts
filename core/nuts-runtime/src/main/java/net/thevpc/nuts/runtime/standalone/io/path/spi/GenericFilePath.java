@@ -4,7 +4,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
-import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NFormatSPI;
@@ -12,7 +11,6 @@ import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.NOsFamily;
@@ -68,7 +66,7 @@ public class GenericFilePath implements NPathSPI {
     }
 
 
-    private NPath resolve(NPath basePath, String path) {
+    public NPath resolve(NPath basePath, String path) {
         NPathPartList newParts = NPathPartParser.parseParts(path);
         if (newParts.isEmpty()) {
             return basePath;
@@ -79,12 +77,8 @@ public class GenericFilePath implements NPathSPI {
         return partsToPath(parts.concat(newParts));
     }
 
-    @Override
-    public NPath resolve(NPath basePath, NPath path) {
-        return resolve(basePath, path == null ? null : path.toString());
-    }
 
-    private NPath resolveSibling(NPath basePath, String path) {
+    public NPath resolveSibling(NPath basePath, String path) {
         if (path == null || path.isEmpty()) {
             return getParent(basePath);
         }
@@ -101,10 +95,6 @@ public class GenericFilePath implements NPathSPI {
         }
     }
 
-    @Override
-    public NPath resolveSibling(NPath basePath, NPath path) {
-        return resolveSibling(basePath, path == null ? null : path.toString());
-    }
 
     @Override
     public NPath toCompressedForm(NPath basePath) {

@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.format.tson;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.runtime.standalone.elem.NElementAnnotationImpl;
 import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
 import net.thevpc.tson.*;
 
@@ -61,9 +62,11 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
 
 
     private NElementAnnotation toNElemAnn(TsonAnnotation elem) {
-        throw new IllegalArgumentException("not implemented");
+        return new NElementAnnotationImpl(
+                elem.name(),
+                elem.params() == null ? null : elem.params().toList().stream().map(x -> toNElem(x)).toArray(NElement[]::new)
+        );
     }
-
 
     @Override
     public NElement parseElement(Reader reader, NElementFactoryContext context) {
@@ -190,17 +193,20 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 }
                 return u;
             }
-            case ARRAY: {
+            case ARRAY:
+            case NAMED_ARRAY:
+            case PARAMETRIZED_ARRAY:
+            case NAMED_PARAMETRIZED_ARRAY: {
                 TsonAnnotation[] annotations = elem.annotations();
                 TsonArray array = elem.toArray();
                 NArrayElementBuilder u = elems.ofArrayBuilder();
                 for (TsonElement item : array) {
                     u.add(toNElem(item));
                 }
-                if(array.isNamed()) {
+                if (array.isNamed()) {
                     u.setName(array.name());
                 }
-                if(array.isParametrized()) {
+                if (array.isParametrized()) {
                     u.addArgs(array.params().toList().stream().map(x -> toNElem(x)).collect(Collectors.toList()));
                 }
                 if (annotations.length > 0) {
@@ -208,17 +214,20 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 }
                 return u.build();
             }
-            case OBJECT: {
+            case OBJECT:
+            case NAMED_OBJECT:
+            case PARAMETRIZED_OBJECT:
+            case NAMED_PARAMETRIZED_OBJECT: {
                 TsonAnnotation[] annotations = elem.annotations();
                 TsonObject obj = elem.toObject();
                 NObjectElementBuilder u = elems.ofObjectBuilder();
                 for (TsonElement item : obj) {
                     u.add(toNElem(item));
                 }
-                if(obj.isNamed()) {
+                if (obj.isNamed()) {
                     u.setName(obj.name());
                 }
-                if(obj.isParametrized()) {
+                if (obj.isParametrized()) {
                     u.addArgs(obj.params().toList().stream().map(x -> toNElem(x)).collect(Collectors.toList()));
                 }
                 if (annotations.length > 0) {
@@ -226,17 +235,17 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 }
                 return u.build();
             }
-            case PAIR:{
+            case PAIR: {
                 TsonAnnotation[] annotations = elem.annotations();
                 TsonPair pair = elem.toPair();
-                NPairElementBuilder b = elems.ofPairBuilder(toNElem(pair.key()), toNElem(pair.key()));
+                NPairElementBuilder b = elems.ofPairBuilder(toNElem(pair.key()), toNElem(pair.value()));
                 if (annotations.length > 0) {
                     return b.addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
                 }
                 return b.build();
             }
         }
-        throw new IllegalArgumentException("not implemented");
+        throw new IllegalArgumentException("not implemented Tson Type " + elem.type());
     }
 
     @Override

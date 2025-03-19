@@ -109,11 +109,11 @@ public interface NPathSPI {
     }
 
 
-    default NPath resolve(NPath basePath, NPath path) {
+    default NPath resolve(NPath basePath, String path) {
         return null;
     }
 
-    default NPath resolveSibling(NPath basePath, NPath path) {
+    default NPath resolveSibling(NPath basePath, String path) {
         NPath parent = basePath.getParent();
         return parent.resolve(path);
     }

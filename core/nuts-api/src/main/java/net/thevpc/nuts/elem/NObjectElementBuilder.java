@@ -109,7 +109,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
      *
      * @return object attributes
      */
-    Collection<NElement> children();
+    List<NElement> children();
 
     public List<NElement> getAll(NElement s);
 

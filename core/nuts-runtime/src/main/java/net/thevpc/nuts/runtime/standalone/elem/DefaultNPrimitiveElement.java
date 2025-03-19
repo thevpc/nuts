@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author thevpc
@@ -214,7 +215,14 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
 
     @Override
     public String toString() {
-        return NLiteral.of(value).toString();
+        StringBuilder sb = new StringBuilder();
+        sb.append(annotations().stream().map(x -> x.toString()).collect(Collectors.joining(" ")));
+        if(sb.length()>0)
+        {
+            sb.append(" ");
+        }
+        sb.append(NLiteral.of(value).toString());
+        return sb.toString();
     }
 
     @Override

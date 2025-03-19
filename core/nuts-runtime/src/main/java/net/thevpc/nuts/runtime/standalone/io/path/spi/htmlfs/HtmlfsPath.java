@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.AbstractPathSPIAdapter;
 import net.thevpc.nuts.spi.*;
@@ -86,7 +85,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
     }
 
     @Override
-    public NPath resolve(NPath basePath, NPath path) {
+    public NPath resolve(NPath basePath, String path) {
         if (NBlankable.isBlank(path)) {
             return basePath;
         }
@@ -97,7 +96,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
     }
 
     @Override
-    public NPath resolveSibling(NPath basePath, NPath path) {
+    public NPath resolveSibling(NPath basePath, String path) {
         if (NBlankable.isBlank(path)) {
             return basePath;
         }

@@ -78,12 +78,12 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
 
 
     @Override
-    public NPath resolve(NPath basePath, NPath path) {
+    public NPath resolve(NPath basePath, String path) {
         return ref.resolve(path);
     }
 
     @Override
-    public NPath resolveSibling(NPath basePath, NPath path) {
+    public NPath resolveSibling(NPath basePath, String path) {
         return ref.resolveSibling(path);
     }
 

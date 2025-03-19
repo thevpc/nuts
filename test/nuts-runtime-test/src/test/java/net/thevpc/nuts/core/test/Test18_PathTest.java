@@ -241,4 +241,13 @@ public class Test18_PathTest {
         List<NPath> nutsPaths = a.walkGlob().toList();
         System.out.println(nutsPaths);
     }
+
+    @Test
+    public void testThevpcPath() {
+        NPath a = NPath.of("htmlfs:https://maven.thevpc.net/net/thevpc/nuts/toolbox/noapi/");
+        List<NPath> nutsPaths = a.list();
+        System.out.println(nutsPaths);
+    }
+
+
 }

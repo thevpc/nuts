@@ -86,20 +86,7 @@ public class FilePath implements NPathSPI {
         }
     }
 
-    @Override
-    public NPath resolve(NPath basePath, NPath path) {
-        if (path == null) {
-            return fastPath(value, getWorkspace());
-        }
-        if (path.toString().isEmpty()) {
-            return fastPath(value, getWorkspace());
-        }
-        Path f = path.toPath().orNull();
-        if (f != null) {
-            return fastPath(value.resolve(f), getWorkspace());
-        }
-        return resolve(basePath, path.toString());
-    }
+
 
     public NPath resolveSibling(NPath basePath, String path) {
         if (path == null) {
@@ -119,13 +106,7 @@ public class FilePath implements NPathSPI {
         }
     }
 
-    @Override
-    public NPath resolveSibling(NPath basePath, NPath path) {
-        if (path == null) {
-            return getParent(basePath);
-        }
-        return resolveSibling(basePath, path.toString());
-    }
+
 
     @Override
     public NPath toCompressedForm(NPath basePath) {

@@ -33,7 +33,9 @@ public class DefaultNLiteral implements NLiteral {
     public static final String[] DATE_FORMATS = {
             "yyyy-MM-dd HH:mm:ss.SSS",
             "yyyy-MM-dd HH:mm:ss",
-            "yyyy-MM-dd'T'HH:mm:ss.SSSX"
+            "yyyy-MM-dd'T'HH:mm:ss.SSSX",
+            "yyyy/MM/dd HH:mm:ss.SSS",
+            "yyyy/MM/dd HH:mm:ss"
     };
 
     private Object value;
@@ -102,7 +104,7 @@ public class DefaultNLiteral implements NLiteral {
                     return NElementType.ALIAS;
             }
             if (value instanceof Number) {
-                return NElementType.FLOAT;
+                return NElementType.DOUBLE;
             }
             if (value instanceof NInputStreamProvider) {
                 return NElementType.BINARY_STREAM;

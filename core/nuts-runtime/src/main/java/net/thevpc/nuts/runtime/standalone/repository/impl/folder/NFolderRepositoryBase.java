@@ -191,7 +191,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
 
         return NIteratorBuilder.ofSupplier(
                 () -> {
-                    List<NId> ret = new ArrayList<>();
+//                    List<NId> ret = new ArrayList<>();
                     session.getTerminal().printProgress(NMsg.ofC("looking for versions of %s at %s", id, foldersFileUrl.toCompressedForm()));
                     try {
                         return NIterator.of(

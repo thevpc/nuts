@@ -47,16 +47,25 @@ public class ProgressOptions {
                     }
                 }
             }
+            if(o.getEnabled().isEmpty() && !o.vals.isEmpty()){
+                // if we specify progress options,
+                // this means we forcibly want progress to be shon
+                o.setEnabled(true);
+            }
             return o;
         });
     }
 
     private final Map<String, NLiteral> vals = new LinkedHashMap<>();
-    private boolean enabled = true;
+    private Boolean enabled;
     private NRef<Level> cachedLevel = null;
 
     public boolean isEnabled() {
-        return enabled;
+        return enabled == null || enabled;
+    }
+
+    public NOptional<Boolean> getEnabled() {
+        return NOptional.of(enabled);
     }
 
     public boolean isArmedNewline() {

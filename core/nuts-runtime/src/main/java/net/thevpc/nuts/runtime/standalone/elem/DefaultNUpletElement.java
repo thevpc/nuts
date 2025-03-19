@@ -25,10 +25,7 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 import net.thevpc.tson.TsonElementType;
 
 import java.time.Instant;
@@ -91,7 +88,7 @@ public class DefaultNUpletElement extends AbstractNNavigatableElement
 
 
     @Override
-    public Collection<NElement> children() {
+    public List<NElement> children() {
         return Arrays.asList(values);
     }
 
@@ -183,7 +180,17 @@ public class DefaultNUpletElement extends AbstractNNavigatableElement
 
     @Override
     public String toString() {
-        return "[" + items().stream().map(Object::toString).collect(Collectors.joining(", ")) + "]";
+        StringBuilder sb = new StringBuilder();
+        sb.append(annotations().stream().map(x -> x.toString()).collect(Collectors.joining(" ")));
+        if(sb.length()>0)
+        {
+            sb.append(" ");
+        }
+        if (isNamed()) {
+            sb.append(name);
+        }
+        sb.append("(").append(children().stream().map(x -> x.toString()).collect(Collectors.joining(", "))).append(")");
+        return sb.toString();
     }
 
     @Override
@@ -208,7 +215,7 @@ public class DefaultNUpletElement extends AbstractNNavigatableElement
 
     @Override
     public boolean isBlank() {
-        return values.length == 0;
+        return values.length == 0 && NBlankable.isBlank(name);
     }
 
     @Override

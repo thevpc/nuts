@@ -25,10 +25,19 @@ public class TomcatWebServerHtmlfsParser extends AbstractHtmlfsParser {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))) {
             String line = null;
             while ((line = br.readLine()) != null) {
-                if (line.trim().matches("<hr class=\"line\"><h3>[^<>]+</h3></body>")) {
-                    expectTomcat = true;
+                String trimmedLine = line.trim();
+                if (!expectTomcat) {
+                    if(trimmedLine.matches("<hr class=\"line\"><h3>[^<>]+</h3></body>")) {
+                        expectTomcat = true;
+                    }
+                    if(trimmedLine.matches("<hr class=\"line\">")) {
+                        expectTomcat = true;
+                    }
+                    if(trimmedLine.matches("<th [^<>]+Filename[^<>]+</th>")) {
+                        expectTomcat = true;
+                    }
                 }
-                if (line.trim().matches("<title>Directory Listing For.*")) {
+                if (!expectDirListing && trimmedLine.matches("<title>Directory Listing For.*")) {
                     expectDirListing = true;
                 }
             }

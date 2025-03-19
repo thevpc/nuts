@@ -144,7 +144,7 @@ public interface NNavigatableElement extends NElement {
      *
      * @return object attributes
      */
-    Collection<NElement> children();
+    List<NElement> children();
 
     /**
      * element count

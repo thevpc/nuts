@@ -545,6 +545,28 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
 
     @SuppressWarnings("unchecked")
     private boolean prepareWorkspace() {
+        boolean resetHardFlag = NBootUtils.firstNonNull(options.getResetHard(), false);
+        boolean dryFlag = NBootUtils.firstNonNull(options.getDry(), false);
+        boolean resetFlag = NBootUtils.firstNonNull(options.getReset(), false);
+        if(resetHardFlag){
+            //force loading version early, it will be used later-on
+            bLog.log(isAskConfirm(getOptions()) ? Level.OFF : Level.WARNING, "WARNING", NBootMsg.ofPlain("reset hard all workspaces"));
+            long countDeleted=0;
+            if (dryFlag) {
+                //
+            } else {
+                countDeleted = NBootUtils.deleteStoreLocationsHard(lastWorkspaceOptions, getOptions(), bLog, () -> scanner.nextLine());
+                NBootUtils.ndiUndo(bLog, null, false);
+            }
+            if (isPlainTrace()) {
+                if (countDeleted > 0) {
+                    bLog.warn(NBootMsg.ofC("nuts hard reset successfully"));
+                } else {
+                    bLog.warn(NBootMsg.ofC("nuts hard reset did not require to delete any file. system is clean."));
+                }
+            }
+            throw new NBootException(NBootMsg.ofPlain(""), 0);
+        }
         if (!preparedWorkspace) {
             preparedWorkspace = true;
             String isolationLevel = NBootUtils.firstNonBlank(options.getIsolationLevel(), "SYSTEM");
@@ -591,10 +613,8 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             NBootOptionsInfo lastConfigLoaded = null;
             String lastNutsWorkspaceJsonConfigPath = null;
             boolean immediateLocation = false;
-            boolean resetHardFlag = NBootUtils.firstNonNull(options.getResetHard(), false);
-            boolean resetFlag = NBootUtils.firstNonNull(options.getReset(), false);
-            boolean dryFlag = NBootUtils.firstNonNull(options.getDry(), false);
             String _ws = options.getWorkspace();
+            Boolean systemWorkspace = NBootUtils.firstNonNull(options.getSystem(), false);
             if (NBootUtils.sameEnum(isolationLevel, "SANDBOX")) {
                 Path t = null;
                 try {
@@ -606,17 +626,14 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 immediateLocation = true;
                 workspaceName = t.getFileName().toString();
                 resetFlag = false; //no need for reset
-                if (NBootUtils.firstNonNull(options.getSystem(), false)) {
-                    throw new NBootException(NBootMsg.ofPlain("you cannot specify option '--global' in sandbox mode"));
+                if (systemWorkspace) {
+                    throw new NBootException(NBootMsg.ofPlain("you cannot specify option option '--global' in sandbox mode"));
                 }
                 if (!NBootUtils.isBlank(options.getWorkspace())) {
-                    throw new NBootException(NBootMsg.ofPlain("you cannot specify '--workspace' in sandbox mode"));
+                    throw new NBootException(NBootMsg.ofPlain("you cannot specify option '--workspace' in sandbox mode"));
                 }
                 if (!NBootUtils.isBlank(options.getStoreStrategy()) && !NBootUtils.sameEnum(options.getStoreStrategy(), "STANDALONE")) {
-                    throw new NBootException(NBootMsg.ofPlain("you cannot specify '--exploded' in sandbox mode"));
-                }
-                if (NBootUtils.firstNonNull(options.getSystem(), false)) {
-                    throw new NBootException(NBootMsg.ofPlain("you cannot specify '--global' in sandbox mode"));
+                    throw new NBootException(NBootMsg.ofPlain("you cannot specify option '--exploded' in sandbox mode"));
                 }
                 options.setWorkspace(lastNutsWorkspaceJsonConfigPath);
 //            }else if (NBootUtils.sameEnum(isolationLevel, "MEMORY")) {
@@ -644,16 +661,16 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
 //                }
 //                options.setWorkspace(lastNutsWorkspaceJsonConfigPath);
             } else {
-                if (!NBootUtils.sameEnum(isolationLevel, "SYSTEM") && NBootUtils.firstNonNull(options.getSystem(), false)) {
+                if (!NBootUtils.sameEnum(isolationLevel, "SYSTEM") && systemWorkspace) {
                     if (NBootUtils.firstNonNull(options.getReset(), false)) {
                         throw new NBootException(NBootMsg.ofC("invalid option 'global' in %s mode", isolationLevel));
                     }
                 }
-                if (_ws != null && _ws.matches("[a-z-]+://.*")) {
+                if (_ws != null && NBootUtils.isRemoteWorkspaceLocation(_ws)) {
                     //this is a protocol based workspace
                     //String protocol=ws.substring(0,ws.indexOf("://"));
                     workspaceName = "remote-bootstrap";
-                    lastNutsWorkspaceJsonConfigPath = NBootPlatformHome.of(null, NBootUtils.firstNonNull(options.getSystem(), false)).getWorkspaceLocation(NBootUtils.resolveValidWorkspaceName(workspaceName));
+                    lastNutsWorkspaceJsonConfigPath = NBootPlatformHome.of(null, systemWorkspace).getWorkspaceLocation(NBootUtils.resolveValidWorkspaceName(workspaceName));
                     lastConfigLoaded = NBootBootConfigLoader.loadBootConfig(lastNutsWorkspaceJsonConfigPath, bLog);
                     immediateLocation = true;
 
@@ -661,7 +678,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                     immediateLocation = NBootUtils.isValidWorkspaceName(_ws);
                     int maxDepth = 36;
                     for (int i = 0; i < maxDepth; i++) {
-                        lastNutsWorkspaceJsonConfigPath = NBootUtils.isValidWorkspaceName(_ws) ? NBootPlatformHome.of(null, NBootUtils.firstNonNull(options.getSystem(), false)).getWorkspaceLocation(NBootUtils.resolveValidWorkspaceName(_ws)) : NBootUtils.getAbsolutePath(_ws);
+                        lastNutsWorkspaceJsonConfigPath = NBootUtils.isValidWorkspaceName(_ws) ? NBootPlatformHome.of(null, systemWorkspace).getWorkspaceLocation(NBootUtils.resolveValidWorkspaceName(_ws)) : NBootUtils.getAbsolutePath(_ws);
 
                         NBootOptionsInfo configLoaded = NBootBootConfigLoader.loadBootConfig(lastNutsWorkspaceJsonConfigPath, bLog);
                         if (configLoaded == null) {

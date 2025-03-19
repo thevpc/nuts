@@ -161,7 +161,7 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
 
 
     @Override
-    public Collection<NElement> children() {
+    public List<NElement> children() {
         return values;
     }
 

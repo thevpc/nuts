@@ -36,7 +36,7 @@ public class DefaultNObjectElement extends AbstractNNavigatableElement implement
 
     @Override
     public Stream<NPairElement> pairs() {
-        return values.stream().filter(NElement::isPair).map(x->x.asPair().get());
+        return values.stream().filter(NElement::isPair).map(x -> x.asPair().get());
     }
 
     @Override
@@ -75,7 +75,7 @@ public class DefaultNObjectElement extends AbstractNNavigatableElement implement
 
 
     @Override
-    public Collection<NElement> children() {
+    public List<NElement> children() {
         return new ArrayList<>(values);
     }
 
@@ -126,7 +126,20 @@ public class DefaultNObjectElement extends AbstractNNavigatableElement implement
 
     @Override
     public String toString() {
-        return "{" + children().stream().map(x -> x.toString()).collect(Collectors.joining(", ")) + "}";
+        StringBuilder sb = new StringBuilder();
+        sb.append(annotations().stream().map(x -> x.toString()).collect(Collectors.joining(" ")));
+        if(sb.length()>0)
+        {
+            sb.append(" ");
+        }
+        if (isNamed()) {
+            sb.append(name);
+        }
+        if (isParametrized()) {
+            sb.append("(").append(params().stream().map(x -> x.toString()).collect(Collectors.joining(", "))).append(")");
+        }
+        sb.append("{").append(children().stream().map(x -> x.toString()).collect(Collectors.joining(", "))).append("}");
+        return sb.toString();
     }
 
     @Override

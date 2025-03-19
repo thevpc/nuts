@@ -3,8 +3,6 @@ package net.thevpc.nuts.ext.ssh;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NEDesc;
-import net.thevpc.nuts.format.NTreeVisitResult;
-import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.util.NConnexionString;
 import net.thevpc.nuts.spi.NFormatSPI;
@@ -199,12 +197,7 @@ class SshNPath implements NPathSPI {
     }
 
 
-    @Override
-    public NPath resolve(NPath basePath, NPath path) {
-        return resolve(basePath, path.getLocation());
-    }
-
-    private NPath resolveSibling(NPath basePath, String path) {
+    public NPath resolveSibling(NPath basePath, String path) {
         NConnexionString c = this.path.copy();
         if (NBlankable.isBlank(path)) {
             return basePath;
@@ -222,11 +215,6 @@ class SshNPath implements NPathSPI {
         }
         c.setPath(joinPathString(a));
         return NPath.of(this.path.toString());
-    }
-
-    @Override
-    public NPath resolveSibling(NPath basePath, NPath path) {
-        return resolveSibling(basePath, path.getLocation());
     }
 
     @Override

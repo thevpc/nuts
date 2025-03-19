@@ -6,7 +6,6 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NText;
@@ -90,12 +89,12 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
 
 
     @Override
-    public NPath resolve(NPath basePath, NPath path) {
+    public NPath resolve(NPath basePath, String path) {
         return NPath.of(PREFIX + ref.resolve(path));
     }
 
     @Override
-    public NPath resolveSibling(NPath basePath, NPath path) {
+    public NPath resolveSibling(NPath basePath, String path) {
         return NPath.of(PREFIX + ref.resolveSibling(path));
     }
 

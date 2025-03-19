@@ -2253,7 +2253,13 @@ public final class NBootUtils {
             }
         }
 
-        folders.add(Paths.get(bOptions.getWorkspace()));
+        String _ws = bOptions.getWorkspace();
+        if(!isRemoteWorkspaceLocation(_ws)) {
+            Boolean systemWorkspace = NBootUtils.firstNonNull(bOptions.getSystem(), false);
+            String lastNutsWorkspaceJsonConfigPath = NBootUtils.isValidWorkspaceName(_ws) ? NBootPlatformHome.of(null, systemWorkspace)
+                    .getWorkspaceLocation(NBootUtils.resolveValidWorkspaceName(_ws)) : NBootUtils.getAbsolutePath(_ws);
+            folders.add(Paths.get(lastNutsWorkspaceJsonConfigPath));
+        }
         for (Object ovalue : NBootPlatformHome.storeTypes()) {
             if (ovalue != null) {
                 if (ovalue instanceof String) {
@@ -3170,5 +3176,9 @@ public final class NBootUtils {
         double tokenEditSimilarity = tokenSimilarity(tokens1, tokens2);
         double fuzzyJaccardSimilarity = fuzzyJaccardSimilarity(tokens1, tokens2);
         return (tokenEditSimilarity * 0.6) + (fuzzyJaccardSimilarity * 0.4);
+    }
+
+    public static boolean isRemoteWorkspaceLocation(String _ws) {
+        return _ws.matches("[a-z-]+://.*");
     }
 }
