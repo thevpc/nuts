@@ -598,19 +598,19 @@ public class NPomXmlParser {
         return repository;
     }
 
-    public static void writeDocument(Document doc, File result, NSession session) throws TransformerException {
+    public static void writeDocument(Document doc, File result)  {
         writeDocument(doc, new StreamResult(result));
     }
 
-    public static void writeDocument(Document doc, Writer result, NSession session) throws TransformerException {
+    public static void writeDocument(Document doc, Writer result)  {
         writeDocument(doc, new StreamResult(result));
     }
 
-    public static void writeDocument(Document doc, OutputStream result, NSession session) throws TransformerException {
+    public static void writeDocument(Document doc, OutputStream result)  {
         writeDocument(doc, new StreamResult(result));
     }
 
-    public static void writeDocument(Document doc, StreamResult result) throws TransformerException {
+    public static void writeDocument(Document doc, StreamResult result)  {
         XmlUtils.writeDocument(doc, result, false, true);
     }
 

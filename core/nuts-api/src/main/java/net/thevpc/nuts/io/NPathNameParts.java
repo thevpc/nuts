@@ -62,6 +62,20 @@ public class NPathNameParts {
         return baseName + extension;
     }
 
+    /**
+     * build file name based on variables.
+     * Example : "${name}-02.${extension}"
+     * build a new file name by appending "-02" the the base name
+     * acceptable vars :
+     * <ul>
+     *     <li>name</li>
+     *     <li>basename</li>
+     *     <li>extension</li>
+     *     <li>fullExt</li>
+     * </ul>
+     * @param pattern vars pattern
+     * @return file name based on variables
+     */
     public String toName(String pattern) {
         return NMsg.ofV(pattern,
                 s -> {
