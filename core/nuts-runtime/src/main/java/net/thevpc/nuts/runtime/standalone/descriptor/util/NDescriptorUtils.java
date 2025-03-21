@@ -143,7 +143,7 @@ public class NDescriptorUtils {
 
     }
 
-    public static boolean isValidEffectiveDescriptor(NDescriptor effectiveDescriptor, NSession session) {
+    public static boolean isValidEffectiveDescriptor(NDescriptor effectiveDescriptor) {
         try {
             checkValidEffectiveDescriptor(effectiveDescriptor);
             return true;

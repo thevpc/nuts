@@ -40,9 +40,23 @@ public interface NCustomElementBuilder extends NElementBuilder {
 
     NCustomElementBuilder clearAnnotations();
 
-    List<NElementAnnotation> getAnnotations();
+    List<NElementAnnotation> annotations();
+
+
+    NCustomElementBuilder addLeadingComment(NElementCommentType type, String text);
+    NCustomElementBuilder addTrailingComment(NElementCommentType type, String text);
+    NCustomElementBuilder addLeadingComment(NElementComment comment);
+    NCustomElementBuilder addLeadingComments(NElementComment... comments);
+    NCustomElementBuilder addTrailingComment(NElementComment comment);
+    NCustomElementBuilder addTrailingComments(NElementComment... comments);
+    NCustomElementBuilder removeLeadingComment(NElementComment comment);
+    NCustomElementBuilder removeTrailingComment(NElementComment comment);
+    NCustomElementBuilder removeLeadingCommentAt(int index);
+    NCustomElementBuilder removeTrailingCommentAt(int index);
+    NCustomElementBuilder clearComments();
+    NCustomElementBuilder addComments(NElementComments comments);
 
     NCustomElementBuilder setValue(Object value);
-    Object getValue();
+    Object value();
     NCustomElement build();
 }

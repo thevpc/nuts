@@ -3,10 +3,10 @@ package net.thevpc.nuts.runtime.standalone.elem;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NStringBuilder;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class DefaultNObjectElement extends AbstractNNavigatableElement implements NObjectElement {
@@ -16,13 +16,13 @@ public class DefaultNObjectElement extends AbstractNNavigatableElement implement
     private String name;
     private List<NElement> params;
 
-    public DefaultNObjectElement(String name, List<NElement> params, List<NElement> values, NElementAnnotation[] annotations) {
+    public DefaultNObjectElement(String name, List<NElement> params, List<NElement> values, NElementAnnotation[] annotations,NElementComments comments) {
         super(
                 name == null && params == null ? NElementType.OBJECT
                         : name == null && params != null ? NElementType.PARAMETRIZED_OBJECT
                         : name != null && params == null ? NElementType.NAMED_OBJECT
                         : NElementType.NAMED_PARAMETRIZED_OBJECT,
-                annotations);
+                annotations,comments);
         this.name = name;
         this.params = params;
         if (values != null) {
@@ -124,23 +124,22 @@ public class DefaultNObjectElement extends AbstractNNavigatableElement implement
         return true;
     }
 
-    @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(annotations().stream().map(x -> x.toString()).collect(Collectors.joining(" ")));
-        if(sb.length()>0)
-        {
-            sb.append(" ");
-        }
-        if (isNamed()) {
-            sb.append(name);
-        }
-        if (isParametrized()) {
-            sb.append("(").append(params().stream().map(x -> x.toString()).collect(Collectors.joining(", "))).append(")");
-        }
-        sb.append("{").append(children().stream().map(x -> x.toString()).collect(Collectors.joining(", "))).append("}");
+        return toString(false);
+    }
+
+    @Override
+    public String toString(boolean compact) {
+        NStringBuilder sb = new NStringBuilder();
+        sb.append(TsonElementToStringHelper.leadingCommentsAndAnnotations(this, compact));
+        TsonElementToStringHelper.appendUplet(name,params, compact, sb);
+        sb.append("{");
+        TsonElementToStringHelper.appendChildren(children(), compact, new TsonElementToStringHelper.SemiCompactInfo(),sb);
+        sb.append("}");
+        sb.append(TsonElementToStringHelper.trailingComments(this, compact));
         return sb.toString();
     }
+
 
     @Override
     public boolean isBlank() {

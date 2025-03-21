@@ -53,17 +53,6 @@ public abstract class DefaultFormatBase0<T> implements NCmdLineConfigurable {
         return getValidPrintStream(null);
     }
 
-//    public NSession getSession() {
-//        return session;
-//    }
-//
-//    public T setSession(NSession session) {
-//        //should copy because will change outputformat
-//        session = NWorkspaceUtils.bindSession(workspace, session);
-//        this.session =session == null ? null : session.copy();
-//        return (T) this;
-//    }
-
     public String getName() {
         return name;
     }

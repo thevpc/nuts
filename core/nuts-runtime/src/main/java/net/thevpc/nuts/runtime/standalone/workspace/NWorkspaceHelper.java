@@ -29,7 +29,6 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 import net.thevpc.nuts.NFetchStrategy;
 import net.thevpc.nuts.NRepository;
 import net.thevpc.nuts.NRepositoryFilter;
-import net.thevpc.nuts.NSession;
 
 import java.util.*;
 
@@ -42,7 +41,7 @@ public class NWorkspaceHelper {
         return mode == null ? NFetchStrategy.ONLINE : mode;
     }
 
-    public static List<NRepository> _getEnabledRepositories(NRepository parent, NRepositoryFilter repositoryFilter, NSession session) {
+    public static List<NRepository> _getEnabledRepositories(NRepository parent, NRepositoryFilter repositoryFilter) {
         List<NRepository> repos = new ArrayList<>();
         if (parent.config().isSupportedMirroring()) {
             List<NRepository> subrepos = new ArrayList<>();
@@ -59,7 +58,7 @@ public class NWorkspaceHelper {
                 }
             }
             for (NRepository subrepo : subrepos) {
-                repos.addAll(_getEnabledRepositories(subrepo, repositoryFilter, session));
+                repos.addAll(_getEnabledRepositories(subrepo, repositoryFilter));
             }
         }
         return repos;

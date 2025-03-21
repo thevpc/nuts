@@ -84,9 +84,9 @@
 //    }
 //
 //    @Override
-//    public OutputStream asOutputStream(NSession session) {
+//    public OutputStream asOutputStream() {
 //        if (osWrapper == null) {
-//            osWrapper = new OutputStreamFromOutputStream(this,session);
+//            osWrapper = new OutputStreamFromOutputStream(this);
 //        }
 //        return osWrapper;
 //    }
@@ -118,7 +118,7 @@
 //
 //
 //    @Override
-//    public NFormat formatter(NSession session) {
+//    public NFormat formatter() {
 //        return NFormat.of(session, new NContentMetadataProviderFormatSPI(this, null, "print-stream"));
 //    }
 //}

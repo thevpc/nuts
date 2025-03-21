@@ -40,11 +40,11 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
         super(workspace);
     }
 
-    private static CharacterizedDeployFile characterizeForDeploy(NInputSource contentFile, NFetchCmd options, List<String> parseOptions, NSession session) {
+    private static CharacterizedDeployFile characterizeForDeploy(NInputSource contentFile, NFetchCmd options, List<String> parseOptions) {
         if (parseOptions == null) {
             parseOptions = new ArrayList<>();
         }
-        CharacterizedDeployFile c = new CharacterizedDeployFile(session);
+        CharacterizedDeployFile c = new CharacterizedDeployFile();
         try {
             c.setBaseFile(CoreIOUtils.toPathInputSource(contentFile, c.getTemps(), true));
             c.setContentStreamOrPath(contentFile);
@@ -160,7 +160,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
         try {
             if (descriptor == null) {
                 NFetchCmd p = NFetchCmd.of();
-                characterizedFile = characterizeForDeploy(contentSource, p, getParseOptions(), session);
+                characterizedFile = characterizeForDeploy(contentSource, p, getParseOptions());
                 NAssert.requireNonBlank(characterizedFile.getDescriptor(), "descriptor");
                 descriptor = characterizedFile.getDescriptor();
             }
@@ -224,7 +224,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
                 }
 
                 NId effId = dws.resolveEffectiveId(descriptor);
-                CorePlatformUtils.checkAcceptCondition(descriptor.getCondition(), false, session);
+                CorePlatformUtils.checkAcceptCondition(descriptor.getCondition(), false);
                 if (NBlankable.isBlank(repository)) {
                     effId = CoreNIdUtils.createContentFaceId(effId.builder().setPropertiesQuery("").build(), descriptor);
                     for (NRepository repo : wu.filterRepositoriesDeploy(effId, null)

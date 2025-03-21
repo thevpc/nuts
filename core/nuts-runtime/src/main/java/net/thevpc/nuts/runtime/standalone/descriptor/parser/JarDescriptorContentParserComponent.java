@@ -50,10 +50,8 @@ import net.thevpc.nuts.util.NStringUtils;
 public class JarDescriptorContentParserComponent implements NDescriptorContentParserComponent {
 
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Collections.singletonList("jar"));//, "war", "ear"
-    private NSession session;
 
-    public JarDescriptorContentParserComponent(NSession session) {
-        this.session = session;
+    public JarDescriptorContentParserComponent() {
     }
 
     @Override

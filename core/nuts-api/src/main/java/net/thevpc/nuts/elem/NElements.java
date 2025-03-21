@@ -30,8 +30,10 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.format.NContentTypeFormat;
 import net.thevpc.nuts.format.NIterableFormat;
+import net.thevpc.nuts.io.NInputStreamProvider;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.io.NReaderProvider;
 import net.thevpc.nuts.time.NProgressFactory;
 
 import java.io.File;
@@ -42,6 +44,9 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.function.Predicate;
 
@@ -435,6 +440,12 @@ public interface NElements extends NContentTypeFormat {
 
     NPrimitiveElement ofInstant(Instant instant);
 
+    NPrimitiveElement ofLocalDate(LocalDate localDate);
+
+    NPrimitiveElement ofLocalDateTime(LocalDateTime localDateTime);
+
+    NPrimitiveElement ofLocalTime(LocalTime localTime);
+
     NPrimitiveElement ofFloat(Float value);
 
     NPrimitiveElement ofInt(Integer value);
@@ -493,5 +504,21 @@ public interface NElements extends NContentTypeFormat {
 
     NMatrixElementBuilder ofMatrixBuilder();
 
-    NArrayElementBuilder ofArray(NElement ... items);
+    NArrayElementBuilder ofArray(NElement... items);
+
+    NElementComments ofMultiLineComments(String a);
+
+    NElementComments ofSingleLineComments(String a);
+
+    NElementComments ofComments(NElementComment[] leading, NElementComment[] trailing);
+
+
+    NElementComment ofMultiLineComment(String a);
+
+    NElementComment ofSingleLineComment(String a);
+
+    NElement ofBinaryStream(NInputStreamProvider value);
+    NElement ofCharStream(NReaderProvider value);
+    NBinaryStreamElementBuilder ofBinaryStreamBuilder();
+    NCharStreamElementBuilder ofCharStreamBuilder() ;
 }

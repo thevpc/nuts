@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
 import net.thevpc.nuts.util.NMemorySizeFormat;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.time.NProgressHandler;
@@ -16,7 +15,7 @@ public class NLogProgressMonitor implements NProgressHandler {
     public static final DecimalFormat PERCENT_FORMAT = new DecimalFormat("#00.00%");
     private NLog logger;
 
-    public NLogProgressMonitor(NLog logger, NSession session) {
+    public NLogProgressMonitor(NLog logger) {
         if (logger == null) {
             logger = NLog.of(NLogProgressMonitor.class);
         }

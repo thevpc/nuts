@@ -33,10 +33,9 @@ import java.util.stream.Collectors;
 /**
  * @author thevpc
  */
-public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
+public class DefaultNObjectElementBuilder  extends AbstractNElementBuilder implements NObjectElementBuilder {
 
     private final List<NElement> values = new ArrayList<>();
-    private final List<NElementAnnotation> annotations = new ArrayList<>();
 
     private String name;
     private List<NElement> params;
@@ -67,51 +66,6 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
             params = null;
         }
         return this;
-    }
-
-    @Override
-    public NObjectElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
-        if (annotations != null) {
-            for (NElementAnnotation a : annotations) {
-                if (a != null) {
-                    this.annotations.add(a);
-                }
-            }
-        }
-        return this;
-    }
-
-    @Override
-    public NObjectElementBuilder addAnnotation(NElementAnnotation annotation) {
-        if (annotation != null) {
-            annotations.add(annotation);
-        }
-        return this;
-    }
-
-    @Override
-    public NObjectElementBuilder addAnnotationAt(int index, NElementAnnotation annotation) {
-        if (annotation != null) {
-            annotations.add(index, annotation);
-        }
-        return this;
-    }
-
-    @Override
-    public NObjectElementBuilder removeAnnotationAt(int index) {
-        annotations.remove(index);
-        return this;
-    }
-
-    @Override
-    public NObjectElementBuilder clearAnnotations() {
-        annotations.clear();
-        return this;
-    }
-
-    @Override
-    public List<NElementAnnotation> getAnnotations() {
-        return Collections.unmodifiableList(annotations);
     }
 
     @Override
@@ -201,7 +155,7 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
 
     @Override
     public NObjectElementBuilder add(NElement name, NElement value) {
-        values.add(new DefaultNPairElement(denull(name), denull(value), new NElementAnnotation[0]));
+        values.add(pair(denull(name), denull(value)));
         return this;
     }
 
@@ -214,16 +168,20 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
             if (nElement instanceof NPairElement) {
                 NElement k = ((NPairElement) nElement).key();
                 if (Objects.equals(k, name)) {
-                    values.set(i, new DefaultNPairElement(name, value, new NElementAnnotation[0]));
+                    values.set(i, pair(name, value));
                     return this;
                 }
             } else if (Objects.equals(nElement, name)) {
-                values.set(i, new DefaultNPairElement(name, value, new NElementAnnotation[0]));
+                values.set(i, pair(name, value));
                 return this;
             }
         }
-        values.add(new DefaultNPairElement(name, value, new NElementAnnotation[0]));
+        values.add(pair(name, value));
         return this;
+    }
+
+    private NPairElement pair(NElement k,NElement v){
+        return new DefaultNPairElement(k, v, new NElementAnnotation[0],new NElementCommentsImpl());
     }
 
     @Override
@@ -450,8 +408,10 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
 
     @Override
     public NObjectElement build() {
-        return new DefaultNObjectElement(name, params, values,
-                annotations.toArray(new NElementAnnotation[0]));
+        return new DefaultNObjectElement(name, params, values
+                ,annotations().toArray(new NElementAnnotation[0])
+                ,comments()
+        );
     }
 
     @Override
@@ -479,4 +439,111 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
                 : name != null && params == null ? NElementType.NAMED_OBJECT
                 : NElementType.NAMED_PARAMETRIZED_OBJECT;
     }
+
+    // ------------------------------------------
+    // RETURN SIG
+    // ------------------------------------------
+
+    @Override
+    public NObjectElementBuilder addLeadingComment(NElementCommentType type, String text) {
+        super.addLeadingComment(type, text);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder addTrailingComment(NElementCommentType type, String text) {
+        super.addTrailingComment(type, text);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder addLeadingComment(NElementComment comment) {
+        super.addLeadingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder addLeadingComments(NElementComment... comments) {
+        super.addLeadingComments(comments);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder addTrailingComment(NElementComment comment) {
+        super.addTrailingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder addTrailingComments(NElementComment... comments) {
+        super.addTrailingComments(comments);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder removeTrailingCommentAt(int index) {
+        super.removeTrailingCommentAt(index);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder removeLeadingCommentAt(int index) {
+        super.removeLeadingCommentAt(index);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder removeTrailingComment(NElementComment comment) {
+        super.removeTrailingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder removeLeadingComment(NElementComment comment) {
+        super.removeLeadingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder addComments(NElementComments comments) {
+        super.addComments(comments);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
+        super.addAnnotations(annotations);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder addAnnotation(NElementAnnotation annotation) {
+        super.addAnnotation(annotation);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder addAnnotationAt(int index, NElementAnnotation annotation) {
+        super.addAnnotationAt(index, annotation);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder removeAnnotationAt(int index) {
+        super.removeAnnotationAt(index);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder clearAnnotations() {
+        super.clearAnnotations();
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder clearComments() {
+        super.clearComments();
+        return this;
+    }
+
 }

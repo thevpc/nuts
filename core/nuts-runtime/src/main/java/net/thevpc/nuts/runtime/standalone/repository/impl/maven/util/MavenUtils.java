@@ -623,7 +623,7 @@ public class MavenUtils {
         return nutsDescriptor;
     }
 
-//    public Iterator<NutsId> createArchetypeCatalogIterator(InputStream stream, NutsIdFilter filter, boolean autoClose, NSession session) {
+//    public Iterator<NutsId> createArchetypeCatalogIterator(InputStream stream, NutsIdFilter filter, boolean autoClose) {
 //        Iterator<PomId> it = ArchetypeCatalogParser.createArchetypeCatalogIterator(stream, filter == null ? null : new PomIdFilter() {
 //            @Override
 //            public boolean accept(PomId id) {

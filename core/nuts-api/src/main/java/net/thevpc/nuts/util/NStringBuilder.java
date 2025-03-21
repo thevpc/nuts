@@ -20,11 +20,11 @@ public class NStringBuilder implements CharSequence, NBlankable {
     }
 
     public NStringBuilder(String value) {
-        data = new StringBuilder(value==null?"":value);
+        data = new StringBuilder(value == null ? "" : value);
     }
 
     public NStringBuilder(CharSequence value) {
-        data = value==null?new StringBuilder():new StringBuilder(value);
+        data = value == null ? new StringBuilder() : new StringBuilder(value);
     }
 
     public NStringBuilder(int capacity) {
@@ -730,16 +730,17 @@ public class NStringBuilder implements CharSequence, NBlankable {
     }
 
     public NStringBuilder indent(String prefix) {
-        return indent(prefix,false);
+        return indent(prefix, false);
     }
-    public NStringBuilder indent(String prefix,boolean skipFirstLine) {
+
+    public NStringBuilder indent(String prefix, boolean skipFirstLine) {
         if (prefix == null || prefix.isEmpty()) {
             return this;
         }
         char[] charArray = data.toString().toCharArray();
         boolean wasNewLine = true;
         data.setLength(0);
-        boolean firstLine=true;
+        boolean firstLine = true;
         for (int i = 0; i < charArray.length; i++) {
             char c = charArray[i];
             if (c == '\r') {
@@ -751,14 +752,14 @@ public class NStringBuilder implements CharSequence, NBlankable {
                     data.append('\r');
                 }
                 wasNewLine = true;
-                firstLine=false;
+                firstLine = false;
             } else if (c == '\n') {
                 data.append('\n');
                 wasNewLine = true;
-                firstLine=false;
+                firstLine = false;
             } else {
                 if (wasNewLine) {
-                    if(!firstLine || !skipFirstLine) {
+                    if (!firstLine || !skipFirstLine) {
                         data.append(prefix);
                     }
                 }
@@ -770,16 +771,17 @@ public class NStringBuilder implements CharSequence, NBlankable {
     }
 
     public NStream<String> lines() {
-        StringBuilder data2=new StringBuilder(data);
-        return NStream.of(new Iterator<String>(){
-            String nextLine=null;
+        StringBuilder data2 = new StringBuilder(data);
+        return NStream.of(new Iterator<String>() {
+            String nextLine = null;
+
             @Override
             public boolean hasNext() {
-                if(data2.length()==0){
+                if (data2.length() == 0) {
                     return false;
                 }
                 nextLine = readLine(data2);
-                return nextLine!=null;
+                return nextLine != null;
             }
 
             @Override
@@ -794,24 +796,29 @@ public class NStringBuilder implements CharSequence, NBlankable {
     }
 
     private String readLine(StringBuilder data) {
-        int i=0;
-        while(i<data.length()) {
+        int i = 0;
+        while (i < data.length()) {
             char c = data.charAt(i);
-            if(c=='\n'){
-                if(i+1<data.length() && data.charAt(i+1)=='\r'){
+            if (c == '\n') {
+                if (i + 1 < data.length() && data.charAt(i + 1) == '\r') {
                     i++;
-                    String l=data.substring(0,i-2);
-                    data.delete(0,i);
+                    String l = data.substring(0, i - 2);
+                    data.delete(0, i);
                     return l;
                 }
-                String l=data.substring(0,i-1);
-                data.delete(0,i);
+                String l = data.substring(0, i - 1);
+                data.delete(0, i);
                 return l;
+            } else {
+                i++;
             }
         }
-        String l=data.toString();
+        String l = data.toString();
         data.setLength(0);
         return l;
     }
 
+    public boolean isMultiLine() {
+        return lines().count() > 1;
+    }
 }

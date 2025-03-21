@@ -486,16 +486,14 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
 
     static class MapAndSession {
         Map<String, Object> map;
-        NSession session;
 
-        public MapAndSession(Map<String, Object> map, NSession session) {
+        public MapAndSession(Map<String, Object> map) {
             this.map = map;
-            this.session = session;
         }
     }
 
-    private Map<String, Object> inflate(Map<String, Object> m, NSession session) {
-        MapAndSession mm = new MapAndSession(m, session);
+    private Map<String, Object> inflate(Map<String, Object> m) {
+        MapAndSession mm = new MapAndSession(m);
         inflate(mm, repoSupplier);
         inflate(mm, extraPropertiesSupplier);
         return mm.map;

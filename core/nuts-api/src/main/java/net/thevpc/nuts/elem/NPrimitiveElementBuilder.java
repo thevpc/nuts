@@ -40,7 +40,7 @@ public interface NPrimitiveElementBuilder extends NElementBuilder {
 
     NPrimitiveElementBuilder clearAnnotations();
 
-    List<NElementAnnotation> getAnnotations();
+    List<NElementAnnotation> annotations();
 
     NPrimitiveElement build();
 
@@ -51,4 +51,18 @@ public interface NPrimitiveElementBuilder extends NElementBuilder {
     NPrimitiveElementBuilder setInt(int value);
 
     NPrimitiveElementBuilder setByte(byte value);
+
+    NPrimitiveElementBuilder addLeadingComment(NElementCommentType type, String text);
+    NPrimitiveElementBuilder addTrailingComment(NElementCommentType type, String text);
+    NPrimitiveElementBuilder addLeadingComment(NElementComment comment);
+    NPrimitiveElementBuilder addLeadingComments(NElementComment... comments);
+    NPrimitiveElementBuilder addTrailingComment(NElementComment comment);
+    NPrimitiveElementBuilder addTrailingComments(NElementComment... comments);
+    NPrimitiveElementBuilder removeLeadingComment(NElementComment comment);
+    NPrimitiveElementBuilder removeTrailingComment(NElementComment comment);
+    NPrimitiveElementBuilder removeLeadingCommentAt(int index);
+    NPrimitiveElementBuilder removeTrailingCommentAt(int index);
+    NPrimitiveElementBuilder clearComments();
+    NPrimitiveElementBuilder addComments(NElementComments comments);
+
 }

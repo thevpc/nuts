@@ -6,10 +6,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DefaultNPairElementBuilder implements NPairElementBuilder {
+public class DefaultNPairElementBuilder  extends AbstractNElementBuilder implements NPairElementBuilder {
     private NElement key;
     private NElement value;
-    private final List<NElementAnnotation> annotations = new ArrayList<>();
 
     public DefaultNPairElementBuilder() {
         key = NElements.of().ofNull();
@@ -21,17 +20,6 @@ public class DefaultNPairElementBuilder implements NPairElementBuilder {
         this.value = value == null ? NElements.of().ofNull() : value;
     }
 
-    @Override
-    public NPairElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
-        if (annotations != null) {
-            for (NElementAnnotation a : annotations) {
-                if (a != null) {
-                    this.annotations.add(a);
-                }
-            }
-        }
-        return this;
-    }
 
     public NPairElementBuilder setValue(NElement value) {
         this.value = value == null ? NElements.of().ofNull() : value;
@@ -50,44 +38,11 @@ public class DefaultNPairElementBuilder implements NPairElementBuilder {
         this.key = key == null ? NElements.of().ofNull() : key;
         return this;
     }
-
-
-    @Override
-    public NPairElementBuilder addAnnotation(NElementAnnotation annotation) {
-        if (annotation != null) {
-            annotations.add(annotation);
-        }
-        return this;
-    }
-
-    @Override
-    public NPairElementBuilder addAnnotationAt(int index, NElementAnnotation annotation) {
-        if (annotation != null) {
-            annotations.add(index, annotation);
-        }
-        return this;
-    }
-
-    @Override
-    public NPairElementBuilder removeAnnotationAt(int index) {
-        annotations.remove(index);
-        return this;
-    }
-
-    @Override
-    public NPairElementBuilder clearAnnotations() {
-        annotations.clear();
-        return this;
-    }
-
-    @Override
-    public List<NElementAnnotation> getAnnotations() {
-        return Collections.unmodifiableList(annotations);
-    }
+    
 
     @Override
     public NPairElement build() {
-        return new DefaultNPairElement(key, value, annotations.toArray(new NElementAnnotation[0]));
+        return new DefaultNPairElement(key, value, annotations().toArray(new NElementAnnotation[0]),comments());
     }
 
     @Override
@@ -105,5 +60,111 @@ public class DefaultNPairElementBuilder implements NPairElementBuilder {
         return key;
     }
 
+
+    // ------------------------------------------
+    // RETURN SIG
+    // ------------------------------------------
+
+    @Override
+    public NPairElementBuilder addLeadingComment(NElementCommentType type, String text) {
+        super.addLeadingComment(type, text);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder addTrailingComment(NElementCommentType type, String text) {
+        super.addTrailingComment(type, text);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder addLeadingComment(NElementComment comment) {
+        super.addLeadingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder addLeadingComments(NElementComment... comments) {
+        super.addLeadingComments(comments);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder addTrailingComment(NElementComment comment) {
+        super.addTrailingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder addTrailingComments(NElementComment... comments) {
+        super.addTrailingComments(comments);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder removeTrailingCommentAt(int index) {
+        super.removeTrailingCommentAt(index);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder removeLeadingCommentAt(int index) {
+        super.removeLeadingCommentAt(index);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder removeTrailingComment(NElementComment comment) {
+        super.removeTrailingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder removeLeadingComment(NElementComment comment) {
+        super.removeLeadingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder addComments(NElementComments comments) {
+        super.addComments(comments);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
+        super.addAnnotations(annotations);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder addAnnotation(NElementAnnotation annotation) {
+        super.addAnnotation(annotation);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder addAnnotationAt(int index, NElementAnnotation annotation) {
+        super.addAnnotationAt(index, annotation);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder removeAnnotationAt(int index) {
+        super.removeAnnotationAt(index);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder clearAnnotations() {
+        super.clearAnnotations();
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder clearComments() {
+        super.clearComments();
+        return this;
+    }
 
 }

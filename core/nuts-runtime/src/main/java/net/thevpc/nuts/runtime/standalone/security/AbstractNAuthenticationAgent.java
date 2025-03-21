@@ -21,12 +21,6 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
         this.supportLevel = supportLevel;
     }
 
-//    @Override
-//    public void setSession(NSession session) {
-//        this.session=session;
-//        this.ws=session==null?null:session.getWorkspace();
-//    }
-
     @Override
     public String getId() {
         return name;

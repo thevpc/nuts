@@ -7,11 +7,15 @@ import net.thevpc.nuts.util.NOptional;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public abstract class AbstractNNavigatableElement extends AbstractNElement implements NNavigatableElement {
-    public AbstractNNavigatableElement(NElementType type, NElementAnnotation[] annotations) {
-        super(type, annotations);
+    public AbstractNNavigatableElement(NElementType type, NElementAnnotation[] annotations,NElementComments comments) {
+        super(type, annotations, comments);
     }
+
     @Override
     public NOptional<String> getStringByPath(String... keys) {
         return getByPath(keys).flatMap(NLiteral::asString);
@@ -58,6 +62,21 @@ public abstract class AbstractNNavigatableElement extends AbstractNElement imple
     }
 
     @Override
+    public NOptional<LocalTime> getLocalDateByPath(String... keys) {
+        return getByPath(keys).flatMap(NLiteral::asLocalTime);
+    }
+
+    @Override
+    public NOptional<LocalDate> getLocalTimeByPath(String... keys) {
+        return getByPath(keys).flatMap(NLiteral::asLocalDate);
+    }
+
+    @Override
+    public NOptional<LocalDateTime> getLocalDateTimeByPath(String... keys) {
+        return getByPath(keys).flatMap(NLiteral::asLocalDateTime);
+    }
+
+    @Override
     public NOptional<BigInteger> getBigIntByPath(String... keys) {
         return getByPath(keys).flatMap(NLiteral::asBigInt);
     }
@@ -71,6 +90,7 @@ public abstract class AbstractNNavigatableElement extends AbstractNElement imple
     public NOptional<Number> getNumberByPath(String... keys) {
         return getByPath(keys).flatMap(NLiteral::asNumber);
     }
+
     @Override
     public NOptional<NArrayElement> getArray(String key) {
         return get(key).flatMap(NElement::asArray);
@@ -177,9 +197,40 @@ public abstract class AbstractNNavigatableElement extends AbstractNElement imple
     }
 
     @Override
+    public NOptional<LocalDate> getLocalDate(String key) {
+        return get(key).flatMap(NLiteral::asLocalDate);
+    }
+
+    @Override
+    public NOptional<LocalDateTime> getLocalDateTime(String key) {
+        return get(key).flatMap(NLiteral::asLocalDateTime);
+    }
+
+    @Override
+    public NOptional<LocalTime> getLocalTime(String key) {
+        return get(key).flatMap(NLiteral::asLocalTime);
+    }
+
+    @Override
     public NOptional<Instant> getInstant(NElement key) {
         return get(key).flatMap(NLiteral::asInstant);
     }
+
+    @Override
+    public NOptional<LocalDate> getLocalDate(NElement key) {
+        return get(key).flatMap(NLiteral::asLocalDate);
+    }
+
+    @Override
+    public NOptional<LocalDateTime> getLocalDateTime(NElement key) {
+        return get(key).flatMap(NLiteral::asLocalDateTime);
+    }
+
+    @Override
+    public NOptional<LocalTime> getLocalTime(NElement key) {
+        return get(key).flatMap(NLiteral::asLocalTime);
+    }
+
 
     @Override
     public NOptional<Float> getFloat(String key) {
@@ -215,7 +266,7 @@ public abstract class AbstractNNavigatableElement extends AbstractNElement imple
     public NOptional<NElement> getByPath(String... keys) {
         NOptional<NElement> r = NOptional.of(this);
         for (String key : keys) {
-            r=r.flatMap(NElement::asNavigatable).flatMap(x->x.get(key));
+            r = r.flatMap(NElement::asNavigatable).flatMap(x -> x.get(key));
         }
         return r;
     }

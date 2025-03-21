@@ -287,7 +287,7 @@ public class DefaultNPlatformModel {
             }
         }
         if (!ret.isEmpty()) {
-            ret.sort(new NPlatformLocationSelectComparator(session));
+            ret.sort(new NPlatformLocationSelectComparator());
         }
         return NStream.of(ret);
     }

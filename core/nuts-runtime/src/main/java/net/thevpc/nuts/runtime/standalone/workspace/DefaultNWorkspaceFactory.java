@@ -129,7 +129,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             //fallback needed in bootstrap or if the extensions are broken!
             switch (type.getName()) {
                 case "net.thevpc.nuts.log.NLogs": {
-                    DefaultNLogs p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNLogs(session));
+                    DefaultNLogs p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNLogs());
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.text.NTexts": {
@@ -161,7 +161,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.reserved.rpi.NCollectionsRPI": {
-                    NCollectionsRPI p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNCollectionsRPI(session));
+                    NCollectionsRPI p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNCollectionsRPI());
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.NIdFormat": {
@@ -215,7 +215,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                     System.err.println("[Nuts] unable to resolve " + type);
                     Set<Class<? extends T>> extensionTypes = getExtensionTypes(type);
                     System.err.println("[Nuts] extensionTypes =  " + extensionTypes);
-                    dump(type, session);
+                    dump(type);
                     new Throwable().printStackTrace();
                 }
             }
@@ -225,7 +225,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 System.err.println("[Nuts] unable to resolve " + type);
                 Set<Class<? extends T>> extensionTypes = getExtensionTypes(type);
                 System.err.println("[Nuts] extensionTypes =  " + extensionTypes);
-                dump(type, session);
+                dump(type);
                 new Throwable().printStackTrace();
             }
         }
@@ -299,7 +299,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         return all;
     }
 
-    private <T extends NComponent> Set<Class<? extends T>> getExtensionTypesNoCache(Class<T> type, NSession session) {
+    private <T extends NComponent> Set<Class<? extends T>> getExtensionTypesNoCache(Class<T> type) {
         LinkedHashSet<Class<? extends T>> all = new LinkedHashSet<>();
         for (IdCache v : discoveredCacheById.values()) {
             all.addAll(v.getExtensionTypesNoCache(type));
@@ -307,7 +307,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         return all;
     }
 
-    private <T extends NComponent> Set<Class<? extends T>> getExtensionTypesNoCache2(Class<T> type, NSession session) {
+    private <T extends NComponent> Set<Class<? extends T>> getExtensionTypesNoCache2(Class<T> type) {
         LinkedHashSet<Class<? extends T>> all = new LinkedHashSet<>();
         for (IdCache v : discoveredCacheById.values()) {
             all.addAll(v.getExtensionTypesNoCache2(type));
@@ -556,7 +556,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     }
 
     //    @Override
-    public <T extends NComponent> T create(Class<T> type, NSession session) {
+    public <T extends NComponent> T create(Class<T> type) {
         Object one = instances.getOne(type);
         if (one != null) {
             //if static instance found, always return it!
@@ -576,7 +576,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         throw new NElementNotFoundException(NMsg.ofC("type %s not found", type));
     }
 
-    public <T extends NComponent> List<T> createAll(Class<T> type, Class<?>[] argTypes, Object[] args, NSession session) {
+    public <T extends NComponent> List<T> createAll(Class<T> type, Class<?>[] argTypes, Object[] args) {
         List<T> all = new ArrayList<T>();
         for (Class<? extends T> c : getExtensionTypes(type)) {
             T obj = null;
@@ -607,7 +607,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         }
     }
 
-    public void dump(Class<?> type, NSession session) {
+    public void dump(Class<?> type) {
         System.err.println("Start Extensions Factory Dump");
         String tname = type.getName();
         for (Map.Entry<NId, IdCache> e : discoveredCacheById.entrySet()) {
@@ -627,8 +627,8 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                             System.err.println("\t\t\t --->  " + type + "->" + vv.get(type) + " ::: class loader : found " + k.getClassLoader() + " __VS__ expected " + type.getClassLoader());
                             System.err.println("\t\t\t\t --->  getAll => " + type + "->" + Arrays.asList(vv.getAll(type)));
                             System.err.println("\t\t\t\t --->  getExtensionTypes => " + getExtensionTypes((Class) type));
-                            System.err.println("\t\t\t\t --->  getExtensionTypesNoCache => " + getExtensionTypesNoCache((Class) type, session));
-                            System.err.println("\t\t\t\t --->  getExtensionTypesNoCache2 => " + getExtensionTypesNoCache2((Class) type, session));
+                            System.err.println("\t\t\t\t --->  getExtensionTypesNoCache => " + getExtensionTypesNoCache((Class) type));
+                            System.err.println("\t\t\t\t --->  getExtensionTypesNoCache2 => " + getExtensionTypesNoCache2((Class) type));
                         } else {
                             System.err.println("\t\t" + k + "->" + vv.get(k));
                         }

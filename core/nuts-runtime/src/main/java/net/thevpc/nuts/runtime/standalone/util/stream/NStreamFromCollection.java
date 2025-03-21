@@ -5,7 +5,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.stream;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.util.NIterator;
 
 import java.util.*;
@@ -19,7 +18,7 @@ public class NStreamFromCollection<T> extends NStreamBase<T> {
 
     private final Collection<T> o;
 
-    public NStreamFromCollection(NSession session, String nutsBase, Collection<T> o) {
+    public NStreamFromCollection(String nutsBase, Collection<T> o) {
         super(nutsBase);
         this.o = o;
     }

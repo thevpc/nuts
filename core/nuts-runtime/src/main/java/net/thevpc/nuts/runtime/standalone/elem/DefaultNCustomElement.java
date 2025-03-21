@@ -27,20 +27,20 @@ package net.thevpc.nuts.runtime.standalone.elem;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NStringBuilder;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
 
 /**
- *
  * @author thevpc
  */
 class DefaultNCustomElement extends AbstractNElement implements NCustomElement {
 
     private final Object value;
 
-    DefaultNCustomElement(Object value, NElementAnnotation[] annotations) {
-        super(NElementType.CUSTOM, annotations);
+    DefaultNCustomElement(Object value, NElementAnnotation[] annotations, NElementComments comments) {
+        super(NElementType.CUSTOM, annotations, comments);
         this.value = value;
     }
 
@@ -76,7 +76,17 @@ class DefaultNCustomElement extends AbstractNElement implements NCustomElement {
 
     @Override
     public String toString() {
-        return String.valueOf(value);
+        return toString(true);
+    }
+
+    @Override
+    public String toString(boolean compact) {
+        NStringBuilder sb = new NStringBuilder();
+        sb.append(TsonElementToStringHelper.leadingCommentsAndAnnotations(this, compact));
+        String svalue = String.valueOf(value);
+        sb.append(svalue);
+        sb.append(TsonElementToStringHelper.trailingComments(this, compact));
+        return sb.toString();
     }
 
     @Override

@@ -292,7 +292,7 @@ public class NHttpSrvRepository extends NCachedRepository {
 //        throw new NutsUnsupportedOperationException(session);
 //    }
 //    @Override
-//    public void checkAllowedFetch(NutsId parse, NSession session) {
+//    public void checkAllowedFetch(NutsId parse) {
 //        super.checkAllowedFetch(parse, session);
 //        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
 //            throw new NNotFoundException(session(), parse);

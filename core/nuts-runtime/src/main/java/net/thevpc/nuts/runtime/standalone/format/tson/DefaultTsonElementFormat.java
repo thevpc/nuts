@@ -28,12 +28,13 @@ import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.elem.NElementAnnotationImpl;
+import net.thevpc.nuts.runtime.standalone.elem.NElementCommentImpl;
 import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
 import net.thevpc.tson.*;
 
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -68,6 +69,14 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
         );
     }
 
+
+    private TsonAnnotation toTsonAnn(NElementAnnotation elem) {
+        return Tson.ofAnnotation(
+                elem.name(),
+                elem.params() == null ? null : elem.params().stream().map(x -> toTson(x)).toArray(TsonElementBase[]::new)
+        );
+    }
+
     @Override
     public NElement parseElement(Reader reader, NElementFactoryContext context) {
         TsonDocument tsonDocument = Tson.reader().readDocument(reader);
@@ -75,130 +84,157 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
     }
 
     public TsonElement toTson(NElement elem) {
+        if (elem == null) {
+            return Tson.ofNull();
+        }
+        switch (elem.type()) {
+            case NULL: {
+                return decorateTsonElement(Tson.ofNull(), elem);
+            }
+            case INTEGER: {
+                return decorateTsonElement(Tson.ofInt(elem.asInt().get()), elem);
+            }
+            case LONG: {
+                return decorateTsonElement(Tson.ofLong(elem.asLong().get()), elem);
+            }
+            case FLOAT: {
+                return decorateTsonElement(Tson.ofFloat(elem.asFloat().get()), elem);
+            }
+            case DOUBLE: {
+                return decorateTsonElement(Tson.ofDouble(elem.asDouble().get()), elem);
+            }
+            case BYTE: {
+                return decorateTsonElement(Tson.ofByte(elem.asByte().get()), elem);
+            }
+            case LOCAL_DATE: {
+                return decorateTsonElement(Tson.ofLocalDate(elem.asPrimitive().get().asLocalDate().get()), elem);
+            }
+            case LOCAL_DATETIME: {
+                return decorateTsonElement(Tson.ofLocalDatetime(elem.asPrimitive().get().asLocalDateTime().get()), elem);
+            }
+            case LOCAL_TIME: {
+                return decorateTsonElement(Tson.ofLocalTime(elem.asPrimitive().get().asLocalTime().get()), elem);
+            }
+            case REGEX: {
+                return decorateTsonElement(Tson.ofRegex(elem.asString().get()), elem);
+            }
+            case BIG_INTEGER: {
+                return decorateTsonElement(Tson.ofBigInt(elem.asBigInt().get()), elem);
+            }
+            case BIG_DECIMAL: {
+                return decorateTsonElement(Tson.ofBigDecimal(elem.asBigDecimal().get()), elem);
+            }
+            case ARRAY: {
+                return decorateTsonElement(Tson.ofNull(), elem);
+            }
+        }
         throw new IllegalArgumentException("not implemented");
     }
 
-    private NElement toNElem(TsonElement elem) {
+    private TsonElement decorateTsonElement(TsonElement t, NElement elem) {
+        List<NElementAnnotation> na = elem.annotations();
+        NElementComments nc = elem.comments();
+        if (na.isEmpty() && nc.isEmpty()) {
+            return t;
+        }
+        TsonElementBuilder b = t.builder();
+        b.addAnnotations(
+                na.stream().map(x -> toTsonAnn(x)).collect(Collectors.toList())
+        );
+        TsonComments tc = TsonComments.BLANK;
+        tc.addLeading(nc.leadingComments().stream().map(x -> new TsonComment(
+                x.type() == NElementCommentType.SINGLE_LINE ? TsonCommentType.SINGLE_LINE
+                        : x.type() == NElementCommentType.MULTI_LINE ? TsonCommentType.MULTI_LINE
+                        : TsonCommentType.SINGLE_LINE,
+                x.text()
+        )).toArray(TsonComment[]::new));
+        tc.addTrailing(nc.trailingComments().stream().map(x -> new TsonComment(
+                x.type() == NElementCommentType.SINGLE_LINE ? TsonCommentType.SINGLE_LINE
+                        : x.type() == NElementCommentType.MULTI_LINE ? TsonCommentType.MULTI_LINE
+                        : TsonCommentType.SINGLE_LINE,
+                x.text()
+        )).toArray(TsonComment[]::new));
+        b.setComments(tc);
+        return b.build();
+    }
+
+    private NElement decorateNElement(NElement elem, TsonElement fromTson) {
+        List<TsonAnnotation> annotations = fromTson.annotations();
+        TsonComments comments = fromTson.comments();
+        if (annotations.isEmpty() && comments.isEmpty()) {
+            return elem;
+        }
+        NElementBuilder builder = elem.builder();
+        builder.addAnnotations(annotations.stream().map(this::toNElemAnn).collect(Collectors.toList())).build();
+        for (TsonComment tc : fromTson.comments().leadingComments()) {
+            builder.addLeadingComment(new NElementCommentImpl(
+                    tc.type() == TsonCommentType.SINGLE_LINE ? NElementCommentType.SINGLE_LINE
+                            : tc.type() == TsonCommentType.MULTI_LINE ? NElementCommentType.MULTI_LINE
+                            : NElementCommentType.SINGLE_LINE,
+                    tc.text()
+            ));
+        }
+        for (TsonComment tc : fromTson.comments().trailingComments()) {
+            builder.addLeadingComment(new NElementCommentImpl(
+                    tc.type() == TsonCommentType.SINGLE_LINE ? NElementCommentType.SINGLE_LINE
+                            : tc.type() == TsonCommentType.MULTI_LINE ? NElementCommentType.MULTI_LINE
+                            : NElementCommentType.SINGLE_LINE,
+                    tc.text()
+            ));
+        }
+        return builder.build();
+    }
+
+    private NElement toNElem(TsonElement tsonElem) {
         NElements elems = NElements.of();
-        switch (elem.type()) {
+        switch (tsonElem.type()) {
             case NULL: {
-                TsonAnnotation[] annotations = elem.annotations();
-                NPrimitiveElement u = elems.ofNull();
-                if (annotations.length > 0) {
-                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
-                }
-                return u;
+                return decorateNElement(elems.ofNull(), tsonElem);
             }
             case BYTE: {
-                TsonAnnotation[] annotations = elem.annotations();
-                NPrimitiveElement u = elems.ofByte(elem.byteValue());
-                if (annotations.length > 0) {
-                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
-                }
-                return u;
+                return decorateNElement(elems.ofByte(tsonElem.byteValue()), tsonElem);
             }
             case SHORT: {
-                TsonAnnotation[] annotations = elem.annotations();
-                NPrimitiveElement u = elems.ofShort(elem.shortValue());
-                if (annotations.length > 0) {
-                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
-                }
-                return u;
+                return decorateNElement(elems.ofShort(tsonElem.shortValue()), tsonElem);
             }
             case CHAR: {
-                TsonAnnotation[] annotations = elem.annotations();
-                NPrimitiveElement u = elems.ofChar(elem.charValue());
-                if (annotations.length > 0) {
-                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
-                }
-                return u;
+                return decorateNElement(elems.ofChar(tsonElem.charValue()), tsonElem);
             }
             case INTEGER: {
-                TsonAnnotation[] annotations = elem.annotations();
-                NPrimitiveElement u = elems.ofInt(elem.intValue());
-                if (annotations.length > 0) {
-                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
-                }
-                return u;
+                return decorateNElement(elems.ofInt(tsonElem.intValue()), tsonElem);
             }
             case LONG: {
-                TsonAnnotation[] annotations = elem.annotations();
-                NPrimitiveElement u = elems.ofLong(elem.longValue());
-                if (annotations.length > 0) {
-                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
-                }
-                return u;
+                return decorateNElement(elems.ofLong(tsonElem.longValue()), tsonElem);
             }
             case FLOAT: {
-                TsonAnnotation[] annotations = elem.annotations();
-                NPrimitiveElement u = elems.ofFloat(elem.floatValue());
-                if (annotations.length > 0) {
-                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
-                }
-                return u;
+                return decorateNElement(elems.ofFloat(tsonElem.floatValue()), tsonElem);
             }
             case DOUBLE: {
-                TsonAnnotation[] annotations = elem.annotations();
-                NPrimitiveElement u = elems.ofDouble(elem.doubleValue());
-                if (annotations.length > 0) {
-                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
-                }
-                return u;
+                return decorateNElement(elems.ofDouble(tsonElem.doubleValue()), tsonElem);
             }
             case BIG_INTEGER: {
-                TsonAnnotation[] annotations = elem.annotations();
-                NPrimitiveElement u = elems.ofBigInteger(elem.bigIntegerValue());
-                if (annotations.length > 0) {
-                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
-                }
-                return u;
+                return decorateNElement(elems.ofBigInteger(tsonElem.bigIntegerValue()), tsonElem);
             }
             case BIG_DECIMAL: {
-                TsonAnnotation[] annotations = elem.annotations();
-                NPrimitiveElement u = elems.ofBigDecimal(elem.bigDecimalValue());
-                if (annotations.length > 0) {
-                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
-                }
-                return u;
+                return decorateNElement(elems.ofBigDecimal(tsonElem.bigDecimalValue()), tsonElem);
             }
             case STRING: {
-                TsonAnnotation[] annotations = elem.annotations();
-                NPrimitiveElement u = elems.ofString(elem.stringValue());
-                if (annotations.length > 0) {
-                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
-                }
-                return u;
+                return decorateNElement(elems.ofString(tsonElem.stringValue()), tsonElem);
             }
             case BOOLEAN: {
-                TsonAnnotation[] annotations = elem.annotations();
-                NPrimitiveElement u = elems.ofBoolean(elem.booleanValue());
-                if (annotations.length > 0) {
-                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
-                }
-                return u;
+                return decorateNElement(elems.ofBoolean(tsonElem.booleanValue()), tsonElem);
             }
             case REGEX: {
-                TsonAnnotation[] annotations = elem.annotations();
-                NPrimitiveElement u = elems.ofRegex(elem.stringValue());
-                if (annotations.length > 0) {
-                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
-                }
-                return u;
+                return decorateNElement(elems.ofRegex(tsonElem.stringValue()), tsonElem);
             }
             case NAME: {
-                TsonAnnotation[] annotations = elem.annotations();
-                NPrimitiveElement u = elems.ofName(elem.stringValue());
-                if (annotations.length > 0) {
-                    return u.builder().addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
-                }
-                return u;
+                return decorateNElement(elems.ofName(tsonElem.stringValue()), tsonElem);
             }
             case ARRAY:
             case NAMED_ARRAY:
             case PARAMETRIZED_ARRAY:
             case NAMED_PARAMETRIZED_ARRAY: {
-                TsonAnnotation[] annotations = elem.annotations();
-                TsonArray array = elem.toArray();
+                TsonArray array = tsonElem.toArray();
                 NArrayElementBuilder u = elems.ofArrayBuilder();
                 for (TsonElement item : array) {
                     u.add(toNElem(item));
@@ -209,17 +245,13 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 if (array.isParametrized()) {
                     u.addArgs(array.params().toList().stream().map(x -> toNElem(x)).collect(Collectors.toList()));
                 }
-                if (annotations.length > 0) {
-                    return u.addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
-                }
-                return u.build();
+                return decorateNElement(u.build(), tsonElem);
             }
             case OBJECT:
             case NAMED_OBJECT:
             case PARAMETRIZED_OBJECT:
             case NAMED_PARAMETRIZED_OBJECT: {
-                TsonAnnotation[] annotations = elem.annotations();
-                TsonObject obj = elem.toObject();
+                TsonObject obj = tsonElem.toObject();
                 NObjectElementBuilder u = elems.ofObjectBuilder();
                 for (TsonElement item : obj) {
                     u.add(toNElem(item));
@@ -230,22 +262,15 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 if (obj.isParametrized()) {
                     u.addArgs(obj.params().toList().stream().map(x -> toNElem(x)).collect(Collectors.toList()));
                 }
-                if (annotations.length > 0) {
-                    return u.addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
-                }
-                return u.build();
+                return decorateNElement(u.build(), tsonElem);
             }
             case PAIR: {
-                TsonAnnotation[] annotations = elem.annotations();
-                TsonPair pair = elem.toPair();
+                TsonPair pair = tsonElem.toPair();
                 NPairElementBuilder b = elems.ofPairBuilder(toNElem(pair.key()), toNElem(pair.value()));
-                if (annotations.length > 0) {
-                    return b.addAnnotations(Arrays.stream(annotations).map(this::toNElemAnn).collect(Collectors.toList())).build();
-                }
-                return b.build();
+                return decorateNElement(b.build(), tsonElem);
             }
         }
-        throw new IllegalArgumentException("not implemented Tson Type " + elem.type());
+        throw new IllegalArgumentException("not implemented Tson Type " + tsonElem.type());
     }
 
     @Override

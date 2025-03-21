@@ -11,11 +11,9 @@
 //public class OutputStreamFromOutputStream extends OutputStream implements NOutputStreamAdapter {
 //
 //    private NOutputStream base;
-//    private NSession session;
 //
-//    public OutputStreamFromOutputStream(NOutputStream base, NSession session) {
+//    public OutputStreamFromOutputStream(NOutputStream base) {
 //        this.base = base;
-//        this.session = session;
 //    }
 //
 //    public NOutputStream getBaseOutputStream() {

@@ -27,6 +27,9 @@ package net.thevpc.nuts.elem;
 import net.thevpc.nuts.util.NOptional;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
@@ -79,21 +82,27 @@ public interface NArrayElement extends NNavigatableElement, Iterable<NElement> {
 
     NOptional<Instant> getInstant(int index);
 
+    NOptional<LocalDate> getLocalDate(int index);
+
+    NOptional<LocalDateTime> getLocalDateTime(int index);
+
+    NOptional<LocalTime> getLocalTime(int index);
+
     NOptional<NArrayElement> getArray(int index);
 
     NOptional<NObjectElement> getObject(int index);
 
-    String name() ;
+    String name();
 
-    boolean isNamed() ;
+    boolean isNamed();
 
-    boolean isParametrized() ;
+    boolean isParametrized();
 
-    List<NElement> params() ;
+    List<NElement> params();
 
-    int paramsCount() ;
+    int paramsCount();
 
-    NElement param(int index) ;
+    NElement param(int index);
 
     /**
      * return new builder initialized with this instance

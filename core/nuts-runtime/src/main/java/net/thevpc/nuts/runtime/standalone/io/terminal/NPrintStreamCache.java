@@ -6,9 +6,8 @@
 //public class NPrintStreamCache {
 //    private NPrintStream base;
 //    private NPrintStream result;
-//    private NSession session;
 //
-//    public NPrintStream get(NPrintStream base, NSession session){
+//    public NPrintStream get(NPrintStream base){
 //        if(base.getSession()==session){
 //            return base;
 //        }

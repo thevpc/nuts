@@ -50,6 +50,8 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable, NLi
      */
     NElementType type();
 
+    String toString(boolean compact);
+
     List<NElementAnnotation> annotations();
 
     /**
@@ -112,6 +114,9 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable, NLi
      */
     boolean isPrimitive();
 
+    boolean isAnyString();
+
+
     /**
      * return true if this element can be cast to {@link NObjectElement}
      *
@@ -157,4 +162,10 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable, NLi
     NElementBuilder builder();
 
     boolean isPair();
+
+    NElementComments comments();
+
+    boolean isNamed();
+
+    boolean isParametrized();
 }

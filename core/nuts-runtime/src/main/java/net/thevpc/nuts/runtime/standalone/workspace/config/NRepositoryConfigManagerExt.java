@@ -33,9 +33,9 @@ public interface NRepositoryConfigManagerExt {
 //    //    public NutsRepositoryRef[] getMirrorRefs() {
 //    //        return configMirrorRefs.values().toArray(new NutsRepositoryRef[0]);
 //    //    }
-//    boolean save(boolean force, NSession session);
+//    boolean save(boolean force);
 //
-//    void save(NSession session);
+//    void save();
 //
 //    Path getTempMirrorsRoot();
 //

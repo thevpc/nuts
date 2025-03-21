@@ -1,15 +1,12 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.*;
 
 public class NIterableFromJavaIterable<T> implements NIterable<T> {
     private final Iterable<T> base;
-    private final NSession session;
 
-    public NIterableFromJavaIterable(Iterable<T> base,NSession session) {
+    public NIterableFromJavaIterable(Iterable<T> base) {
         this.base = base;
-        this.session = session;
     }
 
     @Override

@@ -312,6 +312,20 @@ public interface NArrayElementBuilder extends NElementBuilder {
     NArrayElementBuilder removeAnnotationAt(int index);
     NArrayElementBuilder clearAnnotations();
 
+    NArrayElementBuilder addLeadingComment(NElementCommentType type, String text);
+    NArrayElementBuilder addTrailingComment(NElementCommentType type, String text);
+    NArrayElementBuilder addLeadingComment(NElementComment comment);
+    NArrayElementBuilder addLeadingComments(NElementComment... comments);
+    NArrayElementBuilder addTrailingComment(NElementComment comment);
+    NArrayElementBuilder addTrailingComments(NElementComment... comments);
+    NArrayElementBuilder removeLeadingComment(NElementComment comment);
+    NArrayElementBuilder removeTrailingComment(NElementComment comment);
+    NArrayElementBuilder removeLeadingCommentAt(int index);
+    NArrayElementBuilder removeTrailingCommentAt(int index);
+    NArrayElementBuilder clearComments();
+    NArrayElementBuilder addComments(NElementComments comments);
+
+
     NArrayElementBuilder addArgs(List<NElement> args) ;
     NArrayElementBuilder addArg(NElement arg) ;
     NArrayElementBuilder addArgAt(int index, NElement arg) ;

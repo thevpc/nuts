@@ -169,7 +169,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
         if (result == null) {
             run();
         }
-        return new NStreamFromList<NDefinition>(session,
+        return new NStreamFromList<NDefinition>(
                 ids.isEmpty() ? null : ids.keySet().toArray()[0].toString(),
                 Arrays.asList(result)
         ).withDesc(NEDesc.of("InstallResult"));

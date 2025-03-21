@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.text.util;
 
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
@@ -53,12 +52,12 @@ public class DefaultNDurationFormat2 {
     }
 
     //    @Override
-    public NText formatMillis(long millis,NSession session) {
+    public NText formatMillis(long millis) {
         return format(millis, 0);
     }
 
 
-    public NText formatNanos(long nanos,NSession session) {
+    public NText formatNanos(long nanos) {
         return format(nanos / 1000000, (int) (nanos % 1000000));
     }
 

@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.cache;
 
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
 
 import net.thevpc.nuts.NStoreType;
@@ -21,7 +20,6 @@ public class DefaultCachedSupplier<T> implements CachedSupplier<T> {
     private String valueCacheId;
     private boolean evaluated;
     private RuntimeException exception;
-    private final NSession session;
     private final Class<T> clazz;
     private final CacheValidator<T> validator;
     private NElements elems;
@@ -35,7 +33,7 @@ public class DefaultCachedSupplier<T> implements CachedSupplier<T> {
         return new DefaultCachedSupplier<>(
                 NCacheLevel.MEM,
                 (Class) Object.class,
-                null, supplier, validator, null
+                null, supplier, validator
         );
     }
 
@@ -43,31 +41,30 @@ public class DefaultCachedSupplier<T> implements CachedSupplier<T> {
         return new DefaultCachedSupplier<>(
                 NCacheLevel.NONE,
                 (Class) Object.class,
-                null, supplier, null, null
+                null, supplier, null
         );
     }
 
     public static <T> DefaultCachedSupplier<T> ofStore(Class<T> clazz,
-                                                       NLocationKey key, Supplier<T> supplier, CacheValidator<T> validator, NSession session) {
+                                                       NLocationKey key, Supplier<T> supplier, CacheValidator<T> validator) {
         return new DefaultCachedSupplier<>(NCacheLevel.STORE,
                 clazz,
-                key, supplier, validator, session
+                key, supplier, validator
         );
     }
 
     public static <T> DefaultCachedSupplier<T> of(NCacheLevel level,
                                                   Class<T> clazz,
-                                                  NLocationKey key, Supplier<T> supplier, CacheValidator<T> validator, NSession session) {
+                                                  NLocationKey key, Supplier<T> supplier, CacheValidator<T> validator) {
         return new DefaultCachedSupplier<>(level,
                 clazz,
-                key, supplier, validator, session
+                key, supplier, validator
         );
     }
 
     public DefaultCachedSupplier(NCacheLevel level,
                                  Class<T> clazz,
-                                 NLocationKey key, Supplier<T> supplier, CacheValidator<T> validator, NSession session) {
-        this.session = session;
+                                 NLocationKey key, Supplier<T> supplier, CacheValidator<T> validator) {
         this.level = level;
         this.key = key;
         this.clazz = clazz;
@@ -77,12 +74,12 @@ public class DefaultCachedSupplier<T> implements CachedSupplier<T> {
             if (key.getStoreType() != NStoreType.CACHE) {
                 throw new IllegalArgumentException("expected cache store");
             }
-            NWorkspace nLocations = session.getWorkspace();
+            NWorkspace ws = NWorkspace.of();
             this.elems = NElements.of();
-            this.cachePath = nLocations.getStoreLocation(key.getId(), key.getStoreType(), key.getRepoUuid())
-                    .resolve(nLocations.getDefaultIdFilename(key.getId().builder().setFace(key.getName() + ".value.cache").build()));
-            this.cacheIdPath = nLocations.getStoreLocation(key.getId(), key.getStoreType(), key.getRepoUuid())
-                    .resolve(nLocations.getDefaultIdFilename(key.getId().builder().setFace(key.getName() + ".id.cache").build()));
+            this.cachePath = ws.getStoreLocation(key.getId(), key.getStoreType(), key.getRepoUuid())
+                    .resolve(ws.getDefaultIdFilename(key.getId().builder().setFace(key.getName() + ".value.cache").build()));
+            this.cacheIdPath = ws.getStoreLocation(key.getId(), key.getStoreType(), key.getRepoUuid())
+                    .resolve(ws.getDefaultIdFilename(key.getId().builder().setFace(key.getName() + ".id.cache").build()));
         }
     }
 
@@ -233,10 +230,8 @@ public class DefaultCachedSupplier<T> implements CachedSupplier<T> {
     }
 
     public static class SimpleCacheValidator<T> implements CacheValidator<T> {
-        NSession session;
 
-        public SimpleCacheValidator(NSession session) {
-            this.session=session;
+        public SimpleCacheValidator() {
         }
 
         @Override

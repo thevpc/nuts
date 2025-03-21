@@ -601,7 +601,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
 
             applyRegularUpdate(((DefaultNUpdateResult) runtimeUpdate));
             ((DefaultNUpdateResult) runtimeUpdate).setUpdateApplied(true);
-            List<NId> baseApiIds = CoreNUtils.resolveNutsApiIdsFromIdList(runtimeUpdate.getDependencies(), session);
+            List<NId> baseApiIds = CoreNUtils.resolveNutsApiIdsFromIdList(runtimeUpdate.getDependencies());
             DefaultNWorkspaceConfigModel configModel = NWorkspaceExt.of().getModel().configModel;
             for (NId newApi : baseApiIds) {
                 configModel.setExtraBootRuntimeId(
@@ -616,7 +616,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
             if (!extension.isUpdateApplied()) {
                 if (extension.getAvailable() != null) {
                     applyRegularUpdate(((DefaultNUpdateResult) extension));
-                    List<NId> baseApiIds = CoreNUtils.resolveNutsApiIdsFromIdList(extension.getDependencies(), session);
+                    List<NId> baseApiIds = CoreNUtils.resolveNutsApiIdsFromIdList(extension.getDependencies());
                     DefaultNWorkspaceConfigModel configModel = NWorkspaceExt.of().getModel().configModel;
                     for (NId newApi : baseApiIds) {
                         configModel.setExtraBootExtensionId(

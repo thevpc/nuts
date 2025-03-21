@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.elem;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NStringBuilder;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.ArrayList;
@@ -35,7 +36,6 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- *
  * @author thevpc
  */
 public class DefaultNPairElement extends AbstractNElement implements NPairElement {
@@ -43,8 +43,8 @@ public class DefaultNPairElement extends AbstractNElement implements NPairElemen
     private final NElement key;
     private final NElement value;
 
-    public DefaultNPairElement(NElement key, NElement value, NElementAnnotation[] annotations) {
-        super(NElementType.PAIR, annotations);
+    public DefaultNPairElement(NElement key, NElement value, NElementAnnotation[] annotations, NElementComments comments) {
+        super(NElementType.PAIR, annotations, comments);
         this.key = key;
         this.value = value;
     }
@@ -77,9 +77,33 @@ public class DefaultNPairElement extends AbstractNElement implements NPairElemen
         return value;
     }
 
-    @Override
     public String toString() {
-        return String.valueOf(key) + " : " + String.valueOf(value);
+        return toString(false);
+    }
+
+    @Override
+    public String toString(boolean compact) {
+        NStringBuilder sb = new NStringBuilder();
+        sb.append(TsonElementToStringHelper.leadingCommentsAndAnnotations(this, compact));
+        String skey = key.toString();
+        String svalue = value.toString();
+        if (compact) {
+            sb.append(skey);
+            sb.append(" : ");
+            sb.append(svalue);
+        } else {
+            if (new NStringBuilder(skey).lines().count() > 1) {
+                sb.append(skey);
+                sb.append("\n : ");
+                sb.append(new NStringBuilder(svalue).indent("  ", true));
+            } else {
+                sb.append(skey);
+                sb.append(" : ");
+                sb.append(new NStringBuilder(svalue).indent("  ", true));
+            }
+        }
+        sb.append(TsonElementToStringHelper.trailingComments(this, compact));
+        return sb.toString();
     }
 
     @Override

@@ -95,19 +95,19 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         return NLog.of(DefaultNInstalledRepository.class);
     }
 
-//    public Set<NutsId> getChildrenDependencies(NutsId id, NSession session) {
+//    public Set<NutsId> getChildrenDependencies(NutsId id) {
 //        return Collections.emptySet();
 //    }
 //
-//    public Set<NutsId> getParentDependencies(NutsId id, NSession session) {
+//    public Set<NutsId> getParentDependencies(NutsId id) {
 //        return Collections.emptySet();
 //    }
 //
-//    public void addDependency(NutsId id, NutsId parentId, NSession session) {
+//    public void addDependency(NutsId id, NutsId parentId) {
 //
 //    }
 //
-//    public void removeDependency(NutsId id, NutsId parentId, NSession session) {
+//    public void removeDependency(NutsId id, NutsId parentId) {
 //
 //    }
 
@@ -542,11 +542,11 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         }
     }
 
-    public void addString(NId id, String name, String value, NSession session) {
+    public void addString(NId id, String name, String value) {
         getPath(id, name).writeString(value);
     }
 
-    public <T> T readJson(NId id, String name, Class<T> clazz, NSession session) {
+    public <T> T readJson(NId id, String name, Class<T> clazz) {
         return NElements.of()
                 .json()
                 .parse(getPath(id, name), clazz);
@@ -564,7 +564,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         path.delete();
     }
 
-    public boolean contains(NId id, String name, NSession session) {
+    public boolean contains(NId id, String name) {
         return getPath(id, name).isRegularFile();
     }
 

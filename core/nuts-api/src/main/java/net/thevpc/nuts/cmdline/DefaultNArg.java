@@ -33,6 +33,9 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -316,6 +319,21 @@ public class DefaultNArg implements NArg {
     }
 
     @Override
+    public NOptional<LocalDate> asLocalDate() {
+        return toValue().asLocalDate();
+    }
+
+    @Override
+    public NOptional<LocalDateTime> asLocalDateTime() {
+        return toValue().asLocalDateTime();
+    }
+
+    @Override
+    public NOptional<LocalTime> asLocalTime() {
+        return toValue().asLocalTime();
+    }
+
+    @Override
     public NOptional<Number> asNumber() {
         return toValue().asNumber();
     }
@@ -373,6 +391,21 @@ public class DefaultNArg implements NArg {
     @Override
     public boolean isString() {
         return toValue().isString();
+    }
+
+    @Override
+    public boolean isComplexNumber() {
+        return toValue().isComplexNumber();
+    }
+
+    @Override
+    public boolean isTemporal() {
+        return toValue().isTemporal();
+    }
+
+    @Override
+    public boolean isLocalTemporal() {
+        return toValue().isLocalTemporal();
     }
 
     @Override
@@ -513,5 +546,10 @@ public class DefaultNArg implements NArg {
     @Override
     public NOptional<Object> asObjectAt(int index) {
         return toValue().asObjectAt(index);
+    }
+
+    @Override
+    public boolean isStream() {
+        return toValue().isStream();
     }
 }

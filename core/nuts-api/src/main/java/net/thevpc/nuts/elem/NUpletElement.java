@@ -27,6 +27,9 @@ package net.thevpc.nuts.elem;
 import net.thevpc.nuts.util.NOptional;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
@@ -49,6 +52,7 @@ public interface NUpletElement extends NNavigatableElement, Iterable<NElement> {
     boolean isNamed();
 
     List<NElement> items();
+
     Stream<NElement> stream();
 
     /**
@@ -76,6 +80,12 @@ public interface NUpletElement extends NNavigatableElement, Iterable<NElement> {
     NOptional<Double> getDouble(int index);
 
     NOptional<Instant> getInstant(int index);
+
+    NOptional<LocalDate> getLocalDate(int index);
+
+    NOptional<LocalDateTime> getLocalDateTime(int index);
+
+    NOptional<LocalTime> getLocalTime(int index);
 
     NOptional<NArrayElement> getArray(int index);
 

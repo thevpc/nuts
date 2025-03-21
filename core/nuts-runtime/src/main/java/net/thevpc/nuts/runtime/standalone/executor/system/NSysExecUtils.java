@@ -182,7 +182,7 @@ public class NSysExecUtils {
                     case MACOS:
                     case UNIX: {
                         if (runWithGui) {
-                            String currSu = guiSu(de, sysWhich, session).get();
+                            String currSu = guiSu(de, sysWhich).get();
                             cc.add(currSu);
                             cc.add(runAsEffective);
                         } else {
@@ -214,7 +214,7 @@ public class NSysExecUtils {
                     case MACOS:
                     case UNIX: {
                         if (runWithGui) {
-                            String currSu = guiSudo(de, sysWhich, session).get();
+                            String currSu = guiSudo(de, sysWhich).get();
                             cc.add(currSu);
                         } else {
                             NCmdLine cmdLine = NCmdLine.of(executorOptions);
@@ -279,7 +279,7 @@ public class NSysExecUtils {
         throw new NIllegalArgumentException(NMsg.ofPlain("cannot run as admin/root on unknown system OS family"));
     }
 
-    private static NOptional<String> guiSu(Set<NDesktopEnvironmentFamily> de, Function<String, String> sysWhich, NSession session) {
+    private static NOptional<String> guiSu(Set<NDesktopEnvironmentFamily> de, Function<String, String> sysWhich) {
         if (de == null) {
             de = NWorkspace.of().getDesktopEnvironmentFamilies();
         }
@@ -313,7 +313,7 @@ public class NSysExecUtils {
         return NOptional.of(currSu);
     }
 
-    private static NOptional<String> guiSudo(Set<NDesktopEnvironmentFamily> de, Function<String, String> sysWhich, NSession session) {
+    private static NOptional<String> guiSudo(Set<NDesktopEnvironmentFamily> de, Function<String, String> sysWhich) {
         if (de == null) {
             de = NWorkspace.of().getDesktopEnvironmentFamilies();
         }

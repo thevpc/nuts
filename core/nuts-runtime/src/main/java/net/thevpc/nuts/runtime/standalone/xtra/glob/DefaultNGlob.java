@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.xtra.glob;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NBlankable;
@@ -10,12 +9,10 @@ import java.io.File;
 import java.util.regex.Pattern;
 
 public class DefaultNGlob implements NGlob {
-    private final NSession session;
     private String separator;
 
 
-    public DefaultNGlob(NSession session) {
-        this.session = session;
+    public DefaultNGlob() {
         separator = File.separator;
     }
 

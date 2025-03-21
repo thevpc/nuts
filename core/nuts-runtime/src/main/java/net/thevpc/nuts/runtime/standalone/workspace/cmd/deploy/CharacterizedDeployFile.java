@@ -18,10 +18,8 @@ class CharacterizedDeployFile implements AutoCloseable {
     private NInputSource contentStreamOrPath;
     private List<Path> temps = new ArrayList<>();
     private NDescriptor descriptor;
-    private NSession session;
 
-    public CharacterizedDeployFile(NSession session) {
-        this.session = session;
+    public CharacterizedDeployFile() {
     }
 
     public void addTemp(Path f) {
@@ -61,15 +59,6 @@ class CharacterizedDeployFile implements AutoCloseable {
 
     public CharacterizedDeployFile setDescriptor(NDescriptor descriptor) {
         this.descriptor = descriptor;
-        return this;
-    }
-
-    public NSession getSession() {
-        return session;
-    }
-
-    public CharacterizedDeployFile setSession(NSession session) {
-        this.session = session;
         return this;
     }
 

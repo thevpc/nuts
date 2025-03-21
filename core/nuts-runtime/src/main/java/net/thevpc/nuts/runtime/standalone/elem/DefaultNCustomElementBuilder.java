@@ -6,27 +6,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DefaultNCustomElementBuilder implements NCustomElementBuilder {
+public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implements NCustomElementBuilder {
     private Object value;
-    private final List<NElementAnnotation> annotations = new ArrayList<>();
 
 
     public DefaultNCustomElementBuilder() {
     }
 
-    @Override
-    public NCustomElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
-        if (annotations != null) {
-            for (NElementAnnotation a : annotations) {
-                if (a != null) {
-                    this.annotations.add(a);
-                }
-            }
-        }
-        return this;
-    }
 
-    public Object getValue() {
+    public Object value() {
         return value;
     }
 
@@ -37,46 +25,119 @@ public class DefaultNCustomElementBuilder implements NCustomElementBuilder {
 
 
     @Override
-    public NCustomElementBuilder addAnnotation(NElementAnnotation annotation) {
-        if (annotation != null) {
-            annotations.add(annotation);
-        }
-        return this;
-    }
-
-    @Override
-    public NCustomElementBuilder addAnnotationAt(int index, NElementAnnotation annotation) {
-        if (annotation != null) {
-            annotations.add(index, annotation);
-        }
-        return this;
-    }
-
-    @Override
-    public NCustomElementBuilder removeAnnotationAt(int index) {
-        annotations.remove(index);
-        return this;
-    }
-
-    @Override
-    public NCustomElementBuilder clearAnnotations() {
-        annotations.clear();
-        return this;
-    }
-
-    @Override
-    public List<NElementAnnotation> getAnnotations() {
-        return Collections.unmodifiableList(annotations);
-    }
-
-    @Override
     public NCustomElement build() {
-        return new DefaultNCustomElement(value, annotations.toArray(new NElementAnnotation[0]));
+        return new DefaultNCustomElement(value, annotations().toArray(new NElementAnnotation[0]), comments());
     }
 
     @Override
     public NElementType type() {
         return NElementType.CUSTOM;
+    }
+
+    // ------------------------------------------
+    // RETURN SIG
+    // ------------------------------------------
+
+    @Override
+    public NCustomElementBuilder addLeadingComment(NElementCommentType type, String text) {
+        super.addLeadingComment(type, text);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder addTrailingComment(NElementCommentType type, String text) {
+        super.addTrailingComment(type, text);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder addLeadingComment(NElementComment comment) {
+        super.addLeadingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder addLeadingComments(NElementComment... comments) {
+        super.addLeadingComments(comments);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder addTrailingComment(NElementComment comment) {
+        super.addTrailingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder addTrailingComments(NElementComment... comments) {
+        super.addTrailingComments(comments);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder removeTrailingCommentAt(int index) {
+        super.removeTrailingCommentAt(index);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder removeLeadingCommentAt(int index) {
+        super.removeLeadingCommentAt(index);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder removeTrailingComment(NElementComment comment) {
+        super.removeTrailingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder removeLeadingComment(NElementComment comment) {
+        super.removeLeadingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder addComments(NElementComments comments) {
+        super.addComments(comments);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
+        super.addAnnotations(annotations);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder addAnnotation(NElementAnnotation annotation) {
+        super.addAnnotation(annotation);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder addAnnotationAt(int index, NElementAnnotation annotation) {
+        super.addAnnotationAt(index, annotation);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder removeAnnotationAt(int index) {
+        super.removeAnnotationAt(index);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder clearAnnotations() {
+        super.clearAnnotations();
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder clearComments() {
+        super.clearComments();
+        return this;
     }
 
 }

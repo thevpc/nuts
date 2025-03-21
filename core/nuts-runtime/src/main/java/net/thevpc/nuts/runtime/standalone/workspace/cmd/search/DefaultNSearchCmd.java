@@ -35,7 +35,6 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.id.filter.NIdFilterOr;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.id.filter.NPatternIdFilter;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
@@ -84,7 +83,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
         return t;
     }
 
-    private NRepositoryFilter createRepositoryFilter(NInstallStatusFilter status, NIdFilter _idFilter, NSession session) {
+    private NRepositoryFilter createRepositoryFilter(NInstallStatusFilter status, NIdFilter _idFilter) {
 //        if(status==null){
 //            return null;
 //        }
@@ -269,7 +268,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
         if (!wildcardIds.isEmpty()) {
             _idFilter = _idFilter.and(NIdFilters.of().byName(wildcardIds.toArray(new String[0])));
         }
-        NRepositoryFilter extraRepositoryFilter = createRepositoryFilter(installStatus, _idFilter, session);
+        NRepositoryFilter extraRepositoryFilter = createRepositoryFilter(installStatus, _idFilter);
         if (extraRepositoryFilter != null) {
             _repositoryFilter = _repositoryFilter.and(extraRepositoryFilter);
         }
@@ -324,8 +323,8 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
         return new DefaultNSearch(
                 goodIds.toArray(new String[0]),
                 _repositoryFilter,
-                _idFilter, _descriptorFilter,
-                session);
+                _idFilter, _descriptorFilter
+        );
     }
 
     //    private Collection<NutsId> applyPrintDecoratorCollectionOfNutsId(Collection<NutsId> curr, boolean print) {
@@ -528,8 +527,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
         DefaultNSearch search = build();
 
         List<NIterator<? extends NId>> allResults = new ArrayList<>();
-        NSession session = search.getSession();
-        NSessionUtils.checkSession(session.getWorkspace(), session);
+        NSession session = NSession.of();
         NIdFilter sIdFilter = search.getIdFilter();
         NRepositoryFilter sRepositoryFilter = search.getRepositoryFilter();
         NDescriptorFilter sDescriptorFilter = search.getDescriptorFilter();

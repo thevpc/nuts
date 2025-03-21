@@ -10,12 +10,10 @@
 //
 //public class NTextNodeWriterRaw {
 //
-//    private final NSession session;
 //    private final List<NutsText> items = new ArrayList<>();
 //    private NutsTextTransformConfig config;
 //
-//    public NutsTextNodeWriterRaw(NSession session) {
-//        this.session = session;
+//    public NutsTextNodeWriterRaw() {
 //    }
 //
 //    public NutsTextTransformConfig getWriteConfiguration() {

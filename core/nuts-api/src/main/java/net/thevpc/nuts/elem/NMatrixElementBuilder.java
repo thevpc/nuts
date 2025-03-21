@@ -323,4 +323,16 @@ public interface NMatrixElementBuilder extends NElementBuilder {
     boolean isParametrized() ;
     NMatrixElementBuilder setHasArgs(boolean hasArgs);
 
+    NMatrixElementBuilder addLeadingComment(NElementCommentType type, String text);
+    NMatrixElementBuilder addTrailingComment(NElementCommentType type, String text);
+    NMatrixElementBuilder addLeadingComment(NElementComment comment);
+    NMatrixElementBuilder addLeadingComments(NElementComment... comments);
+    NMatrixElementBuilder addTrailingComment(NElementComment comment);
+    NMatrixElementBuilder addTrailingComments(NElementComment... comments);
+    NMatrixElementBuilder removeLeadingComment(NElementComment comment);
+    NMatrixElementBuilder removeTrailingComment(NElementComment comment);
+    NMatrixElementBuilder removeLeadingCommentAt(int index);
+    NMatrixElementBuilder removeTrailingCommentAt(int index);
+    NMatrixElementBuilder clearComments();
+    NMatrixElementBuilder addComments(NElementComments comments);
 }

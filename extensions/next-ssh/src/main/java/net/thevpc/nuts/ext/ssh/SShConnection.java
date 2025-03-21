@@ -5,7 +5,6 @@ import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NConnexionString;
 import net.thevpc.nuts.util.NStringMapFormat;
 
@@ -18,7 +17,6 @@ import java.util.Properties;
 public class SShConnection implements AutoCloseable {
 
     Session sshSession;
-    NSession nSession;
     private boolean redirectErrorStream;
     private boolean failFast;
     private PrintStream out = new PrintStream(new NonClosableOutputStream(System.out));
@@ -35,11 +33,11 @@ public class SShConnection implements AutoCloseable {
                 NLiteral.of(address.getPort()).asInt().orElse(-1),
                 NStringMapFormat.URL_FORMAT.parse(address.getQueryString())
                         .orElse(Collections.emptyMap()).get("key-file"),
-                address.getPassword(), in, out, err, sshSession);
+                address.getPassword(), in, out, err);
     }
 
     public SShConnection(String user, String host, int port, String keyFilePath, String keyPassword, InputStream in, OutputStream out, OutputStream err, NSession sshSession) {
-        init(user, host, port, keyFilePath, keyPassword, in, out, err, sshSession);
+        init(user, host, port, keyFilePath, keyPassword, in, out, err);
     }
 
     public boolean isRedirectErrorStream() {
@@ -77,8 +75,7 @@ public class SShConnection implements AutoCloseable {
         return this;
     }
 
-    private void init(String user, String host, int port, String keyFilePath, String keyPassword, InputStream in0, OutputStream out0, OutputStream err0, NSession session) {
-        this.nSession = session;
+    private void init(String user, String host, int port, String keyFilePath, String keyPassword, InputStream in0, OutputStream out0, OutputStream err0) {
         this.out = new PrintStream(new NonClosableOutputStream(out0));
         this.err = new PrintStream(new NonClosableOutputStream(err0));
         this.in = in0;

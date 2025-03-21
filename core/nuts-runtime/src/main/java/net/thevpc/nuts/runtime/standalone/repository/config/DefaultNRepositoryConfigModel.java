@@ -111,7 +111,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         return deployWeight;
     }
 
-//    public String getEnv(String key, String defaultValue, boolean inherit,NSession session) {
+//    public String getEnv(String key, String defaultValue, boolean inherit) {
 //        String t = null;
 //        if (config.getEnv() != null) {
 //            t = config.getEnv().get(defaultValue);
@@ -128,7 +128,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
 //        return defaultValue;
 //    }
 
-//    public Map<String, String> getEnv(boolean inherit,NSession session) {
+//    public Map<String, String> getEnv(boolean inherit) {
 //        Map<String, String> p = new LinkedHashMap<>();
 //        if (inherit) {
 //            p.putAll(repository.getWorkspace().env().getEnvMap());

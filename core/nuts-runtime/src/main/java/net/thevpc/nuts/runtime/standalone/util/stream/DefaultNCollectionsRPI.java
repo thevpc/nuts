@@ -22,10 +22,8 @@ import java.util.stream.Stream;
 
 @NComponentScope(NScopeType.SESSION)
 public class DefaultNCollectionsRPI implements NCollectionsRPI {
-    private final NSession session;
 
-    public DefaultNCollectionsRPI(NSession session) {
-        this.session = session;
+    public DefaultNCollectionsRPI() {
     }
 
     @Override
@@ -51,13 +49,13 @@ public class DefaultNCollectionsRPI implements NCollectionsRPI {
             return new NStreamEmpty<T>(name);
         }
         if (str instanceof List) {
-            return new NStreamFromList<T>(getSession(), name, (List<T>) str);
+            return new NStreamFromList<T>(name, (List<T>) str);
         }
         if (str instanceof Collection) {
-            return new NStreamFromCollection<T>(getSession(), name, (Collection<T>) str);
+            return new NStreamFromCollection<T>(name, (Collection<T>) str);
         }
 
-        return new NStreamFromNIterable<>(getSession(), name, NIterable.of(str));
+        return new NStreamFromNIterable<>(name, NIterable.of(str));
     }
 
     @Override
@@ -70,7 +68,7 @@ public class DefaultNCollectionsRPI implements NCollectionsRPI {
     @Override
     public <T> NStream<T> toStream(Stream<T> str) {
         checkSession();
-        return new NStreamFromJavaStream<>(getSession(), null, str);
+        return new NStreamFromJavaStream<>(null, str);
     }
 
     @Override
@@ -102,14 +100,10 @@ public class DefaultNCollectionsRPI implements NCollectionsRPI {
         if (o instanceof NIterable) {
             return (NIterable<T>) o;
         }
-        return new NIterableFromJavaIterable<>(o,session);
+        return new NIterableFromJavaIterable<>(o);
     }
 
     public void checkSession() {
         //should we ?
-    }
-
-    public NSession getSession() {
-        return session;
     }
 }

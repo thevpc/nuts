@@ -113,7 +113,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
         }
         NAskFormat<T> ff = this.getFormat();
         if (ff == null) {
-            ff = new DefaultNAskFormat<>(session);
+            ff = new DefaultNAskFormat<>();
         }
         List<Object> _acceptedValues = this.getAcceptedValues();
         if (_acceptedValues == null) {

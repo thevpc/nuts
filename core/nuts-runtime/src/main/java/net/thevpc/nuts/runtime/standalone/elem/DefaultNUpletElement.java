@@ -26,11 +26,12 @@ package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.*;
-import net.thevpc.tson.TsonElementType;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -39,21 +40,21 @@ import java.util.stream.Stream;
 public class DefaultNUpletElement extends AbstractNNavigatableElement
         implements NUpletElement {
 
-    private final NElement[] values;
+    private final NElement[] params;
     private String name;
 
-    public DefaultNUpletElement(String name, Collection<NElement> values, NElementAnnotation[] annotations) {
+    public DefaultNUpletElement(String name, Collection<NElement> params, NElementAnnotation[] annotations, NElementComments comments) {
         super(name == null ? NElementType.UPLET
                         : NElementType.NAMED_UPLET,
-                annotations);
-        this.values = values.toArray(new NElement[0]);
+                annotations, comments);
+        this.params = params.toArray(new NElement[0]);
         this.name = name;
     }
 
-    public DefaultNUpletElement(String name, NElement[] values, NElementAnnotation[] annotations) {
+    public DefaultNUpletElement(String name, NElement[] params, NElementAnnotation[] annotations, NElementComments comments) {
         super(name == null ? NElementType.UPLET
-                : NElementType.NAMED_UPLET, annotations);
-        this.values = Arrays.copyOf(values, values.length);
+                : NElementType.NAMED_UPLET, annotations, comments);
+        this.params = Arrays.copyOf(params, params.length);
         this.name = name;
     }
 
@@ -83,31 +84,31 @@ public class DefaultNUpletElement extends AbstractNNavigatableElement
 
     @Override
     public List<NElement> items() {
-        return Arrays.asList(values);
+        return Arrays.asList(params);
     }
 
 
     @Override
     public List<NElement> children() {
-        return Arrays.asList(values);
+        return Arrays.asList(params);
     }
 
     @Override
     public int size() {
-        return values.length;
+        return params.length;
     }
 
     @Override
     public Stream<NElement> stream() {
-        return Arrays.asList(values).stream();
+        return Arrays.asList(params).stream();
     }
 
     @Override
     public NOptional<NElement> get(int index) {
-        if (index >= 0 && index < values.length) {
-            return NOptional.of(values[index]);
+        if (index >= 0 && index < params.length) {
+            return NOptional.of(params[index]);
         }
-        return NOptional.ofError(() -> NMsg.ofC("invalid array index %s not in [%s,%s[", index, 0, values.length));
+        return NOptional.ofError(() -> NMsg.ofC("invalid array index %s not in [%s,%s[", index, 0, params.length));
     }
 
     @Override
@@ -156,6 +157,21 @@ public class DefaultNUpletElement extends AbstractNNavigatableElement
     }
 
     @Override
+    public NOptional<LocalDate> getLocalDate(int index) {
+        return get(index).flatMap(NElement::asLocalDate);
+    }
+
+    @Override
+    public NOptional<LocalDateTime> getLocalDateTime(int index) {
+        return get(index).flatMap(NElement::asLocalDateTime);
+    }
+
+    @Override
+    public NOptional<LocalTime> getLocalTime(int index) {
+        return get(index).flatMap(NElement::asLocalTime);
+    }
+
+    @Override
     public NOptional<NArrayElement> getArray(int index) {
         return get(index).flatMap(NElement::asArray);
     }
@@ -175,21 +191,26 @@ public class DefaultNUpletElement extends AbstractNNavigatableElement
 
     @Override
     public Iterator<NElement> iterator() {
-        return Arrays.asList(values).iterator();
+        return Arrays.asList(params).iterator();
+    }
+
+    public String toString() {
+        return toString(false);
     }
 
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(annotations().stream().map(x -> x.toString()).collect(Collectors.joining(" ")));
-        if(sb.length()>0)
-        {
-            sb.append(" ");
-        }
-        if (isNamed()) {
+    public String toString(boolean compact) {
+        NStringBuilder sb = new NStringBuilder();
+        sb.append(TsonElementToStringHelper.leadingCommentsAndAnnotations(this, compact));
+        if (name != null) {
             sb.append(name);
         }
-        sb.append("(").append(children().stream().map(x -> x.toString()).collect(Collectors.joining(", "))).append(")");
+        if (params != null) {
+            sb.append("(");
+            TsonElementToStringHelper.appendChildren(Arrays.asList(params), compact, new TsonElementToStringHelper.SemiCompactInfo(), sb);
+            sb.append(")");
+        }
+        sb.append(TsonElementToStringHelper.trailingComments(this, compact));
         return sb.toString();
     }
 
@@ -198,24 +219,24 @@ public class DefaultNUpletElement extends AbstractNNavigatableElement
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         DefaultNUpletElement nElements = (DefaultNUpletElement) o;
-        return Objects.deepEquals(values, nElements.values)
+        return Objects.deepEquals(params, nElements.params)
                 && Objects.equals(name, nElements.name())
                 ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), Arrays.hashCode(values), name);
+        return Objects.hash(super.hashCode(), Arrays.hashCode(params), name);
     }
 
     @Override
     public boolean isEmpty() {
-        return values.length == 0;
+        return params.length == 0;
     }
 
     @Override
     public boolean isBlank() {
-        return values.length == 0 && NBlankable.isBlank(name);
+        return params.length == 0 && NBlankable.isBlank(name);
     }
 
     @Override

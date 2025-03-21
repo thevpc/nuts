@@ -10,7 +10,6 @@ import net.thevpc.nuts.format.NMutableTableModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.format.NTableCell;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
@@ -22,10 +21,8 @@ public class DefaultNMutableTableModel implements NMutableTableModel {
 
     private final Row header = new Row();
     private final List<Row> rows = new ArrayList<>();
-    private NSession session;
 
-    public DefaultNMutableTableModel(NSession session) {
-        this.session = session;
+    public DefaultNMutableTableModel() {
     }
 
     @Override

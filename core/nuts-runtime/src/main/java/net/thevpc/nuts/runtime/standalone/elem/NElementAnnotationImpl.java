@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.elem;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementAnnotation;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NStringBuilder;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -56,16 +57,15 @@ public class NElementAnnotationImpl implements NElementAnnotation {
         return NBlankable.isBlank(name) && (params == null || params.length == 0);
     }
 
-    @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("@");
-        if (isNamed()) {
-            sb.append(name);
-        }
-        if (isParametrized()) {
-            sb.append("(").append(children().stream().map(x -> x.toString()).collect(Collectors.joining(", "))).append(")");
-        }
+        return toString(false);
+    }
+
+    @Override
+    public String toString(boolean compact) {
+        NStringBuilder sb = new NStringBuilder();
+        TsonElementToStringHelper.appendUplet("@" + name, params == null ? null : Arrays.asList(params), compact, sb);
         return sb.toString();
     }
+
 }

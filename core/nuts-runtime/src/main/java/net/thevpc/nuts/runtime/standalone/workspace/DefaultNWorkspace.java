@@ -72,14 +72,12 @@ import net.thevpc.nuts.runtime.standalone.extension.NExtensionListHelper;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.installer.CommandForIdNInstallerComponent;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.log.DefaultNLogModel;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNWorkspaceSecurityModel;
 import net.thevpc.nuts.runtime.standalone.security.util.CoreDigestHelper;
 import net.thevpc.nuts.runtime.standalone.session.DefaultNSession;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
@@ -148,7 +146,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 //     * @return bundled nuts file, the nuts is neither deployed nor installed!
 //     */
 //    @Deprecated
-//    public NutsDefinition createBundle(Path contentFolder, Path destFile, NutsQueryOptions queryOptions, NSession session) {
+//    public NutsDefinition createBundle(Path contentFolder, Path destFile, NutsQueryOptions queryOptions) {
 //        session = CoreNutsUtils.validateSession(session, this);
 //        if (Files.isDirectory(contentFolder)) {
 //            NutsDescriptor descriptor = null;
@@ -185,7 +183,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 //        }
 //    }
 //    @Override
-//    public boolean isFetched(NutsId parseList, NSession session) {
+//    public boolean isFetched(NutsId parseList) {
 //        session = CoreNutsUtils.validateSession(session, this);
 //        NSession offlineSession = session.copy();
 //        try {
@@ -933,11 +931,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         return instance;
     }
 
-    private void checkSession(NSession session) {
-        NSessionUtils.checkSession(this, session);
-    }
-
-    private NId resolveApiId(NId id, Set<NId> visited, NSession session) {
+    private NId resolveApiId(NId id, Set<NId> visited) {
         if (visited.contains(id.getLongId())) {
             return null;
         }
@@ -946,7 +940,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             return id;
         }
         for (NDependency dependency : NFetchCmd.of(id).getResultDescriptor().getDependencies()) {
-            NId q = resolveApiId(dependency.toId(), visited, session);
+            NId q = resolveApiId(dependency.toId(), visited);
             if (q != null) {
                 return q;
             }

@@ -58,15 +58,15 @@ import org.xml.sax.SAXParseException;
  */
 public class XmlUtils {
 
-//    public static void print(String name, Object object, long elemIndex, Writer out, boolean compact, boolean headerDeclaration, NSession session) {
+//    public static void print(String name, Object object, long elemIndex, Writer out, boolean compact, boolean headerDeclaration) {
 //        print(name, object, elemIndex, (Object) out, compact, headerDeclaration, session);
 //    }
 //
-//    public static void print(String name, Object object, long elemIndex, PrintStream out, boolean compact, boolean headerDeclaration, NSession session) {
+//    public static void print(String name, Object object, long elemIndex, PrintStream out, boolean compact, boolean headerDeclaration) {
 //        print(name, object, elemIndex, (Object) out, compact, headerDeclaration, session);
 //    }
 //
-//    private static void print(String name, Object object, long elemIndex, Object out, boolean compact, boolean headerDeclaration, NSession session) {
+//    private static void print(String name, Object object, long elemIndex, Object out, boolean compact, boolean headerDeclaration) {
 //        try {
 //            Document document = XmlUtils.createDocument(session);
 //            String rootName = name;
@@ -89,13 +89,13 @@ public class XmlUtils {
 //        }
 //    }
 
-//    public static Document createDocument(String name, Object object, NSession session) {
+//    public static Document createDocument(String name, Object object) {
 //            Document document = createDocument(session);
 //            document.appendChild(createElement(NutsBlankable.isBlank(name) ? "root" : name, object, -1,document, session));
 //            return document;
 //    }
 
-//    public static Element createElement(String name, Object o, long elemIndex, Document document, NSession session) {
+//    public static Element createElement(String name, Object o, long elemIndex, Document document) {
 //        // root element
 //        Element elem = document.createElement(createElementName(name));
 //        if(elemIndex>=0){

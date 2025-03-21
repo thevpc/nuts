@@ -46,10 +46,8 @@ import java.util.*;
 public class ZipExecutorComponent implements NExecutorComponent {
 
     public static NId ID;
-    NSession session;
 
-    public ZipExecutorComponent(NSession session) {
-        this.session = session;
+    public ZipExecutorComponent() {
         ID = NId.get("net.thevpc.nuts.exec:zip").get();
     }
 

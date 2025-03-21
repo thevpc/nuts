@@ -11,13 +11,15 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DefaultNPrimitiveElementBuilder implements NPrimitiveElementBuilder, NLiteral {
+public class DefaultNPrimitiveElementBuilder  extends AbstractNElementBuilder implements NPrimitiveElementBuilder, NLiteral {
     private Object value;
-    private final List<NElementAnnotation> annotations = new ArrayList<>();
 
     private NElementType type;
 
@@ -25,17 +27,6 @@ public class DefaultNPrimitiveElementBuilder implements NPrimitiveElementBuilder
         this.type = NElementType.NULL;
     }
 
-    @Override
-    public NPrimitiveElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
-        if (annotations != null) {
-            for (NElementAnnotation a : annotations) {
-                if (a != null) {
-                    this.annotations.add(a);
-                }
-            }
-        }
-        return this;
-    }
 
     public Object get() {
         return value;
@@ -136,41 +127,8 @@ public class DefaultNPrimitiveElementBuilder implements NPrimitiveElementBuilder
     }
 
     @Override
-    public NPrimitiveElementBuilder addAnnotation(NElementAnnotation annotation) {
-        if (annotation != null) {
-            annotations.add(annotation);
-        }
-        return this;
-    }
-
-    @Override
-    public NPrimitiveElementBuilder addAnnotationAt(int index, NElementAnnotation annotation) {
-        if (annotation != null) {
-            annotations.add(index, annotation);
-        }
-        return this;
-    }
-
-    @Override
-    public NPrimitiveElementBuilder removeAnnotationAt(int index) {
-        annotations.remove(index);
-        return this;
-    }
-
-    @Override
-    public NPrimitiveElementBuilder clearAnnotations() {
-        annotations.clear();
-        return this;
-    }
-
-    @Override
-    public List<NElementAnnotation> getAnnotations() {
-        return Collections.unmodifiableList(annotations);
-    }
-
-    @Override
     public NPrimitiveElement build() {
-        return new DefaultNPrimitiveElement(type, value, annotations.toArray(new NElementAnnotation[0]));
+        return new DefaultNPrimitiveElement(type, value, annotations().toArray(new NElementAnnotation[0]),comments());
     }
 
     @Override
@@ -191,6 +149,21 @@ public class DefaultNPrimitiveElementBuilder implements NPrimitiveElementBuilder
     @Override
     public NOptional<Instant> asInstant() {
         return NLiteral.of(value).asInstant();
+    }
+
+    @Override
+    public NOptional<LocalDate> asLocalDate() {
+        return NLiteral.of(value).asLocalDate();
+    }
+
+    @Override
+    public NOptional<LocalDateTime> asLocalDateTime() {
+        return NLiteral.of(value).asLocalDateTime();
+    }
+
+    @Override
+    public NOptional<LocalTime> asLocalTime() {
+        return NLiteral.of(value).asLocalTime();
     }
 
     @Override
@@ -416,5 +389,132 @@ public class DefaultNPrimitiveElementBuilder implements NPrimitiveElementBuilder
     @Override
     public <ET> NOptional<ET> asType(Type expectedType) {
         return NLiteral.of(value).asType(expectedType);
+    }
+
+
+    // ------------------------------------------
+    // RETURN SIG
+    // ------------------------------------------
+
+    @Override
+    public NPrimitiveElementBuilder addLeadingComment(NElementCommentType type, String text) {
+        super.addLeadingComment(type, text);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder addTrailingComment(NElementCommentType type, String text) {
+        super.addTrailingComment(type, text);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder addLeadingComment(NElementComment comment) {
+        super.addLeadingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder addLeadingComments(NElementComment... comments) {
+        super.addLeadingComments(comments);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder addTrailingComment(NElementComment comment) {
+        super.addTrailingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder addTrailingComments(NElementComment... comments) {
+        super.addTrailingComments(comments);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder removeTrailingCommentAt(int index) {
+        super.removeTrailingCommentAt(index);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder removeLeadingCommentAt(int index) {
+        super.removeLeadingCommentAt(index);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder removeTrailingComment(NElementComment comment) {
+        super.removeTrailingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder removeLeadingComment(NElementComment comment) {
+        super.removeLeadingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder addComments(NElementComments comments) {
+        super.addComments(comments);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
+        super.addAnnotations(annotations);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder addAnnotation(NElementAnnotation annotation) {
+        super.addAnnotation(annotation);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder addAnnotationAt(int index, NElementAnnotation annotation) {
+        super.addAnnotationAt(index, annotation);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder removeAnnotationAt(int index) {
+        super.removeAnnotationAt(index);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder clearAnnotations() {
+        super.clearAnnotations();
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder clearComments() {
+        super.clearComments();
+        return this;
+    }
+
+    @Override
+    public boolean isStream() {
+        return type().isStream();
+    }
+
+    @Override
+    public boolean isComplexNumber() {
+        return type().isStream();
+    }
+
+    @Override
+    public boolean isTemporal() {
+        return type().isTemporal();
+    }
+
+    @Override
+    public boolean isLocalTemporal() {
+        return type().isLocalTemporal();
     }
 }

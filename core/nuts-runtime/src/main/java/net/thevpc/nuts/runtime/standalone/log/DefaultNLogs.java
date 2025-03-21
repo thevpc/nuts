@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.log;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
@@ -18,8 +17,8 @@ public class DefaultNLogs implements NLogs {
 
     private final DefaultNLogModel model;
 
-    public DefaultNLogs(NSession session) {
-        this.model = ((NWorkspaceExt) (session.getWorkspace())).getModel().logModel;
+    public DefaultNLogs() {
+        this.model = NWorkspaceExt.of().getModel().logModel;
     }
 
     @Override

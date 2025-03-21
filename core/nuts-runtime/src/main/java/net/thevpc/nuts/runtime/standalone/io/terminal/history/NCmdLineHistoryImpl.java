@@ -24,7 +24,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.terminal.history;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.cmdline.NCmdLineHistoryEntry;
@@ -47,11 +46,9 @@ import java.util.ListIterator;
 public class NCmdLineHistoryImpl implements NCmdLineHistory {
 
     private NPath path;
-    private final NSession session;
     private final List<NCmdLineHistoryEntry> entries = new ArrayList<>();
 
-    public NCmdLineHistoryImpl(NSession session) {
-        this.session = session;
+    public NCmdLineHistoryImpl() {
     }
 
     @Override

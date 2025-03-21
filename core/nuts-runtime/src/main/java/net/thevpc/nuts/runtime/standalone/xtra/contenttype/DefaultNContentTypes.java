@@ -21,13 +21,7 @@
 //import java.util.stream.Collectors;
 //
 //public class DefaultNContentTypes implements NContentTypes {
-//    private final NSession session;
 //    private NWorkspace ws;
-//
-//    public DefaultNContentTypes(NSession session) {
-//        this.session = session;
-//        this.ws = session.getWorkspace();
-//    }
 //
 //    @Override
 //    public String probeContentType(Path path) {

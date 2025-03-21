@@ -35,14 +35,6 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
     private NWorkspace workspace;
     private NSystemTerminalBase term;
 
-//    public NTextNodeWriterRenderer(NPrintStream rawOutput, NSession session) {
-//        this(new NPrintStreamHelper(rawOutput), session, rawOutput.getTerminal());
-//    }
-//
-//    public NTextNodeWriterRenderer(OutputStream rawOutput, NSession session, NSystemTerminalBase term) {
-//        this(new OutputStreamHelper(rawOutput, session), session, term);
-//    }
-
     public NTextNodeWriterRenderer(NPrintStream rawOutput, NWorkspace workspace, NSystemTerminalBase term) {
         this.rawOutput = rawOutput;
         this.workspace = workspace;

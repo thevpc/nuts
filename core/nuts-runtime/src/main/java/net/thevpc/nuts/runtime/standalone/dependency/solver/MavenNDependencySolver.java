@@ -469,7 +469,7 @@ public class MavenNDependencySolver implements NDependencySolver {
 //        }
 //        return true;
 //    }
-//    public NutsDependencyFilter getEffDependencyFilter(NSession session) {
+//    public NutsDependencyFilter getEffDependencyFilter() {
 //        if (effDependencyFilter == null) {
 //            if (dependencyFilter == null) {
 //                effDependencyFilter = session.dependency().filter().byOs(NWorkspace.of().getOsFamily())

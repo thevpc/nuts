@@ -36,10 +36,9 @@ import java.util.stream.Collectors;
 /**
  * @author thevpc
  */
-public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
+public class DefaultNArrayElementBuilder extends AbstractNElementBuilder implements NArrayElementBuilder {
 
     private final List<NElement> values = new ArrayList<>();
-    private final List<NElementAnnotation> annotations = new ArrayList<>();
     private List<NElement> params;
     private String name;
 
@@ -128,50 +127,6 @@ public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
         return Collections.unmodifiableList(params);
     }
 
-    @Override
-    public NArrayElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
-        if (annotations != null) {
-            for (NElementAnnotation a : annotations) {
-                if (a != null) {
-                    this.annotations.add(a);
-                }
-            }
-        }
-        return this;
-    }
-
-    @Override
-    public NArrayElementBuilder addAnnotation(NElementAnnotation annotation) {
-        if (annotation != null) {
-            annotations.add(annotation);
-        }
-        return this;
-    }
-
-    @Override
-    public NArrayElementBuilder addAnnotationAt(int index, NElementAnnotation annotation) {
-        if (annotation != null) {
-            annotations.add(index, annotation);
-        }
-        return this;
-    }
-
-    @Override
-    public NArrayElementBuilder removeAnnotationAt(int index) {
-        annotations.remove(index);
-        return this;
-    }
-
-    @Override
-    public NArrayElementBuilder clearAnnotations() {
-        annotations.clear();
-        return this;
-    }
-
-    @Override
-    public List<NElementAnnotation> getAnnotations() {
-        return Collections.unmodifiableList(annotations);
-    }
 
     @Override
     public List<NElement> items() {
@@ -391,7 +346,7 @@ public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
     @Override
     public NArrayElement build() {
         return new DefaultNArrayElement(name, params, values,
-                annotations.toArray(new NElementAnnotation[0]));
+                annotations().toArray(new NElementAnnotation[0]), comments());
     }
 
     @Override
@@ -421,5 +376,111 @@ public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
                 : name == null && params != null ? NElementType.PARAMETRIZED_ARRAY
                 : name != null && params == null ? NElementType.NAMED_ARRAY
                 : NElementType.NAMED_PARAMETRIZED_ARRAY;
+    }
+
+    // ------------------------------------------
+    // RETURN SIG
+    // ------------------------------------------
+
+    @Override
+    public NArrayElementBuilder addLeadingComment(NElementCommentType type, String text) {
+        super.addLeadingComment(type, text);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder addTrailingComment(NElementCommentType type, String text) {
+        super.addTrailingComment(type, text);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder addLeadingComment(NElementComment comment) {
+        super.addLeadingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder addLeadingComments(NElementComment... comments) {
+        super.addLeadingComments(comments);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder addTrailingComment(NElementComment comment) {
+        super.addTrailingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder addTrailingComments(NElementComment... comments) {
+        super.addTrailingComments(comments);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder removeTrailingCommentAt(int index) {
+        super.removeTrailingCommentAt(index);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder removeLeadingCommentAt(int index) {
+        super.removeLeadingCommentAt(index);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder removeTrailingComment(NElementComment comment) {
+        super.removeTrailingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder removeLeadingComment(NElementComment comment) {
+        super.removeLeadingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder addComments(NElementComments comments) {
+        super.addComments(comments);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
+        super.addAnnotations(annotations);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder addAnnotation(NElementAnnotation annotation) {
+        super.addAnnotation(annotation);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder addAnnotationAt(int index, NElementAnnotation annotation) {
+        super.addAnnotationAt(index, annotation);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder removeAnnotationAt(int index) {
+        super.removeAnnotationAt(index);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder clearAnnotations() {
+        super.clearAnnotations();
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder clearComments() {
+        super.clearComments();
+        return this;
     }
 }

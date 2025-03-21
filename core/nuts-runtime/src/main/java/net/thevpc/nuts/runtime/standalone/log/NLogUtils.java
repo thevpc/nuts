@@ -9,13 +9,7 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
-import java.io.BufferedReader;
-import java.io.PrintWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -75,7 +69,7 @@ public class NLogUtils {
         }
     }
 
-    public static NLogRecord toNutsLogRecord(LogRecord record, NSession session) {
+    public static NLogRecord toNutsLogRecord(LogRecord record) {
         if (record instanceof NLogRecord) {
             return (NLogRecord) record;
         }
@@ -83,7 +77,7 @@ public class NLogUtils {
         NMsg jMsg = NMsg.ofJ(record.getMessage(),
                 record.getParameters());
         NLogRecord h = new NLogRecord(
-                session, lvl,
+                NSession.of(), lvl,
                 lvl.intValue() <= Level.SEVERE.intValue() ? NLogVerb.FAIL :
                         lvl.intValue() <= Level.WARNING.intValue() ? NLogVerb.WARNING :
                                 lvl.intValue() <= Level.INFO.intValue() ? NLogVerb.INFO :

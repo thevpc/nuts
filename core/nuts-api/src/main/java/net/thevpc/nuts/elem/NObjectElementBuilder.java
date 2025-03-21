@@ -27,7 +27,6 @@ package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.util.NOptional;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -239,4 +238,18 @@ public interface NObjectElementBuilder extends NElementBuilder {
     boolean isParametrized();
 
     NObjectElementBuilder setParametrized(boolean hasArgs);
+
+    NObjectElementBuilder addLeadingComment(NElementCommentType type, String text);
+    NObjectElementBuilder addTrailingComment(NElementCommentType type, String text);
+    NObjectElementBuilder addLeadingComment(NElementComment comment);
+    NObjectElementBuilder addLeadingComments(NElementComment... comments);
+    NObjectElementBuilder addTrailingComment(NElementComment comment);
+    NObjectElementBuilder addTrailingComments(NElementComment... comments);
+    NObjectElementBuilder removeLeadingComment(NElementComment comment);
+    NObjectElementBuilder removeTrailingComment(NElementComment comment);
+    NObjectElementBuilder removeLeadingCommentAt(int index);
+    NObjectElementBuilder removeTrailingCommentAt(int index);
+    NObjectElementBuilder clearComments();
+    NObjectElementBuilder addComments(NElementComments comments);
+
 }

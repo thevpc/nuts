@@ -14,10 +14,8 @@ public class OutputStreamHelper implements OutputHelper {
     private OutputStream rawOutput;
     private OutputStream rawOutput0;
     private PrintStream ps;
-    private NSession session;
 
-    public OutputStreamHelper(OutputStream rawOutput, NSession session) {
-        this.session = session;
+    public OutputStreamHelper(OutputStream rawOutput) {
         this.rawOutput = rawOutput;
         this.rawOutput0 = rawOutput;
         int loopGard = 100;

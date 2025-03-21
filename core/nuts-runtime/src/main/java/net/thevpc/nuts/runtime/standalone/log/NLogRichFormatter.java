@@ -26,7 +26,7 @@ public class NLogRichFormatter extends Formatter {
 
     @Override
     public String format(LogRecord record) {
-        NLogRecord wRecord = NLogUtils.toNutsLogRecord(record, workspace.currentSession());
+        NLogRecord wRecord = NLogUtils.toNutsLogRecord(record);
         NTexts tf = NTexts.of();
 
         NTextBuilder sb = tf.ofBuilder();

@@ -30,7 +30,7 @@ public class RollingFileService {
     private int count;
 
 
-    public RollingFileService(NPath folder, int count, NSession session) {
+    public RollingFileService(NPath folder, int count) {
         this.count = count;
         int cc = String.valueOf(count).length();
         StringBuilder df = new StringBuilder();

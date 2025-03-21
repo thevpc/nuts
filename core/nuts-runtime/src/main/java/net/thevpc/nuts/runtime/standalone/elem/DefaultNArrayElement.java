@@ -28,10 +28,11 @@ import java.time.Instant;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.*;
-import net.thevpc.tson.TsonElementType;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -44,26 +45,26 @@ public class DefaultNArrayElement extends AbstractNNavigatableElement
     private String name;
     private List<NElement> params;
 
-    public DefaultNArrayElement(String name, List<NElement> params, Collection<NElement> values, NElementAnnotation[] annotations) {
+    public DefaultNArrayElement(String name, List<NElement> params, Collection<NElement> values, NElementAnnotation[] annotations, NElementComments comments) {
         super(
                 name == null && params == null ? NElementType.ARRAY
                         : name == null && params != null ? NElementType.PARAMETRIZED_ARRAY
                         : name != null && params == null ? NElementType.NAMED_ARRAY
                         : NElementType.NAMED_PARAMETRIZED_ARRAY,
-                annotations);
+                annotations, comments);
         this.values = values.toArray(new NElement[0]);
         this.name = name;
         this.params = params;
     }
 
 
-    public DefaultNArrayElement(String name, List<NElement> params, NElement[] values, NElementAnnotation[] annotations) {
+    public DefaultNArrayElement(String name, List<NElement> params, NElement[] values, NElementAnnotation[] annotations, NElementComments comments) {
         super(
                 name == null && params == null ? NElementType.ARRAY
                         : name == null && params != null ? NElementType.PARAMETRIZED_ARRAY
                         : name != null && params == null ? NElementType.NAMED_ARRAY
                         : NElementType.NAMED_PARAMETRIZED_ARRAY,
-                annotations);
+                annotations, comments);
         this.values = Arrays.copyOf(values, values.length);
         this.name = name;
         this.params = params;
@@ -138,6 +139,21 @@ public class DefaultNArrayElement extends AbstractNNavigatableElement
     }
 
     @Override
+    public NOptional<LocalDate> getLocalDate(int index) {
+        return get(index).flatMap(NElement::asLocalDate);
+    }
+
+    @Override
+    public NOptional<LocalDateTime> getLocalDateTime(int index) {
+        return get(index).flatMap(NElement::asLocalDateTime);
+    }
+
+    @Override
+    public NOptional<LocalTime> getLocalTime(int index) {
+        return get(index).flatMap(NElement::asLocalTime);
+    }
+
+    @Override
     public NOptional<NArrayElement> getArray(int index) {
         return get(index).flatMap(NElement::asArray);
     }
@@ -160,21 +176,19 @@ public class DefaultNArrayElement extends AbstractNNavigatableElement
         return Arrays.asList(values).iterator();
     }
 
-    @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(annotations().stream().map(x -> x.toString()).collect(Collectors.joining(" ")));
-        if(sb.length()>0)
-        {
-            sb.append(" ");
-        }
-        if (isNamed()) {
-            sb.append(name);
-        }
-        if (isParametrized()) {
-            sb.append("(").append(params().stream().map(x -> x.toString()).collect(Collectors.joining(", "))).append(")");
-        }
-        sb.append("[").append(children().stream().map(x -> x.toString()).collect(Collectors.joining(", "))).append("]");
+        return toString(false);
+    }
+
+    @Override
+    public String toString(boolean compact) {
+        NStringBuilder sb = new NStringBuilder();
+        sb.append(TsonElementToStringHelper.leadingCommentsAndAnnotations(this, compact));
+        TsonElementToStringHelper.appendUplet(name, params, compact, sb);
+        sb.append("[");
+        TsonElementToStringHelper.appendChildren(children(), compact, new TsonElementToStringHelper.SemiCompactInfo(), sb);
+        sb.append("]");
+        sb.append(TsonElementToStringHelper.trailingComments(this, compact));
         return sb.toString();
     }
 

@@ -6,9 +6,7 @@ import net.thevpc.nuts.util.NStringUtils;
 import java.util.Comparator;
 
 public class NPlatformLocationSelectComparator implements Comparator<NPlatformLocation> {
-    private NSession session;
-    public NPlatformLocationSelectComparator(NSession session) {
-        this.session = session;
+    public NPlatformLocationSelectComparator() {
     }
 
     @Override

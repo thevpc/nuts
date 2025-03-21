@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.text.util;
 
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
@@ -218,7 +217,7 @@ public class DefaultUnitFormat {
         }
     }
 
-    public NText formatDouble(double value, NSession session) {
+    public NText formatDouble(double value) {
         return format(value);
     }
 

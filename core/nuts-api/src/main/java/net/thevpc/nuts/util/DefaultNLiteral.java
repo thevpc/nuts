@@ -1,7 +1,6 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementType;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NInputStreamProvider;
 import net.thevpc.nuts.io.NReaderProvider;
 
@@ -11,7 +10,7 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
@@ -30,7 +29,7 @@ public class DefaultNLiteral implements NLiteral {
         return new DefaultNLiteral(any);
     }
 
-    public static final String[] DATE_FORMATS = {
+    public static final String[] DATE_TIME_FORMATS = {
             "yyyy-MM-dd HH:mm:ss.SSS",
             "yyyy-MM-dd HH:mm:ss",
             "yyyy-MM-dd'T'HH:mm:ss.SSSX",
@@ -38,11 +37,23 @@ public class DefaultNLiteral implements NLiteral {
             "yyyy/MM/dd HH:mm:ss"
     };
 
+    public static final String[] TIME_FORMATS = {
+            "HH:mm:ss.SSSX",
+            "HH:mm:ss.SSS",
+            "HH:mm:ss",
+            "HH:mm"
+    };
+
+    public static final String[] DATE_FORMATS = {
+            "yyyy-MM-dd",
+            "yyyy/MM/dd",
+    };
+
     private Object value;
     private NElementType type;
 
     public static NOptional<Instant> parseInstant(String text) {
-        for (String f : DATE_FORMATS) {
+        for (String f : DATE_TIME_FORMATS) {
             try {
                 return NOptional.of(new SimpleDateFormat(f).parse(text).toInstant());
             } catch (Exception ex) {
@@ -85,11 +96,11 @@ public class DefaultNLiteral implements NLiteral {
                 case "java.time.Instant":
                     return NElementType.INSTANT;
                 case "java.time.LocalDateTime":
-                    return NElementType.DATETIME;
+                    return NElementType.LOCAL_DATETIME;
                 case "java.time.LocalDate":
-                    return NElementType.DATE;
+                    return NElementType.LOCAL_DATE;
                 case "java.time.LocalTime":
-                    return NElementType.TIME;
+                    return NElementType.LOCAL_TIME;
                 case "java.lang.Boolean":
                     return NElementType.BOOLEAN;
                 case "net.thevpc.nuts.elem.NDComplex":
@@ -132,6 +143,168 @@ public class DefaultNLiteral implements NLiteral {
     }
 
     @Override
+    public NOptional<LocalDateTime> asLocalDateTime() {
+        if (value == null) {
+            return NOptional.ofEmpty(() -> NMsg.ofPlain("empty instant"));
+        }
+        if (value instanceof Boolean) {
+            return NOptional.ofEmpty(() -> NMsg.ofPlain("cannot convert boolean to Instant"));
+        }
+        if (value instanceof Date) {
+            return NOptional.of(((Date) value).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+        }
+        if (value instanceof Instant) {
+            return NOptional.of(((Instant) value).atZone(ZoneId.systemDefault()).toLocalDateTime());
+        }
+        String s = String.valueOf(value);
+        if (s.trim().isEmpty()) {
+            return NOptional.ofEmpty(() -> NMsg.ofPlain("empty instant"));
+        }
+        try {
+            return NOptional.of(DateTimeFormatter.ISO_INSTANT.parse(s, Instant::from).atZone(ZoneId.systemDefault()).toLocalDateTime());
+        } catch (Exception ex) {
+            //
+        }
+        for (String f : DATE_TIME_FORMATS) {
+            try {
+                return NOptional.of(new SimpleDateFormat(f).parse(s).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+            } catch (Exception ex) {
+                //
+            }
+        }
+        if (isLong()) {
+            try {
+                try {
+                    return NOptional.of(Instant.ofEpochMilli(((Number) value).longValue()).atZone(ZoneId.systemDefault()).toLocalDateTime());
+                } catch (Exception any) {
+                    //
+                }
+            } catch (Exception ex) {
+                //
+            }
+        }
+        if (isNumber()) {
+            return NOptional.ofEmpty(() -> NMsg.ofPlain("cannot convert number to Instant"));
+        }
+        return NOptional.ofEmpty(() -> NMsg.ofPlain("cannot convert to Instant"));
+    }
+
+    @Override
+    public NOptional<LocalDate> asLocalDate() {
+        if (value == null) {
+            return NOptional.ofEmpty(() -> NMsg.ofPlain("empty instant"));
+        }
+        if (value instanceof Boolean) {
+            return NOptional.ofEmpty(() -> NMsg.ofPlain("cannot convert boolean to Instant"));
+        }
+        if (value instanceof Date) {
+            return NOptional.of(((Date) value).toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        }
+        if (value instanceof Instant) {
+            return NOptional.of(((Instant) value).atZone(ZoneId.systemDefault()).toLocalDate());
+        }
+        String s = String.valueOf(value);
+        if (s.trim().isEmpty()) {
+            return NOptional.ofEmpty(() -> NMsg.ofPlain("empty instant"));
+        }
+        try {
+            return NOptional.of(DateTimeFormatter.ISO_INSTANT.parse(s, Instant::from).atZone(ZoneId.systemDefault()).toLocalDate());
+        } catch (Exception ex) {
+            //
+        }
+        for (String f : DATE_TIME_FORMATS) {
+            try {
+                return NOptional.of(new SimpleDateFormat(f).parse(s).toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+            } catch (Exception ex) {
+                //
+            }
+        }
+        for (String f : DATE_FORMATS) {
+            try {
+                return NOptional.of(new SimpleDateFormat(f).parse(s).toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+            } catch (Exception ex) {
+                //
+            }
+        }
+        if (isLong()) {
+            try {
+                try {
+                    return NOptional.of(Instant.ofEpochMilli(((Number) value).longValue()).atZone(ZoneId.systemDefault()).toLocalDate());
+                } catch (Exception any) {
+                    //
+                }
+            } catch (Exception ex) {
+                //
+            }
+        }
+        if (isNumber()) {
+            return NOptional.ofEmpty(() -> NMsg.ofPlain("cannot convert number to Instant"));
+        }
+        return NOptional.ofEmpty(() -> NMsg.ofPlain("cannot convert to Instant"));
+    }
+
+    @Override
+    public NOptional<LocalTime> asLocalTime() {
+        if (value == null) {
+            return NOptional.ofEmpty(() -> NMsg.ofPlain("empty instant"));
+        }
+        if (value instanceof Boolean) {
+            return NOptional.ofEmpty(() -> NMsg.ofPlain("cannot convert boolean to Instant"));
+        }
+        if (value instanceof Date) {
+            return NOptional.of(((Date) value).toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
+        }
+        if (value instanceof Instant) {
+            return NOptional.of(((Instant) value).atZone(ZoneId.systemDefault()).toLocalTime());
+        }
+        String s = String.valueOf(value);
+        if (s.trim().isEmpty()) {
+            return NOptional.ofEmpty(() -> NMsg.ofPlain("empty instant"));
+        }
+        try {
+            return NOptional.of(DateTimeFormatter.ISO_INSTANT.parse(s, Instant::from).atZone(ZoneId.systemDefault()).toLocalTime());
+        } catch (Exception ex) {
+            //
+        }
+        for (String f : TIME_FORMATS) {
+            try {
+                return NOptional.of(new SimpleDateFormat(f).parse(s).toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
+            } catch (Exception ex) {
+                //
+            }
+        }
+        for (String f : DATE_TIME_FORMATS) {
+            try {
+                return NOptional.of(new SimpleDateFormat(f).parse(s).toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
+            } catch (Exception ex) {
+                //
+            }
+        }
+        for (String f : DATE_FORMATS) {
+            try {
+                return NOptional.of(new SimpleDateFormat(f).parse(s).toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
+            } catch (Exception ex) {
+                //
+            }
+        }
+        if (isLong()) {
+            try {
+                try {
+                    return NOptional.of(Instant.ofEpochMilli(((Number) value).longValue()).atZone(ZoneId.systemDefault()).toLocalTime());
+                } catch (Exception any) {
+                    //
+                }
+            } catch (Exception ex) {
+                //
+            }
+        }
+        if (isNumber()) {
+            return NOptional.ofEmpty(() -> NMsg.ofPlain("cannot convert number to Instant"));
+        }
+        return NOptional.ofEmpty(() -> NMsg.ofPlain("cannot convert to Instant"));
+    }
+
+    @Override
     public NOptional<Instant> asInstant() {
         if (value == null) {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty instant"));
@@ -154,7 +327,7 @@ public class DefaultNLiteral implements NLiteral {
         } catch (Exception ex) {
             //
         }
-        for (String f : DATE_FORMATS) {
+        for (String f : DATE_TIME_FORMATS) {
             try {
                 return NOptional.of(new SimpleDateFormat(f).parse(s).toInstant());
             } catch (Exception ex) {
@@ -604,9 +777,9 @@ public class DefaultNLiteral implements NLiteral {
             case DOUBLE:
                 return String.valueOf(asNumber().get());
             case INSTANT:
-            case TIME:
-            case DATE:
-            case DATETIME:
+            case LOCAL_TIME:
+            case LOCAL_DATE:
+            case LOCAL_DATETIME:
                 return NStringUtils.formatStringLiteral(asInstant().get().toString(), NQuoteType.DOUBLE);
         }
         return asString().get();
@@ -1051,6 +1224,39 @@ public class DefaultNLiteral implements NLiteral {
                 return null;
         }
         return null;
+    }
+
+    @Override
+    public boolean isStream() {
+        return value instanceof NInputStreamProvider || value instanceof NReaderProvider;
+    }
+
+    @Override
+    public boolean isComplexNumber() {
+        return
+                value instanceof NDComplex
+                        || value instanceof NFComplex
+                        || value instanceof NBComplex
+                ;
+    }
+
+    @Override
+    public boolean isTemporal() {
+        return
+                value instanceof Instant
+                        || value instanceof LocalTime
+                        || value instanceof LocalDate
+                        || value instanceof LocalDateTime
+                ;
+    }
+
+    @Override
+    public boolean isLocalTemporal() {
+        return
+                value instanceof LocalTime
+                        || value instanceof LocalDate
+                        || value instanceof LocalDateTime
+                ;
     }
 }
 

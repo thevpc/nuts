@@ -10,10 +10,8 @@ import java.util.List;
 
 public class DefaultNAskFormat<T> implements NAskFormat<T> {
 
-    private NSession session;
 
-    public DefaultNAskFormat(NSession session) {
-        this.session = session;
+    public DefaultNAskFormat() {
     }
 
     @Override

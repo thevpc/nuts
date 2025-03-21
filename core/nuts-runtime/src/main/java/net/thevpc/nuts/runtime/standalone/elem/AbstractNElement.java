@@ -33,6 +33,9 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -45,10 +48,17 @@ public abstract class AbstractNElement implements NElement {
 
     private NElementType type;
     private NElementAnnotation[] annotations;
+    private NElementComments comments;
 
-    public AbstractNElement(NElementType type, NElementAnnotation[] annotations) {
+    public AbstractNElement(NElementType type, NElementAnnotation[] annotations, NElementComments comments) {
         this.type = type;
         this.annotations = annotations;
+        this.comments = comments == null ? new NElementCommentsImpl() : comments;
+    }
+
+
+    public NElementComments comments() {
+        return comments;
     }
 
     @Override
@@ -120,26 +130,22 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public boolean isPrimitive() {
-        NElementType t = type();
-        return t != NElementType.ARRAY
-                && t != NElementType.OBJECT
-                && t != NElementType.CUSTOM
-                ;
+        return type().isPrimitive();
+    }
+
+    @Override
+    public boolean isAnyString() {
+        return type().isAnyString();
+    }
+
+    @Override
+    public boolean isStream() {
+        return type().isStream();
     }
 
     @Override
     public boolean isNumber() {
-        NElementType t = type();
-        switch (t) {
-            case BYTE:
-            case SHORT:
-            case INTEGER:
-            case LONG:
-            case FLOAT:
-            case DOUBLE:
-                return true;
-        }
-        return false;
+        return type().isNumber();
     }
 
 //    @Override
@@ -198,25 +204,37 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public boolean isDecimalNumber() {
-        switch (type()) {
-            case FLOAT:
-            case DOUBLE:
-            case BIG_DECIMAL: {
-                return true;
-            }
-        }
-        return false;
+        return type().isDecimalNumber();
     }
 
     @Override
     public boolean isBigNumber() {
-        switch (type()) {
-            case BIG_DECIMAL:
-            case BIG_INTEGER: {
-                return true;
-            }
-        }
-        return false;
+        return type().isBigNumber();
+    }
+
+    @Override
+    public boolean isComplexNumber() {
+        return type().isComplexNumber();
+    }
+
+    @Override
+    public boolean isTemporal() {
+        return type().isTemporal();
+    }
+
+    @Override
+    public boolean isLocalTemporal() {
+        return type().isLocalTemporal();
+    }
+
+    @Override
+    public boolean isNamed() {
+        return type().isNamed();
+    }
+
+    @Override
+    public boolean isParametrized() {
+        return type().isParametrized();
     }
 
     @Override
@@ -303,6 +321,21 @@ public abstract class AbstractNElement implements NElement {
     @Override
     public NOptional<Instant> asInstant() {
         return asPrimitive().flatMap(NLiteral::asInstant);
+    }
+
+    @Override
+    public NOptional<LocalDate> asLocalDate() {
+        return asPrimitive().flatMap(NLiteral::asLocalDate);
+    }
+
+    @Override
+    public NOptional<LocalDateTime> asLocalDateTime() {
+        return asPrimitive().flatMap(NLiteral::asLocalDateTime);
+    }
+
+    @Override
+    public NOptional<LocalTime> asLocalTime() {
+        return asPrimitive().flatMap(NLiteral::asLocalTime);
     }
 
     @Override

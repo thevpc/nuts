@@ -6,6 +6,9 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public interface NLiteral extends NBlankable {
 
@@ -16,6 +19,12 @@ public interface NLiteral extends NBlankable {
     Object getRaw();
 
     NOptional<Instant> asInstant();
+
+    NOptional<LocalDate> asLocalDate();
+
+    NOptional<LocalDateTime> asLocalDateTime();
+
+    NOptional<LocalTime> asLocalTime();
 
     NOptional<Number> asNumber();
 
@@ -41,11 +50,19 @@ public interface NLiteral extends NBlankable {
 
     NOptional<BigDecimal> asBigDecimal();
 
+    boolean isStream();
+
     boolean isBoolean();
 
     boolean isDecimalNumber();
 
     boolean isBigNumber();
+
+    boolean isComplexNumber();
+
+    boolean isTemporal();
+
+    boolean isLocalTemporal();
 
     boolean isBigDecimal();
 

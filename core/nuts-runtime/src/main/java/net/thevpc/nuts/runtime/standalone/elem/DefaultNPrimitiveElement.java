@@ -25,18 +25,18 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @author thevpc
@@ -44,8 +44,8 @@ import java.util.stream.Collectors;
 class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveElement {
     private final NLiteral value;
 
-    DefaultNPrimitiveElement(NElementType type, Object value, NElementAnnotation[] annotations) {
-        super(type, annotations);
+    DefaultNPrimitiveElement(NElementType type, Object value, NElementAnnotation[] annotations,NElementComments comments) {
+        super(type, annotations, comments);
         this.value = NLiteral.of(value);
     }
 
@@ -91,6 +91,21 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
     @Override
     public NOptional<Float> asFloat() {
         return value.asFloat();
+    }
+
+    @Override
+    public NOptional<LocalDate> asLocalDate() {
+        return value.asLocalDate();
+    }
+
+    @Override
+    public NOptional<LocalTime> asLocalTime() {
+        return value.asLocalTime();
+    }
+
+    @Override
+    public NOptional<LocalDateTime> asLocalDateTime() {
+        return value.asLocalDateTime();
     }
 
     @Override
@@ -215,13 +230,48 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(annotations().stream().map(x -> x.toString()).collect(Collectors.joining(" ")));
-        if(sb.length()>0)
-        {
-            sb.append(" ");
+        return toString(true);
+    }
+
+    @Override
+    public String toString(boolean compact) {
+        NStringBuilder sb = new NStringBuilder();
+        sb.append(TsonElementToStringHelper.leadingCommentsAndAnnotations(this, compact));
+        switch (type()) {
+            case NULL:
+                sb.append("null");
+                break;
+            case CHAR:
+            case STRING:
+                sb.append(NStringUtils.formatStringLiteral(String.valueOf(value), NQuoteType.DOUBLE));
+                break;
+            case NAME:
+                sb.append(String.valueOf(value));
+                break;
+            case BOOLEAN:
+                sb.append(String.valueOf(value));
+                break;
+            case BYTE:
+            case LONG:
+            case BIG_DECIMAL:
+            case BIG_INTEGER:
+            case SHORT:
+            case INTEGER:
+            case FLOAT:
+            case DOUBLE:
+                sb.append(String.valueOf(asNumber().get()));
+                break;
+            case INSTANT:
+            case LOCAL_TIME:
+            case LOCAL_DATE:
+            case LOCAL_DATETIME:
+                sb.append(NStringUtils.formatStringLiteral(asInstant().get().toString(), NQuoteType.DOUBLE));
+                break;
+            default: {
+                sb.append(String.valueOf(value));
+            }
         }
-        sb.append(NLiteral.of(value).toString());
+        sb.append(TsonElementToStringHelper.trailingComments(this, compact));
         return sb.toString();
     }
 

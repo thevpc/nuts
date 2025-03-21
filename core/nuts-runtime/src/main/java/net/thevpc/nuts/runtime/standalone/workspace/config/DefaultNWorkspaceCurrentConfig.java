@@ -86,7 +86,7 @@ public final class DefaultNWorkspaceCurrentConfig {
     }
 
 
-    public DefaultNWorkspaceCurrentConfig mergeRuntime(NWorkspaceOptions c, NSession session) {
+    public DefaultNWorkspaceCurrentConfig mergeRuntime(NWorkspaceOptions c) {
         if (c.getRuntimeId().isPresent()) {
             this.bootRuntime = c.getRuntimeId().get();
         }

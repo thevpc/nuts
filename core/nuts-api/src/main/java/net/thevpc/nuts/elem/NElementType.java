@@ -101,9 +101,9 @@ public enum NElementType implements NEnum {
      */
     CUSTOM,
     PAIR,
-    DATETIME,
-    DATE,
-    TIME,
+    LOCAL_DATETIME,
+    LOCAL_DATE,
+    LOCAL_TIME,
     BINARY_STREAM,
     CHAR_STREAM,
     DOUBLE_COMPLEX,
@@ -171,9 +171,9 @@ public enum NElementType implements NEnum {
             case BOOLEAN:
             case NAME:
             case ALIAS:
-            case DATETIME:
-            case DATE:
-            case TIME:
+            case LOCAL_DATETIME:
+            case LOCAL_DATE:
+            case LOCAL_TIME:
             case REGEX:
             case MATRIX:
             case PAIR:
@@ -226,18 +226,18 @@ public enum NElementType implements NEnum {
             case BIG_COMPLEX:
             case BIG_DECIMAL:
             case NULL:
-            case BINARY_STREAM:
-            case CHAR_STREAM:
             case STRING:
             case CHAR:
             case BOOLEAN:
             case NAME:
             case ALIAS:
-            case DATETIME:
-            case DATE:
-            case TIME:
+            case LOCAL_DATETIME:
+            case LOCAL_DATE:
+            case LOCAL_TIME:
             case REGEX:
                 return true;
+            case BINARY_STREAM:
+            case CHAR_STREAM:
             case MATRIX:
             case PAIR:
             case OP:
@@ -260,4 +260,110 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    public boolean isStream() {
+        switch (this) {
+            case BINARY_STREAM:
+            case CHAR_STREAM:
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isAnyString() {
+        switch (this) {
+            case STRING:
+            case NAME:
+            case REGEX:
+            case CHAR:
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isDecimalNumber() {
+        switch (this) {
+            case FLOAT:
+            case DOUBLE:
+            case BIG_DECIMAL: {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isBigNumber() {
+        switch (this) {
+            case BIG_DECIMAL:
+            case BIG_INTEGER:
+            case BIG_COMPLEX: {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isNamed() {
+        switch (this) {
+            case NAMED_ARRAY:
+            case NAMED_PARAMETRIZED_ARRAY:
+            case NAMED_OBJECT:
+            case NAMED_PARAMETRIZED_OBJECT:
+            case NAMED_UPLET:
+            case NAMED_MATRIX:
+            case NAMED_PARAMETRIZED_MATRIX: {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isParametrized() {
+        switch (this) {
+            case PARAMETRIZED_ARRAY:
+            case NAMED_PARAMETRIZED_ARRAY:
+            case PARAMETRIZED_OBJECT:
+            case NAMED_PARAMETRIZED_OBJECT:
+            case PARAMETRIZED_MATRIX:
+            case NAMED_PARAMETRIZED_MATRIX:
+            case UPLET:
+            case NAMED_UPLET: {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isLocalTemporal() {
+        switch (this) {
+            case LOCAL_DATE:
+            case LOCAL_DATETIME:
+            case LOCAL_TIME: {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isTemporal() {
+        switch (this) {
+            case INSTANT:
+            case LOCAL_DATE:
+            case LOCAL_DATETIME:
+            case LOCAL_TIME: {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isComplexNumber() {
+        switch (this) {
+            case BIG_COMPLEX:
+            case DOUBLE_COMPLEX:
+            case FLOAT_COMPLEX: {
+                return true;
+            }
+        }
+        return false;
+    }
 }

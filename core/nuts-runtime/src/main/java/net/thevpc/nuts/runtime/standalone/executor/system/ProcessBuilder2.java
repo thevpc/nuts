@@ -79,7 +79,7 @@ public class ProcessBuilder2 {
         this.workspace = workspace;
     }
 
-    private static String formatArg(String s, NSession session) {
+    private static String formatArg(String s) {
         DefaultNArg a = new DefaultNArg(s);
         StringBuilder sb = new StringBuilder();
         NTexts factory = NTexts.of();

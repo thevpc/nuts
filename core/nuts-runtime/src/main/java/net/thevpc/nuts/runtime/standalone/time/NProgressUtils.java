@@ -9,15 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NProgressUtils {
-//    public static java.io.InputStream ofMonitored(URL from, NProgressListener monitor, NSession session) {
-//        return ofMonitored(
-//                NPath.of(from).getInputStream(),
-//                from, NTexts.of().ofStyled(
-//                        NPath.of(from).getName()
-//                        , NTextStyle.path()),
-//                NPath.of(from).getContentLength(), monitor, session);
-//    }
-
 
     public static NProgressFactory createLogProgressMonitorFactory(MonitorType mt) {
         NWorkspace workspace = NWorkspace.get().get();

@@ -25,7 +25,6 @@
 package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.NException;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.format.NVisitResult;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.io.urlpart.URLPart;
@@ -128,7 +127,7 @@ public final class CoreServiceUtils {
         return found;
     }
 
-    public static List<String> loadServiceClassNames(URL u, Class<?> service, NSession session) {
+    public static List<String> loadServiceClassNames(URL u, Class<?> service) {
 
         try (InputStreamReader ir = new InputStreamReader(CoreIOUtils.openStream(u).get(), StandardCharsets.UTF_8)) {
             return CoreIOUtils.confLines(ir).map(String::trim).collect(Collectors.toList());
@@ -137,7 +136,7 @@ public final class CoreServiceUtils {
         }
     }
 
-    public static List<Class> loadServiceClasses(Class service, ClassLoader classLoader, NSession session) {
+    public static List<Class> loadServiceClasses(Class service, ClassLoader classLoader) {
         String fullName = "META-INF/services/" + service.getName();
         Enumeration<URL> configs;
         LinkedHashSet<String> names = new LinkedHashSet<>();
@@ -151,7 +150,7 @@ public final class CoreServiceUtils {
             throw new NIOException(ex);
         }
         while (configs.hasMoreElements()) {
-            names.addAll(loadServiceClassNames(configs.nextElement(), service, session));
+            names.addAll(loadServiceClassNames(configs.nextElement(), service));
         }
         List<Class> classes = new ArrayList<>();
         for (String n : names) {

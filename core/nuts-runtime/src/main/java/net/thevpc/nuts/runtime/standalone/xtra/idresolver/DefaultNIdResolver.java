@@ -22,10 +22,7 @@
 //
 //public class DefaultNIdResolver implements NIdResolver {
 //
-//    private NSession session;
-//
-//    public DefaultNIdResolver(NSession session) {
-//        this.session = session;
+//    public DefaultNIdResolver() {
 //    }
 //
 //    @Override

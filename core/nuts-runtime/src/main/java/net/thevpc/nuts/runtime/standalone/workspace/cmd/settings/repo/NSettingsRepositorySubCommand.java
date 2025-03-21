@@ -35,10 +35,10 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
         super(workspace);
     }
 
-    public static RepoInfo repoInfo(NRepository x, boolean tree, NSession session) {
+    public static RepoInfo repoInfo(NRepository x, boolean tree) {
         return new RepoInfo(x.getName(), x.config().getType(), x.config().getLocationPath(),
                 x.config().isEnabled() ? RepoStatus.enabled : RepoStatus.disabled,
-                (tree ? x.config().getMirrors().stream().map(e -> repoInfo(e, tree, session)).toArray(RepoInfo[]::new) : null),
+                (tree ? x.config().getMirrors().stream().map(e -> repoInfo(e, tree)).toArray(RepoInfo[]::new) : null),
                 x.config().isTemporary(),
                 x.config().isPreview(),
                 x.config().getTags().toArray(new String[0])
@@ -196,7 +196,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
         if (cmdLine.isExecMode()) {
             List<NRepository> r = parent.isNull() ? workspace.getRepositories() : workspace.findRepository(parent.get())
                     .get().config().getMirrors();
-            out.println(r.stream().map(x -> repoInfo(x, session.getOutputFormat().orDefault() != NContentType.TABLE && session.getOutputFormat().orDefault() != NContentType.PLAIN, session)).toArray());
+            out.println(r.stream().map(x -> repoInfo(x, session.getOutputFormat().orDefault() != NContentType.TABLE && session.getOutputFormat().orDefault() != NContentType.PLAIN)).toArray());
         }
     }
 

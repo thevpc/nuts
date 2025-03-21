@@ -11,14 +11,14 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
@@ -29,7 +29,9 @@ import net.thevpc.nuts.util.NOptional;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
-import java.util.Collection;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 /**
@@ -69,6 +71,12 @@ public interface NNavigatableElement extends NElement {
 
     NOptional<Instant> getInstantByPath(String... keys);
 
+    NOptional<LocalTime> getLocalDateByPath(String... keys);
+
+    NOptional<LocalDate> getLocalTimeByPath(String... keys);
+
+    NOptional<LocalDateTime> getLocalDateTimeByPath(String... keys);
+
     NOptional<BigInteger> getBigIntByPath(String... keys);
 
     NOptional<BigDecimal> getBigDecimalByPath(String... keys);
@@ -76,11 +84,15 @@ public interface NNavigatableElement extends NElement {
     NOptional<Number> getNumberByPath(String... keys);
 
     NOptional<NElement> getByPath(String... keys);
+
     NOptional<NArrayElement> getArrayByPath(String... keys);
+
     NOptional<NObjectElement> getObjectByPath(String... keys);
+
     NOptional<NNavigatableElement> getNavigatableByPath(String... keys);
 
     NOptional<NElement> get(NElement key);
+
     List<NElement> getAll(NElement s);
 
     NOptional<NArrayElement> getArray(String key);
@@ -125,7 +137,19 @@ public interface NNavigatableElement extends NElement {
 
     NOptional<Instant> getInstant(String key);
 
+    NOptional<LocalDate> getLocalDate(String key);
+
+    NOptional<LocalDateTime> getLocalDateTime(String key);
+
+    NOptional<LocalTime> getLocalTime(String key);
+
     NOptional<Instant> getInstant(NElement key);
+
+    NOptional<LocalDate> getLocalDate(NElement key);
+
+    NOptional<LocalDateTime> getLocalDateTime(NElement key);
+
+    NOptional<LocalTime> getLocalTime(NElement key);
 
     NOptional<Float> getFloat(String key);
 

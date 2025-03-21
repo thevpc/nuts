@@ -27,6 +27,9 @@ package net.thevpc.nuts.elem;
 import net.thevpc.nuts.util.NOptional;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
@@ -39,7 +42,7 @@ import java.util.stream.Stream;
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NMatrixElement  {
+public interface NMatrixElement {
 
     /**
      * array items
@@ -47,6 +50,7 @@ public interface NMatrixElement  {
      * @return array items
      */
     List<NArrayElement> rows();
+
     List<NArrayElement> columns();
 
 
@@ -56,25 +60,31 @@ public interface NMatrixElement  {
      * @param index index
      * @return element at index
      */
-    NOptional<NElement> get(int column,int row);
+    NOptional<NElement> get(int column, int row);
 
-    NOptional<String> getString(int column,int row);
+    NOptional<String> getString(int column, int row);
 
-    NOptional<Boolean> getBoolean(int column,int row);
+    NOptional<Boolean> getBoolean(int column, int row);
 
-    NOptional<Byte> getByte(int column,int row);
+    NOptional<Byte> getByte(int column, int row);
 
-    NOptional<Short> getShort(int column,int row);
+    NOptional<Short> getShort(int column, int row);
 
-    NOptional<Integer> getInt(int column,int row);
+    NOptional<Integer> getInt(int column, int row);
 
-    NOptional<Long> getLong(int column,int row);
+    NOptional<Long> getLong(int column, int row);
 
-    NOptional<Float> getFloat(int column,int row);
+    NOptional<Float> getFloat(int column, int row);
 
-    NOptional<Double> getDouble(int column,int row);
+    NOptional<Double> getDouble(int column, int row);
 
-    NOptional<Instant> getInstant(int column,int row);
+    NOptional<Instant> getInstant(int column, int row);
+
+    NOptional<LocalDate> getLocalDate(int column, int row);
+
+    NOptional<LocalDateTime> getLocalDateTime(int column, int row);
+
+    NOptional<LocalTime> getLocalTime(int column, int row);
 
     NOptional<NArrayElement> getArray(int index);
 

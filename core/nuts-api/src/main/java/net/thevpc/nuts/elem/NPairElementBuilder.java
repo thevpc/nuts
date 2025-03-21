@@ -13,7 +13,7 @@ public interface NPairElementBuilder extends NElementBuilder {
 
     NPairElementBuilder clearAnnotations();
 
-    List<NElementAnnotation> getAnnotations();
+    List<NElementAnnotation> annotations();
 
     NPairElement build();
 
@@ -26,5 +26,17 @@ public interface NPairElementBuilder extends NElementBuilder {
     NPairElementBuilder setValue(NElement value);
 
     NPairElementBuilder copyFrom(NPairElement other);
+
+    NPairElementBuilder addLeadingComment(NElementCommentType type, String text);
+    NPairElementBuilder addTrailingComment(NElementCommentType type, String text);
+    NPairElementBuilder addLeadingComment(NElementComment comment);
+    NPairElementBuilder addLeadingComments(NElementComment... comments);
+    NPairElementBuilder addTrailingComment(NElementComment comment);
+    NPairElementBuilder addTrailingComments(NElementComment... comments);
+    NPairElementBuilder removeLeadingComment(NElementComment comment);
+    NPairElementBuilder removeTrailingComment(NElementComment comment);
+    NPairElementBuilder removeLeadingCommentAt(int index);
+    NPairElementBuilder removeTrailingCommentAt(int index);
+    NPairElementBuilder addComments(NElementComments comments);
 
 }

@@ -569,7 +569,7 @@ public class CoreNUtils {
                 .distinct().collect(Collectors.toList());
     }
 
-    public static List<NId> resolveNutsApiIdsFromIdList(List<NId> deps, NSession session) {
+    public static List<NId> resolveNutsApiIdsFromIdList(List<NId> deps) {
         return deps.stream()
                 .filter(x -> NId.getApi("").get().equalsShortId(x))
                 .distinct().collect(Collectors.toList());

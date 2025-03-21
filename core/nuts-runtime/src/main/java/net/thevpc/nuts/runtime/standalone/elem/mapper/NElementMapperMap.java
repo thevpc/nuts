@@ -43,10 +43,10 @@ public class NElementMapperMap implements NElementMapper<Map> {
                 Map.Entry e = (Map.Entry) e0;
                 NElement k = context.objectToElement(e.getKey(), null);
                 NElement v = context.objectToElement(e.getValue(), null);
-                m.add(new DefaultNPairElement(k, v, new NElementAnnotation[0]));
+                m.add(new DefaultNPairElement(k, v, new NElementAnnotation[0],null));
             }
         }
-        return new DefaultNObjectElement(null, null, m, new NElementAnnotation[0]);
+        return new DefaultNObjectElement(null, null, m, new NElementAnnotation[0],null);
     }
 
     public Map fillObject(NElement o, Map all, Type elemType1, Type elemType2, Type to, NElementFactoryContext context) {

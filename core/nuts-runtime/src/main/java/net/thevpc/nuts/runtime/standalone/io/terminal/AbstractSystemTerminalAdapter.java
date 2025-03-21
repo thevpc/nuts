@@ -145,7 +145,7 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
             if (getBase() instanceof NSystemTerminal) {
                 ((NSystemTerminal) getBase()).printProgress(progress, message);
             } else {
-                getProgressBar(session).printProgress(
+                getProgressBar().printProgress(
                         Float.isNaN(progress) ? -1
                                 : (int) (progress * 100),
                         NText.of(message),
@@ -155,7 +155,7 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
         }
         return this;
     }
-    private CProgressBar getProgressBar(NSession session) {
+    private CProgressBar getProgressBar() {
         if (progressBar == null) {
             progressBar = CProgressBar.of();
         }

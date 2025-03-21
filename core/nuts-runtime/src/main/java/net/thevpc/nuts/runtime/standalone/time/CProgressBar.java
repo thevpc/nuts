@@ -33,7 +33,6 @@ public class CProgressBar {
     private int indeterminateSize = 10;
     private int maxMessage = 0;
     private float indeterminateRatio = 0.3f;
-    private NSession session;
     private NLog logger;
     private int columns = 3;
     private int maxColumns = 133;
@@ -44,7 +43,6 @@ public class CProgressBar {
     private IndeterminatePosition indeterminatePosition = DEFAULT_INDETERMINATE_POSITION;
     private ProgressOptions options;
     private Formatter formatter;
-    private NWorkspace ws;
     private static Map<String, Supplier<Formatter>> formatters = new HashMap();
 
     static {
@@ -262,10 +260,8 @@ public class CProgressBar {
     }
 
     public CProgressBar(int determinateSize) {
-        this.session = NSession.get().get();
         this.logger = NLog.of(CProgressBar.class);
         this.options = ProgressOptions.of();
-        this.ws = session.getWorkspace();
         this.formatter = createFormatter(options.get("type").flatMap(NLiteral::asString).orElse(""));
         if (determinateSize <= 0) {
             determinateSize = options.get("size").flatMap(NLiteral::asInt).orElse(formatter.getDefaultWidth());
@@ -499,11 +495,6 @@ public class CProgressBar {
 
     public CProgressBar setPrefixMoveLineStart(boolean v) {
         this.prefixMoveLineStart = v;
-        return this;
-    }
-
-    public CProgressBar setSession(NSession session) {
-        this.session = NWorkspaceUtils.bindSession(ws, session);
         return this;
     }
 

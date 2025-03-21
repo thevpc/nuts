@@ -315,7 +315,7 @@ public class CorePlatformUtils {
     }
 
 
-    public static boolean checkAcceptCondition(NEnvCondition condition, boolean currentVM, NSession session) {
+    public static boolean checkAcceptCondition(NEnvCondition condition, boolean currentVM) {
         if (!CoreFilterUtils.acceptCondition(condition, currentVM)) {
             throw new NIllegalArgumentException(NMsg.ofC("environment %s is rejected by %s", currentVM, condition));
         }

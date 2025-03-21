@@ -13,12 +13,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class DefaultNDigestName implements NDigestName {
-    private NSession session;
     private Object source;
     private String sourceType;
 
-    public DefaultNDigestName(NSession session) {
-        this.session = session;
+    public DefaultNDigestName() {
     }
 
     public String getWorkspaceHashName(String path) {
