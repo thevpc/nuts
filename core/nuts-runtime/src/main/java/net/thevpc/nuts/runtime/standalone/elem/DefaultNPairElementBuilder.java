@@ -2,8 +2,6 @@ package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.elem.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class DefaultNPairElementBuilder  extends AbstractNElementBuilder implements NPairElementBuilder {
@@ -21,20 +19,32 @@ public class DefaultNPairElementBuilder  extends AbstractNElementBuilder impleme
     }
 
 
-    public NPairElementBuilder setValue(NElement value) {
+    public NPairElementBuilder value(NElement value) {
         this.value = value == null ? NElements.of().ofNull() : value;
         return this;
     }
 
-    public NPairElementBuilder copyFrom(NPairElement other) {
-        if (other != null) {
-            setKey(other.key());
-            setValue(other.value());
+    public NPairElementBuilder copyFrom(NPairElement element) {
+        if (element != null) {
+            addAnnotations(element.annotations());
+            addComments(element.comments());
+            key(element.key());
+            value(element.value());
         }
         return this;
     }
 
-    public NPairElementBuilder setKey(NElement key) {
+    public NPairElementBuilder copyFrom(NPairElementBuilder element) {
+        if (element != null) {
+            addAnnotations(element.annotations());
+            addComments(element.comments());
+            key(element.key());
+            value(element.value());
+        }
+        return this;
+    }
+
+    public NPairElementBuilder key(NElement key) {
         this.key = key == null ? NElements.of().ofNull() : key;
         return this;
     }
@@ -51,12 +61,12 @@ public class DefaultNPairElementBuilder  extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NElement getValue() {
+    public NElement value() {
         return value;
     }
 
     @Override
-    public NElement getKey() {
+    public NElement key() {
         return key;
     }
 

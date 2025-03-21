@@ -14,12 +14,12 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class DefaultNPrimitiveElementBuilder  extends AbstractNElementBuilder implements NPrimitiveElementBuilder, NLiteral {
+public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder implements NPrimitiveElementBuilder, NLiteral {
     private Object value;
+    private NNumberLayout numberLayout;
+    private String numberSuffix;
 
     private NElementType type;
 
@@ -28,11 +28,25 @@ public class DefaultNPrimitiveElementBuilder  extends AbstractNElementBuilder im
     }
 
 
-    public Object get() {
-        return value;
+    public NNumberLayout numberLayout() {
+        return numberLayout;
     }
 
-    public NPrimitiveElementBuilder setValue(Object value) {
+    public NPrimitiveElementBuilder numberLayout(NNumberLayout numberLayout) {
+        this.numberLayout = numberLayout;
+        return this;
+    }
+
+    public String numberSuffix() {
+        return numberSuffix;
+    }
+
+    public NPrimitiveElementBuilder numberSuffix(String numberSuffix) {
+        this.numberSuffix = numberSuffix;
+        return this;
+    }
+
+    public NPrimitiveElementBuilder value(Object value) {
         if (value == null) {
             this.value = null;
             this.type = NElementType.NULL;
@@ -107,7 +121,18 @@ public class DefaultNPrimitiveElementBuilder  extends AbstractNElementBuilder im
                     break;
                 }
                 default: {
-                    throw new NIllegalArgumentException(NMsg.ofC("Unsupported type: %s", value.getClass().getName()));
+                    if (value instanceof NDComplex) {
+                        this.value = value;
+                        this.type = NElementType.DOUBLE_COMPLEX;
+                    } else if (value instanceof NFComplex) {
+                        this.value = value;
+                        this.type = NElementType.FLOAT_COMPLEX;
+                    } else if (value instanceof NBComplex) {
+                        this.value = value;
+                        this.type = NElementType.BIG_COMPLEX;
+                    } else {
+                        throw new NIllegalArgumentException(NMsg.ofC("Unsupported type: %s", value.getClass().getName()));
+                    }
                 }
             }
         }
@@ -127,8 +152,47 @@ public class DefaultNPrimitiveElementBuilder  extends AbstractNElementBuilder im
     }
 
     @Override
+    public NPrimitiveElementBuilder setDoubleComplex(NDComplex value) {
+        if (value == null) {
+            this.value = null;
+            this.type = NElementType.NULL;
+        } else {
+            this.value = value;
+            this.type = NElementType.DOUBLE_COMPLEX;
+        }
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder setFloatComplex(NFComplex value) {
+        if (value == null) {
+            this.value = null;
+            this.type = NElementType.NULL;
+        } else {
+            this.value = value;
+            this.type = NElementType.FLOAT_COMPLEX;
+        }
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder setBigComplex(NBComplex value) {
+        if (value == null) {
+            this.value = null;
+            this.type = NElementType.NULL;
+        } else {
+            this.value = value;
+            this.type = NElementType.BIG_COMPLEX;
+        }
+        return this;
+    }
+
+    @Override
     public NPrimitiveElement build() {
-        return new DefaultNPrimitiveElement(type, value, annotations().toArray(new NElementAnnotation[0]),comments());
+        if (type().isNumber()) {
+            return new DefaultNNumberElement(type, value, numberLayout(), numberSuffix(), annotations().toArray(new NElementAnnotation[0]), comments());
+        }
+        return new DefaultNPrimitiveElement(type, value, annotations().toArray(new NElementAnnotation[0]), comments());
     }
 
     @Override
@@ -142,7 +206,7 @@ public class DefaultNPrimitiveElementBuilder  extends AbstractNElementBuilder im
     }
 
     @Override
-    public Object getValue() {
+    public Object value() {
         return value;
     }
 
@@ -378,6 +442,9 @@ public class DefaultNPrimitiveElementBuilder  extends AbstractNElementBuilder im
             case "java.lang.Number":
                 return true;
         }
+        if (Number.class.isAssignableFrom(type)) {
+            return true;
+        }
         return false;
     }
 
@@ -516,5 +583,33 @@ public class DefaultNPrimitiveElementBuilder  extends AbstractNElementBuilder im
     @Override
     public boolean isLocalTemporal() {
         return type().isLocalTemporal();
+    }
+
+    public NPrimitiveElementBuilder copyFrom(NPrimitiveElement element) {
+        if (element != null) {
+            addAnnotations(element.annotations());
+            addComments(element.comments());
+            value(element.value());
+            if (element instanceof NNumberElement) {
+                NNumberElement ne = (NNumberElement) element;
+                numberLayout(ne.numberLayout());
+                numberSuffix(ne.numberSuffix());
+            }
+        }
+        return this;
+    }
+
+    public NPrimitiveElementBuilder copyFrom(NPrimitiveElementBuilder element) {
+        if (element != null) {
+            addAnnotations(element.annotations());
+            addComments(element.comments());
+            value(element.value());
+            if (element instanceof NNumberElement) {
+                NNumberElement ne = (NNumberElement) element;
+                numberLayout(ne.numberLayout());
+                numberSuffix(ne.numberSuffix());
+            }
+        }
+        return this;
     }
 }

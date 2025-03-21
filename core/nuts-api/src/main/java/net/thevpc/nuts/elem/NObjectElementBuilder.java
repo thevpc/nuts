@@ -127,7 +127,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
      * @param other other instance
      * @return this {@code this} instance
      */
-    NObjectElementBuilder set(NObjectElement other);
+    NObjectElementBuilder copyFrom(NObjectElement other);
 
     /**
      * set all properties from the given {@code other} instance.
@@ -136,17 +136,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
      * @param other other instance
      * @return this {@code this} instance
      */
-    NObjectElementBuilder setAll(NObjectElementBuilder other);
-
-
-    /**
-     * set all properties from the given {@code other} instance.
-     * all properties not found in {@code other} will be retained.
-     *
-     * @param other other instance
-     * @return this {@code this} instance
-     */
-    NObjectElementBuilder add(NObjectElementBuilder other);
+    NObjectElementBuilder copyFrom(NObjectElementBuilder other);
 
     /**
      * add entry key value binding
@@ -192,15 +182,6 @@ public interface NObjectElementBuilder extends NElementBuilder {
     NObjectElementBuilder addAll(NElement... entries);
 
     /**
-     * set all properties from the given {@code other} instance.
-     * all properties not found in {@code other} will be retained.
-     *
-     * @param other other instance
-     * @return this {@code this} instance
-     */
-    NObjectElementBuilder addAll(NObjectElement other);
-
-    /**
      * add all  key value entries binding
      *
      * @param other other entry
@@ -219,25 +200,25 @@ public interface NObjectElementBuilder extends NElementBuilder {
     NObjectElementBuilder clearAnnotations();
 
 
-    NObjectElementBuilder addArgs(List<NElement> args);
+    NObjectElementBuilder addParams(List<NElement> params);
 
-    NObjectElementBuilder addArg(NElement arg);
+    NObjectElementBuilder addParam(NElement param);
 
-    NObjectElementBuilder addArgAt(int index, NElement arg);
+    NObjectElementBuilder addParamAt(int index, NElement param);
 
-    NObjectElementBuilder removeArgAt(int index);
+    NObjectElementBuilder removeParamAt(int index);
 
-    NObjectElementBuilder clearArgs();
+    NObjectElementBuilder clearParams();
 
-    List<NElement> getParams();
+    List<NElement> params();
 
-    String getName();
+    String name();
 
-    NObjectElementBuilder setName(String name);
+    NObjectElementBuilder name(String name);
 
     boolean isParametrized();
 
-    NObjectElementBuilder setParametrized(boolean hasArgs);
+    NObjectElementBuilder setParametrized(boolean parametrized);
 
     NObjectElementBuilder addLeadingComment(NElementCommentType type, String text);
     NObjectElementBuilder addTrailingComment(NElementCommentType type, String text);

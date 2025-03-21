@@ -30,6 +30,14 @@ import java.util.List;
  * @author thevpc
  */
 public interface NPrimitiveElementBuilder extends NElementBuilder {
+    public NNumberLayout numberLayout();
+
+    public NPrimitiveElementBuilder numberLayout(NNumberLayout numberLayout);
+
+    public String numberSuffix();
+
+    public NPrimitiveElementBuilder numberSuffix(String numberSuffix);
+
     NPrimitiveElementBuilder addAnnotations(List<NElementAnnotation> annotations);
 
     NPrimitiveElementBuilder addAnnotation(NElementAnnotation annotation);
@@ -44,25 +52,47 @@ public interface NPrimitiveElementBuilder extends NElementBuilder {
 
     NPrimitiveElement build();
 
-    Object getValue();
+    Object value();
 
-    NPrimitiveElementBuilder setValue(Object value);
+    NPrimitiveElementBuilder copyFrom(NPrimitiveElement element);
+
+    NPrimitiveElementBuilder copyFrom(NPrimitiveElementBuilder element);
+
+
+    NPrimitiveElementBuilder value(Object value);
 
     NPrimitiveElementBuilder setInt(int value);
 
     NPrimitiveElementBuilder setByte(byte value);
 
+    NPrimitiveElementBuilder setDoubleComplex(NDComplex value);
+
+    NPrimitiveElementBuilder setFloatComplex(NFComplex value);
+
+    NPrimitiveElementBuilder setBigComplex(NBComplex value);
+
     NPrimitiveElementBuilder addLeadingComment(NElementCommentType type, String text);
+
     NPrimitiveElementBuilder addTrailingComment(NElementCommentType type, String text);
+
     NPrimitiveElementBuilder addLeadingComment(NElementComment comment);
+
     NPrimitiveElementBuilder addLeadingComments(NElementComment... comments);
+
     NPrimitiveElementBuilder addTrailingComment(NElementComment comment);
+
     NPrimitiveElementBuilder addTrailingComments(NElementComment... comments);
+
     NPrimitiveElementBuilder removeLeadingComment(NElementComment comment);
+
     NPrimitiveElementBuilder removeTrailingComment(NElementComment comment);
+
     NPrimitiveElementBuilder removeLeadingCommentAt(int index);
+
     NPrimitiveElementBuilder removeTrailingCommentAt(int index);
+
     NPrimitiveElementBuilder clearComments();
+
     NPrimitiveElementBuilder addComments(NElementComments comments);
 
 }

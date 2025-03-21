@@ -52,6 +52,65 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable, NLi
 
     String toString(boolean compact);
 
+    boolean isNamed();
+
+    boolean isParametrized();
+
+    boolean isNamedUplet();
+
+    boolean isNamedUplet(String name);
+
+    boolean isNamedObject();
+
+    boolean isAnyNamedObject();
+
+    boolean isAnyNamedObject(String name);
+
+    boolean isParametrizedObject();
+
+    boolean isNamedParametrizedObject();
+
+    boolean isNamedParametrizedMatrix();
+
+    boolean isNamedParametrizedObject(String name);
+
+    boolean isNamedArray();
+
+    boolean isAnyArray();
+
+    boolean isListContainer();
+
+    boolean isAnyObject();
+
+    boolean isAnyMatrix();
+
+    boolean isAnyUplet();
+
+    boolean isAnyNamedArray();
+
+    boolean isAnyNamedArray(String name);
+
+    boolean isParametrizedArray();
+
+    boolean isNamedParametrizedArray();
+
+    boolean isNamedParametrizedArray(String name);
+
+
+    boolean isNamedMatrix();
+
+    boolean isAnyNamedMatrix();
+
+    boolean isAnyNamedMatrix(String name);
+
+    boolean isParametrizedMatrix();
+
+    boolean isAnyParametrizedMatrix();
+
+    boolean isNamed(String name);
+
+    boolean isAnyParametrizedMatrix(String name);
+
     List<NElementAnnotation> annotations();
 
     /**
@@ -82,7 +141,7 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable, NLi
      *
      * @return {@link NObjectElement}
      */
-    NOptional<NNavigatableElement> asNavigatable();
+    NOptional<NListContainerElement> asListContainer();
 
     /**
      * cast this element to {@link NCustomElement} or throw
@@ -164,8 +223,4 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable, NLi
     boolean isPair();
 
     NElementComments comments();
-
-    boolean isNamed();
-
-    boolean isParametrized();
 }

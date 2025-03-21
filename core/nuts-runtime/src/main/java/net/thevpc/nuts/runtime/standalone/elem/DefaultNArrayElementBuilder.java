@@ -45,11 +45,11 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     public DefaultNArrayElementBuilder() {
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
-    public NArrayElementBuilder setName(String name) {
+    public NArrayElementBuilder name(String name) {
         this.name = name;
         return this;
     }
@@ -58,8 +58,8 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
         return params != null;
     }
 
-    public NArrayElementBuilder setParametrized(boolean hasArgs) {
-        if (hasArgs) {
+    public NArrayElementBuilder setParametrized(boolean parametrized) {
+        if (parametrized) {
             if (params == null) {
                 params = new ArrayList<>();
             }
@@ -70,9 +70,9 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NArrayElementBuilder addArgs(List<NElement> args) {
-        if (args != null) {
-            for (NElement a : args) {
+    public NArrayElementBuilder addParams(List<NElement> params) {
+        if (params != null) {
+            for (NElement a : params) {
                 if (a != null) {
                     if (this.params == null) {
                         this.params = new ArrayList<>();
@@ -85,29 +85,29 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NArrayElementBuilder addArg(NElement arg) {
-        if (arg != null) {
+    public NArrayElementBuilder addParam(NElement param) {
+        if (param != null) {
             if (this.params == null) {
                 this.params = new ArrayList<>();
             }
-            this.params.add(arg);
+            this.params.add(param);
         }
         return this;
     }
 
     @Override
-    public NArrayElementBuilder addArgAt(int index, NElement arg) {
-        if (arg != null) {
+    public NArrayElementBuilder addParamAt(int index, NElement param) {
+        if (param != null) {
             if (this.params == null) {
                 this.params = new ArrayList<>();
             }
-            params.add(index, arg);
+            params.add(index, param);
         }
         return this;
     }
 
     @Override
-    public NArrayElementBuilder removeArgAt(int index) {
+    public NArrayElementBuilder removeParamAt(int index) {
         if (this.params != null) {
             params.remove(index);
         }
@@ -115,7 +115,7 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NArrayElementBuilder clearArgs() {
+    public NArrayElementBuilder clearParams() {
         if (this.params != null) {
             params.clear();
         }
@@ -123,7 +123,7 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public List<NElement> getParams() {
+    public List<NElement> params() {
         return Collections.unmodifiableList(params);
     }
 
@@ -141,18 +141,6 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     @Override
     public NElement get(int index) {
         return values.get(index);
-    }
-
-    @Override
-    public NArrayElementBuilder addAll(NArrayElement value) {
-        if (value == null) {
-            add(_elements().ofNull());
-        } else {
-            for (NElement child : value.items()) {
-                add(child);
-            }
-        }
-        return this;
     }
 
     @Override
@@ -221,16 +209,34 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NArrayElementBuilder set(NArrayElementBuilder other) {
-        clear();
-        addAll(other);
+    public NArrayElementBuilder copyFrom(NArrayElementBuilder other) {
+        if (other != null) {
+            addAnnotations(other.annotations());
+            addComments(other.comments());
+            if (other.name() != null) {
+                this.name(other.name());
+            }
+            if (other.params() != null) {
+                this.addParams(other.params());
+            }
+            addAll(other.items());
+        }
         return this;
     }
 
     @Override
-    public NArrayElementBuilder set(NArrayElement other) {
-        clear();
-        addAll(other);
+    public NArrayElementBuilder copyFrom(NArrayElement other) {
+        if (other != null) {
+            addAnnotations(other.annotations());
+            addComments(other.comments());
+            if (other.name() != null) {
+                this.name(other.name());
+            }
+            if (other.params() != null) {
+                this.addParams(other.params());
+            }
+            addAll(other.items());
+        }
         return this;
     }
 

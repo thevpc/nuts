@@ -44,6 +44,9 @@ public interface NCharStreamElementBuilder extends NElementBuilder {
 
     List<NElementAnnotation> annotations();
 
+    NCharStreamElementBuilder copyFrom(NCharStreamElement element);
+
+    NCharStreamElementBuilder copyFrom(NCharStreamElementBuilder element);
 
     NCharStreamElementBuilder addLeadingComment(NElementCommentType type, String text);
 
@@ -69,7 +72,7 @@ public interface NCharStreamElementBuilder extends NElementBuilder {
 
     NCharStreamElementBuilder addComments(NElementComments comments);
 
-    NCharStreamElementBuilder setValue(NReaderProvider value);
+    NCharStreamElementBuilder value(NReaderProvider value);
 
     NReaderProvider value();
 

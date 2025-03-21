@@ -37,7 +37,7 @@ public interface NCustomElement extends NElement {
      * return value
      * @return value
      */
-    Object getValue();
+    Object value();
 
     NCustomElementBuilder builder();
 }

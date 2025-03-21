@@ -59,6 +59,11 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
     }
 
     @Override
+    public Object value() {
+        return value.getRaw();
+    }
+
+    @Override
     public Object getRaw() {
         return value.getRaw();
     }
@@ -301,6 +306,7 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
 
     @Override
     public NPrimitiveElementBuilder builder() {
-        return new DefaultNPrimitiveElementBuilder().addAnnotations(annotations()).setValue(value);
+        return new DefaultNPrimitiveElementBuilder()
+                .copyFrom(this);
     }
 }

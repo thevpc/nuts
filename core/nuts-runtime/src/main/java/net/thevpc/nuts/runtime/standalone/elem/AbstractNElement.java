@@ -52,13 +52,171 @@ public abstract class AbstractNElement implements NElement {
 
     public AbstractNElement(NElementType type, NElementAnnotation[] annotations, NElementComments comments) {
         this.type = type;
-        this.annotations = annotations;
+        this.annotations = annotations == null ? new NElementAnnotation[0] : annotations;
         this.comments = comments == null ? new NElementCommentsImpl() : comments;
     }
 
 
     public NElementComments comments() {
         return comments;
+    }
+
+    @Override
+    public boolean isNamedUplet() {
+        return type() == NElementType.NAMED_UPLET;
+    }
+
+    @Override
+    public boolean isNamedUplet(String name) {
+        return false;
+    }
+
+    @Override
+    public boolean isNamedObject() {
+        return type() == NElementType.NAMED_UPLET;
+    }
+
+    @Override
+    public boolean isAnyNamedObject() {
+        return type().isAnyNamedObject();
+    }
+
+    @Override
+    public boolean isAnyNamedObject(String name) {
+        return isAnyNamedObject() && isNamed(name);
+    }
+
+    @Override
+    public boolean isParametrizedObject() {
+        return type() == NElementType.PARAMETRIZED_OBJECT;
+    }
+
+    @Override
+    public boolean isNamedParametrizedObject() {
+        return type().isAnyParametrizedObject();
+    }
+
+    @Override
+    public boolean isNamedParametrizedObject(String name) {
+        return type() == NElementType.NAMED_PARAMETRIZED_OBJECT && isNamed(name);
+    }
+
+    @Override
+    public boolean isAnyArray() {
+        return type().isAnyArray();
+    }
+
+    @Override
+    public boolean isAnyObject() {
+        return type().isAnyObject();
+    }
+
+    @Override
+    public boolean isListContainer() {
+        return type().isListContainer();
+    }
+
+    @Override
+    public NOptional<NListContainerElement> asListContainer() {
+        if (isListContainer()) {
+            return NOptional.of((NListContainerElement) this);
+        }
+        return NOptional.ofEmpty(NMsg.ofC("%s is not a list container", type().id()));
+    }
+
+    @Override
+    public boolean isAnyMatrix() {
+        return type().isAnyMatrix();
+    }
+
+    @Override
+    public boolean isAnyUplet() {
+        return type().isAnyUplet();
+    }
+
+    @Override
+    public boolean isNamedArray() {
+        return type() == NElementType.NAMED_ARRAY;
+    }
+
+    @Override
+    public boolean isAnyNamedArray() {
+        return type().isAnyNamedArray();
+    }
+
+    @Override
+    public boolean isAnyNamedArray(String name) {
+        return isAnyNamedArray() && isNamed(name);
+    }
+
+    @Override
+    public boolean isParametrizedArray() {
+        return type() == NElementType.PARAMETRIZED_ARRAY;
+    }
+
+    @Override
+    public boolean isNamedParametrizedArray() {
+        return type().isAnyParametrizedArray();
+    }
+
+    @Override
+    public boolean isNamedParametrizedArray(String name) {
+        return type() == NElementType.NAMED_PARAMETRIZED_ARRAY && isNamed(name);
+    }
+
+    @Override
+    public boolean isNamedMatrix() {
+        return type() == NElementType.NAMED_MATRIX;
+    }
+
+    @Override
+    public boolean isAnyNamedMatrix() {
+        return false;
+    }
+
+    @Override
+    public boolean isAnyNamedMatrix(String name) {
+        return isNamedMatrix() && isNamed(name);
+    }
+
+    @Override
+    public boolean isParametrizedMatrix() {
+        return type() == NElementType.PARAMETRIZED_MATRIX;
+    }
+
+    @Override
+    public boolean isAnyParametrizedMatrix() {
+        return type().isAnyParametrizedMatrix();
+    }
+
+    @Override
+    public boolean isAnyParametrizedMatrix(String name) {
+        return isNamedParametrizedMatrix() && isNamed(name);
+    }
+
+    @Override
+    public boolean isNamedParametrizedMatrix() {
+        return type() == NElementType.NAMED_PARAMETRIZED_MATRIX;
+    }
+
+    @Override
+    public boolean isNamed(String name) {
+        return false;
+    }
+
+    @Override
+    public List<NElement> resolveAll(String pattern) {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public NElementBuilder builder() {
+        return null;
+    }
+
+    @Override
+    public NOptional<Object> asObjectAt(int index) {
+        return null;
     }
 
     @Override
@@ -98,14 +256,6 @@ public abstract class AbstractNElement implements NElement {
             return NOptional.of((NPairElement) this);
         }
         return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to pair: %s", type().id(), this));
-    }
-
-    @Override
-    public NOptional<NNavigatableElement> asNavigatable() {
-        if (this instanceof NNavigatableElement) {
-            return NOptional.of((NNavigatableElement) this);
-        }
-        return NOptional.ofError(() -> NMsg.ofC("unable to cast % sto object/array: %s", type().id(), this));
     }
 
     public NOptional<NCustomElement> asCustom() {

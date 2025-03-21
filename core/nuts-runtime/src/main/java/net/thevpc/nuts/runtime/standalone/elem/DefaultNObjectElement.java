@@ -9,7 +9,7 @@ import net.thevpc.nuts.util.NStringUtils;
 import java.util.*;
 import java.util.stream.Stream;
 
-public class DefaultNObjectElement extends AbstractNNavigatableElement implements NObjectElement {
+public class DefaultNObjectElement extends AbstractNListContainerElement implements NObjectElement {
 
     private List<NElement> values = new ArrayList<>();
     private NElements elements;
@@ -32,6 +32,12 @@ public class DefaultNObjectElement extends AbstractNNavigatableElement implement
                 }
             }
         }
+    }
+
+
+    @Override
+    public boolean isNamed(String name) {
+        return isNamed() && Objects.equals(name, this.name);
     }
 
     @Override
@@ -91,7 +97,7 @@ public class DefaultNObjectElement extends AbstractNNavigatableElement implement
 
     @Override
     public NObjectElementBuilder builder() {
-        return NElements.of().ofObjectBuilder().set(this);
+        return NElements.of().ofObjectBuilder().copyFrom(this);
     }
 
     @Override

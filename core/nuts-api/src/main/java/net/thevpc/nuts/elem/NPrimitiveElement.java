@@ -35,6 +35,7 @@ package net.thevpc.nuts.elem;
  */
 public interface NPrimitiveElement extends NElement {
 
+    Object value();
     NPrimitiveElementBuilder builder();
 
 }

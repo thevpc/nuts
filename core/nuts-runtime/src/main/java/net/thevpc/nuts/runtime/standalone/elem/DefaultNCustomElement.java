@@ -63,7 +63,7 @@ class DefaultNCustomElement extends AbstractNElement implements NCustomElement {
     }
 
     @Override
-    public Object getValue() {
+    public Object value() {
         return value;
     }
 
@@ -127,6 +127,6 @@ class DefaultNCustomElement extends AbstractNElement implements NCustomElement {
 
     @Override
     public NCustomElementBuilder builder() {
-        return new DefaultNCustomElementBuilder().addAnnotations(annotations()).setValue(value);
+        return new DefaultNCustomElementBuilder().addAnnotations(annotations()).value(value);
     }
 }

@@ -53,13 +53,21 @@ public interface NElementBuilder {
     NElementBuilder addTrailingComment(NElementComment comment);
 
     List<NElementComment> leadingComments();
+
     List<NElementComment> trailingComments();
+
     NElementBuilder addTrailingComments(NElementComment... comments);
+
     NElementBuilder removeLeadingComment(NElementComment comment);
+
     NElementBuilder removeTrailingComment(NElementComment comment);
+
     NElementBuilder removeLeadingCommentAt(int index);
+
     NElementBuilder removeTrailingCommentAt(int index);
+
     NElementBuilder clearComments();
+
     NElementBuilder addComments(NElementComments comments);
 
     NElementComments comments();

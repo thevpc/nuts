@@ -478,17 +478,17 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     @Override
     public NPrimitiveElement ofFloat(Float value) {
-        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.FLOAT, value, null, null);
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.FLOAT, value);
     }
 
     @Override
     public NPrimitiveElement ofInt(Integer value) {
-        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.INTEGER, value, null, null);
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.INTEGER, value);
     }
 
     @Override
     public NElement ofBinaryStream(NInputStreamProvider value) {
-        return value == null ? ofNull() : new DefaultNBinaryStreamElement(value, null,null);
+        return value == null ? ofNull() : new DefaultNBinaryStreamElement(value, null, null);
     }
 
     @Override
@@ -498,7 +498,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     @Override
     public NElement ofCharStream(NReaderProvider value) {
-        return value == null ? ofNull() : new DefaultNCharStreamElement(value, null,null);
+        return value == null ? ofNull() : new DefaultNCharStreamElement(value, null, null);
     }
 
     @Override
@@ -508,7 +508,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     @Override
     public NPrimitiveElement ofLong(Long value) {
-        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.LONG, value, null, null);
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.LONG, value);
     }
 
     @Override
@@ -571,12 +571,12 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     @Override
     public NPrimitiveElement ofByte(Byte value) {
-        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.BYTE, value, null, null);
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.BYTE, value);
     }
 
     @Override
     public NPrimitiveElement ofShort(Short value) {
-        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.SHORT, value, null, null);
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.SHORT, value);
     }
 
     @Override
@@ -586,12 +586,12 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     @Override
     public NPrimitiveElement ofDouble(Double value) {
-        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.DOUBLE, value, null, null);
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.DOUBLE, value);
     }
 
     @Override
     public NPrimitiveElement ofFloat(Short value) {
-        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.SHORT, value, null, null);
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.SHORT, value);
     }
 
     @Override
@@ -599,7 +599,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
         if (value == null) {
             return ofNull();
         }
-        return new DefaultNPrimitiveElement(NElementType.BIG_DECIMAL, value, null, null);
+        return new DefaultNNumberElement(NElementType.BIG_DECIMAL, value);
     }
 
     @Override
@@ -607,7 +607,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
         if (value == null) {
             return ofNull();
         }
-        return new DefaultNPrimitiveElement(NElementType.BIG_INTEGER, value, null, null);
+        return new DefaultNNumberElement(NElementType.BIG_INTEGER, value);
     }
 
     @Override
@@ -621,30 +621,72 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     @Override
+    public NPrimitiveElement ofDoubleComplex(double real) {
+        return ofDoubleComplex(real, 0);
+    }
+
+    @Override
+    public NPrimitiveElement ofDoubleComplex(double real, double imag) {
+        return new DefaultNNumberElement(NElementType.DOUBLE_COMPLEX, new NDComplex(real, imag));
+    }
+
+    @Override
+    public NPrimitiveElement ofFloatComplex(float real) {
+        return ofFloatComplex(real, 0);
+    }
+
+    @Override
+    public NPrimitiveElement ofFloatComplex(float real, float imag) {
+        return new DefaultNNumberElement(NElementType.FLOAT_COMPLEX, new NFComplex(real, imag));
+    }
+
+    @Override
+    public NPrimitiveElement ofBigComplex(BigDecimal real) {
+        return ofBigComplex(real, BigDecimal.ZERO);
+    }
+
+    @Override
+    public NPrimitiveElement ofBigComplex(BigDecimal real, BigDecimal imag) {
+        if (real == null && imag == null) {
+            return ofNull();
+        }
+        return new DefaultNNumberElement(NElementType.BIG_COMPLEX, new NBComplex(real, imag));
+    }
+
+    @Override
     public NPrimitiveElement ofNumber(Number value) {
         if (value == null) {
             return ofNull();
         }
         switch (value.getClass().getName()) {
             case "java.lang.Byte":
-                return new DefaultNPrimitiveElement(NElementType.BYTE, value, null, null);
+                return new DefaultNNumberElement(NElementType.BYTE, value);
             case "java.lang.Short":
-                return new DefaultNPrimitiveElement(NElementType.SHORT, value, null, null);
+                return new DefaultNNumberElement(NElementType.SHORT, value);
             case "java.lang.Integer":
-                return new DefaultNPrimitiveElement(NElementType.INTEGER, value, null, null);
+                return new DefaultNNumberElement(NElementType.INTEGER, value);
             case "java.lang.Long":
-                return new DefaultNPrimitiveElement(NElementType.LONG, value, null, null);
+                return new DefaultNNumberElement(NElementType.LONG, value);
             case "java.math.BigInteger":
-                return new DefaultNPrimitiveElement(NElementType.BIG_INTEGER, value, null, null);
+                return new DefaultNNumberElement(NElementType.BIG_INTEGER, value);
             case "java.lang.float":
-                return new DefaultNPrimitiveElement(NElementType.FLOAT, value, null, null);
+                return new DefaultNNumberElement(NElementType.FLOAT, value);
             case "java.lang.Double":
-                return new DefaultNPrimitiveElement(NElementType.DOUBLE, value, null, null);
+                return new DefaultNNumberElement(NElementType.DOUBLE, value);
             case "java.math.BigDecimal":
-                return new DefaultNPrimitiveElement(NElementType.BIG_DECIMAL, value, null, null);
+                return new DefaultNNumberElement(NElementType.BIG_DECIMAL, value);
+        }
+        if (value instanceof NDComplex) {
+            return new DefaultNNumberElement(NElementType.DOUBLE_COMPLEX, value);
+        }
+        if (value instanceof NBComplex) {
+            return new DefaultNNumberElement(NElementType.BIG_COMPLEX, value);
+        }
+        if (value instanceof NFComplex) {
+            return new DefaultNNumberElement(NElementType.FLOAT_COMPLEX, value);
         }
         // ???
-        return new DefaultNPrimitiveElement(NElementType.FLOAT, value, null, null);
+        return new DefaultNNumberElement(NElementType.FLOAT, value);
     }
 
     public Predicate<Class<?>> getIndestructibleObjects() {

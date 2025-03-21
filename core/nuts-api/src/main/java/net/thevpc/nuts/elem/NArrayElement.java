@@ -42,7 +42,7 @@ import java.util.stream.Stream;
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NArrayElement extends NNavigatableElement, Iterable<NElement> {
+public interface NArrayElement extends NListContainerElement, Iterable<NElement> {
     static NArrayElement ofEmpty() {
         return NElements.of().ofEmptyArray();
     }

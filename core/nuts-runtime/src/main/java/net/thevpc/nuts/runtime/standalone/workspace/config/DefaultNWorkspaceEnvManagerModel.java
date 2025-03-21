@@ -411,7 +411,7 @@ public class DefaultNWorkspaceEnvManagerModel {
 
     public <T> T getOrCreateProperty(String property, Supplier<T> supplier) {
         NElement a = getPropertyElement(property);
-        T o = a.isCustom() ? (T) a.asCustom().get().getValue() : (T) a.asPrimitive().get().getRaw();
+        T o = a.isCustom() ? (T) a.asCustom().get().value() : (T) a.asPrimitive().get().getRaw();
         if (o != null) {
             return o;
         }

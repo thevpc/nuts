@@ -64,13 +64,6 @@ public interface NArrayElementBuilder extends NElementBuilder {
      */
     NElement get(int index);
 
-    /**
-     * all all elements in the given array
-     *
-     * @param value value
-     * @return {@code this} instance
-     */
-    NArrayElementBuilder addAll(NArrayElement value);
 
     /**
      * all all elements in the given array
@@ -288,7 +281,7 @@ public interface NArrayElementBuilder extends NElementBuilder {
      * @param other array
      * @return {@code this} instance
      */
-    NArrayElementBuilder set(NArrayElementBuilder other);
+    NArrayElementBuilder copyFrom(NArrayElementBuilder other);
 
     /**
      * reset this instance with the given array
@@ -296,7 +289,7 @@ public interface NArrayElementBuilder extends NElementBuilder {
      * @param other array builder
      * @return {@code this} instance
      */
-    NArrayElementBuilder set(NArrayElement other);
+    NArrayElementBuilder copyFrom(NArrayElement other);
 
     /**
      * create array with this instance elements
@@ -326,15 +319,15 @@ public interface NArrayElementBuilder extends NElementBuilder {
     NArrayElementBuilder addComments(NElementComments comments);
 
 
-    NArrayElementBuilder addArgs(List<NElement> args) ;
-    NArrayElementBuilder addArg(NElement arg) ;
-    NArrayElementBuilder addArgAt(int index, NElement arg) ;
-    NArrayElementBuilder removeArgAt(int index) ;
-    NArrayElementBuilder clearArgs() ;
-    List<NElement> getParams();
-    String getName() ;
-    NArrayElementBuilder setName(String name) ;
+    NArrayElementBuilder addParams(List<NElement> params) ;
+    NArrayElementBuilder addParam(NElement param) ;
+    NArrayElementBuilder addParamAt(int index, NElement param) ;
+    NArrayElementBuilder removeParamAt(int index) ;
+    NArrayElementBuilder clearParams() ;
+    List<NElement> params();
+    String name() ;
+    NArrayElementBuilder name(String name) ;
     boolean isParametrized() ;
-    NArrayElementBuilder setParametrized(boolean hasArgs);
+    NArrayElementBuilder setParametrized(boolean parametrized);
 
 }

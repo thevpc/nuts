@@ -366,4 +366,117 @@ public enum NElementType implements NEnum {
         }
         return false;
     }
+
+    public boolean isAnyNamedObject() {
+        switch (this) {
+            case NAMED_OBJECT:
+            case NAMED_PARAMETRIZED_OBJECT:
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isAnyNamedArray() {
+        switch (this) {
+            case NAMED_OBJECT:
+            case NAMED_PARAMETRIZED_OBJECT:
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isAnyNamedMatrix() {
+        switch (this) {
+            case NAMED_MATRIX:
+            case NAMED_PARAMETRIZED_MATRIX:
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isAnyParametrizedObject() {
+        switch (this) {
+            case PARAMETRIZED_OBJECT:
+            case NAMED_PARAMETRIZED_OBJECT:
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isAnyParametrizedArray() {
+        switch (this) {
+            case PARAMETRIZED_OBJECT:
+            case NAMED_PARAMETRIZED_OBJECT:
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isAnyParametrizedMatrix() {
+        switch (this) {
+            case PARAMETRIZED_MATRIX:
+            case NAMED_PARAMETRIZED_MATRIX:
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isAnyArray() {
+        switch (this) {
+            case ARRAY:
+            case NAMED_ARRAY:
+            case PARAMETRIZED_ARRAY:
+            case NAMED_PARAMETRIZED_MATRIX:
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isAnyObject() {
+        switch (this) {
+            case OBJECT:
+            case NAMED_OBJECT:
+            case PARAMETRIZED_OBJECT:
+            case NAMED_PARAMETRIZED_OBJECT:
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isAnyMatrix() {
+        switch (this) {
+            case MATRIX:
+            case NAMED_MATRIX:
+            case PARAMETRIZED_MATRIX:
+            case NAMED_PARAMETRIZED_MATRIX:
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isAnyUplet() {
+        switch (this) {
+            case UPLET:
+            case NAMED_UPLET:
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isListContainer() {
+        switch (this) {
+            case UPLET:
+            case NAMED_UPLET:
+            case OBJECT:
+            case NAMED_OBJECT:
+            case PARAMETRIZED_OBJECT:
+            case NAMED_PARAMETRIZED_OBJECT:
+            case ARRAY:
+            case NAMED_ARRAY:
+            case PARAMETRIZED_ARRAY:
+            case NAMED_PARAMETRIZED_MATRIX:
+                return true;
+        }
+        return false;
+    }
 }

@@ -2,8 +2,6 @@ package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.elem.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implements NCustomElementBuilder {
@@ -18,7 +16,7 @@ public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implem
         return value;
     }
 
-    public NCustomElementBuilder setValue(Object value) {
+    public NCustomElementBuilder value(Object value) {
         this.value = value;
         return this;
     }
@@ -32,6 +30,24 @@ public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implem
     @Override
     public NElementType type() {
         return NElementType.CUSTOM;
+    }
+
+    public NCustomElementBuilder copyFrom(NCustomElement element) {
+        if (element != null) {
+            addAnnotations(element.annotations());
+            addComments(element.comments());
+            value(element.value());
+        }
+        return this;
+    }
+
+    public NCustomElementBuilder copyFrom(NCustomElementBuilder element) {
+        if (element != null) {
+            addAnnotations(element.annotations());
+            addComments(element.comments());
+            value(element.value());
+        }
+        return this;
     }
 
     // ------------------------------------------

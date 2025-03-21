@@ -25,7 +25,6 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.io.NInputStreamProvider;
 import net.thevpc.nuts.io.NReaderProvider;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NOptional;
@@ -132,6 +131,6 @@ class DefaultNCharStreamElement extends AbstractNElement implements NCharStreamE
 
     @Override
     public NCharStreamElementBuilder builder() {
-        return new DefaultNCharStreamElementBuilder().addAnnotations(annotations()).setValue(value);
+        return new DefaultNCharStreamElementBuilder().addAnnotations(annotations()).value(value);
     }
 }

@@ -1,6 +1,7 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.NPrimitiveElement;
+import net.thevpc.nuts.elem.NPrimitiveElementBuilder;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;

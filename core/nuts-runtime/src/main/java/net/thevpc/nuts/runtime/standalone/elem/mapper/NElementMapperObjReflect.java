@@ -138,7 +138,7 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
                 break;
             }
             case CUSTOM:{
-                return c.cast(o.asCustom().get().getValue());
+                return c.cast(o.asCustom().get().value());
             }
         }
         int mod = c.getModifiers();

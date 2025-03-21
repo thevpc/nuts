@@ -17,15 +17,17 @@ public interface NPairElementBuilder extends NElementBuilder {
 
     NPairElement build();
 
-    NElement getKey();
+    NElement key();
 
-    NElement getValue();
+    NElement value();
 
-    NPairElementBuilder setKey(NElement value);
+    NPairElementBuilder key(NElement value);
 
-    NPairElementBuilder setValue(NElement value);
+    NPairElementBuilder value(NElement value);
 
     NPairElementBuilder copyFrom(NPairElement other);
+
+    NPairElementBuilder copyFrom(NPairElementBuilder element);
 
     NPairElementBuilder addLeadingComment(NElementCommentType type, String text);
     NPairElementBuilder addTrailingComment(NElementCommentType type, String text);

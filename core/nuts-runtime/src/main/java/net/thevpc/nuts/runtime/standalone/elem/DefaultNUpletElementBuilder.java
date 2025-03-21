@@ -107,6 +107,8 @@ public class DefaultNUpletElementBuilder  extends AbstractNElementBuilder implem
     @Override
     public NUpletElementBuilder copyFrom(NUpletElement value) {
         if (value != null) {
+            addAnnotations(value.annotations());
+            addComments(value.comments());
             if (value.name() != null) {
                 setName(value.name());
             }
@@ -141,6 +143,8 @@ public class DefaultNUpletElementBuilder  extends AbstractNElementBuilder implem
     @Override
     public NUpletElementBuilder copyFrom(NUpletElementBuilder value) {
         if (value != null) {
+            addAnnotations(value.annotations());
+            addComments(value.comments());
             if (value.name() != null) {
                 setName(value.name());
             }

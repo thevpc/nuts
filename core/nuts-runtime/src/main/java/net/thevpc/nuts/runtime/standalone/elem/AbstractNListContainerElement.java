@@ -11,8 +11,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-public abstract class AbstractNNavigatableElement extends AbstractNElement implements NNavigatableElement {
-    public AbstractNNavigatableElement(NElementType type, NElementAnnotation[] annotations,NElementComments comments) {
+public abstract class AbstractNListContainerElement extends AbstractNElement implements NListContainerElement {
+    public AbstractNListContainerElement(NElementType type, NElementAnnotation[] annotations, NElementComments comments) {
         super(type, annotations, comments);
     }
 
@@ -112,13 +112,13 @@ public abstract class AbstractNNavigatableElement extends AbstractNElement imple
     }
 
     @Override
-    public NOptional<NNavigatableElement> getNavigatable(String key) {
-        return get(key).flatMap(NElement::asNavigatable);
+    public NOptional<NListContainerElement> getListContainer(String key) {
+        return get(key).flatMap(NElement::asListContainer);
     }
 
     @Override
-    public NOptional<NNavigatableElement> getNavigatable(NElement key) {
-        return get(key).flatMap(NElement::asNavigatable);
+    public NOptional<NListContainerElement> getListContainer(NElement key) {
+        return get(key).flatMap(NElement::asListContainer);
     }
 
     @Override
@@ -266,7 +266,7 @@ public abstract class AbstractNNavigatableElement extends AbstractNElement imple
     public NOptional<NElement> getByPath(String... keys) {
         NOptional<NElement> r = NOptional.of(this);
         for (String key : keys) {
-            r = r.flatMap(NElement::asNavigatable).flatMap(x -> x.get(key));
+            r=r.flatMap(NElement::asListContainer).flatMap(x->x.get(key));
         }
         return r;
     }
@@ -282,7 +282,7 @@ public abstract class AbstractNNavigatableElement extends AbstractNElement imple
     }
 
     @Override
-    public NOptional<NNavigatableElement> getNavigatableByPath(String... keys) {
-        return getByPath(keys).flatMap(NElement::asNavigatable);
+    public NOptional<NListContainerElement> getListContainerByPath(String... keys) {
+        return getByPath(keys).flatMap(NElement::asListContainer);
     }
 }

@@ -30,7 +30,9 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.elem.NElementAnnotationImpl;
 import net.thevpc.nuts.runtime.standalone.elem.NElementCommentImpl;
 import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.tson.*;
+import net.thevpc.tson.impl.builders.TsonPrimitiveElementBuilderImpl;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -131,9 +133,38 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
         throw new IllegalArgumentException("not implemented");
     }
 
-    private TsonElement decorateTsonElement(TsonElement t, NElement elem) {
-        List<NElementAnnotation> na = elem.annotations();
-        NElementComments nc = elem.comments();
+    private TsonElement decorateTsonElement(TsonElement t, NElement fromElem) {
+        if (fromElem instanceof NNumberElement) {
+            NNumberElement en = (NNumberElement) fromElem;
+            TsonNumberLayout nf = TsonNumberLayout.DECIMAL;
+            String nSuffix = null;
+
+            if (en.numberLayout() != null && en.numberLayout() != NNumberLayout.DECIMAL) {
+                switch (en.numberLayout()) {
+                    case DECIMAL:
+                        nf = (TsonNumberLayout.DECIMAL);
+                        break;
+                    case HEXADECIMAL:
+                        nf = (TsonNumberLayout.HEXADECIMAL);
+                        break;
+                    case BINARY:
+                        nf = (TsonNumberLayout.BINARY);
+                        break;
+                    case OCTAL:
+                        nf = (TsonNumberLayout.OCTAL);
+                        break;
+                }
+            }
+            if (!NBlankable.isBlank(en.numberSuffix())) {
+                nSuffix = (en.numberSuffix());
+            }
+            if ((nf != null && nf != TsonNumberLayout.DECIMAL) || nSuffix != null) {
+                t = Tson.ofNumber(en.numberValue(), nf, nSuffix);
+            }
+        }
+
+        List<NElementAnnotation> na = fromElem.annotations();
+        NElementComments nc = fromElem.comments();
         if (na.isEmpty() && nc.isEmpty()) {
             return t;
         }
@@ -155,6 +186,8 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 x.text()
         )).toArray(TsonComment[]::new));
         b.setComments(tc);
+
+
         return b.build();
     }
 
@@ -181,6 +214,29 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                             : NElementCommentType.SINGLE_LINE,
                     tc.text()
             ));
+        }
+        if (elem instanceof NNumberElement) {
+            TsonNumber tn = (TsonNumber) fromTson;
+            NPrimitiveElementBuilder nnb = (NPrimitiveElementBuilder) builder;
+            if (tn.numberLayout() != null && tn.numberLayout() != TsonNumberLayout.DECIMAL) {
+                switch (tn.numberLayout()) {
+                    case DECIMAL:
+                        nnb.numberLayout(NNumberLayout.DECIMAL);
+                        break;
+                    case HEXADECIMAL:
+                        nnb.numberLayout(NNumberLayout.HEXADECIMAL);
+                        break;
+                    case BINARY:
+                        nnb.numberLayout(NNumberLayout.BINARY);
+                        break;
+                    case OCTAL:
+                        nnb.numberLayout(NNumberLayout.OCTAL);
+                        break;
+                }
+            }
+            if (!NBlankable.isBlank(tn.numberSuffix())) {
+                nnb.numberSuffix(tn.numberSuffix());
+            }
         }
         return builder.build();
     }
@@ -240,10 +296,10 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                     u.add(toNElem(item));
                 }
                 if (array.isNamed()) {
-                    u.setName(array.name());
+                    u.name(array.name());
                 }
                 if (array.isParametrized()) {
-                    u.addArgs(array.params().toList().stream().map(x -> toNElem(x)).collect(Collectors.toList()));
+                    u.addParams(array.params().toList().stream().map(x -> toNElem(x)).collect(Collectors.toList()));
                 }
                 return decorateNElement(u.build(), tsonElem);
             }
@@ -257,10 +313,10 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                     u.add(toNElem(item));
                 }
                 if (obj.isNamed()) {
-                    u.setName(obj.name());
+                    u.name(obj.name());
                 }
                 if (obj.isParametrized()) {
-                    u.addArgs(obj.params().toList().stream().map(x -> toNElem(x)).collect(Collectors.toList()));
+                    u.addParams(obj.params().toList().stream().map(x -> toNElem(x)).collect(Collectors.toList()));
                 }
                 return decorateNElement(u.build(), tsonElem);
             }

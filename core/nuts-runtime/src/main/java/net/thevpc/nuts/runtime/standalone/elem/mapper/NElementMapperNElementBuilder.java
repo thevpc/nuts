@@ -104,7 +104,7 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
                 return src.build();
             }
             case CUSTOM:{
-                Object v1 = src.build().asCustom().get().getValue();
+                Object v1 = src.build().asCustom().get().value();
                 if(context.getIndestructibleObjects()!=null && context.getIndestructibleObjects().test(v1.getClass())){
                     return src.build();
                 }

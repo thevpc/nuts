@@ -137,8 +137,8 @@ All you have to do is to add this library to your application and configure your
 ### **nlib-servlet**
 Basically this is the simplest way to include **nserver** into your web application.
 
-### **ndoc-lib**
-This library provides helper methods to manipulate maven pom.xml and generate simple Java files while supporting **```nuts```** concepts. It's used in other tools that are meant to generate maven projects.
+### **nsite-lib**
+This library provides static site generation and templating.
 
 ### **nlib-talkagent**
 This library provides support for client to client communication

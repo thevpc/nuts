@@ -37,7 +37,7 @@ import java.util.stream.Stream;
 /**
  * @author thevpc
  */
-public class DefaultNUpletElement extends AbstractNNavigatableElement
+public class DefaultNUpletElement extends AbstractNListContainerElement
         implements NUpletElement {
 
     private final NElement[] params;
@@ -70,6 +70,11 @@ public class DefaultNUpletElement extends AbstractNNavigatableElement
         NElementPathImpl pp = new NElementPathImpl(pattern);
         NElement[] nElements = pp.resolveReversed(this);
         return new ArrayList<>(Arrays.asList(nElements));
+    }
+
+    @Override
+    public boolean isNamed(String name) {
+        return isNamed() && Objects.equals(name, this.name);
     }
 
     @Override

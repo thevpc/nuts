@@ -44,6 +44,9 @@ public interface NBinaryStreamElementBuilder extends NElementBuilder {
 
     List<NElementAnnotation> annotations();
 
+    NBinaryStreamElementBuilder copyFrom(NBinaryStreamElement element) ;
+
+    NBinaryStreamElementBuilder copyFrom(NBinaryStreamElementBuilder element) ;
 
     NBinaryStreamElementBuilder addLeadingComment(NElementCommentType type, String text);
     NBinaryStreamElementBuilder addTrailingComment(NElementCommentType type, String text);
@@ -58,7 +61,7 @@ public interface NBinaryStreamElementBuilder extends NElementBuilder {
     NBinaryStreamElementBuilder clearComments();
     NBinaryStreamElementBuilder addComments(NElementComments comments);
 
-    NBinaryStreamElementBuilder setValue(NInputStreamProvider value);
+    NBinaryStreamElementBuilder value(NInputStreamProvider value);
     NInputStreamProvider value();
     NBinaryStreamElement build();
 }

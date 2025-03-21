@@ -41,6 +41,11 @@ public interface NMatrixElementBuilder extends NElementBuilder {
         return NElements.of().ofMatrixBuilder();
     }
 
+
+    NMatrixElementBuilder copyFrom(NMatrixElement element) ;
+
+    NMatrixElementBuilder copyFrom(NMatrixElementBuilder element) ;
+
     /**
      * array items
      *
@@ -312,16 +317,16 @@ public interface NMatrixElementBuilder extends NElementBuilder {
     NMatrixElementBuilder removeAnnotationAt(int index);
     NMatrixElementBuilder clearAnnotations();
 
-    NMatrixElementBuilder addArgs(List<NElement> args) ;
-    NMatrixElementBuilder addArg(NElement arg) ;
-    NMatrixElementBuilder addArgAt(int index, NElement arg) ;
-    NMatrixElementBuilder removeArgAt(int index) ;
-    NMatrixElementBuilder clearArgs() ;
-    List<NElement> getArgs();
-    String getName() ;
-    NMatrixElementBuilder setName(String name) ;
+    NMatrixElementBuilder addParams(List<NElement> params) ;
+    NMatrixElementBuilder addParam(NElement param) ;
+    NMatrixElementBuilder addParamAt(int index, NElement param) ;
+    NMatrixElementBuilder removeParamAt(int index) ;
+    NMatrixElementBuilder clearParams() ;
+    List<NElement> params();
+    String name() ;
+    NMatrixElementBuilder name(String name) ;
     boolean isParametrized() ;
-    NMatrixElementBuilder setHasArgs(boolean hasArgs);
+    NMatrixElementBuilder setParametrized(boolean parametrized);
 
     NMatrixElementBuilder addLeadingComment(NElementCommentType type, String text);
     NMatrixElementBuilder addTrailingComment(NElementCommentType type, String text);

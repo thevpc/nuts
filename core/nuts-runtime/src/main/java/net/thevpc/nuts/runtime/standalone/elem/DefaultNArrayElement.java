@@ -38,7 +38,7 @@ import java.util.stream.Stream;
 /**
  * @author thevpc
  */
-public class DefaultNArrayElement extends AbstractNNavigatableElement
+public class DefaultNArrayElement extends AbstractNListContainerElement
         implements NArrayElement {
 
     private final NElement[] values;
@@ -68,6 +68,12 @@ public class DefaultNArrayElement extends AbstractNNavigatableElement
         this.values = Arrays.copyOf(values, values.length);
         this.name = name;
         this.params = params;
+    }
+
+
+    @Override
+    public boolean isNamed(String name) {
+        return isNamed() && Objects.equals(name, this.name);
     }
 
     @Override
@@ -168,7 +174,7 @@ public class DefaultNArrayElement extends AbstractNNavigatableElement
     public NArrayElementBuilder builder() {
         return NElements.of()
                 .ofArrayBuilder()
-                .set(this);
+                .copyFrom(this);
     }
 
     @Override

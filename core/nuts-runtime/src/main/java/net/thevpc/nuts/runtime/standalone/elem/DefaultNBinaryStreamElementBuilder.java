@@ -17,7 +17,7 @@ public class DefaultNBinaryStreamElementBuilder extends AbstractNElementBuilder 
         return value;
     }
 
-    public NBinaryStreamElementBuilder setValue(NInputStreamProvider value) {
+    public NBinaryStreamElementBuilder value(NInputStreamProvider value) {
         this.value = value;
         return this;
     }
@@ -32,6 +32,25 @@ public class DefaultNBinaryStreamElementBuilder extends AbstractNElementBuilder 
     public NElementType type() {
         return NElementType.BINARY_STREAM;
     }
+
+    public NBinaryStreamElementBuilder copyFrom(NBinaryStreamElement element) {
+        if (element != null) {
+            addAnnotations(element.annotations());
+            addComments(element.comments());
+            value(element.value());
+        }
+        return this;
+    }
+
+    public NBinaryStreamElementBuilder copyFrom(NBinaryStreamElementBuilder element) {
+        if (element != null) {
+            addAnnotations(element.annotations());
+            addComments(element.comments());
+            value(element.value());
+        }
+        return this;
+    }
+
 
     // ------------------------------------------
     // RETURN SIG

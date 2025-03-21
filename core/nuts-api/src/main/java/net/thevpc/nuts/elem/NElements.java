@@ -468,6 +468,18 @@ public interface NElements extends NContentTypeFormat {
 
     NPrimitiveElement ofDouble(Double value);
 
+    NPrimitiveElement ofDoubleComplex(double real);
+
+    NPrimitiveElement ofDoubleComplex(double real, double imag);
+
+    NPrimitiveElement ofFloatComplex(float real);
+
+    NPrimitiveElement ofFloatComplex(float real, float imag);
+
+    NPrimitiveElement ofBigComplex(BigDecimal real);
+
+    NPrimitiveElement ofBigComplex(BigDecimal real, BigDecimal imag);
+
     NPrimitiveElement ofFloat(Short value);
 
     NPrimitiveElement ofNumber(Number value);
@@ -518,7 +530,10 @@ public interface NElements extends NContentTypeFormat {
     NElementComment ofSingleLineComment(String a);
 
     NElement ofBinaryStream(NInputStreamProvider value);
+
     NElement ofCharStream(NReaderProvider value);
+
     NBinaryStreamElementBuilder ofBinaryStreamBuilder();
-    NCharStreamElementBuilder ofCharStreamBuilder() ;
+
+    NCharStreamElementBuilder ofCharStreamBuilder();
 }

@@ -77,7 +77,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                 NElement k2 = context.objectToElement(k, null);
                 NElement v2 = context.objectToElement(v, null);
                 if (k2 == k || v2 == v) {
-                    return p.builder().setKey(k2).setValue(v2).build();
+                    return p.builder().key(k2).value(v2).build();
                 }
                 return p;
             }
@@ -122,7 +122,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                 return src;
             }
             case CUSTOM: {
-                Object v1 = src.asCustom().get().getValue();
+                Object v1 = src.asCustom().get().value();
                 if (context.getIndestructibleObjects() != null && context.getIndestructibleObjects().test(v1.getClass())) {
                     return src;
                 }

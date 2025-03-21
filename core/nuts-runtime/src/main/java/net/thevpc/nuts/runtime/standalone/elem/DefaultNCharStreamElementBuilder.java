@@ -18,7 +18,7 @@ public class DefaultNCharStreamElementBuilder extends AbstractNElementBuilder im
         return value;
     }
 
-    public NCharStreamElementBuilder setValue(NReaderProvider value) {
+    public NCharStreamElementBuilder value(NReaderProvider value) {
         this.value = value;
         return this;
     }
@@ -33,6 +33,25 @@ public class DefaultNCharStreamElementBuilder extends AbstractNElementBuilder im
     public NElementType type() {
         return NElementType.CHAR_STREAM;
     }
+
+    public NCharStreamElementBuilder copyFrom(NCharStreamElement element) {
+        if (element != null) {
+            addAnnotations(element.annotations());
+            addComments(element.comments());
+            value(element.value());
+        }
+        return this;
+    }
+
+    public NCharStreamElementBuilder copyFrom(NCharStreamElementBuilder element) {
+        if (element != null) {
+            addAnnotations(element.annotations());
+            addComments(element.comments());
+            value(element.value());
+        }
+        return this;
+    }
+
 
     // ------------------------------------------
     // RETURN SIG

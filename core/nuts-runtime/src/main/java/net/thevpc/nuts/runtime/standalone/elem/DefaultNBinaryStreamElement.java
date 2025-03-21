@@ -131,6 +131,6 @@ class DefaultNBinaryStreamElement extends AbstractNElement implements NBinaryStr
 
     @Override
     public NBinaryStreamElementBuilder builder() {
-        return new DefaultNBinaryStreamElementBuilder().addAnnotations(annotations()).setValue(value);
+        return new DefaultNBinaryStreamElementBuilder().addAnnotations(annotations()).value(value);
     }
 }

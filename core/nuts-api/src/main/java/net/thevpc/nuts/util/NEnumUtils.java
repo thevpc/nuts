@@ -59,6 +59,10 @@ public class NEnumUtils {
             return value;
         }
 
+        /**
+         * enum name formatted using NNameFormat.CONST_NAME
+         * @return name formatted using NNameFormat.CONST_NAME
+         */
         public String getNormalizedValue() {
             return normalizedValue;
         }

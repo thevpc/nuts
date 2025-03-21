@@ -35,7 +35,7 @@ import java.util.stream.Stream;
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NObjectElement extends NNavigatableElement, Iterable<NElement> {
+public interface NObjectElement extends NListContainerElement, Iterable<NElement> {
     static NObjectElement ofEmpty() {
         return NElements.of().ofEmptyObject();
     }
