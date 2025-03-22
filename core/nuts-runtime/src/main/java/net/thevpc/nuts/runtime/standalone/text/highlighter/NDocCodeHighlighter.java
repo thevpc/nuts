@@ -7,9 +7,9 @@ import net.thevpc.nuts.text.*;
 
 import java.util.*;
 
-public class HalfaCodeHighlighter extends TsonCodeHighlighter {
+public class NDocCodeHighlighter extends TsonCodeHighlighter {
 
-    public HalfaCodeHighlighter(NWorkspace workspace) {
+    public NDocCodeHighlighter(NWorkspace workspace) {
         super(workspace);
     }
 
@@ -25,12 +25,9 @@ public class HalfaCodeHighlighter extends TsonCodeHighlighter {
             return NConstants.Support.DEFAULT_SUPPORT;
         }
         switch (s) {
-            case "halfa":
-            case "hd":
-            case "application/halfa":
-            case "application/hd":
-            case "text/halfa":
-            case "text/hd": {
+            case "ndoc":
+            case "application/ndoc":
+            case "text/ndoc":{
                 return NConstants.Support.DEFAULT_SUPPORT;
             }
         }
