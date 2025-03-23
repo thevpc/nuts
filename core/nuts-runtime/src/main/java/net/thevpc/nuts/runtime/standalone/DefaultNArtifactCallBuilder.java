@@ -10,19 +10,19 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.NArtifactCall;
@@ -49,6 +49,8 @@ public class DefaultNArtifactCallBuilder implements NArtifactCallBuilder, Serial
 
     private NId id;
     private List<String> arguments = new ArrayList<>();
+    private String scriptName;
+    private String scriptContent;
 
     public DefaultNArtifactCallBuilder() {
     }
@@ -58,23 +60,59 @@ public class DefaultNArtifactCallBuilder implements NArtifactCallBuilder, Serial
         setArguments(value.getArguments());
     }
 
+    @Override
+    public String getScriptName() {
+        return scriptName;
+    }
+
+    @Override
+    public NArtifactCallBuilder setScriptName(String scriptName) {
+        this.scriptName = scriptName;
+        return this;
+    }
+
+    @Override
+    public String getScriptContent() {
+        return scriptContent;
+    }
+
+    @Override
+    public NArtifactCallBuilder setScriptContent(String scriptContent) {
+        this.scriptContent = scriptContent;
+        return this;
+    }
+
     public NId getId() {
         return id;
     }
 
     public List<String> getArguments() {
-        return arguments;
+        return Collections.unmodifiableList(arguments);
     }
 
     @Override
     public DefaultNArtifactCallBuilder setArguments(String... arguments) {
-        this.arguments = NReservedLangUtils.unmodifiableList(Arrays.asList(arguments));
+        this.arguments = new ArrayList<>();
+        if (arguments != null) {
+            for (String argument : arguments) {
+                if (argument != null) {
+                    this.arguments.add(argument);
+                }
+            }
+        }
         return this;
     }
 
     @Override
-    public NArtifactCallBuilder setArguments(List<String> value) {
-        this.arguments = NReservedLangUtils.unmodifiableList(value);
+    public NArtifactCallBuilder setArguments(List<String> arguments) {
+        this.arguments = new ArrayList<>();
+        if (arguments != null) {
+            for (String argument : arguments) {
+                if (argument != null) {
+                    this.arguments.add(argument);
+                }
+            }
+        }
         return this;
     }
 
@@ -85,17 +123,23 @@ public class DefaultNArtifactCallBuilder implements NArtifactCallBuilder, Serial
     }
 
     @Override
-    public NArtifactCallBuilder set(NArtifactCallBuilder value) {
-        return null;
+    public NArtifactCallBuilder copyFrom(NArtifactCallBuilder value) {
+        if (value != null) {
+            setId(value.getId());
+            setArguments(value.getArguments());
+            setScriptName(value.getScriptName());
+            setScriptContent(value.getScriptContent());
+        }
+        return this;
     }
 
     @Override
-    public NArtifactCallBuilder set(NArtifactCall value) {
-        if(value!=null){
+    public NArtifactCallBuilder copyFrom(NArtifactCall value) {
+        if (value != null) {
             setId(value.getId());
             setArguments(value.getArguments());
-        }else{
-            clear();
+            setScriptName(value.getScriptName());
+            setScriptContent(value.getScriptContent());
         }
         return this;
     }
@@ -103,31 +147,28 @@ public class DefaultNArtifactCallBuilder implements NArtifactCallBuilder, Serial
     @Override
     public NArtifactCallBuilder clear() {
         setId(null);
-        setArguments();
+        this.arguments = new ArrayList<>();
+        this.scriptName = null;
+        this.scriptContent = null;
         return this;
     }
 
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DefaultNArtifactCallBuilder that = (DefaultNArtifactCallBuilder) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(arguments, that.arguments)
-                ;
+        return Objects.equals(id, that.id) && Objects.equals(arguments, that.arguments) && Objects.equals(scriptName, that.scriptName) && Objects.equals(scriptContent, that.scriptContent);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id);
-        result = 31 * result + Objects.hashCode(arguments);
-        return result;
+        return Objects.hash(id, arguments, scriptName, scriptContent);
     }
 
     @Override
     public NArtifactCall build() {
-        return new DefaultNArtifactCall(id, arguments);
+        return new DefaultNArtifactCall(id, arguments, scriptName, scriptContent);
     }
 
     @Override

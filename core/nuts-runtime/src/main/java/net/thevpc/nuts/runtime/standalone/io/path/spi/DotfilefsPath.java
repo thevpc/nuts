@@ -180,79 +180,87 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         boolean folders = true;
         boolean files = true;
         List<String> all = new ArrayList<>();
-        InputStream foldersFileStream = null;
+        String dotFilesContent = null;
         String dotFilesUrl = NStringUtils.pjoin("/", baseUrl, CoreNConstants.Files.DOT_FILES);
         NSession session = workspace.currentSession();
         NVersion versionString = NVersion.get("0.5.5").get();
-        try {
+        try (InputStream foldersFileStream = NInputStreamMonitor.of().setSource(NPath.of(dotFilesUrl)).create()) {
             session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "browse", NPath.of(baseUrl).toCompressedForm()));
-            foldersFileStream = NInputStreamMonitor.of().setSource(NPath.of(dotFilesUrl)).create();
-            List<String> splitted = StringTokenizerUtils.splitNewLine(NIOUtils.loadString(foldersFileStream, true));
-            for (String s : splitted) {
-                s = s.trim();
-                if (s.length() > 0) {
-                    if (s.startsWith("#")) {
-                        if (all.isEmpty()) {
-                            s = s.substring(1).trim();
-                            if (s.startsWith("version=")) {
-                                versionString = NVersion.get(s.substring("version=".length()).trim()).get();
-                            }
-                        }
-                    } else {
-                        if (versionString.compareTo("0.5.7") < 0) {
-                            if (files) {
-                                all.add(s);
-                            } else {
-                                //ignore the rest
-                                break;
+            dotFilesContent=NIOUtils.loadString(foldersFileStream, false);
+        } catch (IOException | NIOException e) {
+            session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "not found", NPath.of(baseUrl).toCompressedForm()));
+            // not found
+        }
+        if (dotFilesContent != null) {
+            try {
+                List<String> splitted = StringTokenizerUtils.splitNewLine(dotFilesContent);
+                for (String s : splitted) {
+                    s = s.trim();
+                    if (!s.isEmpty()) {
+                        if (s.startsWith("#")) {
+                            if (all.isEmpty()) {
+                                s = s.substring(1).trim();
+                                if (s.startsWith("version=")) {
+                                    versionString = NVersion.get(s.substring("version=".length()).trim()).get();
+                                }
                             }
                         } else {
-                            //version 0.5.7 or later
-                            if (s.endsWith("/")) {
-                                s = s.substring(0, s.length() - 1);
-                                int y = s.lastIndexOf('/');
-                                if (y > 0) {
-                                    s = s.substring(y + 1);
-                                }
-                                if (s.length() > 0 && !s.equals("..")) {
-                                    if (folders) {
-                                        if (!s.endsWith("/")) {
-                                            s = s + "/";
-                                        }
-                                        all.add(s);
-                                    }
+                            if (versionString.compareTo("0.5.7") < 0) {
+                                if (files) {
+                                    all.add(s);
+                                } else {
+                                    //ignore the rest
+                                    break;
                                 }
                             } else {
-                                if (files) {
+                                //version 0.5.7 or later
+                                if (s.endsWith("/")) {
+                                    s = s.substring(0, s.length() - 1);
                                     int y = s.lastIndexOf('/');
                                     if (y > 0) {
                                         s = s.substring(y + 1);
                                     }
-                                    all.add(s);
+                                    if (s.length() > 0 && !s.equals("..")) {
+                                        if (folders) {
+                                            if (!s.endsWith("/")) {
+                                                s = s + "/";
+                                            }
+                                            all.add(s);
+                                        }
+                                    }
+                                } else {
+                                    if (files) {
+                                        int y = s.lastIndexOf('/');
+                                        if (y > 0) {
+                                            s = s.substring(y + 1);
+                                        }
+                                        all.add(s);
+                                    }
                                 }
                             }
                         }
                     }
                 }
+            } catch (UncheckedIOException | NIOException ex) {
+                NLogOp.of(DotfilefsPath.class).level(Level.FINE).verb(NLogVerb.FAIL)
+                        .log(NMsg.ofC("unable to navigate : %s", dotFilesUrl));
             }
-        } catch (UncheckedIOException | NIOException ex) {
-            NLogOp.of(DotfilefsPath.class).level(Level.FINE).verb(NLogVerb.FAIL)
-                    .log(NMsg.ofC("unable to navigate : file not found %s", dotFilesUrl));
         }
+
         if (versionString.compareTo("0.5.7") < 0) {
             if (folders) {
-                String[] foldersFileContent = null;
+                String[] dotFoldersContent = null;
                 String dotFolderUrl = NStringUtils.pjoin("/", baseUrl, CoreNConstants.Files.DOT_FOLDERS);
                 try (InputStream stream = NInputStreamMonitor.of().setSource(NPath.of(dotFolderUrl))
                         .create()) {
-                    foldersFileContent = StringTokenizerUtils.splitNewLine(NIOUtils.loadString(stream, true))
-                            .stream().map(x -> x.trim()).filter(x -> x.length() > 0).toArray(String[]::new);
+                    dotFoldersContent = StringTokenizerUtils.splitNewLine(NIOUtils.loadString(stream, true))
+                            .stream().map(x -> x.trim()).filter(x -> !x.isEmpty()).toArray(String[]::new);
                 } catch (IOException | UncheckedIOException | NIOException ex) {
                     NLogOp.of(DotfilefsPath.class).level(Level.FINE).verb(NLogVerb.FAIL)
                             .log(NMsg.ofC("unable to navigate : file not found %s", dotFolderUrl));
                 }
-                if (foldersFileContent != null) {
-                    for (String folder : foldersFileContent) {
+                if (dotFoldersContent != null) {
+                    for (String folder : dotFoldersContent) {
                         if (!folder.endsWith("/")) {
                             folder = folder + "/";
                         }

@@ -524,7 +524,7 @@ public final class NBootUtils {
             Path sysrcFile = Paths.get(System.getProperty("user.home")).resolve(bashrc);
             if (Files.exists(sysrcFile)) {
 
-                //these two lines will remove older versions of nuts ( before 0.8.0)
+                //these two lines will remove older versions of nuts (before 0.8.0)
                 ndiRemoveFileCommented2Lines(sysrcFile, "net.thevpc.app.nuts.toolbox.ndi configuration", true, bLog);
                 ndiRemoveFileCommented2Lines(sysrcFile, "net.thevpc.app.nuts configuration", true, bLog);
 
@@ -2254,7 +2254,7 @@ public final class NBootUtils {
         }
 
         String _ws = bOptions.getWorkspace();
-        if(!isRemoteWorkspaceLocation(_ws)) {
+        if (!isRemoteWorkspaceLocation(_ws)) {
             Boolean systemWorkspace = NBootUtils.firstNonNull(bOptions.getSystem(), false);
             String lastNutsWorkspaceJsonConfigPath = NBootUtils.isValidWorkspaceName(_ws) ? NBootPlatformHome.of(null, systemWorkspace)
                     .getWorkspaceLocation(NBootUtils.resolveValidWorkspaceName(_ws)) : NBootUtils.getAbsolutePath(_ws);
@@ -3179,6 +3179,6 @@ public final class NBootUtils {
     }
 
     public static boolean isRemoteWorkspaceLocation(String _ws) {
-        return _ws.matches("[a-z-]+://.*");
+        return _ws != null && _ws.matches("[a-z-]+://.*");
     }
 }

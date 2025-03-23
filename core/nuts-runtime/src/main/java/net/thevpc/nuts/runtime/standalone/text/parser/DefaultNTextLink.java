@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NTextLink;
@@ -40,8 +39,8 @@ import java.util.Objects;
 public class DefaultNTextLink extends NTextSpecialBase implements NTextLink {
     private String value;
 
-    public DefaultNTextLink(NWorkspace workspace, String separator, String value) {
-        super(workspace, "```!", "link", separator, "```");
+    public DefaultNTextLink(String separator, String value) {
+        super("```!", "link", separator, "```");
         this.value = value;
     }
 
@@ -69,10 +68,12 @@ public class DefaultNTextLink extends NTextSpecialBase implements NTextLink {
         DefaultNTextLink that = (DefaultNTextLink) o;
         return Objects.equals(value, that.value);
     }
+
     @Override
     public NText immutable() {
         return this;
     }
+
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), value);
@@ -86,5 +87,13 @@ public class DefaultNTextLink extends NTextSpecialBase implements NTextLink {
     @Override
     public int textLength() {
         return value == null ? 0 : value.length();
+    }
+
+    @Override
+    public NText simplify() {
+        if (value.isEmpty()) {
+            return DefaultNTextPlain.EMPTY;
+        }
+        return this;
     }
 }

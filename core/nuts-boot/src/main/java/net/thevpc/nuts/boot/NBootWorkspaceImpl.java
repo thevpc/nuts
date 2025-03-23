@@ -565,7 +565,9 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                     bLog.warn(NBootMsg.ofC("nuts hard reset did not require to delete any file. system is clean."));
                 }
             }
-            throw new NBootException(NBootMsg.ofPlain(""), 0);
+            if(NBootUtils.isEmptyList(options.getApplicationArguments())) {
+                throw new NBootException(NBootMsg.ofPlain(""), 0);
+            }
         }
         if (!preparedWorkspace) {
             preparedWorkspace = true;

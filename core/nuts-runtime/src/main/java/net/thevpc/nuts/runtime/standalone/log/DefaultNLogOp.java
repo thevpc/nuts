@@ -73,7 +73,7 @@ public class DefaultNLogOp implements NLogOp {
             if (msgSupplier != null) {
                 m = msgSupplier.get();
             }
-            NSession s=workspace.createSession();
+            NSession s=workspace.currentSession();
             NLogRecord record = new NLogRecord(
                     s,
                     level,

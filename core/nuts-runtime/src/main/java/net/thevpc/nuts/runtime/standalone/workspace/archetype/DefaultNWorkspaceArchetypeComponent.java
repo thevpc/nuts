@@ -35,7 +35,10 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * Created by vpc on 1/23/17.
@@ -53,16 +56,46 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
         return "default";
     }
 
+    private String defaultRepoDiscriminator(NAddRepositoryOptions d){
+        NPath repositoriesRoot = NWorkspaceExt.of().getConfigModel().getRepositoriesRoot();
+        if (d.getConfig() != null && d.getConfig().getLocation() != null && d.getConfig().getLocation().getPath() != null) {
+            return NPath.of(d.getConfig().getLocation().getPath()).toAbsolute(repositoriesRoot).toString();
+        } else if (!NBlankable.isBlank(d.getLocation())) {
+            return NPath.of(d.getLocation()).toAbsolute(repositoriesRoot).toString();
+        } else if (!NBlankable.isBlank(d.getName())) {
+            return NPath.of(d.getName()).toAbsolute(repositoriesRoot).toString();
+        } else if (d.getRepositoryModel() != null) {
+            String n = NAssert.requireNonBlank(
+                    NStringUtils.firstNonBlank(d.getRepositoryModel().getName(), d.getRepositoryModel().getUuid()),
+                    "RepositoryModel name"
+            );
+            return NPath.of(n).toAbsolute(NWorkspaceExt.of().getConfigModel().getRepositoriesRoot()).toString();
+        } else {
+            throw new NIllegalArgumentException(NMsg.ofC("unable to load default repository location: %s", d.getLocation()));
+        }
+    }
+
     @Override
     public void initializeWorkspace() {
         LinkedHashMap<String, NAddRepositoryOptions> def = new LinkedHashMap<>();
         List<NRepositoryLocation> defaults = new ArrayList<>();
         for (NAddRepositoryOptions d : workspace.getDefaultRepositories()) {
-            if (d.getConfig() != null) {
-                def.put(NPath.of(d.getConfig().getLocation().getPath()).toAbsolute().toString(), d);
-            } else {
-                def.put(NPath.of(d.getLocation()).toAbsolute().toString(), d);
+            String discriminator = defaultRepoDiscriminator(d);
+            String name = d.getName();
+            if(NBlankable.isBlank(name)) {
+                if (d.getConfig() != null && !NBlankable.isBlank(d.getConfig().getName())) {
+                    name = d.getConfig().getName();
+                } else if (d.getRepositoryModel() != null) {
+                    name = NAssert.requireNonBlank(
+                            NStringUtils.firstNonBlank(d.getRepositoryModel().getName(), d.getRepositoryModel().getUuid()),
+                            "RepositoryModel name"
+                    );
+                } else {
+                    throw new NIllegalArgumentException(NMsg.ofC("unable to load default repository location: %s", d.getLocation()));
+                }
+                d.setName(name);
             }
+            def.put(discriminator, d);
             defaults.add(NRepositoryLocation.of(d.getName(), (String) null));
         }
         NWorkspaceExt.of().getModel().configModel.getStoredConfigMain().setEnablePreviewRepositories(NSession.of().isPreviewRepo());
@@ -71,7 +104,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
         NRepositoryLocation[] br = NWorkspaceExt.of(workspace).getConfigModel().resolveBootRepositoriesList().resolve(defaults.toArray(new NRepositoryLocation[0]), NRepositoryDB.of());
         for (NRepositoryLocation s : br) {
             NAddRepositoryOptions oo = NRepositorySelectorHelper.createRepositoryOptions(s, false);
-            String sloc = NPath.of(oo.getConfig().getLocation().getPath()).toAbsolute().toString();
+            String sloc = defaultRepoDiscriminator(oo);
             if (def.containsKey(sloc)) {
                 NAddRepositoryOptions r = def.get(sloc).copy();
                 if (!NBlankable.isBlank(s.getName())) {
@@ -100,7 +133,6 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 //            ws.repos().addRepository(d);
 //        }
         NWorkspace.of().addImports(
-                "net.thevpc.nuts.toolbox",
                 "net.thevpc"
         );
 
@@ -125,12 +157,11 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
     @Override
     public void startWorkspace() {
         NIsolationLevel nIsolationLevel = workspace.getBootOptions().getIsolationLevel().orNull();
-        if(nIsolationLevel == NIsolationLevel.MEMORY){
+        if (nIsolationLevel == NIsolationLevel.MEMORY) {
             return;
         }
         boolean isolated = nIsolationLevel == NIsolationLevel.SANDBOX
-                || nIsolationLevel == NIsolationLevel.CONFINED
-                ;
+                || nIsolationLevel == NIsolationLevel.CONFINED;
 //        boolean initializePlatforms = boot.getBootOptions().getInitPlatforms().ifEmpty(false).get(session);
 //        boolean initializeJava = boot.getBootOptions().getInitJava().ifEmpty(initializePlatforms).get(session);
         boolean initializeScripts = workspace.getBootOptions().getInitScripts().orElse(!isolated);

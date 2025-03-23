@@ -50,6 +50,14 @@ public interface NArtifactCallBuilder extends Serializable, NComponent {
        return NExtensions.of(NArtifactCallBuilder.class);
     }
 
+    String getScriptName();
+
+    NArtifactCallBuilder setScriptName(String scriptName);
+
+    String getScriptContent();
+
+    NArtifactCallBuilder setScriptContent(String scriptContent);
+
     /**
      * return artifact id
      *
@@ -94,7 +102,7 @@ public interface NArtifactCallBuilder extends Serializable, NComponent {
      * @param value copy from value
      * @return {@code this} instance
      */
-    NArtifactCallBuilder set(NArtifactCallBuilder value);
+    NArtifactCallBuilder copyFrom(NArtifactCallBuilder value);
 
     /**
      * initialize this instance from the given value
@@ -102,7 +110,7 @@ public interface NArtifactCallBuilder extends Serializable, NComponent {
      * @param value copy from value
      * @return {@code this} instance
      */
-    NArtifactCallBuilder set(NArtifactCall value);
+    NArtifactCallBuilder copyFrom(NArtifactCall value);
 
     /**
      * reset this instance to default (null) values

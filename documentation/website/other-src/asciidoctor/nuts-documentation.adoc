@@ -1252,7 +1252,7 @@ Aliases, Imports and launchers, are three features in nuts where you can call ar
 [source,bash]
 ----
 
-nuts net.thevpc.toolbox.nsh:nsh#0.8.5.0
+nuts net.thevpc.nsh:nsh#0.8.5.0
 
 ----
 
@@ -1264,7 +1264,7 @@ Imports help you discard groupId and call/install artifacts using only artifactI
 [source,bash]
 ----
 
-nuts net.thevpc.toolbox.nsh:nsh#0.8.5.0
+nuts net.thevpc.nsh:nsh#0.8.5.0
 # becomes
 nuts settings add import net.thevpc.toolbox
 # now call it simply with
@@ -1274,7 +1274,7 @@ nuts nsh
 
 ----
 
-As a matter of fact, there are a couple of imports automatically defined 'net.thevpc' and 'net.thevpc.toolbox' 
+As a matter of fact, there is a default import defined 'net.thevpc'
 
 =====  Aliases
 
@@ -1284,9 +1284,9 @@ Aliases help you define your own command by calling existing artifacts and defin
 [source,bash]
 ----
 
-nuts net.thevpc.toolbox.nsh:nsh#0.8.5.0
+nuts net.thevpc.nsh:nsh#0.8.5.0
 # becomes
-nuts settings add alias ll='net.thevpc.toolbox.nsh:nsh#0.8.5.0 -c ls -l'
+nuts settings add alias ll='net.thevpc.nsh:nsh#0.8.5.0 -c ls -l'
 # now call it simply with
 nuts ll
 
@@ -1300,9 +1300,9 @@ Launchers help you define your own system command by calling nuts with existing 
 [source,bash]
 ----
 
-nuts net.thevpc.toolbox.nsh:nsh#0.8.5.0
+nuts net.thevpc.nsh:nsh#0.8.5.0
 # becomes
-nuts settings add launcher --menu --desktop 'net.thevpc.toolbox.nsh:nsh#0.8.5.0'
+nuts settings add launcher --menu --desktop 'net.thevpc.nsh:nsh#0.8.5.0'
 # now call it simply click on the desktop icon or open via system menu
 
 ----
@@ -4518,13 +4518,13 @@ $> nuts search
 
 $> nuts search 'net.thevpc.nuts.toolbox:*' --anywhere
  
-        net.thevpc.nuts.toolbox:nsh#0.8.5.0
+        net.thevpc.nsh:nsh#0.8.5.0
         net.thevpc.nuts.toolbox:ndoc#0.8.5.0
         net.thevpc.nuts.toolbox:ndexer#0.8.5.0
         net.thevpc.nuts.toolbox:njob#0.8.5.0
         net.thevpc.nuts.toolbox:nmvn#0.8.5.0
         net.thevpc.nuts.toolbox:nwork#0.8.5.0
-        net.thevpc.nuts.toolbox:nsh#0.8.5.0
+        net.thevpc.nsh:nsh#0.8.5.0
         net.thevpc.nuts.toolbox:ntomcat#0.8.5.0
         net.thevpc.nuts.toolbox:ntalk-agent#0.8.5.0
         net.thevpc.nuts.toolbox:ndiff#0.8.5.0

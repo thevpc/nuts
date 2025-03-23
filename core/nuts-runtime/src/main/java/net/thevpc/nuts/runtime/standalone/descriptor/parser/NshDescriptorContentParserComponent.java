@@ -29,6 +29,7 @@ package net.thevpc.nuts.runtime.standalone.descriptor.parser;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.DefaultNArtifactCall;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.runtime.standalone.DefaultNArtifactCallBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.format.json.JsonStringBuffer;
 import net.thevpc.nuts.spi.*;
@@ -159,7 +160,11 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
                 return new DefaultNDescriptorBuilder()
                         .setId(NId.get("temp:nsh#1.0").get())
                         .setPackaging("nsh")
-                        .setExecutor(new DefaultNArtifactCall(NId.get("net.thevpc.nuts.toolbox:nsh").get()))
+                        .setExecutor(
+                                NArtifactCallBuilder.of()
+                                        .setId(NId.of(NConstants.Ids.NUTS_SHELL))
+                                        .build()
+                        )
                         .build();
             }
             return NDescriptorParser.of().parse(comment.getValidString()).get();

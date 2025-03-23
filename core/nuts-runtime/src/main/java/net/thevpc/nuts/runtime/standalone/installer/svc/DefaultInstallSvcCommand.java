@@ -646,7 +646,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         }
         if (x == null) {
             try {
-                x = System.getenv(n);
+                x = NWorkspace.of().getSysEnv(n).orNull();
             } catch (Exception e) {
                 //
             }

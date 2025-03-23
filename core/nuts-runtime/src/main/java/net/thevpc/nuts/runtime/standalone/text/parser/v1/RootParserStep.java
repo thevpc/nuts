@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.text.NTextPlain;
-import net.thevpc.nuts.text.NTexts;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -63,7 +62,7 @@ public class RootParserStep extends ParserStep {
                 NTextPlain p1=(NTextPlain) n;
                 NTextPlain p2=(NTextPlain) all.remove(all.size()-1);
                 all.add(new DefaultNTextPlain(
-                        workspace,p1.getText()+p2.getText()
+                        p1.getText()+p2.getText()
                 ));
             }else{
                 all.add(n);

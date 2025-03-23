@@ -26,8 +26,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextPlain;
 import net.thevpc.nuts.text.NTextType;
@@ -38,11 +36,11 @@ import java.util.Objects;
  * Created by vpc on 5/23/17.
  */
 public class DefaultNTextPlain extends AbstractNText implements NTextPlain {
-
+    public static final NTextPlain EMPTY = new DefaultNTextPlain("");
     private String text;
 
-    public DefaultNTextPlain(NWorkspace workspace, String text) {
-        super(workspace);
+    public DefaultNTextPlain(String text) {
+        super();
         this.text = text == null ? "" : text;
     }
 
@@ -86,4 +84,13 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain {
     public int textLength() {
         return text==null?0:text.length();
     }
+
+    @Override
+    public NText simplify() {
+        if(this.equals(DefaultNTextPlain.EMPTY)){
+            return DefaultNTextPlain.EMPTY;
+        }
+        return this;
+    }
+
 }

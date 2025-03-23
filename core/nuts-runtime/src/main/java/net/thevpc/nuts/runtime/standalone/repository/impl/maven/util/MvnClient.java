@@ -7,7 +7,7 @@ import net.thevpc.nuts.util.NMsg;
 import java.util.logging.Level;
 
 public class MvnClient {
-    public static final String NET_VPC_APP_NUTS_MVN = "net.thevpc.nuts.toolbox:mvn";
+    public static final String NET_VPC_APP_NUTS_MVN = "net.thevpc.nmvn:nmvn";
     private NWorkspace workspace;
     private Status status = Status.INIT;
 

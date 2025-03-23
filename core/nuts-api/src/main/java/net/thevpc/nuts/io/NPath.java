@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts.io;
 
+import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NRepository;
 import net.thevpc.nuts.NWorkspaceProvider;
 import net.thevpc.nuts.util.NOptional;
@@ -167,6 +168,45 @@ public interface NPath extends NInputSource, NOutputTarget,Comparable<NPath> {
      */
     static NPath ofTempRepositoryFolder(NRepository repository) {
         return NIO.of().ofTempRepositoryFolder(repository);
+    }
+
+
+    /**
+     * create temp file in the id's temp folder
+     *
+     * @param name file name
+     * @return newly created file path
+     */
+    static NPath ofTempIdFile(String name, NId id) {
+        return NIO.of().ofTempIdFile(name, id);
+    }
+
+    /**
+     * create temp file in the id's temp folder
+     *
+     * @return newly created file path
+     */
+    static NPath ofTempIdFile(NId id) {
+        return NIO.of().ofTempIdFile(id);
+    }
+
+    /**
+     * create temp folder in the id's temp folder
+     *
+     * @param name folder name
+     * @return newly created temp folder
+     */
+    static NPath ofTempIdFolder(String name, NId id) {
+        return NIO.of().ofTempIdFolder(name, id);
+    }
+
+    /**
+     * create temp folder in the id's temp folder
+     *
+     * @return newly created temp folder
+     */
+    static NPath ofTempIdFolder(NId id) {
+        return NIO.of().ofTempIdFolder(id);
     }
 
     /**

@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.io;
 
+import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NRepository;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
@@ -208,6 +209,14 @@ public interface NIO extends NComponent {
     String probeContentType(URL path);
 
     String probeContentType(File path);
+
+    NPath ofTempIdFile(String name, NId repository);
+
+    NPath ofTempIdFolder(String name, NId repository);
+
+    NPath ofTempIdFile(NId repository);
+
+    NPath ofTempIdFolder(NId repository);
 
     String probeContentType(Path path);
 

@@ -6,7 +6,6 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNExecutionEntry;
 import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NRef;
 
@@ -183,8 +182,8 @@ public class JavaClassUtils {
 
     public static String sourceVersionToClassVersion(String sourceVersion) {
         NVersion v = NVersion.get(sourceVersion).get();
-        int major = v.getNumber(0).flatMap(NLiteral::asInt).orElse(0);
-        int minor = v.getNumber(1).flatMap(NLiteral::asInt).orElse(-1);
+        int major = v.getIntegerAt(0).orElse(0);
+        int minor = v.getIntegerAt(1).orElse(-1);
         if (major < 1) {
             throw new NIllegalArgumentException(NMsg.ofC("invalid sourceVersion %s", sourceVersion));
         }

@@ -250,7 +250,7 @@ public class DefaultNBootModel implements NBootModel {
         if (st.isAutoCompleteSupported()) {
             //that's ok
         } else {
-            NId extId = NId.get("net.thevpc.nuts.ext:next-term#" + workspace.getApiVersion()).get();
+            NId extId = NId.get("net.thevpc.nuts:nuts-term#" + workspace.getApiVersion()).get();
             if (!NExtensions.of().isExcludedExtension(extId.toString(), NWorkspace.of().getBootOptions().toWorkspaceOptions())) {
                 NExtensions extensions = NExtensions.of();
                 extensions.loadExtension(extId);
@@ -268,7 +268,7 @@ public class DefaultNBootModel implements NBootModel {
                 }
             } else {
                 _LOGOP().level(Level.FINE).verb(NLogVerb.WARNING)
-                        .log(NMsg.ofPlain("enableRichTerm discarded; next-term is excluded."));
+                        .log(NMsg.ofPlain("enableRichTerm discarded; nuts-term is excluded."));
             }
         }
     }

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.installer.util;
 
 import net.thevpc.nuts.installer.model.InstallData;
-import net.thevpc.nuts.boot.swing.Wizard;
+import net.thevpc.nuts.nswing.Wizard;
 import net.thevpc.nuts.installer.NutsInstaller;
 
 import java.io.ByteArrayOutputStream;

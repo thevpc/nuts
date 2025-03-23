@@ -1,7 +1,7 @@
 package net.thevpc.nuts.installer.util;
 
 import net.thevpc.nuts.installer.NutsInstaller;
-import net.thevpc.nuts.boot.swing.UIHelper;
+import net.thevpc.nuts.nswing.UIHelper;
 
 import javax.swing.*;
 import java.awt.*;

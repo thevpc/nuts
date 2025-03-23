@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NTextInclude;
@@ -40,8 +39,8 @@ import java.util.Objects;
 public class DefaultNTextInclude extends NTextSpecialBase implements NTextInclude {
     private String value;
 
-    public DefaultNTextInclude(NWorkspace workspace, String separator, String value) {
-        super(workspace, "```!", "include", separator, "```");
+    public DefaultNTextInclude(String separator, String value) {
+        super("```!", "include", separator, "```");
         this.value = value == null ? "" : value;
     }
 
@@ -87,4 +86,13 @@ public class DefaultNTextInclude extends NTextSpecialBase implements NTextInclud
     public int textLength() {
         return value == null ? 0 : value.length();
     }
+
+    @Override
+    public NText simplify() {
+        if (value.isEmpty()) {
+            return DefaultNTextPlain.EMPTY;
+        }
+        return this;
+    }
+
 }

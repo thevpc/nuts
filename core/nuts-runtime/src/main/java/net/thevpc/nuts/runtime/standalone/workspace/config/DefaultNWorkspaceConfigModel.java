@@ -63,6 +63,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.security.NAuthenticationAgent;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -125,6 +126,8 @@ public class DefaultNWorkspaceConfigModel {
                     "ssh", NId.get("net.thevpc.nuts.ext:next-ssh").get()
             )
     );
+
+    private InheritableThreadLocal<Stack<Map<String, String>>> currentEnv = new InheritableThreadLocal<>();
     //    private final NutsLogger LOG;
 
     public DefaultNWorkspaceConfigModel(final DefaultNWorkspace workspace) {
@@ -148,6 +151,91 @@ public class DefaultNWorkspaceConfigModel {
         //        this.excludedRepositoriesSet = this.options.getExcludedRepositories() == null ? null : new HashSet<>(CoreStringUtils.split(Arrays.asList(this.options.getExcludedRepositories()), " ,;"));
     }
 
+
+    public void sysEnvPop() {
+        Stack<Map<String, String>> s = currentEnv.get();
+        if (s != null && !s.isEmpty()) {
+            s.pop();
+        }
+    }
+
+    public Map<String, String> sysEnvPush(Map<String, String> env) {
+        Stack<Map<String, String>> s = currentEnv.get();
+        if (s == null) {
+            s = new Stack<>();
+        }
+        Map<String, String> p = null;
+        if (!s.isEmpty()) {
+            p = s.peek();
+        }
+        Map<String, String> finalP = p;
+        Map<String, String> p2 = new AbstractMap<String, String>() {
+            private Map<String, String> build() {
+                Map<String, String> aa = new HashMap<>();
+                if (finalP == null) {
+                    aa.putAll(System.getenv());
+                } else {
+                    aa.putAll(finalP);
+                }
+                aa.putAll(env);
+                return aa;
+            }
+
+            @Override
+            public String get(Object key) {
+                String b = env.get(key);
+                if (b == null && !env.containsKey(key)) {
+                    if (finalP == null) {
+                        return System.getenv((String) key);
+                    }
+                    return finalP.get(key);
+                }
+                return b;
+            }
+
+            @Override
+            public boolean containsKey(Object key) {
+                String b = env.get(key);
+                if (b == null && !env.containsKey(key)) {
+                    if (finalP == null) {
+                        return System.getenv((String) key) != null;
+                    }
+                    return finalP.containsKey(key);
+                }
+                return true;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return build().isEmpty();
+            }
+
+            @Override
+            public int size() {
+                return build().size();
+            }
+
+            @Override
+            public @NotNull Set<String> keySet() {
+                return build().keySet();
+            }
+
+            @Override
+            public Set<Entry<String, String>> entrySet() {
+                return build().entrySet();
+            }
+        };
+        s.push(p2);
+        return p2;
+    }
+
+    public Map<String, String> sysEnv() {
+        Stack<Map<String, String>> s = currentEnv.get();
+        if (s == null || s.isEmpty()) {
+            return System.getenv();
+        }
+        return s.peek();
+    }
 
     public void onNewComponent(Class componentType) {
         if (NPathFactorySPI.class.isAssignableFrom(componentType)) {

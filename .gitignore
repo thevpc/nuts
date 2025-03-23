@@ -18,7 +18,7 @@
 /deprecated/
 /ext/next-term/target/
 /installers/nuts-installer/target/
-/lib/nlib-servlet/nuts-servlet.iml
+/lib/nlib-servlet/nuts-javax-servlet.iml
 /lib/nlib-servlet/target/
 /lib/nlib-talk-agent/nlib-talk-agent.iml
 /lib/nlib-talk-agent/target/

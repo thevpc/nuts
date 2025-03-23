@@ -100,7 +100,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         if (NBlankable.isBlank(path)) {
             return basePath;
         }
-        if (!path.toString().endsWith("/")) {
+        if (!path.endsWith("/")) {
             return ref.resolveSibling(path);
         }
         return NPath.of(PREFIX + ref.resolveSibling(path));

@@ -62,7 +62,7 @@ public enum NIdType implements NEnum {
      * the id denotes a nuts companion id artifact.
      * Default companions are
      * <ul>
-     *     <li>net.thevpc.nuts.toolbox:nsh</li>
+     *     <li>net.thevpc.nsh:nsh</li>
      * </ul>
      */
     COMPANION,

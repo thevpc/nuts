@@ -26,8 +26,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextCmd;
@@ -42,8 +40,8 @@ public class DefaultNTextCommand extends NTextSpecialBase implements NTextCmd {
 
     private final NTerminalCmd command;
 
-    public DefaultNTextCommand(NWorkspace workspace, String start, NTerminalCmd command, String separator, String end) {
-        super(workspace, start, command.getName(),
+    public DefaultNTextCommand(String start, NTerminalCmd command, String separator, String end) {
+        super(start, command.getName(),
                 (command.getArgs() != null && command.getArgs().size() > 0 && (separator == null || separator.isEmpty())) ? " " : separator
                 , end);
         this.command = command;
@@ -89,4 +87,10 @@ public class DefaultNTextCommand extends NTextSpecialBase implements NTextCmd {
     public int textLength() {
         return 0;
     }
+
+    @Override
+    public NText simplify() {
+        return this;
+    }
+
 }

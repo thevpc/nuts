@@ -364,10 +364,6 @@ public final class NBootConstants {
          * nuts runtime id
          */
         public static final String NUTS_RUNTIME = NUTS_GROUP_ID+":"+NUTS_RUNTIME_ARTIFACT_ID;
-        /**
-         * nuts shell id
-         */
-        public static final String NUTS_SHELL = "net.thevpc.nuts.toolbox:nsh";
 
         /**
          * private constructor

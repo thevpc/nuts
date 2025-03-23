@@ -1,19 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.text.NTextNodeWriterStringer;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NBlankable;
 
 import java.io.ByteArrayOutputStream;
 
 public abstract class AbstractNText implements NText {
-    protected NWorkspace workspace;
 
-    public AbstractNText(NWorkspace workspace) {
-        this.workspace=workspace;
+    public AbstractNText() {
     }
 
     @Override

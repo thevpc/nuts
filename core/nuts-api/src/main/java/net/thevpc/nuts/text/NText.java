@@ -78,16 +78,16 @@ public interface NText extends NBlankable {
         return NTexts.of().ofStyled(other, styles);
     }
 
-    static NText ofStyled(String other, NTextStyle style) {
-        return NTexts.of().ofStyled(other, style);
+    static NText ofStyled(String plainText, NTextStyle style) {
+        return NTexts.of().ofStyled(plainText, style);
     }
 
     static NText ofStyledError(String other) {
         return NTexts.of().ofStyled(other, NTextStyle.error());
     }
 
-    static NText ofStyledPath(String other) {
-        return NTexts.of().ofStyled(other, NTextStyle.path());
+    static NText ofStyledPath(String plainPath) {
+        return NTexts.of().ofStyled(plainPath, NTextStyle.path());
     }
 
     static NText ofStyled(NMsg other, NTextStyle style) {
@@ -233,4 +233,5 @@ public interface NText extends NBlankable {
     int textLength();
 
     boolean isEmpty();
+    NText simplify();
 }

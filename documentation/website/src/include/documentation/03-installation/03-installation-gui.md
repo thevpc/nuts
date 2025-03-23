@@ -82,13 +82,13 @@ $> nuts search
 
 $> nuts search 'net.thevpc.nuts.toolbox:*' --anywhere
  
-        net.thevpc.nuts.toolbox:nsh#0.8.5.0
+        net.thevpc.nsh:nsh#0.8.5.0
         net.thevpc.nuts.toolbox:ndoc#0.8.5.0
         net.thevpc.nuts.toolbox:ndexer#0.8.5.0
         net.thevpc.nuts.toolbox:njob#0.8.5.0
         net.thevpc.nuts.toolbox:nmvn#0.8.5.0
         net.thevpc.nuts.toolbox:nwork#0.8.5.0
-        net.thevpc.nuts.toolbox:nsh#0.8.5.0
+        net.thevpc.nsh:nsh#0.8.5.0
         net.thevpc.nuts.toolbox:ntomcat#0.8.5.0
         net.thevpc.nuts.toolbox:ntalk-agent#0.8.5.0
         net.thevpc.nuts.toolbox:ndiff#0.8.5.0

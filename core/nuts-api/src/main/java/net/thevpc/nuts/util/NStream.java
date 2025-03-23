@@ -163,7 +163,13 @@ public interface NStream<T> extends Iterable<T>, NElementDescribable<NStream<T>>
 
     NStream<T> filterNonBlank();
 
+    NStream<T> concat(NIterator<? extends T> other);
+
     NStream<T> coalesce(NIterator<? extends T> other);
+
+    NStream<T> concat(NStream<? extends T> other);
+
+    NStream<T> coalesce(NStream<? extends T> other);
 
     <A> A[] toArray(IntFunction<A[]> generator);
 

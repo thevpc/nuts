@@ -270,7 +270,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 }
                 String bootArgumentsString = NCmdLineFormat.ofPlain(ncmdLine
                         .add(executionContext.getDefinition().getId().getLongName())
-                        ).setShellFamily(NShellFamily.SH).toString();
+                ).setShellFamily(NShellFamily.SH).toString();
                 if (!NBlankable.isBlank(bootArgumentsString)) {
                     osEnv.put("NUTS_BOOT_ARGS", bootArgumentsString);
                     joptions.getJvmArgs().add("-Dnuts.boot.args=" + bootArgumentsString);
@@ -423,7 +423,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 cmdLine.add("embedded-java");
                 cmdLine.add("-cp");
                 cmdLine.add(joptions.getClassPathNodes().stream().map(NClassLoaderNode::getId).filter(NBlankable::isNonBlank)
-                                .map(Object::toString)
+                        .map(Object::toString)
                         .collect(Collectors.joining(":")));
                 cmdLine.add(joptions.getMainClass());
                 cmdLine.addAll(joptions.getAppArgs());
@@ -459,20 +459,27 @@ public class JavaExecutorComponent implements NExecutorComponent {
                     }
                 }
                 Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader);
+                Map<String, String> newEnv = executionContext.getEnv();
                 th = session.copy().callWith(() -> {
-                    Throwable th2 = null;
+                    NWorkspaceExt.of().getConfigModel().sysEnvPush(newEnv);
                     try {
-                        new ClassloaderAwareRunnableImpl(def.getId(), classLoader, cls, session, joptions, executionContext).runAndWaitFor();
-                    } catch (InvocationTargetException e) {
-                        th2 = e.getTargetException();
-                    } catch (MalformedURLException | NoSuchMethodException | SecurityException
-                             | IllegalAccessException | IllegalArgumentException
-                             | ClassNotFoundException e) {
-                        th2 = e;
-                    } catch (Throwable ex) {
-                        th2 = ex;
+
+                        Throwable th2 = null;
+                        try {
+                            new ClassloaderAwareRunnableImpl(def.getId(), classLoader, cls, session, joptions, executionContext).runAndWaitFor();
+                        } catch (InvocationTargetException e) {
+                            th2 = e.getTargetException();
+                        } catch (MalformedURLException | NoSuchMethodException | SecurityException
+                                 | IllegalAccessException | IllegalArgumentException
+                                 | ClassNotFoundException e) {
+                            th2 = e;
+                        } catch (Throwable ex) {
+                            th2 = ex;
+                        }
+                        return th2;
+                    } finally {
+                        NWorkspaceExt.of().getConfigModel().sysEnvPop();
                     }
-                    return th2;
                 });
             } catch (Throwable ex) {
                 th = ex;

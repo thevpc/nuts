@@ -328,7 +328,7 @@ public class DefaultNDigest implements NDigest {
 
         @Override
         public String toString() {
-            NPlainPrintStream out = new NPlainPrintStream();
+            NMemoryPrintStream out = NPrintStream.ofMem(NTerminalMode.FILTERED);
             NOptional<NMsg> m = getMetaData().getMessage();
             if (m.isPresent()) {
                 out.print(m.get());

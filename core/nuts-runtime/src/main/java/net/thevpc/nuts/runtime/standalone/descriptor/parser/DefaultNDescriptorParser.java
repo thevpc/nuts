@@ -5,6 +5,7 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.runtime.standalone.DefaultNArtifactCallBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorPropertyBuilder;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
@@ -71,26 +72,26 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
             try {
                 try (InputStream is = path.getInputStream()) {
                     startParsing = true;
-                    NDescriptorStyle defaultDescriptorStyle=null;
+                    NDescriptorStyle defaultDescriptorStyle = null;
                     String canonicalPathName = path.getName().toLowerCase();
-                    switch (canonicalPathName){
-                        case "pom.xml":{
-                            defaultDescriptorStyle=NDescriptorStyle.MAVEN;
+                    switch (canonicalPathName) {
+                        case "pom.xml": {
+                            defaultDescriptorStyle = NDescriptorStyle.MAVEN;
                             break;
                         }
-                        case "manifest.mf":{
-                            defaultDescriptorStyle=NDescriptorStyle.MANIFEST;
+                        case "manifest.mf": {
+                            defaultDescriptorStyle = NDescriptorStyle.MANIFEST;
                             break;
                         }
-                        case "nuts.json":{
-                            defaultDescriptorStyle=NDescriptorStyle.NUTS;
+                        case "nuts.json": {
+                            defaultDescriptorStyle = NDescriptorStyle.NUTS;
                             break;
                         }
-                        default:{
-                            if(canonicalPathName.endsWith(".pom")){
-                                defaultDescriptorStyle=NDescriptorStyle.MAVEN;
-                            }else if(canonicalPathName.endsWith(".nuts")){
-                                defaultDescriptorStyle=NDescriptorStyle.NUTS;
+                        default: {
+                            if (canonicalPathName.endsWith(".pom")) {
+                                defaultDescriptorStyle = NDescriptorStyle.MAVEN;
+                            } else if (canonicalPathName.endsWith(".nuts")) {
+                                defaultDescriptorStyle = NDescriptorStyle.NUTS;
                             }
                         }
                     }
@@ -133,7 +134,6 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
         this.descriptorStyle = descriptorStyle;
         return this;
     }
-
 
 
     private NOptional<NDescriptor> parse(InputStream in, NDescriptorStyle defaultDescriptorStyle, boolean closeStream) {
@@ -297,14 +297,12 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
                                                     .build())
                                             .collect(Collectors.toList()))
                                     //.setCondition()
-                                    .setExecutor(new DefaultNArtifactCall(
-                                            NId.get("java").get(),
-                                            //new String[]{"-jar"}
-                                            NBlankable.isBlank(mainClass) ? Collections.emptyList()
-                                                    : Arrays.asList(
-                                                    "--main-class=", mainClass
-                                            )
-                                    ))
+                                    .setExecutor(
+                                            new DefaultNArtifactCallBuilder()
+                                                    .setId(NId.get("java").get())
+                                                    .setArguments(NBlankable.isBlank(mainClass) ? null : new String[]{"--main-class=", mainClass})
+                                                    .build()
+                                    )
                                     .setDependencies(new ArrayList<>(deps))
                                     .build();
                         }

@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.repository;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NRepositoryDB;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.spi.NRepositorySelectorList;
@@ -88,7 +89,7 @@ public class NRepositorySelectorHelper {
         NAssert.requireNonBlank(url, "repository url (<name>=<url>)");
 
         NRepositoryLocation loc = NRepositoryLocation.of(url);
-        String sloc = NPath.of(loc.getPath()).toAbsolute().toString();
+        String sloc = NPath.of(loc.getPath()).toAbsolute(NWorkspaceExt.of().getConfigModel().getRepositoriesRoot()).toString();
         loc = loc.setPath(sloc);
 
         return new NAddRepositoryOptions().setName(name)

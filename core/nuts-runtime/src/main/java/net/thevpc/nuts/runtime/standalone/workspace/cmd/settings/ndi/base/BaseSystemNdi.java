@@ -27,7 +27,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class BaseSystemNdi extends AbstractSystemNdi {
-    public static final ReplaceString COMMENT_LINE_CONFIG_HEADER = new ReplaceString("net.thevpc.nuts configuration", "((net[.]thevpc[.]nuts)|(net[.]thevpc[.]nuts.toolbox[.]ndi)|(net[.]vpc[.]app[.]nuts)) configuration");
+    public static final ReplaceString COMMENT_LINE_CONFIG_HEADER = new ReplaceString("net.thevpc.nuts configuration",
+            "((net[.]thevpc[.]nuts)" +
+                    // TODO should remove this (was relevant in pre 0.8.0)
+                    "|(net[.]thevpc[.]nuts.toolbox[.]ndi)" +
+                    // TODO should remove this (was relevant in pre 0.8.0)
+                    "|(net[.]vpc[.]app[.]nuts)) configuration"
+    );
 
     public BaseSystemNdi(NWorkspace workspace) {
         super(workspace);

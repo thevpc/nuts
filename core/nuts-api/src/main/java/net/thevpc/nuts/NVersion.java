@@ -241,15 +241,19 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
      *     <li>size(1.22_u1)=5 {'1','.','22','_u','1'}</li>
      * </ul>
      * <ul>
-     *     <li>(1.a22).getNumber(0)=1</li>
-     *     <li>(1.a22).getNumber(1)=22</li>
-     *     <li>(1.a22).getNumber(-1)=22</li>
+     *     <li>(1.a22).getNumberLiteralAt(0)=1</li>
+     *     <li>(1.a22).getNumberLiteralAt(1)=22</li>
+     *     <li>(1.a22).getNumberLiteralAt(-1)=22</li>
      * </ul>
      *
      * @param index version part index
      * @return element at given index.
      */
-    NOptional<NLiteral> getNumber(int index);
+    NOptional<NLiteral> getNumberLiteralAt(int index);
+
+    NOptional<Integer> getIntegerAt(int index);
+
+    NOptional<Long> getLongAt(int index);
 
     boolean isLatestVersion();
 

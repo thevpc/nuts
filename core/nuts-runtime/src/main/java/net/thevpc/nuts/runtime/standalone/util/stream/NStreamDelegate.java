@@ -257,4 +257,19 @@ public abstract class NStreamDelegate<T> implements NStream<T> {
     public <R> NStream<R> mapUnsafe(UnsafeFunction<? super T, ? extends R> mapper) {
         return baseStream().mapUnsafe(mapper);
     }
+
+    @Override
+    public NStream<T> concat(NIterator<? extends T> other) {
+        return baseStream().concat(other);
+    }
+
+    @Override
+    public NStream<T> concat(NStream<? extends T> other) {
+        return baseStream().concat(other);
+    }
+
+    @Override
+    public NStream<T> coalesce(NStream<? extends T> other) {
+        return baseStream().coalesce(other);
+    }
 }

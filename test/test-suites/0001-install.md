@@ -68,8 +68,8 @@ create file /home/vpc/.config/nuts/default-workspace/apps/id/net/thevpc/nuts/nut
 create file /home/vpc/.config/nuts/default-workspace/apps/id/net/thevpc/nuts/nuts/0.8.3-rc1/inc/.nuts-term-init.sh
 create file /home/vpc/.config/nuts/default-workspace/apps/id/net/thevpc/nuts/nuts/0.8.3-rc1/inc/.nuts-term-init.fish
 create file /home/vpc/.config/nuts/default-workspace/apps/id/net/thevpc/nuts/nuts/0.8.3-rc1/bin/nuts-term
-looking for recommended companion tools to install... detected : net.thevpc.nuts.toolbox:nsh
-install net.thevpc.nuts.toolbox:nsh#0.8.3.0-rc1 ...
+looking for recommended companion tools to install... detected : net.thevpc.nsh:nsh
+install net.thevpc.nsh:nsh#0.8.3.0-rc1 ...
 require net.thevpc.nuts.lib:nlib-ssh#0.8.3.0-rc1 from remote repository (dev).
 require com.jcraft:jsch#0.1.55 from remote repository (dev).
 install command date
@@ -110,7 +110,7 @@ re-registered 34 nsh commands : autocomplete, basename, builtin, cat, chmod, com
 update file /home/vpc/.bashrc
 force updating .nuts-env.sh, .nuts-env.fish, .nuts-init.sh, .nuts-init.fish, nuts, .nuts-term-init.sh, .nuts-term-init.fish, nuts-term, .bashrc, .profile, .zshenv, .cshrc, .kshrc, config.fish, net.thevpc.nuts-nuts.desktop, net.thevpc.nuts-nuts.menu to point to workspace /home/vpc/.config/nuts/default-workspace
 create file /home/vpc/.config/nuts/default-workspace/apps/id/net/thevpc/nuts/nuts/0.8.3-rc1/bin/nsh
-install net.thevpc.nuts.toolbox:nsh#0.8.3.0-rc1 from remote repository (dev). set as default.
+install net.thevpc.nsh:nsh#0.8.3.0-rc1 from remote repository (dev). set as default.
 install net.thevpc.nuts.toolbox:ntomcat#0.8.3.0-rc1 ...
 require org.jsoup:jsoup#1.12.1 from remote repository (maven-central).
 install net.thevpc.nuts.toolbox:ntomcat#0.8.3.0-rc1 from remote repository (dev). set as default.

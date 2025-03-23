@@ -379,6 +379,11 @@ public class NTextBuilderPlain implements NTextBuilder {
         return sb.isBlank();
     }
 
+    @Override
+    public NText simplify() {
+        return this;
+    }
+
     private static class ImmutableNTextPlain implements NTextPlain {
         private final String nString;
 
@@ -421,6 +426,11 @@ public class NTextBuilderPlain implements NTextBuilder {
             NTextBuilderPlain b = new NTextBuilderPlain();
             b.sb.append(nString.toString());
             return b;
+        }
+
+        @Override
+        public NText simplify() {
+            return this;
         }
 
         @Override

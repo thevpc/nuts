@@ -2,7 +2,7 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.thevpc.nuts.test</groupId>
+    <groupId>net.thevpc.xprojects.test.nuts</groupId>
     <artifactId>nuts-runtime-test</artifactId>
     <version>0.8.5.0</version>
     <packaging>jar</packaging>

@@ -75,7 +75,6 @@ public class NUncompressGzip implements NUncompressPackaging {
     }
 
     protected NLog _LOG() {
-        NSession session = workspace.createSession();
         return NLog.of(NUncompressGzip.class);
     }
 

@@ -165,7 +165,34 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
     @Override
     public NDescriptorBuilder setIcons(List<String> icons) {
-        this.icons = icons == null ? new ArrayList<>() : new ArrayList<>(icons);
+        this.setIcons(icons == null ? null : icons.toArray(new String[0]));
+        return this;
+    }
+
+    @Override
+    public NDescriptorBuilder setIcons(String... icons) {
+        this.icons = new ArrayList<>();
+        if (icons != null) {
+            for (String icon : icons) {
+                if (!NBlankable.isBlank(icon)) {
+                    this.icons.add(icon);
+                }
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NDescriptorBuilder setLocations(NIdLocation... locations) {
+        this.locations = new ArrayList<>();
+        if (locations != null) {
+            for (NIdLocation location : locations) {
+                if (!NBlankable.isBlank(location)) {
+                    this.locations.add(location);
+                }
+            }
+        }
+        this.locations=NReservedLangUtils.uniqueList(this.locations);
         return this;
     }
 
@@ -176,7 +203,20 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
     @Override
     public NDescriptorBuilder setCategories(List<String> categories) {
-        this.categories = categories == null ? new ArrayList<>() : new ArrayList<>(categories);
+        this.setCategories(categories == null ? null : categories.toArray(new String[0]));
+        return this;
+    }
+
+    @Override
+    public NDescriptorBuilder setCategories(String... categories) {
+        this.categories = new ArrayList<>();
+        if (categories != null) {
+            for (String cat : categories) {
+                if (!NBlankable.isBlank(cat)) {
+                    this.categories.add(cat);
+                }
+            }
+        }
         return this;
     }
 
@@ -209,7 +249,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
     @Override
     public NDescriptorBuilder setLocations(List<NIdLocation> locations) {
-        this.locations = NReservedLangUtils.uniqueList(locations);
+        setLocations(locations == null ? null : locations.toArray(new NIdLocation[0]));
         return this;
     }
 
@@ -328,28 +368,28 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
         return this;
     }
 
-//    @Override
+    //    @Override
     public NDescriptorBuilder setAll(NBootDescriptor other) {
         if (other != null) {
-            setId(other.getId()==null?null:NId.get(other.getId().toString()).get());
+            setId(other.getId() == null ? null : NId.get(other.getId().toString()).get());
             setPackaging(other.getPackaging());
-            setParents(other.getParents()==null?null:other.getParents().stream().map(x->NId.get(x.toString()).get()).collect(Collectors.toList()));
+            setParents(other.getParents() == null ? null : other.getParents().stream().map(x -> NId.get(x.toString()).get()).collect(Collectors.toList()));
             setDescription(other.getDescription());
             setName(other.getName());
-            setCondition(other.getCondition()==null?null:new DefaultNEnvConditionBuilder().setAll(other.getCondition()).build());
-            setDependencies(other.getDependencies()==null?null:other.getDependencies().stream().map(x->new DefaultNDependencyBuilder().setAll(x).build()).collect(Collectors.toList()));
-            setStandardDependencies(other.getStandardDependencies()==null?null:other.getDependencies().stream().map(x->new DefaultNDependencyBuilder().setAll(x).build()).collect(Collectors.toList()));
-            setProperties(other.getProperties()==null?null:other.getProperties().stream().map(x->new DefaultNDescriptorPropertyBuilder().setAll(x).build()).collect(Collectors.toList()));
+            setCondition(other.getCondition() == null ? null : new DefaultNEnvConditionBuilder().setAll(other.getCondition()).build());
+            setDependencies(other.getDependencies() == null ? null : other.getDependencies().stream().map(x -> new DefaultNDependencyBuilder().setAll(x).build()).collect(Collectors.toList()));
+            setStandardDependencies(other.getStandardDependencies() == null ? null : other.getDependencies().stream().map(x -> new DefaultNDependencyBuilder().setAll(x).build()).collect(Collectors.toList()));
+            setProperties(other.getProperties() == null ? null : other.getProperties().stream().map(x -> new DefaultNDescriptorPropertyBuilder().setAll(x).build()).collect(Collectors.toList()));
 
             setIdType(null);
             setExecutor(null);
             setInstaller(null);
-            setLocations(null);
-            setIcons(null);
-            setCategories(null);
+            setLocations();
+            setIcons();
+            setCategories();
             setGenericName(null);
             setSolver(null);
-            setFlags(null);
+            setFlags();
         } else {
             clear();
         }
@@ -400,12 +440,12 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
         setExecutor(null);
         setInstaller(null);
         setCondition((NEnvCondition) null);
-        setLocations(null);
+        setLocations();
         setDependencies(null);
         setStandardDependencies(null);
         setProperties(null);
-        setIcons(null);
-        setCategories(null);
+        setIcons();
+        setCategories();
         setGenericName(null);
         setSolver(null);
         setOrganization(null);
@@ -654,6 +694,19 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
     public NDescriptorBuilder setFlags(Set<NDescriptorFlag> flags) {
         this.flags = flags == null ? new LinkedHashSet<>() : new LinkedHashSet<>(flags);
+        return this;
+    }
+    public NDescriptorBuilder setFlags(NDescriptorFlag... flags) {
+        Set<NDescriptorFlag> nv = new LinkedHashSet<>();
+        if (flags != null) {
+            for (NDescriptorFlag v : flags) {
+                if (v!=null) {
+                    nv.add(v);
+                }
+            }
+        }
+
+        this.flags = nv;
         return this;
     }
 

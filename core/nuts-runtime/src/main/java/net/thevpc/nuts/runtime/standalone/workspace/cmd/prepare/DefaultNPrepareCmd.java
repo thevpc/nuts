@@ -43,7 +43,7 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
         pushId(apiId, null);
         Set<NId> deps = new HashSet<>();
         deps.add(session.getWorkspace().getRuntimeId());
-        deps.addAll(NSearchCmd.of().addId("net.thevpc.nuts.toolbox:nsh").setOptional(false).setLatest(true).setContent(true).setTargetApiVersion(apiId.getVersion()).setDependencyFilter(NDependencyFilters.of().byRunnable()).setBasePackage(true).setDependencies(true).getResultIds().toList());
+        deps.addAll(NSearchCmd.of().addId("net.thevpc.nsh:nsh").setOptional(false).setLatest(true).setContent(true).setTargetApiVersion(apiId.getVersion()).setDependencyFilter(NDependencyFilters.of().byRunnable()).setBasePackage(true).setDependencies(true).getResultIds().toList());
         if(ids!=null){
             for (NId id : deps) {
                 deps.addAll(NSearchCmd.of().addId(id).setOptional(false).setLatest(true).setContent(true).setTargetApiVersion(apiId.getVersion()).setDependencyFilter(NDependencyFilters.of().byRunnable()).setBasePackage(true).setDependencies(true).getResultIds().toList());

@@ -26,8 +26,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextTitle;
 import net.thevpc.nuts.text.NTextType;
@@ -43,8 +41,8 @@ public class DefaultNTextTitle extends AbstractNText implements NTextTitle {
     private NText child;
     private int level;
 
-    public DefaultNTextTitle(NWorkspace workspace, String start, int level, NText child) {
-        super(workspace);
+    public DefaultNTextTitle(String start, int level, NText child) {
+        super();
         this.start = start;
         this.level = level;
         this.child = child;
@@ -99,11 +97,21 @@ public class DefaultNTextTitle extends AbstractNText implements NTextTitle {
     @Override
     public int textLength() {
         // 1 is the length of '\n'
-        return child.textLength()+1;
+        return child.textLength() + 1;
     }
 
     @Override
     public NText immutable() {
         return this;
     }
+
+    @Override
+    public NText simplify() {
+        NText c = child.simplify();
+        if (!c.equals(child)) {
+            return new DefaultNTextTitle(start, level, child);
+        }
+        return this;
+    }
+
 }

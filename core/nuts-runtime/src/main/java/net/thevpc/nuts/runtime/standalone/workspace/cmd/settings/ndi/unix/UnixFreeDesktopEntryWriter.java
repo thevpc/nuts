@@ -147,7 +147,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
     }
 
     private String getDesktopEnvironment() {
-        return System.getenv("XDG_SESSION_DESKTOP");
+        return NWorkspace.of().getSysEnv("XDG_SESSION_DESKTOP").orNull();
     }
 
     private Element ensureXmlChild(Node parent, String name) {

@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -11,7 +11,7 @@
  * large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
@@ -29,6 +29,7 @@ import net.thevpc.nuts.NArtifactCall;
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.Serializable;
 import java.util.*;
@@ -44,6 +45,8 @@ public class DefaultNArtifactCall implements NArtifactCall, Serializable {
 
     private NId id;
     private List<String> arguments;
+    private String scriptName;
+    private String scriptContent;
 
     /**
      * constructor used by serializers and deserializers
@@ -55,14 +58,32 @@ public class DefaultNArtifactCall implements NArtifactCall, Serializable {
     public DefaultNArtifactCall(NArtifactCall other) {
         this.id = other.getId();
         this.arguments = NReservedLangUtils.nonNullList(other.getArguments());
+        this.scriptName = NStringUtils.trimToNull(other.getScriptName());
+        this.scriptContent = NStringUtils.trimToNull(other.getScriptContent());
+    }
+
+    @Override
+    public String getScriptName() {
+        return scriptName;
+    }
+
+    @Override
+    public String getScriptContent() {
+        return scriptContent;
     }
 
     @Override
     public boolean isBlank() {
-        if(!NBlankable.isBlank(id)){
+        if (!NBlankable.isBlank(id)) {
             return false;
         }
-        if(arguments!=null) {
+        if (!NBlankable.isBlank(scriptName)) {
+            return false;
+        }
+        if (!NBlankable.isBlank(scriptContent)) {
+            return false;
+        }
+        if (arguments != null) {
             for (String d : arguments) {
                 if (!NBlankable.isBlank(d)) {
                     return false;
@@ -73,16 +94,14 @@ public class DefaultNArtifactCall implements NArtifactCall, Serializable {
     }
 
     public DefaultNArtifactCall(NId id) {
-        this(id, null, null);
+        this(id, null, null, null);
     }
 
-    public DefaultNArtifactCall(NId id, List<String> options) {
-        this(id, options, null);
-    }
-
-    public DefaultNArtifactCall(NId id, List<String> options, Map<String, String> properties) {
+    public DefaultNArtifactCall(NId id, List<String> args, String scriptName, String scriptContent) {
         this.id = id;
-        this.arguments = NReservedLangUtils.nonNullList(options);
+        this.arguments = NReservedLangUtils.nonNullList(args);
+        this.scriptName = NStringUtils.trimToNull(scriptName);
+        this.scriptContent = scriptContent;
     }
 
     public NId getId() {

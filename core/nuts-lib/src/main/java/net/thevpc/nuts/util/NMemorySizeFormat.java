@@ -1,8 +1,10 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.format.NPositionType;
+import net.thevpc.nuts.io.NMemoryPrintStream;
 import net.thevpc.nuts.io.NPlainPrintStream;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.text.NTextStyle;
 
 import java.text.DecimalFormat;
@@ -97,7 +99,7 @@ public class NMemorySizeFormat {
     }
 
     public String format(NMemorySize memorySize) {
-        NPrintStream sb = new NPlainPrintStream();
+        NMemoryPrintStream sb = NPrintStream.ofMem(NTerminalMode.FILTERED);
         print(memorySize, sb);
         return sb.toString();
     }

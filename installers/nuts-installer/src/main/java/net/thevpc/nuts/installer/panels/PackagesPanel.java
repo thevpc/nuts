@@ -6,10 +6,10 @@ import net.thevpc.nuts.installer.NutsInstaller;
 import net.thevpc.nuts.installer.connector.RequestQuery;
 import net.thevpc.nuts.installer.connector.RequestQueryInfo;
 import net.thevpc.nuts.installer.connector.SimpleRecommendationConnector;
-import net.thevpc.nuts.boot.swing.UIHelper;
+import net.thevpc.nuts.nswing.UIHelper;
 import net.thevpc.nuts.installer.util.UiHelper2;
 import net.thevpc.nuts.installer.util.Utils;
-import net.thevpc.nuts.boot.swing.WizardPageBase;
+import net.thevpc.nuts.nswing.WizardPageBase;
 
 import javax.swing.*;
 import java.awt.*;

@@ -468,7 +468,7 @@ public class NTFParser2 extends AbstractNTextNodeParser {
         Embedded embedded = stackedStyles.peek();
         pushUp(consumeBuffer());
         stackedStyles.pop();
-        return pushUp(txt.ofStyled(txt.ofList(embedded.children), embedded.style));
+        return pushUp(txt.ofStyled(txt.ofList(embedded.children).simplify(), embedded.style).simplify());
     }
 
     private NText pushUpSimpleStyle() {
@@ -476,7 +476,7 @@ public class NTFParser2 extends AbstractNTextNodeParser {
         wasNewLine = false;
         pushUp(consumeBuffer());
         stackedStyles.pop();
-        return pushUp(txt.ofStyled(txt.ofList(embedded.children), embedded.style));
+        return pushUp(txt.ofStyled(txt.ofList(embedded.children).simplify(), embedded.style).simplify());
     }
 
     private void pushCompositeStyle(NTextStyles style) {

@@ -34,10 +34,9 @@ public class NElementMapperNArtifactCall implements NElementMapper<NArtifactCall
         Type mapType = NReflectRepository.of().getParametrizedType(
                 Map.class, null, new Type[]{String.class, String.class}
         ).getJavaType();
-        Map<String, String> properties = (Map<String, String>) context
-                .elementToObject(object.get(context.elem().
-                        ofString("properties")).orNull(), mapType);
+        String scriptName = context.elementToObject(object.get(context.elem().ofString("scriptName")).orNull(), String.class);
+        String scriptContent = context.elementToObject(object.get(context.elem().ofString("scriptContent")).orNull(), String.class);
 
-        return new DefaultNArtifactCall(id, Arrays.asList(arguments), properties);
+        return new DefaultNArtifactCall(id, Arrays.asList(arguments),scriptName,scriptContent);
     }
 }

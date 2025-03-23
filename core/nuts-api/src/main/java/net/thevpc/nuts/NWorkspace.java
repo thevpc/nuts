@@ -372,6 +372,10 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
 
     /// /
 
+    NOptional<String> getSysEnv(String name);
+
+    Map<String, String> getSysEnv();
+
     NWorkspace addImports(String... importExpression);
 
     NWorkspace clearImports();

@@ -311,8 +311,16 @@ public class MavenUtils {
             }
 
             Set<String> toRemoveProps = new LinkedHashSet<>();
-            NArtifactCall installerCall = parseCall(pom.getProperties().get("nuts.installer"));
-            NArtifactCall executorCall = parseCall(pom.getProperties().get("nuts.executor"));
+            NArtifactCall installerCall = parseCall(
+                    pom.getProperties().get("nuts.installer"),
+                    pom.getProperties().get("nuts.installer.scriptName"),
+                    pom.getProperties().get("nuts.installer.scriptContent")
+            );
+            NArtifactCall executorCall = parseCall(
+                    pom.getProperties().get("nuts.executor"),
+                    pom.getProperties().get("nuts.executor.scriptName"),
+                    pom.getProperties().get("nuts.executor.scriptContent")
+            );
             LinkedHashSet<NIdLocation> idLocations = new LinkedHashSet<>();
             NIdLocation idLocation = parseLocation(pom.getProperties(), "nuts.location", toRemoveProps);
             if (idLocation != null) {
@@ -649,7 +657,7 @@ public class MavenUtils {
         return s;
     }
 
-    public NArtifactCall parseCall(String callString) {
+    public NArtifactCall parseCall(String callString,String scriptName,String scriptContent) {
         if (callString == null) {
             return null;
         }
@@ -672,11 +680,11 @@ public class MavenUtils {
         }
         List<String> callArgs = cl.toStringList();
         if (callId != null) {
-            return new DefaultNArtifactCall(callId, callArgs, callProps);
+            return new DefaultNArtifactCall(callId, callArgs,scriptName,scriptContent);
         }
         //there is no callId, props are considered as args!
         if (!callPropsAsArgs.isEmpty()) {
-            return new DefaultNArtifactCall(null, callPropsAsArgs, null);
+            return new DefaultNArtifactCall(null, callPropsAsArgs,scriptName,scriptContent);
         }
         return null;
     }

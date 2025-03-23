@@ -17,8 +17,8 @@ public class DefaultNTextNodeBuilder extends AbstractNText implements NTextBuild
     private NTextStyleGenerator styleGenerator;
     private boolean flattened = true;
 
-    public DefaultNTextNodeBuilder(NWorkspace workspace) {
-        super(workspace);
+    public DefaultNTextNodeBuilder() {
+        super();
         txt = NTexts.of();
     }
 
@@ -359,7 +359,7 @@ public class DefaultNTextNodeBuilder extends AbstractNText implements NTextBuild
 
 
     public NTextBuilder copy() {
-        DefaultNTextNodeBuilder c = new DefaultNTextNodeBuilder(workspace);
+        DefaultNTextNodeBuilder c = new DefaultNTextNodeBuilder();
         c.appendAll(children);
         c.flattened = flattened;
         return c;
@@ -438,7 +438,12 @@ public class DefaultNTextNodeBuilder extends AbstractNText implements NTextBuild
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         NTextNodeWriterStringer ss = new NTextNodeWriterStringer(out);
         ss.writeNode(build());
-        return new DefaultNTextList(workspace,children.toArray(new NText[0]));
+        return new DefaultNTextList(children.toArray(new NText[0])).simplify();
+    }
+
+    @Override
+    public NText simplify() {
+        return this;
     }
 
     @Override

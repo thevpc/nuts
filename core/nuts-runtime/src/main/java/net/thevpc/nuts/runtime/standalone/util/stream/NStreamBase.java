@@ -264,6 +264,45 @@ public abstract class NStreamBase<T> implements NStream<T> {
     }
 
     @Override
+    public NStream<T> concat(NIterator<? extends T> other) {
+        return new NStreamBase<T>(nutsBase) {
+            @Override
+            public NIterator<T> iterator() {
+                NIterator<T> it = NStreamBase.this.iterator();
+                List<NIterator<? extends T>> iterators = Arrays.asList(it, other);
+                return NIteratorUtils.concat(iterators)
+                        ;//,"mapped("+it+")"
+            }
+        };
+    }
+
+    @Override
+    public NStream<T> coalesce(NStream<? extends T> other) {
+        return new NStreamBase<T>(nutsBase) {
+            @Override
+            public NIterator<T> iterator() {
+                NIterator<T> it = NStreamBase.this.iterator();
+                List<NIterator<? extends T>> iterators = Arrays.asList(it, other.iterator());
+                return NIteratorUtils.coalesce(iterators)
+                        ;//,"mapped("+it+")"
+            }
+        };
+    }
+
+    @Override
+    public NStream<T> concat(NStream<? extends T> other) {
+        return new NStreamBase<T>(nutsBase) {
+            @Override
+            public NIterator<T> iterator() {
+                NIterator<T> it = NStreamBase.this.iterator();
+                List<NIterator<? extends T>> iterators = Arrays.asList(it, other.iterator());
+                return NIteratorUtils.concat(iterators)
+                        ;//,"mapped("+it+")"
+            }
+        };
+    }
+
+    @Override
     public <A> A[] toArray(IntFunction<A[]> generator) {
         return stream().toArray(generator);
     }

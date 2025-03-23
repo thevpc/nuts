@@ -25,7 +25,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextList;
 import net.thevpc.nuts.text.NTextType;
@@ -39,8 +38,8 @@ public class DefaultNTextList extends AbstractNText implements NTextList {
 
     private final List<NText> children = new ArrayList<NText>();
 
-    public DefaultNTextList(NWorkspace workspace, NText... children) {
-        super(workspace);
+    public DefaultNTextList(NText... children) {
+        super();
         if (children != null) {
             for (NText c : children) {
                 if (c != null) {
@@ -83,10 +82,32 @@ public class DefaultNTextList extends AbstractNText implements NTextList {
     @Override
     public NText simplify() {
         if (isEmpty()) {
-            return new DefaultNTextPlain(workspace, "");
+            return DefaultNTextPlain.EMPTY;
         }
         if (size() == 1) {
-            return get(0);
+            return get(0).simplify();
+        }
+        List<NText> all = new ArrayList<>();
+        boolean someChanges = false;
+        for (NText child : children) {
+            NText c = child.simplify();
+            if (c.equals(DefaultNTextPlain.EMPTY)) {
+                someChanges = true;
+            } else if (c.equals(child)) {
+                all.add(child);
+            } else {
+                all.add(c);
+                someChanges = true;
+            }
+        }
+        if (all.isEmpty()) {
+            return DefaultNTextPlain.EMPTY;
+        }
+        if (size() == 1) {
+            return all.get(0);
+        }
+        if (someChanges) {
+            return new DefaultNTextList(all.toArray(new NText[0]));
         }
         return this;
     }

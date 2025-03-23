@@ -57,25 +57,25 @@ public class DefaultNVersion implements NVersion {
             count = BigInteger.ZERO;
         }
         VersionParts parts = splitVersionParts2(oldVersion);
-        int digitCount = parts.getDigitCount();
+        int digitCount = parts.getNumbersCount();
         if (digitCount == 0) {
-            parts.addDigit(BigInteger.ZERO, ".");
-            digitCount = parts.getDigitCount();
+            parts.addNumber(BigInteger.ZERO, ".");
+            digitCount = parts.getNumbersCount();
         }
         if (level < 0) {
             level = digitCount + level;
             while (level < 0) {
-                parts.addDigit(BigInteger.ZERO, ".");
+                parts.addNumber(BigInteger.ZERO, ".");
                 level++;
             }
-            VersionPart digit = parts.getDigit(level);
+            VersionPart digit = parts.getNumberAt(level);
             digit.string = String.valueOf(new BigInteger(digit.string).add(count));
             return parts.toString();
         } else {
             for (int i = digitCount; i < level; i++) {
-                parts.addDigit(BigInteger.ZERO, ".");
+                parts.addNumber(BigInteger.ZERO, ".");
             }
-            VersionPart digit = parts.getDigit(level);
+            VersionPart digit = parts.getNumberAt(level);
             digit.string = String.valueOf(new BigInteger(digit.string).add(count));
             return parts.toString();
         }
@@ -116,13 +116,13 @@ public class DefaultNVersion implements NVersion {
                 if (last == null) {
                     last = new StringBuilder();
                     last.append(c);
-                    partType = VersionPartType.NUMBER;
-                } else if (partType == VersionPartType.NUMBER) {
+                    partType = VersionPartType.INT;
+                } else if (partType == VersionPartType.INT) {
                     last.append(c);
                 } else {
                     parts.add(new VersionPart(last.toString(), partType));
                     last.delete(0, last.length());
-                    partType = VersionPartType.NUMBER;
+                    partType = VersionPartType.INT;
                     last.append(c);
                 }
             } else if (c == '.' || c == '-') {
@@ -387,7 +387,7 @@ public class DefaultNVersion implements NVersion {
 
     @Override
     public int numberSize() {
-        return getParts().getDigitCount();
+        return getParts().getNumbersCount();
     }
 
     public NLiteral[] split() {
@@ -416,23 +416,33 @@ public class DefaultNVersion implements NVersion {
         return NOptional.ofEmpty(() -> NMsg.ofC("version part not found : %s", index));
     }
 
-    public NOptional<NLiteral> getNumber(int level) {
+    public NOptional<NLiteral> getNumberLiteralAt(int level) {
         VersionParts parts = getParts();
-        int size = parts.getDigitCount();
+        int size = parts.getNumbersCount();
         if (level >= 0) {
-            VersionPart digit = parts.getDigit(level);
+            VersionPart digit = parts.getNumberAt(level);
             return NOptional.of(
                     digit == null ? null : NLiteral.of(digit.string),
                     () -> NMsg.ofC("missing number at %s", level)
             );
         } else {
             int x = size + level;
-            VersionPart digit = x >= 0 ? parts.getDigit(x) : null;
+            VersionPart digit = x >= 0 ? parts.getNumberAt(x) : null;
             return NOptional.of(
                     digit == null ? null : NLiteral.of(digit.string),
                     () -> NMsg.ofC("missing number at %s", level)
             );
         }
+    }
+
+    @Override
+    public NOptional<Integer> getIntegerAt(int index) {
+        return getNumberLiteralAt(index).flatMap(NLiteral::asInt);
+    }
+
+    @Override
+    public NOptional<Long> getLongAt(int index) {
+        return getNumberLiteralAt(index).flatMap(NLiteral::asLong);
     }
 
     private String toExplicitSingleValueOrNullString() {
@@ -475,7 +485,7 @@ public class DefaultNVersion implements NVersion {
     }
 
     enum VersionPartType {
-        NUMBER,
+        INT,
         QAL,
         SEPARATOR,
     }
@@ -527,11 +537,11 @@ public class DefaultNVersion implements NVersion {
                 return 1;
             }
 
-            if (v1.type == VersionPartType.NUMBER && v2.type == VersionPartType.NUMBER) {
+            if (v1.type == VersionPartType.INT && v2.type == VersionPartType.INT) {
                 return new BigInteger(v1.string).compareTo(new BigInteger(v2.string));
-            } else if (v1.type == VersionPartType.NUMBER) {
+            } else if (v1.type == VersionPartType.INT) {
                 return 1;
-            } else if (v2.type == VersionPartType.NUMBER) {
+            } else if (v2.type == VersionPartType.INT) {
                 return -1;
             } else {
                 //both are string...
@@ -566,20 +576,20 @@ public class DefaultNVersion implements NVersion {
             return all.size();
         }
 
-        public int getDigitCount() {
+        public int getNumbersCount() {
             int c = 0;
             for (VersionPart s : all) {
-                if (s.type == VersionPartType.NUMBER) {
+                if (s.type == VersionPartType.INT) {
                     c++;
                 }
             }
             return c;
         }
 
-        public VersionPart getDigit(int index) {
+        public VersionPart getNumberAt(int index) {
             int c = 0;
             for (VersionPart s : all) {
-                if (s.type == VersionPartType.NUMBER) {
+                if (s.type == VersionPartType.INT) {
                     if (c == index) {
                         return s;
                     }
@@ -589,10 +599,10 @@ public class DefaultNVersion implements NVersion {
             return null;
         }
 
-        public void insertDigit(long val, String sep) {
+        public void insertNumber(long val, String sep) {
             if (all.size() == 0) {
-                all.add(new VersionPart(String.valueOf(val), VersionPartType.NUMBER));
-            } else if (all.get(0).type == VersionPartType.NUMBER) {
+                all.add(new VersionPart(String.valueOf(val), VersionPartType.INT));
+            } else if (all.get(0).type == VersionPartType.INT) {
                 if (sep == null) {
                     sep = ".";
                 }
@@ -600,16 +610,16 @@ public class DefaultNVersion implements NVersion {
                     throw new IllegalArgumentException("illegal separator");
                 }
                 all.add(0, new VersionPart(sep, VersionPartType.SEPARATOR));
-                all.add(0, new VersionPart(String.valueOf(val), VersionPartType.NUMBER));
+                all.add(0, new VersionPart(String.valueOf(val), VersionPartType.INT));
             } else {
-                all.add(0, new VersionPart(String.valueOf(val), VersionPartType.NUMBER));
+                all.add(0, new VersionPart(String.valueOf(val), VersionPartType.INT));
             }
         }
 
-        public void addDigit(BigInteger val, String sep) {
+        public void addNumber(BigInteger val, String sep) {
             if (all.size() == 0) {
-                all.add(new VersionPart(String.valueOf(val), VersionPartType.NUMBER));
-            } else if (all.get(all.size() - 1).type == VersionPartType.NUMBER) {
+                all.add(new VersionPart(String.valueOf(val), VersionPartType.INT));
+            } else if (all.get(all.size() - 1).type == VersionPartType.INT) {
                 if (sep == null) {
                     sep = ".";
                 }
@@ -617,9 +627,9 @@ public class DefaultNVersion implements NVersion {
                     throw new IllegalArgumentException("illegal separator");
                 }
                 all.add(new VersionPart(sep, VersionPartType.SEPARATOR));
-                all.add(new VersionPart(String.valueOf(val), VersionPartType.NUMBER));
+                all.add(new VersionPart(String.valueOf(val), VersionPartType.INT));
             } else {
-                all.add(new VersionPart(String.valueOf(val), VersionPartType.NUMBER));
+                all.add(new VersionPart(String.valueOf(val), VersionPartType.INT));
             }
         }
 

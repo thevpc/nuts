@@ -1340,4 +1340,16 @@ public class Test04_NTFTest {
         NText parsed = NText.of(str);
         TestUtils.println(parsed);
     }
+
+    @Test
+    public void test44(){
+        String str = "##{path:##{path:/home/vpc/.m2/repository/net/thevpc/nuts/nuts/0.8.5/nuts-0.8.5.pom}##\u001E}##\u001E";
+        NOut.println(str);
+        NText parsed = NText.of(str);
+        TestUtils.println(parsed);
+        String result="##{path:##{path:/home/vpc/.m2/repository/net/thevpc/nuts/nuts/0.8.5/nuts-0.8.5.pom}##\u001E}##\u001E";
+        TestUtils.println(result);
+        Assertions.assertEquals(result, parsed.toString());
+    }
+
 }

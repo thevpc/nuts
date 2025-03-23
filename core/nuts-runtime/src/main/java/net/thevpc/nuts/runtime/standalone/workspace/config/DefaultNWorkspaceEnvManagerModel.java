@@ -117,7 +117,7 @@ public class DefaultNWorkspaceEnvManagerModel {
         if (hostName == null) {
             switch (getOsFamily()) {
                 case WINDOWS: {
-                    String computername = System.getenv("COMPUTERNAME");
+                    String computername = NWorkspace.of().getSysEnv("COMPUTERNAME").orNull();
                     if (computername != null) {
                         hostName = computername;
                     } else {
@@ -242,8 +242,9 @@ public class DefaultNWorkspaceEnvManagerModel {
     }
 
     protected NId[] getDesktopEnvironmentsXDGOrEmpty() {
-        String _XDG_SESSION_DESKTOP = System.getenv("XDG_SESSION_DESKTOP");
-        String _XDG_CURRENT_DESKTOP = System.getenv("XDG_CURRENT_DESKTOP");
+        NWorkspace ws = NWorkspace.of();
+        String _XDG_SESSION_DESKTOP = ws.getSysEnv("XDG_SESSION_DESKTOP").orNull();
+        String _XDG_CURRENT_DESKTOP = ws.getSysEnv("XDG_CURRENT_DESKTOP").orNull();
         List<NId> a = new ArrayList<>();
         if (!NBlankable.isBlank(_XDG_SESSION_DESKTOP) && !NBlankable.isBlank(_XDG_SESSION_DESKTOP)) {
             String[] supportedSessions = new LinkedHashSet<>(
@@ -255,8 +256,8 @@ public class DefaultNWorkspaceEnvManagerModel {
             for (int i = 0; i < supportedSessions.length; i++) {
                 NIdBuilder nb = NIdBuilder.of().setArtifactId(supportedSessions[i]);
                 if ("kde".equals(sd)) {
-                    String _KDE_FULL_SESSION = System.getenv("KDE_FULL_SESSION");
-                    String _KDE_SESSION_VERSION = System.getenv("KDE_SESSION_VERSION");
+                    String _KDE_FULL_SESSION = ws.getSysEnv("KDE_FULL_SESSION").orNull();
+                    String _KDE_SESSION_VERSION = ws.getSysEnv("KDE_SESSION_VERSION").orNull();
                     if (_KDE_FULL_SESSION != null && "true".equals(_KDE_FULL_SESSION.trim())) {
                         nb.setProperty("full", "true");
                     }
@@ -264,9 +265,9 @@ public class DefaultNWorkspaceEnvManagerModel {
                         nb.setProperty("version", _KDE_SESSION_VERSION.trim());
                     }
                 }
-                String _XDG_SESSION_TYPE = System.getenv("XDG_SESSION_TYPE");
-                String _XSESSION_IS_UP = System.getenv("XSESSION_IS_UP");
-                String _XDG_SESSION_CLASS = System.getenv("XDG_SESSION_CLASS");
+                String _XDG_SESSION_TYPE = ws.getSysEnv("XDG_SESSION_TYPE").orNull();
+                String _XSESSION_IS_UP = ws.getSysEnv("XSESSION_IS_UP").orNull();
+                String _XDG_SESSION_CLASS = ws.getSysEnv("XDG_SESSION_CLASS").orNull();
                 if (_XDG_SESSION_TYPE != null) {
                     nb.setProperty("type", _XDG_SESSION_TYPE.trim().toLowerCase());
                 }

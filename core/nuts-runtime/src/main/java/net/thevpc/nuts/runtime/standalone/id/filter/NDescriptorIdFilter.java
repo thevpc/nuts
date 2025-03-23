@@ -45,7 +45,7 @@ public class NDescriptorIdFilter extends AbstractIdFilter implements NIdFilter, 
             return true;
         }
         NLog LOG = NLog.of(MavenRepositoryFolderHelper.class);
-        DelegateNDescriptor d = new DelegateNDescriptor(workspace) {
+        NDescriptor d = new DelegateNDescriptor(workspace) {
             NDescriptor descriptor = null;
             boolean loaded = false;
             RuntimeException replayException;
@@ -61,19 +61,19 @@ public class NDescriptorIdFilter extends AbstractIdFilter implements NIdFilter, 
                     loaded = true;
                     try {
 //                descriptor = repository.fetchDescriptor().setId(id).setSession(session).getResult();
-                        descriptor = NFetchCmd.of(id).getResultDescriptor();
-                        if (!CoreNUtils.isEffectiveId(descriptor.getId())) {
+                        descriptor = NFetchCmd.of(id).setEffective(true).setDependencies(true).getResultDescriptor();
+                        //if (!CoreNUtils.isEffectiveId(descriptor.getId())) {
                             NDescriptor nutsDescriptor = null;
                             try {
                                 //NutsWorkspace ws = repository.getWorkspace();
                                 nutsDescriptor = NWorkspaceExt.of().resolveEffectiveDescriptor(descriptor);
+                                descriptor = nutsDescriptor;
                             } catch (Exception ex) {
                                 LOG.with().level(Level.FINE).error(ex)
                                         .log(NMsg.ofC("failed to resolve effective desc %s for %s", descriptor.getId(), id));
                                 //throw new NutsException(e);
                             }
-                            descriptor = nutsDescriptor;
-                        }
+                        //}
                     } catch (Exception ex) {
                         //suppose we cannot retrieve descriptor
                         if (LOG.isLoggable(Level.FINER)) {
@@ -95,7 +95,6 @@ public class NDescriptorIdFilter extends AbstractIdFilter implements NIdFilter, 
                 return descriptor;
             }
         };
-
         if (!filter.acceptDescriptor(d)) {
             return false;
         }

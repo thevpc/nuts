@@ -330,6 +330,7 @@ public class ZipUtils {
             zis = new ZipInputStream(zipFile);
             //get the zipped file list entry
             ZipEntry ze = zis.getNextEntry();
+            String eFileName = ze.getName();
             final ZipInputStream finalZis = zis;
             InputStream entryInputStream = new InputStream() {
                 @Override
@@ -350,6 +351,11 @@ public class ZipUtils {
                 @Override
                 public void close() throws IOException {
                     finalZis.closeEntry();
+                }
+
+                @Override
+                public String toString() {
+                    return eFileName+" Zip Entry InputStream";
                 }
             };
 

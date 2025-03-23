@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.io.NContentMetadata;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -58,7 +59,10 @@ public class DefaultNTexts implements NTexts {
         register(NMsgFormattable.class, (o, t, s) -> _NMsg_toString((((NMsgFormattable) o).toMsg())));
         register(NMsg.class, (o, t, s) -> _NMsg_toString((NMsg) o));
         register(NText.class, (o, t, s) -> (NText) o);
-        register(InputStream.class, (o, t, s) -> t.ofStyled(NInputSource.of((InputStream) o).getMetaData().getName().orElse(o.toString()), NTextStyle.path()));
+        register(InputStream.class, (o, t, s) -> {
+            NContentMetadata metaData = NInputSource.of((InputStream) o).getMetaData();
+            return t.ofStyled(metaData.getName().orElse(o.toString()), NTextStyle.path());
+        });
         register(OutputStream.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
         register(NPrintStream.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
         register(Writer.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
@@ -383,7 +387,7 @@ public class DefaultNTexts implements NTexts {
 
     @Override
     public NTextBuilder ofBuilder() {
-        return new DefaultNTextNodeBuilder(workspace);
+        return new DefaultNTextNodeBuilder();
     }
 
     @Override
@@ -433,7 +437,7 @@ public class DefaultNTexts implements NTexts {
 
     @Override
     public NTextPlain ofPlain(String t) {
-        return new DefaultNTextPlain(workspace, t);
+        return new DefaultNTextPlain(t);
     }
 
     @Override
@@ -444,9 +448,9 @@ public class DefaultNTexts implements NTexts {
     @Override
     public NTextList ofList(Collection<NText> nodes) {
         if (nodes == null) {
-            return new DefaultNTextList(workspace);
+            return new DefaultNTextList();
         }
-        return new DefaultNTextList(workspace, nodes.toArray(new NText[0]));
+        return new DefaultNTextList(nodes.toArray(new NText[0]));
     }
 
     @Override
@@ -463,15 +467,15 @@ public class DefaultNTexts implements NTexts {
         if (styles == null || styles.isPlain()) {
             return other;
         }
-        return new DefaultNTextStyled(workspace,
+        return new DefaultNTextStyled(
                 "##:" + styles.id() + ":", "##",
                 other, true, styles);
     }
 
 
     @Override
-    public NText ofStyled(String other, NTextStyle style) {
-        return ofStyled(ofPlain(other), style);
+    public NText ofStyled(String plainText, NTextStyle style) {
+        return ofStyled(ofPlain(plainText), style);
     }
 
     @Override
@@ -497,7 +501,7 @@ public class DefaultNTexts implements NTexts {
 
     @Override
     public NTextCmd ofCommand(NTerminalCmd command) {
-        return new DefaultNTextCommand(workspace, "```!", command, "", "```");
+        return new DefaultNTextCommand("```!", command, "", "```");
     }
 
     @Override
@@ -649,7 +653,7 @@ public class DefaultNTexts implements NTexts {
     @Override
     public NTextLink ofLink(String value, char sep) {
         checkValidSeparator(sep);
-        return new DefaultNTextLink(workspace, "" + sep, value);
+        return new DefaultNTextLink("" + sep, value);
     }
 
     @Override
@@ -660,7 +664,7 @@ public class DefaultNTexts implements NTexts {
     @Override
     public NTextInclude ofInclude(String value, char sep) {
         checkValidSeparator(sep);
-        return new DefaultNTextInclude(workspace, "" + sep, value);
+        return new DefaultNTextInclude("" + sep, value);
     }
 
     public NOptional<NTextFormatTheme> getTheme(String name){
@@ -822,7 +826,6 @@ public class DefaultNTexts implements NTexts {
     public NTextTitle ofTitle(NText other, int level) {
         String prefix = CoreStringUtils.fillString('#', level) + ")";
         return new DefaultNTextTitle(
-                workspace,
                 prefix, level, other
         );
     }
@@ -834,19 +837,19 @@ public class DefaultNTexts implements NTexts {
 
 
     public NTextCode createCode(String start, String kind, String separator, String end, String text) {
-        return new DefaultNTextCode(workspace, start, kind, separator, end, text);
+        return new DefaultNTextCode(start, kind, separator, end, text);
     }
 
     public NTextCmd createCommand(String start, NTerminalCmd command, String separator, String end) {
-        return new DefaultNTextCommand(workspace, start, command, separator, end);
+        return new DefaultNTextCommand(start, command, separator, end);
     }
 
     public NTextAnchor createAnchor(String start, String separator, String end, String value) {
-        return new DefaultNTextAnchor(workspace, start, separator, end, value);
+        return new DefaultNTextAnchor(start, separator, end, value);
     }
 
     public NText createTitle(String start, int level, NText child, boolean complete) {
-        return new DefaultNTextTitle(workspace, start, level, child);
+        return new DefaultNTextTitle(start, level, child);
     }
 
     @Override

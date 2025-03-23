@@ -3,14 +3,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.thevpc.nuts.builders</groupId>
+    <groupId>net.thevpc.xprojects.builders</groupId>
     <artifactId>nuts-extensions-builder</artifactId>
     <name>Nuts Community Extensions Build Project</name>
     <version>0.8.5.0</version>
     <packaging>pom</packaging>
     <modules>
-        <module>next-term</module>
-        <module>next-ssh</module>
+        <module>nuts-term</module>
+        <module>nuts-ssh</module>
     </modules>
     <properties>
     </properties>

@@ -32,7 +32,7 @@ public class DefaultNIO implements NIO {
     public NWorkspace workspace;
 
     public DefaultNIO(NWorkspace workspace) {
-        this.workspace=workspace;
+        this.workspace = workspace;
         this.cmodel = NWorkspaceExt.of().getConfigModel();
         bootModel = NWorkspaceExt.of().getModel().bootModel;
     }
@@ -245,36 +245,67 @@ public class DefaultNIO implements NIO {
 
 
     public NPath ofTempRepositoryFile(String name, NRepository repository) {
-        return createAnyTempFile(name, false, repository);
+        return createAnyTempFile(name, false, resolveRootPath(repository));
     }
 
     @Override
     public NPath ofTempRepositoryFolder(String name, NRepository repository) {
-        return createAnyTempFile(name, true, repository);
+        return createAnyTempFile(name, true, resolveRootPath(repository));
     }
 
     @Override
     public NPath ofTempRepositoryFile(NRepository repository) {
-        return createAnyTempFile(null, false, repository);
+        return createAnyTempFile(null, false, resolveRootPath(repository));
     }
 
     @Override
     public NPath ofTempRepositoryFolder(NRepository repository) {
-        return createAnyTempFile(null, true, repository);
+        return createAnyTempFile(null, true, resolveRootPath(repository));
     }
 
 
-    public NPath createAnyTempFile(String name, boolean folder, NRepository repositoryId) {
-        NPath rootFolder = null;
-        NRepository repositoryById = null;
-        NSession session = workspace.currentSession();
+    @Override
+    public NPath ofTempIdFile(String name, NId repository) {
+        return createAnyTempFile(name, false, resolveRootPath(repository));
+    }
+
+    @Override
+    public NPath ofTempIdFolder(String name, NId repository) {
+        return createAnyTempFile(name, true, resolveRootPath(repository));
+    }
+
+    @Override
+    public NPath ofTempIdFile(NId repository) {
+        return createAnyTempFile(null, false, resolveRootPath(repository));
+    }
+
+    @Override
+    public NPath ofTempIdFolder(NId repository) {
+        return createAnyTempFile(null, true, resolveRootPath(repository));
+    }
+
+    private NPath resolveRootPath(NRepository repositoryId) {
         if (repositoryId == null) {
-            rootFolder = NWorkspace.of().getStoreLocation(NStoreType.TEMP);
+            return NWorkspace.of().getStoreLocation(NStoreType.TEMP);
         } else {
-            repositoryById = repositoryId;
-            rootFolder = repositoryById.config().getStoreLocation(NStoreType.TEMP);
+            return repositoryId.config().getStoreLocation(NStoreType.TEMP);
         }
-        NId appId = NApp.of().getId().orElseGet(()->session.getWorkspace().getRuntimeId());
+    }
+
+    private NPath resolveRootPath(NId nId) {
+        if (nId == null) {
+            return NWorkspace.of().getStoreLocation(NStoreType.TEMP);
+        } else {
+            return NWorkspace.of().getStoreLocation(nId, NStoreType.TEMP);
+        }
+    }
+
+    public NPath createAnyTempFile(String name, boolean folder, NPath rootFolder) {
+        NSession session = workspace.currentSession();
+        if (rootFolder == null) {
+            rootFolder = NWorkspace.of().getStoreLocation(NStoreType.TEMP);
+        }
+        NId appId = NApp.of().getId().orElseGet(() -> session.getWorkspace().getRuntimeId());
         if (appId != null) {
             rootFolder = rootFolder.resolve(NConstants.Folders.ID).resolve(NWorkspace.of().getDefaultIdBasedir(appId));
         }
@@ -376,7 +407,7 @@ public class DefaultNIO implements NIO {
         for (NContentTypeResolver r : allSupported) {
             List<String> s = r.findExtensionsByContentType(contentType);
             if (s != null) {
-                all.addAll(s.stream().filter(x->!NBlankable.isBlank(x)).collect(Collectors.toList()));
+                all.addAll(s.stream().filter(x -> !NBlankable.isBlank(x)).collect(Collectors.toList()));
             }
         }
         return new ArrayList<>(all);
@@ -457,7 +488,7 @@ public class DefaultNIO implements NIO {
 
     @Override
     public String probeCharset(InputStream stream) {
-        byte[] buffer = NIOUtils.readBestEffort(4096*10, stream);
+        byte[] buffer = NIOUtils.readBestEffort(4096 * 10, stream);
         return probeCharset(buffer);
     }
 

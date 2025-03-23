@@ -46,7 +46,7 @@ import java.util.function.UnaryOperator;
  */
 public interface NDescriptorBuilder extends NDescriptor, NComponent {
 
-    static NDescriptorBuilder of(){
+    static NDescriptorBuilder of() {
         return NExtensions.of(NDescriptorBuilder.class);
     }
 
@@ -111,9 +111,12 @@ public interface NDescriptorBuilder extends NDescriptor, NComponent {
 
     NDescriptorBuilder setIcons(List<String> icons);
 
+    NDescriptorBuilder setIcons(String... icons);
+
 
     NDescriptorBuilder setCategories(List<String> categories);
 
+    NDescriptorBuilder setCategories(String... categories);
 
     NDescriptorBuilder setCondition(NEnvCondition condition);
 
@@ -132,6 +135,8 @@ public interface NDescriptorBuilder extends NDescriptor, NComponent {
      * @return {@code this} instance
      */
     NDescriptorBuilder setLocations(List<NIdLocation> locations);
+
+    NDescriptorBuilder setLocations(NIdLocation... locations);
 
 
     /**
@@ -290,6 +295,7 @@ public interface NDescriptorBuilder extends NDescriptor, NComponent {
      * @return {@code this} instance
      */
     NDescriptorBuilder addProperties(List<NDescriptorProperty> properties);
+
     /**
      * create a new instance of descriptor with added/merged properties
      *
@@ -346,6 +352,7 @@ public interface NDescriptorBuilder extends NDescriptor, NComponent {
      */
     NDescriptorBuilder setFlags(Set<NDescriptorFlag> flags);
 
+    NDescriptorBuilder setFlags(NDescriptorFlag... flags);
     /**
      * add flag
      *
@@ -403,12 +410,14 @@ public interface NDescriptorBuilder extends NDescriptor, NComponent {
 
     /**
      * return id type
+     *
      * @return id type
      */
     NIdType getIdType();
 
     /**
      * set idType
+     *
      * @param idType idType
      * @return {@code this} instance
      */

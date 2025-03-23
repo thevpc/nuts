@@ -37,7 +37,7 @@ public class NSysExecUtils {
             return new Path[0];
         }
         List<Path> all = new ArrayList<>();
-        String p = System.getenv("PATH");
+        String p = NWorkspace.of().getSysEnv("PATH").orNull();
         if (p != null) {
             for (String s : p.split(File.pathSeparator)) {
                 try {

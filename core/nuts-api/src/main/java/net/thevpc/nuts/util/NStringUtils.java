@@ -995,18 +995,18 @@ public class NStringUtils {
             delimiter = "";
         }
         if (delimiter.isEmpty()) {
-            for (String string : items) {
-                if (string != null && string.length() >= 0) {
-                    builder.append(string);
+            for (String item : items) {
+                if (item != null && !item.isEmpty()) {
+                    builder.append(item);
                 }
             }
         } else {
-            for (String string : items) {
-                if (string != null && string.length() >= 0) {
-                    if (!(builder.endsWith(delimiter) || string.startsWith(delimiter))) {
+            for (String item : items) {
+                if (item != null && !item.isEmpty()) {
+                    if (!builder.isEmpty() && !(builder.endsWith(delimiter) || item.startsWith(delimiter))) {
                         builder.append(delimiter);
                     }
-                    builder.append(string);
+                    builder.append(item);
                 }
             }
         }

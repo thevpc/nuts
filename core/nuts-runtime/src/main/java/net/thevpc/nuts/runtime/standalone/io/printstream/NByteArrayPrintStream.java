@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.AbstractMultiReadNInputSource;
 import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextTransformConfig;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.*;
@@ -26,6 +27,22 @@ public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPri
         );
     }
 
+    protected NPrintStream printParsed(NText b) {
+        switch (getTerminalMode()) {
+            case FILTERED:{
+                NText transformed = txt().transform(b,
+                        new NTextTransformConfig()
+                                .setFiltered(true)
+                                .setNormalize(true)
+                                .setFlatten(true)
+                );
+                print(transformed.toString());
+                return this;
+            }
+        }
+        print(b.toString());
+        return this;
+    }
 
     @Override
     public byte[] getBytes() {

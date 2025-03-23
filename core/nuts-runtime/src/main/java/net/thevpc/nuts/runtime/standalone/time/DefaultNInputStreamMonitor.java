@@ -88,28 +88,24 @@ public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
 
     @Override
     public NInputStreamMonitor setSource(Path path) {
-        NSession session=workspace.createSession();
         this.source = path == null ? null : NPath.of(path);
         return this;
     }
 
     @Override
     public NInputStreamMonitor setSource(File path) {
-        NSession session=workspace.createSession();
         this.source = path == null ? null : NPath.of(path);
         return this;
     }
 
     @Override
     public NInputStreamMonitor setSource(InputStream path) {
-        NSession session=workspace.createSession();
         this.source = path == null ? null : NInputSource.of(path);
         return this;
     }
 
     @Override
     public InputStream create() {
-        NSession session=workspace.createSession();
         NAssert.requireNonNull(source, "source");
         NMsg sourceName = this.sourceName;
         if (sourceName == null && source != null) {

@@ -2,11 +2,11 @@ package net.thevpc.nuts.installer.panels;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
-import net.thevpc.nuts.boot.swing.WizardPageBase;
-import net.thevpc.nuts.boot.swing.Wizard;
+import net.thevpc.nuts.nswing.WizardPageBase;
+import net.thevpc.nuts.nswing.Wizard;
 import net.thevpc.nuts.installer.model.ButtonInfo;
 import net.thevpc.nuts.installer.model.InstallData;
-import net.thevpc.nuts.boot.swing.UIHelper;
+import net.thevpc.nuts.nswing.UIHelper;
 import net.thevpc.nuts.installer.util.UiHelper2;
 
 import javax.swing.*;

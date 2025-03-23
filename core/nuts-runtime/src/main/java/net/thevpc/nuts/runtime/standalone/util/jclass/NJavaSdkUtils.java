@@ -427,8 +427,8 @@ public class NJavaSdkUtils {
     public NId createJdkId(String version) {
         NAssert.requireNonBlank(version, "version");
         NVersion jv = NVersion.get(version).get();
-        long n1 = jv.getNumber(0).flatMap(NLiteral::asLong).orElse(0L);
-        long n2 = jv.getNumber(1).flatMap(NLiteral::asLong).orElse(0L);
+        long n1 = jv.getNumberLiteralAt(0).flatMap(NLiteral::asLong).orElse(0L);
+        long n2 = jv.getNumberLiteralAt(1).flatMap(NLiteral::asLong).orElse(0L);
         long classFileId = 0;
         String standard = n1 + "." + n2;
         if (n1 == 1) {

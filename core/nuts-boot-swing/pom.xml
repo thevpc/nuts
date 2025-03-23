@@ -174,7 +174,7 @@
                         <configuration>
                             <archive>
                                 <manifestEntries>
-                                    <Automatic-Module-Name>net.thevpc.nuts.lib.talkagent</Automatic-Module-Name>
+                                    <Automatic-Module-Name>net.thevpc.nuts.boot.nswing</Automatic-Module-Name>
                                 </manifestEntries>
                             </archive>
                         </configuration>

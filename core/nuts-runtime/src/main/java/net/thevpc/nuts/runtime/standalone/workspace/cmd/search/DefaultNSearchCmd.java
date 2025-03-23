@@ -147,7 +147,6 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
 
     //@Override
     private DefaultNSearch build() {
-        NSession session=getWorkspace().currentSession();
         HashSet<String> someIds = new HashSet<>();
         for (NId id : this.getIds()) {
             someIds.add(id.toString());

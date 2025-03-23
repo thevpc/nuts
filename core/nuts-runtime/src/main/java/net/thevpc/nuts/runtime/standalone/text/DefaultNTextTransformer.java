@@ -110,13 +110,18 @@ public class DefaultNTextTransformer implements NTextTransformer {
                 NTextStyled t = (NTextStyled) text;
                 NText child = t.getChild();
                 List<NText> cc = new ArrayList<>();
+                boolean filtered = config.isFiltered();
                 if (config.isFlatten()) {
                     if (child instanceof NTextList) {
                         for (NText x : ((NTextList) child).getChildren()) {
                             if (isNewline(x)) {
                                 cc.add(x);
                             } else {
-                                cc.add(txts.ofStyled(x, t.getStyles()));
+                                if(filtered){
+                                    cc.add(x);
+                                }else {
+                                    cc.add(txts.ofStyled(x, t.getStyles()));
+                                }
                             }
                         }
                     }else {
@@ -124,13 +129,21 @@ public class DefaultNTextTransformer implements NTextTransformer {
                             if (isNewline(x)) {
                                 return x;
                             }
-                            return txts.ofStyled(x, t.getStyles());
+                            if(filtered){
+                                return x;
+                            }else {
+                                return txts.ofStyled(x, t.getStyles());
+                            }
                         }));
                     }
                 }else{
-                    cc.add(child);
+                    if(filtered) {
+                        cc.add(child);
+                    }else{
+                        cc.add(text);
+                    }
                 }
-                if (config.isFiltered()) {
+                if (filtered) {
                     return compressTxt(cc.stream().map(x->mapTxt(x, y -> {
                         if (y.getType() == NTextType.STYLED) {
                             return ((NTextStyled) y).getChild();
@@ -152,9 +165,8 @@ public class DefaultNTextTransformer implements NTextTransformer {
                             throw new IllegalArgumentException("unexpected...");
                         })).collect(Collectors.toList()));
                     }else{
-                        return txts.ofStyled(compressTxt(cc), t.getStyles());
+                        return compressTxt(cc);
                     }
-                    //return compressTxt(cc);
                 }
             }
             case LINK: {

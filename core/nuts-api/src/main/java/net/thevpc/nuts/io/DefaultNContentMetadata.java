@@ -6,6 +6,7 @@
 package net.thevpc.nuts.io;
 
 
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
@@ -79,7 +80,7 @@ public class DefaultNContentMetadata implements NContentMetadata {
 //
     public DefaultNContentMetadata(NMsg message, Long contentLength, String contentType, String charset, String kind) {
         this.contentLength = contentLength == null ? null : () -> contentLength;
-        this.name = message == null ? null : () -> message.toString();
+        this.name = message == null ? null : () -> NText.of(message).filteredText();
         this.message = message == null ? null : () -> message;
         this.kind = kind == null ? null : () -> kind;
         this.contentType = contentType == null ? null : () -> contentType;
@@ -155,8 +156,8 @@ public class DefaultNContentMetadata implements NContentMetadata {
     public String toString() {
         if (message != null) {
             NMsg obj = message.get();
-            if (obj == null) {
-                return obj.toString();
+            if (obj != null) {
+                return NText.of((NMsg) obj).filteredText();
             }
         }
         if (name != null) {

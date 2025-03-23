@@ -66,8 +66,7 @@ public interface NTexts extends NComponent {
 
     NText ofStyled(NText other, NTextStyles styles);
 
-
-    NText ofStyled(String other, NTextStyle style);
+    NText ofStyled(String plainText, NTextStyle style);
 
     NText ofStyled(NMsg other, NTextStyle style);
 

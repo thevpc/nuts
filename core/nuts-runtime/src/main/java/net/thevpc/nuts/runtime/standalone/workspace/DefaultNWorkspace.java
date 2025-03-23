@@ -220,7 +220,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         InitWorkspaceData data = new InitWorkspaceData();
         data.initialBootOptions = initialBootOptions0.readOnly();
         try {
-            this.wsModel = new NWorkspaceModel(this, data.initialBootOptions,this.LOG);
+            this.wsModel = new NWorkspaceModel(this, data.initialBootOptions, this.LOG);
             this.runWith(() -> {
                 this.wsModel.init();
                 _preloadWorkspace(data);
@@ -340,7 +340,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         NSession session = currentSession();
         if (data.justInstalled) {
             NLiteral enableRecommendations = wsModel.bootModel.getCustomBootOptions().get("---recommendations");
-            if(enableRecommendations==null || enableRecommendations.asBoolean().orElse(true)) {
+            if (enableRecommendations == null || enableRecommendations.asBoolean().orElse(true)) {
                 try {
                     Map rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(getApiId().toString(), ""), NRecommendationPhase.BOOTSTRAP, false);
                     if (rec != null) {
@@ -1149,7 +1149,32 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                         ;
                 NArtifactCall installer = def.getDescriptor().getInstaller();
                 if (installer != null) {
-                    cc.addExecutorOptions(installer.getArguments());
+                    String scriptName = installer.getScriptName();
+                    String scriptContent = installer.getScriptContent();
+                    NPath installScriptPath = null;
+                    if (!NBlankable.isBlank(scriptName) && !NBlankable.isBlank(scriptContent)) {
+                        installScriptPath = NPath.ofTempIdFile(scriptName, def.getId());
+                    }
+                    Map<String, String> installVars = prepareInstallVars(def);
+                    if (installScriptPath != null) {
+                        installScriptPath.writeString(scriptContent == null ? "" : scriptContent);
+                        installVars.put("nutsIdInstallScriptPath", installScriptPath.toString());
+                    }
+
+                    // all vars are replicated as environment vars
+                    Map<String, String> installEnv = installVars.entrySet().stream().map(x -> {
+                        return new AbstractMap.SimpleImmutableEntry<>(
+                                NNameFormat.CONST_NAME.format(x.getKey())
+                                , x.getValue());
+                    }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                    //accept both namings...
+                    installEnv.putAll(installVars);
+                    cc.setEnv(installEnv);
+                    cc.addExecutorOptions(
+                            installer.getArguments()
+                                    .stream().map(x -> NMsg.ofV(x, installVars
+                                    ).toString()).collect(Collectors.toList())
+                    );
                 }
                 cc.setWorkspace(cc.getWorkspace());
                 NExecutionContext executionContext = cc.build();
@@ -1404,6 +1429,15 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         }
     }
 
+    private Map<String, String> prepareInstallVars(NDefinition def) {
+        Map<String, String> m = new HashMap<>();
+        m.put("nutsIdContentPath", def.getContent().get().toString());
+        for (NStoreType st : NStoreType.values()) {
+            m.put("nutsId" + NNameFormat.TITLE_CASE.format(st.id()) + "Path", getStoreLocation(def.getId(), st).toString());
+        }
+        return m;
+    }
+
     public String resolveCommandName(NId id) {
         String nn = id.getArtifactId();
         NWorkspace aliases = this;
@@ -1634,7 +1668,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     if (NBlankable.isBlank(installerId.getGroupId())
                             && "nsh".equals(installerId.getArtifactId())
                     ) {
-                        installerId = installerId.builder().setGroupId("net.thevpc.nuts.toolbox").build();
+                        installerId = installerId.builder().setGroupId("net.thevpc.nsh").build();
                     }
                     //ensure installer is always well qualified!
                     CoreNIdUtils.checkShortId(installerId);
@@ -1763,11 +1797,11 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         if (!descriptor.getId().getVersion().isBlank() && descriptor.getId().getVersion().isSingleValue()
                 && descriptor.getId().toString().indexOf('$') < 0) {
             try {
-                NDescriptor d = store().loadLocationKey(NLocationKey.ofCacheFaced(descriptor.getId(), null, "eff-nuts.cache"),NDescriptor.class);
+                NDescriptor d = store().loadLocationKey(NLocationKey.ofCacheFaced(descriptor.getId(), null, "eff-nuts.cache"), NDescriptor.class);
                 if (d != null) {
                     return d;
                 }
-            }catch (Exception ex) {
+            } catch (Exception ex) {
                 LOG.with().level(Level.FINE).error(ex)
                         .log(NMsg.ofC("failed to load eff-nuts.cache for %s", descriptor.getId()));
                 //
@@ -1777,7 +1811,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         NDescriptorUtils.checkValidEffectiveDescriptor(effectiveDescriptor);
 
         try {
-            store().saveLocationKey(NLocationKey.ofCacheFaced(effectiveDescriptor.getId(), null, "eff-nuts.cache"),effectiveDescriptor);
+            store().saveLocationKey(NLocationKey.ofCacheFaced(effectiveDescriptor.getId(), null, "eff-nuts.cache"), effectiveDescriptor);
         } catch (Exception ex) {
             LOG.with().level(Level.FINE).error(ex)
                     .log(NMsg.ofC("failed to save eff-nuts.cache for %s", effectiveDescriptor.getId()));
@@ -1986,7 +2020,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     @Override
     public void setInstallationDigest(String value) {
         this.wsModel.installationDigest = value;
-        store().saveLocationKey(NLocationKey.ofConf(getApiId(),null, "installation-digest"), NStringUtils.trimToNull(value));
+        store().saveLocationKey(NLocationKey.ofConf(getApiId(), null, "installation-digest"), NStringUtils.trimToNull(value));
     }
 
     @Override
@@ -2538,6 +2572,16 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             NWorkspaceUtils.of(this).installCurrentJVM();
         }
         return this;
+    }
+
+    @Override
+    public NOptional<String> getSysEnv(String name) {
+        return NOptional.of(getSysEnv().get(name));
+    }
+
+    @Override
+    public Map<String, String> getSysEnv() {
+        return getConfigModel().sysEnv();
     }
 
     @Override

@@ -1,9 +1,9 @@
 package net.thevpc.nuts.installer.panels;
 
 import net.thevpc.nuts.installer.model.InstallData;
-import net.thevpc.nuts.boot.swing.UIHelper;
+import net.thevpc.nuts.nswing.UIHelper;
 import net.thevpc.nuts.installer.util.Utils;
-import net.thevpc.nuts.boot.swing.WizardPageBase;
+import net.thevpc.nuts.nswing.WizardPageBase;
 
 import javax.swing.*;
 import java.awt.*;

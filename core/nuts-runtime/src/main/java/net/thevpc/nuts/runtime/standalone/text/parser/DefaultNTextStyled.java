@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyled;
 import net.thevpc.nuts.text.NTextStyles;
@@ -45,17 +44,17 @@ public class DefaultNTextStyled extends AbstractNText implements NTextStyled {
     private NTextStyles textStyles;
     private boolean completed;
 
-    public DefaultNTextStyled(NWorkspace workspace, NText child, NTextStyles textStyle) {
-        this(workspace, "##", "##", child, true, textStyle);
+    public DefaultNTextStyled(NText child, NTextStyles textStyle) {
+        this("##", "##", child, true, textStyle);
     }
 
-    public DefaultNTextStyled(NWorkspace workspace, String start, String end, NText child, boolean completed, NTextStyles textStyle) {
-        super(workspace);
+    public DefaultNTextStyled(String start, String end, NText child, boolean completed, NTextStyles textStyles) {
+        super();
         this.start = start;
         this.end = end;
         this.child = child;
         this.completed = completed;
-        this.textStyles = textStyle;
+        this.textStyles = textStyles;
     }
 
     @Override
@@ -113,6 +112,18 @@ public class DefaultNTextStyled extends AbstractNText implements NTextStyled {
 
     @Override
     public NText immutable() {
+        return this;
+    }
+
+    @Override
+    public NText simplify() {
+        NText c = child.simplify();
+        if(child.equals(DefaultNTextPlain.EMPTY)){
+            return DefaultNTextPlain.EMPTY;
+        }
+        if(!c.equals(child)){
+            return new DefaultNTextStyled(start, end, c, completed, textStyles);
+        }
         return this;
     }
 }

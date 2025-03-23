@@ -824,7 +824,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     }
 
     public boolean isUserCommand(String s) {
-        String p = System.getenv().get("PATH");
+        String p = NWorkspace.of().getSysEnv("PATH").orNull();
         if (p != null) {
             char r = File.pathSeparatorChar;
             for (String z : p.split("" + r)) {
@@ -964,7 +964,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                         if (eid.getArtifactId().equals("nuts")) {
                             eid = eid.builder().setGroupId("net.thevpc.nuts").build();
                         } else if (eid.getArtifactId().equals("nsh")) {
-                            eid = eid.builder().setGroupId("net.thevpc.nuts.toolbox").build();
+                            eid = eid.builder().setGroupId("net.thevpc.nsh").build();
                         }
                     }
                     if (eid.getGroupId() != null) {

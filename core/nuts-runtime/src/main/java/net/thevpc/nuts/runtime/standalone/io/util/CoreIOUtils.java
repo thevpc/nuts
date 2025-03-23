@@ -885,7 +885,7 @@ public class CoreIOUtils {
     public static String metadataToString(NContentMetadata md, Object caller) {
         NOptional<NMsg> m = md.getMessage();
         if (m.isPresent()) {
-            NPlainPrintStream out = new NPlainPrintStream();
+            NMemoryPrintStream out = NPrintStream.ofMem(NTerminalMode.FILTERED);
             out.print(m.get());
             String s = out.toString();
             if (!NBlankable.isBlank(s)) {

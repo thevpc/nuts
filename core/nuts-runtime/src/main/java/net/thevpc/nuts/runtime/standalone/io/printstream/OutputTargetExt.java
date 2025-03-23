@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.format.NFormat;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.io.*;
@@ -40,12 +41,12 @@ public class OutputTargetExt implements NOutputTarget {
 
     @Override
     public String toString() {
-        NPlainPrintStream out = new NPlainPrintStream();
+        NMemoryPrintStream out = NPrintStream.ofMem(NTerminalMode.FILTERED);
         NOptional<NMsg> m = getMetaData().getMessage();
         if (m.isPresent()) {
             out.print(m.get());
         } else if (sourceName != null) {
-            out.print(sourceName, NTextStyle.path());
+            out.print(NText.ofStyled(sourceName,NTextStyle.path()));
         } else {
             out.print(getClass().getSimpleName(), NTextStyle.path());
         }

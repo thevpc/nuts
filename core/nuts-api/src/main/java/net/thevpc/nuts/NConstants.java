@@ -576,7 +576,7 @@ public final class NConstants {
         /**
          * nuts shell id
          */
-        public static final String NUTS_SHELL = "net.thevpc.nuts.toolbox:nsh";
+        public static final String NUTS_SHELL = "net.thevpc.nsh:nsh";
 
         /**
          * private constructor

@@ -27,7 +27,6 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.text.NText;
@@ -44,8 +43,8 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
 
     private final String text;
 
-    public DefaultNTextCode(NWorkspace workspace, String start, String kind, String separator, String end, String text) {
-        super(workspace, start, kind,
+    public DefaultNTextCode(String start, String kind, String separator, String end, String text) {
+        super(start, kind,
                 (kind != null && kind.length() > 0
                         &&
                         text != null && text.length() > 0
@@ -66,10 +65,12 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
                 .resolveCodeHighlighter(getKind());
         return t.stringToText(text, txt);
     }
+
     @Override
     public NText immutable() {
         return this;
     }
+
     @Override
     public NTextType getType() {
         return NTextType.CODE;
@@ -92,7 +93,7 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
         DefaultNTextCode that = (DefaultNTextCode) o;
         return
                 Objects.equals(text, that.text)
-                && Objects.equals(getQualifier(), that.getQualifier())
+                        && Objects.equals(getQualifier(), that.getQualifier())
                 ;
     }
 
@@ -110,4 +111,13 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
     public int textLength() {
         return text == null ? 0 : text.length();
     }
+
+    @Override
+    public NText simplify() {
+        if (text.isEmpty()) {
+            return DefaultNTextPlain.EMPTY;
+        }
+        return this;
+    }
+
 }

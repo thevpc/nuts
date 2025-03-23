@@ -31,6 +31,7 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NVisitResult;
+import net.thevpc.nuts.runtime.standalone.DefaultNArtifactCallBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.util.NBlankable;
@@ -158,8 +159,12 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
         if (maven.isSet()) {
             baseNutsDescriptor = maven.get();
             if (!NBlankable.isBlank(mainClassString)) {
-                return baseNutsDescriptor.builder().setExecutor(new DefaultNArtifactCall(JAVA,
-                        Arrays.asList("--main-class", mainClassString))).build();
+                return baseNutsDescriptor.builder().setExecutor(
+                        new DefaultNArtifactCallBuilder()
+                                .setId(JAVA)
+                                .setArguments("--main-class=", mainClassString)
+                                .build()
+                ).build();
             }
         } else if (metainf.isSet()) {
             baseNutsDescriptor = metainf.get();
