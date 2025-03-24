@@ -246,3 +246,8 @@ core/nuts-app-full/target
 /core/nuts-app-full/src/dist/nuts-app-full-0.8.5.jar
 /incubating/ndexer/target
 /tutorials/naf/spring-boot-integration-hello-world-example/target/
+/libraries/nuts-swing/target/
+/libraries/nuts-spring-boot/target/
+/libraries/nuts-tomcat-classloader/target/
+/extensions/nuts-ssh/target/
+/extensions/nuts-term/target/
