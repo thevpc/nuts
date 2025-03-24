@@ -89,17 +89,12 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                     )
                     .setInstaller(NArtifactCallBuilder.of()
                             .setId(NId.of(NConstants.Ids.NUTS_SHELL))
-                            .setArguments(
-                                    "-c", "unzip",
-                                    "$nutsIdContentPath",
-                                    "-d",
-                                    "$nutsIdBinPath"
-                            )
+                            .setArguments("$nutsIdInstallScriptPath")
                             .setScriptName("install-catalina.nsh")
                             .setScriptContent(
-                                    "unzip -o \"$nutsIdContentPath\" \"$nutsIdBinPath\" \n" +
+                                    "unzip --skip-root \"$nutsIdContentPath\" \"$nutsIdBinPath/app\" \n" +
                                             (NWorkspace.of().getOsFamily().isPosix() ?
-                                                    "chmod a+x $nutsIdBinPath/*.sh \n" : "")
+                                                    "chmod a+x $nutsIdBinPath/app/*.sh \n" : "")
                             )
                             .build()
                     )
@@ -107,8 +102,8 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                             .setId(NId.of("exec"))
                             .setArguments(
                                     NWorkspace.of().getOsFamily().isWindow()
-                                            ? "$nutsIdBinPath/tomcat/bin/catalina.bat"
-                                            : "$nutsIdBinPath/tomcat/bin/catalina.sh"
+                                            ? "$nutsIdBinPath/app/bin/catalina.bat"
+                                            : "$nutsIdBinPath/app/bin/catalina.sh"
                             )
                             .build()
                     )

@@ -161,7 +161,7 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
         if (apiVersion == null) {
             apiVersion = getWorkspace().getApiVersion();
         }
-        return new BootAPINDescriptorFilter(
+        return new NutsAPINDescriptorFilter(
                 getWorkspace(),
                 apiVersion
         );

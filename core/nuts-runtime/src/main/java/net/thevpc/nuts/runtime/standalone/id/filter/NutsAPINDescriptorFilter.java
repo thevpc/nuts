@@ -5,11 +5,13 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.runtime.standalone.descriptor.filter.AbstractDescriptorFilter;
 import net.thevpc.nuts.util.NFilterOp;
 
-public class BootAPINDescriptorFilter extends AbstractDescriptorFilter {
+import java.util.List;
+
+public class NutsAPINDescriptorFilter extends AbstractDescriptorFilter {
 
     private final NVersion bootApiVersion;
 
-    public BootAPINDescriptorFilter(NWorkspace workspace, NVersion bootApiVersion) {
+    public NutsAPINDescriptorFilter(NWorkspace workspace, NVersion bootApiVersion) {
         super(workspace, NFilterOp.CUSTOM);
         this.bootApiVersion = bootApiVersion;
     }
@@ -25,12 +27,25 @@ public class BootAPINDescriptorFilter extends AbstractDescriptorFilter {
                 }
             }
         }
+        // check now all transitive
+        List<NDependency> allDeps = NFetchCmd.of(descriptor.getId()).setDependencies(true)
+                .setDependencyFilter(NDependencyFilters.of().byRunnable()).getResultDefinition().getDependencies().get()
+                .transitive().toList();
+        for (NDependency dependency : allDeps) {
+            if (dependency.getSimpleName().equals(NConstants.Ids.NUTS_API)) {
+                if (bootApiVersion.filter().acceptVersion(dependency.getVersion())) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
         return false;
     }
 
     @Override
     public String toString() {
-        return "BootAPI(" + bootApiVersion + ')';
+        return "NutsAPI(" + bootApiVersion + ')';
     }
 
     @Override

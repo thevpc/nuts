@@ -56,9 +56,10 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
                         .setId(NId.of(NConstants.Ids.NUTS_SHELL))
                         .setArguments(
                                 "-c", "unzip",
+                                "--skip-root",
                                 "$nutsIdContentPath",
                                 "-d",
-                                "$nutsIdBinPath"
+                                "$nutsIdBinPath/app"
                         )
                         .build()
                 )
@@ -66,8 +67,8 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
                         .setId(NId.of("exec"))
                         .setArguments(
                                 NWorkspace.of().getOsFamily().isWindow()
-                                        ? "$nutsIdBinPath/netbeans/bin/netbeans.exe"
-                                        : "$nutsIdBinPath/netbeans/bin/netbeans"
+                                        ? "$nutsIdBinPath/app/bin/netbeans.exe"
+                                        : "$nutsIdBinPath/app/bin/netbeans"
                         )
                         .build()
                 )

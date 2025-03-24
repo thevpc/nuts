@@ -187,7 +187,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         try (InputStream foldersFileStream = NInputStreamMonitor.of().setSource(NPath.of(dotFilesUrl)).create()) {
             session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "browse", NPath.of(baseUrl).toCompressedForm()));
             dotFilesContent=NIOUtils.loadString(foldersFileStream, false);
-        } catch (IOException | NIOException e) {
+        } catch (IOException | NIOException | UncheckedIOException e) {
             session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "not found", NPath.of(baseUrl).toCompressedForm()));
             // not found
         }
