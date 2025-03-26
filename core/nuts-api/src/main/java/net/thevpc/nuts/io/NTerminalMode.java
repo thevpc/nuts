@@ -90,7 +90,7 @@ public enum NTerminalMode implements NEnum {
                 case "A":
                     return NOptional.of(ANSI);
                 default:{
-                    Boolean b = NLiteral.of(normalizedValue).asBoolean().orNull();
+                    Boolean b = NLiteral.of(normalizedValue).asBooleanValue().orNull();
                     if(b!=null){
                         return NOptional.of(b?FORMATTED:FILTERED);
                     }

@@ -24,7 +24,7 @@ public class NSwingUtils {
                 }else if("small".equalsIgnoreCase(a)) {
                     scale = 1;
                 }else  {
-                    Integer i = NLiteral.of(a).asInt().orElse(0);
+                    Integer i = NLiteral.of(a).asIntValue().orElse(0);
                     if(i>0){
                         scale = i;
                     }
@@ -36,7 +36,7 @@ public class NSwingUtils {
                 }else if("small".equalsIgnoreCase(a)) {
                     scale = 1;
                 }else  {
-                    Integer i = NLiteral.of(a).asInt().orElse(0);
+                    Integer i = NLiteral.of(a).asIntValue().orElse(0);
                     if(i>0){
                         scale = i;
                     }

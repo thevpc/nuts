@@ -432,6 +432,8 @@ public interface NElements extends NContentTypeFormat {
 
     NPrimitiveElement ofString(String str);
 
+    NPrimitiveElement ofString(String str, NStringLayout stringLayout);
+
     NCustomElement ofCustom(Object object);
 
     NPrimitiveElement ofTrue();

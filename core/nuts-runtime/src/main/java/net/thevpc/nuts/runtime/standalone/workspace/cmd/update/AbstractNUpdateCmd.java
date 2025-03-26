@@ -499,7 +499,7 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
                     return false;
                 } else {
                     cmdLine.skip();
-                    addId(a.asString().get());
+                    addId(a.asStringValue().get());
                     return true;
                 }
             }

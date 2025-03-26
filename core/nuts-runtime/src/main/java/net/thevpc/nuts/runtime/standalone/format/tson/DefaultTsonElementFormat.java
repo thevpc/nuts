@@ -32,10 +32,10 @@ import net.thevpc.nuts.runtime.standalone.elem.NElementCommentImpl;
 import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.tson.*;
-import net.thevpc.tson.impl.builders.TsonPrimitiveElementBuilderImpl;
 
 import java.io.Reader;
 import java.io.StringReader;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -94,43 +94,146 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 return decorateTsonElement(Tson.ofNull(), elem);
             }
             case INTEGER: {
-                return decorateTsonElement(Tson.ofInt(elem.asInt().get()), elem);
+                return decorateTsonElement(Tson.ofInt(elem.asIntValue().get()), elem);
             }
             case LONG: {
-                return decorateTsonElement(Tson.ofLong(elem.asLong().get()), elem);
+                return decorateTsonElement(Tson.ofLong(elem.asLongValue().get()), elem);
             }
             case FLOAT: {
-                return decorateTsonElement(Tson.ofFloat(elem.asFloat().get()), elem);
+                return decorateTsonElement(Tson.ofFloat(elem.asFloatValue().get()), elem);
             }
             case DOUBLE: {
-                return decorateTsonElement(Tson.ofDouble(elem.asDouble().get()), elem);
+                return decorateTsonElement(Tson.ofDouble(elem.asDoubleValue().get()), elem);
             }
             case BYTE: {
-                return decorateTsonElement(Tson.ofByte(elem.asByte().get()), elem);
+                return decorateTsonElement(Tson.ofByte(elem.asByteValue().get()), elem);
             }
             case LOCAL_DATE: {
-                return decorateTsonElement(Tson.ofLocalDate(elem.asPrimitive().get().asLocalDate().get()), elem);
+                return decorateTsonElement(Tson.ofLocalDate(elem.asPrimitive().get().asLocalDateValue().get()), elem);
             }
             case LOCAL_DATETIME: {
-                return decorateTsonElement(Tson.ofLocalDatetime(elem.asPrimitive().get().asLocalDateTime().get()), elem);
+                return decorateTsonElement(Tson.ofLocalDatetime(elem.asPrimitive().get().asLocalDateTimeValue().get()), elem);
             }
             case LOCAL_TIME: {
-                return decorateTsonElement(Tson.ofLocalTime(elem.asPrimitive().get().asLocalTime().get()), elem);
+                return decorateTsonElement(Tson.ofLocalTime(elem.asPrimitive().get().asLocalTimeValue().get()), elem);
             }
             case REGEX: {
-                return decorateTsonElement(Tson.ofRegex(elem.asString().get()), elem);
+                return decorateTsonElement(Tson.ofRegex(elem.asStringValue().get()), elem);
             }
             case BIG_INTEGER: {
-                return decorateTsonElement(Tson.ofBigInt(elem.asBigInt().get()), elem);
+                return decorateTsonElement(Tson.ofBigInt(elem.asBigIntValue().get()), elem);
             }
             case BIG_DECIMAL: {
-                return decorateTsonElement(Tson.ofBigDecimal(elem.asBigDecimal().get()), elem);
+                return decorateTsonElement(Tson.ofBigDecimal(elem.asBigDecimalValue().get()), elem);
             }
-            case ARRAY: {
-                return decorateTsonElement(Tson.ofNull(), elem);
+            case SHORT: {
+                return decorateTsonElement(Tson.ofShort(elem.asShortValue().get()), elem);
+            }
+            case BOOLEAN: {
+                return decorateTsonElement(Tson.ofBoolean(elem.asBooleanValue().get()), elem);
+            }
+            case CHAR: {
+                return decorateTsonElement(Tson.ofChar(elem.asCharValue().get()), elem);
+            }
+            case INSTANT: {
+                return decorateTsonElement(Tson.ofInstant(elem.asInstantValue().get()), elem);
+            }
+            case BIG_COMPLEX: {
+                NBigComplex v = elem.asBigComplexValue().get();
+                return decorateTsonElement(Tson.ofBigComplex(v.real(), v.imag()), elem);
+            }
+            case DOUBLE_COMPLEX: {
+                NDoubleComplex v = elem.asDoubleComplexValue().get();
+                return decorateTsonElement(Tson.ofDoubleComplex(v.real(), v.imag()), elem);
+            }
+            case FLOAT_COMPLEX: {
+                NFloatComplex v = elem.asFloatComplexValue().get();
+                return decorateTsonElement(Tson.ofFloatComplex(v.real(), v.imag()), elem);
+            }
+
+            case ARRAY:
+            case NAMED_ARRAY:
+            case PARAMETRIZED_ARRAY:
+            case NAMED_PARAMETRIZED_ARRAY: {
+                NArrayElement ee = elem.asArray().get();
+                return decorateTsonElement(
+                        Tson.ofArrayBuilder()
+                                .name(ee.name())
+                                .addParams(
+                                        ee.params() == null ? null :
+                                                ee.params().stream().map(x -> toTson(x)).toArray(TsonElement[]::new)
+                                ).addAll(ee.children().stream().map(x -> toTson(x)).toArray(TsonElement[]::new))
+                                .build()
+                        , elem);
+            }
+            case OBJECT:
+            case NAMED_OBJECT:
+            case PARAMETRIZED_OBJECT:
+            case NAMED_PARAMETRIZED_OBJECT: {
+                NObjectElement ee = elem.asObject().get();
+                return decorateTsonElement(
+                        Tson.ofArrayBuilder()
+                                .name(ee.name())
+                                .addParams(
+                                        ee.params() == null ? null :
+                                                ee.params().stream().map(x -> toTson(x)).toArray(TsonElement[]::new)
+                                ).addAll(ee.children().stream().map(x -> toTson(x)).toArray(TsonElement[]::new))
+                                .build()
+                        , elem);
+            }
+            case UPLET:
+            case NAMED_UPLET: {
+                NUpletElement ee = elem.asUplet().get();
+                return decorateTsonElement(
+                        Tson.ofArrayBuilder()
+                                .name(ee.name())
+                                .addAll(ee.children().stream().map(x -> toTson(x)).toArray(TsonElement[]::new))
+                                .build()
+                        , elem);
+            }
+            case PAIR: {
+                NPairElement ee = elem.asPair().get();
+                return decorateTsonElement(
+                        Tson.ofPair(
+                                toTson(ee.key()),
+                                toTson(ee.value())
+                        )
+                        , elem);
+            }
+            case NAME: {
+                return decorateTsonElement(Tson.ofName(elem.asNamed().get().name()), elem);
+            }
+            case STRING: {
+                return decorateTsonElement(Tson.ofString(
+                        elem.asStr().get().stringValue(),
+                        toTsonStringLayout(elem.asStr().get().stringLayout())
+                ), elem);
             }
         }
         throw new IllegalArgumentException("not implemented");
+    }
+
+    private TsonStringLayout toTsonStringLayout(NStringLayout layout) {
+        if (layout == null) {
+            return null;
+        }
+        switch (layout) {
+            case DOUBLE_QUOTE:
+                return TsonStringLayout.DOUBLE_QUOTE;
+            case ANTI_QUOTE:
+                return TsonStringLayout.ANTI_QUOTE;
+            case TRIPLE_DOUBLE_QUOTE:
+                return TsonStringLayout.TRIPLE_DOUBLE_QUOTE;
+            case TRIPLE_SINGLE_QUOTE:
+                return TsonStringLayout.TRIPLE_SINGLE_QUOTE;
+            case TRIPLE_ANTI_QUOTE:
+                return TsonStringLayout.TRIPLE_ANTI_QUOTE;
+            case SINGLE_QUOTE:
+                return TsonStringLayout.SINGLE_QUOTE;
+            case SINGLE_LINE:
+                return TsonStringLayout.SINGLE_LINE;
+        }
+        throw new IllegalArgumentException("not implemented Tson Type " + layout);
     }
 
     private TsonElement decorateTsonElement(TsonElement t, NElement fromElem) {
@@ -275,10 +378,34 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 return decorateNElement(elems.ofBigDecimal(tsonElem.bigDecimalValue()), tsonElem);
             }
             case STRING: {
-                return decorateNElement(elems.ofString(tsonElem.stringValue()), tsonElem);
+                return decorateNElement(elems.ofString(tsonElem.toStr().stringValue(), toNStringLayout(tsonElem.toStr().layout())), tsonElem);
             }
             case BOOLEAN: {
                 return decorateNElement(elems.ofBoolean(tsonElem.booleanValue()), tsonElem);
+            }
+            case INSTANT:{
+                return decorateNElement(elems.ofInstant(tsonElem.instantValue()), tsonElem);
+            }
+            case LOCAL_DATE:{
+                return decorateNElement(elems.ofLocalDate(tsonElem.localDateValue()), tsonElem);
+            }
+            case LOCAL_TIME:{
+                return decorateNElement(elems.ofLocalTime(tsonElem.localTimeValue()), tsonElem);
+            }
+            case LOCAL_DATETIME:{
+                return decorateNElement(elems.ofLocalDateTime(tsonElem.localDateTimeValue()), tsonElem);
+            }
+            case BIG_COMPLEX:{
+                TsonBigComplex v = tsonElem.toBigComplex();
+                return decorateNElement(elems.ofBigComplex(v.real(),v.imag()), tsonElem);
+            }
+            case FLOAT_COMPLEX:{
+                TsonFloatComplex v = tsonElem.toFloatComplex();
+                return decorateNElement(elems.ofFloatComplex(v.real(),v.imag()), tsonElem);
+            }
+            case DOUBLE_COMPLEX:{
+                TsonDoubleComplex v = tsonElem.toDoubleComplex();
+                return decorateNElement(elems.ofDoubleComplex(v.real(),v.imag()), tsonElem);
             }
             case REGEX: {
                 return decorateNElement(elems.ofRegex(tsonElem.stringValue()), tsonElem);
@@ -321,8 +448,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 return decorateNElement(u.build(), tsonElem);
             }
             case UPLET:
-            case NAMED_UPLET:
-            {
+            case NAMED_UPLET: {
                 TsonUplet obj = tsonElem.toUplet();
                 NUpletElementBuilder u = elems.ofUpletBuilder();
                 for (TsonElement item : obj) {
@@ -340,6 +466,29 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
             }
         }
         throw new IllegalArgumentException("not implemented Tson Type " + tsonElem.type());
+    }
+
+    private NStringLayout toNStringLayout(TsonStringLayout layout) {
+        if (layout == null) {
+            return null;
+        }
+        switch (layout) {
+            case DOUBLE_QUOTE:
+                return NStringLayout.DOUBLE_QUOTE;
+            case ANTI_QUOTE:
+                return NStringLayout.ANTI_QUOTE;
+            case TRIPLE_DOUBLE_QUOTE:
+                return NStringLayout.TRIPLE_DOUBLE_QUOTE;
+            case TRIPLE_SINGLE_QUOTE:
+                return NStringLayout.TRIPLE_SINGLE_QUOTE;
+            case TRIPLE_ANTI_QUOTE:
+                return NStringLayout.TRIPLE_ANTI_QUOTE;
+            case SINGLE_QUOTE:
+                return NStringLayout.SINGLE_QUOTE;
+            case SINGLE_LINE:
+                return NStringLayout.SINGLE_LINE;
+        }
+        throw new IllegalArgumentException("not implemented Tson Type " + layout);
     }
 
     @Override

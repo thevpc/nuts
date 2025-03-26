@@ -111,7 +111,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
                         while (r.hasNext() && r.peekChar() >= '0' && r.peekChar() <= '9') {
                             mod.append(r.readChar());
                         }
-                        sb.append(variant % (NLiteral.of(mod.toString()).asInt().orElse(1)));
+                        sb.append(variant % (NLiteral.of(mod.toString()).asIntValue().orElse(1)));
                     } else {
                         r.readChar();
                         sb.append(variant);
@@ -126,7 +126,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
     }
 
     private int getVarValAsInt(String n) {
-        return NLiteral.of(props.getProperty(n)).asInt().orElse(0);
+        return NLiteral.of(props.getProperty(n)).asIntValue().orElse(0);
     }
 
     private Color getVarValAsColor(String n) {
@@ -233,7 +233,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
                 if(c!=null){
                     return NTextStyles.of(NTextStyle.of(st, c.getRGB()));
                 }
-                Integer ii = NLiteral.of(n).asInt().orNull();
+                Integer ii = NLiteral.of(n).asIntValue().orNull();
                 if (ii == null) {
                     ii = getVarValAsInt(n);
                 }
@@ -246,7 +246,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
                 if(c!=null){
                     return NTextStyles.of(NTextStyle.of(st, c.getRGB()));
                 }
-                Integer ii = NLiteral.of(n).asInt().orNull();
+                Integer ii = NLiteral.of(n).asIntValue().orNull();
                 if (ii == null) {
                     ii = getVarValAsInt(n);
                 }
@@ -260,14 +260,14 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
                 if(c!=null){
                     return NTextStyles.of(NTextStyle.of(st, c.getRGB()));
                 }
-                Integer ii = NLiteral.of(n).asInt().orNull();
+                Integer ii = NLiteral.of(n).asIntValue().orNull();
                 if (ii == null) {
                     ii = getVarValAsInt(n);
                 }
                 return NTextStyles.of(NTextStyle.of(st, ii));
             }
             default: {
-                Integer ii = NLiteral.of(n).asInt().orNull();
+                Integer ii = NLiteral.of(n).asIntValue().orNull();
                 if (ii == null) {
                     ii = getVarValAsInt(n);
                 }

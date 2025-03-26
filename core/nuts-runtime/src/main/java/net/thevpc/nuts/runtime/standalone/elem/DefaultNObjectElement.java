@@ -7,6 +7,7 @@ import net.thevpc.nuts.util.NStringBuilder;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class DefaultNObjectElement extends AbstractNListContainerElement implements NObjectElement {
@@ -41,8 +42,8 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
     }
 
     @Override
-    public Stream<NPairElement> pairs() {
-        return values.stream().filter(NElement::isPair).map(x -> x.asPair().get());
+    public List<NPairElement> pairs() {
+        return values.stream().filter(NElement::isPair).map(x -> x.asPair().get()).collect(Collectors.toList());
     }
 
     @Override
@@ -137,12 +138,12 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
     @Override
     public String toString(boolean compact) {
         NStringBuilder sb = new NStringBuilder();
-        sb.append(TsonElementToStringHelper.leadingCommentsAndAnnotations(this, compact));
-        TsonElementToStringHelper.appendUplet(name,params, compact, sb);
+        sb.append(NElementToStringHelper.leadingCommentsAndAnnotations(this, compact));
+        NElementToStringHelper.appendUplet(name,params, compact, sb);
         sb.append("{");
-        TsonElementToStringHelper.appendChildren(children(), compact, new TsonElementToStringHelper.SemiCompactInfo(),sb);
+        NElementToStringHelper.appendChildren(children(), compact, new NElementToStringHelper.SemiCompactInfo(),sb);
         sb.append("}");
-        sb.append(TsonElementToStringHelper.trailingComments(this, compact));
+        sb.append(NElementToStringHelper.trailingComments(this, compact));
         return sb.toString();
     }
 
@@ -153,7 +154,7 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
     }
 
     @Override
-    public NOptional<Object> asObjectAt(int index) {
+    public NOptional<Object> asObjectValueAt(int index) {
         if (index >= 0 && index < values.size()) {
             return NOptional.of(values.get(index));
         }

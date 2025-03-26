@@ -971,7 +971,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
             case "--optional": {
                 NArg val = cmdLine.nextEntry().get();
                 if (enabled) {
-                    this.setOptional(val.getValue().asBoolean().orNull());
+                    this.setOptional(val.getValue().asBooleanValue().orNull());
                 }
                 return true;
             }
@@ -1033,7 +1033,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
                     return false;
                 } else {
                     cmdLine.skip();
-                    addId(a.asString().get());
+                    addId(a.asStringValue().get());
                     return true;
                 }
             }

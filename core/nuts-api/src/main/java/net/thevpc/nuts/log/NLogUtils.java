@@ -44,7 +44,7 @@ public class NLogUtils {
                 return NOptional.of(Level.CONFIG);
             }
         }
-        Integer i = NLiteral.of(value).asInt().orNull();
+        Integer i = NLiteral.of(value).asIntValue().orNull();
         if (i != null) {
             switch (i) {
                 case Integer.MAX_VALUE:

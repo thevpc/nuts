@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.lock;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.concurrent.NLock;
 import net.thevpc.nuts.concurrent.NLockAcquireException;
 import net.thevpc.nuts.concurrent.NLockBarrierException;
 import net.thevpc.nuts.concurrent.NLockReleaseException;
@@ -37,7 +36,7 @@ public class DefaultFileNLock extends AbstractNLock {
 
     public TimePeriod getDefaultTimePeriod() {
         return TimePeriod.parse(
-                NWorkspace.of().getConfigProperty("nuts.file-lock.timeout").flatMap(NLiteral::asString).get(),
+                NWorkspace.of().getConfigProperty("nuts.file-lock.timeout").flatMap(NLiteral::asStringValue).get(),
                 TimeUnit.SECONDS
         ).orElse(FIVE_MINUTES);
     }

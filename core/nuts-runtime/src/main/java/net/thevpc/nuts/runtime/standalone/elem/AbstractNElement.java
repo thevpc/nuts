@@ -223,7 +223,7 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public NOptional<Object> asObjectAt(int index) {
+    public NOptional<Object> asObjectValueAt(int index) {
         return null;
     }
 
@@ -272,6 +272,14 @@ public abstract class AbstractNElement implements NElement {
             return NOptional.of((NPairElement) this);
         }
         return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to pair: %s", type().id(), this));
+    }
+
+    @Override
+    public NOptional<NStringElement> asStr() {
+        if (this instanceof NStringElement) {
+            return NOptional.of((NStringElement) this);
+        }
+        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to string: %s", type().id(), this));
     }
 
     public NOptional<NCustomElement> asCustom() {
@@ -432,7 +440,7 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public boolean isPairWithPrimitiveKey() {
+    public boolean isSimplePair() {
         if (!isPair()) {
             return false;
         }
@@ -441,7 +449,7 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public boolean isPairWithAnyStringKey() {
+    public boolean isNamedPair() {
         if (!isPair()) {
             return false;
         }
@@ -463,27 +471,27 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public NOptional<String> asString() {
-        return asPrimitive().flatMap(NLiteral::asString);
+    public NOptional<String> asStringValue() {
+        return asPrimitive().flatMap(NLiteral::asStringValue);
     }
 
     @Override
-    public NOptional<Number> asNumber() {
-        return asPrimitive().flatMap(NLiteral::asNumber);
+    public NOptional<Number> asNumberValue() {
+        return asPrimitive().flatMap(NLiteral::asNumberValue);
     }
 
     @Override
-    public NOptional<BigInteger> asBigInt() {
-        return asPrimitive().flatMap(NLiteral::asBigInt);
+    public NOptional<BigInteger> asBigIntValue() {
+        return asPrimitive().flatMap(NLiteral::asBigIntValue);
     }
 
     @Override
-    public NOptional<BigDecimal> asBigDecimal() {
-        return asPrimitive().flatMap(NLiteral::asBigDecimal);
+    public NOptional<BigDecimal> asBigDecimalValue() {
+        return asPrimitive().flatMap(NLiteral::asBigDecimalValue);
     }
 
     @Override
-    public Object getRaw() {
+    public Object asObjectValue() {
         if (isPrimitive()) {
             return asPrimitive().get();
         }
@@ -491,63 +499,78 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public NOptional<Boolean> asBoolean() {
-        return asPrimitive().flatMap(NLiteral::asBoolean);
+    public NOptional<Boolean> asBooleanValue() {
+        return asPrimitive().flatMap(NLiteral::asBooleanValue);
     }
 
     @Override
-    public NOptional<Byte> asByte() {
-        return asPrimitive().flatMap(NLiteral::asByte);
+    public NOptional<Byte> asByteValue() {
+        return asPrimitive().flatMap(NLiteral::asByteValue);
     }
 
     @Override
-    public NOptional<Double> asDouble() {
-        return asPrimitive().flatMap(NLiteral::asDouble);
+    public NOptional<Double> asDoubleValue() {
+        return asPrimitive().flatMap(NLiteral::asDoubleValue);
     }
 
     @Override
-    public NOptional<Float> asFloat() {
-        return asPrimitive().flatMap(NLiteral::asFloat);
+    public NOptional<Float> asFloatValue() {
+        return asPrimitive().flatMap(NLiteral::asFloatValue);
     }
 
     @Override
-    public NOptional<Instant> asInstant() {
-        return asPrimitive().flatMap(NLiteral::asInstant);
+    public NOptional<Instant> asInstantValue() {
+        return asPrimitive().flatMap(NLiteral::asInstantValue);
     }
 
     @Override
-    public NOptional<LocalDate> asLocalDate() {
-        return asPrimitive().flatMap(NLiteral::asLocalDate);
+    public NOptional<LocalDate> asLocalDateValue() {
+        return asPrimitive().flatMap(NLiteral::asLocalDateValue);
     }
 
     @Override
-    public NOptional<LocalDateTime> asLocalDateTime() {
-        return asPrimitive().flatMap(NLiteral::asLocalDateTime);
+    public NOptional<LocalDateTime> asLocalDateTimeValue() {
+        return asPrimitive().flatMap(NLiteral::asLocalDateTimeValue);
     }
 
     @Override
-    public NOptional<LocalTime> asLocalTime() {
-        return asPrimitive().flatMap(NLiteral::asLocalTime);
+    public NOptional<LocalTime> asLocalTimeValue() {
+        return asPrimitive().flatMap(NLiteral::asLocalTimeValue);
     }
 
     @Override
-    public NOptional<Integer> asInt() {
-        return asPrimitive().flatMap(NLiteral::asInt);
+    public NOptional<NBigComplex> asBigComplexValue() {
+        return asPrimitive().flatMap(NLiteral::asBigComplexValue);
     }
 
     @Override
-    public NOptional<Long> asLong() {
-        return asPrimitive().flatMap(NLiteral::asLong);
+    public NOptional<NDoubleComplex> asDoubleComplexValue() {
+        return asPrimitive().flatMap(NLiteral::asDoubleComplexValue);
     }
 
     @Override
-    public NOptional<Short> asShort() {
-        return asPrimitive().flatMap(NLiteral::asShort);
+    public NOptional<NFloatComplex> asFloatComplexValue() {
+        return asPrimitive().flatMap(NLiteral::asFloatComplexValue);
     }
 
     @Override
-    public NOptional<Character> asChar() {
-        return asPrimitive().flatMap(NLiteral::asChar);
+    public NOptional<Integer> asIntValue() {
+        return asPrimitive().flatMap(NLiteral::asIntValue);
+    }
+
+    @Override
+    public NOptional<Long> asLongValue() {
+        return asPrimitive().flatMap(NLiteral::asLongValue);
+    }
+
+    @Override
+    public NOptional<Short> asShortValue() {
+        return asPrimitive().flatMap(NLiteral::asShortValue);
+    }
+
+    @Override
+    public NOptional<Character> asCharValue() {
+        return asPrimitive().flatMap(NLiteral::asCharValue);
     }
 
     @Override
@@ -595,23 +618,23 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public NOptional<String> asStringAt(int index) {
-        return asLiteralAt(index).asString();
+    public NOptional<String> asStringValueAt(int index) {
+        return asLiteralAt(index).asStringValue();
     }
 
     @Override
-    public NOptional<Long> asLongAt(int index) {
-        return asLiteralAt(index).asLong();
+    public NOptional<Long> asLongValueAt(int index) {
+        return asLiteralAt(index).asLongValue();
     }
 
     @Override
-    public NOptional<Integer> asIntAt(int index) {
-        return asLiteralAt(index).asInt();
+    public NOptional<Integer> asIntValueAt(int index) {
+        return asLiteralAt(index).asIntValue();
     }
 
     @Override
-    public NOptional<Double> asDoubleAt(int index) {
-        return asLiteralAt(index).asDouble();
+    public NOptional<Double> asDoubleValueAt(int index) {
+        return asLiteralAt(index).asDoubleValue();
     }
 
     @Override
@@ -621,7 +644,7 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public NLiteral asLiteralAt(int index) {
-        return NLiteral.of(asObjectAt(index).orNull());
+        return NLiteral.of(asObjectValueAt(index).orNull());
     }
 
     @Override

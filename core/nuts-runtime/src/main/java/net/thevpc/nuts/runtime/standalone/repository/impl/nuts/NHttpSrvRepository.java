@@ -275,7 +275,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         }
 
         String passphrase = config().getConfigProperty(CoreSecurityUtils.ENV_KEY_PASSPHRASE)
-                .flatMap(NLiteral::asString)
+                .flatMap(NLiteral::asStringValue)
                 .orElse(CoreSecurityUtils.DEFAULT_PASSPHRASE);
         newLogin = new String(CoreSecurityUtils.INSTANCE.defaultEncryptChars(NStringUtils.trim(newLogin).toCharArray(), passphrase));
         credentials = CoreSecurityUtils.INSTANCE.defaultEncryptChars(credentials, passphrase);

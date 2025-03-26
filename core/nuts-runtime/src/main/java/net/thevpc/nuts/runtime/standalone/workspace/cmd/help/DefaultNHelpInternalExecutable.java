@@ -66,7 +66,7 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
                 }
             } else {
                 cmdLine.skip();
-                helpFor.add(a.asString().get());
+                helpFor.add(a.asStringValue().get());
                 helpFor.addAll(Arrays.asList(cmdLine.toStringArray()));
                 cmdLine.skipAll();
             }

@@ -476,7 +476,7 @@ public final class JavaExecutorOptions {
                         mainClass = NAsk.of()
                                 .forString(NMsg.ofNtf(msgString))
                                 .setValidator((value, question) -> {
-                                    Integer anyInt = NLiteral.of(value).asInt().orNull();
+                                    Integer anyInt = NLiteral.of(value).asIntValue().orNull();
                                     if (anyInt != null) {
                                         int i = anyInt;
                                         if (i >= 1 && i <= possibleClasses.size()) {
@@ -561,7 +561,7 @@ public final class JavaExecutorOptions {
 
     private String resolveMainClass(String name, List<String> possibleClasses) {
         if (name != null) {
-            Integer v = NLiteral.of(name).asInt().orNull();
+            Integer v = NLiteral.of(name).asIntValue().orNull();
             if (v != null) {
                 if (v >= 1 && v <= possibleClasses.size()) {
                     return possibleClasses.get(v - 1);

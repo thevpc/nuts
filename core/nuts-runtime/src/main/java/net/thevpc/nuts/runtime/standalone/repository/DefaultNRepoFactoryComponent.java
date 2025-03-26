@@ -111,7 +111,7 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
             } else if (NPath.of(config.getLocation().getPath()).isURL()) {
                 Map<String, String> e = config.getEnv();
                 if (e != null) {
-                    if (NLiteral.of(e.get("nuts-api-server")).asBoolean().orElse(false)) {
+                    if (NLiteral.of(e.get("nuts-api-server")).asBooleanValue().orElse(false)) {
                         return (new NHttpSrvRepository(options, workspace, parentRepository));
                     }
                 }

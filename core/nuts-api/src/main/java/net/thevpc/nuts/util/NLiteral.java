@@ -1,7 +1,9 @@
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.elem.NBigComplex;
+import net.thevpc.nuts.elem.NDoubleComplex;
+import net.thevpc.nuts.elem.NFloatComplex;
 import net.thevpc.nuts.elem.NPrimitiveElement;
-import net.thevpc.nuts.elem.NPrimitiveElementBuilder;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -17,39 +19,45 @@ public interface NLiteral extends NBlankable {
         return DefaultNLiteral.of(any);
     }
 
-    Object getRaw();
+    Object asObjectValue();
 
-    NOptional<Instant> asInstant();
+    NOptional<Instant> asInstantValue();
 
-    NOptional<LocalDate> asLocalDate();
+    NOptional<LocalDate> asLocalDateValue();
 
-    NOptional<LocalDateTime> asLocalDateTime();
+    NOptional<LocalDateTime> asLocalDateTimeValue();
 
-    NOptional<LocalTime> asLocalTime();
+    NOptional<LocalTime> asLocalTimeValue();
 
-    NOptional<Number> asNumber();
+    NOptional<NBigComplex> asBigComplexValue();
 
-    NOptional<Boolean> asBoolean();
+    NOptional<NDoubleComplex> asDoubleComplexValue();
 
-    NOptional<Long> asLong();
+    NOptional<NFloatComplex> asFloatComplexValue();
 
-    NOptional<Double> asDouble();
+    NOptional<Number> asNumberValue();
 
-    NOptional<Float> asFloat();
+    NOptional<Boolean> asBooleanValue();
 
-    NOptional<Byte> asByte();
+    NOptional<Long> asLongValue();
 
-    NOptional<Short> asShort();
+    NOptional<Double> asDoubleValue();
 
-    NOptional<Character> asChar();
+    NOptional<Float> asFloatValue();
 
-    NOptional<Integer> asInt();
+    NOptional<Byte> asByteValue();
 
-    NOptional<String> asString();
+    NOptional<Short> asShortValue();
 
-    NOptional<BigInteger> asBigInt();
+    NOptional<Character> asCharValue();
 
-    NOptional<BigDecimal> asBigDecimal();
+    NOptional<Integer> asIntValue();
+
+    NOptional<String> asStringValue();
+
+    NOptional<BigInteger> asBigIntValue();
+
+    NOptional<BigDecimal> asBigDecimalValue();
 
     boolean isStream();
 
@@ -96,19 +104,19 @@ public interface NLiteral extends NBlankable {
 
     boolean isEmpty();
 
-    NOptional<String> asStringAt(int index);
+    NOptional<String> asStringValueAt(int index);
 
-    NOptional<Long> asLongAt(int index);
+    NOptional<Long> asLongValueAt(int index);
 
-    NOptional<Integer> asIntAt(int index);
+    NOptional<Integer> asIntValueAt(int index);
 
-    NOptional<Double> asDoubleAt(int index);
+    NOptional<Double> asDoubleValueAt(int index);
 
     boolean isNullAt(int index);
 
     NLiteral asLiteralAt(int index);
 
-    NOptional<Object> asObjectAt(int index);
+    NOptional<Object> asObjectValueAt(int index);
 
     boolean isBlank();
 

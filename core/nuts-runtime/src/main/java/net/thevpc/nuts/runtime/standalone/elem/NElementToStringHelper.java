@@ -10,7 +10,7 @@ import net.thevpc.nuts.util.NStringUtils;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TsonElementToStringHelper {
+public class NElementToStringHelper {
     public static String leadingCommentsAndAnnotations(NElement any, boolean compact) {
         StringBuilder sb = new StringBuilder();
         for (NElementComment c : any.comments().leadingComments()) {

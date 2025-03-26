@@ -137,6 +137,8 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable, NLi
 
     NOptional<NPairElement> asPair();
 
+    NOptional<NStringElement> asStr();
+
     /**
      * cast this element to {@link NObjectElement} or throw
      * ClassCastException
@@ -229,11 +231,16 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable, NLi
     /**
      * true if pair with primitive key
      *
-     * @return
+     * @return true if pair with primitive key
      */
-    boolean isPairWithPrimitiveKey();
+    boolean isSimplePair();
 
-    boolean isPairWithAnyStringKey();
+    /**
+     * true if pair with string like key
+     *
+     * @return true if pair with string like key
+     */
+    boolean isNamedPair();
 
     List<NElement> toElementList();
 

@@ -294,7 +294,7 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
                     cmdLine.throwUnexpectedArgument();
                 } else {
                     cmdLine.skip();
-                    addId(a.asString().get());
+                    addId(a.asStringValue().get());
                     return true;
                 }
             }

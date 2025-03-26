@@ -76,7 +76,7 @@ public final class NReservedLangUtils {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty size"));
         }
         value = value.trim();
-        Integer i = NLiteral.of(value).asInt().orNull();
+        Integer i = NLiteral.of(value).asIntValue().orNull();
         if (i != null) {
             if (defaultMultiplier != null) {
                 return NOptional.of(i * defaultMultiplier);
@@ -87,7 +87,7 @@ public final class NReservedLangUtils {
         for (String s : new String[]{"kb", "mb", "gb", "k", "m", "g"}) {
             if (value.toLowerCase().endsWith(s)) {
                 String v = value.substring(0, value.length() - s.length()).trim();
-                i = NLiteral.of(v).asInt().orNull();
+                i = NLiteral.of(v).asIntValue().orNull();
                 if (i != null) {
                     switch (s) {
                         case "k":

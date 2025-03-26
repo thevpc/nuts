@@ -136,13 +136,13 @@ public final class NTerminalCmd {
             case Ids.CLEAR_LINE_FROM_CURSOR:
                 return CLEAR_LINE_FROM_CURSOR;
             case Ids.MOVE_UP:
-                return MOVE_UP(NLiteral.of(args[0]).asInt().orElse(1));
+                return MOVE_UP(NLiteral.of(args[0]).asIntValue().orElse(1));
             case Ids.MOVE_DOWN:
-                return MOVE_DOWN(NLiteral.of(args[0]).asInt().orElse(1));
+                return MOVE_DOWN(NLiteral.of(args[0]).asIntValue().orElse(1));
             case Ids.MOVE_LEFT:
-                return MOVE_LEFT(NLiteral.of(args[0]).asInt().orElse(1));
+                return MOVE_LEFT(NLiteral.of(args[0]).asIntValue().orElse(1));
             case Ids.MOVE_RIGHT:
-                return MOVE_RIGHT(NLiteral.of(args[0]).asInt().orElse(1));
+                return MOVE_RIGHT(NLiteral.of(args[0]).asIntValue().orElse(1));
         }
 
         return new NTerminalCmd(name, args == null ? null : Arrays.asList(args));

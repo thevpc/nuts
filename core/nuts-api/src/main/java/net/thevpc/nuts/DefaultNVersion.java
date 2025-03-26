@@ -437,12 +437,12 @@ public class DefaultNVersion implements NVersion {
 
     @Override
     public NOptional<Integer> getIntegerAt(int index) {
-        return getNumberLiteralAt(index).flatMap(NLiteral::asInt);
+        return getNumberLiteralAt(index).flatMap(NLiteral::asIntValue);
     }
 
     @Override
     public NOptional<Long> getLongAt(int index) {
-        return getNumberLiteralAt(index).flatMap(NLiteral::asLong);
+        return getNumberLiteralAt(index).flatMap(NLiteral::asLongValue);
     }
 
     private String toExplicitSingleValueOrNullString() {

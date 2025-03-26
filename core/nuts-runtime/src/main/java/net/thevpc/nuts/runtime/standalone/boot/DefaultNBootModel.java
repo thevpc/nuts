@@ -376,14 +376,14 @@ public class DefaultNBootModel implements NBootModel {
                     if (property != null) {
                         DefaultNArg a = new DefaultNArg(property);
                         if (a.isActive()) {
-                            String key = a.getKey().asString().orElse("");
+                            String key = a.getKey().asStringValue().orElse("");
                             String v = a.getStringValue().orElse(null);
                             if (a.isEnabled()) {
                                 this.customBootOptions.put(key, NLiteral.of(v));
                             } else if (NBlankable.isBlank(v)) {
                                 this.customBootOptions.put(key, NLiteral.of(false));
                             } else {
-                                NOptional<Boolean> b = NLiteral.of(v).asBoolean();
+                                NOptional<Boolean> b = NLiteral.of(v).asBooleanValue();
                                 if (b.isPresent()) {
                                     this.customBootOptions.put(key, NLiteral.of(!b.get()));
                                 } else {

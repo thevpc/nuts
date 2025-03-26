@@ -67,7 +67,7 @@ public class NSysExecUtils {
             case WINDOWS: {
                 String s = (String) NApp.of().getProperty("nuts.windows.root-user", NScopeType.SESSION).orNull();
                 if (s == null) {
-                    s = NWorkspace.of().getConfigProperty("nuts.windows.root-user").flatMap(NLiteral::asString).orNull();
+                    s = NWorkspace.of().getConfigProperty("nuts.windows.root-user").flatMap(NLiteral::asStringValue).orNull();
                 }
                 if (NBlankable.isBlank(s)) {
                     s = "Administrator";
@@ -85,7 +85,7 @@ public class NSysExecUtils {
             case WINDOWS: {
                 String s = (String) NApp.of().getProperty("nuts.windows.root-user", NScopeType.SESSION).orNull();
                 if (s == null) {
-                    s = NWorkspace.of().getConfigProperty("nuts.windows.root-user").flatMap(NLiteral::asString).orNull();
+                    s = NWorkspace.of().getConfigProperty("nuts.windows.root-user").flatMap(NLiteral::asStringValue).orNull();
                 }
                 if (NBlankable.isBlank(s)) {
                     s = "Administrator";

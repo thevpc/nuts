@@ -36,7 +36,7 @@ public class NDescriptorUtils {
         if (list != null) {
             for (NDescriptorProperty property : list) {
                 if (property.getCondition() == null || property.getCondition().isBlank()) {
-                    m.put(property.getName(), property.getValue().asString().orNull());
+                    m.put(property.getName(), property.getValue().asStringValue().orNull());
                 } else {
                     throw new NIllegalArgumentException(NMsg.ofPlain("unexpected properties with conditions. probably a bug"));
                 }
@@ -356,7 +356,7 @@ public class NDescriptorUtils {
         NArtifactCall n_installer = b.getInstaller();
         DefaultNProperties n_props = new DefaultNProperties();
         for (NDescriptorProperty property : b.getProperties()) {
-            String v = property.getValue().asString().get();
+            String v = property.getValue().asStringValue().get();
             if (CoreStringUtils.containsVars("${")) {
                 n_props.add(property.builder().setValue(CoreNUtils.applyStringProperties(v, map))
                         .readOnly());

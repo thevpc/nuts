@@ -177,7 +177,7 @@ public class NDeleteFileHelper {
                     refForceAll.setForce(true);
                 } else if ("c".equalsIgnoreCase(line)) {
                     throw new NCancelException();
-                } else if (!NLiteral.of(line).asBoolean().orElse(false)) {
+                } else if (!NLiteral.of(line).asBooleanValue().orElse(false)) {
                     refForceAll.ignore(directory);
                     return 0;
                 }

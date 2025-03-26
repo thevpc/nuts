@@ -313,7 +313,7 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
             }
             case "-s":
             case "--strategy": {
-                String val = cmdLine.nextEntry().flatMap(NLiteral::asString).get();
+                String val = cmdLine.nextEntry().flatMap(NLiteral::asStringValue).get();
                 if (enabled) {
                     this.setStrategy(CoreEnumUtils.parseEnumString(val, NInstallStrategy.class, false));
                 }
@@ -357,7 +357,7 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
                     return false;
                 } else {
                     cmdLine.skip();
-                    addId(aa.asString().get());
+                    addId(aa.asStringValue().get());
                     return true;
                 }
             }

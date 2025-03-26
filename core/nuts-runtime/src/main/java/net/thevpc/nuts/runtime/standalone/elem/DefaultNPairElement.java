@@ -52,7 +52,7 @@ public class DefaultNPairElement extends AbstractNElement implements NPairElemen
     @Override
     public String name() {
         if (key.isAnyString()) {
-            return key.asString().orNull();
+            return key.asStringValue().orNull();
         }
         return null;
     }
@@ -71,7 +71,7 @@ public class DefaultNPairElement extends AbstractNElement implements NPairElemen
     }
 
     @Override
-    public NOptional<Object> asObjectAt(int index) {
+    public NOptional<Object> asObjectValueAt(int index) {
         return NOptional.ofEmpty(() -> NMsg.ofC("invalid object at %s", index));
     }
 
@@ -92,7 +92,7 @@ public class DefaultNPairElement extends AbstractNElement implements NPairElemen
     @Override
     public String toString(boolean compact) {
         NStringBuilder sb = new NStringBuilder();
-        sb.append(TsonElementToStringHelper.leadingCommentsAndAnnotations(this, compact));
+        sb.append(NElementToStringHelper.leadingCommentsAndAnnotations(this, compact));
         String skey = key.toString();
         String svalue = value.toString();
         if (compact) {
@@ -110,7 +110,7 @@ public class DefaultNPairElement extends AbstractNElement implements NPairElemen
                 sb.append(new NStringBuilder(svalue).indent("  ", true));
             }
         }
-        sb.append(TsonElementToStringHelper.trailingComments(this, compact));
+        sb.append(NElementToStringHelper.trailingComments(this, compact));
         return sb.toString();
     }
 

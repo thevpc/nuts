@@ -1,24 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.lock;
 
-import net.thevpc.nuts.NUnsupportedOperationException;
 import net.thevpc.nuts.NWorkspace;
-import net.thevpc.nuts.concurrent.NLock;
 import net.thevpc.nuts.concurrent.NLockAcquireException;
 import net.thevpc.nuts.concurrent.NLockBarrierException;
 import net.thevpc.nuts.concurrent.NLockReleaseException;
-import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.util.TimePeriod;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMsg;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class DefaultMemLock extends AbstractNLock {
@@ -35,7 +26,7 @@ public class DefaultMemLock extends AbstractNLock {
 
     public TimePeriod getDefaultTimePeriod() {
         return TimePeriod.parse(
-                NWorkspace.of().getConfigProperty("nuts.file-lock.timeout").flatMap(NLiteral::asString).get(),
+                NWorkspace.of().getConfigProperty("nuts.file-lock.timeout").flatMap(NLiteral::asStringValue).get(),
                 TimeUnit.SECONDS
         ).orElse(FIVE_MINUTES);
     }

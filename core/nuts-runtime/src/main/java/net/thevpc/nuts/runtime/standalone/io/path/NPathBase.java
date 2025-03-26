@@ -264,18 +264,18 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         int lastDot = -1;
         for (int i = vals.length - 1; i >= 0; i--) {
             NLiteral v = vals[i];
-            String u = v.asString().get();
+            String u = v.asStringValue().get();
             if (u.equals(".")) {
                 if (i == vals.length - 1) {
                     return rebuildSmartParts(vals, i);
                 }
                 NLiteral v2 = vals[i + 1];
-                if (v2.asNumber().isPresent()) {
+                if (v2.asNumberValue().isPresent()) {
                     //check if the part before is also a number
-                    if (i > 0 && vals[i - 1].asNumber().isPresent()) {
+                    if (i > 0 && vals[i - 1].asNumberValue().isPresent()) {
                         if (i + 1 == vals.length - 1) {
                             return rebuildSmartParts(vals, i + 2);
-                        } else if (vals[i + 1].asString().get().equals(".")) {
+                        } else if (vals[i + 1].asStringValue().get().equals(".")) {
                             return rebuildSmartParts(vals, i + 1);
                         }
                     }
@@ -310,7 +310,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     private String concatSmartParts(NLiteral[] vals, int from, int to) {
         StringBuilder sb = new StringBuilder();
         for (int i = from; i < to; i++) {
-            sb.append(vals[i].asString().get());
+            sb.append(vals[i].asStringValue().get());
         }
         return sb.toString();
     }

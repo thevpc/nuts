@@ -82,10 +82,10 @@ class DefaultNCustomElement extends AbstractNElement implements NCustomElement {
     @Override
     public String toString(boolean compact) {
         NStringBuilder sb = new NStringBuilder();
-        sb.append(TsonElementToStringHelper.leadingCommentsAndAnnotations(this, compact));
+        sb.append(NElementToStringHelper.leadingCommentsAndAnnotations(this, compact));
         String svalue = String.valueOf(value);
         sb.append(svalue);
-        sb.append(TsonElementToStringHelper.trailingComments(this, compact));
+        sb.append(NElementToStringHelper.trailingComments(this, compact));
         return sb.toString();
     }
 
@@ -115,8 +115,8 @@ class DefaultNCustomElement extends AbstractNElement implements NCustomElement {
     }
 
     @Override
-    public NOptional<Object> asObjectAt(int index) {
-        return NLiteral.of(value).asObjectAt(index);
+    public NOptional<Object> asObjectValueAt(int index) {
+        return NLiteral.of(value).asObjectValueAt(index);
     }
 
     @Override

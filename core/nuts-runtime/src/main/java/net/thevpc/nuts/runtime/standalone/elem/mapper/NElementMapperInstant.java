@@ -25,16 +25,16 @@ public class NElementMapperInstant implements NElementMapper<Instant> {
         NSession session = context.getSession();
         switch (o.type()) {
             case INSTANT: {
-                return o.asInstant().get();
+                return o.asInstantValue().get();
             }
             case INTEGER: {
-                return Instant.ofEpochMilli(o.asInt().get());
+                return Instant.ofEpochMilli(o.asIntValue().get());
             }
             case LONG: {
-                return Instant.ofEpochMilli(o.asLong().get());
+                return Instant.ofEpochMilli(o.asLongValue().get());
             }
             case STRING: {
-                return Instant.parse(o.asString().get());
+                return Instant.parse(o.asStringValue().get());
             }
         }
         throw new NUnsupportedEnumException(o.type());

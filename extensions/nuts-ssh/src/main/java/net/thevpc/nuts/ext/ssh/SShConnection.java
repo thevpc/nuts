@@ -30,7 +30,7 @@ public class SShConnection implements AutoCloseable {
 
     public SShConnection(NConnexionString address, InputStream in, OutputStream out, OutputStream err, NSession sshSession) {
         init(address.getUser(), address.getHost(),
-                NLiteral.of(address.getPort()).asInt().orElse(-1),
+                NLiteral.of(address.getPort()).asIntValue().orElse(-1),
                 NStringMapFormat.URL_FORMAT.parse(address.getQueryString())
                         .orElse(Collections.emptyMap()).get("key-file"),
                 address.getPassword(), in, out, err);

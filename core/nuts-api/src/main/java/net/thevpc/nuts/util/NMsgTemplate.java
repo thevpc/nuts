@@ -122,8 +122,8 @@ public class NMsgTemplate {
                                 nsIntString=String.valueOf(currentIndex);
                             }
                             NLiteral lit = NLiteral.of(nsIntString);
-                            if (lit.asInt().isPresent()) {
-                                nsInt = lit.asInt().get();
+                            if (lit.asIntValue().isPresent()) {
+                                nsInt = lit.asIntValue().get();
                             }
                             if (nsInt != null) {
                                 while (maxElems <= nsInt) {

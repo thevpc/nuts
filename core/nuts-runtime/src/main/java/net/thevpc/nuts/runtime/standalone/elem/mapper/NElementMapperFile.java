@@ -1,12 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 
 import java.io.File;
 import java.lang.reflect.Type;
@@ -32,6 +30,6 @@ public class NElementMapperFile implements NElementMapper<File> {
 
     @Override
     public File createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        return new File(o.asString().get());
+        return new File(o.asStringValue().get());
     }
 }

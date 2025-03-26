@@ -1433,13 +1433,13 @@ public class DefaultNWorkspaceConfigModel {
                     executorService = NWorkspace.of().getBootOptions().getExecutorService().orNull();
                     if (executorService == null) {
 
-                        int minPoolSize = getConfigProperty("nuts.threads.min").flatMap(NLiteral::asInt).orElse(2);
+                        int minPoolSize = getConfigProperty("nuts.threads.min").flatMap(NLiteral::asIntValue).orElse(2);
                         if (minPoolSize < 1) {
                             minPoolSize = 60;
                         } else if (minPoolSize > 500) {
                             minPoolSize = 500;
                         }
-                        int maxPoolSize = getConfigProperty("nuts.threads.max").flatMap(NLiteral::asInt).orElse(60);
+                        int maxPoolSize = getConfigProperty("nuts.threads.max").flatMap(NLiteral::asIntValue).orElse(60);
                         if (maxPoolSize < 1) {
                             maxPoolSize = 60;
                         } else if (maxPoolSize > 500) {
@@ -1450,7 +1450,7 @@ public class DefaultNWorkspaceConfigModel {
                         }
                         TimePeriod defaultPeriod = new TimePeriod(3, TimeUnit.SECONDS);
                         TimePeriod period = TimePeriod.parse(
-                                getConfigProperty("nuts.threads.keep-alive").flatMap(NLiteral::asString).orNull(),
+                                getConfigProperty("nuts.threads.keep-alive").flatMap(NLiteral::asStringValue).orNull(),
                                 TimeUnit.SECONDS
                         ).orElse(defaultPeriod);
                         if (period.getCount() < 0) {

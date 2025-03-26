@@ -64,19 +64,19 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                 break;
             }
             case BOOLEAN: {
-                out.print(data.asBoolean().orElse(false));
+                out.print(data.asBooleanValue().orElse(false));
                 break;
             }
             case BYTE:
             case SHORT:
             case INTEGER:
             case LONG: {
-                out.print(data.asNumber().orElse(0));
+                out.print(data.asNumberValue().orElse(0));
                 break;
             }
             case FLOAT:
             case DOUBLE: {
-                out.print(data.asNumber().orElse(0.0));
+                out.print(data.asNumberValue().orElse(0.0));
                 break;
             }
             case INSTANT:
@@ -84,7 +84,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
 //            case NUTS_STRING:
             {
                 StringBuilder sb = new StringBuilder("\"");
-                final String str = data.asString().orElse("");
+                final String str = data.asStringValue().orElse("");
                 char[] chars = str.toCharArray();
 
                 for (int i = 0; i < chars.length; i++) {
@@ -381,7 +381,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                         break;
                     }
                     default: {
-                        name = k.asString().get();
+                        name = k.asStringValue().get();
                     }
                 }
                 skipWhiteSpaceAndComments();

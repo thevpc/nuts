@@ -174,7 +174,7 @@ public abstract class AbstractNUninstallCmd extends NWorkspaceCmdBase<NUninstall
                     return false;
                 } else {
                     cmdLine.skip();
-                    addId(aa.asString().get());
+                    addId(aa.asStringValue().get());
                     return true;
                 }
             }

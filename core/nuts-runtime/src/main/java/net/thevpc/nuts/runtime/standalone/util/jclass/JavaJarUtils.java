@@ -177,7 +177,7 @@ public class JavaJarUtils {
                 }
                 NDescriptorProperty mc = descriptor.getProperty("nuts.mainClass").orNull();
                 if (mc != null) {
-                    String s = NStringUtils.trim(mc.getValue().asString().get());
+                    String s = NStringUtils.trim(mc.getValue().asStringValue().get());
                     if (s.length() > 0) {
                         s = resolveMainClassString(s, descriptor);
                         classes.add(new DefaultNExecutionEntry(s, true, false));
@@ -235,7 +235,7 @@ public class JavaJarUtils {
 
     private static String resolveMainClassString(String nameOrVar, NDescriptor pom) {
         if (nameOrVar.startsWith("${") && nameOrVar.endsWith("}")) {
-            String e = pom.getPropertyValue(nameOrVar.substring(2, nameOrVar.length() - 1)).flatMap(NLiteral::asString).orNull();
+            String e = pom.getPropertyValue(nameOrVar.substring(2, nameOrVar.length() - 1)).flatMap(NLiteral::asStringValue).orNull();
             if (e != null) {
                 return e;
             }

@@ -148,7 +148,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
             }
             case STRING: {
                 Element e = doc.createElement(TAG_STRING);
-                final String s = elem.asString().get();
+                final String s = elem.asStringValue().get();
                 if (isComplexString(s)) {
                     e.setTextContent(s);
                 } else {
@@ -168,42 +168,42 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
 //            }
             case BOOLEAN: {
                 return doc.createElement(
-                        elem.asBoolean().get() ? TAG_TRUE : TAG_FALSE
+                        elem.asBooleanValue().get() ? TAG_TRUE : TAG_FALSE
                 );
             }
             case BYTE: {
                 Element e = doc.createElement(TAG_BYTE);
-                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asByte().get()));
+                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asByteValue().get()));
                 return e;
             }
             case SHORT: {
                 Element e = doc.createElement(TAG_SHORT);
-                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asShort().get()));
+                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asShortValue().get()));
                 return e;
             }
             case INTEGER: {
                 Element e = doc.createElement(TAG_INT);
-                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asInt().get()));
+                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asIntValue().get()));
                 return e;
             }
             case LONG: {
                 Element e = doc.createElement(TAG_LONG);
-                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asLong().get()));
+                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asLongValue().get()));
                 return e;
             }
             case FLOAT: {
                 Element e = doc.createElement(TAG_FLOAT);
-                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asFloat().get()));
+                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asFloatValue().get()));
                 return e;
             }
             case DOUBLE: {
                 Element e = doc.createElement(TAG_DOUBLE);
-                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asDouble().get()));
+                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asDoubleValue().get()));
                 return e;
             }
             case INSTANT: {
                 Element e = doc.createElement(TAG_INSTANT);
-                e.setAttribute(ATTRIBUTE_VALUE, elem.asInstant().get().toString());
+                e.setAttribute(ATTRIBUTE_VALUE, elem.asInstantValue().get().toString());
                 return e;
             }
             case ARRAY: {
@@ -225,7 +225,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
                         NPairElement ne = (NPairElement) nn;
                         final NElementType kt = ne.key().type();
                         boolean complexKey = kt == NElementType.ARRAY || kt == NElementType.OBJECT
-                                || (kt == NElementType.STRING && isComplexString(ne.key().asString().get()));
+                                || (kt == NElementType.STRING && isComplexString(ne.key().asStringValue().get()));
                         if (complexKey) {
                             Element entry = doc.createElement(TAG_ENTRY);
                             Element ek = (Element) createObject(ne.key(), NElement.class, context);
@@ -237,11 +237,11 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
                             obj.appendChild(entry);
                         } else {
                             String tagName
-                                    = ne.key().type() == NElementType.BOOLEAN ? ne.key().asString().get()
+                                    = ne.key().type() == NElementType.BOOLEAN ? ne.key().asStringValue().get()
                                     : ne.key().type().id();
                             Element entryElem = (Element) doc.createElement(tagName);
                             if (ne.key().type() != NElementType.BOOLEAN && ne.key().type() != NElementType.NULL) {
-                                entryElem.setAttribute(ATTRIBUTE_KEY, ne.key().asString().get());
+                                entryElem.setAttribute(ATTRIBUTE_KEY, ne.key().asStringValue().get());
                             }
                             switch (ne.value().type()) {
                                 case ARRAY:
@@ -258,12 +258,12 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
                                     break;
                                 }
                                 case STRING: {
-                                    entryElem.setAttribute(ATTRIBUTE_VALUE, ne.value().asString().get());
+                                    entryElem.setAttribute(ATTRIBUTE_VALUE, ne.value().asStringValue().get());
                                     obj.appendChild(entryElem);
                                     break;
                                 }
                                 default: {
-                                    entryElem.setAttribute(ATTRIBUTE_VALUE, ne.value().asString().get());
+                                    entryElem.setAttribute(ATTRIBUTE_VALUE, ne.value().asStringValue().get());
                                     entryElem.setAttribute(ATTRIBUTE_VALUE_TYPE, ne.value().type().id());
                                     obj.appendChild(entryElem);
                                     break;

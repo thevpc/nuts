@@ -44,7 +44,7 @@ public class NSettingsImportSubCommand extends AbstractNSettingsSubCommand {
         } else if (cmdLine.next("import", "ia").isPresent()) {
             do {
                 String a = cmdLine.nextNonOption(NArgName.of("import")).get()
-                        .asString().get();
+                        .asStringValue().get();
                 if (cmdLine.isExecMode()) {
                     NWorkspace.of().addImports(new String[]{a});
                 }
@@ -56,7 +56,7 @@ public class NSettingsImportSubCommand extends AbstractNSettingsSubCommand {
         } else if (cmdLine.next("unimport", "ir").isPresent()) {
             while (cmdLine.hasNext()) {
                 String ii = cmdLine.nextNonOption(NArgName.of("import")).get()
-                        .asString().get();
+                        .asStringValue().get();
                 if (cmdLine.isExecMode()) {
                     NWorkspace.of().removeImports(new String[]{ii});
                 }

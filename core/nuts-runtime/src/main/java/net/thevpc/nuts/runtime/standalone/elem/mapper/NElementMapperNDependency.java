@@ -57,7 +57,7 @@ public class NElementMapperNDependency implements NElementMapper<NDependency> {
     public NDependency createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
         NSession session = context.getSession();
         if (o.type() == NElementType.STRING) {
-            return NDependency.get(o.asString().get()).get();
+            return NDependency.get(o.asStringValue().get()).get();
         }
         NDependencyBuilder builder = context.defaultElementToObject(o, DefaultNDependencyBuilder.class);
         return NDependencyBuilder.of().setAll(builder).build();

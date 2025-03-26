@@ -287,8 +287,8 @@ public class NAnsiTermHelper {
             case NTerminalCmd.Ids.MOVE_TO: {
                 List<String> a = command.getArgs();
                 if (a.size() >= 2) {
-                    Integer count1 = NLiteral.of(a.get(0)).asInt().orNull();
-                    Integer count2 = NLiteral.of(a.get(1)).asInt().orNull();
+                    Integer count1 = NLiteral.of(a.get(0)).asIntValue().orNull();
+                    Integer count2 = NLiteral.of(a.get(1)).asIntValue().orNull();
                     if (count1 != null && count2 != null) {
                         return ("\u001b[" + count1 + ";" + count2 + "H");
                     }
@@ -299,7 +299,7 @@ public class NAnsiTermHelper {
             case NTerminalCmd.Ids.MOVE_UP: {
                 List<String> a = command.getArgs();
                 if (a.size() >= 1) {
-                    Integer count1 = NLiteral.of(a.get(0)).asInt().orNull();
+                    Integer count1 = NLiteral.of(a.get(0)).asIntValue().orNull();
                     if (count1 != null) {
                         return ("\u001b[" + count1 + "A");
                     }
@@ -309,7 +309,7 @@ public class NAnsiTermHelper {
             case NTerminalCmd.Ids.MOVE_DOWN: {
                 List<String> a = command.getArgs();
                 if (a.size() >= 1) {
-                    Integer count1 = NLiteral.of(a.get(0)).asInt().orNull();
+                    Integer count1 = NLiteral.of(a.get(0)).asIntValue().orNull();
                     if (count1 != null) {
                         return ("\u001b[" + count1 + "B");
                     }
@@ -319,7 +319,7 @@ public class NAnsiTermHelper {
             case NTerminalCmd.Ids.MOVE_RIGHT: {
                 List<String> a = command.getArgs();
                 if (a.size() >= 1) {
-                    Integer count1 = NLiteral.of(a.get(0)).asInt().orNull();
+                    Integer count1 = NLiteral.of(a.get(0)).asIntValue().orNull();
                     if (count1 != null) {
                         return ("\u001b[" + count1 + "C");
                     }
@@ -329,7 +329,7 @@ public class NAnsiTermHelper {
             case NTerminalCmd.Ids.MOVE_LEFT: {
                 List<String> a = command.getArgs();
                 if (a.size() >= 1) {
-                    Integer count1 = NLiteral.of(a.get(0)).asInt().orNull();
+                    Integer count1 = NLiteral.of(a.get(0)).asIntValue().orNull();
                     if (count1 != null) {
                         return ("\u001b[" + count1 + "D");
                     }

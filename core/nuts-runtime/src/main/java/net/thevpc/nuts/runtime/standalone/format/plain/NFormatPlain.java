@@ -62,13 +62,13 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
             if ((a = cmdLine.nextEntry(DefaultNPropertiesFormat.OPTION_MULTILINE_PROPERTY).orNull()) != null) {
                 if (enabled) {
                     NArg i = NArg.of(a.getStringValue().get());
-                    extraConfig.add(a.asString().get());
+                    extraConfig.add(a.asStringValue().get());
                     addMultilineProperty(i.key(), i.getStringValue().get());
                 }
             } else {
                 a = cmdLine.next().get();
                 if (!a.isOption() || a.isActive()) {
-                    extraConfig.add(a.asString().get());
+                    extraConfig.add(a.asStringValue().get());
                 }
             }
             return true;

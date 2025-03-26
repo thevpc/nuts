@@ -101,62 +101,62 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
 
     @Override
     public NOptional<String> getString(int index) {
-        return get(index).flatMap(NElement::asString);
+        return get(index).flatMap(NElement::asStringValue);
     }
 
     @Override
     public NOptional<Boolean> getBoolean(int index) {
-        return get(index).flatMap(NElement::asBoolean);
+        return get(index).flatMap(NElement::asBooleanValue);
     }
 
     @Override
     public NOptional<Byte> getByte(int index) {
-        return get(index).flatMap(NElement::asByte);
+        return get(index).flatMap(NElement::asByteValue);
     }
 
     @Override
     public NOptional<Short> getShort(int index) {
-        return get(index).flatMap(NElement::asShort);
+        return get(index).flatMap(NElement::asShortValue);
     }
 
     @Override
     public NOptional<Integer> getInt(int index) {
-        return get(index).flatMap(NElement::asInt);
+        return get(index).flatMap(NElement::asIntValue);
     }
 
     @Override
     public NOptional<Long> getLong(int index) {
-        return get(index).flatMap(NElement::asLong);
+        return get(index).flatMap(NElement::asLongValue);
     }
 
     @Override
     public NOptional<Float> getFloat(int index) {
-        return get(index).flatMap(NElement::asFloat);
+        return get(index).flatMap(NElement::asFloatValue);
     }
 
     @Override
     public NOptional<Double> getDouble(int index) {
-        return get(index).flatMap(NElement::asDouble);
+        return get(index).flatMap(NElement::asDoubleValue);
     }
 
     @Override
     public NOptional<Instant> getInstant(int index) {
-        return get(index).flatMap(NElement::asInstant);
+        return get(index).flatMap(NElement::asInstantValue);
     }
 
     @Override
     public NOptional<LocalDate> getLocalDate(int index) {
-        return get(index).flatMap(NElement::asLocalDate);
+        return get(index).flatMap(NElement::asLocalDateValue);
     }
 
     @Override
     public NOptional<LocalDateTime> getLocalDateTime(int index) {
-        return get(index).flatMap(NElement::asLocalDateTime);
+        return get(index).flatMap(NElement::asLocalDateTimeValue);
     }
 
     @Override
     public NOptional<LocalTime> getLocalTime(int index) {
-        return get(index).flatMap(NElement::asLocalTime);
+        return get(index).flatMap(NElement::asLocalTimeValue);
     }
 
     @Override
@@ -189,12 +189,12 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
     @Override
     public String toString(boolean compact) {
         NStringBuilder sb = new NStringBuilder();
-        sb.append(TsonElementToStringHelper.leadingCommentsAndAnnotations(this, compact));
-        TsonElementToStringHelper.appendUplet(name, params, compact, sb);
+        sb.append(NElementToStringHelper.leadingCommentsAndAnnotations(this, compact));
+        NElementToStringHelper.appendUplet(name, params, compact, sb);
         sb.append("[");
-        TsonElementToStringHelper.appendChildren(children(), compact, new TsonElementToStringHelper.SemiCompactInfo(), sb);
+        NElementToStringHelper.appendChildren(children(), compact, new NElementToStringHelper.SemiCompactInfo(), sb);
         sb.append("]");
-        sb.append(TsonElementToStringHelper.trailingComments(this, compact));
+        sb.append(NElementToStringHelper.trailingComments(this, compact));
         return sb.toString();
     }
 
@@ -226,26 +226,26 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
 
     @Override
     public NOptional<NElement> get(String key) {
-        return NLiteral.of(key).asInt().flatMap(this::get);
+        return NLiteral.of(key).asIntValue().flatMap(this::get);
     }
 
     @Override
     public NOptional<NElement> get(NElement key) {
-        return key.isString() ? key.asString().flatMap(this::get) : key.asInt().flatMap(this::get);
+        return key.isString() ? key.asStringValue().flatMap(this::get) : key.asIntValue().flatMap(this::get);
     }
 
     @Override
     public List<NElement> getAll(NElement s) {
         int index = -1;
         if (s.isString()) {
-            NOptional<Integer> ii = NLiteral.of(s.asString().get()).asInt();
+            NOptional<Integer> ii = NLiteral.of(s.asStringValue().get()).asIntValue();
             if (ii.isPresent()) {
                 index = ii.get();
             } else {
                 return Collections.emptyList();
             }
-        } else if (s.asInt().isPresent()) {
-            index = s.asInt().get();
+        } else if (s.asIntValue().isPresent()) {
+            index = s.asIntValue().get();
         } else {
             return Collections.emptyList();
         }
@@ -288,7 +288,7 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
 
 
     @Override
-    public NOptional<Object> asObjectAt(int index) {
+    public NOptional<Object> asObjectValueAt(int index) {
         return get(index).map(x -> x);
     }
 

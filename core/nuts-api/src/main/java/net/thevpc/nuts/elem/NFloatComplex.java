@@ -3,28 +3,28 @@ package net.thevpc.nuts.elem;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class NDComplex extends Number implements Serializable {
-    public static final NDComplex ZERO = new NDComplex(0, 0);
-    public static final NDComplex ONE = new NDComplex(1, 0);
-    public static final NDComplex I = new NDComplex(0, 1);
-    private double real;
-    private double imag;
+public class NFloatComplex extends Number implements Serializable {
+    public static final NFloatComplex ZERO = new NFloatComplex(0, 0);
+    public static final NFloatComplex ONE = new NFloatComplex(1, 0);
+    public static final NFloatComplex I = new NFloatComplex(0, 1);
+    private float real;
+    private float imag;
 
-    public NDComplex(double real, double imag) {
+    public NFloatComplex(float real, float imag) {
         this.real = real;
         this.imag = imag;
     }
 
-    public double real() {
+    public float real() {
         return real;
     }
 
-    public double imag() {
+    public float imag() {
         return imag;
     }
 
-    public double abs() {
-        return Math.sqrt(real*real + imag*imag);
+    public float abs() {
+        return (float) Math.sqrt(real * real + imag * imag);
     }
 
     @Override
@@ -50,8 +50,8 @@ public class NDComplex extends Number implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        NDComplex ndComplex = (NDComplex) o;
-        return Double.compare(real, ndComplex.real) == 0 && Double.compare(imag, ndComplex.imag) == 0;
+        NFloatComplex ndComplex = (NFloatComplex) o;
+        return Float.compare(real, ndComplex.real) == 0 && Float.compare(imag, ndComplex.imag) == 0;
     }
 
     @Override
@@ -73,11 +73,11 @@ public class NDComplex extends Number implements Serializable {
         }
     }
 
-    protected String realToString(double d) {
+    protected String realToString(float d) {
         return String.valueOf(d);
     }
 
-    protected String imagToString(double d) {
+    protected String imagToString(float d) {
         if (Double.isNaN(d) || Double.isInfinite(d)) {
             return d + "*î";
         }

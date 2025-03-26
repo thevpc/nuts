@@ -23,7 +23,7 @@ public class NElementMapperNFilter implements NElementMapper<NFilter> {
 
     @Override
     public NFilter createObject(NElement o, Type to, NElementFactoryContext context) {
-        String s = o.asString().orNull();
+        String s = o.asStringValue().orNull();
         if(s==null || s.trim().isEmpty()){
             s="true";
         }

@@ -168,82 +168,82 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
         addDefaultFct(new NExprFct() {
             @Override
             public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
-                return NLiteral.of(args.get(0).getValue().orNull()).asShort().orNull();
+                return NLiteral.of(args.get(0).getValue().orNull()).asShortValue().orNull();
             }
         }, "string");
         addDefaultFct(new NExprFct() {
             @Override
             public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
-                return NLiteral.of(args.get(0).getValue().orNull()).asBoolean().orNull();
+                return NLiteral.of(args.get(0).getValue().orNull()).asBooleanValue().orNull();
             }
         }, "boolean");
         addDefaultFct(new NExprFct() {
             @Override
             public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
-                return NLiteral.of(args.get(0).getValue().orNull()).asDouble().orNull();
+                return NLiteral.of(args.get(0).getValue().orNull()).asDoubleValue().orNull();
             }
         }, "double");
         addDefaultFct(new NExprFct() {
             @Override
             public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
-                return NLiteral.of(args.get(0).getValue().orNull()).asLong().orNull();
+                return NLiteral.of(args.get(0).getValue().orNull()).asLongValue().orNull();
             }
         }, "long");
         addDefaultFct(new NExprFct() {
             @Override
             public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
-                return NLiteral.of(args.get(0).getValue().orNull()).asInt().orNull();
+                return NLiteral.of(args.get(0).getValue().orNull()).asIntValue().orNull();
             }
         }, "int");
         addDefaultFct(new NExprFct() {
             @Override
             public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
-                return NLiteral.of(args.get(0).getValue().orNull()).asFloat().orNull();
+                return NLiteral.of(args.get(0).getValue().orNull()).asFloatValue().orNull();
             }
         }, "float");
         addDefaultFct(new NExprFct() {
             @Override
             public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
-                return NLiteral.of(args.get(0).getValue().orNull()).asNumber().isPresent();
+                return NLiteral.of(args.get(0).getValue().orNull()).asNumberValue().isPresent();
             }
         }, "isNumber");
         addDefaultFct(new NExprFct() {
             @Override
             public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
-                return NLiteral.of(args.get(0).getValue().orNull()).asBoolean().isPresent();
+                return NLiteral.of(args.get(0).getValue().orNull()).asBooleanValue().isPresent();
             }
         }, "isBoolean");
         addDefaultFct(new NExprFct() {
             @Override
             public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
                 NLiteral v = NLiteral.of(args.get(0).getValue().orNull());
-                if (v.asNumber().isPresent()) {
+                if (v.asNumberValue().isPresent()) {
                     if (v.isBigDecimal()) {
-                        return v.asBigDecimal().get().abs();
+                        return v.asBigDecimalValue().get().abs();
                     }
                     if (v.isBigInt()) {
-                        return v.asBigInt().get().abs();
+                        return v.asBigIntValue().get().abs();
                     }
                     if (v.isDouble()) {
-                        return Math.abs(v.asDouble().get());
+                        return Math.abs(v.asDoubleValue().get());
                     }
                     if (v.isFloat()) {
-                        return Math.abs(v.asFloat().get());
+                        return Math.abs(v.asFloatValue().get());
                     }
                     if (v.isInt()) {
-                        return Math.abs(v.asInt().get());
+                        return Math.abs(v.asIntValue().get());
                     }
                     if (v.isShort()) {
-                        short a = v.asShort().get();
+                        short a = v.asShortValue().get();
                         return a < 0 ? -a : a;
                     }
                     if (v.isByte()) {
-                        byte a = v.asByte().get();
+                        byte a = v.asByteValue().get();
                         return a < 0 ? -a : a;
                     }
-                    return v.asBigDecimal().get().abs();
+                    return v.asBigDecimalValue().get().abs();
                 }
-                return v.asBoolean().isPresent();
+                return v.asBooleanValue().isPresent();
             }
         }, "abs");
     }

@@ -33,8 +33,9 @@ package net.thevpc.nuts.elem;
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NPrimitiveElement extends NElement {
+public interface NStringElement extends NPrimitiveElement {
 
-    Object value();
+    NStringLayout stringLayout();
+    String stringValue();
     NPrimitiveElementBuilder builder();
 }

@@ -340,7 +340,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         NSession session = currentSession();
         if (data.justInstalled) {
             NLiteral enableRecommendations = wsModel.bootModel.getCustomBootOptions().get("---recommendations");
-            if (enableRecommendations == null || enableRecommendations.asBoolean().orElse(true)) {
+            if (enableRecommendations == null || enableRecommendations.asBooleanValue().orElse(true)) {
                 try {
                     Map rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(getApiId().toString(), ""), NRecommendationPhase.BOOTSTRAP, false);
                     if (rec != null) {
@@ -526,10 +526,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         //load all "---config.*" custom options into persistent config
         for (String customOption : effectiveBootOptions.getCustomOptions().orElseGet(Collections::emptyList)) {
             NArg a = NArg.of(customOption);
-            if (a.getKey().asString().get().startsWith("config.")) {
+            if (a.getKey().asStringValue().get().startsWith("config.")) {
                 if (a.isActive()) {
                     this.setConfigProperty(
-                            a.getKey().asString().orElse("").substring("config.".length()),
+                            a.getKey().asStringValue().orElse("").substring("config.".length()),
                             a.getStringValue().orNull()
                     );
                 }

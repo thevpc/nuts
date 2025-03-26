@@ -8,7 +8,6 @@ import net.thevpc.nuts.util.NStringBuilder;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class NElementAnnotationImpl implements NElementAnnotation {
     private final String name;
@@ -64,7 +63,7 @@ public class NElementAnnotationImpl implements NElementAnnotation {
     @Override
     public String toString(boolean compact) {
         NStringBuilder sb = new NStringBuilder();
-        TsonElementToStringHelper.appendUplet("@" + name, params == null ? null : Arrays.asList(params), compact, sb);
+        NElementToStringHelper.appendUplet("@" + name, params == null ? null : Arrays.asList(params), compact, sb);
         return sb.toString();
     }
 

@@ -313,7 +313,7 @@ public class DefaultNTexts implements NTexts {
                             if (paramIndexStr.isEmpty()) {
                                 paramIndex = gParamIndex;
                             } else {
-                                paramIndex = NLiteral.of(paramIndexStr).asInt().get();
+                                paramIndex = NLiteral.of(paramIndexStr).asIntValue().get();
                             }
                             formatExt = formatPart.substring(commaPos + 1);
                         } else {
@@ -321,7 +321,7 @@ public class DefaultNTexts implements NTexts {
                             if (paramIndexStr.isEmpty()) {
                                 paramIndex = gParamIndex;
                             } else {
-                                paramIndex = NLiteral.of(paramIndexStr).asInt().get();
+                                paramIndex = NLiteral.of(paramIndexStr).asIntValue().get();
                             }
                         }
                         Object a = params[paramIndex];
@@ -794,7 +794,7 @@ public class DefaultNTexts implements NTexts {
                 }
                 if (x < cc.length()) {
                     NTextStyle found = NTextStyle.of(NTextStyleType.valueOf(expandAlias(kind.toUpperCase().substring(0, x))),
-                            NLiteral.of(kind.substring(x)).asInt().orElse(0)
+                            NLiteral.of(kind.substring(x)).asIntValue().orElse(0)
                     );
                     return new CustomStyleCodeHighlighter(found, workspace);
                 } else {

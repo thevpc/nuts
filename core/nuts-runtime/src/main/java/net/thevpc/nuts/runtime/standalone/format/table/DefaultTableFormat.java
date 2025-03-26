@@ -736,7 +736,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                                         k.toString()
                                 );
                             }
-                            e.cells.add(resolveColumnsFromCell(k.asString().get(), nee.value()));
+                            e.cells.add(resolveColumnsFromCell(k.asStringValue().get(), nee.value()));
                         }else{
                             e.cells.add(resolveColumnsFromCell("COL " + column,ne));
                         }
@@ -814,7 +814,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
             return true;
         } else if ((a = cmdLine.nextEntry("--border").orNull()) != null) {
             if (a.isActive()) {
-                setBorder(a.getValue().asString().orElse(""));
+                setBorder(a.getValue().asStringValue().orElse(""));
             }
             return true;
         } else if (cmdLine.hasNext() && cmdLine.isNextOption()) {

@@ -30,13 +30,17 @@ import java.util.List;
  * @author thevpc
  */
 public interface NPrimitiveElementBuilder extends NElementBuilder {
-    public NNumberLayout numberLayout();
+    NNumberLayout numberLayout();
 
-    public NPrimitiveElementBuilder numberLayout(NNumberLayout numberLayout);
+    NPrimitiveElementBuilder numberLayout(NNumberLayout numberLayout);
 
-    public String numberSuffix();
+    NStringLayout stringLayout();
 
-    public NPrimitiveElementBuilder numberSuffix(String numberSuffix);
+    NPrimitiveElementBuilder stringLayout(NStringLayout stringLayout);
+
+    String numberSuffix();
+
+    NPrimitiveElementBuilder numberSuffix(String numberSuffix);
 
     NPrimitiveElementBuilder addAnnotations(List<NElementAnnotation> annotations);
 
@@ -65,11 +69,11 @@ public interface NPrimitiveElementBuilder extends NElementBuilder {
 
     NPrimitiveElementBuilder setByte(byte value);
 
-    NPrimitiveElementBuilder setDoubleComplex(NDComplex value);
+    NPrimitiveElementBuilder setDoubleComplex(NDoubleComplex value);
 
-    NPrimitiveElementBuilder setFloatComplex(NFComplex value);
+    NPrimitiveElementBuilder setFloatComplex(NFloatComplex value);
 
-    NPrimitiveElementBuilder setBigComplex(NBComplex value);
+    NPrimitiveElementBuilder setBigComplex(NBigComplex value);
 
     NPrimitiveElementBuilder addLeadingComment(NElementCommentType type, String text);
 

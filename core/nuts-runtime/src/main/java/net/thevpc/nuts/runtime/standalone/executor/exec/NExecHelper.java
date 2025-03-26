@@ -67,7 +67,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
         }
         NSession session = workspace.currentSession();
         if (showCommand || NWorkspace.of().getCustomBootOption("---show-command")
-                .flatMap(NLiteral::asBoolean)
+                .flatMap(NLiteral::asBooleanValue)
                 .orElse(false)) {
 
             if (NOut.getTerminalMode() == NTerminalMode.FORMATTED) {

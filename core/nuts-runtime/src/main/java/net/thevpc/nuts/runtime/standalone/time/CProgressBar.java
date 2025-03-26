@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NLog;
@@ -262,9 +261,9 @@ public class CProgressBar {
     public CProgressBar(int determinateSize) {
         this.logger = NLog.of(CProgressBar.class);
         this.options = ProgressOptions.of();
-        this.formatter = createFormatter(options.get("type").flatMap(NLiteral::asString).orElse(""));
+        this.formatter = createFormatter(options.get("type").flatMap(NLiteral::asStringValue).orElse(""));
         if (determinateSize <= 0) {
-            determinateSize = options.get("size").flatMap(NLiteral::asInt).orElse(formatter.getDefaultWidth());
+            determinateSize = options.get("size").flatMap(NLiteral::asIntValue).orElse(formatter.getDefaultWidth());
         }
         setDeterminateSize(determinateSize);
     }

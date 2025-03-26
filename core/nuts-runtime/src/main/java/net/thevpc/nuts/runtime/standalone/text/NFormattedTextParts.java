@@ -129,8 +129,8 @@ public class NFormattedTextParts {
                             d = s.substring(c + 1);
                         }
                         NLiteral dl = NLiteral.of(d);
-                        if (dl.asInt().isPresent()) {
-                            if (dl.asInt().get() == index) {
+                        if (dl.asIntValue().isPresent()) {
+                            if (dl.asIntValue().get() == index) {
                                 return s;
                             }
                         }

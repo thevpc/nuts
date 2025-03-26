@@ -110,7 +110,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                                 cmdLine.throwUnexpectedArgument();
                             }
                             String[] cmdAndArgs = splitCmdAndExecArgs(a.getStringValue().get());
-                            toAdd.put(a.key(), new AliasInfo(a.getKey().asString().get(), cmdAndArgs[0], null, null, cmdAndArgs[1]));
+                            toAdd.put(a.key(), new AliasInfo(a.getKey().asStringValue().get(), cmdAndArgs[0], null, null, cmdAndArgs[1]));
                         } else {
                             if (n == null) {
                                 n = a.toString();
@@ -150,7 +150,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
         while (cmdLine2.hasNext()) {
             NArg r = cmdLine2.peek().get();
             if (r.isOption()) {
-                executionOptions.add(cmdLine2.next().flatMap(NLiteral::asString).get());
+                executionOptions.add(cmdLine2.next().flatMap(NLiteral::asStringValue).get());
             } else {
                 break;
             }

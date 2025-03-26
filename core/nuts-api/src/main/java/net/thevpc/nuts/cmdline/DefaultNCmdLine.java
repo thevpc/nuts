@@ -129,11 +129,11 @@ public class DefaultNCmdLine implements NCmdLine {
             return false;
         }
         DefaultNArg a = new DefaultNArg(option);
-        String p = a.getOptionPrefix().asString().orNull();
+        String p = a.getOptionPrefix().asStringValue().orNull();
         if (p == null || p.length() != 1) {
             return false;
         }
-        String o = a.getKey().asString().orNull();
+        String o = a.getKey().asStringValue().orNull();
         if (o == null) {
             return false;
         }
@@ -545,7 +545,7 @@ public class DefaultNCmdLine implements NCmdLine {
         if (names.length == 0) {
             if (hasNext()) {
                 NArg peeked = peek().orNull();
-                NOptional<String> string = peeked.getKey().asString();
+                NOptional<String> string = peeked.getKey().asStringValue();
                 if (string.isError()) {
                     return NOptional.ofError(string.getMessage());
                 }
@@ -575,7 +575,7 @@ public class DefaultNCmdLine implements NCmdLine {
             String name = nameSeqArray[nameSeqArray.length - 1];
             NArg p = get(nameSeqArray.length - 1).orNull();
             if (p != null) {
-                NOptional<String> pks = p.getKey().asString();
+                NOptional<String> pks = p.getKey().asStringValue();
                 if (pks.isPresent() && pks.get().equals(name)) {
                     switch (expectedValue) {
                         case DEFAULT: {
@@ -590,7 +590,7 @@ public class DefaultNCmdLine implements NCmdLine {
                                 NArg r2 = peek().orNull();
                                 if (r2 != null && !r2.isOption()) {
                                     skip();
-                                    return NOptional.of(createArgument(p.asString().orElse("") + eq + r2.asString().orElse("")));
+                                    return NOptional.of(createArgument(p.asStringValue().orElse("") + eq + r2.asStringValue().orElse("")));
                                 } else {
                                     return NOptional.of(p);
                                 }
@@ -713,7 +713,7 @@ public class DefaultNCmdLine implements NCmdLine {
             if (argument == null) {
                 return false;
             }
-            if (!argument.getKey().asString().orElse("").equals(values[i])) {
+            if (!argument.getKey().asStringValue().orElse("").equals(values[i])) {
                 return false;
             }
         }
@@ -758,7 +758,7 @@ public class DefaultNCmdLine implements NCmdLine {
         int i = 0;
         while (i < length()) {
             NOptional<NArg> g = get(i);
-            if (g.isPresent() && g.get().getKey().asString().orElse("").equals(name)) {
+            if (g.isPresent() && g.get().getKey().asStringValue().orElse("").equals(name)) {
                 return i;
             }
             i++;
@@ -785,7 +785,7 @@ public class DefaultNCmdLine implements NCmdLine {
     public List<String> toStringList() {
         List<String> all = new ArrayList<>(length());
         for (NArg nutsArgument : lookahead) {
-            all.add(nutsArgument.asString().orElse(""));
+            all.add(nutsArgument.asStringValue().orElse(""));
         }
         all.addAll(args);
         return all;
@@ -858,7 +858,7 @@ public class DefaultNCmdLine implements NCmdLine {
                     String a = nameSeqArray[j];
                     NArg x = get(j).orNull();
                     if (x != null) {
-                        String xs = x.asString().orElse("");
+                        String xs = x.asStringValue().orElse("");
                         if (xs.length() > 0 && !xs.equals(a)) {
                             skipToNext = true;
                             break;
@@ -873,7 +873,7 @@ public class DefaultNCmdLine implements NCmdLine {
                     String a = nameSeqArray[i];
                     NArg x = get(i).orNull();
                     if (x != null) {
-                        String xs = x.asString().orElse("");
+                        String xs = x.asStringValue().orElse("");
                         if (xs.length() > 0 && xs.equals(a)) {
 //                            switch (expectValue) {
 //                                case ANY: {
@@ -908,7 +908,7 @@ public class DefaultNCmdLine implements NCmdLine {
                     String name = nameSeqArray[nameSeqArray.length - 1];
                     NArg p = get(nameSeqArray.length - 1).orNull();
                     if (p != null) {
-                        if (name.startsWith(p.getKey().asString().orElse(""))) {
+                        if (name.startsWith(p.getKey().asStringValue().orElse(""))) {
                             candidates.add(new DefaultNArgCandidate(name));
 //                            switch (expectValue) {
 //                                case ANY: {
@@ -940,7 +940,7 @@ public class DefaultNCmdLine implements NCmdLine {
     private boolean isPrefixed(String[] nameSeqArray) {
         for (int i = 0; i < nameSeqArray.length - 1; i++) {
             NArg x = get(i).orNull();
-            if (x == null || !x.asString().orElse("").equals(nameSeqArray[i])) {
+            if (x == null || !x.asStringValue().orElse("").equals(nameSeqArray[i])) {
                 return false;
             }
         }
@@ -980,7 +980,7 @@ public class DefaultNCmdLine implements NCmdLine {
                 return NOptional.of(createArgument(""));
             }
             if (hasNext() && (!forceNonOption || !isNextOption())) {
-                return emptyOptionalCformat("unexpected option %s", highlightText(String.valueOf(peek().get().asString())));
+                return emptyOptionalCformat("unexpected option %s", highlightText(String.valueOf(peek().get().asStringValue())));
             }
             return emptyOptionalCformat("missing argument %s", highlightText(String.valueOf(name == null ? "value" : name.getName())));
         }

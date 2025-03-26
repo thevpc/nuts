@@ -163,7 +163,7 @@ public class NIdFormatHelper {
         }
         FormatHelperResetListener h2 = (FormatHelperResetListener) workspace
                 .getProperty(FormatHelperResetListener.class.getName())
-                .map(NLiteral::getRaw).orNull()
+                .map(NLiteral::asObjectValue).orNull()
                 ;
         if (h2 == null) {
             h2 = new FormatHelperResetListener();

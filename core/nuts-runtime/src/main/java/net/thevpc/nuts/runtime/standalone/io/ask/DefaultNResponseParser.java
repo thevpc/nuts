@@ -70,7 +70,7 @@ public class DefaultNResponseParser<T> implements NAskParser<T> {
                 if (!a.isBoolean()) {
                     throw new NIllegalArgumentException(NMsg.ofC("invalid response %s", sReponse));
                 }
-                return (T) (Object) a.asBoolean().get();
+                return (T) (Object) a.asBooleanValue().get();
             }
 
             default: {

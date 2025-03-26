@@ -1,6 +1,5 @@
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.cmdline.DefaultNArg;
 import org.junit.jupiter.api.Assertions;
@@ -19,11 +18,11 @@ public class Test28_Argument {
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
-        Assertions.assertEquals("-a", a.getKey().asString().get());
+        Assertions.assertEquals("-a", a.getKey().asStringValue().get());
         Assertions.assertEquals("2", a.getStringValue().get());
-        Assertions.assertEquals("a", a.getOptionName().asString().get());
-        Assertions.assertEquals("-", a.getOptionPrefix().asString().get());
-        Assertions.assertEquals("-a=2", a.asString().get());
+        Assertions.assertEquals("a", a.getOptionName().asStringValue().get());
+        Assertions.assertEquals("-", a.getOptionPrefix().asStringValue().get());
+        Assertions.assertEquals("-a=2", a.asStringValue().get());
     }
 
     @Test
@@ -32,11 +31,11 @@ public class Test28_Argument {
         Assertions.assertTrue(a.isOption());
         Assertions.assertFalse(a.isActive());
         Assertions.assertFalse(a.isNegated());
-        Assertions.assertEquals("-a", a.getKey().asString().get());
+        Assertions.assertEquals("-a", a.getKey().asStringValue().get());
         Assertions.assertEquals("2", a.getStringValue().get());
-        Assertions.assertEquals("a", a.getOptionName().asString().get());
-        Assertions.assertEquals("-", a.getOptionPrefix().asString().get());
-        Assertions.assertEquals("-//a=2", a.asString().get());
+        Assertions.assertEquals("a", a.getOptionName().asStringValue().get());
+        Assertions.assertEquals("-", a.getOptionPrefix().asStringValue().get());
+        Assertions.assertEquals("-//a=2", a.asStringValue().get());
     }
 
     @Test
@@ -45,11 +44,11 @@ public class Test28_Argument {
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertTrue(a.isNegated());
-        Assertions.assertEquals("-a", a.getKey().asString().get());
+        Assertions.assertEquals("-a", a.getKey().asStringValue().get());
         Assertions.assertEquals("2", a.getStringValue().get());
-        Assertions.assertEquals("a", a.getOptionName().asString().get());
-        Assertions.assertEquals("-", a.getOptionPrefix().asString().get());
-        Assertions.assertEquals("-!a=2", a.asString().get());
+        Assertions.assertEquals("a", a.getOptionName().asStringValue().get());
+        Assertions.assertEquals("-", a.getOptionPrefix().asStringValue().get());
+        Assertions.assertEquals("-!a=2", a.asStringValue().get());
     }
 
     @Test
@@ -58,11 +57,11 @@ public class Test28_Argument {
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertTrue(a.isNegated());
-        Assertions.assertEquals("-a", a.getKey().asString().get());
+        Assertions.assertEquals("-a", a.getKey().asStringValue().get());
         Assertions.assertTrue(a.getStringValue().isEmpty());
-        Assertions.assertEquals("a", a.getOptionName().asString().get());
-        Assertions.assertEquals("-", a.getOptionPrefix().asString().get());
-        Assertions.assertEquals("-!a", a.asString().get());
+        Assertions.assertEquals("a", a.getOptionName().asStringValue().get());
+        Assertions.assertEquals("-", a.getOptionPrefix().asStringValue().get());
+        Assertions.assertEquals("-!a", a.asStringValue().get());
     }
 
     @Test
@@ -71,11 +70,11 @@ public class Test28_Argument {
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertTrue(a.isNegated());
-        Assertions.assertEquals("-", a.getKey().asString().get());
+        Assertions.assertEquals("-", a.getKey().asStringValue().get());
         Assertions.assertEquals("a",a.getStringValue().get());
-        Assertions.assertEquals("", a.getOptionName().asString().get());
-        Assertions.assertEquals("-", a.getOptionPrefix().asString().get());
-        Assertions.assertEquals("-!=a", a.asString().get());
+        Assertions.assertEquals("", a.getOptionName().asStringValue().get());
+        Assertions.assertEquals("-", a.getOptionPrefix().asStringValue().get());
+        Assertions.assertEquals("-!=a", a.asStringValue().get());
     }
 
     @Test
@@ -84,11 +83,11 @@ public class Test28_Argument {
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertTrue(a.isNegated());
-        Assertions.assertEquals("-", a.getKey().asString().get());
+        Assertions.assertEquals("-", a.getKey().asStringValue().get());
         Assertions.assertEquals("",a.getStringValue().get());
-        Assertions.assertEquals("", a.getOptionName().asString().get());
-        Assertions.assertEquals("-", a.getOptionPrefix().asString().get());
-        Assertions.assertEquals("-!=", a.asString().get());
+        Assertions.assertEquals("", a.getOptionName().asStringValue().get());
+        Assertions.assertEquals("-", a.getOptionPrefix().asStringValue().get());
+        Assertions.assertEquals("-!=", a.asStringValue().get());
     }
 
     @Test
@@ -97,11 +96,11 @@ public class Test28_Argument {
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertTrue(a.isNegated());
-        Assertions.assertEquals("-", a.getKey().asString().get());
+        Assertions.assertEquals("-", a.getKey().asStringValue().get());
         Assertions.assertTrue(a.getStringValue().isEmpty());
-        Assertions.assertEquals("", a.getOptionName().asString().get());
-        Assertions.assertEquals("-", a.getOptionPrefix().asString().get());
-        Assertions.assertEquals("-!", a.asString().get());
+        Assertions.assertEquals("", a.getOptionName().asStringValue().get());
+        Assertions.assertEquals("-", a.getOptionPrefix().asStringValue().get());
+        Assertions.assertEquals("-!", a.asStringValue().get());
     }
 
     @Test
@@ -110,11 +109,11 @@ public class Test28_Argument {
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
-        Assertions.assertEquals("-", a.getKey().asString().get());
+        Assertions.assertEquals("-", a.getKey().asStringValue().get());
         Assertions.assertTrue(a.getStringValue().isEmpty());
-        Assertions.assertEquals("", a.getOptionName().asString().get());
-        Assertions.assertEquals("-", a.getOptionPrefix().asString().get());
-        Assertions.assertEquals("-", a.asString().get());
+        Assertions.assertEquals("", a.getOptionName().asStringValue().get());
+        Assertions.assertEquals("-", a.getOptionPrefix().asStringValue().get());
+        Assertions.assertEquals("-", a.asStringValue().get());
     }
 
     @Test
@@ -123,11 +122,11 @@ public class Test28_Argument {
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
-        Assertions.assertEquals("", a.getKey().asString().get());
+        Assertions.assertEquals("", a.getKey().asStringValue().get());
         Assertions.assertTrue(a.getStringValue().isEmpty());
-        Assertions.assertTrue(a.getOptionName().asString().isEmpty());
-        Assertions.assertTrue(a.getOptionPrefix().asString().isEmpty());
-        Assertions.assertEquals("", a.asString().get());
+        Assertions.assertTrue(a.getOptionName().asStringValue().isEmpty());
+        Assertions.assertTrue(a.getOptionPrefix().asStringValue().isEmpty());
+        Assertions.assertEquals("", a.asStringValue().get());
     }
 
     @Test
@@ -136,11 +135,11 @@ public class Test28_Argument {
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
-        Assertions.assertEquals("c", a.getKey().asString().get());
+        Assertions.assertEquals("c", a.getKey().asStringValue().get());
         Assertions.assertEquals("/a",a.getStringValue().get());
-        Assertions.assertTrue(a.getOptionName().asString().isEmpty());
-        Assertions.assertTrue(a.getOptionPrefix().asString().isEmpty());
-        Assertions.assertEquals("c=/a", a.asString().get());
+        Assertions.assertTrue(a.getOptionName().asStringValue().isEmpty());
+        Assertions.assertTrue(a.getOptionPrefix().asStringValue().isEmpty());
+        Assertions.assertEquals("c=/a", a.asStringValue().get());
     }
 
     @Test
@@ -149,11 +148,11 @@ public class Test28_Argument {
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
-        Assertions.assertEquals("c", a.getKey().asString().get());
+        Assertions.assertEquals("c", a.getKey().asStringValue().get());
         Assertions.assertTrue(a.getStringValue().isEmpty());
-        Assertions.assertTrue(a.getOptionName().asString().isEmpty());
-        Assertions.assertTrue(a.getOptionPrefix().asString().isEmpty());
-        Assertions.assertEquals("c", a.asString().get());
+        Assertions.assertTrue(a.getOptionName().asStringValue().isEmpty());
+        Assertions.assertTrue(a.getOptionPrefix().asStringValue().isEmpty());
+        Assertions.assertEquals("c", a.asStringValue().get());
     }
 
     @Test
@@ -162,11 +161,11 @@ public class Test28_Argument {
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
-        Assertions.assertEquals("!//c=30", a.getKey().asString().get());
+        Assertions.assertEquals("!//c=30", a.getKey().asStringValue().get());
         Assertions.assertTrue(a.getStringValue().isEmpty());
-        Assertions.assertTrue(a.getOptionName().asString().isEmpty());
-        Assertions.assertTrue(a.getOptionPrefix().asString().isEmpty());
-        Assertions.assertEquals("!//c=30", a.asString().get());
+        Assertions.assertTrue(a.getOptionName().asStringValue().isEmpty());
+        Assertions.assertTrue(a.getOptionPrefix().asStringValue().isEmpty());
+        Assertions.assertEquals("!//c=30", a.asStringValue().get());
     }
 
     @Test
@@ -175,11 +174,11 @@ public class Test28_Argument {
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
-        Assertions.assertEquals("!", a.getKey().asString().get());
+        Assertions.assertEquals("!", a.getKey().asStringValue().get());
         Assertions.assertTrue(a.getStringValue().isEmpty());
-        Assertions.assertTrue(a.getOptionName().asString().isEmpty());
-        Assertions.assertTrue(a.getOptionPrefix().asString().isEmpty());
-        Assertions.assertEquals("!", a.asString().get());
+        Assertions.assertTrue(a.getOptionName().asStringValue().isEmpty());
+        Assertions.assertTrue(a.getOptionPrefix().asStringValue().isEmpty());
+        Assertions.assertEquals("!", a.asStringValue().get());
     }
 
     @Test
@@ -188,10 +187,10 @@ public class Test28_Argument {
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
-        Assertions.assertEquals("", a.getKey().asString().get());
+        Assertions.assertEquals("", a.getKey().asStringValue().get());
         Assertions.assertTrue(a.getStringValue().isEmpty());
-        Assertions.assertTrue(a.getOptionName().asString().isEmpty());
-        Assertions.assertTrue(a.getOptionPrefix().asString().isEmpty());
-        Assertions.assertEquals("", a.asString().get());
+        Assertions.assertTrue(a.getOptionName().asStringValue().isEmpty());
+        Assertions.assertTrue(a.getOptionPrefix().asStringValue().isEmpty());
+        Assertions.assertEquals("", a.asStringValue().get());
     }
 }

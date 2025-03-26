@@ -6,15 +6,15 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public class NBComplex extends Number implements Serializable {
+public class NBigComplex extends Number implements Serializable {
     private static final BigDecimal BIG_DECIMAL_MINUS_ONE = new BigDecimal("-1");
-    public static final NBComplex ZERO = new NBComplex(BigDecimal.ZERO, BigDecimal.ZERO);
-    public static final NBComplex ONE = new NBComplex(BigDecimal.ONE, BigDecimal.ZERO);
-    public static final NBComplex I = new NBComplex(BigDecimal.ZERO, BigDecimal.ONE);
+    public static final NBigComplex ZERO = new NBigComplex(BigDecimal.ZERO, BigDecimal.ZERO);
+    public static final NBigComplex ONE = new NBigComplex(BigDecimal.ONE, BigDecimal.ZERO);
+    public static final NBigComplex I = new NBigComplex(BigDecimal.ZERO, BigDecimal.ONE);
     private BigDecimal real;
     private BigDecimal imag;
 
-    public NBComplex(BigDecimal real, BigDecimal imag) {
+    public NBigComplex(BigDecimal real, BigDecimal imag) {
         this.real = NAssert.requireNonNull(real, "real");
         this.imag = NAssert.requireNonNull(imag, "imag");
     }
@@ -50,7 +50,7 @@ public class NBComplex extends Number implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        NBComplex ndComplex = (NBComplex) o;
+        NBigComplex ndComplex = (NBigComplex) o;
         return real.compareTo(ndComplex.real) == 0 && imag.compareTo(ndComplex.imag) == 0;
     }
 

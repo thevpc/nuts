@@ -104,7 +104,7 @@ public class NJavaSdkUtils {
                 int a = sVersion.indexOf('.');
                 if (a > 0) {
                     NLiteral p = NLiteral.of(sVersion.substring(0, a));
-                    if (p.asInt().isPresent() && p.asInt().get() == 1) {
+                    if (p.asIntValue().isPresent() && p.asIntValue().get() == 1) {
                         String sVersion2 = sVersion.substring(a + 1);
                         NVersion version2 = NVersion.get(sVersion2).get();
                         if (versionFilter.acceptVersion(version2)) {
@@ -427,8 +427,8 @@ public class NJavaSdkUtils {
     public NId createJdkId(String version) {
         NAssert.requireNonBlank(version, "version");
         NVersion jv = NVersion.get(version).get();
-        long n1 = jv.getNumberLiteralAt(0).flatMap(NLiteral::asLong).orElse(0L);
-        long n2 = jv.getNumberLiteralAt(1).flatMap(NLiteral::asLong).orElse(0L);
+        long n1 = jv.getNumberLiteralAt(0).flatMap(NLiteral::asLongValue).orElse(0L);
+        long n2 = jv.getNumberLiteralAt(1).flatMap(NLiteral::asLongValue).orElse(0L);
         long classFileId = 0;
         String standard = n1 + "." + n2;
         if (n1 == 1) {

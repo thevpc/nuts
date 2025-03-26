@@ -149,7 +149,7 @@ public abstract class AbstractNUndeployCmd extends NWorkspaceCmdBase<NUndeployCm
                     return false;
                 } else {
                     cmdLine.skip();
-                    addId(aa.asString().get());
+                    addId(aa.asStringValue().get());
                     return true;
                 }
             }

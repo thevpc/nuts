@@ -119,7 +119,7 @@ class SshNPath implements NPathSPI {
                 NTextBuilder sb = text.ofBuilder();
                 String user = path.getUser();
                 String host = path.getHost();
-                int port = NLiteral.of(path.getPort()).asInt().orElse(-1);
+                int port = NLiteral.of(path.getPort()).asIntValue().orElse(-1);
                 String path0 = path.getPath();
                 String password = path.getPassword();
                 String keyFile = NStringMapFormat.URL_FORMAT.parse(path.getQueryString())
@@ -308,7 +308,7 @@ class SshNPath implements NPathSPI {
             if (r.length > 4) {
                 NLiteral size = NLiteral.of(r[4]);
                 if (size.isLong()) {
-                    return size.asLong().get();
+                    return size.asLongValue().get();
                 }
             }
             return -1;

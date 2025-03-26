@@ -408,7 +408,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     @Override
     public NPrimitiveElement ofBoolean(String value) {
-        NOptional<Boolean> o = NLiteral.of(value).asBoolean();
+        NOptional<Boolean> o = NLiteral.of(value).asBooleanValue();
         if (o.isEmpty()) {
             return ofNull();
         }
@@ -429,7 +429,11 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     public NPrimitiveElement ofString(String str) {
-        return str == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.STRING, str, null, null);
+        return ofString(str,null);
+    }
+
+    public NPrimitiveElement ofString(String str,NStringLayout stringLayout) {
+        return str == null ? ofNull() : new DefaultNStringElement(NElementType.STRING, str, stringLayout, null, null);
     }
 
     public NPrimitiveElement ofRegex(String str) {
@@ -627,7 +631,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     @Override
     public NPrimitiveElement ofDoubleComplex(double real, double imag) {
-        return new DefaultNNumberElement(NElementType.DOUBLE_COMPLEX, new NDComplex(real, imag));
+        return new DefaultNNumberElement(NElementType.DOUBLE_COMPLEX, new NDoubleComplex(real, imag));
     }
 
     @Override
@@ -637,7 +641,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     @Override
     public NPrimitiveElement ofFloatComplex(float real, float imag) {
-        return new DefaultNNumberElement(NElementType.FLOAT_COMPLEX, new NFComplex(real, imag));
+        return new DefaultNNumberElement(NElementType.FLOAT_COMPLEX, new NFloatComplex(real, imag));
     }
 
     @Override
@@ -650,7 +654,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
         if (real == null && imag == null) {
             return ofNull();
         }
-        return new DefaultNNumberElement(NElementType.BIG_COMPLEX, new NBComplex(real, imag));
+        return new DefaultNNumberElement(NElementType.BIG_COMPLEX, new NBigComplex(real, imag));
     }
 
     @Override
@@ -676,13 +680,13 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
             case "java.math.BigDecimal":
                 return new DefaultNNumberElement(NElementType.BIG_DECIMAL, value);
         }
-        if (value instanceof NDComplex) {
+        if (value instanceof NDoubleComplex) {
             return new DefaultNNumberElement(NElementType.DOUBLE_COMPLEX, value);
         }
-        if (value instanceof NBComplex) {
+        if (value instanceof NBigComplex) {
             return new DefaultNNumberElement(NElementType.BIG_COMPLEX, value);
         }
-        if (value instanceof NFComplex) {
+        if (value instanceof NFloatComplex) {
             return new DefaultNNumberElement(NElementType.FLOAT_COMPLEX, value);
         }
         // ???

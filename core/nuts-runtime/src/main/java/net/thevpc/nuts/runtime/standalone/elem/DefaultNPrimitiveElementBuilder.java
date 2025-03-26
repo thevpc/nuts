@@ -19,6 +19,7 @@ import java.util.List;
 public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder implements NPrimitiveElementBuilder, NLiteral {
     private Object value;
     private NNumberLayout numberLayout;
+    private NStringLayout stringLayout;
     private String numberSuffix;
 
     private NElementType type;
@@ -27,13 +28,21 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         this.type = NElementType.NULL;
     }
 
-
     public NNumberLayout numberLayout() {
         return numberLayout;
     }
 
     public NPrimitiveElementBuilder numberLayout(NNumberLayout numberLayout) {
         this.numberLayout = numberLayout;
+        return this;
+    }
+
+    public NStringLayout stringLayout() {
+        return stringLayout;
+    }
+
+    public NPrimitiveElementBuilder stringLayout(NStringLayout stringLayout) {
+        this.stringLayout = stringLayout;
         return this;
     }
 
@@ -121,13 +130,13 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
                     break;
                 }
                 default: {
-                    if (value instanceof NDComplex) {
+                    if (value instanceof NDoubleComplex) {
                         this.value = value;
                         this.type = NElementType.DOUBLE_COMPLEX;
-                    } else if (value instanceof NFComplex) {
+                    } else if (value instanceof NFloatComplex) {
                         this.value = value;
                         this.type = NElementType.FLOAT_COMPLEX;
-                    } else if (value instanceof NBComplex) {
+                    } else if (value instanceof NBigComplex) {
                         this.value = value;
                         this.type = NElementType.BIG_COMPLEX;
                     } else {
@@ -152,7 +161,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     }
 
     @Override
-    public NPrimitiveElementBuilder setDoubleComplex(NDComplex value) {
+    public NPrimitiveElementBuilder setDoubleComplex(NDoubleComplex value) {
         if (value == null) {
             this.value = null;
             this.type = NElementType.NULL;
@@ -164,7 +173,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     }
 
     @Override
-    public NPrimitiveElementBuilder setFloatComplex(NFComplex value) {
+    public NPrimitiveElementBuilder setFloatComplex(NFloatComplex value) {
         if (value == null) {
             this.value = null;
             this.type = NElementType.NULL;
@@ -176,7 +185,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     }
 
     @Override
-    public NPrimitiveElementBuilder setBigComplex(NBComplex value) {
+    public NPrimitiveElementBuilder setBigComplex(NBigComplex value) {
         if (value == null) {
             this.value = null;
             this.type = NElementType.NULL;
@@ -190,7 +199,10 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     @Override
     public NPrimitiveElement build() {
         if (type().isNumber()) {
-            return new DefaultNNumberElement(type, value, numberLayout(), numberSuffix(), annotations().toArray(new NElementAnnotation[0]), comments());
+            return new DefaultNNumberElement(type, (Number) value, numberLayout(), numberSuffix(), annotations().toArray(new NElementAnnotation[0]), comments());
+        }
+        if (type() == NElementType.STRING) {
+            return new DefaultNStringElement(type, (String) value, stringLayout(), annotations().toArray(new NElementAnnotation[0]), comments());
         }
         return new DefaultNPrimitiveElement(type, value, annotations().toArray(new NElementAnnotation[0]), comments());
     }
@@ -201,7 +213,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     }
 
     @Override
-    public Object getRaw() {
+    public Object asObjectValue() {
         return value;
     }
 
@@ -211,83 +223,98 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     }
 
     @Override
-    public NOptional<Instant> asInstant() {
-        return NLiteral.of(value).asInstant();
+    public NOptional<Instant> asInstantValue() {
+        return NLiteral.of(value).asInstantValue();
     }
 
     @Override
-    public NOptional<LocalDate> asLocalDate() {
-        return NLiteral.of(value).asLocalDate();
+    public NOptional<LocalDate> asLocalDateValue() {
+        return NLiteral.of(value).asLocalDateValue();
     }
 
     @Override
-    public NOptional<LocalDateTime> asLocalDateTime() {
-        return NLiteral.of(value).asLocalDateTime();
+    public NOptional<LocalDateTime> asLocalDateTimeValue() {
+        return NLiteral.of(value).asLocalDateTimeValue();
     }
 
     @Override
-    public NOptional<LocalTime> asLocalTime() {
-        return NLiteral.of(value).asLocalTime();
+    public NOptional<LocalTime> asLocalTimeValue() {
+        return NLiteral.of(value).asLocalTimeValue();
     }
 
     @Override
-    public NOptional<Number> asNumber() {
-        return NLiteral.of(value).asNumber();
+    public NOptional<NBigComplex> asBigComplexValue() {
+        return NLiteral.of(value).asBigComplexValue();
     }
 
     @Override
-    public NOptional<Boolean> asBoolean() {
-        return NLiteral.of(value).asBoolean();
+    public NOptional<NDoubleComplex> asDoubleComplexValue() {
+        return NLiteral.of(value).asDoubleComplexValue();
     }
 
     @Override
-    public NOptional<Long> asLong() {
-        return NLiteral.of(value).asLong();
+    public NOptional<NFloatComplex> asFloatComplexValue() {
+        return NLiteral.of(value).asFloatComplexValue();
     }
 
     @Override
-    public NOptional<Double> asDouble() {
-        return NLiteral.of(value).asDouble();
+    public NOptional<Number> asNumberValue() {
+        return NLiteral.of(value).asNumberValue();
     }
 
     @Override
-    public NOptional<Float> asFloat() {
-        return NLiteral.of(value).asFloat();
+    public NOptional<Boolean> asBooleanValue() {
+        return NLiteral.of(value).asBooleanValue();
     }
 
     @Override
-    public NOptional<Byte> asByte() {
-        return NLiteral.of(value).asByte();
+    public NOptional<Long> asLongValue() {
+        return NLiteral.of(value).asLongValue();
     }
 
     @Override
-    public NOptional<Short> asShort() {
-        return NLiteral.of(value).asShort();
+    public NOptional<Double> asDoubleValue() {
+        return NLiteral.of(value).asDoubleValue();
     }
 
     @Override
-    public NOptional<Character> asChar() {
-        return NLiteral.of(value).asChar();
+    public NOptional<Float> asFloatValue() {
+        return NLiteral.of(value).asFloatValue();
     }
 
     @Override
-    public NOptional<Integer> asInt() {
-        return NLiteral.of(value).asInt();
+    public NOptional<Byte> asByteValue() {
+        return NLiteral.of(value).asByteValue();
     }
 
     @Override
-    public NOptional<String> asString() {
-        return NLiteral.of(value).asString();
+    public NOptional<Short> asShortValue() {
+        return NLiteral.of(value).asShortValue();
     }
 
     @Override
-    public NOptional<BigInteger> asBigInt() {
-        return NLiteral.of(value).asBigInt();
+    public NOptional<Character> asCharValue() {
+        return NLiteral.of(value).asCharValue();
     }
 
     @Override
-    public NOptional<BigDecimal> asBigDecimal() {
-        return NLiteral.of(value).asBigDecimal();
+    public NOptional<Integer> asIntValue() {
+        return NLiteral.of(value).asIntValue();
+    }
+
+    @Override
+    public NOptional<String> asStringValue() {
+        return NLiteral.of(value).asStringValue();
+    }
+
+    @Override
+    public NOptional<BigInteger> asBigIntValue() {
+        return NLiteral.of(value).asBigIntValue();
+    }
+
+    @Override
+    public NOptional<BigDecimal> asBigDecimalValue() {
+        return NLiteral.of(value).asBigDecimalValue();
     }
 
     @Override
@@ -371,23 +398,23 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     }
 
     @Override
-    public NOptional<String> asStringAt(int index) {
-        return NLiteral.of(value).asStringAt(index);
+    public NOptional<String> asStringValueAt(int index) {
+        return NLiteral.of(value).asStringValueAt(index);
     }
 
     @Override
-    public NOptional<Long> asLongAt(int index) {
-        return NLiteral.of(value).asLongAt(index);
+    public NOptional<Long> asLongValueAt(int index) {
+        return NLiteral.of(value).asLongValueAt(index);
     }
 
     @Override
-    public NOptional<Integer> asIntAt(int index) {
-        return NLiteral.of(value).asIntAt(index);
+    public NOptional<Integer> asIntValueAt(int index) {
+        return NLiteral.of(value).asIntValueAt(index);
     }
 
     @Override
-    public NOptional<Double> asDoubleAt(int index) {
-        return NLiteral.of(value).asDoubleAt(index);
+    public NOptional<Double> asDoubleValueAt(int index) {
+        return NLiteral.of(value).asDoubleValueAt(index);
     }
 
     @Override
@@ -401,8 +428,8 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     }
 
     @Override
-    public NOptional<Object> asObjectAt(int index) {
-        return NLiteral.of(value).asObjectAt(index);
+    public NOptional<Object> asObjectValueAt(int index) {
+        return NLiteral.of(value).asObjectValueAt(index);
     }
 
     @Override
@@ -595,6 +622,10 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
                 numberLayout(ne.numberLayout());
                 numberSuffix(ne.numberSuffix());
             }
+            if (element instanceof NStringElement) {
+                NStringElement ne = (NStringElement) element;
+                stringLayout(ne.stringLayout());
+            }
         }
         return this;
     }
@@ -604,11 +635,9 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
             addAnnotations(element.annotations());
             addComments(element.comments());
             value(element.value());
-            if (element instanceof NNumberElement) {
-                NNumberElement ne = (NNumberElement) element;
-                numberLayout(ne.numberLayout());
-                numberSuffix(ne.numberSuffix());
-            }
+            numberLayout(element.numberLayout());
+            numberSuffix(element.numberSuffix());
+            stringLayout(element.stringLayout());
         }
         return this;
     }

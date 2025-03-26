@@ -14,7 +14,7 @@ public class DefaultNNumberElement extends DefaultNPrimitiveElement implements N
         this(type, value, layout, suffix,null,null);
     }
 
-    public DefaultNNumberElement(NElementType type, Object value,
+    public DefaultNNumberElement(NElementType type, Number value,
                                  NNumberLayout layout,
                                  String suffix,
                                  NElementAnnotation[] annotations, NElementComments comments) {
