@@ -73,7 +73,7 @@ public class TsonElementToStringHelper {
                 if (semiCompactInfo == null) {
                     semiCompactInfo = new SemiCompactInfo();
                 }
-                if (children.stream().allMatch(x -> isSimple(x, compact)) && children.size() <= semiCompactInfo.maxChildren) {
+                if (isShortList(children,semiCompactInfo.maxLineSize,semiCompactInfo.maxChildren)) {
                     boolean first = true;
                     for (NElement child : children) {
                         if (first) {
@@ -81,17 +81,43 @@ public class TsonElementToStringHelper {
                         } else {
                             sb.append(", ");
                         }
-                        sb.append(new NStringBuilder(child.toString(compact)));
+                        sb.append(new NStringBuilder(child.toString(false)));
                     }
                 } else {
+                    sb.append("\n");
+                    boolean first = true;
                     for (NElement child : children) {
-                        sb.append("\n");
-                        sb.append(new NStringBuilder(child.toString(compact)).indent("  "));
+                        String p = "";
+                        if (first) {
+                            first = false;
+                        } else {
+                            p = ", ";
+                        }
+                        sb.append(new NStringBuilder().append(p).append(child.toString(false)).indent("  "));
                     }
                     sb.append("\n");
                 }
             }
         }
+    }
+
+    private static boolean isShortList(List<NElement> children, int maxChildren, int maxLineSize) {
+        if (!children.stream().allMatch(x -> isSimple(x, false))) {
+            return false;
+        }
+        if (children.size() > maxChildren) {
+            return false;
+        }
+        if (maxLineSize >= 0) {
+            String collected = children.stream().map(x -> x.toString(false)).collect(Collectors.joining(" "));
+            if (collected.length() > maxLineSize) {
+                return false;
+            }
+            if (new NStringBuilder(collected).lines().count() > 1) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static boolean isSimple(NElement any, boolean compact) {
@@ -126,6 +152,16 @@ public class TsonElementToStringHelper {
 
     public static class SemiCompactInfo {
         int maxChildren;
+        int maxLineSize;
+
+        public int getMaxLineSize() {
+            return maxLineSize;
+        }
+
+        public SemiCompactInfo setMaxLineSize(int maxLineSize) {
+            this.maxLineSize = maxLineSize;
+            return this;
+        }
 
         public int getMaxChildren() {
             return maxChildren;

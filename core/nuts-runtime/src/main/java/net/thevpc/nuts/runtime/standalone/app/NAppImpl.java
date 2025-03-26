@@ -6,6 +6,7 @@ import net.thevpc.nuts.cmdline.*;
 
 import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineUtils;
 import net.thevpc.nuts.runtime.standalone.session.DefaultNSession;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
@@ -21,11 +22,17 @@ import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.time.NClock;
 import net.thevpc.nuts.util.*;
 
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @NComponentScope(NScopeType.SESSION)
 public class NAppImpl implements NApp, Cloneable, NCopiable {
@@ -37,6 +44,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
      */
     private NCmdLineAutoComplete autoComplete;
     private NId id;
+    private String bundleName;
     private NClock startTime;
     private List<String> args;
     private NApplicationMode mode = NApplicationMode.RUN;
@@ -197,7 +205,79 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
         } else {
             this.autoComplete = null;
         }
+        bundleName=resolveAppNameFromClass(this.appClass,_appId.getArtifactId());
+    }
 
+    public String getBundleName() {
+        return bundleName;
+    }
+
+    private static String resolveAppNameFromClass(Class clazz, String defaultName) {
+        String n = null;
+        String baseFilePath = clazz.getProtectionDomain().getCodeSource().getLocation().getPath();
+        NLog nLog = NLog.of(NAppImpl.class);
+        nLog.debug(NMsg.ofC("resolveAppNameFromClass " + clazz + " (" + defaultName + ") " + baseFilePath));
+        if (baseFilePath != null) {
+            try {
+                String jar = extractVar(baseFilePath, "x", "(?<x>.*)[.]jar[!]/BOOT-INF/classes[!]/?");
+                if (jar != null) {
+                    n = extractVar(new File(jar).getName(), "n", "(?<n>-[^.]+)[.]jar");
+                } else {
+                    File file = new File(baseFilePath);
+                    File parentFile = file.getParentFile();
+                    File parentFile2 = parentFile == null ? null : parentFile.getParentFile();
+                    File parentFile3 = parentFile2 == null ? null : parentFile2.getParentFile();
+                    if (
+                            file.getName().toLowerCase().endsWith(".jar")
+                                    && parentFile3 != null
+                                    && parentFile.getName().equals("lib")
+                                    && parentFile2.getName().equals("WEB-INF")
+                    ) {
+                        n = parentFile3.getName();
+                        // /WEB-INF/lib/library.jar
+                        nLog.debug(NMsg.ofC("resolveAppNameFromClass [PARTIAL-/WEB-INF/lib/lib.jar] " + clazz + " (" + defaultName + ") " + baseFilePath + " ==> RESULT = " + n));
+                    } else if (
+                            file.getName().equals("classes")
+                                    && parentFile2 != null
+                                    && parentFile.getName().equals("WEB-INF")
+                    ) {
+                        n = parentFile2.getName();
+                        // /WEB-INF/classes/
+                        nLog.debug(NMsg.ofC("resolveAppNameFromClass [PARTIAL-/WEB-INF/classes] " + clazz + " (" + defaultName + ") " + baseFilePath + " ==> RESULT = " + n));
+                    } else if (parentFile2 != null) {
+                        n = parentFile2.getName();
+                        nLog.debug(NMsg.ofC("resolveAppNameFromClass [PARTIAL-OTHER] " + clazz + " (" + defaultName + ") " + baseFilePath + " ==> RESULT = " + n));
+                    }
+                }
+            } catch (Exception ex) {
+                //
+            }
+        }
+        if (n != null) {
+            n = n.trim();
+            if (!n.isEmpty()) {
+                try {
+                    n = URLDecoder.decode(n, StandardCharsets.UTF_8.name());
+                } catch (UnsupportedEncodingException e) {
+                }
+                if (n.contains("##")) {
+                    n = n.split("##")[0];
+                }
+                nLog.debug(NMsg.ofC("resolveAppNameFromClass " + clazz + " (" + defaultName + ") " + baseFilePath + " ==> RESULT = " + n));
+                return n;
+            }
+        }
+        nLog.debug(NMsg.ofC("resolveAppNameFromClass " + clazz + " (" + defaultName + ") " + baseFilePath + " ==> RESULT = " + n));
+        return defaultName;
+    }
+
+    private static String extractVar(String str, String varName, String pattern) {
+        Pattern p = Pattern.compile(pattern);
+        Matcher m = p.matcher(str);
+        if (m.matches()) {
+            return m.group(varName);
+        }
+        return null;
     }
 
     @Override

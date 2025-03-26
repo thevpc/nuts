@@ -125,6 +125,14 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public NOptional<NNamedElement> asNamed() {
+        if (isNamed()) {
+            return NOptional.of((NNamedElement) this);
+        }
+        return NOptional.ofEmpty(NMsg.ofC("%s is not a named", type().id()));
+    }
+
+    @Override
     public boolean isAnyMatrix() {
         return type().isAnyMatrix();
     }
@@ -248,6 +256,14 @@ public abstract class AbstractNElement implements NElement {
             return NOptional.of((NObjectElement) this);
         }
         return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to object: %s", type().id(), this));
+    }
+
+    @Override
+    public NOptional<NUpletElement> asUplet() {
+        if (this instanceof NUpletElement) {
+            return NOptional.of((NUpletElement) this);
+        }
+        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to uplet: %s", type().id(), this));
     }
 
     @Override
@@ -413,6 +429,32 @@ public abstract class AbstractNElement implements NElement {
     public boolean isPair() {
         NElementType t = type();
         return t == NElementType.PAIR;
+    }
+
+    @Override
+    public boolean isPairWithPrimitiveKey() {
+        if (!isPair()) {
+            return false;
+        }
+        NElement key = asPair().get().key();
+        return key.isPrimitive();
+    }
+
+    @Override
+    public boolean isPairWithAnyStringKey() {
+        if (!isPair()) {
+            return false;
+        }
+        NElement key = asPair().get().key();
+        return key.isAnyString();
+    }
+
+    @Override
+    public List<NElement> toElementList() {
+        if (isListContainer()) {
+            return asListContainer().get().children();
+        }
+        return Arrays.asList((NElement) this);
     }
 
     @Override

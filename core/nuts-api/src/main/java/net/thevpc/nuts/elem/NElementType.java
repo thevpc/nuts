@@ -174,6 +174,7 @@ public enum NElementType implements NEnum {
             case LOCAL_DATETIME:
             case LOCAL_DATE:
             case LOCAL_TIME:
+            case INSTANT:
             case REGEX:
             case MATRIX:
             case PAIR:
@@ -193,6 +194,7 @@ public enum NElementType implements NEnum {
             case PARAMETRIZED_ARRAY:
             case PARAMETRIZED_OBJECT:
                 return false;
+
         }
         return false;
     }
@@ -234,6 +236,7 @@ public enum NElementType implements NEnum {
             case LOCAL_DATETIME:
             case LOCAL_DATE:
             case LOCAL_TIME:
+            case INSTANT:
             case REGEX:
                 return true;
             case BINARY_STREAM:
@@ -304,6 +307,7 @@ public enum NElementType implements NEnum {
 
     public boolean isNamed() {
         switch (this) {
+            case PAIR: // key may be the name
             case NAMED_ARRAY:
             case NAMED_PARAMETRIZED_ARRAY:
             case NAMED_OBJECT:

@@ -43,9 +43,15 @@ public interface NExtensions extends NComponent  {
     static <T extends NComponent> T of(Class<T> type) {
         return of().createComponent(type).get();
     }
+    static <T extends NComponent> NOptional<T> get(Class<T> type) {
+        return get().flatMap(x->x.createComponent(type));
+    }
 
     static NExtensions of() {
         return NWorkspace.get().get().extensions();
+    }
+    static NOptional<NExtensions> get() {
+        return NWorkspace.get().map(x->x.extensions());
     }
 
     Set<NId> getCompanionIds();

@@ -49,7 +49,7 @@ public class DefaultNUpletElementBuilder  extends AbstractNElementBuilder implem
         return name;
     }
 
-    public NUpletElementBuilder setName(String name) {
+    public NUpletElementBuilder name(String name) {
         this.name = name;
         return this;
     }
@@ -110,7 +110,7 @@ public class DefaultNUpletElementBuilder  extends AbstractNElementBuilder implem
             addAnnotations(value.annotations());
             addComments(value.comments());
             if (value.name() != null) {
-                setName(value.name());
+                name(value.name());
             }
             for (NElement child : value.children()) {
                 add(child);
@@ -146,7 +146,7 @@ public class DefaultNUpletElementBuilder  extends AbstractNElementBuilder implem
             addAnnotations(value.annotations());
             addComments(value.comments());
             if (value.name() != null) {
-                setName(value.name());
+                name(value.name());
             }
             for (NElement child : value.items()) {
                 add(child);

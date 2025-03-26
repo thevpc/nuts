@@ -43,7 +43,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
 
     String name();
 
-    NUpletElementBuilder setName(String name);
+    NUpletElementBuilder name(String name);
 
     NUpletElementBuilder removeAt(int index);
 

@@ -212,7 +212,11 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
         }
         if (params != null) {
             sb.append("(");
-            TsonElementToStringHelper.appendChildren(Arrays.asList(params), compact, new TsonElementToStringHelper.SemiCompactInfo(), sb);
+            TsonElementToStringHelper.appendChildren(Arrays.asList(params), compact,
+                    new TsonElementToStringHelper.SemiCompactInfo()
+                            .setMaxLineSize(3)
+                            .setMaxLineSize(80)
+                    , sb);
             sb.append(")");
         }
         sb.append(TsonElementToStringHelper.trailingComments(this, compact));

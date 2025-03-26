@@ -31,7 +31,7 @@ package net.thevpc.nuts.elem;
  * @author thevpc
  * @app.category Format
  */
-public interface NPairElement extends NElement {
+public interface NPairElement extends NNamedElement {
 
     /**
      * element name

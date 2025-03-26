@@ -52,8 +52,8 @@ public class DefaultProgressMonitor implements NProgressMonitor {
         count = 0;
         for (int i = 0; i < runnables.length; i++) {
             if (runnables[i] != null) {
-                runnables2[i] = runnables[i];
-                weights2[i] = weights[i];
+                runnables2[count] = runnables[i];
+                weights2[count] = weights[i];
                 count++;
             }
         }

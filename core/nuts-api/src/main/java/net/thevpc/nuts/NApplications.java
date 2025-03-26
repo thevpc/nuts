@@ -210,17 +210,24 @@ public final class NApplications {
         }
         ws.runWith(() -> {
             boolean inherited = NWorkspace.of().getBootOptions().getInherited().orElse(false);
+            NApp nApp = NApp.of();
+            String appClassName = nApp.getAppClass() == null ? null : nApp.getAppClass().getName();
+            if(appClassName == null){
+                appClassName=applicationInstance.getClass().getName();
+            }
+            NId appId = nApp.getId().orNull();
             NLog.of(NApplications.class).with().level(Level.FINE).verb(NLogVerb.START)
                     .log(
                             NMsg.ofC(
-                                    "running application %s: %s %s",
+                                    "running application %s: %s (%s) %s",
                                     inherited ? "(inherited)" : "",
-                                    applicationInstance.getClass().getName(),
-                                    NApp.of().getCmdLine()
+                                    appId==null?"<unresolved-id>":appId,
+                                    appClassName,
+                                    nApp.getCmdLine()
                             )
                     );
             try {
-                switch (NApp.of().getMode()) {
+                switch (nApp.getMode()) {
                     //both RUN and AUTO_COMPLETE execute the run branch. Later
                     //session.isExecMode()
                     case RUN:
@@ -247,7 +254,7 @@ public final class NApplications {
                 }
                 throw e;
             }
-            throw new NExecutionException(NMsg.ofC("unsupported execution mode %s", NApp.of().getMode()), NExecutionException.ERROR_255);
+            throw new NExecutionException(NMsg.ofC("unsupported execution mode %s", nApp.getMode()), NExecutionException.ERROR_255);
         });
     }
 

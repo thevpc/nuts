@@ -50,6 +50,14 @@ public class DefaultNPairElement extends AbstractNElement implements NPairElemen
     }
 
     @Override
+    public String name() {
+        if (key.isAnyString()) {
+            return key.asString().orNull();
+        }
+        return null;
+    }
+
+    @Override
     public List<NElement> resolveAll(String pattern) {
         pattern = NStringUtils.trimToNull(pattern);
         NElementPathImpl pp = new NElementPathImpl(pattern);

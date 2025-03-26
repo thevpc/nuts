@@ -133,6 +133,8 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable, NLi
      */
     NOptional<NObjectElement> asObject();
 
+    NOptional<NUpletElement> asUplet();
+
     NOptional<NPairElement> asPair();
 
     /**
@@ -142,6 +144,8 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable, NLi
      * @return {@link NObjectElement}
      */
     NOptional<NListContainerElement> asListContainer();
+
+    NOptional<NNamedElement> asNamed();
 
     /**
      * cast this element to {@link NCustomElement} or throw
@@ -221,6 +225,17 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable, NLi
     NElementBuilder builder();
 
     boolean isPair();
+
+    /**
+     * true if pair with primitive key
+     *
+     * @return
+     */
+    boolean isPairWithPrimitiveKey();
+
+    boolean isPairWithAnyStringKey();
+
+    List<NElement> toElementList();
 
     NElementComments comments();
 }

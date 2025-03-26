@@ -29,6 +29,10 @@ public interface NApp extends NComponent {
         return NExtensions.of(NApp.class);
     }
 
+    static NOptional<NApp> get() {
+        return NExtensions.get().flatMap(x->x.createComponent(NApp.class));
+    }
+
     /**
      * Prepares the application with the provided initialization information for the current {@code session}
      *
@@ -67,6 +71,13 @@ public interface NApp extends NComponent {
      *         in which the application is running
      */
     NApplicationMode getMode();
+
+
+    /**
+     * detected bundle name
+     * @return detected bundle name
+     */
+    String getBundleName();
 
     /**
      * Retrieves the list of arguments associated with the current execution mode

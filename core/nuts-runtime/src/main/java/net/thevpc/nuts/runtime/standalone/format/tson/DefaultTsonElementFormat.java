@@ -199,7 +199,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
         }
         NElementBuilder builder = elem.builder();
         builder.addAnnotations(annotations.stream().map(this::toNElemAnn).collect(Collectors.toList())).build();
-        for (TsonComment tc : fromTson.comments().leadingComments()) {
+        for (TsonComment tc : comments.leadingComments()) {
             builder.addLeadingComment(new NElementCommentImpl(
                     tc.type() == TsonCommentType.SINGLE_LINE ? NElementCommentType.SINGLE_LINE
                             : tc.type() == TsonCommentType.MULTI_LINE ? NElementCommentType.MULTI_LINE
@@ -207,7 +207,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                     tc.text()
             ));
         }
-        for (TsonComment tc : fromTson.comments().trailingComments()) {
+        for (TsonComment tc : comments.trailingComments()) {
             builder.addLeadingComment(new NElementCommentImpl(
                     tc.type() == TsonCommentType.SINGLE_LINE ? NElementCommentType.SINGLE_LINE
                             : tc.type() == TsonCommentType.MULTI_LINE ? NElementCommentType.MULTI_LINE
@@ -317,6 +317,19 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 }
                 if (obj.isParametrized()) {
                     u.addParams(obj.params().toList().stream().map(x -> toNElem(x)).collect(Collectors.toList()));
+                }
+                return decorateNElement(u.build(), tsonElem);
+            }
+            case UPLET:
+            case NAMED_UPLET:
+            {
+                TsonUplet obj = tsonElem.toUplet();
+                NUpletElementBuilder u = elems.ofUpletBuilder();
+                for (TsonElement item : obj) {
+                    u.add(toNElem(item));
+                }
+                if (obj.isNamed()) {
+                    u.name(obj.name());
                 }
                 return decorateNElement(u.build(), tsonElem);
             }

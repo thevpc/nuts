@@ -1,1 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=net.thevpc.nuts.springboot.NutsSpringBootConfiguration
+org.springframework.boot.env.EnvironmentPostProcessor=net.thevpc.nuts.springboot.NutsSpringBootEnvironmentPostProcessor
