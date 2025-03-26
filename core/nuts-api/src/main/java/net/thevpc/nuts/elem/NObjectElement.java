@@ -63,5 +63,5 @@ public interface NObjectElement extends NNamedElement,NListContainerElement, Ite
 
     NElement param(int index) ;
 
-    Stream<NPairElement> pairs();
+    List<NPairElement> pairs();
 }
