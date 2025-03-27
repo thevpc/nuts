@@ -458,11 +458,31 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public List<NElement> toElementList() {
+    public NOptional<NListContainerElement> toListElementContainer() {
         if (isListContainer()) {
-            return asListContainer().get().children();
+            return asListContainer();
         }
-        return Arrays.asList((NElement) this);
+        if (isNamedPair()) {
+            NArrayElementBuilder ab = NElements.of().ofArrayBuilder();
+            ab.name(asNamed().get().name());
+            NPairElement pair = asPair().get();
+            NElement value = pair.value();
+            if (value.isListContainer()) {
+                NListContainerElement cc = value.asListContainer().get();
+                if (cc.isNamed() || cc.isParametrized()) {
+                    ab.add(cc);
+                } else {
+                    ab.addAll(cc.children());
+                }
+            } else {
+                ab.add(value);
+            }
+            return NOptional.of(ab.build());
+        } else {
+            NArrayElementBuilder ab = NElements.of().ofArrayBuilder();
+            ab.add(this);
+            return NOptional.of(ab.build());
+        }
     }
 
     @Override

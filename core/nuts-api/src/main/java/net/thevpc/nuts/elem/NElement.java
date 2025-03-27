@@ -242,7 +242,11 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable, NLi
      */
     boolean isNamedPair();
 
-    List<NElement> toElementList();
+    /**
+     * best effort to convert to NListContainerElement
+     * @return NListContainerElement
+     */
+    NOptional<NListContainerElement> toListElementContainer();
 
     NElementComments comments();
 }
