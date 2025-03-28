@@ -34,6 +34,7 @@ public class NIteratorAdapter<T> extends NIteratorBase<T> {
         }
         return NEDesc.describeResolveOrDestructAsObject(base)
                 .builder()
-                        .addAll(a.asObject().get()).build();
+                        .addAll(a.asObject().get().children().toArray(new NElement[0]))
+                .build();
     }
 }

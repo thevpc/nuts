@@ -1683,6 +1683,7 @@ public final class NBootWorkspaceCmdLineParser {
                             }
                             return (Collections.singletonList(a));
                         } else {
+                            a = cmdLine.next();
                             String r = NBootUtils.damerauLevenshteinClosest(0.5, a.getImage(), SUPPORTED_OPTIONS);
                             NBootMsg errorMsg = null;
                             if (r != null) {

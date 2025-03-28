@@ -95,6 +95,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     private NProgressFactory progressFactory;
     private Predicate<Class<?>> indestructibleObjects;
 
+
     public DefaultNElements(NWorkspace workspace) {
         super("element-format");
         this.model = NWorkspaceExt.of().getModel().textModel;
@@ -145,6 +146,11 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     @Override
     public NElements json() {
         return setContentType(NContentType.JSON);
+    }
+
+    @Override
+    public NElements yaml() {
+        return setContentType(NContentType.YAML);
     }
 
     @Override
@@ -370,6 +376,11 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     @Override
+    public NPairElement ofPair(String key, NElement value) {
+        return ofPair(ofNameOrString(key), value);
+    }
+
+    @Override
     public NPairElementBuilder ofPairBuilder(NElement key, NElement value) {
         return new DefaultNPairElementBuilder(
                 key == null ? ofNull() : key,
@@ -397,8 +408,8 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     @Override
-    public NArrayElementBuilder ofArray(NElement... items) {
-        return ofArrayBuilder().addAll(items);
+    public NArrayElement ofArray(NElement... items) {
+        return ofArrayBuilder().addAll(items).build();
     }
 
     @Override
@@ -408,7 +419,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     @Override
     public NPrimitiveElement ofBoolean(String value) {
-        NOptional<Boolean> o = NLiteral.of(value).asBooleanValue();
+        NOptional<Boolean> o = NLiteral.of(value).asBoolean();
         if (o.isEmpty()) {
             return ofNull();
         }
@@ -429,10 +440,10 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     public NPrimitiveElement ofString(String str) {
-        return ofString(str,null);
+        return ofString(str, null);
     }
 
-    public NPrimitiveElement ofString(String str,NStringLayout stringLayout) {
+    public NPrimitiveElement ofString(String str, NStringLayout stringLayout) {
         return str == null ? ofNull() : new DefaultNStringElement(NElementType.STRING, str, stringLayout, null, null);
     }
 
@@ -442,6 +453,16 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     public NPrimitiveElement ofName(String str) {
         return str == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.NAME, str, null, null);
+    }
+
+    @Override
+    public NPrimitiveElement ofNameOrString(String value) {
+        if (value == null) {
+            return ofNull();
+        }
+        return NElements.isValidName(value) ? new DefaultNPrimitiveElement(NElementType.NAME, value, null, null)
+                : new DefaultNStringElement(NElementType.STRING, value, null, null, null)
+                ;
     }
 
     @Override
@@ -622,6 +643,11 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     @Override
     public NUpletElement ofEmptyUplet() {
         return ofUpletBuilder().build();
+    }
+
+    @Override
+    public NUpletElement ofUplet(String name, NElement... items) {
+        return ofUpletBuilder().name(name).addAll(items).build();
     }
 
     @Override

@@ -23,6 +23,12 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
 
     public static final String PROTOCOL = "htmlfs";
     public static final String PREFIX = PROTOCOL + ":";
+    private static final HtmlfsParser[] PARSERS = {
+            new MavenCentralHtmlfsParser(),
+            new ApacheReposHtmlfsParser(),
+            new TomcatWebServerHtmlfsParser(),
+            new JettyWebServerHtmlfsParser(),
+    };
 
     private String url;
 
@@ -69,7 +75,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
                         }
                         return ref.resolve(x);
                     }));
-        } catch (IOException|NIOException e) {
+        } catch (IOException | NIOException | UncheckedIOException e) {
             return NStream.ofEmpty();
         }
     }
@@ -89,7 +95,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         if (NBlankable.isBlank(path)) {
             return basePath;
         }
-        if (!path.toString().endsWith("/")) {
+        if (!path.endsWith("/")) {
             return ref.resolve(path);
         }
         return NPath.of(PREFIX + ref.resolve(path));
@@ -106,10 +112,6 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         return NPath.of(PREFIX + ref.resolveSibling(path));
     }
 
-    
-    public boolean isSymbolicLink(NPath basePath) {
-        return false;
-    }
 
     @Override
     public NPathType type(NPath basePath) {
@@ -124,7 +126,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
             if (t.endsWith("text/html")) {
                 return NPathType.DIRECTORY;
             }
-            if(t.startsWith("text/html;")) {
+            if (t.startsWith("text/html;")) {
                 return NPathType.DIRECTORY;
             }
             return NPathType.FILE;
@@ -174,17 +176,10 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         return NPath.of(PREFIX + ref.getRoot());
     }
 
-    public final HtmlfsParser[] PARSERS() {
-            return new HtmlfsParser[]{
-                    new MavenCentralHtmlfsParser(workspace),
-                    new ApacheReposHtmlfsParser(workspace),
-                    new TomcatWebServerHtmlfsParser(workspace),
-                    new JettyWebServerHtmlfsParser(workspace),
-            };
-    };
+
     public List<String> parseHtml(InputStream html) {
         byte[] bytes = NCp.of().from(html).getByteArrayResult();
-        NCallableSupport<List<String>> best = Arrays.stream(PARSERS()).map(p -> {
+        NCallableSupport<List<String>> best = Arrays.stream(PARSERS).map(p -> {
                     try {
                         return p.parseHtmlTomcat(bytes);
                     } catch (Exception ex) {
@@ -221,7 +216,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         @Override
         public NCallableSupport<NPathSPI> createPath(String path, ClassLoader classLoader) {
             if (path.startsWith(PREFIX)) {
-                return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, () -> new HtmlfsPath(path,ws));
+                return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, () -> new HtmlfsPath(path, ws));
             }
             return null;
         }

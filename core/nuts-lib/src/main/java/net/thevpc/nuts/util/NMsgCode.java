@@ -2,7 +2,7 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.NDTO;
 
-public class NMsgCode implements NDTO {
+public class NMsgCode implements NDTO, NImmutable {
     private String code;
     private String[] params;
 

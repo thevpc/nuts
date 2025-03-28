@@ -19,45 +19,45 @@ public interface NLiteral extends NBlankable {
         return DefaultNLiteral.of(any);
     }
 
-    Object asObjectValue();
+    Object asRawObject();
 
-    NOptional<Instant> asInstantValue();
+    NOptional<Instant> asInstant();
 
-    NOptional<LocalDate> asLocalDateValue();
+    NOptional<LocalDate> asLocalDate();
 
-    NOptional<LocalDateTime> asLocalDateTimeValue();
+    NOptional<LocalDateTime> asLocalDateTime();
 
-    NOptional<LocalTime> asLocalTimeValue();
+    NOptional<LocalTime> asLocalTime();
 
-    NOptional<NBigComplex> asBigComplexValue();
+    NOptional<NBigComplex> asBigComplex();
 
-    NOptional<NDoubleComplex> asDoubleComplexValue();
+    NOptional<NDoubleComplex> asDoubleComplex();
 
-    NOptional<NFloatComplex> asFloatComplexValue();
+    NOptional<NFloatComplex> asFloatComplex();
 
-    NOptional<Number> asNumberValue();
+    NOptional<Number> asNumber();
 
-    NOptional<Boolean> asBooleanValue();
+    NOptional<Boolean> asBoolean();
 
-    NOptional<Long> asLongValue();
+    NOptional<Long> asLong();
 
-    NOptional<Double> asDoubleValue();
+    NOptional<Double> asDouble();
 
-    NOptional<Float> asFloatValue();
+    NOptional<Float> asFloat();
 
-    NOptional<Byte> asByteValue();
+    NOptional<Byte> asByte();
 
-    NOptional<Short> asShortValue();
+    NOptional<Short> asShort();
 
-    NOptional<Character> asCharValue();
+    NOptional<Character> asChar();
 
-    NOptional<Integer> asIntValue();
+    NOptional<Integer> asInt();
 
-    NOptional<String> asStringValue();
+    NOptional<String> asString();
 
-    NOptional<BigInteger> asBigIntValue();
+    NOptional<BigInteger> asBigInt();
 
-    NOptional<BigDecimal> asBigDecimalValue();
+    NOptional<BigDecimal> asBigDecimal();
 
     boolean isStream();
 
@@ -104,19 +104,19 @@ public interface NLiteral extends NBlankable {
 
     boolean isEmpty();
 
-    NOptional<String> asStringValueAt(int index);
+    NOptional<String> asStringAt(int index);
 
-    NOptional<Long> asLongValueAt(int index);
+    NOptional<Long> asLongAt(int index);
 
-    NOptional<Integer> asIntValueAt(int index);
+    NOptional<Integer> asIntAt(int index);
 
-    NOptional<Double> asDoubleValueAt(int index);
+    NOptional<Double> asDoubleAt(int index);
 
     boolean isNullAt(int index);
 
     NLiteral asLiteralAt(int index);
 
-    NOptional<Object> asObjectValueAt(int index);
+    NOptional<Object> asObjectAt(int index);
 
     boolean isBlank();
 

@@ -24,8 +24,8 @@ public class CoreAnsiTermHelper {
     }
 
     public static NSystemTerminalBase.Size evalSize() {
-        Integer c = NLiteral.of(evalCapability("cols")).asIntValue().orNull();
-        Integer l = NLiteral.of(evalCapability("lines")).asIntValue().orNull();
+        Integer c = NLiteral.of(evalCapability("cols")).asInt().orNull();
+        Integer l = NLiteral.of(evalCapability("lines")).asInt().orNull();
         if (c != null && l != null) {
             return new NSystemTerminalBase.Size(c, l);
         }

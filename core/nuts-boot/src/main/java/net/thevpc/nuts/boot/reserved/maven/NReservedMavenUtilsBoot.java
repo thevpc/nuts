@@ -401,7 +401,7 @@ public class NReservedMavenUtilsBoot {
                 }
             }
             return depsSet;
-        }else{
+        } else {
             return null;
         }
     }
@@ -771,7 +771,7 @@ public class NReservedMavenUtilsBoot {
                             bLog.with().level(Level.CONFIG).verbCache().log(NBootMsg.ofC("cache %s file %s to %s", ext, ff, to));
                         }
                         return to;
-                    } catch (IOException ex) {
+                    } catch (IOException | UncheckedIOException ex) {
                         errorList.add(new NReservedErrorInfo(nutsId, repository, ff.getPath(), "unable to cache", ex));
                         bLog.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("error caching file %s to %s : %s", ff, to, ex.toString()));
                         //not found

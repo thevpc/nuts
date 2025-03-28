@@ -76,6 +76,12 @@ public interface NLock extends Lock {
                 .toPath().get()
         ).build();
     }
+    static NLock ofIdPath(NId id,String path) {
+        return NLockBuilder.of().setSource(id.getLongId()).setResource(NWorkspace.of().getStoreLocation(id, NStoreType.RUN)
+                .resolve(path)
+                .toPath().get()
+        ).build();
+    }
 
     boolean isLocked();
 

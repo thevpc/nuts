@@ -96,7 +96,7 @@ public class DefaultNDescriptorPropertyBuilder implements NDescriptorPropertyBui
             this.setCondition(null);
         } else {
             this.setName(value.getName());
-            this.setValue(value.getValue().asStringValue().orNull());
+            this.setValue(value.getValue().asString().orNull());
             this.setCondition(value.getCondition());
         }
         return this;

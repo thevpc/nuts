@@ -7,6 +7,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NSpeedQualifier;
+import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNContentEvent;
@@ -63,7 +64,7 @@ public class NRepositoryMirroringHelper {
                             NIteratorBuilder.of(repoSPI.searchVersions().setId(id).setFilter(idFilter)
                                             .setFetchMode(fetchMode)
                                             .getResult())
-                                    .named("searchInMirror(" + repo.getName() + ")")
+                                    .named(NElements.of().ofUplet("searchInMirror",NElements.of().ofString(repo.getName())))
                                     .safeIgnore()
                                     .build()
                     );

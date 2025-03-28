@@ -19,8 +19,10 @@ public class NFunction2WithDescription<A,B,V> implements NFunction2<A,B,V> {
 
     @Override
     public NFunction2<A,B, V> withDesc(NEDesc description) {
-        this.description = description;
-        return this;
+        if(description==null){
+            return base;
+        }
+        return new NFunction2WithDescription<>(base, description);
     }
 
     @Override

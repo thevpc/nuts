@@ -1,6 +1,7 @@
-package net.thevpc.nuts.reserved.util;
+package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.util.NFunction;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElements;
 
 import java.util.function.Function;
 
@@ -21,4 +22,8 @@ public class NFunctionFromJavaFunction<T, V> implements NFunction<T, V> {
         return "Function{" + base + '}';
     }
 
+    @Override
+    public NElement describe() {
+        return NElements.of().toElement(NMsg.ofC("function %s", base).toString());
+    }
 }

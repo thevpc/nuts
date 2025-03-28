@@ -220,7 +220,7 @@ public class MavenUtils {
                     StandardCharsets.UTF_8.name(), urlDesc == null ? "pom.xml" : urlDesc);
             NPom pom = new NPomXmlParser().parse(bytesStream);
             LinkedHashSet<NDescriptorFlag> flags = new LinkedHashSet<>();
-            if (NLiteral.of(pom.getProperties().get("nuts.executable")).asBooleanValue().orElse(false)) {
+            if (NLiteral.of(pom.getProperties().get("nuts.executable")).asBoolean().orElse(false)) {
                 flags.add(NDescriptorFlag.EXEC);
             } else {
                 final Element ee = pom.getXml().getDocumentElement();
@@ -240,15 +240,15 @@ public class MavenUtils {
                     flags.add(NDescriptorFlag.EXEC);
                 }
             }
-            if (NLiteral.of(pom.getProperties().get("nuts.application")).asBooleanValue().orElse(false)) {
+            if (NLiteral.of(pom.getProperties().get("nuts.application")).asBoolean().orElse(false)) {
                 flags.add(NDescriptorFlag.APP);
                 flags.add(NDescriptorFlag.EXEC);
             }
-            if (NLiteral.of(pom.getProperties().get("nuts.gui")).asBooleanValue().orElse(false)) {
+            if (NLiteral.of(pom.getProperties().get("nuts.gui")).asBoolean().orElse(false)) {
                 flags.add(NDescriptorFlag.GUI);
                 flags.add(NDescriptorFlag.EXEC);
             }
-            if (NLiteral.of(pom.getProperties().get("nuts.term")).asBooleanValue().orElse(false)) {
+            if (NLiteral.of(pom.getProperties().get("nuts.term")).asBoolean().orElse(false)) {
                 flags.add(NDescriptorFlag.TERM);
                 flags.add(NDescriptorFlag.EXEC);
             }
@@ -605,7 +605,7 @@ public class MavenUtils {
                 NDescriptorProperty nutsPackaging = nutsDescriptor.getProperty("nuts-packaging").orNull();
                 if (nutsPackaging != null && !NBlankable.isBlank(nutsPackaging.getValue())) {
                     nutsDescriptor = nutsDescriptor.builder().setPackaging(nutsDescriptor.getPropertyValue("nuts-packaging")
-                                    .flatMap(NLiteral::asStringValue).get())
+                                    .flatMap(NLiteral::asString).get())
                             .build();
                 }
                 properties.put("pom.groupId", thisId.getGroupId());

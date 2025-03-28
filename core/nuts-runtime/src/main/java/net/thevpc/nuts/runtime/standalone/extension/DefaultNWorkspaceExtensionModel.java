@@ -683,7 +683,7 @@ public class DefaultNWorkspaceExtensionModel {
         //should parse this form config?
         //or should be parse from and extension component?
         String repos = workspace
-                .getConfigProperty("nuts.bootstrap-repository-locations").flatMap(NLiteral::asStringValue).orElse("") + ";" //                + NutsConstants.BootstrapURLs.LOCAL_NUTS_FOLDER
+                .getConfigProperty("nuts.bootstrap-repository-locations").flatMap(NLiteral::asString).orElse("") + ";" //                + NutsConstants.BootstrapURLs.LOCAL_NUTS_FOLDER
                 //                + ";" + NutsConstants.BootstrapURLs.REMOTE_NUTS_GIT
                 ;
         List<String> urls = new ArrayList<>();

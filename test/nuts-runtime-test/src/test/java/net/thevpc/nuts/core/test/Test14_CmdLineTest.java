@@ -258,15 +258,15 @@ public class Test14_CmdLineTest {
             , String optionPrefix
             , String eq
     ){
-        String s = a.asStringValue().orNull();
+        String s = a.asString().orNull();
         Assertions.assertEquals(option,a.isOption(),"Option:"+ s);
         Assertions.assertEquals(active,a.isActive(),"Enabled:"+ s);
         Assertions.assertEquals(keyValue,a.isKeyValue(),"KeyValue:"+ s);
         Assertions.assertEquals(negated,a.isNegated(),"Negated:"+ s);
-        Assertions.assertEquals(key,a.getKey().asStringValue().orNull(),"StringKey:"+ s);
+        Assertions.assertEquals(key,a.getKey().asString().orNull(),"StringKey:"+ s);
         Assertions.assertEquals(value,a.getStringValue().orNull(),"StringValue:"+ s);
-        Assertions.assertEquals(optionName,a.getOptionName().asStringValue().orNull(),"StringOptionName:"+ s);
-        Assertions.assertEquals(optionPrefix,a.getOptionPrefix().asStringValue().orNull(),"StringOptionPrefix:"+ s);
+        Assertions.assertEquals(optionName,a.getOptionName().asString().orNull(),"StringOptionName:"+ s);
+        Assertions.assertEquals(optionPrefix,a.getOptionPrefix().asString().orNull(),"StringOptionPrefix:"+ s);
         Assertions.assertEquals(eq,a.getSeparator(),"KeyValueSeparator:"+ s);
         TestUtils.println("OK : "+ s);
     }

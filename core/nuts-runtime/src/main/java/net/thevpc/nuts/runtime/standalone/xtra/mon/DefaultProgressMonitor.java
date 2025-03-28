@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.util.NAssert;
@@ -467,11 +468,7 @@ public class DefaultProgressMonitor implements NProgressMonitor {
         }
         if (isSuspended()) {
             while (isSuspended()) {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    //ignore
-                }
+                NWorkspaceProfilerImpl.sleep(500,"DefaultProgressMonitor::setProgress/Suspended");
             }
         }
         if ((progress < 0 || progress > 1) && !Double.isNaN(progress)) {

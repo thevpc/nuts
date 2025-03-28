@@ -18,9 +18,9 @@ public class NSupplierIterator<T> extends NIteratorBase<T> {
     @Override
     public NElement describe() {
         return NElements.of().ofObjectBuilder()
-                .set("type","Supplier")
+                .name("Supplier")
                 .set("template",
-                        NEDesc.describeResolveOr(from, ()-> NElements.of().ofObjectBuilder().set("type","compiled").addAll(name).build())
+                        NEDesc.describeResolveOr(from, ()-> NElements.of().ofObjectBuilder().name("Compiled").addAll(name).build())
                 )
                 .build();
     }

@@ -698,7 +698,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                                     }).nonNull().withDesc(NEDesc.of("FileToVersion")).iterator();
                 } else {
                     this.result = NIteratorBuilder.of(deployments.searchVersions(getId(), getFilter(), true))
-                            .named("searchVersionsInMain()")
+                            .named(NElements.of().ofUplet("searchVersionsInMain"))
                             .build()
                     ;
                 }

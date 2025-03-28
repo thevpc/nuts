@@ -14,8 +14,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TomcatWebServerHtmlfsParser extends AbstractHtmlfsParser {
-    public TomcatWebServerHtmlfsParser(NWorkspace workspace) {
-        super(workspace);
+    public TomcatWebServerHtmlfsParser() {
+        super();
     }
 
     @Override

@@ -15,14 +15,6 @@ import java.util.stream.Collectors;
 
 public final class NReservedLangUtils {
 
-    public static String getErrorMessage(Throwable ex) {
-        String m = ex.getMessage();
-        if (m == null || m.length() < 5) {
-            m = ex.toString();
-        }
-        return m;
-    }
-
     public static <T> NOptional<T> findThrowable(Throwable th, Class<T> type, Predicate<Throwable> filter) {
         Set<Throwable> visited = new HashSet<>();
         Stack<Throwable> stack = new Stack<>();
@@ -76,7 +68,7 @@ public final class NReservedLangUtils {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty size"));
         }
         value = value.trim();
-        Integer i = NLiteral.of(value).asIntValue().orNull();
+        Integer i = NLiteral.of(value).asInt().orNull();
         if (i != null) {
             if (defaultMultiplier != null) {
                 return NOptional.of(i * defaultMultiplier);
@@ -87,7 +79,7 @@ public final class NReservedLangUtils {
         for (String s : new String[]{"kb", "mb", "gb", "k", "m", "g"}) {
             if (value.toLowerCase().endsWith(s)) {
                 String v = value.substring(0, value.length() - s.length()).trim();
-                i = NLiteral.of(v).asIntValue().orNull();
+                i = NLiteral.of(v).asInt().orNull();
                 if (i != null) {
                     switch (s) {
                         case "k":

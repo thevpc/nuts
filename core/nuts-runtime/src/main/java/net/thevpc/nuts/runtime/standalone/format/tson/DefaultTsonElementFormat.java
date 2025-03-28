@@ -35,7 +35,6 @@ import net.thevpc.tson.*;
 
 import java.io.Reader;
 import java.io.StringReader;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -94,60 +93,60 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 return decorateTsonElement(Tson.ofNull(), elem);
             }
             case INTEGER: {
-                return decorateTsonElement(Tson.ofInt(elem.asIntValue().get()), elem);
+                return decorateTsonElement(Tson.ofInt(elem.asInt().get()), elem);
             }
             case LONG: {
-                return decorateTsonElement(Tson.ofLong(elem.asLongValue().get()), elem);
+                return decorateTsonElement(Tson.ofLong(elem.asLong().get()), elem);
             }
             case FLOAT: {
-                return decorateTsonElement(Tson.ofFloat(elem.asFloatValue().get()), elem);
+                return decorateTsonElement(Tson.ofFloat(elem.asFloat().get()), elem);
             }
             case DOUBLE: {
-                return decorateTsonElement(Tson.ofDouble(elem.asDoubleValue().get()), elem);
+                return decorateTsonElement(Tson.ofDouble(elem.asDouble().get()), elem);
             }
             case BYTE: {
-                return decorateTsonElement(Tson.ofByte(elem.asByteValue().get()), elem);
+                return decorateTsonElement(Tson.ofByte(elem.asByte().get()), elem);
             }
             case LOCAL_DATE: {
-                return decorateTsonElement(Tson.ofLocalDate(elem.asPrimitive().get().asLocalDateValue().get()), elem);
+                return decorateTsonElement(Tson.ofLocalDate(elem.asPrimitive().get().asLocalDate().get()), elem);
             }
             case LOCAL_DATETIME: {
-                return decorateTsonElement(Tson.ofLocalDatetime(elem.asPrimitive().get().asLocalDateTimeValue().get()), elem);
+                return decorateTsonElement(Tson.ofLocalDatetime(elem.asPrimitive().get().asLocalDateTime().get()), elem);
             }
             case LOCAL_TIME: {
-                return decorateTsonElement(Tson.ofLocalTime(elem.asPrimitive().get().asLocalTimeValue().get()), elem);
+                return decorateTsonElement(Tson.ofLocalTime(elem.asPrimitive().get().asLocalTime().get()), elem);
             }
             case REGEX: {
-                return decorateTsonElement(Tson.ofRegex(elem.asStringValue().get()), elem);
+                return decorateTsonElement(Tson.ofRegex(elem.asString().get()), elem);
             }
             case BIG_INTEGER: {
-                return decorateTsonElement(Tson.ofBigInt(elem.asBigIntValue().get()), elem);
+                return decorateTsonElement(Tson.ofBigInt(elem.asBigInt().get()), elem);
             }
             case BIG_DECIMAL: {
-                return decorateTsonElement(Tson.ofBigDecimal(elem.asBigDecimalValue().get()), elem);
+                return decorateTsonElement(Tson.ofBigDecimal(elem.asBigDecimal().get()), elem);
             }
             case SHORT: {
-                return decorateTsonElement(Tson.ofShort(elem.asShortValue().get()), elem);
+                return decorateTsonElement(Tson.ofShort(elem.asShort().get()), elem);
             }
             case BOOLEAN: {
-                return decorateTsonElement(Tson.ofBoolean(elem.asBooleanValue().get()), elem);
+                return decorateTsonElement(Tson.ofBoolean(elem.asBoolean().get()), elem);
             }
             case CHAR: {
-                return decorateTsonElement(Tson.ofChar(elem.asCharValue().get()), elem);
+                return decorateTsonElement(Tson.ofChar(elem.asChar().get()), elem);
             }
             case INSTANT: {
-                return decorateTsonElement(Tson.ofInstant(elem.asInstantValue().get()), elem);
+                return decorateTsonElement(Tson.ofInstant(elem.asInstant().get()), elem);
             }
             case BIG_COMPLEX: {
-                NBigComplex v = elem.asBigComplexValue().get();
+                NBigComplex v = elem.asBigComplex().get();
                 return decorateTsonElement(Tson.ofBigComplex(v.real(), v.imag()), elem);
             }
             case DOUBLE_COMPLEX: {
-                NDoubleComplex v = elem.asDoubleComplexValue().get();
+                NDoubleComplex v = elem.asDoubleComplex().get();
                 return decorateTsonElement(Tson.ofDoubleComplex(v.real(), v.imag()), elem);
             }
             case FLOAT_COMPLEX: {
-                NFloatComplex v = elem.asFloatComplexValue().get();
+                NFloatComplex v = elem.asFloatComplex().get();
                 return decorateTsonElement(Tson.ofFloatComplex(v.real(), v.imag()), elem);
             }
 

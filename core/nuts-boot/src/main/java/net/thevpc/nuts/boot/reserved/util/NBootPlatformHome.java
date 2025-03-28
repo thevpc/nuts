@@ -305,12 +305,12 @@ public class NBootPlatformHome {
         }
         return null;    }
 
-    public String getStore(String location) {
-        if (location == null) {
+    public String getStore(String storeType) {
+        if (storeType == null) {
             return getHome();
         }
         String platformOsFamilyId = NBootUtils.enumId(this.platformOsFamily==null?currentOsFamily(): this.platformOsFamily);
-        String locationId = NBootUtils.enumId(location);
+        String locationId = NBootUtils.enumId(storeType);
         if (system) {
             String s = null;
             s = NBootUtils.trim(props.apply("nuts.store.system." + locationId + "." + platformOsFamilyId));
@@ -498,7 +498,7 @@ public class NBootPlatformHome {
                 }
             }
         }
-        throw new NBootException(NBootMsg.ofC("unsupported getDefaultPlatformHomeFolderBase %s/%s", platformOsFamilyId, location));
+        throw new NBootException(NBootMsg.ofC("unsupported getDefaultPlatformHomeFolderBase %s/%s", platformOsFamilyId, storeType));
     }
 
     public String getWindowsProgramFiles() {

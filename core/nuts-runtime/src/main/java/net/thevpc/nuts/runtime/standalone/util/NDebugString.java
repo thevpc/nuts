@@ -28,7 +28,7 @@ public class NDebugString {
             d.setSuspend(true);
             for (String a : StringTokenizerUtils.splitDefault(str)) {
                 NArg na = NArg.of(a);
-                switch (na.getKey().asStringValue().orElse("")) {
+                switch (na.getKey().asString().orElse("")) {
                     case "s":
                     case "suspend": {
                         d.setSuspend(!na.isNegated());
@@ -44,23 +44,23 @@ public class NDebugString {
                         break;
                     }
                     case "port": {
-                        String s = na.getValue().asStringValue().orElse("").trim();
+                        String s = na.getValue().asString().orElse("").trim();
                         if(s.matches("[0-9]+-[0-9]+")){
                             int sep = s.indexOf('-');
                             d.setPort(Integer.parseInt(s.substring(0,sep)));
                             d.setMaxPort(Integer.parseInt(s.substring(sep+1)));
                         }else{
-                            d.setPort(na.getValue().asIntValue().get());
+                            d.setPort(na.getValue().asInt().get());
                         }
                         break;
                     }
                     default: {
                         if (na.getValue().isNull()) {
                             if (na.getKey().isBoolean()) {
-                                boolean v = na.getKey().asBooleanValue().get();
+                                boolean v = na.getKey().asBoolean().get();
                                 d.setEnabled(na.isNegated() != v);
-                            } else if (na.getKey().asIntValue().isPresent()) {
-                                d.setPort(na.getKey().asIntValue().get());
+                            } else if (na.getKey().asInt().isPresent()) {
+                                d.setPort(na.getKey().asInt().get());
                             } else {
                                 d.options.add(na);
                             }
@@ -80,7 +80,7 @@ public class NDebugString {
 
     public NArg getOption(String key) {
         for (NArg option : options) {
-            if (Objects.equals(option.getKey().asStringValue(), key)) {
+            if (Objects.equals(option.getKey().asString(), key)) {
                 return option;
             }
         }

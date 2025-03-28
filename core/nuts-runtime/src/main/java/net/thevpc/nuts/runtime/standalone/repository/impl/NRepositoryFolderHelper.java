@@ -272,11 +272,11 @@ public class NRepositoryFolderHelper {
                     },
                     () -> NElements.of()
                             .ofObjectBuilder()
-                            .set("type", "searchSingleVersion")
+                            .name("SearchSingleVersion")
                             .set("repository", repo == null ? null : repo.getName())
                             .set("id", id.toString())
                             .set("root", getStoreLocation().toString())
-                            .addAll(extraInfoElements)
+                            .addAll(extraInfoElements.children())
                             .build()
             ).build();
         }

@@ -52,7 +52,7 @@ public class DefaultNPairElement extends AbstractNElement implements NPairElemen
     @Override
     public String name() {
         if (key.isAnyString()) {
-            return key.asStringValue().orNull();
+            return key.asString().orNull();
         }
         return null;
     }
@@ -71,7 +71,7 @@ public class DefaultNPairElement extends AbstractNElement implements NPairElemen
     }
 
     @Override
-    public NOptional<Object> asObjectValueAt(int index) {
+    public NOptional<Object> asObjectAt(int index) {
         return NOptional.ofEmpty(() -> NMsg.ofC("invalid object at %s", index));
     }
 

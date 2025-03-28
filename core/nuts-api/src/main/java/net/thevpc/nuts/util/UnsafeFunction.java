@@ -1,8 +1,5 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
-
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -24,7 +21,4 @@ public interface UnsafeFunction<T, V> {
         return t -> t;
     }
 
-    default NElement describe() {
-        return NElements.of().toElement("unsafe function");
-    }
 }

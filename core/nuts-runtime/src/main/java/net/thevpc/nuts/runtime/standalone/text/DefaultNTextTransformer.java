@@ -231,7 +231,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
                             t.getText()
                     ).orNull();
                     if (cmd != null && cmd.length() > 0) {
-                        String p = cmd.next().flatMap(NArg::asStringValue).orNull();
+                        String p = cmd.next().flatMap(NArg::asString).orNull();
                         NPath newP = resolveRelativePath(p, config.getCurrentDir());
                         NText n = txts.parser().parse(newP);
                         //do not continue

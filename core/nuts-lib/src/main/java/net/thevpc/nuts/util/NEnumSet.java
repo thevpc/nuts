@@ -119,7 +119,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
         }
         List<String> z = NStringUtils.split(value, ",;|+", true, true);
         if (z.size() == 1) {
-            NOptional<BigInteger> lng = NLiteral.of(z.get(0)).asBigIntValue();
+            NOptional<BigInteger> lng = NLiteral.of(z.get(0)).asBigInt();
             if (lng.isPresent()) {
                 return NOptional.of(ofTypeBitSet(setType, lng.get(), type));
             }

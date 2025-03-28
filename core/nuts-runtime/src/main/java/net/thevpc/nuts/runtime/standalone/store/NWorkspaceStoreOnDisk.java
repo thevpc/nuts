@@ -37,7 +37,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.logging.Level;
 
 public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
@@ -338,7 +337,10 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
             @Override
             public InstallInfoConfig parseObject(NPath path) {
                 try {
-                    return getInstallInfoConfig(null, path);
+                    InstallInfoConfig u = NElements.of().json().parse(path, InstallInfoConfig.class);
+                    if(u!=null && u.getId()!=null){
+                        return loadInstallInfoConfig(u.getId());
+                    }
                 } catch (Exception ex) {
                     _LOG().with().error(ex)
                             .log(NMsg.ofJ("unable to parse {0}", path));
@@ -365,24 +367,15 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
 
     @Override
     public InstallInfoConfig loadInstallInfoConfig(NId id) {
-        return getInstallInfoConfig(id, null);
-    }
-
-    private InstallInfoConfig getInstallInfoConfig(NId id, NPath path) {
-        if (id == null && path == null) {
-            CoreNIdUtils.checkShortId(id);
-        }
-        if (path == null) {
-            path = getPath(id, DefaultNInstalledRepository.NUTS_INSTALL_FILE);
-        }
+        CoreNIdUtils.checkShortId(id);
+        NPath path = getPath(id, DefaultNInstalledRepository.NUTS_INSTALL_FILE);
 //        if (id == null) {
 //            path = getPath(id, NUTS_INSTALL_FILE);
 //        }
-        NPath finalPath = path;
         if (path.isRegularFile()) {
             NElements elem = NElements.of();
-            InstallInfoConfig c = NLock.of(path).callWith(
-                    () -> elem.json().parse(finalPath, InstallInfoConfig.class),
+            InstallInfoConfig c = NLock.ofIdPath(id,DefaultNInstalledRepository.NUTS_INSTALL_FILE).callWith(
+                    () -> elem.json().parse(path, InstallInfoConfig.class),
                     CoreNUtils.LOCK_TIME, CoreNUtils.LOCK_TIME_UNIT
             ).orNull();
             if (c != null) {
@@ -411,11 +404,11 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
                 if (changeStatus && !workspace.isReadOnly()) {
                     NLock.ofPath(path).callWith(() -> {
                                 _LOG().with().level(Level.CONFIG)
-                                        .log(NMsg.ofJ("install-info upgraded {0}", finalPath));
+                                        .log(NMsg.ofJ("install-info upgraded {0}", path));
                                 c.setConfigVersion(workspace.getApiVersion());
                                 elem.json().setValue(c)
                                         .setNtf(false)
-                                        .print(finalPath);
+                                        .print(path);
                                 return null;
                             },
                             CoreNUtils.LOCK_TIME, CoreNUtils.LOCK_TIME_UNIT

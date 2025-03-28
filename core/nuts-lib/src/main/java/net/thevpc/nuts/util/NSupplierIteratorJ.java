@@ -21,11 +21,11 @@ public class NSupplierIteratorJ<T> extends NIteratorBase<T> {
     @Override
     public NElement describe() {
         return NElements.of().ofObjectBuilder()
-                .set("type", "Supplier")
+                .name("Supplier")
                 .set("template",
                         NEDesc.describeResolveOr(from, () -> {
                             NElement t = name.get();
-                            return NElements.of().ofObjectBuilder().set("type", "compiled")
+                            return NElements.of().ofObjectBuilder().name("Compiled")
                                     .addAll(t == null ? null : t.asObject().orNull())
                                     .build();
                         })

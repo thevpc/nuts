@@ -159,10 +159,11 @@ public class NIteratorBuilder<T> {
         }
     }
 
-    public <V> NIteratorBuilder<T> named(String n) {
+    public <V> NIteratorBuilder<T> named(NElement n) {
         if (n != null) {
-            return new NIteratorBuilder<>(new NIteratorAdapter<T>(
-                    it, () -> NElements.of().ofString(n)));
+            NIteratorAdapter<T> a = new NIteratorAdapter<>(it, () -> n);
+//            a.describe();
+            return new NIteratorBuilder<>(a);
         }
         return this;
     }

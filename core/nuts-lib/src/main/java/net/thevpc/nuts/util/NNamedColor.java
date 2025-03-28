@@ -2,7 +2,7 @@ package net.thevpc.nuts.util;
 
 import java.awt.*;
 
-public class NNamedColor {
+public class NNamedColor implements NImmutable{
     private String name;
     private Color color;
 

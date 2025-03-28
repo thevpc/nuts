@@ -213,7 +213,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     }
 
     @Override
-    public Object asObjectValue() {
+    public Object asRawObject() {
         return value;
     }
 
@@ -223,98 +223,98 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     }
 
     @Override
-    public NOptional<Instant> asInstantValue() {
-        return NLiteral.of(value).asInstantValue();
+    public NOptional<Instant> asInstant() {
+        return NLiteral.of(value).asInstant();
     }
 
     @Override
-    public NOptional<LocalDate> asLocalDateValue() {
-        return NLiteral.of(value).asLocalDateValue();
+    public NOptional<LocalDate> asLocalDate() {
+        return NLiteral.of(value).asLocalDate();
     }
 
     @Override
-    public NOptional<LocalDateTime> asLocalDateTimeValue() {
-        return NLiteral.of(value).asLocalDateTimeValue();
+    public NOptional<LocalDateTime> asLocalDateTime() {
+        return NLiteral.of(value).asLocalDateTime();
     }
 
     @Override
-    public NOptional<LocalTime> asLocalTimeValue() {
-        return NLiteral.of(value).asLocalTimeValue();
+    public NOptional<LocalTime> asLocalTime() {
+        return NLiteral.of(value).asLocalTime();
     }
 
     @Override
-    public NOptional<NBigComplex> asBigComplexValue() {
-        return NLiteral.of(value).asBigComplexValue();
+    public NOptional<NBigComplex> asBigComplex() {
+        return NLiteral.of(value).asBigComplex();
     }
 
     @Override
-    public NOptional<NDoubleComplex> asDoubleComplexValue() {
-        return NLiteral.of(value).asDoubleComplexValue();
+    public NOptional<NDoubleComplex> asDoubleComplex() {
+        return NLiteral.of(value).asDoubleComplex();
     }
 
     @Override
-    public NOptional<NFloatComplex> asFloatComplexValue() {
-        return NLiteral.of(value).asFloatComplexValue();
+    public NOptional<NFloatComplex> asFloatComplex() {
+        return NLiteral.of(value).asFloatComplex();
     }
 
     @Override
-    public NOptional<Number> asNumberValue() {
-        return NLiteral.of(value).asNumberValue();
+    public NOptional<Number> asNumber() {
+        return NLiteral.of(value).asNumber();
     }
 
     @Override
-    public NOptional<Boolean> asBooleanValue() {
-        return NLiteral.of(value).asBooleanValue();
+    public NOptional<Boolean> asBoolean() {
+        return NLiteral.of(value).asBoolean();
     }
 
     @Override
-    public NOptional<Long> asLongValue() {
-        return NLiteral.of(value).asLongValue();
+    public NOptional<Long> asLong() {
+        return NLiteral.of(value).asLong();
     }
 
     @Override
-    public NOptional<Double> asDoubleValue() {
-        return NLiteral.of(value).asDoubleValue();
+    public NOptional<Double> asDouble() {
+        return NLiteral.of(value).asDouble();
     }
 
     @Override
-    public NOptional<Float> asFloatValue() {
-        return NLiteral.of(value).asFloatValue();
+    public NOptional<Float> asFloat() {
+        return NLiteral.of(value).asFloat();
     }
 
     @Override
-    public NOptional<Byte> asByteValue() {
-        return NLiteral.of(value).asByteValue();
+    public NOptional<Byte> asByte() {
+        return NLiteral.of(value).asByte();
     }
 
     @Override
-    public NOptional<Short> asShortValue() {
-        return NLiteral.of(value).asShortValue();
+    public NOptional<Short> asShort() {
+        return NLiteral.of(value).asShort();
     }
 
     @Override
-    public NOptional<Character> asCharValue() {
-        return NLiteral.of(value).asCharValue();
+    public NOptional<Character> asChar() {
+        return NLiteral.of(value).asChar();
     }
 
     @Override
-    public NOptional<Integer> asIntValue() {
-        return NLiteral.of(value).asIntValue();
+    public NOptional<Integer> asInt() {
+        return NLiteral.of(value).asInt();
     }
 
     @Override
-    public NOptional<String> asStringValue() {
-        return NLiteral.of(value).asStringValue();
+    public NOptional<String> asString() {
+        return NLiteral.of(value).asString();
     }
 
     @Override
-    public NOptional<BigInteger> asBigIntValue() {
-        return NLiteral.of(value).asBigIntValue();
+    public NOptional<BigInteger> asBigInt() {
+        return NLiteral.of(value).asBigInt();
     }
 
     @Override
-    public NOptional<BigDecimal> asBigDecimalValue() {
-        return NLiteral.of(value).asBigDecimalValue();
+    public NOptional<BigDecimal> asBigDecimal() {
+        return NLiteral.of(value).asBigDecimal();
     }
 
     @Override
@@ -398,23 +398,23 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     }
 
     @Override
-    public NOptional<String> asStringValueAt(int index) {
-        return NLiteral.of(value).asStringValueAt(index);
+    public NOptional<String> asStringAt(int index) {
+        return NLiteral.of(value).asStringAt(index);
     }
 
     @Override
-    public NOptional<Long> asLongValueAt(int index) {
-        return NLiteral.of(value).asLongValueAt(index);
+    public NOptional<Long> asLongAt(int index) {
+        return NLiteral.of(value).asLongAt(index);
     }
 
     @Override
-    public NOptional<Integer> asIntValueAt(int index) {
-        return NLiteral.of(value).asIntValueAt(index);
+    public NOptional<Integer> asIntAt(int index) {
+        return NLiteral.of(value).asIntAt(index);
     }
 
     @Override
-    public NOptional<Double> asDoubleValueAt(int index) {
-        return NLiteral.of(value).asDoubleValueAt(index);
+    public NOptional<Double> asDoubleAt(int index) {
+        return NLiteral.of(value).asDoubleAt(index);
     }
 
     @Override
@@ -428,8 +428,8 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     }
 
     @Override
-    public NOptional<Object> asObjectValueAt(int index) {
-        return NLiteral.of(value).asObjectValueAt(index);
+    public NOptional<Object> asObjectAt(int index) {
+        return NLiteral.of(value).asObjectAt(index);
     }
 
     @Override

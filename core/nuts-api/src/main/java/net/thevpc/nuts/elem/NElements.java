@@ -60,6 +60,28 @@ import java.util.function.Predicate;
  */
 public interface NElements extends NContentTypeFormat {
 
+    static boolean isValidName(String name) {
+        if (name == null) {
+            return false;
+        }
+        if (name.isEmpty()) {
+            return false;
+        }
+        char[] charArray = name.toCharArray();
+        for (int i = 0; i < charArray.length; i++) {
+            char c = charArray[i];
+            if (i == 0) {
+                if (!Character.isJavaIdentifierStart(c)) {
+                    return false;
+                }
+            } else {
+                if (!Character.isJavaIdentifierPart(c)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
     static NElements of(Object any) {
         return of().setValue(any);
@@ -148,6 +170,8 @@ public interface NElements extends NContentTypeFormat {
     NElements setContentType(NContentType contentType);
 
     NElements json();
+
+    NElements yaml();
 
     NElements tson();
 
@@ -399,6 +423,8 @@ public interface NElements extends NContentTypeFormat {
     //    NutsElementEntryBuilder forEntry();
     NPairElement ofPair(NElement key, NElement value);
 
+    NPairElement ofPair(String key, NElement value);
+
     NPairElementBuilder ofPairBuilder(NElement key, NElement value);
 
     /**
@@ -429,6 +455,8 @@ public interface NElements extends NContentTypeFormat {
     NPrimitiveElement ofRegex(String value);
 
     NPrimitiveElement ofName(String value);
+
+    NPrimitiveElement ofNameOrString(String value);
 
     NPrimitiveElement ofString(String str);
 
@@ -516,9 +544,11 @@ public interface NElements extends NContentTypeFormat {
 
     NUpletElement ofEmptyUplet();
 
+    NUpletElement ofUplet(String name, NElement... items);
+
     NMatrixElementBuilder ofMatrixBuilder();
 
-    NArrayElementBuilder ofArray(NElement... items);
+    NArrayElement ofArray(NElement... items);
 
     NElementComments ofMultiLineComments(String a);
 

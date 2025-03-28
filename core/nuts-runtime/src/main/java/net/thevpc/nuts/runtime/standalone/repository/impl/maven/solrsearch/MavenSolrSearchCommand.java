@@ -34,9 +34,9 @@ public class MavenSolrSearchCommand {
 
     public boolean isSolrSearchEnabled() {
         NPath solrSearchUrl = getSolrSearchUrl();
-        String configProperty = repo.config().getConfigProperty("maven.solrsearch.enable").flatMap(NLiteral::asStringValue).orNull();
+        String configProperty = repo.config().getConfigProperty("maven.solrsearch.enable").flatMap(NLiteral::asString).orNull();
         return solrSearchUrl != null
-                && NLiteral.of(configProperty).asBooleanValue()
+                && NLiteral.of(configProperty).asBoolean()
                 .ifEmpty(true).orElse(false);
     }
 
@@ -69,7 +69,7 @@ public class MavenSolrSearchCommand {
     }
 
     public NPath getSolrSearchUrl() {
-        String a = repo.config().getConfigProperty("maven.solrsearch.url").flatMap(NLiteral::asStringValue).orNull();
+        String a = repo.config().getConfigProperty("maven.solrsearch.url").flatMap(NLiteral::asString).orNull();
         if (a != null) {
             return NPath.of(a);
         }

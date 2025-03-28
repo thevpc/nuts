@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NCallableSupport;
 
@@ -14,8 +13,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ApacheReposHtmlfsParser extends AbstractHtmlfsParser {
-    public ApacheReposHtmlfsParser(NWorkspace workspace) {
-        super(workspace);
+    public ApacheReposHtmlfsParser() {
+        super();
     }
 
     @Override

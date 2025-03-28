@@ -82,7 +82,7 @@ public class NIdPathIterator extends NIteratorBase<NId> {
     @Override
     public NElement describe() {
         return NElements.of().ofObjectBuilder()
-                .set("type", "ScanPath")
+                .name("ScanPath")
                 .set("repository", repository == null ? null : repository.getName())
                 .set("filter", NEDesc.describeResolveOrDestruct(filter))
                 .set("path", NElements.of().toElement(basePath))

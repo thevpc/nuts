@@ -5,11 +5,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-final class NUpletImpl<T> implements NUplet<T> {
+final class NUpletImpl<T> implements NUplet<T>, NImmutable {
     private T[] values;
 
     public NUpletImpl(T[] a) {
-        this.values = a;
+        this.values = Arrays.copyOf(a, a.length);
     }
 
     @Override
@@ -66,7 +66,7 @@ final class NUpletImpl<T> implements NUplet<T> {
             b.append('(');
             int i = 0;
 
-            while(true) {
+            while (true) {
                 b.append(values[i]);
                 if (i == iMax) {
                     return b.append(')').toString();

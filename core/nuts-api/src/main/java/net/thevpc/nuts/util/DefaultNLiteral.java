@@ -138,12 +138,12 @@ public class DefaultNLiteral implements NLiteral {
     }
 
     @Override
-    public Object asObjectValue() {
+    public Object asRawObject() {
         return value;
     }
 
     @Override
-    public NOptional<LocalDateTime> asLocalDateTimeValue() {
+    public NOptional<LocalDateTime> asLocalDateTime() {
         if (value == null) {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty instant"));
         }
@@ -190,7 +190,7 @@ public class DefaultNLiteral implements NLiteral {
     }
 
     @Override
-    public NOptional<LocalDate> asLocalDateValue() {
+    public NOptional<LocalDate> asLocalDate() {
         if (value == null) {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty instant"));
         }
@@ -244,7 +244,7 @@ public class DefaultNLiteral implements NLiteral {
     }
 
     @Override
-    public NOptional<NFloatComplex> asFloatComplexValue() {
+    public NOptional<NFloatComplex> asFloatComplex() {
         if (value == null) {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty FloatComplex"));
         }
@@ -263,11 +263,11 @@ public class DefaultNLiteral implements NLiteral {
                     ((NBigComplex) value).imag().floatValue()
             ));
         }
-        return asFloatValue().map(x -> new NFloatComplex((float) value, 0));
+        return asFloat().map(x -> new NFloatComplex((float) value, 0));
     }
 
     @Override
-    public NOptional<NDoubleComplex> asDoubleComplexValue() {
+    public NOptional<NDoubleComplex> asDoubleComplex() {
         if (value == null) {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty DoubleComplex"));
         }
@@ -286,11 +286,11 @@ public class DefaultNLiteral implements NLiteral {
                     ((NBigComplex) value).imag().doubleValue()
             ));
         }
-        return asDoubleValue().map(x -> new NDoubleComplex((double) value, 0));
+        return asDouble().map(x -> new NDoubleComplex((double) value, 0));
     }
 
     @Override
-    public NOptional<NBigComplex> asBigComplexValue() {
+    public NOptional<NBigComplex> asBigComplex() {
         if (value == null) {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty DoubleComplex"));
         }
@@ -309,14 +309,14 @@ public class DefaultNLiteral implements NLiteral {
         if (value instanceof NBigComplex) {
             return NOptional.of(((NBigComplex) value));
         }
-        return asBigDecimalValue().map(x -> new NBigComplex(
+        return asBigDecimal().map(x -> new NBigComplex(
                 BigDecimal.valueOf(x.doubleValue()),
                 BigDecimal.ZERO
         ));
     }
 
     @Override
-    public NOptional<LocalTime> asLocalTimeValue() {
+    public NOptional<LocalTime> asLocalTime() {
         if (value == null) {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty instant"));
         }
@@ -377,7 +377,7 @@ public class DefaultNLiteral implements NLiteral {
     }
 
     @Override
-    public NOptional<Instant> asInstantValue() {
+    public NOptional<Instant> asInstant() {
         if (value == null) {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty instant"));
         }
@@ -424,7 +424,7 @@ public class DefaultNLiteral implements NLiteral {
     }
 
     @Override
-    public NOptional<Number> asNumberValue() {
+    public NOptional<Number> asNumber() {
         if (value == null) {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty number"));
         }
@@ -473,7 +473,7 @@ public class DefaultNLiteral implements NLiteral {
     }
 
     @Override
-    public NOptional<Boolean> asBooleanValue() {
+    public NOptional<Boolean> asBoolean() {
         if (value == null) {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty boolean"));
         }
@@ -504,7 +504,7 @@ public class DefaultNLiteral implements NLiteral {
         return NOptional.ofError(() -> NMsg.ofC("invalid boolean %s", svalue));
     }
 
-    public NOptional<Long> asLongValue() {
+    public NOptional<Long> asLong() {
         if (isBlank()) {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty Long"));
         }
@@ -551,7 +551,7 @@ public class DefaultNLiteral implements NLiteral {
     }
 
     @Override
-    public NOptional<Double> asDoubleValue() {
+    public NOptional<Double> asDouble() {
         if (isBlank()) {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty Double"));
         }
@@ -607,7 +607,7 @@ public class DefaultNLiteral implements NLiteral {
     }
 
     @Override
-    public NOptional<Float> asFloatValue() {
+    public NOptional<Float> asFloat() {
         if (isBlank()) {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty Float"));
         }
@@ -678,42 +678,42 @@ public class DefaultNLiteral implements NLiteral {
 
 
     @Override
-    public NOptional<Byte> asByteValue() {
-        return asLongValue()
+    public NOptional<Byte> asByte() {
+        return asLong()
                 .ifEmptyUse(() -> NOptional.ofEmpty(() -> NMsg.ofPlain("empty Byte")))
-                .ifErrorUse(() -> NOptional.ofError(() -> NMsg.ofC("invalid Byte : %s", asObjectValue())))
+                .ifErrorUse(() -> NOptional.ofError(() -> NMsg.ofC("invalid Byte : %s", asRawObject())))
                 .flatMap(value -> {
                     byte smallValue = value.byteValue();
                     if (!Long.valueOf(smallValue).equals(value)) {
-                        return NOptional.ofError(() -> NMsg.ofC("invalid Byte : %s", asObjectValue()));
+                        return NOptional.ofError(() -> NMsg.ofC("invalid Byte : %s", asRawObject()));
                     }
                     return NOptional.of(smallValue);
                 });
     }
 
     @Override
-    public NOptional<Short> asShortValue() {
-        return asLongValue()
+    public NOptional<Short> asShort() {
+        return asLong()
                 .ifEmptyUse(() -> NOptional.ofEmpty(() -> NMsg.ofPlain("empty Short")))
-                .ifErrorUse(() -> NOptional.ofError(() -> NMsg.ofC("invalid Short : %s", asObjectValue())))
+                .ifErrorUse(() -> NOptional.ofError(() -> NMsg.ofC("invalid Short : %s", asRawObject())))
                 .flatMap(value -> {
                     short smallValue = value.shortValue();
                     if (!Long.valueOf(smallValue).equals(value)) {
-                        return NOptional.ofError(() -> NMsg.ofC("invalid Short : %s", asObjectValue()));
+                        return NOptional.ofError(() -> NMsg.ofC("invalid Short : %s", asRawObject()));
                     }
                     return NOptional.of(smallValue);
                 });
     }
 
     @Override
-    public NOptional<Integer> asIntValue() {
-        return asLongValue()
+    public NOptional<Integer> asInt() {
+        return asLong()
                 .ifEmptyUse(() -> NOptional.ofEmpty(() -> NMsg.ofPlain("empty Integer")))
-                .ifErrorUse(() -> NOptional.ofError(() -> NMsg.ofC("invalid Integer : %s", asObjectValue())))
+                .ifErrorUse(() -> NOptional.ofError(() -> NMsg.ofC("invalid Integer : %s", asRawObject())))
                 .flatMap(value -> {
                     int smallValue = value.intValue();
                     if (!Long.valueOf(smallValue).equals(value)) {
-                        return NOptional.ofError(() -> NMsg.ofC("invalid Integer : %s", asObjectValue()));
+                        return NOptional.ofError(() -> NMsg.ofC("invalid Integer : %s", asRawObject()));
                     }
                     return NOptional.of(smallValue);
                 });
@@ -721,7 +721,7 @@ public class DefaultNLiteral implements NLiteral {
 
 
     @Override
-    public NOptional<String> asStringValue() {
+    public NOptional<String> asString() {
         if (value == null) {
             return NOptional.of(null);
         }
@@ -730,7 +730,7 @@ public class DefaultNLiteral implements NLiteral {
 
     @Override
     public boolean isBoolean() {
-        return asBooleanValue().isPresent();
+        return asBoolean().isPresent();
     }
 
     @Override
@@ -745,7 +745,7 @@ public class DefaultNLiteral implements NLiteral {
 
     @Override
     public boolean isString() {
-        return asStringValue().isPresent();
+        return asString().isPresent();
     }
 
     @Override
@@ -826,7 +826,7 @@ public class DefaultNLiteral implements NLiteral {
 
     @Override
     public String toString() {
-        return Objects.toString(asObjectValue());
+        return Objects.toString(asRawObject());
     }
 
     @Override
@@ -836,9 +836,9 @@ public class DefaultNLiteral implements NLiteral {
                 return "null";
             case CHAR:
             case STRING:
-                return NStringUtils.formatStringLiteral(asStringValue().get(), NQuoteType.DOUBLE);
+                return NStringUtils.formatStringLiteral(asString().get(), NQuoteType.DOUBLE);
             case BOOLEAN:
-                return String.valueOf(asBooleanValue().get());
+                return String.valueOf(asBoolean().get());
             case BYTE:
             case LONG:
             case BIG_DECIMAL:
@@ -847,14 +847,14 @@ public class DefaultNLiteral implements NLiteral {
             case INTEGER:
             case FLOAT:
             case DOUBLE:
-                return String.valueOf(asNumberValue().get());
+                return String.valueOf(asNumber().get());
             case INSTANT:
             case LOCAL_TIME:
             case LOCAL_DATE:
             case LOCAL_DATETIME:
-                return NStringUtils.formatStringLiteral(asInstantValue().get().toString(), NQuoteType.DOUBLE);
+                return NStringUtils.formatStringLiteral(asInstant().get().toString(), NQuoteType.DOUBLE);
         }
-        return asStringValue().get();
+        return asString().get();
     }
 
     @Override
@@ -871,23 +871,23 @@ public class DefaultNLiteral implements NLiteral {
     }
 
     @Override
-    public NOptional<String> asStringValueAt(int index) {
-        return asLiteralAt(index).asStringValue();
+    public NOptional<String> asStringAt(int index) {
+        return asLiteralAt(index).asString();
     }
 
     @Override
-    public NOptional<Long> asLongValueAt(int index) {
-        return asLiteralAt(index).asLongValue();
+    public NOptional<Long> asLongAt(int index) {
+        return asLiteralAt(index).asLong();
     }
 
     @Override
-    public NOptional<Integer> asIntValueAt(int index) {
-        return asLiteralAt(index).asIntValue();
+    public NOptional<Integer> asIntAt(int index) {
+        return asLiteralAt(index).asInt();
     }
 
     @Override
-    public NOptional<Double> asDoubleValueAt(int index) {
-        return asLiteralAt(index).asDoubleValue();
+    public NOptional<Double> asDoubleAt(int index) {
+        return asLiteralAt(index).asDouble();
     }
 
     @Override
@@ -897,11 +897,11 @@ public class DefaultNLiteral implements NLiteral {
 
     @Override
     public NLiteral asLiteralAt(int index) {
-        return of(asObjectValueAt(index).orNull());
+        return of(asObjectAt(index).orNull());
     }
 
     @Override
-    public NOptional<Object> asObjectValueAt(int index) {
+    public NOptional<Object> asObjectAt(int index) {
         if (value != null) {
             if (value instanceof Object[]) {
                 Object[] e = (Object[]) value;
@@ -923,7 +923,7 @@ public class DefaultNLiteral implements NLiteral {
                 }
             }
             if (value instanceof NElement) {
-                return ((NElement) value).asObjectValueAt(index);
+                return ((NElement) value).asObjectAt(index);
             }
         }
         return NOptional.ofEmpty(() -> NMsg.ofC("invalid object at %s", index));
@@ -935,7 +935,7 @@ public class DefaultNLiteral implements NLiteral {
     }
 
     @Override
-    public NOptional<BigInteger> asBigIntValue() {
+    public NOptional<BigInteger> asBigInt() {
         if (isBlank()) {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty BigInteger"));
         }
@@ -989,7 +989,7 @@ public class DefaultNLiteral implements NLiteral {
     }
 
     @Override
-    public NOptional<BigDecimal> asBigDecimalValue() {
+    public NOptional<BigDecimal> asBigDecimal() {
         if (isBlank()) {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty BigDecimal"));
         }
@@ -1051,7 +1051,7 @@ public class DefaultNLiteral implements NLiteral {
             case FLOAT_COMPLEX:
                 return true;
             case STRING: {
-                String s = asStringValue().get();
+                String s = asString().get();
                 s = s.trim();
                 try {
                     new BigDecimal(s);
@@ -1067,7 +1067,7 @@ public class DefaultNLiteral implements NLiteral {
 
 
     @Override
-    public NOptional<Character> asCharValue() {
+    public NOptional<Character> asChar() {
         if (isBlank()) {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty Character"));
         }
@@ -1140,109 +1140,109 @@ public class DefaultNLiteral implements NLiteral {
                 if (NBlankable.isBlank(value)) {
                     return null;
                 }
-                return (NOptional<ET>) asBooleanValue();
+                return (NOptional<ET>) asBoolean();
             }
             case "boolean": {
                 if (NBlankable.isBlank(value)) {
                     return (NOptional<ET>) NOptional.of(getDefaultValue(type));
                 }
-                return (NOptional<ET>) asBooleanValue();
+                return (NOptional<ET>) asBoolean();
             }
             case "java.lang.Byte": {
                 if (NBlankable.isBlank(value)) {
                     return null;
                 }
-                return (NOptional<ET>) asByteValue();
+                return (NOptional<ET>) asByte();
             }
             case "byte": {
                 if (NBlankable.isBlank(value)) {
                     return (NOptional<ET>) NOptional.of(getDefaultValue(type));
                 }
-                return (NOptional<ET>) asByteValue();
+                return (NOptional<ET>) asByte();
             }
             case "java.lang.Short": {
                 if (NBlankable.isBlank(value)) {
                     return null;
                 }
-                return (NOptional<ET>) asShortValue();
+                return (NOptional<ET>) asShort();
             }
             case "short": {
                 if (NBlankable.isBlank(value)) {
                     return (NOptional<ET>) NOptional.of(getDefaultValue(type));
                 }
-                return (NOptional<ET>) asShortValue();
+                return (NOptional<ET>) asShort();
             }
             case "java.lang.Character": {
                 if (NBlankable.isBlank(value)) {
                     return null;
                 }
-                return (NOptional<ET>) asCharValue();
+                return (NOptional<ET>) asChar();
             }
             case "char": {
                 if (NBlankable.isBlank(value)) {
                     return (NOptional<ET>) NOptional.of(getDefaultValue(type));
                 }
-                return (NOptional<ET>) asCharValue();
+                return (NOptional<ET>) asChar();
             }
             case "java.lang.Integer": {
                 if (NBlankable.isBlank(value)) {
                     return null;
                 }
-                return (NOptional<ET>) asIntValue();
+                return (NOptional<ET>) asInt();
             }
             case "int": {
                 if (NBlankable.isBlank(value)) {
                     return (NOptional<ET>) NOptional.of(getDefaultValue(type));
                 }
-                return (NOptional<ET>) asIntValue();
+                return (NOptional<ET>) asInt();
             }
             case "java.lang.Long": {
                 if (NBlankable.isBlank(value)) {
                     return null;
                 }
-                return (NOptional<ET>) asLongValue();
+                return (NOptional<ET>) asLong();
             }
             case "long": {
                 if (NBlankable.isBlank(value)) {
                     return (NOptional<ET>) NOptional.of(getDefaultValue(type));
                 }
-                return (NOptional<ET>) asLongValue();
+                return (NOptional<ET>) asLong();
             }
             case "java.lang.Float": {
                 if (NBlankable.isBlank(value)) {
                     return null;
                 }
-                return (NOptional<ET>) asFloatValue();
+                return (NOptional<ET>) asFloat();
             }
             case "float": {
                 if (NBlankable.isBlank(value)) {
                     return (NOptional<ET>) NOptional.of(getDefaultValue(type));
                 }
-                return (NOptional<ET>) asFloatValue();
+                return (NOptional<ET>) asFloat();
             }
             case "java.lang.Double": {
                 if (NBlankable.isBlank(value)) {
                     return null;
                 }
-                return (NOptional<ET>) asDoubleValue();
+                return (NOptional<ET>) asDouble();
             }
             case "double": {
                 if (NBlankable.isBlank(value)) {
                     return (NOptional<ET>) NOptional.of(getDefaultValue(type));
                 }
-                return (NOptional<ET>) asDoubleValue();
+                return (NOptional<ET>) asDouble();
             }
             case "java.time.Instant": {
                 if (NBlankable.isBlank(value)) {
                     return NOptional.ofEmpty();
                 }
-                return (NOptional<ET>) asInstantValue();
+                return (NOptional<ET>) asInstant();
             }
             case "java.lang.Number": {
                 if (NBlankable.isBlank(value)) {
                     return NOptional.ofEmpty();
                 }
-                return (NOptional<ET>) asNumberValue();
+                return (NOptional<ET>) asNumber();
             }
         }
         if (type.isEnum()) {
@@ -1251,7 +1251,7 @@ public class DefaultNLiteral implements NLiteral {
             }
             if (isInt()) {
                 ET[] enumConstants = type.getEnumConstants();
-                Integer ordinal = asIntValue().get();
+                Integer ordinal = asInt().get();
                 if (ordinal >= 0 && ordinal <= enumConstants.length) {
                     return (NOptional<ET>) NOptional.of(enumConstants[ordinal]);
                 }

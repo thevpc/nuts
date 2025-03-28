@@ -91,7 +91,7 @@ public class NElementToStringHelper {
                         if (first) {
                             first = false;
                         } else {
-                            p = ", ";
+                            p = ",\n";
                         }
                         sb.append(new NStringBuilder().append(p).append(child.toString(false)).indent("  "));
                     }
@@ -126,7 +126,7 @@ public class NElementToStringHelper {
         }
         if (any.type() == NElementType.PAIR) {
             NPairElement k = any.asPair().get();
-            if (k.key().type() == NElementType.STRING || k.key().type() == NElementType.NAME || k.key().type() == NElementType.REGEX) {
+            if (k.key().isAnyString()) {
                 if (k.value().isPrimitive()) {
                     return isSingleLine(any, compact);
                 }

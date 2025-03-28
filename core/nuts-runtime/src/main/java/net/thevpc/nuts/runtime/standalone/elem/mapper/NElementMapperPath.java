@@ -32,6 +32,6 @@ public class NElementMapperPath implements NElementMapper<Path> {
     @Override
     public Path createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
         NSession session = context.getSession();
-        return Paths.get(o.asStringValue().get());
+        return Paths.get(o.asString().get());
     }
 }

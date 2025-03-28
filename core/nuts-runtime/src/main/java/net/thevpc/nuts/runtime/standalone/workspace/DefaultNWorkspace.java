@@ -34,6 +34,7 @@ import net.thevpc.nuts.boot.NBootWorkspaceNotFoundException;
 import net.thevpc.nuts.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.format.NVersionFormat;
+import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepositoryModel;
@@ -340,7 +341,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         NSession session = currentSession();
         if (data.justInstalled) {
             NLiteral enableRecommendations = wsModel.bootModel.getCustomBootOptions().get("---recommendations");
-            if (enableRecommendations == null || enableRecommendations.asBooleanValue().orElse(true)) {
+            if (enableRecommendations == null || enableRecommendations.asBoolean().orElse(true)) {
                 try {
                     Map rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(getApiId().toString(), ""), NRecommendationPhase.BOOTSTRAP, false);
                     if (rec != null) {
@@ -414,6 +415,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                         .build());
             }
         }
+        NWorkspaceProfilerImpl.debug();
     }
 
     private void _createWorkspaceNonFirstBoot(InitWorkspaceData data) {
@@ -526,10 +528,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         //load all "---config.*" custom options into persistent config
         for (String customOption : effectiveBootOptions.getCustomOptions().orElseGet(Collections::emptyList)) {
             NArg a = NArg.of(customOption);
-            if (a.getKey().asStringValue().get().startsWith("config.")) {
+            if (a.getKey().asString().get().startsWith("config.")) {
                 if (a.isActive()) {
                     this.setConfigProperty(
-                            a.getKey().asStringValue().orElse("").substring("config.".length()),
+                            a.getKey().asString().orElse("").substring("config.".length()),
                             a.getStringValue().orNull()
                     );
                 }

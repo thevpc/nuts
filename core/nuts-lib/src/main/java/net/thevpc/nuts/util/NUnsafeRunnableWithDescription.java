@@ -1,10 +1,9 @@
-package net.thevpc.nuts.reserved.util;
+package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.util.NUnsafeRunnable;
 
-public class NUnsafeRunnableWithDescription implements NUnsafeRunnable {
+public class NUnsafeRunnableWithDescription implements NUnsafeRunnable, NImmutable {
     private final NUnsafeRunnable base;
     private final NEDesc nfo;
 

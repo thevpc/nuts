@@ -448,7 +448,7 @@ public class CoreNUtils {
             }
             int a = 0;
             for (String part : s.split("\\.")) {
-                a = a * 100 + NLiteral.of(part).asIntValue().orElse(0);
+                a = a * 100 + NLiteral.of(part).asInt().orElse(0);
             }
             return a;
         } catch (Exception ex) {
@@ -609,13 +609,13 @@ public class CoreNUtils {
     public static boolean isCustomTrue(String name) {
         return NWorkspace.of().getCustomBootOption(name)
                 .ifEmpty(NLiteral.of("true"))
-                .flatMap(NLiteral::asBooleanValue)
+                .flatMap(NLiteral::asBoolean)
                 .orElse(false);
     }
 
     public static boolean isCustomFalse(String name) {
         return NWorkspace.of().getCustomBootOption(name)
-                .flatMap(NLiteral::asBooleanValue)
+                .flatMap(NLiteral::asBoolean)
                 .orElse(false);
     }
 
@@ -628,7 +628,7 @@ public class CoreNUtils {
 
     public static boolean isShowCommand() {
         return NWorkspace.of().getCustomBootOption("---show-command")
-                .flatMap(NLiteral::asBooleanValue)
+                .flatMap(NLiteral::asBoolean)
                 .orElse(false);
     }
 

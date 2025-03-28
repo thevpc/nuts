@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
 import net.thevpc.nuts.NCallableSupport;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 
 import java.io.BufferedReader;
@@ -11,8 +10,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MavenCentralHtmlfsParser extends AbstractHtmlfsParser {
-    public MavenCentralHtmlfsParser(NWorkspace workspace) {
-        super(workspace);
+    public MavenCentralHtmlfsParser() {
+        super();
     }
 
     @Override

@@ -25,7 +25,7 @@ public class NElementMapperBoolean implements NElementMapper<Boolean> {
         switch (((Class) to).getName()) {
             case "boolean":
             case "java.lang.Boolean":
-                return o.asBooleanValue().get();
+                return o.asBoolean().get();
         }
         throw new UnsupportedOperationException("Not supported.");
     }

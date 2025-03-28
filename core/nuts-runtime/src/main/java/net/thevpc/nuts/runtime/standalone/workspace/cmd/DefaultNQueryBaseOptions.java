@@ -329,7 +329,7 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
 //            }
             case "--optional": {
                 cmdLine.withNextEntryValue((v, r) -> this.setOptional(
-                        NLiteral.of(v.asStringValue().get()).asBooleanValue()
+                        NLiteral.of(v.asString().get()).asBoolean()
                                 .orNull()));
                 return true;
             }

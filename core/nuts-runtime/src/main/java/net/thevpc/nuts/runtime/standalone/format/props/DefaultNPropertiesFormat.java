@@ -44,7 +44,7 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
         if ((a = cmdLine.nextEntry(OPTION_MULTILINE_PROPERTY).orNull()) != null) {
             NArg i = NArg.of(a.getStringValue().get());
             if (i.isActive()) {
-                addMultilineProperty(i.getKey().asStringValue().get(), i.getStringValue().get());
+                addMultilineProperty(i.getKey().asString().get(), i.getStringValue().get());
             }
             return true;
         } else if ((a = cmdLine.nextFlag("--compact").orNull()) != null) {

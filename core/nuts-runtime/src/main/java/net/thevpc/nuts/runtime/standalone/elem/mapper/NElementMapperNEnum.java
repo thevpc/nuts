@@ -18,7 +18,7 @@ public class NElementMapperNEnum implements NElementMapper<NEnum> {
     public NEnum createObject(NElement json, Type typeOfResult, NElementFactoryContext context) {
         NSession session = context.getSession();
         Class cc = ReflectUtils.getRawClass(typeOfResult);
-        return (NEnum) NEnum.parse(cc,json.asStringValue().get()).get();
+        return (NEnum) NEnum.parse(cc,json.asString().get()).get();
     }
 
     public NElement createElement(NEnum src, Type typeOfSrc, NElementFactoryContext context) {

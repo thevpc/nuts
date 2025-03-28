@@ -356,7 +356,7 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
                     cmdLine.throwUnexpectedArgument();
                 } else {
                     cmdLine.skip();
-                    String idOrPath = a.asStringValue().get();
+                    String idOrPath = a.asString().get();
                     if (idOrPath.indexOf('/') >= 0 || idOrPath.indexOf('\\') >= 0) {
                         setContent(NPath.of(idOrPath));
                     } else {

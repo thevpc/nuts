@@ -19,8 +19,10 @@ public class NFunction3WithDescription<A, B, C, V> implements NFunction3<A, B, C
 
     @Override
     public NFunction3<A, B, C, V> withDesc(NEDesc description) {
-        this.description = description;
-        return this;
+        if(description==null){
+            return base;
+        }
+        return new NFunction3WithDescription<>(base, description);
     }
 
     @Override

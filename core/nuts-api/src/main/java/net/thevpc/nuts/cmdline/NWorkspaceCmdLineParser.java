@@ -547,7 +547,7 @@ public final class NWorkspaceCmdLineParser {
                                 } else {
                                     if (a.isNegated()) {
                                         options.setDebug(
-                                                String.valueOf(!NLiteral.of(a.getStringValue().get()).asBooleanValue()
+                                                String.valueOf(!NLiteral.of(a.getStringValue().get()).asBoolean()
                                                         .ifEmpty(true).ifError(false).get()));
                                     } else {
                                         options.setDebug(a.getStringValue().get());
@@ -1095,7 +1095,7 @@ public final class NWorkspaceCmdLineParser {
                                     if (showError == null) {
                                         showError = new ArrayList<>();
                                     }
-                                    showError.add(NMsg.ofC("invalid argument for workspace: %s", a.asStringValue()));
+                                    showError.add(NMsg.ofC("invalid argument for workspace: %s", a.asString()));
                                     options.setErrors(showError);
                                 }
                                 List<String> applicationArguments = options.getApplicationArguments().orNull();
@@ -1183,7 +1183,7 @@ public final class NWorkspaceCmdLineParser {
                         if (active) {
                             if (options != null) {
                                 if (!NBlankable.isBlank(a.getStringValue())) {
-                                    options.setExpireTime(a.getValue().asInstantValue().ifEmpty(null).get());
+                                    options.setExpireTime(a.getValue().asInstant().ifEmpty(null).get());
                                 } else {
                                     options.setExpireTime(Instant.now());
                                 }
@@ -1238,11 +1238,11 @@ public final class NWorkspaceCmdLineParser {
                                             if (executorOptions == null) {
                                                 executorOptions = new ArrayList<>();
                                             }
-                                            executorOptions.add(a.asStringValue().orElse(""));
-                                            newArgs.add(a.asStringValue().orElse(""));
+                                            executorOptions.add(a.asString().orElse(""));
+                                            newArgs.add(a.asString().orElse(""));
                                             options.setExecutorOptions(executorOptions);
                                         } else {
-                                            newArgs.add(a.asStringValue().orElse(""));
+                                            newArgs.add(a.asString().orElse(""));
                                         }
                                     } else {
                                         if (options != null) {
@@ -1250,7 +1250,7 @@ public final class NWorkspaceCmdLineParser {
                                             if (applicationArguments == null) {
                                                 applicationArguments = new ArrayList<>();
                                             }
-                                            applicationArguments.add(a.asStringValue().orElse(""));
+                                            applicationArguments.add(a.asString().orElse(""));
                                             List<String> list = Arrays.asList(cmdLine.toStringArray());
                                             applicationArguments.addAll(list);
                                             newArgs.addAll(list);
@@ -1473,7 +1473,7 @@ public final class NWorkspaceCmdLineParser {
                                     showError = new ArrayList<>();
                                     options.setErrors(showError);
                                 }
-                                showError.add(NMsg.ofC("nuts: invalid option %s", a.asStringValue().orNull()));
+                                showError.add(NMsg.ofC("nuts: invalid option %s", a.asString().orNull()));
                             }
                             NArg finalA1 = a;
                             return NOptional.ofEmpty(() -> NMsg.ofC("unsupported option %s", finalA1));
@@ -1587,7 +1587,7 @@ public final class NWorkspaceCmdLineParser {
             case "--log-file-count": {
                 a = cmdLine.nextEntry().get();
                 if (enabled) {
-                    logConfig.setLogFileCount(a.getValue().asIntValue().get());
+                    logConfig.setLogFileCount(a.getValue().asInt().get());
                     return NOptional.of(a);
                 } else {
                     return NOptional.of(a);

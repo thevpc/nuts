@@ -45,6 +45,11 @@ class DefaultNCustomElement extends AbstractNElement implements NCustomElement {
     }
 
     @Override
+    public Object asRawObject() {
+        return value;
+    }
+
+    @Override
     public NOptional<NElement> resolve(String pattern) {
         pattern = NStringUtils.trimToNull(pattern);
         if (pattern == null || pattern.equals(".")) {
@@ -115,8 +120,8 @@ class DefaultNCustomElement extends AbstractNElement implements NCustomElement {
     }
 
     @Override
-    public NOptional<Object> asObjectValueAt(int index) {
-        return NLiteral.of(value).asObjectValueAt(index);
+    public NOptional<Object> asObjectAt(int index) {
+        return NLiteral.of(value).asObjectAt(index);
     }
 
     @Override

@@ -2,9 +2,9 @@ package net.thevpc.nuts.util;
 
 import java.util.regex.Matcher;
 
-public abstract class NStringMatchResult {
+public abstract class NStringMatchResult implements NImmutable{
     private static final NStringMatchResult NO_MATCH = new NStringMatchResultAsNoMatch();
-    private NMatchType mode;
+    private final NMatchType mode;
 
     public static NStringMatchResult ofNoMatch() {
         return NO_MATCH;

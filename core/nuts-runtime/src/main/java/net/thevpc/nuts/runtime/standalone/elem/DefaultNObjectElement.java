@@ -1,10 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStringBuilder;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,13 +14,16 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
     private String name;
     private List<NElement> params;
 
-    public DefaultNObjectElement(String name, List<NElement> params, List<NElement> values, NElementAnnotation[] annotations,NElementComments comments) {
+    public DefaultNObjectElement(String name, List<NElement> params, List<NElement> values, NElementAnnotation[] annotations, NElementComments comments) {
         super(
                 name == null && params == null ? NElementType.OBJECT
                         : name == null && params != null ? NElementType.PARAMETRIZED_OBJECT
                         : name != null && params == null ? NElementType.NAMED_OBJECT
                         : NElementType.NAMED_PARAMETRIZED_OBJECT,
-                annotations,comments);
+                annotations, comments);
+        if (name != null) {
+            NAssert.requireTrue(NElements.isValidName(name), "valid name");
+        }
         this.name = name;
         this.params = params;
         if (values != null) {
@@ -56,8 +56,44 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
         if (elements == null) {
             elements = NElements.of();
         }
-        NPrimitiveElement newKey = elements.ofString(s);
-        return get(newKey);
+        for (NElement x : values) {
+            if (x instanceof NPairElement) {
+                NPairElement e = (NPairElement) x;
+                if (s == null) {
+                    if (e.key().isNull()) {
+                        return NOptional.of(e.value());
+                    }
+                } else if (e.key().isAnyString()) {
+                    if (Objects.equals(e.key().asString().get(), s)) {
+                        return NOptional.of(e.value());
+                    }
+                }
+            }
+        }
+        return NOptional.ofNamedEmpty("property " + s);
+    }
+
+    @Override
+    public List<NElement> getAll(String s) {
+        if (elements == null) {
+            elements = NElements.of();
+        }
+        List<NElement> ret = new ArrayList<>();
+        for (NElement x : values) {
+            if (x instanceof NPairElement) {
+                NPairElement e = (NPairElement) x;
+                if (s == null) {
+                    if (e.key().isNull()) {
+                        ret.add(e.value());
+                    }
+                } else if (e.key().isAnyString()) {
+                    if (Objects.equals(e.key().asString().get(), s)) {
+                        ret.add(e.value());
+                    }
+                }
+            }
+        }
+        return ret;
     }
 
     @Override
@@ -139,9 +175,9 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
     public String toString(boolean compact) {
         NStringBuilder sb = new NStringBuilder();
         sb.append(NElementToStringHelper.leadingCommentsAndAnnotations(this, compact));
-        NElementToStringHelper.appendUplet(name,params, compact, sb);
+        NElementToStringHelper.appendUplet(name, params, compact, sb);
         sb.append("{");
-        NElementToStringHelper.appendChildren(children(), compact, new NElementToStringHelper.SemiCompactInfo(),sb);
+        NElementToStringHelper.appendChildren(children(), compact, new NElementToStringHelper.SemiCompactInfo(), sb);
         sb.append("}");
         sb.append(NElementToStringHelper.trailingComments(this, compact));
         return sb.toString();
@@ -154,7 +190,7 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
     }
 
     @Override
-    public NOptional<Object> asObjectValueAt(int index) {
+    public NOptional<Object> asObjectAt(int index) {
         if (index >= 0 && index < values.size()) {
             return NOptional.of(values.get(index));
         }

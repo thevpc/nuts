@@ -39,7 +39,7 @@ public class DefaultNDescriptorProperty implements NDescriptorProperty {
     public NDescriptorPropertyBuilder builder() {
         return new DefaultNDescriptorPropertyBuilder()
                 .setName(getName())
-                .setValue(getValue().asStringValue().orNull())
+                .setValue(getValue().asString().orNull())
                 .setCondition(getCondition());
     }
 

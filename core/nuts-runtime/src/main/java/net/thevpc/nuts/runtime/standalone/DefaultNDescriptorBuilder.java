@@ -601,50 +601,50 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
             if (NBlankable.isBlank(property.getCondition())) {
                 switch (property.getName()) {
                     case "nuts.application": {
-                        if (property.getValue().asBooleanValue().orElse(false)) {
+                        if (property.getValue().asBoolean().orElse(false)) {
                             flags.add(NDescriptorFlag.APP);
                             flags.add(NDescriptorFlag.EXEC);
                         }
                         break;
                     }
                     case "nuts.executable": {
-                        if (property.getValue().asBooleanValue().orElse(false)) {
+                        if (property.getValue().asBoolean().orElse(false)) {
                             flags.add(NDescriptorFlag.EXEC);
                         }
                         break;
                     }
                     case "nuts.term": {
-                        if (property.getValue().asBooleanValue().orElse(false)) {
+                        if (property.getValue().asBoolean().orElse(false)) {
                             flags.add(NDescriptorFlag.TERM);
                         }
                         break;
                     }
                     case "nuts.gui": {
-                        if (property.getValue().asBooleanValue().orElse(false)) {
+                        if (property.getValue().asBoolean().orElse(false)) {
                             flags.add(NDescriptorFlag.GUI);
                         }
                         break;
                     }
                     case "nuts.extension": {
-                        if (property.getValue().asBooleanValue().orElse(false)) {
+                        if (property.getValue().asBoolean().orElse(false)) {
                             idType = NIdType.EXTENSION;
                         }
                         break;
                     }
                     case "nuts.runtime": {
-                        if (property.getValue().asBooleanValue().orElse(false)) {
+                        if (property.getValue().asBoolean().orElse(false)) {
                             idType = NIdType.RUNTIME;
                         }
                         break;
                     }
                     case "nuts.companion": {
-                        if (property.getValue().asBooleanValue().orElse(false)) {
+                        if (property.getValue().asBoolean().orElse(false)) {
                             idType = NIdType.COMPANION;
                         }
                         break;
                     }
                     case "nuts.api": {
-                        if (property.getValue().asBooleanValue().orElse(false)) {
+                        if (property.getValue().asBoolean().orElse(false)) {
                             flags.add(NDescriptorFlag.NUTS_API);
                         }
                         break;

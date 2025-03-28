@@ -195,7 +195,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
             if (lib.isReadEnabled()) {
                 all.add(NIteratorBuilder.of(
                                         lib.searchVersions(id, idFilter, true)
-                                ).named("searchVersionInLib(" + getName() + ")")
+                                ).named(NElements.of().ofUplet("searchVersionInLib",NElements.of().ofString(getName())))
                                 .build()
 
                 );
@@ -207,7 +207,9 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                     all.add(
                             NIteratorBuilder.of(
                                     cache.searchVersions(id, idFilter, true)
-                            ).named("searchVersionInCache(" + getName() + ")").build());
+                            )
+                                    .named(NElements.of().ofUplet("searchVersionInCache",NElements.of().ofString(getName())))
+                                    .build());
                 }
 //                Iterator<NutsId> p = null;
 //                try {
@@ -228,7 +230,9 @@ public class NCachedRepository extends AbstractNRepositoryBase {
             p = searchVersionsCore(id, idFilter, fetchMode);
             if (p != null) {
                 all.add(
-                        NIteratorBuilder.of(p).named("searchVersionInCore(" + getName() + ")").build());
+                        NIteratorBuilder.of(p)
+                                .named(NElements.of().ofUplet("searchVersionInCore",NElements.of().ofString(getName())))
+                                .build());
             }
         } catch (NNotFoundException ex) {
             //ignore error
@@ -245,7 +249,9 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         }
         return NIteratorBuilder.of(
                 mirroring.searchVersionsImpl_appendMirrors(namedNutIdIterator, id, idFilter, fetchMode)
-        ).named("searchVersion(" + getName() + ")").build();
+        )
+                .named(NElements.of().ofUplet("searchVersion",NElements.of().ofString(getName())))
+                .build();
 
     }
 

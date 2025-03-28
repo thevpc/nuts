@@ -30,7 +30,7 @@ public class NElementMapperNVersion implements NElementMapper<NVersion> {
 
     @Override
     public NVersion createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        return NVersion.get(o.asStringValue().get()).get();
+        return NVersion.get(o.asString().get()).get();
     }
 
 }

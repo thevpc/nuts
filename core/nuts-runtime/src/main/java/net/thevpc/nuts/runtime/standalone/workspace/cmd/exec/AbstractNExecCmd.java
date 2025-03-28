@@ -593,7 +593,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
         }
         if (!command.isEmpty()) {
             cmdLine.next();
-            command.add(a.asStringValue().get());
+            command.add(a.asString().get());
             return true;
         }
         boolean enabled = a.isActive();
@@ -672,15 +672,15 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
                 return true;
             }
             case "--rerun-min-time": {
-                cmdLine.withNextEntry((v, ar) -> this.multipleRunsMinTimeMs = NLiteral.of(v).asLongValue().get());
+                cmdLine.withNextEntry((v, ar) -> this.multipleRunsMinTimeMs = NLiteral.of(v).asLong().get());
                 return true;
             }
             case "--rerun-safe-time": {
-                cmdLine.withNextEntry((v, ar) -> this.multipleRunsSafeTimeMs = NLiteral.of(v).asLongValue().get());
+                cmdLine.withNextEntry((v, ar) -> this.multipleRunsSafeTimeMs = NLiteral.of(v).asLong().get());
                 return true;
             }
             case "--rerun-max-count": {
-                cmdLine.withNextEntry((v, ar) -> this.multipleRunsMaxCount = NLiteral.of(v).asIntValue().get());
+                cmdLine.withNextEntry((v, ar) -> this.multipleRunsMaxCount = NLiteral.of(v).asInt().get());
                 return true;
             }
             case "--cron": {
@@ -693,9 +693,9 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
                 }
                 cmdLine.skip();
                 if (a.isOption()) {
-                    addExecutorOption(a.asStringValue().get());
+                    addExecutorOption(a.asString().get());
                 } else {
-                    addCommand(a.asStringValue().get());
+                    addCommand(a.asString().get());
                     addCommand(cmdLine.toStringArray());
                     cmdLine.skipAll();
                 }

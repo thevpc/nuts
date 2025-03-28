@@ -44,8 +44,11 @@ import java.util.Objects;
 class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveElement {
     private final NLiteral value;
 
-    DefaultNPrimitiveElement(NElementType type, Object value, NElementAnnotation[] annotations,NElementComments comments) {
+    DefaultNPrimitiveElement(NElementType type, Object value, NElementAnnotation[] annotations, NElementComments comments) {
         super(type, annotations, comments);
+        if (type == NElementType.NAME) {
+            NAssert.requireTrue(NElements.isValidName((String) value), "valid name");
+        }
         this.value = NLiteral.of(value);
     }
 
@@ -60,97 +63,97 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
 
     @Override
     public Object value() {
-        return value.asObjectValue();
+        return value.asRawObject();
     }
 
     @Override
-    public Object asObjectValue() {
-        return value.asObjectValue();
+    public Object asRawObject() {
+        return value.asRawObject();
     }
 
     @Override
-    public NOptional<Instant> asInstantValue() {
-        return value.asInstantValue();
+    public NOptional<Instant> asInstant() {
+        return value.asInstant();
     }
 
     @Override
-    public NOptional<Number> asNumberValue() {
-        return value.asNumberValue();
+    public NOptional<Number> asNumber() {
+        return value.asNumber();
     }
 
     @Override
-    public NOptional<Boolean> asBooleanValue() {
-        return value.asBooleanValue();
+    public NOptional<Boolean> asBoolean() {
+        return value.asBoolean();
     }
 
     @Override
-    public NOptional<Long> asLongValue() {
-        return value.asLongValue();
+    public NOptional<Long> asLong() {
+        return value.asLong();
     }
 
     @Override
-    public NOptional<Double> asDoubleValue() {
-        return value.asDoubleValue();
+    public NOptional<Double> asDouble() {
+        return value.asDouble();
     }
 
     @Override
-    public NOptional<Float> asFloatValue() {
-        return value.asFloatValue();
+    public NOptional<Float> asFloat() {
+        return value.asFloat();
     }
 
     @Override
-    public NOptional<LocalDate> asLocalDateValue() {
-        return value.asLocalDateValue();
+    public NOptional<LocalDate> asLocalDate() {
+        return value.asLocalDate();
     }
 
     @Override
-    public NOptional<LocalTime> asLocalTimeValue() {
-        return value.asLocalTimeValue();
+    public NOptional<LocalTime> asLocalTime() {
+        return value.asLocalTime();
     }
 
     @Override
-    public NOptional<NBigComplex> asBigComplexValue() {
-        return value.asBigComplexValue();
+    public NOptional<NBigComplex> asBigComplex() {
+        return value.asBigComplex();
     }
 
     @Override
-    public NOptional<NDoubleComplex> asDoubleComplexValue() {
-        return value.asDoubleComplexValue();
+    public NOptional<NDoubleComplex> asDoubleComplex() {
+        return value.asDoubleComplex();
     }
 
     @Override
-    public NOptional<NFloatComplex> asFloatComplexValue() {
-        return value.asFloatComplexValue();
+    public NOptional<NFloatComplex> asFloatComplex() {
+        return value.asFloatComplex();
     }
 
     @Override
-    public NOptional<LocalDateTime> asLocalDateTimeValue() {
-        return value.asLocalDateTimeValue();
+    public NOptional<LocalDateTime> asLocalDateTime() {
+        return value.asLocalDateTime();
     }
 
     @Override
-    public NOptional<Byte> asByteValue() {
-        return value.asByteValue();
+    public NOptional<Byte> asByte() {
+        return value.asByte();
     }
 
     @Override
-    public NOptional<Short> asShortValue() {
-        return value.asShortValue();
+    public NOptional<Short> asShort() {
+        return value.asShort();
     }
 
     @Override
-    public NOptional<Character> asCharValue() {
-        return value.asCharValue();
+    public NOptional<Character> asChar() {
+        return value.asChar();
     }
 
     @Override
-    public NOptional<Integer> asIntValue() {
-        return value.asIntValue();
+    public NOptional<Integer> asInt() {
+        return value.asInt();
     }
 
     @Override
-    public NOptional<String> asStringValue() {
-        return value.asStringValue();
+    public NOptional<String> asString() {
+        return value.asString();
     }
 
     @Override
@@ -234,13 +237,13 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
     }
 
     @Override
-    public NOptional<BigInteger> asBigIntValue() {
-        return value.asBigIntValue();
+    public NOptional<BigInteger> asBigInt() {
+        return value.asBigInt();
     }
 
     @Override
-    public NOptional<BigDecimal> asBigDecimalValue() {
-        return value.asBigDecimalValue();
+    public NOptional<BigDecimal> asBigDecimal() {
+        return value.asBigDecimal();
     }
 
     @Override
@@ -279,13 +282,13 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
             case INTEGER:
             case FLOAT:
             case DOUBLE:
-                sb.append(String.valueOf(this.asNumberValue().get()));
+                sb.append(String.valueOf(this.asNumber().get()));
                 break;
             case INSTANT:
             case LOCAL_TIME:
             case LOCAL_DATE:
             case LOCAL_DATETIME:
-                sb.append(NStringUtils.formatStringLiteral(this.asInstantValue().get().toString(), NQuoteType.DOUBLE));
+                sb.append(NStringUtils.formatStringLiteral(this.asInstant().get().toString(), NQuoteType.DOUBLE));
                 break;
             default: {
                 sb.append(String.valueOf(value));
@@ -315,8 +318,8 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
 
 
     @Override
-    public NOptional<Object> asObjectValueAt(int index) {
-        return value.asObjectValueAt(index);
+    public NOptional<Object> asObjectAt(int index) {
+        return value.asObjectAt(index);
     }
 
     @Override

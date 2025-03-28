@@ -44,21 +44,15 @@ public class NQueueIterator<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        return NElements.of()
-                .ofObjectBuilder()
-                .set("type","Queue")
-                .set("items",
-                        NElements.of().ofArrayBuilder()
-                                .addAll(
-                                        new ArrayList<>(children)
-                                                .stream().map(
-                                                        x-> NEDesc.describeResolveOrDestruct(x)
-                                                ).collect(Collectors.toList())
-                                )
-                                .build()
-                        )
-                .build()
-                ;
+        return NElements.of().ofObjectBuilder()
+                .name("Queue")
+                .addAll(
+                        children
+                                .stream().map(
+                                        x -> NEDesc.describeResolveOrDestruct(x)
+                                ).toArray(NElement[]::new)
+                )
+                .build();
     }
 
     public void addNonNull(NIterator<? extends T> child) {

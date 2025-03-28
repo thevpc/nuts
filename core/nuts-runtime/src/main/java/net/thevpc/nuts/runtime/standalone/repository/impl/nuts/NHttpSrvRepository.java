@@ -275,7 +275,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         }
 
         String passphrase = config().getConfigProperty(CoreSecurityUtils.ENV_KEY_PASSPHRASE)
-                .flatMap(NLiteral::asStringValue)
+                .flatMap(NLiteral::asString)
                 .orElse(CoreSecurityUtils.DEFAULT_PASSPHRASE);
         newLogin = new String(CoreSecurityUtils.INSTANCE.defaultEncryptChars(NStringUtils.trim(newLogin).toCharArray(), passphrase));
         credentials = CoreSecurityUtils.INSTANCE.defaultEncryptChars(credentials, passphrase);
@@ -312,7 +312,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         @Override
         public NElement describe() {
             return NElements.of().ofObjectBuilder()
-                    .set("type", "ScanArchetypeCatalog")
+                    .name("ScanArchetypeCatalog")
                     .set("source", source0.toString())
                     .build();
         }

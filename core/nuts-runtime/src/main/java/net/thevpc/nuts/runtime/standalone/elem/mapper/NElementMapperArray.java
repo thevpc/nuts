@@ -25,49 +25,49 @@ public class NElementMapperArray implements NElementMapper<Object> {
             case "boolean": {
                 boolean[] x = new boolean[e.size()];
                 for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get().asBooleanValue().get();
+                    x[i] = e.get(i).get().asBoolean().get();
                 }
                 return x;
             }
             case "byte": {
                 byte[] x = new byte[e.size()];
                 for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get().asByteValue().get();
+                    x[i] = e.get(i).get().asByte().get();
                 }
                 return x;
             }
             case "short": {
                 short[] x = new short[e.size()];
                 for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get().asShortValue().get();
+                    x[i] = e.get(i).get().asShort().get();
                 }
                 return x;
             }
             case "int": {
                 int[] x = new int[e.size()];
                 for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get().asIntValue().get();
+                    x[i] = e.get(i).get().asInt().get();
                 }
                 return x;
             }
             case "long": {
                 long[] x = new long[e.size()];
                 for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get().asLongValue().get();
+                    x[i] = e.get(i).get().asLong().get();
                 }
                 return x;
             }
             case "float": {
                 float[] x = new float[e.size()];
                 for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get().asFloatValue().get();
+                    x[i] = e.get(i).get().asFloat().get();
                 }
                 return x;
             }
             case "double": {
                 double[] x = new double[e.size()];
                 for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get().asDoubleValue().get();
+                    x[i] = e.get(i).get().asDouble().get();
                 }
                 return x;
             }

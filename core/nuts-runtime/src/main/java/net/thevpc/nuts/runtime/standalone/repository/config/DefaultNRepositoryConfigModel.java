@@ -73,7 +73,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         this.repository = repository;
         this.repositoryName = repositoryName;
         this.globalName = globalName;
-        this.storeLocation = NPath.of(storeLocation);
+        this.storeLocation = NPath.of(storeLocation).toAbsolute(NWorkspaceExt.of().getConfigModel().getRepositoriesRoot());
         this.speed = speed;
         this.deployWeight = options.getDeployWeight();
         this.temporary = options.isTemporary();

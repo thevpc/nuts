@@ -7,6 +7,7 @@ import net.thevpc.nuts.NIdLocation;
 
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
+import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
@@ -297,11 +298,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                 break;
             }
             if (multipleRunsSafeTimeMs > 0) {
-                try {
-                    Thread.sleep(multipleRunsSafeTimeMs);
-                } catch (InterruptedException ex) {
-                    throw new RuntimeException(ex);
-                }
+                NWorkspaceProfilerImpl.sleep(multipleRunsSafeTimeMs,"DefaultNExecCmd::runLoop");
             }
         }
         if (err != null) {

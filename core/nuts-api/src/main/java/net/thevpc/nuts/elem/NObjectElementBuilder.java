@@ -73,7 +73,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     NObjectElementBuilder addAll(Map<NElement, NElement> other);
 
-    NObjectElementBuilder addAll(List<NPairElement> other);
+    NObjectElementBuilder addAll(List<NElement> other);
 
     NObjectElementBuilder setAll(Map<NElement, NElement> other);
 

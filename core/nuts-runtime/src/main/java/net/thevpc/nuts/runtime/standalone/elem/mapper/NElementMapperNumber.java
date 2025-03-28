@@ -27,26 +27,26 @@ public class NElementMapperNumber implements NElementMapper<Number> {
         switch (((Class) to).getName()) {
             case "byte":
             case "java.lang.Byte":
-                return o.asByteValue().get();
+                return o.asByte().get();
             case "short":
             case "java.lang.Short":
-                return o.asShortValue().get();
+                return o.asShort().get();
             case "int":
             case "java.lang.Integer":
-                return o.asIntValue().get();
+                return o.asInt().get();
             case "long":
             case "java.lang.Long":
-                return o.asLongValue().get();
+                return o.asLong().get();
             case "float":
             case "java.lang.Float":
-                return o.asFloatValue().get();
+                return o.asFloat().get();
             case "double":
             case "java.lang.Double":
-                return o.asDoubleValue().get();
+                return o.asDouble().get();
             case "java.lang.BigDecimal":
-                return new BigDecimal(o.asStringValue().get());
+                return new BigDecimal(o.asString().get());
             case "java.lang.BigInteger":
-                return new BigInteger(o.asStringValue().get());
+                return new BigInteger(o.asString().get());
         }
         throw new UnsupportedOperationException("Not supported yet.");
     }

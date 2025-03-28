@@ -1,14 +1,13 @@
-package net.thevpc.nuts.reserved.util;
+package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.util.NUnsafeFunction;
 
-public class NUnsafeFunctionWithDescription<T, V> implements NUnsafeFunction<T, V> {
-    private final NUnsafeFunction<? super T, V> base;
-    private NEDesc description;
+public class NUnsafeFunctionFromJavaUnsafeFunction<T, V> implements NUnsafeFunction<T, V>, NImmutable {
+    private final UnsafeFunction<T, V> base;
+    private final NEDesc description;
 
-    public NUnsafeFunctionWithDescription(NUnsafeFunction<? super T, V> base, NEDesc description) {
+    public NUnsafeFunctionFromJavaUnsafeFunction(UnsafeFunction<T, V> base, NEDesc description) {
         this.base = base;
         this.description = description;
     }
@@ -19,9 +18,8 @@ public class NUnsafeFunctionWithDescription<T, V> implements NUnsafeFunction<T, 
     }
 
     @Override
-    public NUnsafeFunctionWithDescription<T, V> withDesc(NEDesc description) {
-        this.description = description;
-        return this;
+    public NUnsafeFunction<T, V> withDesc(NEDesc description) {
+        return new NUnsafeFunctionFromJavaUnsafeFunction<>(base, description);
     }
 
     @Override

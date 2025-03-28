@@ -28,6 +28,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 
 
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
@@ -71,8 +72,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
 
     @Override
     public NFetchCmd toFetch() {
-        NFetchCmd t = new DefaultNFetchCmd(getWorkspace()).copyFromDefaultNQueryBaseOptions(this)
-                ;
+        NFetchCmd t = new DefaultNFetchCmd(getWorkspace()).copyFromDefaultNQueryBaseOptions(this);
         if (getDisplayOptions().isRequireDefinition()) {
             t.setContent(true);
         }
@@ -424,7 +424,8 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
 //    }
 //    protected NutsCollectionStream<NutsDependency> getResultDependenciesBase(boolean print, boolean sort) {
 //        DefaultNSearch build = build();
-////        build.getOptions().session(build.getOptions().getSession().copy().trace(print));
+
+    /// /        build.getOptions().session(build.getOptions().getSession().copy().trace(print));
 //        NutsIterator<NutsDependency> base0 = findIterator2(build);
 //        if (base0 == null) {
 //            return buildCollectionResult(IteratorUtils.emptyIterator(), print);
@@ -632,10 +633,11 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                                         .and(search.getIdFilter())
                         );
                         NIterator<NId> extraResult = search2.getResultIds().iterator();
-                        allResults.add(NIteratorUtils.coalesce(
-                                NIteratorUtils.concat(toConcat),
-                                extraResult
-                        ));
+                        allResults.add(
+                                fetchMode.isStopFast() ?
+                                        NIteratorUtils.coalesce(NIteratorUtils.concat(toConcat), extraResult)
+                                        : NIteratorUtils.concat(NIteratorUtils.concat(toConcat), extraResult)
+                        );
                     } else {
                         allResults.add(NIteratorUtils.concat(toConcat));
                     }
@@ -650,7 +652,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                     fetchMode
             )) {
                 consideredRepos.add(repoAndMode.getRepository());
-                NSession finalSession1 = session;
+//                NSession finalSession1 = session;
                 all.add(
                         NIteratorBuilder.of(wu.repoSPI(repoAndMode.getRepository()).search()
                                         .setFilter(filter)
@@ -673,7 +675,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
             );
         }
         NIterator<NId> baseIterator = NIteratorUtils.concat(allResults);
-
+        NElement described = baseIterator.describe();
         if (inlineDependencies) {
             //optimize by applying latest and distinct when asking for dependencies
             baseIterator = filterLatestAndDuplicatesThenSort(baseIterator, isLatest(), isDistinct(), false);
@@ -829,8 +831,8 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
         } else if (!latest && distinct) {
             r = NIteratorBuilder.of(baseIterator).distinct(
                     NFunction.of(
-                            (NId nutsId) -> nutsId.getLongId()
-                                    .toString())
+                                    (NId nutsId) -> nutsId.getLongId()
+                                            .toString())
                             .withDesc(NEDesc.of("getLongId"))
             ).iterator();
         } else if (latest && distinct) {

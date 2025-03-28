@@ -4,6 +4,7 @@ import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.concurrent.NLockAcquireException;
 import net.thevpc.nuts.concurrent.NLockBarrierException;
 import net.thevpc.nuts.concurrent.NLockReleaseException;
+import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.util.TimePeriod;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NLiteral;
@@ -13,7 +14,6 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class DefaultMemLock extends AbstractNLock {
-
     private static TimePeriod FIVE_MINUTES = new TimePeriod(5, TimeUnit.MINUTES);
     private Object lockedObject;
     private NWorkspace workspace;
@@ -26,7 +26,7 @@ public class DefaultMemLock extends AbstractNLock {
 
     public TimePeriod getDefaultTimePeriod() {
         return TimePeriod.parse(
-                NWorkspace.of().getConfigProperty("nuts.file-lock.timeout").flatMap(NLiteral::asStringValue).get(),
+                NWorkspace.of().getConfigProperty("nuts.file-lock.timeout").flatMap(NLiteral::asString).get(),
                 TimeUnit.SECONDS
         ).orElse(FIVE_MINUTES);
     }
@@ -159,11 +159,7 @@ public class DefaultMemLock extends AbstractNLock {
             if (System.currentTimeMillis() - now > ptime.timeMs) {
                 break;
             }
-            try {
-                Thread.sleep(ptime.minTimeToSleep);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            NWorkspaceProfilerImpl.sleep(ptime.minTimeToSleep,"DefaultMemLock::tryLockInterruptibly");
         } while (true);
         return false;
     }

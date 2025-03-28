@@ -30,6 +30,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineFormatStrategy;
 import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineShellOptions;
 import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
@@ -95,9 +96,9 @@ public class ProcessBuilder2 {
             }
         } else {
             if (a.isOption()) {
-                sb.append(factory.ofStyled(NStringUtils.formatStringLiteral(a.asStringValue().get()), NTextStyle.option()));
+                sb.append(factory.ofStyled(NStringUtils.formatStringLiteral(a.asString().get()), NTextStyle.option()));
             } else {
-                sb.append(NStringUtils.formatStringLiteral(a.asStringValue().get()));
+                sb.append(NStringUtils.formatStringLiteral(a.asString().get()));
             }
         }
         return sb.toString();
@@ -555,11 +556,7 @@ public class ProcessBuilder2 {
                     break;
                 }
                 if (sleepMillis > 0) {
-                    try {
-                        Thread.sleep(sleepMillis);
-                    } catch (InterruptedException e) {
-                        throw new IOException(CoreStringUtils.exceptionToString(e));
-                    }
+                    NWorkspaceProfilerImpl.sleep(sleepMillis,"ProcessBuilder2::waitFor");
                 }
             }
         }

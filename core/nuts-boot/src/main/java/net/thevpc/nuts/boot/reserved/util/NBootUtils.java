@@ -2113,18 +2113,18 @@ public final class NBootUtils {
     public static String getStoreLocationPath(NBootOptionsInfo bOptions, String storeType) {
         Map<String, String> storeLocations = bOptions.getStoreLocations();
         if (storeLocations != null) {
-            return storeLocations.get(enumName(storeType));
+            return storeLocations.get(enumId(storeType));
         }
         return null;
     }
 
     /**
      * @param includeRoot true if include root
-     * @param locations   of type NutsStoreLocation, Path of File
+     * @param storeTypesOrPaths   of type NutsStoreLocation, Path of File
      * @param readline
      */
     public static long deleteStoreLocations(NBootOptionsInfo lastBootOptions, NBootOptionsInfo o, boolean includeRoot,
-                                            NBootLog bLog, Object[] locations, Supplier<String> readline) {
+                                            NBootLog bLog, Object[] storeTypesOrPaths, Supplier<String> readline) {
         if (lastBootOptions == null) {
             return 0;
         }
@@ -2158,12 +2158,20 @@ public final class NBootUtils {
         if (includeRoot) {
             folders.add(Paths.get(lastBootOptions.getWorkspace()));
         }
-        for (Object ovalue : locations) {
+        NBootPlatformHome hh = (firstNonNull(o.getSystem(), false) ?
+                NBootPlatformHome.ofSystem(o.getStoreLayout()) :
+                NBootPlatformHome.of(o.getStoreLayout()));
+
+        for (Object ovalue : storeTypesOrPaths) {
             if (ovalue != null) {
                 if (ovalue instanceof String) {
                     String p = getStoreLocationPath(lastBootOptions, (String) ovalue);
                     if (p != null) {
                         folders.add(Paths.get(p));
+                    }else{
+                        folders.add(Paths.get(hh.getStore(
+                                (String)ovalue
+                        )));
                     }
                 } else if (ovalue instanceof Path) {
                     folders.add(((Path) ovalue));
@@ -2218,16 +2226,15 @@ public final class NBootUtils {
         }
         LinkedHashSet<Path> folders = new LinkedHashSet<>();
 
-        Boolean sys = firstNonNull(bOptions.getSystem(), false);
-        NBootPlatformHome hh = (sys ?
+        NBootPlatformHome hh = (firstNonNull(bOptions.getSystem(), false) ?
                 NBootPlatformHome.ofSystem(bOptions.getStoreLayout()) :
                 NBootPlatformHome.of(bOptions.getStoreLayout()));
         folders.add(Paths.get(hh.getHome()).resolve("ws"));
 
 
-        for (String storeFolder : NBootPlatformHome.storeTypes()) {
+        for (String storeType : NBootPlatformHome.storeTypes()) {
             folders.add(Paths.get(hh.getStore(
-                    storeFolder
+                    storeType
             )));
         }
 

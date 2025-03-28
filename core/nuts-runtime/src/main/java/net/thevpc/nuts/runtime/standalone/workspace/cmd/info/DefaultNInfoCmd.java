@@ -288,7 +288,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
                     if (p != null && !p.isOption()) {
                         cmdLine.skip();
                         if (enabled) {
-                            requests.add(p.asStringValue().get());
+                            requests.add(p.asString().get());
                         }
                     } else {
                         break;

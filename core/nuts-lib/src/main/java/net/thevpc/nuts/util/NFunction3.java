@@ -8,8 +8,8 @@ import net.thevpc.nuts.elem.NElements;
 public interface NFunction3<A, B, C, V> extends NElementDescribable<NFunction3<A, B, C, V>> {
     V apply(A a, B b, C c);
 
-    default NFunction3<A, B, C, V> withDesc(NEDesc description){
-        return new NFunction3WithDescription<>(this,description);
+    default NFunction3<A, B, C, V> withDesc(NEDesc description) {
+        return description == null ? this : new NFunction3WithDescription<>(this, description);
     }
 
     default NElement describe() {

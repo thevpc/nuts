@@ -230,7 +230,7 @@ public class NdiScriptOptions implements Cloneable {
                                     f
                                             -> NVersion.get(f.getFileName().toString())
                                             .flatMap(v->v.getNumberLiteralAt(0))
-                                            .flatMap(NLiteral::asLongValue).isPresent()
+                                            .flatMap(NLiteral::asLong).isPresent()
                                             && Files.exists(f.resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME))
                             ).map(
                                     f -> NVersion.get(f.getFileName().toString()).get()

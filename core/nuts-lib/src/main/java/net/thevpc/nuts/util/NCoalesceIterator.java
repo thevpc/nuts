@@ -15,7 +15,6 @@ import java.util.Queue;
 import java.util.stream.Collectors;
 
 /**
- *
  * @author thevpc
  */
 public class NCoalesceIterator<T> extends NIteratorBase<T> {
@@ -26,16 +25,12 @@ public class NCoalesceIterator<T> extends NIteratorBase<T> {
     @Override
     public NElement describe() {
         return NElements.of().ofObjectBuilder()
-                .set("type", "Coalesce")
-                .set("items",
-                        NElements.of().ofArrayBuilder()
-                                .addAll(
-                                        new ArrayList<>(children)
-                                                .stream().map(
-                                                        x-> NEDesc.describeResolveOrDestruct(x)
-                                                ).collect(Collectors.toList())
-                                )
-                                .build()
+                .name("Coalesce")
+                .addAll(
+                        children
+                                .stream().map(
+                                        x -> NEDesc.describeResolveOrDestruct(x)
+                                ).toArray(NElement[]::new)
                 )
                 .build();
     }
@@ -65,7 +60,7 @@ public class NCoalesceIterator<T> extends NIteratorBase<T> {
     public int size() {
         return children.size();
     }
-    
+
     public NIterator<T>[] getChildren() {
         return children.toArray(new NIterator[0]);
     }

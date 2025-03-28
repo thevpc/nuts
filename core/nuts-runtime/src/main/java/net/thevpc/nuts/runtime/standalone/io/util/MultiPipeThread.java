@@ -27,6 +27,7 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
 import net.thevpc.nuts.io.NNonBlockingInputStream;
+import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -114,11 +115,7 @@ public class MultiPipeThread extends Thread implements StopMonitor {
                         ids = null;
                     }
                 }
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    //
-                }
+                NWorkspaceProfilerImpl.sleep(500,"MultiPipeThread::run");
             }
         } catch (IOException e) {
             e.printStackTrace();

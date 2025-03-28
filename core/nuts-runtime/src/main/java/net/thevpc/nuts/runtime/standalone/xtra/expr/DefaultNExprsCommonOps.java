@@ -48,7 +48,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asByteValue().get().byteValue() == NLiteral.of(b).asByteValue().get().byteValue();
+                        return NLiteral.of(a).asByte().get().byteValue() == NLiteral.of(b).asByte().get().byteValue();
                     }
                 }
         );
@@ -62,7 +62,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asShortValue().get().shortValue() == NLiteral.of(b).asShortValue().get().shortValue();
+                        return NLiteral.of(a).asShort().get().shortValue() == NLiteral.of(b).asShort().get().shortValue();
                     }
                 },
                 NPlatformSignature.of(Short.class, Byte.class), NPlatformSignature.of(Byte.class, Short.class)
@@ -77,7 +77,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asIntValue().get().intValue() == NLiteral.of(b).asIntValue().get().intValue();
+                        return NLiteral.of(a).asInt().get().intValue() == NLiteral.of(b).asInt().get().intValue();
                     }
                 },
                 NPlatformSignature.of(Integer.class, Byte.class), NPlatformSignature.of(Byte.class, Integer.class)
@@ -93,7 +93,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asLongValue().get().longValue() == NLiteral.of(b).asLongValue().get().longValue();
+                        return NLiteral.of(a).asLong().get().longValue() == NLiteral.of(b).asLong().get().longValue();
                     }
                 },
                 NPlatformSignature.of(Long.class, Byte.class), NPlatformSignature.of(Byte.class, Long.class)
@@ -110,7 +110,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asBigIntValue().get().equals(NLiteral.of(b).asBigIntValue().get());
+                        return NLiteral.of(a).asBigInt().get().equals(NLiteral.of(b).asBigInt().get());
                     }
                 },
                 NPlatformSignature.of(BigInteger.class, Byte.class), NPlatformSignature.of(Byte.class, BigInteger.class)
@@ -128,7 +128,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asFloatValue().get().floatValue() == NLiteral.of(b).asFloatValue().get().floatValue();
+                        return NLiteral.of(a).asFloat().get().floatValue() == NLiteral.of(b).asFloat().get().floatValue();
                     }
                 },
                 NPlatformSignature.of(Float.class, Byte.class), NPlatformSignature.of(Byte.class, Float.class)
@@ -145,7 +145,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asDoubleValue().get().doubleValue() == NLiteral.of(b).asDoubleValue().get().doubleValue();
+                        return NLiteral.of(a).asDouble().get().doubleValue() == NLiteral.of(b).asDouble().get().doubleValue();
                     }
                 },
                 NPlatformSignature.of(Double.class, Byte.class), NPlatformSignature.of(Byte.class, Double.class)
@@ -164,7 +164,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asBigDecimalValue().get().equals(NLiteral.of(b).asBigDecimalValue().get());
+                        return NLiteral.of(a).asBigDecimal().get().equals(NLiteral.of(b).asBigDecimal().get());
                     }
                 },
                 NPlatformSignature.of(BigDecimal.class, Byte.class), NPlatformSignature.of(Byte.class, BigDecimal.class)
@@ -202,7 +202,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return true;
                         }
-                        return NLiteral.of(a).asByteValue().get().byteValue() != NLiteral.of(b).asByteValue().get().byteValue();
+                        return NLiteral.of(a).asByte().get().byteValue() != NLiteral.of(b).asByte().get().byteValue();
                     }
                 }
         );
@@ -216,7 +216,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return true;
                         }
-                        return NLiteral.of(a).asShortValue().get().shortValue() != NLiteral.of(b).asShortValue().get().shortValue();
+                        return NLiteral.of(a).asShort().get().shortValue() != NLiteral.of(b).asShort().get().shortValue();
                     }
                 },
                 NPlatformSignature.of(Short.class, Byte.class), NPlatformSignature.of(Byte.class, Short.class)
@@ -231,7 +231,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return true;
                         }
-                        return NLiteral.of(a).asIntValue().get().intValue() != NLiteral.of(b).asIntValue().get().intValue();
+                        return NLiteral.of(a).asInt().get().intValue() != NLiteral.of(b).asInt().get().intValue();
                     }
                 },
                 NPlatformSignature.of(Integer.class, Byte.class), NPlatformSignature.of(Byte.class, Integer.class)
@@ -247,7 +247,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return true;
                         }
-                        return NLiteral.of(a).asLongValue().get().longValue() != NLiteral.of(b).asLongValue().get().longValue();
+                        return NLiteral.of(a).asLong().get().longValue() != NLiteral.of(b).asLong().get().longValue();
                     }
                 },
                 NPlatformSignature.of(Long.class, Byte.class), NPlatformSignature.of(Byte.class, Long.class)
@@ -264,7 +264,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return true;
                         }
-                        return !NLiteral.of(a).asBigIntValue().get().equals(NLiteral.of(b).asBigIntValue().get());
+                        return !NLiteral.of(a).asBigInt().get().equals(NLiteral.of(b).asBigInt().get());
                     }
                 },
                 NPlatformSignature.of(BigInteger.class, Byte.class), NPlatformSignature.of(Byte.class, BigInteger.class)
@@ -282,7 +282,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return true;
                         }
-                        return NLiteral.of(a).asFloatValue().get().floatValue() != NLiteral.of(b).asFloatValue().get().floatValue();
+                        return NLiteral.of(a).asFloat().get().floatValue() != NLiteral.of(b).asFloat().get().floatValue();
                     }
                 },
                 NPlatformSignature.of(Float.class, Byte.class), NPlatformSignature.of(Byte.class, Float.class)
@@ -299,7 +299,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return true;
                         }
-                        return NLiteral.of(a).asDoubleValue().get().doubleValue() != NLiteral.of(b).asDoubleValue().get().doubleValue();
+                        return NLiteral.of(a).asDouble().get().doubleValue() != NLiteral.of(b).asDouble().get().doubleValue();
                     }
                 },
                 NPlatformSignature.of(Double.class, Byte.class), NPlatformSignature.of(Byte.class, Double.class)
@@ -318,7 +318,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return true;
                         }
-                        return !NLiteral.of(a).asBigDecimalValue().get().equals(NLiteral.of(b).asBigDecimalValue().get());
+                        return !NLiteral.of(a).asBigDecimal().get().equals(NLiteral.of(b).asBigDecimal().get());
                     }
                 },
                 NPlatformSignature.of(BigDecimal.class, Byte.class), NPlatformSignature.of(Byte.class, BigDecimal.class)
@@ -356,7 +356,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asByteValue().get().byteValue() > NLiteral.of(b).asByteValue().get().byteValue();
+                        return NLiteral.of(a).asByte().get().byteValue() > NLiteral.of(b).asByte().get().byteValue();
                     }
                 }
         );
@@ -370,7 +370,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asShortValue().get().shortValue() > NLiteral.of(b).asShortValue().get().shortValue();
+                        return NLiteral.of(a).asShort().get().shortValue() > NLiteral.of(b).asShort().get().shortValue();
                     }
                 },
                 NPlatformSignature.of(Short.class, Byte.class), NPlatformSignature.of(Byte.class, Short.class)
@@ -385,7 +385,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asIntValue().get().intValue() > NLiteral.of(b).asIntValue().get().intValue();
+                        return NLiteral.of(a).asInt().get().intValue() > NLiteral.of(b).asInt().get().intValue();
                     }
                 },
                 NPlatformSignature.of(Integer.class, Byte.class), NPlatformSignature.of(Byte.class, Integer.class)
@@ -401,7 +401,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asLongValue().get().longValue() > NLiteral.of(b).asLongValue().get().longValue();
+                        return NLiteral.of(a).asLong().get().longValue() > NLiteral.of(b).asLong().get().longValue();
                     }
                 },
                 NPlatformSignature.of(Long.class, Byte.class), NPlatformSignature.of(Byte.class, Long.class)
@@ -418,7 +418,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asBigIntValue().get().compareTo(NLiteral.of(b).asBigIntValue().get()) > 0;
+                        return NLiteral.of(a).asBigInt().get().compareTo(NLiteral.of(b).asBigInt().get()) > 0;
                     }
                 },
                 NPlatformSignature.of(BigInteger.class, Byte.class), NPlatformSignature.of(Byte.class, BigInteger.class)
@@ -436,7 +436,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asFloatValue().get().floatValue() > NLiteral.of(b).asFloatValue().get().floatValue();
+                        return NLiteral.of(a).asFloat().get().floatValue() > NLiteral.of(b).asFloat().get().floatValue();
                     }
                 },
                 NPlatformSignature.of(Float.class, Byte.class), NPlatformSignature.of(Byte.class, Float.class)
@@ -453,7 +453,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asDoubleValue().get().doubleValue() > NLiteral.of(b).asDoubleValue().get().doubleValue();
+                        return NLiteral.of(a).asDouble().get().doubleValue() > NLiteral.of(b).asDouble().get().doubleValue();
                     }
                 },
                 NPlatformSignature.of(Double.class, Byte.class), NPlatformSignature.of(Byte.class, Double.class)
@@ -472,7 +472,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asBigDecimalValue().get().compareTo(NLiteral.of(b).asBigDecimalValue().get()) > 0;
+                        return NLiteral.of(a).asBigDecimal().get().compareTo(NLiteral.of(b).asBigDecimal().get()) > 0;
                     }
                 },
                 NPlatformSignature.of(BigDecimal.class, Byte.class), NPlatformSignature.of(Byte.class, BigDecimal.class)
@@ -496,7 +496,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asByteValue().get().byteValue() >= NLiteral.of(b).asByteValue().get().byteValue();
+                        return NLiteral.of(a).asByte().get().byteValue() >= NLiteral.of(b).asByte().get().byteValue();
                     }
                 }
         );
@@ -510,7 +510,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asShortValue().get().shortValue() >= NLiteral.of(b).asShortValue().get().shortValue();
+                        return NLiteral.of(a).asShort().get().shortValue() >= NLiteral.of(b).asShort().get().shortValue();
                     }
                 },
                 NPlatformSignature.of(Short.class, Byte.class), NPlatformSignature.of(Byte.class, Short.class)
@@ -525,7 +525,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asIntValue().get().intValue() >= NLiteral.of(b).asIntValue().get().intValue();
+                        return NLiteral.of(a).asInt().get().intValue() >= NLiteral.of(b).asInt().get().intValue();
                     }
                 },
                 NPlatformSignature.of(Integer.class, Byte.class), NPlatformSignature.of(Byte.class, Integer.class)
@@ -541,7 +541,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asLongValue().get().longValue() >= NLiteral.of(b).asLongValue().get().longValue();
+                        return NLiteral.of(a).asLong().get().longValue() >= NLiteral.of(b).asLong().get().longValue();
                     }
                 },
                 NPlatformSignature.of(Long.class, Byte.class), NPlatformSignature.of(Byte.class, Long.class)
@@ -558,7 +558,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asBigIntValue().get().compareTo(NLiteral.of(b).asBigIntValue().get()) >= 0;
+                        return NLiteral.of(a).asBigInt().get().compareTo(NLiteral.of(b).asBigInt().get()) >= 0;
                     }
                 },
                 NPlatformSignature.of(BigInteger.class, Byte.class), NPlatformSignature.of(Byte.class, BigInteger.class)
@@ -576,7 +576,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asFloatValue().get().floatValue() >= NLiteral.of(b).asFloatValue().get().floatValue();
+                        return NLiteral.of(a).asFloat().get().floatValue() >= NLiteral.of(b).asFloat().get().floatValue();
                     }
                 },
                 NPlatformSignature.of(Float.class, Byte.class), NPlatformSignature.of(Byte.class, Float.class)
@@ -593,7 +593,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asDoubleValue().get().doubleValue() >= NLiteral.of(b).asDoubleValue().get().doubleValue();
+                        return NLiteral.of(a).asDouble().get().doubleValue() >= NLiteral.of(b).asDouble().get().doubleValue();
                     }
                 },
                 NPlatformSignature.of(Double.class, Byte.class), NPlatformSignature.of(Byte.class, Double.class)
@@ -612,7 +612,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asBigDecimalValue().get().compareTo(NLiteral.of(b).asBigDecimalValue().get()) >= 0;
+                        return NLiteral.of(a).asBigDecimal().get().compareTo(NLiteral.of(b).asBigDecimal().get()) >= 0;
                     }
                 },
                 NPlatformSignature.of(BigDecimal.class, Byte.class), NPlatformSignature.of(Byte.class, BigDecimal.class)
@@ -636,7 +636,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asByteValue().get().byteValue() < NLiteral.of(b).asByteValue().get().byteValue();
+                        return NLiteral.of(a).asByte().get().byteValue() < NLiteral.of(b).asByte().get().byteValue();
                     }
                 }
         );
@@ -650,7 +650,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asShortValue().get().shortValue() < NLiteral.of(b).asShortValue().get().shortValue();
+                        return NLiteral.of(a).asShort().get().shortValue() < NLiteral.of(b).asShort().get().shortValue();
                     }
                 },
                 NPlatformSignature.of(Short.class, Byte.class), NPlatformSignature.of(Byte.class, Short.class)
@@ -665,7 +665,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asIntValue().get().intValue() < NLiteral.of(b).asIntValue().get().intValue();
+                        return NLiteral.of(a).asInt().get().intValue() < NLiteral.of(b).asInt().get().intValue();
                     }
                 },
                 NPlatformSignature.of(Integer.class, Byte.class), NPlatformSignature.of(Byte.class, Integer.class)
@@ -681,7 +681,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asLongValue().get().longValue() < NLiteral.of(b).asLongValue().get().longValue();
+                        return NLiteral.of(a).asLong().get().longValue() < NLiteral.of(b).asLong().get().longValue();
                     }
                 },
                 NPlatformSignature.of(Long.class, Byte.class), NPlatformSignature.of(Byte.class, Long.class)
@@ -698,7 +698,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asBigIntValue().get().compareTo(NLiteral.of(b).asBigIntValue().get()) < 0;
+                        return NLiteral.of(a).asBigInt().get().compareTo(NLiteral.of(b).asBigInt().get()) < 0;
                     }
                 },
                 NPlatformSignature.of(BigInteger.class, Byte.class), NPlatformSignature.of(Byte.class, BigInteger.class)
@@ -716,7 +716,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asFloatValue().get().floatValue() < NLiteral.of(b).asFloatValue().get().floatValue();
+                        return NLiteral.of(a).asFloat().get().floatValue() < NLiteral.of(b).asFloat().get().floatValue();
                     }
                 },
                 NPlatformSignature.of(Float.class, Byte.class), NPlatformSignature.of(Byte.class, Float.class)
@@ -733,7 +733,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asDoubleValue().get().doubleValue() < NLiteral.of(b).asDoubleValue().get().doubleValue();
+                        return NLiteral.of(a).asDouble().get().doubleValue() < NLiteral.of(b).asDouble().get().doubleValue();
                     }
                 },
                 NPlatformSignature.of(Double.class, Byte.class), NPlatformSignature.of(Byte.class, Double.class)
@@ -752,7 +752,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asBigDecimalValue().get().compareTo(NLiteral.of(b).asBigDecimalValue().get()) < 0;
+                        return NLiteral.of(a).asBigDecimal().get().compareTo(NLiteral.of(b).asBigDecimal().get()) < 0;
                     }
                 },
                 NPlatformSignature.of(BigDecimal.class, Byte.class), NPlatformSignature.of(Byte.class, BigDecimal.class)
@@ -776,7 +776,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asByteValue().get().byteValue() <= NLiteral.of(b).asByteValue().get().byteValue();
+                        return NLiteral.of(a).asByte().get().byteValue() <= NLiteral.of(b).asByte().get().byteValue();
                     }
                 }
         );
@@ -790,7 +790,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asShortValue().get().shortValue() <= NLiteral.of(b).asShortValue().get().shortValue();
+                        return NLiteral.of(a).asShort().get().shortValue() <= NLiteral.of(b).asShort().get().shortValue();
                     }
                 },
                 NPlatformSignature.of(Short.class, Byte.class), NPlatformSignature.of(Byte.class, Short.class)
@@ -805,7 +805,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asIntValue().get().intValue() <= NLiteral.of(b).asIntValue().get().intValue();
+                        return NLiteral.of(a).asInt().get().intValue() <= NLiteral.of(b).asInt().get().intValue();
                     }
                 },
                 NPlatformSignature.of(Integer.class, Byte.class), NPlatformSignature.of(Byte.class, Integer.class)
@@ -821,7 +821,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asLongValue().get().longValue() <= NLiteral.of(b).asLongValue().get().longValue();
+                        return NLiteral.of(a).asLong().get().longValue() <= NLiteral.of(b).asLong().get().longValue();
                     }
                 },
                 NPlatformSignature.of(Long.class, Byte.class), NPlatformSignature.of(Byte.class, Long.class)
@@ -838,7 +838,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asBigIntValue().get().compareTo(NLiteral.of(b).asBigIntValue().get()) <= 0;
+                        return NLiteral.of(a).asBigInt().get().compareTo(NLiteral.of(b).asBigInt().get()) <= 0;
                     }
                 },
                 NPlatformSignature.of(BigInteger.class, Byte.class), NPlatformSignature.of(Byte.class, BigInteger.class)
@@ -856,7 +856,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asFloatValue().get().floatValue() <= NLiteral.of(b).asFloatValue().get().floatValue();
+                        return NLiteral.of(a).asFloat().get().floatValue() <= NLiteral.of(b).asFloat().get().floatValue();
                     }
                 },
                 NPlatformSignature.of(Float.class, Byte.class), NPlatformSignature.of(Byte.class, Float.class)
@@ -873,7 +873,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asDoubleValue().get().doubleValue() <= NLiteral.of(b).asDoubleValue().get().doubleValue();
+                        return NLiteral.of(a).asDouble().get().doubleValue() <= NLiteral.of(b).asDouble().get().doubleValue();
                     }
                 },
                 NPlatformSignature.of(Double.class, Byte.class), NPlatformSignature.of(Byte.class, Double.class)
@@ -892,7 +892,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null || b == null) {
                             return false;
                         }
-                        return NLiteral.of(a).asBigDecimalValue().get().compareTo(NLiteral.of(b).asBigDecimalValue().get()) <= 0;
+                        return NLiteral.of(a).asBigDecimal().get().compareTo(NLiteral.of(b).asBigDecimal().get()) <= 0;
                     }
                 },
                 NPlatformSignature.of(BigDecimal.class, Byte.class), NPlatformSignature.of(Byte.class, BigDecimal.class)
@@ -919,7 +919,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asByteValue().get().byteValue() + NLiteral.of(b).asByteValue().get().byteValue();
+                        return NLiteral.of(a).asByte().get().byteValue() + NLiteral.of(b).asByte().get().byteValue();
                     }
                 }
         );
@@ -936,7 +936,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asShortValue().get().shortValue() + NLiteral.of(b).asShortValue().get().shortValue();
+                        return NLiteral.of(a).asShort().get().shortValue() + NLiteral.of(b).asShort().get().shortValue();
                     }
                 },
                 NPlatformSignature.of(Short.class, Byte.class), NPlatformSignature.of(Byte.class, Short.class)
@@ -954,7 +954,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asIntValue().get().intValue() + NLiteral.of(b).asIntValue().get().intValue();
+                        return NLiteral.of(a).asInt().get().intValue() + NLiteral.of(b).asInt().get().intValue();
                     }
                 },
                 NPlatformSignature.of(Integer.class, Byte.class), NPlatformSignature.of(Byte.class, Integer.class)
@@ -973,7 +973,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asLongValue().get().longValue() + NLiteral.of(b).asLongValue().get().longValue();
+                        return NLiteral.of(a).asLong().get().longValue() + NLiteral.of(b).asLong().get().longValue();
                     }
                 },
                 NPlatformSignature.of(Long.class, Byte.class), NPlatformSignature.of(Byte.class, Long.class)
@@ -993,7 +993,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asBigIntValue().get().add(NLiteral.of(b).asBigIntValue().get());
+                        return NLiteral.of(a).asBigInt().get().add(NLiteral.of(b).asBigInt().get());
                     }
                 },
                 NPlatformSignature.of(BigInteger.class, Byte.class), NPlatformSignature.of(Byte.class, BigInteger.class)
@@ -1014,7 +1014,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asFloatValue().get().floatValue() + NLiteral.of(b).asFloatValue().get().floatValue();
+                        return NLiteral.of(a).asFloat().get().floatValue() + NLiteral.of(b).asFloat().get().floatValue();
                     }
                 },
                 NPlatformSignature.of(Float.class, Byte.class), NPlatformSignature.of(Byte.class, Float.class)
@@ -1034,7 +1034,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asDoubleValue().get().doubleValue() + NLiteral.of(b).asDoubleValue().get().doubleValue();
+                        return NLiteral.of(a).asDouble().get().doubleValue() + NLiteral.of(b).asDouble().get().doubleValue();
                     }
                 },
                 NPlatformSignature.of(Double.class, Byte.class), NPlatformSignature.of(Byte.class, Double.class)
@@ -1056,7 +1056,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asBigDecimalValue().get().add(NLiteral.of(b).asBigDecimalValue().get());
+                        return NLiteral.of(a).asBigDecimal().get().add(NLiteral.of(b).asBigDecimal().get());
                     }
                 },
                 NPlatformSignature.of(BigDecimal.class, Byte.class), NPlatformSignature.of(Byte.class, BigDecimal.class)
@@ -1100,7 +1100,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asByteValue().get().byteValue() - NLiteral.of(b).asByteValue().get().byteValue();
+                        return NLiteral.of(a).asByte().get().byteValue() - NLiteral.of(b).asByte().get().byteValue();
                     }
                 }
         );
@@ -1117,7 +1117,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asShortValue().get().shortValue() - NLiteral.of(b).asShortValue().get().shortValue();
+                        return NLiteral.of(a).asShort().get().shortValue() - NLiteral.of(b).asShort().get().shortValue();
                     }
                 },
                 NPlatformSignature.of(Short.class, Byte.class), NPlatformSignature.of(Byte.class, Short.class)
@@ -1135,7 +1135,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asIntValue().get().intValue() - NLiteral.of(b).asIntValue().get().intValue();
+                        return NLiteral.of(a).asInt().get().intValue() - NLiteral.of(b).asInt().get().intValue();
                     }
                 },
                 NPlatformSignature.of(Integer.class, Byte.class), NPlatformSignature.of(Byte.class, Integer.class)
@@ -1154,7 +1154,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asLongValue().get().longValue() - NLiteral.of(b).asLongValue().get().longValue();
+                        return NLiteral.of(a).asLong().get().longValue() - NLiteral.of(b).asLong().get().longValue();
                     }
                 },
                 NPlatformSignature.of(Long.class, Byte.class), NPlatformSignature.of(Byte.class, Long.class)
@@ -1174,7 +1174,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asBigIntValue().get().subtract(NLiteral.of(b).asBigIntValue().get());
+                        return NLiteral.of(a).asBigInt().get().subtract(NLiteral.of(b).asBigInt().get());
                     }
                 },
                 NPlatformSignature.of(BigInteger.class, Byte.class), NPlatformSignature.of(Byte.class, BigInteger.class)
@@ -1195,7 +1195,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asFloatValue().get().floatValue() - NLiteral.of(b).asFloatValue().get().floatValue();
+                        return NLiteral.of(a).asFloat().get().floatValue() - NLiteral.of(b).asFloat().get().floatValue();
                     }
                 },
                 NPlatformSignature.of(Float.class, Byte.class), NPlatformSignature.of(Byte.class, Float.class)
@@ -1215,7 +1215,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asDoubleValue().get().doubleValue() - NLiteral.of(b).asDoubleValue().get().doubleValue();
+                        return NLiteral.of(a).asDouble().get().doubleValue() - NLiteral.of(b).asDouble().get().doubleValue();
                     }
                 },
                 NPlatformSignature.of(Double.class, Byte.class), NPlatformSignature.of(Byte.class, Double.class)
@@ -1237,7 +1237,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asBigDecimalValue().get().subtract(NLiteral.of(b).asBigDecimalValue().get());
+                        return NLiteral.of(a).asBigDecimal().get().subtract(NLiteral.of(b).asBigDecimal().get());
                     }
                 },
                 NPlatformSignature.of(BigDecimal.class, Byte.class), NPlatformSignature.of(Byte.class, BigDecimal.class)
@@ -1264,7 +1264,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asByteValue().get().byteValue() * NLiteral.of(b).asByteValue().get().byteValue();
+                        return NLiteral.of(a).asByte().get().byteValue() * NLiteral.of(b).asByte().get().byteValue();
                     }
                 }
         );
@@ -1281,7 +1281,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asShortValue().get().shortValue() * NLiteral.of(b).asShortValue().get().shortValue();
+                        return NLiteral.of(a).asShort().get().shortValue() * NLiteral.of(b).asShort().get().shortValue();
                     }
                 },
                 NPlatformSignature.of(Short.class, Byte.class), NPlatformSignature.of(Byte.class, Short.class)
@@ -1299,7 +1299,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asIntValue().get().intValue() * NLiteral.of(b).asIntValue().get().intValue();
+                        return NLiteral.of(a).asInt().get().intValue() * NLiteral.of(b).asInt().get().intValue();
                     }
                 },
                 NPlatformSignature.of(Integer.class, Byte.class), NPlatformSignature.of(Byte.class, Integer.class)
@@ -1318,7 +1318,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asLongValue().get().longValue() * NLiteral.of(b).asLongValue().get().longValue();
+                        return NLiteral.of(a).asLong().get().longValue() * NLiteral.of(b).asLong().get().longValue();
                     }
                 },
                 NPlatformSignature.of(Long.class, Byte.class), NPlatformSignature.of(Byte.class, Long.class)
@@ -1338,7 +1338,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asBigIntValue().get().multiply(NLiteral.of(b).asBigIntValue().get());
+                        return NLiteral.of(a).asBigInt().get().multiply(NLiteral.of(b).asBigInt().get());
                     }
                 },
                 NPlatformSignature.of(BigInteger.class, Byte.class), NPlatformSignature.of(Byte.class, BigInteger.class)
@@ -1359,7 +1359,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asFloatValue().get().floatValue() * NLiteral.of(b).asFloatValue().get().floatValue();
+                        return NLiteral.of(a).asFloat().get().floatValue() * NLiteral.of(b).asFloat().get().floatValue();
                     }
                 },
                 NPlatformSignature.of(Float.class, Byte.class), NPlatformSignature.of(Byte.class, Float.class)
@@ -1379,7 +1379,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asDoubleValue().get().doubleValue() * NLiteral.of(b).asDoubleValue().get().doubleValue();
+                        return NLiteral.of(a).asDouble().get().doubleValue() * NLiteral.of(b).asDouble().get().doubleValue();
                     }
                 },
                 NPlatformSignature.of(Double.class, Byte.class), NPlatformSignature.of(Byte.class, Double.class)
@@ -1401,7 +1401,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asBigDecimalValue().get().multiply(NLiteral.of(b).asBigDecimalValue().get());
+                        return NLiteral.of(a).asBigDecimal().get().multiply(NLiteral.of(b).asBigDecimal().get());
                     }
                 },
                 NPlatformSignature.of(BigDecimal.class, Byte.class), NPlatformSignature.of(Byte.class, BigDecimal.class)
@@ -1428,7 +1428,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return powerLong(NLiteral.of(a).asByteValue().get().byteValue(), NLiteral.of(b).asByteValue().get().byteValue());
+                        return powerLong(NLiteral.of(a).asByte().get().byteValue(), NLiteral.of(b).asByte().get().byteValue());
                     }
                 }
         );
@@ -1445,7 +1445,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return powerLong(NLiteral.of(a).asShortValue().get().shortValue(), NLiteral.of(b).asShortValue().get().shortValue());
+                        return powerLong(NLiteral.of(a).asShort().get().shortValue(), NLiteral.of(b).asShort().get().shortValue());
                     }
                 },
                 NPlatformSignature.of(Short.class, Byte.class), NPlatformSignature.of(Byte.class, Short.class)
@@ -1463,7 +1463,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return powerLong(NLiteral.of(a).asIntValue().get().intValue(), NLiteral.of(b).asIntValue().get().intValue());
+                        return powerLong(NLiteral.of(a).asInt().get().intValue(), NLiteral.of(b).asInt().get().intValue());
                     }
                 },
                 NPlatformSignature.of(Integer.class, Byte.class), NPlatformSignature.of(Byte.class, Integer.class)
@@ -1482,7 +1482,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return powerLong(NLiteral.of(a).asLongValue().get().longValue(), NLiteral.of(b).asLongValue().get().longValue());
+                        return powerLong(NLiteral.of(a).asLong().get().longValue(), NLiteral.of(b).asLong().get().longValue());
                     }
                 },
                 NPlatformSignature.of(Long.class, Byte.class), NPlatformSignature.of(Byte.class, Long.class)
@@ -1502,8 +1502,8 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        BigInteger aa = NLiteral.of(a).asBigIntValue().get();
-                        BigInteger bb = NLiteral.of(b).asBigIntValue().get();
+                        BigInteger aa = NLiteral.of(a).asBigInt().get();
+                        BigInteger bb = NLiteral.of(b).asBigInt().get();
                         return powerBigDecimal(new BigDecimal(aa), new BigDecimal(bb), new MathContext(0, RoundingMode.DOWN));
                     }
                 },
@@ -1525,7 +1525,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return Math.pow(NLiteral.of(a).asFloatValue().get().floatValue(), NLiteral.of(b).asFloatValue().get().floatValue());
+                        return Math.pow(NLiteral.of(a).asFloat().get().floatValue(), NLiteral.of(b).asFloat().get().floatValue());
                     }
                 },
                 NPlatformSignature.of(Float.class, Byte.class), NPlatformSignature.of(Byte.class, Float.class)
@@ -1545,7 +1545,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return Math.pow(NLiteral.of(a).asDoubleValue().get().doubleValue(), NLiteral.of(b).asDoubleValue().get().doubleValue());
+                        return Math.pow(NLiteral.of(a).asDouble().get().doubleValue(), NLiteral.of(b).asDouble().get().doubleValue());
                     }
                 },
                 NPlatformSignature.of(Double.class, Byte.class), NPlatformSignature.of(Byte.class, Double.class)
@@ -1567,8 +1567,8 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        BigDecimal aa = NLiteral.of(a).asBigDecimalValue().get();
-                        BigDecimal bb = NLiteral.of(b).asBigDecimalValue().get();
+                        BigDecimal aa = NLiteral.of(a).asBigDecimal().get();
+                        BigDecimal bb = NLiteral.of(b).asBigDecimal().get();
                         return powerBigDecimal(aa, bb, new MathContext(aa.precision() + bb.precision(), RoundingMode.DOWN));
                     }
                 },
@@ -1596,7 +1596,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asByteValue().get().byteValue() / NLiteral.of(b).asByteValue().get().byteValue();
+                        return NLiteral.of(a).asByte().get().byteValue() / NLiteral.of(b).asByte().get().byteValue();
                     }
                 }
         );
@@ -1613,7 +1613,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asShortValue().get().shortValue() / NLiteral.of(b).asShortValue().get().shortValue();
+                        return NLiteral.of(a).asShort().get().shortValue() / NLiteral.of(b).asShort().get().shortValue();
                     }
                 },
                 NPlatformSignature.of(Short.class, Byte.class), NPlatformSignature.of(Byte.class, Short.class)
@@ -1631,7 +1631,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asIntValue().get().intValue() / NLiteral.of(b).asIntValue().get().intValue();
+                        return NLiteral.of(a).asInt().get().intValue() / NLiteral.of(b).asInt().get().intValue();
                     }
                 },
                 NPlatformSignature.of(Integer.class, Byte.class), NPlatformSignature.of(Byte.class, Integer.class)
@@ -1650,7 +1650,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asLongValue().get().longValue() / NLiteral.of(b).asLongValue().get().longValue();
+                        return NLiteral.of(a).asLong().get().longValue() / NLiteral.of(b).asLong().get().longValue();
                     }
                 },
                 NPlatformSignature.of(Long.class, Byte.class), NPlatformSignature.of(Byte.class, Long.class)
@@ -1670,7 +1670,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asBigIntValue().get().divide(NLiteral.of(b).asBigIntValue().get());
+                        return NLiteral.of(a).asBigInt().get().divide(NLiteral.of(b).asBigInt().get());
                     }
                 },
                 NPlatformSignature.of(BigInteger.class, Byte.class), NPlatformSignature.of(Byte.class, BigInteger.class)
@@ -1691,7 +1691,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asFloatValue().get().floatValue() / NLiteral.of(b).asFloatValue().get().floatValue();
+                        return NLiteral.of(a).asFloat().get().floatValue() / NLiteral.of(b).asFloat().get().floatValue();
                     }
                 },
                 NPlatformSignature.of(Float.class, Byte.class), NPlatformSignature.of(Byte.class, Float.class)
@@ -1711,7 +1711,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asDoubleValue().get().doubleValue() / NLiteral.of(b).asDoubleValue().get().doubleValue();
+                        return NLiteral.of(a).asDouble().get().doubleValue() / NLiteral.of(b).asDouble().get().doubleValue();
                     }
                 },
                 NPlatformSignature.of(Double.class, Byte.class), NPlatformSignature.of(Byte.class, Double.class)
@@ -1733,7 +1733,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asBigDecimalValue().get().divide(NLiteral.of(b).asBigDecimalValue().get());
+                        return NLiteral.of(a).asBigDecimal().get().divide(NLiteral.of(b).asBigDecimal().get());
                     }
                 },
                 NPlatformSignature.of(BigDecimal.class, Byte.class), NPlatformSignature.of(Byte.class, BigDecimal.class)
@@ -1760,7 +1760,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asByteValue().get().byteValue() % NLiteral.of(b).asByteValue().get().byteValue();
+                        return NLiteral.of(a).asByte().get().byteValue() % NLiteral.of(b).asByte().get().byteValue();
                     }
                 }
         );
@@ -1777,7 +1777,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asShortValue().get().shortValue() % NLiteral.of(b).asShortValue().get().shortValue();
+                        return NLiteral.of(a).asShort().get().shortValue() % NLiteral.of(b).asShort().get().shortValue();
                     }
                 },
                 NPlatformSignature.of(Short.class, Byte.class), NPlatformSignature.of(Byte.class, Short.class)
@@ -1795,7 +1795,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asIntValue().get().intValue() % NLiteral.of(b).asIntValue().get().intValue();
+                        return NLiteral.of(a).asInt().get().intValue() % NLiteral.of(b).asInt().get().intValue();
                     }
                 },
                 NPlatformSignature.of(Integer.class, Byte.class), NPlatformSignature.of(Byte.class, Integer.class)
@@ -1814,7 +1814,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asLongValue().get().longValue() % NLiteral.of(b).asLongValue().get().longValue();
+                        return NLiteral.of(a).asLong().get().longValue() % NLiteral.of(b).asLong().get().longValue();
                     }
                 },
                 NPlatformSignature.of(Long.class, Byte.class), NPlatformSignature.of(Byte.class, Long.class)
@@ -1834,7 +1834,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asBigIntValue().get().remainder(NLiteral.of(b).asBigIntValue().get());
+                        return NLiteral.of(a).asBigInt().get().remainder(NLiteral.of(b).asBigInt().get());
                     }
                 },
                 NPlatformSignature.of(BigInteger.class, Byte.class), NPlatformSignature.of(Byte.class, BigInteger.class)
@@ -1855,7 +1855,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asFloatValue().get().floatValue() % NLiteral.of(b).asFloatValue().get().floatValue();
+                        return NLiteral.of(a).asFloat().get().floatValue() % NLiteral.of(b).asFloat().get().floatValue();
                     }
                 },
                 NPlatformSignature.of(Float.class, Byte.class), NPlatformSignature.of(Byte.class, Float.class)
@@ -1875,7 +1875,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asDoubleValue().get().doubleValue() % NLiteral.of(b).asDoubleValue().get().doubleValue();
+                        return NLiteral.of(a).asDouble().get().doubleValue() % NLiteral.of(b).asDouble().get().doubleValue();
                     }
                 },
                 NPlatformSignature.of(Double.class, Byte.class), NPlatformSignature.of(Byte.class, Double.class)
@@ -1897,7 +1897,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asBigDecimalValue().get().remainder(NLiteral.of(b).asBigDecimalValue().get());
+                        return NLiteral.of(a).asBigDecimal().get().remainder(NLiteral.of(b).asBigDecimal().get());
                     }
                 },
                 NPlatformSignature.of(BigDecimal.class, Byte.class), NPlatformSignature.of(Byte.class, BigDecimal.class)
@@ -1929,7 +1929,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null) {
                             return null;
                         }
-                        return -NLiteral.of(a).asByteValue().get();
+                        return -NLiteral.of(a).asByte().get();
                     }
                 }
         );
@@ -1940,7 +1940,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null) {
                             return null;
                         }
-                        return -NLiteral.of(a).asShortValue().get().shortValue();
+                        return -NLiteral.of(a).asShort().get().shortValue();
                     }
                 }
         );
@@ -1951,7 +1951,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null) {
                             return null;
                         }
-                        return -NLiteral.of(a).asIntValue().get().intValue();
+                        return -NLiteral.of(a).asInt().get().intValue();
                     }
                 }
         );
@@ -1962,7 +1962,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null) {
                             return null;
                         }
-                        return -NLiteral.of(a).asLongValue().get().longValue();
+                        return -NLiteral.of(a).asLong().get().longValue();
                     }
                 }
         );
@@ -1973,7 +1973,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null) {
                             return null;
                         }
-                        return NLiteral.of(a).asBigIntValue().get().negate();
+                        return NLiteral.of(a).asBigInt().get().negate();
                     }
                 }
         );
@@ -1984,7 +1984,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null) {
                             return null;
                         }
-                        return -NLiteral.of(a).asFloatValue().get().floatValue();
+                        return -NLiteral.of(a).asFloat().get().floatValue();
                     }
                 }
         );
@@ -1995,7 +1995,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null) {
                             return null;
                         }
-                        return -NLiteral.of(a).asDoubleValue().get();
+                        return -NLiteral.of(a).asDouble().get();
                     }
                 }
         );
@@ -2006,7 +2006,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null) {
                             return null;
                         }
-                        return NLiteral.of(a).asBigDecimalValue().get().negate();
+                        return NLiteral.of(a).asBigDecimal().get().negate();
                     }
                 }
         );
@@ -2020,11 +2020,11 @@ public class DefaultNExprsCommonOps {
                         if (a == null) {
                             return true;
                         }
-                        Boolean u = NLiteral.of(a).asBooleanValue().orNull();
+                        Boolean u = NLiteral.of(a).asBoolean().orNull();
                         if (u != null) {
                             return !u;
                         }
-                        Number n = NLiteral.of(a).asNumberValue().orNull();
+                        Number n = NLiteral.of(a).asNumber().orNull();
                         if (n != null) {
                             return n.doubleValue() == 0;
                         }
@@ -2042,7 +2042,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null) {
                             return true;
                         }
-                        return NLiteral.of(a).asShortValue().get().shortValue() != 0;
+                        return NLiteral.of(a).asShort().get().shortValue() != 0;
                     }
                 },
                 NPlatformSignature.of(Short.class, Byte.class), NPlatformSignature.of(Byte.class, Short.class)
@@ -2054,7 +2054,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null) {
                             return true;
                         }
-                        return NLiteral.of(a).asIntValue().get().intValue() == 0;
+                        return NLiteral.of(a).asInt().get().intValue() == 0;
                     }
                 }
         );
@@ -2065,7 +2065,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null) {
                             return true;
                         }
-                        return NLiteral.of(a).asLongValue().get().longValue() == 0;
+                        return NLiteral.of(a).asLong().get().longValue() == 0;
                     }
                 }
         );
@@ -2076,7 +2076,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null) {
                             return null;
                         }
-                        return NLiteral.of(a).asBigIntValue().get().equals(BigInteger.ZERO);
+                        return NLiteral.of(a).asBigInt().get().equals(BigInteger.ZERO);
                     }
                 }
         );
@@ -2087,7 +2087,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null) {
                             return true;
                         }
-                        return NLiteral.of(a).asFloatValue().get().floatValue() == 0;
+                        return NLiteral.of(a).asFloat().get().floatValue() == 0;
                     }
                 }
         );
@@ -2098,7 +2098,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null) {
                             return true;
                         }
-                        return NLiteral.of(a).asDoubleValue().get() == 0;
+                        return NLiteral.of(a).asDouble().get() == 0;
                     }
                 }
         );
@@ -2109,7 +2109,7 @@ public class DefaultNExprsCommonOps {
                         if (a == null) {
                             return true;
                         }
-                        return NLiteral.of(a).asBigDecimalValue().get().equals(BigDecimal.ZERO);
+                        return NLiteral.of(a).asBigDecimal().get().equals(BigDecimal.ZERO);
                     }
                 }
         );
@@ -2129,7 +2129,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Boolean) a;
                         }
-                        return NLiteral.of(a).asBooleanValue().get().booleanValue() && NLiteral.of(b).asBooleanValue().get().booleanValue();
+                        return NLiteral.of(a).asBoolean().get().booleanValue() && NLiteral.of(b).asBoolean().get().booleanValue();
                     }
                 }
         );
@@ -2169,7 +2169,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asByteValue().get().byteValue() & NLiteral.of(b).asByteValue().get().byteValue();
+                        return NLiteral.of(a).asByte().get().byteValue() & NLiteral.of(b).asByte().get().byteValue();
                     }
                 }
         );
@@ -2186,7 +2186,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asShortValue().get().shortValue() & NLiteral.of(b).asShortValue().get().shortValue();
+                        return NLiteral.of(a).asShort().get().shortValue() & NLiteral.of(b).asShort().get().shortValue();
                     }
                 },
                 NPlatformSignature.of(Short.class, Byte.class), NPlatformSignature.of(Byte.class, Short.class)
@@ -2204,7 +2204,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asIntValue().get().intValue() & NLiteral.of(b).asIntValue().get().intValue();
+                        return NLiteral.of(a).asInt().get().intValue() & NLiteral.of(b).asInt().get().intValue();
                     }
                 },
                 NPlatformSignature.of(Integer.class, Byte.class), NPlatformSignature.of(Byte.class, Integer.class)
@@ -2223,7 +2223,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asLongValue().get().longValue() & NLiteral.of(b).asLongValue().get().longValue();
+                        return NLiteral.of(a).asLong().get().longValue() & NLiteral.of(b).asLong().get().longValue();
                     }
                 },
                 NPlatformSignature.of(Long.class, Byte.class), NPlatformSignature.of(Byte.class, Long.class)
@@ -2243,7 +2243,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asBigIntValue().get().and(NLiteral.of(b).asBigIntValue().get());
+                        return NLiteral.of(a).asBigInt().get().and(NLiteral.of(b).asBigInt().get());
                     }
                 },
                 NPlatformSignature.of(BigInteger.class, Byte.class), NPlatformSignature.of(Byte.class, BigInteger.class)
@@ -2264,7 +2264,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asFloatValue().get().floatValue() != 0 && NLiteral.of(b).asFloatValue().get().floatValue() != 0;
+                        return NLiteral.of(a).asFloat().get().floatValue() != 0 && NLiteral.of(b).asFloat().get().floatValue() != 0;
                     }
                 },
                 NPlatformSignature.of(Float.class, Byte.class), NPlatformSignature.of(Byte.class, Float.class)
@@ -2284,7 +2284,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asDoubleValue().get().doubleValue() == 0 & NLiteral.of(b).asDoubleValue().get().doubleValue() == 0;
+                        return NLiteral.of(a).asDouble().get().doubleValue() == 0 & NLiteral.of(b).asDouble().get().doubleValue() == 0;
                     }
                 },
                 NPlatformSignature.of(Double.class, Byte.class), NPlatformSignature.of(Byte.class, Double.class)
@@ -2307,8 +2307,8 @@ public class DefaultNExprsCommonOps {
                             return a;
                         }
                         return
-                                NLiteral.of(a).asBigDecimalValue().get().equals(BigDecimal.ZERO)
-                                        && NLiteral.of(b).asBigDecimalValue().get().equals(BigDecimal.ZERO);
+                                NLiteral.of(a).asBigDecimal().get().equals(BigDecimal.ZERO)
+                                        && NLiteral.of(b).asBigDecimal().get().equals(BigDecimal.ZERO);
                     }
                 },
                 NPlatformSignature.of(BigDecimal.class, Byte.class), NPlatformSignature.of(Byte.class, BigDecimal.class)
@@ -2335,7 +2335,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Boolean) a;
                         }
-                        return NLiteral.of(a).asBooleanValue().get().booleanValue() || NLiteral.of(b).asBooleanValue().get().booleanValue();
+                        return NLiteral.of(a).asBoolean().get().booleanValue() || NLiteral.of(b).asBoolean().get().booleanValue();
                     }
                 }
         );
@@ -2375,7 +2375,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asByteValue().get().byteValue() | NLiteral.of(b).asByteValue().get().byteValue();
+                        return NLiteral.of(a).asByte().get().byteValue() | NLiteral.of(b).asByte().get().byteValue();
                     }
                 }
         );
@@ -2392,7 +2392,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asShortValue().get().shortValue() | NLiteral.of(b).asShortValue().get().shortValue();
+                        return NLiteral.of(a).asShort().get().shortValue() | NLiteral.of(b).asShort().get().shortValue();
                     }
                 },
                 NPlatformSignature.of(Short.class, Byte.class), NPlatformSignature.of(Byte.class, Short.class)
@@ -2410,7 +2410,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asIntValue().get().intValue() | NLiteral.of(b).asIntValue().get().intValue();
+                        return NLiteral.of(a).asInt().get().intValue() | NLiteral.of(b).asInt().get().intValue();
                     }
                 },
                 NPlatformSignature.of(Integer.class, Byte.class), NPlatformSignature.of(Byte.class, Integer.class)
@@ -2429,7 +2429,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asLongValue().get().longValue() | NLiteral.of(b).asLongValue().get().longValue();
+                        return NLiteral.of(a).asLong().get().longValue() | NLiteral.of(b).asLong().get().longValue();
                     }
                 },
                 NPlatformSignature.of(Long.class, Byte.class), NPlatformSignature.of(Byte.class, Long.class)
@@ -2449,7 +2449,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asBigIntValue().get().or(NLiteral.of(b).asBigIntValue().get());
+                        return NLiteral.of(a).asBigInt().get().or(NLiteral.of(b).asBigInt().get());
                     }
                 },
                 NPlatformSignature.of(BigInteger.class, Byte.class), NPlatformSignature.of(Byte.class, BigInteger.class)
@@ -2470,7 +2470,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asFloatValue().get().floatValue() != 0 | NLiteral.of(b).asFloatValue().get().floatValue() != 0;
+                        return NLiteral.of(a).asFloat().get().floatValue() != 0 | NLiteral.of(b).asFloat().get().floatValue() != 0;
                     }
                 },
                 NPlatformSignature.of(Float.class, Byte.class), NPlatformSignature.of(Byte.class, Float.class)
@@ -2490,7 +2490,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asDoubleValue().get().doubleValue() == 0 | NLiteral.of(b).asDoubleValue().get().doubleValue() == 0;
+                        return NLiteral.of(a).asDouble().get().doubleValue() == 0 | NLiteral.of(b).asDouble().get().doubleValue() == 0;
                     }
                 },
                 NPlatformSignature.of(Double.class, Byte.class), NPlatformSignature.of(Byte.class, Double.class)
@@ -2513,8 +2513,8 @@ public class DefaultNExprsCommonOps {
                             return a;
                         }
                         return
-                                NLiteral.of(a).asBigDecimalValue().get().equals(BigDecimal.ZERO)
-                                        | NLiteral.of(b).asBigDecimalValue().get().equals(BigDecimal.ZERO);
+                                NLiteral.of(a).asBigDecimal().get().equals(BigDecimal.ZERO)
+                                        | NLiteral.of(b).asBigDecimal().get().equals(BigDecimal.ZERO);
                     }
                 },
                 NPlatformSignature.of(BigDecimal.class, Byte.class), NPlatformSignature.of(Byte.class, BigDecimal.class)
@@ -2542,7 +2542,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Boolean) a;
                         }
-                        return NLiteral.of(a).asBooleanValue().get().booleanValue() ^ NLiteral.of(b).asBooleanValue().get().booleanValue();
+                        return NLiteral.of(a).asBoolean().get().booleanValue() ^ NLiteral.of(b).asBoolean().get().booleanValue();
                     }
                 }
         );
@@ -2582,7 +2582,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asByteValue().get().byteValue() ^ NLiteral.of(b).asByteValue().get().byteValue();
+                        return NLiteral.of(a).asByte().get().byteValue() ^ NLiteral.of(b).asByte().get().byteValue();
                     }
                 }
         );
@@ -2599,7 +2599,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asShortValue().get().shortValue() ^ NLiteral.of(b).asShortValue().get().shortValue();
+                        return NLiteral.of(a).asShort().get().shortValue() ^ NLiteral.of(b).asShort().get().shortValue();
                     }
                 },
                 NPlatformSignature.of(Short.class, Byte.class), NPlatformSignature.of(Byte.class, Short.class)
@@ -2617,7 +2617,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asIntValue().get().intValue() ^ NLiteral.of(b).asIntValue().get().intValue();
+                        return NLiteral.of(a).asInt().get().intValue() ^ NLiteral.of(b).asInt().get().intValue();
                     }
                 },
                 NPlatformSignature.of(Integer.class, Byte.class), NPlatformSignature.of(Byte.class, Integer.class)
@@ -2636,7 +2636,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asLongValue().get().longValue() ^ NLiteral.of(b).asLongValue().get().longValue();
+                        return NLiteral.of(a).asLong().get().longValue() ^ NLiteral.of(b).asLong().get().longValue();
                     }
                 },
                 NPlatformSignature.of(Long.class, Byte.class), NPlatformSignature.of(Byte.class, Long.class)
@@ -2656,7 +2656,7 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        return NLiteral.of(a).asBigIntValue().get().xor(NLiteral.of(b).asBigIntValue().get());
+                        return NLiteral.of(a).asBigInt().get().xor(NLiteral.of(b).asBigInt().get());
                     }
                 },
                 NPlatformSignature.of(BigInteger.class, Byte.class), NPlatformSignature.of(Byte.class, BigInteger.class)
@@ -2677,8 +2677,8 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        float v1 = NLiteral.of(a).asFloatValue().get().floatValue();
-                        float v2 = NLiteral.of(b).asFloatValue().get().floatValue();
+                        float v1 = NLiteral.of(a).asFloat().get().floatValue();
+                        float v2 = NLiteral.of(b).asFloat().get().floatValue();
                         return Float.intBitsToFloat(Float.floatToIntBits(v1) ^ Float.floatToIntBits(v2));
                     }
                 },
@@ -2699,8 +2699,8 @@ public class DefaultNExprsCommonOps {
                         if (b == null) {
                             return (Number) a;
                         }
-                        double v1 = NLiteral.of(a).asDoubleValue().get().doubleValue();
-                        double v2 = NLiteral.of(b).asDoubleValue().get().doubleValue();
+                        double v1 = NLiteral.of(a).asDouble().get().doubleValue();
+                        double v2 = NLiteral.of(b).asDouble().get().doubleValue();
                         return Double.longBitsToDouble(Double.doubleToLongBits(v1) ^ Double.doubleToLongBits(v2));
                     }
                 },
@@ -2724,7 +2724,7 @@ public class DefaultNExprsCommonOps {
                             return a;
                         }
                         return
-                                NLiteral.of(a).asBigIntValue().get().xor(NLiteral.of(b).asBigIntValue().get());
+                                NLiteral.of(a).asBigInt().get().xor(NLiteral.of(b).asBigInt().get());
                     }
                 },
                 NPlatformSignature.of(BigDecimal.class, Byte.class), NPlatformSignature.of(Byte.class, BigDecimal.class)
@@ -2805,7 +2805,7 @@ public class DefaultNExprsCommonOps {
 
 
     private static Number powerBigDecimal(BigDecimal a, BigDecimal b, MathContext mc) {
-        Integer ii = NLiteral.of(b).asIntValue().orNull();
+        Integer ii = NLiteral.of(b).asInt().orNull();
         if (ii != null) {
             return a.pow(ii);
         }

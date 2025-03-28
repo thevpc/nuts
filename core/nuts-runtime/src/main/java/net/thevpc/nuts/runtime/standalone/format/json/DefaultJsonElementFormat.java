@@ -33,6 +33,7 @@ import net.thevpc.nuts.util.NHex;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.*;
+import java.util.List;
 
 /**
  * @author thevpc
@@ -53,10 +54,14 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
     }
 
     public void write(NPrintStream out, NElement data, boolean compact) {
-        write(out, data, compact ? null : "");
+        writeSafe(out, ensureJson(data), compact ? null : "");
     }
 
     private void write(NPrintStream out, NElement data, String indent) {
+        writeSafe(out, ensureJson(data), indent);
+    }
+
+    private void writeSafe(NPrintStream out, NElement data, String indent) {
 
         switch (data.type()) {
             case NULL: {
@@ -64,27 +69,28 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                 break;
             }
             case BOOLEAN: {
-                out.print(data.asBooleanValue().orElse(false));
+                out.print(data.asBoolean().orElse(false));
                 break;
             }
             case BYTE:
             case SHORT:
             case INTEGER:
             case LONG: {
-                out.print(data.asNumberValue().orElse(0));
+                out.print(data.asNumber().orElse(0));
                 break;
             }
             case FLOAT:
             case DOUBLE: {
-                out.print(data.asNumberValue().orElse(0.0));
+                out.print(data.asNumber().orElse(0.0));
                 break;
             }
             case INSTANT:
             case STRING:
+            case NAME:
 //            case NUTS_STRING:
             {
                 StringBuilder sb = new StringBuilder("\"");
-                final String str = data.asStringValue().orElse("");
+                final String str = data.asString().orElse("");
                 char[] chars = str.toCharArray();
 
                 for (int i = 0; i < chars.length; i++) {
@@ -167,9 +173,9 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                         if (indent != null) {
                             out.print('\n');
                             out.print(indent2);
-                            write(out, e, indent2);
+                            writeSafe(out, e, indent2);
                         } else {
-                            write(out, e, null);
+                            writeSafe(out, e, null);
                         }
                     }
                     if (indent != null) {
@@ -199,21 +205,21 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                             out.print(indent2);
                             if (e instanceof NPairElement) {
                                 NPairElement ee = (NPairElement) e;
-                                write(out, ee.key(), indent2);
+                                writeSafe(out, ee.key(), indent2);
                                 out.print(':');
                                 out.print(' ');
-                                write(out, ee.value(), indent2);
+                                writeSafe(out, ee.value(), indent2);
                             } else {
-                                write(out, e, indent2);
+                                writeSafe(out, e, indent2);
                             }
                         } else {
                             if (e instanceof NPairElement) {
                                 NPairElement ee = (NPairElement) e;
-                                write(out, ee.key(), null);
+                                writeSafe(out, ee.key(), null);
                                 out.print(':');
-                                write(out, ee.value(), null);
+                                writeSafe(out, ee.value(), null);
                             } else {
-                                write(out, e, null);
+                                writeSafe(out, e, null);
                             }
                         }
                     }
@@ -226,7 +232,189 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                 break;
             }
             default: {
-                throw new IllegalArgumentException("unsupported");
+                throw new IllegalArgumentException("unsupported JSON format for " + data.type());
+            }
+        }
+    }
+
+    private NElement _jsonAnnotations(List<NElementAnnotation> a) {
+        NElements elems = NElements.of();
+        return elems.ofArray(
+                a.stream().map(x -> _jsonAnnotation(x)).toArray(NElement[]::new)
+        );
+    }
+
+    private NElement _jsonAnnotation(NElementAnnotation a) {
+        NElements elems = NElements.of();
+        NObjectElementBuilder u = elems.ofObjectBuilder()
+                .add("annotationName", a.name());
+        if (a.params() != null) {
+            u.add("annotationParams",
+                    elems.ofArray(
+                            a.params().stream().map(x -> ensureJson(x)).toArray(NElement[]::new)
+                    )
+            );
+        }
+        return u.build();
+    }
+
+    private NElement ensureJson(NElement e) {
+        NElements elems = NElements.of();
+        switch (e.type()) {
+            case NULL:
+            case INTEGER:
+            case LONG:
+            case SHORT:
+            case BYTE:
+            case DOUBLE:
+            case FLOAT:
+            case BOOLEAN:
+            case BIG_DECIMAL:
+            case BIG_INTEGER: {
+                List<NElementAnnotation> a = e.annotations();
+                if (a.isEmpty()) {
+                    return e;
+                } else {
+                    return elems.ofObjectBuilder()
+                            .add("value", e.builder().clearAnnotations().build())
+                            .add(a.isEmpty() ? null : elems.ofPair("@annotations", _jsonAnnotations(a)))
+                            .build();
+                }
+            }
+            case REGEX:
+            case NAME:
+            case INSTANT:
+            case BIG_COMPLEX:
+            case DOUBLE_COMPLEX:
+            case FLOAT_COMPLEX:
+            case CUSTOM:
+            case CHAR_STREAM:
+            case BINARY_STREAM:
+            case LOCAL_TIME:
+            case LOCAL_DATE:
+            case LOCAL_DATETIME:
+            case CHAR:
+            case STRING:
+                // TODO FIXE ME LATER
+            {
+                List<NElementAnnotation> a = e.annotations();
+                if (a.isEmpty()) {
+                    return elems.ofString(e.asString().get());
+                } else {
+                    return elems.ofObjectBuilder()
+                            .add("value", e.builder().clearAnnotations().build())
+                            .add(a.isEmpty() ? null : elems.ofPair("@annotations", _jsonAnnotations(a)))
+                            .build();
+                }
+            }
+            case ALIAS: {
+                List<NElementAnnotation> a = e.annotations();
+                if (a.isEmpty()) {
+                    return elems.ofString("&" + e.asString().get());
+                } else {
+                    return elems.ofObjectBuilder()
+                            .add("value", "&" + e.builder().clearAnnotations().build().asString().get())
+                            .add(a.isEmpty() ? null : elems.ofPair("@annotations", _jsonAnnotations(a)))
+                            .build();
+                }
+            }
+            case PAIR: {
+                List<NElementAnnotation> a = e.annotations();
+                NPairElement p0 = e.asPair().get();
+                NPairElementBuilder p = p0.builder().clearAnnotations()
+                        .key(ensureJson(p0.key()))
+                        .value(ensureJson(p0.value()));
+                if (p.key().isPrimitive()) {
+                    if (a.isEmpty()) {
+                        return p.build();
+                    } else {
+                        return elems.ofObjectBuilder()
+                                .add("value", p.build())
+                                .add(a.isEmpty() ? null : elems.ofPair("@annotations", _jsonAnnotations(a)))
+                                .build();
+                    }
+                } else {
+                    if (a.isEmpty()) {
+                        return elems.ofObjectBuilder()
+                                .add("key", p.key())
+                                .add("value", p.value())
+                                .add(a.isEmpty() ? null : elems.ofPair("@annotations", _jsonAnnotations(a)))
+                                .build();
+                    } else {
+                        return elems.ofObjectBuilder()
+                                .add("key", p.key())
+                                .add("value", p.value())
+                                .add(a.isEmpty() ? null : elems.ofPair("@annotations", _jsonAnnotations(a)))
+                                .build();
+                    }
+                }
+            }
+            case ARRAY:
+            case NAMED_ARRAY:
+            case NAMED_PARAMETRIZED_ARRAY:
+            case PARAMETRIZED_ARRAY: {
+                List<NElementAnnotation> a = e.annotations();
+
+                NArrayElement p0 = e.asArray().get();
+                NArrayElementBuilder p = elems.ofArrayBuilder()
+                        .addAll(p0.children().stream().map(x -> ensureJson(x)).toArray(NElement[]::new));
+
+                if (a.isEmpty() && !p0.isNamed() && !p0.isParametrized()) {
+                    return p.build();
+                } else {
+                    return elems.ofObjectBuilder()
+                            .add("value", p.build())
+                            .add(a.isEmpty() ? null : elems.ofPair("@annotations", _jsonAnnotations(a)))
+                            .add(!p0.isNamed() ? null : elems.ofPair("@name", elems.ofString(p0.name())))
+                            .add(!p0.isParametrized() ? null : elems.ofPair("@params", elems.ofArray(p0.params().stream().map(x -> ensureJson(x)).toArray(NElement[]::new))))
+                            .build();
+                }
+            }
+            case OBJECT:
+            case NAMED_OBJECT:
+            case NAMED_PARAMETRIZED_OBJECT:
+            case PARAMETRIZED_OBJECT: {
+                List<NElementAnnotation> a = e.annotations();
+
+                NObjectElement p0 = e.asObject().get();
+                NObjectElementBuilder p = elems.ofObjectBuilder()
+                        .addAll(p0.children().stream().map(x -> ensureJson(x)).toArray(NElement[]::new));
+
+                if (a.isEmpty() && !p0.isNamed() && !p0.isParametrized()) {
+                    return p.build();
+                } else {
+                    return elems.ofObjectBuilder()
+                            .add("value", p.build())
+                            .add(a.isEmpty() ? null : elems.ofPair("@annotations", _jsonAnnotations(a)))
+                            .add(!p0.isNamed() ? null : elems.ofPair("@name", elems.ofString(p0.name())))
+                            .add(!p0.isParametrized() ? null : elems.ofPair("@params", elems.ofArray(p0.params().stream().map(x -> ensureJson(x)).toArray(NElement[]::new))))
+                            .build();
+                }
+            }
+            case UPLET:
+            case NAMED_UPLET: {
+                List<NElementAnnotation> a = e.annotations();
+
+                NUpletElement p0 = e.asUplet().get();
+                NArrayElementBuilder p = elems.ofArrayBuilder()
+                        .addAll(p0.children().stream().map(x -> ensureJson(x)).toArray(NElement[]::new));
+
+                if (a.isEmpty() && !p0.isNamed() && !p0.isParametrized()) {
+                    return p.build();
+                } else {
+                    return elems.ofObjectBuilder()
+                            .add("value", p.build())
+                            .add(a.isEmpty() ? null : elems.ofPair("@annotations", _jsonAnnotations(a)))
+                            .add(!p0.isNamed() ? null : elems.ofPair("@name", elems.ofString(p0.name())))
+                            .build();
+                }
+            }
+            case MATRIX:
+            case NAMED_MATRIX:
+            case NAMED_PARAMETRIZED_MATRIX:
+            case OP:
+            default: {
+                throw new NUnsupportedOperationException(NMsg.ofC("unsupported ensureJson for %s", e.type()));
             }
         }
     }
@@ -381,7 +569,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                         break;
                     }
                     default: {
-                        name = k.asStringValue().get();
+                        name = k.asString().get();
                     }
                 }
                 skipWhiteSpaceAndComments();

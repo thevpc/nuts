@@ -15,7 +15,7 @@ public class NElementMapperNPrimitiveElement implements NElementMapper<NPrimitiv
 
     @Override
     public Object destruct(NPrimitiveElement src, Type typeOfSrc, NElementFactoryContext context) {
-        return src.asObjectValue();
+        return src.asRawObject();
     }
 
     @Override

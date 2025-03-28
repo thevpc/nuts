@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
 import net.thevpc.nuts.NCallableSupport;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.util.XmlEscaper;
 
 import java.io.BufferedReader;
@@ -13,8 +12,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class JettyWebServerHtmlfsParser extends AbstractHtmlfsParser {
-    public JettyWebServerHtmlfsParser(NWorkspace workspace) {
-        super(workspace);
+    public JettyWebServerHtmlfsParser() {
+        super();
     }
 
     @Override

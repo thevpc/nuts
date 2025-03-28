@@ -59,7 +59,7 @@ public class NFormatUtils {
             case BIG_INTEGER:
             case BIG_DECIMAL:
             {
-                dest.put(prefix, stringValue(value.asPrimitive().get().asObjectValue()));
+                dest.put(prefix, stringValue(value.asPrimitive().get().asRawObject()));
                 break;
             }
             case PAIR: {

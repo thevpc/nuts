@@ -280,15 +280,15 @@ public class NElementPathFilter {
                                 if (vir.indexOf('-') > 0) {
                                     String[] inter = vir.split("-");
                                     if (inter.length == 2
-                                            && NLiteral.of(inter[0]).asIntValue().isPresent()
-                                            && NLiteral.of(inter[1]).asIntValue().isPresent()) {
+                                            && NLiteral.of(inter[0]).asInt().isPresent()
+                                            && NLiteral.of(inter[1]).asInt().isPresent()) {
                                         int a = Integer.parseInt(inter[0]);
                                         int b = Integer.parseInt(inter[1]);
                                         ors.add(new NElementNameMatcherValueInterval(a, b));
                                     }
                                 } else {
-                                    if (NLiteral.of(vir).asIntValue().isPresent()) {
-                                        int a = NLiteral.of(vir).asIntValue().get();
+                                    if (NLiteral.of(vir).asInt().isPresent()) {
+                                        int a = NLiteral.of(vir).asInt().get();
                                         ors.add(new NElementNameMatcherValue(a));
                                     }
                                 }
@@ -336,8 +336,8 @@ public class NElementPathFilter {
                     if (s.startsWith(":#")) {
                         s = s.substring(2);
                         return createIndexValueInervalMatcher(s);
-                    } else if (NLiteral.of(s).asIntValue().isPresent()) {
-                        return new NElementIndexMatcherForValue(NLiteral.of(s).asIntValue().get());
+                    } else if (NLiteral.of(s).asInt().isPresent()) {
+                        return new NElementIndexMatcherForValue(NLiteral.of(s).asInt().get());
                     } else if (s.matches("[0-9][0-9,-]+")) {
                         return createIndexValueInervalMatcher(s);
                     } else {
@@ -354,13 +354,13 @@ public class NElementPathFilter {
                 if (vir.length() > 0) {
                     if (vir.indexOf('-') > 0) {
                         String[] inter = vir.split("-");
-                        if (inter.length == 2 && NLiteral.of(inter[0]).asIntValue().isPresent() && NLiteral.of(inter[1]).asIntValue().isPresent()) {
+                        if (inter.length == 2 && NLiteral.of(inter[0]).asInt().isPresent() && NLiteral.of(inter[1]).asInt().isPresent()) {
                             int a = Integer.parseInt(inter[0]);
                             int b = Integer.parseInt(inter[1]);
                             ors.add(new NElementIndexMatcherValueInterval(a, b));
                         }
                     } else {
-                        if (NLiteral.of(vir).asIntValue().isPresent()) {
+                        if (NLiteral.of(vir).asInt().isPresent()) {
                             ors.add(new NElementIndexMatcherForValue(Integer.parseInt(vir)));
                         }
                     }
@@ -567,7 +567,7 @@ public class NElementPathFilter {
         @Override
         public boolean matches(int index, NElement name, int len, Map<String, Object> matchContext) {
             if (name.type() == NElementType.STRING) {
-                String sname = name.asStringValue().get();
+                String sname = name.asString().get();
                 return lower
                         ? sname.toLowerCase().matches(pat)
                         : sname.matches(pat);

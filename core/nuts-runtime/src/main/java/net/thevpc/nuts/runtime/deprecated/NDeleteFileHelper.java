@@ -9,6 +9,7 @@ import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
+import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
 import net.thevpc.nuts.util.NAsk;
 import net.thevpc.nuts.util.NLiteral;
@@ -177,7 +178,7 @@ public class NDeleteFileHelper {
                     refForceAll.setForce(true);
                 } else if ("c".equalsIgnoreCase(line)) {
                     throw new NCancelException();
-                } else if (!NLiteral.of(line).asBooleanValue().orElse(false)) {
+                } else if (!NLiteral.of(line).asBoolean().orElse(false)) {
                     refForceAll.ignore(directory);
                     return 0;
                 }
@@ -207,11 +208,7 @@ public class NDeleteFileHelper {
                                 // the children (asynchronous)
                                 //try three times and then exit!
                             }
-                            try {
-                                Thread.sleep(500);
-                            } catch (InterruptedException e) {
-                                break;
-                            }
+                            NWorkspaceProfilerImpl.sleep(500,"NDeleteFileHelper::workaround-delete");
                         }
                         if (!deleted) {
                             //do not catch, last time the exception is thrown

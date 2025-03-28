@@ -186,7 +186,7 @@ public class DefaultNArg implements NArg {
 
     @Override
     public NOptional<String> getStringKey() {
-        return getKey().asStringValue();
+        return getKey().asString();
     }
 
     @Override
@@ -201,12 +201,12 @@ public class DefaultNArg implements NArg {
 
     @Override
     public NOptional<String> getStringValue() {
-        return getValue().asStringValue()
+        return getValue().asString()
                 .ifEmptyUse(
-                        () -> NOptional.ofEmpty(() -> NMsg.ofC("missing value for : %s", getKey().asStringValue().orElse("")))
+                        () -> NOptional.ofEmpty(() -> NMsg.ofC("missing value for : %s", getKey().asString().orElse("")))
                 )
                 .ifErrorUse(
-                        () -> NOptional.ofEmpty(() -> NMsg.ofC("erroneous value for : %s", getKey().asStringValue().orElse("")))
+                        () -> NOptional.ofEmpty(() -> NMsg.ofC("erroneous value for : %s", getKey().asString().orElse("")))
                 );
     }
 
@@ -265,20 +265,20 @@ public class DefaultNArg implements NArg {
     @Override
     public NOptional<Boolean> getBooleanValue() {
         if (isNegated()) {
-            return getValue().asBooleanValue().ifEmpty(true).map(x -> isNegated() != x)
+            return getValue().asBoolean().ifEmpty(true).map(x -> isNegated() != x)
                     .ifEmptyUse(
-                            () -> NOptional.ofEmpty(() -> NMsg.ofC("missing value for : %s", getKey().asStringValue().orElse("")))
+                            () -> NOptional.ofEmpty(() -> NMsg.ofC("missing value for : %s", getKey().asString().orElse("")))
                     )
                     .ifErrorUse(
-                            () -> NOptional.ofEmpty(() -> NMsg.ofC("erroneous value for : %s", getKey().asStringValue().orElse("")))
+                            () -> NOptional.ofEmpty(() -> NMsg.ofC("erroneous value for : %s", getKey().asString().orElse("")))
                     );
         }
-        return getValue().asBooleanValue()
+        return getValue().asBoolean()
                 .ifEmptyUse(
-                        () -> NOptional.ofEmpty(() -> NMsg.ofC("missing value for : %s", getKey().asStringValue().orElse("")))
+                        () -> NOptional.ofEmpty(() -> NMsg.ofC("missing value for : %s", getKey().asString().orElse("")))
                 )
                 .ifErrorUse(
-                        () -> NOptional.ofEmpty(() -> NMsg.ofC("erroneous value for : %s", getKey().asStringValue().orElse("")))
+                        () -> NOptional.ofEmpty(() -> NMsg.ofC("erroneous value for : %s", getKey().asString().orElse("")))
                 );
     }
 
@@ -312,93 +312,93 @@ public class DefaultNArg implements NArg {
     }
 
     @Override
-    public Object asObjectValue() {
+    public Object asRawObject() {
         return image;
     }
 
     @Override
-    public NOptional<Instant> asInstantValue() {
-        return toValue().asInstantValue();
+    public NOptional<Instant> asInstant() {
+        return toValue().asInstant();
     }
 
     @Override
-    public NOptional<LocalDate> asLocalDateValue() {
-        return toValue().asLocalDateValue();
+    public NOptional<LocalDate> asLocalDate() {
+        return toValue().asLocalDate();
     }
 
     @Override
-    public NOptional<LocalDateTime> asLocalDateTimeValue() {
-        return toValue().asLocalDateTimeValue();
+    public NOptional<LocalDateTime> asLocalDateTime() {
+        return toValue().asLocalDateTime();
     }
 
     @Override
-    public NOptional<LocalTime> asLocalTimeValue() {
-        return toValue().asLocalTimeValue();
+    public NOptional<LocalTime> asLocalTime() {
+        return toValue().asLocalTime();
     }
 
     @Override
-    public NOptional<NBigComplex> asBigComplexValue() {
-        return toValue().asBigComplexValue();
+    public NOptional<NBigComplex> asBigComplex() {
+        return toValue().asBigComplex();
     }
 
     @Override
-    public NOptional<NDoubleComplex> asDoubleComplexValue() {
-        return toValue().asDoubleComplexValue();
+    public NOptional<NDoubleComplex> asDoubleComplex() {
+        return toValue().asDoubleComplex();
     }
 
     @Override
-    public NOptional<NFloatComplex> asFloatComplexValue() {
-        return toValue().asFloatComplexValue();
+    public NOptional<NFloatComplex> asFloatComplex() {
+        return toValue().asFloatComplex();
     }
 
     @Override
-    public NOptional<Number> asNumberValue() {
-        return toValue().asNumberValue();
+    public NOptional<Number> asNumber() {
+        return toValue().asNumber();
     }
 
     @Override
-    public NOptional<Boolean> asBooleanValue() {
-        return toValue().asBooleanValue();
+    public NOptional<Boolean> asBoolean() {
+        return toValue().asBoolean();
     }
 
     @Override
-    public NOptional<Long> asLongValue() {
-        return toValue().asLongValue();
+    public NOptional<Long> asLong() {
+        return toValue().asLong();
     }
 
     @Override
-    public NOptional<Double> asDoubleValue() {
-        return toValue().asDoubleValue();
+    public NOptional<Double> asDouble() {
+        return toValue().asDouble();
     }
 
     @Override
-    public NOptional<Float> asFloatValue() {
-        return toValue().asFloatValue();
+    public NOptional<Float> asFloat() {
+        return toValue().asFloat();
     }
 
     @Override
-    public NOptional<Byte> asByteValue() {
-        return toValue().asByteValue();
+    public NOptional<Byte> asByte() {
+        return toValue().asByte();
     }
 
     @Override
-    public NOptional<Short> asShortValue() {
-        return toValue().asShortValue();
+    public NOptional<Short> asShort() {
+        return toValue().asShort();
     }
 
     @Override
-    public NOptional<Integer> asIntValue() {
-        return toValue().asIntValue();
+    public NOptional<Integer> asInt() {
+        return toValue().asInt();
     }
 
     @Override
-    public NOptional<BigInteger> asBigIntValue() {
-        return toValue().asBigIntValue();
+    public NOptional<BigInteger> asBigInt() {
+        return toValue().asBigInt();
     }
 
     @Override
-    public NOptional<BigDecimal> asBigDecimalValue() {
-        return toValue().asBigDecimalValue();
+    public NOptional<BigDecimal> asBigDecimal() {
+        return toValue().asBigDecimal();
     }
 
     @Override
@@ -502,8 +502,8 @@ public class DefaultNArg implements NArg {
     }
 
     @Override
-    public NOptional<String> asStringValue() {
-        return toValue().asStringValue();
+    public NOptional<String> asString() {
+        return toValue().asString();
     }
 
     @Override
@@ -512,8 +512,8 @@ public class DefaultNArg implements NArg {
     }
 
     @Override
-    public NOptional<Character> asCharValue() {
-        return toValue().asCharValue();
+    public NOptional<Character> asChar() {
+        return toValue().asChar();
     }
 
     @Override
@@ -532,23 +532,23 @@ public class DefaultNArg implements NArg {
     }
 
     @Override
-    public NOptional<String> asStringValueAt(int index) {
-        return toValue().asStringValueAt(index);
+    public NOptional<String> asStringAt(int index) {
+        return toValue().asStringAt(index);
     }
 
     @Override
-    public NOptional<Long> asLongValueAt(int index) {
-        return toValue().asLongValueAt(index);
+    public NOptional<Long> asLongAt(int index) {
+        return toValue().asLongAt(index);
     }
 
     @Override
-    public NOptional<Integer> asIntValueAt(int index) {
-        return toValue().asIntValueAt(index);
+    public NOptional<Integer> asIntAt(int index) {
+        return toValue().asIntAt(index);
     }
 
     @Override
-    public NOptional<Double> asDoubleValueAt(int index) {
-        return toValue().asDoubleValueAt(index);
+    public NOptional<Double> asDoubleAt(int index) {
+        return toValue().asDoubleAt(index);
     }
 
     @Override
@@ -562,8 +562,8 @@ public class DefaultNArg implements NArg {
     }
 
     @Override
-    public NOptional<Object> asObjectValueAt(int index) {
-        return toValue().asObjectValueAt(index);
+    public NOptional<Object> asObjectAt(int index) {
+        return toValue().asObjectAt(index);
     }
 
     @Override

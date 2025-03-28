@@ -93,6 +93,20 @@ public class InternalNIdFilters extends InternalNTypedFilters<NIdFilter> impleme
     @Override
     public NIdFilter all(NFilter... others) {
         List<NIdFilter> all = convertList(others);
+        for (int i = all.size()-1; i >=0; i--) {
+            NIdFilter c = (NIdFilter) all.get(i).simplify();
+            if(c!=null) {
+                if (c.equals(always())) {
+                    if (all.size() > 1) {
+                        all.remove(i);
+                    }
+                } else if (c.equals(never())) {
+                    return never();
+                }
+            }else{
+                all.remove(i);
+            }
+        }
         if (all.isEmpty()) {
             return always();
         }
@@ -105,6 +119,20 @@ public class InternalNIdFilters extends InternalNTypedFilters<NIdFilter> impleme
     @Override
     public NIdFilter any(NFilter... others) {
         List<NIdFilter> all = convertList(others);
+        for (int i = all.size()-1; i >=0; i--) {
+            NIdFilter c = (NIdFilter) all.get(i).simplify();
+            if(c!=null) {
+                if (c.equals(never())) {
+                    if (all.size() > 1) {
+                        all.remove(i);
+                    }
+                } else if (c.equals(always())) {
+                    return always();
+                }
+            }else{
+                all.remove(i);
+            }
+        }
         if (all.isEmpty()) {
             return always();
         }

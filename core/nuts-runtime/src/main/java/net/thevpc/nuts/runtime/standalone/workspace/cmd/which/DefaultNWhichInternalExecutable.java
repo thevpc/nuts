@@ -76,8 +76,8 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                             } else {
                                 NOut.println(
                                         elem.ofObjectBuilder()
-                                                .set("name", arg)
-                                                .set("type", "system-command")
+                                                .name("system-command")
+                                                .addParam(elem.ofString(arg))
                                                 .set("description", p.getDescription())
                                                 .build()
                                 );
@@ -95,8 +95,8 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                             } else {
                                 NOut.println(
                                         elem.ofObjectBuilder()
-                                                .set("name", arg)
-                                                .set("type", "alias")
+                                                .name("alias")
+                                                .addParam(elem.ofString(arg))
                                                 .set("description", p.getDescription())
                                                 .set("id", p.getId().toString())
                                                 .build()
@@ -122,8 +122,8 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                             } else {
                                 NOut.println(
                                         elem.ofObjectBuilder()
-                                                .set("name", arg)
-                                                .set("type", "artifact")
+                                                .name("artifact")
+                                                .addParam(elem.ofString(arg))
                                                 .set("id", p.getId().toString())
                                                 .set("description", p.getDescription())
                                                 .build()
@@ -140,8 +140,8 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                             } else {
                                 NOut.println(
                                         elem.ofObjectBuilder()
-                                                .set("name", arg)
-                                                .set("type", "internal-command")
+                                                .name("internal-command")
+                                                .addParam(elem.ofString(arg))
                                                 .set("description", p.getDescription())
                                                 .build()
                                 );
@@ -157,8 +157,8 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                             } else {
                                 NOut.println(
                                         elem.ofObjectBuilder()
-                                                .set("name", arg)
-                                                .set("type", "unknown-command")
+                                                .name("unknown-command")
+                                                .addParam(elem.ofString(arg))
                                                 .build()
                                 );
                             }
@@ -176,8 +176,8 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                 } else {
                     session.eout().add(
                             elem.ofObjectBuilder()
-                                    .set("name", arg)
-                                    .set("type", "not-found")
+                                    .name("not-found")
+                                    .addParam(elem.ofString(arg))
                                     .build()
                     );
                 }

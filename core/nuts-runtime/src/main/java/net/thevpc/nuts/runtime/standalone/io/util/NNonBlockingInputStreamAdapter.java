@@ -29,6 +29,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NMsg;
@@ -205,11 +206,7 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
             if (now > then) {
                 break;
             }
-            try {
-                Thread.sleep(tic);
-            } catch (InterruptedException e) {
-                break;
-            }
+            NWorkspaceProfilerImpl.sleep(tic,"NNonBlockingInputStreamAdapter::readNonBlocking");
         }
         return 0;
     }

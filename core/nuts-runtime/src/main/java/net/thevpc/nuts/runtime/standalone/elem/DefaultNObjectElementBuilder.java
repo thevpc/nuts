@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 /**
  * @author thevpc
  */
-public class DefaultNObjectElementBuilder  extends AbstractNElementBuilder implements NObjectElementBuilder {
+public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implements NObjectElementBuilder {
 
     private final List<NElement> values = new ArrayList<>();
 
@@ -83,6 +83,9 @@ public class DefaultNObjectElementBuilder  extends AbstractNElementBuilder imple
     @Override
     public NObjectElementBuilder addParam(NElement param) {
         if (param != null) {
+            if (params == null) {
+                params = new ArrayList<>();
+            }
             this.params.add(param);
         }
         return this;
@@ -91,6 +94,9 @@ public class DefaultNObjectElementBuilder  extends AbstractNElementBuilder imple
     @Override
     public NObjectElementBuilder addParamAt(int index, NElement param) {
         if (param != null) {
+            if (params == null) {
+                params = new ArrayList<>();
+            }
             params.add(index, param);
         }
         return this;
@@ -98,25 +104,29 @@ public class DefaultNObjectElementBuilder  extends AbstractNElementBuilder imple
 
     @Override
     public NObjectElementBuilder removeParamAt(int index) {
-        params.remove(index);
+        if (params != null) {
+            params.remove(index);
+        }
         return this;
     }
 
     @Override
     public NObjectElementBuilder clearParams() {
-        params.clear();
+        if (params != null) {
+            params.clear();
+        }
         return this;
     }
 
     @Override
     public List<NElement> params() {
-        return Collections.unmodifiableList(params);
+        return params;
     }
 
 
     @Override
     public List<NElement> children() {
-        return values;
+        return Collections.unmodifiableList(values);
     }
 
     @Override
@@ -155,7 +165,7 @@ public class DefaultNObjectElementBuilder  extends AbstractNElementBuilder imple
 
     @Override
     public NObjectElementBuilder add(NElement name, NElement value) {
-        values.add(pair(denull(name), denull(value)));
+        add(pair(denull(name), denull(value)));
         return this;
     }
 
@@ -176,37 +186,37 @@ public class DefaultNObjectElementBuilder  extends AbstractNElementBuilder imple
                 return this;
             }
         }
-        values.add(pair(name, value));
+        add(pair(name, value));
         return this;
     }
 
-    private NPairElement pair(NElement k,NElement v){
-        return new DefaultNPairElement(k, v, new NElementAnnotation[0],new NElementCommentsImpl());
+    private NPairElement pair(NElement k, NElement v) {
+        return new DefaultNPairElement(k, v, new NElementAnnotation[0], new NElementCommentsImpl());
     }
 
     @Override
     public NObjectElementBuilder set(String name, NElement value) {
-        return set(_elements().ofString(name), denull(value));
+        return set(_elements().ofNameOrString(name), denull(value));
     }
 
     @Override
     public NObjectElementBuilder set(String name, boolean value) {
-        return set(_elements().ofString(name), _elements().ofBoolean(value));
+        return set(_elements().ofNameOrString(name), _elements().ofBoolean(value));
     }
 
     @Override
     public NObjectElementBuilder set(String name, int value) {
-        return set(_elements().ofString(name), _elements().ofInt(value));
+        return set(_elements().ofNameOrString(name), _elements().ofInt(value));
     }
 
     @Override
     public NObjectElementBuilder set(String name, double value) {
-        return set(_elements().ofString(name), _elements().ofDouble(value));
+        return set(_elements().ofNameOrString(name), _elements().ofDouble(value));
     }
 
     @Override
     public NObjectElementBuilder set(String name, String value) {
-        return set(_elements().ofString(name), _elements().ofString(value));
+        return set(_elements().ofNameOrString(name), _elements().ofString(value));
     }
 
     @Override
@@ -267,10 +277,12 @@ public class DefaultNObjectElementBuilder  extends AbstractNElementBuilder imple
     }
 
     @Override
-    public NObjectElementBuilder addAll(List<NPairElement> other) {
+    public NObjectElementBuilder addAll(List<NElement> other) {
         if (other != null) {
-            for (NPairElement e : other) {
-                add(e.key(), e.value());
+            for (NElement e : other) {
+                if (e != null) {
+                    add(e);
+                }
             }
         }
         return this;
@@ -314,7 +326,7 @@ public class DefaultNObjectElementBuilder  extends AbstractNElementBuilder imple
 
     @Override
     public NObjectElementBuilder copyFrom(NObjectElement other) {
-        if(other!=null) {
+        if (other != null) {
             addAnnotations(other.annotations());
             addComments(other.comments());
             if (other.name() != null) {
@@ -323,7 +335,7 @@ public class DefaultNObjectElementBuilder  extends AbstractNElementBuilder imple
             if (other.params() != null) {
                 this.addParams(other.params());
             }
-            this.addAll(other);
+            this.addAll(other.children());
         }
         return this;
     }
@@ -405,8 +417,8 @@ public class DefaultNObjectElementBuilder  extends AbstractNElementBuilder imple
     @Override
     public NObjectElement build() {
         return new DefaultNObjectElement(name, params, values
-                ,annotations().toArray(new NElementAnnotation[0])
-                ,comments()
+                , annotations().toArray(new NElementAnnotation[0])
+                , comments()
         );
     }
 

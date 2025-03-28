@@ -25,7 +25,7 @@ public class ProgressOptions {
                 String v = e.getValue();
                 if (!enabledVisited) {
                     if (v == null) {
-                        Boolean a = NLiteral.of(k).asBooleanValue().orNull();
+                        Boolean a = NLiteral.of(k).asBoolean().orNull();
                         if (a != null) {
                             o.setEnabled(a);
                             enabledVisited = true;
@@ -76,7 +76,7 @@ public class ProgressOptions {
         if (item.isEmpty()) {
             return false;
         }
-        return item.isBlank() || item.flatMap(NLiteral::asBooleanValue).orElse(false);
+        return item.isBlank() || item.flatMap(NLiteral::asBoolean).orElse(false);
     }
 
     public Level getArmedLogLevel() {
@@ -97,7 +97,7 @@ public class ProgressOptions {
             for (String id : ids) {
                 NOptional<NLiteral> item = get(id);
                 if (!item.isEmpty()) {
-                    if (item.flatMap(NLiteral::asBooleanValue).orElse(true)) {
+                    if (item.flatMap(NLiteral::asBoolean).orElse(true)) {
                         return level;
                     }
                     return null;
@@ -109,7 +109,7 @@ public class ProgressOptions {
             return null;
         }
         NLiteral iValue = item.get();
-        String s = iValue.asStringValue().orNull();
+        String s = iValue.asString().orNull();
         if (s != null) {
             for (Level level : new Level[]{Level.OFF, Level.SEVERE, Level.WARNING, Level.INFO, Level.CONFIG, Level.FINE, Level.FINER, Level.FINEST, Level.ALL}) {
                 String[] ids = new String[]{"log-" + level.getName().toLowerCase()};
@@ -123,7 +123,7 @@ public class ProgressOptions {
                 }
             }
         }
-        return iValue.asBooleanValue().orElse(true) ? Level.FINEST : null;
+        return iValue.asBoolean().orElse(true) ? Level.FINEST : null;
     }
 
     public ProgressOptions put(String k, NLiteral e) {

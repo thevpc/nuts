@@ -4,13 +4,11 @@ import net.thevpc.nuts.elem.NElementDescribable;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.reserved.util.NFunctionFromJavaFunction;
-import net.thevpc.nuts.reserved.util.NFunctionWithDescription;
 
 import java.util.function.Function;
 
 public interface NFunction<T, V> extends Function<T, V>, NElementDescribable<NFunction<T, V>> {
-    static <T, V> NFunction<T, V> of(Function<? super T, V> o) {
+    static <T, V> NFunction<T, V> of(Function<T, V> o) {
         if (o == null) {
             return null;
         }
@@ -20,7 +18,7 @@ public interface NFunction<T, V> extends Function<T, V>, NElementDescribable<NFu
         return new NFunctionFromJavaFunction<>(o);
     }
 
-    static <T, V> NFunction<T, V> ofUnsafe(UnsafeFunction<? super T, V> o, Function<Exception, ? extends V> onError) {
+    static <T, V> NFunction<T, V> ofUnsafe(UnsafeFunction<T, V> o, Function<Exception, ? extends V> onError) {
         NAssert.requireNonNull(o, "function");
         if (o instanceof NFunction) {
             return (NFunction<T, V>) o;

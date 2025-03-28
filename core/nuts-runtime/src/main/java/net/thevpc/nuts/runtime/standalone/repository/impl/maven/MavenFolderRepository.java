@@ -62,7 +62,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
         if("maven-local".equals(options.getName())) {
             NLiteral enableM2 = getWorkspace().getCustomBootOption("---m2").orNull();
             if(enableM2!=null){
-                disableMe=!enableM2.isNull() && !enableM2.asBooleanValue().orElse(true);
+                disableMe=!enableM2.isNull() && !enableM2.asBoolean().orElse(true);
             }
         }
     }

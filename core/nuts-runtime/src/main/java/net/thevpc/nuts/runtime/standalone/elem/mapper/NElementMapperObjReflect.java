@@ -53,7 +53,7 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
 
     @Override
     public Object createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        NSession session = context.getSession();
+//        NSession session = context.getSession();
         Class c = ReflectUtils.getRawClass(typeOfResult);
         switch (o.type()) {
             case NULL: {
@@ -61,67 +61,67 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
             }
             case STRING: {
                 if (c.isAssignableFrom(String.class)) {
-                    return o.asStringValue().orNull();
+                    return o.asString().orNull();
                 }
                 break;
             }
             case BOOLEAN: {
                 if (c.isAssignableFrom(Boolean.class)) {
-                    return o.asBooleanValue();
+                    return o.asBoolean();
                 }
                 break;
             }
             case DOUBLE: {
                 if (c.isAssignableFrom(Double.class)) {
-                    return o.asDoubleValue();
+                    return o.asDouble();
                 }
                 break;
             }
             case FLOAT: {
                 if (c.isAssignableFrom(Float.class)) {
-                    return o.asFloatValue();
+                    return o.asFloat();
                 }
                 break;
             }
             case BYTE: {
                 if (c.isAssignableFrom(Byte.class)) {
-                    return o.asByteValue();
+                    return o.asByte();
                 }
                 break;
             }
             case BIG_DECIMAL: {
                 if (c.isAssignableFrom(BigDecimal.class)) {
-                    return o.asNumberValue();
+                    return o.asNumber();
                 }
                 break;
             }
             case BIG_INTEGER: {
                 if (c.isAssignableFrom(BigInteger.class)) {
-                    return o.asNumberValue();
+                    return o.asNumber();
                 }
                 break;
             }
             case LONG: {
                 if (c.isAssignableFrom(Long.class)) {
-                    return o.asLongValue();
+                    return o.asLong();
                 }
                 break;
             }
             case SHORT: {
                 if (c.isAssignableFrom(Short.class)) {
-                    return o.asShortValue();
+                    return o.asShort();
                 }
                 break;
             }
             case INTEGER: {
                 if (c.isAssignableFrom(Integer.class)) {
-                    return o.asIntValue();
+                    return o.asInt();
                 }
                 break;
             }
             case INSTANT: {
                 if (c.isAssignableFrom(Instant.class)) {
-                    return o.asInstantValue();
+                    return o.asInstant();
                 }
                 break;
             }
@@ -148,7 +148,7 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
         NReflectType m = defaultNutsElementFactoryService.getTypesRepository().getType(typeOfResult);
         Object instance = m.newInstance();
         NObjectElement eobj = o.asObject().get();
-        NElements prv = context.elem();
+//        NElements prv = context.elem();
         for (NReflectProperty property : m.getProperties()) {
             if (property.isWrite()) {
                 NElement v = eobj.get(property.getName()).orNull();

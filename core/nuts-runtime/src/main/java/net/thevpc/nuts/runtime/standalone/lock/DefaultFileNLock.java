@@ -7,16 +7,15 @@ import net.thevpc.nuts.concurrent.NLockReleaseException;
 
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.util.TimePeriod;
 import net.thevpc.nuts.time.NDuration;
-import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Date;
+import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 
@@ -28,6 +27,52 @@ public class DefaultFileNLock extends AbstractNLock {
     private NWorkspace workspace;
     private Thread ownerThread;
 
+    public static class LockInfo {
+        String hostname;
+        String pid;
+        Instant instant;
+        Instant maxValidInstant;
+
+        public boolean isValid() {
+            return instant != null && maxValidInstant != null;
+        }
+
+        public void deserialize(String value) {
+            NStringBuilder sb = new NStringBuilder(value);
+            for (String line : sb.lines()) {
+                line = line.trim();
+                if (line.startsWith("hostname=")) {
+                    hostname = line.substring("hostname=".length()).trim();
+                } else if (line.startsWith("pid=")) {
+                    pid = line.substring("pid=".length()).trim();
+                } else if (line.startsWith("instant=")) {
+                    instant = Instant.parse(line.substring("instant=".length()).trim());
+                } else if (line.startsWith("maxValidInstant=")) {
+                    maxValidInstant = Instant.parse(line.substring("maxValidInstant=".length()).trim());
+                }
+            }
+        }
+
+        public String serialize() {
+            NStringBuilder sb = new NStringBuilder();
+            sb.println("hostname=" + NStringUtils.trim(hostname));
+            sb.println("pid=" + NStringUtils.trim(pid));
+            sb.println("instant=" + instant);
+            sb.println("maxValidInstant=" + maxValidInstant);
+            return sb.toString();
+        }
+
+        @Override
+        public String toString() {
+            return "LockInfo{" +
+                    "hostname='" + hostname + '\'' +
+                    ", pid='" + pid + '\'' +
+                    ", instant='" + instant + "'" +
+                    ", maxValidInstant='" + maxValidInstant + "'" +
+                    '}';
+        }
+    }
+
     public DefaultFileNLock(Path path, Object lockedObject, NWorkspace workspace) {
         this.path = path;
         this.lockedObject = lockedObject;
@@ -36,7 +81,7 @@ public class DefaultFileNLock extends AbstractNLock {
 
     public TimePeriod getDefaultTimePeriod() {
         return TimePeriod.parse(
-                NWorkspace.of().getConfigProperty("nuts.file-lock.timeout").flatMap(NLiteral::asStringValue).get(),
+                NWorkspace.of().getConfigProperty("nuts.file-lock.timeout").flatMap(NLiteral::asString).get(),
                 TimeUnit.SECONDS
         ).orElse(FIVE_MINUTES);
     }
@@ -63,22 +108,19 @@ public class DefaultFileNLock extends AbstractNLock {
     @Override
     public synchronized void lock() {
         long now = System.currentTimeMillis();
-        PollTime ptime = preferredPollTime(now, TimeUnit.SECONDS);
-        long lastLog=System.currentTimeMillis();
+        long maxWaitingTime=30000;
+        PollTime ptime = preferredPollTime(maxWaitingTime, TimeUnit.MILLISECONDS);
+        long lastLog = System.currentTimeMillis();
         do {
             long now2 = System.currentTimeMillis();
-            if(now2-lastLog>30000){
-                NLog.of(DefaultFileNLock.class).warn(NMsg.ofC("Lock file duration is excessive. waiting for %s for %s", NDuration.ofMillis(now2-now),path));
-                lastLog=now2;
+            if (now2 - lastLog > maxWaitingTime) {
+                NLog.of(DefaultFileNLock.class).warn(NMsg.ofC("Lock file duration is excessive. waiting for %s for %s", NDuration.ofMillis(now2 - now), path));
+                lastLog = now2;
             }
             if (tryLockImmediately()) {
                 return;
             }
-            try {
-                Thread.sleep(ptime.minTimeToSleep);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            NWorkspaceProfilerImpl.sleep(ptime.minTimeToSleep, "DefaultFileNLock::lock");
         } while (true);
     }
 
@@ -166,8 +208,10 @@ public class DefaultFileNLock extends AbstractNLock {
             }
         }
         long minTimeToSleep = timeMs / 10;
-        if (timeMs < 200) {
-            timeMs = 200;
+        if (timeMs > 500) {
+            timeMs = 500;
+        }else if (timeMs < 100) {
+            timeMs = 100;
         }
         return new PollTime(timeMs, minTimeToSleep);
     }
@@ -184,11 +228,7 @@ public class DefaultFileNLock extends AbstractNLock {
             if (System.currentTimeMillis() - now > ptime.timeMs) {
                 break;
             }
-            try {
-                Thread.sleep(ptime.minTimeToSleep);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            NWorkspaceProfilerImpl.sleep(ptime.minTimeToSleep, "DefaultFileNLock::tryLock");
         } while (true);
         return false;
     }
@@ -204,11 +244,7 @@ public class DefaultFileNLock extends AbstractNLock {
             if (System.currentTimeMillis() - now > ptime.timeMs) {
                 break;
             }
-            try {
-                Thread.sleep(ptime.minTimeToSleep);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            NWorkspaceProfilerImpl.sleep(ptime.minTimeToSleep, "DefaultFileNLock::tryLockInterruptibly");
         } while (true);
         return false;
     }
@@ -222,25 +258,46 @@ public class DefaultFileNLock extends AbstractNLock {
 
     public boolean tryLockImmediately() {
         try {
-            if (!Files.exists(path)) {
-                NPath p = NPath.of(path);
-                p.mkParentDirs();
-                Files.createFile(path);
-                Date now = new Date();
-                Files.write(path,
-                        (
-                                "hostname=" + workspace.getHostName() + "\n"
-                                        + "pid=" + workspace.getPid() + "\n"
-                                        + "time=" + now.getTime() + "\n"
-                                        + "date=" + now + "\n"
-                        ).getBytes());
-                ownerThread = Thread.currentThread();
-                return true;
+            synchronized (DefaultFileNLock.class) {
+                if (!Files.exists(path)) {
+                    writeLock();
+                    return true;
+                }else{
+                    LockInfo li = new LockInfo();
+                    try {
+                        byte[] bytes = Files.readAllBytes(path);
+                        li.deserialize(new String(bytes));
+                    }catch (Exception ex) {
+                        //
+                    }
+                    if(li.isValid() && Instant.now().compareTo(li.maxValidInstant)<=0){
+                        return false;
+                    }
+                    writeLock();
+                    return true;
+                }
             }
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             return false;
         }
-        return false;
+    }
+
+    private void writeLock() {
+        try {
+            NPath p = NPath.of(path);
+            p.mkParentDirs();
+            Files.createFile(path);
+            LockInfo li = new LockInfo();
+            li.hostname=workspace.getHostName();
+            li.instant=Instant.now();
+            li.maxValidInstant=li.instant.plusSeconds(12*3600);
+            li.pid=workspace.getPid();
+
+            Files.write(path,li.serialize().getBytes());
+            ownerThread = Thread.currentThread();
+        } catch (IOException ex) {
+            throw new NLockAcquireException(NMsg.ofC("unable to acquire lock"), lockedObject, this, ex);
+        }
     }
 
     @Override

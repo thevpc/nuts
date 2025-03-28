@@ -403,8 +403,8 @@ public abstract class NStreamBase<T> implements NStream<T> {
         return new NStreamFromNIterator<Map.Entry<K, List<T>>>(
                 nutsBase, NIterator.of(entries.iterator()).withDesc(
                 () -> NElements.of().ofObjectBuilder()
-                        .set("type", "GroupBy")
-                        .set("groupBy", NFunction.of(classifier).describe())
+                        .name("GroupBy")
+                        .set("by", NFunction.of(classifier).describe())
                         .set("base", iterator().describe())
                         .build()
         )

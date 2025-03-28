@@ -30,6 +30,6 @@ public class NElementMapperFile implements NElementMapper<File> {
 
     @Override
     public File createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        return new File(o.asStringValue().get());
+        return new File(o.asString().get());
     }
 }

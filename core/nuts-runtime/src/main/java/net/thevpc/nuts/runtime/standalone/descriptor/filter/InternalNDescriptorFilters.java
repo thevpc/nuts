@@ -130,7 +130,7 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
 
     @Override
     public NDescriptorFilter byFlag(NDescriptorFlag... flags) {
-        return new NDescriptorFlagsIdFilter(getWorkspace(),flags);
+        return new NDescriptorFlagsIdFilter(getWorkspace(), flags);
     }
 
     @Override
@@ -198,6 +198,20 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
     @Override
     public NDescriptorFilter all(NFilter... others) {
         List<NDescriptorFilter> all = convertList(others);
+        for (int i = all.size() - 1; i >= 0; i--) {
+            NDescriptorFilter c = (NDescriptorFilter) all.get(i).simplify();
+            if (c != null) {
+                if (c.equals(always())) {
+                    if (all.size() > 1) {
+                        all.remove(i);
+                    }
+                } else if (c.equals(never())) {
+                    return never();
+                }
+            } else {
+                all.remove(i);
+            }
+        }
         if (all.isEmpty()) {
             return always();
         }
@@ -210,6 +224,20 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
     @Override
     public NDescriptorFilter any(NFilter... others) {
         List<NDescriptorFilter> all = convertList(others);
+        for (int i = all.size() - 1; i >= 0; i--) {
+            NDescriptorFilter c = (NDescriptorFilter) all.get(i).simplify();
+            if (c != null) {
+                if (c.equals(never())) {
+                    if (all.size() > 1) {
+                        all.remove(i);
+                    }
+                } else if (c.equals(always())) {
+                    return always();
+                }
+            } else {
+                all.remove(i);
+            }
+        }
         if (all.isEmpty()) {
             return always();
         }

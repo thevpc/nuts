@@ -6,8 +6,8 @@ import net.thevpc.nuts.elem.NElement;
 import java.util.function.Supplier;
 
 public class NIteratorWithDescription<T> extends NIteratorDelegate<T> {
-    private NIterator<T> base;
-    private Supplier<NElement> description;
+    private final NIterator<T> base;
+    private final Supplier<NElement> description;
 
     public NIteratorWithDescription(NIterator<T> base, Supplier<NElement> description) {
         this.base = base;
@@ -20,8 +20,22 @@ public class NIteratorWithDescription<T> extends NIteratorDelegate<T> {
     }
 
     public NIterator<T> withDesc(NEDesc description) {
-        this.description = description;
-        return this;
+        return new NIteratorWithDescription<T>(base, description);
+    }
+
+    @Override
+    public String toString() {
+        if (description != null) {
+            try {
+                NElement e = description.get();
+                if (e != null) {
+                    return e.toString();
+                }
+            } catch (Exception e) {
+                //
+            }
+        }
+        return String.valueOf(base);
     }
 
     @Override

@@ -73,8 +73,8 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
     @Override
     public NElement describe() {
         return NElements.of().ofObjectBuilder()
-                .set("type", "ScanPath")
-                .set("name", name)
+                .name("ScanPath")
+                .addParam(NElements.of().ofString(name))
                 .set("path", NEDesc.describeResolveOrDestruct(folder))
                 .set("maxDepth", maxDepth)
                 .set("filter", NEDesc.describeResolveOrDestruct(filter))

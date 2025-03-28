@@ -249,4 +249,6 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable, NLi
     NOptional<NListContainerElement> toListElementContainer();
 
     NElementComments comments();
+
+    boolean isName();
 }

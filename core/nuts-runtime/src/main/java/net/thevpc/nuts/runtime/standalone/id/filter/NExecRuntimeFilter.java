@@ -40,7 +40,7 @@ public class NExecRuntimeFilter extends AbstractDescriptorFilter {
             }
         }
         if(communityRuntime) {
-            if (!other.getPropertyValue("nuts-runtime").flatMap(NLiteral::asBooleanValue).orElse(false)) {
+            if (!other.getPropertyValue("nuts-runtime").flatMap(NLiteral::asBoolean).orElse(false)) {
                 return false;
             }
             for (NDependency dependency : other.getDependencies()) {

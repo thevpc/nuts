@@ -54,7 +54,7 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
                 String defaultURL = resolveDefaultEndpointURL();
                 workspace.setProperty("nuts-endpoint-url", defaultURL);
             } else {
-                ri.server = endPointURL.asStringValue().get();
+                ri.server = endPointURL.asString().get();
             }
         }
         RequestAgent agent = ri.q.getAgent();
