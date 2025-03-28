@@ -129,16 +129,18 @@ public class Test01_CreateTest {
                 break;
             }
         }
+        NWorkspace ws = NWorkspace.of();
         Assertions.assertEquals(
                 NPath.of(new File(base, new File(wsPath).getName())),
-                NWorkspace.of().getStoreLocation(NStoreType.CACHE));
+                ws.getStoreLocation(NStoreType.CACHE));
+        NRepository localRepo = ws.getRepositories().stream().filter(x -> x.getName().equals("local")).findFirst().get();
         Assertions.assertEquals(
                 NPath.of(new File(base, new File(wsPath).getName() + "/"
                         + NConstants.Folders.REPOSITORIES + "/"
-                        + NWorkspace.of().getRepositories().get(0).getName()
-                        + "/" + NWorkspace.of().getRepositories().get(0).getUuid()
+                        + localRepo.getName()
+                        + "/" + localRepo.getUuid()
                 )),
-                NWorkspace.of().getRepositories().get(0).config().getStoreLocation(NStoreType.CACHE));
+                localRepo.config().getStoreLocation(NStoreType.CACHE));
     }
 
     @Test

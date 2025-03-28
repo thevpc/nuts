@@ -264,7 +264,10 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
                     to = List.class;
                     break;
                 }
-                case STRING: {
+                case STRING:
+                case REGEX:
+                case NAME:
+                {
                     to = String.class;
                     break;
                 }

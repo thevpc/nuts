@@ -38,7 +38,9 @@ public class NElementMapperEnum implements NElementMapper<Enum> {
             case LONG: {
                 return (Enum) ((Class) to).getEnumConstants()[o.asInt().get()];
             }
-            case STRING: {
+            case STRING:
+            case NAME:
+            {
                 Class cc = ReflectUtils.getRawClass(to);
                 String name = o.asString().get();
                 if (NEnum.class.isAssignableFrom(cc)) {

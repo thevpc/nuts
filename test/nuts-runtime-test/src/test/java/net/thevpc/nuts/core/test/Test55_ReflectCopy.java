@@ -12,7 +12,7 @@ public class Test55_ReflectCopy {
 
     @BeforeAll
     static void init() {
-        TestUtils.openNewTestWorkspace();
+        TestUtils.openNewMinTestWorkspace();
     }
 
     static class Toto {

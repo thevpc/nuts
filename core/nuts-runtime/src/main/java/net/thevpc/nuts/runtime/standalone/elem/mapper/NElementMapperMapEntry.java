@@ -32,17 +32,16 @@ public class NElementMapperMapEntry implements NElementMapper<Map.Entry> {
 
     @Override
     public Map.Entry createObject(NElement o, Type to, NElementFactoryContext context) {
-        NSession session = context.getSession();
         if (to instanceof ParameterizedType) {
             Type[] kvt = ((ParameterizedType) to).getActualTypeArguments();
             return new AbstractMap.SimpleEntry(
-                    context.elementToObject(o.asObject().get().get(context.elem().ofString("key")).orNull(), kvt[0]),
-                    context.elementToObject(o.asObject().get().get(context.elem().ofString("value")).orNull(), kvt[0])
+                    context.elementToObject(o.asObject().get().get("key").orNull(), kvt[0]),
+                    context.elementToObject(o.asObject().get().get("value").orNull(), kvt[0])
             );
         }
         return new AbstractMap.SimpleEntry(
-                context.elementToObject(o.asObject().get().get(context.elem().ofString("key")).orNull(), Object.class),
-                context.elementToObject(o.asObject().get().get(context.elem().ofString("value")).orNull(), Object.class)
+                context.elementToObject(o.asObject().get().get("key").orNull(), Object.class),
+                context.elementToObject(o.asObject().get().get("value").orNull(), Object.class)
         );
     }
 

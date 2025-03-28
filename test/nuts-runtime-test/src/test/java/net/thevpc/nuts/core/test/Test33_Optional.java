@@ -7,6 +7,8 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.NNoSuchElementException;
 import net.thevpc.nuts.core.test.utils.TestUtils;
+import net.thevpc.nuts.reserved.optional.NDetachedEmptyOptionalException;
+import net.thevpc.nuts.reserved.optional.NDetachedErrorOptionalException;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NNoSessionOptionalErrorException;
 import net.thevpc.nuts.util.NOptional;
@@ -41,7 +43,7 @@ public class Test33_Optional {
         }
         {
             NOptional<String> a = NOptional.of(null);
-            Assertions.assertThrows(NNoSuchElementException.class, () -> a.get());
+            Assertions.assertThrows(NDetachedEmptyOptionalException.class, () -> a.get());
             Assertions.assertEquals(true, a.isEmpty());
             Assertions.assertEquals(false, a.isError());
             Assertions.assertEquals(false, a.isPresent());
@@ -66,7 +68,7 @@ public class Test33_Optional {
             Assertions.assertEquals(false, a.isNotPresent());
 
             NOptional<String> b=a.ifBlankEmpty();
-            Assertions.assertThrows(NNoSuchElementException.class, () -> b.get());
+            Assertions.assertThrows(NDetachedEmptyOptionalException.class, () -> b.get());
             Assertions.assertEquals(true, b.isEmpty());
             Assertions.assertEquals(false, b.isError());
             Assertions.assertEquals(false, b.isPresent());
@@ -75,7 +77,7 @@ public class Test33_Optional {
 
         {
             NOptional<String> a = NOptional.ofError(NMsg.ofPlain("error"));
-            Assertions.assertThrows(NOptionalErrorException.class, () -> a.get());
+            Assertions.assertThrows(NDetachedErrorOptionalException.class, () -> a.get());
             Assertions.assertEquals(false, a.isEmpty());
             Assertions.assertEquals(true, a.isError());
             Assertions.assertEquals(false, a.isPresent());

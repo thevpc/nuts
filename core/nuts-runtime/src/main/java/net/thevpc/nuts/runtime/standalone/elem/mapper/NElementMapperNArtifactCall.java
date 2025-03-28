@@ -29,13 +29,13 @@ public class NElementMapperNArtifactCall implements NElementMapper<NArtifactCall
     @Override
     public NArtifactCall createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
         NObjectElement object = o.asObject().get();
-        NId id = (NId) context.elementToObject(object.get(context.elem().ofString("id")).orNull(), NId.class);
-        String[] arguments = (String[]) context.elementToObject(object.get(context.elem().ofString("arguments")).orNull(), String[].class);
+        NId id = (NId) context.elementToObject(object.get("id").orNull(), NId.class);
+        String[] arguments = (String[]) context.elementToObject(object.get("arguments").orNull(), String[].class);
         Type mapType = NReflectRepository.of().getParametrizedType(
                 Map.class, null, new Type[]{String.class, String.class}
         ).getJavaType();
-        String scriptName = context.elementToObject(object.get(context.elem().ofString("scriptName")).orNull(), String.class);
-        String scriptContent = context.elementToObject(object.get(context.elem().ofString("scriptContent")).orNull(), String.class);
+        String scriptName = context.elementToObject(object.get("scriptName").orNull(), String.class);
+        String scriptContent = context.elementToObject(object.get("scriptContent").orNull(), String.class);
 
         return new DefaultNArtifactCall(id, Arrays.asList(arguments),scriptName,scriptContent);
     }
