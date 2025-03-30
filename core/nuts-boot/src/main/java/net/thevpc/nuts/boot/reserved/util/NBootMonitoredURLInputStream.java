@@ -14,21 +14,20 @@ public class NBootMonitoredURLInputStream extends FilterInputStream {
     public static final int M = 1024 * 1024;
     private NBootChronometer chronometer;
     private final long contentLength;
-    private final NBootLog log;
     private final URL url;
     long lastSec = -1;
     long readCount = 0;
     boolean preDestroyed = false;
 
-    private NBootMonitoredURLInputStream(InputStream in, URL url, NBootChronometer chronometer, long contentLength, NBootLog log) {
+    private NBootMonitoredURLInputStream(InputStream in, URL url, NBootChronometer chronometer, long contentLength) {
         super(in);
         this.chronometer = chronometer;
         this.url = url;
         this.contentLength = contentLength;
-        this.log = log;
     }
 
-    public static NBootMonitoredURLInputStream of(URL url, NBootLog log) {
+    public static NBootMonitoredURLInputStream of(URL url) {
+        NBootLog log = NBootContext.log();
         if (log != null) {
             log.with().level(Level.FINE).verbStart().log(NBootMsg.ofC("download %s", url));
         }
@@ -42,11 +41,20 @@ public class NBootMonitoredURLInputStream extends FilterInputStream {
             }
             throw new UncheckedIOException("url not accessible " + url, ex);
         }
+        int bootConnectionTimout = 0;
+        if (NBootContext.context() != null) {
+            bootConnectionTimout = NBootContext.context().bootConnectionTimout;
+        }
+        if (bootConnectionTimout <= 0) {
+            bootConnectionTimout = 3000;
+        }
+        c.setConnectTimeout(bootConnectionTimout);
+        c.setReadTimeout(bootConnectionTimout);
         long contentLength = c.getContentLengthLong();
         try {
-            return new NBootMonitoredURLInputStream(c.getInputStream(), url, chronometer, contentLength, log);
+            return new NBootMonitoredURLInputStream(c.getInputStream(), url, chronometer, contentLength);
         } catch (IOException ex) {
-            if (log != null) {
+            if (log!=null) {
                 log.with().level(Level.FINE).verbFail().log(NBootMsg.ofC("failed to download %s", url));
             }
             throw new UncheckedIOException("url not accessible " + url, ex);
@@ -99,6 +107,7 @@ public class NBootMonitoredURLInputStream extends FilterInputStream {
             preDestroyed = true;
             chronometer.stop();
             doLog(true);
+            NBootLog log = NBootContext.log();
             if (contentLength >= 0) {
                 if (readCount != contentLength) {
                     log.with().level(Level.FINE).verbFail().log(NBootMsg.ofC("failed to downloaded %s. stream closed unexpectedly", url));
@@ -118,6 +127,7 @@ public class NBootMonitoredURLInputStream extends FilterInputStream {
         } else {
             return;
         }
+        NBootLog log = NBootContext.log();
         if (sec == 0) {
             if (contentLength <= 0) {
                 String v = formatSize(readCount) + "/s";

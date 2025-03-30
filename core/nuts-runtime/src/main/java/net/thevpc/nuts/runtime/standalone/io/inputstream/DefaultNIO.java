@@ -510,4 +510,10 @@ public class DefaultNIO implements NIO {
         }
         return best.call();
     }
+
+    @Override
+    public NTempOutputStream ofTempOutputStream() {
+        return new NTempOutputStreamImpl();
+    }
+
 }

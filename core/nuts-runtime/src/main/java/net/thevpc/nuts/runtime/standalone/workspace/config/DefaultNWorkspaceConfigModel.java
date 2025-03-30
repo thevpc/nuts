@@ -1603,6 +1603,10 @@ public class DefaultNWorkspaceConfigModel {
         }
     }
 
+    public boolean isSecure() {
+        return getStoredConfigSecurity().isSecure();
+    }
+
     private static class WorkspaceSystemTerminalAdapter extends AbstractSystemTerminalAdapter {
 
         public WorkspaceSystemTerminalAdapter(NWorkspace workspace) {

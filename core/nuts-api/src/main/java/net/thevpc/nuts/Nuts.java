@@ -81,6 +81,20 @@ public final class Nuts {
      * called by child processes of nuts in order to inherit workspace
      * configuration.
      *
+     * @param appArgs application arguments
+     * @return NSession instance
+     */
+    public static NWorkspace openInheritedWorkspace(String... appArgs) throws NBootUnsatisfiedRequirementsException {
+        return openInheritedWorkspace(null, new String[0], appArgs);
+    }
+
+    /**
+     * open a workspace using "nuts.boot.args" and "nut.args" system properties.
+     * "nuts.boot.args" is to be passed by nuts parent process. "nuts.args" is
+     * an optional property that can be 'exec' method. This method is to be
+     * called by child processes of nuts in order to inherit workspace
+     * configuration.
+     *
      * @param overriddenNutsArgs nuts arguments to override inherited arguments
      * @param appArgs application arguments
      * @return NSession instance

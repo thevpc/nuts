@@ -26,6 +26,8 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.*;
 
+import java.net.URL;
+
 /**
  * Nuts App. Nuts is a Package manager for Java Applications and this
  * class is its main class for creating and opening nuts workspaces.
@@ -46,6 +48,7 @@ public final class NutsApp {
     @SuppressWarnings("UseSpecificCatch")
     public static void main(String[] args) {
         try {
+            new URL("https://google.com").openConnection();
             NBootWorkspace bws = NBootWorkspace.of(args);
             bws.runWorkspace();
         } catch (Exception ex) {

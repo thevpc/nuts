@@ -251,6 +251,10 @@ public class NBootArg {
         return v;
     }
 
+    public Integer getIntValue() {
+        return NBootUtils.parseInt(getValue());
+    }
+
 
     public String getKey() {
         return (key == null ? image : key);

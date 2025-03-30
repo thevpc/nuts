@@ -241,4 +241,10 @@ public interface NIO extends NComponent {
 
     List<String> findExtensionsByContentType(String contentType);
     List<String> findContentTypesByExtension(String extension);
+
+    /**
+     * returns a memory or file (depending on size) output stream
+     * @return a memory or file (depending on size) output stream
+     */
+    NTempOutputStream ofTempOutputStream();
 }

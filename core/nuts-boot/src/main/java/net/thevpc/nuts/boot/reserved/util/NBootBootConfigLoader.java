@@ -44,26 +44,27 @@ import java.util.logging.Level;
  */
 public final class NBootBootConfigLoader {
 
-    public static NBootOptionsInfo loadBootConfig(String workspaceLocation, NBootLog bLog) {
+    public static NBootOptionsInfo loadBootConfig(String workspaceLocation) {
         File bootFile = new File(workspaceLocation, NBootConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
+        NBootLog log = NBootContext.log();
         try {
             if (bootFile.isFile()) {
-                bLog.with().level(Level.CONFIG).verbRead().log(NBootMsg.ofC("load boot file : %s", bootFile.getPath()));
+                log.with().level(Level.CONFIG).verbRead().log(NBootMsg.ofC("load boot file : %s", bootFile.getPath()));
                 String json = NBootUtils.readStringFromFile(bootFile).trim();
                 if (json.length() > 0) {
-                    return loadBootConfigJSON(json, bLog);
+                    return loadBootConfigJSON(json);
                 }
             }
-            if (bLog.isLoggable(Level.FINEST)) {
-                bLog.with().level(Level.CONFIG).verbInfo().log(NBootMsg.ofC("previous Workspace config not found at %s", bootFile.getPath()));
+            if (log.isLoggable(Level.FINEST)) {
+                log.with().level(Level.CONFIG).verbInfo().log(NBootMsg.ofC("previous Workspace config not found at %s", bootFile.getPath()));
             }
         } catch (Exception ex) {
-            bLog.with().level(Level.CONFIG).verbFail().error(ex).log(NBootMsg.ofC("unable to load nuts version file %s", bootFile));
+            log.with().level(Level.CONFIG).verbFail().error(ex).log(NBootMsg.ofC("unable to load nuts version file %s", bootFile));
         }
         return null;
     }
 
-    private static NBootOptionsInfo loadBootConfigJSON(String json, NBootLog bLog) {
+    private static NBootOptionsInfo loadBootConfigJSON(String json) {
         NBootJsonParser parser = new NBootJsonParser(new StringReader(json));
         Map<String, Object> jsonObject = parser.parseObject();
         NBootOptionsInfo c = new NBootOptionsInfo();
@@ -75,23 +76,24 @@ public final class NBootBootConfigLoader {
             configVersion = "";
         }
 
+        NBootLog log = NBootContext.log();
         if (NBootUtils.isBlank(configVersion)) {
             configVersion = NBootWorkspace.NUTS_BOOT_VERSION;
-            bLog.with().level(Level.FINEST).verbFail().log(NBootMsg.ofC("unable to detect config version. Fallback to %s", configVersion));
+            log.with().level(Level.FINEST).verbFail().log(NBootMsg.ofC("unable to detect config version. Fallback to %s", configVersion));
         }
         int buildNumber = getApiVersionOrdinalNumber(configVersion);
         if (buildNumber <= 501) {
             //load nothing!
-            bLog.with().level(Level.CONFIG).verbRead().log(NBootMsg.ofC("detect config version %s ( considered as 0.5.1, very old config, ignored)", configVersion));
+            log.with().level(Level.CONFIG).verbRead().log(NBootMsg.ofC("detect config version %s ( considered as 0.5.1, very old config, ignored)", configVersion));
         } else if (buildNumber <= 505) {
-            bLog.with().level(Level.CONFIG).verbRead().log(NBootMsg.ofC("detect config version %s ( compatible with 0.5.2 config file )", configVersion));
-            NReservedBootConfigLoaderOld.loadConfigVersion502(c, jsonObject, bLog);
+            log.with().level(Level.CONFIG).verbRead().log(NBootMsg.ofC("detect config version %s ( compatible with 0.5.2 config file )", configVersion));
+            NReservedBootConfigLoaderOld.loadConfigVersion502(c, jsonObject, log);
         } else if (buildNumber <= 506) {
-            bLog.with().level(Level.CONFIG).verbRead().log(NBootMsg.ofC("detect config version %s ( compatible with 0.5.6 config file )", configVersion));
-            NReservedBootConfigLoaderOld.loadConfigVersion506(c, jsonObject, bLog);
+            log.with().level(Level.CONFIG).verbRead().log(NBootMsg.ofC("detect config version %s ( compatible with 0.5.6 config file )", configVersion));
+            NReservedBootConfigLoaderOld.loadConfigVersion506(c, jsonObject, log);
         } else {
-            bLog.with().level(Level.CONFIG).verbRead().log(NBootMsg.ofC("detect config version %s ( compatible with 0.5.7 config file )", configVersion));
-            NReservedBootConfigLoaderOld.loadConfigVersion507(c, jsonObject, bLog);
+            log.with().level(Level.CONFIG).verbRead().log(NBootMsg.ofC("detect config version %s ( compatible with 0.5.7 config file )", configVersion));
+            NReservedBootConfigLoaderOld.loadConfigVersion507(c, jsonObject, log);
         }
         return c;
     }

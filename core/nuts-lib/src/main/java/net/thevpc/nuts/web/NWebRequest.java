@@ -6,6 +6,7 @@ import net.thevpc.nuts.io.NPath;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public interface NWebRequest extends NMsgFormattable {
     boolean isOneWay();
@@ -94,6 +95,8 @@ public interface NWebRequest extends NMsgFormattable {
 
     NWebRequest setParameters(Map<String, List<String>> parameters);
 
+    NWebRequest doWith(Consumer<NWebRequest> any);
+
     NWebRequest addParameter(String name, String value);
 
     NWebRequest setParameter(String name, String value);
@@ -101,6 +104,8 @@ public interface NWebRequest extends NMsgFormattable {
     NInputSource getBody();
 
     NWebRequest setJsonBody(Object body);
+
+    NWebRequest setBody(String body);
 
     NWebRequest setBody(byte[] body);
 

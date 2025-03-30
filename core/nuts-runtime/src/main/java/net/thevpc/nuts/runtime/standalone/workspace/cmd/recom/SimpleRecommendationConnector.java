@@ -45,6 +45,8 @@ public class SimpleRecommendationConnector extends AbstractRecommendationConnect
             String out = elems.setValue(ri.q).json().setNtf(false).format().filteredText();
             int length = out.length();
             http.setFixedLengthStreamingMode(length);
+            http.setConnectTimeout(3000);
+            http.setReadTimeout(3000);
             http.connect();
             try (OutputStream os = http.getOutputStream()) {
                 os.write(out.getBytes(StandardCharsets.UTF_8));

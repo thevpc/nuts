@@ -89,7 +89,7 @@ public class DefaultNRepositorySecurityModel {
 
     public boolean isAllowed(String right) {
         NWorkspaceSecurityManager sec = NWorkspaceSecurityManager.of();
-        if (!sec.isSecure()) {
+        if (!sec.isSecureMode()) {
             return true;
         }
         String name = sec.getCurrentUsername();

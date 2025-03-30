@@ -26,7 +26,6 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NBootOptionsInfo;
-import net.thevpc.nuts.boot.reserved.util.NBootLog;
 import net.thevpc.nuts.boot.reserved.util.NBootUtils;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NMsg;
@@ -133,11 +132,11 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
     }
 
 
-    public int processThrowable(NBootOptionsInfo options, NBootLog bLog) {
+    public int processThrowable(NBootOptionsInfo options) {
         if (this.session != null) {
             return this.session.callWith(() -> NExceptionWorkspaceHandler.of().processThrowable(options.getApplicationArguments().toArray(new String[0]), this));
         } else {
-            return NBootUtils.processThrowable(this, bLog, true, NBootUtils.resolveShowStackTrace(options), NBootUtils.resolveGui(options));
+            return NBootUtils.processThrowable(this, true, NBootUtils.resolveShowStackTrace(options), NBootUtils.resolveGui(options));
         }
     }
 }

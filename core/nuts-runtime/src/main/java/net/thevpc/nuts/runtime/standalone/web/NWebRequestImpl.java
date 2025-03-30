@@ -8,14 +8,16 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.web.*;
 
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class NWebRequestImpl implements NWebRequest {
     private String url;
     private NHttpMethod method;
-    private DefaultNWebHeaders headers=new DefaultNWebHeaders();
+    private DefaultNWebHeaders headers = new DefaultNWebHeaders();
     private Map<String, List<String>> parameters;
     private NInputSource body;
     private boolean oneWay;
@@ -449,6 +451,14 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
+    public NWebRequest doWith(Consumer<NWebRequest> any) {
+        if(any!=null){
+            any.accept(this);
+        }
+        return this;
+    }
+
+    @Override
     public NWebRequest addParameter(String name, String value) {
         if (value != null) {
             if (this.parameters == null) {
@@ -499,6 +509,12 @@ public class NWebRequestImpl implements NWebRequest {
     public NWebRequest setBody(byte[] body) {
         this.body = body == null ? null : NInputSource.of(body);
         return this;
+    }
+
+    @Override
+    public NWebRequest setBody(String body) {
+        this.body = body == null ? null : NInputSource.of(new StringReader(body));
+        return null;
     }
 
     @Override

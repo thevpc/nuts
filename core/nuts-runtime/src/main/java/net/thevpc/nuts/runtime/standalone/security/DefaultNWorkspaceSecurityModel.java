@@ -138,13 +138,14 @@ public class DefaultNWorkspaceSecurityModel {
         }
         boolean deactivated = false;
         char[] credentials = NDigestUtils.evalSHA1(adminPassword);
-        if (Arrays.equals(credentials, adminPassword)) {
-            Arrays.fill(credentials, '\0');
+        boolean passwordAccepted = Arrays.equals(credentials, adminPassword);
+        Arrays.fill(credentials, '\0');
+        if (!passwordAccepted) {
             throw new NSecurityException(NMsg.ofPlain("invalid credentials"));
         }
-        Arrays.fill(credentials, '\0');
-        if (!isSecure()) {
-            NWorkspaceExt.of(workspace).getConfigModel().setSecure(true);
+        DefaultNWorkspaceConfigModel configModel = NWorkspaceExt.of(workspace).getConfigModel();
+        if (!configModel.isSecure()) {
+            configModel.setSecure(true);
             deactivated = true;
         }
         return deactivated;
@@ -153,6 +154,10 @@ public class DefaultNWorkspaceSecurityModel {
 
     public boolean isAdmin() {
         return NConstants.Users.ADMIN.equals(getCurrentUsername());
+    }
+
+    public boolean isAnonymous() {
+        return NConstants.Users.ANONYMOUS.equals(getCurrentUsername());
     }
 
 

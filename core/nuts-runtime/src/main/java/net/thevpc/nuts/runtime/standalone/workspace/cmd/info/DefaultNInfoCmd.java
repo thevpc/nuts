@@ -353,7 +353,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         }
         props.put("nuts-open-mode", () ->  NWorkspace.of().getBootOptions().getOpenMode().orNull());
         props.put("nuts-isolation-level", () ->  NWorkspace.of().getBootOptions().getIsolationLevel().orNull());
-        props.put("nuts-secure", () ->  (NWorkspaceSecurityManager.of().isSecure()));
+        props.put("nuts-secure", () ->  (NWorkspaceSecurityManager.of().isSecureMode()));
         props.put("nuts-gui", () ->  NWorkspace.of().getBootOptions().getGui().orNull());
         props.put("nuts-inherited", () ->  NWorkspace.of().getBootOptions().getInherited().orNull());
         props.put("nuts-recover", () ->  NWorkspace.of().getBootOptions().getRecover().orNull());
@@ -544,7 +544,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         }
         props.put("nuts-open-mode", options.getOpenMode().orNull());
         props.put("nuts-isolation-level", options.getIsolationLevel().orNull());
-        props.put("nuts-secure", (NWorkspaceSecurityManager.of().isSecure()));
+        props.put("nuts-secure", (NWorkspaceSecurityManager.of().isSecureMode()));
         props.put("nuts-gui", options.getGui().orNull());
         props.put("nuts-inherited", options.getInherited().orNull());
         props.put("nuts-recover", options.getRecover().orNull());

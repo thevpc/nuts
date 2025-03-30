@@ -83,6 +83,11 @@ public class DefaultNWorkspaceSecurityManager implements NWorkspaceSecurityManag
     }
 
     @Override
+    public boolean isAnonymous() {
+        return model.isAnonymous();
+    }
+
+    @Override
     public NWorkspaceSecurityManager logout() {
         model.logout();
         return this;
@@ -147,7 +152,7 @@ public class DefaultNWorkspaceSecurityManager implements NWorkspaceSecurityManag
     }
 
     @Override
-    public boolean isSecure() {
+    public boolean isSecureMode() {
         return model.isSecure();
     }
 

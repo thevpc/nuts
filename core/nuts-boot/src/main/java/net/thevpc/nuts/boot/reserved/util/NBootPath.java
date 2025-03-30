@@ -55,7 +55,7 @@ public class NBootPath {
         }
     }
 
-    public byte[] readAllBytes(NBootLog log) {
+    public byte[] readAllBytes() {
         if (this.path == null) {
             return null;
         }
@@ -68,17 +68,17 @@ public class NBootPath {
                     return null;
                 }
             }
-            return NBootUtils.loadStream(getInputSteam(log), log);
+            return NBootUtils.loadStream(getInputSteam());
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
     }
 
-    public InputStream getInputSteam(NBootLog log) {
+    public InputStream getInputSteam() {
         if (path == null) {
             return null;
         }
-        return NBootUtils.openStream(getUrl(), log);
+        return NBootUtils.openStream(getUrl());
     }
 
     public Path getFile() {

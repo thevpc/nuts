@@ -28,10 +28,6 @@ package net.thevpc.nuts;
 
 
 import net.thevpc.nuts.boot.NBootOptionsInfo;
-import net.thevpc.nuts.boot.reserved.util.NBootLog;
-
-import java.io.PrintStream;
-import java.util.logging.Level;
 
 /**
  * Base Nuts Exception Interface. Parent of all Nuts defined Exceptions.
@@ -41,5 +37,5 @@ import java.util.logging.Level;
  * @since 0.5.4
  */
 public interface NExceptionBootAware {
-    int processThrowable(NBootOptionsInfo options, NBootLog bLog);
+    int processThrowable(NBootOptionsInfo options);
 }

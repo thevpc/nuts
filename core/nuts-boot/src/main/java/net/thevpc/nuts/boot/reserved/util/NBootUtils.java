@@ -419,7 +419,7 @@ public final class NBootUtils {
 
 
     private static boolean ndiAddFileLine(Path filePath, String commentLine, String goodLine, boolean force,
-                                          String ensureHeader, String headerReplace, NBootLog bLog) {
+                                          String ensureHeader, String headerReplace) {
         boolean found = false;
         boolean updatedFile = false;
         List<String> lines = new ArrayList<>();
@@ -477,7 +477,7 @@ public final class NBootUtils {
         return updatedFile;
     }
 
-    static boolean ndiRemoveFileCommented2Lines(Path filePath, String commentLine, boolean force, NBootLog bLog) {
+    static boolean ndiRemoveFileCommented2Lines(Path filePath, String commentLine, boolean force) {
         boolean found = false;
         boolean updatedFile = false;
         try {
@@ -509,12 +509,12 @@ public final class NBootUtils {
             }
             return updatedFile;
         } catch (IOException ex) {
-            bLog.with().level(Level.WARNING).verbWarning().error(ex).log(NBootMsg.ofPlain("unable to update update " + filePath));
+            NBootContext.log().with().level(Level.WARNING).verbWarning().error(ex).log(NBootMsg.ofPlain("unable to update update " + filePath));
             return false;
         }
     }
 
-    public static void ndiUndo(NBootLog bLog, String wsName, boolean update) {
+    public static void ndiUndo(String wsName, boolean update) {
         //need to unset settings configuration.
         //what is the safest way to do so?
         String os = NBootPlatformHome.currentOsFamily();
@@ -525,11 +525,11 @@ public final class NBootUtils {
             if (Files.exists(sysrcFile)) {
 
                 //these two lines will remove older versions of nuts (before 0.8.0)
-                ndiRemoveFileCommented2Lines(sysrcFile, "net.thevpc.app.nuts.toolbox.ndi configuration", true, bLog);
-                ndiRemoveFileCommented2Lines(sysrcFile, "net.thevpc.app.nuts configuration", true, bLog);
+                ndiRemoveFileCommented2Lines(sysrcFile, "net.thevpc.app.nuts.toolbox.ndi configuration", true);
+                ndiRemoveFileCommented2Lines(sysrcFile, "net.thevpc.app.nuts configuration", true);
 
                 //this line will remove 0.8.0+ versions of nuts
-                ndiRemoveFileCommented2Lines(sysrcFile, "net.thevpc.nuts configuration", true, bLog);
+                ndiRemoveFileCommented2Lines(sysrcFile, "net.thevpc.nuts configuration", true);
             }
 
             // if we have deleted a non default workspace, we will fall back to the default one
@@ -548,11 +548,11 @@ public final class NBootUtils {
                     if (latestDefaultVersion != null) {
                         ndiAddFileLine(sysrcFile, "net.thevpc.nuts configuration",
                                 "source " + nbase.resolve(latestDefaultVersion).resolve(".nuts-bashrc"),
-                                true, "#!.*", "#!/bin/sh", bLog);
+                                true, "#!.*", "#!/bin/sh");
                     }
                 } catch (Exception e) {
                     //ignore
-                    bLog.with().level(Level.FINEST).verbFail().log(NBootMsg.ofC("unable to undo NDI : %s", e.toString()));
+                    NBootContext.log().with().level(Level.FINEST).verbFail().log(NBootMsg.ofC("unable to undo NDI : %s", e.toString()));
                 }
             }
         }
@@ -796,7 +796,7 @@ public final class NBootUtils {
     }
 
     public static String resolveNutsIdDigest(NBootId id, URL[] urls) {
-        return getURLDigest(findClassLoaderJar(id, urls), null);
+        return getURLDigest(findClassLoaderJar(id, urls));
     }
 
     public static boolean isAcceptDependency(NBootDependency s, NBootOptionsInfo bOptions) {
@@ -1218,7 +1218,7 @@ public final class NBootUtils {
         }
     }
 
-    public static String inputString(String message, String title, Supplier<String> in, NBootLog bLog) {
+    public static String inputString(String message, String title, Supplier<String> in) {
         try {
             if (title == null) {
                 title = "Nuts Package Manager - " + NBootWorkspace.NUTS_BOOT_VERSION;
@@ -1233,7 +1233,7 @@ public final class NBootUtils {
             return line;
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
-            bLog.with().level(Level.OFF).verbWarning().log(NBootMsg.ofC("[Graphical Environment Unsupported] %s", title));
+            NBootContext.log().with().level(Level.OFF).verbWarning().log(NBootMsg.ofC("[Graphical Environment Unsupported] %s", title));
             if (in == null) {
                 return new Scanner(System.in).nextLine();
             }
@@ -1241,7 +1241,7 @@ public final class NBootUtils {
         }
     }
 
-    public static void showMessage(String message, String title, NBootLog bLog) {
+    public static void showMessage(String message, String title) {
         if (title == null) {
             title = "Nuts Package Manager";
         }
@@ -1249,33 +1249,31 @@ public final class NBootUtils {
             javax.swing.JOptionPane.showMessageDialog(null, message);
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
-            bLog.with().level(Level.OFF).verbWarning().log(NBootMsg.ofC("[Graphical Environment Unsupported] %s", title));
+            NBootContext.log().with().level(Level.OFF).verbWarning().log(NBootMsg.ofC("[Graphical Environment Unsupported] %s", title));
         }
     }
 
-    private static void fillBootDependencyNodes(NBootClassLoaderNode node, Set<URL> urls, Set<String> visitedIds,
-                                                NBootLog bLog) {
+    private static void fillBootDependencyNodes(NBootClassLoaderNode node, Set<URL> urls, Set<String> visitedIds) {
         String shortName = NBootId.of(node.getId()).getShortName();
         if (!visitedIds.contains(shortName)) {
             visitedIds.add(shortName);
             if (!node.isIncludedInClasspath()) {
                 urls.add(node.getURL());
             } else {
-                bLog.with().level(Level.WARNING).verbCache().log(NBootMsg.ofC("url will not be loaded (already in classloader) : %s", node.getURL()));
+                NBootContext.log().with().level(Level.WARNING).verbCache().log(NBootMsg.ofC("url will not be loaded (already in classloader) : %s", node.getURL()));
             }
             for (NBootClassLoaderNode dependency : node.getDependencies()) {
-                fillBootDependencyNodes(dependency, urls, visitedIds, bLog);
+                fillBootDependencyNodes(dependency, urls, visitedIds);
             }
         }
     }
 
-    public static URL[] resolveClassWorldURLs(NBootClassLoaderNode[] nodes, ClassLoader contextClassLoader,
-                                              NBootLog bLog) {
+    public static URL[] resolveClassWorldURLs(NBootClassLoaderNode[] nodes, ClassLoader contextClassLoader) {
         LinkedHashSet<URL> urls = new LinkedHashSet<>();
         Set<String> visitedIds = new HashSet<>();
         for (NBootClassLoaderNode info : nodes) {
             if (info != null) {
-                fillBootDependencyNodes(info, urls, visitedIds, bLog);
+                fillBootDependencyNodes(info, urls, visitedIds);
             }
         }
         return urls.toArray(new URL[0]);
@@ -1347,8 +1345,8 @@ public final class NBootUtils {
         return all.toArray(new URL[0]);
     }
 
-    public static boolean isLoadedClassPath(URL url, ClassLoader contextClassLoader,
-                                            NBootLog bLog) {
+    public static boolean isLoadedClassPath(URL url, ClassLoader contextClassLoader) {
+        NBootLog log = NBootContext.log();
         try {
             if (url != null) {
                 if (contextClassLoader == null) {
@@ -1373,11 +1371,11 @@ public final class NBootUtils {
                             URL incp = contextClassLoader.getResource(zname);
                             String clz = zname.substring(0, zname.length() - 6).replace('/', '.');
                             if (incp != null) {
-                                bLog.with().level(Level.FINEST).verbSuccess().log(NBootMsg.ofC("url %s is already in classpath. checked class %s successfully",
+                                log.with().level(Level.FINEST).verbSuccess().log(NBootMsg.ofC("url %s is already in classpath. checked class %s successfully",
                                         url, clz));
                                 return true;
                             } else {
-                                bLog.with().level(Level.FINEST).verbInfo().log(NBootMsg.ofC("url %s is not in classpath. failed to check class %s",
+                                log.with().level(Level.FINEST).verbInfo().log(NBootMsg.ofC("url %s is not in classpath. failed to check class %s",
                                         url, clz));
                                 return false;
                             }
@@ -1397,7 +1395,7 @@ public final class NBootUtils {
         } catch (IOException e) {
             //
         }
-        bLog.with().level(Level.FINEST).verbFail().log(NBootMsg.ofC("url %s is not in classpath. no class found to check", url));
+        log.with().level(Level.FINEST).verbFail().log(NBootMsg.ofC("url %s is not in classpath. no class found to check", url));
         return false;
     }
 
@@ -1522,21 +1520,21 @@ public final class NBootUtils {
         return new String(Files.readAllBytes(file.toPath()));
     }
 
-    public static InputStream openStream(URL url, NBootLog bLog) {
-        return NBootMonitoredURLInputStream.of(url, bLog);
+    public static InputStream openStream(URL url) {
+        return NBootMonitoredURLInputStream.of(url);
     }
 
-    public static byte[] loadStream(InputStream stream, NBootLog bLog) throws IOException {
+    public static byte[] loadStream(InputStream stream) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         copy(stream, bos, true, true);
         return bos.toByteArray();
     }
 
-    public static ByteArrayInputStream preloadStream(InputStream stream, NBootLog bLog) throws IOException {
-        return new ByteArrayInputStream(loadStream(stream, bLog));
+    public static ByteArrayInputStream preloadStream(InputStream stream) throws IOException {
+        return new ByteArrayInputStream(loadStream(stream));
     }
 
-    public static Properties loadURLProperties(Path path, NBootLog bLog) {
+    public static Properties loadURLProperties(Path path) {
         Properties props = new Properties();
         if (Files.isRegularFile(path)) {
             try (InputStream is = Files.newInputStream(path)) {
@@ -1548,11 +1546,12 @@ public final class NBootUtils {
         return props;
     }
 
-    public static Properties loadURLProperties(URL url, File cacheFile, boolean useCache, NBootLog bLog) {
+    public static Properties loadURLProperties(URL url, File cacheFile, boolean useCache) {
         NBootChronometer chrono = NBootChronometer.startNow();
         Properties props = new Properties();
         InputStream inputStream = null;
         File urlFile = toFile(url);
+        NBootLog log = NBootContext.log();
         try {
             if (useCache) {
                 if (cacheFile != null && cacheFile.isFile()) {
@@ -1561,17 +1560,17 @@ public final class NBootUtils {
                         props.load(inputStream);
                         chrono.stop();
                         NBootDuration time = chrono.getDuration();
-                        bLog.with().level(Level.CONFIG).verbSuccess().log(NBootMsg.ofC("load cached file from  %s" + ((!time.isZero()) ? " (time %s)" : ""), cacheFile.getPath(), chrono));
+                        log.with().level(Level.CONFIG).verbSuccess().log(NBootMsg.ofC("load cached file from  %s" + ((!time.isZero()) ? " (time %s)" : ""), cacheFile.getPath(), chrono));
                         return props;
                     } catch (IOException ex) {
-                        bLog.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("invalid cache. Ignored %s : %s", cacheFile.getPath(), ex.toString()));
+                        log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("invalid cache. Ignored %s : %s", cacheFile.getPath(), ex.toString()));
                     } finally {
                         if (inputStream != null) {
                             try {
                                 inputStream.close();
                             } catch (Exception ex) {
-                                if (bLog != null) {
-                                    bLog.with().level(Level.FINE).verbFail().error(ex).log(NBootMsg.ofPlain("unable to close stream"));
+                                if (log != null) {
+                                    log.with().level(Level.FINE).verbFail().error(ex).log(NBootMsg.ofPlain("unable to close stream"));
                                 }
                                 //
                             }
@@ -1583,7 +1582,7 @@ public final class NBootUtils {
             try {
                 if (url != null) {
                     String urlString = url.toString();
-                    inputStream = openStream(url, bLog);
+                    inputStream = openStream(url);
                     if (inputStream != null) {
                         props.load(inputStream);
                         if (cacheFile != null) {
@@ -1601,24 +1600,24 @@ public final class NBootUtils {
                                 }
                                 boolean cachedRecovered = cacheFile.isFile();
                                 if (urlFile != null) {
-                                    copy(urlFile, cacheFile, bLog);
+                                    copy(urlFile, cacheFile);
                                 } else {
-                                    copy(url, cacheFile, bLog);
+                                    copy(url, cacheFile);
                                 }
                                 NBootDuration time = chrono.getDuration();
                                 if (cachedRecovered) {
-                                    bLog.with().level(Level.CONFIG).verbCache().log(NBootMsg.ofC("recover cached prp file %s (from %s)" + ((!time.isZero()) ? " (time %s)" : ""), cacheFile.getPath(), urlString, time));
+                                    log.with().level(Level.CONFIG).verbCache().log(NBootMsg.ofC("recover cached prp file %s (from %s)" + ((!time.isZero()) ? " (time %s)" : ""), cacheFile.getPath(), urlString, time));
                                 } else {
-                                    bLog.with().level(Level.CONFIG).verbCache().log(NBootMsg.ofC("cache prp file %s (from %s)" + ((!time.isZero()) ? " (time %s)" : ""), cacheFile.getPath(), urlString, time));
+                                    log.with().level(Level.CONFIG).verbCache().log(NBootMsg.ofC("cache prp file %s (from %s)" + ((!time.isZero()) ? " (time %s)" : ""), cacheFile.getPath(), urlString, time));
                                 }
                                 return props;
                             }
                         }
                         NBootDuration time = chrono.getDuration();
-                        bLog.with().level(Level.CONFIG).verbSuccess().log(NBootMsg.ofC("load props file from  %s" + ((!time.isZero()) ? " (time %s)" : ""), urlString, time));
+                        log.with().level(Level.CONFIG).verbSuccess().log(NBootMsg.ofC("load props file from  %s" + ((!time.isZero()) ? " (time %s)" : ""), urlString, time));
                     } else {
                         NBootDuration time = chrono.getDuration();
-                        bLog.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("load props file from  %s" + ((!time.isZero()) ? " (time %s)" : ""), urlString, time));
+                        log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("load props file from  %s" + ((!time.isZero()) ? " (time %s)" : ""), urlString, time));
                     }
                 }
             } finally {
@@ -1628,7 +1627,7 @@ public final class NBootUtils {
             }
         } catch (Exception e) {
             NBootDuration time = chrono.getDuration();
-            bLog.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("load props file from  %s" + ((!time.isZero()) ? " (time %s)" : ""), String.valueOf(url),
+            log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("load props file from  %s" + ((!time.isZero()) ? " (time %s)" : ""), String.valueOf(url),
                     time));
         }
         return props;
@@ -1712,45 +1711,47 @@ public final class NBootUtils {
         }
     }
 
-    public static void copy(File ff, File to, NBootLog bLog) throws IOException {
+    public static void copy(File ff, File to) throws IOException {
         if (ff.equals(to)) {
             return;
         }
         if (to.getParentFile() != null) {
             to.getParentFile().mkdirs();
         }
+        NBootLog log = NBootContext.log();
         if (ff == null || !ff.exists()) {
-            bLog.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("not found %s", ff));
+            log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("not found %s", ff));
             throw new FileNotFoundException(ff == null ? "" : ff.getPath());
         }
         try {
             Files.copy(ff.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException ex) {
-            bLog.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("error copying %s to %s : %s", ff, to, ex.toString()));
+            log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("error copying %s to %s : %s", ff, to, ex.toString()));
             throw ex;
         }
     }
 
-    public static void copy(String path, File to, NBootLog bLog) throws IOException {
+    public static void copy(String path, File to) throws IOException {
         if (isBlank(path)) {
             throw new IOException("empty path " + path);
         }
         File file = toFile(path);
         if (file != null) {
-            copy(file, to, bLog);
+            copy(file, to);
         } else {
             URL u = toURL(path);
             if (u != null) {
-                copy(u, to, bLog);
+                copy(u, to);
             } else {
                 throw new IOException("neither file nor URL : " + path);
             }
         }
     }
 
-    public static void copy(URL url, File to, NBootLog bLog) throws IOException {
+    public static void copy(URL url, File to) throws IOException {
+        NBootLog log = NBootContext.log();
         try {
-            InputStream in = openStream(url, bLog);
+            InputStream in = openStream(url);
             if (in == null) {
                 throw new IOException("empty Stream " + url);
             }
@@ -1758,7 +1759,7 @@ public final class NBootUtils {
                 if (!to.getParentFile().isDirectory()) {
                     boolean mkdirs = to.getParentFile().mkdirs();
                     if (!mkdirs) {
-                        bLog.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("error creating folder %s", url));
+                        log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("error creating folder %s", url));
                     }
                 }
             }
@@ -1766,10 +1767,10 @@ public final class NBootUtils {
             FileOutputStream fos = new FileOutputStream(to);
             fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
         } catch (FileNotFoundException | UncheckedIOException ex) {
-            bLog.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("not found %s", url));
+            log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("not found %s", url));
             throw ex;
         } catch (IOException ex) {
-            bLog.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("error copying %s to %s : %s", url, to, ex.toString()));
+            log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("error copying %s to %s : %s", url, to, ex.toString()));
             throw ex;
         }
     }
@@ -1809,7 +1810,7 @@ public final class NBootUtils {
         return base + File.separator + path;
     }
 
-    public static boolean isFileAccessible(Path path, Instant expireTime, NBootLog bLog) {
+    public static boolean isFileAccessible(Path path, Instant expireTime) {
         boolean proceed = Files.isRegularFile(path);
         if (proceed) {
             try {
@@ -1820,13 +1821,13 @@ public final class NBootUtils {
                     }
                 }
             } catch (Exception ex0) {
-                bLog.with().level(Level.FINEST).verbFail().log(NBootMsg.ofC("unable to get LastModifiedTime for file : %s", path.toString(), ex0.toString()));
+                NBootContext.log().with().level(Level.FINEST).verbFail().log(NBootMsg.ofC("unable to get LastModifiedTime for file : %s", path.toString(), ex0.toString()));
             }
         }
         return proceed;
     }
 
-    public static String getURLDigest(URL url, NBootLog bLog) {
+    public static String getURLDigest(URL url) {
         if (url != null) {
             File ff = toFile(url);
             if (ff != null) {
@@ -1834,7 +1835,7 @@ public final class NBootUtils {
             }
             InputStream is = null;
             try {
-                is = openStream(url, bLog);
+                is = openStream(url);
                 if (is != null) {
                     return getStreamDigest(is);
                 }
@@ -1936,13 +1937,13 @@ public final class NBootUtils {
         }
     }
 
-    public static InputStream resolveInputStream(String url, NBootLog bLog) {
+    public static InputStream resolveInputStream(String url) {
         InputStream in = null;
         try {
             if (url.startsWith("http://") || url.startsWith("https://")) {
                 URL url1 = urlOf(url);
                 try {
-                    in = openStream(url1, bLog);
+                    in = openStream(url1);
                 } catch (Exception ex) {
                     //do not need to log error
                     return null;
@@ -1953,7 +1954,7 @@ public final class NBootUtils {
                 if (file == null) {
                     // was not able to resolve to File
                     try {
-                        in = openStream(url1, bLog);
+                        in = openStream(url1);
                     } catch (Exception ex) {
                         //do not need to log error
                         return null;
@@ -1972,13 +1973,14 @@ public final class NBootUtils {
                 }
             }
         } catch (IOException | UncheckedIOException e) {
-            bLog.with().level(Level.FINE).verbFail().error(e).log(NBootMsg.ofC("unable to resolveInputStream %s", url));
+            NBootLog log = NBootContext.log();
+            log.with().level(Level.FINE).verbFail().error(e).log(NBootMsg.ofC("unable to resolveInputStream %s", url));
         }
         return in;
     }
 
     public static long deleteAndConfirmAll(Path[] folders, boolean force, NBootDeleteFilesContextBoot refForceAll,
-                                           String header, NBootLog bLog, NBootOptionsInfo bOptions, Supplier<String> readline) {
+                                           String header, NBootOptionsInfo bOptions, Supplier<String> readline) {
         long count = 0;
         boolean headerWritten = false;
         if (folders != null) {
@@ -1989,12 +1991,12 @@ public final class NBootUtils {
                         if (!force && !refForceAll.isForce(true)) {
                             if (header != null) {
                                 if (!firstNonNull(bOptions.getBot(), false)) {
-                                    bLog.with().level(Level.WARNING).verbWarning().log(NBootMsg.ofC("%s", header));
+                                    NBootContext.log().with().level(Level.WARNING).verbWarning().log(NBootMsg.ofC("%s", header));
                                 }
                             }
                         }
                     }
-                    count += deleteAndConfirm(child, force, refForceAll, bLog, bOptions, readline);
+                    count += deleteAndConfirm(child, force, refForceAll, bOptions, readline);
                 }
             }
         }
@@ -2002,11 +2004,12 @@ public final class NBootUtils {
     }
 
     private static long deleteAndConfirm(Path directory, boolean force, NBootDeleteFilesContextBoot refForceAll,
-                                         NBootLog bLog, NBootOptionsInfo bOptions, Supplier<String> readline) {
+                                         NBootOptionsInfo bOptions, Supplier<String> readline) {
         String confirm = _confirm(bOptions);
         boolean bot = firstNonNull(bOptions.getBot(), false);
         boolean gui = firstNonNull(bOptions.getGui(), false);
         if (Files.exists(directory)) {
+            NBootLog log = NBootContext.log();
             if (!force && !refForceAll.isForce(true) && refForceAll.accept(directory)) {
                 String line = null;
                 if (bot) {
@@ -2032,11 +2035,11 @@ public final class NBootUtils {
                             if (gui) {
                                 line = inputString(
                                         NBootMsg.ofC("do you confirm deleting %s [y/n/c] (default 'n') ?", directory).toString(),
-                                        null, readline, bLog
+                                        null, readline
                                 );
                             } else {
                                 // Level.OFF is to force logging in all cases
-                                bLog.with().level(Level.OFF).verbWarning().log(NBootMsg.ofC("do you confirm deleting %s [y/n/c] (default 'n') ? : ", directory));
+                                log.with().level(Level.OFF).verbWarning().log(NBootMsg.ofC("do you confirm deleting %s [y/n/c] (default 'n') ? : ", directory));
                                 line = readline.get();
                             }
                         }
@@ -2090,7 +2093,7 @@ public final class NBootUtils {
                     }
                 });
                 count[0]++;
-                bLog.with().level(Level.FINEST).verbWarning().log(NBootMsg.ofC("delete folder : %s (%s files/folders deleted)", directory, count[0]));
+                log.with().level(Level.FINEST).verbWarning().log(NBootMsg.ofC("delete folder : %s (%s files/folders deleted)", directory, count[0]));
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -2119,12 +2122,12 @@ public final class NBootUtils {
     }
 
     /**
-     * @param includeRoot true if include root
-     * @param storeTypesOrPaths   of type NutsStoreLocation, Path of File
+     * @param includeRoot       true if include root
+     * @param storeTypesOrPaths of type NutsStoreLocation, Path of File
      * @param readline
      */
     public static long deleteStoreLocations(NBootOptionsInfo lastBootOptions, NBootOptionsInfo o, boolean includeRoot,
-                                            NBootLog bLog, Object[] storeTypesOrPaths, Supplier<String> readline) {
+                                            Object[] storeTypesOrPaths, Supplier<String> readline) {
         if (lastBootOptions == null) {
             return 0;
         }
@@ -2136,7 +2139,8 @@ public final class NBootUtils {
                             + "You need to provide default response (-y|-n) for resetting/recovering workspace. "
                             + "You was asked to confirm deleting folders as part as recover/reset option."), 255);
         }
-        bLog.with().level(Level.FINEST).verbWarning().log(NBootMsg.ofC("delete workspace location(s) at : %s",
+        NBootLog log = NBootContext.log();
+        log.with().level(Level.FINEST).verbWarning().log(NBootMsg.ofC("delete workspace location(s) at : %s",
                 lastBootOptions.getWorkspace()
         ));
         boolean force = false;
@@ -2150,7 +2154,7 @@ public final class NBootUtils {
             }
             case "NO":
             case "ERROR": {
-                bLog.with().level(Level.WARNING).verbWarning().log(NBootMsg.ofPlain("reset cancelled (applied '--no' argument)"));
+                log.with().level(Level.WARNING).verbWarning().log(NBootMsg.ofPlain("reset cancelled (applied '--no' argument)"));
                 throw new NBootCancelException();
             }
         }
@@ -2188,7 +2192,7 @@ public final class NBootUtils {
         }
         return deleteAndConfirmAll(folders.toArray(new Path[0]), force,
                 "ATTENTION ! You are about to delete nuts workspace files."
-                , bLog, optionsCopy, readline);
+                , optionsCopy, readline);
     }
 
     private static String _confirm(NBootOptionsInfo o) {
@@ -2199,7 +2203,7 @@ public final class NBootUtils {
      * @param readline
      */
     public static long deleteStoreLocationsHard(NBootOptionsInfo lastBootOptions, NBootOptionsInfo bOptions,
-                                                NBootLog bLog, Supplier<String> readline) {
+                                                Supplier<String> readline) {
         String confirm = _confirm(bOptions);
         if (sameEnum(confirm, "ASK")
                 && !sameEnum(enumName(firstNonNull(bOptions.getOutputFormat(), "PLAIN")), "PLAIN")) {
@@ -2208,7 +2212,8 @@ public final class NBootUtils {
                             + "You need to provide default response (-y|-n) for resetting/recovering workspace. "
                             + "You was asked to confirm deleting folders as part as recover/reset option."), 255);
         }
-        bLog.with().level(Level.FINEST).verbWarning().log(NBootMsg.ofC("hard reset nuts to remove all workspaces and all configuration files."));
+        NBootLog log = NBootContext.log();
+        log.with().level(Level.FINEST).verbWarning().log(NBootMsg.ofC("hard reset nuts to remove all workspaces and all configuration files."));
         boolean force = false;
         switch (confirm) {
             case "ASK": {
@@ -2220,7 +2225,7 @@ public final class NBootUtils {
             }
             case "NO":
             case "ERROR": {
-                bLog.with().level(Level.WARNING).verbWarning().log(NBootMsg.ofPlain("reset cancelled (applied '--no' argument)"));
+                log.with().level(Level.WARNING).verbWarning().log(NBootMsg.ofPlain("reset cancelled (applied '--no' argument)"));
                 throw new NBootCancelException();
             }
         }
@@ -2290,13 +2295,13 @@ public final class NBootUtils {
         }
         return deleteAndConfirmAll(folders.stream().sorted().toArray(Path[]::new), force,
                 "ATTENTION ! You are about to delete workspaces and all nuts configuration files."
-                , bLog, optionsCopy, readline);
+                , optionsCopy, readline);
     }
 
 
     public static long deleteAndConfirmAll(Path[] folders, boolean force, String header,
-                                           NBootLog bLog, NBootOptionsInfo bOptions, Supplier<String> readline) {
-        return deleteAndConfirmAll(folders, force, new NBootDeleteFilesContextBootImpl(), header, bLog, bOptions, readline);
+                                           NBootOptionsInfo bOptions, Supplier<String> readline) {
+        return deleteAndConfirmAll(folders, force, new NBootDeleteFilesContextBootImpl(), header, bOptions, readline);
     }
 
     /**
@@ -2955,19 +2960,19 @@ public final class NBootUtils {
     }
 
 
-    public static int processThrowable(Throwable ex, String[] args, NBootOptionsInfo bootOptions, NBootLog bootLog) {
+    public static int processThrowable(Throwable ex, String[] args, NBootOptionsInfo bootOptions) {
         if (ex == null) {
             return 0;
         } else {
             NExceptionBootAware u = findThrowable(ex, NExceptionBootAware.class, null);
             if (u != null) {
-                return u.processThrowable(bootOptions, bootLog);
+                return u.processThrowable(bootOptions);
             } else {
                 if (bootOptions == null) {
                     bootOptions = new NBootOptionsInfo();
                     NBootWorkspaceCmdLineParser.parseNutsArguments(args, bootOptions);
                 }
-                return processThrowable(ex, (NBootLog) bootLog, true, resolveShowStackTrace(bootOptions), resolveGui(bootOptions));
+                return processThrowable(ex, true, resolveShowStackTrace(bootOptions), resolveGui(bootOptions));
             }
         }
     }
@@ -2986,10 +2991,11 @@ public final class NBootUtils {
         }
     }
 
-    public static int processThrowable(Throwable ex, NBootLog out, boolean showMessage, boolean showStackTrace, boolean showGui) {
+    public static int processThrowable(Throwable ex, boolean showMessage, boolean showStackTrace, boolean showGui) {
         if (ex == null) {
             return 0;
         } else {
+            NBootLog out = NBootContext.log();
             String m = getErrorMessage(ex);
             if (out == null) {
                 if (showMessage) {
@@ -3008,7 +3014,7 @@ public final class NBootUtils {
                         sb.append("\n");
                         sb.append(stacktrace(ex));
                     }
-                    showMessage(NBootMsg.ofPlain(sb.toString()).toString(), "Nuts Package Manager - Error", out);
+                    showMessage(NBootMsg.ofPlain(sb.toString()).toString(), "Nuts Package Manager - Error");
                 }
             } else {
                 if (showMessage) {
@@ -3027,15 +3033,15 @@ public final class NBootUtils {
                         sb.append("\n");
                         sb.append(stacktrace(ex));
                     }
-                    showMessage(NBootMsg.ofPlain(sb.toString()).toString(), "Nuts Package Manager - Error", out);
+                    showMessage(NBootMsg.ofPlain(sb.toString()).toString(), "Nuts Package Manager - Error");
                 }
             }
             return 224;
         }
     }
 
-    public static int exitIfError(Throwable ex, String[] args, NBootOptionsInfo bootOptions, NBootLog bootLog) {
-        int code = processThrowable(ex, args, bootOptions, bootLog);
+    public static int exitIfError(Throwable ex, String[] args, NBootOptionsInfo bootOptions) {
+        int code = processThrowable(ex, args, bootOptions);
         if (code != 0) {
             System.exit(code);
         }

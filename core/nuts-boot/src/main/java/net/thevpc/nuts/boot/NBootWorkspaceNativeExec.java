@@ -1,6 +1,5 @@
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.NExceptionBootAware;
 import net.thevpc.nuts.NWorkspaceBase;
 import net.thevpc.nuts.boot.reserved.cmdline.NBootArg;
 import net.thevpc.nuts.boot.reserved.cmdline.NBootCmdLine;
@@ -771,10 +770,10 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
 
     public void runWorkspace0() {
         if (NBootUtils.firstNonNull(options.getCommandHelp(), false)) {
-            NBootWorkspaceHelper.runCommandHelp(options, bLog);
+            NBootWorkspaceHelper.runCommandHelp(options);
             return;
         } else if (NBootUtils.firstNonNull(options.getCommandVersion(), false)) {
-            NBootWorkspaceHelper.runCommandVersion(null, options, bLog);
+            NBootWorkspaceHelper.runCommandVersion(null, options);
             return;
         }
 

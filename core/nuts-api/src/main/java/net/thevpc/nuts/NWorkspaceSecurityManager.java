@@ -155,6 +155,8 @@ public interface NWorkspaceSecurityManager extends NComponent {
      */
     boolean isAdmin();
 
+    boolean isAnonymous();
+
     /**
      * update default authentication agent.
      *
@@ -177,7 +179,7 @@ public interface NWorkspaceSecurityManager extends NComponent {
      *
      * @return true if workspace is running secure mode
      */
-    boolean isSecure();
+    boolean isSecureMode();
 
     /**
      * check if the given <code>password</code> is valid against the one stored

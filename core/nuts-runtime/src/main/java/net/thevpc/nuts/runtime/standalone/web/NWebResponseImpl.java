@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.web;
 
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
@@ -73,6 +74,19 @@ public class NWebResponseImpl implements NWebResponse {
     @Override
     public <T> List<T> getContentArrayAsJson() {
         return getContentAsJson(List.class);
+    }
+
+    @Override
+    public <T> T getContentAs(Class<T> clz, NContentType type) {
+        if (content == null) {
+            return null;
+        }
+        try (InputStream in = content.getInputStream()) {
+            return NElements.of()
+                    .setContentType(type).parse(in, clz);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
     }
 
     @Override

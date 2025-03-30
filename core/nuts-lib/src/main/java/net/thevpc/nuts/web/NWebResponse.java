@@ -1,5 +1,6 @@
 package net.thevpc.nuts.web;
 
+import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.util.NMsg;
 
@@ -24,6 +25,8 @@ public interface NWebResponse {
     <T> List<T> getContentArrayAsJson();
 
     <T> T getContentAsJson(Class<T> clz);
+
+    <T> T getContentAs(Class<T> clz, NContentType type);
 
     Map<?, ?> getContentAsJsonMap();
 

@@ -20,21 +20,15 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 
 public class NMavenSettingsLoaderBoot {
-    private NBootLog log;
     private String settingsFilePath;
 
-    public NMavenSettingsLoaderBoot(NBootLog log) {
-        this.log = log;
+    public NMavenSettingsLoaderBoot() {
     }
 
     public NBootLog getLog() {
-        return log;
+        return NBootContext.log();
     }
 
-    public NMavenSettingsLoaderBoot setLog(NBootLog log) {
-        this.log = log;
-        return this;
-    }
 
     public String getSettingsFilePath() {
         return settingsFilePath;
@@ -163,7 +157,7 @@ public class NMavenSettingsLoaderBoot {
                     }
                 }
             } catch (Exception ex) {
-                log.with().level(Level.FINE).verbFail().error(ex).log(NBootMsg.ofC("unable to load maven settings.xml %s", settingsFilePath));
+                getLog().with().level(Level.FINE).verbFail().error(ex).log(NBootMsg.ofC("unable to load maven settings.xml %s", settingsFilePath));
             }
         }
         if (NBootUtils.isBlank(settings.getLocalRepository())) {

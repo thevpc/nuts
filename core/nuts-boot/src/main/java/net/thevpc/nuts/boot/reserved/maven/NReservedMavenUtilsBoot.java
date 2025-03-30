@@ -1,6 +1,7 @@
 package net.thevpc.nuts.boot.reserved.maven;
 
 import net.thevpc.nuts.boot.*;
+import net.thevpc.nuts.boot.reserved.cmdline.NBootArg;
 import net.thevpc.nuts.boot.reserved.util.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -143,51 +144,52 @@ public class NReservedMavenUtilsBoot {
         return toMavenPath(id) + "/" + name;
     }
 
-    public static File resolveOrDownloadJar(NBootId nutsId, NBootRepositoryLocation[] repositories, NBootRepositoryLocation cacheFolder, NBootLog bLog, boolean includeDesc, Instant expire, NBootErrorInfoList errors) {
+    public static File resolveOrDownloadJar(NBootId nutsId, NBootRepositoryLocation[] repositories, NBootRepositoryLocation cacheFolder, boolean includeDesc, Instant expire, NBootErrorInfoList errors) {
         File cachedJarFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "jar"));
         if (cachedJarFile.isFile()) {
-            if (NBootUtils.isFileAccessible(cachedJarFile.toPath(), expire, bLog)) {
+            if (NBootUtils.isFileAccessible(cachedJarFile.toPath(), expire)) {
                 return cachedJarFile;
             }
         }
+        NBootLog log = NBootContext.log();
         for (NBootRepositoryLocation r : repositories) {
-            bLog.with().level(Level.FINE).verbCache().log(NBootMsg.ofC("checking %s from %s", nutsId, r));
+            log.with().level(Level.FINE).verbCache().log(NBootMsg.ofC("checking %s from %s", nutsId, r));
 //                File file = toFile(r);
             if (includeDesc) {
                 String path = resolveMavenFullPath(r, nutsId, "pom");
                 File cachedPomFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "pom"));
                 try {
-                    NBootUtils.copy(path, cachedPomFile, bLog);
+                    NBootUtils.copy(path, cachedPomFile);
                 } catch (Exception ex) {
                     errors.add(new NReservedErrorInfo(nutsId, r.toString(), path, "unable to load descriptor", ex));
-                    bLog.with().level(Level.SEVERE).verbFail().log(NBootMsg.ofC("unable to load descriptor %s from %s.", nutsId, r));
+                    log.with().level(Level.SEVERE).verbFail().log(NBootMsg.ofC("unable to load descriptor %s from %s.", nutsId, r));
                     continue;
                 }
             }
             String path = resolveMavenFullPath(r, nutsId, "jar");
             try {
-                NBootUtils.copy(path, cachedJarFile, bLog);
-                bLog.with().level(Level.CONFIG).verbCache().log(NBootMsg.ofC("cache jar file %s", cachedJarFile.getPath()));
+                NBootUtils.copy(path, cachedJarFile);
+                log.with().level(Level.CONFIG).verbCache().log(NBootMsg.ofC("cache jar file %s", cachedJarFile.getPath()));
                 errors.removeErrorsFor(nutsId);
                 return cachedJarFile;
             } catch (Exception ex) {
                 errors.add(new NReservedErrorInfo(nutsId, r.toString(), path, "unable to load binaries", ex));
-                bLog.with().level(Level.SEVERE).verbFail().log(NBootMsg.ofC("unable to load binaries %s from %s.", nutsId, r));
+                log.with().level(Level.SEVERE).verbFail().log(NBootMsg.ofC("unable to load binaries %s from %s.", nutsId, r));
             }
         }
         return null;
     }
 
-    public static Set<NBootId> loadDependenciesFromId(NBootId rid, NBootLog bLog, Collection<NBootRepositoryLocation> repos, NBootCache cache) {
+    public static Set<NBootId> loadDependenciesFromId(NBootId rid, Collection<NBootRepositoryLocation> repos) {
         String pomPath = NBootUtils.resolveFilePath(rid, "pom");
         String nutsPath = NBootUtils.resolveFilePath(rid, "nuts");
         Set<NBootId> deps = null;
         for (NBootRepositoryLocation baseUrl : repos) {
             String loc = baseUrl.getPath();
-            Set<String> urls = expandRepoUrls(baseUrl, bLog, cache);
+            Set<String> urls = expandRepoUrls(baseUrl);
             for (String url : urls) {
                 if (url != null) {
-                    deps = loadDependenciesFromPomUrl(url + "/" + pomPath, bLog);
+                    deps = loadDependenciesFromPomUrl(url + "/" + pomPath);
                     if (deps != null) {
                         return deps;
                     }
@@ -197,11 +199,11 @@ public class NReservedMavenUtilsBoot {
                 if (loc.startsWith("htmlfs:")) {
                     loc = loc.substring("htmlfs:".length());
                 }
-                deps = loadDependenciesFromPomUrl(loc + "/" + pomPath, bLog);
+                deps = loadDependenciesFromPomUrl(loc + "/" + pomPath);
                 if (deps != null) {
                     break;
                 }
-                deps = loadDependenciesFromNutsUrl(loc + "/" + nutsPath, bLog);
+                deps = loadDependenciesFromNutsUrl(loc + "/" + nutsPath);
                 if (deps != null) {
                     break;
                 }
@@ -211,8 +213,8 @@ public class NReservedMavenUtilsBoot {
     }
 
 
-    public static Set<NBootId> loadDependenciesFromNutsUrl(String url, NBootLog bLog) {
-        InputStream inputStream = NBootUtils.resolveInputStream(url, bLog);
+    public static Set<NBootId> loadDependenciesFromNutsUrl(String url) {
+        InputStream inputStream = NBootUtils.resolveInputStream(url);
         Map<String, Object> descNuts = null;
         if (inputStream != null) {
             try {
@@ -236,9 +238,9 @@ public class NReservedMavenUtilsBoot {
     }
 
 
-    private static Set<NBootId> loadDependenciesFromPomUrl(String url, NBootLog bLog) {
+    private static Set<NBootId> loadDependenciesFromPomUrl(String url) {
         LinkedHashSet<NBootId> depsSet = new LinkedHashSet<>();
-        InputStream xml = NBootUtils.resolveInputStream(url, bLog);
+        InputStream xml = NBootUtils.resolveInputStream(url);
         if (xml != null) {
             try {
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -392,7 +394,7 @@ public class NReservedMavenUtilsBoot {
                 depsSet.addAll(ok);
 
             } catch (Exception ex) {
-                bLog.with().level(Level.FINE).verbFail().error(ex).log(NBootMsg.ofC("unable to loadDependenciesAndRepositoriesFromPomUrl %s", url));
+                NBootContext.log().with().level(Level.FINE).verbFail().error(ex).log(NBootMsg.ofC("unable to loadDependenciesAndRepositoriesFromPomUrl %s", url));
             } finally {
                 try {
                     xml.close();
@@ -406,8 +408,9 @@ public class NReservedMavenUtilsBoot {
         }
     }
 
-    static List<NBootVersion> detectVersionsFromMetaData(String mavenMetadata, NBootLog bLog) {
+    static List<NBootVersion> detectVersionsFromMetaData(String mavenMetadata) {
         List<NBootVersion> all = new ArrayList<>();
+        NBootLog log = NBootContext.log();
         try {
             String urlType = "";
             if (mavenMetadata.startsWith("dotfilefs:")) {
@@ -420,13 +423,13 @@ public class NReservedMavenUtilsBoot {
             DocumentBuilder builder = factory.newDocumentBuilder();
             InputStream is = null;
             try {
-                is = NBootUtils.preloadStream(NBootUtils.openStream(runtimeMetadata, bLog), bLog);
+                is = NBootUtils.preloadStream(NBootUtils.openStream(runtimeMetadata));
             } catch (Exception ex) {
                 //do not need to log error
                 //ignore
             }
             if (is != null) {
-                bLog.with().level(Level.FINEST).verbSuccess().log(NBootMsg.ofC("parsing %s", mavenMetadata));
+                log.with().level(Level.FINEST).verbSuccess().log(NBootMsg.ofC("parsing %s", mavenMetadata));
                 Document doc = builder.parse(is);
                 Element c = doc.getDocumentElement();
                 for (int i = 0; i < c.getChildNodes().getLength(); i++) {
@@ -452,20 +455,20 @@ public class NReservedMavenUtilsBoot {
                 }
             }
         } catch (Exception ex) {
-            bLog.with().level(Level.FINE).verbFail().error(ex).log(NBootMsg.ofC("unable to parse %s", mavenMetadata));
+            log.with().level(Level.FINE).verbFail().error(ex).log(NBootMsg.ofC("unable to parse %s", mavenMetadata));
             // ignore any error
         }
         return all;
     }
 
     static VersionAndPath resolveLatestMavenId(NBootId zId, String path, Predicate<NBootVersion> filter,
-                                               NBootLog bLog, NBootRepositoryLocation repoUrl2, boolean stopFirst, NBootOptionsInfo options, NBootCache cache) {
+                                               NBootRepositoryLocation repoUrl2, boolean stopFirst, NBootOptionsInfo options) {
         String descType = "MAVEN";
         if (NBootConstants.RepoTypes.NUTS.equalsIgnoreCase(repoUrl2.getLocationType())) {
             descType = "NUTS";
         }
 
-        Set<String> urls = expandRepoUrls(repoUrl2, bLog, cache);
+        Set<String> urls = expandRepoUrls(repoUrl2);
         boolean found = false;
         NBootVersion bestVersion = null;
         String bestPath = null;
@@ -473,6 +476,7 @@ public class NReservedMavenUtilsBoot {
         boolean offline = !NBootUtils.sameEnum(fetchStrategy, "REMOTE");
         boolean online = !NBootUtils.sameEnum(fetchStrategy, "OFFLINE");
 
+        NBootLog log = NBootContext.log();
         for (String repoUrl : urls) {
             if (!repoUrl.contains("://")) {
                 if (offline) {
@@ -498,8 +502,8 @@ public class NReservedMavenUtilsBoot {
                                                 if (Files.isRegularFile(jarPath)) {
                                                     bestVersion = p;
                                                     bestPath = "local location : " + jarPath;
-                                                    if (bLog != null) {
-                                                        bLog.with().level(Level.FINEST).verbSuccess().log(NBootMsg.ofC("%s#%s found in %s as %s", zId, bestVersion, repoUrl2, bestPath));
+                                                    if (log != null) {
+                                                        log.with().level(Level.FINEST).verbSuccess().log(NBootMsg.ofC("%s#%s found in %s as %s", zId, bestVersion, repoUrl2, bestPath));
                                                     }
                                                     if (stopFirst) {
                                                         break;
@@ -529,14 +533,14 @@ public class NReservedMavenUtilsBoot {
                 if ((remoteURL && online) || (!remoteURL && offline)) {
                     //do nothing
                     if (htmlfs) {
-                        for (NBootVersion p : detectVersionsFromHtmlfsTomcatDirectoryListing(basePath, bLog)) {
+                        for (NBootVersion p : detectVersionsFromHtmlfsTomcatDirectoryListing(basePath)) {
                             if (filter == null || filter.test(p)) {
                                 found = true;
                                 if (bestVersion == null || bestVersion.compareTo(p) < 0) {
                                     bestVersion = p;
                                     bestPath = "remote file " + basePath;
-                                    if (bLog != null) {
-                                        bLog.with().level(Level.FINEST).verbSuccess().log(NBootMsg.ofC("%s#%s found in %s as %s", zId, bestVersion, repoUrl2, bestPath));
+                                    if (log != null) {
+                                        log.with().level(Level.FINEST).verbSuccess().log(NBootMsg.ofC("%s#%s found in %s as %s", zId, bestVersion, repoUrl2, bestPath));
                                     }
                                     if (stopFirst) {
                                         break;
@@ -545,15 +549,18 @@ public class NReservedMavenUtilsBoot {
                             }
                         }
                     } else {
+                        int bootConnectionTimout=options.getCustomOptions().stream().map(x-> NBootArg.of(x)).filter(x->Objects.equals(x.getOptionName(),"---boot-connection-timeout")).map(x->x.getIntValue())
+                            .filter(x->x!=null)
+                            .findFirst().orElse(0);
                         String mavenMetadata = basePath + "maven-metadata.xml";
-                        for (NBootVersion p : detectVersionsFromMetaData(mavenMetadata, bLog)) {
+                        for (NBootVersion p : detectVersionsFromMetaData(mavenMetadata)) {
                             if (filter == null || filter.test(p)) {
                                 found = true;
                                 if (bestVersion == null || bestVersion.compareTo(p) < 0) {
                                     bestVersion = p;
                                     bestPath = "remote file " + mavenMetadata;
-                                    if (bLog != null) {
-                                        bLog.with().level(Level.FINEST).verbSuccess().log(NBootMsg.ofC("%s#%s found in %s as %s", zId, bestVersion, repoUrl2, bestPath));
+                                    if (log != null) {
+                                        log.with().level(Level.FINEST).verbSuccess().log(NBootMsg.ofC("%s#%s found in %s as %s", zId, bestVersion, repoUrl2, bestPath));
                                     }
                                     if (stopFirst) {
                                         break;
@@ -576,21 +583,22 @@ public class NReservedMavenUtilsBoot {
      * @return latest runtime version
      */
     public static NBootId resolveLatestMavenId(NBootId zId, Predicate<NBootVersion> filter,
-                                               NBootLog bLog, Collection<NBootRepositoryLocation> bootRepositories, NBootOptionsInfo options, NBootCache cache) {
-        if (bLog.isLoggable(Level.FINEST)) {
+                                               Collection<NBootRepositoryLocation> bootRepositories, NBootOptionsInfo options) {
+        NBootLog log = NBootContext.log();
+        if (log.isLoggable(Level.FINEST)) {
             switch (bootRepositories.size()) {
                 case 0: {
-                    bLog.with().level(Level.FINEST).verbStart().log(NBootMsg.ofC("search for %s nuts there are no repositories to look into.", zId));
+                    log.with().level(Level.FINEST).verbStart().log(NBootMsg.ofC("search for %s nuts there are no repositories to look into.", zId));
                     break;
                 }
                 case 1: {
-                    bLog.with().level(Level.FINEST).verbStart().log(NBootMsg.ofC("search for %s in: %s", zId, bootRepositories.toArray()[0]));
+                    log.with().level(Level.FINEST).verbStart().log(NBootMsg.ofC("search for %s in: %s", zId, bootRepositories.toArray()[0]));
                     break;
                 }
                 default: {
-                    bLog.with().level(Level.FINEST).verbStart().log(NBootMsg.ofC("search for %s in: ", zId));
+                    log.with().level(Level.FINEST).verbStart().log(NBootMsg.ofC("search for %s in: ", zId));
                     for (NBootRepositoryLocation repoUrl : bootRepositories) {
-                        bLog.with().level(Level.FINEST).verbStart().log(NBootMsg.ofC("    %s", repoUrl));
+                        log.with().level(Level.FINEST).verbStart().log(NBootMsg.ofC("    %s", repoUrl));
                     }
                 }
             }
@@ -600,7 +608,7 @@ public class NReservedMavenUtilsBoot {
         String bestPath = null;
         boolean stopOnFirstValidRepo = false;
         for (NBootRepositoryLocation repoUrl2 : bootRepositories) {
-            VersionAndPath r = resolveLatestMavenId(zId, path, filter, bLog, repoUrl2, false, options, cache);
+            VersionAndPath r = resolveLatestMavenId(zId, path, filter, repoUrl2, false, options);
             if (r.version != null) {
                 if (bestVersion == null || bestVersion.compareTo(r.version) < 0) {
                     bestVersion = r.version;
@@ -615,13 +623,13 @@ public class NReservedMavenUtilsBoot {
             return null;
         }
         NBootId iid = NBootId.of(zId.getGroupId(), zId.getArtifactId(), bestVersion.getValue());
-        bLog.with().level(Level.FINEST).verbSuccess().log(NBootMsg.ofC("resolve %s from %s", iid, bestPath));
+        log.with().level(Level.FINEST).verbSuccess().log(NBootMsg.ofC("resolve %s from %s", iid, bestPath));
         return iid;
     }
 
-    private static List<NBootVersion> detectVersionsFromHtmlfsTomcatDirectoryListing(String basePath, NBootLog bLog) {
+    private static List<NBootVersion> detectVersionsFromHtmlfsTomcatDirectoryListing(String basePath) {
         List<NBootVersion> all = new ArrayList<>();
-        try (InputStream in = NBootUtils.openStream(NBootUtils.urlOf(basePath), bLog)) {
+        try (InputStream in = NBootUtils.openStream(NBootUtils.urlOf(basePath))) {
             List<String> p = new HtmlfsTomcatDirectoryListParser().parse(in);
             if (p != null) {
                 for (String s : p) {
@@ -646,8 +654,8 @@ public class NReservedMavenUtilsBoot {
 
     public static File getBootCacheJar(NBootId vid, NBootRepositoryLocation[] repositories, NBootRepositoryLocation cacheFolder, boolean useCache, String name,
                                        Instant expire, NBootErrorInfoList errorList, NBootOptionsInfo bOptions,
-                                       Function<String, String> pathExpansionConverter, NBootLog bLog, NBootCache cache) {
-        File f = getBootCacheFile(vid, getFileName(vid, "jar"), repositories, cacheFolder, useCache, expire, errorList, bOptions, pathExpansionConverter, bLog, cache);
+                                       Function<String, String> pathExpansionConverter) {
+        File f = getBootCacheFile(vid, getFileName(vid, "jar"), repositories, cacheFolder, useCache, expire, errorList, bOptions, pathExpansionConverter);
         if (f == null) {
             throw new NBootInvalidWorkspaceException(bOptions.getWorkspace(),
                     NBootMsg.ofC("unable to load %s %s from repositories %s", name, vid, Arrays.asList(repositories)));
@@ -658,12 +666,12 @@ public class NReservedMavenUtilsBoot {
     static File getBootCacheFile(NBootId vid, String fileName, NBootRepositoryLocation[] repositories, NBootRepositoryLocation cacheFolder,
                                  boolean useCache, Instant expire, NBootErrorInfoList errorList,
                                  NBootOptionsInfo bOptions,
-                                 Function<String, String> pathExpansionConverter, NBootLog bLog, NBootCache cache) {
+                                 Function<String, String> pathExpansionConverter) {
         String path = getPathFile(vid, fileName);
         if (useCache && cacheFolder != null) {
 
             File f = new File(cacheFolder.getPath(), path.replace('/', File.separatorChar));
-            if (NBootUtils.isFileAccessible(f.toPath(), expire, bLog)) {
+            if (NBootUtils.isFileAccessible(f.toPath(), expire)) {
                 return f;
             }
         }
@@ -671,11 +679,12 @@ public class NReservedMavenUtilsBoot {
             if (useCache && cacheFolder != null && cacheFolder.equals(repository)) {
                 return null; // I do not remember why I did this!
             }
-            File file = getBootCacheFile(vid, path, repository, cacheFolder, useCache, expire, errorList, bOptions, pathExpansionConverter, bLog, cache);
+            File file = getBootCacheFile(vid, path, repository, cacheFolder, useCache, expire, errorList, bOptions, pathExpansionConverter);
             if (file != null) {
                 return file;
             }
         }
+        NBootCache cache = NBootContext.cache();
         NBootIdCache e = cache.fallbackIdMap.get(vid);
         if (e != null && e.jar != null) {
             return new File(e.jar);
@@ -689,10 +698,11 @@ public class NReservedMavenUtilsBoot {
 
     private static File getBootCacheFile(NBootId nutsId, String path, NBootRepositoryLocation repository0, NBootRepositoryLocation cacheFolder,
                                          boolean useCache, Instant expire, NBootErrorInfoList errorList,
-                                         NBootOptionsInfo bOptions, Function<String, String> pathExpansionConverter,
-                                         NBootLog bLog, NBootCache cache) {
+                                         NBootOptionsInfo bOptions, Function<String, String> pathExpansionConverter) {
         boolean cacheLocalFiles = true;//Boolean.getBoolean("nuts.cache.cache-local-files");
-        for (String repository : expandRepoUrls(repository0, bLog, cache)) {
+        NBootLog log = NBootContext.log();
+
+        for (String repository : expandRepoUrls(repository0)) {
             //we know exactly the file path, so we will trim "htmlfs:" protocol
             if (repository.startsWith("htmlfs:")) {
                 repository = repository.substring("htmlfs:".length());
@@ -703,7 +713,7 @@ public class NReservedMavenUtilsBoot {
                 try {
                     repositoryFolder = NBootUtils.toFile(NBootUtils.urlOf(repository));
                 } catch (Exception ex) {
-                    bLog.with().level(Level.FINE).verbFail().error(ex).log(NBootMsg.ofC("unable to convert url to file : %s", repository));
+                    log.with().level(Level.FINE).verbFail().error(ex).log(NBootMsg.ofC("unable to convert url to file : %s", repository));
                     //ignore
                 }
             } else {
@@ -721,7 +731,7 @@ public class NReservedMavenUtilsBoot {
                 }
                 urlPath += path;
                 try {
-                    NBootUtils.copy(urlPath, to, bLog);
+                    NBootUtils.copy(urlPath, to);
                     errorList.removeErrorsFor(nutsId);
                     ok = to;
                 } catch (IOException | UncheckedIOException ex) {
@@ -740,11 +750,11 @@ public class NReservedMavenUtilsBoot {
                 if (file.isFile()) {
                     ff = file;
                 } else {
-                    bLog.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("locate %s", file));
+                    log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("locate %s", file));
                 }
             } else {
                 File file = new File(repoFolder, path.replace('/', File.separatorChar));
-                bLog.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("locate %s ; repository is not a valid folder : %s", file, repoFolder));
+                log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("locate %s ; repository is not a valid folder : %s", file, repoFolder));
             }
 
             if (ff != null) {
@@ -764,16 +774,16 @@ public class NReservedMavenUtilsBoot {
                             ext = "jar";
                         }
                         if (to.isFile()) {
-                            NBootUtils.copy(ff, to, bLog);
-                            bLog.with().level(Level.CONFIG).verbCache().log(NBootMsg.ofC("recover cached %s file %s to %s", ext, ff, to));
+                            NBootUtils.copy(ff, to);
+                            log.with().level(Level.CONFIG).verbCache().log(NBootMsg.ofC("recover cached %s file %s to %s", ext, ff, to));
                         } else {
-                            NBootUtils.copy(ff, to, bLog);
-                            bLog.with().level(Level.CONFIG).verbCache().log(NBootMsg.ofC("cache %s file %s to %s", ext, ff, to));
+                            NBootUtils.copy(ff, to);
+                            log.with().level(Level.CONFIG).verbCache().log(NBootMsg.ofC("cache %s file %s to %s", ext, ff, to));
                         }
                         return to;
                     } catch (IOException | UncheckedIOException ex) {
                         errorList.add(new NReservedErrorInfo(nutsId, repository, ff.getPath(), "unable to cache", ex));
-                        bLog.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("error caching file %s to %s : %s", ff, to, ex.toString()));
+                        log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("error caching file %s to %s : %s", ff, to, ex.toString()));
                         //not found
                     }
                     return ff;
@@ -797,7 +807,7 @@ public class NReservedMavenUtilsBoot {
         return false;
     }
 
-    private static Set<String> expandRepoUrls(NBootRepositoryLocation repoUrl2, NBootLog bLog, NBootCache cache) {
+    private static Set<String> expandRepoUrls(NBootRepositoryLocation repoUrl2) {
         Function<String, Object> mappingFunction = new Function<String, Object>() {
             @Override
             public Object apply(String repo) {
@@ -874,19 +884,19 @@ public class NReservedMavenUtilsBoot {
                     if (other == null) {
                         other = true;
                     }
-                    urls.addAll(loadMavenSettingsUrls(local, central, other, bLog, cache));
+                    urls.addAll(loadMavenSettingsUrls(local, central, other));
                 } else {
                     urls.add(repoUrl2.getPath());
                 }
                 return urls;
             }
         };
-        return (Set<String>) cache.get((NMavenSettingsBoot.class.getName() + "::expandRepoUrls::" + repoUrl2), mappingFunction);
+        return (Set<String>) NBootContext.cache().get((NMavenSettingsBoot.class.getName() + "::expandRepoUrls::" + repoUrl2), mappingFunction);
     }
 
 
-    private static Set<String> loadMavenSettingsUrls(boolean local, boolean central, boolean other, NBootLog bLog, NBootCache cache) {
-        NMavenSettingsBoot mavenSettings = (NMavenSettingsBoot) cache.get(NMavenSettingsBoot.class.getName(), x -> new NMavenSettingsLoaderBoot(bLog).loadSettingsRepos());
+    private static Set<String> loadMavenSettingsUrls(boolean local, boolean central, boolean other) {
+        NMavenSettingsBoot mavenSettings = (NMavenSettingsBoot) NBootContext.cache().get(NMavenSettingsBoot.class.getName(), x -> new NMavenSettingsLoaderBoot().loadSettingsRepos());
         Set<String> urls = new LinkedHashSet<>();
         if (local) {
             urls.add(mavenSettings.getLocalRepository());
@@ -902,11 +912,11 @@ public class NReservedMavenUtilsBoot {
         return urls;
     }
 
-    public static String resolveNutsApiVersionFromClassPath(NBootLog bLog) {
-        return resolveNutsApiPomPattern("version", bLog);
+    public static String resolveNutsApiVersionFromClassPath(NBootContext bContext) {
+        return resolveNutsApiPomPattern("version", bContext);
     }
 
-    public static String resolveNutsApiPomPattern(String propName, NBootLog bLog) {
+    public static String resolveNutsApiPomPattern(String propName, NBootContext bContext) {
 //        boolean devMode = false;
         String propValue = null;
         try {
@@ -918,7 +928,7 @@ public class NReservedMavenUtilsBoot {
                     case "version": {
                         propValue = NBootUtils.loadURLProperties(
                                 resource,
-                                null, false, bLog).getProperty(propName);
+                                null, false).getProperty(propName);
                         break;
                     }
                 }
@@ -931,7 +941,7 @@ public class NReservedMavenUtilsBoot {
         }
         URL pomXml = NBootWorkspaceImpl.class.getResource("/META-INF/maven/net.thevpc.nuts/nuts/pom.xml");
         if (pomXml != null) {
-            try (InputStream is = NBootUtils.openStream(pomXml, bLog)) {
+            try (InputStream is = NBootUtils.openStream(pomXml)) {
                 propValue = resolvePomTagValues(new String[]{propName}, is).get(propName);
             } catch (Exception ex) {
                 //
@@ -969,7 +979,7 @@ public class NReservedMavenUtilsBoot {
                     case "version": {
                         String id = NBootUtils.loadURLProperties(
                                 resource,
-                                null, false, bLog).getProperty("id");
+                                null, false).getProperty("id");
                         if (!NBootUtils.isBlank(id)) {
                             NBootId nId = NBootId.of(id);
                             switch (propName) {
