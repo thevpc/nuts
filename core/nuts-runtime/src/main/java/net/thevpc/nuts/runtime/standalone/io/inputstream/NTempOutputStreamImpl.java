@@ -294,4 +294,13 @@ class NTempOutputStreamImpl extends NTempOutputStream {
             return file.getInputStream();
         }
     }
+
+    @Override
+    public void dispose() {
+        try {
+            this.close();
+        } catch (IOException e) {
+            throw new NIOException(e);
+        }
+    }
 }

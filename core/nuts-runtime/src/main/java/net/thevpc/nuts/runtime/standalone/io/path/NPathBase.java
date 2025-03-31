@@ -105,13 +105,13 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     }
 
     @Override
-    public void copyToPrintStream(PrintStream other) {
-        copyToPrintStream(other, null);
+    public void copyToPrintStream(PrintStream other, NPathOption... options) {
+        copyToPrintStream(other, null,options);
     }
 
     @Override
-    public void copyToPrintStream(PrintStream other, Charset cs) {
-        try (Reader reader = getReader()) {
+    public void copyToPrintStream(PrintStream other, Charset cs, NPathOption... options) {
+        try (Reader reader = getReader(options)) {
             char[] buffer = new char[BUFFER_SIZE];
             int count;
             while ((count = reader.read(buffer)) > 0) {
@@ -123,7 +123,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     }
 
     @Override
-    public void copyToOutputStream(OutputStream other) {
+    public void copyToOutputStream(OutputStream other, NPathOption... options) {
         try (InputStream reader = getInputStream()) {
             byte[] buffer = new byte[BUFFER_SIZE];
             int count;
@@ -136,7 +136,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     }
 
     @Override
-    public void copyFromInputStream(InputStream other) {
+    public void copyFromInputStream(InputStream other, NPathOption... options) {
         try (OutputStream out = getOutputStream()) {
             byte[] buffer = new byte[BUFFER_SIZE];
             int count;
@@ -149,7 +149,22 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     }
 
     @Override
-    public void copyFromReader(Reader other) {
+    public void copyFromInputStreamProvider(NInputStreamProvider other, NPathOption... options) {
+        try (InputStream in = other.getInputStream()) {
+            try (OutputStream out = getOutputStream(options)) {
+                byte[] buffer = new byte[BUFFER_SIZE];
+                int count;
+                while ((count = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, count);
+                }
+            }
+        } catch (IOException ex) {
+            throw new NIOException(ex);
+        }
+    }
+
+    @Override
+    public void copyFromReader(Reader other, NPathOption... options) {
         try (Writer writer = getWriter()) {
             char[] buffer = new char[BUFFER_SIZE];
             int count;
@@ -181,12 +196,12 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     }
 
     @Override
-    public void copyToWriter(Writer other) {
-        copyToWriter(other, null);
+    public void copyToWriter(Writer other, NPathOption... options) {
+        copyToWriter(other, null,options);
     }
 
     @Override
-    public void copyToWriter(Writer other, Charset cs) {
+    public void copyToWriter(Writer other, Charset cs, NPathOption... options) {
         try (Reader reader = getReader(cs)) {
             char[] buffer = new char[BUFFER_SIZE];
             int count;
@@ -297,7 +312,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     private NPathNameParts rebuildSmartParts(NLiteral[] vals, int split) {
         String fe = concatSmartParts(vals, split, vals.length);
-        String e = fe.startsWith(".")?fe.substring(1):fe;
+        String e = fe.startsWith(".") ? fe.substring(1) : fe;
 
         return new NPathNameParts(
                 concatSmartParts(vals, 0, split),

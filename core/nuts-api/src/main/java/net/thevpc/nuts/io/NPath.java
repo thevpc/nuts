@@ -27,7 +27,6 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NRepository;
-import net.thevpc.nuts.NWorkspaceProvider;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.spi.NPathSPI;
@@ -50,7 +49,7 @@ import java.util.function.Function;
  *
  * @app.category Input Output
  */
-public interface NPath extends NInputSource, NOutputTarget,Comparable<NPath> {
+public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
     static NPath of(URL path) {
         return NIO.of().createPath(path);
@@ -352,13 +351,16 @@ public interface NPath extends NInputSource, NOutputTarget,Comparable<NPath> {
      * ensure that the folder or the file exists and is empty.
      * If the file or the folder does not exist it will be created
      * If the file or the folder does exist it will be emptied
+     *
      * @return current path
      */
     NPath ensureEmptyDirectory();
+
     /**
      * ensure that the folder or the file exists and is empty.
      * If the file or the folder does not exist it will be created
      * If the file or the folder does exist it will be emptied
+     *
      * @return current path
      */
     NPath ensureEmptyFile();
@@ -507,21 +509,23 @@ public interface NPath extends NInputSource, NOutputTarget,Comparable<NPath> {
 
     void copyFrom(NPath other, NPathOption... options);
 
-    void copyFromInputStream(InputStream other);
+    void copyFromInputStream(InputStream other, NPathOption... options);
 
-    void copyFromReader(Reader other);
+    void copyFromInputStreamProvider(NInputStreamProvider other, NPathOption... options);
+
+    void copyFromReader(Reader other, NPathOption... options);
 
     void copyFromReader(Reader other, Charset charset, NPathOption... options);
 
-    void copyToOutputStream(OutputStream other);
+    void copyToOutputStream(OutputStream other, NPathOption... options);
 
-    void copyToPrintStream(PrintStream other);
+    void copyToPrintStream(PrintStream other, NPathOption... options);
 
-    void copyToPrintStream(PrintStream other, Charset cs);
+    void copyToPrintStream(PrintStream other, Charset cs, NPathOption... options);
 
-    void copyToWriter(Writer other);
+    void copyToWriter(Writer other, NPathOption... options);
 
-    void copyToWriter(Writer other, Charset cs);
+    void copyToWriter(Writer other, Charset cs, NPathOption... options);
 
     NPath getRoot();
 
