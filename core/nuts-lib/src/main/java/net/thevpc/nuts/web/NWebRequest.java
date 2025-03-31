@@ -1,6 +1,7 @@
 package net.thevpc.nuts.web;
 
 import net.thevpc.nuts.format.NMsgFormattable;
+import net.thevpc.nuts.io.NInputContentProvider;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
 
@@ -101,15 +102,15 @@ public interface NWebRequest extends NMsgFormattable {
 
     NWebRequest setParameter(String name, String value);
 
-    NInputSource getBody();
+    NInputSource getRequestBody();
 
-    NWebRequest setJsonBody(Object body);
+    NWebRequest setJsonRequestBody(Object body);
 
-    NWebRequest setBody(String body);
+    NWebRequest setRequestBody(String body);
 
-    NWebRequest setBody(byte[] body);
+    NWebRequest setRequestBody(byte[] body);
 
-    NWebRequest setBody(NInputSource body);
+    NWebRequest setRequestBody(NInputSource body);
 
     NWebRequest setContentLanguage(String contentLanguage);
 
@@ -122,6 +123,14 @@ public interface NWebRequest extends NMsgFormattable {
     String getAuthorizationBearer();
 
     String getContentLanguage();
+
+    NWebRequest addFormUrlEncoded(String key, String value);
+
+    NWebRequest addFormUrlEncoded(Map<String, String> value);
+
+    NWebRequest addFormData(String key, NInputContentProvider value);
+
+    NWebRequest addFormData(String key, String value);
 
     NWebRequest setFormUrlEncoded(Map<String, String> m);
 

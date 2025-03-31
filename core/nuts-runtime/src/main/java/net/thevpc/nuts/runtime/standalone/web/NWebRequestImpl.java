@@ -1,13 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.web;
 
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.io.NInputSource;
-import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.web.*;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -25,10 +25,55 @@ public class NWebRequestImpl implements NWebRequest {
     private Integer connectTimeout;
     private List<NWebRequestBody> parts = new ArrayList<>();
     private DefaultNWebCli cli;
+    private Map<String, Object> formData;
+    private Map<String, String> urlEncoded;
+    private Mode mode = Mode.NONE;
+
+    private static enum Mode {
+        NONE,
+        BODY,
+        FORM_DATA,
+        URLENCODED,
+    }
+
+    ;
 
     public NWebRequestImpl(DefaultNWebCli cli, NHttpMethod method) {
         this.cli = cli;
         this.method = method == null ? NHttpMethod.GET : method;
+    }
+
+    protected NWebRequestImpl setMode(Mode mode) {
+        if (mode != null) {
+            this.mode = mode;
+        }
+        switch (this.mode) {
+            case NONE: {
+                body = null;
+                formData = null;
+                urlEncoded = null;
+                break;
+            }
+            case BODY: {
+                //body=null;
+                formData = null;
+                urlEncoded = null;
+                break;
+            }
+            case FORM_DATA: {
+                body = null;
+                //formData=null;
+                urlEncoded = null;
+                break;
+            }
+            case URLENCODED: {
+                body = null;
+                formData = null;
+                //urlEncoded=null;
+                break;
+            }
+        }
+        return this;
     }
 
     @Override
@@ -452,7 +497,7 @@ public class NWebRequestImpl implements NWebRequest {
 
     @Override
     public NWebRequest doWith(Consumer<NWebRequest> any) {
-        if(any!=null){
+        if (any != null) {
             any.accept(this);
         }
         return this;
@@ -488,12 +533,79 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NInputSource getBody() {
-        return body;
+    public NInputSource getRequestBody() {
+        switch (mode) {
+            case BODY:
+                return body;
+            case URLENCODED: {
+                setContentType("application/x-www-form-urlencoded");
+                StringBuilder sb = new StringBuilder();
+                boolean first = true;
+                for (Map.Entry<String, String> e : urlEncoded.entrySet()) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        sb.append("&");
+                    }
+                    try {
+                        sb
+                                .append(URLEncoder.encode(NStringUtils.trim(e.getKey()), "UTF-8"))
+                                .append("=")
+                                .append(URLEncoder.encode(NStringUtils.trim(e.getValue()), "UTF-8"))
+                        ;
+                    } catch (UnsupportedEncodingException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+                return NInputSource.of(sb.toString().getBytes());
+            }
+            case FORM_DATA: {
+                String boundary = "-------------------------------" + UUID.randomUUID().toString();
+                setContentType("multipart/form-data; boundary=" + boundary);
+                //setContentTypeFormUrlEncoded();
+                NTempOutputStream tos = NIO.of().ofTempOutputStream();
+                if (formData != null) {
+                    for (Map.Entry<String, Object> e : formData.entrySet()) {
+                        try {
+                            if (e.getValue() instanceof String) {
+                                String h = "Content-Disposition: form-data; name=" + NLiteral.of(e.getKey()).toStringLiteral();
+                                tos.write(h.getBytes());
+                                tos.write("\r\n".getBytes());
+                                tos.write(e.getValue().toString().getBytes());
+                                tos.write("\r\n".getBytes());
+                                tos.write("\r\n".getBytes());
+
+                                tos.write(boundary.getBytes());
+                                tos.write("\r\n".getBytes());
+                            } else if (e.getValue() instanceof NInputContentProvider) {
+                                NInputContentProvider npath = (NInputContentProvider) e.getValue();
+                                String h = "Content-Disposition: form-data; name=" + NLiteral.of(e.getKey()).toStringLiteral()
+                                        + " ; filename=" + NLiteral.of(e.getValue()).toStringLiteral();
+                                tos.write(h.getBytes());
+                                tos.write("\r\n".getBytes());
+
+                                tos.write(("Content-Type: " + NStringUtils.firstNonBlank(npath.getContentType(), "application/octet-stream")).getBytes());
+                                tos.write("\r\n".getBytes());
+
+                                ((NPath) e.getValue()).copyToOutputStream(tos);
+                                tos.write(e.getValue().toString().getBytes());
+                                // do we need newline ??
+                                tos.write(boundary.getBytes());
+                                tos.write("\r\n".getBytes());
+                            }
+                        } catch (IOException ex) {
+                            throw new NIOException(ex);
+                        }
+                    }
+                }
+                return tos;
+            }
+        }
+        return null;
     }
 
     @Override
-    public NWebRequestImpl setJsonBody(Object body) {
+    public NWebRequestImpl setJsonRequestBody(Object body) {
         if (body == null) {
             this.body = null;
         } else {
@@ -506,20 +618,23 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest setBody(byte[] body) {
+    public NWebRequest setRequestBody(byte[] body) {
         this.body = body == null ? null : NInputSource.of(body);
+        setMode(Mode.BODY);
         return this;
     }
 
     @Override
-    public NWebRequest setBody(String body) {
+    public NWebRequest setRequestBody(String body) {
         this.body = body == null ? null : NInputSource.of(new StringReader(body));
+        setMode(Mode.BODY);
         return null;
     }
 
     @Override
-    public NWebRequest setBody(NInputSource body) {
+    public NWebRequest setRequestBody(NInputSource body) {
         this.body = body;
+        setMode(Mode.BODY);
         return this;
     }
 
@@ -571,6 +686,60 @@ public class NWebRequestImpl implements NWebRequest {
         return setContentType("application/x-www-form-urlencoded");
     }
 
+
+    @Override
+    public NWebRequest addFormUrlEncoded(String key, String value) {
+        if(value==null){
+            return this;
+        }
+        if (urlEncoded == null) {
+            urlEncoded = new LinkedHashMap<>();
+        }
+        urlEncoded.put(key, value);
+        setMode(Mode.URLENCODED);
+        return this;
+    }
+
+    @Override
+    public NWebRequest addFormUrlEncoded(Map<String, String> value) {
+        if (value == null) {
+            return this;
+        }
+        if (urlEncoded == null) {
+            urlEncoded = new LinkedHashMap<>();
+        }
+        setMode(Mode.URLENCODED);
+        urlEncoded.putAll(value);
+        return this;
+    }
+
+    @Override
+    public NWebRequest addFormData(String key, NInputContentProvider value) {
+        if(value==null){
+            return this;
+        }
+        if (formData == null) {
+            formData = new LinkedHashMap<>();
+        }
+        formData.put(key, value);
+        setMode(Mode.FORM_DATA);
+        return this;
+    }
+
+    @Override
+    public NWebRequest addFormData(String key, String value) {
+        if(value==null){
+            return this;
+        }
+        if (formData == null) {
+            formData = new LinkedHashMap<>();
+        }
+        formData.put(key, value);
+        setMode(Mode.FORM_DATA);
+        return this;
+    }
+
+
     @Override
     public NWebRequest setFormUrlEncoded(Map<String, String> m) {
         setContentTypeFormUrlEncoded();
@@ -594,7 +763,7 @@ public class NWebRequestImpl implements NWebRequest {
                 }
             }
         }
-        setBody(sb.toString().getBytes());
+        setRequestBody(sb.toString().getBytes());
         return this;
     }
 

@@ -363,7 +363,7 @@ public class DefaultNWebCli implements NWebCli {
                 uc.setRequestMethod(method.toString());
                 uc.setUseCaches(false);
 
-                NInputSource requestBody = r.getBody();
+                NInputSource requestBody = r.getRequestBody();
                 long bodyLength = requestBody == null ? -1 : requestBody.contentLength();
                 boolean someBody = requestBody != null && bodyLength > 0;
 
