@@ -17,7 +17,6 @@ public class NElementMapperArray implements NElementMapper<Object> {
 
     @Override
     public Object createObject(NElement json, Type typeOfResult, NElementFactoryContext context) {
-        NSession session = context.getSession();
         NArrayElement e = (NArrayElement) json;
         Class arrType = (Class) typeOfResult;
         Class componentType = arrType.getComponentType();

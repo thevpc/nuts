@@ -45,10 +45,8 @@ import net.thevpc.nuts.util.NStringUtils;
  */
 @NComponentScope(NScopeType.WORKSPACE)
 public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeComponent {
-    private NWorkspace workspace;
 
-    public DefaultNWorkspaceArchetypeComponent(NWorkspace workspace) {
-        this.workspace = workspace;
+    public DefaultNWorkspaceArchetypeComponent() {
     }
 
     @Override
@@ -79,6 +77,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
     public void initializeWorkspace() {
         LinkedHashMap<String, NAddRepositoryOptions> def = new LinkedHashMap<>();
         List<NRepositoryLocation> defaults = new ArrayList<>();
+        NWorkspace workspace = NWorkspace.of();
         for (NAddRepositoryOptions d : workspace.getDefaultRepositories()) {
             String discriminator = defaultRepoDiscriminator(d);
             String name = d.getName();
@@ -101,7 +100,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
         NWorkspaceExt.of().getModel().configModel.getStoredConfigMain().setEnablePreviewRepositories(NSession.of().isPreviewRepo());
         NWorkspaceExt.of().getModel().configModel.invalidateStoreModelMain();
         defaults.add(NRepositoryLocation.ofName(NConstants.Names.DEFAULT_REPOSITORY_NAME));
-        NRepositoryLocation[] br = NWorkspaceExt.of(workspace).getConfigModel().resolveBootRepositoriesList().resolve(defaults.toArray(new NRepositoryLocation[0]), NRepositoryDB.of());
+        NRepositoryLocation[] br = NWorkspaceExt.of().getConfigModel().resolveBootRepositoriesList().resolve(defaults.toArray(new NRepositoryLocation[0]), NRepositoryDB.of());
         for (NRepositoryLocation s : br) {
             NAddRepositoryOptions oo = NRepositorySelectorHelper.createRepositoryOptions(s, false);
             String sloc = defaultRepoDiscriminator(oo);
@@ -132,7 +131,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 //        for (NutsAddRepositoryOptions d : def.values()) {
 //            ws.repos().addRepository(d);
 //        }
-        NWorkspace.of().addImports(
+        workspace.addImports(
                 "net.thevpc"
         );
 
@@ -156,6 +155,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 
     @Override
     public void startWorkspace() {
+        NWorkspace workspace = NWorkspace.of();
         NIsolationLevel nIsolationLevel = workspace.getBootOptions().getIsolationLevel().orNull();
         if (nIsolationLevel == NIsolationLevel.MEMORY) {
             return;

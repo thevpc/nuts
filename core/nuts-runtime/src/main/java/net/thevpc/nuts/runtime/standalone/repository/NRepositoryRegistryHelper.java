@@ -44,10 +44,8 @@ public class NRepositoryRegistryHelper {
 
     private Map<String, RepoAndRef> repositoriesByName = new LinkedHashMap<>();
     private Map<String, RepoAndRef> repositoriesByUuid = new LinkedHashMap<>();
-    private NWorkspace workspace;
 
-    public NRepositoryRegistryHelper(NWorkspace workspace) {
-        this.workspace = workspace;
+    public NRepositoryRegistryHelper() {
     }
 
     public NRepository[] getRepositories() {
@@ -92,7 +90,7 @@ public class NRepositoryRegistryHelper {
         if (uuid != null) {
             repositoriesByUuid.put(uuid, rr);
         }
-        NWorkspaceConfigMain m = ((NWorkspaceExt) workspace).getModel().configModel.getStoreModelMain();
+        NWorkspaceConfigMain m = NWorkspaceExt.of().getModel().configModel.getStoreModelMain();
         List<NRepositoryRef> repositoriesRefs = m.getRepositories();
         if (repositoriesRefs == null) {
             repositoriesRefs = new ArrayList<>();
@@ -140,7 +138,7 @@ public class NRepositoryRegistryHelper {
         if (r != null) {
             repositoriesByName.remove(r.getName());
             repositoriesByUuid.remove(r.getUuid());
-            NWorkspaceConfigMain m = NWorkspaceExt.of(workspace).getModel().configModel.getStoreModelMain();
+            NWorkspaceConfigMain m = NWorkspaceExt.of().getModel().configModel.getStoreModelMain();
             List<NRepositoryRef> repositoriesRefs = m.getRepositories();
             if (repositoriesRefs != null) {
                 repositoriesRefs.removeIf(x -> x.getName().equals(r.getName()));

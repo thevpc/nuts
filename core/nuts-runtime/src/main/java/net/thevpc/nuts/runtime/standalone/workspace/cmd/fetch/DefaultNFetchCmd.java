@@ -34,8 +34,8 @@ import java.util.logging.Level;
 public class DefaultNFetchCmd extends AbstractNFetchCmd {
 
 
-    public DefaultNFetchCmd(NWorkspace workspace) {
-        super(workspace);
+    public DefaultNFetchCmd() {
+        super();
     }
 
     @Override
@@ -154,7 +154,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
 
     @Override
     public NFetchCmd copy() {
-        DefaultNFetchCmd b = new DefaultNFetchCmd(getWorkspace());
+        DefaultNFetchCmd b = new DefaultNFetchCmd();
         b.setAll(this);
         return b;
     }
@@ -173,7 +173,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     public NDefinition fetchDefinitionNoCache(NId id, NFetchCmd options, boolean includeContent, boolean includeInstallInfo) {
         long startTime = System.currentTimeMillis();
         boolean idOptional = id.toDependency().isOptional();
-        NWorkspace workspace = getWorkspace();
+        NWorkspace workspace = NWorkspace.of();
         NSession session = workspace.currentSession();
         NWorkspaceUtils wu = NWorkspaceUtils.of(workspace);
         CoreNIdUtils.checkLongId(id);
@@ -350,7 +350,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     }
 
     protected NPath fetchContent(NId id1, DefaultNDefinition foundDefinition, NRepository repo0, NFetchStrategy nutsFetchModes, List<Exception> reasons) {
-        NRepositorySPI repoSPI = NWorkspaceUtils.of(getWorkspace()).repoSPI(repo0);
+        NRepositorySPI repoSPI = NWorkspaceUtils.of().repoSPI(repo0);
         for (NFetchMode mode : nutsFetchModes) {
             try {
                 NPath content = repoSPI.fetchContent()
@@ -375,7 +375,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     }
 
     protected NPath fetchContent(NId id1, DefaultNDefinition foundDefinition, NRepositoryAndFetchMode repo, List<Exception> reasons) {
-        NRepositorySPI repoSPI = NWorkspaceUtils.of(getWorkspace()).repoSPI(repo.getRepository());
+        NRepositorySPI repoSPI = NWorkspaceUtils.of().repoSPI(repo.getRepository());
         try {
             NPath content = repoSPI.fetchContent()
                     .setId(id1).setDescriptor(foundDefinition.getDescriptor())
@@ -399,7 +399,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
         if (jar.getName().toLowerCase().endsWith(".jar") && jar.isRegularFile()) {
             Map<String, String> map = null;
             try {
-                map = (Map<String, String>) ((NWorkspaceExt)workspace).store().loadLocationKey(NLocationKey.ofCacheFaced(nutsDescriptor.getId(),null,"info.cache"),Map.class );
+                map = (Map<String, String>) ((NWorkspaceExt)NWorkspace.of()).store().loadLocationKey(NLocationKey.ofCacheFaced(nutsDescriptor.getId(),null,"info.cache"),Map.class );
             } catch (Exception ex) {
                 //
             }
@@ -419,7 +419,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                         map = new LinkedHashMap<>();
                         map.put("executable", String.valueOf(executable));
                         map.put("nutsApplication", String.valueOf(nutsApp));
-                        ((NWorkspaceExt)workspace).store().saveLocationKey(NLocationKey.ofCacheFaced(nutsDescriptor.getId(),null,"info.cache"),map);
+                        ((NWorkspaceExt)NWorkspace.of()).store().saveLocationKey(NLocationKey.ofCacheFaced(nutsDescriptor.getId(),null,"info.cache"),map);
                     } catch (Exception ex) {
                         //
                     }
@@ -439,11 +439,12 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     }
 
     protected DefaultNDefinition fetchDescriptorAsDefinition(NId id, NFetchStrategy nutsFetchModes, NFetchMode mode, NRepository repo) {
-        NSession session = getWorkspace().currentSession();
+        NSession session = NSession.of();
         NWorkspaceExt dws = NWorkspaceExt.of();
         boolean withCache = !(repo instanceof DefaultNInstalledRepository) && session.isCached();
         NPath cachePath = null;
-        NWorkspaceUtils wu = NWorkspaceUtils.of(getWorkspace());
+        NWorkspace workspace = NWorkspace.of();
+        NWorkspaceUtils wu = NWorkspaceUtils.of(workspace);
         if (withCache) {
             try {
                 DefaultNDefinition d = (DefaultNDefinition) ((NWorkspaceExt) workspace).store().loadLocationKey(
@@ -523,7 +524,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                     descriptor,
                     null,
                     null,
-                    apiId, getWorkspace()
+                    apiId
             );
             if (withCache) {
                 try {

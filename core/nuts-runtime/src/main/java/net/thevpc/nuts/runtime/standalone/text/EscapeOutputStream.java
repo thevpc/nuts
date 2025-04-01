@@ -13,12 +13,10 @@ import java.io.OutputStream;
 
 public class EscapeOutputStream extends BaseTransparentFilterOutputStream implements ExtendedFormatAware {
 
-    NWorkspace workspace;
     NSystemTerminalBase term;
 
-    public EscapeOutputStream(OutputStream out, NSystemTerminalBase term, NWorkspace workspace) {
+    public EscapeOutputStream(OutputStream out, NSystemTerminalBase term) {
         super(out);
-        this.workspace = workspace;
         this.term = term;
         NTerminalModeOp t = NTerminalModeOpUtils.resolveNutsTerminalModeOp(out);
         if (t.in() != NTerminalMode.FORMATTED && t.in() != NTerminalMode.FILTERED) {
@@ -58,13 +56,13 @@ public class EscapeOutputStream extends BaseTransparentFilterOutputStream implem
                 if (out instanceof ExtendedFormatAware) {
                     return ((ExtendedFormatAware) out).convert(NTerminalModeOp.NOP);
                 }
-                return new RawOutputStream(out, term, workspace);
+                return new RawOutputStream(out, term);
             }
             case FORMAT: {
                 if (out instanceof ExtendedFormatAware) {
                     return ((ExtendedFormatAware) out).convert(NTerminalModeOp.FORMAT);
                 }
-                return new FormatOutputStream(out, term, workspace);
+                return new FormatOutputStream(out, term);
             }
             case FILTER: {
                 if (out instanceof ExtendedFormatAware) {

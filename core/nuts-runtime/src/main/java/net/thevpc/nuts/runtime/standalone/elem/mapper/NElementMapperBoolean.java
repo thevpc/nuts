@@ -21,7 +21,6 @@ public class NElementMapperBoolean implements NElementMapper<Boolean> {
 
     @Override
     public Boolean createObject(NElement o, Type to, NElementFactoryContext context) {
-        NSession session = context.getSession();
         switch (((Class) to).getName()) {
             case "boolean":
             case "java.lang.Boolean":

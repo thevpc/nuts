@@ -15,7 +15,6 @@ import net.thevpc.nuts.io.NPrintStream;
  */
 public abstract class DefaultFormatBase0<T> implements NCmdLineConfigurable {
 
-//    private NSession session;
     private final String name;
     private boolean ntf=true;
 

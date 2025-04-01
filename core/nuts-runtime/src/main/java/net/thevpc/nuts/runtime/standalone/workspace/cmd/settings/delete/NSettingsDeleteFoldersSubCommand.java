@@ -27,7 +27,7 @@ import java.util.Set;
  */
 public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubCommand {
     public NSettingsDeleteFoldersSubCommand(NWorkspace workspace) {
-        super(workspace);
+        super();
     }
 
     private static void deleteRepoCache(NRepository repository, boolean force) {
@@ -90,13 +90,12 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
 
     private void deleteWorkspaceFolder(NStoreType folder, boolean force) {
         NPath sstoreLocation = NWorkspace.of().getStoreLocation(folder);
-        NSession session = workspace.currentSession();
         if (sstoreLocation != null) {
             NTexts factory = NTexts.of();
             if (sstoreLocation.exists()) {
                 NOut.println(NMsg.ofC("```error deleting``` %s for workspace %s folder %s ...",
                         factory.ofStyled(folder.id(), NTextStyle.primary1()),
-                        factory.ofStyled(session.getWorkspace().getName(), NTextStyle.primary1()),
+                        factory.ofStyled(NWorkspace.of().getName(), NTextStyle.primary1()),
                         factory.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
                 if (force
                         || NAsk.of()
@@ -106,7 +105,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
                 }
             }
         }
-        for (NRepository repository : workspace.getRepositories()) {
+        for (NRepository repository : NWorkspace.of().getRepositories()) {
             deleteRepoFolder(repository, folder, force);
         }
     }
@@ -115,7 +114,6 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
         NPath sstoreLocation = NWorkspace.of().getStoreLocation(folder);
         if (sstoreLocation != null) {
             NTexts factory = NTexts.of();
-            NSession session = workspace.currentSession();
             if (sstoreLocation.exists()) {
                 NOut.println(NMsg.ofC("```error deleting``` %s for repository %s folder %s ...",
                         factory.ofStyled(folder.id(), NTextStyle.primary1()),
@@ -143,7 +141,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
             if (sstoreLocation.exists()) {
                 sstoreLocation.delete();
             }
-            for (NRepository repository : workspace.getRepositories()) {
+            for (NRepository repository : NWorkspace.of().getRepositories()) {
                 deleteRepoCache(repository, force);
             }
         }

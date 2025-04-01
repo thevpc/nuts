@@ -23,7 +23,6 @@ public class NElementMapperNumber implements NElementMapper<Number> {
 
     @Override
     public Number createObject(NElement o, Type to, NElementFactoryContext context) {
-        NSession session = context.getSession();
         switch (((Class) to).getName()) {
             case "byte":
             case "java.lang.Byte":

@@ -22,7 +22,6 @@ public class NElementMapperNRepositoryLocation implements NElementMapper<NReposi
 
     @Override
     public NRepositoryLocation createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        NSession session = context.getSession();
         return NRepositoryLocation.of(o.asString().get());
     }
 

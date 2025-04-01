@@ -10,7 +10,6 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NExecutableInformationExt;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 
 /**
  * @author thevpc
@@ -21,20 +20,17 @@ public abstract class AbstractNExecutableInformationExt implements NExecutableIn
     protected String name;
     protected String value;
     private final NExecCmd execCommand;
-    protected final NWorkspace workspace;
-    public AbstractNExecutableInformationExt(NWorkspace workspace,String name, NExecutableType type, NExecCmd execCommand) {
+    public AbstractNExecutableInformationExt(String name, NExecutableType type, NExecCmd execCommand) {
         this.type = type;
         this.name = name;
         this.execCommand = execCommand;
-        this.workspace = workspace;
     }
 
-    public AbstractNExecutableInformationExt(NWorkspace workspace,String name, String value, NExecutableType type, NExecCmd execCommand) {
+    public AbstractNExecutableInformationExt(String name, String value, NExecutableType type, NExecCmd execCommand) {
         this.type = type;
         this.name = name;
         this.value = value;
         this.execCommand = execCommand;
-        this.workspace = workspace;
     }
 
     protected NLog LOG(){

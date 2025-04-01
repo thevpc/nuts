@@ -69,7 +69,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
             throw new NInvalidRepositoryException(storeLocation, NMsg.ofC("unable to resolve root as a valid folder %s", storeLocation));
         }
 
-        this.repositoryRegistryHelper = new NRepositoryRegistryHelper(repository.getWorkspace());
+        this.repositoryRegistryHelper = new NRepositoryRegistryHelper();
         this.repository = repository;
         this.repositoryName = repositoryName;
         this.globalName = globalName;
@@ -394,7 +394,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     public boolean save(boolean force) {
         boolean ok = false;
         if (force || (!NWorkspace.of().isReadOnly() && isConfigurationChanged())) {
-            NWorkspaceUtils.of(getWorkspace()).checkReadOnly();
+            NWorkspaceUtils.of().checkReadOnly();
             repository.security().checkAllowed(NConstants.Permissions.SAVE, "save");
 
             config.setConfigVersion(DefaultNWorkspace.VERSION_REPOSITORY_CONFIG);

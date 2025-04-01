@@ -24,7 +24,6 @@ public class DefaultFileNLock extends AbstractNLock {
     private static TimePeriod FIVE_MINUTES = new TimePeriod(5, TimeUnit.MINUTES);
     private Path path;
     private Object lockedObject;
-    private NWorkspace workspace;
     private Thread ownerThread;
 
     public static class LockInfo {
@@ -73,10 +72,9 @@ public class DefaultFileNLock extends AbstractNLock {
         }
     }
 
-    public DefaultFileNLock(Path path, Object lockedObject, NWorkspace workspace) {
+    public DefaultFileNLock(Path path, Object lockedObject) {
         this.path = path;
         this.lockedObject = lockedObject;
-        this.workspace = workspace;
     }
 
     public TimePeriod getDefaultTimePeriod() {
@@ -288,10 +286,11 @@ public class DefaultFileNLock extends AbstractNLock {
             p.mkParentDirs();
             Files.createFile(path);
             LockInfo li = new LockInfo();
-            li.hostname=workspace.getHostName();
+            NWorkspace ws = NWorkspace.of();
+            li.hostname= ws.getHostName();
             li.instant=Instant.now();
             li.maxValidInstant=li.instant.plusSeconds(12*3600);
-            li.pid=workspace.getPid();
+            li.pid= ws.getPid();
 
             Files.write(path,li.serialize().getBytes());
             ownerThread = Thread.currentThread();

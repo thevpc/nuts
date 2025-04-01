@@ -113,7 +113,7 @@ public class JavaClassUtils {
                 return NVisitResult.CONTINUE;
             }
         };
-        JavaClassByteCode classReader = new JavaClassByteCode(new BufferedInputStream(stream), cl, workspace);
+        JavaClassByteCode classReader = new JavaClassByteCode(new BufferedInputStream(stream), cl);
         if (mainClass.isSet()) {
             return new MainClassType(className.get(), mainClass.isSet(), nutsApp.isSet());
         }

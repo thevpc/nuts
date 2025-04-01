@@ -61,8 +61,8 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
     protected NIndexStore nIndexStore;
 
 
-    public AbstractNRepositoryBase(NAddRepositoryOptions options, NWorkspace workspace, NRepository parentRepository, NSpeedQualifier speed, boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
-        super(workspace);
+    public AbstractNRepositoryBase(NAddRepositoryOptions options, NRepository parentRepository, NSpeedQualifier speed, boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
+        super();
         this.supportsDeploy=supportsDeploy;
         init(options, parentRepository, speed, supportedMirroring, repositoryType);
     }

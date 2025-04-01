@@ -19,14 +19,14 @@ import net.thevpc.nuts.text.NText;
  */
 public class DefaultNLicenseInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNLicenseInternalExecutable(NWorkspace workspace,String[] args, NExecCmd execCommand) {
-        super(workspace,"license", args, execCommand);
+    public DefaultNLicenseInternalExecutable(String[] args, NExecCmd execCommand) {
+        super("license", args, execCommand);
     }
 
     @Override
     public int execute() {
         boolean dry = ExtraApiUtils.asBoolean(getExecCommand().getDry());
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         if (dry) {
             dryExecute();
             return NExecutionException.SUCCESS;

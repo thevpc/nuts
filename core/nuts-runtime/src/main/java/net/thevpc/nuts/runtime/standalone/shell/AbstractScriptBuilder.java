@@ -12,14 +12,12 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base.BaseSy
 import java.nio.file.Path;
 
 public abstract class AbstractScriptBuilder implements ScriptBuilder {
-    private NWorkspace workspace;
     private NId anyId;
     private String path;
     private String type;
     private NShellFamily shellFamily;
 
-    public AbstractScriptBuilder(NShellFamily shellFamily, String type, NId anyId, NWorkspace workspace) {
-        this.workspace = workspace;
+    public AbstractScriptBuilder(NShellFamily shellFamily, String type, NId anyId) {
         this.shellFamily = shellFamily;
         this.anyId = anyId.builder().setRepository(null).build();//remove repo!
         this.type = type;
@@ -27,10 +25,6 @@ public abstract class AbstractScriptBuilder implements ScriptBuilder {
 
     public NShellFamily getShellFamily() {
         return shellFamily;
-    }
-
-    public NWorkspace getWorkspace() {
-        return workspace;
     }
 
     public NId getAnyId() {
@@ -72,7 +66,7 @@ public abstract class AbstractScriptBuilder implements ScriptBuilder {
         NDefinition anyIdDef = NSearchCmd.of().addId(anyId).setLatest(true).setDistinct(true).getResultDefinitions().findSingleton().get();
         NId anyId = anyIdDef.getId();
         String path = NameBuilder.id(anyId,
-                this.path,"%n", anyIdDef.getDescriptor(), workspace).buildName();
+                this.path,"%n", anyIdDef.getDescriptor()).buildName();
         NPath script = NPath.of(path);
         String newContent = buildString();
 //        PathInfo.Status update0 = NdiUtils.tryWriteStatus(newContent.getBytes(), script,session);

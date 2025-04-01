@@ -65,12 +65,12 @@ public class NCachedRepository extends AbstractNRepositoryBase {
     private final NRepositoryMirroringHelper mirroring;
     private boolean lockEnabled = true;
 
-    public NCachedRepository(NAddRepositoryOptions options, NWorkspace workspace, NRepository parent, NSpeedQualifier speed, boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
-        super(options, workspace, parent, speed, supportedMirroring, repositoryType, supportsDeploy);
-        cache = new NRepositoryFolderHelper(this, this.workspace, config().getStoreLocation(NStoreType.CACHE).resolve(NConstants.Folders.ID), true,
+    public NCachedRepository(NAddRepositoryOptions options, NRepository parent, NSpeedQualifier speed, boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
+        super(options, parent, speed, supportedMirroring, repositoryType, supportsDeploy);
+        cache = new NRepositoryFolderHelper(this, config().getStoreLocation(NStoreType.CACHE).resolve(NConstants.Folders.ID), true,
                 "cache", NElements.of().ofObjectBuilder().set("repoKind", "cache").build()
         );
-        lib = new NRepositoryFolderHelper(this, this.workspace, config().getStoreLocation(NStoreType.LIB).resolve(NConstants.Folders.ID), false,
+        lib = new NRepositoryFolderHelper(this, config().getStoreLocation(NStoreType.LIB).resolve(NConstants.Folders.ID), false,
                 "lib", NElements.of().ofObjectBuilder().set("repoKind", "lib").build()
         );
         mirroring = new NRepositoryMirroringHelper(this, cache);

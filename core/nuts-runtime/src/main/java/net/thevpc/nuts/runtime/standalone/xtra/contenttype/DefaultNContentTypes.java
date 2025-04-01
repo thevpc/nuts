@@ -21,8 +21,6 @@
 //import java.util.stream.Collectors;
 //
 //public class DefaultNContentTypes implements NContentTypes {
-//    private NWorkspace ws;
-//
 //    @Override
 //    public String probeContentType(Path path) {
 //        return probeContentType(path == null ? null : NPath.of(path));

@@ -59,20 +59,20 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
  */
 public class DefaultNSearchCmd extends AbstractNSearchCmd {
 
-    public DefaultNSearchCmd(NWorkspace workspace) {
-        super(workspace);
+    public DefaultNSearchCmd() {
+        super();
     }
 
     @Override
     public NSearchCmd copy() {
-        DefaultNSearchCmd b = new DefaultNSearchCmd(getWorkspace());
+        DefaultNSearchCmd b = new DefaultNSearchCmd();
         b.setAll(this);
         return b;
     }
 
     @Override
     public NFetchCmd toFetch() {
-        NFetchCmd t = new DefaultNFetchCmd(getWorkspace()).copyFromDefaultNQueryBaseOptions(this);
+        NFetchCmd t = new DefaultNFetchCmd().copyFromDefaultNQueryBaseOptions(this);
         if (getDisplayOptions().isRequireDefinition()) {
             t.setContent(true);
         }
@@ -538,7 +538,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
 //                search.isSearchInOtherRepositories()
 //        );
         Set<NRepository> consideredRepos = new HashSet<>();
-        NWorkspaceUtils wu = NWorkspaceUtils.of(workspace);
+        NWorkspaceUtils wu = NWorkspaceUtils.of();
         NElements elems = NElements.of();
         if (regularIds.length > 0) {
             for (String id : regularIds) {

@@ -1,19 +1,16 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.expr.*;
 
 import java.util.List;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class NExprEvaluatorAsContext extends NExprDeclarationsBase {
     private NExprEvaluator eval;
     private NExprDeclarations parent;
 
-    public NExprEvaluatorAsContext(NExprs exprs,NWorkspace workspace,NExprEvaluator eval, NExprDeclarations parent) {
-        super(exprs,workspace);
+    public NExprEvaluatorAsContext(NExprs exprs, NExprEvaluator eval, NExprDeclarations parent) {
+        super(exprs);
         this.eval = eval;
         this.parent = parent;
     }
@@ -46,7 +43,7 @@ public class NExprEvaluatorAsContext extends NExprDeclarationsBase {
     @Override
     public NOptional<NExprVarDeclaration> getVar(String varName) {
         return eval.getVar(varName, this)
-                .<NExprVarDeclaration>map(x -> new DefaultNExprVarDeclaration(getWorkspace(),varName, x))
+                .<NExprVarDeclaration>map(x -> new DefaultNExprVarDeclaration(varName, x))
                 .orElseUse(() -> parent.getVar(varName))
                 ;
     }

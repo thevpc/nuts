@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NToken;
 import net.thevpc.nuts.util.NStreamTokenizer;
 
@@ -16,11 +15,11 @@ public class NTokenIterator implements Iterator<NToken> {
     private boolean returnComment = false;
     private boolean doReplay;
 
-    public NTokenIterator(String r, NWorkspace workspace) {
-        this(new StringReader(r==null?"":r),workspace);
+    public NTokenIterator(String r) {
+        this(new StringReader(r==null?"":r));
     }
 
-    public NTokenIterator(Reader r, NWorkspace workspace) {
+    public NTokenIterator(Reader r) {
         this.st = new NStreamTokenizer(r);
         this.st.ordinaryChar('.');
         this.st.wordChar('_');

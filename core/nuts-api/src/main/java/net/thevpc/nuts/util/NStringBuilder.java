@@ -311,6 +311,10 @@ public class NStringBuilder implements CharSequence, NBlankable {
         return c;
     }
 
+    public String build() {
+        return data.toString();
+    }
+
     @Override
     public String toString() {
         return data.toString();

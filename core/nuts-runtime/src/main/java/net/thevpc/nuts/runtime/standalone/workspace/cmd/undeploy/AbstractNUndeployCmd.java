@@ -21,7 +21,7 @@ public abstract class AbstractNUndeployCmd extends NWorkspaceCmdBase<NUndeployCm
     protected boolean offline = true;
 
     public AbstractNUndeployCmd(NWorkspace workspace) {
-        super(workspace, "undeploy");
+        super("undeploy");
     }
 
     @Override
@@ -95,7 +95,7 @@ public abstract class AbstractNUndeployCmd extends NWorkspaceCmdBase<NUndeployCm
             result = new ArrayList<>();
         }
         result.add(id);
-        NSession session=workspace.currentSession();
+        NSession session=NSession.of();
         if (session.isTrace()) {
             if (session.getOutputFormat().orNull() == null || session.getOutputFormat().orDefault() == NContentType.PLAIN) {
                 if (session.getOutputFormat().orNull() == null || session.getOutputFormat().orDefault() == NContentType.PLAIN) {

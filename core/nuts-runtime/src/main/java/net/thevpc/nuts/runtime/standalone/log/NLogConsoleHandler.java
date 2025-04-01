@@ -15,11 +15,9 @@ import java.util.logging.StreamHandler;
 public class NLogConsoleHandler extends StreamHandler {
 
     private NPrintStream out;
-    private NWorkspace workspace;
 
-    public NLogConsoleHandler(NPrintStream out, boolean closeable, NWorkspace workspace) {
-        this.workspace = workspace;
-        setFormatter(new NLogRichFormatter(workspace, false));
+    public NLogConsoleHandler(NPrintStream out, boolean closeable) {
+        setFormatter(new NLogRichFormatter(false));
         setOutputStream(out, closeable);
     }
 
@@ -56,7 +54,7 @@ public class NLogConsoleHandler extends StreamHandler {
         if (!super.isLoggable(record)) {
             return false;
         }
-        NSession session = NLogUtils.resolveSession(record, this.workspace);
+        NSession session = NLogUtils.resolveSession(record);
         if (session.isBot()) {
             return false;
         }

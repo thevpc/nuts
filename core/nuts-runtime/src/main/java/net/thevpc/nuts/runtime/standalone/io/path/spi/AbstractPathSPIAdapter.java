@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
@@ -22,16 +21,10 @@ import java.util.Set;
 
 public abstract class AbstractPathSPIAdapter implements NPathSPI {
 
-    protected final NWorkspace workspace;
     protected NPath ref;
 
-    protected AbstractPathSPIAdapter(NPath ref, NWorkspace workspace) {
-        this.workspace = workspace;
+    protected AbstractPathSPIAdapter(NPath ref) {
         this.ref = ref;
-    }
-
-    public NWorkspace getWorkspace() {
-        return workspace;
     }
 
     @Override

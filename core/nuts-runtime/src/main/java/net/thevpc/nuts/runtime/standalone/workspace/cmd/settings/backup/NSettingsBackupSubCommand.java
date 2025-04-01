@@ -33,12 +33,12 @@ import java.util.List;
  */
 public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
     public NSettingsBackupSubCommand(NWorkspace workspace) {
-        super(workspace);
+        super();
     }
 
     @Override
     public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
-        NSession session=workspace.currentSession();
+        NSession session=NSession.of();
         if (cmdLine.next("backup").isPresent()) {
             cmdLine.setCommandName("settings backup");
             String file = null;

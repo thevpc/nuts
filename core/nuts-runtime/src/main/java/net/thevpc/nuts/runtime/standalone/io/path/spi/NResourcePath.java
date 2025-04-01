@@ -33,14 +33,12 @@ public class NResourcePath implements NPathSPI {
     private final List<NId> ids;
     private String path;
     private String location;
-    private NWorkspace workspace;
     private boolean urlPathLookedUp = false;
     private URL[] urls = null;
     private NPath urlPath = null;
     private static String nResourceProtocol = "resource://";
 
-    public NResourcePath(String path, NWorkspace workspace) {
-        this.workspace = workspace;
+    public NResourcePath(String path) {
         this.path = path;
         String idsStr;
         if (path.startsWith(nResourceProtocol +"(")) {
@@ -69,10 +67,6 @@ public class NResourcePath implements NPathSPI {
             }
             return null;
         }).filter(Objects::nonNull).collect(Collectors.toList());
-    }
-
-    public NWorkspace getWorkspace() {
-        return workspace;
     }
 
     protected static String rebuildURL(String location, NId[] ids) {
@@ -171,14 +165,14 @@ public class NResourcePath implements NPathSPI {
     public NPath resolve(NPath basePath, String path) {
         return NPath.of(new NResourcePath(rebuildURL(
                 NPath.of(location).resolve(path).toString()
-                , ids.toArray(new NId[0])), workspace));
+                , ids.toArray(new NId[0]))));
     }
 
     @Override
     public NPath resolveSibling(NPath basePath, String path) {
         return NPath.of(new NResourcePath(rebuildURL(
                 NPath.of(location).resolveSibling(path).toString()
-                , ids.toArray(new NId[0])), workspace));
+                , ids.toArray(new NId[0]))));
     }
 
     @Override
@@ -426,7 +420,7 @@ public class NResourcePath implements NPathSPI {
     public NPath subpath(NPath basePath, int beginIndex, int endIndex) {
         return NPath.of(new NResourcePath(rebuildURL(
                 NPath.of(location).subpath(beginIndex, endIndex).toString()
-                , ids.toArray(new NId[0])), workspace));
+                , ids.toArray(new NId[0]))));
     }
 
     @Override
@@ -543,7 +537,7 @@ public class NResourcePath implements NPathSPI {
         public NCallableSupport<NPathSPI> createPath(String path, ClassLoader classLoader) {
             try {
                 if (path.startsWith("resource:")) {
-                    return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, () -> new NResourcePath(path, workspace));
+                    return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, () -> new NResourcePath(path));
                 }
             } catch (Exception ex) {
                 //ignore

@@ -5,9 +5,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.util;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.format.NFormat;
-import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
@@ -26,7 +23,6 @@ public class InputStreamExt extends InputStream implements NInterruptible<InputS
 
     private InputStream base;
     private NContentMetadata md;
-    private NWorkspace workspace;
 
     //
     private Runnable onClose;
@@ -52,11 +48,9 @@ public class InputStreamExt extends InputStream implements NInterruptible<InputS
                           NProgressListener monitor,
                           Object source,
                           NMsg sourceName,
-                          Long length,
-                          NWorkspace workspace) {
+                          Long length) {
         this.base = base;
         this.closeBase = closeBase;
-        this.workspace = workspace;
         this.onClose = onClose;
         this.md = CoreIOUtils.createContentMetadata(md0, base);
         this.monitor = monitor;

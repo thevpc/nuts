@@ -443,8 +443,24 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
         return ofString(str, null);
     }
 
-    public NPrimitiveElement ofString(String str, NStringLayout stringLayout) {
-        return str == null ? ofNull() : new DefaultNStringElement(NElementType.STRING, str, stringLayout, null, null);
+    public NPrimitiveElement ofString(String str, NElementType stringLayout) {
+        if(str == null){
+            return ofNull();
+        }
+        if(stringLayout == null){
+            stringLayout=NElementType.DOUBLE_QUOTED_STRING;
+        }
+        switch (stringLayout) {
+            case DOUBLE_QUOTED_STRING:
+            case SINGLE_QUOTED_STRING:
+            case ANTI_QUOTED_STRING:
+            case TRIPLE_DOUBLE_QUOTED_STRING:
+            case TRIPLE_SINGLE_QUOTED_STRING:
+            case TRIPLE_ANTI_QUOTED_STRING:
+            case LINE_STRING:
+                return new DefaultNStringElement(stringLayout, str, null, null);
+        }
+        throw new NUnsupportedEnumException(stringLayout);
     }
 
     public NPrimitiveElement ofRegex(String str) {
@@ -461,7 +477,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
             return ofNull();
         }
         return NElements.isValidName(value) ? new DefaultNPrimitiveElement(NElementType.NAME, value, null, null)
-                : new DefaultNStringElement(NElementType.STRING, value, null, null, null)
+                : new DefaultNStringElement(NElementType.DOUBLE_QUOTED_STRING, value, null, null)
                 ;
     }
 
@@ -781,7 +797,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     private DefaultNElementFactoryContext createFactoryContext() {
         NReflectRepository reflectRepository = NWorkspaceUtils.of().getReflectRepository();
-        DefaultNElementFactoryContext c = new DefaultNElementFactoryContext(NWorkspace.of(), this, reflectRepository);
+        DefaultNElementFactoryContext c = new DefaultNElementFactoryContext(this, reflectRepository);
         switch (getContentType()) {
             case XML:
             case JSON:

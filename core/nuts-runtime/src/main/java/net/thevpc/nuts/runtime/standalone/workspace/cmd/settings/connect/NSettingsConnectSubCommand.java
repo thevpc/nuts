@@ -32,13 +32,13 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
     public static final int DEFAULT_ADMIN_SERVER_PORT = 8898;
 
     public NSettingsConnectSubCommand(NWorkspace workspace) {
-        super(workspace);
+        super();
     }
 
     @Override
     public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
         String cmd0 = cmdLine.toString();
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         if (cmdLine.next("connect").isPresent()) {
             char[] password = null;
             String server = null;

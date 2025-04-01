@@ -76,7 +76,6 @@ public class NElementMapperMap implements NElementMapper<Map> {
 
     @Override
     public Map createObject(NElement o, Type to, NElementFactoryContext context) {
-        NSession session = context.getSession();
         Class cls = Map.class;
         Type elemType1 = null;//Object.class;
         Type elemType2 = null;//Object.class;

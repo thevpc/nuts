@@ -81,13 +81,6 @@ public interface NExecutionContext extends NSessionProvider {
     List<String> getArguments();
 
     /**
-     * workspace
-     *
-     * @return workspace
-     */
-    NWorkspace getWorkspace();
-
-    /**
      * executor descriptor
      *
      * @return executor descriptor

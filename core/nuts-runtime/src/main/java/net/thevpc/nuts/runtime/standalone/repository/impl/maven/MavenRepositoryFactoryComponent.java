@@ -42,10 +42,8 @@ import java.util.List;
  */
 @NComponentScope(NScopeType.WORKSPACE)
 public class MavenRepositoryFactoryComponent implements NRepositoryFactoryComponent {
-    private NWorkspace workspace;
 
-    public MavenRepositoryFactoryComponent(NWorkspace workspace) {
-        this.workspace = workspace;
+    public MavenRepositoryFactoryComponent() {
     }
 
     @Override
@@ -60,7 +58,7 @@ public class MavenRepositoryFactoryComponent implements NRepositoryFactoryCompon
     @Override
     public NRepository create(NAddRepositoryOptions options, NRepository parentRepository) {
         if(MavenUtils.isMavenSettingsRepository(options)){
-            return new MavenSettingsRepository(options, workspace, parentRepository);
+            return new MavenSettingsRepository(options, parentRepository);
         }
         final NRepositoryConfig config = options.getConfig();
         String type = NRepositoryUtils.getRepoType(config);
@@ -73,10 +71,10 @@ public class MavenRepositoryFactoryComponent implements NRepositoryFactoryCompon
             //non traversable!
             case "http":
             case "https": {
-                return new MavenRemoteXmlRepository(options,workspace, parentRepository);
+                return new MavenRemoteXmlRepository(options, parentRepository);
             }
         }
-        return new MavenFolderRepository(options, workspace, parentRepository);
+        return new MavenFolderRepository(options, parentRepository);
     }
 
     @Override

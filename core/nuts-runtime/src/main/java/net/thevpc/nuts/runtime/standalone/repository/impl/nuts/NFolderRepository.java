@@ -50,8 +50,8 @@ import java.util.Map;
 public class NFolderRepository extends NFolderRepositoryBase {
     private boolean userPom=false;
 
-    public NFolderRepository(NAddRepositoryOptions options, NWorkspace workspace, NRepository parentRepository) {
-        super(options, workspace, parentRepository, null, true, NConstants.RepoTypes.NUTS, true);
+    public NFolderRepository(NAddRepositoryOptions options, NRepository parentRepository) {
+        super(options, parentRepository, null, true, NConstants.RepoTypes.NUTS, true);
         repoIter = new NRepoIter(this);
         extensions.put("src", "-src.zip");
     }

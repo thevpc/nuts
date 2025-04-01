@@ -91,7 +91,7 @@ public class DefaultNLiteral implements NLiteral {
                 case "java.lang.String":
                 case "java.lang.StringBuilder":
                 case "java.lang.StringBuffer":
-                    return NElementType.STRING;
+                    return NElementType.DOUBLE_QUOTED_STRING;
                 case "java.util.Date":
                 case "java.time.Instant":
                     return NElementType.INSTANT;
@@ -124,7 +124,7 @@ public class DefaultNLiteral implements NLiteral {
                 return NElementType.CHAR_STREAM;
             }
             if (value instanceof CharSequence) {
-                return NElementType.STRING;
+                return NElementType.DOUBLE_QUOTED_STRING;
             }
             return NElementType.OBJECT;
         }
@@ -835,8 +835,15 @@ public class DefaultNLiteral implements NLiteral {
             case NULL:
                 return "null";
             case CHAR:
-            case STRING:
-                return NStringUtils.formatStringLiteral(asString().get(), NQuoteType.DOUBLE);
+                return NStringUtils.formatStringLiteral(asString().get(), NElementType.SINGLE_QUOTED_STRING);
+            case DOUBLE_QUOTED_STRING:
+            case SINGLE_QUOTED_STRING:
+            case ANTI_QUOTED_STRING:
+            case TRIPLE_DOUBLE_QUOTED_STRING:
+            case TRIPLE_SINGLE_QUOTED_STRING:
+            case TRIPLE_ANTI_QUOTED_STRING:
+            case LINE_STRING:
+                return NStringUtils.formatStringLiteral(asString().get(), type());
             case BOOLEAN:
                 return String.valueOf(asBoolean().get());
             case BYTE:
@@ -852,7 +859,7 @@ public class DefaultNLiteral implements NLiteral {
             case LOCAL_TIME:
             case LOCAL_DATE:
             case LOCAL_DATETIME:
-                return NStringUtils.formatStringLiteral(asInstant().get().toString(), NQuoteType.DOUBLE);
+                return NStringUtils.formatStringLiteral(asInstant().get().toString(), NElementType.DOUBLE_QUOTED_STRING);
         }
         return asString().get();
     }
@@ -863,7 +870,14 @@ public class DefaultNLiteral implements NLiteral {
             case NULL: {
                 return true;
             }
-            case STRING: {
+            case DOUBLE_QUOTED_STRING:
+            case SINGLE_QUOTED_STRING:
+            case ANTI_QUOTED_STRING:
+            case TRIPLE_DOUBLE_QUOTED_STRING:
+            case TRIPLE_SINGLE_QUOTED_STRING:
+            case TRIPLE_ANTI_QUOTED_STRING:
+            case LINE_STRING:
+            {
                 return toString().isEmpty();
             }
         }
@@ -1050,7 +1064,14 @@ public class DefaultNLiteral implements NLiteral {
             case DOUBLE_COMPLEX:
             case FLOAT_COMPLEX:
                 return true;
-            case STRING: {
+            case DOUBLE_QUOTED_STRING:
+            case SINGLE_QUOTED_STRING:
+            case ANTI_QUOTED_STRING:
+            case TRIPLE_DOUBLE_QUOTED_STRING:
+            case TRIPLE_SINGLE_QUOTED_STRING:
+            case TRIPLE_ANTI_QUOTED_STRING:
+            case LINE_STRING:
+            {
                 String s = asString().get();
                 s = s.trim();
                 try {

@@ -18,13 +18,13 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNInfoInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNInfoInternalExecutable(NWorkspace workspace,String[] args, NExecCmd execCommand) {
-        super(workspace,"info", args, execCommand);
+    public DefaultNInfoInternalExecutable(String[] args, NExecCmd execCommand) {
+        super("info", args, execCommand);
     }
 
     @Override
     public int execute() {
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         session = NSessionUtils.configureCopyOfSession(session, getExecCommand().getIn(), getExecCommand().getOut(),getExecCommand().getErr());
         NSession finalSession = session;
         return session.callWith(()->{

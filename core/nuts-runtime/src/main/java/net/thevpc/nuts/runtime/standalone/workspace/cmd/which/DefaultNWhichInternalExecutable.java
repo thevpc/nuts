@@ -28,13 +28,13 @@ import java.util.List;
  */
 public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNWhichInternalExecutable(NWorkspace workspace,String[] args, NExecCmd execCommand) {
-        super(workspace,"which", args, execCommand);
+    public DefaultNWhichInternalExecutable(String[] args, NExecCmd execCommand) {
+        super("which", args, execCommand);
     }
 
     @Override
     public int execute() {
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         boolean dry = ExtraApiUtils.asBoolean(getExecCommand().getDry());
         if(dry){
             dryExecute();

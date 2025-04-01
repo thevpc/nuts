@@ -35,7 +35,7 @@ public class Extra {
                             return NVisitResult.TERMINATE;
                         }
                     };
-                    JavaClassByteCode classReader = new JavaClassByteCode(new BufferedInputStream(inputStream), cl, null);
+                    JavaClassByteCode classReader = new JavaClassByteCode(new BufferedInputStream(inputStream), cl);
 
                 }
                 return NVisitResult.CONTINUE;

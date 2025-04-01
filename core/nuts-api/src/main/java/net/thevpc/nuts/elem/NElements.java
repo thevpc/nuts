@@ -460,7 +460,7 @@ public interface NElements extends NContentTypeFormat {
 
     NPrimitiveElement ofString(String str);
 
-    NPrimitiveElement ofString(String str, NStringLayout stringLayout);
+    NPrimitiveElement ofString(String str, NElementType stringLayout);
 
     NCustomElement ofCustom(Object object);
 

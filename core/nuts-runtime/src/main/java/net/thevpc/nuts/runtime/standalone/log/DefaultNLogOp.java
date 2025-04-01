@@ -17,11 +17,9 @@ public class DefaultNLogOp implements NLogOp {
     private long time;
     private Supplier<NMsg> msgSupplier;
     private Throwable error;
-    private NWorkspace workspace;
 
-    public DefaultNLogOp(NWorkspace workspace,DefaultNLog logger) {
+    public DefaultNLogOp(DefaultNLog logger) {
         this.logger = logger;
-        this.workspace = workspace;
     }
 
     @Override
@@ -62,20 +60,19 @@ public class DefaultNLogOp implements NLogOp {
 
     private void run() {
         Level level = this.level;
-        if(level==null && msg!=null){
-            level=msg.getLevel();
+        if (level == null && msg != null) {
+            level = msg.getLevel();
         }
-        if(level==null){
-            level=Level.FINE;
+        if (level == null) {
+            level = Level.FINE;
         }
         if (logger.isLoggable(level)) {
             NMsg m = msg;
             if (msgSupplier != null) {
                 m = msgSupplier.get();
             }
-            NSession s=workspace.currentSession();
             NLogRecord record = new NLogRecord(
-                    s,
+                    NSession.of(),
                     level,
                     verb,
                     m,

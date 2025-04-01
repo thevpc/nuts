@@ -99,8 +99,7 @@ public class ZipExecutorComponent implements NExecutorComponent {
                 def,
                 args.toArray(new String[0]), osEnv, directory, true,
                 true, executionContext.getSleepMillis(),
-                executionContext.getIn(), executionContext.getOut(), executionContext.getErr(), executionContext.getRunAs(),
-                executionContext.getWorkspace()
+                executionContext.getIn(), executionContext.getOut(), executionContext.getErr(), executionContext.getRunAs()
         );
     }
 }

@@ -69,7 +69,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     private NCmdLineHistory commandHistory;
     private String commandHighlighter;
 
-    public NJLineTerminal(NWorkspace workspace) {
+    public NJLineTerminal() {
         super();
     }
 

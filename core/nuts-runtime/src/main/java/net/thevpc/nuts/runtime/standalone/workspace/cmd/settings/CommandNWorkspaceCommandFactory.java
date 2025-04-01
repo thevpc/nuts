@@ -16,10 +16,8 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
     private String[] findCommand;
     private String[] execCommand;
     private String[] listCommand;
-    private NWorkspace workspace;
 
-    public CommandNWorkspaceCommandFactory(NWorkspace workspace) {
-        this.workspace = workspace;
+    public CommandNWorkspaceCommandFactory() {
     }
 
     public void configure(NCommandFactoryConfig config) {

@@ -22,7 +22,6 @@ public class NElementMapperInstant implements NElementMapper<Instant> {
 
     @Override
     public Instant createObject(NElement o, Type to, NElementFactoryContext context) {
-        NSession session = context.getSession();
         switch (o.type()) {
             case INSTANT: {
                 return o.asInstant().get();
@@ -33,7 +32,14 @@ public class NElementMapperInstant implements NElementMapper<Instant> {
             case LONG: {
                 return Instant.ofEpochMilli(o.asLong().get());
             }
-            case STRING: {
+            case DOUBLE_QUOTED_STRING:
+            case SINGLE_QUOTED_STRING:
+            case ANTI_QUOTED_STRING:
+            case TRIPLE_DOUBLE_QUOTED_STRING:
+            case TRIPLE_SINGLE_QUOTED_STRING:
+            case TRIPLE_ANTI_QUOTED_STRING:
+            case LINE_STRING:
+            {
                 return Instant.parse(o.asString().get());
             }
         }

@@ -27,6 +27,7 @@
 package net.thevpc.nuts.runtime.standalone.version.filter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NElementType;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.spi.base.AbstractVersionFilter;
 import net.thevpc.nuts.runtime.standalone.id.filter.NExprIdFilter;
@@ -121,8 +122,8 @@ public class DefaultNVersionFilter extends AbstractVersionFilter implements NExp
                 //this will escape `"' if It's present
                 + NStringUtils.formatStringLiteral(
                 //this will create '...' value
-                NStringUtils.formatStringLiteral(toString(), NQuoteType.SIMPLE),
-                NQuoteType.DOUBLE, NSupportMode.NEVER
+                NStringUtils.formatStringLiteral(toString(), NElementType.SINGLE_QUOTED_STRING),
+                NElementType.DOUBLE_QUOTED_STRING, NSupportMode.NEVER
         )
                 + ")";
     }

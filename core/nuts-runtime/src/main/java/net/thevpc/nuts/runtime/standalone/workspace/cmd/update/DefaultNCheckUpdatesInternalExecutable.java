@@ -16,8 +16,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNCheckUpdatesInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNCheckUpdatesInternalExecutable(NWorkspace workspace, String[] args, NExecCmd execCommand) {
-        super(workspace,"check-updates", args, execCommand);
+    public DefaultNCheckUpdatesInternalExecutable(String[] args, NExecCmd execCommand) {
+        super("check-updates", args, execCommand);
     }
 
     @Override

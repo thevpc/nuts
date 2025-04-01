@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.expr.*;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NMsg;
@@ -11,18 +10,16 @@ import java.util.*;
 
 public class SyntaxParser {
     NTokenIterator tokens;
-    NWorkspace workspace;
     //    NutsExpr evaluator;
     NExprWithCache withCache;
 
-    public SyntaxParser(String anyStr, NExprWithCache withCache, NWorkspace workspace) {
-        this(new NTokenIterator(new StringReader(anyStr == null ? "" : anyStr), workspace), withCache, workspace);
+    public SyntaxParser(String anyStr, NExprWithCache withCache) {
+        this(new NTokenIterator(new StringReader(anyStr == null ? "" : anyStr)), withCache);
     }
 
 
-    public SyntaxParser(NTokenIterator tokens, NExprWithCache withCache, NWorkspace workspace) {
+    public SyntaxParser(NTokenIterator tokens, NExprWithCache withCache) {
         this.tokens = tokens;
-        this.workspace = workspace;
         this.withCache = withCache;
     }
 

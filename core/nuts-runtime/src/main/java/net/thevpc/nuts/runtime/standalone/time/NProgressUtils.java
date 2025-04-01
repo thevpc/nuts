@@ -14,11 +14,11 @@ public class NProgressUtils {
         NWorkspace workspace = NWorkspace.get().get();
         switch (mt) {
             case STREAM:
-                return new DefaultNInputStreamProgressFactory(workspace);
+                return new DefaultNInputStreamProgressFactory();
             case DEFAULT:
-                return new DefaultNProgressFactory(workspace);
+                return new DefaultNProgressFactory();
         }
-        return new DefaultNProgressFactory(workspace);
+        return new DefaultNProgressFactory();
     }
 
     public static NProgressListener createProgressMonitor(MonitorType mt, NInputSource source, Object sourceOrigin, NWorkspace workspace,

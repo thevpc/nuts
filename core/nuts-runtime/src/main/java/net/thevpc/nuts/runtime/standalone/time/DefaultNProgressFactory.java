@@ -1,14 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.time;
 
-import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.time.NProgressFactory;
 import net.thevpc.nuts.time.NProgressListener;
 
 public class DefaultNProgressFactory implements NProgressFactory {
-    private NWorkspace workspace;
 
-    public DefaultNProgressFactory(NWorkspace workspace) {
-        this.workspace = workspace;
+    public DefaultNProgressFactory() {
     }
 
     @Override
@@ -20,7 +18,7 @@ public class DefaultNProgressFactory implements NProgressFactory {
     }
 
     public boolean acceptMonitoring(Object source, Object sourceOrigin) {
-        if (!workspace.currentSession().isProgress()) {
+        if (!NSession.of().isProgress()) {
             return false;
         }
         return true;

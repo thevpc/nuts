@@ -8,7 +8,6 @@ import java.util.logging.Level;
 
 public class MvnClient {
     public static final String NET_VPC_APP_NUTS_MVN = "net.thevpc.nmvn:nmvn";
-    private NWorkspace workspace;
     private Status status = Status.INIT;
 
     public enum Status {
@@ -18,8 +17,7 @@ public class MvnClient {
         FAIL,
     }
 
-    public MvnClient(NWorkspace workspace) {
-        this.workspace = workspace;
+    public MvnClient() {
     }
 
     protected NLog LOG() {

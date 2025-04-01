@@ -46,8 +46,8 @@ import java.util.List;
  */
 public class MavenRemoteXmlRepository extends MavenFolderRepository {
 
-    public MavenRemoteXmlRepository(NAddRepositoryOptions options, NWorkspace workspace, NRepository parentRepository) {
-        super(options, workspace, parentRepository);
+    public MavenRemoteXmlRepository(NAddRepositoryOptions options, NRepository parentRepository) {
+        super(options, parentRepository);
     }
 
     @Override

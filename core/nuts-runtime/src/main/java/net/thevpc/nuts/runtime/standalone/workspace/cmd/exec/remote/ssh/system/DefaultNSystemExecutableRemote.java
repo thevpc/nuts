@@ -35,14 +35,14 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformati
     private NExecOutput out;
     private NExecOutput err;
 
-    public DefaultNSystemExecutableRemote(NWorkspace workspace,NExecCmdExtension commExec, String[] cmd,
+    public DefaultNSystemExecutableRemote(NExecCmdExtension commExec, String[] cmd,
                                           List<String> executorOptions,
                                           NExecCmd execCommand,
                                           NExecInput in,
                                           NExecOutput out,
                                           NExecOutput err
     ) {
-        super(workspace,cmd[0],
+        super(cmd[0],
                 NCmdLine.of(cmd).toString(),
                 NExecutableType.SYSTEM, execCommand);
         this.in = in;
@@ -90,7 +90,7 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformati
 //                session);
 
 
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         return new AbstractSyncIProcessExecHelper() {
             @Override
             public int exec() {

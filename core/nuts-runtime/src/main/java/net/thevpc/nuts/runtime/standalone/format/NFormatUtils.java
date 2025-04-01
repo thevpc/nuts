@@ -47,7 +47,13 @@ public class NFormatUtils {
             case INSTANT:
             case INTEGER:
             case FLOAT:
-            case STRING:
+            case DOUBLE_QUOTED_STRING:
+            case SINGLE_QUOTED_STRING:
+            case ANTI_QUOTED_STRING:
+            case TRIPLE_DOUBLE_QUOTED_STRING:
+            case TRIPLE_SINGLE_QUOTED_STRING:
+            case TRIPLE_ANTI_QUOTED_STRING:
+            case LINE_STRING:
             case NULL:
             case BYTE:
             case REGEX:

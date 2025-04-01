@@ -62,8 +62,8 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     protected boolean supportsDeploy;
     protected boolean enabled = true;
 
-    public AbstractNRepository(NWorkspace workspace) {
-        this.workspace=workspace;
+    public AbstractNRepository() {
+        this.workspace=NWorkspace.of();
         this.userProperties = new NDefaultObservableMap<>();
         this.securityModel = new DefaultNRepositorySecurityModel(this);
         this.available = new NCachedValue<>(() -> isAvailableImpl(), 0);;

@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.io.inputstream;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.io.NContentMetadata;
 import net.thevpc.nuts.io.NInputSourceBuilder;
@@ -19,7 +18,6 @@ import net.thevpc.nuts.io.NInputSource;
 
 public class DefaultNInputSourceBuilder implements NInputSourceBuilder {
 
-    private NWorkspace workspace;
     private InputStream baseInputStream;
     private boolean closeBase = true;
     private Runnable closeAction;
@@ -32,8 +30,7 @@ public class DefaultNInputSourceBuilder implements NInputSourceBuilder {
     private boolean nonBlocking;
     private OutputStream tee;
 
-    public DefaultNInputSourceBuilder(NWorkspace workspace) {
-        this.workspace = workspace;
+    public DefaultNInputSourceBuilder() {
     }
 
     @Override
@@ -159,7 +156,7 @@ public class DefaultNInputSourceBuilder implements NInputSourceBuilder {
             return (NNonBlockingInputStream) u;
         }
         return new NNonBlockingInputStreamAdapter(
-                u, metadata, sourceName, workspace
+                u, metadata, sourceName
         );
     }
 
@@ -174,20 +171,20 @@ public class DefaultNInputSourceBuilder implements NInputSourceBuilder {
         if (baseInputStream == null) {
             InputStream b = NullInputStream.INSTANCE;
             if (nonBlocking) {
-                return new NNonBlockingInputStreamAdapter(b, metadata, sourceName, workspace);
+                return new NNonBlockingInputStreamAdapter(b, metadata, sourceName);
             }
         }
         InputStream a = baseInputStream;
         Runnable currentOnClose = closeAction;
         if (tee != null) {
-            a = new InputStreamTee(a, tee, currentOnClose, metadata, workspace);
+            a = new InputStreamTee(a, tee, currentOnClose, metadata);
             currentOnClose = null;
         }
         a = new InputStreamExt(a, metadata, closeBase, currentOnClose, monitoringListener, source,
-                sourceName, expectedLength, workspace);
+                sourceName, expectedLength);
         currentOnClose = null;
         if (nonBlocking) {
-            a = new NNonBlockingInputStreamAdapter(a, metadata, sourceName, workspace);
+            a = new NNonBlockingInputStreamAdapter(a, metadata, sourceName);
         }
         return a;
     }

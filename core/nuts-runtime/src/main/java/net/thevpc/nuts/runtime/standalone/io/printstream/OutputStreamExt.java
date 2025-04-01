@@ -1,11 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.format.NFormat;
-import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.io.NContentMetadataProviderFormatSPI;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NMsg;
@@ -19,16 +15,13 @@ public class OutputStreamExt extends OutputStream implements NContentMetadataPro
     private OutputStream base;
     private NMsg sourceName;
     private NContentMetadata md;
-    private NWorkspace workspace;
     private boolean closeBase;
     private Runnable onClose;
 
     public OutputStreamExt(OutputStream base, NContentMetadata md0,
                            boolean closeBase,
-                           Runnable onClose,
-                           NWorkspace workspace) {
+                           Runnable onClose) {
         this.base = base;
-        this.workspace = workspace;
         this.closeBase = closeBase;
         this.onClose = onClose;
         this.md = CoreIOUtils.createContentMetadata(md0, base);

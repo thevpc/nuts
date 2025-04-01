@@ -27,13 +27,13 @@ import java.util.stream.Collectors;
  */
 public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNBundleInternalExecutable(NWorkspace workspace, String[] args, NExecCmd execCommand) {
-        super(workspace, "bundle", args, execCommand);
+    public DefaultNBundleInternalExecutable(String[] args, NExecCmd execCommand) {
+        super("bundle", args, execCommand);
     }
 
     @Override
     public int execute() {
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         if (session.isDry()) {
             dryExecute();
             return NExecutionException.SUCCESS;
@@ -93,7 +93,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     case "--as-dir": {
                         cmdLine.withNextFlag((v, ar) -> {
                             if (v) {
-                                withFormat.set("dir");
+                                withFormat.set("dir" );
                             }
                         });
                         break;
@@ -102,7 +102,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     case "--as-exploded": {
                         cmdLine.withNextFlag((v, ar) -> {
                             if (v) {
-                                withFormat.set("exploded");
+                                withFormat.set("exploded" );
                             }
                         });
                         break;
@@ -111,7 +111,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     case "--as-jar": {
                         cmdLine.withNextFlag((v, ar) -> {
                             if (v) {
-                                withFormat.set("jar");
+                                withFormat.set("jar" );
                             }
                         });
                         break;
@@ -120,7 +120,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     case "--zip": {
                         cmdLine.withNextFlag((v, ar) -> {
                             if (v) {
-                                withFormat.set("zip");
+                                withFormat.set("zip" );
                             }
                         });
                         break;
@@ -150,25 +150,32 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         Set<NId> nIds = new LinkedHashSet<>();
         Set<NId> toBaseDir = new LinkedHashSet<>();
         NWorkspace ws = session.getWorkspace();
-        if (ids.isEmpty() || (ids.size() == 1 && ids.get(0).equals("nuts"))) {
+        NId runnerId = null;
+        NId mainId = null;
+        boolean tooManyMains = false;
+        if (ids.isEmpty() || (ids.size() == 1 && ids.get(0).equals("nuts" ))) {
             nIds.add(ws.getApiId());
             nIds.add(ws.getRuntimeId());
             nIds.add(ws.getAppId());
+            mainId = ws.getAppId();
+            runnerId = ws.getAppId();
         } else {
+            List<NId> secondaryIds = new ArrayList<>();
             for (String id : ids) {
                 if ("nuts".equals(id)) {
                     NId apiId = ws.getApiId();
                     NId appId = resolveNutsAppIdFromApiId(apiId);
-                    toBaseDir.add(appId);
                     nIds.add(apiId);
-                    nIds.add(appId);
+                    runnerId = appId;
+                    secondaryIds.add(appId);
                 } else if ("nuts-runtime".equals(id)) {
                     NId apiId = ws.getApiId();
                     NId appId = resolveNutsAppIdFromApiId(apiId);
-                    toBaseDir.add(appId);
                     nIds.add(apiId);
                     nIds.add(appId);
                     nIds.add(ws.getRuntimeId());
+                    runnerId = appId;
+                    secondaryIds.add(appId);
                 } else {
                     List<NId> found = NSearchCmd.of().addId(id)
                             .setLatest(true)
@@ -182,10 +189,25 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     for (NId resultId : found) {
                         if (resultId.getShortName().equals(ws.getApiId().getShortName())) {
                             NId appId = resolveNutsAppIdFromApiId(resultId);
-                            toBaseDir.add(appId);
                             nIds.add(appId);
+                            runnerId = appId;
+                            secondaryIds.add(appId);
+                        } else if (mainId == null) {
+                            mainId = resultId;
+                        } else {
+                            tooManyMains = true;
                         }
                         nIds.add(resultId);
+                    }
+                }
+            }
+            if (mainId == null) {
+                if (secondaryIds.size() >= 0) {
+                    if (secondaryIds.size() == 1) {
+                        mainId = secondaryIds.get(0);
+                    } else {
+                        mainId = secondaryIds.get(0);
+                        tooManyMains = true;
                     }
                 }
             }
@@ -194,30 +216,30 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         Set<String> sId = new TreeSet<>(ids);
         if (sId.size() > 3) {
             sId = new LinkedHashSet<>(sId.stream().limit(3).collect(Collectors.toSet()));
-            sId.add("etc");
+            sId.add("etc" );
         }
         if (sId.isEmpty()) {
-            sId.add("nuts");
+            sId.add("nuts" );
         }
         String defaultName = sId.stream().map(x -> NId.get(x).get().getArtifactId()).distinct().sorted()
-                .collect(Collectors.joining("-")) + "-bundle";
+                .collect(Collectors.joining("-" )) + "-bundle";
         String appName = NStringUtils.firstNonBlank(withAppName.get(), withAppTitle.get(), defaultName);
 
         switch (format) {
             case "jar":
             case "zip": {
-                rootFolder = NPath.ofTempFolder("bundle");
+                rootFolder = NPath.ofTempFolder("bundle" );
                 includeConfigFiles = true;
-                bundleFolder = rootFolder.resolve("META-INF/bundle");
+                bundleFolder = rootFolder.resolve("META-INF/bundle" );
                 break;
             }
             case "exploded": {
                 rootFolder = NBlankable.isBlank(withTarget.get()) ?
-                        NPath.ofUserDirectory().resolve(appName + "-bundle")
+                        NPath.ofUserDirectory().resolve(appName + "-bundle" )
                         : NPath.of(withTarget.get())
                 ;
                 includeConfigFiles = true;
-                bundleFolder = rootFolder.resolve("META-INF/bundle");
+                bundleFolder = rootFolder.resolve("META-INF/bundle" );
                 if (withClean.get()) {
                     if (bundleFolder.isDirectory()) {
                         for (NPath nPath : bundleFolder.list()) {
@@ -238,7 +260,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
             }
             case "dir": {
                 rootFolder = NBlankable.isBlank(withTarget.get()) ?
-                        NPath.ofUserDirectory().resolve(appName + "-bundle")
+                        NPath.ofUserDirectory().resolve(appName + "-bundle" )
                         : NPath.of(withTarget.get())
                 ;
                 bundleFolder = rootFolder;
@@ -261,14 +283,14 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         NCp cp = NCp.of();
         if ("jar".equals(format)) {
             cp
-                    .from(getClass().getResource("/META-INF/bundle/NutsBundleRunner.class.template"))
+                    .from(getClass().getResource("/META-INF/bundle/NutsBundleRunner.class.template" ))
                     .setMkdirs(true)
-                    .to(rootFolder.resolve("net/thevpc/nuts/runtime/standalone/installer/NutsBundleRunner.class"))
+                    .to(rootFolder.resolve("net/thevpc/nuts/runtime/standalone/installer/NutsBundleRunner.class" ))
                     .run();
             cp
-                    .from(getClass().getResource("/META-INF/bundle/MANIFEST-COPY.MF"))
+                    .from(getClass().getResource("/META-INF/bundle/MANIFEST-COPY.MF" ))
                     .setMkdirs(true)
-                    .to(rootFolder.resolve("META-INF/MANIFEST.MF"))
+                    .to(rootFolder.resolve("META-INF/MANIFEST.MF" ))
                     .run();
         }
 
@@ -320,10 +342,12 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                 );
             }
         }
-
-        bundleFolder.resolve(".nuts-repository").writeString("{}");
+        if (runnerId == null) {
+            runnerId = ws.getAppId();
+        }
+        bundleFolder.resolve(".nuts-repository" ).writeString("{}" );
         if (includeConfigFiles) {
-            nuts_bundle_files_config.println("copy /.nuts-repository $target/.nuts-repository");
+            nuts_bundle_files_config.println("copy /.nuts-repository $target/.nuts-repository" );
             for (NId id : toBaseDir) {
                 String fullPath = ExtraApiUtils.resolveJarPath(id);
 
@@ -337,17 +361,41 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                                 + NPath.of(fullPath).getName()
                 );
             }
-            rootFolder.resolve("META-INF/nuts-bundle-files.config").writeString(nuts_bundle_files_config.toString());
+            // create posix runner
+            bundleFolder.resolve("posix-runner.sh" ).writeString(
+                    new NStringBuilder()
+                            .println("#!/bin/sh" )
+                            .println("" )
+                            .println("java -jar \"lib/" + ExtraApiUtils.resolveJarPath(runnerId) + "\" --repo==lib \"$@\"" )
+                            .build()
+            );
+            nuts_bundle_files_config.println(
+                    "copy /posix-runner.sh"
+                            + " ${user.dir}/" + appName + "-bundle.sh"
+            );
+            // create posix windows runner
+            bundleFolder.resolve("windows-runner.bat" ).writeString(
+                    new NStringBuilder()
+                            .println("#!/bin/sh" )
+                            .println("" )
+                            .println("java -jar \"lib/" + ExtraApiUtils.resolveJarPath(runnerId) + "\" --repo==lib \"$@\"" )
+                            .build()
+            );
+            nuts_bundle_files_config.println(
+                    "copy /windows-runner.bat"
+                            + " ${user.dir}/" + appName + "-bundle.bat"
+            );
+            rootFolder.resolve("META-INF/nuts-bundle-files.config" ).writeString(nuts_bundle_files_config.toString());
         }
 
 
-        String appVersion = NStringUtils.firstNonBlank(withAppVersion.get(), "1.0");
+        String appVersion = NStringUtils.firstNonBlank(withAppVersion.get(), mainId == null ? null : mainId.getVersion().toString(), "1.0" );
         String appTitle = NStringUtils.firstNonBlank(withAppTitle.get(), withAppName.get(), defaultName);
         String appDesc = NStringUtils.firstNonBlank(withAppDesc.get(), withAppTitle.get());
 
         if (includeConfigFiles) {
 
-            nuts_bundle_info_config.println("target=${user.dir}/lib");
+            nuts_bundle_info_config.println("target=${user.dir}/lib" );
             if (appVersion != null) {
                 nuts_bundle_info_config.println("version=" + appVersion);
             }
@@ -360,15 +408,15 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
             if (appDesc != null) {
                 nuts_bundle_info_config.println("description=" + appDesc);
             }
-            rootFolder.resolve("META-INF/nuts-bundle-info.config").writeString(nuts_bundle_info_config.toString());
+            rootFolder.resolve("META-INF/nuts-bundle-info.config" ).writeString(nuts_bundle_info_config.toString());
         }
 
         NSession nSession = NSession.of();
         switch (format) {
             case "jar": {
-                NCompress zip = NCompress.of().setPackaging("zip");
+                NCompress zip = NCompress.of().setPackaging("zip" );
                 NPath target = NPath.of(NStringUtils.firstNonBlank(withTarget.get(),
-                        appName + ".jar")).toAbsolute();
+                        appName + ".jar" )).toAbsolute();
                 zip.addSource(rootFolder)
                         .setSkipRoot(true)
                         .setTarget(
@@ -388,9 +436,9 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                 break;
             }
             case "zip": {
-                NCompress zip = NCompress.of().setPackaging("zip");
+                NCompress zip = NCompress.of().setPackaging("zip" );
                 NPath target = NPath.of(NStringUtils.firstNonBlank(withTarget.get(),
-                        appName + ".zip")).toAbsolute();
+                        appName + ".zip" )).toAbsolute();
                 zip.addSource(rootFolder)
                         .setSkipRoot(true)
                         .setTarget(target
@@ -429,7 +477,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
 
     private NId resolveNutsAppIdFromApiId(NId apiId) {
         NVersion v = apiId.getVersion();
-        if (v.compareTo("0.8.5") < 0) {
+        if (v.compareTo("0.8.5" ) < 0) {
             return apiId;
         }
         NId appId = NWorkspace.of().getAppId();

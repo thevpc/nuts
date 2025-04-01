@@ -25,6 +25,7 @@
 package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.NExceptionHandler;
+import net.thevpc.nuts.elem.NElementType;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.reserved.util.NReservedSimpleCharQueue;
@@ -1001,7 +1002,7 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public String toString() {
-        return toStringList().stream().map(x -> NStringUtils.formatStringLiteral(x, NQuoteType.DOUBLE, NSupportMode.PREFERRED)).collect(Collectors.joining(" "));
+        return toStringList().stream().map(x -> NStringUtils.formatStringLiteral(x, NElementType.DOUBLE_QUOTED_STRING, NSupportMode.PREFERRED)).collect(Collectors.joining(" "));
     }
 
     private String createExpandedSimpleOption(char start, boolean negate, char val) {

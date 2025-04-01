@@ -29,12 +29,12 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     private final Info info;
     private Object loaded;
 
-    public GithubfsPath(String url, NWorkspace workspace) {
-        this(url, null, workspace);
+    public GithubfsPath(String url) {
+        this(url, null);
     }
 
-    private GithubfsPath(String url, Info info, NWorkspace workspace) {
-        super(NPath.of(url.substring(PREFIX.length())), workspace);
+    private GithubfsPath(String url, Info info) {
+        super(NPath.of(url.substring(PREFIX.length())));
         if (!url.startsWith(PREFIX)) {
             throw new NUnsupportedArgumentException(NMsg.ofC("expected prefix '%s'",PREFIX));
         }
@@ -70,7 +70,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
                     .map(NFunction.of(
                             (Info x) -> NPath.of(new GithubfsPath(
                                     PREFIX + ref.resolve(x.name).toString(),
-                                    x, workspace))
+                                    x))
                             ).withDesc(NEDesc.of("GithubfsPath::of"))
                     );
         }
@@ -309,7 +309,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         @Override
         public NCallableSupport<NPathSPI> createPath(String path, ClassLoader classLoader) {
             if (path.startsWith(PREFIX)) {
-                return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, () -> new GithubfsPath(path, workspace));
+                return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, () -> new GithubfsPath(path));
             }
             return null;
         }

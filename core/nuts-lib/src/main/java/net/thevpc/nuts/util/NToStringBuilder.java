@@ -1,5 +1,7 @@
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.elem.NElementType;
+
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -75,7 +77,7 @@ public class NToStringBuilder {
     }
 
     public NToStringBuilder add(String key, String value) {
-        str.add(new AbstractMap.SimpleEntry<>(key, value == null ? "null" : NStringUtils.formatStringLiteral(value, NQuoteType.DOUBLE)));
+        str.add(new AbstractMap.SimpleEntry<>(key, value == null ? "null" : NStringUtils.formatStringLiteral(value, NElementType.DOUBLE_QUOTED_STRING)));
         return this;
     }
 

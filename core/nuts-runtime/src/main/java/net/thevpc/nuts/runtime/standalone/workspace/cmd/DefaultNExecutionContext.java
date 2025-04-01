@@ -46,7 +46,6 @@ public class DefaultNExecutionContext implements NExecutionContext {
     private List<String> workspaceOptions;
     private List<String> arguments;
     private NSession session;
-    private NWorkspace workspace;
     private NArtifactCall executorDescriptor;
     private NPath cwd;
     private String commandName;
@@ -63,7 +62,7 @@ public class DefaultNExecutionContext implements NExecutionContext {
 
     public DefaultNExecutionContext(NDefinition definition,
                                     List<String> arguments, List<String> executorArgs, List<String> workspaceOptions, Map<String, String> env,
-                                    NPath cwd, NWorkspace workspace, boolean failFast,
+                                    NPath cwd, boolean failFast,
                                     boolean temporary,
                                     NExecutionType executionType,
                                     String commandName,
@@ -77,7 +76,6 @@ public class DefaultNExecutionContext implements NExecutionContext {
         this.commandName = commandName;
         this.definition = definition;
         this.arguments = NCoreCollectionUtils.unmodifiableList(arguments);
-        this.workspace = workspace;
         this.executorOptions = NCoreCollectionUtils.unmodifiableList(executorArgs);
         this.workspaceOptions = NCoreCollectionUtils.unmodifiableList(workspaceOptions);
         this.sleepMillis = sleepMillis;
@@ -102,7 +100,6 @@ public class DefaultNExecutionContext implements NExecutionContext {
         this.definition = other.getDefinition();
         this.arguments = other.getArguments();
         this.session = other.getSession();
-        this.workspace = other.getWorkspace();
         this.executorOptions = other.getExecutorOptions();
         this.workspaceOptions = other.getWorkspaceOptions();
         this.cwd = other.getDirectory();
@@ -191,11 +188,6 @@ public class DefaultNExecutionContext implements NExecutionContext {
     }
 
     @Override
-    public NWorkspace getWorkspace() {
-        return workspace;
-    }
-
-    @Override
     public NArtifactCall getExecutorDescriptor() {
         return executorDescriptor;
     }
@@ -251,11 +243,6 @@ public class DefaultNExecutionContext implements NExecutionContext {
 
     public DefaultNExecutionContext setSession(NSession session) {
         this.session = session;
-        return this;
-    }
-
-    public DefaultNExecutionContext setWorkspace(NWorkspace workspace) {
-        this.workspace = workspace;
         return this;
     }
 

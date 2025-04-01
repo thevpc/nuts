@@ -135,7 +135,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
 //            cmdArgs.add(0, "--trace");
 //        }
 
-        NSession session=getWorkspace().currentSession();
+        NSession session=NSession.of();
         NWorkspaceExt dws = NWorkspaceExt.of();
         InstallIdInfo info = list.get(id);
         if (info.doInstall) {
@@ -165,7 +165,6 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
 
     @Override
     public NStream<NDefinition> getResult() {
-        NSession session=getWorkspace().currentSession();
         if (result == null) {
             run();
         }
@@ -177,8 +176,8 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
 
     @Override
     public NInstallCmd run() {
-        NSession session=getWorkspace().currentSession();
-        NWorkspace ws = getWorkspace();
+        NSession session=NSession.of();
+        NWorkspace ws = NWorkspace.of();
         NWorkspaceExt dws = NWorkspaceExt.of();
         NPrintStream out = session.out();
         NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.INSTALL, "install");
@@ -501,7 +500,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
 
     private void printList(NPrintStream out, String skind, String saction, List<NId> all) {
         if (all.size() > 0) {
-            NSession session=getWorkspace().currentSession();
+            NSession session=NSession.of();
             if (session.isPlainOut()) {
                 NTexts text = NTexts.of();
                 NText kind = text.ofStyled(skind, NTextStyle.primary2());

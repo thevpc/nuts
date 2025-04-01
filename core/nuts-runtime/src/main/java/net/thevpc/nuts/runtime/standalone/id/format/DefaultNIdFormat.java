@@ -6,6 +6,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
 
+import net.thevpc.nuts.elem.NElementType;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.dependency.NDependencyScopes;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
@@ -13,7 +14,6 @@ import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NQuoteType;
 import net.thevpc.nuts.util.NStringUtils;
 import net.thevpc.nuts.util.NSupportMode;
 
@@ -285,11 +285,11 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
     }
 
     private String _encodeValue(String s) {
-        return NStringUtils.formatStringLiteral(s, NQuoteType.SIMPLE, NSupportMode.PREFERRED,"=&");
+        return NStringUtils.formatStringLiteral(s, NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED,"=&");
     }
 
     private String _encodeKey(String s) {
-        return NStringUtils.formatStringLiteral(s, NQuoteType.SIMPLE, NSupportMode.PREFERRED,"=&");
+        return NStringUtils.formatStringLiteral(s, NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED,"=&");
     }
 
     @Override

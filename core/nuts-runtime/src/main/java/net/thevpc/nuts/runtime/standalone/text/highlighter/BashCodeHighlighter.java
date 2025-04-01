@@ -20,10 +20,7 @@ import net.thevpc.nuts.text.*;
 
 public class BashCodeHighlighter implements NCodeHighlighter {
 
-    private NWorkspace workspace;
-
-    public BashCodeHighlighter(NWorkspace workspace) {
-        this.workspace = workspace;
+    public BashCodeHighlighter() {
     }
 
     @Override

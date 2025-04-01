@@ -15,8 +15,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNPrepareInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNPrepareInternalExecutable(NWorkspace workspace, String[] args, NExecCmd execCommand) {
-        super(workspace,"prepare", args, execCommand);
+    public DefaultNPrepareInternalExecutable(String[] args, NExecCmd execCommand) {
+        super("prepare", args, execCommand);
     }
 
     @Override

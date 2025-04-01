@@ -17,8 +17,8 @@ public abstract class AbstractNRemoveUserCmd extends NWorkspaceCmdBaseRepo<NRemo
 
     protected String login;
 
-    public AbstractNRemoveUserCmd(NWorkspace workspace) {
-        super(workspace, "remove-user");
+    public AbstractNRemoveUserCmd() {
+        super("remove-user");
     }
 
     @Override

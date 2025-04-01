@@ -128,7 +128,7 @@ public class DefaultNTextManagerModel {
                 //dark blue and red are very ugly under windows, replace them with green tones !
                 defaultTheme = new NTextFormatThemeWrapper(new NTextFormatPropertiesTheme("grass", null, workspace));
             } else {
-                defaultTheme = new DefaultNTextFormatTheme(workspace);
+                defaultTheme = new DefaultNTextFormatTheme();
             }
         }
         return defaultTheme;
@@ -289,7 +289,7 @@ public class DefaultNTextManagerModel {
 
     public NElementStreamFormat getJsonMan() {
         if (jsonMan == null) {
-            jsonMan = new DefaultJsonElementFormat(workspace);
+            jsonMan = new DefaultJsonElementFormat();
         }
         return jsonMan;
     }

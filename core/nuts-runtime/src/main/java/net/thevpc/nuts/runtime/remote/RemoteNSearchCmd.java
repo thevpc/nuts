@@ -12,18 +12,13 @@ import java.util.List;
 
 public class RemoteNSearchCmd extends AbstractNSearchCmd {
 
-    public RemoteNSearchCmd(NWorkspace workspace) {
-        super(workspace);
-    }
-
-    @Override
-    protected RemoteNWorkspace getWorkspace() {
-        return (RemoteNWorkspace) super.getWorkspace();
+    public RemoteNSearchCmd() {
+        super();
     }
 
     @Override
     public NSearchCmd copy() {
-        RemoteNSearchCmd b = new RemoteNSearchCmd(getWorkspace());
+        RemoteNSearchCmd b = new RemoteNSearchCmd();
         b.setAll(this);
         return b;
     }
@@ -58,10 +53,11 @@ public class RemoteNSearchCmd extends AbstractNSearchCmd {
             eb.set("repositories", e.ofString(getRepositoryFilter().toString()));
         }
 
+        RemoteNWorkspace ws=(RemoteNWorkspace)NWorkspace.get();
         return NIterator.of(
                 (Iterator <NId>)
-                getWorkspace().remoteCall(
-                        getWorkspace().createCall(
+                        ws.remoteCall(
+                                ws.createCall(
                                 "workspace.searchIds",
                                 eb.build()
                         ),

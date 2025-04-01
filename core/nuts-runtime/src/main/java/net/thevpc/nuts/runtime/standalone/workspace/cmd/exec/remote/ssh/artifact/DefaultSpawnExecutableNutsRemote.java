@@ -44,14 +44,14 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
     NWorkspace workspace;
 
 
-    public DefaultSpawnExecutableNutsRemote(NWorkspace workspace,NExecCmdExtension commExec, NDefinition def, String[] cmd,
+    public DefaultSpawnExecutableNutsRemote(NExecCmdExtension commExec, NDefinition def, String[] cmd,
                                             List<String> executorOptions, NExecCmd execCommand,
                                             NExecInput in,
                                             NExecOutput out,
                                             NExecOutput err
 
     ) {
-        super(workspace,def.getId().toString(),
+        super(def.getId().toString(),
                 NCmdLine.of(cmd).toString(),
                 NExecutableType.SYSTEM, execCommand);
         this.def = def;

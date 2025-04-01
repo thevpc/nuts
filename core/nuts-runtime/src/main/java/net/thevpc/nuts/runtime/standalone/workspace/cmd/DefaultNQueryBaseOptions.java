@@ -45,11 +45,11 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
 //    private Boolean cached = true;
 //    private Boolean indexed = null;
 //    private NutsFetchStrategy fetchStrategy = null;
-    public DefaultNQueryBaseOptions(NWorkspace workspace, String name) {
-        super(workspace, name);
+    public DefaultNQueryBaseOptions(String name) {
+        super(name);
 //        this.session=ws.createSession();
         displayOptions = new NFetchDisplayOptions();
-        NSession s = workspace.currentSession();
+        NSession s = NSession.of();
         this.fetchStrategy=s.getFetchStrategy().orNull();
         this.transitive=s.getTransitive().orNull();
         this.expireTime=s.getExpireTime().orNull();

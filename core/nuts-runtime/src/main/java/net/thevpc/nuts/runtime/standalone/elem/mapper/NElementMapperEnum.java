@@ -30,7 +30,6 @@ public class NElementMapperEnum implements NElementMapper<Enum> {
 
     @Override
     public Enum createObject(NElement o, Type to, NElementFactoryContext context) {
-        NSession session = context.getSession();
         switch (o.type()) {
             case BYTE:
             case SHORT:
@@ -38,7 +37,14 @@ public class NElementMapperEnum implements NElementMapper<Enum> {
             case LONG: {
                 return (Enum) ((Class) to).getEnumConstants()[o.asInt().get()];
             }
-            case STRING:
+            case DOUBLE_QUOTED_STRING:
+            case SINGLE_QUOTED_STRING:
+            case ANTI_QUOTED_STRING:
+            case TRIPLE_DOUBLE_QUOTED_STRING:
+            case TRIPLE_SINGLE_QUOTED_STRING:
+            case TRIPLE_ANTI_QUOTED_STRING:
+            case LINE_STRING:
+            case CHAR:
             case NAME:
             {
                 Class cc = ReflectUtils.getRawClass(to);

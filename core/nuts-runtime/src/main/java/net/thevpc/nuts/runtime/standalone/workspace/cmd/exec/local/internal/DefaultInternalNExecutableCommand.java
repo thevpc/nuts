@@ -22,8 +22,8 @@ import net.thevpc.nuts.util.NMsg;
 public abstract class DefaultInternalNExecutableCommand extends AbstractNExecutableInformationExt {
 
     protected String[] args;
-    public DefaultInternalNExecutableCommand(NWorkspace workspace,String name, String[] args, NExecCmd execCommand) {
-        super(workspace,name, name, NExecutableType.INTERNAL,execCommand);
+    public DefaultInternalNExecutableCommand(String name, String[] args, NExecCmd execCommand) {
+        super(name, name, NExecutableType.INTERNAL,execCommand);
         this.args = args;
     }
 
@@ -33,7 +33,6 @@ public abstract class DefaultInternalNExecutableCommand extends AbstractNExecuta
     }
 
     protected void showDefaultHelp() {
-        NSession session = workspace.currentSession();
         NOut.println(getHelpText());
     }
 
@@ -57,7 +56,7 @@ public abstract class DefaultInternalNExecutableCommand extends AbstractNExecuta
 
 
     public void dryExecute() {
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         if (NAppUtils.processHelpOptions(args)) {
             NOut.println("[dry] ==show-help==");
             return;

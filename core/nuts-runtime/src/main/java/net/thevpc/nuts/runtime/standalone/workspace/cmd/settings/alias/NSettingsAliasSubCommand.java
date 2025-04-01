@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  */
 public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
     public NSettingsAliasSubCommand(NWorkspace workspace) {
-        super(workspace);
+        super();
     }
 
     @Override
@@ -35,7 +35,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
         if (cmdLine.next("list aliases","list alias","aliases list").isPresent()) {
             cmdLine.setCommandName("settings list aliases");
             List<String> toList = new ArrayList<>();
-            NSession session = workspace.currentSession();
+            NSession session = NSession.of();
             while (cmdLine.hasNext()) {
                 if (!cmdLine.isNextOption()) {
                     NArg a = cmdLine.next().get();
@@ -128,7 +128,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                     cmdLine.next().get();
                 }
                 for (AliasInfo value : toAdd.values()) {
-                    workspace
+                    NWorkspace.of()
                             .addCommand(
                                     new NCommandConfig()
                                             .setCommand(NCmdLine.of(value.command, NShellFamily.BASH).setExpandSimpleOptions(false).toStringArray())

@@ -26,7 +26,6 @@ public class NElementMapperPrimitiveIntArray implements NElementMapper<int[]> {
 
     @Override
     public int[] createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        NSession session = context.getSession();
         NArrayElement earr = o.asArray().get();
         int[] arr = new int[earr.size()];
         for (int i = 0; i < arr.length; i++) {

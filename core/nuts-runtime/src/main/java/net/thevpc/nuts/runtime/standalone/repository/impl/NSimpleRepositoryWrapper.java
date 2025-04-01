@@ -9,8 +9,8 @@ public class NSimpleRepositoryWrapper extends NCachedRepository {
     private NRepositoryModel base;
     private int mode;
 
-    public NSimpleRepositoryWrapper(NAddRepositoryOptions options, NWorkspace workspace, NRepository parent, NRepositoryModel base) {
-        super(options, workspace, parent,
+    public NSimpleRepositoryWrapper(NAddRepositoryOptions options, NRepository parent, NRepositoryModel base) {
+        super(options, parent,
                 base.getSpeed(),
                 (base.getMode() & NRepositoryModel.MIRRORING) != 0,
                 base.getRepositoryType(),true

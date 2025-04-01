@@ -34,10 +34,6 @@ public interface NPrimitiveElementBuilder extends NElementBuilder {
 
     NPrimitiveElementBuilder numberLayout(NNumberLayout numberLayout);
 
-    NStringLayout stringLayout();
-
-    NPrimitiveElementBuilder stringLayout(NStringLayout stringLayout);
-
     String numberSuffix();
 
     NPrimitiveElementBuilder numberSuffix(String numberSuffix);

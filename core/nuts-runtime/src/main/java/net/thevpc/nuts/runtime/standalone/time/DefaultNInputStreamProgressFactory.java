@@ -7,10 +7,7 @@ import net.thevpc.nuts.time.NProgressFactory;
 import net.thevpc.nuts.time.NProgressListener;
 
 public class DefaultNInputStreamProgressFactory implements NProgressFactory {
-    private NWorkspace workspace;
-
-    public DefaultNInputStreamProgressFactory(NWorkspace workspace) {
-        this.workspace = workspace;
+    public DefaultNInputStreamProgressFactory() {
     }
 
     @Override

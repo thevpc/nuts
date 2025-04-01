@@ -271,7 +271,7 @@ public class DefaultNWorkspaceExtensionModel {
                 );
             }
         }
-        this.workspaceExtensionsClassLoader = new DefaultNClassLoader("workspaceExtensionsClassLoader", workspace, bootClassLoader);
+        this.workspaceExtensionsClassLoader = new DefaultNClassLoader("workspaceExtensionsClassLoader", bootClassLoader);
     }
 
     //    public void registerType(RegInfo regInfo) {
@@ -774,7 +774,7 @@ public class DefaultNWorkspaceExtensionModel {
         if (parent == null) {
             parent = workspaceExtensionsClassLoader;
         }
-        return new DefaultNClassLoader(name, workspace, parent);
+        return new DefaultNClassLoader(name, parent);
     }
 
     public static class RegInfo {

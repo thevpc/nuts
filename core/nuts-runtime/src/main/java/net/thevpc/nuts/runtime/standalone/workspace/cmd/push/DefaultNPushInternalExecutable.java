@@ -16,8 +16,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNPushInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNPushInternalExecutable(NWorkspace workspace, String[] args, NExecCmd execCommand) {
-        super(workspace,"push", args, execCommand);
+    public DefaultNPushInternalExecutable(String[] args, NExecCmd execCommand) {
+        super("push", args, execCommand);
     }
 
     @Override

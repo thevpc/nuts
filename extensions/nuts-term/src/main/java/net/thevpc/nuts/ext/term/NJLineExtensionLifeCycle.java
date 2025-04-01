@@ -1,18 +1,15 @@
 package net.thevpc.nuts.ext.term;
 
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.NWorkspaceExtension;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.spi.NExtensionLifeCycle;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.util.NUnused;
 
+@NUnused
 public class NJLineExtensionLifeCycle implements NExtensionLifeCycle {
-    private NWorkspace workspace;
-
-    public NJLineExtensionLifeCycle(NWorkspace workspace) {
-        this.workspace = workspace;
+    public NJLineExtensionLifeCycle() {
     }
 
     @Override
@@ -22,7 +19,7 @@ public class NJLineExtensionLifeCycle implements NExtensionLifeCycle {
 
     @Override
     public void onInitExtension(NWorkspaceExtension extension) {
-        NIO.of().setSystemTerminal(new NJLineTerminal(workspace));
+        NIO.of().setSystemTerminal(new NJLineTerminal());
     }
 
     @Override

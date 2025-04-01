@@ -19,7 +19,6 @@ import java.util.List;
 public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder implements NPrimitiveElementBuilder, NLiteral {
     private Object value;
     private NNumberLayout numberLayout;
-    private NStringLayout stringLayout;
     private String numberSuffix;
 
     private NElementType type;
@@ -34,15 +33,6 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
 
     public NPrimitiveElementBuilder numberLayout(NNumberLayout numberLayout) {
         this.numberLayout = numberLayout;
-        return this;
-    }
-
-    public NStringLayout stringLayout() {
-        return stringLayout;
-    }
-
-    public NPrimitiveElementBuilder stringLayout(NStringLayout stringLayout) {
-        this.stringLayout = stringLayout;
         return this;
     }
 
@@ -63,7 +53,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
             switch (value.getClass().getName()) {
                 case "java.lang.String": {
                     this.value = value;
-                    this.type = NElementType.STRING;
+                    this.type = NElementType.DOUBLE_QUOTED_STRING;
                     break;
                 }
                 case "java.lang.Boolean":
@@ -201,8 +191,8 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         if (type().isNumber()) {
             return new DefaultNNumberElement(type, (Number) value, numberLayout(), numberSuffix(), annotations().toArray(new NElementAnnotation[0]), comments());
         }
-        if (type() == NElementType.STRING) {
-            return new DefaultNStringElement(type, (String) value, stringLayout(), annotations().toArray(new NElementAnnotation[0]), comments());
+        if (type().isString()) {
+            return new DefaultNStringElement(type, (String) value, annotations().toArray(new NElementAnnotation[0]), comments());
         }
         return new DefaultNPrimitiveElement(type, value, annotations().toArray(new NElementAnnotation[0]), comments());
     }
@@ -622,10 +612,6 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
                 numberLayout(ne.numberLayout());
                 numberSuffix(ne.numberSuffix());
             }
-            if (element instanceof NStringElement) {
-                NStringElement ne = (NStringElement) element;
-                stringLayout(ne.stringLayout());
-            }
         }
         return this;
     }
@@ -637,7 +623,6 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
             value(element.value());
             numberLayout(element.numberLayout());
             numberSuffix(element.numberSuffix());
-            stringLayout(element.stringLayout());
         }
         return this;
     }

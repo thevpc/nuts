@@ -74,13 +74,6 @@ public interface NExecutionContextBuilder {
     List<String> getArguments();
 
     /**
-     * workspace
-     *
-     * @return workspace
-     */
-    NWorkspace getWorkspace();
-
-    /**
      * executor descriptor
      *
      * @return executor descriptor
@@ -144,8 +137,6 @@ public interface NExecutionContextBuilder {
     NExecutionContextBuilder addExecutorOptions(List<String> executorOptions);
 
     NExecutionContextBuilder setArguments(String[] arguments);
-
-    NExecutionContextBuilder setWorkspace(NWorkspace workspace);
 
     NExecutionContextBuilder setExecutorDescriptor(NArtifactCall executorDescriptor);
 

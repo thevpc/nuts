@@ -15,7 +15,7 @@ import net.thevpc.nuts.util.NBlankable;
  */
 public class NCliInfoSubCommand extends AbstractNSettingsSubCommand {
     public NCliInfoSubCommand(NWorkspace workspace) {
-        super(workspace);
+        super();
     }
 
     @Override
@@ -41,13 +41,11 @@ public class NCliInfoSubCommand extends AbstractNSettingsSubCommand {
     }
 
     private void doSaveCliId(String value) {
-        NSession session=workspace.currentSession();
         NOut.println(NCliInfo.saveCliId(value));
         NOut.println("cli-id updated.");
     }
 
     private void doLoadCliId() {
-        NSession session=workspace.currentSession();
         NOut.println(NCliInfo.loadCliId());
     }
 }

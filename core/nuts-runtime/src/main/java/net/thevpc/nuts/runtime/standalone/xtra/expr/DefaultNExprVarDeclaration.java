@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.expr.NExprDeclarations;
 import net.thevpc.nuts.expr.NExprVar;
 import net.thevpc.nuts.expr.NExprVarDeclaration;
@@ -8,11 +7,9 @@ import net.thevpc.nuts.expr.NExprVarDeclaration;
 public class DefaultNExprVarDeclaration implements NExprVarDeclaration {
     private String name;
     private NExprVar impl;
-    private NWorkspace workspace;
     private NExprVar v;
 
-    public DefaultNExprVarDeclaration(NWorkspace workspace, String name, NExprVar impl) {
-        this.workspace = workspace;
+    public DefaultNExprVarDeclaration(String name, NExprVar impl) {
         this.name = name;
         this.impl = impl;
     }

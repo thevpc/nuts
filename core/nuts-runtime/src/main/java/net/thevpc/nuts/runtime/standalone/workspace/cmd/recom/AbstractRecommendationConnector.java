@@ -16,10 +16,8 @@ import java.util.TimeZone;
 public abstract class AbstractRecommendationConnector implements RecommendationConnector {
 
     private String localUserUUID;
-    private NWorkspace workspace;
 
-    public AbstractRecommendationConnector(NWorkspace workspace) {
-        this.workspace = workspace;
+    public AbstractRecommendationConnector() {
     }
 
     private String getLocalUserUUID() {
@@ -28,10 +26,6 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
         }
         localUserUUID = NCliInfo.loadCliId(true);
         return localUserUUID;
-    }
-
-    public NWorkspace getWorkspace() {
-        return workspace;
     }
 
     @Override
@@ -47,7 +41,8 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
     public abstract <T> T post(String url, RequestQueryInfo ri, Class<T> resultType);
 
     public void validateRequest(RequestQueryInfo ri) {
-        NSession session= workspace.currentSession();
+        NSession session= NSession.of();
+        NWorkspace workspace = NWorkspace.of();
         NLiteral endPointURL = workspace.getProperty("nuts-endpoint-url").orNull();
         if (NBlankable.isBlank(ri.server)) {
             if (endPointURL == null || endPointURL.isBlank()) {
@@ -58,12 +53,11 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
             }
         }
         RequestAgent agent = ri.q.getAgent();
-        NWorkspace ws = workspace;
         if (agent.getApiVersion() == null) {
-            agent.setApiVersion(ws.getApiVersion().toString());
+            agent.setApiVersion(workspace.getApiVersion().toString());
         }
         if (agent.getRuntimeId() == null) {
-            agent.setRuntimeId(ws.getRuntimeId().toString());
+            agent.setRuntimeId(workspace.getRuntimeId().toString());
         }
         if (agent.getArch() == null) {
             agent.setArch(workspace.getArch().toString());

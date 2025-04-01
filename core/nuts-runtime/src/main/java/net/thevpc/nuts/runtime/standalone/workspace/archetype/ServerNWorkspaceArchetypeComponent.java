@@ -38,10 +38,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
  */
 @NComponentScope(NScopeType.WORKSPACE)
 public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeComponent {
-    private NWorkspace workspace;
-
-    public ServerNWorkspaceArchetypeComponent(NWorkspace workspace) {
-        this.workspace = workspace;
+    public ServerNWorkspaceArchetypeComponent() {
     }
 
     @Override
@@ -51,7 +48,7 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
 
     @Override
     public void initializeWorkspace() {
-        NRepositoryLocation[] br = NWorkspaceExt.of(workspace).getConfigModel().resolveBootRepositoriesList().resolve(
+        NRepositoryLocation[] br = NWorkspaceExt.of().getConfigModel().resolveBootRepositoriesList().resolve(
                 new NRepositoryLocation[]{
                         NRepositoryLocation.ofName("maven-local"),
                         NRepositoryLocation.ofName("maven-central"),
@@ -60,7 +57,7 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
                 NRepositoryDB.of()
         );
         for (NRepositoryLocation s : br) {
-            workspace.addRepository(s.toString());
+            NWorkspace.of().addRepository(s.toString());
         }
         NWorkspaceSecurityManager sec = NWorkspaceSecurityManager.of();
 
@@ -85,9 +82,10 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
     public void startWorkspace() {
 //        boolean initializePlatforms = boot.getBootOptions().getInitPlatforms().ifEmpty(false).get(session);
 //        boolean initializeJava = boot.getBootOptions().getInitJava().ifEmpty(initializePlatforms).get(session);
+        NWorkspace workspace = NWorkspace.of();
         boolean initializeScripts = workspace.getBootOptions().getInitScripts().ifEmpty(true).get();
         boolean initializeLaunchers = workspace.getBootOptions().getInitLaunchers().ifEmpty(true).get();
-        Boolean installCompanions = NWorkspace.of().getBootOptions().getInstallCompanions().orElse(false);
+        Boolean installCompanions = workspace.getBootOptions().getInstallCompanions().orElse(false);
 
 //        if (initializeJava) {
 //            NWorkspaceUtils.of().installAllJVM();

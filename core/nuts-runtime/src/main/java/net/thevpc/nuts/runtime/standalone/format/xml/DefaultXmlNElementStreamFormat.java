@@ -53,7 +53,6 @@ public class DefaultXmlNElementStreamFormat implements NElementStreamFormat {
 
     @Override
     public NElement parseElement(Reader reader, NElementFactoryContext context) {
-        NSession session = context.getSession();
         Document doc = null;
         try {
             doc = XmlUtils.createDocumentBuilder(false).parse(new InputSource(reader));
@@ -67,7 +66,6 @@ public class DefaultXmlNElementStreamFormat implements NElementStreamFormat {
 
     @Override
     public void printElement(NElement value, NPrintStream out, boolean compact, NElementFactoryContext context) {
-        NSession session = context.getSession();
         Document doc = (Document) context.elementToObject(value, Document.class);
         if (out.isNtf()) {
             NPrintStream bos = NMemoryPrintStream.of();

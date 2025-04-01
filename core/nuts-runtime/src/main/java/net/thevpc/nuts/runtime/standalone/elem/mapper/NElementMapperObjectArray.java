@@ -26,7 +26,6 @@ public class NElementMapperObjectArray implements NElementMapper<Object[]> {
 
     @Override
     public Object[] createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        NSession session = context.getSession();
         NArrayElement earr = o.asArray().get();
         Object[] arr = new Object[earr.size()];
         for (int i = 0; i < arr.length; i++) {

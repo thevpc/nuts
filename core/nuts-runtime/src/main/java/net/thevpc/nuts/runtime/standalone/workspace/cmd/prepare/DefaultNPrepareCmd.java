@@ -25,13 +25,13 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
     public NPrepareCmd run() {
         String version = getVersion();
         getValidUser();
-        NSession session=getWorkspace().currentSession();
-        String currentVersion = session.getWorkspace().getApiVersion().toString();
+        NWorkspace workspace = NWorkspace.of();
+        String currentVersion = workspace.getApiVersion().toString();
         if (version == null) {
             version = currentVersion;
         }
         mkdirs(remoteHomeFile("bin"));
-        NId apiId = session.getWorkspace().getApiId();
+        NId apiId = workspace.getApiId();
 
         if (NBlankable.isBlank(version)) {
             apiId = apiId.builder().setVersion(version).build();
@@ -42,7 +42,7 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
         }
         pushId(apiId, null);
         Set<NId> deps = new HashSet<>();
-        deps.add(session.getWorkspace().getRuntimeId());
+        deps.add(workspace.getRuntimeId());
         deps.addAll(NSearchCmd.of().addId("net.thevpc.nsh:nsh").setOptional(false).setLatest(true).setContent(true).setTargetApiVersion(apiId.getVersion()).setDependencyFilter(NDependencyFilters.of().byRunnable()).setBasePackage(true).setDependencies(true).getResultIds().toList());
         if(ids!=null){
             for (NId id : deps) {
@@ -83,9 +83,8 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
     }
 
     private NPath remoteNutsCommand() {
-        NSession session=getWorkspace().currentSession();
         if (version == null) {
-            version = session.getWorkspace().getApiVersion().toString();
+            version = NWorkspace.of().getApiVersion().toString();
         }
         NPath e = remoteHomeFile("bin/nuts-" + version);
         if (runRemoteAsStringNoFail("ls " + e)) {

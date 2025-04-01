@@ -26,7 +26,6 @@ public class NElementMapperNId implements NElementMapper<NId> {
 //                NutsWorkspace ws = context.getSession().getWorkspace();
 //                NutsText n = ws.text().toText(ws.id().formatter(o).setNtf(true).format());
 //                return ws.elem().forPrimitive().buildNutsString(n);
-            NSession session = context.getSession();
             return context.elem().ofString(NFormats.of().ofFormat(o).get().setNtf(true).format().toString());
         } else {
             return context.defaultObjectToElement(o.toString(), null);
@@ -35,7 +34,6 @@ public class NElementMapperNId implements NElementMapper<NId> {
 
     @Override
     public NId createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        NSession session = context.getSession();
         return NId.get(o.asPrimitive().flatMap(NLiteral::asString).get()).get();
     }
 

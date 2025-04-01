@@ -14,7 +14,6 @@ public class NElementMapperNEnvCondition implements NElementMapper<NEnvCondition
 
     @Override
     public Object destruct(NEnvCondition src, Type typeOfSrc, NElementFactoryContext context) {
-        NSession session = context.getSession();
         return context.defaultDestruct(
                 new DefaultNEnvConditionBuilder(src), null
         );

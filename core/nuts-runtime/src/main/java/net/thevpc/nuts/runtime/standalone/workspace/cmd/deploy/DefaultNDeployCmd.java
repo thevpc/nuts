@@ -105,7 +105,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
     @Override
     public NDeployCmd run() {
 //        checkSession();
-        NSession session=workspace.currentSession();
+        NSession session=NSession.of();
 //        NutsWorkspace ws = getSession().getWorkspace();
         if (getContent() != null || getDescriptor() != null || getSha1() != null || getDescSha1() != null) {
             runDeployFile();
@@ -146,9 +146,8 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
     }
 
     private NDeployCmd runDeployFile(NInputSource content, Object descriptor0, String descSHA1) {
-        NSession session=workspace.currentSession();
         NWorkspaceExt dws = NWorkspaceExt.of();
-        NWorkspaceUtils wu = NWorkspaceUtils.of(workspace);
+        NWorkspaceUtils wu = NWorkspaceUtils.of();
         wu.checkReadOnly();
 
         Path tempFile = null;
@@ -242,7 +241,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
                         return this;
                     }
                 } else {
-                    NRepository repo = workspace.findRepository(repository).get();
+                    NRepository repo = NWorkspace.of().findRepository(repository).get();
                     if (!repo.isEnabled()) {
                         throw new NRepositoryDisabledException(repository);
                     }

@@ -26,26 +26,26 @@ import java.util.Arrays;
 import java.util.List;
 
 public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
-    public NSettingsNdiSubCommand(NWorkspace workspace) {
-        super(workspace);
+    public NSettingsNdiSubCommand() {
+        super();
     }
 
-    public static SystemNdi createNdi(NWorkspace workspace) {
+    public static SystemNdi createNdi() {
         SystemNdi ndi = null;
-        switch (workspace.getOsFamily()) {
+        switch (NWorkspace.of().getOsFamily()) {
             case LINUX:
             case UNIX: {
 
-                ndi = new LinuxNdi(workspace);
+                ndi = new LinuxNdi();
                 break;
             }
             case MACOS: {
-                ndi = new MacosNdi(workspace);
+                ndi = new MacosNdi();
                 break;
             }
             case WINDOWS: {
                 if (OptionalMsLinkHelper.isSupported()) {
-                    ndi = new WindowsNdi(workspace);
+                    ndi = new WindowsNdi();
                 }
                 break;
             }
@@ -72,7 +72,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
 //        String linkName = null;
 //        boolean env = false;
         cmdLine.setCommandName("settings add launcher");
-        NSession session=workspace.currentSession();
+        NSession session=NSession.of();
         while (cmdLine.hasNext()) {
             switch (cmdLine.peek().get().key()) {
                 case "-t":
@@ -243,7 +243,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
             cmdLine.peek().get();
         }
         if (cmdLine.isExecMode()) {
-            SystemNdi ndi = createNdi(workspace);
+            SystemNdi ndi = createNdi();
             if (ndi == null) {
                 if (d.ignoreUnsupportedOs) {
                     return;
@@ -288,7 +288,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
         boolean missingAnyArgument = true;
         NArg a;
         boolean ignoreUnsupportedOs = false;
-        NSession session=workspace.currentSession();
+        NSession session=NSession.of();
         while (cmdLine.hasNext()) {
             if ((a = cmdLine.nextEntry("--ignore-unsupported-os").orNull()) != null) {
                 if (a.isActive()) {
@@ -308,7 +308,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
             if (forceAll) {
                 session.setConfirm(NConfirmationMode.YES);
             }
-            SystemNdi ndi = createNdi(workspace);
+            SystemNdi ndi = createNdi();
             if (ndi == null) {
                 if (ignoreUnsupportedOs) {
                     return;
@@ -345,7 +345,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
             String shortcutName = null;
         }
         Data d = new Data();
-        NSession session=workspace.currentSession();
+        NSession session=NSession.of();
         while (cmdLine.hasNext()) {
             switch (cmdLine.peek().get().key()) {
                 case "--ignore-unsupported-os": {
@@ -421,7 +421,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
             }
         }
         if (cmdLine.isExecMode()) {
-            SystemNdi ndi = createNdi(workspace);
+            SystemNdi ndi = createNdi();
             if (ndi == null) {
                 if (d.ignoreUnsupportedOs) {
                     return;
@@ -442,7 +442,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
     }
 
     private void printResults(PathInfo[] result) {
-        NSession session=workspace.currentSession();
+        NSession session=NSession.of();
         if (session.isTrace()) {
             result = Arrays.stream(result).filter(x -> x.getStatus() != PathInfo.Status.DISCARDED).toArray(PathInfo[]::new);
             if (session.isPlainTrace()) {

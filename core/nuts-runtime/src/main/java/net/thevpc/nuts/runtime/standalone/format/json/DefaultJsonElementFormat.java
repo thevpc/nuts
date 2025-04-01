@@ -40,10 +40,8 @@ import java.util.List;
  */
 public class DefaultJsonElementFormat implements NElementStreamFormat {
 
-    private NWorkspace ws;
 
-    public DefaultJsonElementFormat(NWorkspace ws) {
-        this.ws = ws;
+    public DefaultJsonElementFormat() {
     }
 
     public NElement parseElement(String string, NElementFactoryContext context) {
@@ -85,7 +83,13 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                 break;
             }
             case INSTANT:
-            case STRING:
+            case DOUBLE_QUOTED_STRING:
+            case SINGLE_QUOTED_STRING:
+            case ANTI_QUOTED_STRING:
+            case TRIPLE_DOUBLE_QUOTED_STRING:
+            case TRIPLE_SINGLE_QUOTED_STRING:
+            case TRIPLE_ANTI_QUOTED_STRING:
+            case LINE_STRING:
             case NAME:
 //            case NUTS_STRING:
             {
@@ -294,7 +298,13 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
             case LOCAL_DATE:
             case LOCAL_DATETIME:
             case CHAR:
-            case STRING:
+            case DOUBLE_QUOTED_STRING:
+            case SINGLE_QUOTED_STRING:
+            case ANTI_QUOTED_STRING:
+            case TRIPLE_DOUBLE_QUOTED_STRING:
+            case TRIPLE_SINGLE_QUOTED_STRING:
+            case TRIPLE_ANTI_QUOTED_STRING:
+            case LINE_STRING:
                 // TODO FIXE ME LATER
             {
                 List<NElementAnnotation> a = e.annotations();
@@ -544,7 +554,6 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
         }
 
         private NElement readJsonObject() {
-            NSession session = context.getSession();
             NObjectElementBuilder object = builder().ofObjectBuilder();
             readNext();
             skipWhiteSpaceAndComments();

@@ -18,7 +18,7 @@ import java.util.Map;
 public class DefaultNLockBuilder extends AbstractNLockBuilder {
     Map<Object,DefaultMemLock> memLocks=new HashMap<>();
     public DefaultNLockBuilder(NWorkspace workspace) {
-        super(workspace);
+        super();
     }
 
     @Override
@@ -32,18 +32,18 @@ public class DefaultNLockBuilder extends AbstractNLockBuilder {
             }
             Path p = toPath(s);
             if (p == null) {
-                return memLocks.computeIfAbsent(s,e->new DefaultMemLock(e,getWorkspace()));
+                return memLocks.computeIfAbsent(s,e->new DefaultMemLock(e));
                 //throw new NLockException(NMsg.ofC("unsupported lock for %s", s.getClass().getName()), null, s);
             }
             lrPath = p.resolveSibling(p.getFileName().toString() + ".lock");
-            return new DefaultFileNLock(lrPath, s, getWorkspace());
+            return new DefaultFileNLock(lrPath, s);
         } else {
             lrPath = toPath(lr);
             if (lrPath == null) {
-                return memLocks.computeIfAbsent(lr,e->new DefaultMemLock(e,getWorkspace()));
+                return memLocks.computeIfAbsent(lr,e->new DefaultMemLock(e));
                 //throw new NLockException(NMsg.ofC("unsupported lock %s", lr.getClass().getName()), lr, s);
             }
-            return new DefaultFileNLock(lrPath, s, getWorkspace());
+            return new DefaultFileNLock(lrPath, s);
         }
     }
 //

@@ -14,14 +14,14 @@ public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPri
     private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
 
     public NByteArrayPrintStream(NTerminalMode mode, NWorkspace workspace) {
-        super(new ByteArrayOutputStream2(), mode, null, null, workspace, new Bindings(), null);
+        super(new ByteArrayOutputStream2(), mode, null, null, new Bindings(), null);
         getMetaData().setMessage(
                 NMsg.ofNtf(NText.ofStyledPath("<memory-buffer>"))
         );
     }
 
     protected NByteArrayPrintStream(NTerminalMode mode, ByteArrayOutputStream2 bos, NWorkspace workspace) {
-        super(bos, mode, null, null, workspace, new Bindings(), null);
+        super(bos, mode, null, null, new Bindings(), null);
         getMetaData().setMessage(
                 NMsg.ofNtf(NText.ofStyledPath("<memory-buffer>"))
         );

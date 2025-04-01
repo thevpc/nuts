@@ -35,10 +35,10 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
     DefaultNExecCmd execCommand;
     boolean autoInstall = true;
 
-    public DefaultNArtifactExecutable(NWorkspace workspace,NDefinition def, String commandName, String[] appArgs, List<String> executorOptions,
+    public DefaultNArtifactExecutable(NDefinition def, String commandName, String[] appArgs, List<String> executorOptions,
                                       List<String> workspaceOptions, Map<String, String> env, NPath dir, boolean failFast,
                                       NExecutionType executionType, NRunAs runAs, DefaultNExecCmd execCommand) {
-        super(workspace,commandName, def.getId().getLongName(), NExecutableType.ARTIFACT, execCommand);
+        super(commandName, def.getId().getLongName(), NExecutableType.ARTIFACT, execCommand);
         this.def = def;
         this.runAs = runAs;
         //all these information are available, an exception would be thrown if not!
@@ -83,7 +83,7 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
 
     @Override
     public int execute() {
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         if (session.isDry()) {
             if (autoInstall && !def.getInstallInformation().get().getInstallStatus().isInstalled()) {
                 NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.AUTO_INSTALL, commandName);

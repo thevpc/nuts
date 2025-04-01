@@ -70,11 +70,11 @@ public class NWorkspaceModel {
         this.workspace = workspace;
         this.LOG = LOG;
         if (initialBootOptions.getIsolationLevel().orNull() == NIsolationLevel.MEMORY) {
-            this.store = new NWorkspaceStoreInMemory(workspace);
+            this.store = new NWorkspaceStoreInMemory();
         } else {
-            this.store = new NWorkspaceStoreOnDisk(workspace);
+            this.store = new NWorkspaceStoreOnDisk();
         }
-        this.recomm = new SafeRecommendationConnector(new SimpleRecommendationConnector(workspace));
+        this.recomm = new SafeRecommendationConnector(new SimpleRecommendationConnector());
         this.initialBootOptions = initialBootOptions;
         // initialized here because they just do nothing...
         this.commandModel = new DefaultCustomCommandsModel(workspace);

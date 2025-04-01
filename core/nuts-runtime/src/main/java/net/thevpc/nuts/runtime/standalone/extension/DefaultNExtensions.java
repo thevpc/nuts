@@ -28,10 +28,8 @@ import java.util.*;
 public class DefaultNExtensions implements NExtensions {
 
     private NWorkspaceModel wsModel;
-    private NWorkspace workspace;
 
     public DefaultNExtensions(NWorkspaceModel wsModel) {
-        this.workspace = wsModel.workspace;
         this.wsModel = wsModel;
     }
 
@@ -92,7 +90,7 @@ public class DefaultNExtensions implements NExtensions {
             case "net.thevpc.nuts.format.NFormats": {
                 NFormats t = wsModel.textModel.defaultNFormats;
                 if (t == null) {
-                    t = new NFormatsImpl(workspace);
+                    t = new NFormatsImpl();
                     wsModel.textModel.defaultNFormats = t;
                 }
                 return NOptional.of((T) t);

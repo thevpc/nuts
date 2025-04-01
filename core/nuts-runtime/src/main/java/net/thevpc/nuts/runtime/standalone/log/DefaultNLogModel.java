@@ -109,7 +109,7 @@ public class DefaultNLogModel {
         Map<String, NLog> loaded = loaded();
         NLog y = loaded.get(name);
         if (y == null) {
-            y = new DefaultNLog(workspace, name);
+            y = new DefaultNLog(name);
             loaded.put(name, y);
         }
         return y;
@@ -120,7 +120,7 @@ public class DefaultNLogModel {
         Map<String, NLog> loaded = loaded();
         NLog y = loaded.get(clazz.getName());
         if (y == null) {
-            y = new DefaultNLog(workspace, clazz);
+            y = new DefaultNLog(clazz);
             loaded.put(clazz.getName(), y);
         }
         return y;
@@ -171,7 +171,7 @@ public class DefaultNLogModel {
                 if (fileHandler == null) {
                     try {
                         fileHandler = NLogFileHandler.create(
-                                workspace, logConfig, true, logFolder);
+                                logConfig, true, logFolder);
                         fileHandler.setLevel(logConfig.getLogFileLevel());
                     } catch (Exception ex) {
                         Logger.getLogger(DefaultNLogs.class.getName()).log(Level.FINE, "unable to create file handler", ex);
@@ -182,7 +182,7 @@ public class DefaultNLogModel {
     }
 
     public void updateTermHandler(LogRecord record) {
-        NSession session = NLogUtils.resolveSession(record, workspace);
+        NSession session = NLogUtils.resolveSession(record);
         NPrintStream out = session.err();
         if (consoleHandler != null) {
             if (consoleHandler instanceof NLogConsoleHandler) {
@@ -195,7 +195,7 @@ public class DefaultNLogModel {
             }
             consoleHandler.setLevel(logConfig.getLogTermLevel());
         } else {
-            consoleHandler = new NLogConsoleHandler(out, false,workspace);
+            consoleHandler = new NLogConsoleHandler(out, false);
             consoleHandler.setLevel(logConfig.getLogTermLevel());
         }
     }

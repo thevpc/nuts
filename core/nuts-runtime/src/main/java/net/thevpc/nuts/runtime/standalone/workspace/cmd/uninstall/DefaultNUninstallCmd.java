@@ -37,7 +37,7 @@ public class DefaultNUninstallCmd extends AbstractNUninstallCmd {
 
     @Override
     public NUninstallCmd run() {
-        NWorkspaceUtils.of(workspace).checkReadOnly();
+        NWorkspaceUtils.of().checkReadOnly();
         NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.UNINSTALL, "uninstall");
         List<NDefinition> defs = new ArrayList<>();
         List<NId> nutsIds = this.getIds();
@@ -83,7 +83,7 @@ public class DefaultNUninstallCmd extends AbstractNUninstallCmd {
 
     private void printList(NPrintStream out, String skind, String saction, List<NId> all) {
         if (all.size() > 0) {
-            NSession session=workspace.currentSession();
+            NSession session=NSession.of();
             if (session.isPlainOut()) {
                 NTexts text = NTexts.of();
                 NText kind = text.ofStyled(skind, NTextStyle.primary2());

@@ -16,8 +16,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNExecInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNExecInternalExecutable(NWorkspace workspace, String[] args, NExecCmd execCommand) {
-        super(workspace, "exec", args, execCommand);
+    public DefaultNExecInternalExecutable(String[] args, NExecCmd execCommand) {
+        super("exec", args, execCommand);
     }
 
     @Override
@@ -37,7 +37,6 @@ public class DefaultNExecInternalExecutable extends DefaultInternalNExecutableCo
 
     @Override
     public void dryExecute() {
-        NSession session = workspace.currentSession();
         if (NAppUtils.processHelpOptions(args)) {
             NOut.println("[dry] ##show-help##");
             return;

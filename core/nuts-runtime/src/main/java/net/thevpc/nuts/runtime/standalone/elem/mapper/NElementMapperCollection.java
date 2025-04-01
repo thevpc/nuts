@@ -39,7 +39,6 @@ public class NElementMapperCollection implements NElementMapper {
     }
 
     public Collection fillObject(NElement o, Collection coll, Type elemType, Type to, NElementFactoryContext context) {
-        NSession session = context.getSession();
         for (NElement nutsElement : o.asArray().get().items()) {
             coll.add(context.elementToObject(nutsElement, elemType));
         }
@@ -48,7 +47,6 @@ public class NElementMapperCollection implements NElementMapper {
 
     @Override
     public Collection createObject(NElement o, Type to, NElementFactoryContext context) {
-        NSession session = context.getSession();
         Class cls = ReflectUtils.getRawClass(to);
         Type elemType = Object.class;
         if (to instanceof ParameterizedType) {

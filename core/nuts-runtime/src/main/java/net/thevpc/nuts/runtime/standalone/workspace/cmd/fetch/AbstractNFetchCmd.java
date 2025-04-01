@@ -13,8 +13,8 @@ public abstract class AbstractNFetchCmd extends DefaultNQueryBaseOptions<NFetchC
     private NId id;
 //    protected Boolean installedOrNot;
 
-    public AbstractNFetchCmd(NWorkspace workspace) {
-        super(workspace, "fetch");
+    public AbstractNFetchCmd() {
+        super("fetch");
         failFast();
     }
 

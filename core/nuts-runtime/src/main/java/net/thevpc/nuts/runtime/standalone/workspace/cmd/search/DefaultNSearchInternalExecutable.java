@@ -16,8 +16,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNSearchInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNSearchInternalExecutable(NWorkspace workspace, String[] args, NExecCmd execCommand) {
-        super(workspace,"search", args, execCommand);
+    public DefaultNSearchInternalExecutable(String[] args, NExecCmd execCommand) {
+        super("search", args, execCommand);
     }
 
     @Override

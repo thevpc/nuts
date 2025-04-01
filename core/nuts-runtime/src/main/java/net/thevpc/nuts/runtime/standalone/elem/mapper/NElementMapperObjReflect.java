@@ -59,7 +59,14 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
             case NULL: {
                 return null;
             }
-            case STRING: {
+            case DOUBLE_QUOTED_STRING:
+            case SINGLE_QUOTED_STRING:
+            case ANTI_QUOTED_STRING:
+            case TRIPLE_DOUBLE_QUOTED_STRING:
+            case TRIPLE_SINGLE_QUOTED_STRING:
+            case TRIPLE_ANTI_QUOTED_STRING:
+            case LINE_STRING:
+            {
                 if (c.isAssignableFrom(String.class)) {
                     return o.asString().orNull();
                 }

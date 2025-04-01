@@ -40,25 +40,23 @@ import java.util.function.Function;
 import java.util.logging.Level;
 
 public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
-    private NWorkspace workspace;
     private NanoDB db;
     private NanoDB cacheb;
 
-    public NWorkspaceStoreOnDisk(NWorkspace workspace) {
-        this.workspace = workspace;
+    public NWorkspaceStoreOnDisk() {
     }
 
     @Override
     public NanoDB cacheDB() {
         if (cacheb == null) {
             cacheb = new NanoDBOnDisk(
-                    workspace.getStoreLocation(
-                            workspace.getApiId().builder().setVersion("SHARED").build()
+                    NWorkspace.of().getStoreLocation(
+                            NWorkspace.of().getApiId().builder().setVersion("SHARED").build()
                             ,
                             NStoreType.CACHE
                     ).resolve("cachedb").toFile().get()
             );
-            cacheb.getSerializers().setSerializer(NId.class, () -> new NanoDBNIdSerializer(workspace));
+            cacheb.getSerializers().setSerializer(NId.class, () -> new NanoDBNIdSerializer());
         }
         return cacheb;
     }
@@ -67,50 +65,51 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
     public NanoDB varDB() {
         if (db == null) {
             db = new NanoDBOnDisk(
-                    workspace.getStoreLocation(
-                            workspace.getApiId().builder().setVersion("SHARED").build(),
+                    NWorkspace.of().getStoreLocation(
+                            NWorkspace.of().getApiId().builder().setVersion("SHARED").build(),
                             NStoreType.VAR
                     ).resolve("vardb").toFile().get()
             );
-            db.getSerializers().setSerializer(NId.class, () -> new NanoDBNIdSerializer(workspace));
+            db.getSerializers().setSerializer(NId.class, () -> new NanoDBNIdSerializer());
         }
         return db;
     }
 
     @Override
     public boolean isValidWorkspaceFolder() {
-        Path file = workspace.getWorkspaceLocation().toPath().get().resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
+        Path file = NWorkspace.of().getWorkspaceLocation().toPath().get().resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         return Files.isRegularFile(file);
     }
 
     @Override
     public NWorkspaceConfigBoot loadWorkspaceConfigBoot() {
-        return loadWorkspaceConfigBoot(workspace.getWorkspaceLocation());
+        return loadWorkspaceConfigBoot(NWorkspace.of().getWorkspaceLocation());
     }
 
 
     @Override
     public void saveWorkspaceConfigBoot(NWorkspaceConfigBoot value) {
-        Path file = workspace.getWorkspaceLocation().toPath().get().resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
+        Path file = NWorkspace.of().getWorkspaceLocation().toPath().get().resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         storeObject(value, file.toString());
     }
 
     @Override
     public void saveConfigSecurity(NWorkspaceConfigSecurity value) {
-        NPath configVersionSpecificLocation = workspace.getStoreLocation(workspace.getApiId(), NStoreType.CONF);
+        NPath configVersionSpecificLocation = NWorkspace.of().getStoreLocation(NWorkspace.of().getApiId(), NStoreType.CONF);
         NPath file = configVersionSpecificLocation.resolve(CoreNConstants.Files.WORKSPACE_SECURITY_CONFIG_FILE_NAME);
         storeObject(value, file.toString());
     }
 
     @Override
     public void saveConfigMain(NWorkspaceConfigMain value) {
-        NPath configVersionSpecificLocation = workspace.getStoreLocation(workspace.getApiId(), NStoreType.CONF);
+        NPath configVersionSpecificLocation = NWorkspace.of().getStoreLocation(NWorkspace.of().getApiId(), NStoreType.CONF);
         NPath file = configVersionSpecificLocation.resolve(CoreNConstants.Files.WORKSPACE_MAIN_CONFIG_FILE_NAME);
         storeObject(value, file.toString());
     }
 
     @Override
     public void saveConfigApi(NWorkspaceConfigApi value) {
+        NWorkspace workspace = NWorkspace.of();
         NPath apiVersionSpecificLocation = workspace.getStoreLocation(workspace.getApiId(), NStoreType.CONF);
         NPath afile = apiVersionSpecificLocation.resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
         storeObject(value, afile.toString());
@@ -118,6 +117,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
 
     @Override
     public void saveConfigRuntime(NWorkspaceConfigRuntime value) {
+        NWorkspace workspace = NWorkspace.of();
         NPath conf = workspace.getStoreLocation(NStoreType.CONF)
                 .resolve(NConstants.Folders.ID).resolve(workspace.getDefaultIdBasedir(workspace.getRuntimeId()));
         NPath file = conf.resolve(NConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
@@ -143,7 +143,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
                     version = Nuts.getVersion();
                 }
             }
-            return NVersionCompat.of(version, workspace).parseConfig(bytes);
+            return NVersionCompat.of(version).parseConfig(bytes);
         } catch (Exception ex) {
             _LOG().with().level(Level.SEVERE).verb(NLogVerb.FAIL)
                     .log(NMsg.ofC("erroneous workspace config file. Unable to load file %s : %s",
@@ -154,6 +154,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
 
     @Override
     public NWorkspaceConfigApi loadConfigApi(NId apiId) {
+        NWorkspace workspace = NWorkspace.of();
         if (apiId == null) {
             apiId = workspace.getApiId();
         }
@@ -170,6 +171,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
 
     @Override
     public NWorkspaceConfigRuntime loadConfigRuntime() {
+        NWorkspace workspace = NWorkspace.of();
         NPath path = workspace.getStoreLocation(workspace.getRuntimeId(), NStoreType.CONF)
                 .resolve(NConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
@@ -180,6 +182,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
 
     @Override
     public NWorkspaceConfigSecurity loadConfigSecurity(NId apiId) {
+        NWorkspace workspace = NWorkspace.of();
         if (apiId == null) {
             apiId = workspace.getApiId();
         }
@@ -194,6 +197,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
 
     @Override
     public NWorkspaceConfigMain loadConfigMain(NId apiId) {
+        NWorkspace workspace = NWorkspace.of();
         if (apiId == null) {
             apiId = workspace.getApiId();
         }
@@ -221,6 +225,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
 
     @Override
     public NRepositoryConfig loadRepoConfig(String location, String name) {
+        NWorkspace workspace = NWorkspace.of();
         NPath file = NPath.of(location).resolve(NConstants.Files.REPOSITORY_CONFIG_FILE_NAME);
         NRepositoryConfig conf = null;
         if (file.isRegularFile() && file.getPermissions().contains(NPathPermission.CAN_READ)) {
@@ -249,6 +254,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
     }
 
     private void onLoadRepositoryError(NPath file, String name, String uuid, Throwable ex) {
+        NWorkspace workspace = NWorkspace.of();
         if (workspace.isReadOnly()) {
             throw new NIOException(NMsg.ofC("error loading repository %s", file), ex);
         }
@@ -289,6 +295,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
 
     @Override
     public void saveInstallInfoConfig(InstallInfoConfig installInfoConfig) {
+        NWorkspace workspace = NWorkspace.of();
         NPath path = workspace.getStoreLocation(installInfoConfig.getId(), NStoreType.CONF).resolve(DefaultNInstalledRepository.NUTS_INSTALL_FILE);
         NElements.of().setNtf(false)
                 .json().setValue(installInfoConfig)
@@ -297,6 +304,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
 
     @Override
     public Iterator<NVersion> searchInstalledVersions(NId id) {
+        NWorkspace workspace = NWorkspace.of();
         NPath installFolder
                 = workspace.getStoreLocation(id.builder().setVersion("ANY").build(), NStoreType.CONF).getParent();
         if (installFolder.isDirectory()) {
@@ -325,6 +333,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
 
     @Override
     public Iterator<InstallInfoConfig> searchInstalledVersions() {
+        NWorkspace workspace = NWorkspace.of();
         NPath rootFolder = workspace.getStoreLocation(NStoreType.CONF).resolve(NConstants.Folders.ID);
         return new FolderObjectIterator<InstallInfoConfig>("InstallInfoConfig",
                 rootFolder,
@@ -362,12 +371,13 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
     }
 
     public NPath getPath(NId id, String name) {
-        return workspace.getStoreLocation(id, NStoreType.CONF).resolve(name);
+        return NWorkspace.of().getStoreLocation(id, NStoreType.CONF).resolve(name);
     }
 
     @Override
     public InstallInfoConfig loadInstallInfoConfig(NId id) {
         CoreNIdUtils.checkShortId(id);
+        NWorkspace workspace = NWorkspace.of();
         NPath path = getPath(id, DefaultNInstalledRepository.NUTS_INSTALL_FILE);
 //        if (id == null) {
 //            path = getPath(id, NUTS_INSTALL_FILE);
@@ -421,7 +431,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
     }
 
     public NId pathToId(NPath path) {
-        NPath rootFolder = workspace.getStoreLocation(NStoreType.CONF).resolve(NConstants.Folders.ID);
+        NPath rootFolder = NWorkspace.of().getStoreLocation(NStoreType.CONF).resolve(NConstants.Folders.ID);
         String p = path.toString().substring(rootFolder.toString().length());
         List<String> split = StringTokenizerUtils.split(p, "/\\");
         if (split.size() >= 4) {
@@ -436,7 +446,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
 
     @Override
     public String loadInstalledDefaultVersion(NId id) {
-        NPath pp = workspace.getStoreLocation(id
+        NPath pp = NWorkspace.of().getStoreLocation(id
                         //.setAlternative("")
                         .builder().setVersion("ANY").build(), NStoreType.CONF)
                 .resolveSibling("default-version");
@@ -454,7 +464,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
     @Override
     public void saveInstalledDefaultVersion(NId id) {
         String version = id.getVersion().getValue();
-        NPath pp = workspace.getStoreLocation(id
+        NPath pp = NWorkspace.of().getStoreLocation(id
                         //                .setAlternative("")
                         .builder().setVersion("ANY").build(), NStoreType.CONF)
                 .resolveSibling("default-version");
@@ -474,7 +484,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
 
     @Override
     public void saveLocationKey(NLocationKey k, Object value) {
-        NPath path = workspace.getStoreLocation(k);
+        NPath path = NWorkspace.of().getStoreLocation(k);
         if(value==null) {
             path.delete();
         }else if(value instanceof String) {
@@ -494,7 +504,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
 
     @Override
     public <T> T loadLocationKey(NLocationKey k, Class<T> type) {
-        NPath path = workspace.getStoreLocation(k);
+        NPath path = NWorkspace.of().getStoreLocation(k);
         invalidateIfObsolete(k, path);
         if(path.isRegularFile()) {
             if (String.class.equals(type)) {

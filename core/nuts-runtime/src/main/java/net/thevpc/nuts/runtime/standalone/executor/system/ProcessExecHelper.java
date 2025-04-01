@@ -43,7 +43,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
     private NExecOutput err;
     private boolean dry;
 
-    public ProcessExecHelper(NDefinition definition, ProcessBuilder2 pb, NWorkspace workspace, NPrintStream trace, NExecInput in, NExecOutput out, NExecOutput err, boolean dry) {
+    public ProcessExecHelper(NDefinition definition, ProcessBuilder2 pb, NPrintStream trace, NExecInput in, NExecOutput out, NExecOutput err, boolean dry) {
         super();
         this.pb = pb;
         this.trace = trace;
@@ -58,9 +58,9 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                                            boolean showCommand, boolean failFast, long sleep,
                                            NExecInput in, NExecOutput out, NExecOutput err,
                                            NRunAs runAs, String[] executorOptions,
-                                           boolean dry, NWorkspace workspace) {
+                                           boolean dry) {
         List<String> newCommands = NSysExecUtils.buildEffectiveCommandLocal(args, runAs, executorOptions);
-        ProcessBuilder2 pb = new ProcessBuilder2(workspace);
+        ProcessBuilder2 pb = new ProcessBuilder2();
         pb.setCommand(newCommands)
                 .setEnv(env)
                 .setDirectory(directory == null ? null : directory.toFile())
@@ -77,7 +77,6 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                                     pb.getCommandString()
                             )));
         }
-        NSession session = workspace.currentSession();
         if (showCommand || CoreNUtils.isShowCommand()) {
             if (NOut.getTerminalMode() == NTerminalMode.FORMATTED) {
                 NOut.print(NMsg.ofC("%s ", NText.ofStyled("[exec]", NTextStyle.primary4())));
@@ -87,7 +86,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 NOut.println(NMsg.ofPlain(pb.getCommandString()));
             }
         }
-        return new ProcessExecHelper(definition, pb, workspace, session.out(), in, out, err, dry);
+        return new ProcessExecHelper(definition, pb, NSession.of().out(), in, out, err, dry);
     }
 
     public static ProcessExecHelper ofDefinition(NDefinition nutMainFile,
@@ -203,7 +202,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 in, out, err,
                 runAs,
                 executorOptions,
-                dry, workspace);
+                dry);
     }
 
     public int exec() {

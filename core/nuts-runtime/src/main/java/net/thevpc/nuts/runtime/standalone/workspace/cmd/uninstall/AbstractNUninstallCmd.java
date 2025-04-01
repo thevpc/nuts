@@ -30,7 +30,7 @@ public abstract class AbstractNUninstallCmd extends NWorkspaceCmdBase<NUninstall
     private final List<NId> ids = new ArrayList<>();
 
     public AbstractNUninstallCmd(NWorkspace workspace) {
-        super(workspace, "uninstall");
+        super("uninstall");
     }
 
     @Override

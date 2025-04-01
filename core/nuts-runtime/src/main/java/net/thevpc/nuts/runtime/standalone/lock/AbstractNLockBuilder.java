@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.lock;
 
 import net.thevpc.nuts.concurrent.NLockBuilder;
-import net.thevpc.nuts.NWorkspace;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -9,12 +8,10 @@ import java.nio.file.Path;
 import net.thevpc.nuts.io.NPath;
 
 public abstract class AbstractNLockBuilder implements NLockBuilder {
-    private NWorkspace workspace;
     private Object source;
     private Object resource;
 
-    public AbstractNLockBuilder(NWorkspace workspace) {
-        this.workspace = workspace;
+    public AbstractNLockBuilder() {
     }
 
 
@@ -56,10 +53,6 @@ public abstract class AbstractNLockBuilder implements NLockBuilder {
     public NLockBuilder setResource(Object source) {
         this.resource=source;
         return this;
-    }
-
-    public NWorkspace getWorkspace() {
-        return workspace;
     }
 
 }

@@ -28,9 +28,9 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
     protected NIdPathIteratorBase repoIter;
 
     public NFolderRepositoryBase(NAddRepositoryOptions options,
-                                 NWorkspace workspace, NRepository parent, NSpeedQualifier speed,
+                                 NRepository parent, NSpeedQualifier speed,
                                  boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
-        super(options, workspace, parent,
+        super(options, parent,
                 speed == null ? (NPath.of(options.getConfig().getLocation().getPath()
                 ).isRemote() ? NSpeedQualifier.SLOW : NSpeedQualifier.FASTER) : speed
                 , supportedMirroring, repositoryType, supportsDeploy);

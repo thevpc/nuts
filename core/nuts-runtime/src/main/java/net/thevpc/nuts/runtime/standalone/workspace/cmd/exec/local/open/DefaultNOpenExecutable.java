@@ -30,10 +30,10 @@ public class DefaultNOpenExecutable extends AbstractNExecutableInformationExt {
     private boolean showCommand = false;
     private String[] effectiveOpenExecutable;
 
-    public DefaultNOpenExecutable(NWorkspace workspace,String[] cmd,
+    public DefaultNOpenExecutable(String[] cmd,
                                   String[] executorOptions, NExecCmd execCommand
     ) {
-        super(workspace,cmd[0],
+        super(cmd[0],
                 NCmdLine.of(cmd).toString(),
                 NExecutableType.SYSTEM, execCommand);
         this.cmd = cmd;

@@ -138,7 +138,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         Map<String, NUpdateResult> extUpdates = new LinkedHashMap<>();
         Map<String, NUpdateResult> regularUpdates = new HashMap<>();
         NUpdateResult apiUpdate = null;
-        NVersion bootVersion0 = workspace.getApiVersion();
+        NVersion bootVersion0 = NWorkspace.of().getApiVersion();
         NVersion bootVersion = bootVersion0;
         if (!(this.getApiVersion() == null || this.getApiVersion().isBlank())) {
             bootVersion = this.getApiVersion();
@@ -156,7 +156,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         NUpdateResult runtimeUpdate = null;
         if (this.isRuntime()) {
             if (dws.requiresRuntimeExtension()) {
-                runtimeUpdate = checkCoreUpdate(NId.get(workspace.getRuntimeId().getShortName()).get(),
+                runtimeUpdate = checkCoreUpdate(NId.get(NWorkspace.of().getRuntimeId().getShortName()).get(),
                         apiUpdate != null && apiUpdate.getAvailable() != null && apiUpdate.getAvailable().getId() != null ? apiUpdate.getAvailable().getId().getVersion()
                                 : bootVersion, Type.RUNTIME, now);
                 if (runtimeUpdate.isUpdatable()) {
@@ -226,7 +226,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                 if (id.getShortName().equals(NConstants.Ids.NUTS_API)) {
                     continue;
                 }
-                if (id.getShortName().equals(workspace.getRuntimeId().getShortName())) {
+                if (id.getShortName().equals(NWorkspace.of().getRuntimeId().getShortName())) {
                     continue;
                 }
                 if (ext.contains(id.getShortId())) {
@@ -271,7 +271,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
             if (id.getShortName().equals(NConstants.Ids.NUTS_API)) {
                 continue;
             }
-            if (id.getShortName().equals(workspace.getRuntimeId().getShortName())) {
+            if (id.getShortName().equals(NWorkspace.of().getRuntimeId().getShortName())) {
                 continue;
             }
             if (extensions.contains(id.getShortName())) {
@@ -309,7 +309,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
 
     protected void traceFixes() {
         if (resultFixes != null) {
-            NSession session = getWorkspace().currentSession();
+            NSession session = NSession.of();
             NPrintStream out = session.out();
             for (FixAction n : resultFixes) {
                 out.println(NMsg.ofC("[```error FIX```] %s %s", n.getId(), n.getProblemKey()));
@@ -318,7 +318,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
     }
 
     protected void traceUpdates(NWorkspaceUpdateResult result) {
-        NSession session = getWorkspace().currentSession();
+        NSession session = NSession.of();
         NPrintStream out = session.out();
         List<NUpdateResult> all = result.getAllResults();
         List<NUpdateResult> updates = result.getUpdatable();
@@ -543,7 +543,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
 
     private void applyFixes() {
         if (resultFixes != null) {
-            NSession session = workspace.currentSession();
+            NSession session = NSession.of();
             NPrintStream out = session.out();
             for (FixAction n : resultFixes) {
                 n.fix();
@@ -553,7 +553,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
     }
 
     private void applyResult(NWorkspaceUpdateResult result) {
-        NSession session = getWorkspace().currentSession();
+        NSession session = NSession.of();
         NWorkspace ws = session.getWorkspace();
         applyFixes();
         NUpdateResult apiUpdate = result.getApi();
@@ -572,7 +572,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         if (result.getUpdatesCount() == 0) {
             return;
         }
-        NWorkspaceUtils.of(workspace).checkReadOnly();
+        NWorkspaceUtils.of().checkReadOnly();
         boolean requireSave = false;
         NSession validWorkspaceSession = session;
         final NPrintStream out = validWorkspaceSession.out();
@@ -648,7 +648,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
     }
 
     private void traceSingleUpdate(NUpdateResult r) {
-        NSession session = getWorkspace().currentSession();
+        NSession session = NSession.of();
         NId id = r.getId();
         NDefinition d0 = r.getInstalled();
         NDefinition d1 = r.getAvailable();
@@ -694,7 +694,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
 
     public NUpdateResult checkCoreUpdate(NId id, NVersion bootApiVersion, Type type, Instant now) {
         //disable trace so that search do not write to stream
-        NSession session = getWorkspace().currentSession();
+        NSession session = NSession.of();
         NWorkspace ws = session.getWorkspace();
         NId oldId = null;
         NDefinition oldFile = null;
@@ -846,13 +846,10 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
     }
 
     private void applyRegularUpdate(DefaultNUpdateResult r) {
-        NSession session = getWorkspace().currentSession();
-        NWorkspace ws = session.getWorkspace();
         if (r.isUpdateApplied()) {
             return;
         }
         NWorkspaceExt dws = NWorkspaceExt.of();
-        final NPrintStream out = session.out();
 //        NutsId id = r.getId();
         NDefinition d0 = r.getInstalled();
         NDefinition d1 = r.getAvailable();

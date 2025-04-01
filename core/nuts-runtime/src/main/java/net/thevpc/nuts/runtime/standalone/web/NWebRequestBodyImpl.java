@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.web;
 
+import net.thevpc.nuts.elem.NElementType;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NQuoteType;
 import net.thevpc.nuts.util.NStringUtils;
 import net.thevpc.nuts.web.NWebRequest;
 import net.thevpc.nuts.web.NWebRequestBody;
@@ -97,11 +97,11 @@ public class NWebRequestBodyImpl implements NWebRequestBody {
         StringBuilder sb = new StringBuilder("form-data");
         if (!NBlankable.isBlank(getName())) {
             sb.append("; name=");
-            sb.append(NStringUtils.formatStringLiteral(getName(), NQuoteType.DOUBLE));
+            sb.append(NStringUtils.formatStringLiteral(getName(), NElementType.DOUBLE_QUOTED_STRING));
         }
         if (!NBlankable.isBlank(getFileName())) {
             sb.append("; filename=");
-            sb.append(NStringUtils.formatStringLiteral(getFileName(), NQuoteType.DOUBLE));
+            sb.append(NStringUtils.formatStringLiteral(getFileName(), NElementType.DOUBLE_QUOTED_STRING));
         }
         return sb.toString();
     }

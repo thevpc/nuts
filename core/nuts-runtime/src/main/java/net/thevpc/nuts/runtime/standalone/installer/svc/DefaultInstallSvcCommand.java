@@ -28,7 +28,6 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
     private String serviceName;
     private NPath root;
     private NPath workingDirectory;
-    private NWorkspace workspace;
     private boolean verbose;
     private String[] startCommand;
     private String[] stopCommand;
@@ -38,8 +37,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
     private String nutsApiVersion = "0.8.4";
     private String serviceDescription = "System service";
 
-    public DefaultInstallSvcCommand(NWorkspace workspace) {
-        this.workspace = workspace;
+    public DefaultInstallSvcCommand() {
     }
 
     public DefaultInstallSvcCommand setServiceType(NOsServiceType serviceType) {

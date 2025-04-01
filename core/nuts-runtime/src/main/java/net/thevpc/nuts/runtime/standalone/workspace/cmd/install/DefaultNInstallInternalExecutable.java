@@ -16,8 +16,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNInstallInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNInstallInternalExecutable(NWorkspace workspace, String[] args, NExecCmd execCommand) {
-        super(workspace,"install", args, execCommand);
+    public DefaultNInstallInternalExecutable(String[] args, NExecCmd execCommand) {
+        super("install", args, execCommand);
     }
 
     @Override

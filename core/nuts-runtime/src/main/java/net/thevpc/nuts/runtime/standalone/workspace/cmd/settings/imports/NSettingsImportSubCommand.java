@@ -20,12 +20,11 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettin
  */
 public class NSettingsImportSubCommand extends AbstractNSettingsSubCommand {
     public NSettingsImportSubCommand(NWorkspace workspace) {
-        super(workspace);
+        super();
     }
 
     @Override
     public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
-        NSession session = workspace.currentSession();
         if (cmdLine.next("list imports","list import","import list", "li").isPresent()) {
             cmdLine.setCommandName("config list imports").throwUnexpectedArgument();
             if (cmdLine.isExecMode()) {

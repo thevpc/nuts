@@ -30,20 +30,14 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.LinkedHashMap;
 
-import net.thevpc.nuts.NWorkspace;
-
-import net.thevpc.nuts.NSession;
-
 public class DefaultNClassLoader extends URLClassLoader {
 
     private String name;
-    private NWorkspace workspace;
     private LinkedHashMap<String, NClassLoaderNode> nodes = new LinkedHashMap<>();
     private LinkedHashMap<String, NClassLoaderNode> effective = new LinkedHashMap<>();
-    public DefaultNClassLoader(String name, NWorkspace workspace, ClassLoader parent) {
+    public DefaultNClassLoader(String name, ClassLoader parent) {
         super(new URL[0], parent);
         this.name = name;
-        this.workspace = workspace;
     }
 
     public String getName() {

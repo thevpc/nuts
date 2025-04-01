@@ -25,9 +25,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class NCompressZip implements NCompressPackaging {
-    private NWorkspace workspace;
-    public NCompressZip(NWorkspace workspace) {
-        this.workspace=workspace;
+    public NCompressZip() {
     }
 
     public void compressPackage(NCompress compress) {

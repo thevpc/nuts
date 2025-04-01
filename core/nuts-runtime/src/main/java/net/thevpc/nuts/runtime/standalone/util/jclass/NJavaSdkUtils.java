@@ -42,21 +42,21 @@ public class NJavaSdkUtils {
 //        return wp;
     }
 
-    public static List<NClassLoaderNodeExt> loadNutsClassLoaderNodeExts(NClassLoaderNode[] n, boolean java9, NWorkspace workspace) {
+    public static List<NClassLoaderNodeExt> loadNutsClassLoaderNodeExts(NClassLoaderNode[] n, boolean java9) {
         List<NClassLoaderNodeExt> list = new ArrayList<>();
         for (NClassLoaderNode nn : n) {
-            fillNodes(nn, list, java9, workspace);
+            fillNodes(nn, list, java9);
         }
         return list;
     }
 
-    private static void fillNodes(NClassLoaderNode n, List<NClassLoaderNodeExt> list, boolean java9, NWorkspace workspace) {
+    private static void fillNodes(NClassLoaderNode n, List<NClassLoaderNodeExt> list, boolean java9) {
         NClassLoaderNodeExt k = new NClassLoaderNodeExt();
         k.node = n;
         k.id = n.getId();
         k.path = NPath.of(n.getURL());
         if (java9) {
-            k.moduleInfo = JavaJarUtils.parseModuleInfo(k.path, workspace);
+            k.moduleInfo = JavaJarUtils.parseModuleInfo(k.path);
             if (k.moduleInfo != null) {
                 k.moduleName = k.moduleInfo.module_name;
                 for (JavaClassByteCode.ModuleInfoRequired r : k.moduleInfo.required) {
@@ -75,7 +75,7 @@ public class NJavaSdkUtils {
         }
         list.add(k);
         for (NClassLoaderNode d : n.getDependencies()) {
-            fillNodes(d, list, java9, workspace);
+            fillNodes(d, list, java9);
         }
     }
 

@@ -62,26 +62,13 @@ public class NRepositoryFolderHelper {
     private boolean writeEnabled = true;
     private final String kind;
     private final NObjectElement extraInfoElements;
-    private final NWorkspace workspace;
 
-    public NRepositoryFolderHelper(NRepository repo, NWorkspace workspace, NPath rootPath, boolean cacheFolder, String kind, NObjectElement extraInfoElements) {
+    public NRepositoryFolderHelper(NRepository repo, NPath rootPath, boolean cacheFolder, String kind, NObjectElement extraInfoElements) {
         this.repo = repo;
-        this.workspace = workspace;
         this.kind = kind;
         this.extraInfoElements = extraInfoElements;
-        if (workspace == null && repo == null) {
-            throw new IllegalArgumentException("both workspace and repository are null");
-        }
-
         this.rootPath = rootPath;
         this.cacheFolder = cacheFolder;
-    }
-
-    private NSession currentSession() {
-        if(repo!=null) {
-            return repo.getWorkspace().currentSession();
-        }
-        return workspace.currentSession();
     }
 
     public boolean isReadEnabled() {
@@ -307,11 +294,11 @@ public class NRepositoryFolderHelper {
             @Override
             public void undeploy(NId id) throws NExecutionException {
                 if (repo == null) {
-                    NRepositoryFolderHelper.this.undeploy(new DefaultNRepositoryUndeployCmd(workspace)
+                    NRepositoryFolderHelper.this.undeploy(new DefaultNRepositoryUndeployCmd()
                             .setFetchMode(NFetchMode.LOCAL)
                             .setId(id));
                 } else {
-                    NRepositorySPI repoSPI = NWorkspaceUtils.of(workspace).repoSPI(repo);
+                    NRepositorySPI repoSPI = NWorkspaceUtils.of().repoSPI(repo);
                     repoSPI.undeploy().setId(id)
                             //.setFetchMode(NutsFetchMode.LOCAL)
                             .run();
@@ -581,7 +568,7 @@ public class NRepositoryFolderHelper {
                         }
                     }
                     try (PrintStream p = new PrintStream(new File(folder, CoreNConstants.Files.DOT_FILES))) {
-                        p.println("#version=" + workspace.getApiVersion());
+                        p.println("#version=" + NWorkspace.of().getApiVersion());
                         for (String file : folders) {
                             p.println(file + "/");
                         }

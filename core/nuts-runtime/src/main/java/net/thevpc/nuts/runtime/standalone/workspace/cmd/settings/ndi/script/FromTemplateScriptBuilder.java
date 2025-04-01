@@ -29,8 +29,8 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
     private Function<String, String> mapper;
     private final NdiScriptOptions options;
 
-    public FromTemplateScriptBuilder(String templateName, NShellFamily shellFamily, String type, NId anyId, BaseSystemNdi sndi, NdiScriptOptions options, NWorkspace workspace) {
-        super(shellFamily,type, anyId, workspace);
+    public FromTemplateScriptBuilder(String templateName, NShellFamily shellFamily, String type, NId anyId, BaseSystemNdi sndi, NdiScriptOptions options) {
+        super(shellFamily,type, anyId);
         this.sndi = sndi;
         this.options = options;
         this.templateName = templateName;
@@ -137,7 +137,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
 //                                        }
 //                                        appId=getSession().getWorkspace().getRuntimeId();
 //                                        return appId.getLongName();
-                                        return getWorkspace().getRuntimeId().getLongName();
+                                        return NWorkspace.of().getRuntimeId().getLongName();
                                     }
                                     case "SCRIPT_NUTS":
                                         return sndi.getNutsStart(options).path().toString();
@@ -160,7 +160,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                     case "NUTS_API_ID":
                                         return options.resolveNutsApiId().toString();
                                     case "NUTS_VERSION":
-                                        return getWorkspace().getApiVersion().toString();
+                                        return NWorkspace.of().getApiVersion().toString();
                                     case "NUTS_WORKSPACE":
                                         return NWorkspace.of().getWorkspaceLocation().toString();
                                     case "NUTS_WORKSPACE_BIN":

@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.elem.NElementType;
+
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.StringReader;
@@ -435,13 +437,13 @@ public class NStringMapFormat {
                         }
                         if (v.isEmpty()) {
                             sb.append(
-                                    NStringUtils.formatStringLiteral(k, NQuoteType.SIMPLE, NSupportMode.PREFERRED, escapedChars)
+                                    NStringUtils.formatStringLiteral(k, NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED, escapedChars)
                             );
                         } else {
                             sb.append(
-                                            NStringUtils.formatStringLiteral(k, NQuoteType.SIMPLE, NSupportMode.PREFERRED, escapedChars))
+                                            NStringUtils.formatStringLiteral(k, NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED, escapedChars))
                                     .append(equalsChars)
-                                    .append(NStringUtils.formatStringLiteral(v, NQuoteType.SIMPLE, NSupportMode.PREFERRED, escapedChars)
+                                    .append(NStringUtils.formatStringLiteral(v, NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED, escapedChars)
                                     );
                         }
                     } else {
@@ -449,7 +451,7 @@ public class NStringMapFormat {
                             sb.append(separatorChars);
                         }
                         sb.append(
-                                NStringUtils.formatStringLiteral(k, NQuoteType.SIMPLE, NSupportMode.PREFERRED, escapedChars)
+                                NStringUtils.formatStringLiteral(k, NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED, escapedChars)
                         );
                     }
                 }

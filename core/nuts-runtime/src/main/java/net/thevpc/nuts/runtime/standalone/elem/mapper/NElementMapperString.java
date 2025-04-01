@@ -21,7 +21,6 @@ public class NElementMapperString implements NElementMapper<String> {
 
     @Override
     public String createObject(NElement o, Type to, NElementFactoryContext context) {
-        NSession session = context.getSession();
         return o.asString().get();
     }
 }

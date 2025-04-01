@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 import net.thevpc.nuts.spi.NCodeHighlighter;
@@ -13,10 +12,7 @@ public class SqlCodeHighlighter implements NCodeHighlighter {
 
     private Set<String> reservedWords1 =new HashSet<>();
     private Set<String> reservedWords2 =new HashSet<>();
-    private NWorkspace workspace;
-
-    public SqlCodeHighlighter(NWorkspace workspace) {
-        this.workspace = workspace;
+    public SqlCodeHighlighter() {
         reservedWords1.addAll(NCodeHighlighterHelper.loadNames("sql.kw1",getClass()));
         reservedWords2.addAll(NCodeHighlighterHelper.loadNames("sql.kw2",getClass()));
     }

@@ -34,7 +34,7 @@ import java.util.function.Predicate;
 /**
  * @author thevpc
  */
-public interface NElementFactoryContext extends NWorkspaceProvider,NSessionProvider {
+public interface NElementFactoryContext {
 
     Predicate<Class<?>> getIndestructibleObjects();
 

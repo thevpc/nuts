@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 import net.thevpc.nuts.spi.NCodeHighlighter;
@@ -12,10 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TsonCodeHighlighter implements NCodeHighlighter {
-    private NWorkspace workspace;
-
-    public TsonCodeHighlighter(NWorkspace workspace) {
-        this.workspace = workspace;
+    public TsonCodeHighlighter() {
     }
 
     @Override

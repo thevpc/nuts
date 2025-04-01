@@ -26,7 +26,6 @@ public class NElementMapperPrimitiveCharArray implements NElementMapper<char[]> 
 
     @Override
     public char[] createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        NSession session = context.getSession();
         NArrayElement earr = o.asArray().get();
         String s = (String) context.elementToObject(o, String.class);
         return s.toCharArray();

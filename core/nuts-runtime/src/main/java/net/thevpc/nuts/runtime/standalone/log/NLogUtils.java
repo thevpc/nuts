@@ -170,16 +170,13 @@ public class NLogUtils {
         return v;
     }
 
-    public static final NSession resolveSession(LogRecord record, NWorkspace ws) {
+    public static final NSession resolveSession(LogRecord record) {
         NSession session = null;
         if (record instanceof NLogRecord) {
             session = ((NLogRecord) record).getSession();
         }
-        if (session == null && ws != null) {
-            session = ws.currentSession();
-        }
         if (session == null) {
-            session = NSession.of();
+            session = NSession.get().orNull();
         }
         return session;
     }

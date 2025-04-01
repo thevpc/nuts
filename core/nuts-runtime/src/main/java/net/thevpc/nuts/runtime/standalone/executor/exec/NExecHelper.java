@@ -31,7 +31,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
     NExecCmd pb;
     NPrintStream out;
 
-    public NExecHelper(NExecCmd pb, NWorkspace workspace, NPrintStream out) {
+    public NExecHelper(NExecCmd pb, NPrintStream out) {
         super();
         this.pb = pb;
         this.out = out;
@@ -42,8 +42,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                                      NExecInput in,
                                      NExecOutput out,
                                      NExecOutput err,
-                                     NRunAs runAs,
-                                     NWorkspace workspace) {
+                                     NRunAs runAs) {
         NExecCmd pb = NExecCmd.of();
         NCmdLineUtils.OptionsAndArgs optionsAndArgs = NCmdLineUtils.parseOptionsFirst(args);
         pb.setCommand(optionsAndArgs.getArgs())
@@ -65,7 +64,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                             commandOut
                     ));
         }
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         if (showCommand || NWorkspace.of().getCustomBootOption("---show-command")
                 .flatMap(NLiteral::asBoolean)
                 .orElse(false)) {
@@ -78,14 +77,13 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                 NOut.println(commandOut);
             }
         }
-        return new NExecHelper(pb, workspace, session.out());
+        return new NExecHelper(pb, session.out());
     }
 
     public static NExecHelper ofDefinition(NDefinition nutMainFile,
                                            String[] args, Map<String, String> env, String directory, boolean showCommand, boolean failFast, long sleep,
                                            NExecInput in, NExecOutput out, NExecOutput err,
-                                           NRunAs runAs,
-                                           NWorkspace workspace
+                                           NRunAs runAs
     ) throws NExecutionException {
         Path wsLocation = NWorkspace.of().getWorkspaceLocation().toPath().get();
         Path pdirectory = null;
@@ -96,8 +94,8 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
         }
         return ofArgs(args, env, pdirectory, showCommand, failFast,
                 sleep,
-                in, out, err, runAs,
-                workspace);
+                in, out, err, runAs
+        );
     }
 
 

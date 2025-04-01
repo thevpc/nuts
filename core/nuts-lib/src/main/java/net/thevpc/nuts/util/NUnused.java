@@ -24,7 +24,7 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.spi;
+package net.thevpc.nuts.util;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -38,7 +38,7 @@ import java.lang.annotation.Target;
  * @app.category SPI Base
  * @since 0.5.4
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface NUseDefault {
+@Retention(RetentionPolicy.SOURCE)
+@Target({ElementType.METHOD, ElementType.TYPE, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR, ElementType.LOCAL_VARIABLE, ElementType.PACKAGE, ElementType.TYPE_PARAMETER, ElementType.TYPE_USE})
+public @interface NUnused {
 }

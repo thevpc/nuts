@@ -56,8 +56,8 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
     private MvnClient wrapper;
     private boolean disableMe;
 
-    public MavenFolderRepository(NAddRepositoryOptions options, NWorkspace workspace, NRepository parentRepository) {
-        super(options, workspace, parentRepository,null,false, NConstants.RepoTypes.MAVEN,false);
+    public MavenFolderRepository(NAddRepositoryOptions options, NRepository parentRepository) {
+        super(options, parentRepository,null,false, NConstants.RepoTypes.MAVEN,false);
         repoIter = new MavenRepoIter(this);
         if("maven-local".equals(options.getName())) {
             NLiteral enableM2 = getWorkspace().getCustomBootOption("---m2").orNull();
@@ -133,7 +133,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
         if (true) {
             return null;
         }
-        return new MvnClient(getWorkspace());
+        return new MvnClient();
     }
 
     public NPath fetchContentCoreUsingWrapper(NId id, NDescriptor descriptor, NFetchMode fetchMode) {

@@ -41,7 +41,6 @@ public final class JavaExecutorOptions {
     private final List<String> appArgs;
     private final List<String> appendArgs = new ArrayList<>();
     //    private NutsDefinition nutsMainDef;
-    private final NWorkspace workspace;
     private final List<NClassLoaderNode> classPathNodes = new ArrayList<>();
     private final List<String> classPath = new ArrayList<>();
     private String javaVersion = null;//runnerProps.getProperty("java.parseVersion");
@@ -58,8 +57,7 @@ public final class JavaExecutorOptions {
     private String j9_module;
 
     public JavaExecutorOptions(NDefinition def, boolean tempId, List<String> args,
-                               List<String> executorOptions, NPath dir, NWorkspace workspace) {
-        this.workspace = workspace;
+                               List<String> executorOptions, NPath dir) {
         showCommand = CoreNUtils.isShowCommand();
         NId id = def.getId();
         NDescriptor descriptor = null;
@@ -259,7 +257,7 @@ public final class JavaExecutorOptions {
         if (!NBlankable.isBlank(explicitJavaVersion) && (NBlankable.isBlank(javaVersion) || explicitJavaVersion.compareTo(javaVersion) > 0)) {
             javaVersion = explicitJavaVersion.toString();
         }
-        NJavaSdkUtils nJavaSdkUtils = NJavaSdkUtils.of(workspace);
+        NJavaSdkUtils nJavaSdkUtils = NJavaSdkUtils.of(NWorkspace.of());
         NPlatformLocation nutsPlatformLocation = nJavaSdkUtils.resolveJdkLocation(getJavaVersion());
         if (nutsPlatformLocation == null) {
             NLog.of(JavaExecutorOptions.class).warn(NMsg.ofC("No JRE %s is configured in nuts. search of system installations.", javaVersion));
@@ -278,7 +276,7 @@ public final class JavaExecutorOptions {
                         ).setDefaultValue(true)
                         .getBooleanValue()) {
                     for (NPlatformLocation p : existing) {
-                        workspace.addPlatform(p);
+                        NWorkspace.of().addPlatform(p);
                     }
                     nutsPlatformLocation = nJavaSdkUtils.resolveJdkLocation(getJavaVersion());
                 }
@@ -308,7 +306,7 @@ public final class JavaExecutorOptions {
             }
         }
         if (this.jar) {
-            NSession session = workspace.currentSession();
+            NSession session = NSession.of();
             if (this.mainClass != null) {
                 if (session.isPlainOut()) {
                     session.getTerminal().err().println((NMsg.ofC("ignored main-class=%s. running jar!", getMainClass())));
@@ -384,7 +382,7 @@ public final class JavaExecutorOptions {
             List<NClassLoaderNodeExt> ln =
                     NJavaSdkUtils.loadNutsClassLoaderNodeExts(
                             currentCP.toArray(new NClassLoaderNode[0]),
-                            java9, workspace
+                            java9
                     );
             if (java9) {
                 List<NClassLoaderNodeExt> ln_javaFx = new ArrayList<>();
@@ -436,7 +434,7 @@ public final class JavaExecutorOptions {
             }
 
             if (this.mainClass.contains(":")) {
-                NSession session = workspace.currentSession();
+                NSession session = NSession.of();
                 List<String> possibleClasses = StringTokenizerUtils.split(getMainClass(), ":");
                 switch (possibleClasses.size()) {
                     case 0:
@@ -698,10 +696,6 @@ public final class JavaExecutorOptions {
 
     public List<String> getAppArgs() {
         return appArgs;
-    }
-
-    public NWorkspace getWorkspace() {
-        return workspace;
     }
 
     public void fillStrings(NClassLoaderNode n, List<String> list) {

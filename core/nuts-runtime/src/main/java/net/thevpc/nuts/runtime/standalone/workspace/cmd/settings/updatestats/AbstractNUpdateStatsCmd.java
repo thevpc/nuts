@@ -6,7 +6,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.updatestats;
 
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -27,7 +26,7 @@ public abstract class AbstractNUpdateStatsCmd extends NWorkspaceCmdBase<NUpdateS
     private LinkedHashSet<String> repositories = new LinkedHashSet<>();
 
     public AbstractNUpdateStatsCmd(NWorkspace workspace) {
-        super(workspace, "update-statistics");
+        super("update-statistics");
     }
 
     @Override

@@ -61,8 +61,8 @@ public class NHttpSrvRepository extends NCachedRepository {
 //    private final NLog LOG;
     private NId remoteId;
 
-    public NHttpSrvRepository(NAddRepositoryOptions options, NWorkspace workspace, NRepository parentRepository) {
-        super(options, workspace, parentRepository, NSpeedQualifier.SLOW, false, NConstants.RepoTypes.NUTS, true);
+    public NHttpSrvRepository(NAddRepositoryOptions options, NRepository parentRepository) {
+        super(options, parentRepository, NSpeedQualifier.SLOW, false, NConstants.RepoTypes.NUTS, true);
         try {
             remoteId = getRemoteId();
         } catch (Exception ex) {

@@ -16,7 +16,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 
 import net.thevpc.nuts.NExecutionEntry;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.format.NVisitResult;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.time.NChronometer;
@@ -130,7 +129,7 @@ public class Test24_ClassParserTest {
                 return NVisitResult.CONTINUE;
             }
 
-        }, NWorkspace.of()
+        }
         );
     }
 }

@@ -50,7 +50,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
     private String target;
 
     public AbstractNExecCmd(NWorkspace workspace) {
-        super(workspace, "exec");
+        super("exec");
     }
 
     @Override

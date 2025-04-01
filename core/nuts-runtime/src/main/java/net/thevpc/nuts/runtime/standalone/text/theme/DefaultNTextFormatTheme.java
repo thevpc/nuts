@@ -1,9 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text.theme;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.text.NTextFormatTheme;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTextStyleType;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.util.NColors;
 
@@ -48,8 +46,6 @@ public class DefaultNTextFormatTheme implements NTextFormatTheme {
         return "default";
     }
 
-    private NWorkspace ws;
-
     public static int foregroundSimpleToTrueColor(int color) {
         if (color >= 0 && color < FG.length) {
             color = FG[color];
@@ -76,8 +72,7 @@ public class DefaultNTextFormatTheme implements NTextFormatTheme {
         return rgb;
     }
 
-    public DefaultNTextFormatTheme(NWorkspace ws) {
-        this.ws = ws;
+    public DefaultNTextFormatTheme() {
     }
 
     @Override

@@ -10,7 +10,7 @@ import java.util.*;
 public class NDocCodeHighlighter extends TsonCodeHighlighter {
 
     public NDocCodeHighlighter(NWorkspace workspace) {
-        super(workspace);
+        super();
     }
 
     @Override

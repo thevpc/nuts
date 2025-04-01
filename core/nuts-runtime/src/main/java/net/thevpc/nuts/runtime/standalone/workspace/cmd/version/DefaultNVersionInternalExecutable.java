@@ -19,13 +19,13 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmd;
  */
 public class DefaultNVersionInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNVersionInternalExecutable(NWorkspace workspace,String[] args, final DefaultNExecCmd execCommand) {
-        super(workspace,"version", args, execCommand);
+    public DefaultNVersionInternalExecutable(String[] args, final DefaultNExecCmd execCommand) {
+        super("version", args, execCommand);
     }
 
     @Override
     public int execute() {
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         boolean dry = ExtraApiUtils.asBoolean(getExecCommand().getDry());
         if(dry){
             dryExecute();

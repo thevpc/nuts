@@ -38,7 +38,6 @@ public class DefaultNUncompress implements NUncompress {
     private boolean skipRoot = false;
     private boolean safe = true;
     private String packaging = "zip";
-    private NWorkspace workspace;
     private NInputSource source;
     private NOutputTarget target;
     private NProgressFactory progressFactory;
@@ -46,8 +45,7 @@ public class DefaultNUncompress implements NUncompress {
     private NUncompressVisitor visitor;
     private NUncompressPackaging packagingImpl;
 
-    public DefaultNUncompress(NWorkspace ws) {
-        this.workspace = ws;
+    public DefaultNUncompress() {
     }
 
     @Override
@@ -265,11 +263,11 @@ public class DefaultNUncompress implements NUncompress {
     private NUncompress runVisitor(NInputSource source, CompressType format) {
         switch (format) {
             case ZIP: {
-                new NUncompressZip(workspace).visitPackage(this, source, visitor);
+                new NUncompressZip().visitPackage(this, source, visitor);
                 break;
             }
             case GZIP: {
-                new NUncompressGzip(workspace).visitPackage(this, source, visitor);
+                new NUncompressGzip().visitPackage(this, source, visitor);
                 break;
             }
             default: {

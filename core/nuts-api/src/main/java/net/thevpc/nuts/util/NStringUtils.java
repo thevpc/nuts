@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.elem.NElementType;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.reserved.NReservedUtils;
@@ -354,18 +355,18 @@ public class NStringUtils {
     }
 
     public static String formatStringLiteral(String text) {
-        return formatStringLiteral(text, NQuoteType.DOUBLE);
+        return formatStringLiteral(text, NElementType.DOUBLE_QUOTED_STRING);
     }
 
-    public static String formatStringLiteral(String text, NQuoteType quoteType) {
+    public static String formatStringLiteral(String text, NElementType quoteType) {
         return formatStringLiteral(text, quoteType, NSupportMode.ALWAYS);
     }
 
-    public static String formatStringLiteral(String text, NQuoteType quoteType, NSupportMode condition) {
+    public static String formatStringLiteral(String text, NElementType quoteType, NSupportMode condition) {
         return formatStringLiteral(text, quoteType, condition, "");
     }
 
-    public static String formatStringLiteral(String text, NQuoteType quoteType, NSupportMode condition, String escapeChars) {
+    public static String formatStringLiteral(String text, NElementType quoteType, NSupportMode condition, String escapeChars) {
         if (text == null) {
             return "null";
         }
@@ -412,7 +413,7 @@ public class NStringUtils {
                     break;
                 }
                 case '\"': {
-                    if (quoteType == NQuoteType.DOUBLE) {
+                    if (quoteType == NElementType.DOUBLE_QUOTED_STRING) {
                         sb.append("\\").append(c);
                         if (!requireQuotes && allowQuotes) {
                             requireQuotes = true;
@@ -423,7 +424,7 @@ public class NStringUtils {
                     break;
                 }
                 case '\'': {
-                    if (quoteType == NQuoteType.SIMPLE) {
+                    if (quoteType == NElementType.SINGLE_QUOTED_STRING) {
                         sb.append("\\").append(c);
                         if (!requireQuotes && allowQuotes) {
                             requireQuotes = true;
@@ -434,7 +435,7 @@ public class NStringUtils {
                     break;
                 }
                 case '`': {
-                    if (quoteType == NQuoteType.ANTI) {
+                    if (quoteType == NElementType.ANTI_QUOTED_STRING) {
                         sb.append("\\").append(c);
                         if (!requireQuotes && allowQuotes) {
                             requireQuotes = true;
@@ -464,20 +465,42 @@ public class NStringUtils {
         }
         if (requireQuotes) {
             switch (quoteType) {
-                case DOUBLE: {
+                case DOUBLE_QUOTED_STRING: {
                     sb.insert(0, '\"');
                     sb.append('\"');
                     break;
                 }
-                case SIMPLE: {
+                case SINGLE_QUOTED_STRING: {
                     sb.insert(0, '\'');
                     sb.append('\'');
                     break;
                 }
-                case ANTI: {
+                case ANTI_QUOTED_STRING: {
                     sb.insert(0, '`');
                     sb.append('`');
                     break;
+                }
+                case TRIPLE_DOUBLE_QUOTED_STRING: {
+                    sb.insert(0, "\"\"\"");
+                    sb.append("\"\"\"");
+                    break;
+                }
+                case TRIPLE_SINGLE_QUOTED_STRING: {
+                    sb.insert(0, "'''");
+                    sb.append("'''");
+                    break;
+                }
+                case TRIPLE_ANTI_QUOTED_STRING: {
+                    sb.insert(0, "```");
+                    sb.append("```");
+                    break;
+                }
+                case LINE_STRING: {
+                    sb.insert(0, "¶ ");
+                    sb.append("\n");
+                }
+                default: {
+                    throw new IllegalArgumentException("Unsupported quote type: " + quoteType);
                 }
             }
         }

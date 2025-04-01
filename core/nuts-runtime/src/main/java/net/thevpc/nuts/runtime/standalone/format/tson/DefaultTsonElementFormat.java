@@ -199,35 +199,42 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
             case NAME: {
                 return decorateTsonElement(Tson.ofName(elem.asNamed().get().name()), elem);
             }
-            case STRING: {
+            case DOUBLE_QUOTED_STRING:
+            case SINGLE_QUOTED_STRING:
+            case ANTI_QUOTED_STRING:
+            case TRIPLE_DOUBLE_QUOTED_STRING:
+            case TRIPLE_SINGLE_QUOTED_STRING:
+            case TRIPLE_ANTI_QUOTED_STRING:
+            case LINE_STRING:
+            {
                 return decorateTsonElement(Tson.ofString(
-                        elem.asStr().get().stringValue(),
-                        toTsonStringLayout(elem.asStr().get().stringLayout())
+                        toTsonStringLayout(elem.asStr().get().type()),
+                        elem.asStr().get().stringValue()
                 ), elem);
             }
         }
         throw new IllegalArgumentException("not implemented");
     }
 
-    private TsonStringLayout toTsonStringLayout(NStringLayout layout) {
+    private TsonElementType toTsonStringLayout(NElementType layout) {
         if (layout == null) {
             return null;
         }
         switch (layout) {
-            case DOUBLE_QUOTE:
-                return TsonStringLayout.DOUBLE_QUOTE;
-            case ANTI_QUOTE:
-                return TsonStringLayout.ANTI_QUOTE;
-            case TRIPLE_DOUBLE_QUOTE:
-                return TsonStringLayout.TRIPLE_DOUBLE_QUOTE;
-            case TRIPLE_SINGLE_QUOTE:
-                return TsonStringLayout.TRIPLE_SINGLE_QUOTE;
-            case TRIPLE_ANTI_QUOTE:
-                return TsonStringLayout.TRIPLE_ANTI_QUOTE;
-            case SINGLE_QUOTE:
-                return TsonStringLayout.SINGLE_QUOTE;
-            case SINGLE_LINE:
-                return TsonStringLayout.SINGLE_LINE;
+            case DOUBLE_QUOTED_STRING:
+                return TsonElementType.DOUBLE_QUOTED_STRING;
+            case ANTI_QUOTED_STRING:
+                return TsonElementType.ANTI_QUOTED_STRING;
+            case TRIPLE_DOUBLE_QUOTED_STRING:
+                return TsonElementType.TRIPLE_DOUBLE_QUOTED_STRING;
+            case TRIPLE_SINGLE_QUOTED_STRING:
+                return TsonElementType.TRIPLE_SINGLE_QUOTED_STRING;
+            case TRIPLE_ANTI_QUOTED_STRING:
+                return TsonElementType.TRIPLE_ANTI_QUOTED_STRING;
+            case SINGLE_QUOTED_STRING:
+                return TsonElementType.SINGLE_QUOTED_STRING;
+            case LINE_STRING:
+                return TsonElementType.LINE_STRING;
         }
         throw new IllegalArgumentException("not implemented Tson Type " + layout);
     }
@@ -373,8 +380,15 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
             case BIG_DECIMAL: {
                 return decorateNElement(elems.ofBigDecimal(tsonElem.bigDecimalValue()), tsonElem);
             }
-            case STRING: {
-                return decorateNElement(elems.ofString(tsonElem.toStr().stringValue(), toNStringLayout(tsonElem.toStr().layout())), tsonElem);
+            case DOUBLE_QUOTED_STRING:
+            case SINGLE_QUOTED_STRING:
+            case ANTI_QUOTED_STRING:
+            case TRIPLE_DOUBLE_QUOTED_STRING:
+            case TRIPLE_SINGLE_QUOTED_STRING:
+            case TRIPLE_ANTI_QUOTED_STRING:
+            case LINE_STRING:
+            {
+                return decorateNElement(elems.ofString(tsonElem.toStr().stringValue(), toNStringLayout(tsonElem.toStr().type())), tsonElem);
             }
             case BOOLEAN: {
                 return decorateNElement(elems.ofBoolean(tsonElem.booleanValue()), tsonElem);
@@ -464,25 +478,25 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
         throw new IllegalArgumentException("not implemented Tson Type " + tsonElem.type());
     }
 
-    private NStringLayout toNStringLayout(TsonStringLayout layout) {
+    private NElementType toNStringLayout(TsonElementType layout) {
         if (layout == null) {
             return null;
         }
         switch (layout) {
-            case DOUBLE_QUOTE:
-                return NStringLayout.DOUBLE_QUOTE;
-            case ANTI_QUOTE:
-                return NStringLayout.ANTI_QUOTE;
-            case TRIPLE_DOUBLE_QUOTE:
-                return NStringLayout.TRIPLE_DOUBLE_QUOTE;
-            case TRIPLE_SINGLE_QUOTE:
-                return NStringLayout.TRIPLE_SINGLE_QUOTE;
-            case TRIPLE_ANTI_QUOTE:
-                return NStringLayout.TRIPLE_ANTI_QUOTE;
-            case SINGLE_QUOTE:
-                return NStringLayout.SINGLE_QUOTE;
-            case SINGLE_LINE:
-                return NStringLayout.SINGLE_LINE;
+            case DOUBLE_QUOTED_STRING:
+                return NElementType.DOUBLE_QUOTED_STRING;
+            case ANTI_QUOTED_STRING:
+                return NElementType.ANTI_QUOTED_STRING;
+            case TRIPLE_DOUBLE_QUOTED_STRING:
+                return NElementType.TRIPLE_DOUBLE_QUOTED_STRING;
+            case TRIPLE_SINGLE_QUOTED_STRING:
+                return NElementType.TRIPLE_SINGLE_QUOTED_STRING;
+            case TRIPLE_ANTI_QUOTED_STRING:
+                return NElementType.TRIPLE_ANTI_QUOTED_STRING;
+            case SINGLE_QUOTED_STRING:
+                return NElementType.SINGLE_QUOTED_STRING;
+            case LINE_STRING:
+                return NElementType.LINE_STRING;
         }
         throw new IllegalArgumentException("not implemented Tson Type " + layout);
     }

@@ -14,9 +14,9 @@ import java.util.List;
 public class NRepositoryList extends NCachedRepository {
     protected NRepository[] repoItems;
 
-    public NRepositoryList(NAddRepositoryOptions options, NRepository[] repoItems, NWorkspace workspace, NRepository parentRepository,
+    public NRepositoryList(NAddRepositoryOptions options, NRepository[] repoItems, NRepository parentRepository,
                            NSpeedQualifier speed, boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
-        super(options, workspace, parentRepository, speed, supportedMirroring, repositoryType, supportsDeploy);
+        super(options, parentRepository, speed, supportedMirroring, repositoryType, supportsDeploy);
         this.repoItems = repoItems;
     }
 

@@ -16,8 +16,8 @@ public class NVersionCompat507 extends AbstractNVersionCompat {
 
     public static final NVersion CONFIG_VERSION_507 = NVersion.get("5.0.7").get();
 
-    public NVersionCompat507(NWorkspace workspace,NVersion apiVersion) {
-        super(workspace,apiVersion, 507);
+    public NVersionCompat507(NVersion apiVersion) {
+        super(apiVersion, 507);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class NVersionCompat507 extends AbstractNVersionCompat {
 
     @Override
     public NWorkspaceConfigRuntime parseRuntimeConfig() {
-        NPath path = NWorkspace.of().getStoreLocation(workspace.getRuntimeId(), NStoreType.CONF)
+        NPath path = NWorkspace.of().getStoreLocation(NWorkspace.of().getRuntimeId(), NStoreType.CONF)
                 .resolve(NConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
         NWorkspaceConfigRuntime c = bytes==null?null: NElements.of()

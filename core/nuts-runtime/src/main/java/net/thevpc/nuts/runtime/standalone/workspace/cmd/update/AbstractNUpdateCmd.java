@@ -45,7 +45,7 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
     protected NRepositoryFilter repositoryFilter;
 
     public AbstractNUpdateCmd(NWorkspace workspace) {
-        super(workspace, "update");
+        super("update");
     }
 
     @Override
@@ -242,7 +242,7 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
             return true;
         }
         for (NId id : ids) {
-            if (id.getShortName().equals(workspace.getRuntimeId().getShortName())) {
+            if (id.getShortName().equals(NWorkspace.of().getRuntimeId().getShortName())) {
                 return true;
             }
 

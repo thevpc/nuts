@@ -29,7 +29,7 @@ public class DefaultCustomCommandsModel {
 
     public DefaultCustomCommandsModel(NWorkspace ws) {
         this.workspace = ws;
-        defaultCommandFactory = new ConfigNWorkspaceCommandFactory(ws);
+        defaultCommandFactory = new ConfigNWorkspaceCommandFactory();
     }
 
     protected NLogOp _LOGOP() {
@@ -52,7 +52,7 @@ public class DefaultCustomCommandsModel {
         }
         NWorkspaceCmdFactory f = null;
         if (NBlankable.isBlank(commandFactoryConfig.getFactoryType()) || "command".equals(commandFactoryConfig.getFactoryType().trim())) {
-            f = new CommandNWorkspaceCommandFactory(workspace);
+            f = new CommandNWorkspaceCommandFactory();
         }
         if (f != null) {
             f.configure(commandFactoryConfig);
@@ -314,7 +314,7 @@ public class DefaultCustomCommandsModel {
 //            LOG.log(Level.WARNING, "Invalid Command Definition ''{0}''. Missing Owner. Ignored", c.getName());
 //            return null;
 //        }
-        return new DefaultNCustomCommand(workspace)
+        return new DefaultNCustomCommand()
                 .setCommand(c.getCommand())
                 .setFactoryId(c.getFactoryId())
                 .setOwner(c.getOwner())

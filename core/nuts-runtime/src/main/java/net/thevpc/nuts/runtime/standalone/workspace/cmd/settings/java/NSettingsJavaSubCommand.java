@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
     public NSettingsJavaSubCommand(NWorkspace workspace) {
-        super(workspace);
+        super();
     }
 
     @Override
@@ -34,8 +34,9 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
         if (autoSave == null) {
             autoSave = false;
         }
-        NSession session=workspace.currentSession();
+        NSession session=NSession.of();
         NPrintStream out = session.out();
+        NWorkspace workspace = NWorkspace.of();
         if (cmdLine.next("add java","java add").isPresent()) {
             if (cmdLine.next("--search").isPresent()) {
                 List<String> extraLocations = new ArrayList<>();

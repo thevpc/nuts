@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 import net.thevpc.nuts.spi.NCodeHighlighter;
@@ -12,10 +11,8 @@ import java.util.*;
 public class CppCodeHighlighter implements NCodeHighlighter {
 
     private Set<String> reservedWords = new HashSet<>();
-    private NWorkspace workspace;
 
-    public CppCodeHighlighter(NWorkspace workspace) {
-        this.workspace = workspace;
+    public CppCodeHighlighter() {
         reservedWords.addAll(NCodeHighlighterHelper.loadNames("cpp.kw1",getClass()));
     }
 

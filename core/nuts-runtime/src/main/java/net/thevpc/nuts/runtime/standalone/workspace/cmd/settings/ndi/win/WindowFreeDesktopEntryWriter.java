@@ -24,11 +24,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
-    private final NWorkspace workspace;
     private final NPath desktopPath;
 
-    public WindowFreeDesktopEntryWriter(NPath desktopPath, NWorkspace workspace) {
-        this.workspace = workspace;
+    public WindowFreeDesktopEntryWriter(NPath desktopPath) {
         this.desktopPath = desktopPath;
     }
 

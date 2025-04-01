@@ -5,12 +5,12 @@ import net.thevpc.nuts.NWorkspace;
 
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NUnused;
 
+@NUnused
 public class NWsConfDB {
-    private NWorkspace ws;
 
-    public NWsConfDB(NWorkspace ws) {
-        this.ws = ws;
+    public NWsConfDB() {
     }
 
     public void storeStringNonBlank(NLocationKey k, String value) {

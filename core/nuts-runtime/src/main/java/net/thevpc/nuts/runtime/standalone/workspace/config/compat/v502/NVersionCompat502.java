@@ -13,8 +13,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.compat.CompatUtils;
 import java.util.List;
 
 public class NVersionCompat502 extends AbstractNVersionCompat {
-    public NVersionCompat502(NWorkspace workspace,NVersion apiVersion) {
-        super(workspace,apiVersion, 502);
+    public NVersionCompat502(NVersion apiVersion) {
+        super(apiVersion, 502);
     }
 
     @Override

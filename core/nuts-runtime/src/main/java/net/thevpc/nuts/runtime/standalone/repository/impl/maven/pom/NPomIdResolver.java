@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.urlpart.URLPart;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomId;
@@ -22,10 +21,7 @@ import java.util.zip.ZipInputStream;
 public class NPomIdResolver {
 
     //    private NutsWorkspace ws;
-    private NWorkspace workspace;
-
-    public NPomIdResolver(NWorkspace workspace) {
-        this.workspace = workspace;
+    public NPomIdResolver() {
     }
 
     public NPomId[] resolvePomIds(NPath baseUrl) {

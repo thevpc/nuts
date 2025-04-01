@@ -16,8 +16,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNUndeployInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNUndeployInternalExecutable(NWorkspace workspace, String[] args, NExecCmd execCommand) {
-        super(workspace,"undeploy", args, execCommand);
+    public DefaultNUndeployInternalExecutable(String[] args, NExecCmd execCommand) {
+        super("undeploy", args, execCommand);
     }
 
     @Override

@@ -70,7 +70,7 @@ public class DefaultNUpdateUserCmd extends AbstractNUpdateUserCmd {
                 rconf.setUser(u);
 
             } else {
-                DefaultNWorkspaceConfigModel wconf = NWorkspaceExt.of(workspace).getConfigModel();
+                DefaultNWorkspaceConfigModel wconf = NWorkspaceExt.of().getConfigModel();
                 NUserConfig u = wconf.getUser(login);
                 if (u == null) {
                     throw new NIllegalArgumentException(NMsg.ofC("no such user %s", login));

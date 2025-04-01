@@ -43,8 +43,8 @@ public class MavenSettingsRepository extends NRepositoryList {
 
     private NMavenSettings settings;
 
-    public MavenSettingsRepository(NAddRepositoryOptions options, NWorkspace workspace, NRepository parentRepository) {
-        super(options, new NRepository[0], workspace, parentRepository, null, false, NConstants.RepoTypes.MAVEN, false);
+    public MavenSettingsRepository(NAddRepositoryOptions options, NRepository parentRepository) {
+        super(options, new NRepository[0], parentRepository, null, false, NConstants.RepoTypes.MAVEN, false);
         NLog LOG = NLog.of(MavenSettingsRepository.class);
         this.settings = new NMavenSettingsLoader(LOG).loadSettingsRepos();
         List<NRepository> base = new ArrayList<>();
@@ -78,11 +78,11 @@ public class MavenSettingsRepository extends NRepositoryList {
             //non traversable!
             case "http":
             case "https": {
-                mavenChild = new MavenRemoteXmlRepository(options, getWorkspace(), null);
+                mavenChild = new MavenRemoteXmlRepository(options, null);
                 break;
             }
             default: {
-                mavenChild = new MavenFolderRepository(options, getWorkspace(), null);
+                mavenChild = new MavenFolderRepository(options, null);
             }
         }
         mavenChild.getCache().setReadEnabled(false);

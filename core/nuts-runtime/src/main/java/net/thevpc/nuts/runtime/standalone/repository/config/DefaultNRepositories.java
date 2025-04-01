@@ -15,10 +15,7 @@
 //@NComponentScope(NScopeType.SESSION)
 //public class DefaultNRepositories implements NRepositories {
 //
-//    private NWorkspace workspace;
-//
-//    public DefaultNRepositories(NWorkspace workspace) {
-//        this.workspace = workspace;
+//    public DefaultNRepositories() {
 //    }
 //
 //

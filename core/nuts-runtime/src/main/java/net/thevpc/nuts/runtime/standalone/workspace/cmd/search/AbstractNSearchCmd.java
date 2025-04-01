@@ -79,8 +79,8 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     protected NVersion targetApiVersion = null;
     protected NInstallStatusFilter installStatus;
 
-    public AbstractNSearchCmd(NWorkspace workspace) {
-        super(workspace, "search");
+    public AbstractNSearchCmd() {
+        super("search");
     }
 
     @Override
@@ -1258,11 +1258,11 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     @Override
     public NSearchCmd run() {
         NIterator<Object> it = runIterator();
-        NSession session=workspace.currentSession();
+        NSession session=NSession.of();
         if (session.isDry()) {
             displayDryQueryPlan(it);
         } else {
-            it = NWorkspaceUtils.of(getWorkspace()).decoratePrint(it, getDisplayOptions());
+            it = NWorkspaceUtils.of().decoratePrint(it, getDisplayOptions());
             while (it.hasNext()) {
                 it.next();
             }
@@ -1281,7 +1281,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     private void displayDryQueryPlan(NIterator it) {
         NElement n = toQueryPlan(it);
-        NSession session=workspace.currentSession();
+        NSession session=NSession.of();
         NContentType f = session.getOutputFormat().orDefault();
         if (f == NContentType.PLAIN) {
             f = NContentType.TREE;
@@ -1293,7 +1293,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     public NIterator<NDefinition> getResultDefinitionIteratorBase(boolean content, boolean effective) {
         NFetchCmd fetch = toFetch().setContent(content).setEffective(effective);
-        NSession session=workspace.currentSession();
+        NSession session=NSession.of();
 //        NFetchCmd ofetch = toFetch().setContent(content).setEffective(effective)
 //                .setSession(session.copy().setFetchStrategy(NFetchStrategy.OFFLINE));
         final boolean hasRemote = session.getFetchStrategy().orDefault() == null
@@ -1371,11 +1371,11 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     }
 
     protected NSession getSearchSession() {
-        NSession session=getWorkspace().currentSession();
+        NSession session=NSession.of();
         return session;
     }
 
     protected NIterator<NId> applyPrintDecoratorIterOfNutsId(NIterator<NId> curr, boolean print) {
-        return print ? NWorkspaceUtils.of(getWorkspace()).decoratePrint(curr, getDisplayOptions()) : curr;
+        return print ? NWorkspaceUtils.of().decoratePrint(curr, getDisplayOptions()) : curr;
     }
 }

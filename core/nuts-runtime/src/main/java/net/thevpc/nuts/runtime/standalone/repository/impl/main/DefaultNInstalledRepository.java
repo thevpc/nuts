@@ -76,10 +76,9 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     private final NRepositoryFolderHelper deployments;
     private final Map<NId, String> cachedDefaultVersions = new NLRUMap<>(200);
 
-    public DefaultNInstalledRepository(NWorkspace ws, NBootOptions bOptions) {
-        super(ws);
+    public DefaultNInstalledRepository(NBootOptions bOptions) {
+        super();
         this.deployments = new NRepositoryFolderHelper(this,
-                ws,
                 NPath.of(bOptions.getStoreType(NStoreType.LIB).get()).resolve(NConstants.Folders.ID)
                 , false,
                 "lib", NElements.of().ofObjectBuilder().set("repoKind", "lib").build()

@@ -55,10 +55,7 @@ import java.util.*;
 @NComponentScope(NScopeType.WORKSPACE)
 public class DefaultNContentTypeResolver implements NContentTypeResolver {
 
-    private NWorkspace workspace;
-
-    public DefaultNContentTypeResolver(NWorkspace workspace) {
-        this.workspace = workspace;
+    public DefaultNContentTypeResolver() {
     }
 
     public NCallableSupport<String> probeContentType(NPath path) {
@@ -233,7 +230,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
     }
 
     public DefaultNContentTypeResolverModel model() {
-        synchronized (workspace) {
+        synchronized (NWorkspace.of()) {
             return NApp.of().getOrComputeProperty(
                     DefaultNContentTypeResolverModel.class.getName(), NScopeType.WORKSPACE,
                     () -> new DefaultNContentTypeResolverModel()

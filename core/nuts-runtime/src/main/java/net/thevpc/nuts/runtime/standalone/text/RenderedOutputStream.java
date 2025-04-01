@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.io.NOutputStreamTransparentAdapter;
-import net.thevpc.nuts.NWorkspace;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -14,15 +13,13 @@ public class RenderedOutputStream extends OutputStream implements NOutputStreamT
 
     FormatOutputStreamSupport h;
     OutputStream out;
-    NWorkspace workspace;
     NSystemTerminalBase terminal;
 
-    public RenderedOutputStream(OutputStream out, NSystemTerminalBase terminal, boolean filtered, NWorkspace workspace) {
+    public RenderedOutputStream(OutputStream out, NSystemTerminalBase terminal, boolean filtered) {
         this.out = out;
-        this.workspace = workspace;
         this.terminal=terminal;
         h = new FormatOutputStreamSupport(
-                new NPrintStreamRaw(out,true,null, workspace,new NPrintStreamBase.Bindings(), terminal)
+                new NPrintStreamRaw(out,true,null,new NPrintStreamBase.Bindings(), terminal)
                 , terminal,filtered);
     }
 

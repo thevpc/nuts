@@ -42,7 +42,7 @@ public class JavaJarUtils {
                     }
 
                 };
-                JavaClassByteCode classReader = new JavaClassByteCode(new BufferedInputStream(inputStream), cl, NWorkspace.get().get());
+                JavaClassByteCode classReader = new JavaClassByteCode(new BufferedInputStream(inputStream), cl);
             }
             return NVisitResult.CONTINUE;
         });
@@ -307,15 +307,15 @@ public class JavaJarUtils {
         return automaticModuleName.get();
     }
 
-    public static JavaClassByteCode.ModuleInfo parseModuleInfo(NPath jar, NWorkspace workspace) {
+    public static JavaClassByteCode.ModuleInfo parseModuleInfo(NPath jar) {
         try (InputStream is = jar.getInputStream()) {
-            return parseModuleInfo(is, workspace);
+            return parseModuleInfo(is);
         } catch (IOException ex) {
             throw new NIOException(ex);
         }
     }
 
-    public static JavaClassByteCode.ModuleInfo parseModuleInfo(InputStream jarStream, NWorkspace workspace) {
+    public static JavaClassByteCode.ModuleInfo parseModuleInfo(InputStream jarStream) {
         if (!(jarStream instanceof BufferedInputStream)) {
             jarStream = new BufferedInputStream(jarStream);
         }
@@ -328,7 +328,7 @@ public class JavaJarUtils {
                         ref.set(mi);
                         return NVisitResult.CONTINUE;
                     }
-                }, workspace);
+                });
                 return NVisitResult.TERMINATE;
             }
             return NVisitResult.CONTINUE;

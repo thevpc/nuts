@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.recom;
 import java.io.IOException;
 
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
@@ -21,14 +20,14 @@ import java.util.Locale;
 import net.thevpc.nuts.io.NIOException;
 
 public class SimpleRecommendationConnector extends AbstractRecommendationConnector {
-    public SimpleRecommendationConnector(NWorkspace workspace) {
-        super(workspace);
+    public SimpleRecommendationConnector() {
+        super();
     }
 
     @Override
     public <T> T post(String url, RequestQueryInfo ri, Class<T> resultType) {
         validateRequest(ri);
-        NSession session = getWorkspace().currentSession();
+        NSession session = NSession.of();
         try {
             URL url2 = CoreIOUtils.urlOf(ri.server + url);
             URLConnection con = url2.openConnection();

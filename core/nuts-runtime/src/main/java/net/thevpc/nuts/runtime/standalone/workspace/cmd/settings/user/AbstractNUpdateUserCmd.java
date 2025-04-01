@@ -55,7 +55,7 @@ public abstract class AbstractNUpdateUserCmd extends NWorkspaceCmdBaseRepo<NUpda
     protected final Set<String> rm_groups = new HashSet<>();
 
     public AbstractNUpdateUserCmd(NWorkspace workspace) {
-        super(workspace, "update-user");
+        super("update-user");
     }
 
     @Override

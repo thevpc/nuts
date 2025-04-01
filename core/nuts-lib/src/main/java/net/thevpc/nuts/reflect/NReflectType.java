@@ -94,10 +94,6 @@ public interface NReflectType {
 
     boolean hasSpecialConstructor();
 
-    boolean hasSessionConstructor();
-
-    boolean hasWorkspaceConstructor();
-
     NReflectType getRawType();
 
     Object newInstance();

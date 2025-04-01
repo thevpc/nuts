@@ -72,10 +72,15 @@ public enum NElementType implements NEnum {
      * float/double (number) element
      */
     DOUBLE,
-    /**
-     * string element
-     */
-    STRING,
+
+    DOUBLE_QUOTED_STRING,
+    SINGLE_QUOTED_STRING,
+    ANTI_QUOTED_STRING,
+    TRIPLE_DOUBLE_QUOTED_STRING,
+    TRIPLE_SINGLE_QUOTED_STRING,
+    TRIPLE_ANTI_QUOTED_STRING,
+    LINE_STRING,
+
     REGEX,
     NAME,
     CHAR,
@@ -166,7 +171,13 @@ public enum NElementType implements NEnum {
             case NULL:
             case BINARY_STREAM:
             case CHAR_STREAM:
-            case STRING:
+            case DOUBLE_QUOTED_STRING:
+            case SINGLE_QUOTED_STRING:
+            case ANTI_QUOTED_STRING:
+            case TRIPLE_DOUBLE_QUOTED_STRING:
+            case TRIPLE_SINGLE_QUOTED_STRING:
+            case TRIPLE_ANTI_QUOTED_STRING:
+            case LINE_STRING:
             case CHAR:
             case BOOLEAN:
             case NAME:
@@ -228,7 +239,13 @@ public enum NElementType implements NEnum {
             case BIG_COMPLEX:
             case BIG_DECIMAL:
             case NULL:
-            case STRING:
+            case DOUBLE_QUOTED_STRING:
+            case SINGLE_QUOTED_STRING:
+            case ANTI_QUOTED_STRING:
+            case TRIPLE_DOUBLE_QUOTED_STRING:
+            case TRIPLE_SINGLE_QUOTED_STRING:
+            case TRIPLE_ANTI_QUOTED_STRING:
+            case LINE_STRING:
             case CHAR:
             case BOOLEAN:
             case NAME:
@@ -263,6 +280,20 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    public boolean isString() {
+        switch (this) {
+            case DOUBLE_QUOTED_STRING:
+            case SINGLE_QUOTED_STRING:
+            case ANTI_QUOTED_STRING:
+            case TRIPLE_DOUBLE_QUOTED_STRING:
+            case TRIPLE_SINGLE_QUOTED_STRING:
+            case TRIPLE_ANTI_QUOTED_STRING:
+            case LINE_STRING:
+                return true;
+        }
+        return false;
+    }
+
     public boolean isStream() {
         switch (this) {
             case BINARY_STREAM:
@@ -274,7 +305,13 @@ public enum NElementType implements NEnum {
 
     public boolean isAnyString() {
         switch (this) {
-            case STRING:
+            case DOUBLE_QUOTED_STRING:
+            case SINGLE_QUOTED_STRING:
+            case ANTI_QUOTED_STRING:
+            case TRIPLE_DOUBLE_QUOTED_STRING:
+            case TRIPLE_SINGLE_QUOTED_STRING:
+            case TRIPLE_ANTI_QUOTED_STRING:
+            case LINE_STRING:
             case NAME:
             case REGEX:
             case CHAR:

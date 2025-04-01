@@ -6,7 +6,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.archetype;
 
 import net.thevpc.nuts.NOut;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
@@ -18,7 +17,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettin
  */
 public class NSettingsArchetypeSubCommand extends AbstractNSettingsSubCommand {
     public NSettingsArchetypeSubCommand(NWorkspace workspace) {
-        super(workspace);
+        super();
     }
 
     @Override

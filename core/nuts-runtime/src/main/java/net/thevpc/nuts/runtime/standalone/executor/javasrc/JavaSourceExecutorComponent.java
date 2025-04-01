@@ -77,7 +77,7 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
             );
             JavaExecutorComponent cc = new JavaExecutorComponent();
             NDefinition d = executionContext.getDefinition();
-            d = new DefaultNDefinition(d, executionContext.getWorkspace());
+            d = new DefaultNDefinition(d);
             ((DefaultNDefinition) d).setContent(
                     NPath.of(folder).setUserCache(false).setUserTemporary(true)
             );
@@ -109,7 +109,7 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
             }
             JavaExecutorComponent cc = new JavaExecutorComponent();
             NDefinition d = executionContext.getDefinition();
-            d = new DefaultNDefinition(d, executionContext.getWorkspace());
+            d = new DefaultNDefinition(d);
             ((DefaultNDefinition) d).setContent(NPath.of(folder).setUserCache(false).setUserTemporary(true));
             String fileName = javaFile.getFileName().toString();
             List<String> z = new ArrayList<>(executionContext.getExecutorOptions());

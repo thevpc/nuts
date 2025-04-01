@@ -33,11 +33,11 @@ public class DefaultNUpdateStatsCmd extends AbstractNUpdateStatsCmd {
     @Override
     public NUpdateStatsCmd run() {
         boolean processed = false;
-        NSession session=getWorkspace().currentSession();
+        NSession session=NSession.of();
         for (String repository : getRepositories()) {
             processed = true;
-            NRepository repo = workspace.findRepository(repository).get();
-            NRepositorySPI repoSPI = NWorkspaceUtils.of(workspace).repoSPI(repo);
+            NRepository repo = NWorkspace.of().findRepository(repository).get();
+            NRepositorySPI repoSPI = NWorkspaceUtils.of().repoSPI(repo);
             repoSPI.updateStatistics()
                     //                    .setFetchMode(NutsFetchMode.LOCAL)
                     .run();
@@ -69,7 +69,7 @@ public class DefaultNUpdateStatsCmd extends AbstractNUpdateStatsCmd {
                         -> x.getName().equals("nuts-repository.json")
                 );
                 if (nutsRepoRootFiles != null && nutsRepoRootFiles.length > 0) {
-                    new NRepositoryFolderHelper(null, workspace, NPath.of(repositoryPath), false,"stats",null).reindexFolder();
+                    new NRepositoryFolderHelper(null, NPath.of(repositoryPath), false,"stats",null).reindexFolder();
                 } else {
                     throw new NIllegalArgumentException(NMsg.ofPlain("unsupported repository folder"));
                 }
@@ -82,11 +82,11 @@ public class DefaultNUpdateStatsCmd extends AbstractNUpdateStatsCmd {
             if (session.isPlainTrace()) {
                 NOut.resetLine().println(NMsg.ofC("%s updating workspace stats", NWorkspace.of().getWorkspaceLocation()));
             }
-            for (NRepository repo : workspace.getRepositories()) {
+            for (NRepository repo : NWorkspace.of().getRepositories()) {
                 if (session.isPlainTrace()) {
                     NOut.resetLine().println(NMsg.ofC("%s updating stats %s", NWorkspace.of().getWorkspaceLocation(), repo));
                 }
-                NWorkspaceUtils.of(workspace).repoSPI(repo).updateStatistics()
+                NWorkspaceUtils.of().repoSPI(repo).updateStatistics()
                         //                        .setFetchMode(NutsFetchMode.LOCAL)
                         .run();
             }

@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreTimeUtils;
 import net.thevpc.nuts.text.*;
@@ -15,12 +14,10 @@ import java.util.logging.LogRecord;
 
 public class NLogRichFormatter extends Formatter {
     private long lastMillis = -1;
-    private NWorkspace workspace;
     private boolean filtered;
 //    public static final NutsLogRichFormatter RICH = new NutsLogRichFormatter();
 
-    public NLogRichFormatter(NWorkspace workspace, boolean filtered) {
-        this.workspace = workspace;
+    public NLogRichFormatter(boolean filtered) {
         this.filtered = filtered;
     }
 

@@ -37,10 +37,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
  */
 @NComponentScope(NScopeType.WORKSPACE)
 public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeComponent {
-    private NWorkspace workspace;
-
-    public MinimalNWorkspaceArchetypeComponent(NWorkspace workspace) {
-        this.workspace = workspace;
+    public MinimalNWorkspaceArchetypeComponent() {
     }
 
     @Override
@@ -51,8 +48,9 @@ public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
     @Override
     public void initializeWorkspace() {
 //        defaults.put(NutsConstants.Names.DEFAULT_REPOSITORY_NAME, null);
-        NRepositoryLocation[] br = NWorkspaceExt.of(workspace).getConfigModel().resolveBootRepositoriesList().resolve(
+        NRepositoryLocation[] br = NWorkspaceExt.of().getConfigModel().resolveBootRepositoriesList().resolve(
                 new NRepositoryLocation[0], NRepositoryDB.of());
+        NWorkspace workspace = NWorkspace.of();
         for (NRepositoryLocation s : br) {
             workspace.addRepository(s.toString());
         }
@@ -71,9 +69,10 @@ public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
     public void startWorkspace() {
 //        boolean initializePlatforms = boot.getBootOptions().getInitPlatforms().ifEmpty(false).get(session);
 //        boolean initializeJava = boot.getBootOptions().getInitJava().ifEmpty(initializePlatforms).get(session);
+        NWorkspace workspace = NWorkspace.of();
         boolean initializeScripts = workspace.getBootOptions().getInitScripts().ifEmpty(true).get();
         boolean initializeLaunchers = workspace.getBootOptions().getInitLaunchers().ifEmpty(true).get();
-        Boolean installCompanions = NWorkspace.of().getBootOptions().getInstallCompanions().orElse(false);
+        Boolean installCompanions = workspace.getBootOptions().getInstallCompanions().orElse(false);
 
 //        if (initializeJava) {
 //            NWorkspaceUtils.of().installAllJVM();

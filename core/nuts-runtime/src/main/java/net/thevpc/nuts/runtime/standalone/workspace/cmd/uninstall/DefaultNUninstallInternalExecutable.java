@@ -16,8 +16,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNUninstallInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNUninstallInternalExecutable(NWorkspace workspace,String[] args, NExecCmd execCommand) {
-        super(workspace,"uninstall", args, execCommand);
+    public DefaultNUninstallInternalExecutable(String[] args, NExecCmd execCommand) {
+        super("uninstall", args, execCommand);
     }
 
     @Override

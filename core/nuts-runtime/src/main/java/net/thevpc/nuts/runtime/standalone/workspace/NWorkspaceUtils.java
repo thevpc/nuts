@@ -81,7 +81,7 @@ public class NWorkspaceUtils {
         //do not call env.getProperty(...). It will end up with a stack overflow
         NReflectRepository o = (NReflectRepository) (workspace.getProperties().get(NReflectRepository.class.getName()));
         if (o == null) {
-            o = new DefaultNReflectRepository(workspace,NReflectConfigurationBuilder.of()
+            o = new DefaultNReflectRepository(NReflectConfigurationBuilder.of()
                     .setPropertyAccessStrategy(NReflectPropertyAccessStrategy.FIELD)
                     .setPropertyDefaultValueStrategy(NReflectPropertyDefaultValueStrategy.PROPERTY_DEFAULT)
                     .build());

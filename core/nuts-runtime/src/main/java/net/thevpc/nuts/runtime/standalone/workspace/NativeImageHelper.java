@@ -7,7 +7,7 @@ import net.thevpc.nuts.runtime.standalone.format.DefaultNObjectFormat;
 public class NativeImageHelper {
     public static void prepare(NWorkspace workspace){
         if(Boolean.getBoolean("EnableGraalVM")){
-            new DefaultNCmdLines(workspace);
+            new DefaultNCmdLines();
             new DefaultNObjectFormat(workspace);
         }
     }

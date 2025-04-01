@@ -18,8 +18,8 @@ import java.util.Set;
 
 public class WindowsNdi extends BaseSystemNdi {
 
-    public WindowsNdi(NWorkspace workspace) {
-        super(workspace);
+    public WindowsNdi() {
+        super();
     }
 
     protected NShellFamily[] getShellGroups() {
@@ -80,7 +80,7 @@ public class WindowsNdi extends BaseSystemNdi {
     protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
         return new WindowFreeDesktopEntryWriter(
                 NWorkspace.of().getDesktopPath()==null?null: NPath.of(NWorkspace.of().getDesktopPath())
-                , workspace);
+        );
     }
 
     protected int resolveIconExtensionPriority(String extension) {

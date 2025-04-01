@@ -9,14 +9,12 @@ public class NameBuilder {
     private NDescriptor descriptor;
     private String preferredName;
     private String defaultName;
-    private NWorkspace workspace;
     private boolean preferId;
 
-    public NameBuilder(NId id, String preferredName, String defaultName, NDescriptor descriptor, NWorkspace workspace, boolean preferId) {
+    public NameBuilder(NId id, String preferredName, String defaultName, NDescriptor descriptor, boolean preferId) {
         this.id = id;
         this.preferredName = preferredName;
         this.descriptor = descriptor;
-        this.workspace = workspace;
         this.preferId = preferId;
         if (defaultName == null) {
             defaultName = "";
@@ -32,12 +30,12 @@ public class NameBuilder {
         this.defaultName = defaultName;
     }
 
-    public static NameBuilder id(NId id, String preferredName, String defaultName, NDescriptor descriptor, NWorkspace workspace) {
-        return new NameBuilder(id, preferredName, defaultName, descriptor, workspace, true);
+    public static NameBuilder id(NId id, String preferredName, String defaultName, NDescriptor descriptor) {
+        return new NameBuilder(id, preferredName, defaultName, descriptor, true);
     }
 
-    public static NameBuilder label(NId id, String preferredName, String defaultName, NDescriptor descriptor, NWorkspace workspace) {
-        return new NameBuilder(id, preferredName, defaultName, descriptor, workspace, false);
+    public static NameBuilder label(NId id, String preferredName, String defaultName, NDescriptor descriptor) {
+        return new NameBuilder(id, preferredName, defaultName, descriptor, false);
     }
 
     public static String extractPathName(String s) {
@@ -144,7 +142,7 @@ public class NameBuilder {
                     }
                     case 'h': {
                         if (!NWorkspaceUtils.isUserDefaultWorkspace()) {
-                            h.append(workspace.getDigestName());
+                            h.append(NWorkspace.of().getDigestName());
                         }
                         break;
                     }

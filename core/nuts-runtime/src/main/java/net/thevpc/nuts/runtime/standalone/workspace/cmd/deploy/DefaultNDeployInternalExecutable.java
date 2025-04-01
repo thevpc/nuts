@@ -14,13 +14,13 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNDeployInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNDeployInternalExecutable(NWorkspace workspace, String[] args, NExecCmd execCommand) {
-        super(workspace,"deploy", args, execCommand);
+    public DefaultNDeployInternalExecutable(String[] args, NExecCmd execCommand) {
+        super("deploy", args, execCommand);
     }
 
     @Override
     public int execute() {
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         if(session.isDry()){
             dryExecute();
             return NExecutionException.SUCCESS;

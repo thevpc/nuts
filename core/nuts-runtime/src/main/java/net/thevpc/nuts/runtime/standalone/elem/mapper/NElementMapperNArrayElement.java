@@ -15,7 +15,6 @@ public class NElementMapperNArrayElement extends NElementMapperNElement {
 
     @Override
     public NArrayElement createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        NSession session = context.getSession();
         o = super.createObject(o, typeOfResult, context);
         if (o.type() == NElementType.ARRAY) {
             return o.asArray().get();

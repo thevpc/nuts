@@ -16,12 +16,10 @@ import java.util.concurrent.locks.ReentrantLock;
 public class DefaultMemLock extends AbstractNLock {
     private static TimePeriod FIVE_MINUTES = new TimePeriod(5, TimeUnit.MINUTES);
     private Object lockedObject;
-    private NWorkspace workspace;
     private ReentrantLock lock = new ReentrantLock();
 
-    public DefaultMemLock(Object lockedObject, NWorkspace workspace) {
+    public DefaultMemLock(Object lockedObject) {
         this.lockedObject = lockedObject;
-        this.workspace = workspace;
     }
 
     public TimePeriod getDefaultTimePeriod() {

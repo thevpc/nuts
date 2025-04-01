@@ -149,7 +149,7 @@ public class CoreIOUtils {
         if (out instanceof ExtendedFormatAware) {
             aw = (ExtendedFormatAware) out;
         } else {
-            aw = new RawOutputStream(out, term, NWorkspace.get().get());
+            aw = new RawOutputStream(out, term);
         }
         switch (expected) {
             case INHERITED: {

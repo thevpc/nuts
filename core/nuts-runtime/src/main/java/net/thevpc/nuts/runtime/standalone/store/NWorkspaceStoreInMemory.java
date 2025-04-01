@@ -12,7 +12,6 @@ import net.thevpc.nuts.runtime.standalone.xtra.nanodb.mem.NanoDBInMemory;
 import java.util.*;
 
 public class NWorkspaceStoreInMemory extends AbstractNWorkspaceStore {
-    private NWorkspace workspace;
     private NWorkspaceConfigBoot storedConfigBoot;
     private NWorkspaceConfigSecurity storedConfigSecurity;
     private NWorkspaceConfigMain storedConfigMain;
@@ -28,15 +27,14 @@ public class NWorkspaceStoreInMemory extends AbstractNWorkspaceStore {
     private Map<NId, Map<NId, InstallInfoConfig>> shortToLongToInstallInfoConfigMap = new HashMap<>();
     private Map<NId, String> shortToDefaultVersionMap = new HashMap<>();
 
-    public NWorkspaceStoreInMemory(NWorkspace workspace) {
-        this.workspace = workspace;
+    public NWorkspaceStoreInMemory() {
     }
 
     @Override
     public NanoDB cacheDB() {
         if (cacheDB == null) {
             cacheDB = new NanoDBInMemory();
-            cacheDB.getSerializers().setSerializer(NId.class, () -> new NanoDBNIdSerializer(workspace));
+            cacheDB.getSerializers().setSerializer(NId.class, () -> new NanoDBNIdSerializer());
         }
         return cacheDB;
     }
@@ -45,7 +43,7 @@ public class NWorkspaceStoreInMemory extends AbstractNWorkspaceStore {
     public NanoDB varDB() {
         if (varDB == null) {
             varDB = new NanoDBInMemory();
-            varDB.getSerializers().setSerializer(NId.class, () -> new NanoDBNIdSerializer(workspace));
+            varDB.getSerializers().setSerializer(NId.class, () -> new NanoDBNIdSerializer());
         }
         return varDB;
     }
@@ -87,7 +85,7 @@ public class NWorkspaceStoreInMemory extends AbstractNWorkspaceStore {
     }
 
     public NWorkspaceConfigBoot loadWorkspaceConfigBoot(NPath workspacePath) {
-        if (Objects.equals(workspacePath, workspace.getLocation())) {
+        if (Objects.equals(workspacePath, NWorkspace.of().getLocation())) {
             return storedConfigBoot;
         }
         return null;
@@ -96,9 +94,9 @@ public class NWorkspaceStoreInMemory extends AbstractNWorkspaceStore {
     @Override
     public NWorkspaceConfigApi loadConfigApi(NId apiId) {
         if (apiId == null) {
-            apiId = workspace.getApiId();
+            apiId = NWorkspace.of().getApiId();
         }
-        if (apiId.equals(workspace.getApiId())) {
+        if (apiId.equals(NWorkspace.of().getApiId())) {
             return storedConfigApi;
         }
         return storedConfigApiByVersion.get(apiId.getVersion());
@@ -112,9 +110,9 @@ public class NWorkspaceStoreInMemory extends AbstractNWorkspaceStore {
     @Override
     public NWorkspaceConfigSecurity loadConfigSecurity(NId apiId) {
         if (apiId == null) {
-            apiId = workspace.getApiId();
+            apiId = NWorkspace.of().getApiId();
         }
-        if (apiId.equals(workspace.getApiId())) {
+        if (apiId.equals(NWorkspace.of().getApiId())) {
             return storedConfigSecurity;
         }
         return storedConfigSecurityByVersion.get(apiId.getVersion());
@@ -123,9 +121,9 @@ public class NWorkspaceStoreInMemory extends AbstractNWorkspaceStore {
     @Override
     public NWorkspaceConfigMain loadConfigMain(NId apiId) {
         if (apiId == null) {
-            apiId = workspace.getApiId();
+            apiId = NWorkspace.of().getApiId();
         }
-        if (apiId.equals(workspace.getApiId())) {
+        if (apiId.equals(NWorkspace.of().getApiId())) {
             return storedConfigMain;
         }
         return storedConfigMainByVersion.get(apiId.getVersion());

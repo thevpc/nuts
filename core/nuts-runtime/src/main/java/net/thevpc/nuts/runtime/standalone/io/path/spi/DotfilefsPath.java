@@ -30,16 +30,13 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
     public static final String PREFIX = PROTOCOL + ":";
 
     public static class DotfilefsFactory implements NPathFactorySPI {
-        private NWorkspace workspace;
-
-        public DotfilefsFactory(NWorkspace workspace) {
-            this.workspace = workspace;
+        public DotfilefsFactory() {
         }
 
         @Override
         public NCallableSupport<NPathSPI> createPath(String path, ClassLoader classLoader) {
             if (path.startsWith(PREFIX)) {
-                return NCallableSupport.of(10, () -> new DotfilefsPath(path, workspace));
+                return NCallableSupport.of(10, () -> new DotfilefsPath(path));
             }
             return null;
         }
@@ -54,8 +51,8 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         }
     }
 
-    public DotfilefsPath(String url, NWorkspace workspace) {
-        super(NPath.of(url.substring(PREFIX.length())), workspace);
+    public DotfilefsPath(String url) {
+        super(NPath.of(url.substring(PREFIX.length())));
         if (!url.startsWith(PREFIX)) {
             throw new NUnsupportedArgumentException(NMsg.ofC("expected prefix '%s'", PREFIX));
         }
@@ -182,7 +179,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         List<String> all = new ArrayList<>();
         String dotFilesContent = null;
         String dotFilesUrl = NStringUtils.pjoin("/", baseUrl, CoreNConstants.Files.DOT_FILES);
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         NVersion versionString = NVersion.get("0.5.5").get();
         try (InputStream foldersFileStream = NInputStreamMonitor.of().setSource(NPath.of(dotFilesUrl)).create()) {
             session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "browse", NPath.of(baseUrl).toCompressedForm()));

@@ -44,15 +44,13 @@ public class DefaultNReflectRepository implements NReflectRepository {
 
     private final Map<Type, NReflectType> beans = new HashMap<>();
     private NReflectConfiguration configuration;
-    private NWorkspace workspace;
 
     public DefaultNReflectRepository(NWorkspace workspace) {
-        this(workspace,NReflectConfigurationBuilder.of().build());
+        this(NReflectConfigurationBuilder.of().build());
     }
 
-    public DefaultNReflectRepository(NWorkspace workspace,NReflectConfiguration configuration) {
+    public DefaultNReflectRepository(NReflectConfiguration configuration) {
         this.configuration = configuration;
-        this.workspace = workspace;
     }
 
     @Override
@@ -87,7 +85,7 @@ public class DefaultNReflectRepository implements NReflectRepository {
     }
 
     private NReflectType create(Type clz) {
-        return new DefaultNReflectType(workspace, clz, this);
+        return new DefaultNReflectType(clz, this);
     }
 
     @Override

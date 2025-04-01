@@ -49,7 +49,7 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
     protected String repository;
 
     public AbstractDefaultNPushCmd(NWorkspace workspace) {
-        super(workspace, "push");
+        super("push");
     }
 
     @Override

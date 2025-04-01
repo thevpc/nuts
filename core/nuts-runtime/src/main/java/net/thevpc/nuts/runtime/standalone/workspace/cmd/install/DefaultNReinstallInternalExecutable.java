@@ -16,8 +16,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNReinstallInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNReinstallInternalExecutable(NWorkspace workspace, String[] args, NExecCmd execCommand) {
-        super(workspace,"reinstall", args, execCommand);
+    public DefaultNReinstallInternalExecutable(String[] args, NExecCmd execCommand) {
+        super("reinstall", args, execCommand);
     }
 
     @Override

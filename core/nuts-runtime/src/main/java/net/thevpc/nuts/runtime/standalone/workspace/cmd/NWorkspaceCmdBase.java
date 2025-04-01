@@ -20,12 +20,10 @@ import net.thevpc.nuts.log.NLogOp;
  */
 public abstract class NWorkspaceCmdBase<T extends NWorkspaceCmd> implements NWorkspaceCmd {
 
-    protected NWorkspace workspace;
     private final String commandName;
 //    protected final NutsLogger LOG;
 
-    public NWorkspaceCmdBase(NWorkspace workspace, String commandName) {
-        this.workspace = workspace;
+    public NWorkspaceCmdBase(String commandName) {
         this.commandName = commandName;
 //        LOG = ws.log().of(getClass());
     }
@@ -61,14 +59,6 @@ public abstract class NWorkspaceCmdBase<T extends NWorkspaceCmd> implements NWor
 
     }
 
-    protected NWorkspace getWorkspace() {
-        return workspace;
-    }
-
-    protected void setWorkspace(NWorkspace workspace) {
-        this.workspace = workspace;
-        invalidateResult();
-    }
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
@@ -79,7 +69,7 @@ public abstract class NWorkspaceCmdBase<T extends NWorkspaceCmd> implements NWor
 //        switch(a.key()) {
 //        }
 
-        if (workspace.currentSession().configureFirst(cmdLine)) {
+        if (NSession.of().configureFirst(cmdLine)) {
             return true;
         }
         return false;

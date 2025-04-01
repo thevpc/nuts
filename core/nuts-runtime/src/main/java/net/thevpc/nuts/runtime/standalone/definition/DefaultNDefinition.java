@@ -46,12 +46,11 @@ public class DefaultNDefinition implements NDefinition {
     private NDependencies dependencies;
     private NDescriptor effectiveDescriptor;
     private NId apiId = null;
-    private transient NWorkspace workspace;
 
     public DefaultNDefinition() {
     }
 
-    public DefaultNDefinition(String repoUuid, String repoName, NId id, NDescriptor descriptor, NPath content, NInstallInformation install, NId apiId, NWorkspace workspace) {
+    public DefaultNDefinition(String repoUuid, String repoName, NId id, NDescriptor descriptor, NPath content, NInstallInformation install, NId apiId) {
         this.descriptor = descriptor;
         this.content = content;
         this.id = id;
@@ -62,10 +61,9 @@ public class DefaultNDefinition implements NDefinition {
         this.repositoryUuid = repoUuid;
         this.repositoryName = repoName;
         this.apiId = apiId;
-        this.workspace = workspace;
     }
 
-    public DefaultNDefinition(NDefinition other, NWorkspace workspace) {
+    public DefaultNDefinition(NDefinition other) {
         if (other != null) {
             this.descriptor = other.getDescriptor();
             this.id = other.getId();
@@ -78,7 +76,6 @@ public class DefaultNDefinition implements NDefinition {
             this.dependencies = other.getDependencies().orNull();
             this.apiId = other.getApiId();
         }
-        this.workspace = workspace;
     }
 
     @Override
@@ -118,7 +115,7 @@ public class DefaultNDefinition implements NDefinition {
     }
 
     public DefaultNDefinition copy() {
-        return new DefaultNDefinition(this, workspace);
+        return new DefaultNDefinition(this);
     }
 
     @Override

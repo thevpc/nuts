@@ -265,8 +265,15 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
                 sb.append("null");
                 break;
             case CHAR:
-            case STRING:
-                sb.append(NStringUtils.formatStringLiteral(String.valueOf(value), NQuoteType.DOUBLE));
+                sb.append(NStringUtils.formatStringLiteral(String.valueOf(value), NElementType.SINGLE_QUOTED_STRING));
+            case DOUBLE_QUOTED_STRING:
+            case SINGLE_QUOTED_STRING:
+            case ANTI_QUOTED_STRING:
+            case TRIPLE_DOUBLE_QUOTED_STRING:
+            case TRIPLE_SINGLE_QUOTED_STRING:
+            case TRIPLE_ANTI_QUOTED_STRING:
+            case LINE_STRING:
+                sb.append(NStringUtils.formatStringLiteral(String.valueOf(value), type()));
                 break;
             case NAME:
                 sb.append(String.valueOf(value));
@@ -288,7 +295,7 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
             case LOCAL_TIME:
             case LOCAL_DATE:
             case LOCAL_DATETIME:
-                sb.append(NStringUtils.formatStringLiteral(this.asInstant().get().toString(), NQuoteType.DOUBLE));
+                sb.append(NStringUtils.formatStringLiteral(this.asInstant().get().toString(), NElementType.DOUBLE_QUOTED_STRING));
                 break;
             default: {
                 sb.append(String.valueOf(value));

@@ -91,14 +91,14 @@ public class DefaultNIORPI implements NIORPI {
             case ANSI:
             case INHERITED: {
                 return new NPrintStreamRaw(out, expectedMode,
-                        null, null, workspace,
+                        null, null,
                         new NPrintStreamBase.Bindings(), term
                 );
             }
             case FILTERED:
             case FORMATTED: {
                 return new NPrintStreamRaw(out, NTerminalMode.INHERITED,
-                        null, null, workspace,
+                        null, null,
                         new NPrintStreamBase.Bindings(), term
                 ).setTerminalMode(expectedMode);
             }
@@ -112,7 +112,7 @@ public class DefaultNIORPI implements NIORPI {
         if (out instanceof NPrintStreamAdapter) {
             return ((NPrintStreamAdapter) out).getBasePrintStream();
         }
-        return new NPrintStreamRaw(out, null, null, workspace, new NPrintStreamBase.Bindings(), null);
+        return new NPrintStreamRaw(out, null, null, new NPrintStreamBase.Bindings(), null);
     }
 
     @Override
@@ -291,7 +291,7 @@ public class DefaultNIORPI implements NIORPI {
     @Override
     public NOutputTarget ofOutputTarget(OutputStream outputStream, NContentMetadata metadata) {
         return new OutputTargetExt(NOutputStreamBuilder.of(outputStream)
-                .setMetadata(metadata).createOutputStream(), null, workspace);
+                .setMetadata(metadata).createOutputStream(), null);
     }
 
     @Override
@@ -312,7 +312,7 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public NOutputStreamBuilder ofOutputStreamBuilder(OutputStream base) {
-        return new DefaultNOutputStreamBuilder(workspace).setBase(base);
+        return new DefaultNOutputStreamBuilder().setBase(base);
     }
 
     public NNonBlockingInputStream ofNonBlockingInputStream(InputStream base) {
@@ -324,7 +324,7 @@ public class DefaultNIORPI implements NIORPI {
     }
 
     public NInputSourceBuilder ofInputSourceBuilder(InputStream inputStream) {
-        return new DefaultNInputSourceBuilder(workspace).setBase(inputStream);
+        return new DefaultNInputSourceBuilder().setBase(inputStream);
     }
 
     @Override

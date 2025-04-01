@@ -342,7 +342,7 @@ public abstract class AbstractNElement implements NElement {
     @Override
     public boolean isString() {
         NElementType t = type();
-        return t == NElementType.STRING;
+        return t.isString();
     }
 
     @Override

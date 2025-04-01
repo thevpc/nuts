@@ -26,13 +26,13 @@ import java.util.Map;
  */
 public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNWelcomeInternalExecutable(NWorkspace workspace,String[] args, NExecCmd execCommand) {
-        super(workspace,"welcome", args, execCommand);
+    public DefaultNWelcomeInternalExecutable(String[] args, NExecCmd execCommand) {
+        super("welcome", args, execCommand);
     }
 
     @Override
     public int execute() {
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         boolean dry = ExtraApiUtils.asBoolean(getExecCommand().getDry());
         if(dry){
             dryExecute();

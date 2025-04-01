@@ -117,7 +117,6 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
     }
 
     protected Node createObject0(NElement elem, Type typeOfResult, NElementFactoryContext context) {
-        NSession session = context.getSession();
         if (context.getProperties().get(Document.class.getName()) == null || !(context.getProperties().get(Document.class.getName()) instanceof Stack)) {
             Stack<Document> docs = new Stack<>();
             context.getProperties().put(Document.class.getName(), docs);
@@ -146,7 +145,14 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
                 Element e = doc.createElement(TAG_NULL);
                 return e;
             }
-            case STRING: {
+            case DOUBLE_QUOTED_STRING:
+            case SINGLE_QUOTED_STRING:
+            case ANTI_QUOTED_STRING:
+            case TRIPLE_DOUBLE_QUOTED_STRING:
+            case TRIPLE_SINGLE_QUOTED_STRING:
+            case TRIPLE_ANTI_QUOTED_STRING:
+            case LINE_STRING:
+            {
                 Element e = doc.createElement(TAG_STRING);
                 final String s = elem.asString().get();
                 if (isComplexString(s)) {
@@ -225,7 +231,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
                         NPairElement ne = (NPairElement) nn;
                         final NElementType kt = ne.key().type();
                         boolean complexKey = kt == NElementType.ARRAY || kt == NElementType.OBJECT
-                                || (kt == NElementType.STRING && isComplexString(ne.key().asString().get()));
+                                || (kt.isString() && isComplexString(ne.key().asString().get()));
                         if (complexKey) {
                             Element entry = doc.createElement(TAG_ENTRY);
                             Element ek = (Element) createObject(ne.key(), NElement.class, context);
@@ -257,7 +263,14 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
                                     obj.appendChild(entryElem);
                                     break;
                                 }
-                                case STRING: {
+                                case DOUBLE_QUOTED_STRING:
+                                case SINGLE_QUOTED_STRING:
+                                case ANTI_QUOTED_STRING:
+                                case TRIPLE_DOUBLE_QUOTED_STRING:
+                                case TRIPLE_SINGLE_QUOTED_STRING:
+                                case TRIPLE_ANTI_QUOTED_STRING:
+                                case LINE_STRING:
+                                {
                                     entryElem.setAttribute(ATTRIBUTE_VALUE, ne.value().asString().get());
                                     obj.appendChild(entryElem);
                                     break;

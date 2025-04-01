@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class NSettingsIndexSubCommand extends AbstractNSettingsSubCommand {
     public NSettingsIndexSubCommand(NWorkspace workspace) {
-        super(workspace);
+        super();
     }
 
     @Override

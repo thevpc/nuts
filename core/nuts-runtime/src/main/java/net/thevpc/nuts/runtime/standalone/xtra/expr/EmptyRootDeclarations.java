@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.xtra.expr;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.expr.*;
 
 import java.util.Collections;
@@ -11,7 +10,7 @@ import java.util.List;
 
 public class EmptyRootDeclarations extends NExprDeclarationsBase {
     public EmptyRootDeclarations(NExprs exprs, NWorkspace workspace) {
-        super(exprs, workspace);
+        super(exprs);
     }
 
     @Override

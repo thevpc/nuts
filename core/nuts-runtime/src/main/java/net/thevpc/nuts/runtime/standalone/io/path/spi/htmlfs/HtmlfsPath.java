@@ -32,8 +32,8 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
 
     private String url;
 
-    public HtmlfsPath(String url, NWorkspace workspace) {
-        super(NPath.of(url.substring(PREFIX.length())), workspace);
+    public HtmlfsPath(String url) {
+        super(NPath.of(url.substring(PREFIX.length())));
         if (!url.startsWith(PREFIX)) {
             throw new NUnsupportedArgumentException(NMsg.ofC("expected prefix '%s'", PREFIX));
         }
@@ -71,7 +71,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
                             if (!a.endsWith("/")) {
                                 a += "/";
                             }
-                            return NPath.of(new HtmlfsPath(a, workspace));
+                            return NPath.of(new HtmlfsPath(a));
                         }
                         return ref.resolve(x);
                     }));
@@ -216,7 +216,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         @Override
         public NCallableSupport<NPathSPI> createPath(String path, ClassLoader classLoader) {
             if (path.startsWith(PREFIX)) {
-                return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, () -> new HtmlfsPath(path, ws));
+                return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, () -> new HtmlfsPath(path));
             }
             return null;
         }

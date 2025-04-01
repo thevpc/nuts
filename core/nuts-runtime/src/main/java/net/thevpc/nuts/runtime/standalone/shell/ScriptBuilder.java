@@ -10,11 +10,11 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.script.Simp
 
 public interface ScriptBuilder {
     static FromTemplateScriptBuilder fromTemplate(String templateName, NShellFamily shellFamily, String type, NId anyId, BaseSystemNdi sndi, NdiScriptOptions options) {
-        return new FromTemplateScriptBuilder(templateName, shellFamily, type, anyId, sndi, options, sndi.getWorkspace());
+        return new FromTemplateScriptBuilder(templateName, shellFamily, type, anyId, sndi, options);
     }
 
     static SimpleScriptBuilder simple(NShellFamily shellFamily, String type, NId anyId, BaseSystemNdi sndi) {
-        return new SimpleScriptBuilder(shellFamily,type, anyId, sndi, sndi.getWorkspace());
+        return new SimpleScriptBuilder(shellFamily,type, anyId, sndi);
     }
 
     String buildString();

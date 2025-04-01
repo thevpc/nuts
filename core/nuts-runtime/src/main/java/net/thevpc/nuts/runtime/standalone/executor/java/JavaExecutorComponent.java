@@ -206,11 +206,11 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 executionContext.getExecutorOptions(),
                 NBlankable.isBlank(executionContext.getDirectory()) ?
                         NPath.ofUserDirectory()
-                        : executionContext.getDirectory(),
-                executionContext.getWorkspace());
+                        : executionContext.getDirectory()
+        );
         switch (executionContext.getExecutionType()) {
             case EMBEDDED: {
-                return new EmbeddedProcessExecHelper(def, executionContext.getWorkspace(), joptions, session.out(), executionContext);
+                return new EmbeddedProcessExecHelper(def, joptions, session.out(), executionContext);
             }
             case SPAWN:
             default: {
@@ -406,7 +406,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
         private final NPrintStream out;
         private final NExecutionContext executionContext;
 
-        public EmbeddedProcessExecHelper(NDefinition def, NWorkspace workspace, JavaExecutorOptions joptions, NPrintStream out, NExecutionContext executionContext) {
+        public EmbeddedProcessExecHelper(NDefinition def, JavaExecutorOptions joptions, NPrintStream out, NExecutionContext executionContext) {
             super();
             this.def = def;
             this.joptions = joptions;

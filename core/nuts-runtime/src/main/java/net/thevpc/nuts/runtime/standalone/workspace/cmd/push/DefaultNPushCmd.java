@@ -70,7 +70,7 @@ public class DefaultNPushCmd extends AbstractDefaultNPushCmd {
             NId id = entry.getKey();
             NDefinition file = entry.getValue();
             NFetchMode fetchMode = this.isOffline() ? NFetchMode.LOCAL : NFetchMode.REMOTE;
-            NWorkspaceUtils wu = NWorkspaceUtils.of(workspace);
+            NWorkspaceUtils wu = NWorkspaceUtils.of();
             if (NBlankable.isBlank(this.getRepository())) {
                 Set<String> errors = new LinkedHashSet<>();
                 //TODO : CHECK ME, why offline?
@@ -109,7 +109,7 @@ public class DefaultNPushCmd extends AbstractDefaultNPushCmd {
                             ));
                 }
             } else {
-                NRepository repo = workspace.findRepository(this.getRepository()).get();
+                NRepository repo = NWorkspace.of().findRepository(this.getRepository()).get();
                 if (!repo.config().isEnabled()) {
                     throw new NIllegalArgumentException(NMsg.ofC("repository %s is disabled", repo.getName()));
                 }

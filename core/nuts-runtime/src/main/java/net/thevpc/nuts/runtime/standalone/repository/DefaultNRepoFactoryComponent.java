@@ -44,10 +44,8 @@ import java.util.Map;
  */
 @NComponentScope(NScopeType.WORKSPACE)
 public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent {
-    private NWorkspace workspace;
 
-    public DefaultNRepoFactoryComponent(NWorkspace workspace) {
-        this.workspace = workspace;
+    public DefaultNRepoFactoryComponent() {
     }
 
     @Override
@@ -76,7 +74,7 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
     @Override
     public List<NAddRepositoryOptions> getDefaultRepositories() {
         List<NAddRepositoryOptions> all=new ArrayList<>();
-        NSession session=workspace.currentSession();
+        NSession session=NSession.of();
         if (!NWorkspace.of().isSystemWorkspace()) {
             all.add(NRepositorySelectorHelper.createRepositoryOptions(
                     NRepositoryLocation.of("system", NRepositoryDB.of()).get(),
@@ -107,15 +105,15 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
             if (NBlankable.isBlank(config.getLocation()) ||
                     NPath.of(config.getLocation().getPath()).isLocal()
             ) {
-                return new NFolderRepository(options, workspace, parentRepository);
+                return new NFolderRepository(options, parentRepository);
             } else if (NPath.of(config.getLocation().getPath()).isURL()) {
                 Map<String, String> e = config.getEnv();
                 if (e != null) {
                     if (NLiteral.of(e.get("nuts-api-server")).asBoolean().orElse(false)) {
-                        return (new NHttpSrvRepository(options, workspace, parentRepository));
+                        return (new NHttpSrvRepository(options, parentRepository));
                     }
                 }
-                return (new NFolderRepository(options, workspace, parentRepository));
+                return (new NFolderRepository(options, parentRepository));
             }
         }
         return null;

@@ -149,16 +149,16 @@ public class SimpleWriterOutputStream extends OutputStream implements ExtendedFo
                 return this;
             }
             case FORMAT:{
-                return new FormatOutputStream(this,term, workspace);
+                return new FormatOutputStream(this,term);
             }
             case FILTER:{
-                return new FilterFormatOutputStream(this,term, workspace);
+                return new FilterFormatOutputStream(this,term);
             }
             case ESCAPE:{
-                return new EscapeOutputStream(this,term, workspace);
+                return new EscapeOutputStream(this,term);
             }
             case UNESCAPE:{
-                return new EscapeOutputStream(this,term, workspace);
+                return new EscapeOutputStream(this,term);
             }
         }
         throw new NUnsupportedEnumException(other);

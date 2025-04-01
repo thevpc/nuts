@@ -21,10 +21,7 @@ import java.util.logging.Level;
 
 public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
 
-    private NWorkspace workspace;
-
-    public ConfigNWorkspaceCommandFactory(NWorkspace workspace) {
-        this.workspace = workspace;
+    public ConfigNWorkspaceCommandFactory() {
     }
 
     protected NLogOp _LOGOP() {
@@ -69,7 +66,7 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
     }
 
     public NPath getStoreLocation() {
-        return NWorkspace.of().getStoreLocation(workspace.getApiId(), NStoreType.BIN);
+        return NWorkspace.of().getStoreLocation(NWorkspace.of().getApiId(), NStoreType.BIN);
     }
 
     private NPath getCommandsFolder() {
@@ -82,7 +79,7 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
         NPath file = getCommandsFolder().resolve(name + NConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         if (file.exists()) {
             file.delete();
-            NWorkspaceExt.of(workspace).getConfigModel().fireConfigurationChanged("command", ConfigEventType.MAIN);
+            NWorkspaceExt.of().getConfigModel().fireConfigurationChanged("command", ConfigEventType.MAIN);
         }
     }
 
@@ -90,7 +87,7 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
         NPath path = getCommandsFolder().resolve(command.getName() + NConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         NElements.of().json().setValue(command)
                 .setNtf(false).print(path);
-        NWorkspaceExt.of(workspace).getConfigModel().fireConfigurationChanged("command", ConfigEventType.MAIN);
+        NWorkspaceExt.of().getConfigModel().fireConfigurationChanged("command", ConfigEventType.MAIN);
     }
 
     public List<NCommandConfig> findCommands(NId id) {

@@ -60,7 +60,6 @@ public class ProcessBuilder2 {
     private File directory;
     private boolean failFast;
     private long sleepMillis = 1000;
-    private NWorkspace workspace;
 
     private NExecInput2 in = new NExecInput2(NExecInput.ofInherit());
     private NExecOutput2 out = new NExecOutput2(NExecOutput.ofInherit());
@@ -76,8 +75,7 @@ public class ProcessBuilder2 {
     private Process proc;
     private long pid;
 
-    public ProcessBuilder2(NWorkspace workspace) {
-        this.workspace = workspace;
+    public ProcessBuilder2() {
     }
 
     private static String formatArg(String s) {
@@ -911,7 +909,6 @@ public class ProcessBuilder2 {
                 ", directory=" + directory +
                 ", failFast=" + failFast +
                 ", sleepMillis=" + sleepMillis +
-                ", session=" + workspace +
                 ", in=" + in +
                 ", out=" + out +
                 ", err=" + err +

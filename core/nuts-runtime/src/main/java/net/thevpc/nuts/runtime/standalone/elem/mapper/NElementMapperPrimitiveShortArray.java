@@ -26,7 +26,6 @@ public class NElementMapperPrimitiveShortArray implements NElementMapper<short[]
 
     @Override
     public short[] createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        NSession session = context.getSession();
         NArrayElement earr = o.asArray().get();
         short[] arr = new short[earr.size()];
         for (int i = 0; i < arr.length; i++) {

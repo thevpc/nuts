@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
 
 public class AnyNixNdi extends BaseSystemNdi {
 
-    public AnyNixNdi(NWorkspace workspace) {
-        super(workspace);
+    public AnyNixNdi() {
+        super();
     }
 
     protected NShellFamily[] getShellGroups() {
@@ -58,7 +58,7 @@ public class AnyNixNdi extends BaseSystemNdi {
 
     public void onPostGlobal(NdiScriptOptions options, PathInfo[] updatedPaths) {
         NTexts factory = NTexts.of();
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         if (Arrays.stream(updatedPaths).anyMatch(x -> x.getStatus() != PathInfo.Status.DISCARDED) && session.isTrace()) {
             if (session.isPlainTrace()) {
                 NOut.resetLine().println(NMsg.ofC("%s %s to point to workspace %s",
@@ -131,7 +131,7 @@ public class AnyNixNdi extends BaseSystemNdi {
 
     @Override
     protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
-        return new UnixFreeDesktopEntryWriter(workspace,
+        return new UnixFreeDesktopEntryWriter(
                 NWorkspace.of().getDesktopPath()==null?null: NPath.of(NWorkspace.of().getDesktopPath())
         );
     }

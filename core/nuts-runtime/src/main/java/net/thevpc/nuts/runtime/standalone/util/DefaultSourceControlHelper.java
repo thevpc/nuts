@@ -17,6 +17,7 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NUnused;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.IOException;
@@ -27,12 +28,10 @@ import java.util.logging.Level;
 /**
  * @author thevpc
  */
+@NUnused
 public class DefaultSourceControlHelper {
 
-    private NWorkspace workspace;
-
     public DefaultSourceControlHelper(NWorkspace workspace) {
-        this.workspace = workspace;
     }
 
     protected NLogOp _LOGOP() {
@@ -110,7 +109,7 @@ public class DefaultSourceControlHelper {
                     nutToInstall.getRepositoryName(),
                     newId.getLongId(),
                     d, NPath.of(folder).setUserCache(false).setUserTemporary(false),
-                    null, null, workspace
+                    null, null
             );
         } else {
             throw new NUnsupportedOperationException(NMsg.ofPlain("checkout not supported"));

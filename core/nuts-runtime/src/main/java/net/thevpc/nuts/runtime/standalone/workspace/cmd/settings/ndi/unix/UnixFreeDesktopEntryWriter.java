@@ -39,11 +39,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
-    private final NWorkspace workspace;
     private final NPath desktopPath;
 
-    public UnixFreeDesktopEntryWriter(NWorkspace workspace, NPath desktopPath) {
-        this.workspace = workspace;
+    public UnixFreeDesktopEntryWriter(NPath desktopPath) {
         this.desktopPath = desktopPath;
     }
 
@@ -130,7 +128,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
                     .addCommand()
                     .system()
                     .getGrabbedAllString().trim();
-            NSession session = workspace.currentSession();
+            NSession session = NSession.of();
             if (session.isPlainTrace() && !outStr.isEmpty()) {
                 NOut.println(CoreStringUtils.prefixLinesOsNL(outStr, "[" + sysCmd + "] "));
             }

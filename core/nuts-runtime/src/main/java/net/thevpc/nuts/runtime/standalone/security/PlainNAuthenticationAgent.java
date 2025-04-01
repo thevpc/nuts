@@ -13,8 +13,6 @@ import java.util.Map;
 @NComponentScope(NScopeType.WORKSPACE)
 public class PlainNAuthenticationAgent implements NAuthenticationAgent {
 
-    private NWorkspace ws;
-
     @Override
     public String getId() {
         return "plain";

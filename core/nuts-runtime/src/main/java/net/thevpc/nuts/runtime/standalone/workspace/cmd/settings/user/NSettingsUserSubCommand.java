@@ -26,22 +26,22 @@ import java.util.List;
  */
 public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
     public NSettingsUserSubCommand(NWorkspace workspace) {
-        super(workspace);
+        super();
     }
 
     @Override
     public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
-        return exec(null, cmdLine, autoSave,workspace);
+        return exec(null, cmdLine, autoSave);
     }
 
-    public static boolean exec(NRepository editedRepo, NCmdLine cmdLine, Boolean autoSave,NWorkspace workspace) {
+    public static boolean exec(NRepository editedRepo, NCmdLine cmdLine, Boolean autoSave) {
         if (cmdLine.next("add user", "au").isPresent()) {
             NRepository repository = null;
             if (editedRepo != null) {
                 repository = editedRepo;
             } else {
                 if (cmdLine.next("--repo", "-r").isPresent()) {
-                    repository = workspace.findRepository(cmdLine.nextNonOption(NArgName.of("RepositoryId"))
+                    repository = NWorkspace.of().findRepository(cmdLine.nextNonOption(NArgName.of("RepositoryId"))
                             .flatMap(NLiteral::asString).get())
                             .get();
                 }
@@ -70,7 +70,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
             }
             return true;
         } else {
-            NSession session = workspace.currentSession();
+            NSession session = NSession.of();
             NPrintStream out = session.out();
             if (cmdLine.next("list users","list user","user list", "lu").isPresent()) {
                 NRepository repository = null;
@@ -78,7 +78,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r").isPresent()) {
-                        repository = workspace
+                        repository = NWorkspace.of()
                                 .findRepository(
                                         cmdLine.nextNonOption(NArgName.of("repository"))
                                                 .flatMap(NLiteral::asString).get()
@@ -110,7 +110,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r").isPresent()) {
-                        repository = workspace
+                        repository = NWorkspace.of()
                                 .findRepository(cmdLine.nextNonOption(NArgName.of("RepositoryId")).flatMap(NLiteral::asString).get()
                                 ).get();
                     }
@@ -160,7 +160,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r").isPresent()) {
-                        repository = workspace.findRepository(
+                        repository = NWorkspace.of().findRepository(
                                 cmdLine.nextNonOption(NArgName.of("RepositoryId")).flatMap(NLiteral::asString).get()
                         ).get();
                     }
@@ -290,7 +290,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r").isPresent()) {
-                        repository = workspace.findRepository(
+                        repository = NWorkspace.of().findRepository(
                                 cmdLine.nextNonOption(NArgName.of("RepositoryId")).flatMap(NLiteral::asString).get()
                         ).get();
                     }
@@ -322,7 +322,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r").isPresent()) {
-                        repository = workspace.findRepository(
+                        repository = NWorkspace.of().findRepository(
                                 cmdLine.nextNonOption(NArgName.of("RepositoryId")).flatMap(NLiteral::asString).get()
                         ).get();
                     }

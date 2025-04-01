@@ -42,7 +42,6 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     private List<String> executorOptions = new ArrayList<>();
     private List<String> workspaceOptions = new ArrayList<>();
     private List<String> arguments;
-    private NWorkspace workspace;
     private NArtifactCall executorDescriptor;
     private NPath cwd;
     private String commandName;
@@ -62,7 +61,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
 
     public DefaultNExecutionContextBuilder(NDefinition definition,
                                            List<String> arguments, List<String> executorArgs, Map<String, String> env,
-                                           NPath cwd, NWorkspace workspace, boolean failFast,
+                                           NPath cwd, boolean failFast,
                                            boolean temporary,
                                            NExecutionType executionType,
                                            String commandName,
@@ -76,7 +75,6 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
         this.commandName = commandName;
         this.definition = definition;
         this.arguments = NCoreCollectionUtils.nonNullList(arguments);
-        this.workspace = workspace;
         this.executorOptions = NCoreCollectionUtils.nonNullList(executorArgs);
         this.sleepMillis = sleepMillis;
         this.cwd = cwd;
@@ -99,7 +97,6 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
         this.commandName = other.getCommandName();
         this.definition = other.getDefinition();
         this.arguments = NCoreCollectionUtils.nonNullList(other.getArguments());
-        this.workspace = other.getWorkspace();
         this.executorOptions.addAll(NCoreCollectionUtils.nonNullList(other.getExecutorOptions()));
         this.cwd = other.getDirectory();
         this.env = other.getEnv();
@@ -155,11 +152,6 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     @Override
     public List<String> getArguments() {
         return arguments;
-    }
-
-    @Override
-    public NWorkspace getWorkspace() {
-        return workspace;
     }
 
     @Override
@@ -263,12 +255,6 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     }
 
     @Override
-    public NExecutionContextBuilder setWorkspace(NWorkspace workspace) {
-        this.workspace = workspace;
-        return this;
-    }
-
-    @Override
     public NExecutionContextBuilder setExecutorDescriptor(NArtifactCall executorDescriptor) {
         this.executorDescriptor = executorDescriptor;
         return this;
@@ -324,7 +310,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     public NExecutionContext build() {
         return new DefaultNExecutionContext(
                 definition, arguments, executorOptions, workspaceOptions, env, cwd,
-                workspace, failFast, temporary, executionType,
+                failFast, temporary, executionType,
                 commandName, sleepMillis, in, out, err,dry,bot
         ).setSession(NSession.of());
     }
@@ -333,7 +319,6 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
         this.commandName = other.getCommandName();
         this.definition = other.getDefinition();
         this.arguments = other.getArguments();
-        this.workspace = other.getWorkspace();
         this.executorOptions.clear();
         this.executorOptions.addAll(other.getExecutorOptions());
         this.workspaceOptions.clear();

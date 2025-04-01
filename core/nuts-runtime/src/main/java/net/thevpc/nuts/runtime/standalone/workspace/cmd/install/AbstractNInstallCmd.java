@@ -75,7 +75,7 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
     }
 
     public AbstractNInstallCmd(NWorkspace workspace) {
-        super(workspace, "install");
+        super("install");
     }
 
     @Override

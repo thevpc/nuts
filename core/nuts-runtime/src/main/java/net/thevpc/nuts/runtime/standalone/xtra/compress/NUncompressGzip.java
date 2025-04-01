@@ -20,10 +20,7 @@ import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 
 public class NUncompressGzip implements NUncompressPackaging {
-    private NWorkspace workspace;
-
-    public NUncompressGzip(NWorkspace workspace) {
-        this.workspace = workspace;
+    public NUncompressGzip() {
     }
 
     @Override

@@ -11,7 +11,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
@@ -30,7 +29,7 @@ public class DefaultNRepositoryUndeployCmd extends AbstractNRepositoryUndeployCm
         super(repo);
     }
 
-    public DefaultNRepositoryUndeployCmd(NWorkspace ws) {
+    public DefaultNRepositoryUndeployCmd() {
         super(null);
     }
 

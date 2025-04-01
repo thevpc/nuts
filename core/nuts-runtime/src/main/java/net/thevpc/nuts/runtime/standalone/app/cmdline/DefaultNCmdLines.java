@@ -15,11 +15,9 @@ import net.thevpc.nuts.spi.NSupportLevelContext;
 
 public class DefaultNCmdLines implements NCmdLines {
 
-    private NWorkspace ws;
     private NShellFamily family = NShellFamily.getCurrent();
 
-    public DefaultNCmdLines(NWorkspace ws) {
-        this.ws = ws;
+    public DefaultNCmdLines() {
     }
 
     public NShellFamily getShellFamily() {
@@ -29,10 +27,6 @@ public class DefaultNCmdLines implements NCmdLines {
     public NCmdLines setShellFamily(NShellFamily family) {
         this.family = family == null ? NShellFamily.getCurrent() : family;
         return this;
-    }
-
-    public NWorkspace getWorkspace() {
-        return ws;
     }
 
     @Override

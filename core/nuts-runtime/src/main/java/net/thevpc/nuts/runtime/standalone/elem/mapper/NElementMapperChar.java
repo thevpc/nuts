@@ -21,7 +21,6 @@ public class NElementMapperChar implements NElementMapper<Character> {
 
     @Override
     public Character createObject(NElement o, Type to, NElementFactoryContext context) {
-        NSession session = context.getSession();
         final String s = o.asString().get();
         return (s == null || s.isEmpty())
                 ? (((to instanceof Class) && ((Class) to).isPrimitive()) ? '\0' : null)

@@ -25,9 +25,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.util;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.format.NFormat;
-import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.text.NText;
@@ -44,15 +41,13 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
     private boolean hasMoreBytes = true;
     private boolean closed = false;
     private boolean interrupted = false;
-    private NWorkspace worksapce;
     private NContentMetadata md;
     private InputStream base;
     private NMsg sourceName;
 
-    public NNonBlockingInputStreamAdapter(InputStream base, NContentMetadata md, NMsg sourceName, NWorkspace workspace) {
+    public NNonBlockingInputStreamAdapter(InputStream base, NContentMetadata md, NMsg sourceName) {
         super(base);
         this.base = base;
-        this.worksapce = workspace;
         this.md = CoreIOUtils.createContentMetadata(md, base);
         if (sourceName == null) {
             NMsg m2 = this.md.getMessage().orElse(null);

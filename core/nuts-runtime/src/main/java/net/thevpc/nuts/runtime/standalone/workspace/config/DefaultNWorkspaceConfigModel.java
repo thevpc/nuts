@@ -144,7 +144,7 @@ public class DefaultNWorkspaceConfigModel {
         addPathFactory(new URLPath.URLPathFactory(workspace));
         addPathFactory(new NResourcePath.NResourceFactory(workspace));
         addPathFactory(new HtmlfsPath.HtmlfsFactory(workspace));
-        addPathFactory(new DotfilefsPath.DotfilefsFactory(workspace));
+        addPathFactory(new DotfilefsPath.DotfilefsFactory());
         addPathFactory(new GithubfsPath.GithubfsFactory(workspace));
         addPathFactory(new GenericFilePath.GenericPathFactory(workspace));
         invalidPathFactory = new InvalidFilePathFactory();
@@ -282,7 +282,7 @@ public class DefaultNWorkspaceConfigModel {
         if (!force && !isConfigurationChanged()) {
             return false;
         }
-        NWorkspaceUtils.of(getWorkspace()).checkReadOnly();
+        NWorkspaceUtils.of().checkReadOnly();
         boolean ok = false;
         NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.SAVE, "save");
         if (force || storeModelBootChanged) {
@@ -626,7 +626,7 @@ public class DefaultNWorkspaceConfigModel {
 
             setCurrentConfig(cConfig.build(NWorkspace.of().getWorkspaceLocation()));
 
-            NVersionCompat compat = NVersionCompat.of(Nuts.getVersion(), workspace);
+            NVersionCompat compat = NVersionCompat.of(Nuts.getVersion());
             NId apiId = workspace.getApiId();
             NWorkspaceConfigApi aconfig = compat.parseApiConfig(apiId);
             NId toImportOlderId = null;
@@ -1064,7 +1064,7 @@ public class DefaultNWorkspaceConfigModel {
     }
 
     public NId createSdkId(String type, String version) {
-        return NWorkspaceUtils.of(getWorkspace()).createSdkId(type, version);
+        return NWorkspaceUtils.of().createSdkId(type, version);
     }
 
     public void onExtensionsPrepared() {
@@ -1274,7 +1274,7 @@ public class DefaultNWorkspaceConfigModel {
                     descriptor.getId(),
                     descriptor, NPath.of(tmp).setUserCache(true).setUserTemporary(true),
                     new DefaultNInstallInfo(descriptor.getId(), NInstallStatus.NONE, null, null, null, null, null, null, false, false),
-                    null, getWorkspace()
+                    null
             );
             ins.install(b);
             return true;

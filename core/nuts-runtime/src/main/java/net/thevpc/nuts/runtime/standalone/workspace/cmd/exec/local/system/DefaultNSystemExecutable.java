@@ -29,10 +29,10 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
     List<String> executorOptions;
     private boolean showCommand = false;
 
-    public DefaultNSystemExecutable(NWorkspace workspace,String[] cmd,
+    public DefaultNSystemExecutable(String[] cmd,
                                     List<String> executorOptions,
                                     NExecCmd execCommand) {
-        super(workspace,cmd[0],
+        super(cmd[0],
                 NCmdLine.of(cmd).toString(),
                 NExecutableType.SYSTEM, execCommand);
         this.cmd = cmd;
@@ -74,7 +74,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
                 execCommand.getErr(),
                 execCommand.getRunAs(),
                 executorOptions.toArray(new String[0]),
-                ExtraApiUtils.asBooleanOr(execCommand.getDry(),NSession.of().isDry()), workspace
+                ExtraApiUtils.asBooleanOr(execCommand.getDry(),NSession.of().isDry())
         );
     }
 

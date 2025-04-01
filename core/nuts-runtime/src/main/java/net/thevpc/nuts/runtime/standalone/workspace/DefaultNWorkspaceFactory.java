@@ -199,7 +199,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                     return NOptional.of((T) new DefaultNWorkspaceOptionsBuilder());
                 }
                 case "net.thevpc.nuts.format.NFormats": {
-                    NFormats p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.WORKSPACE, () -> new NFormatsImpl(workspace));
+                    NFormats p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.WORKSPACE, () -> new NFormatsImpl());
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.NApp": {

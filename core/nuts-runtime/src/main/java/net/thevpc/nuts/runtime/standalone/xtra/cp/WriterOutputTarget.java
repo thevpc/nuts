@@ -11,7 +11,7 @@ class WriterOutputTarget extends OutputTargetExt {
     Writer writer;
 
     public WriterOutputTarget(NWorkspace workspace,Writer writer) {
-        super(new WriterOutputStream(writer), new DefaultNContentMetadata(), workspace);
+        super(new WriterOutputStream(writer), new DefaultNContentMetadata());
         this.writer = writer;
     }
 

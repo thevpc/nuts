@@ -26,12 +26,12 @@ public class NPrintStreamRaw extends NPrintStreamBase {
         this.base = base;
     }
 
-    public NPrintStreamRaw(OutputStream out, Boolean autoFlush, String encoding, NWorkspace workspace, Bindings bindings, NSystemTerminalBase term) {
-        this(out, null, autoFlush, encoding, workspace, bindings, term);
+    public NPrintStreamRaw(OutputStream out, Boolean autoFlush, String encoding, Bindings bindings, NSystemTerminalBase term) {
+        this(out, null, autoFlush, encoding, bindings, term);
     }
 
     public NPrintStreamRaw(OutputStream out, NTerminalMode mode, Boolean autoFlush,
-                           String encoding, NWorkspace workspace,
+                           String encoding,
                            Bindings bindings,
                            NSystemTerminalBase term) {
         super(true, mode == null ? NTerminalMode.INHERITED : mode, bindings, term);

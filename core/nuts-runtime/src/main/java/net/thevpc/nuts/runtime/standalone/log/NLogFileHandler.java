@@ -19,12 +19,11 @@ import java.util.logging.LogRecord;
 
 public class NLogFileHandler extends FileHandler {
 
-    private NWorkspace workspace;
     private String pattern;
     private int limit;
     private int count;
 
-    public static NLogFileHandler create(NWorkspace workspace, NLogConfig config, boolean append, Path logFolder) throws IOException, SecurityException {
+    public static NLogFileHandler create(NLogConfig config, boolean append, Path logFolder) throws IOException, SecurityException {
         Level level = config.getLogFileLevel();
         String folder = config.getLogFileBase();
         String name = config.getLogFileName();
@@ -39,7 +38,7 @@ public class NLogFileHandler extends FileHandler {
             name = Instant.now().toString().replace(":", "") + "-nuts-%g.log";
         }
         if (folder == null || NBlankable.isBlank(folder)) {
-            folder = logFolder + "/" + NConstants.Folders.ID + "/net/thevpc/nuts/nuts/" + workspace.getApiVersion();
+            folder = logFolder + "/" + NConstants.Folders.ID + "/net/thevpc/nuts/nuts/" + NWorkspace.of().getApiVersion();
         }
         String pattern = (folder + "/" + name).replace('/', File.separatorChar);
         if (maxSize <= 0) {
@@ -52,18 +51,17 @@ public class NLogFileHandler extends FileHandler {
         if (parentFile != null) {
             parentFile.mkdirs();
         }
-        NLogFileHandler handler = new NLogFileHandler(pattern, maxSize * MEGA, count, append,workspace);
+        NLogFileHandler handler = new NLogFileHandler(pattern, maxSize * MEGA, count, append);
         handler.setLevel(level);
         return handler;
     }
 
-    private NLogFileHandler(String pattern, int limit, int count, boolean append, NWorkspace workspace) throws IOException, SecurityException {
+    private NLogFileHandler(String pattern, int limit, int count, boolean append) throws IOException, SecurityException {
         super(prepare(pattern), limit, count, append);
-        this.workspace = workspace;
         this.pattern = pattern;
         this.limit = limit;
         this.count = count;
-        setFormatter(new NLogRichFormatter(workspace,true));
+        setFormatter(new NLogRichFormatter(true));
     }
 
     private static String prepare(String pattern) {
@@ -78,14 +76,8 @@ public class NLogFileHandler extends FileHandler {
         if (!super.isLoggable(record)) {
             return false;
         }
-        NSession session=null;
-        if (record instanceof NLogRecord) {
-            session=((NLogRecord) record).getSession();
-        }
-        if(session==null){
-            session=this.workspace.currentSession();
-        }
-        NLogConfig logConfig = workspace.getBootOptions().getLogConfig().orElseGet(NLogConfig::new);
+        NSession session=NLogUtils.resolveSession(record);
+        NLogConfig logConfig = NWorkspace.of().getBootOptions().getLogConfig().orElseGet(NLogConfig::new);
         Level sessionLogLevel = session.getLogFileLevel();
         if (sessionLogLevel == null) {
             if (logConfig != null) {

@@ -19,9 +19,7 @@ import java.util.List;
 
 public class FishCodeHighlighter implements NCodeHighlighter {
 
-    private NWorkspace workspace;
-    public FishCodeHighlighter(NWorkspace workspace) {
-        this.workspace = workspace;
+    public FishCodeHighlighter() {
     }
 
     @Override

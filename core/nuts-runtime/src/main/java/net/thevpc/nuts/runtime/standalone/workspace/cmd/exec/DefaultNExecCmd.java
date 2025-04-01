@@ -128,7 +128,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
 
     @Override
     public NExecutableInformation which() {
-        NSession session = getWorkspace().currentSession();
+        NSession session = NSession.of();
         refactorCommand();
 
         NExecutableInformationExt exec = null;
@@ -149,7 +149,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                     throw new NIllegalArgumentException(NMsg.ofC("cannot run %s command remotely", executionType));
                 }
                 String[] ts = command.toArray(new String[0]);
-                exec = new DefaultNOpenExecutable(workspace, ts, getExecutorOptions().toArray(new String[0]), this);
+                exec = new DefaultNOpenExecutable(ts, getExecutorOptions().toArray(new String[0]), this);
                 break;
             }
             case SYSTEM: {
@@ -159,7 +159,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                     NAssert.requireNull(getCommandDefinition(), () -> NMsg.ofC("unable to run artifact as %s cmd", finalExecutionType));
                     NAssert.requireNonBlank(command, "command");
                     String[] ts = command.toArray(new String[0]);
-                    return new DefaultNSystemExecutableRemote(workspace,
+                    return new DefaultNSystemExecutableRemote(
                             remoteInfo0.commExec, ts,
                             getExecutorOptions(),
                             this,
@@ -179,7 +179,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                             tsl.set(0, p.toString());
                         }
                     }
-                    exec = new DefaultNSystemExecutable(getWorkspace(), tsl.toArray(new String[0]),
+                    exec = new DefaultNSystemExecutable(tsl.toArray(new String[0]),
                             getExecutorOptions(),
                             this
                     );
@@ -192,7 +192,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                     RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                     if (remoteInfo0 != null) {
                         String[] ts = command == null ? new String[0] : command.toArray(new String[0]);
-                        return new DefaultSpawnExecutableNutsRemote(getWorkspace(), remoteInfo0.commExec, getCommandDefinition(), ts, getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
+                        return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, getCommandDefinition(), ts, getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
                     } else {
                         String[] ts = command == null ? new String[0] : command.toArray(new String[0]);
                         return ws_execDef(getCommandDefinition(), getCommandDefinition().getId().getLongName(), ts, getExecutorOptions(), workspaceOptions, env, directory, failFast,
@@ -381,7 +381,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     }
 
     private NExecutableInformationExt execEmbeddedOrExternal(String[] cmd, List<String> executorOptions, List<String> workspaceOptions, NSession prepareSession) {
-        NSession session = getWorkspace().currentSession();
+        NSession session = NSession.of();
         NAssert.requireNonBlank(cmd, "command");
         String[] args = new String[cmd.length - 1];
         System.arraycopy(cmd, 1, args, 0, args.length);
@@ -448,7 +448,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                             .effective()
                             .getResultDefinitions()
                             .findFirst().get();
-                    return new DefaultSpawnExecutableNutsRemote(getWorkspace(), remoteInfo0.commExec, def2, ts.toArray(new String[0]), getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
+                    return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, def2, ts.toArray(new String[0]), getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
                 } else {
                     CharacterizedExecFile c = null;
                     NPath path = null;
@@ -462,7 +462,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                         NDescriptor descriptor = c.getDescriptor();
                         if (descriptor != null) {
                             try {
-                                descriptor = NWorkspaceExt.of(workspace).resolveEffectiveDescriptor(descriptor);
+                                descriptor = NWorkspaceExt.of().resolveEffectiveDescriptor(descriptor);
                             } catch (NNotFoundException ex) {
                                 //ignore
                                 _LOGOP().level(Level.WARNING).verb(NLogVerb.WARNING)
@@ -478,7 +478,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                                     descriptor,
                                     NPath.of(c.getContentFile()).setUserCache(false).setUserTemporary(!c.getTemps().isEmpty()),
                                     DefaultNInstallInfo.notInstalled(_id),
-                                    null, getWorkspace()
+                                    null
                             );
                             NDependencySolver resolver = NDependencySolver.of();
                             NDependencyFilters ff = NDependencyFilters.of();
@@ -500,7 +500,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                                         this.getOut(),
                                         this.getErr(),
                                         executionType, runAs);
-                                return new DefaultNArtifactPathExecutable(getWorkspace(), cmdName, args, executorOptions, workspaceOptions, executionType, runAs, this, nutToRun, c, null, ec);
+                                return new DefaultNArtifactPathExecutable(cmdName, args, executorOptions, workspaceOptions, executionType, runAs, this, nutToRun, c, null, ec);
                             } catch (Exception ex) {
                                 //fallback to other cases
                                 c.close();
@@ -514,12 +514,12 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                             List<String> cmdArr = new ArrayList<>();
                             cmdArr.add(cmdName);
                             cmdArr.addAll(Arrays.asList(args));
-                            return new DefaultNSystemExecutable(getWorkspace(), cmdArr.toArray(new String[0]), executorOptions, this);
+                            return new DefaultNSystemExecutable(cmdArr.toArray(new String[0]), executorOptions, this);
                         }
                         List<String> cmdArr = new ArrayList<>();
                         cmdArr.add(cmdName);
                         cmdArr.addAll(Arrays.asList(args));
-                        return new DefaultUnknownExecutable(getWorkspace(), cmdArr.toArray(new String[0]), this);
+                        return new DefaultUnknownExecutable(cmdArr.toArray(new String[0]), this);
                     }
                     throw new NNotFoundException(goodId, NMsg.ofC("unable to resolve id %s", path));
                 }
@@ -545,7 +545,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                             .effective()
                             .getResultDefinitions()
                             .findFirst().get();
-                    return new DefaultSpawnExecutableNutsRemote(getWorkspace(), remoteInfo0.commExec, def2, ts.toArray(new String[0]), getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
+                    return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, def2, ts.toArray(new String[0]), getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
 
                 } else {
                     if (idToExec != null) {
@@ -562,140 +562,140 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                         if (remoteInfo0 != null) {
                             return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
-                        return new DefaultNUpdateInternalExecutable(getWorkspace(), args, this);
+                        return new DefaultNUpdateInternalExecutable(args, this);
                     }
                     case "check-updates": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                         if (remoteInfo0 != null) {
                             return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
-                        return new DefaultNCheckUpdatesInternalExecutable(getWorkspace(), args, this);
+                        return new DefaultNCheckUpdatesInternalExecutable(args, this);
                     }
                     case "install": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                         if (remoteInfo0 != null) {
                             return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
-                        return new DefaultNInstallInternalExecutable(getWorkspace(), args, this);
+                        return new DefaultNInstallInternalExecutable(args, this);
                     }
                     case "reinstall": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                         if (remoteInfo0 != null) {
                             return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
-                        return new DefaultNReinstallInternalExecutable(getWorkspace(), args, this);
+                        return new DefaultNReinstallInternalExecutable(args, this);
                     }
                     case "uninstall": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                         if (remoteInfo0 != null) {
                             return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
-                        return new DefaultNUninstallInternalExecutable(getWorkspace(), args, this);
+                        return new DefaultNUninstallInternalExecutable(args, this);
                     }
                     case "deploy": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                         if (remoteInfo0 != null) {
                             return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
-                        return new DefaultNDeployInternalExecutable(getWorkspace(), args, this);
+                        return new DefaultNDeployInternalExecutable(args, this);
                     }
                     case "undeploy": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                         if (remoteInfo0 != null) {
                             return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
-                        return new DefaultNUndeployInternalExecutable(getWorkspace(), args, this);
+                        return new DefaultNUndeployInternalExecutable(args, this);
                     }
                     case "push": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                         if (remoteInfo0 != null) {
                             return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
-                        return new DefaultNPushInternalExecutable(getWorkspace(), args, this);
+                        return new DefaultNPushInternalExecutable(args, this);
                     }
                     case "fetch": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                         if (remoteInfo0 != null) {
                             return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
-                        return new DefaultNFetchInternalExecutable(getWorkspace(), args, this);
+                        return new DefaultNFetchInternalExecutable(args, this);
                     }
                     case "search": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                         if (remoteInfo0 != null) {
                             return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
-                        return new DefaultNSearchInternalExecutable(getWorkspace(), args, this);
+                        return new DefaultNSearchInternalExecutable(args, this);
                     }
                     case "version": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                         if (remoteInfo0 != null) {
                             return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
-                        return new DefaultNVersionInternalExecutable(getWorkspace(), args, this);
+                        return new DefaultNVersionInternalExecutable(args, this);
                     }
                     case "prepare": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                         if (remoteInfo0 != null) {
                             return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
-                        return new DefaultNPrepareInternalExecutable(getWorkspace(), args, this);
+                        return new DefaultNPrepareInternalExecutable(args, this);
                     }
                     case "license": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                         if (remoteInfo0 != null) {
                             return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
-                        return new DefaultNLicenseInternalExecutable(getWorkspace(), args, this);
+                        return new DefaultNLicenseInternalExecutable(args, this);
                     }
                     case "bundle": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                         if (remoteInfo0 != null) {
                             return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
-                        return new DefaultNBundleInternalExecutable(getWorkspace(), args, this);
+                        return new DefaultNBundleInternalExecutable(args, this);
                     }
                     case "help": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                         if (remoteInfo0 != null) {
                             return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
-                        return new DefaultNHelpInternalExecutable(getWorkspace(), args, this);
+                        return new DefaultNHelpInternalExecutable(args, this);
                     }
                     case "welcome": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                         if (remoteInfo0 != null) {
                             return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
-                        return new DefaultNWelcomeInternalExecutable(getWorkspace(), args, this);
+                        return new DefaultNWelcomeInternalExecutable(args, this);
                     }
                     case "info": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                         if (remoteInfo0 != null) {
                             return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
-                        return new DefaultNInfoInternalExecutable(getWorkspace(), args, this);
+                        return new DefaultNInfoInternalExecutable(args, this);
                     }
                     case "which": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                         if (remoteInfo0 != null) {
                             return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
-                        return new DefaultNWhichInternalExecutable(getWorkspace(), args, this);
+                        return new DefaultNWhichInternalExecutable(args, this);
                     }
                     case "exec": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                         if (remoteInfo0 != null) {
                             return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
-                        return new DefaultNExecInternalExecutable(getWorkspace(), args, this);
+                        return new DefaultNExecInternalExecutable(args, this);
                     }
                     case "settings": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                         if (remoteInfo0 != null) {
                             return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
-                        return new DefaultNSettingsInternalExecutable(getWorkspace(), args, this);
+                        return new DefaultNSettingsInternalExecutable(args, this);
                     }
                 }
                 RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
@@ -705,7 +705,6 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                     NAssert.requireNonBlank(command, "command");
                     String[] ts = command.toArray(new String[0]);
                     return new DefaultNSystemExecutableRemote(
-                            getWorkspace(),
                             remoteInfo0.commExec, ts,
                             getExecutorOptions(),
                             this,
@@ -719,7 +718,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                 if (command != null) {
                     NCmdExecOptions o = new NCmdExecOptions().setExecutorOptions(executorOptions).setDirectory(directory).setFailFast(failFast)
                             .setExecutionType(executionType).setEnv(env);
-                    return new DefaultNAliasExecutable(getWorkspace(), command, o, args, this);
+                    return new DefaultNAliasExecutable(command, o, args, this);
                 } else {
                     NId idToExec = null;
                     if (goodId != null) {
@@ -731,12 +730,12 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                             List<String> cmdArr = new ArrayList<>();
                             cmdArr.add(sw.toString());
                             cmdArr.addAll(Arrays.asList(args));
-                            return new DefaultNSystemExecutable(getWorkspace(), cmdArr.toArray(new String[0]), executorOptions, this);
+                            return new DefaultNSystemExecutable(cmdArr.toArray(new String[0]), executorOptions, this);
                         }
                         List<String> cmdArr = new ArrayList<>();
                         cmdArr.add(cmdName);
                         cmdArr.addAll(Arrays.asList(args));
-                        return new DefaultUnknownExecutable(getWorkspace(), cmdArr.toArray(new String[0]), this);
+                        return new DefaultUnknownExecutable(cmdArr.toArray(new String[0]), this);
                     }
                     return ws_execId(idToExec, cmdName, args, executorOptions, workspaceOptions, executionType, runAs);
                 }
@@ -746,7 +745,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     }
 
     private NExecutableInformationExt _runRemoteInternalCommand(String goodKw, RemoteInfo0 remoteInfo0) {
-        NSession session = getWorkspace().currentSession();
+        NSession session = NSession.of();
         NDefinition def2 = NSearchCmd.of()
                 .addId(session.getWorkspace().getApiId())
                 .content()
@@ -757,7 +756,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                 .effective()
                 .getResultDefinitions()
                 .findFirst().get();
-        return new DefaultSpawnExecutableNutsRemote(getWorkspace(), remoteInfo0.commExec, def2, command.toArray(new String[0]), getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
+        return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, def2, command.toArray(new String[0]), getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
     }
 
     protected NId findExecId(NId nid, NSession traceSession, boolean forceInstalled, boolean ignoreIfUserCommand) {
@@ -889,7 +888,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     }
 
     protected NExecutableInformationExt ws_execDef(NDefinition def, String commandName, String[] appArgs, List<String> executorOptions, List<String> workspaceOptions, Map<String, String> env, NPath dir, boolean failFast, NExecutionType executionType, NRunAs runAs) {
-        return new DefaultNArtifactExecutable(getWorkspace(), def, commandName, appArgs, executorOptions, workspaceOptions, env, dir, failFast, executionType, runAs, this);
+        return new DefaultNArtifactExecutable(def, commandName, appArgs, executorOptions, workspaceOptions, env, dir, failFast, executionType, runAs, this);
     }
 
     public int ws_execId(NDefinition def, String commandName, String[] appArgs,
@@ -940,7 +939,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                                                    NRunAs runAs
     ) {
         //TODO ! one of the sessions needs to be removed!
-        NSession session = getWorkspace().currentSession();
+        NSession session = NSession.of();
         NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.EXEC, commandName);
         if (def != null && def.getContent().isPresent()) {
             NDescriptor descriptor = def.getDescriptor();
@@ -1006,7 +1005,6 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                     .setWorkspaceOptions(workspaceOptions)
                     .setEnv(env)
                     .setDirectory(dir)
-                    .setWorkspace(session.getWorkspace())
                     .setFailFast(failFast)
                     .setTemporary(temporary)
                     .setExecutionType(executionType)

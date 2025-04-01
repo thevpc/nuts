@@ -59,7 +59,7 @@ public class NRepositoryMirroringHelper {
                     //                errors.append(CoreStringUtils.exceptionToString(ex)).append("\n");
                 }
                 if (sup != NSpeedQualifier.UNAVAILABLE) {
-                    NRepositorySPI repoSPI = NWorkspaceUtils.of(getWorkspace()).repoSPI(repo);
+                    NRepositorySPI repoSPI = NWorkspaceUtils.of().repoSPI(repo);
                     list.add(
                             NIteratorBuilder.of(repoSPI.searchVersions().setId(id).setFilter(idFilter)
                                             .setFetchMode(fetchMode)
@@ -146,7 +146,7 @@ public class NRepositoryMirroringHelper {
         List<NIterator<? extends NId>> all = new ArrayList<>();
         all.add(li);
         for (NRepository remote : rconfig.getMirrors()) {
-            NRepositorySPI repoSPI = NWorkspaceUtils.of(getWorkspace()).repoSPI(remote);
+            NRepositorySPI repoSPI = NWorkspaceUtils.of().repoSPI(remote);
             all.add(NIteratorUtils.safeIgnore(
                     repoSPI.search().setFilter(filter).setFetchMode(fetchMode).getResult()
             ));
@@ -161,8 +161,8 @@ public class NRepositoryMirroringHelper {
         NSession session = getWorkspace().currentSession();
         NSession nonTransitiveSession = session.copy().setTransitive(false);
 
-        NDescriptor desc = nonTransitiveSession.callWith(() -> NWorkspaceUtils.of(getWorkspace()).repoSPI(repo).fetchDescriptor().setId(id).setFetchMode(NFetchMode.LOCAL).getResult());
-        NPath local = nonTransitiveSession.callWith(() -> NWorkspaceUtils.of(getWorkspace()).repoSPI(repo).fetchContent().setId(id).setFetchMode(NFetchMode.LOCAL).getResult());
+        NDescriptor desc = nonTransitiveSession.callWith(() -> NWorkspaceUtils.of().repoSPI(repo).fetchDescriptor().setId(id).setFetchMode(NFetchMode.LOCAL).getResult());
+        NPath local = nonTransitiveSession.callWith(() -> NWorkspaceUtils.of().repoSPI(repo).fetchContent().setId(id).setFetchMode(NFetchMode.LOCAL).getResult());
         if (local == null) {
             throw new NNotFoundException(id);
         }
@@ -199,7 +199,7 @@ public class NRepositoryMirroringHelper {
             NId effId = CoreNIdUtils.createContentFaceId(id.builder().setPropertiesQuery("").build(), desc)
 //                    .setAlternative(NutsUtilStrings.trim(desc.getAlternative()))
                     ;
-            NDeployRepositoryCmd dep = NWorkspaceUtils.of(getWorkspace()).repoSPI(repo).deploy()
+            NDeployRepositoryCmd dep = NWorkspaceUtils.of().repoSPI(repo).deploy()
                     .setId(effId)
                     .setContent(local)
                     .setDescriptor(desc)
@@ -219,7 +219,7 @@ public class NRepositoryMirroringHelper {
             for (NRepository remote : rconfig.getMirrors()) {
                 NDescriptor nutsDescriptor = null;
                 try {
-                    NRepositorySPI repoSPI = NWorkspaceUtils.of(getWorkspace()).repoSPI(remote);
+                    NRepositorySPI repoSPI = NWorkspaceUtils.of().repoSPI(remote);
                     nutsDescriptor = repoSPI.fetchDescriptor().setId(id).setFetchMode(fetchMode).getResult();
                 } catch (Exception ex) {
                     //ignore

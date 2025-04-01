@@ -16,8 +16,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNFetchInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNFetchInternalExecutable(NWorkspace workspace, String[] args, NExecCmd execCommand) {
-        super(workspace,"fetch", args, execCommand);
+    public DefaultNFetchInternalExecutable(String[] args, NExecCmd execCommand) {
+        super("fetch", args, execCommand);
     }
 
     @Override

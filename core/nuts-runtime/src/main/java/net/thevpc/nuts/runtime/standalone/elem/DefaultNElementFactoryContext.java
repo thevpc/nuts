@@ -46,23 +46,11 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
     private final DefaultNElements base;
     private final NReflectRepository repository;
     private boolean ntf;
-    private NWorkspace workspace;
 
-    public DefaultNElementFactoryContext(NWorkspace workspace,DefaultNElements base, NReflectRepository repository) {
+    public DefaultNElementFactoryContext(DefaultNElements base, NReflectRepository repository) {
         this.base = base;
         this.repository = repository;
         this.ntf = base.isNtf();
-        this.workspace = workspace;
-    }
-
-    @Override
-    public NSession getSession() {
-        return getWorkspace().currentSession();
-    }
-
-    @Override
-    public NWorkspace getWorkspace() {
-        return workspace;
     }
 
     @Override

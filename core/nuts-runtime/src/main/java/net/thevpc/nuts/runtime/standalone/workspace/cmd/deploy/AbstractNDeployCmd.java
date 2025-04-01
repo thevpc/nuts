@@ -45,7 +45,7 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
     }
 
     public AbstractNDeployCmd(NWorkspace workspace) {
-        super(workspace, "deploy");
+        super("deploy");
     }
     @Override
     public int getSupportLevel(NSupportLevelContext context) {

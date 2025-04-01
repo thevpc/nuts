@@ -1,5 +1,7 @@
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.elem.NElementType;
+
 public class NToken {
 
     /***
@@ -285,7 +287,7 @@ public class NToken {
         return "NToken{" +
                 "ttype=" + typeString(ttype) +
                 ", lineno=" + lineno +
-                ", sval=" + (sval == null ? "null" : NStringUtils.formatStringLiteral(sval, NQuoteType.SIMPLE)) +
+                ", sval=" + (sval == null ? "null" : NStringUtils.formatStringLiteral(sval, NElementType.SINGLE_QUOTED_STRING)) +
                 ", nval=" + nval +
                 '}';
     }

@@ -67,7 +67,7 @@ public class DefaultNAddUserCmd extends AbstractNAddUserCmd {
                     getGroups(), getPermissions());
             security.setRemoteIdentity(getRemoteIdentity());
             security.setRemoteCredentials(CoreStringUtils.chrToStr(sec.createCredentials(getRemoteCredentials(), true, null)));
-            NWorkspaceExt.of(workspace).getConfigModel()
+            NWorkspaceExt.of().getConfigModel()
                     .setUser(security);
         }
         return this;

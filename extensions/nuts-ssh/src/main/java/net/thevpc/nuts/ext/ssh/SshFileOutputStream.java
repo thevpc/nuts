@@ -6,12 +6,13 @@ import com.jcraft.jsch.JSchException;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NConnexionString;
+import net.thevpc.nuts.util.NUnused;
 
 import java.io.*;
 
+@NUnused
 public class SshFileOutputStream extends OutputStream {
     private SShConnection connection;
-    private NSession session;
     private String to;
     private boolean mkdirs;
     private boolean failFast;
@@ -23,13 +24,13 @@ public class SshFileOutputStream extends OutputStream {
     private InputStream in;
     private Channel channel;
 
-    public SshFileOutputStream(NConnexionString path, NSession nSession, boolean mkdirs, boolean failFast, long filesize) {
+    public SshFileOutputStream(NConnexionString path, boolean mkdirs, boolean failFast, long filesize) {
         super();
-        this.session = nSession;
+        NSession session = NSession.of();
         this.connection = new SShConnection(path
-                ,nSession.in()
-                ,nSession.out().asOutputStream()
-                ,nSession.err().asOutputStream()
+                , session.in()
+                ,session.out().asOutputStream()
+                ,session.err().asOutputStream()
         );
         this.mkdirs = mkdirs;
         this.to = path.getPath();

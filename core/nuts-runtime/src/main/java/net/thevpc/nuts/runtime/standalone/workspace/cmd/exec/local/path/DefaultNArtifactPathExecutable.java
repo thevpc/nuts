@@ -39,14 +39,14 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableInformati
     String tempFolder;
     DefaultNExecCmd.NExecutorComponentAndContext executorComponentAndContext;
 
-    public DefaultNArtifactPathExecutable(NWorkspace workspace,String cmdName, String[] args, List<String> executorOptions, List<String> workspaceOptions,
+    public DefaultNArtifactPathExecutable(String cmdName, String[] args, List<String> executorOptions, List<String> workspaceOptions,
                                           NExecutionType executionType, NRunAs runAs, DefaultNExecCmd execCommand,
                                           DefaultNDefinition nutToRun,
                                           CharacterizedExecFile c,
                                           String tempFolder,
                                           DefaultNExecCmd.NExecutorComponentAndContext executorComponentAndContext
     ) {
-        super(workspace,cmdName,
+        super(cmdName,
                 NCmdLine.of(args).toString(),
                 NExecutableType.ARTIFACT, execCommand);
         this.c = c;

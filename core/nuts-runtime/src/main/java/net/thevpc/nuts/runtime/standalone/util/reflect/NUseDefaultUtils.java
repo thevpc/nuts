@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
-import net.thevpc.nuts.spi.NUseDefault;
+import net.thevpc.nuts.util.NUseDefault;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;

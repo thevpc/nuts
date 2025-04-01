@@ -23,8 +23,8 @@ import java.util.List;
  */
 public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNSettingsInternalExecutable(NWorkspace workspace, String[] args, NExecCmd execCommand) {
-        super(workspace, "settings", args, execCommand);
+    public DefaultNSettingsInternalExecutable(String[] args, NExecCmd execCommand) {
+        super("settings", args, execCommand);
     }
 
     private List<NSettingsSubCommand> subCommands;
@@ -79,7 +79,7 @@ public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutab
                         break;
                     }
                 }
-                NSession session = workspace.currentSession();
+                NSession session = NSession.of();
                 if (selectedSubCommand == null) {
                     session.configureLast(cmd);
                 } else {

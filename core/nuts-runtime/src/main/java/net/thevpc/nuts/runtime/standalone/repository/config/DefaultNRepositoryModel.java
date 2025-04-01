@@ -2,15 +2,9 @@ package net.thevpc.nuts.runtime.standalone.repository.config;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.elem.NElements;
 
 
-
-import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NPathPermission;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositoryRegistryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
@@ -20,25 +14,17 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEvent;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.ConfigEventType;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
-import java.io.IOException;
-import java.io.PrintStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Instant;
-import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Level;
 
 public class DefaultNRepositoryModel {
 
@@ -47,7 +33,7 @@ public class DefaultNRepositoryModel {
 
     public DefaultNRepositoryModel(NWorkspace workspace) {
         this.workspace = workspace;
-        repositoryRegistryHelper = new NRepositoryRegistryHelper(workspace);
+        repositoryRegistryHelper = new NRepositoryRegistryHelper();
     }
 
     protected NLogOp _LOGOP() {
@@ -234,7 +220,7 @@ public class DefaultNRepositoryModel {
             options2.setTemporary(true);
             options2.setEnabled(options.isEnabled());
             options2.setLocation(CoreIOUtils.resolveRepositoryPath(options2, rootFolder));
-            return new NSimpleRepositoryWrapper(options2, workspace, null, repoModel);
+            return new NSimpleRepositoryWrapper(options2, null, repoModel);
         }
 
         options = options.copy();

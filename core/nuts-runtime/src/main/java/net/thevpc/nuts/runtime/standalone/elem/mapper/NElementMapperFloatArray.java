@@ -26,7 +26,6 @@ public class NElementMapperFloatArray implements NElementMapper<float[]> {
 
     @Override
     public float[] createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        NSession session = context.getSession();
         NArrayElement earr = o.asArray().get();
         float[] arr = new float[earr.size()];
         for (int i = 0; i < arr.length; i++) {

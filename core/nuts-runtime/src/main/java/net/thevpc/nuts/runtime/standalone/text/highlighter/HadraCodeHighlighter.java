@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 
@@ -13,15 +12,13 @@ import net.thevpc.nuts.text.*;
 public class HadraCodeHighlighter implements NCodeHighlighter {
 
     private Set<String> reservedWords = new HashSet<>();
-    private NWorkspace workspace;
 
     @Override
     public String getId() {
-        return "handra";
+        return "hadra";
     }
 
-    public HadraCodeHighlighter(NWorkspace workspace) {
-        this.workspace = workspace;
+    public HadraCodeHighlighter() {
         reservedWords.addAll(NCodeHighlighterHelper.loadNames("hadra.kw1",getClass()));
     }
 

@@ -25,7 +25,6 @@
 package net.thevpc.nuts.runtime.standalone.format.props;
 
 import net.thevpc.nuts.NUnsupportedOperationException;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
@@ -40,10 +39,7 @@ import java.io.StringReader;
  */
 public class DefaultPropsElementFormat implements NElementStreamFormat {
 
-    private NWorkspace ws;
-
-    public DefaultPropsElementFormat(NWorkspace ws) {
-        this.ws = ws;
+    public DefaultPropsElementFormat() {
     }
 
     public NElement parseElement(String string, NElementFactoryContext context) {
@@ -81,7 +77,13 @@ public class DefaultPropsElementFormat implements NElementStreamFormat {
                 break;
             }
             case INSTANT:
-            case STRING:
+            case DOUBLE_QUOTED_STRING:
+            case SINGLE_QUOTED_STRING:
+            case ANTI_QUOTED_STRING:
+            case TRIPLE_DOUBLE_QUOTED_STRING:
+            case TRIPLE_SINGLE_QUOTED_STRING:
+            case TRIPLE_ANTI_QUOTED_STRING:
+            case LINE_STRING:
 //            case NUTS_STRING:
             {
                 StringBuilder sb = new StringBuilder("\"");

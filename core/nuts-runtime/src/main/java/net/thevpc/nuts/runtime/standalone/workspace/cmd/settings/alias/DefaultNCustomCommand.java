@@ -4,7 +4,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.util.NBlankable;
@@ -24,10 +23,8 @@ public class DefaultNCustomCommand implements NCustomCmd {
     private List<String> helpCommand;
     private String helpText;
     private List<String> executorOptions;
-    private NWorkspace workspace;
 
-    public DefaultNCustomCommand(NWorkspace workspace) {
-        this.workspace = workspace;
+    public DefaultNCustomCommand() {
     }
 
     protected NLogOp _LOGOP() {
@@ -60,7 +57,7 @@ public class DefaultNCustomCommand implements NCustomCmd {
 
     @Override
     public int exec(String[] args, NCmdExecOptions options) {
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         if (session.isDry()) {
             List<String> executorOptions = new ArrayList<>(options.getExecutorOptions());
             executorOptions.addAll(this.getExecutorOptions());
@@ -185,14 +182,6 @@ public class DefaultNCustomCommand implements NCustomCmd {
     public DefaultNCustomCommand setHelpText(String helpText) {
         this.helpText = helpText;
         return this;
-    }
-
-    public NWorkspace getWorkspace() {
-        return workspace;
-    }
-
-    public void setWorkspace(NWorkspace workspace) {
-        this.workspace = workspace;
     }
 
     @Override

@@ -65,12 +65,12 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
     }
 
     public void runMode(NExecutionContext executionContext, String mode) {
-        NWorkspaceUtils.of(executionContext.getWorkspace()).checkReadOnly();
+        NWorkspaceUtils.of().checkReadOnly();
         if (runnerId == null) {
             NDefinition definition = executionContext.getDefinition();
             NDescriptor descriptor = definition.getDescriptor();
             if (descriptor.isApplication()) {
-                DefaultNDefinition def2 = new DefaultNDefinition(definition, executionContext.getWorkspace())
+                DefaultNDefinition def2 = new DefaultNDefinition(definition)
                         .setInstallInformation(
                                 new DefaultNInstallInfo(definition.getInstallInformation().get())
                                         .setInstallStatus(
@@ -94,7 +94,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
             NDefinition definition = runnerId;
             NDescriptor descriptor = definition.getDescriptor();
             if (descriptor.isApplication()) {
-                DefaultNDefinition def2 = new DefaultNDefinition(definition, executionContext.getWorkspace())
+                DefaultNDefinition def2 = new DefaultNDefinition(definition)
                         .setInstallInformation(
                                 new DefaultNInstallInfo(definition.getInstallInformation().get())
                                         .setInstallStatus(

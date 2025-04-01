@@ -28,13 +28,13 @@ import java.util.logging.Level;
  */
 public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNHelpInternalExecutable(NWorkspace workspace,String[] args, NExecCmd execCommand) {
-        super(workspace,"help", args, execCommand);
+    public DefaultNHelpInternalExecutable(String[] args, NExecCmd execCommand) {
+        super("help", args, execCommand);
     }
 
     @Override
     public int execute() {
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         if (session.isDry()) {
             dryExecute();
             return NExecutionException.SUCCESS;

@@ -27,10 +27,8 @@ import net.thevpc.nuts.util.NOptional;
 
 public class NFormatsImpl implements NFormats {
     private NClassMap<NFormatMapper> mapper = new NClassMap<>(NFormatMapper.class);
-    private NWorkspace workspace;
 
-    public NFormatsImpl(NWorkspace workspace) {
-        this.workspace = workspace;
+    public NFormatsImpl() {
         registerDefaults();
     }
 
@@ -53,7 +51,7 @@ public class NFormatsImpl implements NFormats {
         Class<?> c = t.getClass();
         NFormatMapper e = mapper.get(c);
         if (e != null) {
-            NFormat n = e.ofFormat(t, this, workspace);
+            NFormat n = e.ofFormat(t, this);
             if (n != null) {
                 return NOptional.of(n);
             }
@@ -62,50 +60,50 @@ public class NFormatsImpl implements NFormats {
     }
 
     private void registerDefaults() {
-        register(NExecCmd.class, (o, f, ws) -> NExecCmdFormat.of().setValue((NExecCmd) o));
+        register(NExecCmd.class, (o, f) -> NExecCmdFormat.of().setValue((NExecCmd) o));
 
-        register(NVersion.class, (o, f, ws) -> NVersionFormat.of().setVersion((NVersion) o));
+        register(NVersion.class, (o, f) -> NVersionFormat.of().setVersion((NVersion) o));
 
-        register(NId.class, (o, f, ws) -> NIdFormat.of().setValue((NId) o));
-        register(NIdBuilder.class, (o, f, ws) -> NIdFormat.of().setValue(((NIdBuilder) o).build()));
+        register(NId.class, (o, f) -> NIdFormat.of().setValue((NId) o));
+        register(NIdBuilder.class, (o, f) -> NIdFormat.of().setValue(((NIdBuilder) o).build()));
 
-        register(NDescriptor.class, (o, f, ws) -> NDescriptorFormat.of().setValue((NDescriptor) o));
-        register(NDescriptorBuilder.class, (o, f, ws) -> NDescriptorFormat.of().setValue(((NDescriptorBuilder) o).build()));
+        register(NDescriptor.class, (o, f) -> NDescriptorFormat.of().setValue((NDescriptor) o));
+        register(NDescriptorBuilder.class, (o, f) -> NDescriptorFormat.of().setValue(((NDescriptorBuilder) o).build()));
 
-        register(NDependency.class, (o, f, ws) -> NDependencyFormat.of().setValue((NDependency) o));
-        register(NDependencyBuilder.class, (o, f, ws) -> NDependencyFormat.of().setValue(((NDependencyBuilder) o).build()));
+        register(NDependency.class, (o, f) -> NDependencyFormat.of().setValue((NDependency) o));
+        register(NDependencyBuilder.class, (o, f) -> NDependencyFormat.of().setValue(((NDependencyBuilder) o).build()));
 
-        register(NCmdLine.class, (o, f, ws) -> NCmdLineFormat.of().setValue((NCmdLine) o));
+        register(NCmdLine.class, (o, f) -> NCmdLineFormat.of().setValue((NCmdLine) o));
 
-        register(NCompressedPath.class, (o, f, ws) -> new NCompressedPath.MyPathFormat((NCompressedPath) o));
-        register(NCompressedPathBase.class, (o, f, ws) -> new NCompressedPathBase.MyPathFormat((NCompressedPathBase) o));
-        register(NPathBase.class, (o, f, ws) -> new NPathBase.PathFormat((NPathBase) o));
+        register(NCompressedPath.class, (o, f) -> new NCompressedPath.MyPathFormat((NCompressedPath) o));
+        register(NCompressedPathBase.class, (o, f) -> new NCompressedPathBase.MyPathFormat((NCompressedPathBase) o));
+        register(NPathBase.class, (o, f) -> new NPathBase.PathFormat((NPathBase) o));
 
-        register(NFormatSPI.class, (o, f, ws) -> NFormat.of(((NFormatSPI) o)));
-        register(NChronometer.class, (o, f, ws) -> NFormat.of(new NChronometerNFormatSPI((NChronometer) o)));
-        register(NDuration.class, (o, f, ws) -> NFormat.of(new NDurationFormatSPI((NDuration) o)));
-        register(NByteArrayPrintStream.MyAbstractMultiReadNInputSource.class, (o, f, ws) ->
+        register(NFormatSPI.class, (o, f) -> NFormat.of(((NFormatSPI) o)));
+        register(NChronometer.class, (o, f) -> NFormat.of(new NChronometerNFormatSPI((NChronometer) o)));
+        register(NDuration.class, (o, f) -> NFormat.of(new NDurationFormatSPI((NDuration) o)));
+        register(NByteArrayPrintStream.MyAbstractMultiReadNInputSource.class, (o, f) ->
                 f.ofFormat(((NByteArrayPrintStream.MyAbstractMultiReadNInputSource) o).getValue()).get());
-        register(InputStreamExt.class, (o, f, ws) ->
+        register(InputStreamExt.class, (o, f) ->
                 NFormat.of(new NContentMetadataProviderFormatSPI((InputStreamExt) o, ((InputStreamExt) o).getSourceName(), "input-stream")));
-        register(InputStreamTee.class, (o, f, ws) ->
+        register(InputStreamTee.class, (o, f) ->
                 NFormat.of(new NContentMetadataProviderFormatSPI((InputStreamTee) o, null, "input-stream-tee")));
-        register(OutputStreamExt.class, (o, f, ws) ->
+        register(OutputStreamExt.class, (o, f) ->
                 NFormat.of(new NContentMetadataProviderFormatSPI((OutputStreamExt) o, null, "output-stream")));
-        register(NNonBlockingInputStreamAdapter.class, (o, f, ws) ->
+        register(NNonBlockingInputStreamAdapter.class, (o, f) ->
                 NFormat.of(new NContentMetadataProviderFormatSPI((NNonBlockingInputStreamAdapter) o, ((NNonBlockingInputStreamAdapter) o).getSourceName(), "input-stream")));
-        register(NInputStreamSource.class, (o, f, ws) ->
+        register(NInputStreamSource.class, (o, f) ->
                 NFormat.of(new NContentMetadataProviderFormatSPI((NInputStreamSource) o, null, "input-stream")));
-        register(NPrintStream.class, (o, f, ws) ->
+        register(NPrintStream.class, (o, f) ->
                 NFormat.of(new NContentMetadataProviderFormatSPI(((NPrintStream)o), null, "print-stream")));
-        register(OutputTargetExt.class, (o, f, ws) ->
+        register(OutputTargetExt.class, (o, f) ->
                 NFormat.of(new NContentMetadataProviderFormatSPI((OutputTargetExt) o,((OutputTargetExt) o).getSourceName(), "output-stream")));
-        register(OutputTargetExt.class, (o, f, ws) ->
+        register(OutputTargetExt.class, (o, f) ->
                 NFormat.of(new NContentMetadataProviderFormatSPI((OutputTargetExt) o,((OutputTargetExt) o).getSourceName(), "output-stream")));
 
-        register(DefaultNDigest.NDescriptorInputSource.class, (o, f, ws) -> NFormat.of(new NDescriptorInputSourceFormatSPI((DefaultNDigest.NDescriptorInputSource) o)));
+        register(DefaultNDigest.NDescriptorInputSource.class, (o, f) -> NFormat.of(new NDescriptorInputSourceFormatSPI((DefaultNDigest.NDescriptorInputSource) o)));
 
-        register(NPathFromSPI.class, (o, f, ws) ->
+        register(NPathFromSPI.class, (o, f) ->
         {
             NPathFromSPI b=(NPathFromSPI) o;
             NPathSPI base = ((NPathFromSPI) o).getBase();
@@ -122,6 +120,6 @@ public class NFormatsImpl implements NFormats {
     }
 
     private interface NFormatMapper {
-        NFormat ofFormat(Object t, NFormats texts, NWorkspace workspace);
+        NFormat ofFormat(Object t, NFormats texts);
     }
 }

@@ -217,7 +217,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
     private void initWorkspace(NBootOptions initialBootOptions0) {
         Objects.requireNonNull(initialBootOptions0, () -> "boot options could not be null");
-        this.LOG = new DefaultNLog(this, DefaultNWorkspace.class, true);
+        this.LOG = new DefaultNLog(DefaultNWorkspace.class, true);
         InitWorkspaceData data = new InitWorkspaceData();
         data.initialBootOptions = initialBootOptions0.readOnly();
         try {
@@ -264,7 +264,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         this.wsModel.extensionModel = new DefaultNWorkspaceExtensionModel(this, bootFactory,
                 data.effectiveBootOptions.getExcludedExtensions().orElse(Collections.emptyList()));
         this.wsModel.filtersModel = new DefaultNFilterModel(this);
-        this.wsModel.installedRepository = new DefaultNInstalledRepository(this, data.effectiveBootOptions);
+        this.wsModel.installedRepository = new DefaultNInstalledRepository(data.effectiveBootOptions);
         this.wsModel.envModel = new DefaultNWorkspaceEnvManagerModel(this);
         this.wsModel.sdkModel = new DefaultNPlatformModel(this.wsModel.envModel);
         this.wsModel.locationsModel = new DefaultNWorkspaceLocationModel(this,
@@ -1178,7 +1178,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                                     ).toString()).collect(Collectors.toList())
                     );
                 }
-                cc.setWorkspace(cc.getWorkspace());
                 NExecutionContext executionContext = cc.build();
 
                 if (strategy0 == InstallStrategy0.REQUIRE) {
@@ -1854,7 +1853,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     public NExecutionContextBuilder createExecutionContext() {
         NSession session = NSession.of();
         return new DefaultNExecutionContextBuilder()
-                .setWorkspace(this)
                 .setDry(session.isDry())
                 .setBot(session.isBot())
                 .setExecutionType(this.getBootOptions().getExecutionType().orNull())
@@ -2356,7 +2354,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             launcher.setSwitchWorkspace(false);
             launcher.setSwitchWorkspaceLocation(null);
         }
-        SystemNdi ndi = NSettingsNdiSubCommand.createNdi(this.getEnvModel().getWorkspace());
+        SystemNdi ndi = NSettingsNdiSubCommand.createNdi();
         if (ndi != null) {
             ndi.addScript(
                     new NdiScriptOptions()

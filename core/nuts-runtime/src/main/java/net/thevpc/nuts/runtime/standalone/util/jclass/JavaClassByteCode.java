@@ -10,7 +10,6 @@ import net.thevpc.nuts.format.NVisitResult;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -37,24 +36,22 @@ public class JavaClassByteCode {
     private static final int FLAG_MODULE = 19;
     private static final int FLAG_PACKAGE = 20;
     private final DataInputStream stream;
-    private final NWorkspace workspace;
     private final Visitor visitor;
     private Constant[] constants = new Constant[32];
 
-    public JavaClassByteCode(InputStream stream, NWorkspace workspace) {
-        this(stream, null, workspace);
+    public JavaClassByteCode(InputStream stream) {
+        this(stream, null);
     }
 
-    public JavaClassByteCode(DataInputStream stream, NWorkspace workspace) {
-        this(stream, null, workspace);
+    public JavaClassByteCode(DataInputStream stream) {
+        this(stream, null);
     }
 
-    public JavaClassByteCode(InputStream stream, Visitor visitor, NWorkspace workspace) {
-        this((stream instanceof DataInputStream) ? ((DataInputStream) stream) : new DataInputStream(stream), visitor, workspace);
+    public JavaClassByteCode(InputStream stream, Visitor visitor) {
+        this((stream instanceof DataInputStream) ? ((DataInputStream) stream) : new DataInputStream(stream), visitor);
     }
 
-    public JavaClassByteCode(DataInputStream stream, Visitor visitor, NWorkspace workspace) {
-        this.workspace = workspace;
+    public JavaClassByteCode(DataInputStream stream, Visitor visitor) {
         this.stream = stream;
         this.visitor = visitor;
         try {

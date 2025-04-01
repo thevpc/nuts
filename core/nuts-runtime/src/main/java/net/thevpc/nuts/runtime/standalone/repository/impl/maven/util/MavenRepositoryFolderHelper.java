@@ -65,12 +65,10 @@ import net.thevpc.nuts.util.NMsg;
 public class MavenRepositoryFolderHelper {
 
     private NRepository repo;
-    private NWorkspace workspace;
     private NPath rootPath;
 
     public MavenRepositoryFolderHelper(NRepository repo, NPath rootPath) {
         this.repo = repo;
-        this.workspace = NWorkspace.of();
         this.rootPath = rootPath;
     }
 
@@ -93,10 +91,6 @@ public class MavenRepositoryFolderHelper {
             return cacheContent.setUserCache(true).setUserTemporary(false);
         }
         return null;
-    }
-
-    public NWorkspace getWorkspace() {
-        return workspace;
     }
 
     protected String getIdFilename(NId id) {
@@ -286,7 +280,7 @@ public class MavenRepositoryFolderHelper {
 //                            throw new NutsIOException(getWorkspace(),e);
 //                        }
                         try (PrintStream p = new PrintStream(new File(folder, CoreNConstants.Files.DOT_FILES))) {
-                            p.println("#version=" + workspace.getApiVersion());
+                            p.println("#version=" + NWorkspace.of().getApiVersion());
                             for (String file : folders) {
                                 p.println(file + "/");
                             }

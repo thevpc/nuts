@@ -4,7 +4,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.OutputStream;
@@ -68,16 +67,16 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
                 return this;
             }
             case FORMAT: {
-                return new FormatOutputStream(new SimpleWriterOutputStream(this, term, workspace), term, workspace);
+                return new FormatOutputStream(new SimpleWriterOutputStream(this, term, workspace), term);
             }
             case FILTER: {
-                return new FilterFormatOutputStream(new SimpleWriterOutputStream(this, term, workspace), term, workspace);
+                return new FilterFormatOutputStream(new SimpleWriterOutputStream(this, term, workspace), term);
             }
             case ESCAPE: {
-                return new EscapeOutputStream(new SimpleWriterOutputStream(this, term, workspace), term, workspace);
+                return new EscapeOutputStream(new SimpleWriterOutputStream(this, term, workspace), term);
             }
             case UNESCAPE: {
-                return new EscapeOutputStream(new SimpleWriterOutputStream(this, term, workspace), term, workspace);
+                return new EscapeOutputStream(new SimpleWriterOutputStream(this, term, workspace), term);
             }
         }
         throw new NUnsupportedEnumException(other);

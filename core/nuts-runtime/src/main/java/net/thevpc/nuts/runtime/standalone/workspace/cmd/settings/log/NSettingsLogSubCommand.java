@@ -25,12 +25,12 @@ import java.util.logging.Logger;
  */
 public class NSettingsLogSubCommand extends AbstractNSettingsSubCommand {
     public NSettingsLogSubCommand(NWorkspace workspace) {
-        super(workspace);
+        super();
     }
 
     @Override
     public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         if (cmdLine.next("set log level", "sll").isPresent()) {
 //            NutsWorkspaceConfigManager configManager = context.getWorkspace().config();
             if (cmdLine.next("verbose", "finest").isPresent()) {

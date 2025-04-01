@@ -14,7 +14,8 @@ public class DefaultNUndeployCmd extends AbstractNUndeployCmd {
 
     @Override
     public NUndeployCmd run() {
-        NSession session=workspace.currentSession();
+        NSession session=NSession.of();
+        NWorkspace workspace = NWorkspace.of();
         NWorkspaceUtils.of(workspace).checkReadOnly();
         if (ids.isEmpty()) {
             throw new NExecutionException(NMsg.ofPlain("no package to undeploy"), NExecutionException.ERROR_1);

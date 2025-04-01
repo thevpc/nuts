@@ -21,10 +21,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class NUncompressZip implements NUncompressPackaging {
-    private NWorkspace workspace;
-
-    public NUncompressZip(NWorkspace workspace) {
-        this.workspace = workspace;
+    public NUncompressZip() {
     }
 
     public void uncompressPackage(NUncompress uncompress, NInputSource source) {

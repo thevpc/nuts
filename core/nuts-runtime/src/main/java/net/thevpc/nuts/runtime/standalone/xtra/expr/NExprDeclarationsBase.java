@@ -1,26 +1,18 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.template.NExprDeclarationsTemplateImpl;
 import net.thevpc.nuts.util.NFunction;
 import net.thevpc.nuts.util.NFunction2;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.expr.*;
 
 import java.util.*;
 
 public abstract class NExprDeclarationsBase implements NExprDeclarations {
-    protected NWorkspace workspace;
     protected NExprs exprs;
 
-    public NExprDeclarationsBase(NExprs exprs, NWorkspace workspace) {
-        this.workspace = workspace;
+    public NExprDeclarationsBase(NExprs exprs) {
         this.exprs = exprs;
-    }
-
-    public NWorkspace getWorkspace() {
-        return workspace;
     }
 
     public NOptional<Object> evalFunction(String fctName, NExprNodeValue... args) {
@@ -64,17 +56,17 @@ public abstract class NExprDeclarationsBase implements NExprDeclarations {
 
     @Override
     public NExprDeclarations newDeclarations(NExprEvaluator evaluator) {
-        return new NExprEvaluatorAsContext(exprs, workspace, evaluator, this);
+        return new NExprEvaluatorAsContext(exprs, evaluator, this);
     }
 
     @Override
     public NExprMutableDeclarations newMutableDeclarations() {
-        return new DefaultDeclarationMutableContext(exprs, workspace, this);
+        return new DefaultDeclarationMutableContext(exprs, this);
     }
 
     @Override
     public NOptional<NExprNode> parse(String expression) {
-        return new SyntaxParser(expression, new NExprWithCache(this), workspace).parse();
+        return new SyntaxParser(expression, new NExprWithCache(this)).parse();
     }
 
     @Override

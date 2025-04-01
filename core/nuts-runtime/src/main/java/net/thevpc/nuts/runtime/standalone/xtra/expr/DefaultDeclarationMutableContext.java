@@ -1,14 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.expr.*;
 
 import java.util.*;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class DefaultDeclarationMutableContext extends NExprDeclarationsBase implements NExprMutableDeclarations {
     private static DecInfo REMOVED = new DecInfo(null);
@@ -21,8 +18,8 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
 
     private NExprDeclarations parent;
 
-    public DefaultDeclarationMutableContext(NExprs exprs,NWorkspace workspace,NExprDeclarations parent) {
-        super(exprs,workspace);
+    public DefaultDeclarationMutableContext(NExprs exprs, NExprDeclarations parent) {
+        super(exprs);
         this.parent = parent;
     }
 
@@ -82,7 +79,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
             if (varImpl == null) {
                 userFunctions.put(name, REMOVED);
             } else {
-                DefaultNExprVarDeclaration r = new DefaultNExprVarDeclaration(workspace,name, varImpl);
+                DefaultNExprVarDeclaration r = new DefaultNExprVarDeclaration(name, varImpl);
                 userVars.put(name, new DecInfo<>(r));
                 return r;
             }
