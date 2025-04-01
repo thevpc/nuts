@@ -14,7 +14,7 @@ import java.util.Objects;
 public class NRepositorySelectorHelper {
 
     public static NAddRepositoryOptions createRepositoryOptions(String s, boolean requireName) {
-        return createRepositoryOptions(s,requireName,null);
+        return createRepositoryOptions(s, requireName, null);
     }
 
     public static NAddRepositoryOptions createRepositoryOptions(String s, boolean requireName, String[] tags) {
@@ -29,13 +29,14 @@ public class NRepositorySelectorHelper {
     public static NAddRepositoryOptions createRepositoryOptions(NRepositoryLocation loc, boolean requireName) {
         return createRepositoryOptions(loc, requireName, null);
     }
+
     public static NAddRepositoryOptions createRepositoryOptions(NRepositoryLocation loc, boolean requireName, String[] tags) {
         String defaultName = null;
         NRepositoryDB db = NRepositoryDB.of();
         if (!db.findAllNamesByName(loc.getName()).isEmpty()) {
             defaultName = loc.getName();
         } else {
-            String nn = db.getRepositoryOptionsByLocation(loc.getPath()).map(x->x.getName()).orNull();
+            String nn = db.getRepositoryOptionsByLocation(loc.getPath()).map(x -> x.getName()).orNull();
             if (nn != null) {
                 defaultName = nn;
             }
@@ -89,7 +90,11 @@ public class NRepositorySelectorHelper {
         NAssert.requireNonBlank(url, "repository url (<name>=<url>)");
 
         NRepositoryLocation loc = NRepositoryLocation.of(url);
-        String sloc = NPath.of(loc.getPath()).toAbsolute(NWorkspaceExt.of().getConfigModel().getRepositoriesRoot()).toString();
+        NPath nPath = NPath.of(loc.getPath());
+        String sloc =
+                nPath.isName() ?
+                        nPath.toAbsolute(NWorkspaceExt.of().getConfigModel().getRepositoriesRoot()).toString()
+                        : nPath.toAbsolute().toString();
         loc = loc.setPath(sloc);
 
         return new NAddRepositoryOptions().setName(name)

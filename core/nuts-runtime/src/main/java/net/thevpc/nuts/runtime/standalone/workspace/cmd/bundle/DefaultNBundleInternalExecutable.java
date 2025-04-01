@@ -374,7 +374,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     new NStringBuilder()
                             .println("#!/bin/sh" )
                             .println("" )
-                            .println("java -jar \"lib/" + ExtraApiUtils.resolveJarPath(runnerId) + "\" --repo==lib " +
+                            .println("java -jar \"lib/" + ExtraApiUtils.resolveJarPath(runnerId) + "\" --repo==./lib " +
                                     (mainIdStr.isEmpty() ? "" : ("'" + mainIdStr + "'" ))
                                     + " \"$@\"" )
                             .build()
@@ -387,7 +387,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
             bundleFolder.resolve("windows-runner.bat" ).writeString(
                     new NStringBuilder()
                             .println("" )
-                            .println("java.exe -jar \"lib/" + ExtraApiUtils.resolveJarPath(runnerId) + "\" --repo==lib " +
+                            .println("java.exe -jar \"lib\\" + ExtraApiUtils.resolveJarPath(runnerId).replace("/","\\") + "\" --repo==.\\lib " +
                                     (mainIdStr.isEmpty() ? "" : ("\"" + mainIdStr + "\"" ))
                                     + " $*" )
                             .build()

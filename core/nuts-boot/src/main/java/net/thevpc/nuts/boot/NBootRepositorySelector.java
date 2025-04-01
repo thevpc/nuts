@@ -59,7 +59,6 @@ public class NBootRepositorySelector {
                 return new NBootRepositorySelector(op, z);
             }
         }
-        String finalLocation = location;
         return null;
     }
 

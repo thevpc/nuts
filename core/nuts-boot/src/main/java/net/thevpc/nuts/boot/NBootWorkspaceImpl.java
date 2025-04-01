@@ -291,7 +291,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 return parsedBootRuntimeRepositories;
             }
             NBootLog log = NBootContext.log();
-            log.log(Level.FINE, "START", NBootMsg.ofC("resolve boot repositories to load nuts-runtime from options : %s and config: %s",
+            log.log(Level.FINE, "START", NBootMsg.ofC("resolving boot repositories to load nuts-runtime from options : %s and config: %s",
                     options.getRepositories() == null ? "[]" : options.getRepositories().toString(),
                     options.getBootRepositories() == null ? "[]" : options.getBootRepositories()));
             NBootRepositorySelectorList bootRepositoriesSelector = NBootRepositorySelectorList.of(options.getRepositories(), repositoryDB);
@@ -299,7 +299,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             NBootRepositoryLocation[] result;
             if (old.length == 0) {
                 //no previous config, use defaults!
-                List<NBootRepositoryLocation> drs = new ArrayList<>();
+                List<NBootRepositorySelector> drs = new ArrayList<>();
                 List<String> tags = new ArrayList<>();
                 tags.add(NBootConstants.RepoTags.MAIN);
                 if (options.getPreviewRepo() != null) {
@@ -326,9 +326,12 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                             }
                         }
                     }
-                    drs.add(NBootRepositoryLocation.of(s, repositoryDB));
+                    drs.add(new NBootRepositorySelector("INCLUDE",NBootRepositoryLocation.of(s, repositoryDB)));
                 }
-                result = drs.toArray(new NBootRepositoryLocation[0]);
+                old = drs.toArray(new NBootRepositorySelector[0]);
+
+
+                result = bootRepositoriesSelector.resolve(Arrays.stream(old).map(x -> NBootRepositoryLocation.of(x.getName(), x.getUrl())).toArray(NBootRepositoryLocation[]::new), repositoryDB);
             } else {
                 result = bootRepositoriesSelector.resolve(Arrays.stream(old).map(x -> NBootRepositoryLocation.of(x.getName(), x.getUrl())).toArray(NBootRepositoryLocation[]::new), repositoryDB);
             }
@@ -384,7 +387,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
 //        } else {
             parsedBootRuntimeRepositories = rr;
 //        }
-            log.log(Level.FINE, "START", NBootMsg.ofC("resolve boot repositories to load nuts-runtime as %s",
+            log.log(Level.FINE, "START", NBootMsg.ofC("resolved boot repositories to load nuts-runtime as %s",
                     parsedBootRuntimeRepositories
             ));
             return rr;
