@@ -10,7 +10,6 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.NRecommendationPha
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.RequestQueryInfo;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 
@@ -28,7 +27,7 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
     private final HashMap<String, String> osEnv;
 
     public JavaProcessExecHelper(List<NText> xargs, JavaExecutorOptions joptions, NExecutionContext executionContext, NDefinition def, List<String> args, HashMap<String, String> osEnv) {
-        super(executionContext.getWorkspace());
+        super();
         this.xargs = xargs;
         this.joptions = joptions;
         this.executionContext = executionContext;

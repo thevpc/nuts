@@ -1477,7 +1477,7 @@ public class DefaultNWorkspaceConfigModel {
             terminal = createTerminal();
         }
         if (!(terminal instanceof UnmodifiableTerminal)) {
-            terminal = new UnmodifiableTerminal(terminal, workspace);
+            terminal = new UnmodifiableTerminal(terminal);
         }
         this.terminal = terminal;
     }
@@ -1498,7 +1498,7 @@ public class DefaultNWorkspaceConfigModel {
 
     public NTerminal createTerminal() {
         return new DefaultNTerminalFromSystem(
-                workspace, workspaceSystemTerminalAdapter
+                workspaceSystemTerminalAdapter
         );
 //        return createTerminal(null, session);
     }
@@ -1610,7 +1610,7 @@ public class DefaultNWorkspaceConfigModel {
     private static class WorkspaceSystemTerminalAdapter extends AbstractSystemTerminalAdapter {
 
         public WorkspaceSystemTerminalAdapter(NWorkspace workspace) {
-            super(workspace);
+            super();
         }
 
         public NSystemTerminalBase getBase() {

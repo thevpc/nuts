@@ -11,14 +11,9 @@ import java.util.List;
 
 public abstract class AbstractNFilter implements NFilter {
 
-    protected NWorkspace workspace;
     private NFilterOp op;
 
-    public AbstractNFilter(NWorkspace workspace, NFilterOp op) {
-        this.workspace = workspace;
-        if(workspace ==null){
-            throw new NullPointerException();
-        }
+    public AbstractNFilter(NFilterOp op) {
         this.op = op;
     }
 

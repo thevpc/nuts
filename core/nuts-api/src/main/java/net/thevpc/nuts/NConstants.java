@@ -562,13 +562,15 @@ public final class NConstants {
 
         public static final String NUTS_GROUP_ID = "net.thevpc.nuts";
         public static final String NUTS_API_ARTIFACT_ID = "nuts";
+        public static final String NUTS_BOOT_ARTIFACT_ID = "nuts-boot";
         public static final String NUTS_APP_ARTIFACT_ID = "nuts-app";
         public static final String NUTS_RUNTIME_ARTIFACT_ID = "nuts-runtime";
         /**
          * nuts api id
          */
-        public static final String NUTS_API = NUTS_GROUP_ID + ":" + NUTS_API_ARTIFACT_ID;
-        public static final String NUTS_APP = NUTS_GROUP_ID + ":" + NUTS_APP_ARTIFACT_ID;
+        public static final String NUTS_BOOT = NUTS_GROUP_ID + ":" + NUTS_BOOT_ARTIFACT_ID;
+        public static final String NUTS_API  = NUTS_GROUP_ID + ":" + NUTS_API_ARTIFACT_ID;
+        public static final String NUTS_APP  = NUTS_GROUP_ID + ":" + NUTS_APP_ARTIFACT_ID;
         /**
          * nuts runtime id
          */

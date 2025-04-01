@@ -70,7 +70,7 @@ public interface NPathSPI {
     /// ////////////////////////////////////////////////
     /// DEFAULT IMPLEMENTATIONS
 
-    default NOptional<NPath> toRelative(NPath basePath, NPath parentPath) {
+    default NOptional<String> toRelative(NPath basePath, NPath parentPath) {
         return null;
     }
 
@@ -235,6 +235,10 @@ public interface NPathSPI {
      * @return
      */
     default Integer getNameCount(NPath basePath) {
+        return null;
+    }
+
+    default List<NPathChildDigestInfo> listDigestInfo(NPath basePath,String algo){
         return null;
     }
 

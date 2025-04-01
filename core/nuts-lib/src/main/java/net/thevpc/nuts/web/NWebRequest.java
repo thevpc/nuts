@@ -128,7 +128,11 @@ public interface NWebRequest extends NMsgFormattable {
 
     NWebRequest addFormUrlEncoded(Map<String, String> value);
 
+    NWebRequest setFormData(String key, NInputContentProvider value);
+
     NWebRequest addFormData(String key, NInputContentProvider value);
+
+    NWebRequest setFormData(String key, String value);
 
     NWebRequest addFormData(String key, String value);
 

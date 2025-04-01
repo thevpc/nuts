@@ -19,8 +19,8 @@ public class NVersionFilterOr extends AbstractVersionFilter implements NExprIdFi
 
     private NVersionFilter[] all;
 
-    public NVersionFilterOr(NWorkspace workspace, NVersionFilter... all) {
-        super(workspace, NFilterOp.OR);
+    public NVersionFilterOr(NVersionFilter... all) {
+        super(NFilterOp.OR);
         List<NVersionFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NVersionFilter filter : all) {

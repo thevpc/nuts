@@ -11,8 +11,8 @@ public class ScopeNDependencyFilter extends AbstractDependencyFilter{
 
     private EnumSet<NDependencyScope> scopes = EnumSet.noneOf(NDependencyScope.class);
 
-    public ScopeNDependencyFilter(NWorkspace workspace, NDependencyScopePattern... scopes) {
-        super(workspace, NFilterOp.CUSTOM);
+    public ScopeNDependencyFilter(NDependencyScopePattern... scopes) {
+        super(NFilterOp.CUSTOM);
         for (NDependencyScopePattern scope : scopes) {
             if(scope!=null) {
                 this.scopes.addAll(scope.toScopes());

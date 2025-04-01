@@ -7,6 +7,7 @@ import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.web.DefaultNWebCli;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.OutputStream;
@@ -31,6 +32,7 @@ public class SimpleRecommendationConnector extends AbstractRecommendationConnect
         try {
             URL url2 = CoreIOUtils.urlOf(ri.server + url);
             URLConnection con = url2.openConnection();
+            DefaultNWebCli.prepareGlobalConnection(con);
             HttpURLConnection http = (HttpURLConnection) con;
             http.setRequestMethod("POST");
             http.setDoOutput(true);
@@ -45,8 +47,8 @@ public class SimpleRecommendationConnector extends AbstractRecommendationConnect
             String out = elems.setValue(ri.q).json().setNtf(false).format().filteredText();
             int length = out.length();
             http.setFixedLengthStreamingMode(length);
-            http.setConnectTimeout(3000);
-            http.setReadTimeout(3000);
+            http.setConnectTimeout(1000);
+            http.setReadTimeout(1000);
             http.connect();
             try (OutputStream os = http.getOutputStream()) {
                 os.write(out.getBytes(StandardCharsets.UTF_8));

@@ -40,8 +40,8 @@ public class NDescriptorFilterPackaging extends AbstractDescriptorFilter {
 
     private final String packaging;
 
-    public NDescriptorFilterPackaging(NWorkspace workspace, String packaging) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NDescriptorFilterPackaging(String packaging) {
+        super(NFilterOp.CUSTOM);
         this.packaging = packaging;
     }
 

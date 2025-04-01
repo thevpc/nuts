@@ -1,8 +1,12 @@
 package net.thevpc.nuts.util;
 
-import java.util.Objects;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class NConnexionString implements Cloneable {
     private static Pattern CONNEXION_PATTERN = Pattern.compile(
@@ -32,7 +36,7 @@ public class NConnexionString implements Cloneable {
         String protocol;
         String path;
         if (e.matches()) {
-            protocol = e.group("protocol");
+            protocol = safeUrlDecode(e.group("protocol"));
             path = e.group("path");
             if (path.startsWith("//") && !"file".equals(protocol)) {
                 path = path.substring(2);
@@ -74,7 +78,7 @@ public class NConnexionString implements Cloneable {
                 String q = pathAndQuery.substring(i + 1);
                 v.setPath(p);
                 v.setQueryString(q);
-            }else {
+            } else {
                 v.setPath(pathAndQuery);
             }
         }
@@ -112,6 +116,30 @@ public class NConnexionString implements Cloneable {
         return this;
     }
 
+    public NConnexionString getRoot() {
+        return copy().setPath("/");
+    }
+
+    public NConnexionString getParent() {
+        String ppath = path;
+        if (NBlankable.isBlank(ppath) || "/".equals(ppath)) {
+            return null;
+        }
+        while (ppath.endsWith("/")) {
+            ppath = ppath.substring(0, ppath.length() - 1);
+        }
+        if (ppath.isEmpty()) {
+            return copy().setPath("/");
+        }
+        int i = ppath.lastIndexOf('/');
+        if (i <= 0) {
+            ppath = "/";
+        } else {
+            ppath = ppath.substring(0, i + 1);
+        }
+        return copy().setPath(ppath);
+    }
+
     public String getPort() {
         return port;
     }
@@ -125,14 +153,14 @@ public class NConnexionString implements Cloneable {
         StringBuilder sb = new StringBuilder();
         boolean fileProtocol = "file".equals(protocol);
         if (!NBlankable.isBlank(protocol)) {
-            sb.append(NStringUtils.trim(protocol)).append(":");
+            sb.append(safeUrlEncode(NStringUtils.trim(protocol))).append(":");
             if (!fileProtocol) {
                 sb.append("//");
                 if (!NBlankable.isBlank(user)) {
-                    sb.append(NStringUtils.trim(user));
-                    if (!NBlankable.isBlank(password)) {
+                    sb.append(safeUrlEncode(NStringUtils.trim(user)));
+                    if (!NBlankable.isBlank(safeUrlEncode(password))) {
                         sb.append(':');
-                        sb.append(password);
+                        sb.append(safeUrlEncode(password));
                     }
                     sb.append('@');
                 }
@@ -143,15 +171,15 @@ public class NConnexionString implements Cloneable {
                 }
                 if (!NBlankable.isBlank(port)) {
                     sb.append(":");
-                    sb.append(port);
+                    sb.append(safeUrlEncode(port));
                 }
             }
-        }else{
+        } else {
             if (!NBlankable.isBlank(user)) {
-                sb.append(NStringUtils.trim(user));
+                sb.append(safeUrlEncode(NStringUtils.trim(user)));
                 if (!NBlankable.isBlank(password)) {
                     sb.append(':');
-                    sb.append(password);
+                    sb.append(safeUrlEncode(password));
                 }
                 if (!NBlankable.isBlank(host) || !NBlankable.isBlank(port)) {
                     sb.append('@');
@@ -161,11 +189,11 @@ public class NConnexionString implements Cloneable {
                 if (NBlankable.isBlank(host)) {
                     sb.append("localhost");
                 } else {
-                    sb.append(NStringUtils.trim(host));
+                    sb.append(safeUrlEncode(NStringUtils.trim(host)));
                 }
                 if (!NBlankable.isBlank(port)) {
                     sb.append(":");
-                    sb.append(port);
+                    sb.append(safeUrlEncode(port));
                 }
             }
         }
@@ -181,7 +209,64 @@ public class NConnexionString implements Cloneable {
             }
             sb.append(path);
         }
+        if (!NBlankable.isBlank(queryString)) {
+            sb.append("?").append(queryString);
+        }
         return sb.toString();
+    }
+
+    public NConnexionString setQueryMap(Map<String, List<String>> queryMap) {
+        if (queryMap != null) {
+            NStringBuilder sb = new NStringBuilder();
+            for (Map.Entry<String, List<String>> e : queryMap.entrySet()) {
+                String k = e.getKey();
+                if (k != null && !k.isEmpty()) {
+                    List<String> v = e.getValue();
+                    if (v != null) {
+                        v = v.stream().filter(y -> y != null).collect(Collectors.toList());
+                    } else {
+                        v = new ArrayList<>();
+                    }
+                    if (v.isEmpty()) {
+                        v.add("");
+                    }
+                    for (String s : v) {
+                        if (!sb.isEmpty()) {
+                            sb.append("&");
+                        }
+                        sb.append(safeUrlEncode(k));
+                        sb.append("=");
+                        sb.append(safeUrlEncode(s));
+                    }
+                }
+            }
+            if (!sb.isEmpty()) {
+                this.queryString = sb.toString();
+            } else {
+                this.queryString = "";
+            }
+        } else {
+            this.queryString = null;
+        }
+        return this;
+    }
+
+    public NOptional<Map<String, List<String>>> getQueryMap() {
+        if (NBlankable.isBlank(queryString)) {
+            return NOptional.ofNamedEmpty("queryMap");
+        }
+        NOptional<Map<String, List<String>>> qq = NStringMapFormat.URL_FORMAT.parseDuplicates(queryString == null ? "" : queryString);
+        return qq.map(
+                x -> {
+                    Map<String, List<String>> r = new LinkedHashMap<>();
+                    for (Map.Entry<String, List<String>> ee : x.entrySet()) {
+                        r.put(safeUrlDecode(ee.getKey()),
+                                ee.getValue().stream().map(NConnexionString::safeUrlDecode).collect(Collectors.toList())
+                        );
+                    }
+                    return r;
+                }
+        );
     }
 
     @Override
@@ -230,5 +315,33 @@ public class NConnexionString implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public List<String> getNames() {
+        return NStringUtils.split(path, "/", true, true)
+                .stream().map(s -> s).collect(Collectors.toList());
+    }
+
+    private static String safeUrlDecode(String s) {
+        try {
+            return URLDecoder.decode(s == null ? "" : s, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    private static String safeUrlEncode(String s) {
+        try {
+            return URLEncoder.encode(s == null ? "" : s, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    public NConnexionString resolve(String child) {
+        if (!NBlankable.isBlank(child)) {
+            return copy().setPath(NStringUtils.pjoin("/", path, child));
+        }
+        return this;
     }
 }

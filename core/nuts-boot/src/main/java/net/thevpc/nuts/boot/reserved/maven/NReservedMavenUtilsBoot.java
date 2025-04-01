@@ -462,7 +462,7 @@ public class NReservedMavenUtilsBoot {
     }
 
     static VersionAndPath resolveLatestMavenId(NBootId zId, String path, Predicate<NBootVersion> filter,
-                                               NBootRepositoryLocation repoUrl2, boolean stopFirst, NBootOptionsInfo options) {
+                                               NBootRepositoryLocation repoUrl2, boolean stopFirst, NBootOptionsInfo options, boolean local, boolean remote) {
         String descType = "MAVEN";
         if (NBootConstants.RepoTypes.NUTS.equalsIgnoreCase(repoUrl2.getLocationType())) {
             descType = "NUTS";
@@ -472,14 +472,10 @@ public class NReservedMavenUtilsBoot {
         boolean found = false;
         NBootVersion bestVersion = null;
         String bestPath = null;
-        String fetchStrategy = NBootUtils.firstNonNull(options.getFetchStrategy(), "ANYWHERE");
-        boolean offline = !NBootUtils.sameEnum(fetchStrategy, "REMOTE");
-        boolean online = !NBootUtils.sameEnum(fetchStrategy, "OFFLINE");
-
         NBootLog log = NBootContext.log();
         for (String repoUrl : urls) {
             if (!repoUrl.contains("://")) {
-                if (offline) {
+                if (local) {
                     File mavenNutsCoreFolder = new File(repoUrl, path.replace("/", File.separator));
                     FilenameFilter filenameFilter =
                             descType.equals("NUTS") ? (dir, name) -> name.endsWith(NBootConstants.Files.DESCRIPTOR_FILE_EXTENSION)
@@ -530,7 +526,7 @@ public class NReservedMavenUtilsBoot {
                     basePath = basePath + "/";
                 }
                 boolean remoteURL = new NBootPath(basePath).isRemote();
-                if ((remoteURL && online) || (!remoteURL && offline)) {
+                if ((remoteURL && remote) || (!remoteURL && local)) {
                     //do nothing
                     if (htmlfs) {
                         for (NBootVersion p : detectVersionsFromHtmlfsTomcatDirectoryListing(basePath)) {
@@ -549,9 +545,6 @@ public class NReservedMavenUtilsBoot {
                             }
                         }
                     } else {
-                        int bootConnectionTimout=options.getCustomOptions().stream().map(x-> NBootArg.of(x)).filter(x->Objects.equals(x.getOptionName(),"---boot-connection-timeout")).map(x->x.getIntValue())
-                            .filter(x->x!=null)
-                            .findFirst().orElse(0);
                         String mavenMetadata = basePath + "maven-metadata.xml";
                         for (NBootVersion p : detectVersionsFromMetaData(mavenMetadata)) {
                             if (filter == null || filter.test(p)) {
@@ -607,14 +600,60 @@ public class NReservedMavenUtilsBoot {
         NBootVersion bestVersion = null;
         String bestPath = null;
         boolean stopOnFirstValidRepo = false;
-        for (NBootRepositoryLocation repoUrl2 : bootRepositories) {
-            VersionAndPath r = resolveLatestMavenId(zId, path, filter, repoUrl2, false, options);
-            if (r.version != null) {
-                if (bestVersion == null || bestVersion.compareTo(r.version) < 0) {
-                    bestVersion = r.version;
-                    bestPath = r.path;
-                    if (stopOnFirstValidRepo) {
-                        break;
+        String fetchStrategy = NBootUtils.firstNonNull(options.getFetchStrategy(), "ONLINE");
+        boolean offline = true;
+        boolean online = true;
+        boolean stopFast = true;
+        switch (fetchStrategy) {
+            case "OFFLINE": {
+                offline = true;
+                online = false;
+                stopFast = true;
+                break;
+            }
+            case "REMOTE": {
+                offline = false;
+                online = true;
+                stopFast = true;
+                break;
+            }
+            case "ONLINE": {
+                offline = true;
+                online = true;
+                stopFast = true;
+                break;
+            }
+            case "ANYWHERE": {
+                offline = true;
+                online = true;
+                stopFast = false;
+                break;
+            }
+        }
+        if (offline) {
+            for (NBootRepositoryLocation repoUrl2 : bootRepositories) {
+                VersionAndPath r = resolveLatestMavenId(zId, path, filter, repoUrl2, false, options, true, false);
+                if (r.version != null) {
+                    if (bestVersion == null || bestVersion.compareTo(r.version) < 0) {
+                        bestVersion = r.version;
+                        bestPath = r.path;
+                        if (stopOnFirstValidRepo) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        if (online && (bestVersion == null || !stopFast)) {
+            for (NBootRepositoryLocation repoUrl2 : bootRepositories) {
+                VersionAndPath r = resolveLatestMavenId(zId, path, filter, repoUrl2, false, options, false, true);
+                if (r.version != null) {
+                    if (bestVersion == null || bestVersion.compareTo(r.version) < 0) {
+                        bestVersion = r.version;
+                        bestPath = r.path;
+                        if (stopOnFirstValidRepo) {
+                            break;
+                        }
                     }
                 }
             }

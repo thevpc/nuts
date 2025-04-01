@@ -23,8 +23,8 @@ public class NIdIdFilter extends AbstractIdFilter implements NIdFilter, NSimplif
     private NLog LOG;
     private final NId filter;
 
-    public NIdIdFilter(NId filter, NWorkspace workspace) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NIdIdFilter(NId filter) {
+        super(NFilterOp.CUSTOM);
         this.filter = filter;
     }
 

@@ -10,9 +10,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.AbstractMultiReadNInputSource;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.util.*;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -20,8 +18,6 @@ import java.nio.charset.CharsetDecoder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
-import net.thevpc.nuts.util.NAssert;
 
 public abstract class NPathBase extends AbstractMultiReadNInputSource implements NPath {
 
@@ -106,7 +102,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     @Override
     public void copyToPrintStream(PrintStream other, NPathOption... options) {
-        copyToPrintStream(other, null,options);
+        copyToPrintStream(other, null, options);
     }
 
     @Override
@@ -197,7 +193,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     @Override
     public void copyToWriter(Writer other, NPathOption... options) {
-        copyToWriter(other, null,options);
+        copyToWriter(other, null, options);
     }
 
     @Override
@@ -541,4 +537,36 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         }
         return other;
     }
+
+    @Override
+    public byte[] getDigest(String algo) {
+        NPathType type = type();
+        switch (type) {
+            case NOT_FOUND:
+                return new byte[0];
+            case DIRECTORY: {
+                NDigest d = NDigest.of();
+                d.setAlgorithm(algo);
+                d.addSource(type().name().getBytes());
+                for (NPath nPath : list()) {
+                    d.addSource(nPath.getName().getBytes());
+                }
+                return d.computeBytes();
+            }
+            case FILE: {
+                NDigest d = NDigest.of();
+                d.setAlgorithm(algo);
+                d.addSource(type().name().getBytes());
+                d.addSource(this);
+                return d.computeBytes();
+            }
+            default:{
+                NDigest d = NDigest.of();
+                d.setAlgorithm(algo);
+                d.addSource(type().name().getBytes());
+                return d.computeBytes();
+            }
+        }
+    }
+
 }

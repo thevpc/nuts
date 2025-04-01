@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.filter;
 
 import net.thevpc.nuts.NDescriptorFilter;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NFilter;
@@ -10,8 +9,8 @@ public class NDescriptorFilterDelegateWithDescription extends NDescriptorFilterD
     private NDescriptorFilter base;
     private NEDesc description;
 
-    public NDescriptorFilterDelegateWithDescription(NWorkspace workspace, NDescriptorFilter base, NEDesc description) {
-        super(workspace);
+    public NDescriptorFilterDelegateWithDescription(NDescriptorFilter base, NEDesc description) {
+        super();
         this.base = base;
         this.description = description;
     }

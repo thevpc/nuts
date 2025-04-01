@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.urlpart;
 
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.web.DefaultNWebCli;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,9 +18,9 @@ class URLPartWeb extends URLPart {
     public InputStream getInputStream() {
         try {
             if (obj instanceof URL) {
-                return ((URL) obj).openStream();
+                return DefaultNWebCli.prepareGlobalOpenStream(((URL) obj));
             } else {
-                return CoreIOUtils.urlOf(path).openStream();
+                return DefaultNWebCli.prepareGlobalOpenStream(CoreIOUtils.urlOf(path));
             }
         } catch (IOException | UncheckedIOException e) {
             throw new NIOException(e);

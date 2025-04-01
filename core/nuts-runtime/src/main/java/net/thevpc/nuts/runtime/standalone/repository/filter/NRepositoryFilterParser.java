@@ -4,8 +4,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.filters.NTypedFiltersParser;
 
 public class NRepositoryFilterParser extends NTypedFiltersParser<NRepositoryFilter> {
-    public NRepositoryFilterParser(String str, NWorkspace workspace) {
-        super(str,workspace);
+    public NRepositoryFilterParser(String str) {
+        super(str);
     }
 
     @Override

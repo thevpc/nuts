@@ -664,7 +664,7 @@ public class DefaultNWorkspaceExtensionModel {
         if (spec != null && spec.get("ignoreClass") != null && spec.get("ignoreClass").equals(termb.getClass())) {
             return null;
         }
-        return new DefaultNTerminalFromSystem(workspace, termb);
+        return new DefaultNTerminalFromSystem(termb);
     }
 
     //@Override

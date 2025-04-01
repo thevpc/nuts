@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class NPathFromSPI extends NPathBase {
     private final NPathSPI base;
@@ -39,12 +40,12 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
-    public String getContentEncoding() {
+    public String contentEncoding() {
         return base.getContentEncoding(this);
     }
 
     @Override
-    public String getContentType() {
+    public String contentType() {
         return base.getContentType(this);
     }
 
@@ -383,12 +384,12 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
-    public Instant getLastModifiedInstant() {
+    public Instant lastModifiedInstant() {
         return base.getLastModifiedInstant(this);
     }
 
     @Override
-    public Instant getLastAccessInstant() {
+    public Instant lastAccessInstant() {
         return base.getLastAccessInstant(this);
     }
 
@@ -535,6 +536,40 @@ public class NPathFromSPI extends NPathBase {
             return r;
         }
         return getNames().size();
+    }
+
+    @Override
+    public List<NPathChildDigestInfo> listDigestInfo() {
+        return listDigestInfo(null);
+    }
+
+    @Override
+    public List<NPathChildDigestInfo> listDigestInfo(String algo) {
+        List<NPathChildDigestInfo> infos = base.listDigestInfo(this,algo);
+        if (infos != null) {
+            return infos;
+        }
+        return list().stream().map(x -> new NPathChildDigestInfo().setName(x.getName()).setDigest(x.getDigest(algo))).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<NPathChildStringDigestInfo> listStringDigestInfo() {
+        return listStringDigestInfo(null);
+    }
+
+    @Override
+    public List<NPathChildStringDigestInfo> listStringDigestInfo(String algo) {
+        List<NPathChildDigestInfo> infos = base.listDigestInfo(this,algo);
+        if (infos != null) {
+            return infos.stream().map(x->
+                    new NPathChildStringDigestInfo()
+                            .setName(x.getName())
+                            .setDigest(NHex.fromBytes(x.getDigest()))
+            ).collect(Collectors.toList());
+        }
+        return list().stream().map(x -> new NPathChildStringDigestInfo().setName(x.getName()).setDigest(
+                NHex.fromBytes(x.getDigest())
+        )).collect(Collectors.toList());
     }
 
     @Override
@@ -747,21 +782,21 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
-    public NOptional<NPath> toRelative(NPath parentPath) {
-        NOptional<NPath> r = base.toRelative(this, unwrapPath(parentPath));
+    public NOptional<String> toRelative(NPath parentPath) {
+        NOptional<String> r = base.toRelative(this, unwrapPath(parentPath));
         if (r != null) {
             return r;
         }
         //default impl
         String child = getLocation();
         String parent = parentPath.getLocation();
-        return NOptional.ofNamed(NPath.of(NIOUtils.toRelativePath(child, parent)), "relative path");
+        return NOptional.ofNamed(NIOUtils.toRelativePath(child, parent), "relative path");
     }
 
 
     @Override
     public boolean startsWith(NPath other) {
-        return toRelative(unwrapPath(other)) != null;
+        return toRelative(unwrapPath(other)).orNull() != null;
     }
 
     @Override
@@ -779,7 +814,7 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public boolean startsWith(String other) {
-        return toRelative(NPath.of(other)) != null;
+        return toRelative(NPath.of(other)).orNull() != null;
     }
 
 }

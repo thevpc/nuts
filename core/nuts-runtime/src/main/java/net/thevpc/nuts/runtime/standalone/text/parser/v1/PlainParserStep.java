@@ -1,9 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NStringBuilder;
 
 import java.util.function.IntPredicate;
@@ -15,17 +13,15 @@ public class PlainParserStep extends ParserStep {
 //    private boolean spreadLines;
     private boolean lineStart;
     private NStringBuilder value = new NStringBuilder();
-    private NWorkspace workspace;
     private DefaultNTextNodeParser.State state;
     private IntPredicate exitCondition;
     private boolean exitOnBrace;
 //    private static int _COUNT=0;
 
-    public PlainParserStep(char c, boolean lineStart, NWorkspace workspace, DefaultNTextNodeParser.State state, IntPredicate exitCondition, boolean exitOnBrace) {
+    public PlainParserStep(char c, boolean lineStart, DefaultNTextNodeParser.State state, IntPredicate exitCondition, boolean exitOnBrace) {
         this.state = state;
         this.exitCondition = exitCondition;
 //        this.spreadLines = spreadLines;
-        this.workspace = workspace;
         this.lineStart = state.isLineStart();
         if (c == '\\') {
             escape = new StringBuilder("\\");
@@ -39,12 +35,11 @@ public class PlainParserStep extends ParserStep {
 //        System.err.println(" PlainParserStep "+c+" : "+value);
     }
 
-    public PlainParserStep(String s, boolean spreadLines, boolean lineStart, NWorkspace workspace, DefaultNTextNodeParser.State state, IntPredicate exitCondition, boolean preParsed, boolean exitOnBrace) {
+    public PlainParserStep(String s, boolean spreadLines, boolean lineStart, DefaultNTextNodeParser.State state, IntPredicate exitCondition, boolean preParsed, boolean exitOnBrace) {
         this.state = state;
         this.exitCondition = exitCondition;
         this.exitOnBrace = exitOnBrace;
 //        this.spreadLines = spreadLines;
-        this.workspace = workspace;
         this.lineStart = state.isLineStart();
         if(preParsed){
             value.append(s);
@@ -94,10 +89,10 @@ public class PlainParserStep extends ParserStep {
                         if (oldLast == c) {
                             value.removeLast();
                             if (value.length() == 0) {
-                                p.applyDropReplace(this, new StyledParserStep(c + "" + c, lineStart, workspace, state, exitOnBrace));
+                                p.applyDropReplace(this, new StyledParserStep(c + "" + c, lineStart, state, exitOnBrace));
                                 return;
                             } else {
-                                p.applyPopReplace(this, new StyledParserStep(c + "" + c, lineStart, workspace, state, exitOnBrace));
+                                p.applyPopReplace(this, new StyledParserStep(c + "" + c, lineStart, state, exitOnBrace));
                                 return;
                             }
                         }

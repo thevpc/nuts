@@ -81,7 +81,7 @@ public class PomAndUnsupportedJavaExecutorComponent implements NExecutorComponen
 
 
     public IProcessExecHelper execHelper(NExecutionContext executionContext) {
-        return new AbstractSyncIProcessExecHelper(executionContext.getWorkspace()) {
+        return new AbstractSyncIProcessExecHelper() {
 
             @Override
             public int exec() {

@@ -88,7 +88,7 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
     }
 
     private AbstractSyncIProcessExecHelper resolveExecHelper() {
-        return new AbstractSyncIProcessExecHelper(workspace) {
+        return new AbstractSyncIProcessExecHelper() {
             @Override
             public int exec() {
                 return runOnce(ecmd);

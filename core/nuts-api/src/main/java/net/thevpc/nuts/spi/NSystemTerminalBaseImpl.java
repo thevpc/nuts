@@ -4,10 +4,8 @@ import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.text.NTerminalCmd;
 
 public abstract class NSystemTerminalBaseImpl implements NSystemTerminalBase {
-    private NWorkspace workspace;
 
-    public NSystemTerminalBaseImpl(NWorkspace workspace) {
-        this.workspace = workspace;
+    public NSystemTerminalBaseImpl() {
     }
 
     @Override
@@ -15,10 +13,6 @@ public abstract class NSystemTerminalBaseImpl implements NSystemTerminalBase {
         run(NTerminalCmd.CLEAR_LINE, getOut());
         run(NTerminalCmd.MOVE_LINE_START, getOut());
         return this;
-    }
-
-    public NWorkspace getWorkspace() {
-        return workspace;
     }
 
     @Override

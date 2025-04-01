@@ -2,6 +2,8 @@ package net.thevpc.nuts.runtime.standalone.web;
 
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.boot.reserved.cmdline.NBootArg;
+import net.thevpc.nuts.boot.reserved.util.NBootLog;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NInputSourceBuilder;
@@ -15,11 +17,13 @@ import net.thevpc.nuts.util.NStringUtils;
 import net.thevpc.nuts.web.*;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.UncheckedIOException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.channels.InterruptedByTimeoutException;
 import java.util.*;
 import java.util.function.Function;
@@ -27,6 +31,59 @@ import java.util.function.Function;
 @NComponentScope(NScopeType.PROTOTYPE)
 public class DefaultNWebCli implements NWebCli {
 
+    public static URLConnection prepareGlobalConnection(URLConnection c) {
+        int connectionTimout = getGlobalConnectionTimeoutOrDefault();
+        int readTimout = getGlobalReadConnectionTimeoutOrDefault();
+        c.setConnectTimeout(connectionTimout);
+        c.setReadTimeout(readTimout);
+        return c;
+    }
+
+    public static int getGlobalConnectionTimeoutOrDefault() {
+        Integer v = getGlobalConnectionTimeout();
+        if (v == null) {
+            return 1000;
+        }
+        return v;
+    }
+
+    public static Integer getGlobalReadConnectionTimeoutOrDefault() {
+        Integer v = getGlobalReadTimeout();
+        if (v == null) {
+            return getGlobalConnectionTimeoutOrDefault();
+        }
+        return v;
+    }
+
+    public static Integer getGlobalConnectionTimeout() {
+        Integer i = NWorkspace.of().getBootOptions()
+                .getCustomOptions().orElse(new ArrayList<>()).stream().map(x -> NBootArg.of(x))
+                .filter(x -> Objects.equals(x.getOptionName(), "---connection-timeout")).map(x -> x.getIntValue())
+                .filter(x -> x != null)
+                .findFirst().orElse(null);
+        if (i != null) {
+            if (i <= 0) {
+                return null;
+            }
+        }
+        return i;
+    }
+
+    public static Integer getGlobalReadTimeout() {
+        Integer i = NWorkspace.of().getBootOptions()
+                .getCustomOptions().orElse(new ArrayList<>()).stream().map(x -> NBootArg.of(x))
+                .filter(x -> Objects.equals(x.getOptionName(), "---connection-read-timeout")).map(x -> x.getIntValue())
+                .filter(x -> x != null)
+                .findFirst().orElse(null);
+        if (i != null) {
+            if (i <= 0) {
+                return null;
+            }
+        }
+        return i;
+    }
+
+    public static NBootLog log;
     private String prefix;
     private Function<NWebResponse, NWebResponse> responsePostProcessor;
     private Integer readTimeout;
@@ -35,6 +92,13 @@ public class DefaultNWebCli implements NWebCli {
 
     public DefaultNWebCli() {
         headers.addHeader("User-Agent", "nwebcli/" + NWorkspace.of().getRuntimeId().getVersion(), DefaultNWebHeaders.Mode.ALWAYS);
+    }
+
+    public static InputStream prepareGlobalOpenStream(URL url) throws IOException {
+        URLConnection c = null;
+        c = url.openConnection();
+        prepareGlobalConnection(c);
+        return c.getInputStream();
     }
 
     @Override
@@ -341,6 +405,9 @@ public class DefaultNWebCli implements NWebCli {
                 if (readTimeout1 == null) {
                     readTimeout1 = getReadTimeout();
                 }
+                if (readTimeout1 == null) {
+                    readTimeout1 = getGlobalReadConnectionTimeoutOrDefault();
+                }
                 if (readTimeout1 != null) {
                     uc.setReadTimeout(readTimeout1);
                 }
@@ -349,7 +416,9 @@ public class DefaultNWebCli implements NWebCli {
                 if (connectTimeout1 == null) {
                     connectTimeout1 = getConnectTimeout();
                 }
-
+                if (connectTimeout1 == null) {
+                    connectTimeout1 = getGlobalConnectionTimeoutOrDefault();
+                }
                 if (connectTimeout1 != null) {
                     uc.setConnectTimeout(connectTimeout1);
                 }

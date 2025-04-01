@@ -22,8 +22,8 @@ public class NVersionIdFilter extends AbstractIdFilter implements NIdFilter, NSi
 
     private final NVersionFilter filter;
 
-    public NVersionIdFilter(NVersionFilter filter, NWorkspace workspace) {
-        super(workspace, NFilterOp.CONVERT);
+    public NVersionIdFilter(NVersionFilter filter) {
+        super(NFilterOp.CONVERT);
         this.filter = filter;
     }
 
@@ -74,7 +74,7 @@ public class NVersionIdFilter extends AbstractIdFilter implements NIdFilter, NSi
         if (f2 == filter) {
             return this;
         }
-        return new NVersionIdFilter(f2,workspace);
+        return new NVersionIdFilter(f2);
     }
 
     @Override

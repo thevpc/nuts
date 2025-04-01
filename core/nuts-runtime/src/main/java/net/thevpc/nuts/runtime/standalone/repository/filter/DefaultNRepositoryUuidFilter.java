@@ -11,8 +11,8 @@ public class DefaultNRepositoryUuidFilter extends AbstractRepositoryFilter{
 
     private final Set<String> exactRepos;
 
-    public DefaultNRepositoryUuidFilter(NWorkspace workspace, Collection<String> exactRepos) {
-        super(workspace, NFilterOp.CUSTOM);
+    public DefaultNRepositoryUuidFilter(Collection<String> exactRepos) {
+        super(NFilterOp.CUSTOM);
         this.exactRepos = new HashSet<>(
                 exactRepos==null?new ArrayList<>() :
                         exactRepos.stream().map(x-> NStringUtils.trimToNull(x))

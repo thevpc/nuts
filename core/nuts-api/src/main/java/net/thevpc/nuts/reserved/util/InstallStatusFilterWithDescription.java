@@ -2,8 +2,6 @@ package net.thevpc.nuts.reserved.util;
 
 import net.thevpc.nuts.NInstallStatus;
 import net.thevpc.nuts.NInstallStatusFilter;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.spi.base.AbstractInstallStatusFilter;
@@ -16,8 +14,8 @@ public class InstallStatusFilterWithDescription extends AbstractInstallStatusFil
     private NInstallStatusFilter base;
     private NEDesc description;
 
-    public InstallStatusFilterWithDescription(NWorkspace workspace, NInstallStatusFilter base, NEDesc description) {
-        super(workspace, NFilterOp.CUSTOM);
+    public InstallStatusFilterWithDescription(NInstallStatusFilter base, NEDesc description) {
+        super(NFilterOp.CUSTOM);
         this.base = base;
         this.description = description;
     }

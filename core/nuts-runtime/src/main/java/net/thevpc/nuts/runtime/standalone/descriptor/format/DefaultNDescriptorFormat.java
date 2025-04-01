@@ -18,7 +18,7 @@ public class DefaultNDescriptorFormat extends DefaultFormatBase<NDescriptorForma
     private boolean compact;
     private NDescriptor desc;
 
-    public DefaultNDescriptorFormat(NWorkspace workspace) {
+    public DefaultNDescriptorFormat() {
         super("descriptor-format");
     }
 

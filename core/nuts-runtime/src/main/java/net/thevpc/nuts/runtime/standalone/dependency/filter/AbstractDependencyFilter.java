@@ -25,12 +25,10 @@
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import net.thevpc.nuts.NDependencyFilter;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.spi.base.AbstractNFilter;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NFilterOp;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NSimplifiable;
 
 /**
@@ -39,8 +37,8 @@ import net.thevpc.nuts.util.NSimplifiable;
  */
 public abstract class AbstractDependencyFilter extends AbstractNFilter implements NDependencyFilter, NSimplifiable<NDependencyFilter> {
 
-    public AbstractDependencyFilter(NWorkspace workspace, NFilterOp op) {
-        super(workspace, op);
+    public AbstractDependencyFilter(NFilterOp op) {
+        super(op);
     }
 
     @Override
@@ -63,6 +61,6 @@ public abstract class AbstractDependencyFilter extends AbstractNFilter implement
         if (description == null) {
             return this;
         }
-        return new DependencyFilterWithDescription(workspace, this, description);
+        return new DependencyFilterWithDescription(this, description);
     }
 }

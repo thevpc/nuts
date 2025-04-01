@@ -101,6 +101,20 @@ public interface NDigest extends NComponent {
      */
     NDigest setSource(NDescriptor descriptor);
 
+    NDigest addSource(InputStream source);
+
+    NDigest addSource(File source);
+
+    NDigest addSource(Path source);
+
+    NDigest addSource(URL url);
+
+    NDigest addSource(NPath source);
+
+    NDigest addSource(byte[] source);
+
+    NDigest addSource(NDescriptor source);
+
     /**
      * compute hash digest and return it as hexadecimal string
      *

@@ -30,7 +30,6 @@ public class SshFileOutputStream extends OutputStream {
                 ,nSession.in()
                 ,nSession.out().asOutputStream()
                 ,nSession.err().asOutputStream()
-                , nSession
         );
         this.mkdirs = mkdirs;
         this.to = path.getPath();

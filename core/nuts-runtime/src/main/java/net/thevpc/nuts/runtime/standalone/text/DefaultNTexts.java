@@ -43,40 +43,38 @@ import java.util.logging.Level;
 @NComponentScope(NScopeType.SESSION)
 public class DefaultNTexts implements NTexts {
 
-    private final NWorkspace workspace;
     private final DefaultNTextManagerModel shared;
     private NClassMap<NTextMapper> mapper = new NClassMap<>(NTextMapper.class);
 
-    public DefaultNTexts(NWorkspace workspace) {
-        this.workspace = workspace;
+    public DefaultNTexts() {
         this.shared = NWorkspaceExt.of().getModel().textModel;
         registerDefaults();
     }
 
     private void registerDefaults() {
-        register(NFormattable.class, (o, t, s) -> (((NFormattable) o).formatter().setNtf(true).format()));
-        register(NFormatted.class, (o, t, s) -> (((NFormatted) o).format()));
-        register(NMsgFormattable.class, (o, t, s) -> _NMsg_toString((((NMsgFormattable) o).toMsg())));
-        register(NMsg.class, (o, t, s) -> _NMsg_toString((NMsg) o));
-        register(NText.class, (o, t, s) -> (NText) o);
-        register(InputStream.class, (o, t, s) -> {
+        register(NFormattable.class, (o, t) -> (((NFormattable) o).formatter().setNtf(true).format()));
+        register(NFormatted.class, (o, t) -> (((NFormatted) o).format()));
+        register(NMsgFormattable.class, (o, t) -> _NMsg_toString((((NMsgFormattable) o).toMsg())));
+        register(NMsg.class, (o, t) -> _NMsg_toString((NMsg) o));
+        register(NText.class, (o, t) -> (NText) o);
+        register(InputStream.class, (o, t) -> {
             NContentMetadata metaData = NInputSource.of((InputStream) o).getMetaData();
             return t.ofStyled(metaData.getName().orElse(o.toString()), NTextStyle.path());
         });
-        register(OutputStream.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
-        register(NPrintStream.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
-        register(Writer.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
-        register(NEnum.class, (o, t, s) -> t.ofStyled(((NEnum) o).id(), NTextStyle.option()));
-        register(Enum.class, (o, t, s) -> (o instanceof NEnum) ? t.ofStyled(((NEnum) o).id(), NTextStyle.option()) : ofStyled(((Enum<?>) o).name(), NTextStyle.option()));
-        register(Number.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.number()));
-        register(Date.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.date()));
-        register(Temporal.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.date()));
-        register(TemporalAmount.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.date()));
-        register(Boolean.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.bool()));
-        register(Path.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
-        register(File.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
-        register(URL.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
-        register(Level.class, (o, t, s) -> {
+        register(OutputStream.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
+        register(NPrintStream.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
+        register(Writer.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
+        register(NEnum.class, (o, t) -> t.ofStyled(((NEnum) o).id(), NTextStyle.option()));
+        register(Enum.class, (o, t) -> (o instanceof NEnum) ? t.ofStyled(((NEnum) o).id(), NTextStyle.option()) : ofStyled(((Enum<?>) o).name(), NTextStyle.option()));
+        register(Number.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.number()));
+        register(Date.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.date()));
+        register(Temporal.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.date()));
+        register(TemporalAmount.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.date()));
+        register(Boolean.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.bool()));
+        register(Path.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
+        register(File.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
+        register(URL.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
+        register(Level.class, (o, t) -> {
             switch (((Level) o).getName()) {
                 case "OFF":
                     return t.ofStyled(o.toString(), NTextStyle.pale());
@@ -98,11 +96,11 @@ public class DefaultNTexts implements NTexts {
                     return t.ofStyled(o.toString(), NTextStyle.bold());
             }
         });
-        register(Throwable.class, (o, t, s) -> t.ofStyled(
+        register(Throwable.class, (o, t) -> t.ofStyled(
                 of(CoreStringUtils.exceptionToMessage((Throwable) o)),
                 NTextStyle.error()
         ));
-        register(Collection.class, (o, t, s) -> {
+        register(Collection.class, (o, t) -> {
             NTextBuilder b = ofBuilder();
             b.append("[", NTextStyle.separator());
             boolean first = true;
@@ -118,7 +116,7 @@ public class DefaultNTexts implements NTexts {
             b.append("]", NTextStyle.separator());
             return b.build();
         });
-        register(Map.Entry.class, (o, t, s) -> {
+        register(Map.Entry.class, (o, t) -> {
             NTextBuilder b = ofBuilder();
             Map.Entry e = (Map.Entry) o;
             b.append(t.of(e.getKey()));
@@ -127,7 +125,7 @@ public class DefaultNTexts implements NTexts {
             b.append(t.of(e.getValue()));
             return b.build();
         });
-        register(Map.class, (o, t, s) -> {
+        register(Map.class, (o, t) -> {
             NTextBuilder b = ofBuilder();
             b.append("{", NTextStyle.separator());
             boolean first = true;
@@ -256,7 +254,7 @@ public class DefaultNTexts implements NTexts {
             params = new Object[0];
         }
         Object msg = m.getMessage();
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         String sLocale = session.getLocale().orDefault();
         Locale locale = NBlankable.isBlank(sLocale) ? null : new Locale(sLocale);
         NTexts txt = NTexts.of();
@@ -426,7 +424,7 @@ public class DefaultNTexts implements NTexts {
         }
         NTextMapper e = mapper.get(c);
         if (e != null) {
-            return e.ofText(t, this, workspace);
+            return e.ofText(t, this);
         }
         NFormat nFormat = NFormats.of().ofFormat(t).orNull();
         if (nFormat != null) {
@@ -717,7 +715,7 @@ public class DefaultNTexts implements NTexts {
 
     @Override
     public NTextParser parser() {
-        return AbstractNTextNodeParserDefaults.createDefault(workspace);
+        return AbstractNTextNodeParserDefaults.createDefault();
     }
 
     public NText bg(String t, int level) {
@@ -796,10 +794,10 @@ public class DefaultNTexts implements NTexts {
                     NTextStyle found = NTextStyle.of(NTextStyleType.valueOf(expandAlias(kind.toUpperCase().substring(0, x))),
                             NLiteral.of(kind.substring(x)).asInt().orElse(0)
                     );
-                    return new CustomStyleCodeHighlighter(found, workspace);
+                    return new CustomStyleCodeHighlighter(found);
                 } else {
                     NTextStyle found = NTextStyle.of(NTextStyleType.valueOf(expandAlias(kind.toUpperCase())));
-                    return new CustomStyleCodeHighlighter(found, workspace);
+                    return new CustomStyleCodeHighlighter(found);
                 }
             } catch (Exception ex) {
                 //ignore
@@ -981,7 +979,7 @@ public class DefaultNTexts implements NTexts {
             NTextTransformConfig iconfig = config.copy();
             iconfig.setProcessIncludes(true);
             iconfig.setImportClassLoader(config.getImportClassLoader());
-            NTextTransformerContext c = new DefaultNTextTransformerContext(iconfig, workspace);
+            NTextTransformerContext c = new DefaultNTextTransformerContext(iconfig);
             text = transform(text, c.getDefaultTransformer(), c);
             config = config.copy().setProcessIncludes(false).setImportClassLoader(null);
         }
@@ -997,7 +995,7 @@ public class DefaultNTexts implements NTexts {
             int level = resolveRootLevel(text);
             if (level != rootLevel) {
                 int offset = rootLevel - level;
-                NTextTransformerContext c = new DefaultNTextTransformerContext(config, workspace);
+                NTextTransformerContext c = new DefaultNTextTransformerContext(config);
                 text = transform(text, (text1, context) -> {
                     if (text1.getType() == NTextType.TITLE) {
                         NTextTitle t = (NTextTitle) text1;
@@ -1018,7 +1016,7 @@ public class DefaultNTexts implements NTexts {
         }
 
         if (transformer != null || !config.isBlank()) {
-            NTextTransformerContext c = new DefaultNTextTransformerContext(config, workspace);
+            NTextTransformerContext c = new DefaultNTextTransformerContext(config);
             if (transformer == null) {
                 transformer = c.getDefaultTransformer();
             }
@@ -1289,7 +1287,7 @@ public class DefaultNTexts implements NTexts {
 
     @Override
     public NFormat createFormat(NFormatSPI format) {
-        return new NFormatFromSPI(format, workspace);
+        return new NFormatFromSPI(format);
     }
 
     @Override
@@ -1337,7 +1335,7 @@ public class DefaultNTexts implements NTexts {
         }
         switch (type.toLowerCase().trim()) {
             case "duration": {
-                DefaultNDurationFormat2 d = new DefaultNDurationFormat2(workspace, pattern);
+                DefaultNDurationFormat2 d = new DefaultNDurationFormat2(pattern);
                 if (NDuration.class.equals(expectedType)) {
                     return NOptional.of(
                             (NTextFormat<T>) new NTextFormat<NDuration>() {
@@ -1494,6 +1492,6 @@ public class DefaultNTexts implements NTexts {
     }
 
     private interface NTextMapper {
-        NText ofText(Object t, NTexts texts, NWorkspace workspace);
+        NText ofText(Object t, NTexts texts);
     }
 }

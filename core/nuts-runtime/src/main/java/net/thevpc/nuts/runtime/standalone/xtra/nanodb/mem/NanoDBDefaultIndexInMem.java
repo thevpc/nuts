@@ -1,14 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb.mem;
 
-import net.thevpc.nuts.NWorkspace;
-import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.DBIndexValueStore;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.DBIndexValueStoreFactory;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBAbstractIndex;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBSerializer;
-import net.thevpc.nuts.util.NMsg;
 
-import java.io.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,14 +16,12 @@ public class NanoDBDefaultIndexInMem<T> extends NanoDBAbstractIndex<T> {
     private Map<T, DBIndexValueStore> index = new HashMap<>();
     private DBIndexValueStoreFactory storeFactory;
     private Class<T> keyType;
-    private NWorkspace workspace;
 
-    public NanoDBDefaultIndexInMem(NWorkspace workspace, Class<T> keyType, NanoDBSerializer<T> ser, DBIndexValueStoreFactory storeFactory, Map<T, DBIndexValueStore> index) {
+    public NanoDBDefaultIndexInMem(Class<T> keyType, NanoDBSerializer<T> ser, DBIndexValueStoreFactory storeFactory, Map<T, DBIndexValueStore> index) {
         super(ser);
         this.keyType = keyType;
         this.index = index;
         this.storeFactory = storeFactory;
-        this.workspace = workspace;
     }
 
 

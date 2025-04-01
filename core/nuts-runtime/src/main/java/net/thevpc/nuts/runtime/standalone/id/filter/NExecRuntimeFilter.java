@@ -18,8 +18,8 @@ import net.thevpc.nuts.util.NLiteral;
 public class NExecRuntimeFilter extends AbstractDescriptorFilter {
     private NId apiId;
     private boolean communityRuntime;
-    public NExecRuntimeFilter(NWorkspace workspace, NId apiId, boolean communityRuntime) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NExecRuntimeFilter(NId apiId, boolean communityRuntime) {
+        super(NFilterOp.CUSTOM);
         this.apiId=apiId;
         this.communityRuntime = communityRuntime;
     }

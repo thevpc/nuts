@@ -7,8 +7,8 @@ import net.thevpc.nuts.util.NFilterOp;
 
 public class NVersionFilterFalse extends AbstractVersionFilter implements NExprIdFilter {
 
-    public NVersionFilterFalse(NWorkspace workspace) {
-        super(workspace, NFilterOp.FALSE);
+    public NVersionFilterFalse() {
+        super(NFilterOp.FALSE);
     }
 
     @Override

@@ -41,8 +41,8 @@ import java.util.List;
  */
 public abstract class AbstractVersionFilter extends AbstractNFilter implements NVersionFilter, NSimplifiable<NVersionFilter> {
 
-    public AbstractVersionFilter(NWorkspace workspace, NFilterOp op) {
-        super(workspace, op);
+    public AbstractVersionFilter(NFilterOp op) {
+        super(op);
     }
 
     @Override
@@ -69,6 +69,6 @@ public abstract class AbstractVersionFilter extends AbstractNFilter implements N
         if(description==null){
             return this;
         }
-        return new NVersionFilterWithDescription(workspace,this,description);
+        return new NVersionFilterWithDescription(this,description);
     }
 }

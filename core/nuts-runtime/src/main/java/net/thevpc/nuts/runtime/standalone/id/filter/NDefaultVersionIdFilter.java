@@ -21,8 +21,8 @@ public class NDefaultVersionIdFilter extends AbstractIdFilter implements NIdFilt
 
     private final Boolean defaultVersion;
 
-    public NDefaultVersionIdFilter(NWorkspace workspace, Boolean defaultVersion) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NDefaultVersionIdFilter(Boolean defaultVersion) {
+        super(NFilterOp.CUSTOM);
         this.defaultVersion = defaultVersion;
     }
 

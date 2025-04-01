@@ -47,7 +47,7 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public <T> NAsk<T> createQuestion(NTerminal terminal) {
-        return new DefaultNAsk<>(workspace, terminal, terminal.out());
+        return new DefaultNAsk<>(terminal, terminal.out());
     }
 
     @Override
@@ -344,13 +344,13 @@ public class DefaultNIORPI implements NIORPI {
         }
         if (terminal instanceof DefaultNTerminalFromSystem) {
             DefaultNTerminalFromSystem t = (DefaultNTerminalFromSystem) terminal;
-            return new DefaultNTerminalFromSystem(workspace, t);
+            return new DefaultNTerminalFromSystem(t);
         }
         if (terminal instanceof DefaultNSessionTerminalFrom) {
             DefaultNSessionTerminalFrom t = (DefaultNSessionTerminalFrom) terminal;
-            return new DefaultNSessionTerminalFrom(workspace, t);
+            return new DefaultNSessionTerminalFrom(t);
         }
-        return new DefaultNSessionTerminalFrom(workspace, terminal);
+        return new DefaultNSessionTerminalFrom(terminal);
     }
 
     @Override

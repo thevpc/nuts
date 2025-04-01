@@ -96,9 +96,9 @@ public class DefaultNBootModel implements NBootModel {
         this.bootTerminal = detectAnsiTerminalSupport(effOptions, true, ((DefaultNWorkspace) workspace).LOG);
         workspaceModel.uuid = effOptions.getUuid().orNull();
         workspaceModel.name = Paths.get(effOptions.getWorkspace().get()).getFileName().toString();
-        DefaultSystemTerminal sys = new DefaultSystemTerminal(workspace, new DefaultNSystemTerminalBaseBoot(this));
-        this.systemTerminal = new NSystemTerminalRef(getWorkspace(), NutsSystemTerminal_of_NutsSystemTerminalBase(sys));
-        this.bootSession.setTerminal(new DefaultNTerminalFromSystem(workspace, this.systemTerminal));
+        DefaultSystemTerminal sys = new DefaultSystemTerminal(new DefaultNSystemTerminalBaseBoot(this));
+        this.systemTerminal = new NSystemTerminalRef(NutsSystemTerminal_of_NutsSystemTerminalBase(sys));
+        this.bootSession.setTerminal(new DefaultNTerminalFromSystem(this.systemTerminal));
         this.nullOut = NullNPrintStream.INSTANCE;
         this.nullOutputStream = NullOutputStream.INSTANCE;
     }
@@ -282,13 +282,13 @@ public class DefaultNBootModel implements NBootModel {
             syst = (NSystemTerminal) terminal;
         } else {
             try {
-                syst = new DefaultSystemTerminal(workspace, terminal);
+                syst = new DefaultSystemTerminal(terminal);
                 //NSessionUtils.setSession(syst, session);
             } catch (Exception ex) {
                 _LOGOP().level(Level.FINEST).verb(NLogVerb.WARNING)
                         .log(NMsg.ofC("unable to create system terminal : %s", ex));
                 DefaultNSystemTerminalBase b = new DefaultNSystemTerminalBase(workspace);
-                syst = new DefaultSystemTerminal(workspace, b);
+                syst = new DefaultSystemTerminal(b);
                 //NSessionUtils.setSession(syst, session);
             }
         }

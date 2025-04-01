@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class NVersionFilterParser extends NTypedFiltersParser<NVersionFilter> {
-    public NVersionFilterParser(String str, NWorkspace workspace) {
-        super(str, workspace);
+    public NVersionFilterParser(String str) {
+        super(str);
     }
 
     @Override
@@ -47,13 +47,13 @@ public class NVersionFilterParser extends NTypedFiltersParser<NVersionFilter> {
 
     public NVersionFilter parse() {
         if (NBlankable.isBlank(str.getContent())) {
-            return new NVersionFilterTrue(workspace);
+            return new NVersionFilterTrue();
         }
         NVersion v = asVersion();
         if (v != null) {
             List<NVersionInterval> intervals = v.intervals().orNull();
             if (intervals != null && intervals.size() > 0) {
-                return new NVersionIntervalsVersionFilter(workspace, v);
+                return new NVersionIntervalsVersionFilter(v);
             }
         }
         return super.parse();
@@ -62,8 +62,8 @@ public class NVersionFilterParser extends NTypedFiltersParser<NVersionFilter> {
     private class NVersionIntervalsVersionFilter extends AbstractVersionFilter {
         private final NVersion version;
 
-        public NVersionIntervalsVersionFilter(NWorkspace workspace,NVersion version) {
-            super(workspace, NFilterOp.CUSTOM);
+        public NVersionIntervalsVersionFilter(NVersion version) {
+            super(NFilterOp.CUSTOM);
             this.version = version;
         }
 

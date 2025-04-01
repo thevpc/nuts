@@ -7,6 +7,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.runtime.standalone.repository.toolbox.ToolboxRepoHelper;
 import net.thevpc.nuts.runtime.standalone.repository.toolbox.ToolboxRepositoryModel;
+import net.thevpc.nuts.runtime.standalone.web.DefaultNWebCli;
 import net.thevpc.nuts.util.*;
 
 import java.io.InputStream;
@@ -44,7 +45,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
         NSession session = NSession.of();
         if (url != null) {
             session.getTerminal().printProgress(NMsg.ofC("peek %s", url));
-            try (InputStream inputStream = url.openStream()) {
+            try (InputStream inputStream = DefaultNWebCli.prepareGlobalOpenStream(url)) {
                 //ws.io().copy().from(r).getByteArrayResult();
                 found = true;
             } catch (Exception ex) {

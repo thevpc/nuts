@@ -14,17 +14,11 @@ public abstract class InternalNTypedFilters<T extends NFilter> implements NTyped
     protected final DefaultNFilterModel model;
     protected final NWorkspace ws;
     private Class<T> type;
-    protected NWorkspace workspace;
 
-    public InternalNTypedFilters(NWorkspace workspace, Class<T> type) {
-        this.workspace = workspace;
+    public InternalNTypedFilters(Class<T> type) {
         this.model = NWorkspaceExt.of().getModel().filtersModel;
         this.ws = model.getWorkspace();
         this.type = type;
-    }
-
-    public NWorkspace getWorkspace() {
-        return workspace;
     }
 
     @Override

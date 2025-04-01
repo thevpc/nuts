@@ -40,8 +40,8 @@ public class NDescriptorFilterDesktopEnvironment extends AbstractDescriptorFilte
 
     private final String desktopEnvironment;
 
-    public NDescriptorFilterDesktopEnvironment(NWorkspace workspace, String desktopEnvironment) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NDescriptorFilterDesktopEnvironment(String desktopEnvironment) {
+        super(NFilterOp.CUSTOM);
         this.desktopEnvironment = desktopEnvironment;
     }
 

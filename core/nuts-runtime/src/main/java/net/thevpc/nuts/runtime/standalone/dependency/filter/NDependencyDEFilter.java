@@ -17,17 +17,17 @@ public class NDependencyDEFilter extends AbstractDependencyFilter  {
 
     private Set<NDesktopEnvironmentFamily> accepted = EnumSet.noneOf(NDesktopEnvironmentFamily.class);
 
-    public NDependencyDEFilter(NWorkspace workspace) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NDependencyDEFilter() {
+        super(NFilterOp.CUSTOM);
     }
 
-    private NDependencyDEFilter(NWorkspace workspace, Collection<NDesktopEnvironmentFamily> accepted) {
-        super(workspace, NFilterOp.CUSTOM);
+    private NDependencyDEFilter(Collection<NDesktopEnvironmentFamily> accepted) {
+        super(NFilterOp.CUSTOM);
         this.accepted = EnumSet.copyOf(accepted);
     }
 
-    public NDependencyDEFilter(NWorkspace workspace, String accepted) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NDependencyDEFilter(String accepted) {
+        super(NFilterOp.CUSTOM);
         this.accepted = EnumSet.noneOf(NDesktopEnvironmentFamily.class);
         for (String e : StringTokenizerUtils.splitDefault(accepted)) {
             if (!e.isEmpty()) {
@@ -39,7 +39,7 @@ public class NDependencyDEFilter extends AbstractDependencyFilter  {
     public NDependencyDEFilter add(Collection<NDesktopEnvironmentFamily> os) {
         EnumSet<NDesktopEnvironmentFamily> s2 = EnumSet.copyOf(this.accepted);
         s2.addAll(os);
-        return new NDependencyDEFilter(workspace, s2);
+        return new NDependencyDEFilter(s2);
     }
 
     @Override

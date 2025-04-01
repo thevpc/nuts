@@ -1,15 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.dependency.solver;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.spi.NDependencySolverFactory;
 
 public class MavenFirstNDependencySolverFactory implements NDependencySolverFactory {
-    private NWorkspace workspace;
-
-    public MavenFirstNDependencySolverFactory(NWorkspace workspace) {
-        this.workspace = workspace;
+    public MavenFirstNDependencySolverFactory() {
     }
 
     @Override
@@ -19,7 +15,7 @@ public class MavenFirstNDependencySolverFactory implements NDependencySolverFact
 
     @Override
     public NDependencySolver create() {
-        return new MavenFirstNDependencySolver(workspace);
+        return new MavenFirstNDependencySolver();
     }
 
     @Override

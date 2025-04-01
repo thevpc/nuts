@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.text.NTextPlain;
 
 import java.util.ArrayList;
@@ -12,10 +11,8 @@ import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextPlain;
 public class RootParserStep extends ParserStep {
     boolean spreadLines;
     LinkedList<ParserStep> available = new LinkedList<>();
-    private NWorkspace workspace;
-    public RootParserStep(boolean spreadLines, NWorkspace workspace) {
+    public RootParserStep(boolean spreadLines) {
         this.spreadLines = spreadLines;
-        this.workspace = workspace;
     }
 
     @Override

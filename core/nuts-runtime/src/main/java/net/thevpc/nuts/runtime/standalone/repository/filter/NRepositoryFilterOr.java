@@ -16,8 +16,8 @@ public class NRepositoryFilterOr extends AbstractRepositoryFilter implements NCo
 
     private NRepositoryFilter[] all;
 
-    public NRepositoryFilterOr(NWorkspace workspace, NRepositoryFilter... all) {
-        super(workspace, NFilterOp.OR);
+    public NRepositoryFilterOr(NRepositoryFilter... all) {
+        super(NFilterOp.OR);
         List<NRepositoryFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NRepositoryFilter filter : all) {

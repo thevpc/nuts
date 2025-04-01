@@ -24,11 +24,11 @@ public class SShConnection implements AutoCloseable {
     private InputStream in;
     private List<SshListener> listeners = new ArrayList<>();
 
-    public SShConnection(String address, InputStream in, OutputStream out, OutputStream err, NSession sshSession) {
-        this(NConnexionString.of(address).get(), in, out, err, sshSession);
+    public SShConnection(String address, InputStream in, OutputStream out, OutputStream err) {
+        this(NConnexionString.of(address).get(), in, out, err);
     }
 
-    public SShConnection(NConnexionString address, InputStream in, OutputStream out, OutputStream err, NSession sshSession) {
+    public SShConnection(NConnexionString address, InputStream in, OutputStream out, OutputStream err) {
         init(address.getUser(), address.getHost(),
                 NLiteral.of(address.getPort()).asInt().orElse(-1),
                 NStringMapFormat.URL_FORMAT.parse(address.getQueryString())

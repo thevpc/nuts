@@ -34,8 +34,8 @@ public class NPatternIdFilter extends AbstractIdFilter implements NIdFilter {
     private Map<String, String> qm;
     private List<Predicate<Map<String, String>>> q = new ArrayList<>();
 
-    public NPatternIdFilter(NWorkspace workspace, NId id) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NPatternIdFilter(NId id) {
+        super(NFilterOp.CUSTOM);
         this.id = id;
         this.wildcard = containsWildcad(id.toString());
         g = GlobUtils.ofExact(id.getGroupId());

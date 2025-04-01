@@ -137,6 +137,48 @@ public class DefaultNDigest implements NDigest {
     }
 
     @Override
+    public NDigest addSource(InputStream source) {
+        this.setSource0((source == null ? null : NInputSource.of(source)));
+        return this;
+    }
+
+    @Override
+    public NDigest addSource(File source) {
+        this.setSource0((source == null ? null : NPath.of(source)));
+        return this;
+    }
+
+    @Override
+    public NDigest addSource(Path source) {
+        this.setSource0(source == null ? null : NPath.of(source));
+        return this;
+    }
+
+    @Override
+    public NDigest addSource(URL url) {
+        this.setSource0(url == null ? null : NPath.of(url));
+        return this;
+    }
+
+    @Override
+    public NDigest addSource(NPath source) {
+        this.setSource0(source);
+        return this;
+    }
+
+    @Override
+    public NDigest addSource(byte[] source) {
+        this.setSource0(source == null ? null : NInputSource.of(source));
+        return this;
+    }
+
+    @Override
+    public NDigest addSource(NDescriptor source) {
+        this.setSource0(source == null ? null : new NDescriptorInputSource(source));
+        return this;
+    }
+
+    @Override
     public String computeString() {
         return NHex.fromBytes(computeBytes());
     }

@@ -15,8 +15,8 @@ import net.thevpc.nuts.util.NFilterOp;
  */
 public class NExecExtensionFilter extends AbstractDescriptorFilter {
     private NId apiId;
-    public NExecExtensionFilter(NWorkspace workspace, NId apiId) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NExecExtensionFilter(NId apiId) {
+        super(NFilterOp.CUSTOM);
         this.apiId=apiId;
     }
 

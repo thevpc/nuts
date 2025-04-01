@@ -32,10 +32,8 @@ import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
  * Created by vpc on 2/19/17.
  */
 public abstract class AbstractNDescriptor implements NDescriptor {
-    protected transient NWorkspace workspace;
+    public AbstractNDescriptor() {
 
-    public AbstractNDescriptor(NWorkspace workspace) {
-        this.workspace = workspace;
     }
 
     @Override

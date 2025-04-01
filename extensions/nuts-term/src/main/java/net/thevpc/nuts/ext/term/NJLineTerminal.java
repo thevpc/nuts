@@ -70,7 +70,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     private String commandHighlighter;
 
     public NJLineTerminal(NWorkspace workspace) {
-        super(workspace);
+        super();
     }
 
     private AttributedString toAttributedString(NText n, NTextStyles styles) {
@@ -200,7 +200,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
             throw new UncheckedIOException(new IOException("unable to create JLine system terminal: " + ex.getMessage(), ex));
         }
         reader = LineReaderBuilder.builder()
-                .completer(new NJLineCompleter(getWorkspace(), this))
+                .completer(new NJLineCompleter(this))
                 .highlighter(new Highlighter() {
                     @Override
                     public AttributedString highlight(LineReader reader, String buffer) {
@@ -383,7 +383,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
                 return null;
             }
             default: {
-                String s = NAnsiTermHelper.of(getWorkspace()).command(command);
+                String s = NAnsiTermHelper.of().command(command);
                 if (s != null) {
                     byte[] bytes = s.getBytes();
                     printStream.writeRaw(bytes,0,bytes.length);
@@ -399,7 +399,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     }
 
     public void setStyles(NTextStyles styles, NPrintStream printStream) {
-        String s = NAnsiTermHelper.of(getWorkspace()).styled(styles);
+        String s = NAnsiTermHelper.of().styled(styles);
         if (s != null) {
             byte[] bytes = s.getBytes();
             printStream.writeRaw(bytes,0,bytes.length);

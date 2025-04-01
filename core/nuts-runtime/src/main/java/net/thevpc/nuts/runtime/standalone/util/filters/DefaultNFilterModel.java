@@ -142,7 +142,7 @@ public class DefaultNFilterModel {
                 if (all.isEmpty()) {
                     return (T) always(type);
                 }
-                return (T) new NDependencyFilterNone(workspace, all.toArray(new NDependencyFilter[0]));
+                return (T) new NDependencyFilterNone(all.toArray(new NDependencyFilter[0]));
             }
             case "net.thevpc.nuts.NRepositoryFilter": {
                 List<NRepositoryFilter> all = new ArrayList<>();
@@ -155,7 +155,7 @@ public class DefaultNFilterModel {
                 if (all.isEmpty()) {
                     return (T) always(type);
                 }
-                return (T) new NRepositoryFilterNone(workspace, all.toArray(new NRepositoryFilter[0]));
+                return (T) new NRepositoryFilterNone(all.toArray(new NRepositoryFilter[0]));
             }
             case "net.thevpc.nuts.NIdFilter": {
                 List<NIdFilter> all = new ArrayList<>();
@@ -168,7 +168,7 @@ public class DefaultNFilterModel {
                 if (all.isEmpty()) {
                     return (T) always(type);
                 }
-                return (T) new NIdFilterNone(workspace, all.toArray(new NIdFilter[0]));
+                return (T) new NIdFilterNone(all.toArray(new NIdFilter[0]));
             }
             case "net.thevpc.nuts.NVersionFilter": {
                 List<NVersionFilter> all = new ArrayList<>();
@@ -181,7 +181,7 @@ public class DefaultNFilterModel {
                 if (all.isEmpty()) {
                     return (T) always(type);
                 }
-                return (T) new NVersionFilterNone(workspace, all.toArray(new NVersionFilter[0]));
+                return (T) new NVersionFilterNone(all.toArray(new NVersionFilter[0]));
             }
             case "net.thevpc.nuts.NDescriptorFilter": {
                 List<NDescriptorFilter> all = new ArrayList<>();
@@ -194,7 +194,7 @@ public class DefaultNFilterModel {
                 if (all.isEmpty()) {
                     return (T) always(type);
                 }
-                return (T) new NDescriptorFilterNone(workspace, all.toArray(new NDescriptorFilter[0]));
+                return (T) new NDescriptorFilterNone(all.toArray(new NDescriptorFilter[0]));
             }
         }
         throw new NIllegalArgumentException(NMsg.ofC("unsupported filter type: %s", type));

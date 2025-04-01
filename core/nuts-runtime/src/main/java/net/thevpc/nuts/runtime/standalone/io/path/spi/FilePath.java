@@ -144,7 +144,7 @@ public class FilePath implements NPathSPI {
                 return NPathType.OTHER;
             }
         }
-        return exists(basePath) ? NPathType.OTHER : NPathType.NOT_FOUND;
+        return Files.exists(value) ? NPathType.OTHER : NPathType.NOT_FOUND;
     }
 
     @Override

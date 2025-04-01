@@ -27,9 +27,7 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.parser;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.DefaultNArtifactCall;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.runtime.standalone.DefaultNArtifactCallBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.format.json.JsonStringBuffer;
 import net.thevpc.nuts.spi.*;
@@ -51,12 +49,10 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
 
     public static NId NSH;
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("nsh", "sh", "bash"));
-    private NWorkspace workspace;
-    public NshDescriptorContentParserComponent(NWorkspace workspace) {
+    public NshDescriptorContentParserComponent() {
         if(NSH==null){
             NSH= NId.get("nsh").get();
         }
-        this.workspace=workspace;
     }
 
     @Override

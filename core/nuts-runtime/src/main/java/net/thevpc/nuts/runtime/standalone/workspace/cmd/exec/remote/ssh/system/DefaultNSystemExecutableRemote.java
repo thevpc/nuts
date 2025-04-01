@@ -91,7 +91,7 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformati
 
 
         NSession session = workspace.currentSession();
-        return new AbstractSyncIProcessExecHelper(workspace) {
+        return new AbstractSyncIProcessExecHelper() {
             @Override
             public int exec() {
                 NExecCmd execCommand = getExecCommand();

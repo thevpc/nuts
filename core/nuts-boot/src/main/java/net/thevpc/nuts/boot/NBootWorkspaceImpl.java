@@ -151,6 +151,9 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                     userOptions.getApplicationArguments().addAll(Arrays.asList(userOptionsUnparsed.getAppArgs()));
                 }
                 this.options = userOptions.copy();
+                NBootContext.context().connectionTimout = options.getCustomOptions().stream().map(x -> NBootArg.of(x)).filter(x -> Objects.equals(x.getOptionName(), "---connection-timeout")).map(x -> x.getIntValue())
+                        .filter(x -> x != null)
+                        .findFirst().orElse(0);
                 this.postInit();
             } catch (Exception e) {
                 NBootErrorInfoList li = new NBootErrorInfoList();

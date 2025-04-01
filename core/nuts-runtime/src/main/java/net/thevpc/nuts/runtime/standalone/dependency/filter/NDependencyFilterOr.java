@@ -15,8 +15,8 @@ public class NDependencyFilterOr extends AbstractDependencyFilter implements NCo
 
     private final NDependencyFilter[] all;
 
-    public NDependencyFilterOr(NWorkspace workspace, NDependencyFilter... all) {
-        super(workspace, NFilterOp.OR);
+    public NDependencyFilterOr(NDependencyFilter... all) {
+        super(NFilterOp.OR);
         this.all = all;
     }
 

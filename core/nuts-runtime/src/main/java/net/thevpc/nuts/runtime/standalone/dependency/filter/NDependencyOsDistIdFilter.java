@@ -14,19 +14,19 @@ public class NDependencyOsDistIdFilter extends AbstractDependencyFilter  {
 
     private Set<NId> accepted = new HashSet<>();
 
-    public NDependencyOsDistIdFilter(NWorkspace workspace) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NDependencyOsDistIdFilter() {
+        super(NFilterOp.CUSTOM);
     }
 
-    private NDependencyOsDistIdFilter(NWorkspace workspace, Collection<NId> accepted) {
-        super(workspace, NFilterOp.CUSTOM);
+    private NDependencyOsDistIdFilter(Collection<NId> accepted) {
+        super(NFilterOp.CUSTOM);
         this.accepted = new LinkedHashSet<>(accepted);
     }
 
     public NDependencyOsDistIdFilter add(Collection<NId> os) {
         LinkedHashSet<NId> s2 = new LinkedHashSet<>(accepted);
         s2.addAll(os);
-        return new NDependencyOsDistIdFilter(workspace, s2);
+        return new NDependencyOsDistIdFilter(s2);
     }
 
     @Override

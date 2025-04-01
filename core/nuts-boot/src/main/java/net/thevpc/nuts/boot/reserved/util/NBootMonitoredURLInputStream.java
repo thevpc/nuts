@@ -43,7 +43,7 @@ public class NBootMonitoredURLInputStream extends FilterInputStream {
         }
         int bootConnectionTimout = 0;
         if (NBootContext.context() != null) {
-            bootConnectionTimout = NBootContext.context().bootConnectionTimout;
+            bootConnectionTimout = NBootContext.context().connectionTimout;
         }
         if (bootConnectionTimout <= 0) {
             bootConnectionTimout = 3000;

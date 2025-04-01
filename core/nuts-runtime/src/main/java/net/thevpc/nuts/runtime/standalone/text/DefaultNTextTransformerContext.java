@@ -1,7 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.text.*;
 
 public class DefaultNTextTransformerContext implements NTextTransformerContext {
@@ -14,12 +12,12 @@ public class DefaultNTextTransformerContext implements NTextTransformerContext {
         this.defaultTransformer = o.getDefaultTransformer();
     }
 
-    public DefaultNTextTransformerContext(NTextTransformConfig config, NWorkspace workspace) {
+    public DefaultNTextTransformerContext(NTextTransformConfig config) {
         if (config == null) {
             config = new NTextTransformConfig();
         }
         this.config = config;
-        this.defaultTransformer = new DefaultNTextTransformer(config, workspace);
+        this.defaultTransformer = new DefaultNTextTransformer(config);
         this.sequence = config.getTitleNumberSequence();
         if (sequence == null) {
             sequence = new DefaultNTitleSequence();

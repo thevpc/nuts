@@ -40,8 +40,8 @@ public class NDescriptorFilterById extends AbstractDescriptorFilter  {
 
     private NIdFilter id;
 
-    public NDescriptorFilterById(NIdFilter id, NWorkspace workspace) {
-        super(workspace, NFilterOp.CONVERT);
+    public NDescriptorFilterById(NIdFilter id) {
+        super(NFilterOp.CONVERT);
         this.id = id;
     }
 
@@ -61,7 +61,7 @@ public class NDescriptorFilterById extends AbstractDescriptorFilter  {
                 if (id2 == null) {
                     return null;
                 }
-                return new NDescriptorFilterById(id2,workspace);
+                return new NDescriptorFilterById(id2);
             }
         }
         return this;

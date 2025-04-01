@@ -16,8 +16,8 @@ public class NRepositoryFilterAnd extends AbstractRepositoryFilter implements NC
 
     private NRepositoryFilter[] all;
 
-    public NRepositoryFilterAnd(NWorkspace workspace, NRepositoryFilter... all) {
-        super(workspace, NFilterOp.AND);
+    public NRepositoryFilterAnd(NRepositoryFilter... all) {
+        super(NFilterOp.AND);
         List<NRepositoryFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NRepositoryFilter filter : all) {

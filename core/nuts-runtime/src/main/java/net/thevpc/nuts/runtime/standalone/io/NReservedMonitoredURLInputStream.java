@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.runtime.standalone.web.DefaultNWebCli;
 import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
@@ -46,6 +47,7 @@ public class NReservedMonitoredURLInputStream extends FilterInputStream {
             }
             throw new UncheckedIOException("url not accessible " + url, ex);
         }
+        DefaultNWebCli.prepareGlobalConnection(c);
         long contentLength = c.getContentLengthLong();
         try {
             return new NReservedMonitoredURLInputStream(c.getInputStream(), url, chronometer, contentLength, log);

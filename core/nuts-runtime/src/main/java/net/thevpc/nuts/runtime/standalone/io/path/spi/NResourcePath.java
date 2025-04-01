@@ -210,7 +210,7 @@ public class NResourcePath implements NPathSPI {
         if(u!=null){
             return u.type();
         }
-        return exists(basePath)?NPathType.OTHER:NPathType.NOT_FOUND;
+        return NPathType.NOT_FOUND;
     }
 
     @Override
@@ -240,7 +240,7 @@ public class NResourcePath implements NPathSPI {
     public String getContentEncoding(NPath basePath) {
         NPath up = toURLPath();
         if (up != null) {
-            return up.getContentEncoding();
+            return up.contentEncoding();
         }
         return null;
     }
@@ -249,7 +249,7 @@ public class NResourcePath implements NPathSPI {
     public String getContentType(NPath basePath) {
         NPath up = toURLPath();
         if (up != null) {
-            return up.getContentType();
+            return up.contentType();
         }
         return null;
     }
@@ -312,13 +312,13 @@ public class NResourcePath implements NPathSPI {
         if (up == null) {
             return null;
         }
-        return up.getLastModifiedInstant();
+        return up.lastModifiedInstant();
     }
 
     @Override
     public Instant getLastAccessInstant(NPath basePath) {
         NPath up = toURLPath();
-        return up != null ? up.getLastAccessInstant() : null;
+        return up != null ? up.lastAccessInstant() : null;
     }
 
     @Override

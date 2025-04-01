@@ -21,14 +21,12 @@ public class DefaultNDependencies implements NDependencies {
 
     private NDependency[] mergedDependencies;
     private NDependencyTreeNode[] mergedNodes;
-    private transient NWorkspace workspace;
     private transient NEDesc description;
 
     public DefaultNDependencies(String solver, NId[] ids, NDependencyFilter filter, NDependency[] immediateDependencies,
                                 NDependency[] nonMergedDependencies, NDependencyTreeNode[] nonMergedNodes,
                                 NDependency[] mergedDependencies, NDependencyTreeNode[] mergedNodes,
-                                NEDesc description,
-                                NWorkspace workspace
+                                NEDesc description
     ) {
         this.sourceIds = ids;
         this.solver = solver;
@@ -38,7 +36,6 @@ public class DefaultNDependencies implements NDependencies {
         this.nonMergedNodes = nonMergedNodes;
         this.mergedNodes = mergedNodes;
         this.mergedDependencies = mergedDependencies;
-        this.workspace = workspace;
         this.description = description;
     }
 

@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextCommand;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextStyled;
@@ -32,12 +31,10 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
             NTextNodeWriterRenderer.this.writeLater(buf);
         }
     };
-    private NWorkspace workspace;
     private NSystemTerminalBase term;
 
-    public NTextNodeWriterRenderer(NPrintStream rawOutput, NWorkspace workspace, NSystemTerminalBase term) {
+    public NTextNodeWriterRenderer(NPrintStream rawOutput, NSystemTerminalBase term) {
         this.rawOutput = rawOutput;
-        this.workspace = workspace;
         this.term = term;
     }
 

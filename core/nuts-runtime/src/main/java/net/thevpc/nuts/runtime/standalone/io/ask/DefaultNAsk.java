@@ -22,7 +22,6 @@ public class DefaultNAsk<T> implements NAsk<T> {
 
     private final NTerminal terminal;
     private final NPrintStream out;
-    private final NWorkspace workspace;
     private NMsg message;
     private NMsg cancelMessage;
     private List<Object> acceptedValues;
@@ -39,8 +38,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
     private boolean password = false;
     private Object lastResult = null;
 
-    public DefaultNAsk(NWorkspace workspace, NTerminal terminal, NPrintStream out) {
-        this.workspace = workspace;
+    public DefaultNAsk(NTerminal terminal, NPrintStream out) {
         this.terminal = terminal;
         this.out = out;
     }
@@ -55,7 +53,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
     }
 
     private T execute() {
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         NAskCache askCache = NApp.of().getOrComputeProperty(NAskCache.class.getName(), NScopeType.SESSION, () -> new NAskCache());
         if (rememberMeKey != null) {
             Object o = askCache.get(rememberMeKey);
@@ -327,7 +325,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
     }
 
     private CoreNUtilGui.GuiResult showGuiInput(String str, boolean pwd, boolean rememberMe) {
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         String ft = NText.of(str).filteredText();
         NMsg title = NMsg.ofC("Nuts Package Manager - %s", session.getWorkspace().getApiId().getVersion());
         if (NApp.of().getId().orNull() != null) {

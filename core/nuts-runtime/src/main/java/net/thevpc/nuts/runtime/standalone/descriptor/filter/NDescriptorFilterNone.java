@@ -16,8 +16,8 @@ public class NDescriptorFilterNone extends AbstractDescriptorFilter {
 
     private NDescriptorFilter[] all;
 
-    public NDescriptorFilterNone(NWorkspace workspace, NDescriptorFilter... all) {
-        super(workspace, NFilterOp.NOT);
+    public NDescriptorFilterNone(NDescriptorFilter... all) {
+        super(NFilterOp.NOT);
         List<NDescriptorFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NDescriptorFilter filter : all) {

@@ -7,7 +7,7 @@ import java.util.concurrent.Callable;
 public class NBootContext {
     public static InheritableThreadLocal<NBootContext> curr = new InheritableThreadLocal<>();
     public NBootLog log;
-    public int bootConnectionTimout;
+    public int connectionTimout;
     private NBootCache cache = new NBootCache();
 
 

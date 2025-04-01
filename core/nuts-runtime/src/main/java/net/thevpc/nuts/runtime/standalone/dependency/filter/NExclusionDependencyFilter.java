@@ -15,8 +15,8 @@ public class NExclusionDependencyFilter extends AbstractDependencyFilter{
     private final NDependencyFilter base;
     private final NId[] exclusions;
 
-    public NExclusionDependencyFilter(NWorkspace workspace, NDependencyFilter base, NId[] exclusions) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NExclusionDependencyFilter(NDependencyFilter base, NId[] exclusions) {
+        super(NFilterOp.CUSTOM);
         this.base = base;
         this.exclusions = exclusions;
     }
@@ -47,7 +47,7 @@ public class NExclusionDependencyFilter extends AbstractDependencyFilter{
         }
         NDependencyFilter base2 = CoreFilterUtils.simplify(base);
         if (base2 != base) {
-            return new NExclusionDependencyFilter(workspace,base2, exclusions);
+            return new NExclusionDependencyFilter(base2, exclusions);
         }
         return this;
     }

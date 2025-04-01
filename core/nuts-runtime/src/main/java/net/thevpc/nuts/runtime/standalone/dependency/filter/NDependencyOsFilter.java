@@ -17,17 +17,17 @@ public class NDependencyOsFilter extends AbstractDependencyFilter  {
 
     private Set<NOsFamily> os = EnumSet.noneOf(NOsFamily.class);
 
-    public NDependencyOsFilter(NWorkspace workspace) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NDependencyOsFilter() {
+        super(NFilterOp.CUSTOM);
     }
 
-    private NDependencyOsFilter(NWorkspace workspace, Collection<NOsFamily> os) {
-        super(workspace, NFilterOp.CUSTOM);
+    private NDependencyOsFilter(Collection<NOsFamily> os) {
+        super(NFilterOp.CUSTOM);
         this.os = EnumSet.copyOf(os);
     }
 
-    public NDependencyOsFilter(NWorkspace workspace, String os) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NDependencyOsFilter(String os) {
+        super(NFilterOp.CUSTOM);
         this.os = EnumSet.noneOf(NOsFamily.class);
         for (String e : StringTokenizerUtils.splitDefault(os)) {
             if (!e.isEmpty()) {
@@ -39,7 +39,7 @@ public class NDependencyOsFilter extends AbstractDependencyFilter  {
     public NDependencyOsFilter add(Collection<NOsFamily> os) {
         EnumSet<NOsFamily> s2 = EnumSet.copyOf(this.os);
         s2.addAll(os);
-        return new NDependencyOsFilter(workspace, s2);
+        return new NDependencyOsFilter(s2);
     }
 
     @Override

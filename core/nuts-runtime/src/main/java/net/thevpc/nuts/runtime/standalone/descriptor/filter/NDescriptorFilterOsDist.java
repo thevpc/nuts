@@ -39,8 +39,8 @@ public class NDescriptorFilterOsDist extends AbstractDescriptorFilter  {
 
     private final String osDist;
 
-    public NDescriptorFilterOsDist(NWorkspace workspace, String osDist) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NDescriptorFilterOsDist(String osDist) {
+        super(NFilterOp.CUSTOM);
         this.osDist = osDist;
     }
 

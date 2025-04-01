@@ -18,27 +18,27 @@ public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositor
         implements NRepositoryFilters {
 
     public InternalNRepositoryFilters(NWorkspace workspace) {
-        super(workspace, NRepositoryFilter.class);
+        super(NRepositoryFilter.class);
     }
 
     @Override
     public NRepositoryFilter always() {
-        return new NRepositoryFilterTrue(getWorkspace());
+        return new NRepositoryFilterTrue();
     }
 
     @Override
     public NRepositoryFilter never() {
-        return new NRepositoryFilterFalse(getWorkspace());
+        return new NRepositoryFilterFalse();
     }
 
     @Override
     public NRepositoryFilter not(NFilter other) {
-        return new NRepositoryFilterNone(getWorkspace(), (NRepositoryFilter) other);
+        return new NRepositoryFilterNone((NRepositoryFilter) other);
     }
 
     @Override
     public NRepositoryFilter installedRepo() {
-        return new DefaultNRepositoryUuidFilter(getWorkspace(), Arrays.asList(DefaultNInstalledRepository.INSTALLED_REPO_UUID));
+        return new DefaultNRepositoryUuidFilter(Arrays.asList(DefaultNInstalledRepository.INSTALLED_REPO_UUID));
     }
 
     @Override
@@ -52,7 +52,7 @@ public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositor
         if (namesList.isEmpty()) {
             return always();
         }
-        return new DefaultNRepositoryNameFilter(getWorkspace(), namesList);
+        return new DefaultNRepositoryNameFilter(namesList);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositor
         if (namesList.isEmpty()) {
             return always();
         }
-        return new DefaultNRepositorySelectorFilter(getWorkspace(), namesList);
+        return new DefaultNRepositorySelectorFilter(namesList);
     }
 
     @Override
@@ -102,7 +102,7 @@ public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositor
         if (namesList.isEmpty()) {
             return always();
         }
-        return new DefaultNRepositorySelectorFilter(getWorkspace(), namesList);
+        return new DefaultNRepositorySelectorFilter(namesList);
     }
 
     @Override
@@ -110,7 +110,7 @@ public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositor
         if (uuids == null || uuids.length == 0) {
             return always();
         }
-        return new DefaultNRepositoryUuidFilter(getWorkspace(), Arrays.asList(uuids));
+        return new DefaultNRepositoryUuidFilter(Arrays.asList(uuids));
     }
 
     @Override
@@ -142,7 +142,7 @@ public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositor
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NRepositoryFilterAnd(getWorkspace(), all.toArray(new NRepositoryFilter[0]));
+        return new NRepositoryFilterAnd(all.toArray(new NRepositoryFilter[0]));
     }
 
     @Override
@@ -154,7 +154,7 @@ public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositor
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NRepositoryFilterOr(getWorkspace(), all.toArray(new NRepositoryFilter[0]));
+        return new NRepositoryFilterOr(all.toArray(new NRepositoryFilter[0]));
     }
 
     @Override
@@ -163,12 +163,12 @@ public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositor
         if (all.isEmpty()) {
             return always();
         }
-        return new NRepositoryFilterNone(getWorkspace(), all.toArray(new NRepositoryFilter[0]));
+        return new NRepositoryFilterNone(all.toArray(new NRepositoryFilter[0]));
     }
 
     @Override
     public NRepositoryFilter parse(String expression) {
-        return new NRepositoryFilterParser(expression, getWorkspace()).parse();
+        return new NRepositoryFilterParser(expression).parse();
     }
 
     @Override

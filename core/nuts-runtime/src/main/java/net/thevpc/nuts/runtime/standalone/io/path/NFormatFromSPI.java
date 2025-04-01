@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPrintStream;
@@ -12,7 +11,7 @@ import net.thevpc.nuts.spi.NSupportLevelContext;
 public class NFormatFromSPI extends DefaultFormatBase<NFormat> {
     private final NFormatSPI spi;
 
-    public NFormatFromSPI(NFormatSPI spi, NWorkspace nWorkspace) {
+    public NFormatFromSPI(NFormatSPI spi) {
         super(spi.getName());
         this.spi = spi;
     }

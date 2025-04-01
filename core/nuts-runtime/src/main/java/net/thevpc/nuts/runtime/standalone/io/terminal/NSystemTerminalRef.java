@@ -11,8 +11,8 @@ public class NSystemTerminalRef extends AbstractSystemTerminalAdapter {
     private NSystemTerminalBase base;
     private NSystemTerminalBase defaultVal;
 
-    public NSystemTerminalRef(NWorkspace workspace,NSystemTerminalBase base) {
-        super(workspace);
+    public NSystemTerminalRef(NSystemTerminalBase base) {
+        super();
         this.base = base;
         this.defaultVal = base;
     }
@@ -23,7 +23,7 @@ public class NSystemTerminalRef extends AbstractSystemTerminalAdapter {
     }
 
     public NSystemTerminalRef setBase(NSystemTerminalBase base) {
-        NSession session = getWorkspace().currentSession();
+        NSession session = NSession.of();
         NSystemTerminalBase old = this.base;
         if (base == null) {
             this.base = defaultVal;
@@ -33,7 +33,7 @@ public class NSystemTerminalRef extends AbstractSystemTerminalAdapter {
 
         if (old != base) {
             NWorkspaceEvent event = null;
-            for (NWorkspaceListener workspaceListener : getWorkspace().getWorkspaceListeners()) {
+            for (NWorkspaceListener workspaceListener : NWorkspace.of().getWorkspaceListeners()) {
                 if (event == null) {
                     event = new DefaultNWorkspaceEvent(session, null, "systemTerminal", null, this);
                 }

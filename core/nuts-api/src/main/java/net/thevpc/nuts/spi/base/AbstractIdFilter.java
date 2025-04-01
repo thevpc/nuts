@@ -24,13 +24,11 @@
  */
 package net.thevpc.nuts.spi.base;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.reserved.util.NIdFilterWithDescriptor;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.NIdFilter;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NSimplifiable;
 
 /**
@@ -39,8 +37,8 @@ import net.thevpc.nuts.util.NSimplifiable;
  */
 public abstract class AbstractIdFilter extends AbstractNFilter implements NIdFilter, NSimplifiable<NIdFilter> {
 
-    public AbstractIdFilter(NWorkspace workspace, NFilterOp op) {
-        super(workspace, op);
+    public AbstractIdFilter(NFilterOp op) {
+        super(op);
     }
 
     @Override
@@ -63,6 +61,6 @@ public abstract class AbstractIdFilter extends AbstractNFilter implements NIdFil
         if (description == null) {
             return this;
         }
-        return new NIdFilterWithDescriptor(workspace,this, description);
+        return new NIdFilterWithDescriptor(this, description);
     }
 }

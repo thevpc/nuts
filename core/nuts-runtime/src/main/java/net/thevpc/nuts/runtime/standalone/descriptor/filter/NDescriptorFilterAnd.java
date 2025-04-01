@@ -16,8 +16,8 @@ public class NDescriptorFilterAnd extends AbstractDescriptorFilter implements NC
 
     private NDescriptorFilter[] all;
 
-    public NDescriptorFilterAnd(NWorkspace workspace, NDescriptorFilter... all) {
-        super(workspace, NFilterOp.AND);
+    public NDescriptorFilterAnd(NDescriptorFilter... all) {
+        super(NFilterOp.AND);
         List<NDescriptorFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NDescriptorFilter filter : all) {

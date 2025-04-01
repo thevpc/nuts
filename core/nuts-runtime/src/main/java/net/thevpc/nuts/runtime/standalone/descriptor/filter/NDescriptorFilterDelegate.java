@@ -10,8 +10,8 @@ import java.util.Objects;
 public abstract class NDescriptorFilterDelegate extends AbstractDescriptorFilter{
     public abstract NDescriptorFilter baseDescriptorFilter();
 
-    public NDescriptorFilterDelegate(NWorkspace workspace) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NDescriptorFilterDelegate() {
+        super(NFilterOp.CUSTOM);
     }
 
     @Override

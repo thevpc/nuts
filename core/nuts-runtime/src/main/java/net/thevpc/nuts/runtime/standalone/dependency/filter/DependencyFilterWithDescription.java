@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import net.thevpc.nuts.NDependencyFilter;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NFilter;
@@ -10,8 +9,8 @@ public class DependencyFilterWithDescription extends DependencyFilterDelegate {
     private NDependencyFilter base;
     private NEDesc description;
 
-    public DependencyFilterWithDescription(NWorkspace workspace, NDependencyFilter base, NEDesc description) {
-        super(workspace);
+    public DependencyFilterWithDescription(NDependencyFilter base, NEDesc description) {
+        super();
         this.base = base;
         this.description = description;
     }

@@ -15,8 +15,8 @@ public class NDependencyFilterNone extends AbstractDependencyFilter{
 
     private final NDependencyFilter[] all;
 
-    public NDependencyFilterNone(NWorkspace workspace, NDependencyFilter... all) {
-        super(workspace, NFilterOp.NOT);
+    public NDependencyFilterNone(NDependencyFilter... all) {
+        super(NFilterOp.NOT);
         this.all = all;
     }
 

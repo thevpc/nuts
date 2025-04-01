@@ -15,26 +15,26 @@ public class InternalNVersionFilters extends InternalNTypedFilters<NVersionFilte
 
 
     public InternalNVersionFilters(NWorkspace workspace) {
-        super(workspace, NVersionFilter.class);
+        super(NVersionFilter.class);
     }
 
     public NOptional<NVersionFilter> byValue(String version) {
-        return DefaultNVersionFilter.parse(version, getWorkspace());
+        return DefaultNVersionFilter.parse(version);
     }
 
     @Override
     public NVersionFilter always() {
-        return new NVersionFilterTrue(getWorkspace());
+        return new NVersionFilterTrue();
     }
 
     @Override
     public NVersionFilter never() {
-        return new NVersionFilterFalse(getWorkspace());
+        return new NVersionFilterFalse();
     }
 
     @Override
     public NVersionFilter not(NFilter other) {
-        return new NVersionFilterNone(getWorkspace(), (NVersionFilter) other);
+        return new NVersionFilterNone((NVersionFilter) other);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class InternalNVersionFilters extends InternalNTypedFilters<NVersionFilte
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NVersionFilterAnd(getWorkspace(), all.toArray(new NVersionFilter[0]));
+        return new NVersionFilterAnd(all.toArray(new NVersionFilter[0]));
     }
 
     @Override
@@ -78,7 +78,7 @@ public class InternalNVersionFilters extends InternalNTypedFilters<NVersionFilte
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NVersionFilterOr(getWorkspace(), all.toArray(new NVersionFilter[0]));
+        return new NVersionFilterOr(all.toArray(new NVersionFilter[0]));
     }
 
     @Override
@@ -87,12 +87,12 @@ public class InternalNVersionFilters extends InternalNTypedFilters<NVersionFilte
         if (all.isEmpty()) {
             return always();
         }
-        return new NVersionFilterNone(getWorkspace(), all.toArray(new NVersionFilter[0]));
+        return new NVersionFilterNone(all.toArray(new NVersionFilter[0]));
     }
 
     @Override
     public NVersionFilter parse(String expression) {
-        return new NVersionFilterParser(expression, getWorkspace()).parse();
+        return new NVersionFilterParser(expression).parse();
     }
 
     @Override

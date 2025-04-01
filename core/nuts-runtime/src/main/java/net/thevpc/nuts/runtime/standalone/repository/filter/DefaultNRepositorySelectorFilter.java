@@ -18,8 +18,8 @@ public class DefaultNRepositorySelectorFilter extends AbstractRepositoryFilter{
     private final Set<String> exactRepos;
     private final Set<Pattern> wildcardRepos;
 
-    public DefaultNRepositorySelectorFilter(NWorkspace workspace, Collection<String> exactRepos) {
-        super(workspace, NFilterOp.CUSTOM);
+    public DefaultNRepositorySelectorFilter(Collection<String> exactRepos) {
+        super(NFilterOp.CUSTOM);
         this.exactRepos = new HashSet<>();
         this.wildcardRepos = new HashSet<>();
         NRepositorySelectorList li=new NRepositorySelectorList();
@@ -27,7 +27,7 @@ public class DefaultNRepositorySelectorFilter extends AbstractRepositoryFilter{
         for (String exactRepo : exactRepos) {
             li=li.merge(NRepositorySelectorList.of(exactRepo, db).get());
         }
-        NRepositoryLocation[] input = workspace.getRepositories().stream()
+        NRepositoryLocation[] input = NWorkspace.of().getRepositories().stream()
                 .map(x -> x.config().getLocation().setName(x.getName()))
                 .toArray(NRepositoryLocation[]::new);
         String[] names = Arrays.stream(li.resolve(input,db)).map(NRepositoryLocation::getName).toArray(String[]::new);

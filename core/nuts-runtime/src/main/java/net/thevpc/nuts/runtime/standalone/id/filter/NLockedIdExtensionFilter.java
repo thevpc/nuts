@@ -19,8 +19,8 @@ import net.thevpc.nuts.util.NFilterOp;
  */
 public class NLockedIdExtensionFilter extends AbstractDescriptorFilter {
     private NId[] lockedIds;
-    public NLockedIdExtensionFilter(NWorkspace workspace, NId[] lockedIds) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NLockedIdExtensionFilter(NId[] lockedIds) {
+        super(NFilterOp.CUSTOM);
         this.lockedIds =lockedIds;
     }
 

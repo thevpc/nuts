@@ -1,7 +1,6 @@
 package net.thevpc.nuts.ext.ssh;
 
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NConnexionString;
 
@@ -9,15 +8,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class SshFileOutputStream2 extends OutputStream {
-    private NWorkspace workspace;
     private NPath temp;
     private NConnexionString path;
     private boolean mkdirs;
     private OutputStream tempOS;
 
-    public SshFileOutputStream2(NConnexionString path, NWorkspace workspace, boolean mkdirs) {
+    public SshFileOutputStream2(NConnexionString path, boolean mkdirs) {
         super();
-        this.workspace = workspace;
         this.path = path;
         this.mkdirs = mkdirs;
         this.temp = NPath.ofTempFile();
@@ -39,12 +36,11 @@ public class SshFileOutputStream2 extends OutputStream {
     @Override
     public void close() throws IOException {
         tempOS.close();
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         try (SShConnection connection = new SShConnection(path
                 , session.in()
                 , session.out().asOutputStream()
                 , session.err().asOutputStream()
-                , session
 
         )) {
             connection.copyLocalToRemote(temp.toString(), path.getPath(), mkdirs);

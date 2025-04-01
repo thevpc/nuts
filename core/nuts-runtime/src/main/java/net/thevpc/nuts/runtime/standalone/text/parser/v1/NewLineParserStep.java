@@ -11,10 +11,8 @@ import net.thevpc.nuts.util.NStringUtils;
 public class NewLineParserStep extends ParserStep {
 
     StringBuilder start = new StringBuilder();
-    private NWorkspace workspace;
-    public NewLineParserStep(char c, NWorkspace workspace) {
+    public NewLineParserStep(char c) {
         start.append(c);
-        this.workspace =workspace;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb.file;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.*;
 import net.thevpc.nuts.util.NMsg;
@@ -18,15 +17,13 @@ public class NanoDBDefaultIndex<T> extends NanoDBAbstractIndex<T> {
     private DBIndexValueStoreFactory storeFactory;
     private File file;
     private Class<T> keyType;
-    private NWorkspace workspace;
 
-    public NanoDBDefaultIndex(NWorkspace workspace, Class<T> keyType, NanoDBSerializer<T> ser, DBIndexValueStoreFactory storeFactory, Map<T, DBIndexValueStore> index, File file) {
+    public NanoDBDefaultIndex(Class<T> keyType, NanoDBSerializer<T> ser, DBIndexValueStoreFactory storeFactory, Map<T, DBIndexValueStore> index, File file) {
         super(ser);
         this.keyType = keyType;
         this.index = index;
         this.storeFactory = storeFactory;
         this.file = file;
-        this.workspace = workspace;
     }
 
     public File getFile() {
@@ -44,7 +41,7 @@ public class NanoDBDefaultIndex<T> extends NanoDBAbstractIndex<T> {
     public void flush() {
         file.getParentFile().mkdirs();
         try (OutputStream out = new FileOutputStream(file)) {
-            store(new NanoDBDefaultOutputStream(out,workspace));
+            store(new NanoDBDefaultOutputStream(out));
         } catch (IOException e) {
             throw new NIOException(e);
         }
@@ -144,7 +141,7 @@ public class NanoDBDefaultIndex<T> extends NanoDBAbstractIndex<T> {
 
     public void store(File stream) throws IOException {
         try (OutputStream out = new FileOutputStream(stream)) {
-            store(new NanoDBDefaultOutputStream(out,workspace));
+            store(new NanoDBDefaultOutputStream(out));
         }
     }
 
@@ -152,7 +149,7 @@ public class NanoDBDefaultIndex<T> extends NanoDBAbstractIndex<T> {
 
     public void load(File stream) {
         try (InputStream out = new FileInputStream(stream)) {
-            load(new NanoDBDefaultInputStream(out,workspace));
+            load(new NanoDBDefaultInputStream(out));
         } catch (IOException ex) {
             throw new NIOException(ex);
         }

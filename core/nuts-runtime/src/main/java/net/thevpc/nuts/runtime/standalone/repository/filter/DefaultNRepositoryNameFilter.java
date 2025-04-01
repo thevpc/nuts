@@ -13,8 +13,8 @@ public class DefaultNRepositoryNameFilter extends AbstractRepositoryFilter{
     private final Set<String> exactRepos;
     private final Set<Pattern> wildcardRepos;
 
-    public DefaultNRepositoryNameFilter(NWorkspace workspace, Collection<String> exactRepos) {
-        super(workspace, NFilterOp.CUSTOM);
+    public DefaultNRepositoryNameFilter(Collection<String> exactRepos) {
+        super(NFilterOp.CUSTOM);
         this.exactRepos = new HashSet<>();
         this.wildcardRepos = new HashSet<>();
         for (String repo : (exactRepos==null?new ArrayList<String>():exactRepos)) {

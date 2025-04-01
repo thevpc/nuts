@@ -14,24 +14,24 @@ public class InternalNInstallStatusFilters extends InternalNTypedFilters<NInstal
         implements NInstallStatusFilters {
 
     public InternalNInstallStatusFilters(NWorkspace workspace) {
-        super(workspace, NInstallStatusFilter.class);
+        super(NInstallStatusFilter.class);
 //        localModel = model.getShared(LocalModel.class, () -> new LocalModel(ws));
     }
 
     @Override
     public NInstallStatusFilter not(NFilter other) {
         NInstallStatusFilter r = other.to(NInstallStatusFilter.class);
-        return new NInstallStatusFilterNone(ws, r);
+        return new NInstallStatusFilterNone(r);
     }
 
     @Override
     public NInstallStatusFilter always() {
-        return new NInstallStatusFilter2(ws, 0, 0, 0, 0);
+        return new NInstallStatusFilter2(0, 0, 0, 0);
     }
 
     @Override
     public NInstallStatusFilter never() {
-        return new NInstallStatusFilterFalse(ws);
+        return new NInstallStatusFilterFalse();
     }
 
     @Override
@@ -43,7 +43,7 @@ public class InternalNInstallStatusFilters extends InternalNTypedFilters<NInstal
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NInstallStatusFilterAnd(ws, all.toArray(new NInstallStatusFilter[0]));
+        return new NInstallStatusFilterAnd(all.toArray(new NInstallStatusFilter[0]));
     }
 
     @Override
@@ -55,7 +55,7 @@ public class InternalNInstallStatusFilters extends InternalNTypedFilters<NInstal
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NInstallStatusFilterOr(ws, all.toArray(new NInstallStatusFilter[0]));
+        return new NInstallStatusFilterOr(all.toArray(new NInstallStatusFilter[0]));
     }
 
     @Override
@@ -64,7 +64,7 @@ public class InternalNInstallStatusFilters extends InternalNTypedFilters<NInstal
         if (all.isEmpty()) {
             return always();
         }
-        return new NInstallStatusFilterNone(ws, all.toArray(new NInstallStatusFilter[0]));
+        return new NInstallStatusFilterNone(all.toArray(new NInstallStatusFilter[0]));
     }
 
     @Override
@@ -87,27 +87,27 @@ public class InternalNInstallStatusFilters extends InternalNTypedFilters<NInstal
 
     @Override
     public NInstallStatusFilter parse(String expression) {
-        return new NInstallStatusFilterParser(expression, getWorkspace()).parse();
+        return new NInstallStatusFilterParser(expression).parse();
     }
 
     @Override
     public NInstallStatusFilter byInstalled(boolean value) {
-        return value ? new NInstallStatusFilter2(ws, 1, 0, 0, 0) : new NInstallStatusFilter2(ws, -1, 0, 0, 0);
+        return value ? new NInstallStatusFilter2(1, 0, 0, 0) : new NInstallStatusFilter2(-1, 0, 0, 0);
     }
 
     @Override
     public NInstallStatusFilter byRequired(boolean value) {
-        return value ? new NInstallStatusFilter2(ws, 0, 1, 0, 0) : new NInstallStatusFilter2(ws, 0, -1, 0, 0);
+        return value ? new NInstallStatusFilter2(0, 1, 0, 0) : new NInstallStatusFilter2(0, -1, 0, 0);
     }
 
     @Override
     public NInstallStatusFilter byDefaultValue(boolean value) {
-        return value ? new NInstallStatusFilter2(ws, 0, 0, 0, 1) : new NInstallStatusFilter2(ws, 0, 0, 0, -1);
+        return value ? new NInstallStatusFilter2(0, 0, 0, 1) : new NInstallStatusFilter2(0, 0, 0, -1);
     }
 
     @Override
     public NInstallStatusFilter byObsolete(boolean value) {
-        return value ? new NInstallStatusFilter2(ws, 0, 0, 1, 0) : new NInstallStatusFilter2(ws, 0, 0, -1, 0);
+        return value ? new NInstallStatusFilter2(0, 0, 1, 0) : new NInstallStatusFilter2(0, 0, -1, 0);
     }
 
     @Override

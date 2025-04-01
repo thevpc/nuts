@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -10,11 +9,9 @@ import net.thevpc.nuts.text.NTexts;
 
 public class CustomStyleCodeHighlighter implements NCodeHighlighter {
 
-    private NWorkspace workspace;
     private NTextStyle style;
 
-    public CustomStyleCodeHighlighter(NTextStyle style, NWorkspace workspace) {
-        this.workspace = workspace;
+    public CustomStyleCodeHighlighter(NTextStyle style) {
         this.style = style;
     }
 

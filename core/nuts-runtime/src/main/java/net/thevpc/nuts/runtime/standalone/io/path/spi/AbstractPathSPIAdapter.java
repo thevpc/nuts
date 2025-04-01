@@ -118,11 +118,11 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
     }
 
     public String getContentEncoding(NPath basePath) {
-        return ref.getContentEncoding();
+        return ref.contentEncoding();
     }
 
     public String getContentType(NPath basePath) {
-        return ref.getContentType();
+        return ref.contentType();
     }
 
     public String getCharset(NPath basePath) {
@@ -154,12 +154,12 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
 
     @Override
     public Instant getLastModifiedInstant(NPath basePath) {
-        return ref.getLastModifiedInstant();
+        return ref.lastModifiedInstant();
     }
 
     @Override
     public Instant getLastAccessInstant(NPath basePath) {
-        return ref.getLastAccessInstant();
+        return ref.lastAccessInstant();
     }
 
     @Override

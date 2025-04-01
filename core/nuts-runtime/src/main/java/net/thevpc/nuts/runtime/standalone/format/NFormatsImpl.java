@@ -115,7 +115,7 @@ public class NFormatsImpl implements NFormats {
                 fspi = base.formatter(b);
             }
             if (fspi != null) {
-                return new NFormatFromSPI(fspi, workspace);
+                return new NFormatFromSPI(fspi);
             }
             return new NPathBase.PathFormat((NPathBase) o);
         });

@@ -6,8 +6,6 @@ import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.OutputStream;
@@ -22,7 +20,7 @@ public class NPrintStreamRaw extends NPrintStreamBase {
     private PrintStream base;
 
     protected NPrintStreamRaw(OutputStream out, PrintStream base, Boolean autoFlush, NTerminalMode mode, NWorkspace workspace, Bindings bindings, NSystemTerminalBase term) {
-        super(autoFlush == null || autoFlush, mode, workspace, bindings, term);
+        super(autoFlush == null || autoFlush, mode, bindings, term);
         getMetaData().setMessage(NMsg.ofNtf(NText.ofStyledPath("<raw-stream>")));
         this.out = out;
         this.base = base;
@@ -36,7 +34,7 @@ public class NPrintStreamRaw extends NPrintStreamBase {
                            String encoding, NWorkspace workspace,
                            Bindings bindings,
                            NSystemTerminalBase term) {
-        super(true, mode == null ? NTerminalMode.INHERITED : mode, workspace, bindings, term);
+        super(true, mode == null ? NTerminalMode.INHERITED : mode, bindings, term);
         getMetaData().setMessage(NMsg.ofNtf(NText.ofStyledPath("<raw-stream>")));
         this.out = out;
         if (out instanceof PrintStream) {
@@ -134,10 +132,10 @@ public class NPrintStreamRaw extends NPrintStreamBase {
     protected NPrintStream convertImpl(NTerminalMode other) {
         switch (other) {
             case FORMATTED: {
-                return new NPrintStreamFormatted(this, workspace, bindings);
+                return new NPrintStreamFormatted(this, bindings);
             }
             case FILTERED: {
-                return new NPrintStreamFiltered(this, workspace, bindings);
+                return new NPrintStreamFiltered(this, bindings);
             }
             case ANSI: {
                 if(this.getTerminalMode()==NTerminalMode.INHERITED){

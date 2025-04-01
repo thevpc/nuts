@@ -29,7 +29,6 @@ package net.thevpc.nuts.runtime.standalone.format.yaml;
  * @author thevpc
  */
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPrintStream;
@@ -42,10 +41,8 @@ import java.io.Reader;
 
 public class SimpleYaml implements NElementStreamFormat {
 
-    private final NWorkspace ws;
 
-    public SimpleYaml(NWorkspace ws) {
-        this.ws = ws;
+    public SimpleYaml() {
     }
 
     @Override

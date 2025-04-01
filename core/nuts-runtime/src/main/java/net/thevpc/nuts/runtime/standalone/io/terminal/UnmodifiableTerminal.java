@@ -14,11 +14,9 @@ public class UnmodifiableTerminal extends AbstractNTerminal {
 
     private final NTerminal base;
     protected CProgressBar progressBar;
-    protected NWorkspace workspace;
 
-    public UnmodifiableTerminal(NTerminal base, NWorkspace workspace) {
+    public UnmodifiableTerminal(NTerminal base) {
         this.base = base;
-        this.workspace = workspace;
     }
 
     @Override
@@ -95,7 +93,7 @@ public class UnmodifiableTerminal extends AbstractNTerminal {
 
     @Override
     public NTerminal printProgress(float progress, NMsg message) {
-        NSession session=workspace.currentSession();
+        NSession session=NSession.of();
         if (session.isProgress()) {
             if (getBase() != null) {
                 getBase().printProgress(progress, message);

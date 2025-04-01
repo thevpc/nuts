@@ -44,7 +44,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
     private boolean dry;
 
     public ProcessExecHelper(NDefinition definition, ProcessBuilder2 pb, NWorkspace workspace, NPrintStream trace, NExecInput in, NExecOutput out, NExecOutput err, boolean dry) {
-        super(workspace);
+        super();
         this.pb = pb;
         this.trace = trace;
         this.definition = definition;
@@ -207,7 +207,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
     }
 
     public int exec() {
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         if (session.isDry()) {
             if (trace.getTerminalMode() == NTerminalMode.FORMATTED) {
                 trace.print("[dry] ==[exec]== ");

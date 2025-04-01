@@ -17,8 +17,8 @@ public class NInstallStatusFilterAnd extends AbstractInstallStatusFilter impleme
 
     private NInstallStatusFilter[] all;
 
-    public NInstallStatusFilterAnd(NWorkspace workspace, NInstallStatusFilter... all) {
-        super(workspace, NFilterOp.AND);
+    public NInstallStatusFilterAnd(NInstallStatusFilter... all) {
+        super(NFilterOp.AND);
         List<NInstallStatusFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NInstallStatusFilter filter : all) {

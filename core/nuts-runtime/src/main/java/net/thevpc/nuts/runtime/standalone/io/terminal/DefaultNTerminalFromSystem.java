@@ -15,7 +15,6 @@ import java.util.Scanner;
 //@NutsPrototype
 public class DefaultNTerminalFromSystem extends AbstractNTerminal {
 
-    protected NWorkspace workspace;
     protected NPrintStream out;
     protected NPrintStream err;
     protected InputStream in;
@@ -23,18 +22,16 @@ public class DefaultNTerminalFromSystem extends AbstractNTerminal {
     protected NSystemTerminalBase parent;
     protected CProgressBar progressBar;
 
-    public DefaultNTerminalFromSystem(NWorkspace workspace, DefaultNTerminalFromSystem other) {
+    public DefaultNTerminalFromSystem(DefaultNTerminalFromSystem other) {
         this.parent = other.parent;
-        this.workspace = workspace;
         this.in = other.in;
         this.inReader = other.inReader;
         setOut(other.out);
         setErr(other.err);
     }
 
-    public DefaultNTerminalFromSystem(NWorkspace workspace, NSystemTerminalBase parent) {
+    public DefaultNTerminalFromSystem(NSystemTerminalBase parent) {
         this.parent = parent;
-        this.workspace = workspace;
     }
 
     public BufferedReader getReader() {
@@ -170,14 +167,14 @@ public class DefaultNTerminalFromSystem extends AbstractNTerminal {
 
     @Override
     public NTerminal copy() {
-        final DefaultNTerminalFromSystem r = new DefaultNTerminalFromSystem(workspace, parent);
+        final DefaultNTerminalFromSystem r = new DefaultNTerminalFromSystem(parent);
         r.setAll(this);
         return r;
     }
 
     @Override
     public <T> NAsk<T> ask() {
-        return new DefaultNAsk<T>(workspace, this, out());
+        return new DefaultNAsk<T>(this, out());
     }
 
     @Override
@@ -197,7 +194,7 @@ public class DefaultNTerminalFromSystem extends AbstractNTerminal {
 
     @Override
     public NTerminal printProgress(float progress, NMsg message) {
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         if (session.isProgress()) {
             if (getParent() instanceof NSystemTerminal) {
                 ((NSystemTerminal) getParent()).printProgress(progress, message);
@@ -237,7 +234,6 @@ public class DefaultNTerminalFromSystem extends AbstractNTerminal {
     }
 
     protected void setAll(DefaultNTerminalFromSystem other) {
-        this.workspace = other.workspace;
         this.parent = other.parent;
         this.out = other.out;
         this.err = other.err;

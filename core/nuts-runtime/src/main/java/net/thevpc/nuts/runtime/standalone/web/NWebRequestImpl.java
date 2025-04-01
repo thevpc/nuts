@@ -584,7 +584,7 @@ public class NWebRequestImpl implements NWebRequest {
                                 tos.write(h.getBytes());
                                 tos.write("\r\n".getBytes());
 
-                                tos.write(("Content-Type: " + NStringUtils.firstNonBlank(npath.getContentType(), "application/octet-stream")).getBytes());
+                                tos.write(("Content-Type: " + NStringUtils.firstNonBlank(npath.contentType(), "application/octet-stream")).getBytes());
                                 tos.write("\r\n".getBytes());
 
                                 ((NPath) e.getValue()).copyToOutputStream(tos);
@@ -689,7 +689,7 @@ public class NWebRequestImpl implements NWebRequest {
 
     @Override
     public NWebRequest addFormUrlEncoded(String key, String value) {
-        if(value==null){
+        if (value == null) {
             return this;
         }
         if (urlEncoded == null) {
@@ -715,7 +715,7 @@ public class NWebRequestImpl implements NWebRequest {
 
     @Override
     public NWebRequest addFormData(String key, NInputContentProvider value) {
-        if(value==null){
+        if (value == null) {
             return this;
         }
         if (formData == null) {
@@ -728,7 +728,7 @@ public class NWebRequestImpl implements NWebRequest {
 
     @Override
     public NWebRequest addFormData(String key, String value) {
-        if(value==null){
+        if (value == null) {
             return this;
         }
         if (formData == null) {
@@ -739,6 +739,15 @@ public class NWebRequestImpl implements NWebRequest {
         return this;
     }
 
+    @Override
+    public NWebRequest setFormData(String key, NInputContentProvider value) {
+        return addFormData(key, value);
+    }
+
+    @Override
+    public NWebRequest setFormData(String key, String value) {
+        return addFormData(key, value);
+    }
 
     @Override
     public NWebRequest setFormUrlEncoded(Map<String, String> m) {

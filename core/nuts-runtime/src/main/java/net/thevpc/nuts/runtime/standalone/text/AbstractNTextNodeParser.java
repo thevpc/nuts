@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.text.*;
 
@@ -10,13 +9,7 @@ import java.nio.file.Path;
 
 public abstract class AbstractNTextNodeParser implements NTextParser {
     protected int bufferSize = 4096;
-    protected NWorkspace workspace;
-    public AbstractNTextNodeParser(NWorkspace workspace) {
-        this.workspace = workspace;
-    }
-
-    public NWorkspace getWorkspace() {
-        return workspace;
+    public AbstractNTextNodeParser() {
     }
 
     @Override
@@ -47,14 +40,14 @@ public abstract class AbstractNTextNodeParser implements NTextParser {
 
     @Override
     public NText parse(InputStream in) {
-        NTextNodeCollector doc = new NTextNodeCollector(workspace);
+        NTextNodeCollector doc = new NTextNodeCollector();
         parse(in, doc);
         return doc.getRootOrEmpty();
     }
 
     @Override
     public NText parse(Reader in) {
-        NTextNodeCollector doc = new NTextNodeCollector(workspace);
+        NTextNodeCollector doc = new NTextNodeCollector();
         parse(in, doc);
         return doc.getRootOrEmpty();
     }
@@ -76,7 +69,7 @@ public abstract class AbstractNTextNodeParser implements NTextParser {
 
     @Override
     public NText parse(NInputSource in) {
-        NTextNodeCollector doc = new NTextNodeCollector(workspace);
+        NTextNodeCollector doc = new NTextNodeCollector();
         try (InputStream is = in.getInputStream()) {
             parse(is, doc);
         } catch (IOException ex) {
@@ -102,49 +95,49 @@ public abstract class AbstractNTextNodeParser implements NTextParser {
 
     @Override
     public NText parseIncremental(byte[] buf) {
-        NTextNodeCollector doc = new NTextNodeCollector(workspace);
+        NTextNodeCollector doc = new NTextNodeCollector();
         parseIncremental(buf, 0, buf.length, doc);
         return doc.getRootOrEmpty();
     }
 
     @Override
     public NText parseIncremental(char[] buf) {
-        NTextNodeCollector doc = new NTextNodeCollector(workspace);
+        NTextNodeCollector doc = new NTextNodeCollector();
         parseIncremental(new String(buf), doc);
         return doc.getRootOrEmpty();
     }
 
     @Override
     public NText parseIncremental(String buf) {
-        NTextNodeCollector doc = new NTextNodeCollector(workspace);
+        NTextNodeCollector doc = new NTextNodeCollector();
         parseIncremental(buf.getBytes(), doc);
         return doc.getRootOrEmpty();
     }
 
     @Override
     public NText parseIncremental(char buf) {
-        NTextNodeCollector doc = new NTextNodeCollector(workspace);
+        NTextNodeCollector doc = new NTextNodeCollector();
         parseIncremental(buf, doc);
         return doc.getRootOrEmpty();
     }
 
     @Override
     public NText parseIncremental(byte[] buf, int off, int len) {
-        NTextNodeCollector doc = new NTextNodeCollector(workspace);
+        NTextNodeCollector doc = new NTextNodeCollector();
         parseIncremental(buf, off, len, doc);
         return doc.getRootOrEmpty();
     }
 
     @Override
     public NText parseIncremental(char[] buf, int off, int len) {
-        NTextNodeCollector doc = new NTextNodeCollector(workspace);
+        NTextNodeCollector doc = new NTextNodeCollector();
         parseIncremental(buf, off, len, doc);
         return doc.getRootOrEmpty();
     }
 
     @Override
     public NText parseRemaining() {
-        NTextNodeCollector doc = new NTextNodeCollector(workspace);
+        NTextNodeCollector doc = new NTextNodeCollector();
         parseRemaining(doc);
         return doc.getRootOrNull();
     }

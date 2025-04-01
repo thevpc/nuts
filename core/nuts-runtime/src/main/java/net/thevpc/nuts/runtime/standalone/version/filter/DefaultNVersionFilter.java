@@ -69,11 +69,11 @@ public class DefaultNVersionFilter extends AbstractVersionFilter implements NExp
      */
     private final List<NVersionInterval> intervals = new ArrayList<>();
 
-    public DefaultNVersionFilter(NWorkspace workspace) {
-        super(workspace, NFilterOp.CUSTOM);
+    public DefaultNVersionFilter() {
+        super(NFilterOp.CUSTOM);
     }
 
-    public static NOptional<NVersionFilter> parse(String version, NWorkspace workspace) {
+    public static NOptional<NVersionFilter> parse(String version) {
         if (NBlankable.isBlank(version) || "*".equals(version)) {
             return NOptional.of(NVersionFilters.of().always());
         }
@@ -81,7 +81,7 @@ public class DefaultNVersionFilter extends AbstractVersionFilter implements NExp
         NOptional<List<NVersionInterval>> r = NVersionInterval.ofList(version);
         return r.map(
                 x -> {
-                    DefaultNVersionFilter dd = new DefaultNVersionFilter(workspace);
+                    DefaultNVersionFilter dd = new DefaultNVersionFilter();
                     for (NVersionInterval i : x) {
                         dd.add(i);
                     }
@@ -151,7 +151,7 @@ public class DefaultNVersionFilter extends AbstractVersionFilter implements NExp
         if (!updates) {
             return this;
         }
-        DefaultNVersionFilter d = new DefaultNVersionFilter(workspace);
+        DefaultNVersionFilter d = new DefaultNVersionFilter();
         d.intervals.addAll(intervals2);
         return d;
     }

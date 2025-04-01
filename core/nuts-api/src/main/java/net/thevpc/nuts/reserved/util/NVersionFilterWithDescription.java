@@ -1,7 +1,6 @@
 package net.thevpc.nuts.reserved.util;
 
 import net.thevpc.nuts.NVersionFilter;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.spi.base.NVersionFilterDelegate;
@@ -11,8 +10,8 @@ public class NVersionFilterWithDescription extends NVersionFilterDelegate {
     private NVersionFilter baseVersionFilter;
     private NEDesc description;
 
-    public NVersionFilterWithDescription(NWorkspace workspace, NVersionFilter baseVersionFilter, NEDesc description) {
-        super(workspace);
+    public NVersionFilterWithDescription(NVersionFilter baseVersionFilter, NEDesc description) {
+        super();
         this.baseVersionFilter = baseVersionFilter;
         this.description = description;
     }

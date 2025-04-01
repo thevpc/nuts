@@ -782,7 +782,11 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
             StringBuilder sb = new StringBuilder();
             while (current != -1 && current != end) {
                 sb.append(skipWhiteSpaceAndComments());
-                sb.append(readStringLiteralUnQuoted());
+                String str = readStringLiteralUnQuoted();
+                if(str.isEmpty()){
+                    break;
+                }
+                sb.append(str);
             }
             if (current != -1) {
                 readNext();

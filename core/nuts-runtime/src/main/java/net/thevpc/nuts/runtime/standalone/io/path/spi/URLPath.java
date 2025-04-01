@@ -5,14 +5,18 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.NPathParts;
 import net.thevpc.nuts.runtime.standalone.util.NCachedValue;
+import net.thevpc.nuts.runtime.standalone.web.DefaultNWebCli;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.web.NWebCli;
 
@@ -25,10 +29,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 public class URLPath implements NPathSPI {
@@ -51,7 +53,7 @@ public class URLPath implements NPathSPI {
             }
         }
         this.url = url;
-        cachedHeader = new NCachedValue<>(workspace,
+        cachedHeader = new NCachedValue<>(
                 () -> loadCacheInfo(), 1000
         );
     }
@@ -234,7 +236,7 @@ public class URLPath implements NPathSPI {
     public NPathType type(NPath basePath) {
         if (toString().endsWith("/")) {
             //if (exists(basePath)) {
-                return NPathType.DIRECTORY;
+            return NPathType.DIRECTORY;
             //}
             //return NPathType.NOT_FOUND;
         }
@@ -290,7 +292,7 @@ public class URLPath implements NPathSPI {
         } catch (Exception e) {
             //
         }
-        try (InputStream is = url.openStream()) {
+        try (InputStream is = DefaultNWebCli.prepareGlobalOpenStream(url)) {
             return true;
         } catch (IOException e) {
             return false;
@@ -335,7 +337,7 @@ public class URLPath implements NPathSPI {
         }
         NPath f = asFilePath(basePath);
         if (f != null) {
-            return f.getContentType();
+            return f.contentType();
         }
         try {
             CacheInfo a = cachedHeader.getValue();
@@ -355,7 +357,7 @@ public class URLPath implements NPathSPI {
         }
         NPath f = asFilePath(basePath);
         if (f != null) {
-            return f.getContentType();
+            return f.contentType();
         }
         try {
             CacheInfo a = cachedHeader.getValue();
@@ -389,7 +391,7 @@ public class URLPath implements NPathSPI {
             return best.req().GET().setUrl(url.toString()).run().getContent().getInputStream();
         }
         try {
-            return url.openStream();
+            return DefaultNWebCli.prepareGlobalOpenStream(url);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -400,7 +402,9 @@ public class URLPath implements NPathSPI {
             if (url == null) {
                 throw new NIOException(NMsg.ofC("unable to resolve output stream %s", toString()));
             }
-            return url.openConnection().getOutputStream();
+            URLConnection c = url.openConnection();
+            DefaultNWebCli.prepareGlobalConnection(c);
+            return c.getOutputStream();
         } catch (IOException e) {
             throw new NIOException(e);
         }
@@ -437,7 +441,7 @@ public class URLPath implements NPathSPI {
         }
         NPath f = asFilePath(basePath);
         if (f != null) {
-            return f.getLastModifiedInstant();
+            return f.lastModifiedInstant();
         }
         try {
             CacheInfo a = cachedHeader.getValue();
@@ -453,7 +457,7 @@ public class URLPath implements NPathSPI {
     @Override
     public Instant getLastAccessInstant(NPath basePath) {
         NPath f = asFilePath(basePath);
-        return (f != null) ? f.getLastAccessInstant() : null;
+        return (f != null) ? f.lastAccessInstant() : null;
     }
 
     @Override
@@ -616,28 +620,38 @@ public class URLPath implements NPathSPI {
     }
 
     private CacheInfo loadCacheInfo() {
+        NChronometer chrono = NChronometer.startNow();
+        boolean success=true;
         try {
-            URLConnection uu = url.openConnection();
-            uu.setDoOutput(false);
+            URLConnection c = url.openConnection();
+            DefaultNWebCli.prepareGlobalConnection(c);
+            c.setDoOutput(false);
             CacheInfo cc = new CacheInfo();
-            if (uu instanceof HttpURLConnection) {
-                HttpURLConnection hc = (HttpURLConnection) uu;
+            if (c instanceof HttpURLConnection) {
+                HttpURLConnection hc = (HttpURLConnection) c;
                 hc.setRequestMethod("HEAD");
                 cc.responseCode = hc.getResponseCode();
             } else {
                 cc.responseCode = 200;
             }
-            cc.contentLength = uu.getContentLengthLong();
-            cc.contentEncoding = uu.getContentEncoding();
-            cc.contentType = uu.getContentType();
+            cc.contentLength = c.getContentLengthLong();
+            cc.contentEncoding = c.getContentEncoding();
+            cc.contentType = c.getContentType();
 
-            long z = uu.getLastModified();
+            long z = c.getLastModified();
             if (z > 0) {
                 cc.lastModified = Instant.ofEpochMilli(z);
             }
             return cc;
         } catch (Exception ex) {
+            success=false;
             //
+        }finally {
+            NLog.of(URLPath.class).with()
+                    .level(Level.FINEST)
+                    .verb(success?NLogVerb.SUCCESS:NLogVerb.FAIL)
+                    .time(chrono.stop().getDurationMs())
+                    .log(NMsg.ofC("loadCacheInfo %s", url));
         }
         return null;
     }

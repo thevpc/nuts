@@ -9,7 +9,6 @@ import net.thevpc.nuts.runtime.standalone.DefaultNArtifactCallBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorPropertyBuilder;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
-import net.thevpc.nuts.runtime.standalone.DefaultNArtifactCall;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
@@ -32,12 +31,10 @@ import java.util.stream.Collectors;
 @NComponentScope(NScopeType.PROTOTYPE)
 public class DefaultNDescriptorParser implements NDescriptorParser {
 
-    private final NWorkspace workspace;
     private NDescriptorStyle descriptorStyle;
     private String format;
 
-    public DefaultNDescriptorParser(NWorkspace workspace) {
-        this.workspace = workspace;
+    public DefaultNDescriptorParser() {
     }
 
     @Override
@@ -324,10 +321,6 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
                 throw new NUnsupportedEnumException(style);
             }
         }
-    }
-
-    public NWorkspace getWorkspace() {
-        return workspace;
     }
 
     @Override

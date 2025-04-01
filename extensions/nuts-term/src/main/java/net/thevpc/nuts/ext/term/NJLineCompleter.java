@@ -1,6 +1,5 @@
 package net.thevpc.nuts.ext.term;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArgCandidate;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
@@ -13,11 +12,9 @@ import java.util.List;
 
 class NJLineCompleter implements Completer {
 
-    private final NWorkspace workspace;
     private final NJLineTerminal nutsJLineTerminal;
 
-    public NJLineCompleter(NWorkspace workspace, NJLineTerminal nutsJLineTerminal) {
-        this.workspace = workspace;
+    public NJLineCompleter(NJLineTerminal nutsJLineTerminal) {
         this.nutsJLineTerminal = nutsJLineTerminal;
     }
 

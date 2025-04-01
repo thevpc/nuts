@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.text.parser.AbstractNTextNodeParserDefaults;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
@@ -10,7 +9,6 @@ public class FormatOutputStreamSupport {
     private NTextNodeWriter nodeWriter;
     private NTextParser parser;
     private boolean formatEnabled = true;
-    private NWorkspace workspace;
     private NTextTransformConfig writeConfiguration = new NTextTransformConfig();
     private NTextVisitor nutsTextNodeVisitor = node -> {
         nodeWriter.writeNode(node);
@@ -19,10 +17,9 @@ public class FormatOutputStreamSupport {
     public FormatOutputStreamSupport() {
     }
 
-    public FormatOutputStreamSupport(NPrintStream rawOutput, NWorkspace workspace, NSystemTerminalBase term, boolean filtered) {
-        this.workspace = workspace;
-        this.parser = AbstractNTextNodeParserDefaults.createDefault(workspace);
-        this.nodeWriter = new NTextNodeWriterRenderer(rawOutput, workspace, term)
+    public FormatOutputStreamSupport(NPrintStream rawOutput, NSystemTerminalBase term, boolean filtered) {
+        this.parser = AbstractNTextNodeParserDefaults.createDefault();
+        this.nodeWriter = new NTextNodeWriterRenderer(rawOutput, term)
                 .setWriteConfiguration(writeConfiguration.setFiltered(false));
         this.writeConfiguration.setFiltered(filtered);
     }

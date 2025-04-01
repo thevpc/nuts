@@ -16,15 +16,13 @@ public class MavenNDependencySolver implements NDependencySolver {
 
     private List<NDependencyTreeNodeBuild> defs = new ArrayList<>();
     private List<RootInfo> pending = new ArrayList<>();
-    private NWorkspace workspace;
     private NDependencyFilter dependencyFilter;
     private NRepositoryFilter repositoryFilter;
     private NDependencyFilter effDependencyFilter;
     private boolean shouldIncludeContent = false;//shouldIncludeContent(this);
     private boolean failFast;
 
-    public MavenNDependencySolver(NWorkspace workspace) {
-        this.workspace = workspace;
+    public MavenNDependencySolver() {
     }
 
 
@@ -113,7 +111,7 @@ public class MavenNDependencySolver implements NDependencySolver {
                                         .builder()
                                         .setVersion(def2.getId().getVersion());
                             }
-                            NDependencyTreeNodeBuild info = new NDependencyTreeNodeBuild(currentNode, def2, dependency, effDependency, currentNode.depth + 1, workspace);
+                            NDependencyTreeNodeBuild info = new NDependencyTreeNodeBuild(currentNode, def2, dependency, effDependency, currentNode.depth + 1);
                             info.exclusions.addAll(currentNode.exclusions);
                             for (NId exclusion : dependency.getExclusions()) {
                                 info.exclusions.add(exclusion.getShortId());
@@ -157,7 +155,7 @@ public class MavenNDependencySolver implements NDependencySolver {
                                         .builder()
                                         .setVersion(def2.getId().getVersion());
                             }
-                            NDependencyTreeNodeBuild info = new NDependencyTreeNodeBuild(currentNode, def2, dependency, effDependency, currentNode.depth + 1, workspace);
+                            NDependencyTreeNodeBuild info = new NDependencyTreeNodeBuild(currentNode, def2, dependency, effDependency, currentNode.depth + 1);
                             info.exclusions.addAll(currentNode.exclusions);
                             for (NId exclusion : dependency.getExclusions()) {
                                 info.exclusions.add(exclusion.getShortId());
@@ -187,7 +185,7 @@ public class MavenNDependencySolver implements NDependencySolver {
                 nonMergedRootNodes.toArray(new NDependencyTreeNode[0]),
                 mergedDepsList,
                 mergedRootNodes.toArray(new NDependencyTreeNode[0]),
-                () -> NElements.of().ofString("solver"), workspace
+                () -> NElements.of().ofString("solver")
         );
     }
 
@@ -222,7 +220,7 @@ public class MavenNDependencySolver implements NDependencySolver {
                     .builder()
                     .setVersion(def.getId().getVersion());
         }
-        NDependencyTreeNodeBuild info = new NDependencyTreeNodeBuild(null, def, effDependency, dependency, 0, workspace);
+        NDependencyTreeNodeBuild info = new NDependencyTreeNodeBuild(null, def, effDependency, dependency, 0);
         for (NId exclusion : dependency.getExclusions()) {
             info.exclusions.add(exclusion.getShortId());
         }
@@ -390,9 +388,8 @@ public class MavenNDependencySolver implements NDependencySolver {
         int depth;
         NDescriptor effDescriptor;
         NDependencyInfo key;
-        NWorkspace workspace;
 
-        public NDependencyTreeNodeBuild(NDependencyTreeNodeBuild parent, NDefinition def, NDependency dependency, NDependency effDependency, int depth, NWorkspace workspace) {
+        public NDependencyTreeNodeBuild(NDependencyTreeNodeBuild parent, NDefinition def, NDependency dependency, NDependency effDependency, int depth) {
             this.parent = parent;
             this.def = def;
             this.dependency = dependency;
@@ -400,7 +397,6 @@ public class MavenNDependencySolver implements NDependencySolver {
             this.depth = depth;
             this.id = def != null ? def.getId() : dependency != null ? dependency.toId() : null;
             this.key = NDependencyInfo.of(this);
-            this.workspace = workspace;
         }
 
         private NId getEffectiveId() {

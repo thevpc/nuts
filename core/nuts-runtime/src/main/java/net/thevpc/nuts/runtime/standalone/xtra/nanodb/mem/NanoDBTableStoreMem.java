@@ -1,10 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb.mem;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.*;
 import net.thevpc.nuts.util.NStream;
 
-import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.*;
 
@@ -14,16 +12,14 @@ public class NanoDBTableStoreMem<T> implements NanoDBTableStore<T> {
     private final Map<String, IndexInfo> indexDefinitions = new HashMap<>();
     private final String tableName;
     private final NanoDB db;
-    private final NWorkspace workspace;
     private FileChannel readChannel;
     private Class<T> rowType;
     private List<T> rows=new ArrayList<>();
 
     public NanoDBTableStoreMem(Class<T> rowType, String tableName
             , NanoDB db
-            , NanoDBIndexDefinition<T>[] indexDefinitions, NWorkspace workspace
+            , NanoDBIndexDefinition<T>[] indexDefinitions
     ) {
-        this.workspace = workspace;
         this.rowType = rowType;
         this.db = db;
         this.tableName = tableName;
@@ -132,7 +128,7 @@ public class NanoDBTableStoreMem<T> implements NanoDBTableStore<T> {
                 if (data != null) {
                     return data;
                 }
-                NanoDBIndex fi=new NanoDBDefaultIndexInMem(workspace,def.getIndexType(),
+                NanoDBIndex fi=new NanoDBDefaultIndexInMem(def.getIndexType(),
                         db.getSerializers().findSerializer(def.getIndexType(), def.isNullable())
                         , new DBIndexValueStoreDefaultFactory(), new HashMap<>());
 

@@ -40,8 +40,8 @@ import java.util.List;
 public abstract class NVersionFilterDelegate extends AbstractVersionFilter {
     public abstract NVersionFilter baseVersionFilter();
 
-    public NVersionFilterDelegate(NWorkspace workspace) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NVersionFilterDelegate() {
+        super(NFilterOp.CUSTOM);
     }
 
     @Override

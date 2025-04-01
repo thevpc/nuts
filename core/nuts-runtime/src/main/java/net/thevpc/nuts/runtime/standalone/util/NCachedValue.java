@@ -5,10 +5,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NWorkspace;
-
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -21,12 +17,10 @@ public class NCachedValue<T> {
     private long lastDate;
     private long timeoutMilliSeconds;
     private boolean updating = false;
-    private NWorkspace workspace;
 
-    public NCachedValue(NWorkspace workspace,Supplier<T> callable, long timeoutMilliSeconds) {
+    public NCachedValue(Supplier<T> callable, long timeoutMilliSeconds) {
         this.supplier = callable;
         this.timeoutMilliSeconds = timeoutMilliSeconds;
-        this.workspace = workspace;
     }
 
     public long getTimeoutMilliSeconds() {

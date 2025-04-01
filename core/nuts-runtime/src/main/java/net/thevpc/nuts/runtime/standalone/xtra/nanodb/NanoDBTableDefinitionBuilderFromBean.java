@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NBlankable;
 
 import java.lang.reflect.Field;
@@ -16,13 +15,11 @@ public class NanoDBTableDefinitionBuilderFromBean<T> {
     private final Set<String> indexFields = new LinkedHashSet<>();
     private boolean nullable=true;
     private String name;
-    private NWorkspace workspace;
 
 
-    public NanoDBTableDefinitionBuilderFromBean(Class<T> cls, NanoDB db, NWorkspace workspace) {
+    public NanoDBTableDefinitionBuilderFromBean(Class<T> cls, NanoDB db) {
         this.cls = cls;
         this.db = db;
-        this.workspace = workspace;
     }
     private Map<String, Field> getCurrFields(){
         if(currFields==null){

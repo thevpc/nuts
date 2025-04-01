@@ -10,8 +10,8 @@ public class NDependencyTypeFilter extends AbstractDependencyFilter {
 
     private String type = null;
 
-    public NDependencyTypeFilter(NWorkspace workspace, String type) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NDependencyTypeFilter(String type) {
+        super(NFilterOp.CUSTOM);
         this.type = type;
     }
 

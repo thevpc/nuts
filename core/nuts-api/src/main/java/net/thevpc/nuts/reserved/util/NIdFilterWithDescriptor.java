@@ -1,7 +1,6 @@
 package net.thevpc.nuts.reserved.util;
 
 import net.thevpc.nuts.NIdFilter;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.spi.base.NIdFilterDelegate;
@@ -11,8 +10,8 @@ public class NIdFilterWithDescriptor extends NIdFilterDelegate {
     private NIdFilter base;
     private NEDesc description;
 
-    public NIdFilterWithDescriptor(NWorkspace workspace, NIdFilter base, NEDesc description) {
-        super(workspace);
+    public NIdFilterWithDescriptor(NIdFilter base, NEDesc description) {
+        super();
         this.base = base;
         this.description = description;
     }

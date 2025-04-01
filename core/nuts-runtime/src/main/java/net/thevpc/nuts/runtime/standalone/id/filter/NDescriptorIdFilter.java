@@ -29,8 +29,8 @@ public class NDescriptorIdFilter extends AbstractIdFilter implements NIdFilter, 
 
     private final NDescriptorFilter filter;
 
-    public NDescriptorIdFilter(NDescriptorFilter filter, NWorkspace workspace) {
-        super(workspace, NFilterOp.CONVERT);
+    public NDescriptorIdFilter(NDescriptorFilter filter) {
+        super(NFilterOp.CONVERT);
         this.filter = filter;
     }
 
@@ -45,7 +45,7 @@ public class NDescriptorIdFilter extends AbstractIdFilter implements NIdFilter, 
             return true;
         }
         NLog LOG = NLog.of(MavenRepositoryFolderHelper.class);
-        NDescriptor d = new DelegateNDescriptor(workspace) {
+        NDescriptor d = new DelegateNDescriptor() {
             NDescriptor descriptor = null;
             boolean loaded = false;
             RuntimeException replayException;
@@ -135,7 +135,7 @@ public class NDescriptorIdFilter extends AbstractIdFilter implements NIdFilter, 
         if (f2 == filter) {
             return this;
         }
-        return new NDescriptorIdFilter(f2, workspace);
+        return new NDescriptorIdFilter(f2);
     }
 
     @Override

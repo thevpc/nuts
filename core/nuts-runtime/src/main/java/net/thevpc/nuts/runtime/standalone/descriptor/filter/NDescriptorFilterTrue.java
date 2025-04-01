@@ -33,8 +33,8 @@ import net.thevpc.nuts.util.NFilterOp;
  */
 public class NDescriptorFilterTrue extends AbstractDescriptorFilter {
 
-    public NDescriptorFilterTrue(NWorkspace workspace) {
-        super(workspace, NFilterOp.TRUE);
+    public NDescriptorFilterTrue() {
+        super(NFilterOp.TRUE);
     }
 
     @Override

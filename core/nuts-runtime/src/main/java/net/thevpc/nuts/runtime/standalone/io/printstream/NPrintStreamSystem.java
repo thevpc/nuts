@@ -8,7 +8,6 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NTerminalCmd;
-import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.OutputStream;
@@ -18,13 +17,13 @@ import java.io.UnsupportedEncodingException;
 public class NPrintStreamSystem extends NPrintStreamBase {
     private final OutputStream out;
     private PrintStream base;
-    public NPrintStreamSystem(OutputStream out, Boolean autoFlush, String encoding, Boolean ansi, NWorkspace workspace, NSystemTerminalBase term) {
-        this(out, autoFlush, encoding, ansi, workspace, new Bindings(), term);
+    public NPrintStreamSystem(OutputStream out, Boolean autoFlush, String encoding, Boolean ansi, NSystemTerminalBase term) {
+        this(out, autoFlush, encoding, ansi, new Bindings(), term);
     }
 
     protected NPrintStreamSystem(OutputStream out, PrintStream base, Boolean autoFlush,
-                                 NTerminalMode mode, NWorkspace workspace, Bindings bindings, NSystemTerminalBase term) {
-        super(autoFlush == null || autoFlush.booleanValue(), mode/*resolveMode(out,ansi, workspace)*/, workspace, bindings, term);
+                                 NTerminalMode mode, Bindings bindings, NSystemTerminalBase term) {
+        super(autoFlush == null || autoFlush.booleanValue(), mode/*resolveMode(out,ansi, workspace)*/, bindings, term);
         //Do not use NTexts, not yet initialized!
         getMetaData().setMessage(NMsg.ofStyledPath("<system-stream>"));
         this.out = out;
@@ -35,8 +34,8 @@ public class NPrintStreamSystem extends NPrintStreamBase {
         return base;
     }
 
-    public NPrintStreamSystem(OutputStream out, Boolean autoFlush, String encoding, Boolean ansi, NWorkspace workspace, Bindings bindings, NSystemTerminalBase term) {
-        super(true, resolveMode(out, ansi, workspace), workspace, bindings, term);
+    public NPrintStreamSystem(OutputStream out, Boolean autoFlush, String encoding, Boolean ansi, Bindings bindings, NSystemTerminalBase term) {
+        super(true, resolveMode(out, ansi), bindings, term);
         //Do not use NTexts, not yet initialized!
         getMetaData().setMessage(NMsg.ofStyledPath("<system-stream>"));
         this.out = out;
@@ -77,7 +76,7 @@ public class NPrintStreamSystem extends NPrintStreamBase {
 //        }
     }
 
-    private static NTerminalMode resolveMode(OutputStream out, Boolean ansi, NWorkspace workspace) {
+    private static NTerminalMode resolveMode(OutputStream out, Boolean ansi) {
         if (ansi != null) {
             return ansi ? NTerminalMode.ANSI : NTerminalMode.INHERITED;
         }
@@ -148,10 +147,10 @@ public class NPrintStreamSystem extends NPrintStreamBase {
     protected NPrintStream convertImpl(NTerminalMode other) {
         switch (other) {
             case FORMATTED: {
-                return new NPrintStreamFormatted(this, workspace, bindings);
+                return new NPrintStreamFormatted(this, bindings);
             }
             case FILTERED: {
-                return new NPrintStreamFiltered(this, workspace, bindings);
+                return new NPrintStreamFiltered(this, bindings);
             }
         }
         throw new NIllegalArgumentException(NMsg.ofC("unsupported %s -> %s", getTerminalMode(), other));

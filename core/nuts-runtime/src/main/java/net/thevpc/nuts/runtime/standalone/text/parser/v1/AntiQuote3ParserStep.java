@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NText;
@@ -23,13 +22,11 @@ public class AntiQuote3ParserStep extends ParserStep {
     int status = START_QUOTES;
     char antiQuote;
     boolean spreadLines;
-    NWorkspace NWorkspace;
     boolean exitOnBrace;
 
-    public AntiQuote3ParserStep(char c, boolean spreadLines, NWorkspace workspace, boolean exitOnBrace) {
+    public AntiQuote3ParserStep(char c, boolean spreadLines, boolean exitOnBrace) {
         start.append(antiQuote = c);
         this.spreadLines = spreadLines;
-        this.NWorkspace = workspace;
         this.exitOnBrace = exitOnBrace;
     }
 

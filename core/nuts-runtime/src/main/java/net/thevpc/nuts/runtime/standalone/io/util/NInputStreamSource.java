@@ -40,7 +40,7 @@ public class NInputStreamSource extends AbstractSingleReadNInputSource {
     }
 
     @Override
-    public String getContentType() {
+    public String contentType() {
         return getMetaData().getContentType().orNull();
     }
 

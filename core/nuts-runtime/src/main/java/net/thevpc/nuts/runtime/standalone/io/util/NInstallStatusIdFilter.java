@@ -8,8 +8,8 @@ import net.thevpc.nuts.util.NFilterOp;
 public class NInstallStatusIdFilter extends AbstractIdFilter {
     private final NInstallStatusFilter installStatus;
 
-    public NInstallStatusIdFilter(NWorkspace workspace, NInstallStatusFilter installStatus) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NInstallStatusIdFilter(NInstallStatusFilter installStatus) {
+        super(NFilterOp.CUSTOM);
         this.installStatus = installStatus;
     }
 

@@ -31,14 +31,13 @@ public class StyledParserStep extends ParserStep {
     boolean lineStart;
 //    List<ParserStep> children = new ArrayList<>();
     int maxSize = 10;
-    private NWorkspace workspace;
     private NEvictingCharQueue charQueue = new NEvictingCharQueue(5);
     private DefaultNTextNodeParser.State state;
     private StyledParserStepCmdParser parseHelper = new StyledParserStepCmdParser();
     private boolean wasEscape;
     private boolean exitOnBrace;
 
-    public StyledParserStep(char c, boolean lineStart, NWorkspace workspace, DefaultNTextNodeParser.State state, boolean exitOnBrace) {
+    public StyledParserStep(char c, boolean lineStart, DefaultNTextNodeParser.State state, boolean exitOnBrace) {
         switch (c) {
             case '#': {
                 curState = CurState.SHARP;
@@ -51,13 +50,11 @@ public class StyledParserStep extends ParserStep {
         }
 //        this.spreadLines = spreadLines;
         this.lineStart = lineStart;
-        this.workspace = workspace;
         this.state = state;
         this.exitOnBrace = exitOnBrace;
     }
 
-    public StyledParserStep(String c, boolean lineStart, NWorkspace workspace, DefaultNTextNodeParser.State state, boolean exitOnBrace) {
-        this.workspace = workspace;
+    public StyledParserStep(String c, boolean lineStart, DefaultNTextNodeParser.State state, boolean exitOnBrace) {
         if (c.charAt(0) == '#') {
             curState = CurState.SHARP;
             sharpsStartCount = 1;
@@ -279,7 +276,7 @@ public class StyledParserStep extends ParserStep {
                             }
                             sharpsEndCount=0;
                             beforeChangingStep();
-                            state.applyPush(new StyledParserStep("#", false, workspace, state,false));
+                            state.applyPush(new StyledParserStep("#", false, state,false));
                             for (int i = 0; i < sharpsEndCount - 1; i++) {
                                 state.applyNextChar('#');
                             }
@@ -380,7 +377,7 @@ public class StyledParserStep extends ParserStep {
                                 children.add(text.ofPlain(content.removeAll()));
                             }
                             beforeChangingStep();
-                            state.applyPush(new StyledParserStep("#", false, workspace, state,true));
+                            state.applyPush(new StyledParserStep("#", false, state,true));
                         }
                         break;
                     }
@@ -514,7 +511,7 @@ public class StyledParserStep extends ParserStep {
                         int _sharpsEndCount=sharpsEndCount;
                         sharpsEndCount=0;
                         beforeChangingStep();
-                        state.applyPush(new StyledParserStep("#", false, workspace, state,false));
+                        state.applyPush(new StyledParserStep("#", false, state,false));
                         for (int i = 0; i < _sharpsEndCount - 1; i++) {
                             state.applyNextChar('#');
                         }
@@ -538,7 +535,7 @@ public class StyledParserStep extends ParserStep {
                         int _sharpsEndCount=sharpsEndCount;
                         sharpsEndCount=0;
                         beforeChangingStep();
-                        state.applyPush(new StyledParserStep("#", false, workspace, state,false));
+                        state.applyPush(new StyledParserStep("#", false, state,false));
                         for (int i = 0; i < _sharpsEndCount - 1; i++) {
                             state.applyNextChar('#');
                         }
@@ -656,7 +653,7 @@ public class StyledParserStep extends ParserStep {
 
     private void logErr(String s) {
         if(NDebugString.of(NWorkspace.of().getBootOptions().getDebug().orNull()).isEnabled()) {
-            workspace.currentSession().err().println(s);
+            NErr.println(s);
         }
     }
 

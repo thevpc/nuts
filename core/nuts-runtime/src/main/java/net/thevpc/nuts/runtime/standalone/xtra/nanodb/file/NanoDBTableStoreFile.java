@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb.file;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.*;
 import net.thevpc.nuts.util.NStream;
@@ -18,7 +17,6 @@ public class NanoDBTableStoreFile<T> implements NanoDBTableStore<T> {
     private final File dir;
     private final String tableName;
     private final NanoDB db;
-    private final NWorkspace workspace;
     private NanoDBOutputStream writeStream;
     private NanoDBInputStream readStream;
     private FileChannel readChannel;
@@ -27,9 +25,8 @@ public class NanoDBTableStoreFile<T> implements NanoDBTableStore<T> {
     public NanoDBTableStoreFile(Class<T> rowType, File dir, String tableName
             , NanoDBSerializer<T> serializer
             , NanoDB db
-            , NanoDBIndexDefinition<T>[] indexDefinitions, NWorkspace workspace
+            , NanoDBIndexDefinition<T>[] indexDefinitions
     ) {
-        this.workspace = workspace;
         this.rowType = rowType;
         this.dir = dir;
         this.db = db;
@@ -61,7 +58,7 @@ public class NanoDBTableStoreFile<T> implements NanoDBTableStore<T> {
                 try {
                     FileInputStream readStreamFIS = new FileInputStream(getTableFile());
                     readChannel = readStreamFIS.getChannel();
-                    readStream = new NanoDBDefaultInputStream(readStreamFIS, workspace);
+                    readStream = new NanoDBDefaultInputStream(readStreamFIS);
                 } catch (FileNotFoundException e) {
                     throw new NIOException(e);
                 }
@@ -91,7 +88,7 @@ public class NanoDBTableStoreFile<T> implements NanoDBTableStore<T> {
                     if(p!=null){
                         p.mkdirs();
                     }
-                    writeStream = new NanoDBDefaultOutputStream(new FileOutputStream(tableFile, true), workspace);
+                    writeStream = new NanoDBDefaultOutputStream(new FileOutputStream(tableFile, true));
                 } catch (FileNotFoundException e) {
                     throw new NIOException(e);
                 }
@@ -169,7 +166,7 @@ public class NanoDBTableStoreFile<T> implements NanoDBTableStore<T> {
                         if (getTableFile().exists()) {
                             try {
                                 is = new NanoDBDefaultInputStream(
-                                        new FileInputStream(getTableFile()), workspace
+                                        new FileInputStream(getTableFile())
                                 );
                             } catch (IOException ex) {
                                 throw new NIOException(ex);
@@ -284,7 +281,7 @@ public class NanoDBTableStoreFile<T> implements NanoDBTableStore<T> {
                 if (data != null) {
                     return data;
                 }
-                NanoDBIndex fi = new NanoDBDefaultIndex<T>(workspace,def.getIndexType(),db.getSerializers().findSerializer(def.getIndexType(), def.isNullable()),
+                NanoDBIndex fi = new NanoDBDefaultIndex<T>(def.getIndexType(),db.getSerializers().findSerializer(def.getIndexType(), def.isNullable()),
                         new DBIndexValueStoreDefaultFactory(), new HashMap<>(), getIndexFile());
                 fi.load();
                 data = fi;

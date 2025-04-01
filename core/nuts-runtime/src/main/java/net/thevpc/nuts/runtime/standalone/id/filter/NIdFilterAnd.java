@@ -19,8 +19,8 @@ public class NIdFilterAnd extends AbstractIdFilter implements NIdFilter, NSimpli
 
     private NIdFilter[] children;
 
-    public NIdFilterAnd(NWorkspace workspace, NIdFilter... all) {
-        super(workspace, NFilterOp.AND);
+    public NIdFilterAnd(NIdFilter... all) {
+        super(NFilterOp.AND);
         List<NIdFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NIdFilter filter : all) {

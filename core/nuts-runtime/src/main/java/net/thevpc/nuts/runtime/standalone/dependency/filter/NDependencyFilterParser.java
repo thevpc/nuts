@@ -4,8 +4,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.filters.NTypedFiltersParser;
 
 public class NDependencyFilterParser extends NTypedFiltersParser<NDependencyFilter> {
-    public NDependencyFilterParser(String str, NWorkspace workspace) {
-        super(str,workspace);
+    public NDependencyFilterParser(String str) {
+        super(str);
     }
 
     @Override

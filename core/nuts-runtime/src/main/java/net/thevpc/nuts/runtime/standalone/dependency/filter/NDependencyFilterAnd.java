@@ -15,8 +15,8 @@ public class NDependencyFilterAnd extends AbstractDependencyFilter implements NC
 
     private final NDependencyFilter[] all;
 
-    public NDependencyFilterAnd(NWorkspace workspace, NDependencyFilter... all) {
-        super(workspace, NFilterOp.AND);
+    public NDependencyFilterAnd(NDependencyFilter... all) {
+        super(NFilterOp.AND);
         this.all = all;
     }
 

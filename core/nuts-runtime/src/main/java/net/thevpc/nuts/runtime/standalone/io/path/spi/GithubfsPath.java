@@ -118,13 +118,13 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     @Override
     public String getContentEncoding(NPath basePath) {
         NPath p = getDownloadPath();
-        return p == null ? null : p.getContentEncoding();
+        return p == null ? null : p.contentEncoding();
     }
 
     @Override
     public String getContentType(NPath basePath) {
         NPath p = getDownloadPath();
-        return p == null ? null : p.getContentType();
+        return p == null ? null : p.contentType();
     }
 
     @Override
@@ -144,13 +144,13 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     @Override
     public Instant getLastModifiedInstant(NPath basePath) {
         NPath p = getDownloadPath();
-        return p == null ? null : p.getLastModifiedInstant();
+        return p == null ? null : p.lastModifiedInstant();
     }
 
     @Override
     public Instant getLastAccessInstant(NPath basePath) {
         NPath p = getDownloadPath();
-        return p == null ? null : p.getLastAccessInstant();
+        return p == null ? null : p.lastAccessInstant();
     }
 
     @Override

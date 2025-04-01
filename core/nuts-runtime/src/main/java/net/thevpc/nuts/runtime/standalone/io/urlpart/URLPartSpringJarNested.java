@@ -5,6 +5,7 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.io.NIOUtils;
+import net.thevpc.nuts.runtime.standalone.web.DefaultNWebCli;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -40,7 +41,7 @@ class URLPartSpringJarNested extends URLPart {
         List<InputStream> found = new ArrayList<>();
         if (obj instanceof URL) {
             try {
-                return ((URL) obj).openStream();
+                return DefaultNWebCli.prepareGlobalOpenStream(((URL) obj));
             } catch (IOException e) {
                 throw new NIOException(e);
             }

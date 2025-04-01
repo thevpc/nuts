@@ -19,8 +19,8 @@ public class NIdFilterOr extends AbstractIdFilter implements NIdFilter, NSimplif
 
     private final NIdFilter[] children;
 
-    public NIdFilterOr(NWorkspace workspace, NIdFilter... all) {
-        super(workspace, NFilterOp.OR);
+    public NIdFilterOr(NIdFilter... all) {
+        super(NFilterOp.OR);
         List<NIdFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NIdFilter filter : all) {

@@ -2,13 +2,11 @@ package net.thevpc.nuts.runtime.standalone.definition.installstatus.filter;
 
 import net.thevpc.nuts.NInstallStatusFilter;
 import net.thevpc.nuts.NInstallStatusFilters;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.util.filters.NTypedFiltersParser;
 
 public class NInstallStatusFilterParser extends NTypedFiltersParser<NInstallStatusFilter> {
-    public NInstallStatusFilterParser(String str, NWorkspace workspace) {
-        super(str,workspace);
+    public NInstallStatusFilterParser(String str) {
+        super(str);
     }
 
     @Override

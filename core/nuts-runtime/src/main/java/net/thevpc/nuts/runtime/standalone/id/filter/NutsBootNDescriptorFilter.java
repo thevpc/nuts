@@ -1,26 +1,25 @@
 package net.thevpc.nuts.runtime.standalone.id.filter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.runtime.standalone.descriptor.filter.AbstractDescriptorFilter;
 import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.List;
 
-public class NutsAPINDescriptorFilter extends AbstractDescriptorFilter {
+public class NutsBootNDescriptorFilter extends AbstractDescriptorFilter {
 
-    private final NVersion apiVersion;
+    private final NVersion bootVersion;
 
-    public NutsAPINDescriptorFilter(NVersion apiVersion) {
+    public NutsBootNDescriptorFilter(NVersion bootVersion) {
         super(NFilterOp.CUSTOM);
-        this.apiVersion = apiVersion;
+        this.bootVersion = bootVersion;
     }
 
     @Override
     public boolean acceptDescriptor(NDescriptor descriptor) {
         for (NDependency dependency : descriptor.getDependencies()) {
-            if (dependency.getSimpleName().equals(NConstants.Ids.NUTS_API)) {
-                if (apiVersion.filter().acceptVersion(dependency.getVersion())) {
+            if (dependency.getSimpleName().equals(NConstants.Ids.NUTS_BOOT)) {
+                if (bootVersion.filter().acceptVersion(dependency.getVersion())) {
                     return true;
                 } else {
                     return false;
@@ -32,8 +31,8 @@ public class NutsAPINDescriptorFilter extends AbstractDescriptorFilter {
                 .setDependencyFilter(NDependencyFilters.of().byRunnable()).getResultDefinition().getDependencies().get()
                 .transitive().toList();
         for (NDependency dependency : allDeps) {
-            if (dependency.getSimpleName().equals(NConstants.Ids.NUTS_API)) {
-                if (apiVersion.filter().acceptVersion(dependency.getVersion())) {
+            if (dependency.getSimpleName().equals(NConstants.Ids.NUTS_BOOT)) {
+                if (bootVersion.filter().acceptVersion(dependency.getVersion())) {
                     return true;
                 } else {
                     return false;
@@ -45,7 +44,7 @@ public class NutsAPINDescriptorFilter extends AbstractDescriptorFilter {
 
     @Override
     public String toString() {
-        return "NutsAPI(" + apiVersion + ')';
+        return "NutsBoot(" + bootVersion + ')';
     }
 
     @Override

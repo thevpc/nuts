@@ -77,6 +77,7 @@ public interface NDescriptorFilters extends NTypedFilters<NDescriptorFilter> {
     NDescriptorFilter byCompanion(NVersion apiVersion);
 
     NDescriptorFilter byApiVersion(NVersion apiVersion);
+    NDescriptorFilter byBootVersion(NVersion apiVersion);
 
     NDescriptorFilter byLockedIds(String... ids);
 }

@@ -29,7 +29,7 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
     private NCmdLineAutoCompleteResolver commandAutoCompleteResolver;
 
     public DefaultNSystemTerminalBaseBoot(DefaultNBootModel bootModel) {
-        super(bootModel.getWorkspace());
+        super();
         NBootOptions bo = bootModel.getBootUserOptions();
         NWorkspaceTerminalOptions bootStdFd = new NWorkspaceTerminalOptions(
                 bo.getStdin().orElse(System.in),
@@ -53,9 +53,9 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
             terminalMode = NTerminalMode.FORMATTED;
         }
         this.out = new NPrintStreamSystem(bootStdFd.getOut(), null, null, bootStdFdAnsi,
-                bootModel.getWorkspace(), this).setTerminalMode(terminalMode);
+                this).setTerminalMode(terminalMode);
         this.err = new NPrintStreamSystem(bootStdFd.getErr(), null, null, bootStdFdAnsi,
-                bootModel.getWorkspace(), this).setTerminalMode(terminalMode);
+                this).setTerminalMode(terminalMode);
         this.in = bootStdFd.getIn();
         this.scanner = new Scanner(this.in);
     }
@@ -167,7 +167,7 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
 
     @Override
     public void setStyles(NTextStyles styles, NPrintStream printStream) {
-        String s = NAnsiTermHelper.of(getWorkspace()).styled(styles);
+        String s = NAnsiTermHelper.of().styled(styles);
         if (s != null) {
             //try {
                 byte[] bytes = s.getBytes();

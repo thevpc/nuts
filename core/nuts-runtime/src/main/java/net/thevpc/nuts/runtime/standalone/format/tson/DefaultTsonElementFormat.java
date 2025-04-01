@@ -24,7 +24,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.format.tson;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.elem.NElementAnnotationImpl;
@@ -43,10 +42,8 @@ import java.util.stream.Collectors;
  */
 public class DefaultTsonElementFormat implements NElementStreamFormat {
 
-    private NWorkspace ws;
 
-    public DefaultTsonElementFormat(NWorkspace ws) {
-        this.ws = ws;
+    public DefaultTsonElementFormat() {
     }
 
     public NElement parseElement(String string, NElementFactoryContext context) {

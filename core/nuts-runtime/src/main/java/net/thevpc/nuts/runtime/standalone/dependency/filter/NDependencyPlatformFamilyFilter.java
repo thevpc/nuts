@@ -16,17 +16,17 @@ public class NDependencyPlatformFamilyFilter extends AbstractDependencyFilter  {
 
     private Set<NPlatformFamily> accepted = EnumSet.noneOf(NPlatformFamily.class);
 
-    public NDependencyPlatformFamilyFilter(NWorkspace workspace) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NDependencyPlatformFamilyFilter() {
+        super(NFilterOp.CUSTOM);
     }
 
-    private NDependencyPlatformFamilyFilter(NWorkspace workspace, Collection<NPlatformFamily> accepted) {
-        super(workspace, NFilterOp.CUSTOM);
+    private NDependencyPlatformFamilyFilter(Collection<NPlatformFamily> accepted) {
+        super(NFilterOp.CUSTOM);
         this.accepted = EnumSet.copyOf(accepted);
     }
 
-    public NDependencyPlatformFamilyFilter(NWorkspace workspace, String accepted) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NDependencyPlatformFamilyFilter(String accepted) {
+        super(NFilterOp.CUSTOM);
         this.accepted = EnumSet.noneOf(NPlatformFamily.class);
         for (NId e : NId.getList(accepted).get()) {
             if (!e.isBlank()) {
@@ -38,7 +38,7 @@ public class NDependencyPlatformFamilyFilter extends AbstractDependencyFilter  {
     public NDependencyPlatformFamilyFilter add(Collection<NPlatformFamily> os) {
         EnumSet<NPlatformFamily> s2 = EnumSet.copyOf(this.accepted);
         s2.addAll(os);
-        return new NDependencyPlatformFamilyFilter(workspace, s2);
+        return new NDependencyPlatformFamilyFilter(s2);
     }
 
     @Override

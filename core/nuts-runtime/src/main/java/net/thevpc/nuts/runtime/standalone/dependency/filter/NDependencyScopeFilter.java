@@ -13,19 +13,19 @@ public class NDependencyScopeFilter extends AbstractDependencyFilter {
 
     private EnumSet<NDependencyScope> scope=EnumSet.noneOf(NDependencyScope.class);
 
-    public NDependencyScopeFilter(NWorkspace workspace) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NDependencyScopeFilter() {
+        super(NFilterOp.CUSTOM);
     }
 
-    private NDependencyScopeFilter(NWorkspace workspace, Collection<NDependencyScope> scope) {
-        super(workspace, NFilterOp.CUSTOM);
+    private NDependencyScopeFilter(Collection<NDependencyScope> scope) {
+        super(NFilterOp.CUSTOM);
         this.scope = EnumSet.copyOf(scope);
     }
 
     public NDependencyScopeFilter add(Collection<NDependencyScope> scope) {
         EnumSet<NDependencyScope> s2 = EnumSet.copyOf(this.scope);
         s2.addAll(scope);
-        return new NDependencyScopeFilter(workspace,s2);
+        return new NDependencyScopeFilter(s2);
     }
 
     public NDependencyScopeFilter addScopePatterns(Collection<NDependencyScopePattern> scope) {
@@ -35,7 +35,7 @@ public class NDependencyScopeFilter extends AbstractDependencyFilter {
                 s2.addAll(ss.toScopes());
             }
         }
-        return new NDependencyScopeFilter(workspace,s2);
+        return new NDependencyScopeFilter(s2);
     }
 
     @Override

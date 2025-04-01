@@ -19,8 +19,8 @@ public class NVersionFilterNone extends AbstractVersionFilter implements NExprId
 
     private NVersionFilter[] all;
 
-    public NVersionFilterNone(NWorkspace workspace, NVersionFilter... all) {
-        super(workspace, NFilterOp.NOT);
+    public NVersionFilterNone(NVersionFilter... all) {
+        super(NFilterOp.NOT);
         List<NVersionFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NVersionFilter filter : all) {

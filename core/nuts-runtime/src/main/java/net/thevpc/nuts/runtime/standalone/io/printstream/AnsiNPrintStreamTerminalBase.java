@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
@@ -19,8 +18,8 @@ public class AnsiNPrintStreamTerminalBase extends NSystemTerminalBaseImpl {
     private String commandHighlighter;
     private NCmdLineAutoCompleteResolver commandAutoCompleteResolver;
 
-    public AnsiNPrintStreamTerminalBase(NWorkspace workspace,NPrintStream out) {
-        super(workspace);
+    public AnsiNPrintStreamTerminalBase(NPrintStream out) {
+        super();
         this.out = out;
     }
 
@@ -83,7 +82,7 @@ public class AnsiNPrintStreamTerminalBase extends NSystemTerminalBaseImpl {
 
     @Override
     public Object run(NTerminalCmd command, NPrintStream printStream) {
-        String s = NAnsiTermHelper.of(getWorkspace()).command(command);
+        String s = NAnsiTermHelper.of().command(command);
         if (s != null) {
             byte[] bytes = s.getBytes();
             out.write(bytes, 0, bytes.length);
@@ -94,7 +93,7 @@ public class AnsiNPrintStreamTerminalBase extends NSystemTerminalBaseImpl {
 
     @Override
     public void setStyles(NTextStyles styles, NPrintStream printStream) {
-        String s = NAnsiTermHelper.of(getWorkspace()).styled(styles);
+        String s = NAnsiTermHelper.of().styled(styles);
         if (s != null) {
             byte[] bytes = s.getBytes();
             out.write(bytes, 0, bytes.length);

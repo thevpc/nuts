@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.optional.mslink;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
@@ -17,14 +16,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 public class OptionalMsLinkHelper {
-    private final NWorkspace workspace;
     private final String command;
     private final String wd;
     private final String icon;
     private final String filePath;
 
-    public OptionalMsLinkHelper(String command, String wd, String icon, String filePath, NWorkspace workspace) {
-        this.workspace = workspace;
+    public OptionalMsLinkHelper(String command, String wd, String icon, String filePath) {
         this.command = command;
         this.wd = wd;
         this.icon = icon;

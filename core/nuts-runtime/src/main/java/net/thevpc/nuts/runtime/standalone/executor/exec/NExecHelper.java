@@ -32,7 +32,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
     NPrintStream out;
 
     public NExecHelper(NExecCmd pb, NWorkspace workspace, NPrintStream out) {
-        super(workspace);
+        super();
         this.pb = pb;
         this.out = out;
     }
@@ -102,7 +102,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
 
 
     public int exec() {
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         if (session.isDry()) {
             if (out.getTerminalMode() == NTerminalMode.FORMATTED) {
                 out.print("[dry] ==[exec]== ");

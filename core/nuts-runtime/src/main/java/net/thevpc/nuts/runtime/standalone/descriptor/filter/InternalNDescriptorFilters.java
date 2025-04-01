@@ -19,23 +19,23 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
 
 
     public InternalNDescriptorFilters(NWorkspace workspace) {
-        super(workspace, NDescriptorFilter.class);
+        super(NDescriptorFilter.class);
 //        localModel = model.getShared(LocalModel.class, () -> new LocalModel(ws));
     }
 
     @Override
     public NDescriptorFilter always() {
-        return new NDescriptorFilterTrue(getWorkspace());
+        return new NDescriptorFilterTrue();
     }
 
     @Override
     public NDescriptorFilter never() {
-        return new NDescriptorFilterFalse(getWorkspace());
+        return new NDescriptorFilterFalse();
     }
 
     @Override
     public NDescriptorFilter not(NFilter other) {
-        return new NDescriptorFilterNone(getWorkspace(), (NDescriptorFilter) other);
+        return new NDescriptorFilterNone((NDescriptorFilter) other);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
         }
         List<NDescriptorFilter> packs = new ArrayList<>();
         for (String v : values) {
-            packs.add(new NDescriptorFilterPackaging(getWorkspace(), v));
+            packs.add(new NDescriptorFilterPackaging(v));
         }
         if (packs.size() == 1) {
             return packs.get(0);
@@ -60,7 +60,7 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
         }
         List<NDescriptorFilter> packs = new ArrayList<>();
         for (String v : values) {
-            packs.add(new NDescriptorFilterArch(getWorkspace(), v));
+            packs.add(new NDescriptorFilterArch(v));
         }
         if (packs.size() == 1) {
             return packs.get(0);
@@ -75,7 +75,7 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
         }
         List<NDescriptorFilter> packs = new ArrayList<>();
         for (String v : values) {
-            packs.add(new NDescriptorFilterOsDist(getWorkspace(), v));
+            packs.add(new NDescriptorFilterOsDist(v));
         }
         if (packs.size() == 1) {
             return packs.get(0);
@@ -90,7 +90,7 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
         }
         List<NDescriptorFilter> packs = new ArrayList<>();
         for (String v : values) {
-            packs.add(new NDescriptorFilterOs(getWorkspace(), v));
+            packs.add(new NDescriptorFilterOs(v));
         }
         if (packs.size() == 1) {
             return packs.get(0);
@@ -105,7 +105,7 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
         }
         List<NDescriptorFilter> packs = new ArrayList<>();
         for (String v : values) {
-            packs.add(new NDescriptorFilterPlatform(getWorkspace(), v));
+            packs.add(new NDescriptorFilterPlatform(v));
         }
         if (packs.size() == 1) {
             return packs.get(0);
@@ -120,7 +120,7 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
         }
         List<NDescriptorFilter> packs = new ArrayList<>();
         for (String v : values) {
-            packs.add(new NDescriptorFilterDesktopEnvironment(getWorkspace(), v));
+            packs.add(new NDescriptorFilterDesktopEnvironment(v));
         }
         if (packs.size() == 1) {
             return packs.get(0);
@@ -130,19 +130,19 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
 
     @Override
     public NDescriptorFilter byFlag(NDescriptorFlag... flags) {
-        return new NDescriptorFlagsIdFilter(getWorkspace(), flags);
+        return new NDescriptorFlagsIdFilter(flags);
     }
 
     @Override
     public NDescriptorFilter byExtension(NVersion targetApiVersion) {
-        return new NExecExtensionFilter(getWorkspace(),
+        return new NExecExtensionFilter(
                 targetApiVersion == null ? null : NId.get(NConstants.Ids.NUTS_API).get().builder().setVersion(targetApiVersion).build()
         );
     }
 
     @Override
     public NDescriptorFilter byRuntime(NVersion targetApiVersion) {
-        return new NExecRuntimeFilter(getWorkspace(),
+        return new NExecRuntimeFilter(
                 targetApiVersion == null ? null : NId.get(NConstants.Ids.NUTS_API).get().builder().setVersion(targetApiVersion).build(),
                 false
         );
@@ -150,7 +150,7 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
 
     @Override
     public NDescriptorFilter byCompanion(NVersion targetApiVersion) {
-        return new NExecCompanionFilter(getWorkspace(),
+        return new NExecCompanionFilter(
                 targetApiVersion == null ? null : NId.get(NConstants.Ids.NUTS_API).get().builder().setVersion(targetApiVersion).build(),
                 NExtensions.of().getCompanionIds().stream().map(NId::getShortName).toArray(String[]::new)
         );
@@ -159,17 +159,26 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
     @Override
     public NDescriptorFilter byApiVersion(NVersion apiVersion) {
         if (apiVersion == null) {
-            apiVersion = getWorkspace().getApiVersion();
+            apiVersion = NWorkspace.of().getApiVersion();
         }
         return new NutsAPINDescriptorFilter(
-                getWorkspace(),
                 apiVersion
         );
     }
 
     @Override
+    public NDescriptorFilter byBootVersion(NVersion bootVersion) {
+        if (bootVersion == null) {
+            bootVersion = NWorkspace.of().getBootVersion();
+        }
+        return new NutsBootNDescriptorFilter(
+                bootVersion
+        );
+    }
+
+    @Override
     public NDescriptorFilter byLockedIds(String... ids) {
-        return new NLockedIdExtensionFilter(getWorkspace(),
+        return new NLockedIdExtensionFilter(
                 Arrays.stream(ids).map(x -> NId.get(x).get()).toArray(NId[]::new)
         );
     }
@@ -180,7 +189,7 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
             return (NDescriptorFilter) a;
         }
         if (a instanceof NIdFilter) {
-            return new NDescriptorFilterById((NIdFilter) a, getWorkspace());
+            return new NDescriptorFilterById((NIdFilter) a);
         }
         return null;
     }
@@ -218,7 +227,7 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NDescriptorFilterAnd(getWorkspace(), all.toArray(new NDescriptorFilter[0]));
+        return new NDescriptorFilterAnd(all.toArray(new NDescriptorFilter[0]));
     }
 
     @Override
@@ -244,7 +253,7 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NDescriptorFilterOr(getWorkspace(), all.toArray(new NDescriptorFilter[0]));
+        return new NDescriptorFilterOr(all.toArray(new NDescriptorFilter[0]));
     }
 
     @Override
@@ -253,12 +262,12 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
         if (all.isEmpty()) {
             return always();
         }
-        return new NDescriptorFilterNone(getWorkspace(), all.toArray(new NDescriptorFilter[0]));
+        return new NDescriptorFilterNone(all.toArray(new NDescriptorFilter[0]));
     }
 
     @Override
     public NDescriptorFilter parse(String expression) {
-        return new NDescriptorFilterParser(expression, getWorkspace()).parse();
+        return new NDescriptorFilterParser(expression).parse();
     }
 
     @Override

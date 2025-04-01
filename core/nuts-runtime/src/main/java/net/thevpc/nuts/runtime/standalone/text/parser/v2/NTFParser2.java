@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v2;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.text.AbstractNTextNodeParser;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 import net.thevpc.nuts.util.*;
@@ -60,9 +59,9 @@ public class NTFParser2 extends AbstractNTextNodeParser {
         }
     }
 
-    public NTFParser2(NWorkspace workspace) {
-        super(workspace);
-        this.txt = new DefaultNTexts(workspace);//NTexts.of(
+    public NTFParser2() {
+        super();
+        this.txt = new DefaultNTexts();//NTexts.of(
     }
 
     @Override

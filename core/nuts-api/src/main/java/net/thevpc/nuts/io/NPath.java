@@ -215,7 +215,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return content encoding if explicitly defined (from HTTP headers for
      * instance)
      */
-    String getContentEncoding();
+    String contentEncoding();
 
     /**
      * content type if explicitly defined (from HTTP headers for instance) or
@@ -224,7 +224,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return content type if explicitly defined (from HTTP headers for
      * instance) or probe for content type.
      */
-    String getContentType();
+    String contentType();
 
     boolean isUserCache();
 
@@ -400,9 +400,9 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
     long contentLength();
 
-    Instant getLastModifiedInstant();
+    Instant lastModifiedInstant();
 
-    Instant getLastAccessInstant();
+    Instant lastAccessInstant();
 
     Instant getCreationInstant();
 
@@ -418,7 +418,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
     NPath toAbsolute(NPath basePath);
 
-    NOptional<NPath> toRelative(NPath basePath);
+    NOptional<String> toRelative(NPath basePath);
 
     String owner();
 
@@ -557,4 +557,13 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
     int getNameCount();
 
     int compareTo(NPath other);
+
+    List<NPathChildDigestInfo> listDigestInfo();
+
+    List<NPathChildDigestInfo> listDigestInfo(String algo);
+
+    List<NPathChildStringDigestInfo> listStringDigestInfo();
+
+    List<NPathChildStringDigestInfo> listStringDigestInfo(String algo);
+
 }

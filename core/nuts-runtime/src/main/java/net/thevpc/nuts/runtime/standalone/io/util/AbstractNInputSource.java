@@ -29,7 +29,7 @@ public abstract class AbstractNInputSource implements NInputSource {
     }
 
     @Override
-    public String getContentType() {
+    public String contentType() {
         return getMetaData().getContentType().orNull();
     }
 

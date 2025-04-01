@@ -28,6 +28,7 @@ import net.thevpc.nuts.*;
 
 
 import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.runtime.standalone.web.DefaultNWebCli;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
@@ -383,7 +384,7 @@ public class CoreIOUtils {
 
         NPath header = NPath.of(path);
         long size = header.contentLength();
-        Instant lastModifiedInstant = header.getLastModifiedInstant();
+        Instant lastModifiedInstant = header.lastModifiedInstant();
         long lastModified = lastModifiedInstant == null ? 0 : lastModifiedInstant.toEpochMilli();
 
         //when sha1 was not resolved check size and last modification
@@ -433,7 +434,7 @@ public class CoreIOUtils {
                 .setMetadata(new DefaultNContentMetadata(
                         path,
                         NMsg.ofNtf(NText.ofStyledPath(path)),
-                        size, header.getContentType(), header.getCharset(), sourceTypeName
+                        size, header.contentType(), header.getCharset(), sourceTypeName
                 )).createInputStream()
                 ;
 
@@ -501,7 +502,7 @@ public class CoreIOUtils {
 
     public static boolean isObsoletePath(NPath path) {
         try {
-            Instant i = path.getLastModifiedInstant();
+            Instant i = path.lastModifiedInstant();
             if (i == null) {
                 return false;
             }
@@ -815,7 +816,7 @@ public class CoreIOUtils {
         }
         InputStream in = null;
         try {
-            in = u.openStream();
+            in = DefaultNWebCli.prepareGlobalOpenStream(u);
         } catch (IOException e) {
             return NOptional.ofNamedEmpty("error stream for " + u);
         }

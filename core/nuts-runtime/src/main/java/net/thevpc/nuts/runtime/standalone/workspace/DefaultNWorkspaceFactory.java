@@ -133,7 +133,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.text.NTexts": {
-                    DefaultNTexts p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNTexts(workspace));
+                    DefaultNTexts p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNTexts());
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.format.NObjectFormat": {

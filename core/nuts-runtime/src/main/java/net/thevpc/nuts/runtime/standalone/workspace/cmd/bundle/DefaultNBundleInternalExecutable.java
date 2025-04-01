@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
  */
 public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNBundleInternalExecutable(NWorkspace workspace,String[] args, NExecCmd execCommand) {
-        super(workspace,"bundle", args, execCommand);
+    public DefaultNBundleInternalExecutable(NWorkspace workspace, String[] args, NExecCmd execCommand) {
+        super(workspace, "bundle", args, execCommand);
     }
 
     @Override
@@ -149,20 +149,26 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
 
         Set<NId> nIds = new LinkedHashSet<>();
         Set<NId> toBaseDir = new LinkedHashSet<>();
+        NWorkspace ws = session.getWorkspace();
         if (ids.isEmpty() || (ids.size() == 1 && ids.get(0).equals("nuts"))) {
-            nIds.add(session.getWorkspace().getApiId());
-            nIds.add(session.getWorkspace().getRuntimeId());
+            nIds.add(ws.getApiId());
+            nIds.add(ws.getRuntimeId());
+            nIds.add(ws.getAppId());
         } else {
             for (String id : ids) {
                 if ("nuts".equals(id)) {
-                    NId apiId = session.getWorkspace().getApiId();
-                    toBaseDir.add(apiId);
+                    NId apiId = ws.getApiId();
+                    NId appId = resolveNutsAppIdFromApiId(apiId);
+                    toBaseDir.add(appId);
                     nIds.add(apiId);
+                    nIds.add(appId);
                 } else if ("nuts-runtime".equals(id)) {
-                    NId apiId = session.getWorkspace().getApiId();
-                    toBaseDir.add(apiId);
+                    NId apiId = ws.getApiId();
+                    NId appId = resolveNutsAppIdFromApiId(apiId);
+                    toBaseDir.add(appId);
                     nIds.add(apiId);
-                    nIds.add(session.getWorkspace().getRuntimeId());
+                    nIds.add(appId);
+                    nIds.add(ws.getRuntimeId());
                 } else {
                     List<NId> found = NSearchCmd.of().addId(id)
                             .setLatest(true)
@@ -174,8 +180,10 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                         throw new NNotFoundException(NId.get(id).get());
                     }
                     for (NId resultId : found) {
-                        if (resultId.getShortName().equals(session.getWorkspace().getApiId().getShortName())) {
-                            toBaseDir.add(resultId);
+                        if (resultId.getShortName().equals(ws.getApiId().getShortName())) {
+                            NId appId = resolveNutsAppIdFromApiId(resultId);
+                            toBaseDir.add(appId);
+                            nIds.add(appId);
                         }
                         nIds.add(resultId);
                     }
@@ -355,37 +363,61 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
             rootFolder.resolve("META-INF/nuts-bundle-info.config").writeString(nuts_bundle_info_config.toString());
         }
 
+        NSession nSession = NSession.of();
         switch (format) {
             case "jar": {
                 NCompress zip = NCompress.of().setPackaging("zip");
+                NPath target = NPath.of(NStringUtils.firstNonBlank(withTarget.get(),
+                        appName + ".jar")).toAbsolute();
                 zip.addSource(rootFolder)
                         .setSkipRoot(true)
                         .setTarget(
-                                NStringUtils.firstNonBlank(withTarget.get(),
-                                        appName + ".jar")
+                                target
                         )
                         .run();
                 if (tempBundleFolder) {
                     rootFolder.deleteTree();
+                }
+                if (nSession.isTrace()) {
+                    if (nSession.isPlainOut()) {
+                        NTrace.out().println(NMsg.ofC("bundle created %s", target));
+                    } else {
+                        NTrace.out().println(NMapBuilder.of().put("bundlePath", target).build());
+                    }
                 }
                 break;
             }
             case "zip": {
                 NCompress zip = NCompress.of().setPackaging("zip");
+                NPath target = NPath.of(NStringUtils.firstNonBlank(withTarget.get(),
+                        appName + ".zip")).toAbsolute();
                 zip.addSource(rootFolder)
                         .setSkipRoot(true)
-                        .setTarget(
-                                NStringUtils.firstNonBlank(withTarget.get(),
-                                        appName + ".zip")
+                        .setTarget(target
                         )
                         .run();
                 if (tempBundleFolder) {
                     rootFolder.deleteTree();
                 }
+                if (nSession.isTrace()) {
+                    if (nSession.isPlainOut()) {
+                        NTrace.out().println(NMsg.ofC("bundle created %s", target));
+                    } else {
+                        NTrace.out().println(NMapBuilder.of().put("bundlePath", target).build());
+                    }
+                }
                 break;
             }
             case "dir":
             case "exploded": {
+                NPath target = rootFolder.toAbsolute();
+                if (nSession.isTrace()) {
+                    if (nSession.isPlainOut()) {
+                        NTrace.out().println(NMsg.ofC("bundle created %s", target));
+                    } else {
+                        NTrace.out().println(NMapBuilder.of().put("bundlePath", target).build());
+                    }
+                }
                 break;
             }
             default: {
@@ -393,6 +425,28 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
             }
         }
         return NExecutionException.SUCCESS;
+    }
+
+    private NId resolveNutsAppIdFromApiId(NId apiId) {
+        NVersion v = apiId.getVersion();
+        if (v.compareTo("0.8.5") < 0) {
+            return apiId;
+        }
+        NId appId = NWorkspace.of().getAppId();
+        return appId.builder().setVersion(apiId.getVersion()).build();
+//        List<NId> found = NSearchCmd.of().addId(appId.getShortId())
+//                .setLatest(true)
+//                .setDistinct(true)
+//                .setDescriptorFilter(NDescriptorFilters.of().byApiVersion(apiId.getVersion()))
+//                .setDependencyFilter(NDependencyFilters.of()
+//                        .byRunnable()
+//                )
+//                .setInlineDependencies(true)
+//                .getResultIds().toList();
+//        if (found.size() > 0) {
+//            return found.get(0);
+//        }
+//        throw new NIllegalArgumentException(NMsg.ofC("unable to resolve app for %s", apiId));
     }
 
 }

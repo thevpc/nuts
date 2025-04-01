@@ -16,8 +16,8 @@ public class NDescriptorFilterOr extends AbstractDescriptorFilter implements NCo
 
     private NDescriptorFilter[] all;
 
-    public NDescriptorFilterOr(NWorkspace workspace, NDescriptorFilter... all) {
-        super(workspace, NFilterOp.OR);
+    public NDescriptorFilterOr(NDescriptorFilter... all) {
+        super(NFilterOp.OR);
         List<NDescriptorFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NDescriptorFilter filter : all) {

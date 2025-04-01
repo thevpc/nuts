@@ -21,8 +21,8 @@ public class NDescriptorFlagsIdFilter extends AbstractDescriptorFilter {
 
     private final Set<NDescriptorFlag> flags;
 
-    public NDescriptorFlagsIdFilter(NWorkspace workspace, NDescriptorFlag...flags) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NDescriptorFlagsIdFilter(NDescriptorFlag...flags) {
+        super(NFilterOp.CUSTOM);
         this.flags = new LinkedHashSet<>();
         for (NDescriptorFlag flag : flags) {
             if(flag!=null){

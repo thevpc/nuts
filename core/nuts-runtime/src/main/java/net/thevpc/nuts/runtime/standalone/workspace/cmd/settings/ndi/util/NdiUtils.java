@@ -28,6 +28,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.util;
 
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.runtime.standalone.web.DefaultNWebCli;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix.AnyNixNdi;
 
@@ -61,7 +62,7 @@ public class NdiUtils {
             if (resource == null) {
                 throw new NIllegalArgumentException(NMsg.ofC("resource not found %s",resourcePath));
             }
-            BufferedReader br = new BufferedReader(new InputStreamReader(resource.openStream()));
+            BufferedReader br = new BufferedReader(new InputStreamReader(DefaultNWebCli.prepareGlobalOpenStream(resource)));
             String line = null;
             Pattern PATTERN = Pattern.compile("[$][$](?<name>([^$]+))[$][$]");
             while ((line = br.readLine()) != null) {

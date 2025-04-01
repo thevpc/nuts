@@ -70,7 +70,7 @@ public class WarExecutorComponent implements NExecutorComponent {
     }
 
     public IProcessExecHelper execHelper(NExecutionContext executionContext) {
-        return new AbstractSyncIProcessExecHelper(executionContext.getWorkspace()) {
+        return new AbstractSyncIProcessExecHelper() {
             public int exec() {
                 throw new NIOException(NMsg.ofC("unsupported yet execution of %s with packaging %s",
                         executionContext.getDefinition().getId(),

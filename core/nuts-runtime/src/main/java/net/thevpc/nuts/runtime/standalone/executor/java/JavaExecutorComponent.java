@@ -407,7 +407,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
         private final NExecutionContext executionContext;
 
         public EmbeddedProcessExecHelper(NDefinition def, NWorkspace workspace, JavaExecutorOptions joptions, NPrintStream out, NExecutionContext executionContext) {
-            super(workspace);
+            super();
             this.def = def;
             this.joptions = joptions;
             this.out = out;
@@ -416,7 +416,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
 
         @Override
         public int exec() {
-            NSession session = workspace.currentSession();
+            NSession session = NSession.of();
             if (executionContext.isDry()) {
                 NTexts text = NTexts.of();
                 List<String> cmdLine = new ArrayList<>();

@@ -16,7 +16,6 @@ import java.util.Date;
 
 public abstract class NPrintStreamBase implements NPrintStream {
     private static String LINE_SEP = System.getProperty("line.separator");
-    protected NWorkspace workspace;
     protected Bindings bindings;
     protected OutputStream osWrapper;
     protected PrintStream psWrapper;
@@ -26,15 +25,14 @@ public abstract class NPrintStreamBase implements NPrintStream {
     protected NSystemTerminalBase term;
     private DefaultNContentMetadata md = new DefaultNContentMetadata();
 
-    public NPrintStreamBase(boolean autoFlash, NTerminalMode mode, NWorkspace workspace, Bindings bindings, NSystemTerminalBase term) {
+    public NPrintStreamBase(boolean autoFlash, NTerminalMode mode, Bindings bindings, NSystemTerminalBase term) {
         NAssert.requireNonNull(mode, "mode");
         bindings.setOrErr(this, mode);
         this.bindings = bindings;
         this.autoFlash = autoFlash;
         this.mode = mode;
-        this.workspace = workspace;
         if(term==null && mode==NTerminalMode.ANSI){
-            term=new AnsiNPrintStreamTerminalBase(workspace,this);
+            term=new AnsiNPrintStreamTerminalBase(this);
         }
         this.term = term;
     }
@@ -99,7 +97,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
                 case CODE:
                 case TITLE:
                 default: {
-                    if (workspace != null) {
+                    if (NWorkspace.get().isPresent()) {
                         throw new NUnsupportedOperationException();
                     } else {
                         throw new UnsupportedOperationException();

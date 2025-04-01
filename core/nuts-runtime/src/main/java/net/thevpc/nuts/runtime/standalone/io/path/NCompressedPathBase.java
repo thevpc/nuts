@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -96,13 +97,13 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public String getContentEncoding() {
-        return base.getContentEncoding();
+    public String contentEncoding() {
+        return base.contentEncoding();
     }
 
     @Override
-    public String getContentType() {
-        return base.getContentType();
+    public String contentType() {
+        return base.contentType();
     }
 
     @Override
@@ -274,13 +275,13 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public Instant getLastModifiedInstant() {
-        return base.getLastModifiedInstant();
+    public Instant lastModifiedInstant() {
+        return base.lastModifiedInstant();
     }
 
     @Override
-    public Instant getLastAccessInstant() {
-        return base.getLastAccessInstant();
+    public Instant lastAccessInstant() {
+        return base.lastAccessInstant();
     }
 
     @Override
@@ -322,7 +323,7 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public NOptional<NPath> toRelative(NPath basePath) {
+    public NOptional<String> toRelative(NPath basePath) {
         return base.toRelative(basePath);
     }
 
@@ -367,6 +368,11 @@ public class NCompressedPathBase extends NPathBase {
     @Override
     public int getNameCount() {
         return base.getNameCount();
+    }
+
+    @Override
+    public List<NPathChildDigestInfo> listDigestInfo() {
+        return base.listDigestInfo();
     }
 
     @Override
@@ -475,5 +481,20 @@ public class NCompressedPathBase extends NPathBase {
         public int getSupportLevel(NSupportLevelContext context) {
             return NConstants.Support.DEFAULT_SUPPORT;
         }
+    }
+
+    @Override
+    public List<NPathChildDigestInfo> listDigestInfo(String algo) {
+        return getBase().listDigestInfo(algo);
+    }
+
+    @Override
+    public List<NPathChildStringDigestInfo> listStringDigestInfo() {
+        return getBase().listStringDigestInfo();
+    }
+
+    @Override
+    public List<NPathChildStringDigestInfo> listStringDigestInfo(String algo) {
+        return getBase().listStringDigestInfo(algo);
     }
 }

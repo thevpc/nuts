@@ -17,18 +17,18 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         implements NDependencyFilters {
 
     public InternalNDependencyFilters(NWorkspace workspace) {
-        super(workspace, NDependencyFilter.class);
+        super(NDependencyFilter.class);
 //        localModel = model.getShared(LocalModel.class, () -> new LocalModel(ws));
     }
 
     @Override
     public NDependencyFilter always() {
-        return new NDependencyFilterTrue(workspace);
+        return new NDependencyFilterTrue();
     }
 
     @Override
     public NDependencyFilter never() {
-        return new NDependencyFilterFalse(getWorkspace());
+        return new NDependencyFilterFalse();
     }
 
     @Override
@@ -40,7 +40,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NDependencyFilterAnd(getWorkspace(), all.toArray(new NDependencyFilter[0]));
+        return new NDependencyFilterAnd(all.toArray(new NDependencyFilter[0]));
     }
 
     @Override
@@ -52,12 +52,12 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NDependencyFilterOr(getWorkspace(), all.toArray(new NDependencyFilter[0]));
+        return new NDependencyFilterOr(all.toArray(new NDependencyFilter[0]));
     }
 
     @Override
     public NDependencyFilter not(NFilter other) {
-        return new NDependencyFilterNone(getWorkspace(), (NDependencyFilter) other);
+        return new NDependencyFilterNone((NDependencyFilter) other);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (all.isEmpty()) {
             return always();
         }
-        return new NDependencyFilterNone(getWorkspace(), all.toArray(new NDependencyFilter[0]));
+        return new NDependencyFilterNone(all.toArray(new NDependencyFilter[0]));
     }
 
     @Override
@@ -89,7 +89,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
 
     @Override
     public NDependencyFilter parse(String expression) {
-        return new NDependencyFilterParser(expression, getWorkspace()).parse();
+        return new NDependencyFilterParser(expression).parse();
     }
 
     @Override
@@ -102,7 +102,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (scope == null) {
             return always();
         }
-        return new ScopeNDependencyFilter(getWorkspace(), scope);
+        return new ScopeNDependencyFilter(scope);
     }
 
     @Override
@@ -110,7 +110,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (scope == null) {
             return always();
         }
-        return new NDependencyScopeFilter(getWorkspace()).add(Arrays.asList(scope));
+        return new NDependencyScopeFilter().add(Arrays.asList(scope));
     }
 
     @Override
@@ -118,7 +118,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (scopes == null) {
             return always();
         }
-        return new NDependencyScopeFilter(getWorkspace()).add(Arrays.asList(scopes));
+        return new NDependencyScopeFilter().add(Arrays.asList(scopes));
     }
 
     @Override
@@ -126,7 +126,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (scopes == null) {
             return always();
         }
-        return new NDependencyScopeFilter(getWorkspace()).add(scopes);
+        return new NDependencyScopeFilter().add(scopes);
     }
 
     @Override
@@ -134,12 +134,12 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (optional == null) {
             return always();
         }
-        return new NDependencyOptionFilter(getWorkspace(), optional);
+        return new NDependencyOptionFilter(optional);
     }
 
     @Override
     public NDependencyFilter byExclude(NDependencyFilter filter, String[] exclusions) {
-        return new NExclusionDependencyFilter(getWorkspace(), filter, Arrays.stream(exclusions).map(x -> NId.get(x).get()).toArray(NId[]::new));
+        return new NExclusionDependencyFilter(filter, Arrays.stream(exclusions).map(x -> NId.get(x).get()).toArray(NId[]::new));
     }
 
     @Override
@@ -147,7 +147,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (archs == null) {
             return always();
         }
-        return new NDependencyArchFamilyFilter(getWorkspace()).add(archs);
+        return new NDependencyArchFamilyFilter().add(archs);
     }
 
     @Override
@@ -155,7 +155,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (arch == null) {
             return always();
         }
-        return new NDependencyArchFamilyFilter(getWorkspace()).add(Arrays.asList(arch));
+        return new NDependencyArchFamilyFilter().add(Arrays.asList(arch));
     }
 
     @Override
@@ -163,7 +163,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (archs == null) {
             return always();
         }
-        return new NDependencyArchFamilyFilter(getWorkspace()).add(Arrays.asList(archs));
+        return new NDependencyArchFamilyFilter().add(Arrays.asList(archs));
     }
 
     @Override
@@ -171,7 +171,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (arch == null) {
             return always();
         }
-        return new NDependencyArchFamilyFilter(getWorkspace(), arch);
+        return new NDependencyArchFamilyFilter(arch);
     }
 
     @Override
@@ -179,7 +179,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (os == null) {
             return always();
         }
-        return new NDependencyOsFilter(getWorkspace()).add(os);
+        return new NDependencyOsFilter().add(os);
     }
 
     @Override
@@ -226,7 +226,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (os == null) {
             return always();
         }
-        return new NDependencyOsFilter(getWorkspace()).add(Arrays.asList(os));
+        return new NDependencyOsFilter().add(Arrays.asList(os));
     }
 
     @Override
@@ -234,7 +234,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (os == null) {
             return always();
         }
-        return new NDependencyOsFilter(getWorkspace()).add(Arrays.asList(os));
+        return new NDependencyOsFilter().add(Arrays.asList(os));
     }
 
     @Override
@@ -242,7 +242,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (de == null) {
             return always();
         }
-        return new NDependencyDEFilter(getWorkspace()).add(Arrays.asList(de));
+        return new NDependencyDEFilter().add(Arrays.asList(de));
     }
 
     @Override
@@ -250,7 +250,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (de == null) {
             return always();
         }
-        return new NDependencyDEFilter(getWorkspace()).add(Arrays.asList(de));
+        return new NDependencyDEFilter().add(Arrays.asList(de));
     }
 
     @Override
@@ -260,7 +260,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
 
     @Override
     public NDependencyFilter byType(String type) {
-        return new NDependencyTypeFilter(getWorkspace(), type);
+        return new NDependencyTypeFilter(type);
     }
 
     @Override
@@ -268,7 +268,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (os == null) {
             return always();
         }
-        return new NDependencyOsFilter(getWorkspace(), os);
+        return new NDependencyOsFilter(os);
     }
 
     @Override
@@ -276,7 +276,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (osDist == null) {
             return always();
         }
-        return new NDependencyOsDistIdFilter(getWorkspace()).add(Collections.singletonList(NId.get(osDist).get()));
+        return new NDependencyOsDistIdFilter().add(Collections.singletonList(NId.get(osDist).get()));
     }
 
     @Override
@@ -284,7 +284,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (osDists == null || osDists.length==0) {
             return always();
         }
-        return new NDependencyOsDistIdFilter(getWorkspace()).add(
+        return new NDependencyOsDistIdFilter().add(
                 Arrays.stream(osDists).map(x-> NId.get(x).get())
                         .collect(Collectors.toList())
         );
@@ -295,7 +295,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (osDists == null || osDists.isEmpty()) {
             return always();
         }
-        return new NDependencyOsDistIdFilter(getWorkspace()).add(
+        return new NDependencyOsDistIdFilter().add(
                 osDists.stream().map(x-> NId.get(x).get())
                         .collect(Collectors.toList())
         );
@@ -306,7 +306,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (pf == null || pf.length==0) {
             return always();
         }
-        return new NDependencyPlatformFamilyFilter(getWorkspace()).add(Arrays.asList(pf));
+        return new NDependencyPlatformFamilyFilter().add(Arrays.asList(pf));
     }
 
     @Override
@@ -314,7 +314,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (pf == null || pf.length==0) {
             return always();
         }
-        return new NDependencyPlatformIdFilter(getWorkspace()).add(
+        return new NDependencyPlatformIdFilter().add(
                 Arrays.stream(pf).map(x-> NId.get(x).get())
                         .collect(Collectors.toList())
         );

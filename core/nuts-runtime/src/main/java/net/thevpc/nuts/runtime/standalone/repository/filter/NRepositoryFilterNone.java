@@ -16,8 +16,8 @@ public class NRepositoryFilterNone extends AbstractRepositoryFilter {
 
     private NRepositoryFilter[] all;
 
-    public NRepositoryFilterNone(NWorkspace workspace, NRepositoryFilter... all) {
-        super(workspace, NFilterOp.NOT);
+    public NRepositoryFilterNone(NRepositoryFilter... all) {
+        super(NFilterOp.NOT);
         List<NRepositoryFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NRepositoryFilter filter : all) {

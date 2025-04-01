@@ -84,7 +84,7 @@ public class DefaultNExtensions implements NExtensions {
             case "net.thevpc.nuts.text.NTexts": {
                 NTexts t = wsModel.textModel.defaultNTexts;
                 if (t == null) {
-                    t = new DefaultNTexts(workspace);
+                    t = new DefaultNTexts();
                     wsModel.textModel.defaultNTexts = t;
                 }
                 return NOptional.of((T) t);

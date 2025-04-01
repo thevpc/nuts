@@ -7,8 +7,8 @@ import net.thevpc.nuts.util.NFilterOp;
 
 public class NIdFilterTrue extends AbstractIdFilter implements NIdFilter, NSimplifiable<NIdFilter>, NExprIdFilter {
 
-    public NIdFilterTrue(NWorkspace workspace) {
-        super(workspace, NFilterOp.TRUE);
+    public NIdFilterTrue() {
+        super(NFilterOp.TRUE);
     }
 
     @Override

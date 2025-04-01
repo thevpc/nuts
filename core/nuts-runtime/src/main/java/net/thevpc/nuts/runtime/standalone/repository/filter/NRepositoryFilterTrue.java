@@ -25,18 +25,16 @@
 */
 package net.thevpc.nuts.runtime.standalone.repository.filter;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.NRepository;
 import net.thevpc.nuts.NRepositoryFilter;
-import net.thevpc.nuts.NSession;
 
 /**
  * Created by vpc on 2/20/17.
  */
 public class NRepositoryFilterTrue extends AbstractRepositoryFilter{
-    public NRepositoryFilterTrue(NWorkspace workspace) {
-        super(workspace, NFilterOp.TRUE);
+    public NRepositoryFilterTrue() {
+        super(NFilterOp.TRUE);
     }
 
     @Override

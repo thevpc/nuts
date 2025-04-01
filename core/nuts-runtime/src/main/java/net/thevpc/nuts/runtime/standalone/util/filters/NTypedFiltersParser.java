@@ -4,10 +4,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.util.NFilter;
 
 public abstract class NTypedFiltersParser<T extends NFilter> extends AbstractFilterParser2<T> {
-    protected NWorkspace workspace;
-    public NTypedFiltersParser(String str, NWorkspace workspace) {
+    public NTypedFiltersParser(String str) {
         super(str==null?"":str);
-        this.workspace =workspace;
         addBoolOps();
     }
 

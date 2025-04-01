@@ -1,17 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.io.NIOException;
 
 import java.io.*;
 
 public class NanoDBDefaultInputStream implements NanoDBInputStream {
     private DataInputStream in;
-    private NWorkspace workspace;
 
-    public NanoDBDefaultInputStream(InputStream in, NWorkspace workspace) {
+    public NanoDBDefaultInputStream(InputStream in) {
         this.in =(in instanceof DataInputStream)?(DataInputStream) in:new DataInputStream(in);
-        this.workspace = workspace;
     }
 
     @Override

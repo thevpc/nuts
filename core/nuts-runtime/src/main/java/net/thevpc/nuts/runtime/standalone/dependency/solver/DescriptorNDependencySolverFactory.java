@@ -1,15 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.dependency.solver;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.spi.NDependencySolverFactory;
 
 public class DescriptorNDependencySolverFactory implements NDependencySolverFactory {
-    private NWorkspace workspace;
 
-    public DescriptorNDependencySolverFactory(NWorkspace workspace) {
-        this.workspace = workspace;
+    public DescriptorNDependencySolverFactory() {
     }
 
     @Override
@@ -19,7 +16,7 @@ public class DescriptorNDependencySolverFactory implements NDependencySolverFact
 
     @Override
     public NDependencySolver create() {
-        return new DescriptorNDependencySolver(workspace);
+        return new DescriptorNDependencySolver();
     }
 
     @Override

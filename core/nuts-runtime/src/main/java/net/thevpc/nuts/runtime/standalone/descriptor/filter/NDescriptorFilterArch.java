@@ -40,8 +40,8 @@ public class NDescriptorFilterArch extends AbstractDescriptorFilter {
 
     private final String arch;
 
-    public NDescriptorFilterArch(NWorkspace workspace, String packaging) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NDescriptorFilterArch(String packaging) {
+        super(NFilterOp.CUSTOM);
         this.arch = packaging;
     }
 

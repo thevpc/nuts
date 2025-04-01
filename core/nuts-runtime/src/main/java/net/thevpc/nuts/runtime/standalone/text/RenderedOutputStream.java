@@ -23,7 +23,7 @@ public class RenderedOutputStream extends OutputStream implements NOutputStreamT
         this.terminal=terminal;
         h = new FormatOutputStreamSupport(
                 new NPrintStreamRaw(out,true,null, workspace,new NPrintStreamBase.Bindings(), terminal)
-                , workspace,terminal,filtered);
+                , terminal,filtered);
     }
 
     public NSystemTerminalBase getTerminal() {

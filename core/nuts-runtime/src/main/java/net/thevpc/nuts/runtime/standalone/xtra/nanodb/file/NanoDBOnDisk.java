@@ -18,11 +18,11 @@ public class NanoDBOnDisk extends AbstractNanoDB {
                 rowType,
                 dir, tableName, serializer,
                 this,
-                indexDefinitions, workspace
+                indexDefinitions
         );
     }
 
     public <T> NanoDBIndex<T> createIndexFor(Class<T> type, NanoDBSerializer<T> ser, File file) {
-        return new NanoDBDefaultIndex<T>(workspace,type,ser, new DBIndexValueStoreDefaultFactory(), new HashMap<>(), file);
+        return new NanoDBDefaultIndex<T>(type,ser, new DBIndexValueStoreDefaultFactory(), new HashMap<>(), file);
     }
 }

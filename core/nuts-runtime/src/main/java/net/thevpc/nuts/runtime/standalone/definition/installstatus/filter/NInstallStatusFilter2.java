@@ -71,8 +71,8 @@ public class NInstallStatusFilter2 extends AbstractInstallStatusFilter {
 //    }
 
 
-    public NInstallStatusFilter2(NWorkspace workspace, int installed, int required, int obsolete, int defaultVersion) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NInstallStatusFilter2(int installed, int required, int obsolete, int defaultVersion) {
+        super(NFilterOp.CUSTOM);
         this.installed = installed;
         this.required = required;
         this.obsolete = obsolete;

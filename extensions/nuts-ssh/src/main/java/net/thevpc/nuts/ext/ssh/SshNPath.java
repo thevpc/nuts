@@ -25,12 +25,10 @@ import java.util.regex.Pattern;
 class SshNPath implements NPathSPI {
 
     private final NConnexionString path;
-    private final NWorkspace workspace;
     private SshListener listener;
 
-    public SshNPath(NConnexionString path, NWorkspace workspace) {
+    public SshNPath(NConnexionString path) {
         this.path = path;
-        this.workspace = workspace;
     }
 
     public static String getURLParentPath(String ppath) {
@@ -79,23 +77,21 @@ class SshNPath implements NPathSPI {
     }
 
     private SShConnection prepareSshConnexion() {
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         return new SShConnection(path
                 , session.in()
                 , NOut.asOutputStream()
                 , session.err().asOutputStream()
-                , session
         )
                 .addListener(listener);
     }
 
     private SShConnection prepareSshConnexionGrab() {
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         return new SShConnection(path
                 , session.in()
                 , NOut.asOutputStream()
                 , NIO.ofNullRawOutputStream()
-                , session
         ).grabOutputString()
                 .addListener(listener);
     }
@@ -394,12 +390,12 @@ class SshNPath implements NPathSPI {
             throw new NIOException(NMsg.ofC("cannot open directory %s", basePath));
         }
 
-        return new SshFileInputStream(path, workspace);
+        return new SshFileInputStream(path);
     }
 
     @Override
     public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
-        return new SshFileOutputStream2(path, workspace, false);
+        return new SshFileOutputStream2(path, false);
     }
 
     public void delete(NPath basePath, boolean recurse) {

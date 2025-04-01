@@ -41,8 +41,8 @@ public class NDescriptorFilterPlatform extends AbstractDescriptorFilter {
 
     private final String platform;
 
-    public NDescriptorFilterPlatform(NWorkspace workspace, String packaging) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NDescriptorFilterPlatform(String packaging) {
+        super(NFilterOp.CUSTOM);
         this.platform = packaging;
     }
 

@@ -7,8 +7,8 @@ public class NDependencyOptionFilter extends AbstractDependencyFilter{
 
     private final Boolean optional;
 
-    public NDependencyOptionFilter(NWorkspace workspace, Boolean optional) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NDependencyOptionFilter(Boolean optional) {
+        super(NFilterOp.CUSTOM);
         this.optional = optional;
     }
 

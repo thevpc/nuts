@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 public class DirectoryScanner {
     private NPath initialPattern;
-//    private String root;
+    //    private String root;
 //    private String patternString;
 //    private Pattern pattern;
     private PathPart[] parts;
@@ -24,17 +24,17 @@ public class DirectoryScanner {
         parts = buildParts(initialPattern);
     }
 
-    public static String escape(String s){
-        StringBuilder sb=new StringBuilder();
+    public static String escape(String s) {
+        StringBuilder sb = new StringBuilder();
         for (char c : s.toCharArray()) {
-            switch (c){
+            switch (c) {
                 case '\\':
                 case '*':
-                case '?':{
+                case '?': {
                     sb.append('\\').append(c);
                     break;
                 }
-                default:{
+                default: {
                     sb.append(c);
                     break;
                 }
@@ -43,7 +43,7 @@ public class DirectoryScanner {
         return sb.toString();
     }
 
-    private static boolean containsWildcard(String name){
+    private static boolean containsWildcard(String name) {
         char[] patternChars = name.toCharArray();
         for (char c : patternChars) {
             if (c == '*' || c == '?') {
@@ -55,23 +55,23 @@ public class DirectoryScanner {
 
     private static PathPart[] buildParts(NPath initialPattern) {
         List<PathPart> parts = new ArrayList<>();
-        NPath h=initialPattern;
-        while(h!=null){
+        NPath h = initialPattern;
+        while (h != null) {
             String name = h.getName();
             if (containsWildcard(name)) {
                 if (name.contains("**")) {
-                    parts.add(0,new SubPathWildCardPathPart(name));
+                    parts.add(0, new SubPathWildCardPathPart(name));
                 } else {
-                    parts.add(0,new NameWildCardPathPart(name));
+                    parts.add(0, new NameWildCardPathPart(name));
                 }
             } else {
-                parts.add(0,new PlainPathPart(name));
+                parts.add(0, new PlainPathPart(name));
             }
             NPath p = h.getParent();
-            if(p==h){
-                h=null;
-            }else{
-                h=p;
+            if (p == h) {
+                h = null;
+            } else {
+                h = p;
             }
         }
         return parts.toArray(new PathPart[0]);
@@ -97,11 +97,11 @@ public class DirectoryScanner {
                     r = initialPattern.getRoot();
                 }
                 if (r == null) {
-                    r= NPath.of(((PlainPathPart) parts[i]).value);
-                }else {
+                    r = NPath.of(((PlainPathPart) parts[i]).value);
+                } else {
                     r = r.resolve(((PlainPathPart) parts[i]).value);
                 }
-                if(!r.exists()){
+                if (!r.exists()) {
                     return NStream.ofEmpty();
                 }
             } else if (parts[i] instanceof NameWildCardPathPart) {
@@ -136,7 +136,7 @@ public class DirectoryScanner {
                     return t.flatMapStream((NFunction) f).distinct();
                 }
             } else {
-                throw new NIllegalArgumentException(NMsg.ofC("unsupported %s",parts[i]));
+                throw new NIllegalArgumentException(NMsg.ofC("unsupported %s", parts[i]));
             }
         }
         if (r == null) {
@@ -168,7 +168,7 @@ public class DirectoryScanner {
 
         public NameWildCardPathPart(String value) {
             this.value = value;
-            this.pattern = GlobUtils.glob(value,"/\\");
+            this.pattern = GlobUtils.glob(value, "/\\");
         }
 
         public boolean matchesName(String name) {
@@ -187,11 +187,11 @@ public class DirectoryScanner {
 
         public SubPathWildCardPathPart(String value) {
             this.value = value;
-            this.pattern = GlobUtils.glob(value,"/\\");
+            this.pattern = GlobUtils.glob(value, "/\\");
         }
 
-        public boolean matchesSubPath(NPath subPath) {
-            return pattern.matcher((subPath==null?"":subPath.toString())).matches();
+        public boolean matchesSubPath(String subPath) {
+            return pattern.matcher((subPath == null ? "" : subPath)).matches();
         }
 
         @Override
@@ -201,7 +201,7 @@ public class DirectoryScanner {
     }
 
     private class SubPathWildCardPathPartIterator implements Iterator<NPath> {
-        private final Stack<NPath> stack=new Stack<>();
+        private final Stack<NPath> stack = new Stack<>();
         private final SubPathWildCardPathPart w;
         NPath last;
         NPath root;

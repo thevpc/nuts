@@ -39,8 +39,8 @@ import java.util.Set;
  */
 public abstract class DelegateNDescriptor extends AbstractNDescriptor {
 
-    public DelegateNDescriptor(NWorkspace workspace) {
-        super(workspace);
+    public DelegateNDescriptor() {
+        super();
     }
 
     protected abstract NDescriptor getBase();

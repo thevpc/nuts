@@ -19,8 +19,8 @@ public class NIdFilterNone extends AbstractIdFilter implements NIdFilter, NSimpl
 
     private NIdFilter[] children;
 
-    public NIdFilterNone(NWorkspace workspace, NIdFilter... all) {
-        super(workspace, NFilterOp.NOT);
+    public NIdFilterNone(NIdFilter... all) {
+        super(NFilterOp.NOT);
         List<NIdFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NIdFilter filter : all) {

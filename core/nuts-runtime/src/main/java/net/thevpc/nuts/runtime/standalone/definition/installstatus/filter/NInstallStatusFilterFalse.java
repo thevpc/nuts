@@ -7,8 +7,8 @@ import net.thevpc.nuts.util.NFilterOp;
 
 public class NInstallStatusFilterFalse extends AbstractInstallStatusFilter implements NExprIdFilter {
 
-    public NInstallStatusFilterFalse(NWorkspace workspace) {
-        super(workspace, NFilterOp.FALSE);
+    public NInstallStatusFilterFalse() {
+        super(NFilterOp.FALSE);
     }
 
     @Override

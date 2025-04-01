@@ -21,8 +21,8 @@ import net.thevpc.nuts.util.NFilterOp;
 public class NExecCompanionFilter extends AbstractDescriptorFilter {
     private NId apiId;
     private Set<String> companions;
-    public NExecCompanionFilter(NWorkspace workspace, NId apiId, String[] shortIds) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NExecCompanionFilter(NId apiId, String[] shortIds) {
+        super(NFilterOp.CUSTOM);
         this.apiId=apiId;
         this.companions=new HashSet<>(Arrays.asList(shortIds));
     }

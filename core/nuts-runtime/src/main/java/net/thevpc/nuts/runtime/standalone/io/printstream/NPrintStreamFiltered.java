@@ -4,14 +4,13 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.text.NTerminalCmd;
-import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.OutputStream;
 
 public class NPrintStreamFiltered extends NPrintStreamRendered {
-    public NPrintStreamFiltered(NPrintStreamBase base, NWorkspace workspace, Bindings bindings) {
-        super(base, workspace, NTerminalMode.FILTERED,
+    public NPrintStreamFiltered(NPrintStreamBase base, Bindings bindings) {
+        super(base, NTerminalMode.FILTERED,
                 bindings);
         getMetaData().setMessage(NMsg.ofStyledPath( "<filtered-stream>"));
     }
@@ -21,7 +20,7 @@ public class NPrintStreamFiltered extends NPrintStreamRendered {
     protected NPrintStream convertImpl(NTerminalMode other) {
         switch (other) {
             case FORMATTED: {
-                return new NPrintStreamFormatted(base, workspace, bindings);
+                return new NPrintStreamFormatted(base, bindings);
             }
         }
         throw new NIllegalArgumentException(NMsg.ofC("unsupported %s -> %s", getTerminalMode(), other));

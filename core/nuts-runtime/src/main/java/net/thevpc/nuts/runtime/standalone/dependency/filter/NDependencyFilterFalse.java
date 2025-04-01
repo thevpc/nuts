@@ -5,8 +5,8 @@ import net.thevpc.nuts.util.NFilterOp;
 
 public final class NDependencyFilterFalse extends AbstractDependencyFilter{
 
-    public NDependencyFilterFalse(NWorkspace workspace) {
-        super(workspace, NFilterOp.FALSE);
+    public NDependencyFilterFalse() {
+        super(NFilterOp.FALSE);
     }
 
     @Override

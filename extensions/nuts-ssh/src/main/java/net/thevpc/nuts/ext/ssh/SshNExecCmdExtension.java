@@ -154,8 +154,8 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
                 target,
                 context.in(),
                 context.out(),
-                context.err(),
-                session)) {
+                context.err()
+        )) {
             return c.execStringCommand(NCmdLine.of(command).toString());
         }
     }
@@ -172,8 +172,8 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
                 target,
                 context.in(),
                 context.out(),
-                context.err(),
-                session)) {
+                context.err()
+        )) {
             String[] command = context.getCommand();
             return c.execStringCommand(NCmdLine.of(command).toString());
         }

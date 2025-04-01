@@ -1,9 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
 import net.thevpc.nuts.NIllegalArgumentException;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.file.NanoDBDefaultIndex;
-import net.thevpc.nuts.runtime.standalone.xtra.nanodb.file.NanoDBTableStoreFile;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 
@@ -14,9 +12,7 @@ import java.util.Map;
 public abstract class AbstractNanoDB implements NanoDB {
     protected Map<String, NanoDBTableStore> tables = new HashMap<>();
     protected NanoDBSerializers serializers = new NanoDBSerializers();
-    protected NWorkspace workspace;
     public AbstractNanoDB() {
-        this.workspace = NWorkspace.get().get();
     }
 
     public void flush() {
@@ -49,7 +45,7 @@ public abstract class AbstractNanoDB implements NanoDB {
     }
 
     public <T> NanoDBTableDefinitionBuilderFromBean<T> tableBuilder(Class<T> type) {
-        return new NanoDBTableDefinitionBuilderFromBean<>(type, this, workspace);
+        return new NanoDBTableDefinitionBuilderFromBean<>(type, this);
     }
 
     public <T> NanoDBTableStore<T> createTable(NanoDBTableDefinition<T> def) {
@@ -123,6 +119,6 @@ public abstract class AbstractNanoDB implements NanoDB {
     }
 
     public <T> NanoDBIndex<T> createIndexFor(Class<T> type, NanoDBSerializer<T> ser, File file) {
-        return new NanoDBDefaultIndex<T>(workspace,type,ser, new DBIndexValueStoreDefaultFactory(), new HashMap<>(), file);
+        return new NanoDBDefaultIndex<T>(type,ser, new DBIndexValueStoreDefaultFactory(), new HashMap<>(), file);
     }
 }

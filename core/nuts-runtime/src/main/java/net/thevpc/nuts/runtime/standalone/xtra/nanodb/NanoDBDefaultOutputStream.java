@@ -1,20 +1,16 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.NSession;
 
 import java.io.*;
 
 public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
     private DataOutputStream dos;
     private NanoDBOutputStreamCounter counter;
-    private NWorkspace workspace;
 
-    public NanoDBDefaultOutputStream(OutputStream out, NWorkspace workspace) {
+    public NanoDBDefaultOutputStream(OutputStream out) {
         counter = new NanoDBOutputStreamCounter(out);
         dos = new DataOutputStream(counter);
-        this.workspace = workspace;
     }
 
     @Override

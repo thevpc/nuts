@@ -11,9 +11,7 @@ import net.thevpc.nuts.spi.NSupportLevelContext;
 import java.util.List;
 
 public class DefaultNDependencySolvers implements NDependencySolvers {
-    private NWorkspace ws;
-    public DefaultNDependencySolvers(NWorkspace ws) {
-        this.ws=ws;
+    public DefaultNDependencySolvers() {
     }
 
     @Override

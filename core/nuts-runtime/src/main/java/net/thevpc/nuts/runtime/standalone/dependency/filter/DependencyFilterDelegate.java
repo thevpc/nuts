@@ -9,8 +9,8 @@ import net.thevpc.nuts.util.NFilterOp;
 import java.util.List;
 
 public abstract class DependencyFilterDelegate extends AbstractDependencyFilter{
-    public DependencyFilterDelegate(NWorkspace workspace) {
-        super(workspace, NFilterOp.CUSTOM);
+    public DependencyFilterDelegate() {
+        super(NFilterOp.CUSTOM);
     }
     public abstract NDependencyFilter dependencyFilter();
 

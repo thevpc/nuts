@@ -6,6 +6,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.runtime.standalone.web.DefaultNWebCli;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 import net.thevpc.nuts.text.NTextFormatTheme;
 import net.thevpc.nuts.text.NTextStyle;
@@ -42,7 +43,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
             if (u != null) {
                 try {
                     InputStream inStream = null;
-                    inStream = u.openStream();
+                    inStream = DefaultNWebCli.prepareGlobalOpenStream(u);
                     if (inStream == null) {
                         throw new NIllegalArgumentException(NMsg.ofC("invalid theme: %s", name));
                     }

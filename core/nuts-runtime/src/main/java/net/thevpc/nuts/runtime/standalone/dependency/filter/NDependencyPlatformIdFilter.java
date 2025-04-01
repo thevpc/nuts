@@ -14,19 +14,19 @@ public class NDependencyPlatformIdFilter extends AbstractDependencyFilter  {
 
     private Set<NId> accepted = new HashSet<>();
 
-    public NDependencyPlatformIdFilter(NWorkspace workspace) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NDependencyPlatformIdFilter() {
+        super(NFilterOp.CUSTOM);
     }
 
-    private NDependencyPlatformIdFilter(NWorkspace workspace, Collection<NId> accepted) {
-        super(workspace, NFilterOp.CUSTOM);
+    private NDependencyPlatformIdFilter(Collection<NId> accepted) {
+        super(NFilterOp.CUSTOM);
         this.accepted = new LinkedHashSet<>(accepted);
     }
 
     public NDependencyPlatformIdFilter add(Collection<NId> os) {
         LinkedHashSet<NId> s2 = new LinkedHashSet<>(accepted);
         s2.addAll(os);
-        return new NDependencyPlatformIdFilter(workspace, s2);
+        return new NDependencyPlatformIdFilter(s2);
     }
 
     @Override

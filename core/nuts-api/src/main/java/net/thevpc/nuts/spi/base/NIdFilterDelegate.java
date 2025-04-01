@@ -12,8 +12,8 @@ import java.util.Objects;
 public abstract class NIdFilterDelegate extends AbstractIdFilter {
     public abstract NIdFilter baseNIdFilter();
 
-    public NIdFilterDelegate(NWorkspace workspace) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NIdFilterDelegate() {
+        super(NFilterOp.CUSTOM);
     }
 
     @Override

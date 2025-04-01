@@ -39,12 +39,11 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     private Boolean preferConsole;
 
     public DefaultNSystemTerminalBase(NWorkspace workspace) {
-        super(workspace);
+        super();
     }
 
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
-        NWorkspace workspace = getWorkspace();
         NBootOptions options = NWorkspace.of().getBootOptions();
         NTerminalMode terminalMode = options.getTerminalMode().orElse(NTerminalMode.DEFAULT);
         NWorkspaceTerminalOptions bootStdFd = NWorkspaceExt.of().getModel().bootModel.getBootTerminal();
@@ -56,16 +55,16 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
             }
         }
         if (bootStdFd.getFlags().contains("tty")) {
-            termCursor = new NCachedValue<>(workspace, () -> CoreAnsiTermHelper.evalCursor(), THIRTY_SECONDS);
-            termSize = new NCachedValue<>(workspace, () -> CoreAnsiTermHelper.evalSize(), THIRTY_SECONDS);
+            termCursor = new NCachedValue<>(() -> CoreAnsiTermHelper.evalCursor(), THIRTY_SECONDS);
+            termSize = new NCachedValue<>(() -> CoreAnsiTermHelper.evalSize(), THIRTY_SECONDS);
         } else {
-            termCursor = new NCachedValue<>(workspace, () -> null, THIRTY_SECONDS);
-            termSize = new NCachedValue<>(workspace, () -> null, THIRTY_SECONDS);
+            termCursor = new NCachedValue<>(() -> null, THIRTY_SECONDS);
+            termSize = new NCachedValue<>(() -> null, THIRTY_SECONDS);
         }
         this.out = new NPrintStreamSystem(bootStdFd.getOut(), null, null, bootStdFd.getFlags().contains("ansi"),
-                workspace, this).setTerminalMode(terminalMode);
+                 this).setTerminalMode(terminalMode);
         this.err = new NPrintStreamSystem(bootStdFd.getErr(), null, null, bootStdFd.getFlags().contains("ansi"),
-                workspace, this).setTerminalMode(terminalMode);
+                 this).setTerminalMode(terminalMode);
         this.in = bootStdFd.getIn();
         this.scanner = new Scanner(this.in);
         return NConstants.Support.DEFAULT_SUPPORT;
@@ -178,7 +177,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
                 return termSize.getValue();
             }
         }
-        String s = NAnsiTermHelper.of(getWorkspace()).command(command);
+        String s = NAnsiTermHelper.of().command(command);
         if (s != null) {
             byte[] bytes = s.getBytes();
             printStream.writeRaw(bytes, 0, bytes.length);
@@ -188,7 +187,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     }
 
     public void setStyles(NTextStyles styles, NPrintStream printStream) {
-        String s = NAnsiTermHelper.of(getWorkspace()).styled(styles);
+        String s = NAnsiTermHelper.of().styled(styles);
         if (s != null) {
             byte[] bytes = s.getBytes();
             printStream.writeRaw(bytes, 0, bytes.length);

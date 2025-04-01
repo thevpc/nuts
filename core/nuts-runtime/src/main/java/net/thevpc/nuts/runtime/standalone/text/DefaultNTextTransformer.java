@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.NIllegalArgumentException;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -18,11 +17,9 @@ import java.util.stream.Collectors;
 public class DefaultNTextTransformer implements NTextTransformer {
     private final NTexts txts;
     private final NTextTransformConfig config;
-    private final NWorkspace workspace;
     private final NWorkspaceVarExpansionFunction d;
 
-    public DefaultNTextTransformer(NTextTransformConfig config, NWorkspace workspace) {
-        this.workspace = workspace;
+    public DefaultNTextTransformer(NTextTransformConfig config) {
         this.config = config;
         txts = NTexts.of();
         d = NWorkspaceVarExpansionFunction.of();

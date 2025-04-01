@@ -951,7 +951,7 @@ public class Test04_NTFTest {
     }
 
     private NTFParser2 createParser() {
-        return new NTFParser2(NWorkspace.of());
+        return new NTFParser2();
     }
 
     @Test

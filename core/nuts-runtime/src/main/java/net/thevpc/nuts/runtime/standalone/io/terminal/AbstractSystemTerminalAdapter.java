@@ -22,8 +22,8 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
     protected CProgressBar progressBar;
     private String commandHighlighter;
 
-    public AbstractSystemTerminalAdapter(NWorkspace workspace) {
-        super(workspace);
+    public AbstractSystemTerminalAdapter() {
+        super();
     }
 
     @Override
@@ -140,7 +140,7 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
 
     @Override
     public NSystemTerminal printProgress(float progress, NMsg message) {
-        NSession session=getWorkspace().currentSession();
+        NSession session=NSession.of();
         if (session.isProgress()) {
             if (getBase() instanceof NSystemTerminal) {
                 ((NSystemTerminal) getBase()).printProgress(progress, message);

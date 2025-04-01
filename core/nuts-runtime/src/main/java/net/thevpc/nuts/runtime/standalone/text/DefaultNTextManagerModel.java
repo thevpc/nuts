@@ -237,7 +237,7 @@ public class DefaultNTextManagerModel {
             try {
                 NTextStyle found = NTextStyle.parse(lc).orNull();
                 if (found != null) {
-                    h = new CustomStyleCodeHighlighter(found, workspace);
+                    h = new CustomStyleCodeHighlighter(found);
                     _cachedHighlighters.put(lc, h);
                     return h;
                 }
@@ -296,7 +296,7 @@ public class DefaultNTextManagerModel {
 
     public NElementStreamFormat getYamlMan() {
         if (yamlMan == null) {
-            yamlMan = new SimpleYaml(workspace);
+            yamlMan = new SimpleYaml();
         }
         return yamlMan;
     }
@@ -309,7 +309,7 @@ public class DefaultNTextManagerModel {
     }
     public NElementStreamFormat getTsonMan() {
         if (tsonMan == null) {
-            tsonMan = new DefaultTsonElementFormat(workspace);
+            tsonMan = new DefaultTsonElementFormat();
         }
         return tsonMan;
     }

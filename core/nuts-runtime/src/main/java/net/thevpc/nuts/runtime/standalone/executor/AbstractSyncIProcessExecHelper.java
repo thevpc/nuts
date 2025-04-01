@@ -7,14 +7,8 @@ import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
 import java.util.concurrent.Future;
 
 public abstract class AbstractSyncIProcessExecHelper implements IProcessExecHelper {
-    protected NWorkspace workspace;
 
-    public AbstractSyncIProcessExecHelper(NWorkspace workspace) {
-        this.workspace = workspace;
-    }
-
-    public NWorkspace getWorkspace() {
-        return workspace;
+    public AbstractSyncIProcessExecHelper() {
     }
 
     @Override

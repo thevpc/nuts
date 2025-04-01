@@ -41,8 +41,8 @@ public class NDescriptorFilterOs extends AbstractDescriptorFilter {
 
     private final String os;
 
-    public NDescriptorFilterOs(NWorkspace workspace, String os) {
-        super(workspace, NFilterOp.CUSTOM);
+    public NDescriptorFilterOs(String os) {
+        super(NFilterOp.CUSTOM);
         this.os = os;
     }
 

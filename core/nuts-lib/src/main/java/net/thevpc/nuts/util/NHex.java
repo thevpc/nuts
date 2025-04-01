@@ -73,6 +73,9 @@ public class NHex {
     }
 
     public static String fromBytes(byte[] bytes) {
+        if(bytes==null){
+            return null;
+        }
         byte[] hexChars = new byte[bytes.length * 2];
         for (int j = 0; j < bytes.length; j++) {
             int v = bytes[j] & 0xFF;
@@ -83,6 +86,9 @@ public class NHex {
     }
 
     public static String fromBytes(byte[] bytes, int offset, int length) {
+        if(bytes==null){
+            return null;
+        }
         byte[] hexChars = new byte[length * 2];
         for (int j = offset; j < offset + length; j++) {
             int v = bytes[j] & 0xFF;
@@ -93,6 +99,9 @@ public class NHex {
     }
 
     public static byte[] toBytes(String s, int size) {
+        if(s==null){
+            return null;
+        }
         byte[] a = toBytes(s);
         if (a.length != size) {
             throw new IllegalArgumentException("invalid hex " + a.length + " <> " + size);
@@ -101,6 +110,9 @@ public class NHex {
     }
 
     public static byte[] toBytes(String s) {
+        if(s==null){
+            return null;
+        }
         int len = s.length();
         if (len == 0) {
             return new byte[0];

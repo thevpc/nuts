@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.text.util;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.text.NText;
@@ -24,14 +23,11 @@ public class DefaultNDurationFormat2 {
     private static DecimalFormat F3 = new DecimalFormat("000");
     private static DecimalFormat F9 = new DecimalFormat("000000000");
     private static DecimalFormat F6 = new DecimalFormat("000000");
-    private NWorkspace workspace;
-    public DefaultNDurationFormat2(NWorkspace workspace,NDurationFormatMode mode) {
+    public DefaultNDurationFormat2(NDurationFormatMode mode) {
         this.mode = mode == null ? NDurationFormatMode.DEFAULT : mode;
-        this.workspace=workspace;
     }
 
-    public DefaultNDurationFormat2(NWorkspace workspace,String pattern) {
-        this.workspace=workspace;
+    public DefaultNDurationFormat2(String pattern) {
         if (NBlankable.isBlank(pattern)) {
             this.mode = NDurationFormatMode.DEFAULT;
         } else {

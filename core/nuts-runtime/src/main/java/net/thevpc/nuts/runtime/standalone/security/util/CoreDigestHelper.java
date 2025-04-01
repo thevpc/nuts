@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.security.util;
 
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.runtime.standalone.web.DefaultNWebCli;
 import net.thevpc.nuts.util.NHex;
 
 import java.io.ByteArrayInputStream;
@@ -57,7 +58,7 @@ public class CoreDigestHelper {
             }
             InputStream is = null;
             try {
-                is = url.openStream();
+                is = DefaultNWebCli.prepareGlobalOpenStream(url);
                 if (is != null) {
                     append(is);
                 }

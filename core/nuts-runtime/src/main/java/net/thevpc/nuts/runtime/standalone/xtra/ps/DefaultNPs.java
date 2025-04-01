@@ -25,11 +25,9 @@ import net.thevpc.nuts.util.*;
 public class DefaultNPs implements NPs {
 
     private String processType;
-    private NWorkspace workspace;
     private boolean failFast;
 
-    public DefaultNPs(NWorkspace workspace) {
-        this.workspace = workspace;
+    public DefaultNPs() {
     }
 
     @Override
@@ -186,7 +184,7 @@ public class DefaultNPs implements NPs {
     }
 
     private String[] betterArgs(String pid) {
-        switch (workspace.getOsFamily()) {
+        switch (NWorkspace.of().getOsFamily()) {
             case LINUX:
             case UNIX:
             case MACOS: {
