@@ -361,29 +361,40 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                                 + NPath.of(fullPath).getName()
                 );
             }
+            String mainIdStr = "";
+            if (mainId != null
+                    && !NConstants.Ids.NUTS_API.equals(mainId.getShortName())
+                    && !NConstants.Ids.NUTS_APP.equals(mainId.getShortName())
+                    && !NConstants.Ids.NUTS_RUNTIME.equals(mainId.getShortName())
+            ) {
+                mainIdStr = mainId.getLongName();
+            }
             // create posix runner
             bundleFolder.resolve("posix-runner.sh" ).writeString(
                     new NStringBuilder()
                             .println("#!/bin/sh" )
                             .println("" )
-                            .println("java -jar \"lib/" + ExtraApiUtils.resolveJarPath(runnerId) + "\" --repo==lib \"$@\"" )
+                            .println("java -jar \"lib/" + ExtraApiUtils.resolveJarPath(runnerId) + "\" --repo==lib " +
+                                    (mainIdStr.isEmpty() ? "" : ("'" + mainIdStr + "'" ))
+                                    + " \"$@\"" )
                             .build()
             );
             nuts_bundle_files_config.println(
                     "copy /posix-runner.sh"
-                            + " ${user.dir}/" + appName + "-bundle.sh"
+                            + " ${user.dir}/" + appName + ".sh"
             );
             // create posix windows runner
             bundleFolder.resolve("windows-runner.bat" ).writeString(
                     new NStringBuilder()
-                            .println("#!/bin/sh" )
                             .println("" )
-                            .println("java -jar \"lib/" + ExtraApiUtils.resolveJarPath(runnerId) + "\" --repo==lib \"$@\"" )
+                            .println("java.exe -jar \"lib/" + ExtraApiUtils.resolveJarPath(runnerId) + "\" --repo==lib " +
+                                    (mainIdStr.isEmpty() ? "" : ("\"" + mainIdStr + "\"" ))
+                                    + " $*" )
                             .build()
             );
             nuts_bundle_files_config.println(
                     "copy /windows-runner.bat"
-                            + " ${user.dir}/" + appName + "-bundle.bat"
+                            + " ${user.dir}/" + appName + ".bat"
             );
             rootFolder.resolve("META-INF/nuts-bundle-files.config" ).writeString(nuts_bundle_files_config.toString());
         }
