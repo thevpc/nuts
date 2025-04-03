@@ -251,3 +251,5 @@ core/nuts-app-full/target
 /libraries/nuts-tomcat-classloader/target/
 /extensions/nuts-ssh/target/
 /extensions/nuts-term/target/
+/libraries/nlib-doc/target/
+/libraries/nlib-md/target/
