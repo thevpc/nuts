@@ -1351,5 +1351,15 @@ public class DefaultNLiteral implements NLiteral {
                         || value instanceof LocalDateTime
                 ;
     }
+
+    @Override
+    public boolean isOrdinalNumber() {
+        return type().isOrdinalNumber();
+    }
+
+    @Override
+    public boolean isFloatingNumber() {
+        return type().isFloatingNumber();
+    }
 }
 

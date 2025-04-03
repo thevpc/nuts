@@ -64,7 +64,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
     @Override
     public NStream<NPath> list(NPath basePath) {
         try (InputStream q = ref.getInputStream()) {
-            return NStream.of(parseHtml(q).stream().map(
+            return NStream.ofStream(parseHtml(q).stream().map(
                     x -> {
                         if (x.endsWith("/")) {
                             String a = PREFIX + ref.resolve(x);

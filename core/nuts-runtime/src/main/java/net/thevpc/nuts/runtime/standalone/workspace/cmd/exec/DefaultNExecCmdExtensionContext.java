@@ -27,44 +27,44 @@ public class DefaultNExecCmdExtensionContext implements NExecCmdExtensionContext
         this.execCommand = execCommand;
         switch (in.getType()) {
             case NULL: {
-                hin = new MyInHolder(session, NIO.ofNullRawInputStream(), false, null);
+                hin = new MyInHolder(NIO.ofNullRawInputStream(), false, null);
                 break;
             }
             case PATH: {
-                hin = new MyInHolder(session, in.getPath().getInputStream(), true, null);
+                hin = new MyInHolder(in.getPath().getInputStream(), true, null);
                 break;
             }
             case INHERIT:
             case PIPE: {
-                hin = new MyInHolder(session, session.in(), false, null);
+                hin = new MyInHolder(session.in(), false, null);
                 break;
             }
             case STREAM: {
-                hin = new MyInHolder(session, in.getStream(), false, null);
+                hin = new MyInHolder(in.getStream(), false, null);
                 break;
             }
         }
         switch (out.getType()) {
             case NULL: {
-                hout = new MyOutHolder(session, NIO.ofNullRawOutputStream(), false, null);
+                hout = new MyOutHolder(NIO.ofNullRawOutputStream(), false, null);
                 break;
             }
             case PATH: {
-                hout = new MyOutHolder(session, in.getPath().getOutputStream(), true, null);
+                hout = new MyOutHolder(in.getPath().getOutputStream(), true, null);
                 break;
             }
             case INHERIT:
             case PIPE: {
-                hout = new MyOutHolder(session, NOut.asOutputStream(), false, null);
+                hout = new MyOutHolder(NOut.asOutputStream(), false, null);
                 break;
             }
             case STREAM: {
-                hout = new MyOutHolder(session, out.getStream(), false, null);
+                hout = new MyOutHolder(out.getStream(), false, null);
                 break;
             }
             case GRAB_STREAM: {
                 ByteArrayOutputStream grabbed = new ByteArrayOutputStream();
-                hout = new MyOutHolder(session, grabbed, false, () -> {
+                hout = new MyOutHolder(grabbed, false, () -> {
                     out.setResult(NInputSource.of(grabbed.toByteArray()));
                 });
                 break;
@@ -73,7 +73,7 @@ public class DefaultNExecCmdExtensionContext implements NExecCmdExtensionContext
                 NPath temp = NPath.ofTempFile();
                 temp.setDeleteOnDispose(true);
                 temp.setUserTemporary(true);
-                hout = new MyOutHolder(session, temp.getOutputStream(), true, () -> {
+                hout = new MyOutHolder(temp.getOutputStream(), true, () -> {
                     out.setResult(temp);
                 });
                 break;
@@ -81,25 +81,25 @@ public class DefaultNExecCmdExtensionContext implements NExecCmdExtensionContext
         }
         switch (err.getType()) {
             case NULL: {
-                herr = new MyOutHolder(session, NIO.ofNullRawOutputStream(), false, null);
+                herr = new MyOutHolder(NIO.ofNullRawOutputStream(), false, null);
                 break;
             }
             case PATH: {
-                herr = new MyOutHolder(session, in.getPath().getOutputStream(), true, null);
+                herr = new MyOutHolder(in.getPath().getOutputStream(), true, null);
                 break;
             }
             case INHERIT:
             case PIPE: {
-                herr = new MyOutHolder(session, session.err().asOutputStream(), false, null);
+                herr = new MyOutHolder(session.err().asOutputStream(), false, null);
                 break;
             }
             case STREAM: {
-                herr = new MyOutHolder(session, err.getStream(), false, null);
+                herr = new MyOutHolder(err.getStream(), false, null);
                 break;
             }
             case GRAB_STREAM: {
                 ByteArrayOutputStream grabbed = new ByteArrayOutputStream();
-                herr = new MyOutHolder(session, grabbed, false, () -> {
+                herr = new MyOutHolder(grabbed, false, () -> {
                     err.setResult(NInputSource.of(grabbed.toByteArray()));
                 });
                 break;
@@ -108,7 +108,7 @@ public class DefaultNExecCmdExtensionContext implements NExecCmdExtensionContext
                 NPath temp = NPath.ofTempFile();
                 temp.setDeleteOnDispose(true);
                 temp.setUserTemporary(true);
-                herr = new MyOutHolder(session, temp.getOutputStream(), true, () -> {
+                herr = new MyOutHolder(temp.getOutputStream(), true, () -> {
                     err.setResult(temp);
                 });
                 break;
@@ -181,13 +181,11 @@ public class DefaultNExecCmdExtensionContext implements NExecCmdExtensionContext
 
 
     private static class MyInHolder implements InHolder {
-        private final NSession session;
         private final InputStream in;
         private final boolean close;
         private final Runnable onClose;
 
-        public MyInHolder(NSession session, InputStream in, boolean close, Runnable onClose) {
-            this.session = session;
+        public MyInHolder(InputStream in, boolean close, Runnable onClose) {
             this.in = in;
             this.close = close;
             this.onClose = onClose;
@@ -214,13 +212,11 @@ public class DefaultNExecCmdExtensionContext implements NExecCmdExtensionContext
     }
 
     private static class MyOutHolder implements OutHolder {
-        private final NSession session;
         private final OutputStream out;
         private final boolean close;
         private final Runnable onClose;
 
-        public MyOutHolder(NSession session, OutputStream out, boolean close, Runnable onClose) {
-            this.session = session;
+        public MyOutHolder(OutputStream out, boolean close, Runnable onClose) {
             this.out = out;
             this.close = close;
             this.onClose = onClose;

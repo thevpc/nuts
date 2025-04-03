@@ -238,7 +238,7 @@ public class DirectoryScanner {
         }
 
         public NStream<NPath> stream() {
-            return NStream.of(this);
+            return NStream.ofIterator(this);
         }
     }
 }

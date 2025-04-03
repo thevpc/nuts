@@ -28,7 +28,7 @@ public class NPathSPIHelper {
     public static NStream<NPath> walk(NPath basePath, int maxDepth, NPathOption[] options) {
         boolean noMax=maxDepth<=0 || maxDepth==Integer.MAX_VALUE;
         Iterator<NPath> it = new NPathIterator(basePath, noMax, maxDepth);
-        return NStream.of(it);
+        return NStream.ofIterator(it);
     }
 
     public static void walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {

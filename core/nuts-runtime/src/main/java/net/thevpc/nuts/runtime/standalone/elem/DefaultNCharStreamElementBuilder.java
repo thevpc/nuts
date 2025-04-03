@@ -5,6 +5,7 @@ import net.thevpc.nuts.io.NInputStreamProvider;
 import net.thevpc.nuts.io.NReaderProvider;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class DefaultNCharStreamElementBuilder extends AbstractNElementBuilder implements NCharStreamElementBuilder {
     private NReaderProvider value;
@@ -13,6 +14,13 @@ public class DefaultNCharStreamElementBuilder extends AbstractNElementBuilder im
     public DefaultNCharStreamElementBuilder() {
     }
 
+    @Override
+    public NCharStreamElementBuilder doWith(Consumer<NCharStreamElementBuilder> con) {
+        if(con!=null){
+            con.accept(this);
+        }
+        return this;
+    }
 
     public NReaderProvider value() {
         return value;

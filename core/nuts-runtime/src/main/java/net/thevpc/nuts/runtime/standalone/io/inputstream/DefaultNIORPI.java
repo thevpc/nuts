@@ -108,7 +108,6 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public NPrintStream ofPrintStream(OutputStream out) {
-//        checkSession();
         if (out instanceof NPrintStreamAdapter) {
             return ((NPrintStreamAdapter) out).getBasePrintStream();
         }
@@ -126,7 +125,6 @@ public class DefaultNIORPI implements NIORPI {
     }
 
     public NPrintStream ofPrintStream(Writer out, NTerminalMode mode, NSystemTerminalBase terminal) {
-//        checkSession();
         if (mode == null) {
             mode = NTerminalMode.INHERITED;
         }
@@ -142,7 +140,6 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public NPrintStream ofPrintStream(Writer out) {
-//        checkSession();
         return ofPrintStream(out, NTerminalMode.INHERITED, null);
     }
 
@@ -277,6 +274,10 @@ public class DefaultNIORPI implements NIORPI {
         return ofInputSource(new ByteArrayInputStream(bytes));
     }
 
+    @Override
+    public NInputSource ofEmptyInputSource() {
+        return ofInputSource(NullInputStream.INSTANCE);
+    }
 
     @Override
     public NInputSource ofInputSource(byte[] inputStream, NContentMetadata metadata) {

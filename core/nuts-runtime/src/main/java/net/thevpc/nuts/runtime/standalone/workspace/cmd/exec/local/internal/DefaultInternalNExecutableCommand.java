@@ -19,12 +19,26 @@ import net.thevpc.nuts.util.NMsg;
 /**
  * @author thevpc
  */
-public abstract class DefaultInternalNExecutableCommand extends AbstractNExecutableInformationExt {
+public class DefaultInternalNExecutableCommand extends AbstractNExecutableInformationExt {
 
     protected String[] args;
+    protected NInternalCommand impl;
     public DefaultInternalNExecutableCommand(String name, String[] args, NExecCmd execCommand) {
         super(name, name, NExecutableType.INTERNAL,execCommand);
         this.args = args;
+    }
+    public DefaultInternalNExecutableCommand(NInternalCommand impl, String[] args, NExecCmd execCommand) {
+        super(impl.getName(), impl.getName(), NExecutableType.INTERNAL,execCommand);
+        this.args = args;
+        this.impl = impl;
+    }
+
+    @Override
+    public int execute() {
+        if(impl==null){
+            throw new NIllegalArgumentException(NMsg.ofC("impl is null"));
+        }
+        return impl.execute(args, getExecCommand());
     }
 
     @Override

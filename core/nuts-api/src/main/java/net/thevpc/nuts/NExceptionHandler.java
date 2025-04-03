@@ -50,7 +50,7 @@ public class NExceptionHandler {
         if (session != null) {
             return session.callWith(() -> {
                 NWorkspaceOptions bo = null;
-                bo = session.getWorkspace().getBootOptions().builder().toWorkspaceOptions();
+                bo = session.getWorkspace().getBootOptions().toWorkspaceOptions();
                 return new NExceptionHandler()
                         .setEx(ex)
                         .setShowMessage(true)

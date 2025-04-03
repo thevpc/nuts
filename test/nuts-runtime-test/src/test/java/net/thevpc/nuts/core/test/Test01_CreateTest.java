@@ -196,7 +196,7 @@ public class Test01_CreateTest {
         }
 
         {
-            NStream<String> stream = NStream.of(new String[]{"a"});
+            NStream<String> stream = NStream.ofArray(new String[]{"a"});
             Assertions.assertNotNull(stream);
         }
 

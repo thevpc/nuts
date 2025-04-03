@@ -30,9 +30,11 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NIterable;
 import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStream;
 
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -59,4 +61,7 @@ public interface NCollectionsRPI extends NComponent {
 
     <T> NIterable<T> toIterable(Iterable<T> str);
 
+    <T> NStream<T> optionalToStream(Optional<T> str);
+
+    <T> NStream<T> optionalToStream(NOptional<T> str);
 }

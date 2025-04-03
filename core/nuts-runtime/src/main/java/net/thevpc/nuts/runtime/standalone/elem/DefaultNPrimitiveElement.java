@@ -250,6 +250,15 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
     public boolean isNumber() {
         return value.isNumber();
     }
+    @Override
+    public boolean isFloatingNumber() {
+        return value.isFloatingNumber();
+    }
+
+    @Override
+    public boolean isOrdinalNumber() {
+        return value.isOrdinalNumber();
+    }
 
     @Override
     public String toString() {

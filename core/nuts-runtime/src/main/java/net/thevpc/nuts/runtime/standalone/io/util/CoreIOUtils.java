@@ -760,7 +760,7 @@ public class CoreIOUtils {
 //    }
 
     public static NStream<String> safeLines(byte[] bytes) {
-        return NStream.of(
+        return NStream.ofIterator(
                 new Iterator<String>() {
                     BufferedReader br;
                     String line;

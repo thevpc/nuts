@@ -2,8 +2,8 @@ package net.thevpc.nuts.runtime.standalone.web;
 
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NWorkspace;
-import net.thevpc.nuts.boot.reserved.cmdline.NBootArg;
 import net.thevpc.nuts.boot.reserved.util.NBootLog;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NInputSourceBuilder;
@@ -13,6 +13,7 @@ import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.util.NStringUtils;
 import net.thevpc.nuts.web.*;
 
@@ -34,8 +35,8 @@ public class DefaultNWebCli implements NWebCli {
     public static URLConnection prepareGlobalConnection(URLConnection c) {
         int connectionTimout = getGlobalConnectionTimeoutOrDefault();
         int readTimout = getGlobalReadConnectionTimeoutOrDefault();
-        c.setConnectTimeout(connectionTimout);
-        c.setReadTimeout(readTimout);
+        c.setConnectTimeout(Math.max(connectionTimout, 0));
+        c.setReadTimeout(Math.max(readTimout, 0));
         return c;
     }
 
@@ -56,31 +57,15 @@ public class DefaultNWebCli implements NWebCli {
     }
 
     public static Integer getGlobalConnectionTimeout() {
-        Integer i = NWorkspace.of().getBootOptions()
-                .getCustomOptions().orElse(new ArrayList<>()).stream().map(x -> NBootArg.of(x))
-                .filter(x -> Objects.equals(x.getOptionName(), "---connection-timeout")).map(x -> x.getIntValue())
-                .filter(x -> x != null)
-                .findFirst().orElse(null);
-        if (i != null) {
-            if (i <= 0) {
-                return null;
-            }
-        }
-        return i;
+        return NWorkspace.of().getBootOptions()
+                .getCustomOptionArg("---connection-timeout").flatMap(y -> y.getValue().asInt())
+                .orElse(null);
     }
 
     public static Integer getGlobalReadTimeout() {
-        Integer i = NWorkspace.of().getBootOptions()
-                .getCustomOptions().orElse(new ArrayList<>()).stream().map(x -> NBootArg.of(x))
-                .filter(x -> Objects.equals(x.getOptionName(), "---connection-read-timeout")).map(x -> x.getIntValue())
-                .filter(x -> x != null)
-                .findFirst().orElse(null);
-        if (i != null) {
-            if (i <= 0) {
-                return null;
-            }
-        }
-        return i;
+        return NWorkspace.of().getBootOptions()
+                .getCustomOptionArg("---connection-read-timeout").flatMap(y -> y.getValue().asInt())
+                .orElse(null);
     }
 
     public static NBootLog log;
@@ -409,7 +394,7 @@ public class DefaultNWebCli implements NWebCli {
                     readTimeout1 = getGlobalReadConnectionTimeoutOrDefault();
                 }
                 if (readTimeout1 != null) {
-                    uc.setReadTimeout(readTimeout1);
+                    uc.setReadTimeout(Math.max(readTimeout1, 0));
                 }
 
                 Integer connectTimeout1 = r.getConnectTimeout();
@@ -420,9 +405,13 @@ public class DefaultNWebCli implements NWebCli {
                     connectTimeout1 = getGlobalConnectionTimeoutOrDefault();
                 }
                 if (connectTimeout1 != null) {
-                    uc.setConnectTimeout(connectTimeout1);
+                    uc.setConnectTimeout(Math.max(connectTimeout1, 0));
                 }
                 DefaultNWebHeaders headers = new DefaultNWebHeaders();
+
+                //must be called before writing headers!
+                NInputSource requestBody = r.getRequestBody();
+
                 headers.addHeadersMulti(r.getHeaders(), DefaultNWebHeaders.Mode.ALWAYS);
                 headers.addHeadersMulti(this.headers.toMap(), DefaultNWebHeaders.Mode.IF_EMPTY);
 
@@ -432,7 +421,6 @@ public class DefaultNWebCli implements NWebCli {
                 uc.setRequestMethod(method.toString());
                 uc.setUseCaches(false);
 
-                NInputSource requestBody = r.getRequestBody();
                 long bodyLength = requestBody == null ? -1 : requestBody.contentLength();
                 boolean someBody = requestBody != null && bodyLength > 0;
 

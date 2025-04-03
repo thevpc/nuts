@@ -55,6 +55,11 @@ public class SimpleYaml implements NElementStreamFormat {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public NElement normalize(NElement e) {
+        return e;
+    }
+
     private enum NodeType {
         LITERAL,
         ARRAY_ELEMENT,

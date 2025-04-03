@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 
@@ -43,6 +44,14 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     private String name;
 
     public DefaultNArrayElementBuilder() {
+    }
+
+    @Override
+    public NArrayElementBuilder doWith(Consumer<NArrayElementBuilder> con) {
+        if (con != null) {
+            con.accept(this);
+        }
+        return this;
     }
 
     public String name() {

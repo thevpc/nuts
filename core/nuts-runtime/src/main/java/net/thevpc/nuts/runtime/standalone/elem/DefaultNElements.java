@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.Temporal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.function.Predicate;
 
@@ -127,7 +128,6 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     @Override
     public NElements setContentType(NContentType contentType) {
-//        checkSession();
         if (contentType == null) {
             this.contentType = NContentType.JSON;
         } else {
@@ -388,6 +388,11 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
         );
     }
 
+    @Override
+    public NPairElementBuilder ofPairBuilder() {
+        return new DefaultNPairElementBuilder();
+    }
+
     //    @Override
 //    public NutsPrimitiveElementBuilder forPrimitive() {
 //        return new DefaultNPrimitiveElementBuilder(session);
@@ -398,8 +403,18 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     @Override
+    public NObjectElementBuilder ofObjectBuilder(String name) {
+        return ofObjectBuilder().name(name);
+    }
+
+    @Override
     public NArrayElementBuilder ofArrayBuilder() {
         return new DefaultNArrayElementBuilder();
+    }
+
+    @Override
+    public NArrayElementBuilder ofArrayBuilder(String name) {
+        return ofArrayBuilder().name(name);
     }
 
     @Override
@@ -410,6 +425,11 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     @Override
     public NArrayElement ofArray(NElement... items) {
         return ofArrayBuilder().addAll(items).build();
+    }
+
+    @Override
+    public NObjectElement ofObject(NElement... items) {
+        return ofObjectBuilder().addAll(items).build();
     }
 
     @Override
@@ -444,11 +464,11 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     public NPrimitiveElement ofString(String str, NElementType stringLayout) {
-        if(str == null){
+        if (str == null) {
             return ofNull();
         }
-        if(stringLayout == null){
-            stringLayout=NElementType.DOUBLE_QUOTED_STRING;
+        if (stringLayout == null) {
+            stringLayout = NElementType.DOUBLE_QUOTED_STRING;
         }
         switch (stringLayout) {
             case DOUBLE_QUOTED_STRING:
@@ -657,6 +677,11 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     @Override
+    public NUpletElementBuilder ofUpletBuilder(String name) {
+        return ofUpletBuilder().name(name);
+    }
+
+    @Override
     public NUpletElement ofEmptyUplet() {
         return ofUpletBuilder().build();
     }
@@ -664,6 +689,11 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     @Override
     public NUpletElement ofUplet(String name, NElement... items) {
         return ofUpletBuilder().name(name).addAll(items).build();
+    }
+
+    @Override
+    public NUpletElement ofUplet(NElement... items) {
+        return ofUpletBuilder().addAll(items).build();
     }
 
     @Override
@@ -777,6 +807,10 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
         return this;
     }
 
+    public NElement normalize(NElement e) {
+        return resolveStructuredFormat().normalize(e == null ? ofNull() : e);
+    }
+
     private NElementStreamFormat resolveStructuredFormat() {
         switch (contentType) {
             case JSON: {
@@ -865,12 +899,15 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
         throw new NUnsupportedOperationException(NMsg.ofC("not implemented yet ofMatrixBuilder()"));
     }
 
-    public NElementComments ofMultiLineComments(String a) {
-        return new NElementCommentsImpl(new NElementComment[]{ofMultiLineComment(a)}, null);
+    public NElementComments ofMultiLineComments(String... lines) {
+        return new NElementCommentsImpl(new NElementComment[]{ofMultiLineComment(lines)}, null);
     }
 
-    public NElementComments ofSingleLineComments(String a) {
-        return new NElementCommentsImpl(new NElementComment[]{ofSingleLineComment(a)}, null);
+    public NElementComments ofSingleLineComments(String... lines) {
+        return new NElementCommentsImpl(
+                Arrays.stream(lines == null ? new String[0] : lines)
+                        .map(x -> ofSingleLineComment(x)).toArray(NElementComment[]::new)
+                , null);
     }
 
     public NElementComments ofComments(NElementComment[] leading, NElementComment[] trailing) {
@@ -878,12 +915,12 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
 
-    public NElementComment ofMultiLineComment(String a) {
-        return NElementCommentImpl.ofMultiLine(a);
+    public NElementComment ofMultiLineComment(String... lines) {
+        return NElementCommentImpl.ofMultiLine(lines);
     }
 
-    public NElementComment ofSingleLineComment(String a) {
-        return NElementCommentImpl.ofSingleLine(a);
+    public NElementComment ofSingleLineComment(String... lines) {
+        return NElementCommentImpl.ofSingleLine(lines);
     }
 
 

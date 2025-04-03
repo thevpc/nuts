@@ -1,23 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.util.stream;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.reserved.rpi.NCollectionsRPI;
-import net.thevpc.nuts.util.NIteratorEmpty;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NIterable;
-import net.thevpc.nuts.util.NIterator;
-import net.thevpc.nuts.util.NStream;
-import net.thevpc.nuts.util.NIteratorBaseFromJavaIterator;
-import net.thevpc.nuts.util.NIterableFromJavaIterable;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 @NComponentScope(NScopeType.SESSION)
@@ -33,7 +24,6 @@ public class DefaultNCollectionsRPI implements NCollectionsRPI {
 
     @Override
     public <T> NStream<T> arrayToStream(T[] str) {
-        checkSession();
         String name = null;
         if (str == null) {
             return new NStreamEmpty<T>(name);
@@ -43,7 +33,6 @@ public class DefaultNCollectionsRPI implements NCollectionsRPI {
 
     @Override
     public <T> NStream<T> iterableToStream(Iterable<T> str) {
-        checkSession();
         String name = null;
         if (str == null) {
             return new NStreamEmpty<T>(name);
@@ -67,7 +56,6 @@ public class DefaultNCollectionsRPI implements NCollectionsRPI {
 
     @Override
     public <T> NStream<T> toStream(Stream<T> str) {
-        checkSession();
         return new NStreamFromJavaStream<>(null, str);
     }
 
@@ -103,7 +91,21 @@ public class DefaultNCollectionsRPI implements NCollectionsRPI {
         return new NIterableFromJavaIterable<>(o);
     }
 
-    public void checkSession() {
-        //should we ?
+
+    @Override
+    public <T> NStream<T> optionalToStream(Optional<T> item) {
+        if (item == null || !item.isPresent()) {
+            return emptyStream();
+        }
+        return NStream.ofArray(item.get());
     }
+
+    @Override
+    public <T> NStream<T> optionalToStream(NOptional<T> item) {
+        if (item == null || !item.isPresent() || item.isError()) {
+            return emptyStream();
+        }
+        return NStream.ofArray(item.get());
+    }
+
 }

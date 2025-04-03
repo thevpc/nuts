@@ -104,13 +104,11 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
 
     @Override
     public NDeployCmd run() {
-//        checkSession();
         NSession session=NSession.of();
-//        NutsWorkspace ws = getSession().getWorkspace();
         if (getContent() != null || getDescriptor() != null || getSha1() != null || getDescSha1() != null) {
             runDeployFile();
         }
-        if (ids.size() > 0) {
+        if (!ids.isEmpty()) {
             for (NId nutsId : NSearchCmd.of()
                     .addIds(ids.toArray(new NId[0])).setLatest(true).setRepositoryFilter(fromRepository).getResultIds()) {
                 NDefinition fetched = NFetchCmd.of(nutsId).setContent(true).getResultDefinition();

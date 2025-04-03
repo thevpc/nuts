@@ -154,6 +154,30 @@ public enum NElementType implements NEnum {
         return NEnumUtils.parseEnum(value, NElementType.class);
     }
 
+    public boolean isFloatingNumber() {
+        switch (this) {
+            case FLOAT:
+            case DOUBLE:
+            case DOUBLE_COMPLEX:
+            case FLOAT_COMPLEX:
+            case BIG_COMPLEX:
+            case BIG_DECIMAL:
+                return true;
+        }
+        return false;
+    }
+    public boolean isOrdinalNumber() {
+        switch (this) {
+            case BYTE:
+            case SHORT:
+            case INTEGER:
+            case LONG:
+            case BIG_INTEGER:
+                return true;
+        }
+        return false;
+    }
+
     public boolean isNumber() {
         switch (this) {
             case BYTE:
@@ -168,44 +192,6 @@ public enum NElementType implements NEnum {
             case BIG_COMPLEX:
             case BIG_DECIMAL:
                 return true;
-            case NULL:
-            case BINARY_STREAM:
-            case CHAR_STREAM:
-            case DOUBLE_QUOTED_STRING:
-            case SINGLE_QUOTED_STRING:
-            case ANTI_QUOTED_STRING:
-            case TRIPLE_DOUBLE_QUOTED_STRING:
-            case TRIPLE_SINGLE_QUOTED_STRING:
-            case TRIPLE_ANTI_QUOTED_STRING:
-            case LINE_STRING:
-            case CHAR:
-            case BOOLEAN:
-            case NAME:
-            case ALIAS:
-            case LOCAL_DATETIME:
-            case LOCAL_DATE:
-            case LOCAL_TIME:
-            case INSTANT:
-            case REGEX:
-            case MATRIX:
-            case PAIR:
-            case OP:
-            case ARRAY:
-            case OBJECT:
-            case UPLET:
-            case CUSTOM:
-            case NAMED_ARRAY:
-            case NAMED_PARAMETRIZED_ARRAY:
-            case NAMED_OBJECT:
-            case NAMED_PARAMETRIZED_OBJECT:
-            case NAMED_UPLET:
-            case NAMED_MATRIX:
-            case NAMED_PARAMETRIZED_MATRIX:
-            case PARAMETRIZED_MATRIX:
-            case PARAMETRIZED_ARRAY:
-            case PARAMETRIZED_OBJECT:
-                return false;
-
         }
         return false;
     }

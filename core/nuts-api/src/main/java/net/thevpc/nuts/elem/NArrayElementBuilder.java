@@ -27,6 +27,7 @@ package net.thevpc.nuts.elem;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Array element Builder is a mutable NutsArrayElement that helps
@@ -41,6 +42,7 @@ public interface NArrayElementBuilder extends NElementBuilder {
         return NElements.of().ofArrayBuilder();
     }
 
+    NArrayElementBuilder doWith(Consumer<NArrayElementBuilder> con);
     /**
      * array items
      *

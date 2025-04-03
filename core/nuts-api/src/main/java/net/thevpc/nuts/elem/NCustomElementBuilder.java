@@ -25,11 +25,13 @@
 package net.thevpc.nuts.elem;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * @author thevpc
  */
 public interface NCustomElementBuilder extends NElementBuilder {
+    NCustomElementBuilder doWith(Consumer<NCustomElementBuilder> con);
     NCustomElementBuilder addAnnotations(List<NElementAnnotation> annotations);
 
     NCustomElementBuilder addAnnotation(NElementAnnotation annotation);

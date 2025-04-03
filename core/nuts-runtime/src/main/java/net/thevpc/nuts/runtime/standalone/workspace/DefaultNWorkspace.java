@@ -1053,7 +1053,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 }
                 def = d2;
             }
-//        checkSession(session);
             NDefinition oldDef = null;
             if (strategy0 == InstallStrategy0.UPDATE) {
                 switch (def.getDescriptor().getIdType()) {
@@ -2145,7 +2144,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
     @Override
     public NOsFamily getOsFamily() {
-//        checkSession();
         return getEnvModel().getOsFamily();
     }
 
@@ -2191,30 +2189,25 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
     @Override
     public NId getPlatform() {
-//        checkSession();
         return getEnvModel().getPlatform();
     }
 
     @Override
     public NId getOs() {
-//        checkSession();
         return getEnvModel().getOs();
     }
 
     public NId getOsDist() {
-//        checkSession();
         return getEnvModel().getOsDist();
     }
 
     @Override
     public NId getArch() {
-//        checkSession();
         return getEnvModel().getArch();
     }
 
     @Override
     public NArchFamily getArchFamily() {
-//        checkSession();
         return getEnvModel().getArchFamily();
     }
 

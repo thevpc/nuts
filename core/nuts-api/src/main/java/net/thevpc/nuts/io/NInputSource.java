@@ -58,6 +58,9 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
     static NInputSource of(byte[] bytes) {
         return bytes == null ? null : NIORPI.of().ofInputSource(bytes);
     }
+    static NInputSource ofEmpty() {
+        return NIORPI.of().ofEmptyInputSource();
+    }
 
     static NInputSource of(InputStream inputSource) {
         return inputSource == null ? null : NIORPI.of().ofInputSource(inputSource);
@@ -90,7 +93,7 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
 
     static NInputSource of(NInputStreamProvider other, NContentMetadata metadata) {
         return other == null ? null :
-                (other instanceof NInputSource && metadata == null) ? null :
+                (other instanceof NInputSource && metadata == null) ? (NInputSource)other :
                         NIORPI.of().ofInputSource(other, metadata);
     }
 

@@ -570,4 +570,14 @@ public class DefaultNArg implements NArg {
     public boolean isStream() {
         return toValue().isStream();
     }
+
+    @Override
+    public boolean isOrdinalNumber() {
+        return toValue().isOrdinalNumber();
+    }
+
+    @Override
+    public boolean isFloatingNumber() {
+        return toValue().isFloatingNumber();
+    }
 }

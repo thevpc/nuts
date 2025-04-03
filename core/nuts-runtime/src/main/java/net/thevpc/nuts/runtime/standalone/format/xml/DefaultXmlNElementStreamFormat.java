@@ -63,6 +63,10 @@ public class DefaultXmlNElementStreamFormat implements NElementStreamFormat {
         }
         return context.objectToElement(doc, Document.class);
     }
+    @Override
+    public NElement normalize(NElement e) {
+        return e;
+    }
 
     @Override
     public void printElement(NElement value, NPrintStream out, boolean compact, NElementFactoryContext context) {

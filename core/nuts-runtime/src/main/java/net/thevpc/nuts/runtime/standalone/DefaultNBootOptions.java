@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.*;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NTerminalMode;
@@ -934,6 +935,26 @@ public class DefaultNBootOptions implements NBootOptions {
     }
 
     @Override
+    public NOptional<List<NArg>> getCustomOptionArgs() {
+        return NOptional.ofNamed(customOptions == null ? null : customOptions.stream().map(x -> NArg.of(x)).collect(Collectors.toList()), "customOptions");
+    }
+
+    @Override
+    public NOptional<NArg> getCustomOptionArg(String key) {
+        return NOptional.ofNamedOptional(getCustomOptions().orElse(new ArrayList<>()).stream().map(x -> NArg.of(x))
+                .filter(x -> Objects.equals(x.getStringKey().orNull(), key))
+                .findFirst(), key);
+    }
+
+    @Override
+    public NOptional<String> getCustomOption(String key) {
+        return NOptional.ofNamedOptional(getCustomOptions().orElse(new ArrayList<>()).stream().map(x -> NArg.of(x))
+                .filter(x -> Objects.equals(x.getStringKey().orNull(), key))
+                        .map(x->x.getImage())
+                .findFirst(), key);
+    }
+
+    @Override
     public NOptional<String> getLocale() {
         return NOptional.ofNamed(locale, "locale");
     }
@@ -965,12 +986,12 @@ public class DefaultNBootOptions implements NBootOptions {
 
     @Override
     public NCmdLine toCmdLine(NWorkspaceOptionsConfig config) {
-        return builder().toWorkspaceOptions().toCmdLine(config);
+        return toWorkspaceOptions().toCmdLine(config);
     }
 
     @Override
     public NBootOptionsBuilder builder() {
-        return NBootOptionsBuilder.of().setAll(this);
+        return NBootOptionsBuilder.of().copyFrom(this);
     }
 
     @Override
@@ -1179,6 +1200,82 @@ public class DefaultNBootOptions implements NBootOptions {
 
     @Override
     public NWorkspaceOptions toWorkspaceOptions() {
-        return builder().toWorkspaceOptions();
+        NWorkspaceOptionsBuilder b = NWorkspaceOptionsBuilder.of();
+        b.setApiVersion(this.getApiVersion().orNull());
+        b.setRuntimeId(this.getRuntimeId().orNull());
+        b.setJavaCommand(this.getJavaCommand().orNull());
+        b.setJavaOptions(this.getJavaOptions().orNull());
+        b.setWorkspace(this.getWorkspace().orNull());
+        b.setName(this.getName().orNull());
+        b.setInstallCompanions(this.getInstallCompanions().orNull());
+        b.setSkipWelcome(this.getSkipWelcome().orNull());
+        b.setSkipBoot(this.getSkipBoot().orNull());
+        b.setSystem(this.getSystem().orNull());
+        b.setGui(this.getGui().orNull());
+        b.setUserName(this.getUserName().orNull());
+        b.setCredentials(this.getCredentials().orNull());
+        b.setTerminalMode(this.getTerminalMode().orNull());
+        b.setReadOnly(this.getReadOnly().orNull());
+        b.setTrace(this.getTrace().orNull());
+        b.setProgressOptions(this.getProgressOptions().orNull());
+        b.setLogConfig(this.getLogConfig().orNull());
+        b.setConfirm(this.getConfirm().orNull());
+        b.setConfirm(this.getConfirm().orNull());
+        b.setOutputFormat(this.getOutputFormat().orNull());
+        b.setOutputFormatOptions(this.getOutputFormatOptions().orNull());
+        b.setOpenMode(this.getOpenMode().orNull());
+        b.setCreationTime(this.getCreationTime().orNull());
+        b.setDry(this.getDry().orNull());
+        b.setShowStacktrace(this.getShowStacktrace().orNull());
+        b.setClassLoaderSupplier(this.getClassLoaderSupplier().orNull());
+        b.setExecutorOptions(this.getExecutorOptions().orNull());
+        b.setRecover(this.getRecover().orNull());
+        b.setReset(this.getReset().orNull());
+        b.setResetHard(this.getResetHard().orNull());
+        b.setCommandVersion(this.getCommandVersion().orNull());
+        b.setCommandHelp(this.getCommandHelp().orNull());
+        b.setDebug(this.getDebug().orNull());
+        b.setInherited(this.getInherited().orNull());
+        b.setExecutionType(this.getExecutionType().orNull());
+        b.setRunAs(this.getRunAs().orNull());
+        b.setArchetype(this.getArchetype().orNull());
+        b.setStoreStrategy(this.getStoreStrategy().orNull());
+        b.setHomeLocations(this.getHomeLocations().orNull());
+        b.setStoreLocations(this.getStoreLocations().orNull());
+        b.setStoreLayout(this.getStoreLayout().orNull());
+        b.setStoreStrategy(this.getStoreStrategy().orNull());
+        b.setRepositoryStoreStrategy(this.getRepositoryStoreStrategy().orNull());
+        b.setFetchStrategy(this.getFetchStrategy().orNull());
+        b.setCached(this.getCached().orNull());
+        b.setIndexed(this.getIndexed().orNull());
+        b.setTransitive(this.getTransitive().orNull());
+        b.setBot(this.getBot().orNull());
+        b.setStdin(this.getStdin().orNull());
+        b.setStdout(this.getStdout().orNull());
+        b.setStderr(this.getStderr().orNull());
+        b.setExecutorService(this.getExecutorService().orNull());
+        b.setExcludedExtensions(this.getExcludedExtensions().orNull());
+        b.setRepositories(this.getRepositories().orNull());
+        b.setApplicationArguments(this.getApplicationArguments().orNull());
+        b.setCustomOptions(this.getCustomOptions().orNull());
+        b.setExpireTime(this.getExpireTime().orNull());
+        b.setErrors(this.getErrors().orNull());
+        b.setSkipErrors(this.getSkipErrors().orNull());
+        b.setSwitchWorkspace(this.getSwitchWorkspace().orNull());
+        b.setLocale(this.getLocale().orNull());
+        b.setTheme(this.getTheme().orNull());
+        b.setDependencySolver(this.getDependencySolver().orNull());
+        b.setIsolationLevel(this.getIsolationLevel().orNull());
+        b.setInitLaunchers(this.getInitLaunchers().orNull());
+        b.setInitJava(this.getInitJava().orNull());
+        b.setInitScripts(this.getInitScripts().orNull());
+        b.setInitPlatforms(this.getInitPlatforms().orNull());
+        b.setDesktopLauncher(this.getDesktopLauncher().orNull());
+        b.setMenuLauncher(this.getMenuLauncher().orNull());
+        b.setUserLauncher(this.getUserLauncher().orNull());
+        b.setSharedInstance(this.getSharedInstance().orNull());
+        b.setPreviewRepo(this.getPreviewRepo().orNull());
+        return b;
     }
+
 }

@@ -66,7 +66,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     public NStream<NPath> list(NPath basePath) {
         Object q = load();
         if (q instanceof Info[]) {
-            return NStream.of((Info[]) q)
+            return NStream.ofArray((Info[]) q)
                     .map(NFunction.of(
                             (Info x) -> NPath.of(new GithubfsPath(
                                     PREFIX + ref.resolve(x.name).toString(),
@@ -238,7 +238,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         NElement e = elems.json().parse(ref);
         if (e != null) {
             if (e.isArray()) {
-                return NStream.of(elems.convert(e, Info[].class)).toArray(Info[]::new);
+                return NStream.ofArray(elems.convert(e, Info[].class)).toArray(Info[]::new);
             } else if (e.isObject()) {
                 return elems.convert(e, Info.class);
             }

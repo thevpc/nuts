@@ -8,6 +8,7 @@ import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.web.*;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -19,7 +20,7 @@ public class NWebRequestImpl implements NWebRequest {
     private NHttpMethod method;
     private DefaultNWebHeaders headers = new DefaultNWebHeaders();
     private Map<String, List<String>> parameters;
-    private NInputSource body;
+    private NInputSource requestBody;
     private boolean oneWay;
     private Integer readTimeout;
     private Integer connectTimeout;
@@ -49,7 +50,7 @@ public class NWebRequestImpl implements NWebRequest {
         }
         switch (this.mode) {
             case NONE: {
-                body = null;
+                requestBody = null;
                 formData = null;
                 urlEncoded = null;
                 break;
@@ -61,13 +62,13 @@ public class NWebRequestImpl implements NWebRequest {
                 break;
             }
             case FORM_DATA: {
-                body = null;
+                requestBody = null;
                 //formData=null;
                 urlEncoded = null;
                 break;
             }
             case URLENCODED: {
-                body = null;
+                requestBody = null;
                 formData = null;
                 //urlEncoded=null;
                 break;
@@ -536,7 +537,7 @@ public class NWebRequestImpl implements NWebRequest {
     public NInputSource getRequestBody() {
         switch (mode) {
             case BODY:
-                return body;
+                return requestBody;
             case URLENCODED: {
                 setContentType("application/x-www-form-urlencoded");
                 StringBuilder sb = new StringBuilder();
@@ -560,58 +561,81 @@ public class NWebRequestImpl implements NWebRequest {
                 return NInputSource.of(sb.toString().getBytes());
             }
             case FORM_DATA: {
-                String boundary = "-------------------------------" + UUID.randomUUID().toString();
-                setContentType("multipart/form-data; boundary=" + boundary);
                 //setContentTypeFormUrlEncoded();
-                NTempOutputStream tos = NIO.of().ofTempOutputStream();
-                if (formData != null) {
-                    for (Map.Entry<String, Object> e : formData.entrySet()) {
-                        try {
+                SimpleWriter sw = new SimpleWriter(NIO.of().ofTempOutputStream());
+                if (formData != null && !formData.isEmpty()) {
+                    String boundary = "-------------------------------" + UUID.randomUUID().toString();
+                    setContentType("multipart/form-data; boundary=" + boundary);
+                    byte[] newlineBytes = "\r\n".getBytes();
+                    try {
+                        sw.println(boundary);
+                        for (Map.Entry<String, Object> e : formData.entrySet()) {
                             if (e.getValue() instanceof String) {
-                                String h = "Content-Disposition: form-data; name=" + NLiteral.of(e.getKey()).toStringLiteral();
-                                tos.write(h.getBytes());
-                                tos.write("\r\n".getBytes());
-                                tos.write(e.getValue().toString().getBytes());
-                                tos.write("\r\n".getBytes());
-                                tos.write("\r\n".getBytes());
+                                sw.println("Content-Disposition: form-data; name=" + NLiteral.of(e.getKey()).toStringLiteral());
+                                sw.println();
+                                sw.println(e.getValue().toString());
 
-                                tos.write(boundary.getBytes());
-                                tos.write("\r\n".getBytes());
                             } else if (e.getValue() instanceof NInputContentProvider) {
                                 NInputContentProvider npath = (NInputContentProvider) e.getValue();
-                                String h = "Content-Disposition: form-data; name=" + NLiteral.of(e.getKey()).toStringLiteral()
-                                        + " ; filename=" + NLiteral.of(e.getValue()).toStringLiteral();
-                                tos.write(h.getBytes());
-                                tos.write("\r\n".getBytes());
-
-                                tos.write(("Content-Type: " + NStringUtils.firstNonBlank(npath.contentType(), "application/octet-stream")).getBytes());
-                                tos.write("\r\n".getBytes());
-
-                                ((NPath) e.getValue()).copyToOutputStream(tos);
-                                tos.write(e.getValue().toString().getBytes());
-                                // do we need newline ??
-                                tos.write(boundary.getBytes());
-                                tos.write("\r\n".getBytes());
+                                sw.println("Content-Disposition: form-data; name=" + NLiteral.of(e.getKey()).toStringLiteral()
+                                        + " ; filename=" + NLiteral.of(npath.getName()).toStringLiteral());
+                                sw.println(("Content-Type: " + NStringUtils.firstNonBlank(npath.contentType(), "application/octet-stream")));
+                                sw.println();
+                                if (npath instanceof NPath) {
+                                    ((NPath) npath).copyToOutputStream(sw.tos);
+                                } else {
+                                    try (InputStream tis = npath.getInputStream()) {
+                                        NIOUtils.copy(tis, sw.tos);
+                                    }
+                                }
                             }
-                        } catch (IOException ex) {
-                            throw new NIOException(ex);
+                            sw.println(boundary);
                         }
+                    } catch (IOException ex) {
+                        throw new NIOException(ex);
                     }
                 }
-                return tos;
+                return sw.tos;
             }
         }
         return null;
     }
 
+    private static class SimpleWriter {
+        private NTempOutputStream tos;
+
+        public SimpleWriter(NTempOutputStream tos) {
+            this.tos = tos;
+        }
+
+        public void println() {
+            try {
+                tos.write("\r\n".getBytes());
+            } catch (IOException e) {
+                throw new NIOException(e);
+            }
+        }
+
+        public void println(String text) {
+            try {
+                tos.write(text.getBytes());
+                tos.write("\r\n".getBytes());
+            } catch (IOException e) {
+                throw new NIOException(e);
+            }
+        }
+    }
+
     @Override
     public NWebRequestImpl setJsonRequestBody(Object body) {
         if (body == null) {
-            this.body = null;
+            this.requestBody = null;
+            setMode(Mode.NONE);
         } else {
-            this.body = NInputSource.of(NElements.of().json()
+            this.requestBody = NInputSource.of(NElements.of().json()
                     .setValue(body).setNtf(false).formatPlain().getBytes()
             );
+            setMode(Mode.BODY);
         }
         setContentType("application/json");
         return this;
@@ -619,21 +643,21 @@ public class NWebRequestImpl implements NWebRequest {
 
     @Override
     public NWebRequest setRequestBody(byte[] body) {
-        this.body = body == null ? null : NInputSource.of(body);
-        setMode(Mode.BODY);
+        this.requestBody = body == null ? null : NInputSource.of(body);
+        setMode(body == null ? Mode.NONE : Mode.BODY);
         return this;
     }
 
     @Override
     public NWebRequest setRequestBody(String body) {
-        this.body = body == null ? null : NInputSource.of(new StringReader(body));
-        setMode(Mode.BODY);
+        this.requestBody = body == null ? null : NInputSource.of(new StringReader(body));
+        setMode(body == null ? Mode.NONE : Mode.BODY);
         return null;
     }
 
     @Override
     public NWebRequest setRequestBody(NInputSource body) {
-        this.body = body;
+        this.requestBody = body;
         setMode(Mode.BODY);
         return this;
     }

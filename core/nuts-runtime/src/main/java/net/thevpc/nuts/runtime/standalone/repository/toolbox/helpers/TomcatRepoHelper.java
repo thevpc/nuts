@@ -89,7 +89,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                             "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Apache_Tomcat_logo.svg/595px-Apache_Tomcat_logo.svg.png"
                     )
                     .setInstaller(NArtifactCallBuilder.of()
-                            .setId(NId.of(NConstants.Ids.NUTS_SHELL))
+                            .setId(NId.of(NConstants.Ids.NSH))
                             .setArguments("$nutsIdInstallScriptPath")
                             .setScriptName("install-catalina.nsh")
                             .setScriptContent(

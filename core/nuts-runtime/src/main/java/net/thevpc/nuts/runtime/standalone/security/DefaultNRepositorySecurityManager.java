@@ -35,10 +35,6 @@ public class DefaultNRepositorySecurityManager implements NRepositorySecurityMan
         return this;
     }
 
-    private void checkSession(NSession session1) {
-        NSessionUtils.checkSession(model.getWorkspace(), session1);
-    }
-
     @Override
     public NAddUserCmd addUser(String name) {
         return model.addUser(name);

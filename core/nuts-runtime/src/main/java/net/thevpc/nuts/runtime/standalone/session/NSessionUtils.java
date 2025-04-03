@@ -10,19 +10,6 @@ import net.thevpc.nuts.util.NMsg;
 import java.util.Objects;
 
 public class NSessionUtils {
-    public static void checkSession(NWorkspace ws, NSession session) {
-        if (session == null) {
-            throw new NMissingSessionException();
-        }
-        if (!Objects.equals(session.getWorkspace().getUuid(), ws.getUuid())) {
-            throw new NIllegalArgumentException(NMsg.ofC("invalid session %s != %s ; %s != %s ; %s != %s ; ",
-                    session.getWorkspace().getName(), ws.getName(),
-                    session.getWorkspace().getLocation(), ws.getLocation(),
-                    session.getWorkspace().getUuid(), ws.getUuid()
-            ));
-        }
-    }
-
     public static boolean setSession(Object o, NSession session) {
         if (o instanceof NSessionAware) {
             ((NSessionAware) o).setSession(session);

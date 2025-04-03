@@ -111,7 +111,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                         .addCommand(eargs)
                         .setExecutionType(NWorkspace.of().getBootOptions().getExecutionType().orNull())
                         .setExecutionType(
-                                "nsh".equals(def2.getId().getArtifactId()) ?
+                                NConstants.Ids.NSH.equals(def2.getId().getShortName()) ?
                                         NExecutionType.EMBEDDED : NExecutionType.SPAWN
                         )
                         .failFast()

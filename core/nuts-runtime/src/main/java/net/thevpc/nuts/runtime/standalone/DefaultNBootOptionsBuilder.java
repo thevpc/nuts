@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.*;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NWorkspaceCmdLineParser;
 import net.thevpc.nuts.format.NContentType;
@@ -478,12 +479,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
 
     @Override
     public NBootOptionsBuilder copy() {
-        return builder();
-    }
-
-    @Override
-    public NBootOptionsBuilder builder() {
-        return new DefaultNBootOptionsBuilder().setAll(this);
+        return new DefaultNBootOptionsBuilder().copyFrom(this);
     }
 
     @Override
@@ -511,7 +507,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     }
 
 
-    public NBootOptionsBuilder setAll(NWorkspaceOptions other) {
+    public NBootOptionsBuilder copyFrom(NWorkspaceOptions other) {
         if (other == null) {
             return this;
         }
@@ -596,7 +592,102 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     }
 
     @Override
-    public NBootOptionsBuilder setAll(NBootOptions other) {
+    public NBootOptionsBuilder copyFrom(NBootOptions other) {
+        if (other == null) {
+            return this;
+        }
+        this.setApiVersion(other.getApiVersion().orNull());
+        this.setRuntimeId(other.getRuntimeId().orNull());
+        this.setJavaCommand(other.getJavaCommand().orNull());
+        this.setJavaOptions(other.getJavaOptions().orNull());
+        this.setWorkspace(other.getWorkspace().orNull());
+        this.setName(other.getName().orNull());
+        this.setInstallCompanions(other.getInstallCompanions().orNull());
+        this.setSkipWelcome(other.getSkipWelcome().orNull());
+        this.setSkipBoot(other.getSkipBoot().orNull());
+        this.setSystem(other.getSystem().orNull());
+        this.setGui(other.getGui().orNull());
+        this.setUserName(other.getUserName().orNull());
+        this.setCredentials(other.getCredentials().orNull());
+        this.setTerminalMode(other.getTerminalMode().orNull());
+        this.setReadOnly(other.getReadOnly().orNull());
+        this.setTrace(other.getTrace().orNull());
+        this.setProgressOptions(other.getProgressOptions().orNull());
+        this.setLogConfig(other.getLogConfig().orNull());
+        this.setConfirm(other.getConfirm().orNull());
+        this.setConfirm(other.getConfirm().orNull());
+        this.setOutputFormat(other.getOutputFormat().orNull());
+        this.setOutputFormatOptions(other.getOutputFormatOptions().orNull());
+        this.setOpenMode(other.getOpenMode().orNull());
+        this.setCreationTime(other.getCreationTime().orNull());
+        this.setDry(other.getDry().orNull());
+        this.setShowStacktrace(other.getShowStacktrace().orNull());
+        this.setClassLoaderSupplier(other.getClassLoaderSupplier().orNull());
+        this.setExecutorOptions(other.getExecutorOptions().orNull());
+        this.setRecover(other.getRecover().orNull());
+        this.setReset(other.getReset().orNull());
+        this.setResetHard(other.getResetHard().orNull());
+        this.setCommandVersion(other.getCommandVersion().orNull());
+        this.setCommandHelp(other.getCommandHelp().orNull());
+        this.setDebug(other.getDebug().orNull());
+        this.setInherited(other.getInherited().orNull());
+        this.setExecutionType(other.getExecutionType().orNull());
+        this.setRunAs(other.getRunAs().orNull());
+        this.setArchetype(other.getArchetype().orNull());
+        this.setStoreStrategy(other.getStoreStrategy().orNull());
+        this.setHomeLocations(other.getHomeLocations().orNull());
+        this.setStoreLocations(other.getStoreLocations().orNull());
+        this.setStoreLayout(other.getStoreLayout().orNull());
+        this.setStoreStrategy(other.getStoreStrategy().orNull());
+        this.setRepositoryStoreStrategy(other.getRepositoryStoreStrategy().orNull());
+        this.setFetchStrategy(other.getFetchStrategy().orNull());
+        this.setCached(other.getCached().orNull());
+        this.setIndexed(other.getIndexed().orNull());
+        this.setTransitive(other.getTransitive().orNull());
+        this.setBot(other.getBot().orNull());
+        this.setStdin(other.getStdin().orNull());
+        this.setStdout(other.getStdout().orNull());
+        this.setStderr(other.getStderr().orNull());
+        this.setExecutorService(other.getExecutorService().orNull());
+//        this.setBootRepositories(other.getBootRepositories());
+
+        this.setExcludedExtensions(other.getExcludedExtensions().orNull());
+//        this.setExcludedRepositories(other.getExcludedRepositories() == null ? null : Arrays.copyOf(other.getExcludedRepositories(), other.getExcludedRepositories().length));
+        this.setRepositories(other.getRepositories().orNull());
+        this.setApplicationArguments(other.getApplicationArguments().orNull());
+        this.setCustomOptions(other.getCustomOptions().orNull());
+        this.setExpireTime(other.getExpireTime().orNull());
+        this.setErrors(other.getErrors().orNull());
+        this.setSkipErrors(other.getSkipErrors().orNull());
+        this.setSwitchWorkspace(other.getSwitchWorkspace().orNull());
+        this.setLocale(other.getLocale().orNull());
+        this.setTheme(other.getTheme().orNull());
+        this.setDependencySolver(other.getDependencySolver().orNull());
+        this.setIsolationLevel(other.getIsolationLevel().orNull());
+        this.setInitLaunchers(other.getInitLaunchers().orNull());
+        this.setInitJava(other.getInitJava().orNull());
+        this.setInitScripts(other.getInitScripts().orNull());
+        this.setInitPlatforms(other.getInitPlatforms().orNull());
+        this.setDesktopLauncher(other.getDesktopLauncher().orNull());
+        this.setMenuLauncher(other.getMenuLauncher().orNull());
+        this.setUserLauncher(other.getUserLauncher().orNull());
+        this.setSharedInstance(other.getSharedInstance().orNull());
+        this.setPreviewRepo(other.getPreviewRepo().orNull());
+        this.setBootRepositories(other.getBootRepositories().orNull());
+        this.setRuntimeBootDependencyNode(other.getRuntimeBootDependencyNode().orNull());
+        this.setExtensionBootDescriptors(other.getExtensionBootDescriptors().orNull());
+        this.setExtensionBootDependencyNodes(other.getExtensionBootDependencyNodes().orNull());
+        this.setBootWorkspaceFactory(other.getBootWorkspaceFactory().orNull());
+        this.setClassWorldURLs(other.getClassWorldURLs().orNull());
+        this.setClassWorldLoader(other.getClassWorldLoader().orNull());
+        this.setUuid(other.getUuid().orNull());
+        this.setExtensionsSet(other.getExtensionsSet().orNull());
+        this.setRuntimeBootDescriptor(other.getRuntimeBootDescriptor().orNull());
+        return this;
+    }
+
+    @Override
+    public NBootOptionsBuilder copyFrom(NBootOptionsBuilder other) {
         if (other == null) {
             return this;
         }
@@ -792,7 +883,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
 
 
     @Override
-    public NBootOptionsBuilder setAllPresent(NWorkspaceOptions other) {
+    public NBootOptionsBuilder copyFromIfPresent(NWorkspaceOptions other) {
         if (other.getApiVersion().isPresent()) {
             this.setApiVersion(other.getApiVersion().orNull());
         }
@@ -1020,7 +1111,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     }
 
     @Override
-    public NBootOptionsBuilder setAllPresent(NBootOptions other) {
+    public NBootOptionsBuilder copyFromIfPresent(NBootOptions other) {
         if (other.getApiVersion().isPresent()) {
             this.setApiVersion(other.getApiVersion().orNull());
         }
@@ -2400,11 +2491,6 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     }
 
     @Override
-    public NOptional<List<String>> getCustomOptions() {
-        return NOptional.ofNamed(customOptions, "customOptions");
-    }
-
-    @Override
     public NBootOptionsBuilder setCustomOptions(List<String> properties) {
         this.customOptions = properties;
         return this;
@@ -2598,7 +2684,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     public NBootOptionsBuilder setCmdLine(String[] args) {
         NWorkspaceOptionsBuilder b = NWorkspaceOptionsBuilder.of();
         NWorkspaceCmdLineParser.parseNutsArguments(args, b);
-        setAllPresent(b);
+        copyFromIfPresent(b);
         return this;
     }
 
@@ -2706,18 +2792,18 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
 
     @Override
     public String toString() {
-        return toCmdLine().toString();
+        return build().toCmdLine().toString();
     }
 
-    @Override
-    public NCmdLine toCmdLine() {
-        return build().toCmdLine();
-    }
-
-    @Override
-    public NCmdLine toCmdLine(NWorkspaceOptionsConfig config) {
-        return build().toCmdLine(config);
-    }
+//    @Override
+//    public NCmdLine toCmdLine() {
+//        return build().toCmdLine();
+//    }
+//
+//    @Override
+//    public NCmdLine toCmdLine(NWorkspaceOptionsConfig config) {
+//        return build().toCmdLine(config);
+//    }
 
     @Override
     public NOptional<NIsolationLevel> getIsolationLevel() {
@@ -2820,83 +2906,28 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     }
 
     @Override
-    public NWorkspaceOptions toWorkspaceOptions() {
-        NWorkspaceOptionsBuilder b = NWorkspaceOptionsBuilder.of();
-        b.setApiVersion(this.getApiVersion().orNull());
-        b.setRuntimeId(this.getRuntimeId().orNull());
-        b.setJavaCommand(this.getJavaCommand().orNull());
-        b.setJavaOptions(this.getJavaOptions().orNull());
-        b.setWorkspace(this.getWorkspace().orNull());
-        b.setName(this.getName().orNull());
-        b.setInstallCompanions(this.getInstallCompanions().orNull());
-        b.setSkipWelcome(this.getSkipWelcome().orNull());
-        b.setSkipBoot(this.getSkipBoot().orNull());
-        b.setSystem(this.getSystem().orNull());
-        b.setGui(this.getGui().orNull());
-        b.setUserName(this.getUserName().orNull());
-        b.setCredentials(this.getCredentials().orNull());
-        b.setTerminalMode(this.getTerminalMode().orNull());
-        b.setReadOnly(this.getReadOnly().orNull());
-        b.setTrace(this.getTrace().orNull());
-        b.setProgressOptions(this.getProgressOptions().orNull());
-        b.setLogConfig(this.getLogConfig().orNull());
-        b.setConfirm(this.getConfirm().orNull());
-        b.setConfirm(this.getConfirm().orNull());
-        b.setOutputFormat(this.getOutputFormat().orNull());
-        b.setOutputFormatOptions(this.getOutputFormatOptions().orNull());
-        b.setOpenMode(this.getOpenMode().orNull());
-        b.setCreationTime(this.getCreationTime().orNull());
-        b.setDry(this.getDry().orNull());
-        b.setShowStacktrace(this.getShowStacktrace().orNull());
-        b.setClassLoaderSupplier(this.getClassLoaderSupplier().orNull());
-        b.setExecutorOptions(this.getExecutorOptions().orNull());
-        b.setRecover(this.getRecover().orNull());
-        b.setReset(this.getReset().orNull());
-        b.setResetHard(this.getResetHard().orNull());
-        b.setCommandVersion(this.getCommandVersion().orNull());
-        b.setCommandHelp(this.getCommandHelp().orNull());
-        b.setDebug(this.getDebug().orNull());
-        b.setInherited(this.getInherited().orNull());
-        b.setExecutionType(this.getExecutionType().orNull());
-        b.setRunAs(this.getRunAs().orNull());
-        b.setArchetype(this.getArchetype().orNull());
-        b.setStoreStrategy(this.getStoreStrategy().orNull());
-        b.setHomeLocations(this.getHomeLocations().orNull());
-        b.setStoreLocations(this.getStoreLocations().orNull());
-        b.setStoreLayout(this.getStoreLayout().orNull());
-        b.setStoreStrategy(this.getStoreStrategy().orNull());
-        b.setRepositoryStoreStrategy(this.getRepositoryStoreStrategy().orNull());
-        b.setFetchStrategy(this.getFetchStrategy().orNull());
-        b.setCached(this.getCached().orNull());
-        b.setIndexed(this.getIndexed().orNull());
-        b.setTransitive(this.getTransitive().orNull());
-        b.setBot(this.getBot().orNull());
-        b.setStdin(this.getStdin().orNull());
-        b.setStdout(this.getStdout().orNull());
-        b.setStderr(this.getStderr().orNull());
-        b.setExecutorService(this.getExecutorService().orNull());
-        b.setExcludedExtensions(this.getExcludedExtensions().orNull());
-        b.setRepositories(this.getRepositories().orNull());
-        b.setApplicationArguments(this.getApplicationArguments().orNull());
-        b.setCustomOptions(this.getCustomOptions().orNull());
-        b.setExpireTime(this.getExpireTime().orNull());
-        b.setErrors(this.getErrors().orNull());
-        b.setSkipErrors(this.getSkipErrors().orNull());
-        b.setSwitchWorkspace(this.getSwitchWorkspace().orNull());
-        b.setLocale(this.getLocale().orNull());
-        b.setTheme(this.getTheme().orNull());
-        b.setDependencySolver(this.getDependencySolver().orNull());
-        b.setIsolationLevel(this.getIsolationLevel().orNull());
-        b.setInitLaunchers(this.getInitLaunchers().orNull());
-        b.setInitJava(this.getInitJava().orNull());
-        b.setInitScripts(this.getInitScripts().orNull());
-        b.setInitPlatforms(this.getInitPlatforms().orNull());
-        b.setDesktopLauncher(this.getDesktopLauncher().orNull());
-        b.setMenuLauncher(this.getMenuLauncher().orNull());
-        b.setUserLauncher(this.getUserLauncher().orNull());
-        b.setSharedInstance(this.getSharedInstance().orNull());
-        b.setPreviewRepo(this.getPreviewRepo().orNull());
-        return b;
+    public NOptional<List<String>> getCustomOptions() {
+        return NOptional.ofNamed(customOptions, "customOptions");
+    }
+
+    @Override
+    public NOptional<List<NArg>> getCustomOptionArgs() {
+        return NOptional.ofNamed(customOptions == null ? null : customOptions.stream().map(x -> NArg.of(x)).collect(Collectors.toList()), "customOptions");
+    }
+
+    @Override
+    public NOptional<NArg> getCustomOptionArg(String key) {
+        return NOptional.ofNamedOptional(getCustomOptions().orElse(new ArrayList<>()).stream().map(x -> NArg.of(x))
+                .filter(x -> Objects.equals(x.getStringKey().orNull(), key))
+                .findFirst(), key);
+    }
+
+    @Override
+    public NOptional<String> getCustomOption(String key) {
+        return NOptional.ofNamedOptional(getCustomOptions().orElse(new ArrayList<>()).stream().map(x -> NArg.of(x))
+                .filter(x -> Objects.equals(x.getStringKey().orNull(), key))
+                .map(x->x.getImage())
+                .findFirst(), key);
     }
 
     /// ///////////////////////

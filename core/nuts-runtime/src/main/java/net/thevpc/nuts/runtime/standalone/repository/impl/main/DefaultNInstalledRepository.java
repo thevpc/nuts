@@ -118,7 +118,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
 
     @Override
     public NIterator<NInstallInformation> searchInstallInformation() {
-        return NStream.of(_wstore().searchInstalledVersions())
+        return NStream.ofIterator(_wstore().searchInstalledVersions())
                 .map(x -> {
                     try {
                         if (x != null) {
@@ -687,7 +687,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
             public NSearchVersionsRepositoryCmd run() {
                 if (getFilter() instanceof NInstallStatusIdFilter) {
                     final NVersionFilter filter0 = getId().getVersion().filter();
-                    result=NStream.of(_wstore().searchInstalledVersions(getId()))
+                    result=NStream.ofIterator(_wstore().searchInstalledVersions(getId()))
                                     .map(vv->{
                                         NId newId = getId().builder().setVersion(vv).build();
                                         if (filter0.acceptVersion(vv) && (filter == null || filter.acceptId(newId))) {

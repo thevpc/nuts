@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.elem;
 import net.thevpc.nuts.elem.*;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implements NCustomElementBuilder {
     private Object value;
@@ -11,6 +12,13 @@ public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implem
     public DefaultNCustomElementBuilder() {
     }
 
+    @Override
+    public NCustomElementBuilder doWith(Consumer<NCustomElementBuilder> con) {
+        if(con!=null){
+            con.accept(this);
+        }
+        return this;
+    }
 
     public Object value() {
         return value;

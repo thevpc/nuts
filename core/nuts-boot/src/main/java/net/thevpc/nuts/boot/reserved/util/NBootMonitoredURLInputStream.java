@@ -41,13 +41,14 @@ public class NBootMonitoredURLInputStream extends FilterInputStream {
             }
             throw new UncheckedIOException("url not accessible " + url, ex);
         }
-        int bootConnectionTimout = 0;
+        Integer bootConnectionTimout = null;
         if (NBootContext.context() != null) {
             bootConnectionTimout = NBootContext.context().connectionTimout;
         }
-        if (bootConnectionTimout <= 0) {
+        if (bootConnectionTimout == null) {
             bootConnectionTimout = 3000;
         }
+        bootConnectionTimout=Math.max(0,bootConnectionTimout);
         c.setConnectTimeout(bootConnectionTimout);
         c.setReadTimeout(bootConnectionTimout);
         long contentLength = c.getContentLengthLong();

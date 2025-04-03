@@ -27,11 +27,13 @@ package net.thevpc.nuts.elem;
 import net.thevpc.nuts.io.NReaderProvider;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * @author thevpc
  */
 public interface NCharStreamElementBuilder extends NElementBuilder {
+    NCharStreamElementBuilder doWith(Consumer<NCharStreamElementBuilder> con);
     NCharStreamElementBuilder addAnnotations(List<NElementAnnotation> annotations);
 
     NCharStreamElementBuilder addAnnotation(NElementAnnotation annotation);

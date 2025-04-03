@@ -262,6 +262,10 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
         return u.build();
     }
 
+    public NElement normalize(NElement e) {
+        return ensureJson(e);
+    }
+
     private NElement ensureJson(NElement e) {
         NElements elems = NElements.of();
         switch (e.type()) {

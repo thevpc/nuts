@@ -52,7 +52,7 @@ public class NanoDBTableStoreMem<T> implements NanoDBTableStore<T> {
     }
 
     public NStream<T> stream() {
-        return NStream.of(new ArrayList<>(rows).stream());
+        return NStream.ofStream(new ArrayList<>(rows).stream());
     }
 
     public Iterable<T> items() {
@@ -74,13 +74,13 @@ public class NanoDBTableStoreMem<T> implements NanoDBTableStore<T> {
     }
 
     public NStream<T> findByIndex(String indexName, Object value) {
-        return NStream.of(
+        return NStream.ofStream(
                 resolveIndexInfo(indexName).getData().get(value)
                 .mapToObj(pos -> get(pos)));
     }
 
     public <T> NStream<T> findIndexValues(String indexName) {
-        return NStream.of(
+        return NStream.ofStream(
                 resolveIndexInfo(indexName).getData().findAll()
         );
     }

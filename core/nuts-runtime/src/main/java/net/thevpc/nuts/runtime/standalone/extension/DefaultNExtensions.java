@@ -99,13 +99,6 @@ public class DefaultNExtensions implements NExtensions {
         return wsModel.extensionModel.createSupported(serviceType, criteriaType);
     }
 
-
-//    @Override
-//    public <T extends NutsComponent<V>, V> T createSupported(Class<T> serviceType, V criteriaType, Class[] constructorParameterTypes, boolean required, Object[] constructorParameters) {
-//        checkSession();
-//        return model.createSupported(serviceType, criteriaType, constructorParameterTypes, constructorParameters, required, session);
-//    }
-
     @Override
     public <T extends NComponent, V> List<T> createComponents(Class<T> serviceType, V criteriaType) {
         return wsModel.extensionModel.createAllSupported(serviceType, criteriaType);

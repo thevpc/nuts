@@ -49,7 +49,7 @@ public class FilePath implements NPathSPI {
             try {
                 try (Stream<Path> files = Files.list(value)) {
                     //ensure closed!!
-                    return NStream.of(files.collect(Collectors.toList())).map(x -> fastPath(x, getWorkspace()));
+                    return NStream.ofIterable(files.collect(Collectors.toList())).map(x -> fastPath(x, getWorkspace()));
                 }
             } catch (IOException e) {
                 //
@@ -527,7 +527,7 @@ public class FilePath implements NPathSPI {
                 }).filter(Objects::nonNull).toArray(FileVisitOption[]::new);
         if (Files.isDirectory(value)) {
             try {
-                return NStream.of(Files.walk(value, maxDepth, fileOptions).map(x -> fastPath(x, getWorkspace()))
+                return NStream.ofStream(Files.walk(value, maxDepth, fileOptions).map(x -> fastPath(x, getWorkspace()))
                 );
             } catch (IOException e) {
                 //

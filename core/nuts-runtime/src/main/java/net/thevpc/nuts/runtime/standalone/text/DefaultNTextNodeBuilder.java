@@ -314,7 +314,7 @@ public class DefaultNTextNodeBuilder extends AbstractNText implements NTextBuild
     @Override
     public NStream<NTextBuilder> lines() {
         DefaultNTextNodeBuilder z = (DefaultNTextNodeBuilder) copy().flatten();
-        return NStream.of(
+        return NStream.ofIterator(
                 new Iterator<NTextBuilder>() {
                     NTextBuilder n;
 

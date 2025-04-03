@@ -4,7 +4,9 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.web.NHttpCode;
 import net.thevpc.nuts.web.NWebCookie;
 import net.thevpc.nuts.web.NWebResponse;
 import net.thevpc.nuts.web.NWebResponseException;
@@ -19,21 +21,32 @@ import java.util.Map;
 
 public class NWebResponseImpl implements NWebResponse {
     private int code;
+    private NHttpCode httpCode;
     private NMsg msg;
-    private DefaultNWebHeaders headers=new DefaultNWebHeaders();
+    private DefaultNWebHeaders headers = new DefaultNWebHeaders();
     private NInputSource content;
     private NMsg userMessage;
 
     public NWebResponseImpl(int code, NMsg msg, Map<String, List<String>> headers, NInputSource content) {
         this.code = code;
+        this.httpCode = NHttpCode.of(code);
         this.msg = msg;
         this.headers.addHeadersMulti(headers, DefaultNWebHeaders.Mode.ALWAYS);
         this.content = content;
     }
 
     @Override
-    public int getCode() {
+    public NOptional<String> getHeader(String name) {
+        return NOptional.ofNamedFirst(getHeaders(name), name);
+    }
+
+    @Override
+    public int getIntCode() {
         return code;
+    }
+
+    public NHttpCode getCode() {
+        return httpCode;
     }
 
     @Override
@@ -135,6 +148,14 @@ public class NWebResponseImpl implements NWebResponse {
     @Override
     public boolean isError() {
         return code >= 400;
+    }
+
+    @Override
+    public boolean isOk() {
+        return
+                code >= 200
+                        && code < 300
+                ;
     }
 
     @Override

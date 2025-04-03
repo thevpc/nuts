@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder implements NPrimitiveElementBuilder, NLiteral {
     private Object value;
@@ -623,6 +624,24 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
             value(element.value());
             numberLayout(element.numberLayout());
             numberSuffix(element.numberSuffix());
+        }
+        return this;
+    }
+
+    @Override
+    public boolean isOrdinalNumber() {
+        return type().isOrdinalNumber();
+    }
+
+    @Override
+    public boolean isFloatingNumber() {
+        return type().isFloatingNumber();
+    }
+
+    @Override
+    public NPrimitiveElementBuilder doWith(Consumer<NPrimitiveElementBuilder> con) {
+        if(con!=null){
+            con.accept(this);
         }
         return this;
     }

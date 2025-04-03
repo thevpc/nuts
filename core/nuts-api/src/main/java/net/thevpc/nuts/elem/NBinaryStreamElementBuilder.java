@@ -27,11 +27,13 @@ package net.thevpc.nuts.elem;
 import net.thevpc.nuts.io.NInputStreamProvider;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * @author thevpc
  */
 public interface NBinaryStreamElementBuilder extends NElementBuilder {
+    NBinaryStreamElementBuilder doWith(Consumer<NBinaryStreamElementBuilder> con);
     NBinaryStreamElementBuilder addAnnotations(List<NElementAnnotation> annotations);
 
     NBinaryStreamElementBuilder addAnnotation(NElementAnnotation annotation);

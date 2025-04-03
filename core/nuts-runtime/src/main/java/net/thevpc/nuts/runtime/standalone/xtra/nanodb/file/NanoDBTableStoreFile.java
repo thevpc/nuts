@@ -134,7 +134,7 @@ public class NanoDBTableStoreFile<T> implements NanoDBTableStore<T> {
     }
 
     public NStream<T> stream() {
-        return NStream.of(
+        return NStream.ofStream(
                 StreamSupport.stream(
                         Spliterators.spliteratorUnknownSize(iterator(), Spliterator.ORDERED),
                         false));
@@ -227,13 +227,13 @@ public class NanoDBTableStoreFile<T> implements NanoDBTableStore<T> {
     }
 
     public NStream<T> findByIndex(String indexName, Object value) {
-        return NStream.of(
+        return NStream.ofStream(
                 resolveIndexInfo(indexName).getData().get(value)
                 .mapToObj(pos -> get(pos)));
     }
 
     public <T> NStream<T> findIndexValues(String indexName) {
-        return NStream.of(
+        return NStream.ofStream(
                 resolveIndexInfo(indexName).getData().findAll()
         );
     }

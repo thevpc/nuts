@@ -44,19 +44,26 @@ import java.util.stream.*;
  * @since 0.5.4
  */
 public interface NStream<T> extends Iterable<T>, NElementDescribable<NStream<T>>, AutoCloseable {
-    static <T> NStream<T> of(T[] str) {
+    static <T> NStream<T> ofArray(T... str) {
         return NCollectionsRPI.of().arrayToStream(str);
     }
+    static <T> NStream<T> ofOptional(NOptional<T> str) {
+        return NCollectionsRPI.of().optionalToStream(str);
+    }
 
-    static <T> NStream<T> of(Iterable<T> str) {
+    static <T> NStream<T> ofOptional(Optional<T> str) {
+        return NCollectionsRPI.of().optionalToStream(str);
+    }
+
+    static <T> NStream<T> ofIterable(Iterable<T> str) {
         return NCollectionsRPI.of().iterableToStream(str);
     }
 
-    static <T> NStream<T> of(Iterator<T> str) {
+    static <T> NStream<T> ofIterator(Iterator<T> str) {
         return NCollectionsRPI.of().iteratorToStream(str);
     }
 
-    static <T> NStream<T> of(Stream<T> str) {
+    static <T> NStream<T> ofStream(Stream<T> str) {
         return NCollectionsRPI.of().toStream(str);
     }
 
@@ -65,7 +72,7 @@ public interface NStream<T> extends Iterable<T>, NElementDescribable<NStream<T>>
     }
 
     static <T> NStream<T> ofSingleton(T element) {
-        return of(Arrays.asList(element));
+        return ofIterable(Arrays.asList(element));
     }
 
     /**

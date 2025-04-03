@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DefaultNWebCookie implements NWebCookie {
+    private static final NStringMapFormat COOKIES_PARSER = NStringMapFormat.of("=", ";", "\\", false, NStringMapFormat.URL_ENCODER, NStringMapFormat.URL_DECODER);
     private String name;
     private String value;
     private Map<String, String> properties = new HashMap<>();
@@ -18,7 +19,7 @@ public class DefaultNWebCookie implements NWebCookie {
         value = NHttpUrlEncoder.decode(expr.substring(index + 1));
         int pv = value.indexOf(';');
         if (pv > 0) {
-            properties = NStringMapFormat.of("=", ";", "\\", false).parse(value.substring(pv + 1)).get();
+            properties = COOKIES_PARSER.parse(value.substring(pv + 1)).get();
             value = value.substring(0, pv);
         }
     }

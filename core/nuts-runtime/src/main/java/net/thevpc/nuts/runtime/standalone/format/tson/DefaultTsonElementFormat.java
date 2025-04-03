@@ -59,6 +59,11 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
         w.write(out.asPrintStream(), toTson(data));
     }
 
+    @Override
+    public NElement normalize(NElement e) {
+        return e;
+    }
+
 
     private NElementAnnotation toNElemAnn(TsonAnnotation elem) {
         return new NElementAnnotationImpl(
@@ -79,6 +84,13 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
     public NElement parseElement(Reader reader, NElementFactoryContext context) {
         TsonDocument tsonDocument = Tson.reader().readDocument(reader);
         return toNElem(tsonDocument.getContent());
+    }
+
+    public TsonElement[] toTsonElemArray(List<NElement> elems) {
+        if (elems == null) {
+            return null;
+        }
+        return elems.stream().map(x -> toTson(x)).toArray(TsonElement[]::new);
     }
 
     public TsonElement toTson(NElement elem) {
@@ -155,10 +167,8 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 return decorateTsonElement(
                         Tson.ofArrayBuilder()
                                 .name(ee.name())
-                                .addParams(
-                                        ee.params() == null ? null :
-                                                ee.params().stream().map(x -> toTson(x)).toArray(TsonElement[]::new)
-                                ).addAll(ee.children().stream().map(x -> toTson(x)).toArray(TsonElement[]::new))
+                                .addParams(toTsonElemArray(ee.params()))
+                                .addAll(toTsonElemArray(ee.children()))
                                 .build()
                         , elem);
             }
@@ -168,12 +178,10 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
             case NAMED_PARAMETRIZED_OBJECT: {
                 NObjectElement ee = elem.asObject().get();
                 return decorateTsonElement(
-                        Tson.ofArrayBuilder()
+                        Tson.ofObjectBuilder()
                                 .name(ee.name())
-                                .addParams(
-                                        ee.params() == null ? null :
-                                                ee.params().stream().map(x -> toTson(x)).toArray(TsonElement[]::new)
-                                ).addAll(ee.children().stream().map(x -> toTson(x)).toArray(TsonElement[]::new))
+                                .addParams(toTsonElemArray(ee.params()))
+                                .addAll(toTsonElemArray(ee.children()))
                                 .build()
                         , elem);
             }
@@ -181,9 +189,9 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
             case NAMED_UPLET: {
                 NUpletElement ee = elem.asUplet().get();
                 return decorateTsonElement(
-                        Tson.ofArrayBuilder()
+                        Tson.ofUpletBuilder()
                                 .name(ee.name())
-                                .addAll(ee.children().stream().map(x -> toTson(x)).toArray(TsonElement[]::new))
+                                .addAll(toTsonElemArray(ee.children()))
                                 .build()
                         , elem);
             }
@@ -197,7 +205,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                         , elem);
             }
             case NAME: {
-                return decorateTsonElement(Tson.ofName(elem.asNamed().get().name()), elem);
+                return decorateTsonElement(Tson.ofName(elem.asString().get()), elem);
             }
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:
@@ -205,8 +213,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
             case TRIPLE_DOUBLE_QUOTED_STRING:
             case TRIPLE_SINGLE_QUOTED_STRING:
             case TRIPLE_ANTI_QUOTED_STRING:
-            case LINE_STRING:
-            {
+            case LINE_STRING: {
                 return decorateTsonElement(Tson.ofString(
                         toTsonStringLayout(elem.asStr().get().type()),
                         elem.asStr().get().stringValue()
@@ -279,21 +286,19 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 na.stream().map(x -> toTsonAnn(x)).collect(Collectors.toList())
         );
         TsonComments tc = TsonComments.BLANK;
-        tc.addLeading(nc.leadingComments().stream().map(x -> new TsonComment(
+        tc = tc.addLeading(nc.leadingComments().stream().map(x -> new TsonComment(
                 x.type() == NElementCommentType.SINGLE_LINE ? TsonCommentType.SINGLE_LINE
                         : x.type() == NElementCommentType.MULTI_LINE ? TsonCommentType.MULTI_LINE
                         : TsonCommentType.SINGLE_LINE,
                 x.text()
         )).toArray(TsonComment[]::new));
-        tc.addTrailing(nc.trailingComments().stream().map(x -> new TsonComment(
+        tc = tc.addTrailing(nc.trailingComments().stream().map(x -> new TsonComment(
                 x.type() == NElementCommentType.SINGLE_LINE ? TsonCommentType.SINGLE_LINE
                         : x.type() == NElementCommentType.MULTI_LINE ? TsonCommentType.MULTI_LINE
                         : TsonCommentType.SINGLE_LINE,
                 x.text()
         )).toArray(TsonComment[]::new));
         b.setComments(tc);
-
-
         return b.build();
     }
 
@@ -386,36 +391,35 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
             case TRIPLE_DOUBLE_QUOTED_STRING:
             case TRIPLE_SINGLE_QUOTED_STRING:
             case TRIPLE_ANTI_QUOTED_STRING:
-            case LINE_STRING:
-            {
+            case LINE_STRING: {
                 return decorateNElement(elems.ofString(tsonElem.toStr().stringValue(), toNStringLayout(tsonElem.toStr().type())), tsonElem);
             }
             case BOOLEAN: {
                 return decorateNElement(elems.ofBoolean(tsonElem.booleanValue()), tsonElem);
             }
-            case INSTANT:{
+            case INSTANT: {
                 return decorateNElement(elems.ofInstant(tsonElem.instantValue()), tsonElem);
             }
-            case LOCAL_DATE:{
+            case LOCAL_DATE: {
                 return decorateNElement(elems.ofLocalDate(tsonElem.localDateValue()), tsonElem);
             }
-            case LOCAL_TIME:{
+            case LOCAL_TIME: {
                 return decorateNElement(elems.ofLocalTime(tsonElem.localTimeValue()), tsonElem);
             }
-            case LOCAL_DATETIME:{
+            case LOCAL_DATETIME: {
                 return decorateNElement(elems.ofLocalDateTime(tsonElem.localDateTimeValue()), tsonElem);
             }
-            case BIG_COMPLEX:{
+            case BIG_COMPLEX: {
                 TsonBigComplex v = tsonElem.toBigComplex();
-                return decorateNElement(elems.ofBigComplex(v.real(),v.imag()), tsonElem);
+                return decorateNElement(elems.ofBigComplex(v.real(), v.imag()), tsonElem);
             }
-            case FLOAT_COMPLEX:{
+            case FLOAT_COMPLEX: {
                 TsonFloatComplex v = tsonElem.toFloatComplex();
-                return decorateNElement(elems.ofFloatComplex(v.real(),v.imag()), tsonElem);
+                return decorateNElement(elems.ofFloatComplex(v.real(), v.imag()), tsonElem);
             }
-            case DOUBLE_COMPLEX:{
+            case DOUBLE_COMPLEX: {
                 TsonDoubleComplex v = tsonElem.toDoubleComplex();
-                return decorateNElement(elems.ofDoubleComplex(v.real(),v.imag()), tsonElem);
+                return decorateNElement(elems.ofDoubleComplex(v.real(), v.imag()), tsonElem);
             }
             case REGEX: {
                 return decorateNElement(elems.ofRegex(tsonElem.stringValue()), tsonElem);

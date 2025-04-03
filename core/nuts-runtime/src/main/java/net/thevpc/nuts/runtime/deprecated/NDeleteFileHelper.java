@@ -89,7 +89,7 @@ public class NDeleteFileHelper {
         if (optionsCopy.getBot().orElse(false) || !NReservedLangUtils.isGraphicalDesktopEnvironment()) {
             optionsCopy.setGui(false);
         }
-        return deleteAndConfirmAll(folders.toArray(new Path[0]), force, DELETE_FOLDERS_HEADER, bLog, optionsCopy, readline);
+        return deleteAndConfirmAll(folders.toArray(new Path[0]), force, DELETE_FOLDERS_HEADER, bLog, optionsCopy.build(), readline);
     }
 
     public static long deleteAndConfirmAll(Path[] folders, boolean force, String header,

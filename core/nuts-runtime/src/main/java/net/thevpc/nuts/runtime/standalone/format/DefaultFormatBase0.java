@@ -29,17 +29,6 @@ public abstract class DefaultFormatBase0<T> implements NCmdLineConfigurable {
 
 
 
-//    public PrintWriter getValidPrintWriter(Writer out) {
-//        checkSession();
-//        return (out == null)
-//                ? CoreIOUtils.toPrintWriter(getSession().getTerminal().getOut(), getSession())
-//                : CoreIOUtils.toPrintWriter(out, getSession());
-//    }
-
-//    public PrintWriter getValidPrintWriter() {
-//        return getValidPrintWriter(null);
-//    }
-
     public NPrintStream getValidPrintStream(NPrintStream out) {
         if (out == null) {
             NSession session=NSession.of();

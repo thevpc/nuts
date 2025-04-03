@@ -873,7 +873,7 @@ public class DefaultNTexts implements NTexts {
         config.setFlatten(true);
         config.setNormalize(true);
         NText z = transform(text, transformer, config);
-        return NStream.of(new Iterator<NText>() {
+        return NStream.ofIterator(new Iterator<NText>() {
             Deque<NText> queue = new ArrayDeque<>();
 
             {

@@ -45,7 +45,7 @@ public class DefaultNDependencies implements NDependencies {
 
     @Override
     public NStream<NId> sourceIds() {
-        return NStream.of(
+        return NStream.ofIterator(
                 NIterator.of(Arrays.asList(sourceIds).iterator()).withDesc(description)
         );
     }
@@ -57,35 +57,35 @@ public class DefaultNDependencies implements NDependencies {
 
     @Override
     public NStream<NDependency> immediate() {
-        return NStream.of(
+        return NStream.ofIterator(
                 NIterator.of(Arrays.asList(immediateDependencies).iterator()).withDesc(description)
         );
     }
 
     @Override
     public NStream<NDependency> transitive() {
-        return NStream.of(
+        return NStream.ofIterator(
                 NIterator.of(Arrays.asList(nonMergedDependencies).iterator()).withDesc(description)
         );
     }
 
     @Override
     public NStream<NDependencyTreeNode> transitiveNodes() {
-        return NStream.of(
+        return NStream.ofIterator(
                 NIterator.of(Arrays.asList(nonMergedNodes).iterator()).withDesc(description)
         );
     }
 
     @Override
     public NStream<NDependency> transitiveWithSource() {
-        return NStream.of(
+        return NStream.ofIterator(
                 NIterator.of(Arrays.asList(mergedDependencies).iterator()).withDesc(description)
         );
     }
 
     @Override
     public NStream<NDependencyTreeNode> sourceNodes() {
-        return NStream.of(
+        return NStream.ofIterator(
                 NIterator.of(Arrays.asList(mergedNodes).iterator()).withDesc(description)
         );
     }

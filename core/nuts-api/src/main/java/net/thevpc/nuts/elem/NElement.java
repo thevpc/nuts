@@ -244,11 +244,48 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable, NLi
 
     /**
      * best effort to convert to NListContainerElement
+     *
      * @return NListContainerElement
      */
-    NOptional<NListContainerElement> toListElementContainer();
+    NOptional<NListContainerElement> toListContainer();
 
     NElementComments comments();
 
     boolean isName();
+
+    /**
+     * converts the current element to a named uplet is applicable without information loss
+     *
+     * @return
+     */
+    NOptional<NUpletElement> toNamedUplet();
+
+    /**
+     * converts the current element to a named uplet
+     *
+     * @return
+     */
+    NOptional<NPairElement> toNamedPair();
+
+    NOptional<NObjectElement> toNamedObject();
+
+    NOptional<NObjectElement> toObject();
+
+    NOptional<NArrayElement> toNamedArray();
+
+    NOptional<NArrayElement> toArray();
+
+    NArrayElement wrapIntoArray();
+
+    NObjectElement wrapIntoObject();
+
+    NUpletElement wrapIntoUplet();
+
+    NArrayElement wrapIntoNamedArray(String name);
+
+    NObjectElement wrapIntoNamedObject(String name);
+
+    NUpletElement wrapIntoNamedUplet(String name);
+
+    NPairElement wrapIntoNamedPair(String name);
 }

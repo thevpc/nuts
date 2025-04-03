@@ -3,6 +3,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.NBootWorkspaceFactory;
 import net.thevpc.nuts.boot.NBootDescriptor;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NTerminalMode;
@@ -21,7 +22,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 
-public interface NBootOptions  {
+public interface NBootOptions {
 
     NOptional<String> getBootRepositories();
 
@@ -591,14 +592,14 @@ public interface NBootOptions  {
     NOptional<Boolean> getBot();
 
     /**
-     * @since 0.8.5
      * @return application is running in preview mode (using preview repositories)
+     * @since 0.8.5
      */
     NOptional<Boolean> getPreviewRepo();
 
     /**
-     * @since 0.8.5
      * @return workspace is running as shared Workspace instance (Singleton)
+     * @since 0.8.5
      */
     NOptional<Boolean> getSharedInstance();
 
@@ -673,6 +674,12 @@ public interface NBootOptions  {
 
     NOptional<List<String>> getCustomOptions();
 
+    NOptional<NArg> getCustomOptionArg(String key);
+
+    NOptional<String> getCustomOption(String key);
+
+    NOptional<List<NArg>> getCustomOptionArgs();
+
     /**
      * locale
      *
@@ -692,6 +699,7 @@ public interface NBootOptions  {
     NCmdLine toCmdLine();
 
     NCmdLine toCmdLine(NWorkspaceOptionsConfig config);
+
     NWorkspaceOptions toWorkspaceOptions();
 
 }

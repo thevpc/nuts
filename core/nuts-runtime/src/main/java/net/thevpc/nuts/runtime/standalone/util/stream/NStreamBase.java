@@ -456,7 +456,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
 
     @Override
     public NStream<T> limit(long maxSize) {
-        return NStream.of(stream().limit(maxSize));
+        return NStream.ofStream(stream().limit(maxSize));
     }
 
     @Override

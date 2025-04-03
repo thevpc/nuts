@@ -25,28 +25,10 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
         super(name);
     }
     
-//    @Override
-//    public PrintWriter getValidPrintWriter(Writer out) {
-//        checkSession();
-//        if(out == null){
-//            return
-//        }
-//        return (out == null) ?
-//                CoreIOUtils.toPrintWriter(session.getTerminal().getOut(), session)
-//                :
-//                CoreIOUtils.toPrintWriter(out, session);
-//    }
-
-//    @Override
-//    public PrintWriter getValidPrintWriter() {
-//        return getValidPrintWriter(null);
-//    }
-
     @Override
     public NPrintStream getValidPrintStream(NPrintStream out) {
         if (out == null) {
-            NSession session=NSession.of();
-            out = session.getTerminal().getOut();
+            out = NOut.out();
         }
         return out;
     }

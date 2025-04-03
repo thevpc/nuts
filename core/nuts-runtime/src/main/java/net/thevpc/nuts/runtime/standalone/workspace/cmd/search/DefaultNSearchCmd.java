@@ -486,7 +486,6 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
 
 
     //    private NutsId[] findDependencies(List<NutsId> ids) {
-//        checkSession();
 //        NutsWorkspace ws = getSession().getWorkspace();
 //        NSession _session = this.getSession();
 //        NutsDependencyFilter _dependencyFilter = ws.dependency().filter().byScope(getScope())
@@ -505,7 +504,6 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
 //                .all().stream().map(NutsDependency::toId).toArray(NutsId[]::new);
 //    }
 //    private NutsDependency[] findDependencies2(List<NutsDependency> ids) {
-//        checkSession();
 //        NutsWorkspace ws = getSession().getWorkspace();
 //        NSession _session = this.getSession();
 //        NutsDependencyFilter _dependencyFilter = ws.dependency().filter().byScope(getScope())
@@ -699,10 +697,8 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
 
 //    public NutsIterator<NutsDependency> findIterator2(DefaultNSearch search) {
 //        List<NutsIterator<NutsDependency>> allResults = new ArrayList<>();
-//        checkSession();
 //        NutsWorkspace ws = getSession().getWorkspace();
 //        NSession session = search.getSession();
-//        NutsWorkspaceUtils.checkSession(ws, session);
 //        NutsIdFilter sIdFilter = search.getIdFilter();
 //        NutsRepositoryFilter sRepositoryFilter = search.getRepositoryFilter();
 //        NutsDescriptorFilter sDescriptorFilter = search.getDescriptorFilter();

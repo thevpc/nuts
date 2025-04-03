@@ -23,13 +23,11 @@ public abstract class NSystemTerminalBaseImpl implements NSystemTerminalBase {
 
     @Override
     public Cursor getTerminalCursor() {
-        //NutsWorkspaceUtils.checkSession(session.getWorkspace(), session);
         return (Cursor) run(NTerminalCmd.GET_CURSOR, getOut());
     }
 
     @Override
     public Size getTerminalSize() {
-        //NutsWorkspaceUtils.checkSession(session.getWorkspace(), session);
         return (Size) run(NTerminalCmd.GET_SIZE, getOut());
     }
 }

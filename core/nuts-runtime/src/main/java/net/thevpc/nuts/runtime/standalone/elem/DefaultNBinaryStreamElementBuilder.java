@@ -4,6 +4,7 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NInputStreamProvider;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class DefaultNBinaryStreamElementBuilder extends AbstractNElementBuilder implements NBinaryStreamElementBuilder {
     private NInputStreamProvider value;
@@ -12,6 +13,13 @@ public class DefaultNBinaryStreamElementBuilder extends AbstractNElementBuilder 
     public DefaultNBinaryStreamElementBuilder() {
     }
 
+    @Override
+    public NBinaryStreamElementBuilder doWith(Consumer<NBinaryStreamElementBuilder> con) {
+        if(con!=null){
+            con.accept(this);
+        }
+        return this;
+    }
 
     public NInputStreamProvider value() {
         return value;

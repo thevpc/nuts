@@ -27,6 +27,8 @@ package net.thevpc.nuts.elem;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Array element Builder is a mutable NutsArrayElement that helps
@@ -36,6 +38,7 @@ import java.util.List;
  * @app.category Elements
  */
 public interface NUpletElementBuilder extends NElementBuilder {
+    NUpletElementBuilder doWith(Consumer<NUpletElementBuilder> con);
 
     static NUpletElementBuilder of() {
         return NElements.of().ofUpletBuilder();
@@ -313,4 +316,42 @@ public interface NUpletElementBuilder extends NElementBuilder {
     NUpletElementBuilder removeTrailingCommentAt(int index);
     NUpletElementBuilder clearComments();
     NUpletElementBuilder addComments(NElementComments comments);
+
+
+    NUpletElementBuilder set(String name, NElement value);
+
+    NUpletElementBuilder set(String name, boolean value);
+
+    NUpletElementBuilder set(String name, int value);
+
+    NUpletElementBuilder set(String name, double value);
+
+    NUpletElementBuilder set(String name, String value);
+
+    NUpletElementBuilder set(NElement name, NElement value);
+
+    NUpletElementBuilder add(NElement name, NElement value);
+
+    NUpletElementBuilder add(String name, NElement value);
+
+    NUpletElementBuilder set(NElement name, boolean value);
+
+    NUpletElementBuilder set(NElement name, int value);
+
+    NUpletElementBuilder set(NElement name, double value);
+
+    NUpletElementBuilder set(NElement name, String value);
+
+    NUpletElementBuilder set(NPairElement entry);
+
+    NUpletElementBuilder add(String name, boolean value);
+
+    NUpletElementBuilder add(String name, int value);
+
+    NUpletElementBuilder add(String name, double value);
+
+    NUpletElementBuilder add(String name, String value);
+
+    NUpletElementBuilder addAll(Map<NElement, NElement> other);
+
 }

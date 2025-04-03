@@ -82,7 +82,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
 
     @Override
     public NStream<NPath> list(NPath basePath) {
-        return NStream.of(parseHtml(ref.toString()).stream().map(
+        return NStream.ofStream(parseHtml(ref.toString()).stream().map(
                 x -> {
                     if (x.endsWith("/")) {
                         return NPath.of(PREFIX + ref.resolve(x));

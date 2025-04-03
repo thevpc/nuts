@@ -174,7 +174,7 @@ public class DefaultNPlatformModel {
     public NStream<NPlatformLocation> searchSystemPlatforms(NPlatformFamily platformType) {
         if (platformType == NPlatformFamily.JAVA) {
             try {
-                return NStream.of(NJavaSdkUtils.of(workspace).searchJdkLocationsFuture().get());
+                return NStream.ofArray(NJavaSdkUtils.of(workspace).searchJdkLocationsFuture().get());
             } catch (InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }
@@ -184,7 +184,7 @@ public class DefaultNPlatformModel {
 
     public NStream<NPlatformLocation> searchSystemPlatforms(NPlatformFamily platformType, NPath path) {
         if (platformType == NPlatformFamily.JAVA) {
-            return NStream.of(NJavaSdkUtils.of(workspace).searchJdkLocations(path));
+            return NStream.ofArray(NJavaSdkUtils.of(workspace).searchJdkLocations(path));
         }
         return NStream.ofEmpty();
     }
@@ -259,13 +259,13 @@ public class DefaultNPlatformModel {
                 for (List<NPlatformLocation> value : model.getConfigPlatforms().values()) {
                     all.addAll(value);
                 }
-                return NStream.of(all);
+                return NStream.ofIterable(all);
             }
             List<NPlatformLocation> list = getPlatforms().get(type);
             if (list == null) {
                 return NStream.ofEmpty();
             }
-            return NStream.of(list);
+            return NStream.ofIterable(list);
         }
         List<NPlatformLocation> ret = new ArrayList<>();
         if (type == null) {
@@ -289,7 +289,7 @@ public class DefaultNPlatformModel {
         if (!ret.isEmpty()) {
             ret.sort(new NPlatformLocationSelectComparator());
         }
-        return NStream.of(ret);
+        return NStream.ofIterable(ret);
     }
 
     public Map<NPlatformFamily, List<NPlatformLocation>> getPlatforms() {

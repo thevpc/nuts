@@ -29,6 +29,7 @@ import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Builder for manipulating {@link NObjectElement} instances
@@ -76,6 +77,8 @@ public interface NObjectElementBuilder extends NElementBuilder {
     NObjectElementBuilder addAll(List<NElement> other);
 
     NObjectElementBuilder setAll(Map<NElement, NElement> other);
+
+    NObjectElementBuilder doWith(Consumer<NObjectElementBuilder> con);
 
     /**
      * remove all properties
@@ -221,16 +224,27 @@ public interface NObjectElementBuilder extends NElementBuilder {
     NObjectElementBuilder setParametrized(boolean parametrized);
 
     NObjectElementBuilder addLeadingComment(NElementCommentType type, String text);
+
     NObjectElementBuilder addTrailingComment(NElementCommentType type, String text);
+
     NObjectElementBuilder addLeadingComment(NElementComment comment);
+
     NObjectElementBuilder addLeadingComments(NElementComment... comments);
+
     NObjectElementBuilder addTrailingComment(NElementComment comment);
+
     NObjectElementBuilder addTrailingComments(NElementComment... comments);
+
     NObjectElementBuilder removeLeadingComment(NElementComment comment);
+
     NObjectElementBuilder removeTrailingComment(NElementComment comment);
+
     NObjectElementBuilder removeLeadingCommentAt(int index);
+
     NObjectElementBuilder removeTrailingCommentAt(int index);
+
     NObjectElementBuilder clearComments();
+
     NObjectElementBuilder addComments(NElementComments comments);
 
 }

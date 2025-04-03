@@ -26,10 +26,8 @@ package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.elem.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 
@@ -43,6 +41,14 @@ public class DefaultNUpletElementBuilder  extends AbstractNElementBuilder implem
     private String name;
 
     public DefaultNUpletElementBuilder() {
+    }
+
+    @Override
+    public NUpletElementBuilder doWith(Consumer<NUpletElementBuilder> con) {
+        if(con!=null){
+            con.accept(this);
+        }
+        return this;
     }
 
     public String name() {
@@ -436,5 +442,124 @@ public class DefaultNUpletElementBuilder  extends AbstractNElementBuilder implem
         super.clearComments();
         return this;
     }
+
+
+    @Override
+    public NUpletElementBuilder add(String name, NElement value) {
+        return add(_elements().ofString(name), denull(value));
+    }
+
+    @Override
+    public NUpletElementBuilder add(NElement name, NElement value) {
+        add(pair(denull(name), denull(value)));
+        return this;
+    }
+
+    @Override
+    public NUpletElementBuilder set(NElement name, NElement value) {
+        name = denull(name);
+        value = denull(value);
+        for (int i = 0; i < values.size(); i++) {
+            NElement nElement = values.get(i);
+            if (nElement instanceof NPairElement) {
+                NElement k = ((NPairElement) nElement).key();
+                if (Objects.equals(k, name)) {
+                    values.set(i, pair(name, value));
+                    return this;
+                }
+            } else if (Objects.equals(nElement, name)) {
+                values.set(i, pair(name, value));
+                return this;
+            }
+        }
+        add(pair(name, value));
+        return this;
+    }
+
+    private NPairElement pair(NElement k, NElement v) {
+        return new DefaultNPairElement(k, v, new NElementAnnotation[0], new NElementCommentsImpl());
+    }
+
+    @Override
+    public NUpletElementBuilder set(String name, NElement value) {
+        return set(_elements().ofNameOrString(name), denull(value));
+    }
+
+    @Override
+    public NUpletElementBuilder set(String name, boolean value) {
+        return set(_elements().ofNameOrString(name), _elements().ofBoolean(value));
+    }
+
+    @Override
+    public NUpletElementBuilder set(String name, int value) {
+        return set(_elements().ofNameOrString(name), _elements().ofInt(value));
+    }
+
+    @Override
+    public NUpletElementBuilder set(String name, double value) {
+        return set(_elements().ofNameOrString(name), _elements().ofDouble(value));
+    }
+
+    @Override
+    public NUpletElementBuilder set(String name, String value) {
+        return set(_elements().ofNameOrString(name), _elements().ofString(value));
+    }
+    @Override
+    public NUpletElementBuilder set(NElement name, boolean value) {
+        return set(name, _elements().ofBoolean(value));
+    }
+
+    @Override
+    public NUpletElementBuilder set(NElement name, int value) {
+        return set(name, _elements().ofInt(value));
+    }
+
+    @Override
+    public NUpletElementBuilder set(NElement name, double value) {
+        return set(name, _elements().ofDouble(value));
+    }
+
+    @Override
+    public NUpletElementBuilder set(NElement name, String value) {
+        return set(name, _elements().ofString(value));
+    }
+
+    @Override
+    public NUpletElementBuilder set(NPairElement entry) {
+        if (entry != null) {
+            set(entry.key(), entry.value());
+        }
+        return this;
+    }
+    @Override
+    public NUpletElementBuilder add(String name, boolean value) {
+        return add(_elements().ofNameOrString(name), _elements().ofBoolean(value));
+    }
+
+    @Override
+    public NUpletElementBuilder add(String name, int value) {
+        return add(_elements().ofNameOrString(name), _elements().ofInt(value));
+    }
+
+    @Override
+    public NUpletElementBuilder add(String name, double value) {
+        return add(_elements().ofNameOrString(name), _elements().ofDouble(value));
+    }
+
+    @Override
+    public NUpletElementBuilder add(String name, String value) {
+        return add(_elements().ofNameOrString(name), _elements().ofString(value));
+    }
+
+    @Override
+    public NUpletElementBuilder addAll(Map<NElement, NElement> other) {
+        if (other != null) {
+            for (Map.Entry<NElement, NElement> e : other.entrySet()) {
+                add(e.getKey(), e.getValue());
+            }
+        }
+        return this;
+    }
+
 
 }

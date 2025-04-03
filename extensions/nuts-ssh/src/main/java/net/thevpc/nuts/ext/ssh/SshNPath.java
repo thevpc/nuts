@@ -56,7 +56,7 @@ class SshNPath implements NPathSPI {
             int i = c.execStringCommand("ls " + path.getPath());
             if (i == 0) {
                 String[] s = c.getOutputString().split("[\n|\r]");
-                return NStream.of(s).map(
+                return NStream.ofArray(s).map(
                         NFunction.of(
                                 x -> {
                                     String cc = path.getPath();
@@ -529,7 +529,7 @@ class SshNPath implements NPathSPI {
             int i = c.execStringCommand(cmd.toString());
             if (i == 0) {
                 String[] s = c.getOutputString().split("[\n|\r]");
-                return NStream.of(s).map(
+                return NStream.ofArray(s).map(
                         NFunction.of(
                                 x -> {
                                     String cc = path.getPath();

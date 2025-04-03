@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.logging.Level;
 
 public class ProgressOptions {
-    public static NStringMapFormat COMMAS_FORMAT = NStringMapFormat.of("=", ",;", "", true);
+    public static NStringMapFormat COMMAS_FORMAT = NStringMapFormat.of("=", ",;", "", true, null, null);
 
     public static ProgressOptions of() {
         return NApp.of().getOrComputeProperty(ProgressOptions.class.getName(), NScopeType.SESSION, () -> {
@@ -47,7 +47,7 @@ public class ProgressOptions {
                     }
                 }
             }
-            if(o.getEnabled().isEmpty() && !o.vals.isEmpty()){
+            if (o.getEnabled().isEmpty() && !o.vals.isEmpty()) {
                 // if we specify progress options,
                 // this means we forcibly want progress to be shon
                 o.setEnabled(true);

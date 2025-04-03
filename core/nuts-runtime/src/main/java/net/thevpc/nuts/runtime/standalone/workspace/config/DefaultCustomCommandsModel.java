@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.NInternalCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.CommandNWorkspaceCommandFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ConfigNWorkspaceCommandFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias.DefaultNCustomCommand;
@@ -17,15 +18,18 @@ import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NAsk;
+import net.thevpc.nuts.util.NOptional;
 
 import java.util.*;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class DefaultCustomCommandsModel {
 
     private final ConfigNWorkspaceCommandFactory defaultCommandFactory;
     private final List<NWorkspaceCmdFactory> commandFactories = new ArrayList<>();
     private NWorkspace workspace;
+    private Map<String, NInternalCommand> internalCommands;
 
     public DefaultCustomCommandsModel(NWorkspace ws) {
         this.workspace = ws;
@@ -350,4 +354,15 @@ public class DefaultCustomCommandsModel {
         return workspace;
     }
 
+    public Map<String, NInternalCommand> getInternalCommands() {
+        if (internalCommands == null) {
+            List<NInternalCommand> all = workspace.extensions().createComponents(NInternalCommand.class, null);
+            internalCommands = all.stream().collect(Collectors.toMap(x -> x.getName(), x -> x));
+        }
+        return internalCommands;
+    }
+
+    public NOptional<NExecCmdExtension> getExecCmdExtension(String target) {
+        return workspace.extensions().createComponent(NExecCmdExtension.class, target);
+    }
 }

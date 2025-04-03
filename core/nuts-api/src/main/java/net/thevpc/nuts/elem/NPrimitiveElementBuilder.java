@@ -25,11 +25,13 @@
 package net.thevpc.nuts.elem;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * @author thevpc
  */
 public interface NPrimitiveElementBuilder extends NElementBuilder {
+    NPrimitiveElementBuilder doWith(Consumer<NPrimitiveElementBuilder> con);
     NNumberLayout numberLayout();
 
     NPrimitiveElementBuilder numberLayout(NNumberLayout numberLayout);

@@ -27,6 +27,7 @@ package net.thevpc.nuts.elem;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Array element Builder is a mutable NutsArrayElement that helps
@@ -36,6 +37,7 @@ import java.util.List;
  * @app.category Elements
  */
 public interface NMatrixElementBuilder extends NElementBuilder {
+    NMatrixElementBuilder doWith(Consumer<NMatrixElementBuilder> con);
 
     static NMatrixElementBuilder of() {
         return NElements.of().ofMatrixBuilder();

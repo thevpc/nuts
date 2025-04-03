@@ -53,7 +53,7 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
                                 .setPlatform(Arrays.asList(javaVersion))
                 )
                 .setInstaller(NArtifactCallBuilder.of()
-                        .setId(NId.of(NConstants.Ids.NUTS_SHELL))
+                        .setId(NId.of(NConstants.Ids.NSH))
                         .setArguments(
                                 "-c", "unzip",
                                 "--skip-root",

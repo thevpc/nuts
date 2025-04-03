@@ -3,14 +3,23 @@ package net.thevpc.nuts.runtime.standalone.elem;
 import net.thevpc.nuts.elem.*;
 
 import java.util.List;
+import java.util.function.Consumer;
 
-public class DefaultNPairElementBuilder  extends AbstractNElementBuilder implements NPairElementBuilder {
+public class DefaultNPairElementBuilder extends AbstractNElementBuilder implements NPairElementBuilder {
     private NElement key;
     private NElement value;
 
     public DefaultNPairElementBuilder() {
         key = NElements.of().ofNull();
         value = NElements.of().ofNull();
+    }
+
+    @Override
+    public NPairElementBuilder doWith(Consumer<NPairElementBuilder> con) {
+        if(con!=null){
+            con.accept(this);
+        }
+        return this;
     }
 
     public DefaultNPairElementBuilder(NElement key, NElement value) {
@@ -48,11 +57,16 @@ public class DefaultNPairElementBuilder  extends AbstractNElementBuilder impleme
         this.key = key == null ? NElements.of().ofNull() : key;
         return this;
     }
-    
+
+    @Override
+    public NPairElementBuilder key(String key) {
+        this.key = key == null ? NElements.of().ofNull() : NElements.of().ofNameOrString(key);
+        return this;
+    }
 
     @Override
     public NPairElement build() {
-        return new DefaultNPairElement(key, value, annotations().toArray(new NElementAnnotation[0]),comments());
+        return new DefaultNPairElement(key, value, annotations().toArray(new NElementAnnotation[0]), comments());
     }
 
     @Override

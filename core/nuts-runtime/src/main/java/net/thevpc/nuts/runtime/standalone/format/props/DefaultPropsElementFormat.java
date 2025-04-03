@@ -49,6 +49,11 @@ public class DefaultPropsElementFormat implements NElementStreamFormat {
         return parseElement(new StringReader(string), context);
     }
 
+    @Override
+    public NElement normalize(NElement e) {
+        return e;
+    }
+
     public void write(NPrintStream out, NElement data, boolean compact) {
         write(out, data, compact ? null : "");
     }

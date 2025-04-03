@@ -1352,11 +1352,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
                 .notBlank());
     }
 
-    //    protected NutsStream<NutsDefinition> getResultDefinitionsBase(boolean print, boolean sort, boolean content, boolean effective) {
-//        checkSession();
-//        return new NutsDefinitionNutsResult(session, resolveFindIdBase(), print, sort, content, effective);
-//    }
-//
     protected abstract NIterator<NId> getResultIdIteratorBase(Boolean forceInlineDependencies);
 
     protected NStream<NId> getResultIdsBase(boolean sort) {

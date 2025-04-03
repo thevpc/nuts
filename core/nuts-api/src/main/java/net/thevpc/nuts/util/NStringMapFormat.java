@@ -31,28 +31,53 @@ import net.thevpc.nuts.elem.NElementType;
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.*;
+import java.util.function.Function;
 
 public class NStringMapFormat {
-    public static NStringMapFormat URL_FORMAT = NStringMapFormat.of("=", "&", "\\", true);
-    public static NStringMapFormat COMMA_FORMAT = NStringMapFormat.of("=", ",", "\\", true);
+    public static final Function<String, String> URL_ENCODER = x -> {
+        try {
+            return URLEncoder.encode(x, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException(e);
+        }
+    };
+    public static final Function<String, String> URL_DECODER = x -> {
+        try {
+            return URLDecoder.decode(x, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException(e);
+        }
+    };
+    public static NStringMapFormat URL_FORMAT = NStringMapFormat.of("=", "&", "", true,
+            URL_ENCODER,
+            URL_DECODER
+    );
+    public static NStringMapFormat COMMA_FORMAT = NStringMapFormat.of("=", ",", "\\", true, null, null);
     public static NStringMapFormat DEFAULT = URL_FORMAT;
 
     private final String equalsChars;
     private final String separatorChars;
     private final String escapeChars;
     private final boolean sort;
+    private final Function<String, String> decoder;
+    private final Function<String, String> encoder;
 
-    public static NStringMapFormat of(String equalsChars, String separatorChars, String escapeChars, boolean sort) {
-        return new NStringMapFormat(equalsChars, separatorChars, escapeChars, sort);
+    public static NStringMapFormat of(String equalsChars, String separatorChars, String escapeChars, boolean sort, Function<String, String> encoder, Function<String, String> decoder) {
+        return new NStringMapFormat(equalsChars, separatorChars, escapeChars, sort, encoder, decoder);
     }
 
     /**
      * @param equalsChars    equality separators, example '='
      * @param separatorChars entry separators, example ','
      */
-    public NStringMapFormat(String equalsChars, String separatorChars, String escapeChars, boolean sort) {
+    public NStringMapFormat(String equalsChars, String separatorChars, String escapeChars, boolean sort, Function<String, String> encoder, Function<String, String> decoder) {
         this.sort = sort;
+        this.encoder = encoder;
+        this.decoder = decoder;
         if (equalsChars != null) {
             for (char c : equalsChars.toCharArray()) {
                 if (isWhitespace(c)) {
@@ -140,7 +165,10 @@ public class NStringMapFormat {
         }
     }
 
-    private static Token readToken(PushbackReader reader, TokenConfig conf) throws IOException {
+    private static Token readToken(PushbackReader reader, TokenConfig conf, Function<String, String> decoder) throws IOException {
+        if (decoder == null) {
+            decoder = x -> x;
+        }
         String escapedTokens = conf.getEscapeChars();
         String eqChars = conf.getEqChars();
         String sepChars = conf.getSepChars();
@@ -163,9 +191,9 @@ public class NStringMapFormat {
                 }
             }
         } else if (eqChars.indexOf(r1) >= 0) {
-            return new Token(TokenType.EQ, String.valueOf(r1));
+            return new Token(TokenType.EQ, decoder.apply(String.valueOf(r1)), String.valueOf(r1));
         } else if (sepChars.indexOf(r1) >= 0) {
-            return new Token(TokenType.SEP, String.valueOf(r1));
+            return new Token(TokenType.SEP, decoder.apply(String.valueOf(r1)), String.valueOf(r1));
         }
         if (r == '\"' || r == '\'') {
             char cr = (char) r;
@@ -177,7 +205,7 @@ public class NStringMapFormat {
                 }
                 image.append(cr);
                 if (r == cr) {
-                    return new Token(cr == '\"' ? TokenType.SIMPLE_QUOTED : TokenType.DOUBLE_QUOTED, value.toString());
+                    return new Token(cr == '\"' ? TokenType.SIMPLE_QUOTED : TokenType.DOUBLE_QUOTED, decoder.apply(value.toString()), value.toString());
                 }
                 if (r == '\\') {
                     r = reader.read();
@@ -216,7 +244,7 @@ public class NStringMapFormat {
             while (true) {
                 r = reader.read();
                 if (r < 0) {
-                    return new Token(TokenType.WORD, value.toString(), image.toString());
+                    return new Token(TokenType.WORD, decoder.apply(value.toString()), image.toString());
                 }
                 char cr = (char) r;
                 if (escapedTokens.indexOf(cr) >= 0) {
@@ -224,14 +252,14 @@ public class NStringMapFormat {
                     r = reader.read();
                     if (r == -1) {
                         value.append(cr);
-                        return new Token(TokenType.WORD, value.toString(), image.toString());
+                        return new Token(TokenType.WORD, decoder.apply(value.toString()), image.toString());
                     } else {
                         cr = (char) r;
 
 //                        r = reader.read();
 //                        if (r == -1) {
 //                            value.append(cr);
-//                            return new Token(TokenType.WORD, value.toString(),image.toString());
+//                            return new Token(TokenType.WORD, decoder.apply(value.toString()),image.toString());
 //                        }
 //                        cr = (char) r;
                         image.append(cr);
@@ -261,14 +289,14 @@ public class NStringMapFormat {
                                 }
                                 default: {
                                     value.append(cr);
-                                    value.append((char)r);
+                                    value.append((char) r);
                                 }
                             }
                         }
                     }
                 } else if (isWhitespace(cr) || eqChars.indexOf(cr) >= 0 || sepChars.indexOf(cr) >= 0) {
                     reader.unread(cr);
-                    return new Token(TokenType.WORD, value.toString(), image.toString());
+                    return new Token(TokenType.WORD, decoder.apply(value.toString()), image.toString());
                 } else {
                     value.append(cr);
                     image.append(cr);
@@ -302,6 +330,10 @@ public class NStringMapFormat {
      * @return parsed map
      */
     public NOptional<Map<String, List<String>>> parseDuplicates(String text) {
+        Function<String, String> decoder = this.decoder;
+        if (decoder == null) {
+            decoder = x -> x;
+        }
         Map<String, List<String>> m = new LinkedHashMap<>();
         if (NBlankable.isBlank(text)) {
             return NOptional.of(m);
@@ -315,7 +347,7 @@ public class NStringMapFormat {
         while (true) {
             Token r = null;
             try {
-                r = readToken(reader, conf);
+                r = readToken(reader, conf, decoder);
             } catch (IOException e) {
                 return NOptional.ofError(() -> NMsg.ofPlain("failed to read token"), e);
             }
@@ -421,6 +453,7 @@ public class NStringMapFormat {
     }
 
     public String formatDuplicates(Map<String, List<String>> map) {
+        Function<String, String> encoder = this.encoder == null ? x -> x : this.encoder;
         StringBuilder sb = new StringBuilder();
         if (map != null) {
             if (sort) {
@@ -437,13 +470,13 @@ public class NStringMapFormat {
                         }
                         if (v.isEmpty()) {
                             sb.append(
-                                    NStringUtils.formatStringLiteral(k, NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED, escapedChars)
+                                    NStringUtils.formatStringLiteral(encoder.apply(k), NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED, escapedChars)
                             );
                         } else {
                             sb.append(
-                                            NStringUtils.formatStringLiteral(k, NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED, escapedChars))
+                                            NStringUtils.formatStringLiteral(encoder.apply(k), NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED, escapedChars))
                                     .append(equalsChars)
-                                    .append(NStringUtils.formatStringLiteral(v, NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED, escapedChars)
+                                    .append(NStringUtils.formatStringLiteral(encoder.apply(v), NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED, escapedChars)
                                     );
                         }
                     } else {
@@ -451,7 +484,7 @@ public class NStringMapFormat {
                             sb.append(separatorChars);
                         }
                         sb.append(
-                                NStringUtils.formatStringLiteral(k, NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED, escapedChars)
+                                NStringUtils.formatStringLiteral(encoder.apply(k), NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED, escapedChars)
                         );
                     }
                 }
@@ -462,15 +495,14 @@ public class NStringMapFormat {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NStringMapFormat that = (NStringMapFormat) o;
-        return sort == that.sort && Objects.equals(equalsChars, that.equalsChars) && Objects.equals(separatorChars, that.separatorChars) && Objects.equals(escapeChars, that.escapeChars);
+        return sort == that.sort && Objects.equals(equalsChars, that.equalsChars) && Objects.equals(separatorChars, that.separatorChars) && Objects.equals(escapeChars, that.escapeChars) && Objects.equals(decoder, that.decoder) && Objects.equals(encoder, that.encoder);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(equalsChars, separatorChars, escapeChars, sort);
+        return Objects.hash(equalsChars, separatorChars, escapeChars, sort, decoder, encoder);
     }
 
     public String getEqualsChars() {
@@ -489,12 +521,17 @@ public class NStringMapFormat {
         return sort;
     }
 
+    public Function<String, String> getDecoder() {
+        return decoder;
+    }
+
+    public Function<String, String> getEncoder() {
+        return encoder;
+    }
+
     public NStringMapFormatBuilder builder() {
         return NStringMapFormatBuilder.of()
-                .setEscapeChars(getEscapeChars())
-                .setEqualsChars(getEqualsChars())
-                .setSeparatorChars(getSeparatorChars())
-                .setSort(isSort())
+                .copyFrom(this)
                 ;
     }
 }

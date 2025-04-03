@@ -11,7 +11,7 @@ public class Test42_NStringMapFormat {
 
     @Test
     public void test01() {
-        NStringMapFormat t = NStringMapFormat.of("=", null, null, false);
+        NStringMapFormat t = NStringMapFormat.of("=", null, null, false, null, null);
         NOptional<Map<String, List<String>>> u = t.parseDuplicates("src=\"https://protos-erp.com/assets/crm/protos-banner-fr.png\"\n" +
                 "        tf=\"p\" tn=\"banner-fr.png\" trackerSecretEmail=\"${email}\" tsc=\"${company}\"\n" +
                 "        alt=\"Banner 2024\" style=\"outline:none;text-decoration:none;border:none;max-width:100%;font-size:16px;border-radius: 25px;\" width=\"560\" align=\"middle\"/");

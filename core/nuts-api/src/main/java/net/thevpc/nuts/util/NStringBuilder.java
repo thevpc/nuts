@@ -7,10 +7,8 @@ import java.security.SecureRandom;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Spliterators;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
-import java.util.stream.StreamSupport;
 
 public class NStringBuilder implements CharSequence, NBlankable {
     private StringBuilder data;
@@ -776,7 +774,7 @@ public class NStringBuilder implements CharSequence, NBlankable {
 
     public NStream<String> lines() {
         StringBuilder data2 = new StringBuilder(data);
-        return NStream.of(new Iterator<String>() {
+        return NStream.ofIterator(new Iterator<String>() {
             String nextLine = null;
 
             @Override

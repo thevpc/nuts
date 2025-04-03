@@ -115,7 +115,7 @@ public class Test10_ExecURLTest {
         TestUtils.println(NVersionFormat.of());
         String result = NExecCmd.of()
                 //.addExecutorOption()
-                .addCommand("nsh","-c","ls")
+                .addCommand(NConstants.Ids.NSH,"-c","ls")
                 .grabAll().failFast().getGrabbedOutString();
         TestUtils.println("Result:");
         TestUtils.println(result);

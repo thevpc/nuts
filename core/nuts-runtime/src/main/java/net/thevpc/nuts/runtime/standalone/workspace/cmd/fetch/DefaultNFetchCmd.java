@@ -177,7 +177,6 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
         NSession session = workspace.currentSession();
         NWorkspaceUtils wu = NWorkspaceUtils.of(workspace);
         CoreNIdUtils.checkLongId(id);
-//        checkSession();
         NWorkspaceExt dws = NWorkspaceExt.of();
         NFetchStrategy nutsFetchModes = NWorkspaceHelper.validate(session.getFetchStrategy().orDefault());
         NRepositoryFilter repositoryFilter = this.getRepositoryFilter();

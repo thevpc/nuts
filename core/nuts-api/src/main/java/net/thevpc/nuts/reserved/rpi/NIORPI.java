@@ -70,6 +70,7 @@ public interface NIORPI extends NComponent {
     NInputSource ofInputSource(Reader inputStream, NContentMetadata metadata);
 
     NInputSource ofInputSource(byte[] inputStream);
+    NInputSource ofEmptyInputSource();
 
     NInputSource ofInputSource(byte[] inputStream, NContentMetadata metadata);
 

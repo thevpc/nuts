@@ -36,6 +36,8 @@ import net.thevpc.nuts.io.NPrintStream;
  */
 public interface NElementStreamFormat {
 
+    NElement normalize(NElement e);
+
     public NElement parseElement(Reader reader, NElementFactoryContext context);
 
     public void printElement(NElement value, NPrintStream out, boolean compact, NElementFactoryContext context);

@@ -122,6 +122,10 @@ public interface NLiteral extends NBlankable {
 
     boolean isNumber();
 
+    boolean isOrdinalNumber();
+
+    boolean isFloatingNumber();
+
     boolean isSupportedType(Class<?> type);
 
     <ET> NOptional<ET> asType(Class<ET> expectedType);

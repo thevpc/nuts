@@ -60,6 +60,8 @@ import java.util.function.Predicate;
  */
 public interface NElements extends NContentTypeFormat {
 
+    NElement normalize(NElement e);
+
     static boolean isValidName(String name) {
         if (name == null) {
             return false;
@@ -427,6 +429,8 @@ public interface NElements extends NContentTypeFormat {
 
     NPairElementBuilder ofPairBuilder(NElement key, NElement value);
 
+    NPairElementBuilder ofPairBuilder();
+
     /**
      * create object element builder (mutable)
      *
@@ -434,12 +438,16 @@ public interface NElements extends NContentTypeFormat {
      */
     NObjectElementBuilder ofObjectBuilder();
 
+    NObjectElementBuilder ofObjectBuilder(String name);
+
     /**
      * create array element builder (mutable)
      *
      * @return array element
      */
     NArrayElementBuilder ofArrayBuilder();
+
+    NArrayElementBuilder ofArrayBuilder(String name);
 
     NArrayElement ofEmptyArray();
 
@@ -542,7 +550,11 @@ public interface NElements extends NContentTypeFormat {
 
     NUpletElementBuilder ofUpletBuilder();
 
+    NUpletElementBuilder ofUpletBuilder(String name);
+
     NUpletElement ofEmptyUplet();
+
+    NUpletElement ofUplet(NElement... items);
 
     NUpletElement ofUplet(String name, NElement... items);
 
@@ -550,16 +562,18 @@ public interface NElements extends NContentTypeFormat {
 
     NArrayElement ofArray(NElement... items);
 
-    NElementComments ofMultiLineComments(String a);
+    NObjectElement ofObject(NElement... items);
 
-    NElementComments ofSingleLineComments(String a);
+    NElementComments ofMultiLineComments(String... a);
+
+    NElementComments ofSingleLineComments(String... a);
 
     NElementComments ofComments(NElementComment[] leading, NElementComment[] trailing);
 
 
-    NElementComment ofMultiLineComment(String a);
+    NElementComment ofMultiLineComment(String ... a);
 
-    NElementComment ofSingleLineComment(String a);
+    NElementComment ofSingleLineComment(String... lines);
 
     NElement ofBinaryStream(NInputStreamProvider value);
 

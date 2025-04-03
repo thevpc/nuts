@@ -28,6 +28,7 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -386,22 +387,30 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
 
     @Override
     public NObjectElementBuilder add(String name, boolean value) {
-        return add(_elements().ofString(name), _elements().ofBoolean(value));
+        return add(_elements().ofNameOrString(name), _elements().ofBoolean(value));
     }
 
     @Override
     public NObjectElementBuilder add(String name, int value) {
-        return add(_elements().ofString(name), _elements().ofInt(value));
+        return add(_elements().ofNameOrString(name), _elements().ofInt(value));
     }
 
     @Override
     public NObjectElementBuilder add(String name, double value) {
-        return add(_elements().ofString(name), _elements().ofDouble(value));
+        return add(_elements().ofNameOrString(name), _elements().ofDouble(value));
     }
 
     @Override
     public NObjectElementBuilder add(String name, String value) {
-        return add(_elements().ofString(name), _elements().ofString(value));
+        return add(_elements().ofNameOrString(name), _elements().ofString(value));
+    }
+
+    @Override
+    public NObjectElementBuilder doWith(Consumer<NObjectElementBuilder> con) {
+        if(con!=null){
+            con.accept(this);
+        }
+        return this;
     }
 
     @Override
