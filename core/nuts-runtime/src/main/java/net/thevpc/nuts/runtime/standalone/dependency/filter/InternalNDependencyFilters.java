@@ -98,11 +98,11 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
     }
 
     @Override
-    public NDependencyFilter byScope(NDependencyScopePattern scope) {
-        if (scope == null) {
+    public NDependencyFilter byScope(NDependencyScopePattern ... scopes) {
+        if (scopes == null || scopes.length == 0) {
             return always();
         }
-        return new ScopeNDependencyFilter(scope);
+        return new ScopeNDependencyFilter(scopes);
     }
 
     @Override
@@ -208,6 +208,13 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
                 ;
     }
 
+    @Override
+    public NDependencyFilter byRunnable(boolean optional,boolean anyEnv) {
+        return byScope(NDependencyScopePattern.RUN)
+                .and(byOptional(optional?null:false))
+                .and(byRegularType())
+                .and(anyEnv?null:byCurrentEnv());
+    }
     @Override
     public NDependencyFilter byRunnable(boolean optional) {
         return byScope(NDependencyScopePattern.RUN)

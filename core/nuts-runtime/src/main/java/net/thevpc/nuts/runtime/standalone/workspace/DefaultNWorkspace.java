@@ -1028,7 +1028,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 installerComponent = getInstaller(def);
             }
             if (reinstall) {
-                uninstallImpl(def, new String[0], resolveInstaller, true, false, false);
                 //must re-fetch def!
                 NDefinition d2 = NFetchCmd.of(def.getId())
                         .setContent(true)
@@ -1052,6 +1051,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                             .getResultDefinitions().findFirst().get();
                 }
                 def = d2;
+                uninstallImpl(def, new String[0], resolveInstaller, true, false, false);
             }
             NDefinition oldDef = null;
             if (strategy0 == InstallStrategy0.UPDATE) {

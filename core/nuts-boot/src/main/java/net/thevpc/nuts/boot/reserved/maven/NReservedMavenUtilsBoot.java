@@ -789,11 +789,11 @@ public class NReservedMavenUtilsBoot {
                 if (file.isFile()) {
                     ff = file;
                 } else {
-                    log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("locate %s", file));
+                    log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("file not found %s", file));
                 }
             } else {
                 File file = new File(repoFolder, path.replace('/', File.separatorChar));
-                log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("locate %s ; repository is not a valid folder : %s", file, repoFolder));
+                log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("file not found %s ; repository is not a valid folder : %s", file, repoFolder));
             }
 
             if (ff != null) {

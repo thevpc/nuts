@@ -198,7 +198,6 @@ public class NLogUtils {
 
     public static void traceMessage(NLog log, NFetchStrategy fetchMode, NId id, NLogVerb tracePhase, String message, long startTime) {
         if (log.isLoggable(Level.FINEST)) {
-
             long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
             String fetchString = "[" + NStringUtils.formatAlign(fetchMode.id(), 7, NPositionType.FIRST) + "] ";
             log.with().level(Level.FINEST)

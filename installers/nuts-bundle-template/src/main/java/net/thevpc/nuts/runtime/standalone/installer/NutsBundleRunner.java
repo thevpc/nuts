@@ -5,31 +5,39 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class NutsBundleRunner {
+    boolean verbose = false;
+    String layout = null;
+    String appVersion;
+    String appTitle;
+    Set<String> osFamilies;
+    Map<String, String> env;
+    Map<String, String> info;
+
     public static void main(String[] args) {
         new NutsBundleRunner().run(args);
     }
 
     private boolean run(String[] args) {
-        Map<String, String> env = readKeyVarFile("nuts-bundle-vars.config", false);
-        Map<String, String> info = readKeyVarFile("nuts-bundle-info.config", false);
+        env = readKeyVarFile("nuts-bundle-vars.config", false);
+        info = readKeyVarFile("nuts-bundle-info.config", false);
         for (Map.Entry<String, String> e : info.entrySet()) {
             if (!env.containsKey(e.getKey())) {
                 env.put(e.getKey(), e.getValue());
             }
         }
-        boolean verbose = false;
-        String appVersion = info.get("version");
+        appVersion = info.get("version");
         if (appVersion == null || appVersion.trim().isEmpty()) {
             appVersion = "1.0";
         }
-        String appTitle = info.get("title");
+        appTitle = info.get("title");
         if (appTitle == null || appTitle.trim().isEmpty()) {
             appTitle = "NutsBundleRunner";
         }
         String appDescription = info.get("description");
-        String layout = null;
         for (String arg : args) {
             String k = null;
             String v = null;
@@ -43,10 +51,10 @@ public class NutsBundleRunner {
             }
             switch (k) {
                 case "--version": {
-                    System.out.println(appTitle + " v" + appVersion);
+                    doLogHelp(appTitle + " v" + appVersion);
                     if (appDescription != null && !appDescription.trim().isEmpty()) {
-                        System.out.println();
-                        System.out.println(appDescription);
+                        doLogHelp("");
+                        doLogHelp(appDescription);
                     }
                     return true;
                 }
@@ -67,25 +75,25 @@ public class NutsBundleRunner {
                 }
                 case "--layout": {
                     if (v == null) {
-                        System.err.println("missing option value : " + k);
+                        doLogError("missing option value : " + k);
                         return false;
                     }
                     layout = v;
                     break;
                 }
                 case "--help": {
-                    System.out.println(appTitle + " v" + appVersion);
+                    doLogHelp(appTitle + " v" + appVersion);
                     if (appDescription != null && !appDescription.trim().isEmpty()) {
-                        System.out.println();
-                        System.out.println(appDescription);
+                        doLogHelp("");
+                        doLogHelp(appDescription);
                     }
                     if (isResourceAvailable("nuts-bundle.help")) {
-                        System.out.println();
+                        doLogHelp("");
                         try {
                             try (BufferedReader br = new BufferedReader(new InputStreamReader(createInputStream("nuts-bundle.help")))) {
                                 String line;
                                 while ((line = br.readLine()) != null) {
-                                    System.out.println(replaceDollarString(line, env));
+                                    doLogHelp(replaceDollarString(line));
                                 }
                             }
                         } catch (IOException ex) {
@@ -93,15 +101,15 @@ public class NutsBundleRunner {
                         }
                         return true;
                     } else {
-                        System.out.println("Options : ");
-                        System.out.println("  --help");
-                        System.out.println("      show help and exit");
-                        System.out.println("  --version");
-                        System.out.println("      show version exit");
-                        System.out.println("  --verbose");
-                        System.out.println("      verbose mode");
-                        System.out.println("  ---<var>=<value>");
-                        System.out.println("      define a new var named");
+                        doLogHelp("Options : ");
+                        doLogHelp("  --help");
+                        doLogHelp("      show help and exit");
+                        doLogHelp("  --version");
+                        doLogHelp("      show version exit");
+                        doLogHelp("  --verbose");
+                        doLogHelp("      verbose mode");
+                        doLogHelp("  ---<var>=<value>");
+                        doLogHelp("      define a new var named");
                         return true;
                     }
                 }
@@ -110,7 +118,7 @@ public class NutsBundleRunner {
                         if (k.startsWith("---")) {
                             env.put(k.substring(3), v == null ? "true" : v);
                         } else {
-                            System.err.println("unsupported option : " + k);
+                            doLogError("unsupported option : " + k);
                             return false;
                         }
                     } else {
@@ -122,38 +130,265 @@ public class NutsBundleRunner {
         String filesPath = "nuts-bundle-files" + ((layout == null || layout.isEmpty()) ? "" : ("." + layout)) + ".config";
         if (!isResourceAvailable(filesPath)) {
             if ((layout == null || layout.isEmpty())) {
-                System.err.println("missing files file : " + filesPath);
+                doLogError("missing files file : " + filesPath);
                 return false;
             } else {
-                System.err.println("invalid layout " + layout + " . missing files file : " + filesPath);
+                doLogError("invalid layout " + layout + " . missing files file : " + filesPath);
                 return false;
             }
         }
         List<String[]> config = readArgsFileEntries(filesPath, true);
         if (config.isEmpty()) {
-            System.err.println("empty config file");
+            doLogError("empty config file");
             return false;
         }
         for (String[] r : config) {
             if (r.length > 0) {
-                switch (r[0].toLowerCase()) {
-                    case "copy": {
-                        if (r.length == 3) {
-                            String k = r[1];
-                            String v = replaceDollarString(r[2], env);
-                            copyFile(k, v, verbose);
-                        } else {
-                            throw new IllegalArgumentException("expected copy from to");
+                try {
+                    String[] subCmd = Arrays.copyOfRange(r, 1, r.length);
+                    switch (r[0].toLowerCase()) {
+                        case "install": {
+                            if (!cmdInstall(subCmd)) {
+                                return false;
+                            }
+                            break;
                         }
-                        break;
+                        case "set-executable": {
+                            if (!cmdSetExecutable(subCmd)) {
+                                return false;
+                            }
+                            break;
+                        }
+                        default: {
+                            doLogError("unsupported command " + r[0] + " in " + commandToString(r));
+                            return false;
+                        }
                     }
-                    default: {
-                        throw new IllegalArgumentException("unsupported command " + r[0]);
-                    }
+                } catch (RuntimeException ex) {
+                    doLogError("command failed : " + commandToString(r));
+                    doLogError(ex.toString());
+                    return false;
                 }
             }
         }
         return true;
+    }
+
+
+    private boolean cmdInstall(String[] r) {
+        String commandName = "install";
+        String from = null;
+        String to = null;
+        Set<String> acceptableOses = new HashSet<>();
+        for (String s : r) {
+            if (s.startsWith("-")) {
+                if (readOptionAcceptableOS(s, acceptableOses)) {
+                    //ok
+                } else {
+                    doLogError("Unsupported option : " + s + " in " + commandToString(commandName, r));
+                    return false;
+                }
+            } else if (from == null) {
+                from = s;
+            } else if (to == null) {
+                to = s;
+            } else {
+                doLogError("Unsupported argument : " + s + " in " + commandToString(commandName, r));
+                return false;
+            }
+        }
+        if (from == null || to == null) {
+            doLogError("expected install <from> <to>" + " in " + commandToString(commandName, r));
+            return false;
+        }
+        if (!isAcceptabeOs(acceptableOses)) {
+            doDebug("skipped command for incompatible OS " + acceptableOses + " (Current is " + getOsFamilies() + " : " + System.getProperty("os.name") + "). command was :" + commandToString(commandName, r));
+            return true;
+        }
+        to = replaceDollarString(to, env);
+        Path toPath = Paths.get(to);
+        if (Files.isDirectory(toPath)) {
+            doLogError(to + " is already a directory" + " in " + commandToString(commandName, r));
+            return false;
+        }
+        String fromFullPath = "/bundle";
+        try {
+            if (!from.startsWith("/")) {
+                from = "/" + from;
+            }
+            fromFullPath = fromFullPath + from;
+            Path p = toPath.getParent();
+            if (p != null) {
+                p.toFile().mkdirs();
+            }
+            doDebug("install " + fromFullPath + " to " + toPath);
+            try (InputStream in = createInputStream(fromFullPath)) {
+                try (OutputStream os = Files.newOutputStream(toPath)) {
+                    copyStream(in, os);
+                }
+            }
+            return true;
+        } catch (Exception ex) {
+            doLogError("unable to copy /META-INF" + fromFullPath + " to " + toPath + " : " + ex.toString() + " in " + commandToString(commandName, r));
+            return false;
+        }
+    }
+
+
+    private boolean cmdSetExecutable(String[] r) {
+        String commandName = "set-executable";
+        List<String> toMakeExecutables = new ArrayList<>();
+        Set<String> acceptableOses = new HashSet<>();
+        for (String s : r) {
+            if (s.startsWith("-")) {
+                if (readOptionAcceptableOS(s, acceptableOses)) {
+                    //ok
+                } else {
+                    doLogError("Unsupported option : " + s + " in " + commandToString(commandName, r));
+                    return false;
+                }
+            } else {
+                toMakeExecutables.add(s);
+            }
+        }
+        if (toMakeExecutables.isEmpty()) {
+            doLogError("missing paths. Expected set-executable <path>..." + " in " + commandToString(commandName, r));
+            return false;
+        }
+        if (!isAcceptabeOs(acceptableOses)) {
+            doDebug("skipped command for incompatible OS " + acceptableOses + " (Current is " + getOsFamilies() + " : " + System.getProperty("os.name") + "). command was :" + commandToString(commandName, r));
+            return true;
+        }
+        for (String p : toMakeExecutables) {
+            p = replaceDollarString(p, env);
+            for (File file : expandFilesByGlob(p)) {
+                file.setExecutable(true);
+                doDebug("set-executable " + file.getAbsolutePath());
+            }
+        }
+        return true;
+    }
+
+
+    /// ////////////////////////////////////////////////////
+    /// INSTANCE UTILITIES
+    /// ////////////////////////////////////////////////////
+
+    private void doLogHelp(String msg) {
+        System.out.println(msg);
+    }
+
+    private void doLogTrace(String msg) {
+        System.out.println("[INFO ] " + msg);
+    }
+
+    private void doLogError(String msg) {
+        System.err.println("[ERROR] " + msg);
+    }
+
+    private void doLogWarning(String msg) {
+        System.err.println("[WARN ] " + msg);
+    }
+
+    private void doDebug(String msg) {
+        if (verbose) {
+            System.err.println("[DEBUG] " + msg);
+        }
+    }
+
+    private String replaceDollarString(String text) {
+        return replaceDollarString(text, env);
+    }
+
+    public boolean isAcceptabeOs(Set<String> requestedOsFamily) {
+        if (requestedOsFamily.isEmpty()) {
+            return true;
+        }
+        Set<String> currentOsFamilies = getOsFamilies();
+        for (String currentOsFamily : currentOsFamilies) {
+            if (requestedOsFamily.contains(currentOsFamily)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Set<String> getOsFamilies() {
+        if (osFamilies == null) {
+            doLogError("resolve OS Name " + System.getProperty("os.name"));
+            String property = System.getProperty("os.name").toLowerCase();
+            if (property.startsWith("linux")) {
+                osFamilies=new LinkedHashSet<>(Arrays.asList("linux","posix"));
+            } else if (property.startsWith("win")) {
+                osFamilies=new LinkedHashSet<>(Arrays.asList("windows"));
+            } else if (property.startsWith("mac")) {
+                osFamilies=new LinkedHashSet<>(Arrays.asList("macos"));
+            } else if (property.startsWith("sunos") || property.startsWith("solaris")) {
+                osFamilies=new LinkedHashSet<>(Arrays.asList("sunos","posix"));
+            } else if (property.startsWith("zos")) {
+                osFamilies=new LinkedHashSet<>(Arrays.asList("zos","posix"));
+            } else if (property.startsWith("freebsd")) {
+                osFamilies=new LinkedHashSet<>(Arrays.asList("freebsd","posix"));
+            } else if (property.startsWith("openbsd")) {
+                osFamilies=new LinkedHashSet<>(Arrays.asList("openbsd","posix"));
+            } else if (property.startsWith("netbsd")) {
+                osFamilies=new LinkedHashSet<>(Arrays.asList("netbsd","posix"));
+            } else if (property.startsWith("aix")) {
+                osFamilies=new LinkedHashSet<>(Arrays.asList("aix","posix"));
+            } else if (property.startsWith("hpux")) {
+                osFamilies=new LinkedHashSet<>(Arrays.asList("hpux","posix"));
+            } else if (property.startsWith("os400") && property.length() <= 5 || !Character.isDigit(property.charAt(5))) {
+                osFamilies=new LinkedHashSet<>(Arrays.asList("os400"));
+            } else {
+                osFamilies=new LinkedHashSet<>(Arrays.asList("unknown"));
+            }
+            doDebug("resolve OS Family as " + osFamilies);
+        }
+        return osFamilies;
+    }
+
+    /// ////////////////////////////////////////////////////
+    /// UTILITIES
+    /// ////////////////////////////////////////////////////
+
+    private void copyStream(InputStream in, OutputStream os) {
+        byte[] buffer = new byte[2048];
+        int count;
+        try {
+            while ((count = in.read(buffer)) > 0) {
+                os.write(buffer, 0, count);
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    private static boolean readOptionAcceptableOS(String options, Set<String> acceptableOses) {
+        if (options.equals("--windows")) {
+            acceptableOses.add("windows");
+            return true;
+        } else if (options.equals("--linux")) {
+            acceptableOses.add("linux");
+            return true;
+        } else if (options.equals("--posix")) {
+            acceptableOses.add("posix");
+            return true;
+        } else if (options.equals("--macos")) {
+            acceptableOses.add("macos");
+            return true;
+        }
+        return false;
+    }
+
+    private static String commandToString(String name, String[] r) {
+        List<String> all = new ArrayList<>();
+        all.add(name);
+        all.addAll(Arrays.asList(r));
+        return commandToString(all.toArray(new String[0]));
+    }
+
+    private static String commandToString(String[] r) {
+        return Arrays.stream(r).map(x -> x).collect(Collectors.joining(" "));
     }
 
     private static String replaceDollarString(String text, Map<String, String> m) {
@@ -248,6 +483,28 @@ public class NutsBundleRunner {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_';
     }
 
+    private String[] splitLastIndexOfAny(String item, String[] sep) {
+        int x = -1;
+        String goodSep = null;
+        for (int i = 0; i < sep.length; i++) {
+            int v = item.lastIndexOf(sep[i]);
+            if (v >= 0 && v > x) {
+                x = v;
+                goodSep = sep[i];
+            }
+        }
+        if (x >= 0) {
+            return new String[]{
+                    item.substring(0, x),
+                    item.substring(x + goodSep.length()),
+            };
+        }
+        return new String[]{
+                item.substring(0, x),
+                null,
+        };
+    }
+
     private String[] splitKeyValue(String item) {
         int i = item.indexOf('=');
         if (i >= 0) {
@@ -305,15 +562,22 @@ public class NutsBundleRunner {
                     line = line.trim();
                     if (!line.isEmpty()) {
                         if (line.charAt(0) != '#') {
-                            String[] args = parseDefaultList(line);
-                            if (args.length > 0) {
-                                result.add(args);
+                            try {
+                                String[] args = parseDefaultList(line);
+                                if (args.length > 0) {
+                                    result.add(args);
+                                }
+                            } catch (RuntimeException e) {
+                                doLogError("invalid command : " + line);
+                                doLogError("                : " + e);
+                                throw e;
                             }
                         }
                     }
                 }
             }
         } catch (IOException ex) {
+            doLogError("invalid file : " + pp);
             throw new UncheckedIOException(ex);
         }
         return result;
@@ -351,38 +615,6 @@ public class NutsBundleRunner {
         return result;
     }
 
-    private void copyFile(String from, String to, boolean verbose) {
-        Path toPath = Paths.get(to);
-        if (Files.isDirectory(toPath)) {
-            throw new UncheckedIOException(new IOException(to + " is already a directory"));
-        }
-        String fromFullPath = "/bundle";
-        try {
-            if (!from.startsWith("/")) {
-                from = "/" + from;
-            }
-            fromFullPath = fromFullPath + from;
-            Path p = toPath.getParent();
-            if (p != null) {
-                p.toFile().mkdirs();
-            }
-            if (verbose) {
-                System.err.println("copy " + fromFullPath + " to " + toPath);
-            }
-            try (InputStream in = createInputStream(fromFullPath)) {
-                try (OutputStream os = Files.newOutputStream(toPath)) {
-                    byte[] buffer = new byte[2048];
-                    int count;
-                    while ((count = in.read(buffer)) > 0) {
-                        os.write(buffer, 0, count);
-                    }
-                }
-            }
-        } catch (IOException ex) {
-            System.err.println("unable to copy /META-INF" + fromFullPath + " to " + toPath + " : " + ex.toString());
-            throw new UncheckedIOException(ex);
-        }
-    }
 
     public static String[] parseDefaultList(String commandLineString) {
         if (commandLineString == null) {
@@ -543,4 +775,61 @@ public class NutsBundleRunner {
         return i;
     }
 
+
+    public List<File> expandFilesByGlob(String text) {
+        boolean glob = text.contains("*") || text.contains("?");
+        if (!glob) {
+            return Arrays.asList(new File(text));
+        }
+        String[] sp = splitLastIndexOfAny(text, new String[]{"/", "\\"});
+        String fileName;
+        String parentPath = ".";
+        if (sp[1] == null) {
+            fileName = text;
+        } else {
+            parentPath = sp[0];
+            fileName = sp[1];
+        }
+        Pattern p = compileGlob(fileName);
+        File[] result = new File(parentPath).listFiles((dir, name) -> p.matcher(name).matches());
+        if (result == null) {
+            return Collections.emptyList();
+        }
+        return Arrays.asList(result);
+    }
+
+    public Pattern compileGlob(String text) {
+        StringBuilder sb = new StringBuilder();
+        char[] chars = text.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            char c = chars[i];
+            switch (c) {
+                case '.':
+                case '{':
+                case '}':
+                case '<':
+                case '>':
+                case '[':
+                case ']':
+                case '^':
+                case '$': {
+                    sb.append('\\');
+                    sb.append(c);
+                    break;
+                }
+                case '*': {
+                    sb.append(".*");
+                    break;
+                }
+                case '?': {
+                    sb.append(".");
+                    break;
+                }
+                default: {
+                    sb.append(c);
+                }
+            }
+        }
+        return Pattern.compile(sb.toString());
+    }
 }

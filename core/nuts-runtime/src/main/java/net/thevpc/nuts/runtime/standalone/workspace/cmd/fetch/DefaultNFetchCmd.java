@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 
 
+import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.NLocationKey;
@@ -26,6 +27,7 @@ import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -462,7 +464,10 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                     }
                 }
             } catch (Exception ex) {
-                //just ignore....
+                _LOG().with().level(Level.SEVERE)
+                        .verb(NLogVerb.CACHE)
+                        .error(ex)
+                        .log(NMsg.ofC("error loading cache %s",ex));
             }
         }
 

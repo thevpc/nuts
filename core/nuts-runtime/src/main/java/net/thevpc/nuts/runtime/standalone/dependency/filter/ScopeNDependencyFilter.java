@@ -29,6 +29,9 @@ public class ScopeNDependencyFilter extends AbstractDependencyFilter{
 
     @Override
     public NDependencyFilter simplify() {
+        if(scopes.isEmpty()) {
+            return NDependencyFilters.of().always();
+        }
         return this;
     }
 

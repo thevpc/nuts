@@ -48,10 +48,10 @@ public interface NDependencyFilters extends NTypedFilters<NDependencyFilter> {
 
     /**
      * accept only dependencies that match the given scope
-     * @param scope accepted scope
+     * @param scopes accepted scope
      * @return a filter that accepts only dependencies that match the given scope
      */
-    NDependencyFilter byScope(NDependencyScopePattern scope);
+    NDependencyFilter byScope(NDependencyScopePattern ...scopes);
 
     /**
      * accept only dependencies that match the given scope
@@ -219,6 +219,8 @@ public interface NDependencyFilters extends NTypedFilters<NDependencyFilter> {
      * @return filter that accepts only dependencies required for runtime execution
      */
     NDependencyFilter byRunnable(boolean optional);
+
+    NDependencyFilter byRunnable(boolean optional,boolean anyEnv);
 
     /**
      * accept only dependencies that match the given Desktop Environment
