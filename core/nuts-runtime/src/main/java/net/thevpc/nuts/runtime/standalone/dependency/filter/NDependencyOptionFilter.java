@@ -13,7 +13,7 @@ public class NDependencyOptionFilter extends AbstractDependencyFilter{
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency) {
+    public boolean acceptDependency(NDependency dependency, NId from) {
         if (optional == null) {
             return false;
         }

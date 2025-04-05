@@ -330,7 +330,9 @@ public class CoreNUtils {
         }
         if (def.getDescriptor() != null) {
             x.put("descriptor", NDescriptorFormat.of(def.getDescriptor()).format());
-            x.put("effective-descriptor", NDescriptorFormat.of(NDescriptorUtils.getEffectiveDescriptor(def)).format());
+            x.put("effective-descriptor", NDescriptorFormat.of(
+                    def.getEffectiveDescriptor().orElseGet(()->NWorkspace.of().resolveEffectiveDescriptor(def.getDescriptor(),new EffectiveNDescriptorConfig().setFilterCurrentEnvironment(true)))
+            ).format());
         }
         return x;
     }

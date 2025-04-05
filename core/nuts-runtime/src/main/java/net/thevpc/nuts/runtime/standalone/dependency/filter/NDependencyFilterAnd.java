@@ -21,9 +21,9 @@ public class NDependencyFilterAnd extends AbstractDependencyFilter implements NC
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency) {
+    public boolean acceptDependency(NDependency dependency, NId from) {
         for (NDependencyFilter nDependencyFilter : all) {
-            if (nDependencyFilter != null && !nDependencyFilter.acceptDependency(from, dependency)) {
+            if (nDependencyFilter != null && !nDependencyFilter.acceptDependency(dependency, from)) {
                 return false;
             }
         }

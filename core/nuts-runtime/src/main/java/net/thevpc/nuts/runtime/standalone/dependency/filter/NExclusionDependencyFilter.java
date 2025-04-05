@@ -22,9 +22,9 @@ public class NExclusionDependencyFilter extends AbstractDependencyFilter{
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency) {
+    public boolean acceptDependency(NDependency dependency, NId from) {
         if (base != null) {
-            if (!base.acceptDependency(from, dependency)) {
+            if (!base.acceptDependency(dependency, from)) {
                 return false;
             }
         }

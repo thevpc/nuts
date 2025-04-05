@@ -467,7 +467,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                         NDescriptor descriptor = c.getDescriptor();
                         if (descriptor != null) {
                             try {
-                                descriptor = NWorkspaceExt.of().resolveEffectiveDescriptor(descriptor);
+                                descriptor = NWorkspace.of().resolveEffectiveDescriptor(descriptor,new EffectiveNDescriptorConfig().setFilterCurrentEnvironment(true));
                             } catch (NNotFoundException ex) {
                                 //ignore
                                 _LOGOP().level(Level.WARNING).verb(NLogVerb.WARNING)

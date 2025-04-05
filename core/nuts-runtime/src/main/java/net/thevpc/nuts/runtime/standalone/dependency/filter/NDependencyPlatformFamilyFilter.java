@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.dependency.filter;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.NPlatformFamily;
+import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Collection;
@@ -35,14 +36,14 @@ public class NDependencyPlatformFamilyFilter extends AbstractDependencyFilter  {
         }
     }
 
-    public NDependencyPlatformFamilyFilter add(Collection<NPlatformFamily> os) {
+    public NDependencyPlatformFamilyFilter add(Collection<NPlatformFamily> oses) {
         EnumSet<NPlatformFamily> s2 = EnumSet.copyOf(this.accepted);
-        s2.addAll(os);
+        NCoreCollectionUtils.addAllNonNull(s2, oses);
         return new NDependencyPlatformFamilyFilter(s2);
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency) {
+    public boolean acceptDependency(NDependency dependency, NId from) {
         List<String> current = dependency.getCondition().getPlatform();
         boolean empty = true;
         if (current != null) {

@@ -221,7 +221,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
             if (foundDefinition != null) {
                 if (options.isEffective() || isDependencies()) {
                     try {
-                        foundDefinition.setEffectiveDescriptor(dws.resolveEffectiveDescriptor(foundDefinition.getDescriptor()));
+                        foundDefinition.setEffectiveDescriptor(NWorkspace.of().resolveEffectiveDescriptor(foundDefinition.getDescriptor(),new EffectiveNDescriptorConfig().setFilterCurrentEnvironment(false)));
                     } catch (NNotFoundException ex) {
                         //ignore
                         _LOGOP().level(Level.WARNING).verb(NLogVerb.WARNING)

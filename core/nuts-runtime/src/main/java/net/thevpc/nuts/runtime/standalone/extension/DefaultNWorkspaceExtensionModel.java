@@ -160,7 +160,7 @@ public class DefaultNWorkspaceExtensionModel {
                     s = NElements.of().json().parse(rr, DefaultNExtensionInformation[].class);
                 } catch (IOException ex) {
                     _LOGOP().level(Level.SEVERE).error(ex)
-                            .log(NMsg.ofJ("failed to parse NutsExtensionInformation from {0} : {1}", u, ex));
+                            .log(NMsg.ofC("failed to parse NutsExtensionInformation from %s : %s", u, ex));
                 }
                 if (s != null) {
                     for (NExtensionInformation nutsExtensionInfo : s) {
@@ -390,7 +390,7 @@ public class DefaultNWorkspaceExtensionModel {
             return true;
         }
         _LOGOP().level(Level.FINE).verb(NLogVerb.WARNING)
-                .log(NMsg.ofJ("Bootstrap Extension Point {0} => {1} ignored. Already registered", extensionPointType.getName(), extensionImpl.getClass().getName()));
+                .log(NMsg.ofC("Bootstrap Extension Point %s => %s ignored. Already registered", extensionPointType.getName(), extensionImpl.getClass().getName()));
         return false;
     }
 
@@ -401,7 +401,7 @@ public class DefaultNWorkspaceExtensionModel {
             return true;
         }
         _LOGOP().level(Level.FINE).verb(NLogVerb.WARNING)
-                .log(NMsg.ofJ("Bootstrap Extension Point {0} => {1} ignored. Already registered", extensionPointType.getName(), extensionType.getName()));
+                .log(NMsg.ofC("Bootstrap Extension Point %s => %s ignored. Already registered", extensionPointType.getName(), extensionType.getName()));
         return false;
     }
 
@@ -472,7 +472,7 @@ public class DefaultNWorkspaceExtensionModel {
                     //and the add to classpath
                     loadedExtensionIds.add(extension);
                     _LOGOP().verb(NLogVerb.SUCCESS)
-                            .log(NMsg.ofJ("extension {0} loaded", def.getId()
+                            .log(NMsg.ofC("extension %s loaded", def.getId()
                             ));
                     someUpdates = true;
                 }
@@ -530,7 +530,7 @@ public class DefaultNWorkspaceExtensionModel {
             throw new NExtensionAlreadyRegisteredException(id, wired.toString());
         }
 
-        _LOGOP().level(Level.FINE).verb(NLogVerb.ADD).log(NMsg.ofJ("installing extension {0}", id));
+        _LOGOP().level(Level.FINE).verb(NLogVerb.ADD).log(NMsg.ofC("installing extension %s", id));
         NDefinition nDefinitions = NSearchCmd.of()
                 .setAll(options)
                 .addId(id)
@@ -556,7 +556,7 @@ public class DefaultNWorkspaceExtensionModel {
 //            }
 //        }
         extensions.put(id, workspaceExtension);
-        _LOGOP().level(Level.FINE).verb(NLogVerb.ADD).log(NMsg.ofJ("extension {0} installed successfully", id));
+        _LOGOP().level(Level.FINE).verb(NLogVerb.ADD).log(NMsg.ofC("extension %s installed successfully", id));
         NTerminalSpec spec = new NDefaultTerminalSpec();
         if (session.getTerminal() != null) {
             spec.setProperty("ignoreClass", session.getTerminal().getClass());
@@ -564,7 +564,7 @@ public class DefaultNWorkspaceExtensionModel {
         NTerminal newTerminal = createTerminal(spec);
         if (newTerminal != null) {
             _LOGOP().level(Level.FINE).verb(NLogVerb.UPDATE)
-                    .log(NMsg.ofJ("extension {0} changed Terminal configuration. Reloading Session Terminal", id));
+                    .log(NMsg.ofC("extension %s changed Terminal configuration. Reloading Session Terminal", id));
             session.setTerminal(newTerminal);
         }
         for (Class<? extends NComponent> discoveredType : discoveredTypes) {
@@ -611,7 +611,7 @@ public class DefaultNWorkspaceExtensionModel {
                             zipFile.close();
                         } catch (IOException ex) {
                             _LOGOP().level(Level.SEVERE)
-                                    .error(ex).log(NMsg.ofJ("failed to close zip file {0} : {1}",
+                                    .error(ex).log(NMsg.ofC("failed to close zip file %s : %s",
                                             file.getContent().orNull(), ex));
                             //ignore return false;
                         }

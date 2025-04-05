@@ -221,7 +221,7 @@ public class ZipUtils {
                 } else {
                     File newFile = new File(outputFolder + File.separator + fileName);
                     NLogOp.of(ZipUtils.class).level(Level.FINEST).verb(NLogVerb.WARNING)
-                            .log(NMsg.ofJ("file unzip : {0}", newFile.getAbsoluteFile()));
+                            .log(NMsg.ofC("file unzip : %s", newFile.getAbsoluteFile()));
                     //create all non exists folders
                     //else you will hit FileNotFoundException for compressed folder
                     newFile.getParentFile().mkdirs();

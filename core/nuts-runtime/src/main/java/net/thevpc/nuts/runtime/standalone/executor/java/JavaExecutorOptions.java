@@ -8,7 +8,6 @@ import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.descriptor.util.NDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.util.*;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaJarUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NClassLoaderNodeExt;
@@ -68,7 +67,7 @@ public final class JavaExecutorOptions {
 //            }
             id = descriptor.getId();
         } else {
-            descriptor = NDescriptorUtils.getEffectiveDescriptor(def);
+            descriptor = def.getEffectiveDescriptor().orElseGet(()->NWorkspace.of().resolveEffectiveDescriptor(def.getDescriptor(),new EffectiveNDescriptorConfig().setFilterCurrentEnvironment(true)));
             if (!CoreNUtils.isEffectiveId(id)) {
                 id = descriptor.getId();
             }
@@ -218,7 +217,7 @@ public final class JavaExecutorOptions {
                 .and(dependencyFilters.byOptional(false));
         if (tempId) {
             for (NDependency dependency : descriptor.getDependencies()) {
-                if (defFilter.acceptDependency(null, dependency)) {
+                if (defFilter.acceptDependency(dependency, null)) {
                     se.addId(dependency.toId());
                 }
             }

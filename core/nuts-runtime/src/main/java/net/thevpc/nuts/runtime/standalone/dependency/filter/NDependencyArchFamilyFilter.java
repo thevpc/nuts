@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.NArchFamily;
+import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Collection;
@@ -36,14 +37,14 @@ public class NDependencyArchFamilyFilter extends AbstractDependencyFilter {
         }
     }
 
-    public NDependencyArchFamilyFilter add(Collection<NArchFamily> os) {
+    public NDependencyArchFamilyFilter add(Collection<NArchFamily> oses) {
         EnumSet<NArchFamily> s2 = EnumSet.copyOf(this.archs);
-        s2.addAll(os);
+        NCoreCollectionUtils.addAllNonNull(s2, oses);
         return new NDependencyArchFamilyFilter(s2);
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency) {
+    public boolean acceptDependency(NDependency dependency, NId from) {
         List<String> current = dependency.getCondition().getArch();
         boolean empty = true;
         if (current != null) {

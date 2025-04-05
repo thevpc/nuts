@@ -413,14 +413,14 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
             if (_LOG().isLoggable(Level.CONFIG)) {
                 if (created) {
                     _LOGOP().level(Level.CONFIG).verb(NLogVerb.SUCCESS)
-                            .log(NMsg.ofJ(
-                                    "{0} created repository {1} at {2}",
+                            .log(NMsg.ofC(
+                                    "%s created repository %s at %s",
                                     NStringUtils.formatAlign(repository.getName(), 20, NPositionType.FIRST), repository.getName(),
                                     getStoreLocation()
                             ));
                 } else {
-                    _LOGOP().level(Level.CONFIG).verb(NLogVerb.SUCCESS).log(NMsg.ofJ(
-                            "{0} updated repository {1} at {2}",
+                    _LOGOP().level(Level.CONFIG).verb(NLogVerb.SUCCESS).log(NMsg.ofC(
+                            "%s updated repository %s at %s",
                             NStringUtils.formatAlign(repository.getName(), 20, NPositionType.FIRST), repository.getName(),
                             getStoreLocation()
                     ));

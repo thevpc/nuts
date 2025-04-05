@@ -228,7 +228,7 @@ public class DefaultNUncompress implements NUncompress {
         }
 
         _LOGOP().level(Level.FINEST).verb(NLogVerb.START)
-                .log(NMsg.ofJ("uncompress {0} to {1}", _source, target));
+                .log(NMsg.ofC("uncompress %s to %s", _source, target));
 
         if (packagingImpl == null) {
             this.packagingImpl = NExtensions.of().createComponent(NUncompressPackaging.class, this).get();

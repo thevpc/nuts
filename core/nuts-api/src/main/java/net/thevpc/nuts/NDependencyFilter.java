@@ -39,11 +39,11 @@ public interface NDependencyFilter extends NFilter {
     /**
      * return true if the {@code dependency} is accepted
      *
-     * @param from       parent (dependent) id
      * @param dependency dependency id
+     * @param from       parent (dependent) id
      * @return true if the {@code dependency} is accepted
      */
-    boolean acceptDependency(NId from, NDependency dependency);
+    boolean acceptDependency(NDependency dependency, NId from);
 
     NDependencyFilter or(NDependencyFilter other);
 

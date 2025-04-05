@@ -33,7 +33,7 @@ public class NCompressZip implements NCompressPackaging {
         NAssert.requireNonBlank(sources, "source");
         NOutputTarget target = compress.getTarget();
         NAssert.requireNonBlank(target, "target");
-        _LOG().with().level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofJ("compress {0} to {1}", sources, target));
+        _LOG().with().level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofC("compress %s to %s", sources, target));
         try {
             OutputStream fW = null;
             ZipOutputStream zip = null;
@@ -101,7 +101,7 @@ public class NCompressZip implements NCompressPackaging {
             }
         } catch (IOException ex) {
             _LOG().with().level(Level.CONFIG).verb(NLogVerb.FAIL)
-                    .log(NMsg.ofJ("error compressing {0} to {1} : {2}",
+                    .log(NMsg.ofC("error compressing %s to %s : %s",
                             sources, target, ex));
             throw new NIOException(ex);
         }

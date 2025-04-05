@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.NOsFamily;
+import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Collection;
@@ -36,14 +37,17 @@ public class NDependencyOsFilter extends AbstractDependencyFilter  {
         }
     }
 
-    public NDependencyOsFilter add(Collection<NOsFamily> os) {
+    public NDependencyOsFilter add(Collection<NOsFamily> oses) {
+        if(oses==null) {
+            return this;
+        }
         EnumSet<NOsFamily> s2 = EnumSet.copyOf(this.os);
-        s2.addAll(os);
+        NCoreCollectionUtils.addAllNonNull(s2, oses);
         return new NDependencyOsFilter(s2);
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency) {
+    public boolean acceptDependency(NDependency dependency, NId from) {
         List<String> current = dependency.getCondition().getOs();
         boolean empty = true;
         if (current != null) {

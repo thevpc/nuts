@@ -67,6 +67,8 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
         return NScopedWorkspace.callWith(callable);
     }
 
+    NDescriptor resolveEffectiveDescriptor(NDescriptor descriptor, EffectiveNDescriptorConfig effectiveNDescriptorConfig);
+
     NWorkspace setSharedInstance();
 
     NWorkspace share();

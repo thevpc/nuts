@@ -261,7 +261,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
         NLogOp _LOG = _LOG().with();
         String fileName = "nuts-repository" + (name == null ? "" : ("-") + name) + (uuid == null ? "" : ("-") + uuid) + "-" + Instant.now().toString();
         _LOG.level(Level.SEVERE).verb(NLogVerb.FAIL).log(
-                NMsg.ofJ("erroneous repository config file. Unable to load file {0} : {1}", file, ex));
+                NMsg.ofC("erroneous repository config file. Unable to load file %s : %s", file, ex));
         NPath logError = workspace.getStoreLocation(workspace.getApiId(), NStoreType.LOG)
                 .resolve("invalid-config");
         try {
@@ -271,7 +271,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
         }
         NPath newfile = logError.resolve(fileName + ".json");
         _LOG.level(Level.SEVERE).verb(NLogVerb.FAIL)
-                .log(NMsg.ofJ("erroneous repository config file will be replaced by a fresh one. Old config is copied to {0}", newfile));
+                .log(NMsg.ofC("erroneous repository config file will be replaced by a fresh one. Old config is copied to %s", newfile));
         try {
             Files.move(file.toPath().get(), newfile.toPath().get());
         } catch (IOException e) {
@@ -352,7 +352,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
                     }
                 } catch (Exception ex) {
                     _LOG().with().error(ex)
-                            .log(NMsg.ofJ("unable to parse {0}", path));
+                            .log(NMsg.ofC("unable to parse %s", path));
                 }
                 return null;
             }
@@ -414,7 +414,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
                 if (changeStatus && !workspace.isReadOnly()) {
                     NLock.ofPath(path).callWith(() -> {
                                 _LOG().with().level(Level.CONFIG)
-                                        .log(NMsg.ofJ("install-info upgraded {0}", path));
+                                        .log(NMsg.ofC("install-info upgraded %s", path));
                                 c.setConfigVersion(workspace.getApiVersion());
                                 elem.json().setValue(c)
                                         .setNtf(false)
@@ -494,7 +494,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
                 NDescriptorFormat.of((NDescriptor) value).setNtf(false).print(path);
             } catch (Exception ex) {
                 _LOG().with().level(Level.FINE).error(ex)
-                        .log(NMsg.ofJ("failed to print {0}", path));
+                        .log(NMsg.ofC("failed to print %s", path));
                 //
             }
         }else{

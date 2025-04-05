@@ -93,7 +93,7 @@ public class MavenNDependencySolver implements NDependencySolver {
                         NDependency effDependency = dependency.builder()
                                 .setScope(combineScopes(currentNode.effDependency.getScope(), dependency.getScope()))
                                 .build();
-                        if (effDependencyFilter.acceptDependency(currentNode.def.getId(), effDependency)
+                        if (effDependencyFilter.acceptDependency(effDependency, currentNode.def.getId())
                                 && !currentNode.exclusions.contains(dependency.toId().getShortId())
                         ) {
                             NDefinition def2 = null;
@@ -138,7 +138,7 @@ public class MavenNDependencySolver implements NDependencySolver {
                                 .setScope(combineScopes(currentNode.effDependency.getScope(), dependency.getScope()))
                                 .build();
                         if (effDependencyFilter.acceptDependency(
-                                currentNode.getEffectiveId(), effDependency
+                                effDependency, currentNode.getEffectiveId()
                         ) && !currentNode.exclusions.contains(dependency.toId().getShortId())) {
                             NDefinition def2 = null;
                             try {

@@ -31,10 +31,12 @@ public abstract class InternalNTypedFilters<T extends NFilter> implements NTyped
 
     protected List<T> convertList(NFilter... others) {
         List<T> all = new ArrayList<>();
-        for (NFilter other : others) {
-            T a = from(other);
-            if (a != null) {
-                all.add(a);
+        if (others != null) {
+            for (NFilter other : others) {
+                T a = from(other);
+                if (a != null) {
+                    all.add(a);
+                }
             }
         }
         return all;

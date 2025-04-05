@@ -92,13 +92,6 @@ public interface NEnvCondition extends NBlankable {
     NEnvCondition readOnly();
 
     /**
-     * true if no condition
-     *
-     * @return true if no condition
-     */
-    boolean isBlank();
-
-    /**
      * return env properties
      * @since 0.8.4
      * @return env properties

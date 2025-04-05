@@ -21,12 +21,12 @@ public class NDependencyFilterOr extends AbstractDependencyFilter implements NCo
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency) {
+    public boolean acceptDependency(NDependency dependency, NId from) {
         boolean one = false;
         for (NDependencyFilter nDependencyFilter : all) {
             if (nDependencyFilter != null) {
                 one = true;
-                if (nDependencyFilter.acceptDependency(from, dependency)) {
+                if (nDependencyFilter.acceptDependency(dependency, from)) {
                     return true;
                 }
             }

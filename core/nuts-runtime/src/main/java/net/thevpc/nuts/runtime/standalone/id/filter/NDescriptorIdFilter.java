@@ -66,7 +66,7 @@ public class NDescriptorIdFilter extends AbstractIdFilter implements NIdFilter, 
                             NDescriptor nutsDescriptor = null;
                             try {
                                 //NutsWorkspace ws = repository.getWorkspace();
-                                nutsDescriptor = NWorkspaceExt.of().resolveEffectiveDescriptor(descriptor);
+                                nutsDescriptor = NWorkspace.of().resolveEffectiveDescriptor(descriptor,new EffectiveNDescriptorConfig().setFilterCurrentEnvironment(true));
                                 descriptor = nutsDescriptor;
                             } catch (Exception ex) {
                                 LOG.with().level(Level.FINE).error(ex)

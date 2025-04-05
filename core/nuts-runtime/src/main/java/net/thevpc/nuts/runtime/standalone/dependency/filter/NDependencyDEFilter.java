@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NDesktopEnvironmentFamily;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
+import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Collection;
@@ -36,14 +37,14 @@ public class NDependencyDEFilter extends AbstractDependencyFilter  {
         }
     }
 
-    public NDependencyDEFilter add(Collection<NDesktopEnvironmentFamily> os) {
+    public NDependencyDEFilter add(Collection<NDesktopEnvironmentFamily> oses) {
         EnumSet<NDesktopEnvironmentFamily> s2 = EnumSet.copyOf(this.accepted);
-        s2.addAll(os);
+        NCoreCollectionUtils.addAllNonNull(s2, oses);
         return new NDependencyDEFilter(s2);
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency) {
+    public boolean acceptDependency(NDependency dependency, NId from) {
         List<String> current = dependency.getCondition().getDesktopEnvironment();
         boolean empty = true;
         if (current != null) {

@@ -503,7 +503,7 @@ public final class CoreStringUtils {
 
     public static String trueOrEqOrIn(String name, List<String> values) {
         if (values.isEmpty()) {
-            return name + "true";
+            return "true";
         }
         if (values.size() == 1) {
             return name + " = " + values.get(0);

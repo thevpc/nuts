@@ -188,7 +188,7 @@ public class NLogUtils {
         long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
         String modeString = NStringUtils.formatAlign(fetchMode.id(), 7, NPositionType.FIRST);
         log.with().level(lvl).verb(tracePhase).time(time)
-                .log(NMsg.ofJ("[{0}] {1} {2} {3} {4}",
+                .log(NMsg.ofC("[%s] %s %s %s %s",
                         modeString,
                         NStringUtils.formatAlign(name, 20, NPositionType.FIRST),
                         NStringUtils.formatAlign(title, 18, NPositionType.FIRST),
@@ -202,7 +202,7 @@ public class NLogUtils {
             String fetchString = "[" + NStringUtils.formatAlign(fetchMode.id(), 7, NPositionType.FIRST) + "] ";
             log.with().level(Level.FINEST)
                     .verb(tracePhase).time(time)
-                    .log(NMsg.ofJ("{0}{1} {2}",
+                    .log(NMsg.ofC("%s%s %s",
                             fetchString,
                             id,
                             NStringUtils.formatAlign(message, 18, NPositionType.FIRST)

@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NEnvCondition;
 import net.thevpc.nuts.NEnvConditionBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
+import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorProperty;
 import net.thevpc.nuts.runtime.standalone.DefaultNEnvConditionBuilder;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.log.NLogOp;
@@ -22,20 +23,21 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class NDescriptorUtils {
-
-    public static NDescriptor getEffectiveDescriptor(NDefinition def) {
-        final NDescriptor d = def.getEffectiveDescriptor().orNull();
-        if (d == null) {
-            return NWorkspaceExt.of().resolveEffectiveDescriptor(def.getDescriptor());
+    public static Map<String, NDescriptorProperty> getPropertiesMap2(List<NDescriptorProperty> list) {
+        Map<String, NDescriptorProperty> m = new LinkedHashMap<>();
+        if (list != null) {
+            for (NDescriptorProperty property : list) {
+                m.put(property.getName(), property);
+            }
         }
-        return d;
+        return m;
     }
 
     public static Map<String, String> getPropertiesMap(List<NDescriptorProperty> list) {
         Map<String, String> m = new LinkedHashMap<>();
         if (list != null) {
             for (NDescriptorProperty property : list) {
-                if (property.getCondition() == null || property.getCondition().isBlank()) {
+                if (NBlankable.isBlank(property.getCondition())) {
                     m.put(property.getName(), property.getValue().asString().orNull());
                 } else {
                     throw new NIllegalArgumentException(NMsg.ofPlain("unexpected properties with conditions. probably a bug"));
@@ -230,19 +232,19 @@ public class NDescriptorUtils {
 
 
     public static NDescriptorBuilder applyProperties(NDescriptorBuilder b) {
-        Map<String, String> propertiesMap = NDescriptorUtils.getPropertiesMap(b.getProperties());
+        Map<String, NDescriptorProperty> propertiesMap = NDescriptorUtils.getPropertiesMap2(b.getProperties());
         if (b.getId() != null) {
             NId id = b.getId();
             String gid = id.getGroupId();
             String version = id.getVersion().getValue();
             if (gid != null && !propertiesMap.containsKey("groupId")) {
-                propertiesMap.put("groupId", gid);
+                propertiesMap.put("groupId", new DefaultNDescriptorProperty("groupId",NLiteral.of(gid),NEnvCondition.BLANK));
             }
             if (version != null && !propertiesMap.containsKey("version")) {
-                propertiesMap.put("version", version);
+                propertiesMap.put("version", new DefaultNDescriptorProperty("version",NLiteral.of(version),NEnvCondition.BLANK));
             }
         }
-        return applyProperties(b,
+        return applyProperties2(b,
                 propertiesMap
         );
     }
@@ -402,6 +404,65 @@ public class NDescriptorUtils {
         b.setProperties(n_props.toList());
         return b;
     }
+    public static NDescriptorBuilder applyProperties2(NDescriptorBuilder b, Map<String, NDescriptorProperty> properties) {
+        properties = applyPropsToProps2(b, properties);
+        Function<String, String> map = new MapToFunction<>(properties);
+
+        NId n_id = NDescriptorUtils.applyProperties(b.getId().builder(), map).build();
+//        String n_alt = CoreNutsUtils.applyStringProperties(getAlternative(), map);
+        String n_packaging = CoreNUtils.applyStringProperties(b.getPackaging(), map);
+        String n_name = CoreNUtils.applyStringProperties(b.getName(), map);
+        String n_desc = CoreNUtils.applyStringProperties(b.getDescription(), map);
+        NArtifactCall n_executor = b.getExecutor();
+        NArtifactCall n_installer = b.getInstaller();
+        DefaultNProperties n_props = new DefaultNProperties();
+        for (NDescriptorProperty property : b.getProperties()) {
+            String v = property.getValue().asString().get();
+            if (CoreStringUtils.containsVars("${")) {
+                n_props.add(property.builder().setValue(CoreNUtils.applyStringProperties(v, map))
+                        .readOnly());
+            } else {
+                n_props.add(property);
+            }
+        }
+
+        LinkedHashSet<NDependency> n_deps = new LinkedHashSet<>();
+        for (NDependency d2 : b.getDependencies()) {
+            n_deps.add(NDescriptorUtils.applyNutsDependencyProperties(b, d2, map));
+        }
+
+        LinkedHashSet<NDependency> n_sdeps = new LinkedHashSet<>();
+        for (NDependency d2 : b.getStandardDependencies()) {
+            n_sdeps.add(applyNutsDependencyProperties(b, d2, map).build());
+        }
+
+        b.setId(n_id);
+//        b.setAlternative(n_alt);
+        b.setParents(b.getParents());
+        b.setPackaging(n_packaging);
+        b.setExecutor(n_executor);
+        b.setInstaller(n_installer);
+        b.setName(n_name);
+        b.setDescription(n_desc);
+        b.setGenericName(CoreNUtils.applyStringProperties(b.getGenericName(), map));
+        b.setIcons(
+                b.getIcons().stream()
+                        .map(
+                                x -> CoreNUtils.applyStringProperties(x, map)
+                        ).collect(Collectors.toList())
+        );
+        b.setCategories(
+                b.getCategories().stream()
+                        .map(
+                                x -> CoreNUtils.applyStringProperties(x, map)
+                        ).collect(Collectors.toList())
+        );
+        b.setCondition(applyPropertiesNutsEnvCondition(b.getCondition().builder(), properties).build());
+        b.setDependencies(new ArrayList<>(n_deps));
+        b.setStandardDependencies(new ArrayList<>(n_sdeps));
+        b.setProperties(n_props.toList());
+        return b;
+    }
 
     private static Map<String, String> prepareGlobalProperties(NDescriptorBuilder b) {
         Map<String, String> global = new LinkedHashMap<>();
@@ -428,6 +489,34 @@ public class NDescriptorUtils {
         return global;
     }
 
+    private static Map<String, NDescriptorProperty> prepareGlobalProperties2(NDescriptorBuilder b) {
+        Map<String, NDescriptorProperty> global = new LinkedHashMap<>();
+        // try to support both new and deprecated property names
+        // to support ancient built maven packages!
+        for (Map.Entry<Object, Object> e : System.getProperties().entrySet()) {
+            String k = (String) e.getKey();
+            global.put(k,new DefaultNDescriptorProperty(k,NLiteral.of(e.getValue()),NEnvCondition.BLANK));
+        }
+        NId ii = b.getId();
+        for (String s : new String[]{"project.name", "pom.name"}) {
+            global.put(s, new DefaultNDescriptorProperty(s,NLiteral.of(b.getName()),NEnvCondition.BLANK));
+        }
+        if (ii != null) {
+            if (ii.getVersion().getValue() != null) {
+                for (String s : new String[]{"project.version", "version", "pom.version"}) {
+                    global.put(s, new DefaultNDescriptorProperty(s,NLiteral.of(ii.getVersion().getValue()),NEnvCondition.BLANK));
+                }
+            }
+            for (String s : new String[]{"project.groupId", "pom.groupId"}) {
+                global.put(s, new DefaultNDescriptorProperty(s,NLiteral.of(ii.getGroupId()),NEnvCondition.BLANK));
+            }
+            for (String s : new String[]{"project.artifactId", "pom.artifactId"}) {
+                global.put(s, new DefaultNDescriptorProperty(s,NLiteral.of(ii.getArtifactId()),NEnvCondition.BLANK));
+            }
+        }
+        return global;
+    }
+
     private static Map<String, String> applyPropsToProps(NDescriptorBuilder b, Map<String, String> properties) {
 
         Map<String, String> oldMap = new LinkedHashMap<>(properties);
@@ -444,6 +533,37 @@ public class NDescriptorUtils {
             Map<String, String> newMap = new LinkedHashMap<>(oldMap.size());
             updated = new TreeSet<>();
             for (Map.Entry<String, String> entry : oldMap.entrySet()) {
+                String v0 = entry.getValue();
+                String v1 = CoreNUtils.applyStringProperties(v0, fct);
+                if (!Objects.equals(v0, v1)) {
+                    updated.add(entry.getKey());
+                }
+                newMap.put(entry.getKey(), v1);
+            }
+            if (updated.isEmpty()) {
+                return newMap;
+            }
+            oldMap = newMap;
+        }
+        throw new NIllegalArgumentException(NMsg.ofC("too many recursion applying properties %s", updated));
+    }
+
+    private static Map<String, NDescriptorProperty> applyPropsToProps2(NDescriptorBuilder b, Map<String, NDescriptorProperty> properties) {
+
+        Map<String, NDescriptorProperty> oldMap = new LinkedHashMap<>(properties);
+
+
+        for (Map.Entry<String, NDescriptorProperty> entry : prepareGlobalProperties2(b).entrySet()) {
+            if (!oldMap.containsKey(entry.getKey())) {
+                oldMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+        Set<String> updated = new TreeSet<>();
+        for (int i = 0; i < 16; i++) {
+            Function<String, String> fct = new MapToFunction<>(oldMap);
+            Map<String, String> newMap = new LinkedHashMap<>(oldMap.size());
+            updated = new TreeSet<>();
+            for (Map.Entry<String, NDescriptorProperty> entry : oldMap.entrySet()) {
                 String v0 = entry.getValue();
                 String v1 = CoreNUtils.applyStringProperties(v0, fct);
                 if (!Objects.equals(v0, v1)) {

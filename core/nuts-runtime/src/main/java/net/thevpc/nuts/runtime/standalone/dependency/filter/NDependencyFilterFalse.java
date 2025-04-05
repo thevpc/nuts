@@ -10,7 +10,7 @@ public final class NDependencyFilterFalse extends AbstractDependencyFilter{
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency) {
+    public boolean acceptDependency(NDependency dependency, NId from) {
         return false;
     }
 

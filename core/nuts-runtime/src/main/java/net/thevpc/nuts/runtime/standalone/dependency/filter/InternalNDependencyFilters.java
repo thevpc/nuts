@@ -40,7 +40,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NDependencyFilterAnd(all.toArray(new NDependencyFilter[0]));
+        return new NDependencyFilterAnd(all.toArray(new NDependencyFilter[0])).simplify();
     }
 
     @Override
@@ -52,7 +52,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NDependencyFilterOr(all.toArray(new NDependencyFilter[0]));
+        return new NDependencyFilterOr(all.toArray(new NDependencyFilter[0])).simplify();
     }
 
     @Override
@@ -66,7 +66,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (all.isEmpty()) {
             return always();
         }
-        return new NDependencyFilterNone(all.toArray(new NDependencyFilter[0]));
+        return new NDependencyFilterNone(all.toArray(new NDependencyFilter[0])).simplify();
     }
 
     @Override
@@ -102,7 +102,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (scopes == null || scopes.length == 0) {
             return always();
         }
-        return new ScopeNDependencyFilter(scopes);
+        return new ScopeNDependencyFilter(scopes).simplify();
     }
 
     @Override
@@ -110,7 +110,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (scope == null) {
             return always();
         }
-        return new NDependencyScopeFilter().add(Arrays.asList(scope));
+        return new NDependencyScopeFilter().add(Arrays.asList(scope)).simplify();
     }
 
     @Override
@@ -118,7 +118,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (scopes == null) {
             return always();
         }
-        return new NDependencyScopeFilter().add(Arrays.asList(scopes));
+        return new NDependencyScopeFilter().add(Arrays.asList(scopes)).simplify();
     }
 
     @Override
@@ -126,7 +126,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (scopes == null) {
             return always();
         }
-        return new NDependencyScopeFilter().add(scopes);
+        return new NDependencyScopeFilter().add(scopes).simplify();
     }
 
     @Override
@@ -134,12 +134,12 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (optional == null) {
             return always();
         }
-        return new NDependencyOptionFilter(optional);
+        return new NDependencyOptionFilter(optional).simplify();
     }
 
     @Override
     public NDependencyFilter byExclude(NDependencyFilter filter, String[] exclusions) {
-        return new NExclusionDependencyFilter(filter, Arrays.stream(exclusions).map(x -> NId.get(x).get()).toArray(NId[]::new));
+        return new NExclusionDependencyFilter(filter, Arrays.stream(exclusions).map(x -> NId.get(x).get()).toArray(NId[]::new)).simplify();
     }
 
     @Override
@@ -147,7 +147,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (archs == null) {
             return always();
         }
-        return new NDependencyArchFamilyFilter().add(archs);
+        return new NDependencyArchFamilyFilter().add(archs).simplify();
     }
 
     @Override
@@ -155,7 +155,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (arch == null) {
             return always();
         }
-        return new NDependencyArchFamilyFilter().add(Arrays.asList(arch));
+        return new NDependencyArchFamilyFilter().add(Arrays.asList(arch)).simplify();
     }
 
     @Override
@@ -163,7 +163,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (archs == null) {
             return always();
         }
-        return new NDependencyArchFamilyFilter().add(Arrays.asList(archs));
+        return new NDependencyArchFamilyFilter().add(Arrays.asList(archs)).simplify();
     }
 
     @Override
@@ -179,7 +179,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (os == null) {
             return always();
         }
-        return new NDependencyOsFilter().add(os);
+        return new NDependencyOsFilter().add(os).simplify();
     }
 
     @Override
@@ -233,7 +233,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (os == null) {
             return always();
         }
-        return new NDependencyOsFilter().add(Arrays.asList(os));
+        return new NDependencyOsFilter().add(Arrays.asList(os)).simplify();
     }
 
     @Override
@@ -241,7 +241,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (os == null) {
             return always();
         }
-        return new NDependencyOsFilter().add(Arrays.asList(os));
+        return new NDependencyOsFilter().add(Arrays.asList(os)).simplify();
     }
 
     @Override
@@ -249,7 +249,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (de == null) {
             return always();
         }
-        return new NDependencyDEFilter().add(Arrays.asList(de));
+        return new NDependencyDEFilter().add(Arrays.asList(de)).simplify();
     }
 
     @Override
@@ -257,7 +257,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (de == null) {
             return always();
         }
-        return new NDependencyDEFilter().add(Arrays.asList(de));
+        return new NDependencyDEFilter().add(Arrays.asList(de)).simplify();
     }
 
     @Override
@@ -267,7 +267,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
 
     @Override
     public NDependencyFilter byType(String type) {
-        return new NDependencyTypeFilter(type);
+        return new NDependencyTypeFilter(type).simplify();
     }
 
     @Override
@@ -275,7 +275,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (os == null) {
             return always();
         }
-        return new NDependencyOsFilter(os);
+        return new NDependencyOsFilter(os).simplify();
     }
 
     @Override
@@ -283,7 +283,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (osDist == null) {
             return always();
         }
-        return new NDependencyOsDistIdFilter().add(Collections.singletonList(NId.get(osDist).get()));
+        return new NDependencyOsDistIdFilter().add(Collections.singletonList(NId.get(osDist).get())).simplify();
     }
 
     @Override
@@ -294,7 +294,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         return new NDependencyOsDistIdFilter().add(
                 Arrays.stream(osDists).map(x-> NId.get(x).get())
                         .collect(Collectors.toList())
-        );
+        ).simplify();
     }
 
     @Override
@@ -305,7 +305,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         return new NDependencyOsDistIdFilter().add(
                 osDists.stream().map(x-> NId.get(x).get())
                         .collect(Collectors.toList())
-        );
+        ).simplify();
     }
 
     @Override
@@ -313,7 +313,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (pf == null || pf.length==0) {
             return always();
         }
-        return new NDependencyPlatformFamilyFilter().add(Arrays.asList(pf));
+        return new NDependencyPlatformFamilyFilter().add(Arrays.asList(pf)).simplify();
     }
 
     @Override
@@ -324,7 +324,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         return new NDependencyPlatformIdFilter().add(
                 Arrays.stream(pf).map(x-> NId.get(x).get())
                         .collect(Collectors.toList())
-        );
+        ).simplify();
     }
 
     @Override

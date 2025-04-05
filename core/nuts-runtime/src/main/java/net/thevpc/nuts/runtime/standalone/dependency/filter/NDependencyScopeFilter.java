@@ -7,6 +7,7 @@ import java.util.EnumSet;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.util.NFilterOp;
 
 public class NDependencyScopeFilter extends AbstractDependencyFilter {
@@ -22,15 +23,21 @@ public class NDependencyScopeFilter extends AbstractDependencyFilter {
         this.scope = EnumSet.copyOf(scope);
     }
 
-    public NDependencyScopeFilter add(Collection<NDependencyScope> scope) {
-        EnumSet<NDependencyScope> s2 = EnumSet.copyOf(this.scope);
-        s2.addAll(scope);
-        return new NDependencyScopeFilter(s2);
+    public NDependencyScopeFilter add(Collection<NDependencyScope> scopes) {
+        if(scopes==null){
+            return this;
+        }
+        EnumSet<NDependencyScope> newScopes = EnumSet.copyOf(this.scope);
+        NCoreCollectionUtils.addAllNonNull(newScopes, scopes);
+        return new NDependencyScopeFilter(newScopes);
     }
 
-    public NDependencyScopeFilter addScopePatterns(Collection<NDependencyScopePattern> scope) {
+    public NDependencyScopeFilter addScopePatterns(Collection<NDependencyScopePattern> scopes) {
+        if(scopes==null){
+            return this;
+        }
         EnumSet<NDependencyScope> s2 = EnumSet.copyOf(this.scope);
-        for (NDependencyScopePattern ss : scope) {
+        for (NDependencyScopePattern ss : scopes) {
             if(ss!=null) {
                 s2.addAll(ss.toScopes());
             }
@@ -39,7 +46,7 @@ public class NDependencyScopeFilter extends AbstractDependencyFilter {
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency) {
+    public boolean acceptDependency(NDependency dependency, NId from) {
         return scope.isEmpty() || scope.contains(NDependencyScope.parse(dependency.getScope()).orElse(NDependencyScope.API));
     }
 

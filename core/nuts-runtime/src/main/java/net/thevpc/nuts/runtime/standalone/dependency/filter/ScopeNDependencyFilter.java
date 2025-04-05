@@ -21,7 +21,7 @@ public class ScopeNDependencyFilter extends AbstractDependencyFilter{
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency) {
+    public boolean acceptDependency(NDependency dependency, NId from) {
 
         NDependencyScope d = NDependencyScope.parse(dependency.getScope()).orElse(NDependencyScope.API);
         return d != null && scopes.contains(d);

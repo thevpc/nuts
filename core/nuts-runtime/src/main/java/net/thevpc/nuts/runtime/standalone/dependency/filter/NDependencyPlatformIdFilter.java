@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.dependency.filter;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
+import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.util.NStream;
 
@@ -23,14 +24,14 @@ public class NDependencyPlatformIdFilter extends AbstractDependencyFilter  {
         this.accepted = new LinkedHashSet<>(accepted);
     }
 
-    public NDependencyPlatformIdFilter add(Collection<NId> os) {
+    public NDependencyPlatformIdFilter add(Collection<NId> oses) {
         LinkedHashSet<NId> s2 = new LinkedHashSet<>(accepted);
-        s2.addAll(os);
+        NCoreCollectionUtils.addAllNonNull(s2, oses);
         return new NDependencyPlatformIdFilter(s2);
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency) {
+    public boolean acceptDependency(NDependency dependency, NId from) {
         List<String> current = NStream.ofIterable(dependency.getCondition().getPlatform()).filterNonBlank().toList();
         if(current.size()==0 || accepted.isEmpty()){
             return true;

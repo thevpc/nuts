@@ -15,8 +15,8 @@ public abstract class DependencyFilterDelegate extends AbstractDependencyFilter{
     public abstract NDependencyFilter dependencyFilter();
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency) {
-        return dependencyFilter().acceptDependency(from, dependency);
+    public boolean acceptDependency(NDependency dependency, NId from) {
+        return dependencyFilter().acceptDependency(dependency, from);
     }
 
     @Override

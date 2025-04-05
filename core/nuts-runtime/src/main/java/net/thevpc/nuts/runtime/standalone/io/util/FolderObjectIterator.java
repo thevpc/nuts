@@ -102,7 +102,7 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
                                                 return (deep && pathname.isDirectory()) || model.isObjectFile(pathname);
                                             } catch (Exception ex) {
                                                 NLogOp.of(FolderObjectIterator.class).level(Level.FINE).error(ex)
-                                                        .log(NMsg.ofJ("unable to test desk file {0}", pathname));
+                                                        .log(NMsg.ofC("unable to test desk file %s", pathname));
                                                 return false;
                                             }
                                         }
@@ -118,7 +118,7 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
                                 });
                     } catch (Exception ex) {
                         LOG().with().error(ex).log(
-                                NMsg.ofJ("unable to parse {0}", file.path));
+                                NMsg.ofC("unable to parse %s", file.path));
                     }
                 }
             } else {

@@ -515,7 +515,7 @@ public class CoreFilterUtils {
         }
         List<NDependency> r = new ArrayList<>(d0.size());
         for (NDependency nutsDependency : d0) {
-            if (dependencyFilter.acceptDependency(from, nutsDependency)) {
+            if (dependencyFilter.acceptDependency(nutsDependency, from)) {
                 r.add(nutsDependency);
             }
         }

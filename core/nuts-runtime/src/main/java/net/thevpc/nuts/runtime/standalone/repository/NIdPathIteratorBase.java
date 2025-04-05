@@ -20,7 +20,7 @@ public abstract class NIdPathIteratorBase implements NIdPathIteratorModel {
             if (!CoreNUtils.isEffectiveId(t.getId())) {
                 NDescriptor nutsDescriptor = null;
                 try {
-                    nutsDescriptor = NWorkspaceExt.of().resolveEffectiveDescriptor(t);
+                    nutsDescriptor = NWorkspace.of().resolveEffectiveDescriptor(t,new EffectiveNDescriptorConfig().setFilterCurrentEnvironment(true));
                 } catch (Exception ex) {
                     NLogOp.of(NIdPathIteratorBase.class).level(Level.FINE).error(ex).log(
                             NMsg.ofJ("error resolving effective descriptor for {0} in url {1} : {2}", t.getId(),

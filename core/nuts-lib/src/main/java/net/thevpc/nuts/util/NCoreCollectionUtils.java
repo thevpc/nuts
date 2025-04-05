@@ -36,6 +36,19 @@ import java.util.stream.StreamSupport;
  * @author thevpc
  */
 public class NCoreCollectionUtils {
+    public static <T> boolean addAllNonNull(Collection<T> container, Collection<T> newElements) {
+        boolean someAdded = false;
+        if(newElements !=null){
+            for (T t : newElements) {
+                if(t!=null){
+                    container.add(t);
+                    someAdded=true;
+                }
+            }
+        }
+        return someAdded;
+    }
+
     public static <T> List<T> unmodifiableList(Collection<T> other) {
         return other == null ? Collections.emptyList() : Collections.unmodifiableList(nonNullList(other));
     }

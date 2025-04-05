@@ -25,10 +25,11 @@ public interface NWorkspaceExt {
 
 
     static NWorkspaceExt of() {
-        return ((NWorkspaceExt)NWorkspace.of());
+        return ((NWorkspaceExt) NWorkspace.of());
     }
+
     static NWorkspaceExt of(NWorkspace ws) {
-        return ((NWorkspaceExt)ws);
+        return ((NWorkspaceExt) ws);
     }
 
     NWorkspaceStore store();
@@ -68,9 +69,6 @@ public interface NWorkspaceExt {
      */
     boolean requiresRuntimeExtension();
 
-    //    @Override
-    NDescriptor resolveEffectiveDescriptor(NDescriptor descriptor);
-
     NInstalledRepository getInstalledRepository();
 
     NInstallStatus getInstallStatus(NId id, boolean checkDependencies);
@@ -88,11 +86,12 @@ public interface NWorkspaceExt {
     void setInstallationDigest(String value);
 
     Stack<NSession> sessionScopes();
+
     DefaultNRepositoryModel getRepositoryModel();
 
     public DefaultNWorkspaceEnvManagerModel getEnvModel();
 
-    public DefaultCustomCommandsModel getCommandModel() ;
+    public DefaultCustomCommandsModel getCommandModel();
 
     public DefaultNWorkspaceConfigModel getConfigModel();
 

@@ -126,7 +126,7 @@ public class JavaClassUtils {
             mainClass = getMainClassType(classStream, NWorkspace.get().get());
         } catch (Exception ex) {
             NLogOp.of(CorePlatformUtils.class).level(Level.FINE).error(ex)
-                    .log(NMsg.ofJ("invalid file format {0}", sourceName));
+                    .log(NMsg.ofC("invalid java class file format %s", sourceName));
         }
         if (mainClass != null) {
             return new DefaultNExecutionEntry(
