@@ -698,8 +698,6 @@ public interface NWorkspaceOptions extends Serializable {
 
     NWorkspaceOptionsBuilder builder();
 
-    NWorkspaceOptions readOnly();
-
     NCmdLine toCmdLine();
 
     NCmdLine toCmdLine(NWorkspaceOptionsConfig config);

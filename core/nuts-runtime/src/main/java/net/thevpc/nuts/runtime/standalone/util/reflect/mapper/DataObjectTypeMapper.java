@@ -95,7 +95,7 @@ class DataObjectTypeMapper implements NReflectTypeMapper {
             try {
                 NRef<Object> srcVal = null;
                 NRef<Object> targetVal = null;
-                switch (context.getSource()) {
+                switch (context.mapStrategy().source()) {
                     case NULL : {
                         srcVal = NRef.of(from.get(a));
                         if (!srcVal.isNull()) {
@@ -125,7 +125,7 @@ class DataObjectTypeMapper implements NReflectTypeMapper {
                         break;
                     }
                 }
-                switch (context.getTarget()) {
+                switch (context.mapStrategy().target()) {
                     case NULL : {
                         targetVal = NRef.of(to.getField().get(b));
                         if (!targetVal.isNull()) {
@@ -158,7 +158,7 @@ class DataObjectTypeMapper implements NReflectTypeMapper {
                 Object v = srcVal == null ? from.get(a) : srcVal.get();
                 Object v2 = context.mapToType(v, context.repository().getType(toType));
                 Object nv2 = targetVal == null ? to.getField().get(b) : targetVal.get();
-                if (!context.getEq().equals(nv2, v2)) {
+                if (!context.equalizer().equals(nv2, v2)) {
                     if(v2==null){
                         switch (to.getType().getTypeName()){
                             case "boolean":{

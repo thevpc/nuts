@@ -135,8 +135,20 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 InputStream in = userOptions.getStdin();
                 scanner = new Scanner(in == null ? System.in : in);
                 NBootContext.context().log = new NBootLog(userOptions);
-                String[] args = userOptionsUnparsed.getArgs();
-                NBootWorkspaceCmdLineParser.parseNutsArguments(args == null ? new String[0] : args, userOptions);
+
+                List<String> aargs=new ArrayList<>();
+                if(!userOptionsUnparsed.isSkipInherited()){
+                    aargs.addAll(Arrays.asList(NBootCmdLine.parseDefault(NBootUtils.trim(System.getProperty("nuts.boot.args")))));
+                    aargs.addAll(Arrays.asList(NBootCmdLine.parseDefault(NBootUtils.trim(System.getProperty("nuts.args")))));
+                }
+                if(userOptionsUnparsed.getOptionArgs() != null){
+                    for (String appArg : userOptionsUnparsed.getOptionArgs()) {
+                        if(appArg != null){
+                            aargs.add(appArg);
+                        }
+                    }
+                }
+                NBootWorkspaceCmdLineParser.parseNutsArguments(aargs.toArray(new String[0]), userOptions);
                 if (NBootUtils.firstNonNull(userOptions.getSkipErrors(), false)) {
                     StringBuilder errorMessage = new StringBuilder();
                     if (userOptions.getErrors() != null) {
@@ -420,7 +432,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             }
             cmd.add(jc);
             boolean showCommand = false;
-            for (String c : NBootCmdLine.parseDefaultList(options.getJavaOptions())) {
+            for (String c : NBootCmdLine.parseDefault(options.getJavaOptions())) {
                 if (!c.isEmpty()) {
                     if (c.equals("--show-command")) {
                         showCommand = true;
@@ -430,7 +442,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 }
             }
             if (options.getJavaOptions() == null) {
-                Collections.addAll(cmd, NBootCmdLine.parseDefaultList(options.getJavaOptions()));
+                Collections.addAll(cmd, NBootCmdLine.parseDefault(options.getJavaOptions()));
             }
             cmd.add("-jar");
             cmd.add(file.getPath());

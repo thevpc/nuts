@@ -29,7 +29,6 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.Collection;
@@ -402,7 +401,7 @@ public interface NExecCmd extends NWorkspaceCmd {
      * @param other command to copy from
      * @return {@code this} instance
      */
-    NExecCmd setAll(NExecCmd other);
+    NExecCmd copyFrom(NExecCmd other);
 
     /**
      * create a copy of {@code this} instance

@@ -45,9 +45,9 @@ public interface NTerminalSpec extends Serializable {
 
     NTerminalSpec setProperty(String name, Object o);
 
-    NTerminalSpec setAll(NTerminalSpec other);
+    NTerminalSpec copyFrom(NTerminalSpec other);
 
-    NTerminalSpec setAll(Map<String, Object> other);
+    NTerminalSpec setProperties(Map<String, Object> other);
 
     Map<String, Object> getProperties();
 }

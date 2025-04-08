@@ -1,6 +1,7 @@
 package net.thevpc.nuts.springboot;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NBootArguments;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLines;
 import net.thevpc.nuts.concurrent.NScheduler;
@@ -44,7 +45,10 @@ public class NutsSpringBootConfiguration {
 
     @Bean
     public NWorkspace nutsWorkspace(ApplicationArguments applicationArguments) {
-        return Nuts.openInheritedWorkspace(resolveNutsArgs(), applicationArguments.getSourceArgs());
+        return Nuts.openWorkspace(
+                NBootArguments.of(resolveNutsArgs())
+                        .setAppArgs(applicationArguments.getSourceArgs())
+        );
     }
 
     @Bean
@@ -60,33 +64,35 @@ public class NutsSpringBootConfiguration {
 
     @Bean
     public NExprs nutsNExprs(ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).callWith(()->{
+        return nutsSession(applicationArguments).callWith(() -> {
             return NExprs.of();
         });
     }
+
     @Bean
     public NIdFilters nutsIdFilters(ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).callWith(()->{
+        return nutsSession(applicationArguments).callWith(() -> {
             return NIdFilters.of();
         });
     }
 
     @Bean
     public NDependencyFilters nutsDependencyFilters(ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).callWith(()->{
+        return nutsSession(applicationArguments).callWith(() -> {
             return NDependencyFilters.of();
         });
     }
 
     @Bean
     public NDescriptorFilters nutsDescriptorFilters(ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).callWith(()->{
+        return nutsSession(applicationArguments).callWith(() -> {
             return NDescriptorFilters.of();
         });
     }
+
     @Bean
     public NLibPaths nutsLibPaths(ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).callWith(()->{
+        return nutsSession(applicationArguments).callWith(() -> {
             return NLibPaths.of();
         });
     }
@@ -94,40 +100,42 @@ public class NutsSpringBootConfiguration {
 
     @Bean
     public NProgressMonitors nutsProgressMonitors(ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).callWith(()->{
+        return nutsSession(applicationArguments).callWith(() -> {
             return NProgressMonitors.of();
         });
     }
+
     @Bean
     public NIO nutsIO(ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).callWith(()->{
+        return nutsSession(applicationArguments).callWith(() -> {
             return NIO.of();
         });
     }
+
     @Bean
     public NFormats nutsFormats(ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).callWith(()->{
+        return nutsSession(applicationArguments).callWith(() -> {
             return NFormats.of();
         });
     }
 
     @Bean
     public NExtensions nutsExtensions(ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).callWith(()->{
+        return nutsSession(applicationArguments).callWith(() -> {
             return NExtensions.of();
         });
     }
 
     @Bean
     public NScheduler nutsScheduler(ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).callWith(()->{
+        return nutsSession(applicationArguments).callWith(() -> {
             return NScheduler.of();
         });
     }
 
     @Bean
     public NCmdLines nutsCmdLines(ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).callWith(()->{
+        return nutsSession(applicationArguments).callWith(() -> {
             return NCmdLines.of();
         });
     }
@@ -162,10 +170,10 @@ public class NutsSpringBootConfiguration {
                         .setNutsArgs(resolveNutsArgs())
                         .setArgs(applicationArguments.getSourceArgs())
                         .setHandleMode(NApplicationHandleMode.PROPAGATE))
-        ;
+                ;
     }
 
-    private String[] resolveNutsArgs(){
+    private String[] resolveNutsArgs() {
         List<String> args = NCmdLine.parseDefault(env.getProperty("nuts.args")).get().toStringList();
         //always enable main instance in spring apps
         args.add("--shared-instance=true");

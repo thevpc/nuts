@@ -66,13 +66,14 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
     @Override
     public NSearchCmd copy() {
         DefaultNSearchCmd b = new DefaultNSearchCmd();
-        b.setAll(this);
+        b.copyFrom(this);
         return b;
     }
 
     @Override
     public NFetchCmd toFetch() {
         NFetchCmd t = new DefaultNFetchCmd().copyFromDefaultNQueryBaseOptions(this);
+        t.setFilterCurrentEnvironment(isFilterCurrentEnvironment());
         if (getDisplayOptions().isRequireDefinition()) {
             t.setContent(true);
         }
@@ -578,10 +579,10 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                         boolean releaseVersion = false;
                         if (nutsIdNonLatest.getVersion().isLatestVersion()) {
                             latestVersion = true;
-                            nutsIdNonLatest = nutsIdNonLatest.builder().setVersion("");
+                            nutsIdNonLatest = nutsIdNonLatest.builder().setVersion("").build();
                         } else if (nutsIdNonLatest.getVersion().isReleaseVersion()) {
                             releaseVersion = true;
-                            nutsIdNonLatest = nutsIdNonLatest.builder().setVersion("");
+                            nutsIdNonLatest = nutsIdNonLatest.builder().setVersion("").build();
                         }
                         NIdFilter idFilter2 = NFilters.of().all(sIdFilter,
                                 NIdFilters.of().byName(nutsIdNonLatest.getFullName())

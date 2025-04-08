@@ -105,13 +105,13 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
 
     public DefaultNSession(NWorkspace workspace) {
         this.workspace = workspace;
-        setAll(NWorkspace.of().getBootOptions().toWorkspaceOptions());
+        copyFrom(NWorkspace.of().getBootOptions().toWorkspaceOptions());
     }
 
     public DefaultNSession(NWorkspace workspace, NWorkspaceOptions options) {
         this.workspace = workspace;
         if (options != null) {
-            setAll(options);
+            copyFrom(options);
         }
     }
 
@@ -876,7 +876,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     }
 
     @Override
-    public NSession setAll(NSession other) {
+    public NSession copyFrom(NSession other) {
         //boolean withDefaults = false;
         this.terminal = other.getTerminal() == null ? null : NTerminal.of(terminal);
         this.terminal = other.getTerminal();
@@ -924,7 +924,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     }
 
     @Override
-    public NSession setAll(NWorkspaceOptions options) {
+    public NSession copyFrom(NWorkspaceOptions options) {
         if (options != null) {
             this.trace = options.getTrace().orElse(true);
             this.debug = options.getDebug().orNull();
@@ -952,7 +952,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
         return this;
     }
 
-    public NSession setAll(NBootOptions options) {
+    public NSession copyFrom(NBootOptions options) {
         if (options != null) {
             this.trace = options.getTrace().orElse(true);
             this.debug = options.getDebug().orNull();

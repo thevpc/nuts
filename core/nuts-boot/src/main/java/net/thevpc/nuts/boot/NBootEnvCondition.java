@@ -54,7 +54,7 @@ public class NBootEnvCondition implements Serializable {
     }
 
     public NBootEnvCondition(NBootEnvCondition other) {
-        addAll(other);
+        copyFrom(other);
     }
 
     public NBootEnvCondition(List<String> arch, List<String> os, List<String> osDist,
@@ -170,14 +170,7 @@ public class NBootEnvCondition implements Serializable {
     }
 
     
-    public NBootEnvCondition setAll(NBootEnvCondition other) {
-        clear();
-        addAll(other);
-        return this;
-    }
-
-    
-    public NBootEnvCondition addAll(NBootEnvCondition other) {
+    public NBootEnvCondition copyFrom(NBootEnvCondition other) {
         if (other != null) {
             setArch(mergeLists(getArch(), other.getArch()));
             setOs(mergeLists(getOs(), other.getOs()));
@@ -225,18 +218,11 @@ public class NBootEnvCondition implements Serializable {
         return this;
     }
 
-    
-    public NBootEnvCondition build() {
-        return readOnly();
-    }
-
-    
     public NBootEnvCondition copy() {
         return builder();
     }
 
-    
-    public NBootEnvCondition readOnly() {
+    public NBootEnvCondition build() {
         return new NBootEnvCondition(
                 getArch(), getOs(), getOsDist(), getPlatform(),
                 getDesktopEnvironment(),

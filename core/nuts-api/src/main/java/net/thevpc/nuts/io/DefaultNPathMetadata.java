@@ -120,24 +120,30 @@ public class DefaultNPathMetadata {
         this.charset = charset;
     }
 
-    public void setAll(NContentMetadata omd) {
-        this.message = omd.getMessage().orNull();
-        this.kind = omd.getKind().orNull();
-        this.contentLength = omd.getContentLength().orNull();
-        this.contentType = omd.getContentType().orNull();
-        this.charset = omd.getCharset().orNull();
-        this.name = omd.getName().orNull();
+    public void copyFrom(NContentMetadata cmd) {
+        if(cmd==null){
+            return;
+        }
+        this.message = cmd.getMessage().orNull();
+        this.kind = cmd.getKind().orNull();
+        this.contentLength = cmd.getContentLength().orNull();
+        this.contentType = cmd.getContentType().orNull();
+        this.charset = cmd.getCharset().orNull();
+        this.name = cmd.getName().orNull();
     }
 
-    public void setAll(DefaultNPathMetadata omd) {
-        this.message = omd.message;
-        this.kind = omd.kind;
-        this.contentLength = omd.contentLength;
-        this.contentType = omd.contentType;
-        this.charset = omd.charset;
-        this.name = omd.name;
-        this.userCache = omd.userCache;
-        this.userTemporary = omd.userTemporary;
+    public void copyFrom(DefaultNPathMetadata cmd) {
+        if(cmd==null){
+            return;
+        }
+        this.message = cmd.message;
+        this.kind = cmd.kind;
+        this.contentLength = cmd.contentLength;
+        this.contentType = cmd.contentType;
+        this.charset = cmd.charset;
+        this.name = cmd.name;
+        this.userCache = cmd.userCache;
+        this.userTemporary = cmd.userTemporary;
     }
 
     @Override

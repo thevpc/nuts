@@ -1275,7 +1275,7 @@ public class DefaultNBootOptions implements NBootOptions {
         b.setUserLauncher(this.getUserLauncher().orNull());
         b.setSharedInstance(this.getSharedInstance().orNull());
         b.setPreviewRepo(this.getPreviewRepo().orNull());
-        return b;
+        return b.build();
     }
 
 }

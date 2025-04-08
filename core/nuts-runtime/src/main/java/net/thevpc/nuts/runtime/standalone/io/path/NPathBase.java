@@ -42,10 +42,10 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     protected NPath copyExtraFrom(NPath other) {
         this.deleteOnDispose = other.isDeleteOnDispose();
         if (other instanceof NPathBase) {
-            omd.setAll(((NPathBase) other).omd);
+            omd.copyFrom(((NPathBase) other).omd);
         } else {
-            omd.setAll(other.getMetaData());
-            omd.setAll(other.getMetaData());
+            omd.copyFrom(other.getMetaData());
+            omd.copyFrom(other.getMetaData());
         }
         return this;
     }

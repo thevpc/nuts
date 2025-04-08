@@ -488,7 +488,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NWorkspaceOptionsBuilder copy() {
-        return new DefaultNWorkspaceOptionsBuilder().setAll(this);
+        return new DefaultNWorkspaceOptionsBuilder().copyFrom(this);
     }
 
 
@@ -1454,7 +1454,96 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setAll(NWorkspaceOptions other) {
+    public NWorkspaceOptionsBuilder copyFrom(NWorkspaceOptions other) {
+        if(other==null){
+            return this;
+        }
+        this.setApiVersion(other.getApiVersion().orNull());
+        this.setRuntimeId(other.getRuntimeId().orNull());
+        this.setJavaCommand(other.getJavaCommand().orNull());
+        this.setJavaOptions(other.getJavaOptions().orNull());
+        this.setWorkspace(other.getWorkspace().orNull());
+        this.setName(other.getName().orNull());
+        this.setInstallCompanions(other.getInstallCompanions().orNull());
+        this.setSkipWelcome(other.getSkipWelcome().orNull());
+        this.setSkipBoot(other.getSkipBoot().orNull());
+        this.setSystem(other.getSystem().orNull());
+        this.setGui(other.getGui().orNull());
+        this.setUserName(other.getUserName().orNull());
+        this.setCredentials(other.getCredentials().orNull());
+        this.setTerminalMode(other.getTerminalMode().orNull());
+        this.setReadOnly(other.getReadOnly().orNull());
+        this.setTrace(other.getTrace().orNull());
+        this.setProgressOptions(other.getProgressOptions().orNull());
+        this.setLogConfig(other.getLogConfig().orNull());
+        this.setConfirm(other.getConfirm().orNull());
+        this.setConfirm(other.getConfirm().orNull());
+        this.setOutputFormat(other.getOutputFormat().orNull());
+        this.setOutputFormatOptions(other.getOutputFormatOptions().orNull());
+        this.setOpenMode(other.getOpenMode().orNull());
+        this.setCreationTime(other.getCreationTime().orNull());
+        this.setDry(other.getDry().orNull());
+        this.setShowStacktrace(other.getShowStacktrace().orNull());
+        this.setClassLoaderSupplier(other.getClassLoaderSupplier().orNull());
+        this.setExecutorOptions(other.getExecutorOptions().orNull());
+        this.setRecover(other.getRecover().orNull());
+        this.setReset(other.getReset().orNull());
+        this.setResetHard(other.getResetHard().orNull());
+        this.setCommandVersion(other.getCommandVersion().orNull());
+        this.setCommandHelp(other.getCommandHelp().orNull());
+        this.setDebug(other.getDebug().orNull());
+        this.setInherited(other.getInherited().orNull());
+        this.setExecutionType(other.getExecutionType().orNull());
+        this.setRunAs(other.getRunAs().orNull());
+        this.setArchetype(other.getArchetype().orNull());
+        this.setStoreStrategy(other.getStoreStrategy().orNull());
+        this.setHomeLocations(other.getHomeLocations().orNull());
+        this.setStoreLocations(other.getStoreLocations().orNull());
+        this.setStoreLayout(other.getStoreLayout().orNull());
+        this.setStoreStrategy(other.getStoreStrategy().orNull());
+        this.setRepositoryStoreStrategy(other.getRepositoryStoreStrategy().orNull());
+        this.setFetchStrategy(other.getFetchStrategy().orNull());
+        this.setCached(other.getCached().orNull());
+        this.setIndexed(other.getIndexed().orNull());
+        this.setTransitive(other.getTransitive().orNull());
+        this.setBot(other.getBot().orNull());
+        this.setStdin(other.getStdin().orNull());
+        this.setStdout(other.getStdout().orNull());
+        this.setStderr(other.getStderr().orNull());
+        this.setExecutorService(other.getExecutorService().orNull());
+//        this.setBootRepositories(other.getBootRepositories());
+
+        this.setExcludedExtensions(other.getExcludedExtensions().orNull());
+//        this.setExcludedRepositories(other.getExcludedRepositories() == null ? null : Arrays.copyOf(other.getExcludedRepositories(), other.getExcludedRepositories().length));
+        this.setRepositories(other.getRepositories().orNull());
+        this.setApplicationArguments(other.getApplicationArguments().orNull());
+        this.setCustomOptions(other.getCustomOptions().orNull());
+        this.setExpireTime(other.getExpireTime().orNull());
+        this.setErrors(other.getErrors().orNull());
+        this.setSkipErrors(other.getSkipErrors().orNull());
+        this.setSwitchWorkspace(other.getSwitchWorkspace().orNull());
+        this.setLocale(other.getLocale().orNull());
+        this.setTheme(other.getTheme().orNull());
+        this.setDependencySolver(other.getDependencySolver().orNull());
+        this.setIsolationLevel(other.getIsolationLevel().orNull());
+        this.setInitLaunchers(other.getInitLaunchers().orNull());
+        this.setInitJava(other.getInitJava().orNull());
+        this.setInitScripts(other.getInitScripts().orNull());
+        this.setInitPlatforms(other.getInitPlatforms().orNull());
+        this.setDesktopLauncher(other.getDesktopLauncher().orNull());
+        this.setMenuLauncher(other.getMenuLauncher().orNull());
+        this.setUserLauncher(other.getUserLauncher().orNull());
+        this.setSharedInstance(other.getSharedInstance().orNull());
+        this.setPreviewRepo(other.getPreviewRepo().orNull());
+        return this;
+    }
+
+
+    @Override
+    public NWorkspaceOptionsBuilder copyFrom(NWorkspaceOptionsBuilder other) {
+        if(other==null){
+            return this;
+        }
         this.setApiVersion(other.getApiVersion().orNull());
         this.setRuntimeId(other.getRuntimeId().orNull());
         this.setJavaCommand(other.getJavaCommand().orNull());
@@ -1539,7 +1628,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         return build().toBootOptionsInfo();
     }
 
-    public NWorkspaceOptionsBuilder setAll(NBootOptionsInfo other) {
+    public NWorkspaceOptionsBuilder copyFrom(NBootOptionsInfo other) {
         this.setApiVersion(other.getApiVersion()==null?null:NVersion.get(other.getApiVersion()).orNull());
         this.setRuntimeId(other.getRuntimeId()==null?null:
                         other.getRuntimeId().contains("#")?NId.get(other.getRuntimeId()).orNull():
@@ -1663,231 +1752,85 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setAllPresent(NWorkspaceOptions other) {
+    public NWorkspaceOptionsBuilder copyFrom(NWorkspaceOptions other,NMapStrategy strategy) {
         if (other != null) {
-            if (other.getApiVersion().isPresent()) {
-                this.setApiVersion(other.getApiVersion().orNull());
-            }
-            if (other.getRuntimeId().isPresent()) {
-                this.setRuntimeId(other.getRuntimeId().orNull());
-            }
-            if (other.getJavaCommand().isPresent()) {
-                this.setJavaCommand(other.getJavaCommand().orNull());
-            }
-            if (other.getJavaOptions().isPresent()) {
-                this.setJavaOptions(other.getJavaOptions().orNull());
-            }
-            if (other.getWorkspace().isPresent()) {
-                this.setWorkspace(other.getWorkspace().orNull());
-            }
-            if (other.getName().isPresent()) {
-                this.setName(other.getName().orNull());
-            }
-            if (other.getInstallCompanions().isPresent()) {
-                this.setInstallCompanions(other.getInstallCompanions().orNull());
-            }
-            if (other.getSkipWelcome().isPresent()) {
-                this.setSkipWelcome(other.getSkipWelcome().orNull());
-            }
-            if (other.getSkipBoot().isPresent()) {
-                this.setSkipBoot(other.getSkipBoot().orNull());
-            }
-            if (other.getSystem().isPresent()) {
-                this.setSystem(other.getSystem().orNull());
-            }
-            if (other.getGui().isPresent()) {
-                this.setGui(other.getGui().orNull());
-            }
-            if (other.getUserName().isPresent()) {
-                this.setUserName(other.getUserName().orNull());
-            }
-            if (other.getCredentials().isPresent()) {
-                this.setCredentials(other.getCredentials().orNull());
-            }
-            if (other.getTerminalMode().isPresent()) {
-                this.setTerminalMode(other.getTerminalMode().orNull());
-            }
-            if (other.getReadOnly().isPresent()) {
-                this.setReadOnly(other.getReadOnly().orNull());
-            }
-            if (other.getTrace().isPresent()) {
-                this.setTrace(other.getTrace().orNull());
-            }
-            if (other.getProgressOptions().isPresent()) {
-                this.setProgressOptions(other.getProgressOptions().orNull());
-            }
-            if (other.getLogConfig().isPresent()) {
-                this.setLogConfig(other.getLogConfig().orNull());
-            }
-            if (other.getConfirm().isPresent()) {
-                this.setConfirm(other.getConfirm().orNull());
-            }
-            if (other.getConfirm().isPresent()) {
-                this.setConfirm(other.getConfirm().orNull());
-            }
-            if (other.getOutputFormat().isPresent()) {
-                this.setOutputFormat(other.getOutputFormat().orNull());
-            }
-            if (other.getOutputFormatOptions().isPresent()) {
-                this.setOutputFormatOptions(other.getOutputFormatOptions().orNull());
-            }
-            if (other.getOpenMode().isPresent()) {
-                this.setOpenMode(other.getOpenMode().orNull());
-            }
-            if (other.getCreationTime().isPresent()) {
-                this.setCreationTime(other.getCreationTime().orNull());
-            }
-            if (other.getDry().isPresent()) {
-                this.setDry(other.getDry().orNull());
-            }
-            if (other.getShowStacktrace().isPresent()) {
-                this.setShowStacktrace(other.getShowStacktrace().orNull());
-            }
-            if (other.getClassLoaderSupplier().isPresent()) {
-                this.setClassLoaderSupplier(other.getClassLoaderSupplier().orNull());
-            }
-            if (other.getExecutorOptions().isPresent()) {
-                this.setExecutorOptions(other.getExecutorOptions().orNull());
-            }
-            if (other.getRecover().isPresent()) {
-                this.setRecover(other.getRecover().orNull());
-            }
-            if (other.getReset().isPresent()) {
-                this.setReset(other.getReset().orNull());
-            }
-            if (other.getResetHard().isPresent()) {
-                this.setResetHard(other.getResetHard().orNull());
-            }
-            if (other.getCommandVersion().isPresent()) {
-                this.setCommandVersion(other.getCommandVersion().orNull());
-            }
-            if (other.getCommandHelp().isPresent()) {
-                this.setCommandHelp(other.getCommandHelp().orNull());
-            }
-            if (other.getDebug().isPresent()) {
-                this.setDebug(other.getDebug().orNull());
-            }
-            if (other.getInherited().isPresent()) {
-                this.setInherited(other.getInherited().orNull());
-            }
-            if (other.getExecutionType().isPresent()) {
-                this.setExecutionType(other.getExecutionType().orNull());
-            }
-            if (other.getRunAs().isPresent()) {
-                this.setRunAs(other.getRunAs().orNull());
-            }
-            if (other.getArchetype().isPresent()) {
-                this.setArchetype(other.getArchetype().orNull());
-            }
-            if (other.getStoreStrategy().isPresent()) {
-                this.setStoreStrategy(other.getStoreStrategy().orNull());
-            }
-            if (other.getHomeLocations().isPresent()) {
-                this.setHomeLocations(other.getHomeLocations().orNull());
-            }
-
-            if (other.getStoreLocations().isPresent()) {
-                this.setStoreLocations(other.getStoreLocations().orNull());
-            }
-            if (other.getStoreLayout().isPresent()) {
-                this.setStoreLayout(other.getStoreLayout().orNull());
-            }
-            if (other.getStoreStrategy().isPresent()) {
-                this.setStoreStrategy(other.getStoreStrategy().orNull());
-            }
-            if (other.getRepositoryStoreStrategy().isPresent()) {
-                this.setRepositoryStoreStrategy(other.getRepositoryStoreStrategy().orNull());
-            }
-            if (other.getFetchStrategy().isPresent()) {
-                this.setFetchStrategy(other.getFetchStrategy().orNull());
-            }
-            if (other.getCached().isPresent()) {
-                this.setCached(other.getCached().orNull());
-            }
-            if (other.getIndexed().isPresent()) {
-                this.setIndexed(other.getIndexed().orNull());
-            }
-            if (other.getTransitive().isPresent()) {
-                this.setTransitive(other.getTransitive().orNull());
-            }
-            if (other.getBot().isPresent()) {
-                this.setBot(other.getBot().orNull());
-            }
-            if (other.getStdin().isPresent()) {
-                this.setStdin(other.getStdin().orNull());
-            }
-            if (other.getStdout().isPresent()) {
-                this.setStdout(other.getStdout().orNull());
-            }
-            if (other.getStderr().isPresent()) {
-                this.setStderr(other.getStderr().orNull());
-            }
-            if (other.getExecutorService().isPresent()) {
-                this.setExecutorService(other.getExecutorService().orNull());
-            }
-            if (other.getExcludedExtensions().isPresent()) {
-                this.setExcludedExtensions(other.getExcludedExtensions().orNull());
-            }
-            if (other.getRepositories().isPresent()) {
-                this.setRepositories(other.getRepositories().orNull());
-            }
-            if (other.getApplicationArguments().isPresent()) {
-                this.setApplicationArguments(other.getApplicationArguments().orNull());
-            }
-            if (other.getCustomOptions().isPresent()) {
-                this.setCustomOptions(other.getCustomOptions().orNull());
-            }
-            if (other.getExpireTime().isPresent()) {
-                this.setExpireTime(other.getExpireTime().orNull());
-            }
-            if (other.getErrors().isPresent()) {
-                this.setErrors(other.getErrors().orNull());
-            }
-            if (other.getSkipErrors().isPresent()) {
-                this.setSkipErrors(other.getSkipErrors().orNull());
-            }
-            if (other.getSwitchWorkspace().isPresent()) {
-                this.setSwitchWorkspace(other.getSwitchWorkspace().orNull());
-            }
-            if (other.getLocale().isPresent()) {
-                this.setLocale(other.getLocale().orNull());
-            }
-            if (other.getTheme().isPresent()) {
-                this.setTheme(other.getTheme().orNull());
-            }
-            if (other.getDependencySolver().isPresent()) {
-                this.setDependencySolver(other.getDependencySolver().orNull());
-            }
-            if (other.getIsolationLevel().isPresent()) {
-                this.setIsolationLevel(other.getIsolationLevel().orNull());
-            }
-            if (other.getInitLaunchers().isPresent()) {
-                this.setInitLaunchers(other.getInitLaunchers().orNull());
-            }
-            if (other.getInitJava().isPresent()) {
-                this.setInitJava(other.getInitJava().orNull());
-            }
-            if (other.getInitScripts().isPresent()) {
-                this.setInitScripts(other.getInitScripts().orNull());
-            }
-            if (other.getInitLaunchers().isPresent()) {
-                this.setInitLaunchers(other.getInitLaunchers().orNull());
-            }
-            if (other.getDesktopLauncher().isPresent()) {
-                this.setDesktopLauncher(other.getDesktopLauncher().orNull());
-            }
-            if (other.getMenuLauncher().isPresent()) {
-                this.setMenuLauncher(other.getMenuLauncher().orNull());
-            }
-            if (other.getUserLauncher().isPresent()) {
-                this.setUserLauncher(other.getUserLauncher().orNull());
-            }
-            if (other.getPreviewRepo().isPresent()) {
-                this.setPreviewRepo(other.getPreviewRepo().orNull());
-            }
-            if (other.getSharedInstance().isPresent()) {
-                this.setSharedInstance(other.getSharedInstance().orNull());
-            }
+            if(strategy==null){
+                strategy=NMapStrategy.ANY;
+            }
+            strategy.applyOptional(this::getApiVersion, other::getApiVersion, this::setApiVersion);
+            strategy.applyOptional(this::getRuntimeId, other::getRuntimeId, this::setRuntimeId);
+            strategy.applyOptional(this::getJavaOptions, other::getJavaOptions, this::setJavaOptions);
+            strategy.applyOptional(this::getJavaCommand, other::getJavaCommand, this::setJavaCommand);
+            strategy.applyOptional(this::getWorkspace, other::getWorkspace, this::setWorkspace);
+            strategy.applyOptional(this::getName, other::getName, this::setName);
+            strategy.applyOptional(this::getInstallCompanions, other::getInstallCompanions, this::setInstallCompanions);
+            strategy.applyOptional(this::getSkipWelcome, other::getSkipWelcome, this::setSkipWelcome);
+            strategy.applyOptional(this::getSkipBoot, other::getSkipBoot, this::setSkipBoot);
+            strategy.applyOptional(this::getSystem, other::getSystem, this::setSystem);
+            strategy.applyOptional(this::getGui, other::getGui, this::setGui);
+            strategy.applyOptional(this::getUserName, other::getUserName, this::setUserName);
+            strategy.applyOptional(this::getCredentials, other::getCredentials, this::setCredentials);
+            strategy.applyOptional(this::getTerminalMode, other::getTerminalMode, this::setTerminalMode);
+            strategy.applyOptional(this::getReadOnly, other::getReadOnly, this::setReadOnly);
+            strategy.applyOptional(this::getTrace, other::getTrace, this::setTrace);
+            strategy.applyOptional(this::getProgressOptions, other::getProgressOptions, this::setProgressOptions);
+            strategy.applyOptional(this::getLogConfig, other::getLogConfig, this::setLogConfig);
+            strategy.applyOptional(this::getConfirm, other::getConfirm, this::setConfirm);
+            strategy.applyOptional(this::getConfirm, other::getConfirm, this::setConfirm);
+            strategy.applyOptional(this::getOutputFormat, other::getOutputFormat, this::setOutputFormat);
+            strategy.applyOptional(this::getOutputFormatOptions, other::getOutputFormatOptions, this::setOutputFormatOptions);
+            strategy.applyOptional(this::getOpenMode, other::getOpenMode, this::setOpenMode);
+            strategy.applyOptional(this::getCreationTime, other::getCreationTime, this::setCreationTime);
+            strategy.applyOptional(this::getDry, other::getDry, this::setDry);
+            strategy.applyOptional(this::getShowStacktrace, other::getShowStacktrace, this::setShowStacktrace);
+            strategy.applyOptional(this::getClassLoaderSupplier, other::getClassLoaderSupplier, this::setClassLoaderSupplier);
+            strategy.applyOptional(this::getExecutorOptions, other::getExecutorOptions, this::setExecutorOptions);
+            strategy.applyOptional(this::getRecover, other::getRecover, this::setRecover);
+            strategy.applyOptional(this::getReset, other::getReset, this::setReset);
+            strategy.applyOptional(this::getResetHard, other::getResetHard, this::setResetHard);
+            strategy.applyOptional(this::getCommandVersion, other::getCommandVersion, this::setCommandVersion);
+            strategy.applyOptional(this::getCommandHelp, other::getCommandHelp, this::setCommandHelp);
+            strategy.applyOptional(this::getDebug, other::getDebug, this::setDebug);
+            strategy.applyOptional(this::getInherited, other::getInherited, this::setInherited);
+            strategy.applyOptional(this::getExecutionType, other::getExecutionType, this::setExecutionType);
+            strategy.applyOptional(this::getRunAs, other::getRunAs, this::setRunAs);
+            strategy.applyOptional(this::getArchetype, other::getArchetype, this::setArchetype);
+            strategy.applyOptional(this::getStoreStrategy, other::getStoreStrategy, this::setStoreStrategy);
+            strategy.applyOptional(this::getHomeLocations, other::getHomeLocations, this::setHomeLocations);
+            strategy.applyOptional(this::getStoreLocations, other::getStoreLocations, this::setStoreLocations);
+            strategy.applyOptional(this::getStoreLayout, other::getStoreLayout, this::setStoreLayout);
+            strategy.applyOptional(this::getStoreStrategy, other::getStoreStrategy, this::setStoreStrategy);
+            strategy.applyOptional(this::getRepositoryStoreStrategy, other::getRepositoryStoreStrategy, this::setRepositoryStoreStrategy);
+            strategy.applyOptional(this::getFetchStrategy, other::getFetchStrategy, this::setFetchStrategy);
+            strategy.applyOptional(this::getCached, other::getCached, this::setCached);
+            strategy.applyOptional(this::getIndexed, other::getIndexed, this::setIndexed);
+            strategy.applyOptional(this::getTransitive, other::getTransitive, this::setTransitive);
+            strategy.applyOptional(this::getBot, other::getBot, this::setBot);
+            strategy.applyOptional(this::getStdin, other::getStdin, this::setStdin);
+            strategy.applyOptional(this::getStdout, other::getStdout, this::setStdout);
+            strategy.applyOptional(this::getStderr, other::getStderr, this::setStderr);
+            strategy.applyOptional(this::getExecutorService, other::getExecutorService, this::setExecutorService);
+            strategy.applyOptional(this::getExcludedExtensions, other::getExcludedExtensions, this::setExcludedExtensions);
+            strategy.applyOptional(this::getRepositories, other::getRepositories, this::setRepositories);
+            strategy.applyOptional(this::getApplicationArguments, other::getApplicationArguments, this::setApplicationArguments);
+            strategy.applyOptional(this::getCustomOptions, other::getCustomOptions, this::setCustomOptions);
+            strategy.applyOptional(this::getExpireTime, other::getExpireTime, this::setExpireTime);
+            strategy.applyOptional(this::getErrors, other::getErrors, this::setErrors);
+            strategy.applyOptional(this::getSkipErrors, other::getSkipErrors, this::setSkipErrors);
+            strategy.applyOptional(this::getSwitchWorkspace, other::getSwitchWorkspace, this::setSwitchWorkspace);
+            strategy.applyOptional(this::getLocale, other::getLocale, this::setLocale);
+            strategy.applyOptional(this::getTheme, other::getTheme, this::setTheme);
+            strategy.applyOptional(this::getDependencySolver, other::getDependencySolver, this::setDependencySolver);
+            strategy.applyOptional(this::getIsolationLevel, other::getIsolationLevel, this::setIsolationLevel);
+            strategy.applyOptional(this::getInitLaunchers, other::getInitLaunchers, this::setInitLaunchers);
+            strategy.applyOptional(this::getInitJava, other::getInitJava, this::setInitJava);
+            strategy.applyOptional(this::getInitScripts, other::getInitScripts, this::setInitScripts);
+            strategy.applyOptional(this::getInitLaunchers, other::getInitLaunchers, this::setInitLaunchers);
+            strategy.applyOptional(this::getDesktopLauncher, other::getDesktopLauncher, this::setDesktopLauncher);
+            strategy.applyOptional(this::getMenuLauncher, other::getMenuLauncher, this::setMenuLauncher);
+            strategy.applyOptional(this::getUserLauncher, other::getUserLauncher, this::setUserLauncher);
+            strategy.applyOptional(this::getPreviewRepo, other::getPreviewRepo, this::setPreviewRepo);
+            strategy.applyOptional(this::getSharedInstance, other::getSharedInstance, this::setSharedInstance);
         }
         return this;
     }
@@ -2040,12 +1983,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NWorkspaceOptionsBuilder builder() {
-        return new DefaultNWorkspaceOptionsBuilder().setAll(this);
-    }
-
-    @Override
-    public NWorkspaceOptions readOnly() {
-        return build();
+        return new DefaultNWorkspaceOptionsBuilder().copyFrom(this);
     }
 
     @Override

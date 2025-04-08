@@ -170,11 +170,6 @@ public abstract class DelegateNDescriptor extends AbstractNDescriptor {
     }
 
     @Override
-    public NDescriptor readOnly() {
-        return getBase().readOnly();
-    }
-
-    @Override
     public List<NDescriptorContributor> getContributors() {
         return getBase().getContributors();
     }

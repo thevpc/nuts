@@ -10,31 +10,31 @@
  * other 'things' . It's based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * <p>
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
 package net.thevpc.nuts.runtime.standalone.definition;
-
-import java.util.Objects;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
+import java.util.Objects;
+
 /**
  * Created by vpc on 1/6/17.
  */
-public class DefaultNDefinition implements NDefinition {
+public class DefaultNDefinitionBuilder /*implements NDefinition*/ {
 
     private NId id;
     private NDescriptor descriptor;
@@ -47,28 +47,23 @@ public class DefaultNDefinition implements NDefinition {
     private NDescriptor effectiveDescriptor;
     private NId apiId = null;
 
-    public DefaultNDefinition() {
+    public DefaultNDefinitionBuilder() {
     }
 
-    public DefaultNDefinition(String repoUuid, String repoName, NId id, NDescriptor descriptor, NPath content, NInstallInformation install, NId apiId
-            ,NDescriptor effectiveDescriptor
-            ,NDependencies dependencies
-    ) {
-        this.id = id;
+    public DefaultNDefinitionBuilder(String repoUuid, String repoName, NId id, NDescriptor descriptor, NPath content, NInstallInformation install, NId apiId) {
         this.descriptor = descriptor;
         this.content = content;
+        this.id = id;
         if (!id.isLongId()) {
-            throw new NIllegalArgumentException(NMsg.ofC("id should not have query defined in descriptors : %s",id));
+            throw new NIllegalArgumentException(NMsg.ofC("id should not have query defined in descriptors : %s", id));
         }
         this.installInformation = install;
         this.repositoryUuid = repoUuid;
         this.repositoryName = repoName;
         this.apiId = apiId;
-        this.effectiveDescriptor = effectiveDescriptor;
-        this.dependencies = dependencies;
     }
 
-    public DefaultNDefinition(NDefinition other) {
+    public DefaultNDefinitionBuilder(NDefinition other) {
         if (other != null) {
             this.descriptor = other.getDescriptor();
             this.id = other.getId();
@@ -83,22 +78,38 @@ public class DefaultNDefinition implements NDefinition {
         }
     }
 
-    @Override
+    public DefaultNDefinitionBuilder(DefaultNDefinitionBuilder other) {
+        if (other != null) {
+            this.descriptor = other.getDescriptor();
+            this.id = other.getId();
+            this.repositoryUuid = other.getRepositoryUuid();
+            this.repositoryName = other.getRepositoryName();
+
+            this.content = other.getContent().orNull();
+            this.installInformation = other.getInstallInformation().orNull();
+            this.effectiveDescriptor = other.getEffectiveDescriptor().orNull();
+            this.dependencies = other.getDependencies().orNull();
+            this.apiId = other.getApiId();
+        }
+    }
+
+    public NDefinition build() {
+        return new DefaultNDefinition(repositoryUuid, repositoryName, id, descriptor, content, installInformation, apiId,effectiveDescriptor, dependencies);
+    }
+
     public String getRepositoryUuid() {
         return repositoryUuid;
     }
 
-    @Override
     public String getRepositoryName() {
         return repositoryName;
     }
 
-    public DefaultNDefinition setId(NId id) {
+    public DefaultNDefinitionBuilder setId(NId id) {
         this.id = id;
         return this;
     }
 
-    @Override
     public NId getId() {
         return id;
     }
@@ -119,46 +130,41 @@ public class DefaultNDefinition implements NDefinition {
                 + '}';
     }
 
-    public DefaultNDefinition copy() {
-        return new DefaultNDefinition(this);
+    public DefaultNDefinitionBuilder copy() {
+        return new DefaultNDefinitionBuilder(this);
     }
 
-    @Override
     public NOptional<NPath> getContent() {
-        return NOptional.of(content, ()-> NMsg.ofC("content not found for id %s",getId()));
+        return NOptional.of(content, () -> NMsg.ofC("content not found for id %s", getId()));
     }
 
-    @Override
     public NOptional<NDescriptor> getEffectiveDescriptor() {
-        return NOptional.of(effectiveDescriptor, ()-> NMsg.ofC("unable to get effectiveDescriptor for id %s. You need to call search.setEffective(...) first.",getId()));
+        return NOptional.of(effectiveDescriptor, () -> NMsg.ofC("unable to get effectiveDescriptor for id %s. You need to call search.setEffective(...) first.", getId()));
     }
 
-    @Override
     public NOptional<NInstallInformation> getInstallInformation() {
-        return NOptional.of(installInformation, ()-> NMsg.ofC("unable to get install information for id %s.",getId()));
+        return NOptional.of(installInformation, () -> NMsg.ofC("unable to get install information for id %s.", getId()));
     }
 
-    @Override
     public NOptional<NDependencies> getDependencies() {
-        return NOptional.of(dependencies, ()-> NMsg.ofC("unable to get dependencies for id %s. You need to call search.setDependencies(...) first.",getId()));
+        return NOptional.of(dependencies, () -> NMsg.ofC("unable to get dependencies for id %s. You need to call search.setDependencies(...) first.", getId()));
     }
 
-    public DefaultNDefinition setContent(NPath content) {
+    public DefaultNDefinitionBuilder setContent(NPath content) {
         this.content = content;
         return this;
     }
 
-    public DefaultNDefinition setDescriptor(NDescriptor descriptor) {
+    public DefaultNDefinitionBuilder setDescriptor(NDescriptor descriptor) {
         this.descriptor = descriptor;
         return this;
     }
 
-    @Override
-    public int compareTo(NDefinition n2) {
+    public int compareTo(DefaultNDefinitionBuilder n2) {
         if (n2 == null) {
             return 1;
         }
-        if (!(n2 instanceof DefaultNDefinition)) {
+        if (!(n2 instanceof DefaultNDefinitionBuilder)) {
             return -1;
         }
         NId o1 = getId();
@@ -193,39 +199,43 @@ public class DefaultNDefinition implements NDefinition {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final DefaultNDefinition other = (DefaultNDefinition) obj;
+        final DefaultNDefinitionBuilder other = (DefaultNDefinitionBuilder) obj;
         if (!Objects.equals(this.id, other.id)) {
             return false;
         }
         return true;
     }
 
-    public DefaultNDefinition setEffectiveDescriptor(NDescriptor effectiveDescriptor) {
+    public DefaultNDefinitionBuilder setEffectiveDescriptor(NDescriptor effectiveDescriptor) {
         this.effectiveDescriptor = effectiveDescriptor;
         return this;
     }
 
-    public DefaultNDefinition setInstallInformation(NInstallInformation install) {
+    public DefaultNDefinitionBuilder setInstallInformation(NInstallInformation install) {
         this.installInformation = install;
         return this;
     }
 
-    public DefaultNDefinition setDependencies(NDependencies dependencies) {
+    public DefaultNDefinitionBuilder setDependencies(NDependencies dependencies) {
         this.dependencies = dependencies;
         return this;
     }
 
-    @Override
+    public DefaultNDefinitionBuilder setApiId(NId apiId) {
+        this.apiId = apiId;
+        return this;
+    }
+
     public NId getApiId() {
         return apiId;
     }
 
-    public DefaultNDefinition setRepositoryUuid(String repositoryUuid) {
+    public DefaultNDefinitionBuilder setRepositoryUuid(String repositoryUuid) {
         this.repositoryUuid = repositoryUuid;
         return this;
     }
 
-    public DefaultNDefinition setRepositoryName(String repositoryName) {
+    public DefaultNDefinitionBuilder setRepositoryName(String repositoryName) {
         this.repositoryName = repositoryName;
         return this;
     }

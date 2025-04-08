@@ -57,10 +57,7 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.log.NLogConfig;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -183,8 +180,8 @@ public class JavaExecutorComponent implements NExecutorComponent {
         for (String a : executionContext.getWorkspaceOptions()) {
             NWorkspaceOptions extraOptions = NWorkspaceOptionsBuilder.of().setCmdLine(
                     NCmdLine.parseDefault(a).get().toStringArray()
-            ).readOnly();
-            options.setAllPresent(extraOptions);
+            ).build();
+            options.copyFrom(extraOptions, NMapStrategy.SOURCE_NON_NULL);
         }
         //sandbox workspace children are always confined
         if (options.getIsolationLevel().orNull() == NIsolationLevel.SANDBOX) {

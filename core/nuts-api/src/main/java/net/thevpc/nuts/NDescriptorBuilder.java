@@ -27,9 +27,11 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NOptional;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -44,11 +46,177 @@ import java.util.function.UnaryOperator;
  * @app.category Descriptor
  * @since 0.5.4
  */
-public interface NDescriptorBuilder extends NDescriptor, NComponent {
+public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent {
 
     static NDescriptorBuilder of() {
         return NExtensions.of(NDescriptorBuilder.class);
     }
+
+
+    /**
+     * artifact full id (groupId+artifactId+version)
+     *
+     * @return artifact id
+     */
+    NId getId();
+
+
+    /**
+     * true if the artifact is executable and is considered an application. if not It's a library.
+     *
+     * @return true if the artifact is executable
+     */
+    boolean isExecutable();
+
+    /**
+     * true if the artifact is a java executable that implements {@link NApplication} interface.
+     *
+     * @return true if the artifact is a java executable that implements {@link NApplication} interface.
+     */
+    boolean isApplication();
+
+
+    /**
+     * return descriptor packaging (used to resolve file extension)
+     *
+     * @return return descriptor packaging (used to resolve file extension)
+     */
+    String getPackaging();
+
+    /**
+     *
+     * This is typically the case for pom projects
+     * @return true when the descriptor does not define a content.
+     */
+    boolean isNoContent();
+
+    /**
+     * dependency resolution solver. defaults to 'maven'
+     *
+     * @return dependency resolution solver
+     */
+    String getSolver();
+
+    /**
+     * Descriptor Condition
+     *
+     * @return Descriptor Condition
+     */
+    NEnvConditionBuilder getCondition();
+
+    /**
+     * user-friendly name, a short description for the artifact
+     *
+     * @return user friendly name
+     */
+    String getName();
+
+    /**
+     * url (external or classpath url) to the application Icon
+     *
+     * @return url (external or classpath url) to the application Icon
+     */
+    List<String> getIcons();
+
+    /**
+     * category path of the artifact (slash separated).
+     * Standard Category Names should be used.
+     *
+     * @return category path of the artifact
+     */
+    List<String> getCategories();
+
+    /**
+     * long description for the artifact
+     *
+     * @return long description for the artifact
+     */
+    String getDescription();
+
+    /**
+     * list of available mirror locations from which nuts can download artifact content.
+     * location can be mapped to a classifier.
+     *
+     * @return list of available mirror locations
+     */
+    List<NIdLocation> getLocations();
+
+
+    /**
+     * The dependencies specified here are not used until they are referenced in
+     * a POM within the group. This allows the specification of a
+     * &quot;standard&quot; version for a particular. This corresponds to
+     * "dependencyManagement.dependencies" in maven
+     *
+     * @return "standard" dependencies
+     */
+    List<NDependency> getStandardDependencies();
+
+    /**
+     * list of immediate (non-inherited and non-transitive dependencies
+     *
+     * @return list of immediate (non-inherited and non-transitive dependencies
+     */
+    List<NDependency> getDependencies();
+
+    /**
+     * descriptor of artifact responsible for running this artifact
+     *
+     * @return descriptor of artifact responsible for running this artifact
+     */
+    NArtifactCall getExecutor();
+
+    /**
+     * descriptor of artifact responsible for installing this artifact
+     *
+     * @return descriptor of artifact responsible for installing this artifact
+     */
+    NArtifactCall getInstaller();
+
+    /**
+     * custom properties that can be used as placeholders (int ${name} form) in other fields.
+     *
+     * @return custom properties that can be used as placeholders (int ${name} form) in other fields.
+     */
+    List<NDescriptorProperty> getProperties();
+
+    /**
+     * create new builder filled with this descriptor fields.
+     *
+     * @return new builder filled with this descriptor fields.
+     */
+    NDescriptorBuilder builder();
+
+
+    /**
+     * @since 0.8.4
+     * @return contributors
+     */
+    List<NDescriptorContributor> getContributors();
+
+    /**
+     * @since 0.8.4
+     * @return developers
+     */
+    List<NDescriptorContributor> getDevelopers();
+
+    /**
+     * @since 0.8.4
+     * @return licenses
+     */
+    List<NDescriptorLicense> getLicenses();
+
+    /**
+     * @since 0.8.4
+     * @return mailing lists
+     */
+    List<NDescriptorMailingList> getMailingLists();
+
+    /**
+     * @since 0.8.4
+     * @return organization
+     */
+    NDescriptorOrganization getOrganization();
 
     /**
      * set id
@@ -119,6 +287,7 @@ public interface NDescriptorBuilder extends NDescriptor, NComponent {
     NDescriptorBuilder setCategories(String... categories);
 
     NDescriptorBuilder setCondition(NEnvCondition condition);
+    NDescriptorBuilder setCondition(NEnvConditionBuilder condition);
 
     /**
      * set description
@@ -205,7 +374,7 @@ public interface NDescriptorBuilder extends NDescriptor, NComponent {
      * @param other builder to copy from
      * @return {@code this} instance
      */
-    NDescriptorBuilder setAll(NDescriptorBuilder other);
+    NDescriptorBuilder copyFrom(NDescriptorBuilder other);
 
     /**
      * set all fields from {@code other}
@@ -213,7 +382,7 @@ public interface NDescriptorBuilder extends NDescriptor, NComponent {
      * @param other descriptor to copy from
      * @return {@code this} instance
      */
-    NDescriptorBuilder setAll(NDescriptor other);
+    NDescriptorBuilder copyFrom(NDescriptor other);
 
     /**
      * clear this instance (set null/default all properties)

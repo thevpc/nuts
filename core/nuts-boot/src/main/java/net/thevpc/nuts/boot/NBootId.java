@@ -81,7 +81,7 @@ public class NBootId {
     }
 
     public NBootId(NBootId id) {
-        setAll(id);
+        copyFrom(id);
     }
 
     public NBootId(String groupId, String artifactId) {
@@ -125,7 +125,7 @@ public class NBootId {
     }
 
 
-    public NBootId setAll(NBootId id) {
+    public NBootId copyFrom(NBootId id) {
         if (id == null) {
             clear();
         } else {

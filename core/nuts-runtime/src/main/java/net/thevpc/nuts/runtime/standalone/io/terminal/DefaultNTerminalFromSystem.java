@@ -168,7 +168,7 @@ public class DefaultNTerminalFromSystem extends AbstractNTerminal {
     @Override
     public NTerminal copy() {
         final DefaultNTerminalFromSystem r = new DefaultNTerminalFromSystem(parent);
-        r.setAll(this);
+        r.copyFrom(this);
         return r;
     }
 
@@ -233,7 +233,7 @@ public class DefaultNTerminalFromSystem extends AbstractNTerminal {
         return progressBar;
     }
 
-    protected void setAll(DefaultNTerminalFromSystem other) {
+    protected void copyFrom(DefaultNTerminalFromSystem other) {
         this.parent = other.parent;
         this.out = other.out;
         this.err = other.err;

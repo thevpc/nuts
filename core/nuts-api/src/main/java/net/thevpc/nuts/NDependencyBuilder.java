@@ -27,7 +27,9 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.NBlankable;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +42,7 @@ import java.util.Map;
  * @app.category Descriptor
  * @since 0.5.4
  */
-public interface NDependencyBuilder extends NDependency, NComponent {
+public interface NDependencyBuilder extends NComponent, Serializable, NBlankable {
 
     static NDependencyBuilder of(String groupId, String artifactId) {
         return of().setGroupId(groupId).setArtifactId(artifactId);
@@ -72,7 +74,7 @@ public interface NDependencyBuilder extends NDependency, NComponent {
      * @param value new value
      * @return {@code this} instance
      */
-    NDependencyBuilder setAll(NDependencyBuilder value);
+    NDependencyBuilder copyFrom(NDependencyBuilder value);
 
     /**
      * reset this instance with value
@@ -80,7 +82,7 @@ public interface NDependencyBuilder extends NDependency, NComponent {
      * @param value new value
      * @return {@code this} instance
      */
-    NDependencyBuilder setAll(NDependency value);
+    NDependencyBuilder copyFrom(NDependency value);
 
     /**
      * reset this instance with value
@@ -208,7 +210,125 @@ public interface NDependencyBuilder extends NDependency, NComponent {
      * @return {@code this} instance
      */
     NDependencyBuilder setCondition(NEnvCondition condition);
+    NDependencyBuilder setCondition(NEnvConditionBuilder condition);
 
-    NDependency copy();
+    NDependencyBuilder copy();
+
+
+    /**
+     * true if this dependency is optional.
+     * equivalent to {@code Boolean.parseBoolean(getOptional())}
+     *
+     * @return true if this dependency is optional.
+     */
+    boolean isOptional();
+
+    /**
+     * Indicates the dependency is optional for use of this library.
+     *
+     * @return string representation (or $ var) that can be evaluated as 'true'
+     */
+    String getOptional();
+
+    /**
+     * get scope string value (may be $ var).
+     *
+     * @return scope string value (may be $ var)
+     */
+    String getScope();
+
+    /**
+     * get classifier string value (may be $ var)
+     *
+     * @return classifier string
+     */
+    String getClassifier();
+
+    /**
+     * convert to NutsId
+     *
+     * @return converted to NutsId
+     */
+    NId toId();
+
+    /**
+     * return repository
+     *
+     * @return repository
+     */
+    String getRepository();
+
+
+    /**
+     * return artifact group id (aka groupId in maven)
+     *
+     * @return artifact group id (aka groupId in maven)
+     */
+    String getGroupId();
+
+    /**
+     * return artifact id (aka artifactId)
+     *
+     * @return artifact id (aka artifactId in maven)
+     */
+    String getArtifactId();
+
+    /**
+     * return dependency full name in the form
+     * group:name
+     *
+     * @return return dependency short name
+     */
+    String getSimpleName();
+
+    /**
+     * return dependency full name in the form
+     * group:name#version
+     *
+     * @return return dependency long name
+     */
+    String getLongName();
+
+    /**
+     * return dependency full name in the form
+     * group:name#version?scope=&lt;scope&gt;{@code &}optional=&lt;optional&gt;
+     *
+     * @return return dependency full name
+     */
+    String getFullName();
+
+    /**
+     * return dependency version
+     *
+     * @return return dependency version
+     */
+    NVersion getVersion();
+
+    NEnvConditionBuilder getCondition();
+
+    String getType();
+
+    /**
+     * dependency exclusions
+     *
+     * @return dependency exclusions
+     */
+    List<NId> getExclusions();
+
+    /**
+     * properties in the URL query form
+     *
+     * @return properties in the URL query form.
+     * @since 0.5.7
+     */
+    String getPropertiesQuery();
+
+    /**
+     * properties in the URL query form
+     *
+     * @return properties in the URL query form.
+     * @since 0.5.7
+     */
+    Map<String, String> getProperties();
 
 }

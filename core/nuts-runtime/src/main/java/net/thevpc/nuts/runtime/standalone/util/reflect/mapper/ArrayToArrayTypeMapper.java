@@ -32,7 +32,7 @@ class ArrayToArrayTypeMapper implements NReflectTypeMapper {
         for (int i = 0; i < len; i++) {
             Object ov = Array.get(o2, i);
             Object nv = context.mapToType(Array.get(o, i), context.repository().getType(componentType));
-            if (!context.getEq().equals(ov, nv)) {
+            if (!context.equalizer().equals(ov, nv)) {
                 Array.set(o2, i, nv);
                 changed = true;
             }

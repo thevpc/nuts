@@ -103,11 +103,11 @@ public class NBootDependency {
 
     
     public NBootDependency setDependency(NBootDependency value) {
-        return setAll(value);
+        return copyFrom(value);
     }
 
     
-    public NBootDependency setAll(NBootDependency value) {
+    public NBootDependency copyFrom(NBootDependency value) {
         if (value != null) {
             setRepository(value.getRepository());
             setGroupId(value.getGroupId());
@@ -117,7 +117,7 @@ public class NBootDependency {
             setOptional(value.getOptional());
             setExclusions(value.getExclusions());
             setClassifier(value.getClassifier());
-            getCondition().setAll(value.getCondition());
+            getCondition().clear().copyFrom(value.getCondition());
             setType(value.getType());
             setProperties(value.getProperties());
         } else {
@@ -414,7 +414,7 @@ public class NBootDependency {
 
     
     public NBootDependency setCondition(NBootEnvCondition condition) {
-        this.condition.setAll(condition);
+        this.condition.clear().copyFrom(condition);
         return this;
     }
 

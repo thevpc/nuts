@@ -522,7 +522,7 @@ public final class NBootOptionsInfo {
 
 
     public NBootOptionsInfo copy() {
-        return new NBootOptionsInfo().setAll(this);
+        return new NBootOptionsInfo().copyFrom(this);
     }
 
 
@@ -1481,7 +1481,10 @@ public final class NBootOptionsInfo {
     }
 
 
-    public NBootOptionsInfo setAll(NBootOptionsInfo other) {
+    public NBootOptionsInfo copyFrom(NBootOptionsInfo other) {
+        if (other == null) {
+            return this;
+        }
         this.setApiVersion(other.getApiVersion());
         this.setRuntimeId(other.getRuntimeId());
         this.setJavaCommand(other.getJavaCommand());
@@ -1798,7 +1801,7 @@ public final class NBootOptionsInfo {
             if (o.getSharedInstance() != null) {
                 this.setSharedInstance(o.getSharedInstance());
             }
-            if(o.getBootRepositories()!=null) {
+            if (o.getBootRepositories() != null) {
                 setBootRepositories(o.getBootRepositories());
             }
             if (o.getRuntimeBootDependencyNode() != null) {
@@ -2049,7 +2052,6 @@ public final class NBootOptionsInfo {
         return this;
     }
 
-    ///
     /// /////////////////////////////////
 
     public String getBootRepositories() {

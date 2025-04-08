@@ -15,7 +15,6 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.MapToFunction;
 import net.thevpc.nuts.util.NCoreArrayUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 
 import java.util.*;
 import java.util.function.Function;
@@ -177,6 +176,17 @@ public class NDescriptorUtils {
         return c;
     }
 
+    public static NEnvConditionBuilder applyPropertiesNutsEnvCondition2(NEnvConditionBuilder c, Map<String, NDescriptorProperty> properties) {
+        Function<String, String> map = new StringStringFunctionFromNDescriptorProperty(properties);
+        c.setArch(CoreNUtils.applyStringPropertiesList(c.getArch(), map));
+        c.setOs(CoreNUtils.applyStringPropertiesList(c.getOs(), map));
+        c.setOsDist(CoreNUtils.applyStringPropertiesList(c.getOsDist(), map));
+        c.setPlatform(CoreNUtils.applyStringPropertiesList(c.getPlatform(), map));
+        c.setDesktopEnvironment(CoreNUtils.applyStringPropertiesList(c.getDesktopEnvironment(), map));
+        c.setProfile(CoreNUtils.applyStringPropertiesList(c.getProfiles(), map));
+        return c;
+    }
+
     public static NEnvCondition applyNutsConditionProperties(NEnvCondition child, Function<String, String> properties) {
         return child
                 .builder()
@@ -204,7 +214,7 @@ public class NDescriptorUtils {
 
     public static NDependencyBuilder applyNutsDependencyProperties(NDescriptorBuilder d, NDependency child, Function<String, String> properties) {
         List<NId> exclusions = child.getExclusions().stream().map(
-                x -> applyNutsIdProperties(d, x, properties)
+                x -> applyNutsIdProperties(d.build(), x, properties)
         ).collect(Collectors.toList());
         return NDependencyBuilder.of()
                 .setRepository(CoreNUtils.applyStringProperties(child.getRepository(), properties))
@@ -238,10 +248,10 @@ public class NDescriptorUtils {
             String gid = id.getGroupId();
             String version = id.getVersion().getValue();
             if (gid != null && !propertiesMap.containsKey("groupId")) {
-                propertiesMap.put("groupId", new DefaultNDescriptorProperty("groupId",NLiteral.of(gid),NEnvCondition.BLANK));
+                propertiesMap.put("groupId", DefaultNDescriptorProperty.of("groupId", gid));
             }
             if (version != null && !propertiesMap.containsKey("version")) {
-                propertiesMap.put("version", new DefaultNDescriptorProperty("version",NLiteral.of(version),NEnvCondition.BLANK));
+                propertiesMap.put("version", DefaultNDescriptorProperty.of("version", version));
             }
         }
         return applyProperties2(b,
@@ -316,13 +326,13 @@ public class NDescriptorUtils {
             n_desc = CoreNUtils.applyStringInheritance(n_desc, parentDescriptor.getDescription());
             n_deps.putAll(depsAsMap(parentDescriptor.getDependencies()));
             n_sdeps.putAll(depsAsMap(parentDescriptor.getStandardDependencies()));
-            b2.addAll(parentDescriptor.getCondition());
+            b2.copyFrom(parentDescriptor.getCondition());
             n_icons.addAll(parentDescriptor.getIcons());
             n_categories.addAll(parentDescriptor.getCategories());
         }
         n_deps.putAll(depsAsMap(b.getDependencies()));
         n_sdeps.putAll(depsAsMap(b.getStandardDependencies()));
-        b2.addAll(b.getCondition());
+        b2.copyFrom(b.getCondition());
         List<NId> n_parents = new ArrayList<>();
 
         b.setId(n_id);
@@ -361,7 +371,7 @@ public class NDescriptorUtils {
             String v = property.getValue().asString().get();
             if (CoreStringUtils.containsVars("${")) {
                 n_props.add(property.builder().setValue(CoreNUtils.applyStringProperties(v, map))
-                        .readOnly());
+                        .build());
             } else {
                 n_props.add(property);
             }
@@ -369,7 +379,7 @@ public class NDescriptorUtils {
 
         LinkedHashSet<NDependency> n_deps = new LinkedHashSet<>();
         for (NDependency d2 : b.getDependencies()) {
-            n_deps.add(NDescriptorUtils.applyNutsDependencyProperties(b, d2, map));
+            n_deps.add(NDescriptorUtils.applyNutsDependencyProperties(b, d2, map).build());
         }
 
         LinkedHashSet<NDependency> n_sdeps = new LinkedHashSet<>();
@@ -404,9 +414,11 @@ public class NDescriptorUtils {
         b.setProperties(n_props.toList());
         return b;
     }
+
     public static NDescriptorBuilder applyProperties2(NDescriptorBuilder b, Map<String, NDescriptorProperty> properties) {
         properties = applyPropsToProps2(b, properties);
-        Function<String, String> map = new MapToFunction<>(properties);
+        Map<String, NDescriptorProperty> finalProperties = properties;
+        Function<String, String> map = new StringStringFunctionFromNDescriptorProperty(finalProperties);
 
         NId n_id = NDescriptorUtils.applyProperties(b.getId().builder(), map).build();
 //        String n_alt = CoreNutsUtils.applyStringProperties(getAlternative(), map);
@@ -420,7 +432,7 @@ public class NDescriptorUtils {
             String v = property.getValue().asString().get();
             if (CoreStringUtils.containsVars("${")) {
                 n_props.add(property.builder().setValue(CoreNUtils.applyStringProperties(v, map))
-                        .readOnly());
+                        .build());
             } else {
                 n_props.add(property);
             }
@@ -428,7 +440,7 @@ public class NDescriptorUtils {
 
         LinkedHashSet<NDependency> n_deps = new LinkedHashSet<>();
         for (NDependency d2 : b.getDependencies()) {
-            n_deps.add(NDescriptorUtils.applyNutsDependencyProperties(b, d2, map));
+            n_deps.add(NDescriptorUtils.applyNutsDependencyProperties(b, d2, map).build());
         }
 
         LinkedHashSet<NDependency> n_sdeps = new LinkedHashSet<>();
@@ -457,7 +469,7 @@ public class NDescriptorUtils {
                                 x -> CoreNUtils.applyStringProperties(x, map)
                         ).collect(Collectors.toList())
         );
-        b.setCondition(applyPropertiesNutsEnvCondition(b.getCondition().builder(), properties).build());
+        b.setCondition(applyPropertiesNutsEnvCondition2(b.getCondition().builder(), properties).build());
         b.setDependencies(new ArrayList<>(n_deps));
         b.setStandardDependencies(new ArrayList<>(n_sdeps));
         b.setProperties(n_props.toList());
@@ -495,23 +507,23 @@ public class NDescriptorUtils {
         // to support ancient built maven packages!
         for (Map.Entry<Object, Object> e : System.getProperties().entrySet()) {
             String k = (String) e.getKey();
-            global.put(k,new DefaultNDescriptorProperty(k,NLiteral.of(e.getValue()),NEnvCondition.BLANK));
+            global.put(k, DefaultNDescriptorProperty.of(k, e.getValue()));
         }
         NId ii = b.getId();
         for (String s : new String[]{"project.name", "pom.name"}) {
-            global.put(s, new DefaultNDescriptorProperty(s,NLiteral.of(b.getName()),NEnvCondition.BLANK));
+            global.put(s, DefaultNDescriptorProperty.of(s, b.getName()));
         }
         if (ii != null) {
             if (ii.getVersion().getValue() != null) {
                 for (String s : new String[]{"project.version", "version", "pom.version"}) {
-                    global.put(s, new DefaultNDescriptorProperty(s,NLiteral.of(ii.getVersion().getValue()),NEnvCondition.BLANK));
+                    global.put(s, DefaultNDescriptorProperty.of(s, ii.getVersion().getValue()));
                 }
             }
             for (String s : new String[]{"project.groupId", "pom.groupId"}) {
-                global.put(s, new DefaultNDescriptorProperty(s,NLiteral.of(ii.getGroupId()),NEnvCondition.BLANK));
+                global.put(s, DefaultNDescriptorProperty.of(s, ii.getGroupId()));
             }
             for (String s : new String[]{"project.artifactId", "pom.artifactId"}) {
-                global.put(s, new DefaultNDescriptorProperty(s,NLiteral.of(ii.getArtifactId()),NEnvCondition.BLANK));
+                global.put(s, DefaultNDescriptorProperty.of(s, ii.getArtifactId()));
             }
         }
         return global;
@@ -560,16 +572,21 @@ public class NDescriptorUtils {
         }
         Set<String> updated = new TreeSet<>();
         for (int i = 0; i < 16; i++) {
-            Function<String, String> fct = new MapToFunction<>(oldMap);
-            Map<String, String> newMap = new LinkedHashMap<>(oldMap.size());
+            Function<String, String> fct = new StringStringFunctionFromNDescriptorProperty(oldMap);
+            Map<String, NDescriptorProperty> newMap = new LinkedHashMap<>(oldMap.size());
             updated = new TreeSet<>();
             for (Map.Entry<String, NDescriptorProperty> entry : oldMap.entrySet()) {
-                String v0 = entry.getValue();
-                String v1 = CoreNUtils.applyStringProperties(v0, fct);
-                if (!Objects.equals(v0, v1)) {
-                    updated.add(entry.getKey());
+                NDescriptorProperty v00 = entry.getValue();
+                if (NBlankable.isBlank(v00.getCondition())) {
+                    String v0 = v00.getValue().asString().orNull();
+                    String v1 = CoreNUtils.applyStringProperties(v0, fct);
+                    if (!Objects.equals(v0, v1)) {
+                        updated.add(entry.getKey());
+                    }
+                    newMap.put(entry.getKey(), DefaultNDescriptorProperty.of(entry.getKey(), v1));
+                } else {
+                    newMap.put(entry.getKey(), entry.getValue());
                 }
-                newMap.put(entry.getKey(), v1);
             }
             if (updated.isEmpty()) {
                 return newMap;
@@ -609,4 +626,25 @@ public class NDescriptorUtils {
     }
 
 
+    private static class StringStringFunctionFromNDescriptorProperty implements Function<String, String> {
+        private final Map<String, NDescriptorProperty> finalProperties;
+
+        public StringStringFunctionFromNDescriptorProperty(Map<String, NDescriptorProperty> finalProperties) {
+            this.finalProperties = finalProperties;
+        }
+
+        @Override
+        public String apply(String s) {
+            NDescriptorProperty p = finalProperties.get(s);
+            if (p != null) {
+                NEnvCondition cc = p.getCondition();
+                if (NBlankable.isBlank(cc)) {
+                    return p.getValue().asString().orNull();
+                } else {
+                    throw new IllegalArgumentException("unsupported condition " + cc + " for " + p);
+                }
+            }
+            return null;
+        }
+    }
 }

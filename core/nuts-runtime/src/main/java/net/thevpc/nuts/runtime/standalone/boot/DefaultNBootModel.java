@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.standalone.boot;
 import net.thevpc.nuts.*;
 
 import net.thevpc.nuts.NBootOptions;
-import net.thevpc.nuts.NWorkspaceTerminalOptions;
+import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.cmdline.DefaultNArg;
 
 import net.thevpc.nuts.ext.NExtensions;
@@ -87,7 +87,7 @@ public class DefaultNBootModel implements NBootModel {
         this.bOptions = bOption0.readOnly();
         this.effOptions = bOption0.readOnly();
         this.bootSession = new DefaultNSession(workspace, null)
-                .setAll(effOptions);
+                .copyFrom(effOptions);
     }
 
     public void init() {

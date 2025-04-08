@@ -25,6 +25,7 @@
 package net.thevpc.nuts;
 
 
+import net.thevpc.nuts.boot.NBootArguments;
 import net.thevpc.nuts.time.NClock;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
@@ -156,7 +157,7 @@ public final class NApplications {
             NApplication applicationInstance = NAssert.requireNonNull(options.getApplicationInstance(), "applicationInstance");
             NWorkspace ws = NWorkspace.get().orNull();
             if (ws == null) {
-                ws = Nuts.openInheritedWorkspace(options.getNutsArgs(), args);
+                ws = Nuts.openWorkspace(NBootArguments.of(options.getNutsArgs()).setAppArgs(args));
                 ws.runWith(() -> {
                     NApp a = NApp.of();
                     a.setArguments(args);
@@ -202,7 +203,7 @@ public final class NApplications {
     private static void runApplication(NApplication applicationInstance) {
         NWorkspace ws = NWorkspace.get().orNull();
         if (ws == null) {
-            ws = Nuts.openInheritedWorkspace(new String[0], new String[0]);
+            ws = Nuts.openWorkspace();
             ws.runWith(() -> {
                 runApplication(applicationInstance);
             });

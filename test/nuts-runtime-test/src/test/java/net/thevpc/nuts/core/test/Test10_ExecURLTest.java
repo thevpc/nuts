@@ -60,6 +60,7 @@ public class Test10_ExecURLTest {
                 .addWorkspaceOptions(NWorkspaceOptionsBuilder.of()
                         .setBot(true)
                         .setWorkspace(NWorkspace.of().getWorkspaceLocation().resolve("temp-ws").toString())
+                        .build()
                 )
                 //.addExecutorOption("--main-class=Version")
                 .addCommand(

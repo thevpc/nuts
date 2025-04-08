@@ -29,6 +29,7 @@ import net.thevpc.nuts.NBootOptions;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.boot.NBootDescriptor;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
+import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
 import net.thevpc.nuts.runtime.standalone.util.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NEDesc;
@@ -611,11 +612,11 @@ public class DefaultNWorkspaceConfigModel {
                 cConfig.setRuntimeId(effOptions.getRuntimeId().orNull());
             }
             if (cConfig.getRuntimeBootDescriptor() == null) {
-                cConfig.setRuntimeBootDescriptor(effOptions.getRuntimeBootDescriptor().map(x -> new DefaultNDescriptorBuilder().setAll(x).build()).orNull());
+                cConfig.setRuntimeBootDescriptor(effOptions.getRuntimeBootDescriptor().map(x -> new DefaultNDescriptorBuilder().copyFrom(x).build()).orNull());
             }
             if (cConfig.getExtensionBootDescriptors() == null) {
                 cConfig.setExtensionBootDescriptors(effOptions.getExtensionBootDescriptors().map(x ->
-                                x.stream().map(y -> y == null ? null : new DefaultNDescriptorBuilder().setAll(y).build()).collect(Collectors.toList())
+                                x.stream().map(y -> y == null ? null : new DefaultNDescriptorBuilder().copyFrom(y).build()).collect(Collectors.toList())
                         )
                         .orNull());
             }
@@ -1269,13 +1270,12 @@ public class DefaultNWorkspaceConfigModel {
         NInstalledRepository ins = NWorkspaceExt.of().getInstalledRepository();
         NDescriptor descriptor = NDescriptorContentResolver.resolveNutsDescriptorFromFileContent(tmp, null);
         if (descriptor != null) {
-            DefaultNDefinition b = new DefaultNDefinition(
-                    null, null,
-                    descriptor.getId(),
-                    descriptor, NPath.of(tmp).setUserCache(true).setUserTemporary(true),
-                    new DefaultNInstallInfo(descriptor.getId(), NInstallStatus.NONE, null, null, null, null, null, null, false, false),
-                    null
-            );
+            NDefinition b = new DefaultNDefinitionBuilder()
+                    .setId(descriptor.getId())
+                    .setDescriptor(descriptor)
+                    .setContent(NPath.of(tmp).setUserCache(true).setUserTemporary(true))
+                    .setInstallInformation(new DefaultNInstallInfo(descriptor.getId(), NInstallStatus.NONE, null, null, null, null, null, null, false, false)
+            ).build();
             ins.install(b);
             return true;
         }

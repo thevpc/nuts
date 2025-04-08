@@ -8,6 +8,7 @@ import net.thevpc.nuts.NIdLocation;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
+import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.NInternalCommand;
 import net.thevpc.nuts.text.NText;
@@ -476,15 +477,14 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                                 throw ex;
                             }
                             NId _id = descriptor.getId();
-                            DefaultNDefinition nutToRun = new DefaultNDefinition(
-                                    null,
-                                    null,
-                                    _id.getLongId(),
-                                    descriptor,
-                                    NPath.of(c.getContentFile()).setUserCache(false).setUserTemporary(!c.getTemps().isEmpty()),
-                                    DefaultNInstallInfo.notInstalled(_id),
-                                    null
-                            );
+
+                            DefaultNDefinitionBuilder nutToRun =new DefaultNDefinitionBuilder()
+                                    .setId(_id.getLongId())
+                                    .setDescriptor(descriptor)
+                                    .setContent(NPath.of(c.getContentFile()).setUserCache(false).setUserTemporary(!c.getTemps().isEmpty()))
+                                    .setInstallInformation(DefaultNInstallInfo.notInstalled(_id))
+                                    ;
+
                             NDependencySolver resolver = NDependencySolver.of();
                             NDependencyFilters ff = NDependencyFilters.of();
 
@@ -498,14 +498,15 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                                 resolver.add(dependency);
                             }
                             nutToRun.setDependencies(resolver.solve());
+                            NDefinition nd = nutToRun.build();
                             try {
-                                NExecutorComponentAndContext ec = this.ws_execId2(nutToRun, cmdName, args, executorOptions, workspaceOptions, this.getEnv(),
+                                NExecutorComponentAndContext ec = this.ws_execId2(nd, cmdName, args, executorOptions, workspaceOptions, this.getEnv(),
                                         this.getDirectory(), this.isFailFast(), true,
                                         this.getIn(),
                                         this.getOut(),
                                         this.getErr(),
                                         executionType, runAs);
-                                return new DefaultNArtifactPathExecutable(cmdName, args, executorOptions, workspaceOptions, executionType, runAs, this, nutToRun, c, null, ec);
+                                return new DefaultNArtifactPathExecutable(cmdName, args, executorOptions, workspaceOptions, executionType, runAs, this, nd, c, null, ec);
                             } catch (Exception ex) {
                                 //fallback to other cases
                                 c.close();

@@ -30,7 +30,6 @@ import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.format.NIterableFormat;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminal;
-import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.NCallable;
 import net.thevpc.nuts.util.NObservableMapListener;
 import net.thevpc.nuts.util.NOptional;
@@ -40,8 +39,6 @@ import java.io.Closeable;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 import java.util.logging.Filter;
 import java.util.logging.Level;
 
@@ -274,15 +271,15 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      * @param other other session to copy from
      * @return return {@code this} instance
      */
-    NSession setAll(NSession other);
+    NSession copyFrom(NSession other);
 
     /**
      * copy into this instance from the given value
      *
-     * @param options other workspace otions to copy from
+     * @param options other workspace options to copy from
      * @return return {@code this} instance
      */
-    NSession setAll(NWorkspaceOptions options);
+    NSession copyFrom(NWorkspaceOptions options);
 
     /**
      * return current fetch strategy. When no strategy (or null strategy) was

@@ -57,7 +57,7 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
 
 
     public DefaultNDependencyBuilder(NDependency d) {
-        setAll(d);
+        copyFrom(d);
     }
 
     public DefaultNDependencyBuilder() {
@@ -88,11 +88,11 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
 
     @Override
     public NDependencyBuilder setDependency(NDependencyBuilder value) {
-        return setAll(value);
+        return copyFrom(value);
     }
 
     @Override
-    public NDependencyBuilder setAll(NDependencyBuilder value) {
+    public NDependencyBuilder copyFrom(NDependencyBuilder value) {
         if (value != null) {
             setRepository(value.getRepository());
             setGroupId(value.getGroupId());
@@ -102,7 +102,7 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
             setOptional(value.getOptional());
             setExclusions(value.getExclusions());
             setClassifier(value.getClassifier());
-            getCondition().setAll(value.getCondition());
+            getCondition().copyFrom(value.getCondition());
             setType(value.getType());
             setProperties(value.getProperties());
         } else {
@@ -112,7 +112,7 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
     }
 
 
-    public NDependencyBuilder setAll(NBootDependency value) {
+    public NDependencyBuilder copyFrom(NBootDependency value) {
         if (value != null) {
             setRepository(value.getRepository());
             setGroupId(value.getGroupId());
@@ -122,7 +122,7 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
             setOptional(value.getOptional());
             setExclusions(value.getExclusions()==null?null:value.getExclusions().stream().map(x->x==null?null:NId.get(x.toString()).get()).collect(Collectors.toList()));
             setClassifier(value.getClassifier());
-            getCondition().setAll(value.getCondition()==null?null:new DefaultNEnvConditionBuilder().setAll(value.getCondition()));
+            getCondition().copyFrom(value.getCondition()==null?null:new DefaultNEnvConditionBuilder().copyFrom(value.getCondition()));
             setType(value.getType());
             setProperties(value.getProperties());
         } else {
@@ -132,7 +132,7 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
     }
 
     @Override
-    public NDependencyBuilder setAll(NDependency value) {
+    public NDependencyBuilder copyFrom(NDependency value) {
         if (value != null) {
             setRepository(value.getRepository());
             setGroupId(value.getGroupId());
@@ -142,7 +142,7 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
             setOptional(value.getOptional());
             setExclusions(value.getExclusions());
             setClassifier(value.getClassifier());
-            getCondition().setAll(value.getCondition());
+            getCondition().copyFrom(value.getCondition());
             setType(value.getType());
             setProperties(value.getProperties());
         } else {
@@ -153,7 +153,7 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
 
     @Override
     public NDependencyBuilder setDependency(NDependency value) {
-        return setAll(value);
+        return copyFrom(value);
     }
 
     @Override
@@ -337,16 +337,12 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
                 getScope(),
                 getOptional(),
                 getExclusions(),
-                getCondition(),
+                getCondition().build(),
                 getType(),
                 getPropertiesQuery()
         );
     }
 
-    @Override
-    public NDependency copy() {
-        return builder();
-    }
 
     @Override
     public NDependencyBuilder setProperty(String property, String value) {
@@ -461,7 +457,15 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
 
     @Override
     public NDependencyBuilder setCondition(NEnvCondition condition) {
-        this.condition.setAll(condition);
+        this.condition.clear();
+        this.condition.copyFrom(condition);
+        return this;
+    }
+
+    @Override
+    public NDependencyBuilder setCondition(NEnvConditionBuilder condition) {
+        this.condition.clear();
+        this.condition.copyFrom(condition);
         return this;
     }
 
@@ -486,8 +490,8 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
     }
 
     @Override
-    public NDependencyBuilder builder() {
-        return new DefaultNDependencyBuilder().setAll(this);
+    public NDependencyBuilder copy() {
+        return new DefaultNDependencyBuilder().copyFrom(this);
     }
 
     @Override

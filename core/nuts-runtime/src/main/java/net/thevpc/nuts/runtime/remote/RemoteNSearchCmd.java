@@ -19,7 +19,7 @@ public class RemoteNSearchCmd extends AbstractNSearchCmd {
     @Override
     public NSearchCmd copy() {
         RemoteNSearchCmd b = new RemoteNSearchCmd();
-        b.setAll(this);
+        b.copyFrom(this);
         return b;
     }
 

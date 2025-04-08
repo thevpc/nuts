@@ -38,8 +38,8 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
         scanner = new Scanner(in == null ? System.in : in);
         this.bLog = new NBootLog(userOptions);
         List<String> allArgs = new ArrayList<>();
-        if (unparsedOptions.getArgs() != null) {
-            allArgs.addAll(Arrays.asList(unparsedOptions.getArgs()));
+        if (unparsedOptions.getOptionArgs() != null) {
+            allArgs.addAll(Arrays.asList(unparsedOptions.getOptionArgs()));
         }
         if (unparsedOptions.getAppArgs() != null) {
             allArgs.addAll(Arrays.asList(unparsedOptions.getAppArgs()));

@@ -45,7 +45,7 @@ public class NBootClassLoaderNodeBuilder {
     public NBootClassLoaderNodeBuilder() {
     }
 
-    public NBootClassLoaderNodeBuilder setAll(NBootClassLoaderNode o) {
+    public NBootClassLoaderNodeBuilder copyFrom(NBootClassLoaderNode o) {
         if (o != null) {
             id = o.getId();
             enabled = o.isEnabled();
@@ -61,7 +61,7 @@ public class NBootClassLoaderNodeBuilder {
         return this;
     }
 
-    public NBootClassLoaderNodeBuilder setAll(NBootClassLoaderNodeBuilder o) {
+    public NBootClassLoaderNodeBuilder copyFrom(NBootClassLoaderNodeBuilder o) {
         if (o != null) {
             id = o.getId();
             enabled = o.isEnabled();

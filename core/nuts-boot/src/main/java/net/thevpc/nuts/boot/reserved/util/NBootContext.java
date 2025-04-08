@@ -24,6 +24,10 @@ public class NBootContext {
 
     public void runWith(Runnable r) {
         NBootContext old = curr.get();
+        if(old == this) {
+            r.run();
+            return;
+        }
         try {
             curr.set(this);
             r.run();
@@ -34,6 +38,15 @@ public class NBootContext {
 
     public <T> T callWith(Callable<T> r) {
         NBootContext old = curr.get();
+        if(old == this) {
+            try {
+                return r.call();
+            } catch (RuntimeException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new NBootException(NBootMsg.ofC("unable to call %s : error =%s", r, e), e);
+            }
+        }
         curr.set(this);
         try {
             return r.call();

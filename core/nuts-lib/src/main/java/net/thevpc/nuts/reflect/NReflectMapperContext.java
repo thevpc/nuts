@@ -1,6 +1,7 @@
 package net.thevpc.nuts.reflect;
 
 import net.thevpc.nuts.util.NEqualizer;
+import net.thevpc.nuts.util.NMapStrategy;
 import net.thevpc.nuts.util.NOptional;
 
 public interface NReflectMapperContext {
@@ -22,17 +23,13 @@ public interface NReflectMapperContext {
 
     Object mapToType(Object value, NReflectType toType);
 
-    NEqualizer<Object> getEq();
+    NEqualizer<Object> equalizer();
 
-    NReflectMapperContext setEq(NEqualizer<Object> eq);
+    NReflectMapperContext setEqqualizer(NEqualizer<Object> eq);
 
-    NReflectFieldMapperStrategy getSource();
+    NMapStrategy mapStrategy();
 
-    NReflectFieldMapperStrategy getTarget();
-
-    NReflectMapperContext setSource(NReflectFieldMapperStrategy source);
-
-    NReflectMapperContext setTarget(NReflectFieldMapperStrategy target);
+    NReflectMapperContext setMapStrategy(NMapStrategy mapStrategy);
 
     NReflectMapper mapper();
 

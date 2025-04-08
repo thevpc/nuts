@@ -158,7 +158,7 @@ public interface NExecutionContextBuilder {
 
     NExecutionContext build();
 
-    NExecutionContextBuilder setAll(NExecutionContext other);
+    NExecutionContextBuilder copyFrom(NExecutionContext other);
 
     NExecutionContextBuilder setIn(NExecInput in);
 

@@ -72,14 +72,14 @@ public class NDefaultTerminalSpec implements NTerminalSpec {
     }
 
     @Override
-    public NTerminalSpec setAll(NTerminalSpec other) {
+    public NTerminalSpec copyFrom(NTerminalSpec other) {
         this.autoComplete = other.getAutoComplete();
-        setAll(other.getProperties());
+        setProperties(other.getProperties());
         return this;
     }
 
     @Override
-    public NTerminalSpec setAll(Map<String, Object> other) {
+    public NTerminalSpec setProperties(Map<String, Object> other) {
         if (other != null) {
             for (Map.Entry<String, Object> e : other.entrySet()) {
                 setProperty(e.getKey(), e.getValue());

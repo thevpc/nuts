@@ -18,7 +18,7 @@ public class NBootHelper {
     }
 
     public static NDependency toDependency(NBootDependency x) {
-        return x == null ? null : new DefaultNDependencyBuilder().setAll(x).build();
+        return x == null ? null : new DefaultNDependencyBuilder().copyFrom(x).build();
     }
 
     public static List<NDependency> toDependencyList(List<NBootDependency> x) {
@@ -26,7 +26,7 @@ public class NBootHelper {
     }
 
     public static NDescriptor toDescriptor(NBootDescriptor x) {
-        return x == null ? null : new DefaultNDescriptorBuilder().setAll(x).build();
+        return x == null ? null : new DefaultNDescriptorBuilder().copyFrom(x).build();
     }
 
     public static List<NDescriptor> toDescriptorList(List<NBootDescriptor> x) {

@@ -94,7 +94,7 @@ public class DefaultNDependency implements NDependency {
 
     @Override
     public NDependencyBuilder builder() {
-        return NDependencyBuilder.of().setAll(this);
+        return NDependencyBuilder.of().copyFrom(this);
     }
 
     @Override

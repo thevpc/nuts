@@ -386,8 +386,6 @@ public interface NBootOptionsBuilder extends NComponent {
 
     NOptional<NBootDescriptor> getRuntimeBootDescriptor();
 
-    NBootOptions readOnly();
-
     NOptional<NSupportMode> getDesktopLauncher();
 
     NOptional<NSupportMode> getMenuLauncher();

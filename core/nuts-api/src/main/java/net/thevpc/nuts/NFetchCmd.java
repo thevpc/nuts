@@ -29,6 +29,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.util.NOptional;
 
 import java.time.Instant;
@@ -222,7 +223,7 @@ public interface NFetchCmd extends NWorkspaceCmd {
      * @param other copy into {@code this} from {@code other} fetch command
      * @return {@code this} instance
      */
-    NFetchCmd setAll(NFetchCmd other);
+    NFetchCmd copyFrom(NFetchCmd other);
 
     /**
      * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
@@ -458,4 +459,9 @@ public interface NFetchCmd extends NWorkspaceCmd {
     NFetchCmd content();
 
     NFetchCmd effective();
+
+    boolean isFilterCurrentEnvironment() ;
+
+    public NFetchCmd setFilterCurrentEnvironment(boolean filterCurrentEnvironment) ;
+
 }

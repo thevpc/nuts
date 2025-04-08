@@ -56,7 +56,11 @@ public class DefaultNIdBuilder implements NIdBuilder {
     }
 
     public DefaultNIdBuilder(NId id) {
-        setAll(id);
+        copyFrom(id);
+    }
+
+    public DefaultNIdBuilder(NIdBuilder id) {
+        copyFrom(id);
     }
 
     public DefaultNIdBuilder(String groupId, String artifactId) {
@@ -86,7 +90,7 @@ public class DefaultNIdBuilder implements NIdBuilder {
     }
 
     @Override
-    public NIdBuilder setAll(NId id) {
+    public NIdBuilder copyFrom(NId id) {
         if (id == null) {
             clear();
         } else {
@@ -111,7 +115,7 @@ public class DefaultNIdBuilder implements NIdBuilder {
     }
 
     @Override
-    public NIdBuilder setAll(NIdBuilder id) {
+    public NIdBuilder copyFrom(NIdBuilder id) {
         if (id == null) {
             clear();
         } else {
@@ -520,27 +524,8 @@ public class DefaultNIdBuilder implements NIdBuilder {
     }
 
     @Override
-    public int compareTo(NId o) {
-        return build().compareTo(o);
-    }
-
-    @Override
     public int getSupportLevel(NSupportLevelContext context) {
         return NConstants.Support.DEFAULT_SUPPORT;
     }
 
-    @Override
-    public String getMavenFolder() {
-        return build().getMavenFolder();
-    }
-
-    @Override
-    public String getMavenFileName(String extension) {
-        return build().getMavenFileName(extension);
-    }
-
-    @Override
-    public String getMavenPath(String extension) {
-        return build().getMavenPath(extension);
-    }
 }

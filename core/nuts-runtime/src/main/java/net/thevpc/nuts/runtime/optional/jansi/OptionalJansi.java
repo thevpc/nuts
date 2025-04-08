@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts.runtime.optional.jansi;
 
-import net.thevpc.nuts.NWorkspaceTerminalOptions;
+import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.NOsFamily;
 
 import java.io.InputStream;

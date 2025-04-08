@@ -496,7 +496,10 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
     }
 
     @Override
-    public NExecCmd setAll(NExecCmd other) {
+    public NExecCmd copyFrom(NExecCmd other) {
+        if (other == null) {
+            return this;
+        }
         super.copyFromWorkspaceCommandBase((NWorkspaceCmdBase) other);
         addCommand(other.getCommand());
         addEnv(other.getEnv());
@@ -516,7 +519,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
 
     @Override
     public NExecCmd copy() {
-        return NExecCmd.of().setAll(this);
+        return NExecCmd.of().copyFrom(this);
     }
 
     @Override
@@ -660,7 +663,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
             }
             case "--dry":
             case "-d": {
-                cmdLine.withNextFlag((v,ar)->setDry(v),"--dry","-d");
+                cmdLine.withNextFlag((v, ar) -> setDry(v), "--dry", "-d");
                 return true;
             }
             case "--target": {

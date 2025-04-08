@@ -14,6 +14,9 @@ public class DefaultNDescriptorProperty implements NDescriptorProperty {
     private final NLiteral value;
     private final NEnvCondition condition;
 
+    public static DefaultNDescriptorProperty of(String name, Object value) {
+        return new DefaultNDescriptorProperty(name,NLiteral.of(value),NEnvCondition.BLANK);
+    }
     public DefaultNDescriptorProperty(String name, NLiteral value, NEnvCondition condition) {
         this.name = name;
         this.value = value;
@@ -74,8 +77,4 @@ public class DefaultNDescriptorProperty implements NDescriptorProperty {
                 ;
     }
 
-    @Override
-    public NDescriptorProperty readOnly() {
-        return this;
-    }
 }

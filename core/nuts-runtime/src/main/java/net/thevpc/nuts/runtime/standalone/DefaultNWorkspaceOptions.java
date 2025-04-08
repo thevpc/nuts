@@ -1027,11 +1027,6 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
     }
 
     @Override
-    public NWorkspaceOptions readOnly() {
-        return this;
-    }
-
-    @Override
     public NCmdLine toCmdLine() {
         return toCmdLine(new NWorkspaceOptionsConfig());
     }
@@ -1043,7 +1038,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
 
     @Override
     public NWorkspaceOptionsBuilder builder() {
-        return NWorkspaceOptionsBuilder.of().setAll(this);
+        return NWorkspaceOptionsBuilder.of().copyFrom(this);
     }
 
 }

@@ -27,6 +27,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NImmutable;
 import net.thevpc.nuts.util.NLiteral;
 
 /**
@@ -36,7 +37,7 @@ import net.thevpc.nuts.util.NLiteral;
  * @since 0.8.3
  * @app.category Descriptor
  */
-public interface NDescriptorProperty extends NBlankable {
+public interface NDescriptorProperty extends NBlankable, NImmutable {
     /**
      * property name
      *
@@ -65,5 +66,4 @@ public interface NDescriptorProperty extends NBlankable {
      */
     NDescriptorPropertyBuilder builder();
 
-    NDescriptorProperty readOnly();
 }

@@ -25,13 +25,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.*;
-import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Nuts Top Class. Nuts is a Package manager for Java Applications and this
@@ -75,99 +70,24 @@ public final class Nuts {
     }
 
     /**
-     * open a workspace using "nuts.boot.args" and "nut.args" system properties.
-     * "nuts.boot.args" is to be passed by nuts parent process. "nuts.args" is
-     * an optional property that can be 'exec' method. This method is to be
-     * called by child processes of nuts in order to inherit workspace
-     * configuration.
-     *
-     * @param appArgs application arguments
-     * @return NSession instance
-     */
-    public static NWorkspace openInheritedWorkspace(String... appArgs) throws NBootUnsatisfiedRequirementsException {
-        return openInheritedWorkspace(null, new String[0], appArgs);
-    }
-
-    /**
-     * open a workspace using "nuts.boot.args" and "nut.args" system properties.
-     * "nuts.boot.args" is to be passed by nuts parent process. "nuts.args" is
-     * an optional property that can be 'exec' method. This method is to be
-     * called by child processes of nuts in order to inherit workspace
-     * configuration.
-     *
-     * @param overriddenNutsArgs nuts arguments to override inherited arguments
-     * @param appArgs application arguments
-     * @return NSession instance
-     */
-    public static NWorkspace openInheritedWorkspace(String[] overriddenNutsArgs, String... appArgs) throws NBootUnsatisfiedRequirementsException {
-        return openInheritedWorkspace(null, overriddenNutsArgs, appArgs);
-    }
-
-    /**
-     * open a workspace using "nuts.boot.args" and "nut.args" system properties.
-     * "nuts.boot.args" is to be passed by nuts parent process. "nuts.args" is
-     * an optional property that can be 'exec' method. This method is to be
-     * called by child processes of nuts in order to inherit workspace
-     * configuration.
-     *
-     * @param term boot terminal or null for defaults
-     * @param overriddenNutsArgs nuts arguments to override inherited arguments
-     * @param appArgs arguments
-     * @return NSession instance
-     */
-    public static NWorkspace openInheritedWorkspace(NWorkspaceTerminalOptions term, String[] overriddenNutsArgs, String... appArgs) throws NBootUnsatisfiedRequirementsException {
-        Instant startTime = Instant.now();
-        List<String> nutsArgs = new ArrayList<>();
-        nutsArgs.addAll(NCmdLine.parseDefault(NStringUtils.trim(System.getProperty("nuts.boot.args"))).get().toStringList());
-        nutsArgs.addAll(NCmdLine.parseDefault(NStringUtils.trim(System.getProperty("nuts.args"))).get().toStringList());
-        if (overriddenNutsArgs != null) {
-            nutsArgs.addAll(Arrays.asList(overriddenNutsArgs));
-        }
-        NBootArguments options = new NBootArguments();
-        options.setArgs(nutsArgs.toArray(new String[0]));
-        options.setAppArgs(appArgs);
-        options.setInherited(true);
-        options.setStartTime(startTime);
-        if (term != null) {
-            options.setIn(term.getIn());
-            options.setOut(term.getOut());
-            options.setErr(term.getErr());
-        }
-        return (NWorkspace) NBootWorkspace.of(options).getWorkspace();
-    }
-
-    /**
      * open a workspace. Nuts Boot arguments are passed in <code>args</code>
      *
      * @param args nuts boot arguments
      * @return new NSession instance
      */
     public static NWorkspace openWorkspace(String... args) throws NBootUnsatisfiedRequirementsException {
-        Instant startTime = Instant.now();
-        NBootArguments options = new NBootArguments();
-        options.setArgs(args);
-        options.setStartTime(startTime);
-        return (NWorkspace) NBootWorkspace.of(options).getWorkspace();
+        return openWorkspace(NBootArguments.of(args));
     }
+
 
     /**
      * open a workspace. Nuts Boot arguments are passed in <code>args</code>
      *
-     * @param term boot terminal or null for null
-     * @param args nuts boot arguments
+     * @param args boot args
      * @return new NSession instance
      */
-    public static NWorkspace openWorkspace(NWorkspaceTerminalOptions term, String... args) throws NBootUnsatisfiedRequirementsException {
-        Instant startTime = Instant.now();
-        NBootArguments options = new NBootArguments();
-        options.setArgs(args);
-        options.setStartTime(startTime);
-        if (term != null) {
-            options.setIn(term.getIn());
-            options.setOut(term.getOut());
-            options.setErr(term.getErr());
-        }
-        return (NWorkspace) NBootWorkspace.of(options).getWorkspace();
+    public static NWorkspace openWorkspace(NBootArguments args) throws NBootUnsatisfiedRequirementsException {
+        return (NWorkspace) NBootWorkspace.of(args).getWorkspace();
     }
 
     /**
@@ -176,7 +96,7 @@ public final class Nuts {
      * @return new NSession instance
      */
     public static NWorkspace openWorkspace() {
-        return openWorkspace((NWorkspaceOptions) null);
+        return openWorkspace((NBootArguments) null);
     }
 
     /**
@@ -186,34 +106,9 @@ public final class Nuts {
      * @return new NSession instance
      */
     public static NWorkspace openWorkspace(NWorkspaceOptions options) {
-        return (NWorkspace) new NBootWorkspaceImpl(options == null ? null : options.toBootOptionsInfo()).getWorkspace();
+        return (NWorkspace) NBootWorkspace.of(options == null ? null : options.toBootOptionsInfo()).getWorkspace();
     }
 
-    /**
-     * <strong>open</strong> then <strong>run</strong> Nuts application with the
-     * provided arguments. This Main will <strong>NOT</strong> call
-     * {@link System#exit(int)}. Note that if --help or --version are detected
-     * in the command line arguments the workspace will not be opened and a null
-     * session is returned after displaying help/version information on the
-     * standard
-     *
-     * @param term boot terminal or null for defaults
-     * @param args boot arguments
-     * @return workspace
-     */
-    public static NWorkspace runWorkspace(NWorkspaceTerminalOptions term, String... args) throws NExecutionException {
-        Instant startTime = Instant.now();
-        NBootArguments options = new NBootArguments();
-        options.setArgs(args);
-        options.setStartTime(startTime);
-        if (term != null) {
-            options.setIn(term.getIn());
-            options.setOut(term.getOut());
-            options.setErr(term.getErr());
-        }
-        NBootWorkspace bw = NBootWorkspace.of(options);
-        return (NWorkspace) bw.runWorkspace().getWorkspace();
-    }
 
     /**
      * <strong>open</strong> then <strong>run</strong> Nuts application with the
@@ -227,11 +122,32 @@ public final class Nuts {
      * @return session
      */
     public static NWorkspace runWorkspace(String... args) throws NExecutionException {
-        Instant startTime = Instant.now();
-        NBootArguments options = new NBootArguments();
-        options.setArgs(args);
-        options.setStartTime(startTime);
-        NBootWorkspace bws = NBootWorkspace.of(options);
-        return (NWorkspace) bws.runWorkspace().getWorkspace();
+        return runWorkspace(NBootArguments.of(args));
+    }
+
+    /**
+     * open a workspace using the given options
+     *
+     * @param options boot options
+     * @return new NSession instance
+     */
+    public static NWorkspace runWorkspace(NWorkspaceOptions options) {
+        return (NWorkspace) NBootWorkspace.of(options == null ? null : options.toBootOptionsInfo()).runWorkspace().getWorkspace();
+    }
+
+
+    /**
+     * <strong>open</strong> then <strong>run</strong> Nuts application with the
+     * provided arguments. This Main will <strong>NOT</strong> call
+     * {@link System#exit(int)}. Not that if --help or --version are detected in
+     * the command line arguments the workspace will not be opened and a null
+     * session is returned after displaying help/version information on the
+     * standard
+     *
+     * @param args boot arguments
+     * @return session
+     */
+    public static NWorkspace runWorkspace(NBootArguments args) throws NExecutionException {
+        return (NWorkspace) NBootWorkspace.of(args).runWorkspace().getWorkspace();
     }
 }

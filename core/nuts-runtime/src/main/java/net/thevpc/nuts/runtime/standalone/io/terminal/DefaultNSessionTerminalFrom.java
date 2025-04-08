@@ -169,7 +169,7 @@ public class DefaultNSessionTerminalFrom extends AbstractNTerminal {
     @Override
     public NTerminal copy() {
         final DefaultNSessionTerminalFrom r = new DefaultNSessionTerminalFrom(parent);
-        r.setAll(this);
+        r.copyFrom(this);
         return r;
     }
 
@@ -235,7 +235,7 @@ public class DefaultNSessionTerminalFrom extends AbstractNTerminal {
         return progressBar;
     }
 
-    protected void setAll(DefaultNSessionTerminalFrom other) {
+    protected void copyFrom(DefaultNSessionTerminalFrom other) {
         this.parent = other.parent;
         this.out = other.out;
         this.err = other.err;

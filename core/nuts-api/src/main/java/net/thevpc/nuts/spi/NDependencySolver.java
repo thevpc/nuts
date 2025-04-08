@@ -62,4 +62,9 @@ public interface NDependencySolver {
     NDependencies solve();
 
     String getName();
+
+    boolean isFilterCurrentEnvironment() ;
+
+    public NDependencySolver setFilterCurrentEnvironment(boolean filterCurrentEnvironment) ;
+
 }

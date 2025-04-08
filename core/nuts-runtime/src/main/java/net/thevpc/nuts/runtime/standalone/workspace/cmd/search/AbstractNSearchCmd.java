@@ -29,6 +29,7 @@ import net.thevpc.nuts.NConstants;
 
 
 import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -75,12 +76,24 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     protected boolean includeBasePackage = true;
     protected boolean sorted = false;
     protected Boolean defaultVersions = null;
+    protected boolean filterCurrentEnvironment = true;
     protected String execType = null;
     protected NVersion targetApiVersion = null;
     protected NInstallStatusFilter installStatus;
 
     public AbstractNSearchCmd() {
         super("search");
+    }
+
+    @Override
+    public boolean isFilterCurrentEnvironment() {
+        return filterCurrentEnvironment;
+    }
+
+    @Override
+    public NSearchCmd setFilterCurrentEnvironment(boolean filterCurrentEnvironment) {
+        this.filterCurrentEnvironment = filterCurrentEnvironment;
+        return this;
     }
 
     @Override
@@ -407,10 +420,11 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     }
 
     @Override
-    public NSearchCmd setAll(NSearchCmd other) {
+    public NSearchCmd copyFrom(NSearchCmd other) {
         super.copyFromDefaultNQueryBaseOptions((DefaultNQueryBaseOptions) other);
         if (other != null) {
             NSearchCmd o = other;
+            this.filterCurrentEnvironment = o.isFilterCurrentEnvironment();
             this.comparator = o.getComparator();
             this.descriptorFilter = o.getDescriptorFilter();
             this.idFilter = o.getIdFilter();
@@ -432,7 +446,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     }
 
     @Override
-    public NSearchCmd setAll(NFetchCmd other) {
+    public NSearchCmd copyFrom(NFetchCmd other) {
         super.copyFromDefaultNQueryBaseOptions((DefaultNQueryBaseOptions) other);
         return this;
     }
@@ -1296,13 +1310,14 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
         NSession session=NSession.of();
 //        NFetchCmd ofetch = toFetch().setContent(content).setEffective(effective)
 //                .setSession(session.copy().setFetchStrategy(NFetchStrategy.OFFLINE));
-        final boolean hasRemote = session.getFetchStrategy().orDefault() == null
-                || session.getFetchStrategy().orDefault().modes().stream()
-                .anyMatch(x -> x == NFetchMode.REMOTE);
+//        final boolean hasRemote = session.getFetchStrategy().orDefault() == null
+//                || session.getFetchStrategy().orDefault().modes().stream()
+//                .anyMatch(x -> x == NFetchMode.REMOTE);
         return NIteratorBuilder.of(getResultIdIteratorBase(null))
                 .map(NFunction.of((NId next) -> {
 //                    NutsDefinition d = null;
 //                    if (isContent()) {
+                    NEnvCondition condition = next.getCondition();
                     NDefinition d=null;
                     try {
                         d = fetch.setId(next).getResultDefinition();
@@ -1316,6 +1331,14 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
                             throw new NNotFoundException(next);
                         }
                         return d;
+                    }
+                    if(!NBlankable.isBlank(d)){
+                        d=new DefaultNDefinitionBuilder(d)
+                                .setDescriptor(
+                                        d.getDescriptor().builder().setCondition(
+                                                d.getDescriptor().getCondition().builder().and(condition).build()
+                                        ).build()
+                                ).build();
                     }
                     return d;
 //                    } else {

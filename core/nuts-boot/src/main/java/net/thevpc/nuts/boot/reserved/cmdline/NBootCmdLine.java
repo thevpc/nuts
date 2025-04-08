@@ -743,7 +743,7 @@ public class NBootCmdLine {
     }
 
 
-    public static String[] parseDefaultList(String commandLineString) {
+    public static String[] parseDefault(String commandLineString) {
         if (commandLineString == null) {
             return (new String[0]);
         }

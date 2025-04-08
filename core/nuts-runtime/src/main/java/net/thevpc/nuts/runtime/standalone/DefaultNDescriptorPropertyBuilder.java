@@ -55,7 +55,12 @@ public class DefaultNDescriptorPropertyBuilder implements NDescriptorPropertyBui
 
     public DefaultNDescriptorPropertyBuilder(NDescriptorProperty other) {
         this.condition = new DefaultNEnvConditionBuilder();
-        setAll(other);
+        copyFrom(other);
+    }
+
+    public DefaultNDescriptorPropertyBuilder(NDescriptorPropertyBuilder other) {
+        this.condition = new DefaultNEnvConditionBuilder();
+        copyFrom(other);
     }
 
     public String getName() {
@@ -68,7 +73,15 @@ public class DefaultNDescriptorPropertyBuilder implements NDescriptorPropertyBui
 
     @Override
     public NDescriptorPropertyBuilder setCondition(NEnvCondition condition) {
-        this.condition.setAll(condition);
+        this.condition.clear();
+        this.condition.copyFrom(condition);
+        return this;
+    }
+
+    @Override
+    public NDescriptorPropertyBuilder setCondition(NEnvConditionBuilder condition) {
+        this.condition.clear();
+        this.condition.copyFrom(condition);
         return this;
     }
 
@@ -89,11 +102,11 @@ public class DefaultNDescriptorPropertyBuilder implements NDescriptorPropertyBui
     }
 
     @Override
-    public NDescriptorPropertyBuilder setAll(NDescriptorProperty value) {
+    public NDescriptorPropertyBuilder copyFrom(NDescriptorProperty value) {
         if (value == null) {
             this.setName(null);
             this.setValue(null);
-            this.setCondition(null);
+            this.setCondition((NEnvCondition) null);
         } else {
             this.setName(value.getName());
             this.setValue(value.getValue().asString().orNull());
@@ -102,15 +115,29 @@ public class DefaultNDescriptorPropertyBuilder implements NDescriptorPropertyBui
         return this;
     }
 
-    public NDescriptorPropertyBuilder setAll(NBootDescriptorProperty value) {
+    @Override
+    public NDescriptorPropertyBuilder copyFrom(NDescriptorPropertyBuilder value) {
         if (value == null) {
             this.setName(null);
             this.setValue(null);
-            this.setCondition(null);
+            this.setCondition((NEnvCondition) null);
+        } else {
+            this.setName(value.getName());
+            this.setValue(value.getValue().asString().orNull());
+            this.setCondition(value.getCondition());
+        }
+        return this;
+    }
+
+    public NDescriptorPropertyBuilder copyFrom(NBootDescriptorProperty value) {
+        if (value == null) {
+            this.setName(null);
+            this.setValue(null);
+            this.setCondition((NEnvCondition) null);
         } else {
             this.setName(value.getName());
             this.setValue(value.getValue());
-            this.setCondition(value.getCondition()==null?null:new DefaultNEnvConditionBuilder().setAll(value.getCondition()).build());
+            this.setCondition(value.getCondition()==null?null:new DefaultNEnvConditionBuilder().copyFrom(value.getCondition()).build());
         }
         return this;
     }
@@ -131,13 +158,8 @@ public class DefaultNDescriptorPropertyBuilder implements NDescriptorPropertyBui
     }
 
     @Override
-    public NDescriptorProperty readOnly() {
-        return new DefaultNDescriptorProperty(getName(), getValue(), getCondition().readOnly());
-    }
-
-    @Override
     public NDescriptorProperty build() {
-        return readOnly();
+        return new DefaultNDescriptorProperty(getName(), getValue(), getCondition().readOnly());
     }
 
     @Override

@@ -34,7 +34,7 @@ class CollectionToArrayTypeMapper implements NReflectTypeMapper {
         for (Object o : fromColl) {
             Object ov = Array.get(o2, i);
             Object nv = context.mapToType(o, context.repository().getType(componentType));
-            if (!context.getEq().equals(ov, nv)) {
+            if (!context.equalizer().equals(ov, nv)) {
                 Array.set(o2, i, nv);
                 changed = true;
             }

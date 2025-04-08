@@ -26,6 +26,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NImmutable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NOptional;
 
@@ -51,7 +52,7 @@ import java.util.Set;
  * @app.category Descriptor
  * @since 0.1.0
  */
-public interface NDescriptor extends Serializable, NBlankable {
+public interface NDescriptor extends Serializable, NBlankable, NImmutable {
 
     /**
      * artifact full id (groupId+artifactId+version)
@@ -232,8 +233,6 @@ public interface NDescriptor extends Serializable, NBlankable {
      * @return new builder filled with this descriptor fields.
      */
     NDescriptorBuilder builder();
-
-    NDescriptor readOnly();
 
     /**
      * @since 0.8.4

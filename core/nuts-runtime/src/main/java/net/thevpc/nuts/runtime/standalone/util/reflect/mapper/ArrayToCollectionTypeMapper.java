@@ -46,7 +46,7 @@ class ArrayToCollectionTypeMapper implements NReflectTypeMapper {
             }
             if(checkEq){
                 Object tv = toList.get(i);
-                if(!context.getEq().equals(tv,nv)) {
+                if(!context.equalizer().equals(tv,nv)) {
                     toList.set(i,nv);
                     changed=true;
                 }

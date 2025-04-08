@@ -532,7 +532,7 @@ public class DefaultNWorkspaceExtensionModel {
 
         _LOGOP().level(Level.FINE).verb(NLogVerb.ADD).log(NMsg.ofC("installing extension %s", id));
         NDefinition nDefinitions = NSearchCmd.of()
-                .setAll(options)
+                .copyFrom(options)
                 .addId(id)
                 .setOptional(false)
                 .addScope(NDependencyScopePattern.RUN)

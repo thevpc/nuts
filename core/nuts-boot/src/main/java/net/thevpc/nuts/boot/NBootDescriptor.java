@@ -61,7 +61,7 @@ public class NBootDescriptor {
 
     public NBootDescriptor(NBootDescriptor other) {
         condition = new NBootEnvCondition();
-        setAll(other);
+        copyFrom(other);
     }
 
     public NBootId getId() {
@@ -119,7 +119,7 @@ public class NBootDescriptor {
 
 
     public NBootDescriptor setCondition(NBootEnvCondition condition) {
-        this.condition.setAll(condition);
+        this.condition.clear().copyFrom(condition);
         return this;
     }
 
@@ -189,7 +189,7 @@ public class NBootDescriptor {
         return this;
     }
 
-    public NBootDescriptor setAll(NBootDescriptor other) {
+    public NBootDescriptor copyFrom(NBootDescriptor other) {
         if (other != null) {
             setId(other.getId());
             setPackaging(other.getPackaging());

@@ -27,6 +27,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.NBlankable;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -38,10 +39,10 @@ import java.util.Map;
  * @app.category Descriptor
  * @since 0.5.4
  */
-public interface NIdBuilder extends NId, NComponent, Serializable {
+public interface NIdBuilder extends NBlankable, NComponent, Serializable {
 
     static NIdBuilder of(NId id) {
-        return of().setAll(id);
+        return of().copyFrom(id);
     }
     static NIdBuilder of(String groupId, String artifactId) {
         return of().setGroupId(groupId).setArtifactId(artifactId);
@@ -172,7 +173,7 @@ public interface NIdBuilder extends NId, NComponent, Serializable {
      * @param id new value
      * @return {@code this} instance
      */
-    NIdBuilder setAll(NId id);
+    NIdBuilder copyFrom(NId id);
 
 
     /**
@@ -181,7 +182,7 @@ public interface NIdBuilder extends NId, NComponent, Serializable {
      * @param id new value
      * @return {@code this} instance
      */
-    NIdBuilder setAll(NIdBuilder id);
+    NIdBuilder copyFrom(NIdBuilder id);
 
     /**
      * clear this instance (set null/default all properties)
@@ -196,4 +197,183 @@ public interface NIdBuilder extends NId, NComponent, Serializable {
      * @return new instance of {@link NId} initialized with this builder values.
      */
     NId build();
+
+
+    /**
+     * true if other has exact short name than {@code this}
+     *
+     * @param other other id
+     * @return true if other has exact short name than {@code this}
+     */
+    boolean equalsShortId(NId other);
+
+    /**
+     * true if other has exact long name than {@code this}
+     *
+     * @param other other id
+     * @return true if other has exact long name than {@code this}
+     */
+    boolean equalsLongId(NId other);
+
+    /**
+     * true if this id is a long name
+     *
+     * @return true if this id is a long name
+     */
+    boolean isLongId();
+
+    boolean isShortId();
+
+    /**
+     * id face define is a release file type selector of the id.
+     * It helps discriminating content (jar) from descriptor, from other (hash,...)
+     * files released for the very same  artifact.
+     *
+     * @return id face selector
+     */
+    String getFace();
+
+    /**
+     * os supported by the artifact
+     *
+     * @return os supported by the artifact
+     */
+    NEnvConditionBuilder getCondition();
+
+    /**
+     * properties in the url query form
+     *
+     * @return properties in the url query form.
+     */
+    String getPropertiesQuery();
+
+    /**
+     * properties as map.
+     *
+     * @return properties as map.
+     */
+    Map<String, String> getProperties();
+
+    /**
+     * artifact repository (usually repository name or id)
+     *
+     * @return artifact repository (usually repository name or id)
+     */
+    String getRepository();
+
+    /**
+     * artifact group which identifies uniquely projects and group of projects.
+     *
+     * @return artifact group which identifies uniquely projects and group of projects.
+     */
+    String getGroupId();
+
+    /**
+     * return a string representation of this id. All of group, name, version,
+     * repository, queryMap values are printed. This method is equivalent to
+     * {@link Object#toString()}
+     *
+     * @return string representation of this id
+     */
+    String getFullName();
+
+    /**
+     * return a string concatenation of group, name and version,
+     * ignoring repository, and queryMap values. An example of long name is
+     * <code>my-group:my-artifact#my-version?alt</code>
+     *
+     * @return group id, artifact id and version only Id instance
+     */
+    String getLongName();
+
+    /**
+     * returns a string concatenation of group and name (':' separated) ignoring
+     * version,repository, and queryMap values. In group is empty or null, name
+     * is returned. Ann null values are trimmed to "" An example of simple name
+     * is <code>my-group:my-artifact</code>
+     *
+     * @return group id and artifact id
+     */
+    String getShortName();
+
+    /**
+     * return a new instance of NutsId defining only group and name ignoring
+     * version,repository, and queryMap values.
+     *
+     * @return group and name only Id instance
+     */
+    NId getShortId();
+
+    /**
+     * return a new instance of NutsId defining only group, name, version and classifier if available,
+     * ignoring repository, and queryMap values.
+     *
+     * @return group, name and version only Id instance
+     */
+    NId getLongId();
+
+    /**
+     * return name part of this id
+     *
+     * @return return name part of this id
+     */
+    String getArtifactId();
+
+    /**
+     * tag used to distinguish between different artifacts that were built from the same source code
+     *
+     * @return tag used to distinguish between different artifacts that were built from the same source code
+     */
+    String getClassifier();
+
+    /**
+     * package packaging type
+     *
+     * @return packaging
+     */
+    String getPackaging();
+
+    /**
+     * artifact version (never null)
+     *
+     * @return artifact version (never null)
+     */
+    NVersion getVersion();
+
+    /**
+     * create a builder (mutable id) based on this id
+     *
+     * @return a new instance of builder (mutable id) based on this id
+     */
+    NIdBuilder builder();
+
+    NDependency toDependency();
+
+    NIdFilter filter();
+
+    /**
+     * filter accepted any id with the defined version or greater
+     * @return filter accepted any id with the defined version or greater
+     */
+    /**
+     * when the current version is a single value version X , returns ],X] version that guarantees backward compatibility
+     * in all other cases returns the current version
+     *
+     * @return when the current version is a single value version X , returns ],X] version that guarantees backward compatibility in all other cases returns the current version
+     * @since 0.8.3
+     */
+    NId compatNewer();
+
+    /**
+     * when the current version is a single value version X , returns [X,[ version that guarantees forward compatibility
+     * in all other cases returns the current version
+     *
+     * @return when the current version is a single value version X , returns [X,[ version that guarantees forward compatibility in all other cases returns the current version
+     * @since 0.8.3
+     */
+    NId compatOlder();
+
+    boolean isNull();
+
+    boolean isBlank();
 }

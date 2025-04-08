@@ -474,7 +474,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     }
 
     public DefaultNBootOptionsBuilder(NBootOptionsInfo other) {
-        setAll(other);
+        copyFrom(other);
     }
 
     @Override
@@ -1361,12 +1361,6 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         }
         return this;
     }
-
-    @Override
-    public NBootOptions readOnly() {
-        return build();
-    }
-
 
     public NBootOptionsInfo toBootOptions() {
         NBootOptionsInfo r = new NBootOptionsInfo();
@@ -2518,7 +2512,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         return this;
     }
 
-    public NBootOptionsBuilder setAll(NBootOptionsInfo other) {
+    public NBootOptionsBuilder copyFrom(NBootOptionsInfo other) {
         this.setApiVersion(other.getApiVersion() == null ? null : NVersion.get(other.getApiVersion()).orNull());
         this.setRuntimeId(other.getRuntimeId() == null ? null :
                 other.getRuntimeId().contains("#") ? NId.get(other.getRuntimeId()).orNull() :
@@ -2684,7 +2678,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     public NBootOptionsBuilder setCmdLine(String[] args) {
         NWorkspaceOptionsBuilder b = NWorkspaceOptionsBuilder.of();
         NWorkspaceCmdLineParser.parseNutsArguments(args, b);
-        copyFromIfPresent(b);
+        copyFromIfPresent(b.build());
         return this;
     }
 

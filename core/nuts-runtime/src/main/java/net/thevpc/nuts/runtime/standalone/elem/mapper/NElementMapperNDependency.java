@@ -6,7 +6,6 @@ import net.thevpc.nuts.runtime.standalone.DefaultNDependencyBuilder;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
-import net.thevpc.nuts.elem.NElementType;
 import net.thevpc.nuts.format.NFormats;
 import net.thevpc.nuts.text.NText;
 
@@ -27,7 +26,7 @@ public class NElementMapperNDependency implements NElementMapper<NDependency> {
                         .format(), null);
             }
         }
-        return context.defaultDestruct(NDependencyBuilder.of().setAll(o), null);
+        return context.defaultDestruct(NDependencyBuilder.of().copyFrom(o), null);
     }
 
     @Override
@@ -59,7 +58,7 @@ public class NElementMapperNDependency implements NElementMapper<NDependency> {
             return NDependency.get(o.asString().get()).get();
         }
         NDependencyBuilder builder = context.defaultElementToObject(o, DefaultNDependencyBuilder.class);
-        return NDependencyBuilder.of().setAll(builder).build();
+        return NDependencyBuilder.of().copyFrom(builder).build();
     }
 
 }

@@ -315,7 +315,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
         ).setSession(NSession.of());
     }
 
-    public NExecutionContextBuilder setAll(NExecutionContext other) {
+    public NExecutionContextBuilder copyFrom(NExecutionContext other) {
         this.commandName = other.getCommandName();
         this.definition = other.getDefinition();
         this.arguments = other.getArguments();

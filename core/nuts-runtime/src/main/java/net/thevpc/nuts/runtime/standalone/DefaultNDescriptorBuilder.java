@@ -84,7 +84,12 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
     public DefaultNDescriptorBuilder(NDescriptor other) {
         condition = new DefaultNEnvConditionBuilder();
-        setAll(other);
+        copyFrom(other);
+    }
+
+    public DefaultNDescriptorBuilder(NDescriptorBuilder other) {
+        condition = new DefaultNEnvConditionBuilder();
+        copyFrom(other);
     }
 
     @Override
@@ -227,7 +232,13 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
     @Override
     public NDescriptorBuilder setCondition(NEnvCondition condition) {
-        this.condition.setAll(condition);
+        this.condition.copyFrom(condition);
+        return this;
+    }
+
+    @Override
+    public NDescriptorBuilder setCondition(NEnvConditionBuilder condition) {
+        this.condition.copyFrom(condition);
         return this;
     }
 
@@ -306,7 +317,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     public NDescriptorBuilder setProperties(List<NDescriptorProperty> properties) {
         _rebuildPropertiesBuilder();
         _propertiesBuilder.clear();
-        if (properties == null || properties.size() == 0) {
+        if (properties == null || properties.isEmpty()) {
 
         } else {
             _propertiesBuilder.addAll(properties);
@@ -329,7 +340,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
         NDescriptorProperty pp = new DefaultNDescriptorPropertyBuilder()
                 .setName(name)
                 .setValue(value)
-                .readOnly();
+                .build();
         _rebuildPropertiesBuilder();
         if (value == null) {
             _propertiesBuilder.remove(pp);
@@ -341,7 +352,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     }
 
     @Override
-    public NDescriptorBuilder setAll(NDescriptorBuilder other) {
+    public NDescriptorBuilder copyFrom(NDescriptorBuilder other) {
         if (other != null) {
             setId(other.getId());
             setIdType(other.getIdType());
@@ -369,17 +380,17 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     }
 
     //    @Override
-    public NDescriptorBuilder setAll(NBootDescriptor other) {
+    public NDescriptorBuilder copyFrom(NBootDescriptor other) {
         if (other != null) {
             setId(other.getId() == null ? null : NId.get(other.getId().toString()).get());
             setPackaging(other.getPackaging());
             setParents(other.getParents() == null ? null : other.getParents().stream().map(x -> NId.get(x.toString()).get()).collect(Collectors.toList()));
             setDescription(other.getDescription());
             setName(other.getName());
-            setCondition(other.getCondition() == null ? null : new DefaultNEnvConditionBuilder().setAll(other.getCondition()).build());
-            setDependencies(other.getDependencies() == null ? null : other.getDependencies().stream().map(x -> new DefaultNDependencyBuilder().setAll(x).build()).collect(Collectors.toList()));
-            setStandardDependencies(other.getStandardDependencies() == null ? null : other.getDependencies().stream().map(x -> new DefaultNDependencyBuilder().setAll(x).build()).collect(Collectors.toList()));
-            setProperties(other.getProperties() == null ? null : other.getProperties().stream().map(x -> new DefaultNDescriptorPropertyBuilder().setAll(x).build()).collect(Collectors.toList()));
+            setCondition(other.getCondition() == null ? null : new DefaultNEnvConditionBuilder().copyFrom(other.getCondition()).build());
+            setDependencies(other.getDependencies() == null ? null : other.getDependencies().stream().map(x -> new DefaultNDependencyBuilder().copyFrom(x).build()).collect(Collectors.toList()));
+            setStandardDependencies(other.getStandardDependencies() == null ? null : other.getDependencies().stream().map(x -> new DefaultNDependencyBuilder().copyFrom(x).build()).collect(Collectors.toList()));
+            setProperties(other.getProperties() == null ? null : other.getProperties().stream().map(x -> new DefaultNDescriptorPropertyBuilder().copyFrom(x).build()).collect(Collectors.toList()));
 
             setIdType(null);
             setExecutor(null);
@@ -397,7 +408,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     }
 
     @Override
-    public NDescriptorBuilder setAll(NDescriptor other) {
+    public NDescriptorBuilder copyFrom(NDescriptor other) {
         if (other != null) {
             setId(other.getId());
             setIdType(other.getIdType());
@@ -685,7 +696,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
     @Override
     public NDescriptorBuilder copy() {
-        return new DefaultNDescriptorBuilder().setAll(this);
+        return new DefaultNDescriptorBuilder().copyFrom(this);
     }
 
     public Set<NDescriptorFlag> getFlags() {
@@ -811,11 +822,6 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
                 && Objects.equals(flags, that.flags)
                 && Objects.equals(solver, that.solver)
                 ;
-    }
-
-    @Override
-    public NDescriptor readOnly() {
-        return build();
     }
 
     @Override

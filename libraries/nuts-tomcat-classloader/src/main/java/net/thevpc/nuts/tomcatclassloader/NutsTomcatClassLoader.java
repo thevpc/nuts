@@ -135,7 +135,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
 //                                    .setExcludedRepositories(splitString(getWorkspaceExcludedRepositories(), ";"))
                                     .setExcludedExtensions(
                                             Arrays.asList(splitString(getWorkspaceExcludedExtensions(), " ;"))
-                                    )
+                                    ).build()
                     );
         }
         return workspace;

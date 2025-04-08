@@ -449,7 +449,7 @@ public interface NSearchCmd extends NWorkspaceCmd {
      * @param other other instance
      * @return {@code this}
      */
-    NSearchCmd setAll(NSearchCmd other);
+    NSearchCmd copyFrom(NSearchCmd other);
 
     /**
      * copy content from given {@code other}
@@ -457,7 +457,7 @@ public interface NSearchCmd extends NWorkspaceCmd {
      * @param other other instance
      * @return {@code this}
      */
-    NSearchCmd setAll(NFetchCmd other);
+    NSearchCmd copyFrom(NFetchCmd other);
 
     /**
      * create new instance copy of this
@@ -1145,4 +1145,8 @@ public interface NSearchCmd extends NWorkspaceCmd {
     NSearchCmd setId(NId id);
 
     NElement getResultQueryPlan();
+
+    boolean isFilterCurrentEnvironment() ;
+
+    NSearchCmd setFilterCurrentEnvironment(boolean filterCurrentEnvironment) ;
 }

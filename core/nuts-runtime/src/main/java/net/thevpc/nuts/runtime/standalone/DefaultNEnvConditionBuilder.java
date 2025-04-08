@@ -33,6 +33,7 @@ import net.thevpc.nuts.boot.NBootEnvCondition;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.reserved.NReservedUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.Serializable;
@@ -60,7 +61,11 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
     }
 
     public DefaultNEnvConditionBuilder(NEnvCondition other) {
-        addAll(other);
+        copyFrom(other);
+    }
+
+    public DefaultNEnvConditionBuilder(NEnvConditionBuilder other) {
+        copyFrom(other);
     }
 
     public List<String> getArch() {
@@ -124,20 +129,7 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
     }
 
     @Override
-    public NEnvConditionBuilder setAll(NEnvCondition other) {
-        clear();
-        addAll(other);
-        return this;
-    }
-
-    public NEnvConditionBuilder setAll(NBootEnvCondition other) {
-        clear();
-        addAll(other);
-        return this;
-    }
-
-    @Override
-    public NEnvConditionBuilder addAll(NEnvCondition other) {
+    public NEnvConditionBuilder copyFrom(NEnvCondition other) {
         if (other != null) {
             setArch(mergeLists(getArch(), other.getArch()));
             setOs(mergeLists(getOs(), other.getOs()));
@@ -150,7 +142,21 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
         return this;
     }
 
-    public NEnvConditionBuilder addAll(NBootEnvCondition other) {
+    @Override
+    public NEnvConditionBuilder copyFrom(NEnvConditionBuilder other) {
+        if (other != null) {
+            setArch(mergeLists(getArch(), other.getArch()));
+            setOs(mergeLists(getOs(), other.getOs()));
+            setOsDist(mergeLists(getOsDist(), other.getOsDist()));
+            setPlatform(mergeLists(getPlatform(), other.getPlatform()));
+            setDesktopEnvironment(mergeLists(getDesktopEnvironment(), other.getDesktopEnvironment()));
+            setProfile(mergeLists(getProfiles(), other.getProfiles()));
+            setProperties(mergeMaps(getProperties(), other.getProperties()));
+        }
+        return this;
+    }
+
+    public NEnvConditionBuilder copyFrom(NBootEnvCondition other) {
         if (other != null) {
             setArch(mergeLists(getArch(), other.getArch()));
             setOs(mergeLists(getOs(), other.getOs()));
@@ -204,8 +210,8 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
     }
 
     @Override
-    public NEnvCondition copy() {
-        return builder();
+    public NEnvConditionBuilder copy() {
+        return new DefaultNEnvConditionBuilder(this);
     }
 
     @Override
@@ -264,9 +270,9 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
 
     @Override
     public NEnvConditionBuilder addProperties(Map<String, String> properties) {
-        if(properties!=null){
+        if (properties != null) {
             for (Map.Entry<String, String> e : properties.entrySet()) {
-                addProperty(e.getKey(),e.getValue());
+                addProperty(e.getKey(), e.getValue());
             }
         }
         return this;
@@ -274,15 +280,15 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
 
     @Override
     public NEnvConditionBuilder addProperty(String key, String value) {
-        key= NStringUtils.trimToNull(key);
-        if(key!=null) {
+        key = NStringUtils.trimToNull(key);
+        if (key != null) {
             if (this.properties == null) {
                 this.properties = new HashMap<>();
             }
-            if(value==null){
+            if (value == null) {
                 this.properties.remove(key);
-            }else{
-                this.properties.put(key,value);
+            } else {
+                this.properties.put(key, value);
             }
         }
         return this;
@@ -290,76 +296,166 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
 
     @Override
     public NEnvConditionBuilder addDesktopEnvironment(String value) {
-        this.desktopEnvironment= NReservedLangUtils.addUniqueNonBlankList(this.desktopEnvironment,value);
+        this.desktopEnvironment = NReservedLangUtils.addUniqueNonBlankList(this.desktopEnvironment, value);
         return this;
     }
 
     @Override
     public NEnvConditionBuilder addDesktopEnvironments(String... values) {
-        this.desktopEnvironment= NReservedLangUtils.addUniqueNonBlankList(this.desktopEnvironment,values);
+        this.desktopEnvironment = NReservedLangUtils.addUniqueNonBlankList(this.desktopEnvironment, values);
         return this;
     }
 
     @Override
     public NEnvConditionBuilder addArchs(String value) {
-        this.arch= NReservedLangUtils.addUniqueNonBlankList(this.arch,value);
+        this.arch = NReservedLangUtils.addUniqueNonBlankList(this.arch, value);
         return this;
     }
 
     @Override
     public NEnvConditionBuilder addArchs(String... values) {
-        this.arch= NReservedLangUtils.addUniqueNonBlankList(this.arch,values);
+        this.arch = NReservedLangUtils.addUniqueNonBlankList(this.arch, values);
         return this;
     }
 
     @Override
     public NEnvConditionBuilder addOs(String value) {
-        this.os= NReservedLangUtils.addUniqueNonBlankList(this.os,value);
+        this.os = NReservedLangUtils.addUniqueNonBlankList(this.os, value);
         return this;
     }
 
     @Override
     public NEnvConditionBuilder addOses(String... values) {
-        this.os= NReservedLangUtils.addUniqueNonBlankList(this.os,values);
+        this.os = NReservedLangUtils.addUniqueNonBlankList(this.os, values);
         return this;
     }
 
     @Override
     public NEnvConditionBuilder addOsDist(String value) {
-        this.osDist= NReservedLangUtils.addUniqueNonBlankList(this.osDist,value);
+        this.osDist = NReservedLangUtils.addUniqueNonBlankList(this.osDist, value);
         return this;
     }
 
     @Override
     public NEnvConditionBuilder addOsDists(String... values) {
-        this.osDist= NReservedLangUtils.addUniqueNonBlankList(this.osDist,values);
+        this.osDist = NReservedLangUtils.addUniqueNonBlankList(this.osDist, values);
         return this;
     }
 
     @Override
     public NEnvConditionBuilder addPlatform(String value) {
-        this.platform= NReservedLangUtils.addUniqueNonBlankList(this.platform,value);
+        this.platform = NReservedLangUtils.addUniqueNonBlankList(this.platform, value);
         return this;
     }
 
     @Override
     public NEnvConditionBuilder addPlatforms(String... values) {
-        this.platform= NReservedLangUtils.addUniqueNonBlankList(this.platform,values);
+        this.platform = NReservedLangUtils.addUniqueNonBlankList(this.platform, values);
         return this;
     }
 
     @Override
     public NEnvConditionBuilder addProfile(String value) {
-        this.profiles= NReservedLangUtils.addUniqueNonBlankList(this.profiles,value);
+        this.profiles = NReservedLangUtils.addUniqueNonBlankList(this.profiles, value);
         return this;
     }
 
     @Override
     public NEnvConditionBuilder addProfiles(String... values) {
-        this.profiles= NReservedLangUtils.addUniqueNonBlankList(this.profiles,values);
+        this.profiles = NReservedLangUtils.addUniqueNonBlankList(this.profiles, values);
         return this;
     }
 
+    @Override
+    public NEnvConditionBuilder and(NEnvCondition other) {
+        NEnvConditionBuilder b2 = this.copy().builder();
+        if (other != null) {
+            List<String> c_arch = new ArrayList<>(this.arch); //defaults to empty
+            List<String> c_os = new ArrayList<>(this.os); //defaults to empty;
+            List<String> c_osDist = new ArrayList<>(this.osDist); //defaults to empty;
+            List<String> c_platform = new ArrayList<>(this.platform); //defaults to empty;
+            List<String> c_desktopEnvironment = new ArrayList<>(this.desktopEnvironment); //defaults to empty;
+            List<String> c_profiles = new ArrayList<>(this.profiles); //defaults to empty;
+            Map<String, String> c_properties = new HashMap<>(this.properties);
+
+            List<String> o_arch = new ArrayList<>(other.getArch()); //defaults to empty
+            List<String> o_os = new ArrayList<>(other.getOs()); //defaults to empty;
+            List<String> o_osDist = new ArrayList<>(other.getOsDist()); //defaults to empty;
+            List<String> o_platform = new ArrayList<>(other.getPlatform()); //defaults to empty;
+            List<String> o_desktopEnvironment = new ArrayList<>(other.getDesktopEnvironment()); //defaults to empty;
+            List<String> o_profiles = new ArrayList<>(other.getProfiles()); //defaults to empty;
+            Map<String, String> o_properties = new HashMap<>(other.getProperties());
+
+            this.arch.clear();
+            this.arch.addAll(intersect("arch", c_arch, o_arch));
+            this.os.clear();
+            this.os.addAll(intersect("os", c_os, o_os));
+            this.osDist.clear();
+            this.osDist.addAll(intersect("osDist", c_osDist, o_osDist));
+            this.platform.clear();
+            this.platform.addAll(intersect("platform", c_platform, o_platform));
+            this.desktopEnvironment.clear();
+            this.desktopEnvironment.addAll(intersect("desktopEnvironment", c_desktopEnvironment, o_desktopEnvironment));
+            this.profiles.clear();
+            this.profiles.addAll(intersect("profiles", c_profiles, o_profiles));
+            this.properties.clear();
+            this.properties.putAll(intersect("properties", c_properties, o_properties));
+        }
+        return b2.builder();
+    }
+
+    private List<String> intersect(String name, List<String> a, List<String> b) {
+        if (a.isEmpty()) {
+            return new ArrayList<>(b);
+        }
+        if (b.isEmpty()) {
+            return new ArrayList<>(a);
+        }
+        ArrayList<String> s = new ArrayList<>(a);
+        s.retainAll(b);
+        if (s.isEmpty()) {
+            throw new IllegalArgumentException("invalid " + name + " as intersection of " + a + " and " + b);
+        }
+        return s;
+    }
+
+    private Map<String, String> intersect(String name, Map<String, String> a, Map<String, String> b) {
+        if (a.isEmpty()) {
+            return new LinkedHashMap<>(b);
+        }
+        if (b.isEmpty()) {
+            return new LinkedHashMap<>(a);
+        }
+        LinkedHashMap<String, String> s = new LinkedHashMap<>(b);
+        for (Map.Entry<String, String> e : b.entrySet()) {
+            String k = e.getKey();
+            String v1 = s.get(k);
+            String v2 = e.getValue();
+            if (NBlankable.isBlank(v1)) {
+                s.put(k, v2);
+            } else if (!Objects.equals(v1, v2)) {
+                throw new IllegalArgumentException("invalid " + name + " as intersection of " + v1 + " and " + v2 + " for key " + k);
+            }
+        }
+        return s;
+    }
+
+    private List<String> union(List<String> a, List<String> b) {
+        if (a.isEmpty()) {
+            return new ArrayList<>(b);
+        }
+        if (b.isEmpty()) {
+            return new ArrayList<>(a);
+        }
+        ArrayList<String> s = new ArrayList<>(b);
+        s.addAll(b);
+        return new ArrayList<>(new LinkedHashSet<>(s));
+    }
+
+    @Override
+    public NEnvConditionBuilder or(NEnvCondition other) {
+        return null;
+    }
 
     private String ts(String n, Map<String, String> properties) {
         if (properties.isEmpty()) {
@@ -388,7 +484,7 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
     }
 
     public Map<String, String> toMap() {
-        return NReservedUtils.toMap(this);
+        return NReservedUtils.toMap(build());
     }
 
     public int getSupportLevel(NSupportLevelContext context) {

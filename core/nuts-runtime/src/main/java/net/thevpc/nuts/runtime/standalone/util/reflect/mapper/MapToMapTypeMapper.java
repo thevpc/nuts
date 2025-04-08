@@ -34,7 +34,7 @@ class MapToMapTypeMapper implements NReflectTypeMapper {
             Object v = context.mapToType(e.getValue(), context.repository().getType(valueType));
             if (toColl.containsKey(k)) {
                 Object o = toColl.get(k);
-                if (!context.getEq().equals(o, v)) {
+                if (!context.equalizer().equals(o, v)) {
                     toColl.put(k, v);
                     changed = true;
                 } else {

@@ -10,6 +10,7 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
 import net.thevpc.nuts.runtime.standalone.io.util.UnzipOptions;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
@@ -104,13 +105,14 @@ public class DefaultSourceControlHelper {
 
             NDescriptorFormat.of(d).print(file);
 
-            return new DefaultNDefinition(
-                    nutToInstall.getRepositoryUuid(),
-                    nutToInstall.getRepositoryName(),
-                    newId.getLongId(),
-                    d, NPath.of(folder).setUserCache(false).setUserTemporary(false),
-                    null, null
-            );
+            return new DefaultNDefinitionBuilder()
+                    .setRepositoryUuid(nutToInstall.getRepositoryUuid())
+                    .setRepositoryName(nutToInstall.getRepositoryName())
+                    .setId(newId.getLongId())
+                    .setDescriptor(d)
+                    .setContent(NPath.of(folder).setUserCache(false).setUserTemporary(false))
+                    .build()
+            ;
         } else {
             throw new NUnsupportedOperationException(NMsg.ofPlain("checkout not supported"));
         }

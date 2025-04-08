@@ -463,14 +463,8 @@ public class DefaultNDescriptor implements NDescriptor {
 
     @Override
     public NDescriptorBuilder builder() {
-        return new DefaultNDescriptorBuilder().setAll(this);
+        return new DefaultNDescriptorBuilder().copyFrom(this);
     }
-
-    @Override
-    public NDescriptor readOnly() {
-        return this;
-    }
-
 
     @Override
     public List<NDescriptorContributor> getContributors() {

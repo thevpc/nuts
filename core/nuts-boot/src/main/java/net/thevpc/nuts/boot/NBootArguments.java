@@ -6,21 +6,33 @@ import java.time.Instant;
 import java.util.Set;
 
 public class NBootArguments {
-    private String[] args;
+    private String[] optionArgs;
     private String[] appArgs;
-    private Instant startTime;
-    private boolean inherited;
+    private Instant startTime = Instant.now();
+    private boolean skipInherited;
     private InputStream in;
     private PrintStream out;
     private PrintStream err;
     private Set<String> ioFlags;
 
-    public String[] getArgs() {
-        return args;
+    public static NBootArguments of(String... args) {
+        return ofOptionArgs(args);
     }
 
-    public NBootArguments setArgs(String[] args) {
-        this.args = args;
+    public static NBootArguments ofOptionArgs(String... args) {
+        return new NBootArguments().setOptionArgs(args);
+    }
+
+    public static NBootArguments ofAppArgs(String... args) {
+        return new NBootArguments().setAppArgs(args);
+    }
+
+    public String[] getOptionArgs() {
+        return optionArgs;
+    }
+
+    public NBootArguments setOptionArgs(String[] args) {
+        this.optionArgs = args;
         return this;
     }
 
@@ -28,8 +40,9 @@ public class NBootArguments {
         return appArgs;
     }
 
-    public void setAppArgs(String[] appArgs) {
+    public NBootArguments setAppArgs(String[] appArgs) {
         this.appArgs = appArgs;
+        return this;
     }
 
     public Instant getStartTime() {
@@ -41,12 +54,12 @@ public class NBootArguments {
         return this;
     }
 
-    public boolean isInherited() {
-        return inherited;
+    public boolean isSkipInherited() {
+        return skipInherited;
     }
 
-    public NBootArguments setInherited(boolean inherited) {
-        this.inherited = inherited;
+    public NBootArguments setSkipInherited(boolean skipInherited) {
+        this.skipInherited = skipInherited;
         return this;
     }
 
@@ -70,6 +83,15 @@ public class NBootArguments {
 
     public PrintStream getErr() {
         return err;
+    }
+
+    public NBootArguments setTerm(NWorkspaceTerminalOptions term) {
+        if (term != null) {
+            this.in = term.getIn();
+            this.out = term.getOut();
+            this.err = term.getErr();
+        }
+        return this;
     }
 
     public NBootArguments setErr(PrintStream err) {

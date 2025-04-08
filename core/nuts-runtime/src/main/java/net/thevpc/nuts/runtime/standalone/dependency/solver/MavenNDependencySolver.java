@@ -21,11 +21,20 @@ public class MavenNDependencySolver implements NDependencySolver {
     private NDependencyFilter effDependencyFilter;
     private boolean shouldIncludeContent = false;//shouldIncludeContent(this);
     private boolean failFast;
+    boolean filterCurrentEnvironment=true;
 
     public MavenNDependencySolver() {
     }
 
 
+    public boolean isFilterCurrentEnvironment() {
+        return filterCurrentEnvironment;
+    }
+
+    public NDependencySolver setFilterCurrentEnvironment(boolean filterCurrentEnvironment) {
+        this.filterCurrentEnvironment = filterCurrentEnvironment;
+        return this;
+    }
 
     public NDependencySolver addRootId(NId id) {
         pending.add(new RootInfo(id.toDependency(), null));
@@ -109,7 +118,8 @@ public class MavenNDependencySolver implements NDependencySolver {
                             if (def2 != null) {
                                 effDependency = effDependency
                                         .builder()
-                                        .setVersion(def2.getId().getVersion());
+                                        .setVersion(def2.getId().getVersion())
+                                        .build();
                             }
                             NDependencyTreeNodeBuild info = new NDependencyTreeNodeBuild(currentNode, def2, dependency, effDependency, currentNode.depth + 1);
                             info.exclusions.addAll(currentNode.exclusions);
@@ -153,7 +163,8 @@ public class MavenNDependencySolver implements NDependencySolver {
                             if (def2 != null) {
                                 effDependency = effDependency
                                         .builder()
-                                        .setVersion(def2.getId().getVersion());
+                                        .setVersion(def2.getId().getVersion())
+                                        .build();
                             }
                             NDependencyTreeNodeBuild info = new NDependencyTreeNodeBuild(currentNode, def2, dependency, effDependency, currentNode.depth + 1);
                             info.exclusions.addAll(currentNode.exclusions);
@@ -218,7 +229,8 @@ public class MavenNDependencySolver implements NDependencySolver {
         if (def != null) {
             effDependency = effDependency
                     .builder()
-                    .setVersion(def.getId().getVersion());
+                    .setVersion(def.getId().getVersion())
+                    .build();
         }
         NDependencyTreeNodeBuild info = new NDependencyTreeNodeBuild(null, def, effDependency, dependency, 0);
         for (NId exclusion : dependency.getExclusions()) {
@@ -407,8 +419,14 @@ public class MavenNDependencySolver implements NDependencySolver {
             if (effDescriptor == null && def != null) {
                 effDescriptor = def.getEffectiveDescriptor().orNull();
                 if (effDescriptor == null) {
-                    throw new NIllegalArgumentException(
-                            NMsg.ofC("expected an effective definition for %s", def.getId()));
+                    effDescriptor=NWorkspace.of().resolveEffectiveDescriptor(def.getDescriptor(),
+                            new EffectiveNDescriptorConfig()
+                                    .setFilterCurrentEnvironment(isFilterCurrentEnvironment())
+                    );
+                    if (effDescriptor == null) {
+                        throw new NIllegalArgumentException(
+                                NMsg.ofC("expected an effective definition for %s", def.getId()));
+                    }
                 }
             }
             return effDescriptor;

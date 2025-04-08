@@ -49,7 +49,7 @@ public class NBootDescriptorProperty {
 
     public NBootDescriptorProperty(NBootDescriptorProperty other) {
         this.condition = new NBootEnvCondition();
-        setAll(other);
+        copyFrom(other);
     }
 
     public String getName() {
@@ -62,7 +62,7 @@ public class NBootDescriptorProperty {
 
 
     public NBootDescriptorProperty setCondition(NBootEnvCondition condition) {
-        this.condition.setAll(condition);
+        this.condition.clear().copyFrom(condition);
         return this;
     }
 
@@ -83,7 +83,7 @@ public class NBootDescriptorProperty {
     }
 
 
-    public NBootDescriptorProperty setAll(NBootDescriptorProperty value) {
+    public NBootDescriptorProperty copyFrom(NBootDescriptorProperty value) {
         if (value == null) {
             this.setName(null);
             this.setValue(null);

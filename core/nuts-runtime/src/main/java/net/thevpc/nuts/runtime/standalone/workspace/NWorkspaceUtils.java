@@ -55,7 +55,7 @@ public class NWorkspaceUtils {
 
     public static NSession bindSession(NWorkspace ws, NSession session) {
         if (ws != null && session != null && !Objects.equals(session.getWorkspace().getUuid(), ws.getUuid())) {
-            return ws.createSession().setAll(session);
+            return ws.createSession().copyFrom(session);
         }
         return session;
     }

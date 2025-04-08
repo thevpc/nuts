@@ -34,14 +34,14 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableInformati
     NExecutionType executionType;
     NRunAs runAs;
     DefaultNExecCmd execCommand;
-    DefaultNDefinition nutToRun;
+    NDefinition nutToRun;
     CharacterizedExecFile c;
     String tempFolder;
     DefaultNExecCmd.NExecutorComponentAndContext executorComponentAndContext;
 
     public DefaultNArtifactPathExecutable(String cmdName, String[] args, List<String> executorOptions, List<String> workspaceOptions,
                                           NExecutionType executionType, NRunAs runAs, DefaultNExecCmd execCommand,
-                                          DefaultNDefinition nutToRun,
+                                          NDefinition nutToRun,
                                           CharacterizedExecFile c,
                                           String tempFolder,
                                           DefaultNExecCmd.NExecutorComponentAndContext executorComponentAndContext

@@ -89,7 +89,7 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
                     folder.toString()));
             NExecutionContext executionContext2 = NWorkspaceExt.of()
                     .createExecutionContext()
-                    .setAll(executionContext)
+                    .copyFrom(executionContext)
                     .setDefinition(d)
                     .setExecutorOptions(z)
                     .failFast()
@@ -119,7 +119,7 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
                     folder.toString()));
             NExecutionContext executionContext2 = NWorkspaceExt.of()
                     .createExecutionContext()
-                    .setAll(executionContext)
+                    .copyFrom(executionContext)
                     .setDefinition(d)
                     .setExecutorOptions(z)
                     .failFast()

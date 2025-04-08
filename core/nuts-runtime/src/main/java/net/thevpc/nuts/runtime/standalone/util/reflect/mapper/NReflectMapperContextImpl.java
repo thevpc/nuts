@@ -4,9 +4,7 @@ import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.util.reflect.DefaultConvertersByType;
 import net.thevpc.nuts.runtime.standalone.util.reflect.NReflectMapperImpl;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NEqualizer;
-import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.*;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -21,8 +19,7 @@ public class NReflectMapperContextImpl implements NReflectMapperContext {
     private final NReflectMapper mapper;
     private final NReflectRepository repository;
     private final TypeMapperTraversedTreeImpl tree;
-    private NReflectFieldMapperStrategy source = NReflectFieldMapperStrategy.ANY;
-    private NReflectFieldMapperStrategy target = NReflectFieldMapperStrategy.ANY;
+    private NMapStrategy mapStrategy = NMapStrategy.ANY;
     private NEqualizer<Object> eq = NEqualizer.ofDefault();
 
     private Set<NReflectMapperImpl.SPath> included = new HashSet<>();
@@ -122,35 +119,22 @@ public class NReflectMapperContextImpl implements NReflectMapperContext {
     }
 
     @Override
-    public NEqualizer<Object> getEq() {
+    public NEqualizer<Object> equalizer() {
         return eq;
     }
 
     @Override
-    public NReflectMapperContext setEq(NEqualizer<Object> eq) {
+    public NReflectMapperContext setEqqualizer(NEqualizer<Object> eq) {
         this.eq = eq == null ? NEqualizer.ofDefault() : eq;
         return this;
     }
 
-    @Override
-    public NReflectFieldMapperStrategy getSource() {
-        return source;
+    public NMapStrategy mapStrategy() {
+        return mapStrategy;
     }
 
-    @Override
-    public NReflectFieldMapperStrategy getTarget() {
-        return target;
-    }
-
-    @Override
-    public NReflectMapperContext setSource(NReflectFieldMapperStrategy source) {
-        this.source = source == null ? NReflectFieldMapperStrategy.ANY : source;
-        return this;
-    }
-
-    @Override
-    public NReflectMapperContext setTarget(NReflectFieldMapperStrategy target) {
-        this.target = target == null ? NReflectFieldMapperStrategy.ANY : target;
+    public NReflectMapperContextImpl setMapStrategy(NMapStrategy mapStrategy) {
+        this.mapStrategy = mapStrategy==null?NMapStrategy.ANY : mapStrategy;
         return this;
     }
 
@@ -204,8 +188,8 @@ public class NReflectMapperContextImpl implements NReflectMapperContext {
             NOptional<NReflectProperty> toProp = toType.getProperty(n == null ? path.name() : n.name());
             if (toProp.isPresent()) {
                 Object sourceValue = property.read(fromInstance);
-                if (acceptValue(sourceValue, source)) {
-                    switch (target) {
+                if (acceptValue(sourceValue, mapStrategy.source())) {
+                    switch (mapStrategy.target()) {
                         case ANY: {
                             NReflectMapper.Converter c = convertersByName.get(fpath);
                             if (c == null) {
@@ -222,7 +206,7 @@ public class NReflectMapperContextImpl implements NReflectMapperContext {
                             return true;
                         }
                         default: {
-                            if (acceptValue(toProp.get().read(toInstance), target)) {
+                            if (acceptValue(toProp.get().read(toInstance), mapStrategy.target())) {
                                 Object toValue;
                                 NReflectMapper.Converter c = convertersByName.get(fpath);
                                 if (c == null) {
@@ -230,7 +214,7 @@ public class NReflectMapperContextImpl implements NReflectMapperContext {
                                 } else {
                                     toValue = c.convert(sourceValue, path.toString(), property.getPropertyType(), toProp.get().getPropertyType(), this);
                                 }
-                                if (acceptValue(toValue, target)) {
+                                if (acceptValue(toValue, mapStrategy.target())) {
                                     toProp.get().write(toInstance, toValue);
                                     return true;
                                 }
@@ -243,7 +227,7 @@ public class NReflectMapperContextImpl implements NReflectMapperContext {
         return false;
     }
 
-    private boolean acceptValue(Object value, NReflectFieldMapperStrategy filter) {
+    private boolean acceptValue(Object value, NMapSideStrategy filter) {
         switch (filter) {
             case BLANK: {
                 return NBlankable.isBlank(value);

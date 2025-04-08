@@ -31,7 +31,7 @@ import net.thevpc.nuts.boot.NBootWorkspaceFactory;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.boot.NBootWorkspaceAlreadyExistsException;
 import net.thevpc.nuts.boot.NBootWorkspaceNotFoundException;
-import net.thevpc.nuts.NWorkspaceTerminalOptions;
+import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.format.NVersionFormat;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
@@ -790,7 +790,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 for (String s : pp.keySet()) {
                     NDescriptorProperty[] a = pp.getAll(s);
                     if (a.length == 1) {
-                        n.add(a[0].builder().setCondition(null).build());
+                        n.add(a[0].builder().setCondition((NEnvCondition) null).build());
                     } else {
                         NDescriptorProperty z = null;
                         for (NDescriptorProperty zz : a) {
@@ -812,7 +812,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                             }
                         }
                         if (z != null) {
-                            n.add(z.builder().setCondition(null).build());
+                            n.add(z.builder().setCondition((NEnvCondition) null).build());
                         }
                     }
                 }
@@ -827,7 +827,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         if(effectiveNDescriptorConfig.isFilterCurrentEnvironment()) {
             for (NDependency d : effectiveDescriptor.getDependencies()) {
                 if (CoreFilterUtils.acceptDependency(d)) {
-                    oldDependencies.add(d.builder().setCondition(null).build());
+                    oldDependencies.add(d.builder().setCondition((NEnvCondition) null).build());
                 }
             }
         }else{
