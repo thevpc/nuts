@@ -23,11 +23,11 @@ public class NSimpleRepositoryWrapper extends NCachedRepository {
         this.base = base;
     }
     
-    public NIterator<NId> searchVersionsCore(NId id, NIdFilter idFilter, NFetchMode fetchMode) {
+    public NIterator<NId> searchVersionsCore(NId id, NDefinitionFilter idFilter, NFetchMode fetchMode) {
         return base.searchVersions(id, idFilter, fetchMode, this);
     }
 
-    public NId searchLatestVersionCore(NId id, NIdFilter filter, NFetchMode fetchMode) {
+    public NId searchLatestVersionCore(NId id, NDefinitionFilter filter, NFetchMode fetchMode) {
         return base.searchLatestVersion(id, filter, fetchMode, this);
     }
 
@@ -39,7 +39,7 @@ public class NSimpleRepositoryWrapper extends NCachedRepository {
         return base.fetchContent(id, descriptor, fetchMode, this);
     }
 
-    public NIterator<NId> searchCore(final NIdFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode) {
+    public NIterator<NId> searchCore(final NDefinitionFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode) {
         return base.search(filter, basePaths, fetchMode, this);
     }
 

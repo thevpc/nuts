@@ -220,8 +220,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
             // In all cases, even though search may be empty we considere that the list is not empty
             // so that no empty exception is thrown
             list.emptyCommand = false;
-            for (NId resultId : NSearchCmd.of().setInstallStatus(
-                    NInstallStatusFilters.of().byInstalled(true)).getResultIds()) {
+            for (NId resultId : NSearchCmd.of().setDefinitionFilter(NDefinitionFilters.of().byInstalled(true)).getResultIds()) {
                 list.addForInstall(resultId, getInstalled(), true);
             }
             // This bloc is to handle packages that were installed but their jar/content was removed for any reason!

@@ -20,7 +20,6 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author thevpc
@@ -43,62 +42,193 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         String withFormat = null;
         boolean withClean = false;
     }
-    private static class ResultingIds{
-        Set<NId> classPathIds = new LinkedHashSet<>();
-        Set<NId> nAppIds = new LinkedHashSet<>();
-        NId nAppId;
+
+    private class ResultingIds {
+        LinkedHashMap<NId, NDefinition> classPath = new LinkedHashMap<>();
         Set<NId> executableAppIds = new LinkedHashSet<>();
+        Set<NId> baseIds = new LinkedHashSet<>();
 
-        private void add(NDescriptor desc) {
-            NId resultId=desc.getId();
-            if (resultId.getShortName().equals(NConstants.Ids.NUTS_API)) {
-                NId appId = resolveNutsAppIdFromApiId(resultId);
-                if(nAppId==null){
-                    nAppId=appId;
-                }
-                nAppIds.add(appId);
-                executableAppIds.add(appId);
-                classPathIds.add(appId);
-            }else if (resultId.getShortName().equals(NConstants.Ids.NUTS_APP)) {
-                if(nAppId==null){
-                    nAppId=resultId;
-                }
-                nAppIds.add(resultId);
-                executableAppIds.add(resultId);
-                classPathIds.add(resultId);
-            } else {
-                if (desc.isExecutable() || desc.isApplication()) {
-                    executableAppIds.add(resultId);
+
+        private NId findNutsApiId() {
+            for (NId resultId : classPath.keySet()) {
+                if (resultId.getShortName().equals(NConstants.Ids.NUTS_API)) {
+                    return resultId;
                 }
             }
-            classPathIds.add(resultId);
-
+            return null;
         }
-        private NId resolveNutsAppIdFromApiId(NId apiId) {
-            NVersion v = apiId.getVersion();
-            if (v.compareTo("0.8.5") < 0) {
-                return apiId;
+
+        private NId findNutsAppId() {
+            for (NId resultId : classPath.keySet()) {
+                if (resultId.getShortName().equals(NConstants.Ids.NUTS_APP)) {
+                    return resultId;
+                }
             }
-            NId appId = NWorkspace.of().getAppId();
-            return appId.builder().setVersion(apiId.getVersion()).build();
-//        List<NId> found = NSearchCmd.of().addId(appId.getShortId())
-//                .setLatest(true)
-//                .setDistinct(true)
-//                .setDescriptorFilter(NDescriptorFilters.of().byApiVersion(apiId.getVersion()))
-//                .setDependencyFilter(NDependencyFilters.of()
-//                        .byRunnable()
-//                )
-//                .setInlineDependencies(true)
-//                .getResultIds().toList();
-//        if (found.size() > 0) {
-//            return found.get(0);
-//        }
-//        throw new NIllegalArgumentException(NMsg.ofC("unable to resolve app for %s", apiId));
+            return null;
+        }
+
+        private NId findNutsRuntimeId() {
+            for (NId resultId : classPath.keySet()) {
+                if (resultId.getShortName().equals(NConstants.Ids.NUTS_RUNTIME)) {
+                    return resultId;
+                }
+            }
+            return null;
+        }
+
+
+        public ResultingIds add(String id) {
+            if (!NBlankable.isBlank(id)) {
+                add(NId.of(id));
+            }
+            return this;
+        }
+
+        public ResultingIds add(NId id) {
+            if (!NBlankable.isBlank(id)) {
+                if (classPath.containsKey(id.getLongId())) {
+                    return this;
+                }
+                List<NDefinition> list = new ArrayList<>();
+                NStream<NDefinition> resultDefinitions = NSearchCmd.of().addId(id)
+                        .setLatest(true)
+                        .setDistinct(true)
+                        .setEffective(true)
+                        .setDependencyFilter(
+                                NDependencyFilters.of().byScope(NDependencyScopePattern.RUN, NDependencyScopePattern.COMPILE)
+                                .and(NDependencyFilters.of().byRegularType())
+                        )
+                        .setInlineDependencies(true)
+                        .setIgnoreCurrentEnvironment(true)
+                        .setContent(true)
+                        .getResultDefinitions();
+                resultDefinitions.forEach(resultDefinition -> {
+                    list.add(resultDefinition);
+                    NTrace.println(NMsg.ofC(NI18n.of("loaded dependency %s for %s"),
+                            resultDefinition.getId(),
+                            id
+                    ));
+                });
+                if (list.isEmpty()) {
+                    throw new NNotFoundException(id);
+                }
+                for (NDefinition def : list) {
+                    if (!classPath.containsKey(def.getId().getLongId())) {
+                        NId resultId = def.getId();
+                        if (def.getDescriptor().isPlatformApplication() || def.getDescriptor().isNutsApplication()) {
+                            if (isBaseId(resultId)) {
+                                executableAppIds.add(resultId);
+                            }
+                        }
+                        classPath.put(resultId.getLongId(), def);
+                    }
+                    for (NId parent : def.getDescriptor().getParents()) {
+                        add(parent);
+                    }
+                }
+            }
+            return this;
+        }
+
+        public boolean isBaseId(NId resultId) {
+            for (NId baseId : baseIds) {
+                if (baseId.getLongName().equals(resultId.getShortName())) {
+                    return true;
+                }
+            }
+            for (NId baseId : baseIds) {
+                if (baseId.getShortName().equals(resultId.getShortName())) {
+                    return true;
+                }
+            }
+            for (NId baseId : baseIds) {
+                if (NBlankable.isBlank(baseId.getGroupId()) && baseId.getArtifactId().equals(resultId.getArtifactId())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public ResultingIds addAllId(String[] ids) {
+            for (String id : ids) {
+                if (!NBlankable.isBlank(id)) {
+                    baseIds.add(NId.of(id));
+                }
+            }
+            for (String id : ids) {
+                add(id);
+            }
+            return this;
+        }
+
+        public void build() {
+            NSession session = NSession.of();
+            //ensure there is a full nuts workspace runtime (nuts-runtime)
+            if (findNutsRuntimeId() == null) {
+                for (NDefinition resultIdDef : new ArrayList<>(classPath.values())) {
+                    if (resultIdDef.getId().getShortName().equals(NConstants.Ids.NUTS_API)) {
+                        if (resultIdDef.getId().getLongName().equals(session.getWorkspace().getAppId().getLongName())) {
+                            add(session.getWorkspace().getRuntimeId());
+                        } else {
+                            add(session.getWorkspace().getRuntimeId().builder().setVersion(resultIdDef.getId().getVersion() + ".0").build());
+                        }
+                        break;
+                    }
+                }
+            }
+            if (findNutsRuntimeId() == null) {
+                add(session.getWorkspace().getRuntimeId());
+            }
+            if (findNutsAppId() == null) {
+                for (NDefinition resultIdDef : new ArrayList<>(classPath.values())) {
+                    if (resultIdDef.getId().getShortName().equals(NConstants.Ids.NUTS_API)) {
+                        if (resultIdDef.getId().getLongName().equals(session.getWorkspace().getAppId().getLongName())) {
+                            add(session.getWorkspace().getAppId());
+                        } else {
+                            NVersion v = resultIdDef.getId().getVersion();
+                            if (v.compareTo("0.8.5") < 0) {
+                                //do nothing
+                            } else {
+                                NId appId = NWorkspace.of().getAppId();
+                                add(appId.builder().setVersion(resultIdDef.getId().getVersion()).build());
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+            if (findNutsRuntimeId() == null) {
+                add(session.getWorkspace().getAppId());
+            }
         }
     }
+
+    private NOptional<String> ensureValidFileName(String any) {
+        if (any != null) {
+            StringBuilder sb = new StringBuilder();
+            for (char c : any.toCharArray()) {
+                if (
+                        (c >= 'a' && c <= 'z')
+                                || (c >= 'A' && c <= 'Z')
+                                || (c >= '0' && c <= '9')
+                                || (c == '_')
+                                || (c == '+')
+                                || (c == '.')
+                ) {
+                    sb.append(c);
+                } else {
+                    sb.append("_");
+                }
+            }
+            if (sb.length() > 0) {
+                return NOptional.of(sb.toString());
+            }
+        }
+        return NOptional.ofNamedEmpty("file name");
+    }
+
     @Override
     public int execute() {
-        List<NDescriptor> aa = searchDescriptors(NId.of("nuts-runtime"));
         NChronometer allChrono = NChronometer.startNow();
         NSession session = NSession.of();
         if (session.isDry()) {
@@ -117,8 +247,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         parseBOptions(boptions, cmdLine, session);
         NutsBundleFilesConfig nuts_bundle_files_config = new NutsBundleFilesConfig();
         NutsBundleInfoConfig nuts_bundle_info_config = new NutsBundleInfoConfig();
-        nuts_bundle_info_config.target = "${user.dir}/lib";
-
+        String repo = "${target}/.nuts-bundle/lib";
         NPath rootFolder = null;
         NPath bundleFolder = null;
         boolean tempBundleFolder = false;
@@ -130,38 +259,55 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
 
         ResultingIds resultingIds = new ResultingIds();
 
-        NWorkspace ws = session.getWorkspace();
-        NTrace.println(NMsg.ofC("computing dependencies for %s", boptions.ids));
+        NTrace.println(NMsg.ofC(NI18n.of("computing dependencies for %s"), boptions.ids));
         NChronometer chrono = NChronometer.startNow();
-        for (String id : boptions.ids) {
-            for (NDescriptor resultId : searchDescriptors(NId.of(id))) {
-                resultingIds.add(resultId);
-            }
-        }
-        if(resultingIds.nAppId==null) {
-            for (NDescriptor resultId : searchDescriptors(ws.getAppId())) {
-                resultingIds.add(resultId);
-            }
-        }
+        resultingIds
+                .addAllId(boptions.ids.toArray(new String[0]))
+                .build();
+
+
         cmdLine.throwUnexpectedArgument(NMsg.ofC("%s", boptions.ids));
         chrono.stop();
-        NTrace.println(NMsg.ofC("found %s dependency and %s apps in %s...", resultingIds.classPathIds.size(), resultingIds.executableAppIds.size(), chrono.getDuration()));
+        NTrace.println(NMsg.ofC(NI18n.of("found %s deps and %s apps in %s..."), resultingIds.classPath.size(), resultingIds.executableAppIds.size(), chrono.getDuration()));
         String defaultName = "nuts-bundle";
         String defaultVersion = "1.0";
         if (resultingIds.executableAppIds.size() == 1) {
             for (NId executableAppId : resultingIds.executableAppIds) {
-                defaultName = executableAppId.getArtifactId() + "-bundle";
+                defaultName = preferredAppName(executableAppId);
                 defaultVersion = executableAppId.getVersion().toString();
                 break;
             }
         } else if (resultingIds.executableAppIds.size() > 1) {
-            for (NId executableAppId : resultingIds.executableAppIds) {
-                defaultName = executableAppId.getArtifactId() + "-and-all-bundle";
-                defaultVersion = executableAppId.getVersion().toString();
-                break;
+            NId[] explicitIds = resultingIds.executableAppIds.stream().filter(x -> {
+                for (String id : boptions.ids) {
+                    if (Objects.equals(NId.of(id).getShortName(), x.getShortName())) {
+                        return true;
+                    }
+                }
+                for (String id : boptions.ids) {
+                    if (Objects.equals(id, x.getArtifactId())) {
+                        return true;
+                    }
+                }
+                return false;
+            }).toArray(NId[]::new);
+            if (explicitIds.length == 1) {
+                defaultName = preferredAppName(explicitIds[0]);
+                defaultVersion = explicitIds[0].getVersion().toString();
+            } else {
+                for (NId executableAppId : resultingIds.executableAppIds) {
+                    defaultName = preferredAppName(executableAppId) + "-and-all";
+                    defaultVersion = executableAppId.getVersion().toString();
+                    break;
+                }
             }
         }
         nuts_bundle_info_config.appName = NStringUtils.firstNonBlank(boptions.withAppName, boptions.withAppTitle, defaultName);
+        nuts_bundle_info_config.appVersion = NStringUtils.firstNonBlank(boptions.withAppVersion, defaultVersion, "1.0");
+        nuts_bundle_info_config.appTitle = NStringUtils.firstNonBlank(boptions.withAppTitle, nuts_bundle_info_config.appName);
+        nuts_bundle_info_config.appDesc = NStringUtils.firstNonBlank(boptions.withAppDesc, nuts_bundle_info_config.appTitle);
+        String fullAppFileName = ensureValidFileName(nuts_bundle_info_config.appName).orElse("app") + "-" + ensureValidFileName(nuts_bundle_info_config.appVersion).orElse("1.0");
+        nuts_bundle_info_config.target = "${user.dir}/" + fullAppFileName;
 
         switch (format) {
             case "jar":
@@ -173,7 +319,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
             }
             case "exploded": {
                 rootFolder = NBlankable.isBlank(boptions.withTarget) ?
-                        NPath.ofUserDirectory().resolve(nuts_bundle_info_config.appName + "-bundle")
+                        NPath.ofUserDirectory().resolve(fullAppFileName + "-bundle")
                         : NPath.of(boptions.withTarget)
                 ;
                 includeConfigFiles = true;
@@ -198,7 +344,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
             }
             case "dir": {
                 rootFolder = NBlankable.isBlank(boptions.withTarget) ?
-                        NPath.ofUserDirectory().resolve(nuts_bundle_info_config.appName + "-bundle")
+                        NPath.ofUserDirectory().resolve(fullAppFileName + "-bundle")
                         : NPath.of(boptions.withTarget)
                 ;
                 bundleFolder = rootFolder;
@@ -232,70 +378,44 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     .run();
         }
 
-
-        NFetchCmd f = NFetchCmd.of();
-
-        //load all definitions
-        Map<NId, NDefinition> allIds = new HashMap<>();
-        Stack<NId> toProcess = new Stack<>();
-        toProcess.addAll(resultingIds.classPathIds);
-        while (!toProcess.isEmpty()) {
-            NId id = toProcess.pop();
-            if (!allIds.containsKey(id)) {
-                allIds.put(id, null);
-                NDefinition resultDefinition = f.setId(id)
-                        .setContent(true)
-                        .getResultDefinition();
-                allIds.put(id, resultDefinition);
-                for (NId parent : resultDefinition.getDescriptor().getParents()) {
-                    toProcess.push(parent);
-                }
-            }
-        }
-
-        for (Map.Entry<NId, NDefinition> entry : allIds.entrySet()) {
-            NId id = entry.getKey();
-            NDefinition resultDefinition = entry.getValue();
+        for (NDefinition d : resultingIds.classPath.values()) {
+            NId id = d.getId();
             String fullPath = ExtraApiUtils.resolveJarPath(id);
-            if (resultDefinition.getContent().isPresent()) {
-                cp.from(resultDefinition.getContent().get())
+            if (d.getContent().isPresent()) {
+                cp.from(d.getContent().get())
                         .to(bundleFolder.resolve(fullPath))
                         .run();
                 if (includeConfigFiles) {
                     nuts_bundle_files_config.install(
                             "/" + fullPath
-                            , "$target/" + fullPath
+                            , repo + "/" + fullPath
                     );
-                    NTrace.println(NMsg.ofC("adding to classpath %s", id));
+                    NTrace.println(NMsg.ofC(NI18n.of("adding to classpath %s"), id));
                 }
             }
 
             fullPath = ExtraApiUtils.resolveNutsDescriptorPath(id);
-            cp.from(NDescriptorFormat.of().setValue(resultDefinition.getDescriptor()).setNtf(false).toString().getBytes())
+            cp.from(NDescriptorFormat.of().setValue(d.getDescriptor()).setNtf(false).toString().getBytes())
                     .to(bundleFolder.resolve(fullPath))
                     .run();
             if (includeConfigFiles) {
                 nuts_bundle_files_config.install("/" + fullPath
-                        , "$target/" + fullPath
+                        , repo + "/" + fullPath
                 );
             }
         }
-        NTrace.println(NMsg.ofC("resolving workspace runner as %s", resultingIds.nAppId));
+        NTrace.println(NMsg.ofC(NI18n.of("resolving workspace runner as %s"), resultingIds.findNutsAppId()));
         bundleFolder.resolve(".nuts-repository").writeString("{}");
         if (includeConfigFiles) {
-            NTrace.println(NMsg.ofC("building repository"));
-            nuts_bundle_files_config.install("/.nuts-repository", "$target/.nuts-repository");
+            NTrace.println(NMsg.ofC(NI18n.of("building repository")));
+            nuts_bundle_files_config.install("/.nuts-repository", repo + "/.nuts-repository");
             for (NId executableAppId : resultingIds.executableAppIds) {
-                NTrace.println(NMsg.ofC("building executable script for %s", executableAppId));
-                createAppScripts(executableAppId, resultingIds.nAppId, bundleFolder, nuts_bundle_files_config);
+                NTrace.println(NMsg.ofC(NI18n.of("building executable script for %s"), executableAppId));
+                createAppScripts(executableAppId, resultingIds.findNutsAppId(), bundleFolder, nuts_bundle_files_config);
             }
             rootFolder.resolve("META-INF/nuts-bundle-files.config").writeString(nuts_bundle_files_config.toString());
         }
 
-
-        nuts_bundle_info_config.appVersion = NStringUtils.firstNonBlank(boptions.withAppVersion, defaultVersion, "1.0");
-        nuts_bundle_info_config.appTitle = NStringUtils.firstNonBlank(boptions.withAppTitle, boptions.withAppName, defaultName);
-        nuts_bundle_info_config.appDesc = NStringUtils.firstNonBlank(boptions.withAppDesc, boptions.withAppTitle);
 
         if (includeConfigFiles) {
             rootFolder.resolve("META-INF/nuts-bundle-info.config").writeString(nuts_bundle_info_config.toString());
@@ -306,7 +426,9 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
             case "jar": {
                 NCompress zip = NCompress.of().setPackaging("zip");
                 NPath target = NPath.of(NStringUtils.firstNonBlank(boptions.withTarget,
-                        nuts_bundle_info_config.appName + ".jar")).toAbsolute();
+                        fullAppFileName
+                                + "-bundle"
+                                + ".jar")).toAbsolute();
                 zip.addSource(rootFolder)
                         .setSkipRoot(true)
                         .setTarget(
@@ -328,7 +450,9 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
             case "zip": {
                 NCompress zip = NCompress.of().setPackaging("zip");
                 NPath target = NPath.of(NStringUtils.firstNonBlank(boptions.withTarget,
-                        nuts_bundle_info_config.appName + ".zip")).toAbsolute();
+                        fullAppFileName
+                                + "-bundle"
+                                + ".zip")).toAbsolute();
                 zip.addSource(rootFolder)
                         .setSkipRoot(true)
                         .setTarget(target
@@ -364,19 +488,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         }
         return NExecutionException.SUCCESS;
     }
-    private List<NDescriptor> searchDescriptors(NId id){
-        List<NDescriptor> list = NSearchCmd.of().addId(id)
-                .setLatest(true)
-                .setDistinct(true)
-                .setEffective(true)
-                .setDependencyFilter(NDependencyFilters.of().byScope(NDependencyScopePattern.RUN, NDependencyScopePattern.COMPILE))
-                .setInlineDependencies(true)
-                .getResultDescriptors().toList();
-        if (list.isEmpty()) {
-            throw new NNotFoundException(id);
-        }
-        return list;
-    }
+
 
     private void parseBOptions(BOptions boptions, NCmdLine cmdLine, NSession session) {
         while (cmdLine.hasNext()) {
@@ -465,14 +577,21 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         }
     }
 
+    private String preferredAppName(NId mainIdStr) {
+        if (NConstants.Ids.NUTS_APP.equals(mainIdStr.getShortName())) {
+            return "nuts";
+        }
+        return mainIdStr.getArtifactId();
+    }
+
     private void createAppScripts(NId mainIdStr, NId nutsId, NPath bundleFolder, NutsBundleFilesConfig nuts_bundle_files_config) {
         if (mainIdStr == null) {
             return;
         }
-        String appName = mainIdStr.getArtifactId();
-        if (appName.equals("nuts-app")) {
-            appName = "nuts";
-        }
+        String appName = preferredAppName(mainIdStr);
+//        if(!mainIdStr.getVersion().isBlank()) {
+//            appName = appName + "-" + mainIdStr.getVersion();
+//        }
         createPosixScript(mainIdStr, nutsId, appName, bundleFolder, nuts_bundle_files_config);
         createWindowsScript(mainIdStr, nutsId, appName, bundleFolder, nuts_bundle_files_config);
     }
@@ -482,29 +601,35 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         bundleFolder.resolve(appName + "-posix-runner.sh").writeString(
                 new NStringBuilder()
                         .println("#!/bin/sh")
+                        .println("#-------------------------------------")
+                        .println("# Nuts Bundle Launcher Script " + NWorkspace.of().getRuntimeId().getVersion())
+                        .println("# This bundle was created for " + mainIdStr.getShortName())
+                        .println("# (c) 2025 thevpc")
+                        .println("#-------------------------------------")
                         .println("")
-                        .println("SCRIPT_PATH=\"${BASH_SOURCE[0]:-${(%):-%x}}\"")
-                        .println("DIR=\"$(cd -- \"$(dirname -- \"$SCRIPT_PATH\")\" && pwd)\"")
-                        .println("java -jar " +
-                                "\"$DIR/lib/" + ExtraApiUtils.resolveJarPath(nutsId) + "\" " +
-                                "--repo==$DIR/lib " +
-                                "-w=$DIR/ws " +
-                                "---m2=false " +
-                                "--desktop-launcher=unsupported " +
-                                "--menu-launcher=unsupported " +
-                                "--user-launcher=unsupported " +
-                                "'--!switch' " +
-                                "'--!init-platforms' " +
-                                "'--!init-scripts' " +
-                                "'--!init-launchers' " +
-                                "'--install-companions=false' " +
+                        .println("# resolve current script path")
+                        .println("NS_SCRIPT_PATH=\"${BASH_SOURCE[0]:-${(%):-%x}}\"")
+                        .println("NS_SCRIPT_DIR=\"$(cd -- \"$(dirname -- \"$N_SCRIPT_PATH\")\" && pwd)\"")
+                        .println("NS_WS_JAR=\"$NS_SCRIPT_DIR/.nuts-bundle/lib/" + ExtraApiUtils.resolveJarPath(nutsId) + "\"")
+                        .println("")
+                        .println("# resolve workspace options")
+                        .println("NS_WS_OPTIONS=\"--repo==$NS_SCRIPT_DIR/.nuts-bundle/lib -w=$NS_SCRIPT_DIR/.nuts-bundle/ws\"")
+                        .println("# add workspace isolation options")
+                        .println("NS_WS_OPTIONS=\"$NS_WS_OPTIONS ---m2=false --desktop-launcher=unsupported --menu-launcher=unsupported --user-launcher=unsupported --!switch --!init-platforms --!init-scripts --!init-launchers --!install-companions\"")
+                        .println("# add other options like ...")
+                        .println("#  --verbose : for more logging")
+                        .println("#  -Zy       : to reset the whole workspace")
+                        .println("# NS_WS_OPTIONS=\"$NS_WS_OPTIONS --verbose\"")
+                        .println("")
+
+                        .println("java -jar \"$NS_WS_JAR\" $NS_WS_OPTIONS " +
                                 (NConstants.Ids.NUTS_APP.equals(mainIdStr.getShortName()) ? "" : ("\"" + mainIdStr + "\""))
                                 + " \"$@\"")
                         .build()
         );
         nuts_bundle_files_config.installPosixExecutable(
                 "/" + appName + "-posix-runner.sh",
-                "${user.dir}/" + appName + ".sh"
+                "${target}/" + appName /*+ ".sh"*/ // no need for bat extension
         );
     }
 
@@ -512,29 +637,34 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         // create windows runner
         bundleFolder.resolve(appName + "-windows-runner.bat").writeString(
                 new NStringBuilder()
+                        .println("::-------------------------------------")
+                        .println(":: Nuts Bundle Launcher Script " + NWorkspace.of().getRuntimeId().getVersion())
+                        .println(":: This bundle was created for " + mainIdStr.getShortName())
+                        .println(":: (c) 2025 thevpc")
+                        .println("::-------------------------------------")
                         .println("")
-                        .println("SET FPATH=%~dp0")
-                        .println("SET DIR=%FPATH:~0,-1%")
-                        .println("java.exe -jar " +
-                                "\"%DIR%\\lib\\" + ExtraApiUtils.resolveJarPath(nutsId).replace("/", "\\") + "\" " +
-                                "--repo==%DIR%\\lib " +
-                                "-w=%DIR%\\ws " +
-                                "---m2=false " +
-                                "--desktop-launcher=unsupported " +
-                                "--menu-launcher=unsupported " +
-                                "--user-launcher=unsupported " +
-                                "--!switch " +
-                                "--!init-platforms " +
-                                "--!init-scripts " +
-                                "--!init-launchers " +
-                                "--install-companions=false " +
+                        .println("@echo off")
+                        .println(":: resolve current script path")
+                        .println("SET NS_SCRIPT_PATH=%~dp0")
+                        .println("SET NS_SCRIPT_DIR=%NS_SCRIPT_PATH:~0,-1%")
+                        .println("SET NS_WS_JAR=%NS_SCRIPT_DIR%\\.nuts-bundle\\lib\\" + ExtraApiUtils.resolveJarPath(nutsId).replace("/", "\\"))
+                        .println("")
+                        .println(":: resolve workspace options")
+                        .println("SET NS_WS_OPTIONS=--repo==%NS_SCRIPT_DIR%\\.nuts-bundle\\lib -w=%NS_SCRIPT_DIR%\\.nuts-bundle\\ws")
+                        .println(":: add workspace isolation options")
+                        .println("SET NS_WS_OPTIONS=%NS_WS_OPTIONS% ---m2=false --desktop-launcher=unsupported --menu-launcher=unsupported --user-launcher=unsupported --!switch --!init-platforms --!init-scripts --!init-launchers --!install-companions")
+                        .println(":: add other options like --verbose")
+                        .println("::  --verbose : for more logging")
+                        .println("::  -Zy       : to reset the whole workspace")
+                        .println("REM SET NS_WS_OPTIONS=%NS_WS_OPTIONS% --verbose")
+                        .println("")
+                        .println("java.exe -jar \"%NS_WS_JAR%\" %NS_WS_OPTIONS% " +
                                 (NConstants.Ids.NUTS_APP.equals(mainIdStr.getShortName()) ? "" : ("\"" + mainIdStr + "\""))
-                                + " $*")
+                                + " %*")
                         .build()
         );
-        nuts_bundle_files_config.installWindows("/" + appName + "-windows-runner.bat", "${user.dir}/" + appName + ".bat");
+        nuts_bundle_files_config.installWindows("/" + appName + "-windows-runner.bat", "${target}/" + appName + ".bat");
     }
-
 
 
 }

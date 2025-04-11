@@ -47,7 +47,7 @@ public class DefaultNUninstallCmd extends AbstractNUninstallCmd {
             List<NDefinition> resultDefinitions = NSearchCmd.of()
                     .setTransitive(false)
                     .addId(id)
-                    .setInstallStatus(NInstallStatusFilters.of().byInstalled(true))
+                    .setDefinitionFilter(NDefinitionFilters.of().byInstalled(true))
                     .setOptional(false).setEffective(true)
                     .setContent(true)//include content so that we can remove it by calling executor
                     .setDependencies(true)//include dependencies so that we can remove it by calling executor

@@ -57,7 +57,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
     }
 
     @Override
-    public NId searchLatestVersionCore(NId id, NIdFilter filter, NFetchMode fetchMode) {
+    public NId searchLatestVersionCore(NId id, NDefinitionFilter filter, NFetchMode fetchMode) {
         return null;
     }
 

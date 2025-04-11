@@ -80,7 +80,9 @@ public interface NDescriptor extends Serializable, NBlankable, NImmutable {
      *
      * @return true if the artifact is a java executable that implements {@link NApplication} interface.
      */
-    boolean isApplication();
+    boolean isNutsApplication();
+
+    boolean isPlatformApplication();
 
     /**
      * return descriptor flags
@@ -106,8 +108,8 @@ public interface NDescriptor extends Serializable, NBlankable, NImmutable {
     String getPackaging();
 
     /**
-     *
      * This is typically the case for pom projects
+     *
      * @return true when the descriptor does not define a content.
      */
     boolean isNoContent();
@@ -235,32 +237,32 @@ public interface NDescriptor extends Serializable, NBlankable, NImmutable {
     NDescriptorBuilder builder();
 
     /**
-     * @since 0.8.4
      * @return contributors
+     * @since 0.8.4
      */
     List<NDescriptorContributor> getContributors();
 
     /**
-     * @since 0.8.4
      * @return developers
+     * @since 0.8.4
      */
     List<NDescriptorContributor> getDevelopers();
 
     /**
-     * @since 0.8.4
      * @return licenses
+     * @since 0.8.4
      */
     List<NDescriptorLicense> getLicenses();
 
     /**
-     * @since 0.8.4
      * @return mailing lists
+     * @since 0.8.4
      */
     List<NDescriptorMailingList> getMailingLists();
 
     /**
-     * @since 0.8.4
      * @return organization
+     * @since 0.8.4
      */
     NDescriptorOrganization getOrganization();
 

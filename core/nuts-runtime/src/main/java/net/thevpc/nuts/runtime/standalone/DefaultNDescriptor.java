@@ -287,8 +287,13 @@ public class DefaultNDescriptor implements NDescriptor {
     }
 
     @Override
-    public boolean isApplication() {
-        return getFlags().contains(NDescriptorFlag.APP);
+    public boolean isNutsApplication() {
+        return getFlags().contains(NDescriptorFlag.NUTS_APP);
+    }
+
+    @Override
+    public boolean isPlatformApplication() {
+        return getFlags().contains(NDescriptorFlag.PLATFORM_APP);
     }
 
     @Override

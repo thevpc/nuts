@@ -18,7 +18,7 @@ public class DummyNIndexStore extends AbstractNIndexStore {
     }
 
     @Override
-    public NIterator<NId> search(NIdFilter filter) {
+    public NIterator<NId> search(NDefinitionFilter filter) {
         return NIteratorBuilder.emptyIterator();
     }
 

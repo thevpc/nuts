@@ -122,7 +122,7 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
     }
 
     @Override
-    public NId searchLatestVersion(NId id, NIdFilter filter, NFetchMode fetchMode) {
+    public NId searchLatestVersion(NId id, NDefinitionFilter filter, NFetchMode fetchMode) {
         Iterator<NId> allVersions = searchVersions().setId(id).setFilter(filter)
                 .setFetchMode(fetchMode)
                 .getResult();

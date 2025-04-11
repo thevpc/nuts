@@ -1,5 +1,6 @@
 package net.thevpc.nuts.time;
 
+import net.thevpc.nuts.NI18n;
 import net.thevpc.nuts.elem.NMapBy;
 
 import java.io.Serializable;
@@ -1017,7 +1018,7 @@ public class NDuration implements Serializable {
         }
         NDuration d = new NDuration(values, smallestUnit, largestUnit);
         if (this.timeMillis != d.timeMillis || this.timeNanos != d.timeNanos) {
-            throw new IllegalArgumentException("unexpected");
+            throw new IllegalArgumentException(NI18n.of("unexpected chronometer value"));
         }
         return d;
     }

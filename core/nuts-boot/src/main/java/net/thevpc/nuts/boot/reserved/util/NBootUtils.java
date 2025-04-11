@@ -1516,21 +1516,25 @@ public final class NBootUtils {
         return new File(path).toPath().toAbsolutePath().normalize().toString();
     }
 
-    public static String readStringFromFile(File file) throws IOException {
-        return new String(Files.readAllBytes(file.toPath()));
+    public static String readStringFromFile(File file)  {
+        try {
+            return new String(Files.readAllBytes(file.toPath()));
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     public static InputStream openStream(URL url) {
         return NBootMonitoredURLInputStream.of(url);
     }
 
-    public static byte[] loadStream(InputStream stream) throws IOException {
+    public static byte[] loadStream(InputStream stream)  {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         copy(stream, bos, true, true);
         return bos.toByteArray();
     }
 
-    public static ByteArrayInputStream preloadStream(InputStream stream) throws IOException {
+    public static ByteArrayInputStream preloadStream(InputStream stream)  {
         return new ByteArrayInputStream(loadStream(stream));
     }
 
@@ -1688,30 +1692,34 @@ public final class NBootUtils {
         return null;
     }
 
-    public static long copy(InputStream from, OutputStream to, boolean closeInput, boolean closeOutput) throws IOException {
+    public static long copy(InputStream from, OutputStream to, boolean closeInput, boolean closeOutput)  {
         byte[] bytes = new byte[10240];
         int count;
         long all = 0;
         try {
             try {
-                while ((count = from.read(bytes)) > 0) {
-                    to.write(bytes, 0, count);
-                    all += count;
+                try {
+                    while ((count = from.read(bytes)) > 0) {
+                        to.write(bytes, 0, count);
+                        all += count;
+                    }
+                    return all;
+                } finally {
+                    if (closeInput) {
+                        from.close();
+                    }
                 }
-                return all;
             } finally {
-                if (closeInput) {
-                    from.close();
+                if (closeOutput) {
+                    to.close();
                 }
             }
-        } finally {
-            if (closeOutput) {
-                to.close();
-            }
+        }catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 
-    public static void copy(File ff, File to) throws IOException {
+    public static void copy(File ff, File to)  {
         if (ff.equals(to)) {
             return;
         }
@@ -1721,19 +1729,19 @@ public final class NBootUtils {
         NBootLog log = NBootContext.log();
         if (ff == null || !ff.exists()) {
             log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("not found %s", ff));
-            throw new FileNotFoundException(ff == null ? "" : ff.getPath());
+            throw new UncheckedIOException(new FileNotFoundException(ff == null ? "" : ff.getPath()));
         }
         try {
             Files.copy(ff.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException ex) {
             log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("error copying %s to %s : %s", ff, to, ex.toString()));
-            throw ex;
+            throw new UncheckedIOException(ex);
         }
     }
 
-    public static void copy(String path, File to) throws IOException {
+    public static void copy(String path, File to)  {
         if (isBlank(path)) {
-            throw new IOException("empty path " + path);
+            throw new UncheckedIOException(new IOException("empty path " + path));
         }
         File file = toFile(path);
         if (file != null) {
@@ -1743,12 +1751,12 @@ public final class NBootUtils {
             if (u != null) {
                 copy(u, to);
             } else {
-                throw new IOException("neither file nor URL : " + path);
+                throw new UncheckedIOException(new IOException("neither file nor URL : " + path));
             }
         }
     }
 
-    public static void copy(URL url, File to) throws IOException {
+    public static void copy(URL url, File to)  {
         NBootLog log = NBootContext.log();
         try {
             InputStream in = openStream(url);
@@ -1766,12 +1774,15 @@ public final class NBootUtils {
             ReadableByteChannel rbc = Channels.newChannel(in);
             FileOutputStream fos = new FileOutputStream(to);
             fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-        } catch (FileNotFoundException | UncheckedIOException ex) {
+        } catch (FileNotFoundException ex) {
+            log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("not found %s", url));
+            throw new UncheckedIOException(ex);
+        } catch (UncheckedIOException ex) {
             log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("not found %s", url));
             throw ex;
         } catch (IOException ex) {
             log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("error copying %s to %s : %s", url, to, ex.toString()));
-            throw ex;
+            throw new UncheckedIOException(ex);
         }
     }
 
@@ -1872,25 +1883,29 @@ public final class NBootUtils {
             MessageDigest md = MessageDigest.getInstance("MD5");
             Files.walkFileTree(p, new FileVisitor<Path>() {
                 @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)  {
                     incrementalUpdateFileDigest(new ByteArrayInputStream(dir.toString().getBytes()), md);
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)  {
                     incrementalUpdateFileDigest(new ByteArrayInputStream(file.toString().getBytes()), md);
-                    incrementalUpdateFileDigest(Files.newInputStream(file), md);
+                    try {
+                        incrementalUpdateFileDigest(Files.newInputStream(file), md);
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
-                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                public FileVisitResult visitFileFailed(Path file, IOException exc)  {
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc)  {
                     return FileVisitResult.CONTINUE;
                 }
             });
@@ -2058,15 +2073,18 @@ public final class NBootUtils {
             try {
                 Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
                     @Override
-                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                        Files.delete(file);
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)  {
+                        try {
+                            Files.delete(file);
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
                         count[0]++;
                         return FileVisitResult.CONTINUE;
                     }
 
                     @Override
-                    public FileVisitResult postVisitDirectory(Path dir, IOException exc)
-                            throws IOException {
+                    public FileVisitResult postVisitDirectory(Path dir, IOException exc){
                         count[0]++;
                         boolean deleted = false;
                         for (int i = 0; i < 2; i++) {
@@ -2078,6 +2096,8 @@ public final class NBootUtils {
                                 // sometimes, on Windows OS, the Filesystem hasn't yet finished deleting
                                 // the children (asynchronous)
                                 //try three times and then exit!
+                            } catch (IOException e) {
+                                throw new UncheckedIOException(e);
                             }
                             try {
                                 Thread.sleep(500);
@@ -2087,7 +2107,11 @@ public final class NBootUtils {
                         }
                         if (!deleted) {
                             //do not catch, last time the exception is thrown
-                            Files.delete(dir);
+                            try {
+                                Files.delete(dir);
+                            } catch (IOException e) {
+                                throw new UncheckedIOException(e);
+                            }
                         }
                         return FileVisitResult.CONTINUE;
                     }
@@ -2124,7 +2148,7 @@ public final class NBootUtils {
     /**
      * @param includeRoot       true if include root
      * @param storeTypesOrPaths of type NutsStoreLocation, Path of File
-     * @param readline
+     * @param readline readline
      */
     public static long deleteStoreLocations(NBootOptionsInfo lastBootOptions, NBootOptionsInfo o, boolean includeRoot,
                                             Object[] storeTypesOrPaths, Supplier<String> readline) {

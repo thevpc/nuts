@@ -89,8 +89,6 @@ public interface NEnvCondition extends NBlankable {
      */
     NEnvConditionBuilder builder();
 
-    NEnvCondition readOnly();
-
     /**
      * return env properties
      * @since 0.8.4

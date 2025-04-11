@@ -84,9 +84,9 @@ public class NutsSpringBootConfiguration {
     }
 
     @Bean
-    public NDescriptorFilters nutsDescriptorFilters(ApplicationArguments applicationArguments) {
+    public NDefinitionFilters nutsFeinitionFilters(ApplicationArguments applicationArguments) {
         return nutsSession(applicationArguments).callWith(() -> {
-            return NDescriptorFilters.of();
+            return NDefinitionFilters.of();
         });
     }
 

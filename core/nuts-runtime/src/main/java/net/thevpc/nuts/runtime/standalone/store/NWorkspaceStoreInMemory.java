@@ -205,4 +205,8 @@ public class NWorkspaceStoreInMemory extends AbstractNWorkspaceStore {
         return (T) obj;
     }
 
+    @Override
+    public boolean deleteLocationKey(NLocationKey k) {
+        return locationKeyToObjectConfMap.remove(k) != null;
+    }
 }

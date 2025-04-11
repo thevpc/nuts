@@ -36,13 +36,13 @@ public interface NRepositoryExt extends NRepositoryExt0 {
 
     NDescriptor fetchDescriptorImpl(NId id, NFetchMode fetchMode);
 
-    NIterator<NId> searchVersionsImpl(NId id, NIdFilter idFilter, NFetchMode fetchMode);
+    NIterator<NId> searchVersionsImpl(NId id, NDefinitionFilter idFilter, NFetchMode fetchMode);
 
     NPath fetchContentImpl(NId id, NDescriptor descriptor, NFetchMode fetchMode);
 
-    NIterator<NId> searchImpl(final NIdFilter filter, NFetchMode fetchMode);
+    NIterator<NId> searchImpl(final NDefinitionFilter filter, NFetchMode fetchMode);
 
-    NId searchLatestVersion(NId id, NIdFilter filter, NFetchMode fetchMode);
+    NId searchLatestVersion(NId id, NDefinitionFilter filter, NFetchMode fetchMode);
 
     boolean acceptAction(NId id, NRepositorySupportedAction supportedAction, NFetchMode mode);
 }

@@ -29,7 +29,6 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorComponent;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.*;
@@ -76,9 +75,8 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
                     )
             );
             JavaExecutorComponent cc = new JavaExecutorComponent();
-            NDefinition d = executionContext.getDefinition();
-            d = new DefaultNDefinition(d);
-            ((DefaultNDefinition) d).setContent(
+            NDefinitionBuilder d = executionContext.getDefinition().builder();
+            d.setContent(
                     NPath.of(folder).setUserCache(false).setUserTemporary(true)
             );
             String fileName = javaFile.getFileName().toString();
@@ -90,7 +88,7 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
             NExecutionContext executionContext2 = NWorkspaceExt.of()
                     .createExecutionContext()
                     .copyFrom(executionContext)
-                    .setDefinition(d)
+                    .setDefinition(d.build())
                     .setExecutorOptions(z)
                     .failFast()
                     .temporary()
@@ -108,9 +106,8 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
                 throw new NExecutionException(NMsg.ofPlain("compilation failed"), res);
             }
             JavaExecutorComponent cc = new JavaExecutorComponent();
-            NDefinition d = executionContext.getDefinition();
-            d = new DefaultNDefinition(d);
-            ((DefaultNDefinition) d).setContent(NPath.of(folder).setUserCache(false).setUserTemporary(true));
+            NDefinitionBuilder d = executionContext.getDefinition().builder();
+            d.setContent(NPath.of(folder).setUserCache(false).setUserTemporary(true));
             String fileName = javaFile.getFileName().toString();
             List<String> z = new ArrayList<>(executionContext.getExecutorOptions());
             z.addAll(Arrays.asList("--main-class",
@@ -120,7 +117,7 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
             NExecutionContext executionContext2 = NWorkspaceExt.of()
                     .createExecutionContext()
                     .copyFrom(executionContext)
-                    .setDefinition(d)
+                    .setDefinition(d.build())
                     .setExecutorOptions(z)
                     .failFast()
                     .temporary()

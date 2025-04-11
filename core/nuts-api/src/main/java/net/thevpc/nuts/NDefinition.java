@@ -30,6 +30,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NOptional;
 
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * Definition is an <strong>immutable</strong> object that contains all information about a artifact identified by it's Id.
@@ -53,6 +54,8 @@ public interface NDefinition extends Serializable, Comparable<NDefinition> {
      * @return artifact descriptor
      */
     NDescriptor getDescriptor();
+
+    NOptional<Set<NDescriptorFlag>> getEffectiveFlags();
 
     /**
      * return artifact content file info (including path).
@@ -121,10 +124,17 @@ public interface NDefinition extends Serializable, Comparable<NDefinition> {
     String getRepositoryUuid();
 
     /**
+     * the current id as a dependency that holds information about conditions, scope and optionality
+     * @return the current id as a dependency that holds information about conditions, scope and optionality
+     */
+    NDependency getDependency();
+    /**
      * name of the repository providing this id.
      *
      * @return name of the repository providing this id.
      */
     String getRepositoryName();
+
+    NDefinitionBuilder builder();
 
 }

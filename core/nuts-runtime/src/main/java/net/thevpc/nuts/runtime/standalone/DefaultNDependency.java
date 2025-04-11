@@ -109,6 +109,86 @@ public class DefaultNDependency implements NDependency {
     }
 
     @Override
+    public boolean isAnyProvided() {
+        if (!NBlankable.isBlank(scope)) {
+            NDependencyScopePattern u = NDependencyScopePattern.parse(getScope()).orElse(null);
+            if(u!=null){
+                switch (u) {
+                    case PROVIDED:
+                    case TEST_PROVIDED:
+                        return true;
+                }
+            }
+            return u == NDependencyScopePattern.PROVIDED;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isAnyRuntime() {
+        if (!NBlankable.isBlank(scope)) {
+            NDependencyScopePattern u = NDependencyScopePattern.parse(getScope()).orElse(null);
+            if(u!=null){
+                switch (u) {
+                    case RUNTIME:
+                    case TEST_RUNTIME:
+                        return true;
+                }
+            }
+            return u == NDependencyScopePattern.PROVIDED;
+        }
+        return false;
+    }
+    @Override
+    public boolean isProvided() {
+        if (!NBlankable.isBlank(scope)) {
+            NDependencyScopePattern u = NDependencyScopePattern.parse(getScope()).orElse(null);
+            if(u!=null){
+                switch (u) {
+                    case PROVIDED:
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isRuntime() {
+        if (!NBlankable.isBlank(scope)) {
+            NDependencyScopePattern u = NDependencyScopePattern.parse(getScope()).orElse(null);
+            if(u!=null){
+                switch (u) {
+                    case RUNTIME:
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isAnyTest() {
+        if (!NBlankable.isBlank(scope)) {
+            NDependencyScopePattern u = NDependencyScopePattern.parse(getScope()).orElse(null);
+            if(u!=null){
+                switch (u) {
+                    case TEST:
+                    case TEST_COMPILE:
+                    case TEST_IMPLEMENTATION:
+                    case TEST_RUNTIME:
+                    case TEST_SYSTEM:
+                    case TEST_PROVIDED:
+                    case TEST_OTHER:
+                    case TEST_API:
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
     public String getScope() {
         return scope;
     }

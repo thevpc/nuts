@@ -3,34 +3,32 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thevpc.nuts.runtime.standalone.id.filter;
+package net.thevpc.nuts.runtime.standalone.definition.filter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.thevpc.nuts.runtime.standalone.descriptor.filter.AbstractDescriptorFilter;
-import net.thevpc.nuts.util.NFilterOp;
-
 /**
  *
  * @author thevpc
  */
-public class NExecCompanionFilter extends AbstractDescriptorFilter {
+public class NDefinitionExecCompanionFilter extends AbstractDefinitionFilter {
     private NId apiId;
     private Set<String> companions;
-    public NExecCompanionFilter(NId apiId, String[] shortIds) {
+    public NDefinitionExecCompanionFilter(NId apiId, String[] shortIds) {
         super(NFilterOp.CUSTOM);
         this.apiId=apiId;
         this.companions=new HashSet<>(Arrays.asList(shortIds));
     }
 
     @Override
-    public boolean acceptDescriptor(NDescriptor other) {
+    public boolean acceptDefinition(NDefinition other) {
         if(companions.contains(other.getId().getShortName())){
-            for (NDependency dependency : other.getDependencies()) {
+            for (NDependency dependency : other.getDescriptor().getDependencies()) {
                 if(dependency.toId().getShortName().equals(this.apiId.getShortName())){
                     if(apiId==null){
                         return true;
@@ -47,7 +45,7 @@ public class NExecCompanionFilter extends AbstractDescriptorFilter {
     }
 
     @Override
-    public NDescriptorFilter simplify() {
+    public NDefinitionFilter simplify() {
         return this;
     }
 

@@ -6,7 +6,6 @@ import net.thevpc.nuts.runtime.standalone.repository.NIdPathIteratorBase;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.util.NMsg;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 class NRepoIter extends NIdPathIteratorBase {
@@ -35,7 +34,7 @@ class NRepoIter extends NIdPathIteratorBase {
     }
 
     @Override
-    public NDescriptor parseDescriptor(NPath pathname, InputStream in, NFetchMode fetchMode, NRepository repository, NPath rootURL) throws IOException {
+    public NDescriptor parseDescriptor(NPath pathname, InputStream in, NFetchMode fetchMode, NRepository repository, NPath rootURL)  {
         NSession session=getWorkspace().currentSession();
         session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "parse", pathname.toCompressedForm()));
         String fn = pathname.getName();
@@ -47,7 +46,7 @@ class NRepoIter extends NIdPathIteratorBase {
     }
 
     @Override
-    public NId parseId(NPath pomFile, NPath rootPath, NIdFilter filter, NRepository repository) throws IOException {
+    public NId parseId(NPath pomFile, NPath rootPath, NDefinitionFilter filter, NRepository repository)  {
         String fn = pomFile.getName();
         if (fn.endsWith(".pom")) {
             NPath versionFolder = pomFile.getParent();

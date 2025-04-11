@@ -518,6 +518,16 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
         return null;
     }
 
+    @Override
+    public boolean deleteLocationKey(NLocationKey k) {
+        NPath path = NWorkspace.of().getStoreLocation(k);
+        if(path.isRegularFile()) {
+            path.delete();
+            return true;
+        }
+        return false;
+    }
+
     private static void invalidateIfObsolete(NLocationKey k, NPath cachePath) {
         try {
             if (k.getStoreType() == NStoreType.CACHE && cachePath.isRegularFile() && CoreIOUtils.isObsoletePath(cachePath)) {

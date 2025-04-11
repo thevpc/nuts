@@ -72,7 +72,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
     }
 
     @Override
-    public NIterator<NId> searchCore(final NIdFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode) {
+    public NIterator<NId> searchCore(final NDefinitionFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode) {
         if(disableMe){
             return NIterator.ofEmpty();
         }
@@ -96,7 +96,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
         return super.fetchContentCoreUsingRepoHelper(id, descriptor, fetchMode);
     }
 
-    public NIterator<NId> findNonSingleVersionImpl(final NId id, NIdFilter idFilter, NFetchMode fetchMode) {
+    public NIterator<NId> findNonSingleVersionImpl(final NId id, NDefinitionFilter idFilter, NFetchMode fetchMode) {
         if(disableMe){
             return NIterator.ofEmpty();
         }

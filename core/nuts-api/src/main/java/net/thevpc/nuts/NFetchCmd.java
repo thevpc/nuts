@@ -29,7 +29,6 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.util.NOptional;
 
 import java.time.Instant;
@@ -190,6 +189,7 @@ public interface NFetchCmd extends NWorkspaceCmd {
      * @return result as descriptor
      */
     NDescriptor getResultDescriptor();
+    NDescriptor getResultEffectiveDescriptor();
 
     /**
      * return result as InstallInformation
@@ -460,8 +460,8 @@ public interface NFetchCmd extends NWorkspaceCmd {
 
     NFetchCmd effective();
 
-    boolean isFilterCurrentEnvironment() ;
+    boolean isIgnoreCurrentEnvironment() ;
 
-    public NFetchCmd setFilterCurrentEnvironment(boolean filterCurrentEnvironment) ;
+    public NFetchCmd setIgnoreCurrentEnvironment(boolean ignoreCurrentEnvironment) ;
 
 }

@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.repository;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 public interface NIdPathIteratorModel {
@@ -12,7 +11,7 @@ public interface NIdPathIteratorModel {
 
     boolean isDescFile(NPath pathname);
 
-    NDescriptor parseDescriptor(NPath pathname, InputStream in, NFetchMode fetchMode, NRepository repository, NPath rootURL) throws IOException;
+    NDescriptor parseDescriptor(NPath pathname, InputStream in, NFetchMode fetchMode, NRepository repository, NPath rootURL) ;
 
-    NId parseId(NPath pathname, NPath rootPath, NIdFilter filter, NRepository repository) throws IOException;
+    NId parseId(NPath pathname, NPath rootPath, NDefinitionFilter filter, NRepository repository) ;
 }

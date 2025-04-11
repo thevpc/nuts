@@ -5,6 +5,7 @@ import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
+import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.repository.toolbox.ToolboxRepoHelper;
 import net.thevpc.nuts.runtime.standalone.repository.toolbox.ToolboxRepositoryModel;
 import net.thevpc.nuts.runtime.standalone.web.DefaultNWebCli;
@@ -22,7 +23,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
     public static final String HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT = "https://archive.apache.org/dist/tomcat/";
 
     @Override
-    public NIterator<NId> searchVersions(NId id, NIdFilter filter, NRepository repository) {
+    public NIterator<NId> searchVersions(NId id, NDefinitionFilter filter, NRepository repository) {
         return search(filter, new NPath[]{null}, repository);
     }
 
@@ -120,7 +121,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
     }
 
     @Override
-    public NIterator<NId> search(NIdFilter filter, NPath[] basePaths, NRepository repository) {
+    public NIterator<NId> search(NDefinitionFilter filter, NPath[] basePaths, NRepository repository) {
         //List<NutsId> all = new ArrayList<>();
 //        NutsWorkspace ws = session.getWorkspace();
         NIdBuilder idBuilder = NIdBuilder.of("org.apache.catalina", "apache-tomcat");
@@ -169,7 +170,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                                                                                 String v0 = s3.substring(finalPrefix.length(), s3.length() - 4);
                                                                                 NVersion v = NVersion.get(v0).get();
                                                                                 NId id2 = idBuilder.setVersion(v).build();
-                                                                                if (filter == null || filter.acceptId(id2)) {
+                                                                                if (filter == null || filter.acceptDefinition(NDefinitionHelper.ofIdOnly(id2))) {
                                                                                     return id2;
                                                                                 }
                                                                                 return null;
@@ -177,7 +178,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                                                                     .<NId>nonNull();
                                                         } else {
                                                             NId id2 = idBuilder.setVersion(version).build();
-                                                            if (filter == null || filter.acceptId(id2)) {
+                                                            if (filter == null || filter.acceptDefinition(NDefinitionHelper.ofIdOnly(id2))) {
                                                                 return NStream.ofSingleton(id2);
                                                             }
                                                             return NStream.ofEmpty();

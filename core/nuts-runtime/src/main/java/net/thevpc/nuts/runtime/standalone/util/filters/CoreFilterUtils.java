@@ -89,17 +89,10 @@ public class CoreFilterUtils {
         return Collections.singletonList(idFilter);
     }
 
-    public static NIdFilter idFilterOf(Map<String, String> map, NIdFilter idFilter, NDescriptorFilter
-            descriptorFilter) {
-        return NIdFilters.of().nonnull(idFilter).and(
-                CoreFilterUtils.createNutsDescriptorFilter(map).and(descriptorFilter).to(NIdFilter.class)
-        );
-    }
 
-
-    public static NDescriptorFilter createNutsDescriptorFilter(String arch, String os, String osDist, String
+    public static NDefinitionFilter createNutsDefinitionFilter(String arch, String os, String osDist, String
             platform, String desktopEnv) {
-        NDescriptorFilters d = NDescriptorFilters.of();
+        NDefinitionFilters d = NDefinitionFilters.of();
         return d.byArch(arch)
                 .and(d.byOs(os))
                 .and(d.byOsDist(osDist))
@@ -108,8 +101,8 @@ public class CoreFilterUtils {
                 ;
     }
 
-    public static NDescriptorFilter createNutsDescriptorFilter(Map<String, String> faceMap) {
-        return createNutsDescriptorFilter(
+    public static NDefinitionFilter createNutsDefinitionFilter(Map<String, String> faceMap) {
+        return createNutsDefinitionFilter(
                 faceMap == null ? null : faceMap.get(NConstants.IdProperties.ARCH),
                 faceMap == null ? null : faceMap.get(NConstants.IdProperties.OS),
                 faceMap == null ? null : faceMap.get(NConstants.IdProperties.OS_DIST),
@@ -118,12 +111,6 @@ public class CoreFilterUtils {
         );
     }
 
-    public static NPredicate<NId> createFilter(NIdFilter t) {
-        if (t == null) {
-            return null;
-        }
-        return new NIdFilterToPredicate(t);
-    }
 
 
     public static List<NExtensionInformation> filterNutsExtensionInfoByLatestVersion
@@ -403,7 +390,7 @@ public class CoreFilterUtils {
             return true;
         }
         NId currentId = NId.get(current).get();
-        if (allConditions != null && allConditions.size() > 0) {
+        if (allConditions != null && !allConditions.isEmpty()) {
             for (String cond : allConditions) {
                 if (NBlankable.isBlank(cond)) {
                     return true;
@@ -415,7 +402,25 @@ public class CoreFilterUtils {
         } else {
             return true;
         }
+    }
 
+    public static <T> boolean matchesEnum(T current, Collection<T> allConditions) {
+        if (NBlankable.isBlank(current)) {
+            return true;
+        }
+        if (allConditions != null && !allConditions.isEmpty()) {
+            for (T cond : allConditions) {
+                if (NBlankable.isBlank(cond)) {
+                    return true;
+                }
+                if(cond== current){
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            return true;
+        }
     }
 
     public static boolean matchesPlatform(Collection<NPlatformLocation> platforms, Collection<String> allCond) {

@@ -72,20 +72,23 @@ public final class NBootJsonParser {
     }
 
     public Object parse() {
-        try {
-            Object a = nextElement();
-            int p = st.nextToken();
-            if (p != StreamTokenizer.TT_EOF) {
-                throw new NBootException(NBootMsg.ofC("json syntax error :  encountered %s", st));
-            }
-            return a;
-        } catch (IOException ex) {
-            throw new NBootException(NBootMsg.ofC("json syntax error : %s", ex.getMessage()), ex);
+        Object a = nextElement();
+        int p = nextToken();
+        if (p != StreamTokenizer.TT_EOF) {
+            throw new NBootException(NBootMsg.ofC("json syntax error :  encountered %s", st));
         }
+        return a;
     }
 
-    private Object nextElement() throws IOException {
-        int p = st.nextToken();
+    private int nextToken(){
+        try {
+            return st.nextToken();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+    private Object nextElement()  {
+        int p = nextToken();
         switch (p) {
             case StreamTokenizer.TT_NUMBER: {
                 return st.nval;
@@ -119,20 +122,20 @@ public final class NBootJsonParser {
         }
     }
 
-    private List<Object> nextArray() throws IOException {
+    private List<Object> nextArray() {
         List<Object> arr = new ArrayList<>();
-        int p = st.nextToken();
+        int p = nextToken();
         if (p != '[') {
             throw new NBootException(NBootMsg.ofC("json syntax error : %s", str(p)));
         }
-        p = st.nextToken();
+        p = nextToken();
         if (p == ']') {
             return arr;
         } else {
             st.pushBack();
         }
         arr.add(nextElement());
-        while ((p = st.nextToken()) != StreamTokenizer.TT_EOF) {
+        while ((p = nextToken()) != StreamTokenizer.TT_EOF) {
             switch (p) {
                 case ']':
                     return arr;
@@ -146,8 +149,8 @@ public final class NBootJsonParser {
         throw new NBootException(NBootMsg.ofPlain("json syntax error : missing ]"));
     }
 
-    private void readChar(char expected) throws IOException {
-        int encountered = st.nextToken();
+    private void readChar(char expected)  {
+        int encountered = nextToken();
         if (encountered != expected) {
             throw new NBootException(
                     NBootMsg.ofC("json syntax error : expected %s  , encountered %s", str(expected), str(encountered))
@@ -155,7 +158,7 @@ public final class NBootJsonParser {
         }
     }
 
-    private Object[] nextKeyValue() throws IOException {
+    private Object[] nextKeyValue()  {
         Object t = nextElement();
         if (!(t instanceof String)) {
             throw new NBootException(NBootMsg.ofC("json syntax error : expected entry name, , encountered %s", t));
@@ -165,13 +168,13 @@ public final class NBootJsonParser {
         return new Object[]{t, v};
     }
 
-    private Map<String, Object> nextObject() throws IOException {
+    private Map<String, Object> nextObject() {
         Map<String, Object> map = new LinkedHashMap<>();
-        int p = st.nextToken();
+        int p = nextToken();
         if (p != '{') {
             throw new NBootException(NBootMsg.ofC("json syntax error : %s", p));
         }
-        p = st.nextToken();
+        p = nextToken();
         if (p == '}') {
             return map;
         } else {
@@ -179,7 +182,7 @@ public final class NBootJsonParser {
         }
         Object[] kv = nextKeyValue();
         map.put((String) kv[0], kv[1]);
-        while ((p = st.nextToken()) != StreamTokenizer.TT_EOF) {
+        while ((p = nextToken()) != StreamTokenizer.TT_EOF) {
             switch (p) {
                 case '}':
                     return map;

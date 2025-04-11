@@ -32,7 +32,7 @@ public class RemoteNSearchCmd extends AbstractNSearchCmd {
     protected NIterator<NId> getResultIdIteratorBase(Boolean forceInlineDependencies) {
         NElements e = NElements.of();
         NObjectElementBuilder eb = e.ofObjectBuilder()
-                .set("execType", getExecType())
+                .set("execType", getExecType().id())
                 .set("defaultVersions", getDefaultVersions())
                 .set("targetApiVersion", getTargetApiVersion().toString())
                 .set("optional", getOptional())
@@ -40,14 +40,8 @@ public class RemoteNSearchCmd extends AbstractNSearchCmd {
                 .set("packaging", e.ofArrayBuilder().addAll(getPackaging().toArray(new String[0])).build())
                 .set("ids", e.ofArrayBuilder().addAll(getIds().stream()
                         .map(Object::toString).toArray(String[]::new)).build());
-        if (getIdFilter() != null) {
-            eb.set("idFilter", e.toElement(getIdFilter()));
-        }
-        if (getDescriptorFilter() != null) {
-            eb.set("descriptorFilter", NElements.of().toElement(getDescriptorFilter()));
-        }
-        if (getInstallStatus() != null) {
-            eb.set("installStatus", e.ofString(getInstallStatus().toString()));
+        if (getDefinitionFilter() != null) {
+            eb.set("filter", NElements.of().toElement(getDefinitionFilter()));
         }
         if (getRepositoryFilter() != null) {
             eb.set("repositories", e.ofString(getRepositoryFilter().toString()));

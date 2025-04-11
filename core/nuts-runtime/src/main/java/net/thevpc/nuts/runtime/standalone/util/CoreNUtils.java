@@ -30,7 +30,6 @@ import net.thevpc.nuts.NConstants;
 
 import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.format.NDescriptorFormat;
-import net.thevpc.nuts.runtime.standalone.descriptor.util.NDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.NOsFamily;
@@ -44,6 +43,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -331,7 +331,7 @@ public class CoreNUtils {
         if (def.getDescriptor() != null) {
             x.put("descriptor", NDescriptorFormat.of(def.getDescriptor()).format());
             x.put("effective-descriptor", NDescriptorFormat.of(
-                    def.getEffectiveDescriptor().orElseGet(()->NWorkspace.of().resolveEffectiveDescriptor(def.getDescriptor(),new EffectiveNDescriptorConfig().setFilterCurrentEnvironment(true)))
+                    def.getEffectiveDescriptor().orElseGet(()->NWorkspace.of().resolveEffectiveDescriptor(def.getDescriptor(),new NDescriptorEffectiveConfig().setIgnoreCurrentEnvironment(true)))
             ).format());
         }
         return x;
@@ -675,5 +675,6 @@ public class CoreNUtils {
         }
         throw new IllegalArgumentException("value is not copiable : " + value);
     }
+
 
 }

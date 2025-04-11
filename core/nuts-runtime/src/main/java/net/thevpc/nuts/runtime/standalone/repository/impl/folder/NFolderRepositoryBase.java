@@ -9,6 +9,7 @@ import net.thevpc.nuts.NStoreStrategy;
 import net.thevpc.nuts.format.NTreeVisitResult;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.repository.NIdPathIterator;
 import net.thevpc.nuts.runtime.standalone.repository.NIdPathIteratorBase;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NCachedRepository;
@@ -63,12 +64,12 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
     }
 
     @Override
-    public NIterator<NId> searchVersionsCore(final NId id, NIdFilter idFilter, NFetchMode fetchMode) {
+    public NIterator<NId> searchVersionsCore(final NId id, NDefinitionFilter idFilter, NFetchMode fetchMode) {
         if (!acceptedFetchNoCache(fetchMode)) {
             return null;
         }
-        NIdFilter filter2 = NIdFilters.of().nonnull(idFilter).and(
-                NIdFilters.of().byName(id.getShortName())
+        NDefinitionFilter filter2 = NDefinitionFilters.of().nonnull(idFilter).and(
+                NDefinitionFilters.of().byName(id.getShortName())
         );
         if (id.getVersion().isSingleValue()) {
             return findSingleVersionImpl(id, filter2, fetchMode);
@@ -96,7 +97,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
 
 
     @Override
-    public NIterator<NId> searchCore(final NIdFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode) {
+    public NIterator<NId> searchCore(final NDefinitionFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode) {
         if (!acceptedFetchNoCache(fetchMode)) {
             return null;
         }
@@ -183,7 +184,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
         }
     }
 
-    public NIterator<NId> findNonSingleVersionImpl(final NId id, NIdFilter idFilter, NFetchMode fetchMode) {
+    public NIterator<NId> findNonSingleVersionImpl(final NId id, NDefinitionFilter idFilter, NFetchMode fetchMode) {
         String groupId = id.getGroupId();
         String artifactId = id.getArtifactId();
         NPath foldersFileUrl = config().getLocationPath().resolve(groupId.replace('.', '/') + "/" + artifactId + "/");
@@ -202,7 +203,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                                     NId expectedId = NIdBuilder.of(groupId, artifactId).setVersion(versionName).build();
                                     if (isValidArtifactVersionFolder(expectedId, versionFolder)) {
                                         final NId nutsId = id.builder().setVersion(versionFolder.getName()).build();
-                                        if (idFilter == null || idFilter.acceptId(nutsId)) {
+                                        if (idFilter == null || idFilter.acceptDefinition(NDefinitionHelper.ofIdOnly(nutsId))) {
                                             return expectedId;
                                         }
                                     }
@@ -225,7 +226,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
         return versionFolder.resolve(expectedFileName).isRegularFile();
     }
 
-    public NIterator<NId> findSingleVersionImpl(final NId id, NIdFilter idFilter, NFetchMode fetchMode) {
+    public NIterator<NId> findSingleVersionImpl(final NId id, NDefinitionFilter idFilter, NFetchMode fetchMode) {
         String singleVersion = id.getVersion().asSingleValue().orNull();
         NSession session = getWorkspace().currentSession();
         if (singleVersion != null) {

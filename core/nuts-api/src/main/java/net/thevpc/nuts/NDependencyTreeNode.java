@@ -45,6 +45,10 @@ public interface NDependencyTreeNode extends Serializable {
      */
     NDependency getDependency();
 
+    boolean isOptional();
+
+    boolean isProvided();
+
     /**
      * node children
      *

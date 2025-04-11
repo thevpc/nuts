@@ -3,40 +3,43 @@ package net.thevpc.nuts.runtime.standalone.repository;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NInputStreamMonitor;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.id.filter.NSearchIdByDescriptor;
-import net.thevpc.nuts.runtime.standalone.id.filter.NSearchIdById;
+import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.util.NMsg;
 
-import java.io.IOException;
 import java.util.logging.Level;
 
 public abstract class NIdPathIteratorBase implements NIdPathIteratorModel {
+
+    public NIdPathIteratorBase() {
+    }
+
     public abstract NWorkspace getWorkspace();
-    public NId validate(NId id, NDescriptor t, NPath pathname, NPath rootPath, NIdFilter filter, NRepository repository) throws IOException {
-        if (t != null) {
-            if (!CoreNUtils.isEffectiveId(t.getId())) {
-                NDescriptor nutsDescriptor = null;
+    public NId validate(NId id, NDescriptor descriptor, NPath pathname, NPath rootPath, NDefinitionFilter filter, NRepository repository)  {
+        if (descriptor != null) {
+            if (!CoreNUtils.isEffectiveId(descriptor.getId())) {
+                NDescriptor effectiveDescriptor = null;
                 try {
-                    nutsDescriptor = NWorkspace.of().resolveEffectiveDescriptor(t,new EffectiveNDescriptorConfig().setFilterCurrentEnvironment(true));
+                    effectiveDescriptor = NWorkspace.of().resolveEffectiveDescriptor(descriptor);
                 } catch (Exception ex) {
                     NLogOp.of(NIdPathIteratorBase.class).level(Level.FINE).error(ex).log(
-                            NMsg.ofJ("error resolving effective descriptor for {0} in url {1} : {2}", t.getId(),
+                            NMsg.ofC("error resolving effective descriptor for %s in url %s : %s", descriptor.getId(),
                                     pathname,
                                     ex));//e.printStackTrace();
                 }
-                t = nutsDescriptor;
+                if(effectiveDescriptor!=null){
+                    descriptor = effectiveDescriptor;
+                }
             }
-            if ((filter == null || filter.acceptSearchId(new NSearchIdByDescriptor(t)))) {
-                NId nutsId = t.getId().builder().setRepository(repository.getName()).build();
+            if ((filter == null || filter.acceptDefinition(NDefinitionHelper.ofDescriptorOnly(descriptor)))) {
+                NId nutsId = descriptor.getId().builder().setRepository(repository.getName()).build();
 //                        nutsId = nutsId.setAlternative(t.getAlternative());
                 return nutsId;
             }
         }
         if (id != null) {
-            if ((filter == null || filter.acceptSearchId(new NSearchIdById(id)))) {
+            if ((filter == null || filter.acceptDefinition(NDefinitionHelper.ofIdOnly(id)))) {
                 return id;
             }
         }
@@ -44,7 +47,7 @@ public abstract class NIdPathIteratorBase implements NIdPathIteratorModel {
     }
 
     @Override
-    public NId parseId(NPath pathname, NPath rootPath, NIdFilter filter, NRepository repository) throws IOException {
+    public NId parseId(NPath pathname, NPath rootPath, NDefinitionFilter filter, NRepository repository)  {
         NDescriptor t = null;
         try {
             t = parseDescriptor(pathname, NInputStreamMonitor.of().setSource(pathname).create(),

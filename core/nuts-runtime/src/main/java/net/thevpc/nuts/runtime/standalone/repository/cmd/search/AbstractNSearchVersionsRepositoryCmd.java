@@ -20,7 +20,7 @@ public abstract class AbstractNSearchVersionsRepositoryCmd extends NRepositoryCm
 
     protected NId id;
     protected NIterator<NId> result;
-    protected NIdFilter filter;
+    protected NDefinitionFilter filter;
 
     public AbstractNSearchVersionsRepositoryCmd(NRepository repo) {
         super(repo, "search-versions");
@@ -40,13 +40,13 @@ public abstract class AbstractNSearchVersionsRepositoryCmd extends NRepositoryCm
 //    }
 
     @Override
-    public NSearchVersionsRepositoryCmd setFilter(NIdFilter filter) {
+    public NSearchVersionsRepositoryCmd setFilter(NDefinitionFilter filter) {
         this.filter = filter;
         return this;
     }
 
     @Override
-    public NIdFilter getFilter() {
+    public NDefinitionFilter getFilter() {
         return filter;
     }
 

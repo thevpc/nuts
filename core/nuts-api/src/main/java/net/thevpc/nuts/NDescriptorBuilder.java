@@ -73,7 +73,9 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      *
      * @return true if the artifact is a java executable that implements {@link NApplication} interface.
      */
-    boolean isApplication();
+    boolean isNutsApplication();
+
+    boolean isPlatformApplication();
 
 
     /**

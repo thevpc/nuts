@@ -159,7 +159,7 @@ public class DefaultNDescriptorPropertyBuilder implements NDescriptorPropertyBui
 
     @Override
     public NDescriptorProperty build() {
-        return new DefaultNDescriptorProperty(getName(), getValue(), getCondition().readOnly());
+        return new DefaultNDescriptorProperty(getName(), getValue(), getCondition().build());
     }
 
     @Override

@@ -10,10 +10,10 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
+import net.thevpc.nuts.runtime.standalone.definition.filter.NDefinitionFilterAnd;
+import net.thevpc.nuts.runtime.standalone.definition.filter.NInstallStatusDefinitionFilter2;
 import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
-import net.thevpc.nuts.util.NAsk;
-import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -208,7 +208,7 @@ public class NDeleteFileHelper {
                                 // the children (asynchronous)
                                 //try three times and then exit!
                             }
-                            NWorkspaceProfilerImpl.sleep(500,"NDeleteFileHelper::workaround-delete");
+                            NWorkspaceProfilerImpl.sleep(500, "NDeleteFileHelper::workaround-delete");
                         }
                         if (!deleted) {
                             //do not catch, last time the exception is thrown

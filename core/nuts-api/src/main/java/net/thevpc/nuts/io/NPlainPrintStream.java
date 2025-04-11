@@ -23,7 +23,7 @@ public class NPlainPrintStream implements NPrintStream {
     public OutputStream getOutputStream() {
         return new OutputStream() {
             @Override
-            public void write(int b) throws IOException {
+            public void write(int b)  {
                 sb.append((char) b);
             }
         };
@@ -275,7 +275,7 @@ public class NPlainPrintStream implements NPrintStream {
     public OutputStream asOutputStream() {
         return new OutputStream() {
             @Override
-            public void write(int b) throws IOException {
+            public void write(int b)  {
                 sb.append((char) b);
             }
         };

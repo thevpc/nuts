@@ -19,6 +19,7 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.web.NWebCli;
+import sun.misc.LRUCache;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class URLPath implements NPathSPI {
 
     private final NWorkspace workspace;
     protected URL url;
-    protected NCachedValue<CacheInfo> cachedHeader;
+    protected static final NLRUMap<URL, NCachedValue<CacheInfo>> cacheManager = new NLRUMap<URL, NCachedValue<CacheInfo>>(1024);
 
 
     public URLPath(URL url, NWorkspace workspace) {
@@ -53,10 +54,19 @@ public class URLPath implements NPathSPI {
             }
         }
         this.url = url;
-        cachedHeader = new NCachedValue<>(
-                () -> loadCacheInfo(), 1000
-        );
     }
+
+    private NCachedValue<CacheInfo> cachedHeader() {
+        NCachedValue<CacheInfo> o = cacheManager.get(url);
+        if (o == null) {
+            o = new NCachedValue<>(
+                    () -> loadCacheInfo(url), 5000
+            );
+            cacheManager.put(url, o);
+        }
+        return o;
+    }
+
 
     public NWorkspace getWorkspace() {
         return workspace;
@@ -284,7 +294,7 @@ public class URLPath implements NPathSPI {
             return f.exists();
         }
         try {
-            CacheInfo a = cachedHeader.getValue();
+            CacheInfo a = cachedHeader().getValue();
             if (a != null) {
                 int r = a.responseCode;
                 return r >= 200 && r < 300;
@@ -309,7 +319,7 @@ public class URLPath implements NPathSPI {
             return f.contentLength();
         }
         try {
-            CacheInfo a = cachedHeader.getValue();
+            CacheInfo a = cachedHeader().getValue();
             if (a != null) {
                 return a.contentLength;
             }
@@ -321,7 +331,7 @@ public class URLPath implements NPathSPI {
 
     public String getContentEncoding(NPath basePath) {
         try {
-            CacheInfo a = cachedHeader.getValue();
+            CacheInfo a = cachedHeader().getValue();
             if (a != null) {
                 return a.contentEncoding;
             }
@@ -340,7 +350,7 @@ public class URLPath implements NPathSPI {
             return f.contentType();
         }
         try {
-            CacheInfo a = cachedHeader.getValue();
+            CacheInfo a = cachedHeader().getValue();
             if (a != null) {
                 return a.contentType;
             }
@@ -360,7 +370,7 @@ public class URLPath implements NPathSPI {
             return f.contentType();
         }
         try {
-            CacheInfo a = cachedHeader.getValue();
+            CacheInfo a = cachedHeader().getValue();
             if (a != null) {
                 return a.contentEncoding;
             }
@@ -444,7 +454,7 @@ public class URLPath implements NPathSPI {
             return f.lastModifiedInstant();
         }
         try {
-            CacheInfo a = cachedHeader.getValue();
+            CacheInfo a = cachedHeader().getValue();
             if (a != null) {
                 return a.lastModified;
             }
@@ -619,9 +629,9 @@ public class URLPath implements NPathSPI {
         throw new NIOException(NMsg.ofC("unable to move %s", this));
     }
 
-    private CacheInfo loadCacheInfo() {
+    private static CacheInfo loadCacheInfo(URL url) {
         NChronometer chrono = NChronometer.startNow();
-        boolean success=true;
+        boolean success = true;
         try {
             URLConnection c = url.openConnection();
             DefaultNWebCli.prepareGlobalConnection(c);
@@ -644,14 +654,14 @@ public class URLPath implements NPathSPI {
             }
             return cc;
         } catch (Exception ex) {
-            success=false;
+            success = false;
             //
-        }finally {
+        } finally {
             NLog.of(URLPath.class).with()
                     .level(Level.FINEST)
-                    .verb(success?NLogVerb.SUCCESS:NLogVerb.FAIL)
+                    .verb(success ? NLogVerb.SUCCESS : NLogVerb.FAIL)
                     .time(chrono.stop().getDurationMs())
-                    .log(NMsg.ofC("loadCacheInfo %s", url));
+                    .log(NMsg.ofC("load url info %s", url));
         }
         return null;
     }

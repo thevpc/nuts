@@ -51,7 +51,7 @@ import java.util.function.Predicate;
  * @app.category Base
  * @since 0.5.4
  */
-public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
+public interface NWorkspace extends NWorkspaceBase, NEnvContext, NComponent, Closeable {
     static NWorkspace of() {
         return get().get();
     }
@@ -68,7 +68,9 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
         return NScopedWorkspace.callWith(callable);
     }
 
-    NDescriptor resolveEffectiveDescriptor(NDescriptor descriptor, EffectiveNDescriptorConfig effectiveNDescriptorConfig);
+    NDescriptor resolveEffectiveDescriptor(NDescriptor descriptor, NDescriptorEffectiveConfig effectiveNDescriptorConfig);
+
+    NDescriptor resolveEffectiveDescriptor(NDescriptor descriptor);
 
     NWorkspace setSharedInstance();
 

@@ -52,6 +52,14 @@ public interface NSearchCmd extends NWorkspaceCmd {
         return NExtensions.of(NSearchCmd.class);
     }
 
+    static NSearchCmd of(String... ids) {
+        return NExtensions.of(NSearchCmd.class).addIds(ids);
+    }
+
+    static NSearchCmd of(NId... ids) {
+        return NExtensions.of(NSearchCmd.class).addIds(ids);
+    }
+
     NOptional<NFetchStrategy> getFetchStrategy();
 
     NOptional<Boolean> getTransitive();
@@ -206,7 +214,7 @@ public interface NSearchCmd extends NWorkspaceCmd {
      *
      * @return nuts app filter
      */
-    boolean isApplication();
+    boolean isNutsApplication();
 
     /**
      * set nuts app filter. if true Nuts app (implementing NApplication) only
@@ -215,7 +223,24 @@ public interface NSearchCmd extends NWorkspaceCmd {
      * @param enable ap filter
      * @return {@code this} instance
      */
-    NSearchCmd setApplication(boolean enable);
+    NSearchCmd setNutsApplication(boolean enable);
+
+
+    /**
+     * nuts app filter
+     *
+     * @return nuts app filter
+     */
+    boolean isPlatformApplication();
+
+    /**
+     * set nuts app filter. if true Nuts app (implementing NApplication) only
+     * are retrieved.
+     *
+     * @param enable ap filter
+     * @return {@code this} instance
+     */
+    NSearchCmd setPlatformApplication(boolean enable);
 
     /**
      * lib filter
@@ -551,7 +576,7 @@ public interface NSearchCmd extends NWorkspaceCmd {
      *
      * @return descriptor filter
      */
-    NDescriptorFilter getDescriptorFilter();
+    NDefinitionFilter getDefinitionFilter();
 
     /**
      * define descriptor filter.
@@ -559,7 +584,7 @@ public interface NSearchCmd extends NWorkspaceCmd {
      * @param filter descriptor filter
      * @return {@code this} instance
      */
-    NSearchCmd setDescriptorFilter(NDescriptorFilter filter);
+    NSearchCmd setDefinitionFilter(NDefinitionFilter filter);
 
     ////////////////////////////////////////////////////////
     // Getters
@@ -571,30 +596,7 @@ public interface NSearchCmd extends NWorkspaceCmd {
      * @param filter descriptor filter
      * @return {@code this} instance
      */
-    NSearchCmd setDescriptorFilter(String filter);
-
-    /**
-     * return id filter
-     *
-     * @return id filter
-     */
-    NIdFilter getIdFilter();
-
-    /**
-     * define id filter.
-     *
-     * @param filter id filter
-     * @return {@code this} instance
-     */
-    NSearchCmd setIdFilter(NIdFilter filter);
-
-    /**
-     * define id filter.
-     *
-     * @param filter id filter
-     * @return {@code this} instance
-     */
-    NSearchCmd setIdFilter(String filter);
+    NSearchCmd setDefinitionFilter(String filter);
 
     List<String> getArch();
 
@@ -1114,21 +1116,6 @@ public interface NSearchCmd extends NWorkspaceCmd {
     NStream<String> getResultArch();
 
     /**
-     * return the defined installStatus
-     *
-     * @return {@code this} instance
-     */
-    NInstallStatusFilter getInstallStatus();
-
-    /**
-     * search for non packages with the given {@code installStatus}
-     *
-     * @param installStatus new status
-     * @return {@code this} instance
-     */
-    NSearchCmd setInstallStatus(NInstallStatusFilter installStatus);
-
-    /**
      * add id to search.
      *
      * @param id id to search
@@ -1146,7 +1133,7 @@ public interface NSearchCmd extends NWorkspaceCmd {
 
     NElement getResultQueryPlan();
 
-    boolean isFilterCurrentEnvironment() ;
+    boolean isIgnoreCurrentEnvironment();
 
-    NSearchCmd setFilterCurrentEnvironment(boolean filterCurrentEnvironment) ;
+    NSearchCmd setIgnoreCurrentEnvironment(boolean ignoreCurrentEnvironment);
 }

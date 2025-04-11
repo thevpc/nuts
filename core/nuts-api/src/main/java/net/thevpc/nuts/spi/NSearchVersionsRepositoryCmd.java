@@ -35,9 +35,9 @@ import net.thevpc.nuts.util.NIterator;
  */
 public interface NSearchVersionsRepositoryCmd extends NRepositoryCmd {
 
-    NIdFilter getFilter();
+    NDefinitionFilter getFilter();
 
-    NSearchVersionsRepositoryCmd setFilter(NIdFilter filter);
+    NSearchVersionsRepositoryCmd setFilter(NDefinitionFilter filter);
 
     NId getId();
 

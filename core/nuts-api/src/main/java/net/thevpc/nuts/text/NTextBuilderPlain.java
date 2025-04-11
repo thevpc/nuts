@@ -1,5 +1,7 @@
 package net.thevpc.nuts.text;
 
+import net.thevpc.nuts.NI18n;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.util.NStringBuilder;
 
@@ -342,7 +344,7 @@ public class NTextBuilderPlain implements NTextBuilder {
 
     @Override
     public NStream<NTextBuilder> lines() {
-        throw new IllegalArgumentException("not supported method lines");
+        throw new IllegalArgumentException(NMsg.ofC(NI18n.of("not supported method %s"),"lines()").toString());
     }
 
     @Override

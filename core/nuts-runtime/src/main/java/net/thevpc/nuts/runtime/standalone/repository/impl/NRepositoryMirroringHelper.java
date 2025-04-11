@@ -10,6 +10,7 @@ import net.thevpc.nuts.NSpeedQualifier;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNContentEvent;
 import net.thevpc.nuts.runtime.standalone.id.filter.NSearchIdByDescriptor;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
@@ -43,7 +44,7 @@ public class NRepositoryMirroringHelper {
         this.cache = cache;
     }
 
-    protected NIterator<NId> searchVersionsImpl_appendMirrors(NIterator<NId> namedNutIdIterator, NId id, NIdFilter idFilter, NFetchMode fetchMode) {
+    protected NIterator<NId> searchVersionsImpl_appendMirrors(NIterator<NId> namedNutIdIterator, NId id, NDefinitionFilter idFilter, NFetchMode fetchMode) {
         NSession session = repo.getWorkspace().currentSession();
         if (!session.isTransitive()) {
             return namedNutIdIterator;
@@ -137,7 +138,7 @@ public class NRepositoryMirroringHelper {
         return null;
     }
 
-    public NIterator<NId> search(NIterator<NId> li, NIdFilter filter, NFetchMode fetchMode) {
+    public NIterator<NId> search(NIterator<NId> li, NDefinitionFilter filter, NFetchMode fetchMode) {
         NRepositoryConfigManager rconfig = repo.config();
         NSession session = repo.getWorkspace().currentSession();
         if (!session.isTransitive() || !rconfig.isSupportedMirroring()) {
@@ -212,7 +213,7 @@ public class NRepositoryMirroringHelper {
         }
     }
 
-    public NId searchLatestVersion(NId bestId, NId id, NIdFilter filter, NFetchMode fetchMode) {
+    public NId searchLatestVersion(NId bestId, NId id, NDefinitionFilter filter, NFetchMode fetchMode) {
         NRepositoryConfigManager rconfig = repo.config();
         NSession session = repo.getWorkspace().currentSession();
         if (session.isTransitive() && rconfig.isSupportedMirroring()) {
@@ -225,7 +226,7 @@ public class NRepositoryMirroringHelper {
                     //ignore
                 }
                 if (nutsDescriptor != null) {
-                    if (filter == null || filter.acceptSearchId(new NSearchIdByDescriptor(nutsDescriptor))) {
+                    if (filter == null || filter.acceptDefinition(NDefinitionHelper.ofDescriptorOnly(nutsDescriptor))) {
 //                        NutsId id2 = C                                oreNutsUtils.createComponentFaceId(getWorkspace().resolveEffectiveId(nutsDescriptor,session),nutsDescriptor,null);
                         NWorkspaceExt dws = NWorkspaceExt.of();
                         NId id2 = dws.resolveEffectiveId(nutsDescriptor).builder().setFaceDescriptor().build();

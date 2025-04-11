@@ -30,11 +30,12 @@ import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Created by vpc on 1/6/17.
  */
-public class DefaultNDefinitionBuilder /*implements NDefinition*/ {
+public class DefaultNDefinitionBuilder implements NDefinitionBuilder {
 
     private NId id;
     private NDescriptor descriptor;
@@ -45,12 +46,14 @@ public class DefaultNDefinitionBuilder /*implements NDefinition*/ {
     private NInstallInformation installInformation;
     private NDependencies dependencies;
     private NDescriptor effectiveDescriptor;
+    private NDependency dependency;
     private NId apiId = null;
+    private Set<NDescriptorFlag> effectiveFlags;
 
     public DefaultNDefinitionBuilder() {
     }
 
-    public DefaultNDefinitionBuilder(String repoUuid, String repoName, NId id, NDescriptor descriptor, NPath content, NInstallInformation install, NId apiId) {
+    public DefaultNDefinitionBuilder(String repoUuid, String repoName, NId id, NDescriptor descriptor, NPath content, NInstallInformation install, NId apiId, NDependency dependency,Set<NDescriptorFlag> effectiveFlags) {
         this.descriptor = descriptor;
         this.content = content;
         this.id = id;
@@ -61,6 +64,8 @@ public class DefaultNDefinitionBuilder /*implements NDefinition*/ {
         this.repositoryUuid = repoUuid;
         this.repositoryName = repoName;
         this.apiId = apiId;
+        this.dependency = dependency;
+        this.effectiveFlags = effectiveFlags;
     }
 
     public DefaultNDefinitionBuilder(NDefinition other) {
@@ -75,6 +80,8 @@ public class DefaultNDefinitionBuilder /*implements NDefinition*/ {
             this.effectiveDescriptor = other.getEffectiveDescriptor().orNull();
             this.dependencies = other.getDependencies().orNull();
             this.apiId = other.getApiId();
+            this.dependency = other.getDependency();
+            this.effectiveFlags = other.getEffectiveFlags().orNull();
         }
     }
 
@@ -90,34 +97,56 @@ public class DefaultNDefinitionBuilder /*implements NDefinition*/ {
             this.effectiveDescriptor = other.getEffectiveDescriptor().orNull();
             this.dependencies = other.getDependencies().orNull();
             this.apiId = other.getApiId();
+            this.dependency = other.getDependency();
+            this.effectiveFlags = other.getEffectiveFlags().orNull();
         }
     }
 
-    public NDefinition build() {
-        return new DefaultNDefinition(repositoryUuid, repositoryName, id, descriptor, content, installInformation, apiId,effectiveDescriptor, dependencies);
+    @Override
+    public NDependency getDependency() {
+        return dependency;
     }
 
+    @Override
+    public NDefinitionBuilder setDependency(NDependency dependency) {
+        this.dependency = dependency;
+        return this;
+    }
+
+    @Override
+    public NDefinition build() {
+        return new DefaultNDefinition(repositoryUuid, repositoryName, id, descriptor, content, installInformation, apiId, effectiveDescriptor, dependencies,
+                dependency != null ? dependency : id != null ? id.toDependency() : null,effectiveFlags
+        );
+    }
+
+    @Override
     public String getRepositoryUuid() {
         return repositoryUuid;
     }
 
+    @Override
     public String getRepositoryName() {
         return repositoryName;
     }
 
-    public DefaultNDefinitionBuilder setId(NId id) {
+    @Override
+    public NDefinitionBuilder setId(NId id) {
         this.id = id;
         return this;
     }
 
+    @Override
     public NId getId() {
         return id;
     }
 
+    @Override
     public boolean isTemporary() {
         return content != null && content.isUserTemporary();
     }
 
+    @Override
     public NDescriptor getDescriptor() {
         return descriptor;
     }
@@ -130,41 +159,48 @@ public class DefaultNDefinitionBuilder /*implements NDefinition*/ {
                 + '}';
     }
 
-    public DefaultNDefinitionBuilder copy() {
+    @Override
+    public NDefinitionBuilder copy() {
         return new DefaultNDefinitionBuilder(this);
     }
 
+    @Override
     public NOptional<NPath> getContent() {
         return NOptional.of(content, () -> NMsg.ofC("content not found for id %s", getId()));
     }
 
+    @Override
     public NOptional<NDescriptor> getEffectiveDescriptor() {
         return NOptional.of(effectiveDescriptor, () -> NMsg.ofC("unable to get effectiveDescriptor for id %s. You need to call search.setEffective(...) first.", getId()));
     }
 
+    @Override
     public NOptional<NInstallInformation> getInstallInformation() {
         return NOptional.of(installInformation, () -> NMsg.ofC("unable to get install information for id %s.", getId()));
     }
 
+    @Override
     public NOptional<NDependencies> getDependencies() {
         return NOptional.of(dependencies, () -> NMsg.ofC("unable to get dependencies for id %s. You need to call search.setDependencies(...) first.", getId()));
     }
 
-    public DefaultNDefinitionBuilder setContent(NPath content) {
+    @Override
+    public NDefinitionBuilder setContent(NPath content) {
         this.content = content;
         return this;
     }
 
-    public DefaultNDefinitionBuilder setDescriptor(NDescriptor descriptor) {
+    @Override
+    public NDefinitionBuilder setDescriptor(NDescriptor descriptor) {
         this.descriptor = descriptor;
         return this;
     }
 
-    public int compareTo(DefaultNDefinitionBuilder n2) {
+    public int compareTo(NDefinitionBuilder n2) {
         if (n2 == null) {
             return 1;
         }
-        if (!(n2 instanceof DefaultNDefinitionBuilder)) {
+        if (!(n2 instanceof NDefinitionBuilder)) {
             return -1;
         }
         NId o1 = getId();
@@ -199,44 +235,62 @@ public class DefaultNDefinitionBuilder /*implements NDefinition*/ {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final DefaultNDefinitionBuilder other = (DefaultNDefinitionBuilder) obj;
-        if (!Objects.equals(this.id, other.id)) {
+        final NDefinitionBuilder other = (NDefinitionBuilder) obj;
+        if (!Objects.equals(this.id, other.getId())) {
             return false;
         }
         return true;
     }
 
-    public DefaultNDefinitionBuilder setEffectiveDescriptor(NDescriptor effectiveDescriptor) {
+    @Override
+    public NDefinitionBuilder setEffectiveDescriptor(NDescriptor effectiveDescriptor) {
         this.effectiveDescriptor = effectiveDescriptor;
         return this;
     }
 
-    public DefaultNDefinitionBuilder setInstallInformation(NInstallInformation install) {
+    @Override
+    public NDefinitionBuilder setInstallInformation(NInstallInformation install) {
         this.installInformation = install;
         return this;
     }
 
-    public DefaultNDefinitionBuilder setDependencies(NDependencies dependencies) {
+    @Override
+    public NDefinitionBuilder setDependencies(NDependencies dependencies) {
         this.dependencies = dependencies;
         return this;
     }
 
-    public DefaultNDefinitionBuilder setApiId(NId apiId) {
+    @Override
+    public NDefinitionBuilder setApiId(NId apiId) {
         this.apiId = apiId;
         return this;
     }
 
+    @Override
     public NId getApiId() {
         return apiId;
     }
 
-    public DefaultNDefinitionBuilder setRepositoryUuid(String repositoryUuid) {
+    @Override
+    public NDefinitionBuilder setRepositoryUuid(String repositoryUuid) {
         this.repositoryUuid = repositoryUuid;
         return this;
     }
 
-    public DefaultNDefinitionBuilder setRepositoryName(String repositoryName) {
+    @Override
+    public NDefinitionBuilder setRepositoryName(String repositoryName) {
         this.repositoryName = repositoryName;
         return this;
+    }
+
+    @Override
+    public NDefinitionBuilder setEffectiveFlags(Set<NDescriptorFlag> effectiveFlags) {
+        this.effectiveFlags = effectiveFlags;
+        return this;
+    }
+
+    @Override
+    public NOptional<Set<NDescriptorFlag>> getEffectiveFlags() {
+        return NOptional.of(effectiveFlags, () -> NMsg.ofC("unable to get effectiveFlags for id %s.", getId()));
     }
 }

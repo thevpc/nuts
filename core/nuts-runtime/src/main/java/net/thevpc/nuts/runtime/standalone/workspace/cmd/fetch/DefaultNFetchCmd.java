@@ -7,13 +7,14 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.NLocationKey;
-import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
+import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder2;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
+import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
+import net.thevpc.nuts.runtime.standalone.util.ValueSupplier;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
-import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalledRepository;
@@ -26,10 +27,13 @@ import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NNameFormat;
 
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 
 public class DefaultNFetchCmd extends AbstractNFetchCmd {
@@ -42,7 +46,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     @Override
     public NPath getResultContent() {
         try {
-            NDefinition def = fetchDefinition(getId(), copy().setContent(true).setEffective(false), true, false);
+            NDefinition def = fetchDefinition(getId());
             if (def.getDescriptor().isNoContent()) {
                 return null;
             }
@@ -64,7 +68,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     @Override
     public NId getResultId() {
         try {
-            NDefinition def = fetchDefinition(getId(), this, false, false);
+            NDefinition def = fetchDefinition(getId());
             if (isEffective()) {
                 return NWorkspaceExt.of().resolveEffectiveId(def.getEffectiveDescriptor().get());
             }
@@ -105,7 +109,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     @Override
     public NDefinition getResultDefinition() {
         try {
-            return fetchDefinition(getId(), this, isContent(), true);
+            return fetchDefinition(getId());
         } catch (NNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
@@ -117,11 +121,24 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     @Override
     public NDescriptor getResultDescriptor() {
         try {
-            NDefinition def = fetchDefinition(getId(), copy().setContent(false), false, false);
+            NDefinition def = fetchDefinition(getId());
             if (isEffective()) {
                 return def.getEffectiveDescriptor().get();
             }
             return def.getDescriptor();
+        } catch (NNotFoundException ex) {
+            if (!isFailFast()) {
+                return null;
+            }
+            throw ex;
+        }
+    }
+
+    @Override
+    public NDescriptor getResultEffectiveDescriptor() {
+        try {
+            NDefinition def = fetchDefinition(getId());
+            return def.getEffectiveDescriptor().get();
         } catch (NNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
@@ -143,7 +160,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
 
     public NPath getResultPath() {
         try {
-            NDefinition def = fetchDefinition(getId(), copy().setContent(true).setEffective(false), true, false);
+            NDefinition def = fetchDefinition(getId());
             return def.getContent().orNull();
         } catch (NNotFoundException ex) {
             if (!isFailFast()) {
@@ -166,14 +183,9 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
         return this;
     }
 
-    public NDefinition fetchDefinition(NId id, NFetchCmd options, boolean includeContent, boolean includeInstallInfo) {
-        NDefinition d = fetchDefinitionNoCache(id, options, includeContent, includeInstallInfo);
-        return d;
-    }
-
-    public NDefinition fetchDefinitionNoCache(NId id, NFetchCmd options, boolean includeContent, boolean includeInstallInfo) {
+    public NDefinition fetchDefinition(NId id) {
         long startTime = System.currentTimeMillis();
-        boolean idOptional = id.toDependency().isOptional();
+//        boolean idOptional = id.toDependency().isOptional();
         NWorkspace workspace = NWorkspace.of();
         NSession session = workspace.currentSession();
         NWorkspaceUtils wu = NWorkspaceUtils.of(workspace);
@@ -190,14 +202,13 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                         nutsFetchModes)
         );
 
-        DefaultNDefinitionBuilder foundDefinitionBuiler = null;
+        DefaultNDefinitionBuilder2 foundDefinitionBuilder = null;
         List<Exception> reasons = new ArrayList<>();
         NRepositoryAndFetchMode successfulDescriptorLocation = null;
-        NRepositoryAndFetchMode successfulContentLocation = null;
         try {
             //add env parameters to fetch adequate nuts
             id = wu.configureFetchEnv(id);
-            NDefinition result = null;
+            DefaultNDefinitionBuilder2 result = null;
             for (NRepositoryAndFetchMode location : descTracker.available()) {
                 try {
                     result = fetchDescriptorAsDefinition(id, nutsFetchModes, location.getFetchMode(), location.getRepository());
@@ -216,112 +227,13 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                     descTracker.addFailure(location);
                 }
             }
-            foundDefinitionBuiler = result==null?null:new DefaultNDefinitionBuilder(result);
-            if (foundDefinitionBuiler != null) {
-                if (options.isEffective() || isDependencies()) {
-                    try {
-                        foundDefinitionBuiler.setEffectiveDescriptor(NWorkspace.of().resolveEffectiveDescriptor(foundDefinitionBuiler.getDescriptor(),
-                                new EffectiveNDescriptorConfig().setFilterCurrentEnvironment(isFilterCurrentEnvironment())));
-                    } catch (NNotFoundException ex) {
-                        //ignore
-                        _LOGOP().level(Level.WARNING).verb(NLogVerb.WARNING)
-                                .log(NMsg.ofC("artifact descriptor found, but one of its parents or dependencies is not: %s : missing %s", id,
-                                        ex.getId()));
-                        foundDefinitionBuiler = null;
-                    }
-                }
-                if (foundDefinitionBuiler != null) {
-                    if (isDependencies()) {
-                        foundDefinitionBuiler.setDependencies(
-                                NDependencySolver.of()
-                                        .setFilterCurrentEnvironment(isFilterCurrentEnvironment())
-                                        .setDependencyFilter(buildActualDependencyFilter())
-                                        .add(id.toDependency(), foundDefinitionBuiler.build())
-                                        .setRepositoryFilter(this.getRepositoryFilter())
-                                        .solve()
-                        );
-                    }
-                    //boolean includeContent = shouldIncludeContent(options);
-                    // always ok for content, if 'content' flag is not armed, try find 'local' path
-                    NInstalledRepository installedRepository = dws.getInstalledRepository();
-                    if (includeContent) {
-                        if (!foundDefinitionBuiler.getDescriptor().isNoContent()) {
-                            boolean loadedFromInstallRepo = DefaultNInstalledRepository.INSTALLED_REPO_UUID.equals(successfulDescriptorLocation
-                                    .getRepository().getUuid());
-                            NId id1 = CoreNIdUtils.createContentFaceId(foundDefinitionBuiler.getId(), foundDefinitionBuiler.getDescriptor());
-//                        boolean escalateMode = false;
-                            boolean contentSuccessful = false;
-                            NRepositoryAndFetchModeTracker contentTracker = new NRepositoryAndFetchModeTracker(descTracker.available());
-                            NPath fetchedPath = fetchContent(id1, foundDefinitionBuiler, successfulDescriptorLocation, reasons);
-                            contentSuccessful = fetchedPath != null;
-                            if (contentSuccessful) {
-                                successfulContentLocation = successfulDescriptorLocation;
-                            } else {
-                                contentTracker.addFailure(successfulDescriptorLocation);
-                            }
-                            if (!contentSuccessful && !loadedFromInstallRepo) {
-                                if (successfulDescriptorLocation.getFetchMode() == NFetchMode.LOCAL) {
-                                    NRepositoryAndFetchMode finalSuccessfulDescriptorLocation = successfulDescriptorLocation;
-                                    NRepositoryAndFetchMode n = contentTracker.available().stream()
-                                            .filter(x -> x.getRepository().getUuid().equals(finalSuccessfulDescriptorLocation.getRepository().getUuid()) &&
-                                                    x.getFetchMode() == NFetchMode.REMOTE).findFirst().orElse(null);
-                                    if (n != null/* && contentTracker.accept(n)*/) {
-                                        fetchedPath = fetchContent(id1, foundDefinitionBuiler, n, reasons);
-                                        contentSuccessful = fetchedPath != null;
-                                        if (contentSuccessful) {
-                                            successfulContentLocation = n;
-                                        } else {
-                                            contentTracker.addFailure(n);
-                                        }
-                                    }
-                                }
-                            }
-                            if (!contentSuccessful) {
-                                for (NRepositoryAndFetchMode repoAndMode : contentTracker.available()) {
-                                    fetchedPath = fetchContent(id1, foundDefinitionBuiler, repoAndMode, reasons);
-                                    contentSuccessful = fetchedPath != null;
-                                    if (contentSuccessful) {
-                                        successfulContentLocation = repoAndMode;
-                                        break;
-                                    } else {
-                                        contentTracker.addFailure(repoAndMode);
-                                    }
-                                }
-                            }
-                            if (contentSuccessful) {
-                                if (loadedFromInstallRepo && successfulContentLocation != successfulDescriptorLocation) {
-                                    //this happens if the jar content is no more installed while its descriptor is still installed.
-                                    NRepositorySPI installedRepositorySPI = wu.repoSPI(installedRepository);
-
-                                    NDefinition finalFoundDefinition = foundDefinitionBuiler.build();
-                                    session.copy().setConfirm(NConfirmationMode.YES).runWith(() -> {
-                                        installedRepositorySPI.deploy()
-                                                .setId(finalFoundDefinition.getId())
-                                                .setDescriptor(finalFoundDefinition.getDescriptor())
-                                                //.setFetchMode(mode)
-                                                .setContent(finalFoundDefinition.getContent().get())
-                                                .run();
-                                    });
-
-                                }
-                            }
-                            if (!contentSuccessful /*&& includedRemote*/) {
-                                NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NLogVerb.FAIL,
-                                        "fetched descriptor but failed to fetch artifact binaries", startTime);
-                            }
-                        }
-                    }
-                    if (includeInstallInfo) {
-                        //will always load install information
-                        NInstallInformation ii = installedRepository.getInstallInformation(id);
-                        if (ii != null) {
-//                            ((DefaultNInstalledRepository) (dws.getInstalledRepository())).updateInstallInfoConfigInstallDate(id, Instant.now(), session);
-                            foundDefinitionBuiler.setInstallInformation(ii);
-                        } else {
-                            foundDefinitionBuiler.setInstallInformation(DefaultNInstallInfo.notInstalled(id));
-                        }
-                    }
-                }
+            foundDefinitionBuilder = result;
+            if (foundDefinitionBuilder != null) {
+                foundDefinitionBuilder.setEffectiveDescriptor(new NDefEffectiveDescriptorSupplier(foundDefinitionBuilder, id));
+                foundDefinitionBuilder.setDependencies(new NDefDependenciesSupplier(id, foundDefinitionBuilder));
+                foundDefinitionBuilder.setContent(new NDefContentSupplier(foundDefinitionBuilder, successfulDescriptorLocation, descTracker, reasons, wu, session, nutsFetchModes, id, startTime));
+                foundDefinitionBuilder.setInstallInformation(new NDefInstallInformationSupplier(dws, id));
+                foundDefinitionBuilder.setEffectiveFlags(new NDefNDescriptorFlagSetSupplier(id, foundDefinitionBuilder));
             }
         } catch (NNotFoundException ex) {
             reasons.add(ex);
@@ -331,7 +243,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
             NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NLogVerb.FAIL, "[unexpected] fetch definition", startTime);
             throw ex;
         }
-        if (foundDefinitionBuiler != null) {
+        if (foundDefinitionBuilder != null) {
 //            if (session.isTrace()) {
 //                NutsIterableOutput ff = CoreNutsUtils.getValidOutputFormat(session)
 //                        .session(session);
@@ -339,7 +251,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
 //                ff.next(foundDefinition);
 //                ff.complete();
 //            }
-            return foundDefinitionBuiler.build();
+            return foundDefinitionBuilder.build();
         }
         throw new NNotFoundException(id);
     }
@@ -351,126 +263,62 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                 ).and(getDependencyFilter());
     }
 
-    protected NPath fetchContent(NId id1, DefaultNDefinition foundDefinition, NRepository repo0, NFetchStrategy nutsFetchModes, List<Exception> reasons) {
-        NRepositorySPI repoSPI = NWorkspaceUtils.of().repoSPI(repo0);
-        for (NFetchMode mode : nutsFetchModes) {
-            try {
-                NPath content = repoSPI.fetchContent()
-                        .setId(id1).setDescriptor(foundDefinition.getDescriptor())
-                        .setFetchMode(mode)
-                        .getResult();
-                if (content != null) {
-                    content = repoSPI.fetchContent()
-                            .setId(id1).setDescriptor(foundDefinition.getDescriptor())
-                            .setFetchMode(mode)
-                            .getResult();
-                    foundDefinition.setContent(content);
-                    foundDefinition.setDescriptor(resolveExecProperties(foundDefinition.getDescriptor(), content));
-                    return content;
-                }
-            } catch (NNotFoundException ex) {
-                reasons.add(ex);
-                //
-            }
-        }
-        return null;
-    }
+//    protected NPath fetchContent(NId id1, NDefinitionBuilder foundDefinition, NRepository repo0, NFetchStrategy nutsFetchModes, List<Exception> reasons) {
+//        NRepositorySPI repoSPI = NWorkspaceUtils.of().repoSPI(repo0);
+//        for (NFetchMode mode : nutsFetchModes) {
+//            try {
+//                NPath content = repoSPI.fetchContent()
+//                        .setId(id1).setDescriptor(foundDefinition.getDescriptor())
+//                        .setFetchMode(mode)
+//                        .getResult();
+//                if (content != null) {
+//                    content = repoSPI.fetchContent()
+//                            .setId(id1).setDescriptor(foundDefinition.getDescriptor())
+//                            .setFetchMode(mode)
+//                            .getResult();
+//                    foundDefinition.setContent(content);
+//                    return content;
+//                }
+//            } catch (NNotFoundException ex) {
+//                reasons.add(ex);
+//                //
+//            }
+//        }
+//        return null;
+//    }
 
-    protected NPath fetchContent(NId id1, DefaultNDefinitionBuilder foundDefinition, NRepositoryAndFetchMode repo, List<Exception> reasons) {
-        NRepositorySPI repoSPI = NWorkspaceUtils.of().repoSPI(repo.getRepository());
-        try {
-            NPath content = repoSPI.fetchContent()
-                    .setId(id1).setDescriptor(foundDefinition.getDescriptor())
-                    .setFetchMode(repo.getFetchMode())
-                    .getResult();
-            if (content != null) {
-                foundDefinition.setContent(content);
-                foundDefinition.setDescriptor(resolveExecProperties(foundDefinition.getDescriptor(), content));
-                return content;
-            }
-        } catch (NNotFoundException ex) {
-            reasons.add(ex);
-            //
-        }
-        return null;
-    }
 
-    protected NDescriptor resolveExecProperties(NDescriptor nutsDescriptor, NPath jar) {
-        boolean executable = nutsDescriptor.isExecutable();
-        boolean nutsApp = nutsDescriptor.isApplication();
-        if (jar.getName().toLowerCase().endsWith(".jar") && jar.isRegularFile()) {
-            Map<String, String> map = null;
-            try {
-                map = (Map<String, String>) ((NWorkspaceExt)NWorkspace.of()).store().loadLocationKey(NLocationKey.ofCacheFaced(nutsDescriptor.getId(),null,"info.cache"),Map.class );
-            } catch (Exception ex) {
-                //
-            }
-            if (map != null) {
-                executable = "true".equals(map.get("executable"));
-                nutsApp = "true".equals(map.get("nutsApplication"));
-            } else {
-                try {
-                    List<NExecutionEntry> t = NExecutionEntry.parse(jar);
-                    if (t.size() > 0) {
-                        executable = true;
-                        if (t.get(0).isApp()) {
-                            nutsApp = true;
-                        }
-                    }
-                    try {
-                        map = new LinkedHashMap<>();
-                        map.put("executable", String.valueOf(executable));
-                        map.put("nutsApplication", String.valueOf(nutsApp));
-                        ((NWorkspaceExt)NWorkspace.of()).store().saveLocationKey(NLocationKey.ofCacheFaced(nutsDescriptor.getId(),null,"info.cache"),map);
-                    } catch (Exception ex) {
-                        //
-                    }
-                } catch (Exception ex) {
-                    //
-                }
-            }
-        }
-        NDescriptorBuilder nb = nutsDescriptor.builder();
-        if (executable) {
-            nb.addFlag(NDescriptorFlag.EXEC);
-        }
-        if (nutsApp) {
-            nb.addFlag(NDescriptorFlag.APP);
-        }
-        return nb.build();
-    }
-
-    protected NDefinition fetchDescriptorAsDefinition(NId id, NFetchStrategy nutsFetchModes, NFetchMode mode, NRepository repo) {
-        NSession session = NSession.of();
+    protected DefaultNDefinitionBuilder2 fetchDescriptorAsDefinition(NId id, NFetchStrategy nutsFetchModes, NFetchMode mode, NRepository repo) {
+//        NSession session = NSession.of();
         NWorkspaceExt dws = NWorkspaceExt.of();
-        boolean withCache = !(repo instanceof DefaultNInstalledRepository) && session.isCached();
-        NPath cachePath = null;
+//        boolean withCache = !(repo instanceof DefaultNInstalledRepository) && session.isCached();
         NWorkspace workspace = NWorkspace.of();
         NWorkspaceUtils wu = NWorkspaceUtils.of(workspace);
-        if (withCache) {
-            try {
-                NDefinition d = ((NWorkspaceExt) workspace).store().loadLocationKey(
-                        NLocationKey.ofCacheFaced(id, repo.getUuid(), "def.cache"),
-                        DefaultNDefinition.class
-                );
-                if (d != null) {
-                    NRepository repositoryById = workspace.findRepositoryById(d.getRepositoryUuid()).orNull();
-                    NRepository repositoryByName = workspace.findRepositoryByName(d.getRepositoryName()).orNull();
-                    if (repositoryById == null || repositoryByName == null) {
-                        //this is invalid cache!
-                        cachePath.delete();
-                    } else {
-                        NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NLogVerb.CACHE, "fetch definition", 0);
-                        return d;
-                    }
-                }
-            } catch (Exception ex) {
-                _LOG().with().level(Level.SEVERE)
-                        .verb(NLogVerb.CACHE)
-                        .error(ex)
-                        .log(NMsg.ofC("error loading cache %s",ex));
-            }
-        }
+        NWorkspaceStore wstore = ((NWorkspaceExt) workspace).store();
+//        if (withCache) {
+//            try {
+//                NDefinition d = wstore.loadLocationKey(
+//                        NLocationKey.ofCacheFaced(id, repo.getUuid(), "def.cache"),
+//                        DefaultNDefinition.class
+//                );
+//                if (d != null) {
+//                    NRepository repositoryById = workspace.findRepositoryById(d.getRepositoryUuid()).orNull();
+//                    NRepository repositoryByName = workspace.findRepositoryByName(d.getRepositoryName()).orNull();
+//                    if (repositoryById == null || repositoryByName == null) {
+//                        //this is invalid cache!
+//                        wstore.deleteLocationKey(NLocationKey.ofCacheFaced(id, repo.getUuid(), "def.cache"));
+//                    } else {
+//                        NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NLogVerb.CACHE, "fetch definition", 0);
+//                        return new DefaultNDefinitionBuilder2(d);
+//                    }
+//                }
+//            } catch (Exception ex) {
+//                _LOG().with().level(Level.SEVERE)
+//                        .verb(NLogVerb.CACHE)
+//                        .error(ex)
+//                        .log(NMsg.ofC("error loading cache %s",ex));
+//            }
+//        }
 
         NRepositorySPI repoSPI = wu.repoSPI(repo);
         NDescriptor descriptor = repoSPI.fetchDescriptor().setId(id)
@@ -522,23 +370,23 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                 }
             }
 
-            NDefinition result = new DefaultNDefinitionBuilder()
-                    .setId(newId.getLongId())
-                    .setRepositoryUuid(repo.getUuid())
-                    .setRepositoryName(repo.getName())
-                    .setDescriptor(descriptor)
-                    .setApiId(apiId)
-                    .build();
-            if (withCache) {
-                try {
-                    ((NWorkspaceExt) workspace).store().saveLocationKey(
-                            NLocationKey.ofCacheFaced(id, repo.getUuid(), "def.cache"),
-                            result
-                    );
-                } catch (Exception ex) {
-                    //
-                }
-            }
+            DefaultNDefinitionBuilder2 result = new DefaultNDefinitionBuilder2()
+                    .setId(new ValueSupplier<>(newId.getLongId()))
+                    .setDependency(new ValueSupplier<>(id.toDependency()))
+                    .setRepositoryUuid(new ValueSupplier<>(repo.getUuid()))
+                    .setRepositoryName(new ValueSupplier<>(repo.getName()))
+                    .setDescriptor(new ValueSupplier<>(descriptor))
+                    .setApiId(new ValueSupplier<>(apiId));
+//            if (withCache) {
+//                try {
+//                    wstore.saveLocationKey(
+//                            NLocationKey.ofCacheFaced(id, repo.getUuid(), "def.cache"),
+//                            result
+//                    );
+//                } catch (Exception ex) {
+//                    //
+//                }
+//            }
             return result;
         }
         throw new NNotFoundException(id, new NNotFoundException.NIdInvalidDependency[0], new NNotFoundException.NIdInvalidLocation[]{
@@ -560,6 +408,266 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                 }
             }
             return s * 31 + (optional == null ? 0 : optional.hashCode());
+        }
+    }
+
+    private static class NDefInstallInformationSupplier implements Supplier<NInstallInformation> {
+        private final NWorkspaceExt dws;
+        private final NId id;
+
+        public NDefInstallInformationSupplier(NWorkspaceExt dws, NId id) {
+            this.dws = dws;
+            this.id = id;
+        }
+
+        @Override
+        public NInstallInformation get() {
+            NInstalledRepository installedRepository = dws.getInstalledRepository();
+            //will always load install information
+            NInstallInformation ii = installedRepository.getInstallInformation(id);
+            if (ii != null) {
+//                            ((DefaultNInstalledRepository) (dws.getInstalledRepository())).updateInstallInfoConfigInstallDate(id, Instant.now(), session);
+                return ii;
+            } else {
+                return DefaultNInstallInfo.notInstalled(id);
+            }
+        }
+    }
+
+    private class NDefEffectiveDescriptorSupplier implements Supplier<NDescriptor> {
+        private final DefaultNDefinitionBuilder2 foundDefinitionBuilder;
+        private final NId id;
+
+        public NDefEffectiveDescriptorSupplier(DefaultNDefinitionBuilder2 foundDefinitionBuilder, NId id) {
+            this.foundDefinitionBuilder = foundDefinitionBuilder;
+            this.id = id;
+        }
+
+        @Override
+        public NDescriptor get() {
+            try {
+                return (NWorkspace.of().resolveEffectiveDescriptor(foundDefinitionBuilder.getDescriptor().get(),
+                        new NDescriptorEffectiveConfig().setIgnoreCurrentEnvironment(DefaultNFetchCmd.this.isIgnoreCurrentEnvironment())));
+            } catch (NNotFoundException ex) {
+                //ignore
+                DefaultNFetchCmd.this._LOGOP().level(Level.WARNING).verb(NLogVerb.WARNING)
+                        .log(NMsg.ofC("artifact descriptor found, but one of its parents or dependencies is not: %s : missing %s", id,
+                                ex.getId()));
+            }
+            return null;
+        }
+    }
+
+    private class NDefDependenciesSupplier implements Supplier<NDependencies> {
+        private final NId id;
+        private final DefaultNDefinitionBuilder2 foundDefinitionBuilder;
+
+        public NDefDependenciesSupplier(NId id, DefaultNDefinitionBuilder2 foundDefinitionBuilder) {
+            this.id = id;
+            this.foundDefinitionBuilder = foundDefinitionBuilder;
+        }
+
+        @Override
+        public NDependencies get() {
+            return NDependencySolver.of()
+                    .setIgnoreCurrentEnvironment(DefaultNFetchCmd.this.isIgnoreCurrentEnvironment())
+                    .setDependencyFilter(DefaultNFetchCmd.this.buildActualDependencyFilter())
+                    .add(id.toDependency(), foundDefinitionBuilder.build())
+                    .setRepositoryFilter(DefaultNFetchCmd.this.getRepositoryFilter())
+                    .solve();
+        }
+    }
+
+    private class NDefContentSupplier implements Supplier<NPath> {
+        private final DefaultNDefinitionBuilder2 foundDefinitionBuilder;
+        private final NRepositoryAndFetchMode successfulDescriptorLocation;
+        private final NRepositoryAndFetchModeTracker descTracker;
+        private final List<Exception> reasons;
+        private NRepositoryAndFetchMode successfulContentLocation;
+        private final NWorkspaceUtils wu;
+        private final NSession session;
+        private final NFetchStrategy nutsFetchModes;
+        private final NId id;
+        private final long startTime;
+
+        public NDefContentSupplier(DefaultNDefinitionBuilder2 foundDefinitionBuilder, NRepositoryAndFetchMode successfulDescriptorLocation, NRepositoryAndFetchModeTracker descTracker, List<Exception> reasons, NWorkspaceUtils wu, NSession session, NFetchStrategy nutsFetchModes, NId id, long startTime) {
+            this.foundDefinitionBuilder = foundDefinitionBuilder;
+            this.successfulDescriptorLocation = successfulDescriptorLocation;
+            this.descTracker = descTracker;
+            this.reasons = reasons;
+            this.wu = wu;
+            this.session = session;
+            this.nutsFetchModes = nutsFetchModes;
+            this.id = id;
+            this.startTime = startTime;
+        }
+
+        @Override
+        public NPath get() {
+            NPath fetchedPath = null;
+            if (!foundDefinitionBuilder.getDescriptor().get().isNoContent()) {
+                boolean loadedFromInstallRepo = DefaultNInstalledRepository.INSTALLED_REPO_UUID.equals(successfulDescriptorLocation
+                        .getRepository().getUuid());
+                NId id1 = CoreNIdUtils.createContentFaceId(foundDefinitionBuilder.getId().get(), foundDefinitionBuilder.getDescriptor().get());
+//                        boolean escalateMode = false;
+                boolean contentSuccessful = false;
+                NRepositoryAndFetchModeTracker contentTracker = new NRepositoryAndFetchModeTracker(descTracker.available());
+                fetchedPath = fetchContent(id1, successfulDescriptorLocation, reasons);
+                contentSuccessful = fetchedPath != null;
+                if (contentSuccessful) {
+                    successfulContentLocation = successfulDescriptorLocation;
+                } else {
+                    contentTracker.addFailure(successfulDescriptorLocation);
+                }
+                if (!contentSuccessful && !loadedFromInstallRepo) {
+                    if (successfulDescriptorLocation.getFetchMode() == NFetchMode.LOCAL) {
+                        NRepositoryAndFetchMode finalSuccessfulDescriptorLocation = successfulDescriptorLocation;
+                        NRepositoryAndFetchMode n = contentTracker.available().stream()
+                                .filter(x -> x.getRepository().getUuid().equals(finalSuccessfulDescriptorLocation.getRepository().getUuid()) &&
+                                        x.getFetchMode() == NFetchMode.REMOTE).findFirst().orElse(null);
+                        if (n != null/* && contentTracker.accept(n)*/) {
+                            fetchedPath = fetchContent(id1, n, reasons);
+                            contentSuccessful = fetchedPath != null;
+                            if (contentSuccessful) {
+                                successfulContentLocation = n;
+                            } else {
+                                contentTracker.addFailure(n);
+                            }
+                        }
+                    }
+                }
+                if (!contentSuccessful) {
+                    for (NRepositoryAndFetchMode repoAndMode : contentTracker.available()) {
+                        fetchedPath = fetchContent(id1, repoAndMode, reasons);
+                        contentSuccessful = fetchedPath != null;
+                        if (contentSuccessful) {
+                            successfulContentLocation = repoAndMode;
+                            break;
+                        } else {
+                            contentTracker.addFailure(repoAndMode);
+                        }
+                    }
+                }
+                if (contentSuccessful) {
+                    if (loadedFromInstallRepo && successfulContentLocation != successfulDescriptorLocation) {
+                        //this happens if the jar content is no more installed while its descriptor is still installed.
+                        NInstalledRepository installedRepository = NWorkspaceExt.of().getInstalledRepository();
+                        NRepositorySPI installedRepositorySPI = wu.repoSPI(installedRepository);
+
+                        NPath finalFetchedPath = fetchedPath;
+                        session.copy().setConfirm(NConfirmationMode.YES).runWith(() -> {
+                            installedRepositorySPI.deploy()
+                                    .setId(foundDefinitionBuilder.getId().get())
+                                    .setDescriptor(foundDefinitionBuilder.getDescriptor().get())
+                                    //.setFetchMode(mode)
+                                    .setContent(finalFetchedPath)
+                                    .run();
+                        });
+
+                    }
+                }
+                if (!contentSuccessful /*&& includedRemote*/) {
+                    NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NLogVerb.FAIL,
+                            "fetched descriptor but failed to fetch artifact binaries", startTime);
+                }
+            }
+            return fetchedPath;
+        }
+
+        protected NPath fetchContent(NId id1, NRepositoryAndFetchMode repo, List<Exception> reasons) {
+            NRepositorySPI repoSPI = NWorkspaceUtils.of().repoSPI(repo.getRepository());
+            try {
+                NDescriptor baseDescriptor = foundDefinitionBuilder.getDescriptor().get();
+                return repoSPI.fetchContent()
+                        .setId(id1).setDescriptor(baseDescriptor)
+                        .setFetchMode(repo.getFetchMode())
+                        .getResult();
+            } catch (NNotFoundException ex) {
+                reasons.add(ex);
+                //
+            }
+            return null;
+        }
+    }
+
+    private class NDefNDescriptorFlagSetSupplier implements Supplier<Set<NDescriptorFlag>> {
+        private final NId id;
+        private final DefaultNDefinitionBuilder2 foundDefinitionBuilder;
+
+        public NDefNDescriptorFlagSetSupplier(NId id, DefaultNDefinitionBuilder2 foundDefinitionBuilder) {
+            this.id = id;
+            this.foundDefinitionBuilder = foundDefinitionBuilder;
+        }
+
+        private Set<NDescriptorFlag> loadCache() {
+            Map<String, String> map = null;
+            try {
+                map = (Map<String, String>) ((NWorkspaceExt) NWorkspace.of()).store().loadLocationKey(NLocationKey.ofCacheFaced(id, null, "info.cache"), Map.class);
+            } catch (Exception ex) {
+                //
+            }
+            if (map != null) {
+                Set<NDescriptorFlag> nb = new HashSet<>();
+                for (Map.Entry<String, String> e : map.entrySet()) {
+                    String v = e.getValue();
+                    if (NLiteral.of(v).asBoolean().orElse(false)) {
+                        String k = e.getKey();
+                        NDescriptorFlag kk = NDescriptorFlag.parse(k).orNull();
+                        if (kk != null) {
+                            nb.add(kk);
+                        }
+                    }
+                }
+                return nb;
+            }
+            return null;
+        }
+
+        private void storeCache(Set<NDescriptorFlag> nb) {
+            Map<String, String> map = new HashMap<>();
+            try {
+                map = new LinkedHashMap<>();
+                for (NDescriptorFlag n : nb) {
+                    map.put(NNameFormat.VAR_NAME.format(n.name()), "true");
+                }
+                ((NWorkspaceExt) NWorkspace.of()).store().saveLocationKey(NLocationKey.ofCacheFaced(id, null, "info.cache"), map);
+            } catch (Exception ex) {
+                //
+            }
+        }
+
+        @Override
+        public Set<NDescriptorFlag> get() {
+            Set<NDescriptorFlag> cc = loadCache();
+            if (cc != null) {
+                return cc;
+            }
+            NPath jar = foundDefinitionBuilder.getContent().get();
+            Set<NDescriptorFlag> nb = new HashSet<>();
+            if (jar == null) {
+                //do nothing
+            } else {
+                if (jar.getName().toLowerCase().endsWith(".jar") && jar.isRegularFile()) {
+                    try {
+                        List<NExecutionEntry> t = NExecutionEntry.parse(jar);
+                        if (t.size() > 0) {
+                            nb.add(NDescriptorFlag.EXEC);
+                            if (t.get(0).isApp()) {
+                                nb.add(NDescriptorFlag.NUTS_APP);
+                            }
+                        }
+                    } catch (Exception ex) {
+                        //
+                    }
+                }
+            }
+            Set<NDescriptorFlag> flags = foundDefinitionBuilder.getDescriptor().get().getFlags();
+            nb.addAll(flags);
+            if (nb.contains(NDescriptorFlag.NUTS_APP) || nb.contains(NDescriptorFlag.PLATFORM_APP)) {
+                nb.add(NDescriptorFlag.EXEC);
+            }
+            storeCache(nb);
+            return nb;
         }
     }
 }

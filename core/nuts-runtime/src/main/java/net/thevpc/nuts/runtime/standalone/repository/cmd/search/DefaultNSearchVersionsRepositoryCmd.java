@@ -16,6 +16,7 @@ import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
@@ -63,7 +64,7 @@ public class DefaultNSearchVersionsRepositoryCmd extends AbstractNSearchVersions
                     if (d != null && filter != null) {
                         resultList.add(
                                 NIteratorBuilder.of(d).filter(
-                                        x -> filter.acceptId(x),
+                                        x -> filter.acceptDefinition(NDefinitionHelper.ofIdOnly(x)),
                                         () -> NEDesc.describeResolveOrToString(filter)
                                 ).safeIgnore().iterator()
                         );

@@ -85,7 +85,6 @@ public class DefaultSourceControlHelper {
 
     //    @Override
     public NDefinition checkout(NId id, Path folder) {
-        NWorkspace workspace = NWorkspace.get().get();
         NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.INSTALL, "checkout");
         NDefinition nutToInstall = NFetchCmd.of(id).setOptional(false).setDependencies(true).getResultDefinition();
         if ("zip".equals(nutToInstall.getDescriptor().getPackaging())) {
@@ -111,6 +110,7 @@ public class DefaultSourceControlHelper {
                     .setId(newId.getLongId())
                     .setDescriptor(d)
                     .setContent(NPath.of(folder).setUserCache(false).setUserTemporary(false))
+                    .setDependency(id.toDependency())
                     .build()
             ;
         } else {

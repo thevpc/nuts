@@ -14,7 +14,7 @@ import net.thevpc.nuts.util.NOptional;
 public class InternalNVersionFilters extends InternalNTypedFilters<NVersionFilter> implements NVersionFilters {
 
 
-    public InternalNVersionFilters(NWorkspace workspace) {
+    public InternalNVersionFilters() {
         super(NVersionFilter.class);
     }
 

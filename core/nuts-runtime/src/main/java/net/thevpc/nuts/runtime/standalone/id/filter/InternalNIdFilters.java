@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.id.filter;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
-import net.thevpc.nuts.runtime.standalone.io.util.NInstallStatusIdFilter;
 
 import java.util.List;
 
@@ -45,10 +44,6 @@ public class InternalNIdFilters extends InternalNTypedFilters<NIdFilter> impleme
         return new NDefaultVersionIdFilter(defaultVersion);
     }
 
-    @Override
-    public NIdFilter byInstallStatus(NInstallStatusFilter installStatus) {
-        return new NInstallStatusIdFilter(installStatus);
-    }
 
     @Override
     public NIdFilter byName(String... names) {
@@ -71,8 +66,8 @@ public class InternalNIdFilters extends InternalNTypedFilters<NIdFilter> impleme
         if (a instanceof NIdFilter) {
             return (NIdFilter) a;
         }
-        if (a instanceof NDescriptorFilter) {
-            return new NDescriptorIdFilter((NDescriptorFilter) a);
+        if (a instanceof NDefinitionFilter) {
+            return new NDefinitionIdFilter((NDefinitionFilter) a);
         }
         if (a instanceof NVersionFilter) {
             return new NVersionIdFilter((NVersionFilter) a);

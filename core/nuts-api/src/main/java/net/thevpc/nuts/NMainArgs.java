@@ -17,6 +17,7 @@ public class NMainArgs {
     public static NMainArgs ofPropagated(String[] args) {
         return new NMainArgs().setArgs(args).setHandleMode(NApplicationHandleMode.PROPAGATE);
     }
+
     public static NMainArgs ofExit(String[] args) {
         return new NMainArgs().setArgs(args).setHandleMode(NApplicationHandleMode.EXIT);
     }
@@ -32,10 +33,10 @@ public class NMainArgs {
     public static NMainArgs ofPropagated(NApplication application, String[] args) {
         return new NMainArgs().setApplicationInstance(application).setArgs(args).setHandleMode(NApplicationHandleMode.PROPAGATE);
     }
+
     public static NMainArgs ofExit(NApplication application, String[] args) {
         return new NMainArgs().setArgs(args).setApplicationInstance(application).setHandleMode(NApplicationHandleMode.EXIT);
     }
-
 
 
     public NApplicationHandleMode getHandleMode() {

@@ -44,10 +44,15 @@ public enum NDescriptorFlag implements NEnum {
      */
     EXEC,
 
+
     /**
      * nuts application
      */
-    APP,
+    NUTS_APP,
+    /**
+     * executable as app (has main executable)
+     */
+    PLATFORM_APP,
 
     /**
      * term application
@@ -58,11 +63,6 @@ public enum NDescriptorFlag implements NEnum {
      * gui application
      */
     GUI,
-
-    /**
-     * nuts companion
-     */
-    NUTS_API,
 
     ;
 

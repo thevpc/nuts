@@ -144,7 +144,7 @@ public class NdiScriptOptions implements Cloneable {
             if (getLauncher().getSwitchWorkspaceLocation() == null) {
                 NDefinition appDef = NSearchCmd.of()
                         .addId(nid).setOptional(false).setLatest(true).setContent(true).getResultDefinitions().findFirst().get();
-                nutsAppJarPath = appDef.getContent().orNull();
+                nutsAppJarPath = appDef.getContent().get();
             } else {
                 NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
                 nutsAppJarPath = NPath.of(bootConfig.getStoreLocation(nid, NStoreType.LIB));

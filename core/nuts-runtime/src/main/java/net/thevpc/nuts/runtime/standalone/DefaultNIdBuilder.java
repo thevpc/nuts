@@ -441,7 +441,7 @@ public class DefaultNIdBuilder implements NIdBuilder {
     @Override
     public NId build() {
         return new DefaultNId(
-                groupId, artifactId, version, classifier, properties, condition.readOnly()
+                groupId, artifactId, version, classifier, properties, condition.build()
         );
     }
 

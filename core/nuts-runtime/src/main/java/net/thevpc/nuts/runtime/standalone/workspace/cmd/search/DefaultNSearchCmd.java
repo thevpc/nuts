@@ -29,23 +29,22 @@ import net.thevpc.nuts.NConstants;
 
 
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
+import net.thevpc.nuts.runtime.standalone.definition.filter.NDefinitionFilterOr;
+import net.thevpc.nuts.runtime.standalone.definition.filter.NPatternDefinitionFilter;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
-import net.thevpc.nuts.runtime.standalone.id.filter.NIdFilterOr;
-import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.id.filter.NPatternIdFilter;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.io.util.NInstallStatusIdFilter;
 import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.util.NIteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.fetch.DefaultNFetchCmd;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.NInstallStatuses;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NRepositoryAndFetchMode;
 import net.thevpc.nuts.spi.NRepositorySPI;
 
@@ -73,7 +72,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
     @Override
     public NFetchCmd toFetch() {
         NFetchCmd t = new DefaultNFetchCmd().copyFromDefaultNQueryBaseOptions(this);
-        t.setFilterCurrentEnvironment(isFilterCurrentEnvironment());
+        t.setIgnoreCurrentEnvironment(isIgnoreCurrentEnvironment());
         if (getDisplayOptions().isRequireDefinition()) {
             t.setContent(true);
         }
@@ -84,58 +83,29 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
         return t;
     }
 
-    private NRepositoryFilter createRepositoryFilter(NInstallStatusFilter status, NIdFilter _idFilter) {
-//        if(status==null){
-//            return null;
-//        }
-        boolean searchInInstalled = true;
-        boolean searchInOtherRepositories = true;
-        if (status != null && Arrays.stream(NInstallStatuses.ALL_DEPLOYED).noneMatch(
-                x -> status.acceptInstallStatus(x)
-        )) {
-            searchInInstalled = false;
-        }
-        if (status != null && Arrays.stream(NInstallStatuses.ALL_UNDEPLOYED).noneMatch(
-                x -> status.acceptInstallStatus(x)
-        )) {
-            searchInOtherRepositories = false;
-        }
+    private NRepositoryFilter createRepositoryFilter(NDefinitionFilter _idFilter) {
+        Boolean installed = NDefinitionHelper.resolveInstalled(_idFilter).orNull();
+        Boolean required = NDefinitionHelper.resolveRequired(_idFilter).orNull();
+        Boolean deployed = NDefinitionHelper.resolveRequired(_idFilter).orNull();
         List<NRepositoryFilter> otherFilters = new ArrayList<>();
-
-        if (_idFilter != null && _idFilter.getFilterOp() == NFilterOp.AND) {
-            searchInOtherRepositories = true;
-            for (NFilter subFilter : _idFilter.getSubFilters()) {
-                if (subFilter instanceof NInstallStatusIdFilter) {
-                    NInstallStatusFilter status2 = ((NInstallStatusIdFilter) subFilter).getInstallStatus();
-                    if (searchInInstalled) {
-                        if (status != null && Arrays.stream(NInstallStatuses.ALL_DEPLOYED).noneMatch(
-                                x -> status2.acceptInstallStatus(x)
-                        )) {
-                            searchInInstalled = false;
-                        }
-                    }
-                    if (searchInOtherRepositories) {
-                        if (status != null && Arrays.stream(NInstallStatuses.ALL_UNDEPLOYED).noneMatch(
-                                x -> status2.acceptInstallStatus(x)
-                        )) {
-                            searchInOtherRepositories = false;
-                        }
-                    }
-                }
-                if (subFilter instanceof NRepositoryFilter) {
-                    otherFilters.add((NRepositoryFilter) subFilter);
-                }
+        if(
+                Boolean.TRUE.equals(installed)
+                || Boolean.TRUE.equals(required)
+                || Boolean.TRUE.equals(deployed)
+        ){
+            otherFilters.add(NRepositoryFilters.of().installedRepo());
+        }else if(
+                (Boolean.FALSE.equals(installed) &&  Boolean.FALSE.equals(required))
+                        || Boolean.FALSE.equals(deployed)
+        ){
+            otherFilters.add(NRepositoryFilters.of().installedRepo().neg());
+        }
+        for (NDefinitionFilter nDefinitionFilter : NDefinitionHelper.flattenAnd(_idFilter)) {
+            if(nDefinitionFilter instanceof NRepositoryFilter){
+                otherFilters.add((NRepositoryFilter) nDefinitionFilter);
             }
         }
 
-        NRepositoryFilters repository = NRepositoryFilters.of();
-        if (!searchInInstalled && searchInOtherRepositories) {
-            otherFilters.add(repository.installedRepo().neg());
-        } else if (searchInInstalled && !searchInOtherRepositories) {
-            otherFilters.add(repository.installedRepo());
-        } else if (!searchInInstalled && !searchInOtherRepositories) {
-            otherFilters.add(repository.never());
-        }
         if (otherFilters.isEmpty()) {
             return null;
         }
@@ -167,21 +137,21 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                 goodIds.add(someId);
             }
         }
-        NIdFilter idFilter0 = getIdFilter();
-        if (idFilter0 instanceof NPatternIdFilter) {
-            NPatternIdFilter f = (NPatternIdFilter) idFilter0;
+        NDefinitionFilter defFilter0 = getDefinitionFilter();
+        if (defFilter0 instanceof NPatternDefinitionFilter) {
+            NPatternDefinitionFilter f = (NPatternDefinitionFilter) defFilter0;
             if (!f.isWildcard()) {
                 goodIds.add(f.getId().toString());
-                idFilter0 = null;
+                defFilter0 = null;
             }
         }
-        if (idFilter0 instanceof NIdFilterOr) {
-            List<NIdFilter> oo = new ArrayList<>(Arrays.asList(((NIdFilterOr) idFilter0).getChildren()));
+        if (defFilter0 instanceof NDefinitionFilterOr) {
+            List<NDefinitionFilter> oo = new ArrayList<>(Arrays.asList(((NDefinitionFilterOr) defFilter0).getChildren()));
             boolean someChange = false;
-            for (Iterator<NIdFilter> it = oo.iterator(); it.hasNext(); ) {
-                NIdFilter curr = it.next();
-                if (curr instanceof NPatternIdFilter) {
-                    NPatternIdFilter f = (NPatternIdFilter) curr;
+            for (Iterator<NDefinitionFilter> it = oo.iterator(); it.hasNext(); ) {
+                NDefinitionFilter curr = it.next();
+                if (curr instanceof NPatternDefinitionFilter) {
+                    NPatternDefinitionFilter f = (NPatternDefinitionFilter) curr;
                     if (!f.isWildcard()) {
                         goodIds.add(f.getId().toString());
                         it.remove();
@@ -191,351 +161,103 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
             }
             if (someChange) {
                 if (oo.isEmpty()) {
-                    idFilter0 = null;
+                    defFilter0 = null;
                 } else {
-                    idFilter0 = NIdFilters.of().any(oo.toArray(new NIdFilter[0]));
+                    defFilter0 = NDefinitionFilters.of().any(oo.toArray(new NDefinitionFilter[0]));
                 }
             }
         }
 
-        NDescriptorFilters dfilter = NDescriptorFilters.of();
-        NDescriptorFilter _descriptorFilter = dfilter.always();
-        NIdFilter _idFilter = NIdFilters.of().always();
+        NDefinitionFilters dfilter = NDefinitionFilters.of();
+        NDefinitionFilter _defFilter = dfilter.always();
         NDependencyFilter depFilter = NDependencyFilters.of().always();
         NRepositoryFilter rfilter = NRepositoryFilters.of().always();
         for (String j : this.getScripts()) {
             if (!NBlankable.isBlank(j)) {
-                if (CoreStringUtils.containsTopWord(j, "descriptor")) {
-                    _descriptorFilter = _descriptorFilter.and(dfilter.parse(j));
-                } else if (CoreStringUtils.containsTopWord(j, "dependency")) {
+                if (CoreStringUtils.containsTopWord(j, "dependency")) {
                     depFilter = depFilter.and(NDependencyFilters.of().parse(j));
                 } else {
-                    _idFilter = _idFilter.and(NIdFilters.of().parse(j));
+                    _defFilter = _defFilter.and(dfilter.parse(j));
                 }
             }
         }
-        NDescriptorFilter packs = dfilter.byPackaging(getPackaging());
-        NDescriptorFilter archs = dfilter.byArch(getArch());
-        _descriptorFilter = _descriptorFilter.and(packs).and(archs);
+        NDefinitionFilter packs = dfilter.byPackaging(getPackaging());
+        NDefinitionFilter archs = dfilter.byArch(getArch().stream().map(x -> NArchFamily.parse(x).get()).collect(Collectors.toList()));
+        _defFilter = _defFilter.and(packs).and(archs);
 
         NRepositoryFilter _repositoryFilter = rfilter.and(this.getRepositoryFilter());
-        _descriptorFilter = _descriptorFilter.and(this.getDescriptorFilter());
+        _defFilter = _defFilter.and(this.getDefinitionFilter());
 
-        _idFilter = _idFilter.and(idFilter0);
-        if (getInstallStatus() != null) {
-            _idFilter = _idFilter.and(NIdFilters.of().byInstallStatus(getInstallStatus()));
-        }
+        NDefinitionFilter _idFilter = NDefinitionFilters.of().always();
+        _idFilter = _idFilter.and(defFilter0);
         if (getDefaultVersions() != null) {
-            _idFilter = _idFilter.and(NIdFilters.of().byDefaultVersion(getDefaultVersions()));
+            _idFilter = _idFilter.and(NDefinitionFilters.of().byDefaultVersion(getDefaultVersions()));
         }
         if (execType != null) {
             switch (execType) {
-                case "lib": {
-                    _descriptorFilter = _descriptorFilter.and(dfilter.byFlag(NDescriptorFlag.EXEC).neg());
+                case LIB: {
+                    _defFilter = _defFilter.and(dfilter.byFlag(NDescriptorFlag.EXEC).neg());
                     break;
                 }
-                case "exec": {
-                    _descriptorFilter = _descriptorFilter.and(dfilter.byFlag(NDescriptorFlag.EXEC));
+                case EXEC: {
+                    _defFilter = _defFilter.and(dfilter.byFlag(NDescriptorFlag.EXEC));
                     break;
                 }
-                case "app": {
-                    _descriptorFilter = _descriptorFilter.and(dfilter.byFlag(NDescriptorFlag.APP));
+                case NUTS_APPLICATION: {
+                    _defFilter = _defFilter.and(dfilter.byFlag(NDescriptorFlag.NUTS_APP));
                     break;
                 }
-                case "extension": {
-                    _descriptorFilter = _descriptorFilter.and(dfilter.byExtension(targetApiVersion));
+                case PLATFORM_APPLICATION: {
+                    _defFilter = _defFilter.and(dfilter.byFlag(NDescriptorFlag.PLATFORM_APP));
                     break;
                 }
-                case "runtime": {
-                    _descriptorFilter = _descriptorFilter.and(dfilter.byRuntime(targetApiVersion));
+                case EXTENSION: {
+                    _defFilter = _defFilter.and(dfilter.byExtension(targetApiVersion));
                     break;
                 }
-                case "companions": {
-                    _descriptorFilter = _descriptorFilter.and(dfilter.byCompanion(targetApiVersion));
+                case RUNTIME: {
+                    _defFilter = _defFilter.and(dfilter.byRuntime(targetApiVersion));
+                    break;
+                }
+                case COMPANION: {
+                    _defFilter = _defFilter.and(dfilter.byCompanion(targetApiVersion));
                     break;
                 }
             }
         } else {
             if (targetApiVersion != null) {
-                _descriptorFilter = _descriptorFilter.and(dfilter.byApiVersion(targetApiVersion));
+                _defFilter = _defFilter.and(dfilter.byApiVersion(targetApiVersion));
             }
         }
         if (!lockedIds.isEmpty()) {
-            _descriptorFilter = _descriptorFilter.and(dfilter.byLockedIds(
+            _defFilter = _defFilter.and(dfilter.byLockedIds(
                     lockedIds.stream().map(NId::getFullName).toArray(String[]::new)
             ));
         }
         if (!wildcardIds.isEmpty()) {
-            _idFilter = _idFilter.and(NIdFilters.of().byName(wildcardIds.toArray(new String[0])));
+            _idFilter = _idFilter.and(NDefinitionFilters.of().byName(wildcardIds.toArray(new String[0])));
         }
-        NRepositoryFilter extraRepositoryFilter = createRepositoryFilter(installStatus, _idFilter);
+        NRepositoryFilter extraRepositoryFilter = createRepositoryFilter(_idFilter);
         if (extraRepositoryFilter != null) {
             _repositoryFilter = _repositoryFilter.and(extraRepositoryFilter);
         }
-//        boolean searchInInstalled = false;
-//        boolean searchInOtherRepositories = false;
-//
-//        if (getInstallStatus() != null && this.getRepositories().length > 0) {
-//            for (NutsInstallStatus x : NutsInstallStatuses.ALL_DEPLOYED) {
-//                if (getInstallStatus().acceptInstallStatus(x, getSession())) {
-//                    searchInInstalled = true;
-//                    break;
-//                }
-//            }
-//            searchInOtherRepositories = true;
-//        } else if (getInstallStatus() == null && this.getRepositories().length > 0) {
-//            searchInInstalled = false;
-//            searchInOtherRepositories = true;
-//        } else if (getInstallStatus() != null && this.getRepositories().length == 0) {
-//            for (NutsInstallStatus x : NutsInstallStatuses.ALL_DEPLOYED) {
-//                if (getInstallStatus().acceptInstallStatus(x, getSession())) {
-//                    searchInInstalled = true;
-//                    break;
-//                }
-//            }
-//            if (getInstallStatus().acceptInstallStatus(NutsInstallStatuses.ALL_UNDEPLOYED, getSession())) {
-//                searchInOtherRepositories = true;
-//            }
-//        } else if (getInstallStatus() == null && this.getRepositories().length == 0) {
-//            searchInInstalled = true;
-//            searchInOtherRepositories = true;
-//            if (_idFilter.getFilterOp() == NutsFilterOp.AND) {
-//                searchInOtherRepositories = true;
-//                for (NutsFilter subFilter : _idFilter.getSubFilters()) {
-//                    if (subFilter instanceof NutsInstallStatusIdFilter) {
-//                        NutsInstallStatusFilter f = ((NutsInstallStatusIdFilter) subFilter).getInstallStatus();
-//                        if (!f.acceptInstallStatus(NutsInstallStatuses.ALL_UNDEPLOYED, getSession())) {
-//                            searchInOtherRepositories = false;
-//                        }
-//                    }
-//                }
-//            } else {
-//                searchInOtherRepositories = true;
-//            }
-//        } else {
-//            searchInInstalled = true;
-//            searchInOtherRepositories = true;
-//        }
-//        NutsIdFilter filter = _idFilter.and(_descriptorFilter).to(NutsIdFilter.class);
-//        InstalledVsNonInstalledSearch includeInstalledRepository = CoreFilterUtils.getTopLevelInstallRepoInclusion(filter);
-//        searchInInstalled |= includeInstalledRepository.isSearchInInstalled();
-//        searchInOtherRepositories |= includeInstalledRepository.isSearchInOtherRepositories();
         return new DefaultNSearch(
                 goodIds.toArray(new String[0]),
                 _repositoryFilter,
-                _idFilter, _descriptorFilter
+                _idFilter.and(_defFilter)
         );
     }
 
-    //    private Collection<NutsId> applyPrintDecoratorCollectionOfNutsId(Collection<NutsId> curr, boolean print) {
-//        if (!print) {
-//            return curr;
-//        }
-//        return NutsTextUtils.toList(applyPrintDecoratorIterOfNutsId(curr.iterator(), print));
-//    }
-//    private NutsCollectionStream<NutsId> applyVersionFlagFilters(NutsIterator<NutsId> curr, boolean print) {
-//        if (!isLatest() && !isDistinct()) {
-//            return buildCollectionResult(curr, print);
-//            //nothing
-//        } else if (!isLatest() && isDistinct()) {
-//            return buildCollectionResult(IteratorBuilder.of(curr).distinct((NutsId nutsId) -> nutsId.getLongNameId()
-//                    //                            .setAlternative(nutsId.getAlternative())
-//                    .toString()).iterator(), print);
-//        } else if (isLatest() && isDistinct()) {
-//            NutsIterator<NutsId> nn = IteratorUtils.supplier(() -> {
-//                Map<String, NutsId> visited = new LinkedHashMap<>();
-//                while (curr.hasNext()) {
-//                    NutsId nutsId = curr.next();
-//                    String k = nutsId.getShortNameId()
-//                            //                        .setAlternative(nutsId.getAlternative())
-//                            .toString();
-//                    NutsId old = visited.get(k);
-//                    if (old == null || old.getVersion().isBlank() || old.getVersion().compareTo(nutsId.getVersion()) < 0) {
-//                        visited.put(k, nutsId);
-//                    }
-//                }
-//                return visited.values().iterator();
-//            }, "latestAndDistinct");
-//            return buildCollectionResult(nn, print);
-//        } else if (isLatest() && !isDistinct()) {
-//            NutsIterator<NutsId> nn = IteratorUtils.supplier(() -> {
-//                Map<String, List<NutsId>> visited = new LinkedHashMap<>();
-//                while (curr.hasNext()) {
-//                    NutsId nutsId = curr.next();
-//                    String k = nutsId.getShortNameId()
-//                            //                        .setAlternative(nutsId.getAlternative())
-//                            .toString();
-//                    List<NutsId> oldList = visited.get(k);
-//                    if (oldList == null || oldList.get(0).getVersion().isBlank() || oldList.get(0).getVersion().compareTo(nutsId.getVersion()) < 0) {
-//                        visited.put(k, new ArrayList<>(Arrays.asList(nutsId)));
-//                    } else if (oldList.get(0).getVersion().compareTo(nutsId.getVersion()) == 0) {
-//                        oldList.add(nutsId);
-//                    }
-//                }
-//                return IteratorUtils.name("latestAndDuplicate", IteratorUtils.flatCollection((NutsIterator) visited.values().iterator()));
-//            }, "latestAndDuplicate");
-//            return buildCollectionResult(nn, print);
-//        }
-//        throw new NutsUnexpectedException(getSession());
-//    }
-//    private NutsCollectionStream<NutsDependency> applyVersionFlagFilters2(NutsIterator<NutsDependency> curr, boolean print) {
-//        if (!isLatest() && !isDistinct()) {
-//            return buildCollectionResult(curr, print);
-//            //nothing
-//        } else if (!isLatest() && isDistinct()) {
-//            return buildCollectionResult(IteratorBuilder.of(curr).distinct((NutsDependency nutsId) -> nutsId.toId().getLongNameId()
-//                    //                            .setAlternative(nutsId.getAlternative())
-//                    .toString()).iterator(), print);
-//        } else if (isLatest() && isDistinct()) {
-//            NutsIterator<NutsDependency> nn = IteratorUtils.supplier(() -> {
-//                Map<String, NutsDependency> visited = new LinkedHashMap<>();
-//                while (curr.hasNext()) {
-//                    NutsDependency nutsId = curr.next();
-//                    String k = nutsId.toId().getShortNameId()
-//                            //                        .setAlternative(nutsId.getAlternative())
-//                            .toString();
-//                    NutsDependency old = visited.get(k);
-//                    if (old == null || old.getVersion().isBlank() || old.getVersion().compareTo(nutsId.getVersion()) < 0) {
-//                        visited.put(k, nutsId);
-//                    }
-//                }
-//                return visited.values().iterator();
-//            }, "latestAndDistinct");
-//            return buildCollectionResult(nn, print);
-//        } else if (isLatest() && !isDistinct()) {
-//            NutsIterator<NutsDependency> nn = IteratorUtils.supplier(() -> {
-//                Map<String, List<NutsDependency>> visited = new LinkedHashMap<>();
-//                while (curr.hasNext()) {
-//                    NutsDependency nutsId = curr.next();
-//                    String k = nutsId.toId().getShortNameId()
-//                            //                        .setAlternative(nutsId.getAlternative())
-//                            .toString();
-//                    List<NutsDependency> oldList = visited.get(k);
-//                    if (oldList == null || oldList.get(0).getVersion().isBlank() || oldList.get(0).getVersion().compareTo(nutsId.getVersion()) < 0) {
-//                        visited.put(k, new ArrayList<>(Arrays.asList(nutsId)));
-//                    } else if (oldList.get(0).getVersion().compareTo(nutsId.getVersion()) == 0) {
-//                        oldList.add(nutsId);
-//                    }
-//                }
-//                return IteratorUtils.name("latestAndDuplicate", IteratorUtils.flatCollection((NutsIterator) visited.values().iterator()));
-//            }, "latestAndDuplicate");
-//            return buildCollectionResult(nn, print);
-//        }
-//        throw new NutsUnexpectedException(getSession());
-//    }
-//    protected NutsCollectionStream<NutsDependency> getResultDependenciesBase(boolean print, boolean sort) {
-//        DefaultNSearch build = build();
 
-    /// /        build.getOptions().session(build.getOptions().getSession().copy().trace(print));
-//        NutsIterator<NutsDependency> base0 = findIterator2(build);
-//        if (base0 == null) {
-//            return buildCollectionResult(IteratorUtils.emptyIterator(), print);
-//        }
-//        if (!isLatest() && !isDistinct() && !sort && !isInlineDependencies()) {
-//            return buildCollectionResult(base0, print);
-//        }
-//        NutsCollectionStream<NutsDependency> a = applyVersionFlagFilters2(base0, false);
-//        NutsIterator<NutsDependency> curr = a.iterator();
-//        if (isInlineDependencies()) {
-//            if (!isBasePackage()) {
-//                curr = Arrays.asList(findDependencies2(a.list())).iterator();
-//            } else {
-//                List<NutsIterator<NutsDependency>> it = new ArrayList<>();
-//                NutsIterator<NutsDependency> a0 = a.iterator();
-//                List<NutsDependency> base = new ArrayList<>();
-//                it.add(new AbstractNamedIterator<NutsDependency>("tee(" + a0 + ")") {
-//                    @Override
-//                    public boolean hasNext() {
-//                        return a0.hasNext();
-//                    }
-//
-//                    @Override
-//                    public NutsDependency next() {
-//                        NutsDependency x = a0.next();
-//                        base.add(x);
-//                        return x;
-//                    }
-//                });
-//                it.add(new AbstractNamedIterator<NutsDependency>("ResolveDependencies") {
-//                    NutsIterator<NutsDependency> deps = null;
-//
-//                    @Override
-//                    public boolean hasNext() {
-//                        if (deps == null) {
-//                            //will be called when base is already filled up!
-//                            deps = Arrays.asList(findDependencies2(base)).iterator();
-//                        }
-//                        return deps.hasNext();
-//                    }
-//
-//                    @Override
-//                    public NutsDependency next() {
-//                        return deps.next();
-//                    }
-//                });
-//                curr = IteratorUtils.concat(it);
-//            }
-//        }
-//        if (sort) {
-//            return buildCollectionResult(
-//                    IteratorUtils.sort(applyVersionFlagFilters2(curr, false).iterator(), comparator, false),
-//                    print);
-//        } else {
-//            return applyVersionFlagFilters2(curr, print);
-//        }
-//    }
-
-
-    //    private NutsId[] findDependencies(List<NutsId> ids) {
-//        NutsWorkspace ws = getSession().getWorkspace();
-//        NSession _session = this.getSession();
-//        NutsDependencyFilter _dependencyFilter = ws.dependency().filter().byScope(getScope())
-//                .and(ws.dependency().filter().byOptional(getOptional()))
-//                .and(getDependencyFilter());
-//        for (NutsDependencyFilter ff : CoreFilterUtils.getTopLevelFilters(getIdFilter(), NutsDependencyFilter.class, getWorkspace())) {
-//            _dependencyFilter = _dependencyFilter.and(ff);
-//        }
-//        NutsDependenciesResolver nutsDependenciesResolver = new NutsDependenciesResolver(CoreNutsUtils.silent(_session))
-//                .setDependencyFilter(_dependencyFilter)
-//                .setFailFast(isFailFast());
-//        for (NutsId id : ids) {
-//            nutsDependenciesResolver.addRootId(id);
-//        }
-//        return nutsDependenciesResolver.resolve()
-//                .all().stream().map(NutsDependency::toId).toArray(NutsId[]::new);
-//    }
-//    private NutsDependency[] findDependencies2(List<NutsDependency> ids) {
-//        NutsWorkspace ws = getSession().getWorkspace();
-//        NSession _session = this.getSession();
-//        NutsDependencyFilter _dependencyFilter = ws.dependency().filter().byScope(getScope())
-//                .and(ws.dependency().filter().byOptional(getOptional()))
-//                .and(getDependencyFilter());
-//        for (NutsDependencyFilter ff : CoreFilterUtils.getTopLevelFilters(getIdFilter(), NutsDependencyFilter.class, getWorkspace())) {
-//            _dependencyFilter = _dependencyFilter.and(ff);
-//        }
-//        NutsDependenciesResolver nutsDependenciesResolver = new NutsDependenciesResolver(CoreNutsUtils.silent(_session))
-//                .setDependencyFilter(_dependencyFilter)
-//                .setFailFast(isFailFast());
-//        for (NutsDependency dep : ids) {
-//            nutsDependenciesResolver.addRootDefinition(dep);
-//        }
-//        return nutsDependenciesResolver.resolve().all().toArray(new NutsDependency[0]);
-//    }
     public NIterator<NId> getResultIdIteratorBase(Boolean forceInlineDependencies) {
         boolean inlineDependencies = forceInlineDependencies == null ? isInlineDependencies() : forceInlineDependencies;
         DefaultNSearch search = build();
 
         List<NIterator<? extends NId>> allResults = new ArrayList<>();
         NSession session = NSession.of();
-        NIdFilter sIdFilter = search.getIdFilter();
         NRepositoryFilter sRepositoryFilter = search.getRepositoryFilter();
-        NDescriptorFilter sDescriptorFilter = search.getDescriptorFilter();
         String[] regularIds = search.getRegularIds();
         NFetchStrategy fetchMode = NWorkspaceHelper.validate(session.getFetchStrategy().orDefault());
-//        InstalledVsNonInstalledSearch installedVsNonInstalledSearch = new InstalledVsNonInstalledSearch(
-//                search.isSearchInInstalled(),
-//                search.isSearchInOtherRepositories()
-//        );
         Set<NRepository> consideredRepos = new HashSet<>();
         NWorkspaceUtils wu = NWorkspaceUtils.of();
         NElements elems = NElements.of();
@@ -553,7 +275,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                             if (!nutsId.getArtifactId().contains("*")) {
                                 NRepositorySPI repoSPI = wu
                                         .repoSPI(NWorkspaceExt.of().getInstalledRepository());
-                                NIterator<NId> it = repoSPI.search().setFetchMode(NFetchMode.LOCAL).setFilter(NIdFilters.of().byName(
+                                NIterator<NId> it = repoSPI.search().setFetchMode(NFetchMode.LOCAL).setFilter(NDefinitionFilters.of().byName(
                                         nutsId.builder().setGroupId("*").build().toString()
                                 )).getResult();
                                 installedIds = NIteratorUtils.toList(it);
@@ -584,11 +306,13 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                             releaseVersion = true;
                             nutsIdNonLatest = nutsIdNonLatest.builder().setVersion("").build();
                         }
-                        NIdFilter idFilter2 = NFilters.of().all(sIdFilter,
-                                NIdFilters.of().byName(nutsIdNonLatest.getFullName())
+                        NDefinitionFilters dd = NDefinitionFilters.of();
+                        NDefinitionFilter filter = (
+                                dd.byName(nutsIdNonLatest.getFullName())
+                                        .and(dd.byEnv(nutsIdNonLatest.getProperties()))
+                                        .and(search.getDefinitionFilter())
                         );
-                        NIdFilter filter = CoreFilterUtils.simplify(CoreFilterUtils.idFilterOf(nutsIdNonLatest.getProperties(),
-                                idFilter2, sDescriptorFilter));
+
                         List<NRepositoryAndFetchMode> repositoryAndFetchModes = wu.filterRepositoryAndFetchModes(
                                 NRepositorySupportedAction.SEARCH, nutsIdNonLatest, sRepositoryFilter, fetchMode
                         );
@@ -626,11 +350,10 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                         //now will look with *:artifactId pattern
                         NSearchCmd search2 = NSearchCmd.of()
                                 .setRepositoryFilter(search.getRepositoryFilter())
-                                .setDescriptorFilter(search.getDescriptorFilter());
-                        search2.setIdFilter(
-                                NIdFilters.of().byName(nutsId.builder().setGroupId("*").build().toString())
-                                        .and(search.getIdFilter())
-                        );
+                                .setDefinitionFilter(
+                                        NDefinitionFilters.of().byName(nutsId.builder().setGroupId("*").build().toString())
+                                                .and(search.getDefinitionFilter())
+                                );
                         NIterator<NId> extraResult = search2.getResultIds().iterator();
                         allResults.add(
                                 fetchMode.isStopFast() ?
@@ -643,8 +366,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                 }
             }
         } else {
-            NIdFilter filter = CoreFilterUtils.simplify(CoreFilterUtils.idFilterOf(null, sIdFilter, sDescriptorFilter));
-
+            NDefinitionFilter filter = search.getDefinitionFilter();
             List<NIterator<? extends NId>> all = new ArrayList<>();
             for (NRepositoryAndFetchMode repoAndMode : wu.filterRepositoryAndFetchModes(
                     NRepositorySupportedAction.SEARCH, null, sRepositoryFilter,
@@ -653,18 +375,19 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                 consideredRepos.add(repoAndMode.getRepository());
 //                NSession finalSession1 = session;
                 all.add(
-                        NIteratorBuilder.of(wu.repoSPI(repoAndMode.getRepository()).search()
-                                        .setFilter(filter)
-                                        .setFetchMode(repoAndMode.getFetchMode())
-                                        .getResult()).safeIgnore()
-                                .named(
-                                        elems.ofObjectBuilder()
+                        NIteratorBuilder.ofSupplier(() -> wu.repoSPI(repoAndMode.getRepository()).search()
+                                                .setFilter(filter)
+                                                .setFetchMode(repoAndMode.getFetchMode())
+                                                .getResult(),
+                                        NEDesc.of(elems.ofObjectBuilder()
                                                 .set("description", "searchRepository")
                                                 .set("repository", repoAndMode.getRepository().getName())
                                                 .set("fetchMode", repoAndMode.getFetchMode().id())
                                                 .set("filter", NEDesc.describeResolveOrDestruct(filter))
-                                                .build()
-                                ).iterator()
+                                                .build())
+                                )
+                                .safeIgnore()
+                                .iterator()
                 );
             }
             allResults.add(
@@ -696,129 +419,6 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
         return filterLatestAndDuplicatesThenSort(baseIterator, isLatest(), isDistinct(), isSorted());
     }
 
-//    public NutsIterator<NutsDependency> findIterator2(DefaultNSearch search) {
-//        List<NutsIterator<NutsDependency>> allResults = new ArrayList<>();
-//        NutsWorkspace ws = getSession().getWorkspace();
-//        NSession session = search.getSession();
-//        NutsIdFilter sIdFilter = search.getIdFilter();
-//        NutsRepositoryFilter sRepositoryFilter = search.getRepositoryFilter();
-//        NutsDescriptorFilter sDescriptorFilter = search.getDescriptorFilter();
-//        String[] regularIds = search.getRegularIds();
-//        NutsFetchStrategy fetchMode = NutsWorkspaceHelper.validate(session.getFetchStrategy());
-//        InstalledVsNonInstalledSearch installedVsNonInstalledSearch = new InstalledVsNonInstalledSearch(
-//                search.isSearchInInstalled(),
-//                search.isSearchInOtherRepositories()
-//        );
-//        NutsWorkspaceUtils wu = NutsWorkspaceUtils.of();
-//
-//        if (regularIds.length > 0) {
-//            for (String id : regularIds) {
-//                NutsId nutsId = ws.id().parser().parse(id);
-//                if (nutsId != null) {
-//                    NutsDependency dep = nutsId.toDependency();
-//                    List<NutsId> nutsId2 = new ArrayList<>();
-//                    if (NutsBlankable.isBlank(nutsId.getGroupId())) {
-//                        if (nutsId.getArtifactId().equals("nuts")) {
-//                            nutsId2.add(nutsId.builder().setGroupId("net.thevpc.nuts").build());
-//                        } else {
-//                            for (String aImport : ws.imports().getAll()) {
-//                                nutsId2.add(nutsId.builder().setGroupId(aImport).build());
-//                            }
-//                        }
-//                    } else {
-//                        nutsId2.add(nutsId);
-//                    }
-//                    List<NutsIterator<NutsDependency>> coalesce = new ArrayList<>();
-//                    NSession finalSession = session;
-//                    for (NutsId nutsId1 : nutsId2) {
-//                        List<NutsIterator<NutsDependency>> idLookup = new ArrayList<>();
-//                        NutsIdFilter idFilter2 = ws.filters().all(sIdFilter,
-//                                ws.id().filter().byName(nutsId1.getFullName())
-//                        );
-//                        NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(nutsId1.getProperties(),
-//                                idFilter2, sDescriptorFilter, ws));
-//                        for (NutsRepositoryAndFetchMode repoAndMode : wu.filterRepositoryAndFetchModes(
-//                                NutsRepositorySupportedAction.SEARCH, nutsId1, sRepositoryFilter, fetchMode, session,
-//                                installedVsNonInstalledSearch
-//                        )) {
-//                            NutsRepositorySPI repoSPI = wu.repoSPI(repoAndMode.getRepository());
-//                            idLookup.add(
-//                                    IteratorBuilder.ofLazyNamed("searchVersions("
-//                                            + repoAndMode.getRepository().getName() + ","
-//                                            + repoAndMode.getFetchMode() + "," + sRepositoryFilter + "," + finalSession + ")",
-//                                            ()
-//                                            -> CoreNutsUtils.itIdToDep(
-//                                                    repoSPI.searchVersions().setId(nutsId1).setFilter(filter)
-//                                                            .setSession(finalSession)
-//                                                            .setFetchMode(repoAndMode.getFetchMode())
-//                                                            .getResult(), dep)
-//                                    ).safeIgnore().iterator()
-//                            );
-//                        }
-//                        coalesce.add(fetchMode.isStopFast()
-//                                ? IteratorUtils.coalesce(idLookup)
-//                                : IteratorUtils.concat(idLookup)
-//                        );
-//                    }
-//                    if (nutsId.getGroupId() == null) {
-//                        //now will look with *:artifactId pattern
-//                        NutsSearchCommand search2 = ws.search()
-//                                .setSession(session)
-//                                .setRepositoryFilter(search.getRepositoryFilter())
-//                                .setDescriptorFilter(search.getDescriptorFilter());
-//                        search2.setIdFilter(
-//                                ws.id().filter().byName(nutsId.builder().setGroupId("*").build().toString())
-//                                        .and(search.getIdFilter())
-//                        );
-//                        NutsIterator<NutsDependency> extraResult = CoreNutsUtils.itIdToDep(search2.getResultIds().iterator(), nutsId.toDependency());
-//                        if (fetchMode.isStopFast()) {
-//                            coalesce.add(extraResult);
-//                            allResults.add(IteratorUtils.coalesce(coalesce));
-//                        } else {
-//                            allResults.add(
-//                                    IteratorUtils.coalesce(
-//                                            Arrays.asList(
-//                                                    IteratorUtils.concat(coalesce),
-//                                                    extraResult
-//                                            )
-//                                    )
-//                            );
-//                        }
-//                    } else {
-//                        allResults.add(fetchMode.isStopFast()
-//                                ? IteratorUtils.coalesce(coalesce)
-//                                : IteratorUtils.concat(coalesce)
-//                        );
-//                    }
-//                }
-//            }
-//        } else {
-//            NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(null, sIdFilter, sDescriptorFilter, ws));
-//
-//            List<NutsIterator<NutsDependency>> all = new ArrayList<>();
-//            for (NutsRepositoryAndFetchMode repoAndMode : wu.filterRepositoryAndFetchModes(
-//                    NutsRepositorySupportedAction.SEARCH, null, sRepositoryFilter,
-//                    fetchMode, session,
-//                    installedVsNonInstalledSearch
-//            )) {
-//                NSession finalSession1 = session;
-//                all.add(IteratorBuilder.ofLazyNamed("search(" + repoAndMode.getRepository().getName() + ","
-//                        + repoAndMode.getFetchMode() + "," + sRepositoryFilter + "," + session + ")",
-//                        () -> CoreNutsUtils.itIdToDep(wu.repoSPI(repoAndMode.getRepository()).search()
-//                                .setFilter(filter).setSession(finalSession1)
-//                                .setFetchMode(repoAndMode.getFetchMode())
-//                                .getResult())
-//                ).safeIgnore().iterator()
-//                );
-//            }
-//            allResults.add(
-//                    fetchMode.isStopFast()
-//                    ? IteratorUtils.coalesce(all)
-//                    : IteratorUtils.concat(all)
-//            );
-//        }
-//        return IteratorUtils.concat(allResults);
-//    }
 
     private NIterator<NId> filterLatestAndDuplicatesThenSort(NIterator<NId> baseIterator, boolean latest, boolean distinct, boolean sort) {
         //ff ft tt tf

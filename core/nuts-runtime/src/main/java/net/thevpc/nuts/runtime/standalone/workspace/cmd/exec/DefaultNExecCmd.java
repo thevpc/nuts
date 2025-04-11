@@ -9,6 +9,7 @@ import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
+import net.thevpc.nuts.NDefinitionBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.NInternalCommand;
 import net.thevpc.nuts.text.NText;
@@ -19,7 +20,6 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.util.NConnexionString;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineUtils;
-import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
 import net.thevpc.nuts.runtime.standalone.descriptor.parser.NDescriptorContentResolver;
 import net.thevpc.nuts.runtime.standalone.executor.NExecutionContextUtils;
@@ -468,7 +468,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                         NDescriptor descriptor = c.getDescriptor();
                         if (descriptor != null) {
                             try {
-                                descriptor = NWorkspace.of().resolveEffectiveDescriptor(descriptor,new EffectiveNDescriptorConfig().setFilterCurrentEnvironment(true));
+                                descriptor = NWorkspace.of().resolveEffectiveDescriptor(descriptor,new NDescriptorEffectiveConfig().setIgnoreCurrentEnvironment(true));
                             } catch (NNotFoundException ex) {
                                 //ignore
                                 _LOGOP().level(Level.WARNING).verb(NLogVerb.WARNING)
@@ -478,8 +478,9 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                             }
                             NId _id = descriptor.getId();
 
-                            DefaultNDefinitionBuilder nutToRun =new DefaultNDefinitionBuilder()
+                            NDefinitionBuilder nutToRun =new DefaultNDefinitionBuilder()
                                     .setId(_id.getLongId())
+                                    .setDependency(_id.toDependency())
                                     .setDescriptor(descriptor)
                                     .setContent(NPath.of(c.getContentFile()).setUserCache(false).setUserTemporary(!c.getTemps().isEmpty()))
                                     .setInstallInformation(DefaultNInstallInfo.notInstalled(_id))
@@ -799,7 +800,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
             nid = nid.builder().setGroupId(NConstants.Ids.NUTS_GROUP_ID).build();
         }
         NId ff = NSearchCmd.of().addId(nid).setOptional(false).setLatest(true).setFailFast(false)
-                .setInstallStatus(NInstallStatusFilters.of().byDeployed(true))
+                .setDefinitionFilter(NDefinitionFilters.of().byDeployed(true))
                 .getResultDefinitions().stream()
                 .sorted(Comparator.comparing(x -> !x.getInstallInformation().get().isDefaultVersion())) // default first
                 .map(NDefinition::getId).findFirst().orElse(null);

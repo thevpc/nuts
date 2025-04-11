@@ -13,12 +13,10 @@ import java.util.logging.Level;
 class SilentStartNProgressListenerAdapter implements NProgressListener {
     private final NProgressListener delegate;
     private final NMsg path;
-    private final NWorkspace workspace;
 
-    public SilentStartNProgressListenerAdapter(NWorkspace workspace,NProgressListener delegate, NMsg path) {
+    public SilentStartNProgressListenerAdapter(NProgressListener delegate, NMsg path) {
         this.delegate = delegate;
         this.path = path;
-        this.workspace = workspace;
     }
 
     protected NLogOp _LOGOP() {
@@ -39,10 +37,12 @@ class SilentStartNProgressListenerAdapter implements NProgressListener {
                 boolean b=delegate.onProgress(event);
                 if (event.getError() != null) {
                     _LOGOP().level(Level.FINEST).verb(NLogVerb.FAIL)
-                            .log(NMsg.ofC("download failed    : %s", path));
+                            .time(event.getDuration().getTimeAsMillis())
+                            .log(NMsg.ofC(NI18n.of("download failed    : %s"), path));
                 } else {
                     _LOGOP().level(Level.FINEST).verb(NLogVerb.SUCCESS)
-                            .log(NMsg.ofC( "download succeeded : %s", path));
+                            .time(event.getDuration().getTimeAsMillis())
+                            .log(NMsg.ofC( NI18n.of("download succeeded : %s"), path));
                 }
                 return b;
             }

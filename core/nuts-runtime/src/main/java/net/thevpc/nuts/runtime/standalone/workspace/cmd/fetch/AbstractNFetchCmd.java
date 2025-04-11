@@ -11,7 +11,7 @@ import net.thevpc.nuts.util.NMsg;
 public abstract class AbstractNFetchCmd extends DefaultNQueryBaseOptions<NFetchCmd> implements NFetchCmd {
 
     private NId id;
-    private boolean filterCurrentEnvironment=true;
+    private boolean ignoreCurrentEnvironment;
 //    protected Boolean installedOrNot;
 
     public AbstractNFetchCmd() {
@@ -20,13 +20,13 @@ public abstract class AbstractNFetchCmd extends DefaultNQueryBaseOptions<NFetchC
     }
 
     @Override
-    public boolean isFilterCurrentEnvironment() {
-        return filterCurrentEnvironment;
+    public boolean isIgnoreCurrentEnvironment() {
+        return ignoreCurrentEnvironment;
     }
 
     @Override
-    public NFetchCmd setFilterCurrentEnvironment(boolean filterCurrentEnvironment) {
-        this.filterCurrentEnvironment = filterCurrentEnvironment;
+    public NFetchCmd setIgnoreCurrentEnvironment(boolean ignoreCurrentEnvironment) {
+        this.ignoreCurrentEnvironment = ignoreCurrentEnvironment;
         return this;
     }
     @Override
@@ -66,7 +66,7 @@ public abstract class AbstractNFetchCmd extends DefaultNQueryBaseOptions<NFetchC
         if (other != null) {
             NFetchCmd o = other;
             this.id = o.getId();
-            this.filterCurrentEnvironment = o.isFilterCurrentEnvironment();
+            this.ignoreCurrentEnvironment = o.isIgnoreCurrentEnvironment();
 //            this.installedOrNot = o.getInstalled();
         }
         return this;

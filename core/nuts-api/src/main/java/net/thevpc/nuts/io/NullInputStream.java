@@ -47,17 +47,17 @@ public final class NullInputStream extends InputStream {
     }
 
     @Override
-    public int read(byte[] b) throws IOException {
+    public int read(byte[] b)  {
         return 0;
     }
 
     @Override
-    public int read(byte[] b, int off, int len) throws IOException {
+    public int read(byte[] b, int off, int len) {
         return 0;
     }
 
     @Override
-    public long skip(long n) throws IOException {
+    public long skip(long n) {
         return 0;
     }
 

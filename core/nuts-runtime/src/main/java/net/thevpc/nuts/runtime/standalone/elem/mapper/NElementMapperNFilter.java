@@ -32,17 +32,14 @@ public class NElementMapperNFilter implements NElementMapper<NFilter> {
                 case "net.thevpc.nuts.NIdFilter": {
                     return NIdFilters.of().parse(s);
                 }
-                case "net.thevpc.nuts.NDescriptorFilter": {
-                    return NDescriptorFilters.of().parse(s);
+                case "net.thevpc.nuts.NDefinitionFilter": {
+                    return NDefinitionFilters.of().parse(s);
                 }
                 case "net.thevpc.nuts.NVersionFilter": {
                     return NVersionFilters.of().parse(s);
                 }
                 case "net.thevpc.nuts.NDependencyFilter": {
                     return NDependencyFilters.of().parse(s);
-                }
-                case "net.thevpc.nuts.NInstallStatusFilter": {
-                    return NInstallStatusFilters.of().parse(s);
                 }
                 case "net.thevpc.nuts.NRepositoryFilter": {
                     return NRepositoryFilters.of().parse(s);

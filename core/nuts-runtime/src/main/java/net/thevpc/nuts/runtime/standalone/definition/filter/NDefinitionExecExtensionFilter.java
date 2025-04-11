@@ -3,29 +3,28 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thevpc.nuts.runtime.standalone.id.filter;
+package net.thevpc.nuts.runtime.standalone.definition.filter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.descriptor.filter.AbstractDescriptorFilter;
 import net.thevpc.nuts.util.NFilterOp;
 
 /**
  *
  * @author thevpc
  */
-public class NExecExtensionFilter extends AbstractDescriptorFilter {
+public class NDefinitionExecExtensionFilter extends AbstractDefinitionFilter {
     private NId apiId;
-    public NExecExtensionFilter(NId apiId) {
+    public NDefinitionExecExtensionFilter(NId apiId) {
         super(NFilterOp.CUSTOM);
         this.apiId=apiId;
     }
 
     @Override
-    public boolean acceptDescriptor(NDescriptor other) {
-        if(other.getIdType()!= NIdType.EXTENSION){
+    public boolean acceptDefinition(NDefinition other) {
+        if(other.getDescriptor().getIdType()!= NIdType.EXTENSION){
             return false;
         }
-        for (NDependency dependency : other.getDependencies()) {
+        for (NDependency dependency : other.getDescriptor().getDependencies()) {
             if(dependency.toId().getShortName().equals(this.apiId.getShortName())){
                 if(apiId==null){
                     return true;
@@ -40,7 +39,7 @@ public class NExecExtensionFilter extends AbstractDescriptorFilter {
     }
 
     @Override
-    public NDescriptorFilter simplify() {
+    public NDefinitionFilter simplify() {
         return this;
     }
 

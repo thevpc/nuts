@@ -218,12 +218,7 @@ public class DefaultNEnvCondition implements NEnvCondition {
 
     @Override
     public NEnvConditionBuilder builder() {
-        return NEnvConditionBuilder.of();
-    }
-
-    @Override
-    public NEnvCondition readOnly() {
-        return this;
+        return NEnvConditionBuilder.of().copyFrom(this);
     }
 
     @Override

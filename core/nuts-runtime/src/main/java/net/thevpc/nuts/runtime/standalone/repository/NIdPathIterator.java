@@ -44,7 +44,7 @@ public class NIdPathIterator extends NIteratorBase<NId> {
 
     private final NRepository repository;
     private final StackOrQueue<PathAndDepth> stack;
-    private final NIdFilter filter;
+    private final NDefinitionFilter filter;
     private final NIdPathIteratorModel model;
     private final int maxDepth;
     private final NPath basePath;
@@ -55,7 +55,7 @@ public class NIdPathIterator extends NIteratorBase<NId> {
     private final NObjectElement extraProperties;
     private final String kind;
 
-    public NIdPathIterator(NRepository repository, NPath rootFolder, NPath basePath, NIdFilter filter, NIdPathIteratorModel model, int maxDepth, String kind, NObjectElement extraProperties, boolean bfs) {
+    public NIdPathIterator(NRepository repository, NPath rootFolder, NPath basePath, NDefinitionFilter filter, NIdPathIteratorModel model, int maxDepth, String kind, NObjectElement extraProperties, boolean bfs) {
         this.stack = bfs?new OneQueue<>():new OneStack<>();
         this.repository = repository;
         this.extraProperties = extraProperties;

@@ -15,7 +15,7 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
     public static final String ID = "org.apache.netbeans:netbeans";
 
     @Override
-    public NIterator<NId> searchVersions(NId id, NIdFilter filter, NRepository repository) {
+    public NIterator<NId> searchVersions(NId id, NDefinitionFilter filter, NRepository repository) {
         return search(filter, new NPath[]{null}, repository);
     }
 
@@ -78,7 +78,7 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
     }
 
     @Override
-    public NIterator<NId> search(NIdFilter filter, NPath[] basePaths, NRepository repository) {
+    public NIterator<NId> search(NDefinitionFilter filter, NPath[] basePaths, NRepository repository) {
         //List<NutsId> all = new ArrayList<>();
 //        NutsWorkspace ws = session.getWorkspace();
         NIdBuilder idBuilder = NIdBuilder.of("org.apache.netbeans", "netbeans");

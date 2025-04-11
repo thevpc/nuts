@@ -51,7 +51,7 @@ public class NRepositoryList extends NCachedRepository {
     }
 
     @Override
-    public NIterator<NId> searchVersionsCore(final NId id, NIdFilter idFilter, NFetchMode fetchMode) {
+    public NIterator<NId> searchVersionsCore(final NId id, NDefinitionFilter idFilter, NFetchMode fetchMode) {
         List<NIterator<? extends NId>> all = new ArrayList<>();
         for (NRepository repoItem : repoItems) {
             all.add(
@@ -86,7 +86,7 @@ public class NRepositoryList extends NCachedRepository {
     }
 
     @Override
-    public NIterator<NId> searchCore(final NIdFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode) {
+    public NIterator<NId> searchCore(final NDefinitionFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode) {
         List<NIterator<? extends NId>> list = new ArrayList<>();
         for (NRepository repoItem : repoItems) {
             list.add(
@@ -124,7 +124,7 @@ public class NRepositoryList extends NCachedRepository {
     }
 
 
-    public NId searchLatestVersionCore(NId id, NIdFilter filter, NFetchMode fetchMode) {
+    public NId searchLatestVersionCore(NId id, NDefinitionFilter filter, NFetchMode fetchMode) {
         for (NRepository repoItem : repoItems) {
             try {
                 NId nId = ((NRepositoryExt) repoItem).searchLatestVersion(id, filter, fetchMode);

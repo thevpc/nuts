@@ -52,7 +52,7 @@ public interface NIndexStore {
      * @param filter filter or null for all
      * @return all available versions (in the index)
      */
-    NIterator<NId> search(NIdFilter filter);
+    NIterator<NId> search(NDefinitionFilter filter);
 
     /**
      * return true if the index is enabled

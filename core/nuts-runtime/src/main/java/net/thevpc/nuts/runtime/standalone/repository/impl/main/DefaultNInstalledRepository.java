@@ -30,6 +30,7 @@ import net.thevpc.nuts.NConstants;
 
 
 import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NEDesc;
@@ -40,7 +41,6 @@ import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
-import net.thevpc.nuts.runtime.standalone.io.util.NInstallStatusIdFilter;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.deploy.AbstractNDeployRepositoryCmd;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.AbstractNFetchContentRepositoryCmd;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.AbstractNFetchDescriptorRepositoryCmd;
@@ -53,7 +53,6 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.AbstractNRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt0;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryFolderHelper;
 import net.thevpc.nuts.util.NLRUMap;
-import net.thevpc.nuts.runtime.standalone.util.filters.NIdFilterToPredicate;
 import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -243,10 +242,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
             _wstore().deleteInstallInfoConfig(id);
             String v = getDefaultVersion(id);
             if (v != null && v.equals(id.getVersion().getValue())) {
-                Iterator<NId> versions = searchVersions().setId(id)
-                        .setFilter(NIdFilters.of().byInstallStatus(
-                                NInstallStatusFilters.of().byInstalled(true)
-                        )) //search only in installed, ignore deployed!
+                Iterator<NId> versions = searchVersions().setId(id).setFilter(NDefinitionFilters.of().byInstalled(true)) //search only in installed, ignore deployed!
                         .setFetchMode(NFetchMode.LOCAL)
                         .getResult();
                 List<NId> nutsIds = NCollections.list(versions == null ? Collections.emptyIterator() : versions);
@@ -666,9 +662,9 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                 NIterator<NId> idIter = NIteratorBuilder.of(installIter)
                         .map(NFunction.of(InstallInfoConfig::getId).withDesc(NEDesc.of("NutsInstallInformation->Id")))
                         .build();
-                NIdFilter ff = getFilter();
+                NDefinitionFilter ff = getFilter();
                 if (ff != null) {
-                    idIter = NIteratorBuilder.of(idIter).filter(new NIdFilterToPredicate(ff)).build();
+                    idIter = NIteratorBuilder.of(idIter).filter(NDefinitionHelper.toIdPredicate(ff)).build();
                 }
                 result = idIter; //deployments.searchImpl(getFilter(), session)
                 if (result == null) {
@@ -685,22 +681,22 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         return new AbstractNSearchVersionsRepositoryCmd(this) {
             @Override
             public NSearchVersionsRepositoryCmd run() {
-                if (getFilter() instanceof NInstallStatusIdFilter) {
+//                if (getFilter() instanceof NInstallStatusDefinitionFilter) {
                     final NVersionFilter filter0 = getId().getVersion().filter();
                     result=NStream.ofIterator(_wstore().searchInstalledVersions(getId()))
                                     .map(vv->{
                                         NId newId = getId().builder().setVersion(vv).build();
-                                        if (filter0.acceptVersion(vv) && (filter == null || filter.acceptId(newId))) {
+                                        if (filter0.acceptVersion(vv) && (filter == null || filter.acceptDefinition(NDefinitionHelper.ofIdOnly(newId)))) {
                                             return newId;
                                         }
                                         return null;
                                     }).nonNull().withDesc(NEDesc.of("FileToVersion")).iterator();
-                } else {
-                    this.result = NIteratorBuilder.of(deployments.searchVersions(getId(), getFilter(), true))
-                            .named(NElements.of().ofUplet("searchVersionsInMain"))
-                            .build()
-                    ;
-                }
+//                } else {
+//                    this.result = NIteratorBuilder.of(deployments.searchVersions(getId(), getFilter(), true))
+//                            .named(NElements.of().ofUplet("searchVersionsInMain"))
+//                            .build()
+//                    ;
+//                }
                 return this;
             }
         };

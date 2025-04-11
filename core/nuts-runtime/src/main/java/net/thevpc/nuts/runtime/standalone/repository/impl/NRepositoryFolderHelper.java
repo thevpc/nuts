@@ -15,6 +15,7 @@ import net.thevpc.nuts.elem.NObjectElement;
 
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNContentEvent;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultWriteTypeProcessor;
@@ -235,7 +236,7 @@ public class NRepositoryFolderHelper {
         return getStoreLocation().resolve(ExtraApiUtils.resolveIdPath(id.getShortId()));
     }
 
-    public NIterator<NId> searchVersions(NId id, final NIdFilter filter, boolean deep) {
+    public NIterator<NId> searchVersions(NId id, final NDefinitionFilter filter, boolean deep) {
         if (!isReadEnabled()) {
             return null;
         }
@@ -267,22 +268,23 @@ public class NRepositoryFolderHelper {
                             .build()
             ).build();
         }
-        NIdFilter filter2 = NIdFilters.of().all(filter,
-                NIdFilters.of().byName(id.getShortName())
+        NDefinitionFilter filter2 = NDefinitionFilters.of().all(
+                filter,
+                NDefinitionFilters.of().byName(id.getShortName())
         );
         return findInFolder(getRelativeLocalGroupAndArtifactFile(id), filter2,
                 deep ? Integer.MAX_VALUE : 1
         );
     }
 
-    public NIterator<NId> searchImpl(NIdFilter filter) {
+    public NIterator<NId> searchImpl(NDefinitionFilter filter) {
         if (!isReadEnabled()) {
             return null;
         }
         return findInFolder(null, filter, Integer.MAX_VALUE);
     }
 
-    public NIterator<NId> findInFolder(NPath folder, final NIdFilter filter, int maxDepth) {
+    public NIterator<NId> findInFolder(NPath folder, final NDefinitionFilter filter, int maxDepth) {
         if (!isReadEnabled()) {
             return null;
         }
@@ -327,7 +329,7 @@ public class NRepositoryFolderHelper {
         return rootPath;
     }
 
-    public NId searchLatestVersion(NId id, NIdFilter filter) {
+    public NId searchLatestVersion(NId id, NDefinitionFilter filter) {
         if (!isReadEnabled()) {
             return null;
         }
@@ -342,7 +344,7 @@ public class NRepositoryFolderHelper {
                     if (pathExists(versionFolder)) {
                         NId id2 = id.builder().setVersion(versionFolder.getName()).build();
                         if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
-                            if (filter == null || filter.acceptId(id2)) {
+                            if (filter == null || filter.acceptDefinition(NDefinitionHelper.ofIdOnly(id2))) {
                                 bestId = id2;
                             }
                         }

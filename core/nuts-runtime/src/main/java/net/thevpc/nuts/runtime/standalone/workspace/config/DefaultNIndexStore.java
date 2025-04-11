@@ -35,6 +35,8 @@ import net.thevpc.nuts.NIndexStore;
 
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterToNIdPredicate;
+import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterToNIdPredicate2;
 import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
@@ -89,7 +91,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
     }
 
     @Override
-    public NIterator<NId> search(NIdFilter filter) {
+    public NIterator<NId> search(NDefinitionFilter filter) {
         NElements elems = NElements.of();
         return NIteratorBuilder.ofSupplier(
                 () -> {
@@ -102,7 +104,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
                         Map[] array = elems.json().parse(new InputStreamReader(NPath.of(uu).getInputStream()), Map[].class);
                         return Arrays.stream(array)
                                 .map(s -> NId.get(s.get("stringId").toString()).get())
-                                .filter(filter != null ? new NIdFilterToNIdPredicate(filter) : NPredicates.always())
+                                .filter(new NDefinitionFilterToNIdPredicate2(filter))
                                 .iterator();
                     } catch (UncheckedIOException | NIOException e) {
                         setInaccessible();

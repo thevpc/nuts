@@ -27,7 +27,7 @@ public class Test05_FindTest {
         List<NId> def = NSearchCmd.of().addId("nuts").setOptional(false).setLatest(true).setFailFast(false)
 //                .repository("maven-local")
                 .setDefaultVersions(true)
-                .setInstallStatus(NInstallStatusFilters.of().byDeployed(true))
+                .setDefinitionFilter(NDefinitionFilters.of().byDeployed(true))
                 .getResultIds().toList();
 
         TestUtils.println(def);

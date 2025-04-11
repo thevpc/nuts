@@ -11,32 +11,32 @@ public class NullReader extends Reader {
     }
 
     @Override
-    public int read(char[] chars, int i, int i1) throws IOException {
+    public int read(char[] chars, int i, int i1)  {
         return -1;
     }
 
     @Override
-    public int read(CharBuffer target) throws IOException {
+    public int read(CharBuffer target)  {
         return 0;
     }
 
     @Override
-    public int read() throws IOException {
+    public int read()  {
         return -1;
     }
 
     @Override
-    public int read(char[] cbuf) throws IOException {
+    public int read(char[] cbuf)  {
         return 0;
     }
 
     @Override
-    public long skip(long n) throws IOException {
+    public long skip(long n)  {
         return 0;
     }
 
     @Override
-    public boolean ready() throws IOException {
+    public boolean ready()  {
         return false;
     }
 

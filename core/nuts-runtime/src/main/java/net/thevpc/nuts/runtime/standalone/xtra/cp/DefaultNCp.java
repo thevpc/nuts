@@ -19,6 +19,7 @@ import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.time.NProgressEvent;
 import net.thevpc.nuts.time.NProgressFactory;
 import net.thevpc.nuts.time.NProgressListener;
@@ -778,6 +779,7 @@ public class DefaultNCp implements NCp {
                             .create());
         }
         NLogOp lop = _LOGOP();
+        NChronometer chrono = NChronometer.startNow();
         if (lop.isLoggable(Level.FINEST)) {
             lop.level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofC("%s %s to %s",
                     m,
@@ -868,12 +870,17 @@ public class DefaultNCp implements NCp {
                     }
                 }
             }
+            lop.level(Level.CONFIG).verb(NLogVerb.SUCCESS)
+                    .time(chrono.getDurationMs())
+                    .log(NMsg.ofC(NI18n.of("%s %s to %s"), m,_source2.source, loggedTarget));
         } catch (IOException ex) {
             lop.level(Level.CONFIG).verb(NLogVerb.FAIL)
-                    .log(NMsg.ofC("error copying %s to %s : %s", _source2.source, target, ex));
+                    .time(chrono.getDurationMs())
+                    .log(NMsg.ofC("error % %s to %s : %s", m,_source2.source, loggedTarget, ex));
             throw new NIOException(ex);
         }
     }
+
 
     private void _validate(Path temp) {
         if (checker != null) {

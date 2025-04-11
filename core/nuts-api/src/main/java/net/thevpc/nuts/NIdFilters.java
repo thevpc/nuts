@@ -28,6 +28,8 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.ext.NExtensions;
 
+import java.util.Map;
+
 /**
  * @app.category Base
  */
@@ -40,7 +42,7 @@ public interface NIdFilters extends NTypedFilters<NIdFilter> {
 
     NIdFilter byDefaultVersion(Boolean defaultVersion);
 
-    NIdFilter byInstallStatus(NInstallStatusFilter installStatus);
 
     NIdFilter byName(String... names);
+
 }

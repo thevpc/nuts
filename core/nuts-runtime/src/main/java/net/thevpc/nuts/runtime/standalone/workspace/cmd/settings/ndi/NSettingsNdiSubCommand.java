@@ -189,8 +189,8 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 case "--installed": {
                     cmdLine.withNextTrueFlag((v, a) -> {
                         session.setConfirm(NConfirmationMode.YES);
-                        for (NId resultId : NSearchCmd.of().setInstallStatus(
-                                NInstallStatusFilters.of().byInstalled(true)
+                        for (NId resultId : NSearchCmd.of()
+                                .setDefinitionFilter(NDefinitionFilters.of().byInstalled(true)
                         ).getResultIds()) {
                             d.idsToInstall.add(resultId.getLongName());
                             d.missingAnyArgument = false;

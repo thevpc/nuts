@@ -29,12 +29,42 @@ public abstract class AbstractNFilter implements NFilter {
 
     @Override
     public NFilter or(NFilter other) {
-        return other == null ? this : NFilters.of().any(this, other);
+        if (other == null) {
+            return this;
+        }
+        switch (other.getFilterOp()) {
+            case TRUE:
+                return other;
+            case FALSE:
+                return this;
+        }
+        switch (getFilterOp()) {
+            case TRUE:
+                return other;
+            case FALSE:
+                return other;
+        }
+        return NFilters.of().any(this, other);
     }
 
     @Override
     public NFilter and(NFilter other) {
-        return other == null ? this : NFilters.of().all(this, other);
+        if (other == null) {
+            return this;
+        }
+        switch (other.getFilterOp()) {
+            case TRUE:
+                return this;
+            case FALSE:
+                return other;//false
+        }
+        switch (getFilterOp()) {
+            case TRUE:
+                return other;
+            case FALSE:
+                return this; //false
+        }
+        return NFilters.of().all(this, other);
     }
 
     @Override

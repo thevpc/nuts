@@ -47,6 +47,8 @@ public interface NWorkspaceStore {
 
     <T> T loadLocationKey(NLocationKey k, Class<T> type);
 
+    boolean deleteLocationKey(NLocationKey k);
+
     <T> T supplyWithCache(NLocationKey k, Class<T> type, Supplier<T> supplier);
 
     void saveInstallInfoConfig(InstallInfoConfig installInfoConfig);

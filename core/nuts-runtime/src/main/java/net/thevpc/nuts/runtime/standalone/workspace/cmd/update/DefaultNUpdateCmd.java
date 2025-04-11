@@ -255,7 +255,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         HashSet<NId> baseRegulars = new HashSet<>(ids);
         if (isInstalled()) {
             baseRegulars.addAll(NSearchCmd.of()
-                    .setInstallStatus(NInstallStatusFilters.of().byInstalled(true))
+                    .setDefinitionFilter(NDefinitionFilters.of().byInstalled(true))
                     .getResultIds().stream().map(NId::getShortId).collect(Collectors.toList()));
             // This bloc is to handle packages that were installed by their jar/content but was removed for any reason!
             NWorkspaceExt dws = NWorkspaceExt.of();
@@ -289,9 +289,9 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         resultFixes = NIteratorUtils.toList(NIteratorUtils.convertNonNull(ir.searchInstallInformation(), new Function<NInstallInformation, FixAction>() {
             @Override
             public FixAction apply(NInstallInformation nInstallInformation) {
-                NId id = NSearchCmd.of().setInstallStatus(
-                                NInstallStatusFilters.of().byInstalled(true)
-                        ).addId(nInstallInformation.getId()).getResultIds()
+                NId id = NSearchCmd.of()
+                        .setDefinitionFilter(NDefinitionFilters.of().byInstalled(true))
+                        .addId(nInstallInformation.getId()).getResultIds()
                         .findFirst().orNull();
                 if (id == null) {
                     return new FixAction(nInstallInformation.getId(), "MissingInstallation") {
@@ -470,7 +470,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         r.setId(id.getShortId());
         boolean shouldUpdateDefault = false;
         NDefinition d0 = NSearchCmd.of().addId(id)
-                .setInstallStatus(NInstallStatusFilters.of().byDeployed(true))
+                .setDefinitionFilter(NDefinitionFilters.of().byDeployed(true))
                 .setOptional(false).setFailFast(false)//.setDefaultVersions(true)
                 .sort(DEFAULT_THEN_LATEST_VERSION_FIRST)
                 .getResultDefinitions()

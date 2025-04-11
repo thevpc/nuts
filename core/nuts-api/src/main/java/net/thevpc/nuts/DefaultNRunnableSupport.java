@@ -23,9 +23,9 @@ public class DefaultNRunnableSupport implements NRunnableSupport {
     public DefaultNRunnableSupport(Runnable value, int supportLevel, Supplier<NMsg> emptyMessage) {
         this.value = value;
         if (this.value == null && supportLevel > 0) {
-            throw new IllegalArgumentException("null runnable requires invalid support");
+            throw new IllegalArgumentException(NI18n.of("null runnable requires invalid support"));
         } else if (this.value != null && supportLevel <= 0) {
-            throw new IllegalArgumentException("non null runnable requires valid support");
+            throw new IllegalArgumentException(NI18n.of("non null runnable requires valid support"));
         }
         this.supportLevel = supportLevel;
         this.emptyMessage = emptyMessage == null ? () -> NMsg.ofInvalidValue() : emptyMessage;

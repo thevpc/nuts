@@ -3,23 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thevpc.nuts.runtime.standalone.id.filter;
+package net.thevpc.nuts.runtime.standalone.definition.filter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
-
-import net.thevpc.nuts.runtime.standalone.descriptor.filter.AbstractDescriptorFilter;
-import net.thevpc.nuts.util.NFilterOp;
 
 /**
  *
  * @author thevpc
  */
-public class NLockedIdExtensionFilter extends AbstractDescriptorFilter {
+public class NLockedIdExtensionDefinitionFilter extends AbstractDefinitionFilter {
     private NId[] lockedIds;
-    public NLockedIdExtensionFilter(NId[] lockedIds) {
+    public NLockedIdExtensionDefinitionFilter(NId[] lockedIds) {
         super(NFilterOp.CUSTOM);
         this.lockedIds =lockedIds;
     }
@@ -34,11 +32,11 @@ public class NLockedIdExtensionFilter extends AbstractDescriptorFilter {
     }
 
     @Override
-    public boolean acceptDescriptor(NDescriptor other) {
+    public boolean acceptDefinition(NDefinition other) {
         if(!acceptId(other.getId())){
             return false;
         }
-        for (NDependency dependency : other.getDependencies()) {
+        for (NDependency dependency : other.getDescriptor().getDependencies()) {
             if(!acceptId(dependency.toId())){
                 return false;
             }
@@ -47,7 +45,7 @@ public class NLockedIdExtensionFilter extends AbstractDescriptorFilter {
     }
 
     @Override
-    public NDescriptorFilter simplify() {
+    public NDefinitionFilter simplify() {
         return this;
     }
 

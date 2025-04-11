@@ -6,7 +6,6 @@ import net.thevpc.nuts.runtime.standalone.repository.NIdPathIteratorBase;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.util.NMsg;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 class MavenRepoIter extends NIdPathIteratorBase {
@@ -40,7 +39,7 @@ class MavenRepoIter extends NIdPathIteratorBase {
     }
 
     @Override
-    public NId parseId(NPath pomFile, NPath rootPath, NIdFilter filter, NRepository repository) throws IOException {
+    public NId parseId(NPath pomFile, NPath rootPath, NDefinitionFilter filter, NRepository repository)  {
         String fn = pomFile.getName();
         if (fn.endsWith(".pom")) {
             NPath versionFolder = pomFile.getParent();

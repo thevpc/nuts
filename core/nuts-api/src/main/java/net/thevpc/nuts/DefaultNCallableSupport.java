@@ -25,9 +25,9 @@ public class DefaultNCallableSupport<T> implements NCallableSupport<T> {
     public DefaultNCallableSupport(Supplier<T> value, int supportLevel, Supplier<NMsg> emptyMessage) {
         this.value = value;
         if (this.value == null && supportLevel > 0) {
-            throw new IllegalArgumentException("null callable requires invalid support");
+            throw new IllegalArgumentException(NI18n.of("null callable requires invalid support"));
         } else if (this.value != null && supportLevel <= 0) {
-            throw new IllegalArgumentException("non null callable requires valid support");
+            throw new IllegalArgumentException(NI18n.of("non null callable requires valid support"));
         }
         this.supportLevel = supportLevel;
         this.emptyMessage = emptyMessage == null ? () -> NMsg.ofInvalidValue() : emptyMessage;

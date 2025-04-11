@@ -30,6 +30,8 @@ import net.thevpc.nuts.NSpeedQualifier;
 import net.thevpc.nuts.NUser;
 import net.thevpc.nuts.NUserConfig;
 import net.thevpc.nuts.format.NDescriptorFormat;
+import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
+import net.thevpc.nuts.runtime.standalone.util.reflect.NUseDefaultUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
@@ -134,7 +136,7 @@ public class NHttpSrvRepository extends NCachedRepository {
     }
 
     @Override
-    public NIterator<NId> searchVersionsCore(NId id, NIdFilter idFilter, NFetchMode fetchMode) {
+    public NIterator<NId> searchVersionsCore(NId id, NDefinitionFilter idFilter, NFetchMode fetchMode) {
         NSession session=getWorkspace().currentSession();
         if (fetchMode != NFetchMode.REMOTE) {
             throw new NNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
@@ -148,17 +150,17 @@ public class NHttpSrvRepository extends NCachedRepository {
             return NIteratorBuilder.emptyIterator();
         }
         NIterator<NId> it = new NamedNIdFromStreamIterator(ret);
-        NIdFilter filter2 = NIdFilters.of().nonnull(idFilter).and(
-                NIdFilters.of().byName(id.getShortName())
+        NDefinitionFilter filter2 = NDefinitionFilters.of().nonnull(idFilter).and(
+                NDefinitionFilters.of().byName(id.getShortName())
         );
         if (filter2 != null) {
-            it = NIteratorBuilder.of(it).filter(CoreFilterUtils.createFilter(filter2)).iterator();
+            it = NIteratorBuilder.of(it).filter(NDefinitionHelper.toIdPredicate(filter2)).iterator();
         }
         return it;
     }
 
     @Override
-    public NIterator<NId> searchCore(final NIdFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode) {
+    public NIterator<NId> searchCore(final NDefinitionFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode) {
         if (fetchMode != NFetchMode.REMOTE) {
             return null;
         }
@@ -181,7 +183,7 @@ public class NHttpSrvRepository extends NCachedRepository {
                                 NInputSource.of(js.getBytes())).end()
                         .run()
                         .getContent().getInputStream();
-                return NIteratorBuilder.of(new NamedNIdFromStreamIterator(ret)).filter(CoreFilterUtils.createFilter(filter)).iterator();
+                return NIteratorBuilder.of(new NamedNIdFromStreamIterator(ret)).filter(NDefinitionHelper.toIdPredicate(filter)).iterator();
             }
         } else {
             NWebCli nWebCli = NWebCli.of();
@@ -198,7 +200,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         if (filter == null) {
             return new NamedNIdFromStreamIterator(ret);
         }
-        return NIteratorBuilder.of(new NamedNIdFromStreamIterator(ret)).filter(CoreFilterUtils.createFilter(filter)).iterator();
+        return NIteratorBuilder.of(new NamedNIdFromStreamIterator(ret)).filter(NDefinitionHelper.toIdPredicate(filter)).iterator();
 
     }
 

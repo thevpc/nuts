@@ -3,11 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thevpc.nuts.runtime.standalone.id.filter;
+package net.thevpc.nuts.runtime.standalone.definition.filter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.runtime.standalone.descriptor.filter.AbstractDescriptorFilter;
 import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.util.NLiteral;
 
@@ -15,22 +13,22 @@ import net.thevpc.nuts.util.NLiteral;
  *
  * @author thevpc
  */
-public class NExecRuntimeFilter extends AbstractDescriptorFilter {
+public class NDefinitionExecRuntimeFilter extends AbstractDefinitionFilter {
     private NId apiId;
     private boolean communityRuntime;
-    public NExecRuntimeFilter(NId apiId, boolean communityRuntime) {
+    public NDefinitionExecRuntimeFilter(NId apiId, boolean communityRuntime) {
         super(NFilterOp.CUSTOM);
         this.apiId=apiId;
         this.communityRuntime = communityRuntime;
     }
 
     @Override
-    public boolean acceptDescriptor(NDescriptor other) {
+    public boolean acceptDefinition(NDefinition other) {
         if(other.getId().getShortName().equals(NConstants.Ids.NUTS_RUNTIME)){
             if(apiId==null){
                 return true;
             }
-            for (NDependency dependency : other.getDependencies()) {
+            for (NDependency dependency : other.getDescriptor().getDependencies()) {
                 if (dependency.toId().getShortName().equals(this.apiId.getShortName())) {
                     if (apiId.getVersion().equals(dependency.toId().getVersion())) {
                         return true;
@@ -40,10 +38,10 @@ public class NExecRuntimeFilter extends AbstractDescriptorFilter {
             }
         }
         if(communityRuntime) {
-            if (!other.getPropertyValue("nuts-runtime").flatMap(NLiteral::asBoolean).orElse(false)) {
+            if (!other.getDescriptor().getPropertyValue("nuts-runtime").flatMap(NLiteral::asBoolean).orElse(false)) {
                 return false;
             }
-            for (NDependency dependency : other.getDependencies()) {
+            for (NDependency dependency : other.getDescriptor().getDependencies()) {
                 if (dependency.toId().getShortName().equals(this.apiId.getShortName())) {
                     if (apiId == null) {
                         return true;
@@ -59,7 +57,7 @@ public class NExecRuntimeFilter extends AbstractDescriptorFilter {
     }
 
     @Override
-    public NDescriptorFilter simplify() {
+    public NDefinitionFilter simplify() {
         return this;
     }
 

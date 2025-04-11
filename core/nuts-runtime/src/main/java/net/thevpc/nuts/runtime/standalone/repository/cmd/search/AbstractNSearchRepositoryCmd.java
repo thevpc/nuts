@@ -17,7 +17,7 @@ import net.thevpc.nuts.util.NIterator;
  */
 public abstract class AbstractNSearchRepositoryCmd extends NRepositoryCmdBase<NSearchRepositoryCmd> implements NSearchRepositoryCmd {
 
-    protected NIdFilter filter;
+    protected NDefinitionFilter filter;
     protected NIterator<NId> result;
 
     public AbstractNSearchRepositoryCmd(NRepository repo) {
@@ -42,13 +42,13 @@ public abstract class AbstractNSearchRepositoryCmd extends NRepositoryCmdBase<NS
     }
 
     @Override
-    public NSearchRepositoryCmd setFilter(NIdFilter filter) {
+    public NSearchRepositoryCmd setFilter(NDefinitionFilter filter) {
         this.filter = filter;
         return this;
     }
 
     @Override
-    public NIdFilter getFilter() {
+    public NDefinitionFilter getFilter() {
         return filter;
     }
 

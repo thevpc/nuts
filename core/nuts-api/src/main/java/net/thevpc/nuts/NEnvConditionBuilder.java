@@ -114,15 +114,6 @@ public interface NEnvConditionBuilder extends NComponent, NBlankable {
     List<String> getDesktopEnvironment();
 
     /**
-     * create builder from this instance
-     *
-     * @return builder copy of this instance
-     */
-    NEnvConditionBuilder builder();
-
-    NEnvCondition readOnly();
-
-    /**
      * return env properties
      *
      * @return env properties

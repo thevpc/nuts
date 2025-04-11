@@ -254,7 +254,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     }
 
     private void _preloadWorkspace(InitWorkspaceData data) {
-        LOG.debug(NMsg.ofC("detected terminal flags %s", this.wsModel.bootModel.getBootTerminal().getFlags()));
+        LOG.debug(NMsg.ofC(NI18n.of("detected terminal flags %s"), this.wsModel.bootModel.getBootTerminal().getFlags()));
         data.effectiveBootOptions = this.wsModel.bootModel.getBootEffectiveOptions();
         this.wsModel.configModel = new DefaultNWorkspaceConfigModel(this);
         String workspaceLocation = data.effectiveBootOptions.getWorkspace().orNull();
@@ -774,17 +774,17 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         return descriptor;
     }
 
-    protected NDescriptor _resolveEffectiveDescriptor(NDescriptor descriptor, EffectiveNDescriptorConfig effectiveNDescriptorConfig) {
+    protected NDescriptor _resolveEffectiveDescriptor(NDescriptor descriptor, NDescriptorEffectiveConfig effectiveNDescriptorConfig) {
         LOG.with().level(Level.FINEST).verb(NLogVerb.START)
-                .log(NMsg.ofC("resolve effective %s using %s", descriptor.getId()));
+                .log(NMsg.ofC("resolve effective %s using %s", descriptor.getId(),effectiveNDescriptorConfig));
         NDescriptorBuilder descrWithParents = _applyParentDescriptors(descriptor).builder();
         //now apply conditions!
         List<NDescriptorProperty> properties = descrWithParents.getProperties().stream()
-                .filter(x -> !effectiveNDescriptorConfig.isFilterCurrentEnvironment() || CoreFilterUtils.acceptCondition(x.getCondition(), false)
+                .filter(x -> effectiveNDescriptorConfig.isIgnoreCurrentEnvironment() || CoreFilterUtils.acceptCondition(x.getCondition(), false)
                 ).collect(Collectors.toList());
         if (!properties.isEmpty()) {
             DefaultNProperties pp = new DefaultNProperties();
-            if (effectiveNDescriptorConfig.isFilterCurrentEnvironment()) {
+            if (!effectiveNDescriptorConfig.isIgnoreCurrentEnvironment()) {
                 List<NDescriptorProperty> n = new ArrayList<>();
                 pp.addAll(properties);
                 for (String s : pp.keySet()) {
@@ -824,13 +824,13 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
         NDescriptor effectiveDescriptor = NDescriptorUtils.applyProperties(descrWithParents).build();
         List<NDependency> oldDependencies = new ArrayList<>();
-        if(effectiveNDescriptorConfig.isFilterCurrentEnvironment()) {
+        if (!effectiveNDescriptorConfig.isIgnoreCurrentEnvironment()) {
             for (NDependency d : effectiveDescriptor.getDependencies()) {
                 if (CoreFilterUtils.acceptDependency(d)) {
                     oldDependencies.add(d.builder().setCondition((NEnvCondition) null).build());
                 }
             }
-        }else{
+        } else {
             oldDependencies.addAll(effectiveDescriptor.getDependencies());
         }
 
@@ -841,12 +841,12 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             if ("import".equals(standardDependency.getScope())) {
                 NDescriptor dd = NFetchCmd.of(standardDependency.toId()).setEffective(true).getResultDescriptor();
                 for (NDependency dependency : dd.getStandardDependencies()) {
-                    if (!effectiveNDescriptorConfig.isFilterCurrentEnvironment() || CoreFilterUtils.acceptDependency(dependency)) {
+                    if (effectiveNDescriptorConfig.isIgnoreCurrentEnvironment() || CoreFilterUtils.acceptDependency(dependency)) {
                         effStandardDeps.add(dependency);
                     }
                 }
             } else {
-                if (!effectiveNDescriptorConfig.isFilterCurrentEnvironment() || CoreFilterUtils.acceptDependency(standardDependency)) {
+                if (effectiveNDescriptorConfig.isIgnoreCurrentEnvironment() || CoreFilterUtils.acceptDependency(standardDependency)) {
                     effStandardDeps.add(standardDependency);
                 }
             }
@@ -1079,7 +1079,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     }
                     default: {
                         oldDef = NSearchCmd.of().addId(def.getId().getShortId())
-                                .setInstallStatus(NInstallStatusFilters.of().byDeployed(true))
+                                .setDefinitionFilter(NDefinitionFilters.of().byDeployed(true))
                                 .setFailFast(false).getResultDefinitions()
                                 .findFirst().orNull();
                         break;
@@ -1800,13 +1800,17 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     }
 
     @Override
-    public NDescriptor resolveEffectiveDescriptor(NDescriptor descriptor, EffectiveNDescriptorConfig effectiveNDescriptorConfig) {
+    public NDescriptor resolveEffectiveDescriptor(NDescriptor descriptor) {
+        return resolveEffectiveDescriptor(descriptor, null);
+    }
+
+    @Override
+    public NDescriptor resolveEffectiveDescriptor(NDescriptor descriptor, NDescriptorEffectiveConfig effectiveNDescriptorConfig) {
         if (effectiveNDescriptorConfig == null) {
-            effectiveNDescriptorConfig = new EffectiveNDescriptorConfig();
-            effectiveNDescriptorConfig.setFilterCurrentEnvironment(true);
+            effectiveNDescriptorConfig = new NDescriptorEffectiveConfig();
         }
         String cacheId = null;
-        if (effectiveNDescriptorConfig.equals(new EffectiveNDescriptorConfig().setFilterCurrentEnvironment(true))) {
+        if (effectiveNDescriptorConfig.equals(new NDescriptorEffectiveConfig())) {
             cacheId = "eff-nuts.cache";
         }
         if (cacheId != null) {
@@ -1851,7 +1855,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         try {
             nutToInstall = NSearchCmd.of().setTransitive(false).addId(id)
                     .setInlineDependencies(checkDependencies)
-                    .setInstallStatus(NInstallStatusFilters.of().byDeployed(true))
+                    .setDefinitionFilter(NDefinitionFilters.of().byDeployed(true))
                     .setOptional(false)
                     .getResultDefinitions()
                     .findFirst().orNull();

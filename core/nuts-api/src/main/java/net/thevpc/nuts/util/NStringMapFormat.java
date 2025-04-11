@@ -27,11 +27,9 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.NElementType;
+import net.thevpc.nuts.io.NIOException;
 
-import java.io.IOException;
-import java.io.PushbackReader;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.*;
@@ -165,96 +163,97 @@ public class NStringMapFormat {
         }
     }
 
-    private static Token readToken(PushbackReader reader, TokenConfig conf, Function<String, String> decoder) throws IOException {
-        if (decoder == null) {
-            decoder = x -> x;
-        }
-        String escapedTokens = conf.getEscapeChars();
-        String eqChars = conf.getEqChars();
-        String sepChars = conf.getSepChars();
-        StringBuilder value = new StringBuilder();
-        StringBuilder image = new StringBuilder();
-        int r = reader.read();
-        if (r == -1) {
-            return null;
-        }
-        char r1 = (char) r;
-        if (isWhitespace(r1)) {
-            while (true) {
-                r = reader.read();
-                if (r == -1) {
-                    return null;
-                }
-                if (!isWhitespace((char) r)) {
-                    r1 = (char) r;
-                    break;
-                }
+    private static Token readToken(PushbackReader reader, TokenConfig conf, Function<String, String> decoder) {
+        try {
+            if (decoder == null) {
+                decoder = x -> x;
             }
-        } else if (eqChars.indexOf(r1) >= 0) {
-            return new Token(TokenType.EQ, decoder.apply(String.valueOf(r1)), String.valueOf(r1));
-        } else if (sepChars.indexOf(r1) >= 0) {
-            return new Token(TokenType.SEP, decoder.apply(String.valueOf(r1)), String.valueOf(r1));
-        }
-        if (r == '\"' || r == '\'') {
-            char cr = (char) r;
-            image.append(cr);
-            while (true) {
-                r = reader.read();
-                if (r == -1) {
-                    throw new RuntimeException("Expected " + cr);
+            String escapedTokens = conf.getEscapeChars();
+            String eqChars = conf.getEqChars();
+            String sepChars = conf.getSepChars();
+            StringBuilder value = new StringBuilder();
+            StringBuilder image = new StringBuilder();
+            int r = reader.read();
+            if (r == -1) {
+                return null;
+            }
+            char r1 = (char) r;
+            if (isWhitespace(r1)) {
+                while (true) {
+                    r = reader.read();
+                    if (r == -1) {
+                        return null;
+                    }
+                    if (!isWhitespace((char) r)) {
+                        r1 = (char) r;
+                        break;
+                    }
                 }
+            } else if (eqChars.indexOf(r1) >= 0) {
+                return new Token(TokenType.EQ, decoder.apply(String.valueOf(r1)), String.valueOf(r1));
+            } else if (sepChars.indexOf(r1) >= 0) {
+                return new Token(TokenType.SEP, decoder.apply(String.valueOf(r1)), String.valueOf(r1));
+            }
+            if (r == '\"' || r == '\'') {
+                char cr = (char) r;
                 image.append(cr);
-                if (r == cr) {
-                    return new Token(cr == '\"' ? TokenType.SIMPLE_QUOTED : TokenType.DOUBLE_QUOTED, decoder.apply(value.toString()), value.toString());
-                }
-                if (r == '\\') {
+                while (true) {
                     r = reader.read();
                     if (r == -1) {
                         throw new RuntimeException("Expected " + cr);
                     }
-                    image.append((char) r);
-                    switch ((char) r) {
-                        case 'n': {
-                            value.append('\n');
-                            break;
-                        }
-                        case 'r': {
-                            value.append('\r');
-                            break;
-                        }
-                        case 'f': {
-                            value.append('\f');
-                            break;
-                        }
-                        case 't': {
-                            value.append('\t');
-                            break;
-                        }
-                        default: {
-                            value.append('\\');
-                            value.append((char) r);
-                        }
-                    }
-                } else {
-                    value.append((char) r);
-                }
-            }
-        } else {
-            reader.unread(r);
-            while (true) {
-                r = reader.read();
-                if (r < 0) {
-                    return new Token(TokenType.WORD, decoder.apply(value.toString()), image.toString());
-                }
-                char cr = (char) r;
-                if (escapedTokens.indexOf(cr) >= 0) {
                     image.append(cr);
-                    r = reader.read();
-                    if (r == -1) {
-                        value.append(cr);
-                        return new Token(TokenType.WORD, decoder.apply(value.toString()), image.toString());
+                    if (r == cr) {
+                        return new Token(cr == '\"' ? TokenType.SIMPLE_QUOTED : TokenType.DOUBLE_QUOTED, decoder.apply(value.toString()), value.toString());
+                    }
+                    if (r == '\\') {
+                        r = reader.read();
+                        if (r == -1) {
+                            throw new RuntimeException("Expected " + cr);
+                        }
+                        image.append((char) r);
+                        switch ((char) r) {
+                            case 'n': {
+                                value.append('\n');
+                                break;
+                            }
+                            case 'r': {
+                                value.append('\r');
+                                break;
+                            }
+                            case 'f': {
+                                value.append('\f');
+                                break;
+                            }
+                            case 't': {
+                                value.append('\t');
+                                break;
+                            }
+                            default: {
+                                value.append('\\');
+                                value.append((char) r);
+                            }
+                        }
                     } else {
-                        cr = (char) r;
+                        value.append((char) r);
+                    }
+                }
+            } else {
+                reader.unread(r);
+                while (true) {
+                    r = reader.read();
+                    if (r < 0) {
+                        return new Token(TokenType.WORD, decoder.apply(value.toString()), image.toString());
+                    }
+                    char cr = (char) r;
+                    if (escapedTokens.indexOf(cr) >= 0) {
+                        image.append(cr);
+                        r = reader.read();
+                        if (r == -1) {
+                            value.append(cr);
+                            return new Token(TokenType.WORD, decoder.apply(value.toString()), image.toString());
+                        } else {
+                            cr = (char) r;
 
 //                        r = reader.read();
 //                        if (r == -1) {
@@ -262,46 +261,49 @@ public class NStringMapFormat {
 //                            return new Token(TokenType.WORD, decoder.apply(value.toString()),image.toString());
 //                        }
 //                        cr = (char) r;
-                        image.append(cr);
-                        if (escapedTokens.indexOf(cr) >= 0 || isWhitespace(cr) || eqChars.indexOf(cr) >= 0 || sepChars.indexOf(cr) >= 0) {
-                            value.append(cr);
-                        } else {
-                            switch ((char) r) {
-                                case ' ': {
-                                    value.append(' ');
-                                    break;
-                                }
-                                case 'n': {
-                                    value.append('\n');
-                                    break;
-                                }
-                                case 'r': {
-                                    value.append('\r');
-                                    break;
-                                }
-                                case 'f': {
-                                    value.append('\f');
-                                    break;
-                                }
-                                case 't': {
-                                    value.append('\t');
-                                    break;
-                                }
-                                default: {
-                                    value.append(cr);
-                                    value.append((char) r);
+                            image.append(cr);
+                            if (escapedTokens.indexOf(cr) >= 0 || isWhitespace(cr) || eqChars.indexOf(cr) >= 0 || sepChars.indexOf(cr) >= 0) {
+                                value.append(cr);
+                            } else {
+                                switch ((char) r) {
+                                    case ' ': {
+                                        value.append(' ');
+                                        break;
+                                    }
+                                    case 'n': {
+                                        value.append('\n');
+                                        break;
+                                    }
+                                    case 'r': {
+                                        value.append('\r');
+                                        break;
+                                    }
+                                    case 'f': {
+                                        value.append('\f');
+                                        break;
+                                    }
+                                    case 't': {
+                                        value.append('\t');
+                                        break;
+                                    }
+                                    default: {
+                                        value.append(cr);
+                                        value.append((char) r);
+                                    }
                                 }
                             }
                         }
+                    } else if (isWhitespace(cr) || eqChars.indexOf(cr) >= 0 || sepChars.indexOf(cr) >= 0) {
+                        reader.unread(cr);
+                        return new Token(TokenType.WORD, decoder.apply(value.toString()), image.toString());
+                    } else {
+                        value.append(cr);
+                        image.append(cr);
                     }
-                } else if (isWhitespace(cr) || eqChars.indexOf(cr) >= 0 || sepChars.indexOf(cr) >= 0) {
-                    reader.unread(cr);
-                    return new Token(TokenType.WORD, decoder.apply(value.toString()), image.toString());
-                } else {
-                    value.append(cr);
-                    image.append(cr);
                 }
             }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -348,7 +350,7 @@ public class NStringMapFormat {
             Token r = null;
             try {
                 r = readToken(reader, conf, decoder);
-            } catch (IOException e) {
+            } catch (UncheckedIOException | NIOException e) {
                 return NOptional.ofError(() -> NMsg.ofPlain("failed to read token"), e);
             }
             if (r != null) {

@@ -25,10 +25,7 @@
  */
 package net.thevpc.nuts.runtime.standalone;
 
-import net.thevpc.nuts.DefaultNEnvCondition;
-import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NEnvCondition;
-import net.thevpc.nuts.NEnvConditionBuilder;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootEnvCondition;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.reserved.NReservedUtils;
@@ -205,28 +202,18 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
     }
 
     @Override
-    public NEnvCondition build() {
-        return readOnly();
-    }
-
-    @Override
     public NEnvConditionBuilder copy() {
         return new DefaultNEnvConditionBuilder(this);
     }
 
     @Override
-    public NEnvCondition readOnly() {
+    public NEnvCondition build() {
         return new DefaultNEnvCondition(
                 getArch(), getOs(), getOsDist(), getPlatform(),
                 getDesktopEnvironment(),
                 getProfiles(),
                 properties
         );
-    }
-
-    @Override
-    public NEnvConditionBuilder builder() {
-        return new DefaultNEnvConditionBuilder(this);
     }
 
     @Override
@@ -368,7 +355,6 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
 
     @Override
     public NEnvConditionBuilder and(NEnvCondition other) {
-        NEnvConditionBuilder b2 = this.copy().builder();
         if (other != null) {
             List<String> c_arch = new ArrayList<>(this.arch); //defaults to empty
             List<String> c_os = new ArrayList<>(this.os); //defaults to empty;
@@ -387,21 +373,71 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
             Map<String, String> o_properties = new HashMap<>(other.getProperties());
 
             this.arch.clear();
-            this.arch.addAll(intersect("arch", c_arch, o_arch));
+            this.arch.addAll(intersectIds("arch", c_arch, o_arch));
             this.os.clear();
-            this.os.addAll(intersect("os", c_os, o_os));
+            this.os.addAll(intersectIds("os", c_os, o_os));
             this.osDist.clear();
-            this.osDist.addAll(intersect("osDist", c_osDist, o_osDist));
+            this.osDist.addAll(intersectIds("osDist", c_osDist, o_osDist));
             this.platform.clear();
-            this.platform.addAll(intersect("platform", c_platform, o_platform));
+            this.platform.addAll(intersectIds("platform", c_platform, o_platform));
             this.desktopEnvironment.clear();
-            this.desktopEnvironment.addAll(intersect("desktopEnvironment", c_desktopEnvironment, o_desktopEnvironment));
+            this.desktopEnvironment.addAll(intersectIds("desktopEnvironment", c_desktopEnvironment, o_desktopEnvironment));
             this.profiles.clear();
             this.profiles.addAll(intersect("profiles", c_profiles, o_profiles));
             this.properties.clear();
             this.properties.putAll(intersect("properties", c_properties, o_properties));
         }
-        return b2.builder();
+        return this;
+    }
+
+    private List<String> intersectIds(String name, List<String> a, List<String> b) {
+        if (a.isEmpty()) {
+            return new ArrayList<>(b);
+        }
+        if (b.isEmpty()) {
+            return new ArrayList<>(a);
+        }
+        LinkedHashMap<String, NId> am=new LinkedHashMap<>();
+        for (String s : a) {
+            if(!NBlankable.isBlank(s)) {
+                NId nv = NId.of(s);
+                //NId ov = am.get(nv.getShortName());
+                am.put(nv.getShortName(), nv);
+            }
+        }
+        LinkedHashMap<String, NId> bm=new LinkedHashMap<>();
+        for (String s : a) {
+            if(!NBlankable.isBlank(s)) {
+                NId nv = NId.of(s);
+                //NId ov = am.get(nv.getShortName());
+                bm.put(nv.getShortName(), nv);
+            }
+        }
+        if(am.isEmpty()) {
+            return b;
+        }
+        if(bm.isEmpty()) {
+            return a;
+        }
+        Set<String> allKeys=new HashSet<>();
+        LinkedHashMap<String,String> allKeyMap=new LinkedHashMap<>();
+        allKeys.addAll(am.keySet());
+        allKeys.addAll(bm.keySet());
+        for (String s : new LinkedHashSet<>(allKeys)) {
+            if(am.containsKey(s) && bm.containsKey(s)) {
+                NId aa = am.get(s);
+                NId bb = bm.get(s);
+                if(aa.toString().length()>bb.toString().length()) {
+                    allKeyMap.put(aa.toString(), bb.toString());
+                }else{
+                    allKeyMap.put(aa.toString(), aa.toString());
+                }
+            }
+        }
+        if (allKeyMap.isEmpty()) {
+            throw new IllegalArgumentException("invalid " + name + " as intersection of " + a + " and " + b);
+        }
+        return new ArrayList<>(allKeyMap.values());
     }
 
     private List<String> intersect(String name, List<String> a, List<String> b) {

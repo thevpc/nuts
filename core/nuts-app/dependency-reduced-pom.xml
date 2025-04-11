@@ -312,7 +312,6 @@
   <properties>
     <nuts.categories>/Settings/PackageManager/Nuts</nuts.categories>
     <github.global.server>github</github.global.server>
-    <nuts.api>true</nuts.api>
     <maven.compiler.source>1.8</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.target>1.8</maven.compiler.target>

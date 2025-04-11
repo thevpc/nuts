@@ -41,6 +41,8 @@ public class MutableNDependencyTreeNode implements NDependencyTreeNode {
     private NDependency dependency;
     private List<NDependencyTreeNode> children;
     private boolean partial;
+    private boolean optional;
+    private boolean provided;
 
     public MutableNDependencyTreeNode() {
     }
@@ -50,7 +52,26 @@ public class MutableNDependencyTreeNode implements NDependencyTreeNode {
         this.children=new ArrayList<>(n.getChildren());
         this.partial=n.isPartial();
     }
-    
+
+    @Override
+    public boolean isOptional() {
+        return optional;
+    }
+
+    public MutableNDependencyTreeNode setOptional(boolean optional) {
+        this.optional = optional;
+        return this;
+    }
+
+    @Override
+    public boolean isProvided() {
+        return provided;
+    }
+
+    public MutableNDependencyTreeNode setProvided(boolean provided) {
+        this.provided = provided;
+        return this;
+    }
 
     public void setDependency(NDependency dependency) {
         this.dependency = dependency;

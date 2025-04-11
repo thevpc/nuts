@@ -28,6 +28,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenMetadata;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
@@ -51,7 +52,7 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
     }
 
     @Override
-    public NIterator<NId> findNonSingleVersionImpl(NId id, NIdFilter idFilter, NFetchMode fetchMode) {
+    public NIterator<NId> findNonSingleVersionImpl(NId id, NDefinitionFilter idFilter, NFetchMode fetchMode) {
         if (!acceptedFetchNoCache(fetchMode)) {
             return NIteratorBuilder.emptyIterator();
         }
@@ -76,7 +77,7 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
                             for (String version : info.getVersions()) {
                                 final NId nutsId = id.builder().setVersion(version).build();
 
-                                if (idFilter != null && !idFilter.acceptId(nutsId)) {
+                                if (idFilter != null && !idFilter.acceptDefinition(NDefinitionHelper.ofIdOnly(nutsId))) {
                                     continue;
                                 }
                                 ret.add(

@@ -7,14 +7,11 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.util.NFilterOp;
 
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
-public class NDependencyDEFilter extends AbstractDependencyFilter  {
+public class NDependencyDEFilter extends AbstractDependencyFilter {
 
     private Set<NDesktopEnvironmentFamily> accepted = EnumSet.noneOf(NDesktopEnvironmentFamily.class);
 
@@ -45,26 +42,39 @@ public class NDependencyDEFilter extends AbstractDependencyFilter  {
 
     @Override
     public boolean acceptDependency(NDependency dependency, NId from) {
+        if (accepted.isEmpty()) {
+            return true;
+        }
         List<String> current = dependency.getCondition().getDesktopEnvironment();
-        boolean empty = true;
         if (current != null) {
-            for (String e : current) {
+            List<NDesktopEnvironmentFamily> currentFamilies = current.stream().map(e -> {
                 if (!e.isEmpty()) {
-                    empty = false;
-                    if (accepted.contains(NDesktopEnvironmentFamily.parse(e).orNull())) {
-                        return true;
+                    NId de = NId.get(e).orNull();
+                    if (de != null) {
+                        return NDesktopEnvironmentFamily.parse(de.getArtifactId()).orNull();
                     }
                 }
+                return null;
+            }).filter(Objects::nonNull).collect(Collectors.toList());
+            if (currentFamilies.isEmpty()) {
+                return true;
             }
+            for (NDesktopEnvironmentFamily currentFamily : currentFamilies) {
+                if (accepted.contains(currentFamily)) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            return true;
         }
-        return empty;
     }
 
     @Override
     public String toString() {
         return CoreStringUtils.trueOrEqOrIn("desktopEnvironment",
-                        accepted.stream().map(NDesktopEnvironmentFamily::id).collect(Collectors.toList())
-                        );
+                accepted.stream().map(NDesktopEnvironmentFamily::id).collect(Collectors.toList())
+        );
     }
 
     @Override

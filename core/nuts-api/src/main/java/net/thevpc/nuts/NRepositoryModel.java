@@ -69,7 +69,7 @@ public interface NRepositoryModel {
         return "custom";
     }
 
-    default NId searchLatestVersion(NId id, NIdFilter filter, NFetchMode fetchMode, NRepository repository) {
+    default NId searchLatestVersion(NId id, NDefinitionFilter filter, NFetchMode fetchMode, NRepository repository) {
         Iterator<NId> allVersions = searchVersions(id, filter, fetchMode, repository);
         NId a = null;
         while (allVersions != null && allVersions.hasNext()) {
@@ -81,7 +81,7 @@ public interface NRepositoryModel {
         return a;
     }
 
-    default NIterator<NId> searchVersions(NId id, NIdFilter idFilter, NFetchMode fetchMode, NRepository repository) {
+    default NIterator<NId> searchVersions(NId id, NDefinitionFilter idFilter, NFetchMode fetchMode, NRepository repository) {
         return null;
     }
 
@@ -93,7 +93,7 @@ public interface NRepositoryModel {
         return null;
     }
 
-    default NIterator<NId> search(NIdFilter filter, NPath[] basePaths, NFetchMode fetchMode, NRepository repository) {
+    default NIterator<NId> search(NDefinitionFilter filter, NPath[] basePaths, NFetchMode fetchMode, NRepository repository) {
         return null;
     }
 

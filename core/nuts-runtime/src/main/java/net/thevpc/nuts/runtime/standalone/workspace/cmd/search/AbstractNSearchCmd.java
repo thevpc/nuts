@@ -29,7 +29,9 @@ import net.thevpc.nuts.NConstants;
 
 
 import net.thevpc.nuts.NStoreType;
-import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
+import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder2;
+import net.thevpc.nuts.runtime.standalone.definition.NDefinitionDelegate;
+import net.thevpc.nuts.runtime.standalone.util.ValueSupplier;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -69,30 +71,28 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     protected final List<String> scripts = new ArrayList<>();
     protected final List<String> packaging = new ArrayList<>();
     protected NComparator comparator;
-    protected NDescriptorFilter descriptorFilter;
-    protected NIdFilter idFilter;
+    protected NDefinitionFilter descriptorFilter;
     protected boolean latest = false;
     protected boolean distinct = false;
     protected boolean includeBasePackage = true;
     protected boolean sorted = false;
     protected Boolean defaultVersions = null;
-    protected boolean filterCurrentEnvironment = true;
-    protected String execType = null;
+    protected boolean ignoreCurrentEnvironment;
+    protected SearchExecType execType = null;
     protected NVersion targetApiVersion = null;
-    protected NInstallStatusFilter installStatus;
 
     public AbstractNSearchCmd() {
         super("search");
     }
 
     @Override
-    public boolean isFilterCurrentEnvironment() {
-        return filterCurrentEnvironment;
+    public boolean isIgnoreCurrentEnvironment() {
+        return ignoreCurrentEnvironment;
     }
 
     @Override
-    public NSearchCmd setFilterCurrentEnvironment(boolean filterCurrentEnvironment) {
-        this.filterCurrentEnvironment = filterCurrentEnvironment;
+    public NSearchCmd setIgnoreCurrentEnvironment(boolean ignoreCurrentEnvironment) {
+        this.ignoreCurrentEnvironment = ignoreCurrentEnvironment;
         return this;
     }
 
@@ -163,67 +163,78 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public boolean isRuntime() {
-        return "runtime".equals(execType);
+        return SearchExecType.RUNTIME == execType;
     }
 
     @Override
     public NSearchCmd setRuntime(boolean enable) {
-        this.execType = enable ? "runtime" : null;
+        this.execType = enable ? SearchExecType.RUNTIME : null;
         return this;
     }
 
     @Override
     public boolean isCompanion() {
-        return "companion".equals(execType);
+        return execType == SearchExecType.COMPANION;
     }
 
     @Override
     public NSearchCmd setCompanion(boolean enable) {
-        this.execType = enable ? "companion" : null;
+        this.execType = enable ? SearchExecType.COMPANION : null;
         return this;
     }
 
     @Override
     public boolean isExtension() {
-        return "extension".equals(execType);
+        return SearchExecType.EXTENSION==execType;
     }
 
     @Override
     public NSearchCmd setExtension(boolean enable) {
-        this.execType = enable ? "extension" : null;
+        this.execType = enable ? SearchExecType.EXTENSION : null;
         return this;
     }
 
     @Override
     public boolean isExec() {
-        return "exec".equals(execType);
+        return SearchExecType.EXEC==execType;
     }
 
     @Override
     public NSearchCmd setExec(boolean enable) {
-        this.execType = enable ? "exec" : null;
+        this.execType = enable ? SearchExecType.EXEC : null;
         return this;
     }
 
     @Override
-    public boolean isApplication() {
-        return "app".equals(execType);
+    public boolean isNutsApplication() {
+        return SearchExecType.NUTS_APPLICATION == execType;
     }
 
     @Override
-    public NSearchCmd setApplication(boolean enable) {
-        this.execType = enable ? "app" : null;
+    public NSearchCmd setNutsApplication(boolean enable) {
+        this.execType = enable ? SearchExecType.NUTS_APPLICATION : null;
+        return this;
+    }
+
+    @Override
+    public boolean isPlatformApplication() {
+        return SearchExecType.PLATFORM_APPLICATION == execType;
+    }
+
+    @Override
+    public NSearchCmd setPlatformApplication(boolean enable) {
+        this.execType = enable ? SearchExecType.PLATFORM_APPLICATION : null;
         return this;
     }
 
     @Override
     public boolean isLib() {
-        return "lib".equals(execType);
+        return SearchExecType.LIB == execType;
     }
 
     @Override
     public NSearchCmd setLib(boolean enable) {
-        this.execType = enable ? "lib" : null;
+        this.execType = enable ? SearchExecType.LIB : null;
         return this;
     }
 
@@ -424,10 +435,9 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
         super.copyFromDefaultNQueryBaseOptions((DefaultNQueryBaseOptions) other);
         if (other != null) {
             NSearchCmd o = other;
-            this.filterCurrentEnvironment = o.isFilterCurrentEnvironment();
+            this.ignoreCurrentEnvironment = o.isIgnoreCurrentEnvironment();
             this.comparator = o.getComparator();
-            this.descriptorFilter = o.getDescriptorFilter();
-            this.idFilter = o.getIdFilter();
+            this.descriptorFilter = o.getDefinitionFilter();
             this.latest = o.isLatest();
             this.distinct = (o.isDistinct());
             this.includeBasePackage = o.isBasePackage();
@@ -440,7 +450,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
             this.scripts.addAll(o.getScripts());
             this.packaging.clear();
             this.packaging.addAll(o.getPackaging());
-            this.installStatus = other.getInstallStatus();
         }
         return this;
     }
@@ -482,36 +491,19 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     }
 
     @Override
-    public NDescriptorFilter getDescriptorFilter() {
+    public NDefinitionFilter getDefinitionFilter() {
         return descriptorFilter;
     }
 
     @Override
-    public NSearchCmd setDescriptorFilter(NDescriptorFilter filter) {
+    public NSearchCmd setDefinitionFilter(NDefinitionFilter filter) {
         this.descriptorFilter = filter;
         return this;
     }
 
     @Override
-    public NSearchCmd setDescriptorFilter(String filter) {
-        this.descriptorFilter = NDescriptorFilters.of().parse(filter);
-        return this;
-    }
-
-    @Override
-    public NIdFilter getIdFilter() {
-        return idFilter;
-    }
-
-    @Override
-    public NSearchCmd setIdFilter(NIdFilter filter) {
-        this.idFilter = filter;
-        return this;
-    }
-
-    @Override
-    public NSearchCmd setIdFilter(String filter) {
-        this.idFilter = NIdFilters.of().parse(filter);
+    public NSearchCmd setDefinitionFilter(String filter) {
+        this.descriptorFilter = NDefinitionFilters.of().parse(filter);
         return this;
     }
 
@@ -869,17 +861,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     }
 
     @Override
-    public NInstallStatusFilter getInstallStatus() {
-        return installStatus;
-    }
-
-    @Override
-    public NSearchCmd setInstallStatus(NInstallStatusFilter installStatus) {
-        this.installStatus = installStatus;
-        return this;
-    }
-
-    @Override
     public NSearchCmd setId(String id) {
         clearIds();
         addId(id);
@@ -893,7 +874,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
         return this;
     }
 
-    public String getExecType() {
+    public SearchExecType getExecType() {
         return execType;
     }
 
@@ -916,7 +897,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
                 return true;
             }
             case "--repo": {
-                cmdLine.withNextEntry((v, r) -> this.setRepositoryFilter(NRepositoryFilters.of().bySelector(NStringUtils.split(v,";,|",true,true).toArray(new String[0]))));
+                cmdLine.withNextEntry((v, r) -> this.setRepositoryFilter(NRepositoryFilters.of().bySelector(NStringUtils.split(v, ";,|", true, true).toArray(new String[0]))));
                 return true;
             }
             case "--distinct": {
@@ -971,7 +952,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
             }
             case "--nuts-app":
             case "--nuts-apps": {
-                cmdLine.withNextFlag((v, r) -> this.setApplication(v));
+                cmdLine.withNextFlag((v, r) -> this.setNutsApplication(v));
                 return true;
             }
             case "--arch": {
@@ -1004,7 +985,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
             case "--deployed": {
                 NArg b = cmdLine.nextFlag().get();
                 if (enabled) {
-                    this.setInstallStatus(NInstallStatusFilters.of().byDeployed(b.getBooleanValue().get()));
+                    this.setDefinitionFilter(NDefinitionFilters.of().byDefaultValue(b.getBooleanValue().get()).and(getDefinitionFilter()));
                 }
                 return true;
             }
@@ -1012,30 +993,21 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
             case "--installed": {
                 NArg b = cmdLine.nextFlag().get();
                 if (enabled) {
-                    this.setInstallStatus(
-                            NInstallStatusFilters.of().byInstalled(b.getBooleanValue().get())
-                    );
+                    this.setDefinitionFilter(NDefinitionFilters.of().byInstalled(b.getBooleanValue().get()).and(getDefinitionFilter()));
                 }
                 return true;
             }
             case "--required": {
                 NArg b = cmdLine.nextFlag().get();
                 if (enabled) {
-                    this.setInstallStatus(NInstallStatusFilters.of().byRequired(b.getBooleanValue().get()));
+                    this.setDefinitionFilter(NDefinitionFilters.of().byRequired(b.getBooleanValue().get()).and(getDefinitionFilter()));
                 }
                 return true;
             }
             case "--obsolete": {
                 NArg b = cmdLine.nextFlag().get();
                 if (enabled) {
-                    this.setInstallStatus(NInstallStatusFilters.of().byObsolete(b.getBooleanValue().get()));
-                }
-                return true;
-            }
-            case "--status": {
-                NArg aa = cmdLine.nextEntry().get();
-                if (enabled) {
-                    this.setInstallStatus(NInstallStatusFilters.of().parse(aa.getStringValue().get()));
+                    this.setDefinitionFilter(NDefinitionFilters.of().byObsolete(b.getBooleanValue().get()).and(getDefinitionFilter()));
                 }
                 return true;
             }
@@ -1067,8 +1039,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
                 + ", displayOptions=" + getDisplayOptions()
                 + ", comparator=" + getComparator()
                 + ", dependencyFilter=" + getDependencyFilter()
-                + ", descriptorFilter=" + getDescriptorFilter()
-                + ", idFilter=" + getIdFilter()
+                + ", descriptorFilter=" + getDefinitionFilter()
                 + ", repositoryFilter=" + getRepositoryFilter()
                 + ", latest=" + isLatest()
                 + ", distinct=" + isDistinct()
@@ -1272,7 +1243,57 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     @Override
     public NSearchCmd run() {
         NIterator<Object> it = runIterator();
-        NSession session=NSession.of();
+        NSession session = NSession.of();
+        NIteratorBuilder.of(it)
+                .map(x->{
+                    if(x instanceof NDefinition) {
+                        return new NDefinitionDelegate() {
+                            @Override
+                            protected NDefinition getBase() {
+                                return (NDefinition) x;
+                            }
+
+                            @Override
+                            public NOptional<NInstallInformation> getInstallInformation() {
+                                return super.getInstallInformation();
+                            }
+
+                            @Override
+                            public NOptional<NDescriptor> getEffectiveDescriptor() {
+                                if(isEffective() || isDependencies()) {
+                                    return super.getEffectiveDescriptor();
+                                }
+                                return NOptional.ofNamedEmpty("effectiveDescriptor");
+                            }
+
+                            @Override
+                            public NOptional<NPath> getContent() {
+                                if(isContent()) {
+                                    return super.getContent();
+                                }
+                                return NOptional.ofNamedEmpty("content");
+                            }
+
+                            @Override
+                            public NOptional<Set<NDescriptorFlag>> getEffectiveFlags() {
+                                if(isContent()) {
+                                    return super.getEffectiveFlags();
+                                }
+                                return NOptional.ofNamedEmpty("effectiveFlags");
+                            }
+
+                            @Override
+                            public NOptional<NDependencies> getDependencies() {
+                                if(isDependencies() || isInlineDependencies()){
+                                    return super.getDependencies();
+                                }
+                                return NOptional.ofNamedEmpty("dependencies");
+                            }
+                        }.builder().build();
+                    }
+                    return x;
+                });
+
         if (session.isDry()) {
             displayDryQueryPlan(it);
         } else {
@@ -1295,7 +1316,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     private void displayDryQueryPlan(NIterator it) {
         NElement n = toQueryPlan(it);
-        NSession session=NSession.of();
+        NSession session = NSession.of();
         NContentType f = session.getOutputFormat().orDefault();
         if (f == NContentType.PLAIN) {
             f = NContentType.TREE;
@@ -1304,56 +1325,58 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
         session2.out().println(n);
     }
 
+    private NDefinition loadedIdToDefinition(NId next, boolean content, boolean effective) {
+        NFetchCmd fetch = toFetch().setContent(content).setEffective(effective);
+        NEnvCondition condition = next.getCondition();
+        NDependency dep = next.toDependency();
+        NDefinition d = null;
+        try {
+            d = fetch.setId(next).getResultDefinition();
+        } catch (NNotFoundException e) {
+            if (dep.isOptional()) {
+                return null;
+            }
+        }
+        if (d == null) {
+            if (isFailFast()) {
+                throw new NNotFoundException(next);
+            }
+            return d;
+        }
+        if (!NBlankable.isBlank(d) && !NBlankable.isBlank(condition)) {
+            DefaultNDefinitionBuilder2 db=new DefaultNDefinitionBuilder2(d);
+            db.setDependency(new ValueSupplier<>(dep));
+            if(false) {
+                //TODO fix me later,
+                // We need to to apply this "AND" op when needed and not here !!
+                db.setDescriptor(
+                        () -> {
+                            NDescriptor oldDesc = db.getDescriptor().get();
+                            NDescriptor newdesc = oldDesc.builder().setCondition(
+                                    oldDesc.getCondition().builder().and(condition).build()
+                            ).build();
+                            return newdesc;
+                        }
+
+                );
+                db.setEffectiveDescriptor(
+                        () -> {
+                            NDescriptor oldDesc = db.getEffectiveDescriptor().get();
+                            NDescriptor newdesc = oldDesc.builder().setCondition(
+                                    oldDesc.getCondition().builder().and(condition).build()
+                            ).build();
+                            return newdesc;
+                        }
+                );
+            }
+            d = db.build();
+        }
+        return d;
+    }
 
     public NIterator<NDefinition> getResultDefinitionIteratorBase(boolean content, boolean effective) {
-        NFetchCmd fetch = toFetch().setContent(content).setEffective(effective);
-        NSession session=NSession.of();
-//        NFetchCmd ofetch = toFetch().setContent(content).setEffective(effective)
-//                .setSession(session.copy().setFetchStrategy(NFetchStrategy.OFFLINE));
-//        final boolean hasRemote = session.getFetchStrategy().orDefault() == null
-//                || session.getFetchStrategy().orDefault().modes().stream()
-//                .anyMatch(x -> x == NFetchMode.REMOTE);
         return NIteratorBuilder.of(getResultIdIteratorBase(null))
-                .map(NFunction.of((NId next) -> {
-//                    NutsDefinition d = null;
-//                    if (isContent()) {
-                    NEnvCondition condition = next.getCondition();
-                    NDefinition d=null;
-                    try {
-                        d = fetch.setId(next).getResultDefinition();
-                    }catch (NNotFoundException e){
-                        if(next.toDependency().isOptional()){
-                            return null;
-                        }
-                    }
-                    if (d == null) {
-                        if (isFailFast()) {
-                            throw new NNotFoundException(next);
-                        }
-                        return d;
-                    }
-                    if(!NBlankable.isBlank(d)){
-                        d=new DefaultNDefinitionBuilder(d)
-                                .setDescriptor(
-                                        d.getDescriptor().builder().setCondition(
-                                                d.getDescriptor().getCondition().builder().and(condition).build()
-                                        ).build()
-                                ).build();
-                    }
-                    return d;
-//                    } else {
-//                        if (hasRemote) {
-//                            fetch.setId(next).getResultDescriptor();
-//                        }
-//                        d = ofetch.setId(next).getResultDefinition();
-//                        if(d==null){
-//                            _LOGOP(session)
-//                                    .verb(NutsLogVerb.FAIL)
-//                                    .log("inconsistent repository. id %s was found but its definition could not be resolved!",next);
-//                        }
-//                    }
-//                    return d;
-                }).withDesc(NEDesc.of("Id->Definition")))
+                .map(NFunction.of((NId next) -> loadedIdToDefinition(next, content, effective)).withDesc(NEDesc.of("Id->Definition")))
                 .notNull().build();
     }
 
@@ -1389,7 +1412,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     }
 
     protected NSession getSearchSession() {
-        NSession session=NSession.of();
+        NSession session = NSession.of();
         return session;
     }
 

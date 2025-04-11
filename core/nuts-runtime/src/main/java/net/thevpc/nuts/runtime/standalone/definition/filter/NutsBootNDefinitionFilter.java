@@ -1,23 +1,22 @@
-package net.thevpc.nuts.runtime.standalone.id.filter;
+package net.thevpc.nuts.runtime.standalone.definition.filter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.descriptor.filter.AbstractDescriptorFilter;
 import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.List;
 
-public class NutsBootNDescriptorFilter extends AbstractDescriptorFilter {
+public class NutsBootNDefinitionFilter extends AbstractDefinitionFilter {
 
     private final NVersion bootVersion;
 
-    public NutsBootNDescriptorFilter(NVersion bootVersion) {
+    public NutsBootNDefinitionFilter(NVersion bootVersion) {
         super(NFilterOp.CUSTOM);
         this.bootVersion = bootVersion;
     }
 
     @Override
-    public boolean acceptDescriptor(NDescriptor descriptor) {
-        for (NDependency dependency : descriptor.getDependencies()) {
+    public boolean acceptDefinition(NDefinition definition) {
+        for (NDependency dependency : definition.getDescriptor().getDependencies()) {
             if (dependency.getSimpleName().equals(NConstants.Ids.NUTS_BOOT)) {
                 if (bootVersion.filter().acceptVersion(dependency.getVersion())) {
                     return true;
@@ -27,7 +26,7 @@ public class NutsBootNDescriptorFilter extends AbstractDescriptorFilter {
             }
         }
         // check now all transitive
-        List<NDependency> allDeps = NFetchCmd.of(descriptor.getId()).setDependencies(true)
+        List<NDependency> allDeps = NFetchCmd.of(definition.getId()).setDependencies(true)
                 .setDependencyFilter(NDependencyFilters.of().byRunnable()).getResultDefinition().getDependencies().get()
                 .transitive().toList();
         for (NDependency dependency : allDeps) {
@@ -48,7 +47,7 @@ public class NutsBootNDescriptorFilter extends AbstractDescriptorFilter {
     }
 
     @Override
-    public NDescriptorFilter simplify() {
+    public NDefinitionFilter simplify() {
         return this;
     }
 }

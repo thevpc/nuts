@@ -31,7 +31,6 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
 import net.thevpc.nuts.runtime.standalone.executor.NExecutionContextUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.spi.NInstallerComponent;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -69,8 +68,8 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
         if (runnerId == null) {
             NDefinition definition = executionContext.getDefinition();
             NDescriptor descriptor = definition.getDescriptor();
-            if (descriptor.isApplication()) {
-                DefaultNDefinition def2 = new DefaultNDefinition(definition)
+            if (descriptor.isNutsApplication()) {
+                NDefinitionBuilder def2 = definition.builder()
                         .setInstallInformation(
                                 new DefaultNInstallInfo(definition.getInstallInformation().get())
                                         .setInstallStatus(
@@ -78,7 +77,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                                         )
                         );
                 NExecCmd cmd = NExecCmd.of()
-                        .setCommandDefinition(def2)
+                        .setCommandDefinition(def2.build())
                         .addCommand("--nuts-exec-mode=" + mode);
                 if (mode.equals("install")) {
                     cmd.addExecutorOptions("--nuts-auto-install=false");
@@ -93,8 +92,8 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
         } else {
             NDefinition definition = runnerId;
             NDescriptor descriptor = definition.getDescriptor();
-            if (descriptor.isApplication()) {
-                DefaultNDefinition def2 = new DefaultNDefinition(definition)
+            if (descriptor.isNutsApplication()) {
+                NDefinitionBuilder def2 = definition.builder()
                         .setInstallInformation(
                                 new DefaultNInstallInfo(definition.getInstallInformation().get())
                                         .setInstallStatus(
@@ -107,7 +106,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                 }
                 eargs.addAll(executionContext.getArguments());
                 NExecCmd.of()
-                        .setCommandDefinition(def2)
+                        .setCommandDefinition(def2.build())
                         .addCommand(eargs)
                         .setExecutionType(NWorkspace.of().getBootOptions().getExecutionType().orNull())
                         .setExecutionType(

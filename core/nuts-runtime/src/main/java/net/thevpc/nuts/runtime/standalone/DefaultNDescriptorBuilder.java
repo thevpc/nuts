@@ -197,7 +197,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
                 }
             }
         }
-        this.locations=NReservedLangUtils.uniqueList(this.locations);
+        this.locations = NReservedLangUtils.uniqueList(this.locations);
         return this;
     }
 
@@ -613,7 +613,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
                 switch (property.getName()) {
                     case "nuts.application": {
                         if (property.getValue().asBoolean().orElse(false)) {
-                            flags.add(NDescriptorFlag.APP);
+                            flags.add(NDescriptorFlag.NUTS_APP);
                             flags.add(NDescriptorFlag.EXEC);
                         }
                         break;
@@ -654,20 +654,22 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
                         }
                         break;
                     }
-                    case "nuts.api": {
-                        if (property.getValue().asBoolean().orElse(false)) {
-                            flags.add(NDescriptorFlag.NUTS_API);
-                        }
-                        break;
-                    }
                 }
             }
+        }
+
+        if (Objects.equals(getId().getShortName(), NConstants.Ids.NUTS_API)) {
+            idType = NIdType.API;
+        }
+
+        if (Objects.equals(getId().getShortName(), NConstants.Ids.NUTS_RUNTIME)) {
+            idType = NIdType.RUNTIME;
         }
 
         for (NDescriptorFlag flag : this.flags) {
             flags.add(flag);
             switch (flag) {
-                case APP:
+                case NUTS_APP:
                 case TERM:
                 case GUI: {
                     flags.add(NDescriptorFlag.EXEC);
@@ -678,7 +680,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
         return new DefaultNDescriptor(
                 getId(), idType, getParents(), getPackaging(),
                 getExecutor(), getInstaller(),
-                getName(), getDescription(), getCondition().readOnly(),
+                getName(), getDescription(), getCondition().build(),
                 getDependencies(), getStandardDependencies(),
                 getLocations(), getProperties(),
                 genericName,
@@ -707,11 +709,12 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
         this.flags = flags == null ? new LinkedHashSet<>() : new LinkedHashSet<>(flags);
         return this;
     }
+
     public NDescriptorBuilder setFlags(NDescriptorFlag... flags) {
         Set<NDescriptorFlag> nv = new LinkedHashSet<>();
         if (flags != null) {
             for (NDescriptorFlag v : flags) {
-                if (v!=null) {
+                if (v != null) {
                     nv.add(v);
                 }
             }
@@ -840,8 +843,13 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     }
 
     @Override
-    public boolean isApplication() {
-        return getFlags().contains(NDescriptorFlag.APP);
+    public boolean isNutsApplication() {
+        return getFlags().contains(NDescriptorFlag.NUTS_APP);
+    }
+
+    @Override
+    public boolean isPlatformApplication() {
+        return getFlags().contains(NDescriptorFlag.PLATFORM_APP);
     }
 
     @Override

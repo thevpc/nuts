@@ -150,7 +150,7 @@ public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
 
         InputStream z = NInputSourceBuilder.of(openedStream)
                 .setSource(source)
-                .setMonitoringListener(new SilentStartNProgressListenerAdapter(workspace, monitor, sourceName))
+                .setMonitoringListener(new SilentStartNProgressListenerAdapter(monitor, sourceName))
                 .createInputStream()
                 ;
         ((NContentMetadataProvider)z).getMetaData().setKind(sourceTypeName);

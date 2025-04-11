@@ -43,7 +43,6 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
-import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
 import net.thevpc.nuts.runtime.standalone.dependency.solver.NDependencySolverUtils;
 import net.thevpc.nuts.runtime.standalone.descriptor.parser.NDescriptorContentResolver;
@@ -64,7 +63,6 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.security.NAuthenticationAgent;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.*;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -217,7 +215,7 @@ public class DefaultNWorkspaceConfigModel {
             }
 
             @Override
-            public @NotNull Set<String> keySet() {
+            public Set<String> keySet() {
                 return build().keySet();
             }
 
@@ -1272,6 +1270,8 @@ public class DefaultNWorkspaceConfigModel {
         if (descriptor != null) {
             NDefinition b = new DefaultNDefinitionBuilder()
                     .setId(descriptor.getId())
+                    .setDependency(descriptor.getId().toDependency())
+                    .setDependency(descriptor.getId().toDependency())
                     .setDescriptor(descriptor)
                     .setContent(NPath.of(tmp).setUserCache(true).setUserTemporary(true))
                     .setInstallInformation(new DefaultNInstallInfo(descriptor.getId(), NInstallStatus.NONE, null, null, null, null, null, null, false, false)

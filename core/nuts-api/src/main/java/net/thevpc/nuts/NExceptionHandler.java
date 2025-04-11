@@ -121,7 +121,7 @@ public class NExceptionHandler {
 
     public static RuntimeException ofSafeUnsupportedEnumException(Enum e) {
         if (!NWorkspace.get().isPresent()) {
-            return new NoSuchElementException("unsupported enum value " + e);
+            return new NoSuchElementException(NMsg.ofC(NI18n.of("unsupported enum value %s"),e).toString());
         }
         return new NUnsupportedEnumException(e);
     }
@@ -384,9 +384,9 @@ public class NExceptionHandler {
             }
             if (session != null) {
                 //TODO should we delegate to the workspace implementation?
-                NReservedLangUtils.showMessage(NMsg.ofPlain(sb.toString()).toString(), "Nuts Package Manager - Error", out);
+                NReservedLangUtils.showMessage(NMsg.ofPlain(sb.toString()).toString(), NI18n.of("Nuts Package Manager - Error"), out);
             } else {
-                NReservedLangUtils.showMessage(NMsg.ofPlain(sb.toString()).toString(), "Nuts Package Manager - Error", out);
+                NReservedLangUtils.showMessage(NMsg.ofPlain(sb.toString()).toString(), NI18n.of("Nuts Package Manager - Error"), out);
             }
         }
         return this;

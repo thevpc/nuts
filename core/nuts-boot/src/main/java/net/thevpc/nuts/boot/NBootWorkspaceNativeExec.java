@@ -1,5 +1,6 @@
 package net.thevpc.nuts.boot;
 
+import net.thevpc.nuts.NI18n;
 import net.thevpc.nuts.NWorkspaceBase;
 import net.thevpc.nuts.boot.reserved.cmdline.NBootArg;
 import net.thevpc.nuts.boot.reserved.cmdline.NBootCmdLine;
@@ -52,8 +53,8 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                     errorMessage.append(s).append("\n");
                 }
             }
-            errorMessage.append("Try 'nuts --help' for more information.");
-            bLog.warn(NBootMsg.ofC("Skipped Error : %s", errorMessage));
+            errorMessage.append(NI18n.of("Try 'nuts --help' for more information."));
+            bLog.warn(NBootMsg.ofC(NI18n.of("Skipped Error : %s"), errorMessage));
         }
         this.options = userOptions.copy();
         this.postInit();
@@ -562,7 +563,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                             cmdLine.skipAll();
                             if (options != null) {
                                 if (a.getValue() != null) {
-                                    NBootWorkspaceHelper.addError(NBootMsg.ofC("invalid argument for workspace: %s", a.getImage()), options);
+                                    NBootWorkspaceHelper.addError(NBootMsg.ofC(NI18n.of("invalid argument for workspace: %s"), a.getImage()), options);
                                 }
                                 List<String> applicationArguments = NBootUtils.nonNullStrList(options.getApplicationArguments());
                                 applicationArguments.addAll(newArgs);
@@ -715,8 +716,8 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                             }
                             return (Collections.singletonList(a));
                         } else {
-                            NBootWorkspaceHelper.addError(NBootMsg.ofC("nuts: invalid option %s", a.getImage()), options);
-                            throw new NBootException(NBootMsg.ofC("unsupported option %s", a));
+                            NBootWorkspaceHelper.addError(NBootMsg.ofC(NI18n.of("nuts: invalid option %s"), a.getImage()), options);
+                            throw new NBootException(NBootMsg.ofC(NI18n.of("unsupported option %s"), a));
                         }
                     }
                 }
@@ -735,7 +736,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
         if (cmdLine.isEmpty()) {
             return null;
         }
-        throw new NBootException(NBootMsg.ofC("unsupported %s", cmdLine.peek()));
+        throw new NBootException(NBootMsg.ofC(NI18n.of("unsupported %s"), cmdLine.peek()));
     }
 
     private void postInit() {
@@ -778,13 +779,13 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
         }
 
         if (options.getApplicationArguments().isEmpty()) {
-            NBootWorkspaceHelper.addError(NBootMsg.ofPlain("missing command"), options);
+            NBootWorkspaceHelper.addError(NBootMsg.ofPlain(NI18n.of("missing command")), options);
         }
         if (!options.getErrors().isEmpty()) {
             showErrors();
             StringBuilder sb = new StringBuilder();
-            sb.append("Unable to run command\n");
-            sb.append("run using options :\n");
+            sb.append(NI18n.of("Unable to run command")).append("\n");
+            sb.append(NI18n.of("run using options :")).append("\n");
             sb.append(" minTime =").append(minTime).append("\n");
             sb.append(" waitTime=").append(waitTime).append("\n");
             sb.append(" maxCount=").append(maxCount).append("\n");
@@ -796,23 +797,23 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
         }
         long count = 0;
         while (true) {
-            showDebugLine("START COMMAND");
+            showDebugLine(NI18n.of("START COMMAND"));
             long start = System.currentTimeMillis();
             int i = execCommand();
             long end = System.currentTimeMillis();
-            showDebugLine("END   COMMAND : ret=" + i + "; time=" + (end - start));
+            showDebugLine(NBootMsg.ofC(NI18n.of("END   COMMAND : ret=%s; time=%s"), i, (end - start)).toString());
             if (minTime > 0) {
                 if ((end - start) < minTime) {
-                    showErrorLine("PROCESS TOO FAST, exit");
-                    throw new NBootException(NBootMsg.ofC("PROCESS TOO FAST, exit with : %s", i), i);
+                    showErrorLine(NI18n.of("PROCESS TOO FAST, exit"));
+                    throw new NBootException(NBootMsg.ofC(NI18n.of("PROCESS TOO FAST, exit with : %s"), i), i);
                 }
             }
             if (waitTime > 0) {
                 try {
-                    showDebugLine("WAITING...");
+                    showDebugLine(NI18n.of("WAITING..."));
                     Thread.sleep(waitTime);
                 } catch (InterruptedException ex) {
-                    throw new NBootException(NBootMsg.ofC("PROCESS INTERRUPTED, exit with : %s", i), i);
+                    throw new NBootException(NBootMsg.ofC(NI18n.of("PROCESS INTERRUPTED, exit with : %s"), i), i);
                 }
             }
             count++;

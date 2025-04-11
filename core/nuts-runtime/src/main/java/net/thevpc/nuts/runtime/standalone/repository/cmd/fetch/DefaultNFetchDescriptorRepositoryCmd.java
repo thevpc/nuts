@@ -34,7 +34,6 @@ import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.spi.NFetchDescriptorRepositoryCmd;
 import net.thevpc.nuts.log.NLog;
@@ -96,7 +95,8 @@ public class DefaultNFetchDescriptorRepositoryCmd extends AbstractNFetchDescript
                     id = id.builder().setFaceDescriptor().build();
                     d = xrepo.fetchDescriptorImpl(id, getFetchMode());
                 } else {
-                    NIdFilter filter = CoreFilterUtils.idFilterOf(id.getProperties(), NIdFilters.of().byName(id.getFullName()), null);
+                    NDefinitionFilters dd = NDefinitionFilters.of();
+                    NDefinitionFilter filter=dd.byEnv(id.getProperties()).and(dd.byName(id.getFullName()));
                     NId a = xrepo.searchLatestVersion(id.builder().setVersion("").build(), filter, getFetchMode());
                     if (a == null) {
                         throw new NNotFoundException(id.getLongId());

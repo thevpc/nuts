@@ -20,7 +20,7 @@ public class DefaultNDescriptorProperty implements NDescriptorProperty {
     public DefaultNDescriptorProperty(String name, NLiteral value, NEnvCondition condition) {
         this.name = name;
         this.value = value;
-        this.condition = condition == null ? NEnvCondition.BLANK : condition.readOnly();
+        this.condition = condition == null ? NEnvCondition.BLANK : condition;
     }
 
     @Override

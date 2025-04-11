@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.util.filters;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.definition.filter.NDefinitionFilterNone;
 import net.thevpc.nuts.runtime.standalone.dependency.filter.NDependencyFilterNone;
-import net.thevpc.nuts.runtime.standalone.descriptor.filter.NDescriptorFilterNone;
 import net.thevpc.nuts.runtime.standalone.id.filter.NIdFilterNone;
 import net.thevpc.nuts.runtime.standalone.repository.filter.NRepositoryFilterNone;
 import net.thevpc.nuts.runtime.standalone.version.filter.NVersionFilterNone;
@@ -45,6 +45,9 @@ public class DefaultNFilterModel {
             case "net.thevpc.nuts.NDependencyFilter": {
                 return NDependencyFilters.of();
             }
+            case "net.thevpc.nuts.NDefinitionFilter": {
+                return NDefinitionFilters.of();
+            }
             case "net.thevpc.nuts.NRepositoryFilter": {
                 return NRepositoryFilters.of();
             }
@@ -53,12 +56,6 @@ public class DefaultNFilterModel {
             }
             case "net.thevpc.nuts.NVersionFilter": {
                 return NVersionFilters.of();
-            }
-            case "net.thevpc.nuts.NDescriptorFilter": {
-                return NDescriptorFilters.of();
-            }
-            case "net.thevpc.nuts.NInstallStatusFilter": {
-                return NInstallStatusFilters.of();
             }
         }
         throw new NIllegalArgumentException(NMsg.ofC("unsupported filter type: %s", type));
@@ -183,10 +180,10 @@ public class DefaultNFilterModel {
                 }
                 return (T) new NVersionFilterNone(all.toArray(new NVersionFilter[0]));
             }
-            case "net.thevpc.nuts.NDescriptorFilter": {
-                List<NDescriptorFilter> all = new ArrayList<>();
+            case "net.thevpc.nuts.NDefinitionFilter": {
+                List<NDefinitionFilter> all = new ArrayList<>();
                 for (NFilter other : others) {
-                    NDescriptorFilter a = NDescriptorFilters.of().from(other);
+                    NDefinitionFilter a = NDefinitionFilters.of().from(other);
                     if (a != null) {
                         all.add(a);
                     }
@@ -194,7 +191,7 @@ public class DefaultNFilterModel {
                 if (all.isEmpty()) {
                     return (T) always(type);
                 }
-                return (T) new NDescriptorFilterNone(all.toArray(new NDescriptorFilter[0]));
+                return (T) new NDefinitionFilterNone(all.toArray(new NDefinitionFilter[0]));
             }
         }
         throw new NIllegalArgumentException(NMsg.ofC("unsupported filter type: %s", type));
@@ -294,17 +291,14 @@ public class DefaultNFilterModel {
         if (NIdFilter.class.isAssignableFrom(c1)) {
             return (Class<T>) NIdFilter.class;
         }
-        if (NDescriptorFilter.class.isAssignableFrom(c1)) {
-            return (Class<T>) NDescriptorFilter.class;
+        if (NDefinitionFilter.class.isAssignableFrom(c1)) {
+            return (Class<T>) NDefinitionFilter.class;
         }
         if (NRepositoryFilter.class.isAssignableFrom(c1)) {
             return (Class<T>) NRepositoryFilter.class;
         }
         if (NDependencyFilter.class.isAssignableFrom(c1)) {
             return (Class<T>) NDependencyFilter.class;
-        }
-        if (NInstallStatusFilter.class.isAssignableFrom(c1)) {
-            return (Class<T>) NInstallStatusFilter.class;
         }
         throw new NIllegalArgumentException(NMsg.ofC("cannot detect filter type for %s", c1));
     }
@@ -317,8 +311,8 @@ public class DefaultNFilterModel {
             if (NIdFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NIdFilter.class;
             }
-            if (NDescriptorFilter.class.isAssignableFrom(c2)) {
-                return (Class<T>) NDescriptorFilter.class;
+            if (NDefinitionFilter.class.isAssignableFrom(c2)) {
+                return (Class<T>) NDefinitionFilter.class;
             }
             throw new NIllegalArgumentException(NMsg.ofC("cannot detect common type for %s and %s", c1, c2));
         }
@@ -329,42 +323,36 @@ public class DefaultNFilterModel {
             if (NIdFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NIdFilter.class;
             }
-            if (NDescriptorFilter.class.isAssignableFrom(c2)) {
-                return (Class<T>) NDescriptorFilter.class;
+            if (NDefinitionFilter.class.isAssignableFrom(c2)) {
+                return (Class<T>) NDefinitionFilter.class;
             }
-            throw new NIllegalArgumentException(NMsg.ofC("cannot detect common type for %s and %s",c1,c2));
+            throw new NIllegalArgumentException(NMsg.ofC("cannot detect common type for %s and %s", c1, c2));
         }
-        if (NDescriptorFilter.class.isAssignableFrom(c1)) {
+        if (NDefinitionFilter.class.isAssignableFrom(c1)) {
             if (NVersionFilter.class.isAssignableFrom(c2)) {
-                return (Class<T>) NDescriptorFilter.class;
+                return (Class<T>) NDefinitionFilter.class;
             }
             if (NIdFilter.class.isAssignableFrom(c2)) {
-                return (Class<T>) NDescriptorFilter.class;
+                return (Class<T>) NDefinitionFilter.class;
             }
-            if (NDescriptorFilter.class.isAssignableFrom(c2)) {
-                return (Class<T>) NDescriptorFilter.class;
+            if (NDefinitionFilter.class.isAssignableFrom(c2)) {
+                return (Class<T>) NDefinitionFilter.class;
             }
-            throw new NIllegalArgumentException(NMsg.ofC("cannot detect common type for %s and %s",c1,c2));
+            throw new NIllegalArgumentException(NMsg.ofC("cannot detect common type for %s and %s", c1, c2));
         }
         if (NDependencyFilter.class.isAssignableFrom(c1)) {
             if (NDependencyFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NDependencyFilter.class;
             }
-            throw new NIllegalArgumentException(NMsg.ofC("cannot detect common type for %s and %s",c1,c2));
+            throw new NIllegalArgumentException(NMsg.ofC("cannot detect common type for %s and %s", c1, c2));
         }
         if (NRepositoryFilter.class.isAssignableFrom(c1)) {
             if (NRepositoryFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NRepositoryFilter.class;
             }
-            throw new NIllegalArgumentException(NMsg.ofC("cannot detect common type for %s and %s",c1,c2));
+            throw new NIllegalArgumentException(NMsg.ofC("cannot detect common type for %s and %s", c1, c2));
         }
-        if (NInstallStatusFilter.class.isAssignableFrom(c1)) {
-            if (NInstallStatusFilter.class.isAssignableFrom(c2)) {
-                return (Class<T>) NInstallStatusFilter.class;
-            }
-            throw new NIllegalArgumentException(NMsg.ofC("cannot detect common type for %s and %s",c1,c2));
-        }
-        throw new NIllegalArgumentException(NMsg.ofC("cannot detect common type for %s and %s",c1,c2));
+        throw new NIllegalArgumentException(NMsg.ofC("cannot detect common type for %s and %s", c1, c2));
     }
 
 }

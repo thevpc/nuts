@@ -26,9 +26,9 @@ public class Test07_DescriptorTest {
                 .getResultDefinitions().findFirst().get();
         TestUtils.println(u.getDescriptor());
         TestUtils.println(u.getId()+":"+(u.getDescriptor().isExecutable() ? "executable" : "non-executable"));
-        TestUtils.println(u.getId()+":"+(u.getDescriptor().isApplication() ? "app" : "non-app"));
+        TestUtils.println(u.getId()+":"+(u.getDescriptor().isNutsApplication() ? "app" : "non-app"));
         Assertions.assertTrue(!u.getDescriptor().isExecutable());
-        Assertions.assertTrue(!u.getDescriptor().isApplication());
+        Assertions.assertTrue(!u.getDescriptor().isNutsApplication());
     }
 
     @Test
@@ -42,9 +42,9 @@ public class Test07_DescriptorTest {
         TestUtils.println(u.getDescriptor());
         TestUtils.println(u.getEffectiveDescriptor().get());
         TestUtils.println(u.getId()+":"+(u.getDescriptor().isExecutable() ? "executable" : "non-executable"));
-        TestUtils.println(u.getId()+":"+(u.getDescriptor().isApplication() ? "app" : "non-app"));
+        TestUtils.println(u.getId()+":"+(u.getDescriptor().isNutsApplication() ? "app" : "non-app"));
         Assertions.assertTrue(!u.getDescriptor().isExecutable());
-        Assertions.assertTrue(!u.getDescriptor().isApplication());
+        Assertions.assertTrue(!u.getDescriptor().isNutsApplication());
     }
 
     @Test
@@ -57,9 +57,9 @@ public class Test07_DescriptorTest {
         TestUtils.println(u.getDescriptor());
         TestUtils.println(u.getEffectiveDescriptor().get());
         TestUtils.println(u.getId()+":"+(u.getDescriptor().isExecutable() ? "executable" : "non-executable"));
-        TestUtils.println(u.getId()+":"+(u.getDescriptor().isApplication() ? "app" : "non-app"));
+        TestUtils.println(u.getId()+":"+(u.getDescriptor().isNutsApplication() ? "app" : "non-app"));
         Assertions.assertTrue(!u.getDescriptor().isExecutable());
-        Assertions.assertTrue(!u.getDescriptor().isApplication());
+        Assertions.assertTrue(!u.getDescriptor().isNutsApplication());
     }
 
 }

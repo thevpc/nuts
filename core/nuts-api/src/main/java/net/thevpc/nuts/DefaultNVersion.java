@@ -624,7 +624,7 @@ public class DefaultNVersion implements NVersion {
                     sep = ".";
                 }
                 if (!sep.equals(".") && !sep.equals("-")) {
-                    throw new IllegalArgumentException("illegal separator");
+                    throw new IllegalArgumentException(NMsg.ofC(NI18n.of("illegal version number separator %s"),sep).toString());
                 }
                 all.add(new VersionPart(sep, VersionPartType.SEPARATOR));
                 all.add(new VersionPart(String.valueOf(val), VersionPartType.INT));

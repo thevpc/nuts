@@ -57,14 +57,15 @@ public interface NDependencySolver {
     NDependencySolver add(NDependency dependency, NDefinition def);
 
     NDependencySolver setDependencyFilter(NDependencyFilter dependencyFilter);
+
     NDependencySolver setRepositoryFilter(NRepositoryFilter repositoryFilter);
 
     NDependencies solve();
 
     String getName();
 
-    boolean isFilterCurrentEnvironment() ;
+    boolean isIgnoreCurrentEnvironment();
 
-    public NDependencySolver setFilterCurrentEnvironment(boolean filterCurrentEnvironment) ;
+    NDependencySolver setIgnoreCurrentEnvironment(boolean ignoreCurrentEnvironment);
 
 }

@@ -613,13 +613,13 @@ public class NIdFormatHelper {
 
             if (def != null) {
                 this.executable = def.getDescriptor().isExecutable();
-                this.executableApp = def.getDescriptor().isApplication();
+                this.executableApp = def.getDescriptor().isNutsApplication();
             } else if (this.defFetched != null) {
                 this.executable = this.defFetched.getDescriptor().isExecutable();
-                this.executableApp = this.defFetched.getDescriptor().isApplication();
+                this.executableApp = this.defFetched.getDescriptor().isNutsApplication();
             } else if (desc != null) {
                 this.executable = desc.isExecutable();
-                this.executableApp = desc.isApplication();
+                this.executableApp = desc.isNutsApplication();
             }
             this.status_f = (this.installStatus.isDefaultVersion()) ? 'I'
                     : (this.installStatus.isInstalled()) ? 'i'

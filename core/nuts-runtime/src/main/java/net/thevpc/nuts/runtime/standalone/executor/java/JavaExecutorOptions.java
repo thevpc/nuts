@@ -68,7 +68,7 @@ public final class JavaExecutorOptions {
             id = descriptor.getId();
         } else {
             descriptor = def.getEffectiveDescriptor().orElseGet(()->NWorkspace.of().resolveEffectiveDescriptor(def.getDescriptor(),
-                    new EffectiveNDescriptorConfig().setFilterCurrentEnvironment(true)));
+                    new NDescriptorEffectiveConfig().setIgnoreCurrentEnvironment(false)));
             if (!CoreNUtils.isEffectiveId(id)) {
                 id = descriptor.getId();
             }

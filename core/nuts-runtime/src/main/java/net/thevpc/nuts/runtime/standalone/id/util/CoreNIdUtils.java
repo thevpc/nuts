@@ -167,7 +167,7 @@ public class CoreNIdUtils {
 
     public static String getNutsApiVersion(NExecutionContext executionContext) {
         NDescriptor descriptor = executionContext.getDefinition().getDescriptor();
-        if (descriptor.isApplication()) {
+        if (descriptor.isNutsApplication()) {
             for (NDependency dependency : descriptor.getDependencies()) {
                 if (dependency.toId().getShortName().equals(NConstants.Ids.NUTS_API)) {
                     return dependency.toId().getVersion().getValue();

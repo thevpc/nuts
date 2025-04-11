@@ -75,6 +75,16 @@ public interface NDependency extends Serializable, NBlankable {
      */
     boolean isOptional();
 
+    boolean isAnyProvided();
+
+    boolean isAnyRuntime();
+
+    boolean isProvided();
+
+    boolean isRuntime();
+
+    boolean isAnyTest();
+
     /**
      * Indicates the dependency is optional for use of this library.
      *

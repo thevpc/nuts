@@ -73,8 +73,8 @@ public class NHomeLocation implements NEnum {
         } else {
             value = value.trim().toLowerCase();
         }
-        if(value.isEmpty()){
-            return NOptional.ofEmpty(() -> NMsg.ofC("%s is empty", NHomeLocation.class.getSimpleName()));
+        if (value.isEmpty()) {
+            return NOptional.ofEmpty(() -> NMsg.ofC(NI18n.of("%s is empty"), NHomeLocation.class.getSimpleName()));
         }
         String e = value.replace(':', '_').replace('-', '_');
         String finalValue = value;
@@ -85,21 +85,19 @@ public class NHomeLocation implements NEnum {
             NOsFamily osf = s1.equals("system") ? null : NOsFamily.parse(s1).orNull();
             NStoreType loc = s2.equals("system") ? null : NStoreType.parse(s2).orNull();
             if (osf == null) {
-                if (!s1.equals("system") && s1.length() > 0) {
-                    return NOptional.ofError(() -> NMsg.ofC(NHomeLocation.class.getSimpleName() + " invalid value : %s", finalValue));
+                if (!s1.equals("system") && !s1.isEmpty()) {
+                    return NOptional.ofError(() -> NMsg.ofC(NI18n.of("%s invalid value : %s"), NHomeLocation.class.getSimpleName(), finalValue));
                 }
             }
             if (loc == null) {
-                if (!s2.equals("system") && s2.length() > 0) {
-                    return NOptional.ofError(() -> NMsg.ofC(NHomeLocation.class.getSimpleName() + " invalid value : %s", finalValue));
+                if (!s2.equals("system") && !s2.isEmpty()) {
+                    return NOptional.ofError(() -> NMsg.ofC(NI18n.of("%s invalid value : %s"), NHomeLocation.class.getSimpleName(), finalValue));
                 }
             }
             return NOptional.of(of(osf, loc));
         }
-        return NOptional.ofError(() -> NMsg.ofC(NHomeLocation.class.getSimpleName() + " invalid value : %s", finalValue));
+        return NOptional.ofError(() -> NMsg.ofC(NI18n.of("%s invalid value : %s"), NHomeLocation.class.getSimpleName(), finalValue));
     }
-
-
 
 
     /**

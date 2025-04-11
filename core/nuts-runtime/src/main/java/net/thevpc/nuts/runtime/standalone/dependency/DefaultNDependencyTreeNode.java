@@ -39,11 +39,25 @@ public class DefaultNDependencyTreeNode implements NDependencyTreeNode {
     private final NDependency dependency;
     private final List<NDependencyTreeNode> children;
     private final boolean partial;
+    private final boolean optional;
+    private final boolean provided;
 
-    public DefaultNDependencyTreeNode(NDependency dependency, List<NDependencyTreeNode> children, boolean partial) {
+    public DefaultNDependencyTreeNode(NDependency dependency, List<NDependencyTreeNode> children, boolean partial,boolean optional,boolean provided) {
         this.dependency = dependency;
         this.children = children;
         this.partial = partial;
+        this.optional = optional;
+        this.provided = provided;
+    }
+
+    @Override
+    public boolean isOptional() {
+        return optional;
+    }
+
+    @Override
+    public boolean isProvided() {
+        return provided;
     }
 
     @Override
@@ -71,7 +85,21 @@ public class DefaultNDependencyTreeNode implements NDependencyTreeNode {
                 s.append("?partial=true");
             }
         }
-        if (children.size()>0) {
+        if (optional) {
+            if (s.indexOf("?")>=0) {
+                s.append("&optional=true");
+            } else {
+                s.append("?optional=true");
+            }
+        }
+        if (provided) {
+            if (s.indexOf("?")>=0) {
+                s.append("&provided=true");
+            } else {
+                s.append("?provided=true");
+            }
+        }
+        if (!children.isEmpty()) {
             if (s.indexOf("?")>=0) {
                 s.append("&children-count=").append(children.size());
             } else {

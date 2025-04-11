@@ -117,8 +117,7 @@ net.thevpc.nuts.runtime.standalone.DefaultNArtifactCallBuilder
 net.thevpc.nuts.runtime.standalone.id.filter.InternalNIdFilters
 net.thevpc.nuts.runtime.standalone.version.filter.InternalNVersionFilters
 net.thevpc.nuts.runtime.standalone.dependency.filter.InternalNDependencyFilters
-net.thevpc.nuts.runtime.standalone.descriptor.filter.InternalNDescriptorFilters
-net.thevpc.nuts.runtime.standalone.definition.installstatus.filter.InternalNInstallStatusFilters
+net.thevpc.nuts.runtime.standalone.definition.filter.InternalNDefinitionFilters
 net.thevpc.nuts.runtime.standalone.repository.filter.InternalNRepositoryFilters
 net.thevpc.nuts.runtime.standalone.util.filters.DefaultNFilters
 net.thevpc.nuts.runtime.standalone.util.reflect.NReflectMapperImpl

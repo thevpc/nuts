@@ -110,7 +110,7 @@ public final class NApplications {
                                 return appType.cast(o);
                             }
                         } else {
-                            throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC("createApplicationInstance must return %s", appType.getName()));
+                            throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("createApplicationInstance must return an instance of type %s"), appType.getName()));
                         }
                         break;
                     }
@@ -134,13 +134,13 @@ public final class NApplications {
             if (c instanceof Error) {
                 throw (Error) c;
             }
-            throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC("unable to instantiate application %s", appType.getName()), ex);
+            throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("unable to instantiate application %s"), appType.getName()), ex);
         } catch (IllegalAccessException ex) {
-            throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC("illegal access to default constructor for %s", appType.getName()), ex);
+            throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("illegal access to default constructor for %s"), appType.getName()), ex);
         } catch (InvocationTargetException ex) {
-            throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC("invocation exception for %s", appType.getName()), ex);
+            throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("invocation exception for %s"), appType.getName()), ex);
         }
-        throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC("missing application constructor for %s from of : \n\t static createApplicationInstance(NSession,String[])\n\t Constructor(NSession,String[])\n\t Constructor()", appType.getName()));
+        throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("missing application constructor for %s from of : \n\t static createApplicationInstance(NSession,String[])\n\t Constructor(NSession,String[])\n\t Constructor()"), appType.getName()));
     }
 
     /**
@@ -220,9 +220,9 @@ public final class NApplications {
             NLog.of(NApplications.class).with().level(Level.FINE).verb(NLogVerb.START)
                     .log(
                             NMsg.ofC(
-                                    "running application %s: %s (%s) %s",
-                                    inherited ? "(inherited)" : "",
-                                    appId==null?"<unresolved-id>":appId,
+                                    NI18n.of("running application %s: %s (%s) %s"),
+                                    inherited ? ("("+NI18n.of("inherited")+")") : "",
+                                    appId==null?("<"+NI18n.of("unresolved-id")+">"):appId,
                                     appClassName,
                                     nApp.getCmdLine()
                             )
@@ -255,7 +255,7 @@ public final class NApplications {
                 }
                 throw e;
             }
-            throw new NExecutionException(NMsg.ofC("unsupported execution mode %s", nApp.getMode()), NExecutionException.ERROR_255);
+            throw new NExecutionException(NMsg.ofC(NI18n.of("unsupported execution mode %s"), nApp.getMode()), NExecutionException.ERROR_255);
         });
     }
 

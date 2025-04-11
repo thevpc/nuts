@@ -15,7 +15,6 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <github.global.server>github</github.global.server>
         <nuts.genericName>Package Manager</nuts.genericName>
-        <nuts.api>true</nuts.api>
         <nuts.categories>
             /Settings/PackageManager/Nuts
         </nuts.categories>

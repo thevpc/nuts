@@ -81,8 +81,13 @@ public abstract class DelegateNDescriptor extends AbstractNDescriptor {
     }
 
     @Override
-    public boolean isApplication() {
-        return getBase().isApplication();
+    public boolean isNutsApplication() {
+        return getBase().isNutsApplication();
+    }
+
+    @Override
+    public boolean isPlatformApplication() {
+        return getBase().isPlatformApplication();
     }
 
     @Override

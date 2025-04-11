@@ -1,11 +1,13 @@
 package net.thevpc.nuts.time;
 
+import net.thevpc.nuts.NI18n;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.io.NMemoryPrintStream;
 import net.thevpc.nuts.io.NPlainPrintStream;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.text.DecimalFormat;
@@ -61,10 +63,10 @@ public class DefaultNDurationFormat {
     //    @Override
     public String format(long millis, int nanos) {
         if (millis < 0) {
-            throw new IllegalArgumentException("invalid millis " + millis);
+            throw new IllegalArgumentException(NMsg.ofC(NI18n.of("invalid millis %s"), millis).toString());
         }
         if (nanos < 0 || nanos > 999999) {
-            throw new IllegalArgumentException("invalid nanos " + millis);
+            throw new IllegalArgumentException(NMsg.ofC(NI18n.of("invalid nanos %s"), millis).toString());
         }
         return format(NDuration.ofMillisAndNanos(millis, nanos));
     }
@@ -311,7 +313,7 @@ public class DefaultNDurationFormat {
     public DefaultNDurationFormat setMode(NDurationFormatMode mode) {
         if (this.mode != mode) {
             if (frozen) {
-                throw new IllegalArgumentException("This instance is immutable and cannot be updated");
+                throw new IllegalArgumentException(NI18n.of("This instance is immutable and cannot be updated"));
             }
             this.mode = mode;
         }

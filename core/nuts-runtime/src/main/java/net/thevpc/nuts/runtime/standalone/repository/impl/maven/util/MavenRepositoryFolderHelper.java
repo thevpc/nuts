@@ -105,7 +105,7 @@ public class MavenRepositoryFolderHelper {
         return getStoreLocation().resolve(ExtraApiUtils.resolveIdPath(id.getShortId()));
     }
 
-    public Iterator<NId> searchVersions(NId id, final NIdFilter filter, boolean deep) {
+    public Iterator<NId> searchVersions(NId id, final NDefinitionFilter filter, boolean deep) {
         String singleVersion = id.getVersion().asSingleValue().orNull();
         if (singleVersion != null) {
             NId id1 = id.builder().setVersion(singleVersion).setFaceDescriptor().build();
@@ -120,7 +120,7 @@ public class MavenRepositoryFolderHelper {
         );
     }
 
-    public Iterator<NId> searchInFolder(NPath folder, final NIdFilter filter, int maxDepth) {
+    public Iterator<NId> searchInFolder(NPath folder, final NDefinitionFilter filter, int maxDepth) {
         return new NIdPathIterator(repo, rootPath.normalize(), folder, filter, new NIdPathIteratorBase() {
             @Override
             public NWorkspace getWorkspace() {
@@ -138,7 +138,7 @@ public class MavenRepositoryFolderHelper {
             }
 
             @Override
-            public NDescriptor parseDescriptor(NPath pathname, InputStream in, NFetchMode fetchMode, NRepository repository, NPath rootURL) throws IOException {
+            public NDescriptor parseDescriptor(NPath pathname, InputStream in, NFetchMode fetchMode, NRepository repository, NPath rootURL) {
                 return MavenUtils.of().parsePomXmlAndResolveParents(pathname, NFetchMode.LOCAL, repo);
             }
         }, maxDepth, "core", null, true);
@@ -148,7 +148,7 @@ public class MavenRepositoryFolderHelper {
         return rootPath;
     }
 
-    public NId searchLatestVersion(NId id, NIdFilter filter) {
+    public NId searchLatestVersion(NId id, NDefinitionFilter filter) {
         NId bestId = null;
         NPath file = getLocalGroupAndArtifactFile(id);
         if (file.exists()) {

@@ -54,6 +54,6 @@ public class NUninstallException extends NInstallationException {
      */
     public NUninstallException(NId id, NMsg msg, Throwable ex) {
         super(id,
-                msg == null ? NMsg.ofC("unable to uninstall %s", (id == null ? "<null>" : id)) : msg, ex);
+                msg == null ? NMsg.ofC(NI18n.of("unable to uninstall %s"), (id == null ? "<null>" : id)) : msg, ex);
     }
 }

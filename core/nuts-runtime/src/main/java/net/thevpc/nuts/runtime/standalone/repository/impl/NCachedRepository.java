@@ -150,10 +150,10 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                     }
                     return NOptional.of(success);
                 } else {
-                    return NOptional.ofError(() -> NMsg.ofC("nuts descriptor not found %s", id), new NNotFoundException(id));
+                    return NOptional.ofError(() -> NMsg.ofC(NI18n.of("nuts descriptor not found %s"), id), new NNotFoundException(id));
                 }
             } catch (RuntimeException ex) {
-                return NOptional.ofError(() -> NMsg.ofC("nuts descriptor not found %s", id), ex);
+                return NOptional.ofError(() -> NMsg.ofC(NI18n.of("nuts descriptor not found %s"), id), ex);
             }
         };
         NOptional<NDescriptor> res = null;
@@ -187,7 +187,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
     }
 
     @Override
-    public final NIterator<NId> searchVersionsImpl(NId id, NIdFilter idFilter, NFetchMode fetchMode) {
+    public final NIterator<NId> searchVersionsImpl(NId id, NDefinitionFilter idFilter, NFetchMode fetchMode) {
 
         List<NIterator<? extends NId>> all = new ArrayList<>();
 //        NSession session = getWorkspace().currentSession();
@@ -238,7 +238,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
             //ignore error
         } catch (Exception ex) {
             _LOGOP().level(Level.FINEST).verb(NLogVerb.FAIL).error(ex)
-                    .log(NMsg.ofJ("search versions error : {0}", ex));
+                    .log(NMsg.ofC(NI18n.of("search versions error : %s"), ex));
             //ignore....
         }
         NIterator<NId> namedNutIdIterator = NIteratorBuilder.ofConcat(all).distinct(
@@ -349,7 +349,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
     }
 
     @Override
-    public final NIterator<NId> searchImpl(final NIdFilter filter, NFetchMode fetchMode) {
+    public final NIterator<NId> searchImpl(final NDefinitionFilter filter, NFetchMode fetchMode) {
         NSession session = getWorkspace().currentSession();
         List<NPath> basePaths = CommonRootsByPathHelper.resolveRootPaths(filter);
         List<NId> baseIds = CommonRootsByIdHelper.resolveRootPaths(filter);
@@ -392,11 +392,11 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         return true;
     }
 
-    public NIterator<NId> searchVersionsCore(NId id, NIdFilter idFilter, NFetchMode fetchMode) {
+    public NIterator<NId> searchVersionsCore(NId id, NDefinitionFilter idFilter, NFetchMode fetchMode) {
         return null;
     }
 
-    public NId searchLatestVersionCore(NId id, NIdFilter filter, NFetchMode fetchMode) {
+    public NId searchLatestVersionCore(NId id, NDefinitionFilter filter, NFetchMode fetchMode) {
         return null;
     }
 
@@ -408,7 +408,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         return null;
     }
 
-    public NIterator<NId> searchCore(final NIdFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode) {
+    public NIterator<NId> searchCore(final NDefinitionFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode) {
         return null;
     }
 
@@ -425,7 +425,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
     }
 
     @Override
-    public final NId searchLatestVersion(NId id, NIdFilter filter, NFetchMode fetchMode) {
+    public final NId searchLatestVersion(NId id, NDefinitionFilter filter, NFetchMode fetchMode) {
         if (id.getVersion().isBlank() && filter == null) {
             NId bestId = lib.searchLatestVersion(id, filter);
             NId c1 = null;

@@ -95,11 +95,11 @@ public class Test03_CreateLayoutTest {
         if (NDI_COMPANIONS > 0) {
             NId nshId = null;
             try {
-                nshId = NSearchCmd.of().setInstallStatus(NInstallStatusFilters.of().byInstalled(true)).addId("nsh")
+                nshId = NSearchCmd.of("nsh").setDefinitionFilter(NDefinitionFilters.of().byInstalled(true))
                         .setDistinct(true).getResultIds()
                         .findSingleton().get();
             } catch (Exception ex) {
-                nshId = NSearchCmd.of().setInstallStatus(NInstallStatusFilters.of().byInstalled(true)).addId("nsh")
+                nshId = NSearchCmd.of("nsh").setDefinitionFilter(NDefinitionFilters.of().byInstalled(true))
                         .setDistinct(true).getResultIds()
                         .findSingleton().get();
             }

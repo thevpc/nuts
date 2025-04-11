@@ -196,7 +196,7 @@ public class NDescriptorUtils {
                 .setProfile(CoreNUtils.applyStringProperties(child.getProfiles(), properties))
                 .setDesktopEnvironment(CoreNUtils.applyStringProperties(child.getDesktopEnvironment(), properties))
                 .setArch(CoreNUtils.applyStringProperties(child.getArch(), properties))
-                .readOnly();
+                .build();
     }
 
     public static NId applyNutsIdProperties(NDescriptor d, NId child, Function<String, String> properties) {
@@ -408,7 +408,7 @@ public class NDescriptorUtils {
                                 x -> CoreNUtils.applyStringProperties(x, map)
                         ).collect(Collectors.toList())
         );
-        b.setCondition(applyPropertiesNutsEnvCondition(b.getCondition().builder(), properties).build());
+        b.setCondition(applyPropertiesNutsEnvCondition(b.getCondition(), properties).build());
         b.setDependencies(new ArrayList<>(n_deps));
         b.setStandardDependencies(new ArrayList<>(n_sdeps));
         b.setProperties(n_props.toList());
@@ -469,7 +469,7 @@ public class NDescriptorUtils {
                                 x -> CoreNUtils.applyStringProperties(x, map)
                         ).collect(Collectors.toList())
         );
-        b.setCondition(applyPropertiesNutsEnvCondition2(b.getCondition().builder(), properties).build());
+        b.setCondition(applyPropertiesNutsEnvCondition2(b.getCondition(), properties).build());
         b.setDependencies(new ArrayList<>(n_deps));
         b.setStandardDependencies(new ArrayList<>(n_sdeps));
         b.setProperties(n_props.toList());

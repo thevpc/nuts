@@ -139,16 +139,16 @@ public class NLogRichFormatter extends Formatter {
                 + NLogUtils.formatClassName(wRecord.getSourceClassName())
                 + ": ");
 
+        if (wRecord.getTime() > 0) {
+            sb.append("(");
+            sb.append(CoreTimeUtils.formatPeriodMilli(wRecord.getTime()), NTextStyle.config());
+            sb.append(") ");
+        }
         NMsg message = wRecord.getFormattedMessage();
         NText msgStr =
                 NTexts.of()
                         .of(message);
         sb.append(msgStr);
-        if (wRecord.getTime() > 0) {
-            sb.append(" (");
-            sb.append(CoreTimeUtils.formatPeriodMilli(wRecord.getTime()), NTextStyle.config());
-            sb.append(")");
-        }
         sb.append(NLogUtils.LINE_SEPARATOR);
         lastMillis = wRecord.getMillis();
         if (wRecord.getThrown() != null) {

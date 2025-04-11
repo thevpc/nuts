@@ -6,9 +6,8 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.id.filter.NIdFilterAnd;
-import net.thevpc.nuts.runtime.standalone.id.filter.NIdFilterOr;
-import net.thevpc.nuts.runtime.standalone.id.filter.NPatternIdFilter;
+import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
+import net.thevpc.nuts.runtime.standalone.definition.filter.NPatternDefinitionFilter;
 import net.thevpc.nuts.util.NBlankable;
 
 import java.util.*;
@@ -133,11 +132,11 @@ public class CommonRootsByIdHelper {
                 .build()));
     }
 
-    public static List<NId> resolveRootPaths(NIdFilter filter) {
+    public static List<NId> resolveRootPaths(NDefinitionFilter filter) {
         return new ArrayList<>(CommonRootsByIdHelper.resolveRootIds(filter));
     }
 
-    public static Set<NId> resolveRootIds(NIdFilter filter) {
+    public static Set<NId> resolveRootIds(NDefinitionFilter filter) {
         Set<NId> v = resolveRootId0(filter);
         if (v == null) {
             HashSet<NId> s = new HashSet<>();
@@ -147,35 +146,35 @@ public class CommonRootsByIdHelper {
         return v;
     }
 
-    public static Set<NId> resolveRootId0(NIdFilter filter) {
+    public static Set<NId> resolveRootId0(NDefinitionFilter filter) {
         if (filter == null) {
             return null;
         }
-        if (filter instanceof NIdFilterAnd) {
-            NIdFilterAnd f = ((NIdFilterAnd) filter);
+        NDefinitionFilter[] aa = NDefinitionHelper.toAndChildren(filter).orNull();
+        if(aa!=null) {
             Set<NId> xx = null;
-            for (NIdFilter g : f.getChildren()) {
+            for (NDefinitionFilter g : aa) {
                 xx = resolveRootIdAnd(xx, resolveRootId0(g));
             }
             return xx;
         }
-        if (filter instanceof NIdFilterOr) {
-            NIdFilterOr f = ((NIdFilterOr) filter);
-
-            NIdFilter[] y = f.getChildren();
-            if (y.length == 0) {
+        aa = NDefinitionHelper.toOrChildren(filter).orNull();
+        if(aa!=null) {
+            if (aa.length == 0) {
                 return null;
             }
-            Set<NId> xx = resolveRootId0(y[0]);
-            for (int i = 1; i < y.length; i++) {
-                xx = resolveRootIdOr(xx, resolveRootId0(y[i]));
+            Set<NId> xx = resolveRootId0(aa[0]);
+            for (int i = 1; i < aa.length; i++) {
+                xx = resolveRootIdOr(xx, resolveRootId0(aa[i]));
             }
             return xx;
         }
-        if (filter instanceof NPatternIdFilter) {
-            NPatternIdFilter f = ((NPatternIdFilter) filter);
-            return resolveRootId(f.getId().getGroupId(), f.getId().getArtifactId(), f.getId().getVersion().toString());
+
+        NId pid=NDefinitionHelper.toPatternId(filter).orNull();
+        if ( pid!=null) {
+            return resolveRootId(pid.getGroupId(), pid.getArtifactId(),pid.getVersion().toString());
         }
+
         return null;
     }
 }

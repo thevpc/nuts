@@ -238,10 +238,11 @@ public class MavenUtils {
                     return false;
                 })) {
                     flags.add(NDescriptorFlag.EXEC);
+                    flags.add(NDescriptorFlag.PLATFORM_APP);
                 }
             }
             if (NLiteral.of(pom.getProperties().get("nuts.application")).asBoolean().orElse(false)) {
-                flags.add(NDescriptorFlag.APP);
+                flags.add(NDescriptorFlag.NUTS_APP);
                 flags.add(NDescriptorFlag.EXEC);
             }
             if (NLiteral.of(pom.getProperties().get("nuts.gui")).asBoolean().orElse(false)) {
@@ -490,7 +491,7 @@ public class MavenUtils {
         return version == null ? null : version.replace("(", "]").replace(")", "[");
     }
 
-    public NDescriptor parsePomXmlAndResolveParents(NPath path, NFetchMode fetchMode, NRepository repository) throws IOException {
+    public NDescriptor parsePomXmlAndResolveParents(NPath path, NFetchMode fetchMode, NRepository repository) {
         try {
             NSession session = NSession.get().get();
             session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "parse", path.toCompressedForm()));
@@ -516,7 +517,6 @@ public class MavenUtils {
 //        if (session == null) {
 //            session = ws.createSession();
 //        }
-        NSession session = NSession.get().get();
         try {
             try {
 //            bytes = IOUtils.loadByteArray(stream, true);
@@ -650,7 +650,7 @@ public class MavenUtils {
         }
         for (Iterator<String> iterator = s.getVersions().iterator(); iterator.hasNext(); ) {
             String version = iterator.next();
-            if (s.getLatest().length() > 0 && DefaultNVersion.compareVersions(version, s.getLatest()) > 0) {
+            if (!s.getLatest().isEmpty() && DefaultNVersion.compareVersions(version, s.getLatest()) > 0) {
                 iterator.remove();
             }
         }
@@ -693,9 +693,6 @@ public class MavenUtils {
         if(!"maven".equals(options.getName())){
             return false;
         }
-//        if(!(NBlankable.isBlank(options.getLocation()) || options.getLocation().trim().equals("maven"))){
-//            return false;
-//        }
         if(options.getRepositoryModel()!=null){
             return false;
         }

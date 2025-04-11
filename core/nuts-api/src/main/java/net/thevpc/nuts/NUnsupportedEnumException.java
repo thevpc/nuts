@@ -54,7 +54,7 @@ public class NUnsupportedEnumException extends NException {
     public NUnsupportedEnumException(NMsg message, Enum enumValue) {
         super(
                 message != null ? message : NMsg.ofC(
-                        "unexpected/unsupported enum %s of type %s", enumValue, enumValue.getClass().getName())
+                        NI18n.of("unexpected/unsupported enum %s of type %s"), enumValue, enumValue.getClass().getName())
         );
         this.enumValue = enumValue;
     }
@@ -69,7 +69,7 @@ public class NUnsupportedEnumException extends NException {
     public NUnsupportedEnumException(NMsg message, String stringValue, Enum enumValue) {
         super(
                 message == null ? (
-                        NMsg.ofC("unexpected/unsupported value %s of type %s", stringValue, enumValue.getClass().getName()))
+                        NMsg.ofC(NI18n.of("unexpected/unsupported value %s of type %s"), stringValue, enumValue.getClass().getName()))
                         : message
         );
     }

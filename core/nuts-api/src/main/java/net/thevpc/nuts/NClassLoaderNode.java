@@ -39,13 +39,13 @@ import java.util.Objects;
  */
 public interface NClassLoaderNode {
 
-    public boolean isIncludedInClasspath();
+    boolean isIncludedInClasspath();
 
-    public boolean isEnabled();
+    boolean isEnabled();
 
-    public NId getId();
+    NId getId();
 
-    public URL getURL();
+    URL getURL();
 
-    public List<NClassLoaderNode> getDependencies();
+    List<NClassLoaderNode> getDependencies();
 }

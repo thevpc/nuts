@@ -6,6 +6,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.MavenFolderRepository;
 import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.util.NIteratorUtils;
@@ -40,7 +41,7 @@ public class MavenSolrSearchCommand {
                 .ifEmpty(true).orElse(false);
     }
 
-    public NIterator<NId> search(NIdFilter filter, NId[] baseIds, NFetchMode fetchMode) {
+    public NIterator<NId> search(NDefinitionFilter filter, NId[] baseIds, NFetchMode fetchMode) {
         if(fetchMode== NFetchMode.REMOTE){
             if(isSolrSearchEnabled()){
                 boolean someCorrect=false;
@@ -76,7 +77,7 @@ public class MavenSolrSearchCommand {
         return null;
     }
 
-    public Iterator<NId> search(MavenSolrSearchRequest r, NPath url, NIdFilter idFilter) {
+    public Iterator<NId> search(MavenSolrSearchRequest r, NPath url, NDefinitionFilter idFilter) {
         if (r != null) {
             String urlString = url.toString();
             if (urlString.startsWith("htmlfs:")) {
@@ -139,7 +140,7 @@ public class MavenSolrSearchCommand {
                         };
                     }
                 }, () -> NElements.of().ofObjectBuilder().set("url", query.toString()).build());
-                return it.filter(y->idFilter==null||idFilter.acceptId(y),
+                return it.filter(y->idFilter==null||idFilter.acceptDefinition(NDefinitionHelper.ofIdOnly(y)),
                         ()->
                                         NElements.of().ofObjectBuilder().set(
                                         "filterBy", NElements.of().ofString(idFilter==null?"true":idFilter.toString())

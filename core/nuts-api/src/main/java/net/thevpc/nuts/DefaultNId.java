@@ -80,7 +80,7 @@ public class DefaultNId implements NId {
             }
         }
         this.classifier = c0;
-        this.condition = condition == null ? NEnvCondition.BLANK : condition.readOnly();
+        this.condition = condition == null ? NEnvCondition.BLANK : condition;
         this.properties = NStringUtils.trim(NStringMapFormat.DEFAULT.format(properties));
     }
 

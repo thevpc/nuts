@@ -278,11 +278,7 @@ public class Test01_CreateTest {
             Assertions.assertNotNull(r);
         }
         {
-            NDescriptorFilters r = NDescriptorFilters.of();
-            Assertions.assertNotNull(r);
-        }
-        {
-            NInstallStatusFilters r = NInstallStatusFilters.of();
+            NDefinitionFilters r = NDefinitionFilters.of();
             Assertions.assertNotNull(r);
         }
         {

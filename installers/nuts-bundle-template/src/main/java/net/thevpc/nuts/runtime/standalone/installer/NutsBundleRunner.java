@@ -315,7 +315,7 @@ public class NutsBundleRunner {
 
     public Set<String> getOsFamilies() {
         if (osFamilies == null) {
-            doLogError("resolve OS Name " + System.getProperty("os.name"));
+            doDebug("resolve OS Name " + System.getProperty("os.name"));
             String property = System.getProperty("os.name").toLowerCase();
             if (property.startsWith("linux")) {
                 osFamilies=new LinkedHashSet<>(Arrays.asList("linux","posix"));

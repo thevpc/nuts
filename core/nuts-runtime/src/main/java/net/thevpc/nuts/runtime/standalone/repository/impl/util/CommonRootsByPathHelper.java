@@ -7,11 +7,10 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.util;
 
 import java.util.*;
 
-import net.thevpc.nuts.NIdFilter;
+import net.thevpc.nuts.NDefinitionFilter;
+import net.thevpc.nuts.NId;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.id.filter.NIdFilterAnd;
-import net.thevpc.nuts.runtime.standalone.id.filter.NIdFilterOr;
-import net.thevpc.nuts.runtime.standalone.id.filter.NPatternIdFilter;
+import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 
 /**
  * @author thevpc
@@ -168,11 +167,11 @@ public class CommonRootsByPathHelper {
         return new HashSet<>(Collections.singletonList(NPath.of(g.replace('.', '/'))));
     }
 
-    public static List<NPath> resolveRootPaths(NIdFilter filter) {
+    public static List<NPath> resolveRootPaths(NDefinitionFilter filter) {
         return new ArrayList<>(CommonRootsByPathHelper.resolveRootIds(filter));
     }
 
-    public static Set<NPath> resolveRootIds(NIdFilter filter) {
+    public static Set<NPath> resolveRootIds(NDefinitionFilter filter) {
         Set<NPath> v = resolveRootId0(filter);
         if (v == null) {
             HashSet<NPath> s = new HashSet<>();
@@ -182,34 +181,32 @@ public class CommonRootsByPathHelper {
         return v;
     }
 
-    public static Set<NPath> resolveRootId0(NIdFilter filter) {
+    public static Set<NPath> resolveRootId0(NDefinitionFilter filter) {
         if (filter == null) {
             return null;
         }
-        if (filter instanceof NIdFilterAnd) {
-            NIdFilterAnd f = ((NIdFilterAnd) filter);
+        NDefinitionFilter[] aa= NDefinitionHelper.toAndChildren(filter).orNull();
+        if (aa!=null) {
             Set<NPath> xx = null;
-            for (NIdFilter g : f.getChildren()) {
+            for (NDefinitionFilter g : aa) {
                 xx = resolveRootIdAnd(xx, resolveRootId0(g));
             }
             return xx;
         }
-        if (filter instanceof NIdFilterOr) {
-            NIdFilterOr f = ((NIdFilterOr) filter);
-
-            NIdFilter[] y = f.getChildren();
-            if (y.length == 0) {
+        aa= NDefinitionHelper.toOrChildren(filter).orNull();
+        if (aa!=null) {
+            if (aa.length == 0) {
                 return null;
             }
-            Set<NPath> xx = resolveRootId0(y[0]);
-            for (int i = 1; i < y.length; i++) {
-                xx = resolveRootIdOr(xx, resolveRootId0(y[i]));
+            Set<NPath> xx = resolveRootId0(aa[0]);
+            for (int i = 1; i < aa.length; i++) {
+                xx = resolveRootIdOr(xx, resolveRootId0(aa[i]));
             }
             return xx;
         }
-        if (filter instanceof NPatternIdFilter) {
-            NPatternIdFilter f = ((NPatternIdFilter) filter);
-            return resolveRootId(f.getId().getGroupId(), f.getId().getArtifactId(), f.getId().getVersion().toString());
+        NId pid=NDefinitionHelper.toPatternId(filter).orNull();
+        if ( pid!=null) {
+            return resolveRootId(pid.getGroupId(), pid.getArtifactId(),pid.getVersion().toString());
         }
         return null;
     }
