@@ -80,11 +80,11 @@ public class DefaultNFetchContentRepositoryCmd extends AbstractNFetchContentRepo
             if (f == null) {
                 throw new NNotFoundException(id);
             }
-            NLogUtils.traceMessage(_LOG(), Level.FINER, repo.getName(), getFetchMode(), id.getLongId(), NLogVerb.SUCCESS, "fetch package", startTime, null);
+            NLogUtils.traceMessage(_LOG(), Level.FINER, repo.getName(), getFetchMode(), id.getLongId(), NLogVerb.SUCCESS, "fetch content", startTime, null);
             result = f;
         } catch (RuntimeException ex) {
             if (!CoreNUtils.isUnsupportedFetchModeException(ex)) {
-                NLogUtils.traceMessage(_LOG(), Level.FINEST, repo.getName(), getFetchMode(), id.getLongId(), NLogVerb.FAIL, "fetch package", startTime, CoreStringUtils.exceptionToMessage(ex));
+                NLogUtils.traceMessage(_LOG(), Level.FINEST, repo.getName(), getFetchMode(), id.getLongId(), NLogVerb.FAIL, "fetch content", startTime, CoreStringUtils.exceptionToMessage(ex));
             }
             throw ex;
         }

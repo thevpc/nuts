@@ -776,7 +776,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
     protected NDescriptor _resolveEffectiveDescriptor(NDescriptor descriptor, NDescriptorEffectiveConfig effectiveNDescriptorConfig) {
         LOG.with().level(Level.FINEST).verb(NLogVerb.START)
-                .log(NMsg.ofC("resolve effective %s using %s", descriptor.getId(),effectiveNDescriptorConfig));
+                .log(NMsg.ofC("resolve effective %s using %s", descriptor.getId(), effectiveNDescriptorConfig));
         NDescriptorBuilder descrWithParents = _applyParentDescriptors(descriptor).builder();
         //now apply conditions!
         List<NDescriptorProperty> properties = descrWithParents.getProperties().stream()
@@ -962,7 +962,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             return;
         }
         boolean requireParents = true;
-        NInstallerComponent installerComponent = null;
         try {
             Map rec = null;
             if (strategy0 == InstallStrategy0.INSTALL) {
@@ -1031,9 +1030,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 }
             }
             NRepositorySPI installedRepositorySPI = wu.repoSPI(installedRepository);
-            if (resolveInstaller) {
-                installerComponent = getInstaller(def);
-            }
             if (reinstall) {
                 //must re-fetch def!
                 NDefinition d2 = NFetchCmd.of(def.getId())
@@ -1053,7 +1049,12 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                             .getResultDefinitions().findFirst().get();
                 }
                 def = d2;
-                uninstallImpl(def, new String[0], resolveInstaller, true, false, false);
+                def.getContent().get();
+                if (strategy0 != InstallStrategy0.REQUIRE) {
+                    if (def.getInstallInformation().get().getInstallStatus().isInstalled()) {
+                        uninstallImpl(def, new String[0], resolveInstaller, true, false, false);
+                    }
+                }
             }
             NDefinition oldDef = null;
             if (strategy0 == InstallStrategy0.UPDATE) {
@@ -1213,6 +1214,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 if (strategy0 == InstallStrategy0.REQUIRE) {
                     //
                 } else if (strategy0 == InstallStrategy0.UPDATE) {
+                    NInstallerComponent installerComponent = null;
+                    if (resolveInstaller) {
+                        installerComponent = getInstaller(def);
+                    }
                     if (installerComponent != null) {
                         try {
                             installerComponent.update(executionContext);
@@ -1228,6 +1233,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                         }
                     }
                 } else if (strategy0 == InstallStrategy0.INSTALL) {
+                    NInstallerComponent installerComponent = null;
+                    if (resolveInstaller) {
+                        installerComponent = getInstaller(def);
+                    }
                     if (installerComponent != null) {
                         try {
                             installerComponent.install(executionContext);
@@ -1295,7 +1304,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             }
 
             if (def.getDescriptor().getIdType() == NIdType.EXTENSION) {
-                if(requireDependencies) {
+                if (requireDependencies) {
                     NExtensionListHelper h = new NExtensionListHelper(
                             session.getWorkspace().getApiId(),
                             this.getConfigModel().getStoredConfigBoot().getExtensions())
