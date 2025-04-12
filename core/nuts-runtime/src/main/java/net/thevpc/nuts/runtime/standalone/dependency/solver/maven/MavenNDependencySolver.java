@@ -18,7 +18,6 @@ public class MavenNDependencySolver implements NDependencySolver {
     private NDependencyFilter dependencyFilter;
     private NRepositoryFilter repositoryFilter;
     NDependencyFilter effDependencyFilter;
-    private boolean shouldIncludeContent = false;//shouldIncludeContent(this);
     private boolean failFast;
     boolean ignoreCurrentEnvironment;
 
@@ -161,6 +160,7 @@ public class MavenNDependencySolver implements NDependencySolver {
 
     NDefinition searchOne(NDependency dep) {
         NDefinition def = null;
+        NDefinition def2 = null;
         try {
             def = search(dep)
                     .getResultDefinitions().findFirst().orNull();
@@ -170,17 +170,11 @@ public class MavenNDependencySolver implements NDependencySolver {
         return def;
     }
 
-    public boolean isShouldIncludeContent() {
-        return shouldIncludeContent;
-    }
-
     private NSearchCmd search(NDependency dep) {
         return NSearchCmd.of()
                 .addIds(dep.toId())
                 .setRepositoryFilter(getRepositoryFilter())
-                .setContent(isShouldIncludeContent())
                 .setIgnoreCurrentEnvironment(isIgnoreCurrentEnvironment())
-                .setEffective(true)
                 .setLatest(true)
                 ;
     }

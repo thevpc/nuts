@@ -84,7 +84,6 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
     }
 
 
-
     //@Override
 
 
@@ -106,55 +105,60 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
 
                 List<NIterator<? extends NId>> toConcat = new ArrayList<>();
                 for (NId nutsId1 : nutsId2) {
-                    NId nutsIdNonLatest = nutsId1;
-                    boolean latestVersion = false;
-                    boolean releaseVersion = false;
-                    if (nutsIdNonLatest.getVersion().isLatestVersion()) {
-                        latestVersion = true;
-                        nutsIdNonLatest = nutsIdNonLatest.builder().setVersion("").build();
-                    } else if (nutsIdNonLatest.getVersion().isReleaseVersion()) {
-                        releaseVersion = true;
-                        nutsIdNonLatest = nutsIdNonLatest.builder().setVersion("").build();
-                    }
-                    NDefinitionFilters dd = NDefinitionFilters.of();
-                    NDefinitionFilter filter = (
-                            dd.byName(nutsIdNonLatest.getFullName())
-                                    .and(dd.byEnv(nutsIdNonLatest.getProperties()))
-                                    .and(search.getDefinitionFilter())
-                    );
+                    if (NDependencyScope.parse(nutsId1.toDependency().getScope()).orNull() == NDependencyScope.SYSTEM) {
+                        // TODO, fix me
+                        //just ignore or should we still support it?
+                    } else {
+                        NId nutsIdNonLatest = nutsId1;
+                        boolean latestVersion = false;
+                        boolean releaseVersion = false;
+                        if (nutsIdNonLatest.getVersion().isLatestVersion()) {
+                            latestVersion = true;
+                            nutsIdNonLatest = nutsIdNonLatest.builder().setVersion("").build();
+                        } else if (nutsIdNonLatest.getVersion().isReleaseVersion()) {
+                            releaseVersion = true;
+                            nutsIdNonLatest = nutsIdNonLatest.builder().setVersion("").build();
+                        }
+                        NDefinitionFilters dd = NDefinitionFilters.of();
+                        NDefinitionFilter filter = (
+                                dd.byName(nutsIdNonLatest.getFullName())
+                                        .and(dd.byEnv(nutsIdNonLatest.getProperties()))
+                                        .and(search.getDefinitionFilter())
+                        );
 
-                    List<NRepositoryAndFetchMode> repositoryAndFetchModes = wu.filterRepositoryAndFetchModes(
-                            NRepositorySupportedAction.SEARCH, nutsIdNonLatest, sRepositoryFilter, fetchMode
-                    );
+                        List<NRepositoryAndFetchMode> repositoryAndFetchModes = wu.filterRepositoryAndFetchModes(
+                                NRepositorySupportedAction.SEARCH, nutsIdNonLatest, sRepositoryFilter, fetchMode
+                        );
 
-                    List<NIterator<? extends NId>> idLocal = new ArrayList<>();
-                    List<NIterator<? extends NId>> idRemote = new ArrayList<>();
-                    for (NFetchMode fm : new NFetchMode[]{NFetchMode.LOCAL, NFetchMode.REMOTE}) {
-                        List<NIterator<? extends NId>> idLookup = fm == NFetchMode.LOCAL ? idLocal : idRemote;
-                        for (NRepositoryAndFetchMode repoAndMode : repositoryAndFetchModes) {
-                            if (repoAndMode.getFetchMode() == fm) {
-                                consideredRepos.add(repoAndMode.getRepository());
-                                NRepositorySPI repoSPI = wu.repoSPI(repoAndMode.getRepository());
+                        List<NIterator<? extends NId>> idLocal = new ArrayList<>();
+                        List<NIterator<? extends NId>> idRemote = new ArrayList<>();
+                        for (NFetchMode fm : new NFetchMode[]{NFetchMode.LOCAL, NFetchMode.REMOTE}) {
+                            List<NIterator<? extends NId>> idLookup = fm == NFetchMode.LOCAL ? idLocal : idRemote;
+                            for (NRepositoryAndFetchMode repoAndMode : repositoryAndFetchModes) {
+                                if (repoAndMode.getFetchMode() == fm) {
+                                    consideredRepos.add(repoAndMode.getRepository());
+                                    NRepositorySPI repoSPI = wu.repoSPI(repoAndMode.getRepository());
 
-                                NIterator<NId> z = NIteratorBuilder.of(repoSPI.searchVersions().setId(nutsIdNonLatest).setFilter(filter)
-                                                .setFetchMode(repoAndMode.getFetchMode())
-                                                .getResult())
-                                        .named(
-                                                elems.ofObjectBuilder()
-                                                        .set("description", "searchVersions")
-                                                        .set("repository", repoAndMode.getRepository().getName())
-                                                        .set("filter", NEDesc.describeResolveOrDestruct(filter))
-                                                        .build()
-                                        ).safeIgnore().iterator();
-                                z = filterLatestAndDuplicatesThenSort(z, isLatest() || latestVersion || releaseVersion, isDistinct(), false);
-                                idLookup.add(z);
+                                    NIterator<NId> z = NIteratorBuilder.of(repoSPI.searchVersions().setId(nutsIdNonLatest).setFilter(filter)
+                                                    .setFetchMode(repoAndMode.getFetchMode())
+                                                    .getResult())
+                                            .named(
+                                                    elems.ofObjectBuilder()
+                                                            .set("description", "searchVersions")
+                                                            .set("repository", repoAndMode.getRepository().getName())
+                                                            .set("filter", NEDesc.describeResolveOrDestruct(filter))
+                                                            .build()
+                                            ).safeIgnore().iterator();
+                                    z = filterLatestAndDuplicatesThenSort(z, isLatest() || latestVersion || releaseVersion, isDistinct(), false);
+                                    idLookup.add(z);
+                                }
                             }
                         }
+                        toConcat.add(fetchMode.isStopFast()
+                                ? NIteratorUtils.coalesce(NIteratorUtils.concat(idLocal), NIteratorUtils.concat(idRemote))
+                                : NIteratorUtils.concatLists(idLocal, idRemote)
+                        );
                     }
-                    toConcat.add(fetchMode.isStopFast()
-                            ? NIteratorUtils.coalesce(NIteratorUtils.concat(idLocal), NIteratorUtils.concat(idRemote))
-                            : NIteratorUtils.concatLists(idLocal, idRemote)
-                    );
                 }
                 allResults.add(NIteratorUtils.concat(toConcat));
 //                if (nutsId.getGroupId() == null) {

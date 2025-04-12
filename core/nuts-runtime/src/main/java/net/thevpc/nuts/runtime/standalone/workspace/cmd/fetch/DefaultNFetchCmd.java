@@ -190,6 +190,11 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
         NSession session = workspace.currentSession();
         NWorkspaceUtils wu = NWorkspaceUtils.of(workspace);
         CoreNIdUtils.checkLongId(id);
+        if (NDependencyScope.parse(id.toDependency().getScope()).orNull() == NDependencyScope.SYSTEM) {
+            // TODO, fix me
+            //just ignore or should we still support it?
+            throw new NNotFoundException(id);
+        }
         NWorkspaceExt dws = NWorkspaceExt.of();
         NFetchStrategy nutsFetchModes = NWorkspaceHelper.validate(session.getFetchStrategy().orDefault());
         NRepositoryFilter repositoryFilter = this.getRepositoryFilter();
