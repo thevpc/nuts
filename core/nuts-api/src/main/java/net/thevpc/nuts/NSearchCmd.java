@@ -303,12 +303,6 @@ public interface NSearchCmd extends NWorkspaceCmd {
      */
     List<String> getScripts();
 
-    /**
-     * reset searched for archs
-     *
-     * @return {@code this} instance
-     */
-    NSearchCmd clearArch();
 
     /**
      * define locked ids to prevent them to be updated or the force other ids to
@@ -336,77 +330,6 @@ public interface NSearchCmd extends NWorkspaceCmd {
      * @return {@code this} instance
      */
     NSearchCmd clearLockedIds();
-
-    /**
-     * add arch to search
-     *
-     * @param value arch to search for
-     * @return {@code this} instance
-     */
-    NSearchCmd addArch(String value);
-
-    /**
-     * remove arch to search
-     *
-     * @param value arch to remove
-     * @return {@code this} instance
-     */
-    NSearchCmd removeArch(String value);
-
-    /**
-     * add archs to search
-     *
-     * @param values arch to search for
-     * @return {@code this} instance
-     */
-    NSearchCmd addArch(Collection<String> values);
-
-    /**
-     * add arch to search
-     *
-     * @param values arch to search for
-     * @return {@code this} instance
-     */
-    NSearchCmd addArch(String... values);
-
-    /**
-     * reset packaging to search
-     *
-     * @return {@code this} instance
-     */
-    NSearchCmd clearPackaging();
-
-    /**
-     * add packagings to search
-     *
-     * @param values packagings to search for
-     * @return {@code this} instance
-     */
-    NSearchCmd addPackaging(Collection<String> values);
-
-    /**
-     * add packagings to search
-     *
-     * @param values packagings to search for
-     * @return {@code this} instance
-     */
-    NSearchCmd addPackaging(String... values);
-
-    /**
-     * add packaging to search
-     *
-     * @param value packaging to search for
-     * @return {@code this} instance
-     */
-    NSearchCmd addPackaging(String value);
-
-    /**
-     * remove packaging from search
-     *
-     * @param value packaging to remove
-     * @return {@code this} instance
-     */
-    NSearchCmd removePackaging(String value);
 
     /**
      * add locked ids to prevent them to be updated or the force other ids to
@@ -546,6 +469,14 @@ public interface NSearchCmd extends NWorkspaceCmd {
     NSearchCmd setDependencyFilter(NDependencyFilter filter);
 
     /**
+     * define dependency filter by AND. applicable when using
+     * {@link #setInlineDependencies(boolean)}
+     *
+     * @param filter dependency filter
+     * @return {@code this} instance
+     */
+    NSearchCmd addDependencyFilter(NDependencyFilter filter);
+    /**
      * define dependency filter. applicable when using
      * {@link #setInlineDependencies(boolean)}
      *
@@ -585,6 +516,7 @@ public interface NSearchCmd extends NWorkspaceCmd {
      * @return {@code this} instance
      */
     NSearchCmd setDefinitionFilter(NDefinitionFilter filter);
+    NSearchCmd addDefinitionFilter(NDefinitionFilter filter);
 
     ////////////////////////////////////////////////////////
     // Getters
@@ -598,9 +530,7 @@ public interface NSearchCmd extends NWorkspaceCmd {
      */
     NSearchCmd setDefinitionFilter(String filter);
 
-    List<String> getArch();
 
-    List<String> getPackaging();
 
     /**
      * when true, NNotFoundException instances are ignored
@@ -835,23 +765,6 @@ public interface NSearchCmd extends NWorkspaceCmd {
      * @return optional filter
      */
     Set<NDependencyScope> getScope();
-
-    /**
-     * optional filter. When non null will filter dependencies from
-     * {@link #setInlineDependencies(boolean)}
-     *
-     * @return optional filter
-     */
-    Boolean getOptional();
-
-    /**
-     * set option filter. if null filter is removed. if false only non optional
-     * will be retrieved. if true, only optional will be retrieved.
-     *
-     * @param enable option filter
-     * @return {@code this} instance
-     */
-    NSearchCmd setOptional(Boolean enable);
 
     /**
      * true if content is resolved

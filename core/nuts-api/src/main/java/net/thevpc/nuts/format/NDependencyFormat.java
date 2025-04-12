@@ -131,49 +131,7 @@ public interface NDependencyFormat extends NFormat, NComponent {
      */
     NDependencyFormat setOmitScope(boolean value);
 
-    /**
-     * return true if omit scope
-     *
-     * @return true if omit scope
-     */
-    boolean isOmitClassifier();
 
-    /**
-     * if true omit (do not include) face when formatting the value
-     * set using {@link #setValue(NDependency)} .
-     *
-     * @param value new value
-     * @return {@code this} instance
-     */
-    NDependencyFormat setOmitClassifier(boolean value);
-
-//    /**
-//     * return true if omit alternative
-//     * @return true if omit alternative
-//     */
-//    boolean isOmitAlternative();
-
-//    /**
-//     * if true omit (do not include) face when formatting the value
-//     * set using {@link #setValue(NutsDependency)} .
-//     * @param value new value
-//     * @return {@code this} instance
-//     */
-//    NutsDependencyFormat setOmitAlternative(boolean value);
-//
-//    /**
-//     * if true omit (do not include) face when formatting the value
-//     * set using {@link #setValue(NutsDependency)} .
-//     * @param value new value
-//     * @return {@code this} instance
-//     */
-//    NutsDependencyFormat omitAlternative(boolean value);
-//
-//    /**
-//     * omit alternative
-//     * @return {@code this} instance
-//     */
-//    NutsDependencyFormat omitAlternative();
 
     /**
      * return true if omit exclusions

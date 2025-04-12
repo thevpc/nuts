@@ -189,6 +189,7 @@ public interface NFetchCmd extends NWorkspaceCmd {
      * @return result as descriptor
      */
     NDescriptor getResultDescriptor();
+
     NDescriptor getResultEffectiveDescriptor();
 
     /**
@@ -294,21 +295,6 @@ public interface NFetchCmd extends NWorkspaceCmd {
      */
     Set<NDependencyScope> getScope();
 
-    /**
-     * optional filter
-     *
-     * @return optional filter
-     */
-    Boolean getOptional();
-
-    /**
-     * set option filter. if null filter is removed. if false only non optional
-     * will be retrieved. if true, only optional will be retrieved.
-     *
-     * @param enable option filter
-     * @return {@code this} instance
-     */
-    NFetchCmd setOptional(Boolean enable);
 
     ////////////////////////////////////////////////////////
     // Getters
@@ -446,6 +432,8 @@ public interface NFetchCmd extends NWorkspaceCmd {
      */
     NFetchCmd setDependencyFilter(NDependencyFilter filter);
 
+    NFetchCmd addDependencyFilter(NDependencyFilter filter);
+
     /**
      * define dependency filter.
      *
@@ -460,8 +448,8 @@ public interface NFetchCmd extends NWorkspaceCmd {
 
     NFetchCmd effective();
 
-    boolean isIgnoreCurrentEnvironment() ;
+    boolean isIgnoreCurrentEnvironment();
 
-    public NFetchCmd setIgnoreCurrentEnvironment(boolean ignoreCurrentEnvironment) ;
+    public NFetchCmd setIgnoreCurrentEnvironment(boolean ignoreCurrentEnvironment);
 
 }

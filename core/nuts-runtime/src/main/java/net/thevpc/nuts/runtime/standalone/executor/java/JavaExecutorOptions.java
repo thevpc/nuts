@@ -234,9 +234,8 @@ public final class JavaExecutorOptions {
                             .setDependencies(true)
                             .setLatest(true)
                             //
-                            .setOptional(false)
                             .addScope(NDependencyScopePattern.RUN)
-                            .setDependencyFilter(dependencyFilters.byRunnable())
+                            .setDependencyFilter(dependencyFilters.byRunnable(false))
                             //
                             .getResultDefinitions().toList()
             );

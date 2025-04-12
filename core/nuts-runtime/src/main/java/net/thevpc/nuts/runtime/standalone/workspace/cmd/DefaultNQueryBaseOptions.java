@@ -29,7 +29,6 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
     //    private final List<String> repos = new ArrayList<>();
     protected NDependencyFilter dependencyFilter;
     private boolean failFast = false;
-    private Boolean optional = null;
     private Set<NDependencyScope> scope = EnumSet.noneOf(NDependencyScope.class);
     private boolean content = false;
     private boolean inlineDependencies = false;
@@ -59,7 +58,6 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
     public T copyFromDefaultNQueryBaseOptions(DefaultNQueryBaseOptions other) {
         if (other != null) {
             super.copyFromWorkspaceCommandBase(other);
-            this.optional = other.getOptional();
             this.failFast = other.isFailFast();
             this.content = other.isContent();
             this.inlineDependencies = other.isInlineDependencies();
@@ -100,17 +98,6 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
     public T setExpireTime(Instant transitive) {
         this.expireTime = expireTime;
         return (T)this;
-    }
-
-    //@Override
-    public Boolean getOptional() {
-        return optional;
-    }
-
-    //@Override
-    public T setOptional(Boolean acceptOptional) {
-        this.optional = acceptOptional;
-        return (T) this;
     }
 
     public T clearScopes() {
@@ -328,9 +315,9 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
 //                return true;
 //            }
             case "--optional": {
-                cmdLine.withNextEntryValue((v, r) -> this.setOptional(
-                        NLiteral.of(v.asString().get()).asBoolean()
-                                .orNull()));
+                cmdLine.withNextEntryValue((v, r) ->
+                        this.setDependencyFilter(NDependencyFilters.of().nonnull(this.getDependencyFilter()).and(NDependencyFilters.of().byOptional(NLiteral.of(v.asString().get()).asBoolean()
+                                .orNull()))));
                 return true;
             }
             case "--effective": {
@@ -382,7 +369,6 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
     public String toString() {
         return getClass().getSimpleName() + "("
                 + "failFast=" + failFast
-                + ", optional=" + optional
                 + ", scope=" + scope
                 + ", content=" + content
                 + ", dependencyFilter=" + dependencyFilter
@@ -397,6 +383,17 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
     //    @Override
     public T setDependencyFilter(NDependencyFilter filter) {
         this.dependencyFilter = filter;
+        return (T) this;
+    }
+
+    public T addDependencyFilter(NDependencyFilter filter) {
+        if(filter!=null){
+            if(this.dependencyFilter==null){
+                this.dependencyFilter=filter;
+            }else{
+                this.dependencyFilter.and(filter);
+            }
+        }
         return (T) this;
     }
 

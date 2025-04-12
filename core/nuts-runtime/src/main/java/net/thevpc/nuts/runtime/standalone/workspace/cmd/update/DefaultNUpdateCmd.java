@@ -194,8 +194,8 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         if (lockedIds.size() > 0) {
             for (NId d : new HashSet<>(lockedIds)) {
                 NDependency dd = NDependency.get(d.toString()).get();
-                if (regularUpdates.containsKey(dd.getSimpleName())) {
-                    NUpdateResult updated = regularUpdates.get(dd.getSimpleName());
+                if (regularUpdates.containsKey(dd.getShortName())) {
+                    NUpdateResult updated = regularUpdates.get(dd.getShortName());
                     //FIX ME
                     if (!dd.getVersion().filter().acceptVersion(updated.getId().getVersion())) {
                         throw new NIllegalArgumentException(
@@ -451,7 +451,9 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         } else {
             se.addScopes(scopes.toArray(new NDependencyScope[0]));
         }
-        se.setOptional(isOptional() ? null : false)
+        if(!isOptional()){
+            se.setDependencyFilter(NDependencyFilters.of().nonnull(se.getDependencyFilter()).and(NDependencyFilters.of().byOptional(false)));
+        }
         //TODO
         //.setSession(se.session.copy().setFetchStrategy(NFetchStrategy.ONLINE))
         ;
@@ -471,7 +473,8 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         boolean shouldUpdateDefault = false;
         NDefinition d0 = NSearchCmd.of().addId(id)
                 .setDefinitionFilter(NDefinitionFilters.of().byDeployed(true))
-                .setOptional(false).setFailFast(false)//.setDefaultVersions(true)
+                .setDependencyFilter(NDependencyFilters.of().byOptional(false))
+                .setFailFast(false)//.setDefaultVersions(true)
                 .sort(DEFAULT_THEN_LATEST_VERSION_FIRST)
                 .getResultDefinitions()
                 .findFirst().orNull();
@@ -492,7 +495,8 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                 .addLockedIds(getLockedIds())
                 .addRepositoryFilter(NRepositoryFilters.of().installedRepo().neg())
                 .setDependencies(true)
-                .setOptional(isOptional() ? null : false);
+                .setDependencyFilter(NDependencyFilters.of().byOptional(isOptional() ? null : false))
+                ;
         if (updateEvenIfExisting) {
             sc.setExpireTime(now);
         }

@@ -799,7 +799,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
         if (NConstants.Ids.NUTS_APP_ARTIFACT_ID.equals(nid.getShortName())) {
             nid = nid.builder().setGroupId(NConstants.Ids.NUTS_GROUP_ID).build();
         }
-        NId ff = NSearchCmd.of().addId(nid).setOptional(false).setLatest(true).setFailFast(false)
+        NId ff = NSearchCmd.of().addId(nid).setDependencyFilter(NDependencyFilters.of().byRunnable(false)).setLatest(true).setFailFast(false)
                 .setDefinitionFilter(NDefinitionFilters.of().byDeployed(true))
                 .getResultDefinitions().stream()
                 .sorted(Comparator.comparing(x -> !x.getInstallInformation().get().isDefaultVersion())) // default first
@@ -822,7 +822,8 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                 ff = NSearchCmd.of()
                         .setFetchStrategy(NFetchStrategy.ONLINE)
                         .addId(nid)
-                        .setOptional(false).setFailFast(false)
+                        .setDependencyFilter(NDependencyFilters.of().byRunnable(false))
+                        .setFailFast(false)
                         .setLatest(true)
                         //                        .configure(true,"--trace-monitor")
                         .getResultIds().findFirst().orElse(null);
@@ -878,9 +879,8 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                     .effective()
                     .content()
                     //
-                    .setOptional(false)
                     .addScope(NDependencyScopePattern.RUN)
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                    .setDependencyFilter(NDependencyFilters.of().byRunnable(false))
                     .setRepositoryFilter(NRepositoryFilters.of().installedRepo())
                     //
                     .getResultDefinition();
@@ -894,9 +894,8 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                     .effective()
                     .content()
                     //
-                    .setOptional(false)
                     .addScope(NDependencyScopePattern.RUN)
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                    .setDependencyFilter(NDependencyFilters.of().byRunnable(false))
                     //
                     .getResultDefinition();
         }

@@ -35,21 +35,27 @@ class PassProcessor {
         } else if (currentNode.depth < currentDepth) {
             throw new IllegalArgumentException("invalid depth " + currentNode.depth + "<" + currentDepth);
         }
+        NDependencyInfo oldDepInfo = mergedVisitedSet.find(currentNode.dependency);
+        if (oldDepInfo != null) {
+            if (oldDepInfo.dependency.getVersion().equals(currentNode.dependency.getVersion())) {
+                mavenNDependencySolver.doLog("processCurrentNonProvided already visited " + currentNode.dependency);
+                return;
+            } else {
+                mavenNDependencySolver.doLog("processCurrentNonProvided already visited with other version " + currentNode.dependency + " >>> " + oldDepInfo);
+                return;
+            }
+        }
+        if (currentNode.provided && pushProvidedElsewhere) {
+            providedQueue.add(currentNode);
+            return;
+        }
         currentNode.build0();
-
-
+        if (currentNode.def == null) {
+            //optional and not found
+            return;
+        }
         NDescriptor effectiveDescriptor = currentNode.getEffectiveDescriptor();
         if (effectiveDescriptor != null) {
-            NDependencyInfo oldDepInfo = mergedVisitedSet.find(currentNode.dependency);
-            if (oldDepInfo != null) {
-                if (oldDepInfo.effDependency.getVersion().equals(currentNode.dependency.getVersion())) {
-                    mavenNDependencySolver.doLog("processCurrentNonProvided already visited " + currentNode.dependency);
-                    return;
-                } else {
-                    mavenNDependencySolver.doLog("processCurrentNonProvided already visited with other version " + currentNode.dependency + " >>> " + oldDepInfo);
-                    return;
-                }
-            }
             if (!currentNode.isAcceptableDependency(currentNode.dependency)) {
                 return;
             }
@@ -57,6 +63,7 @@ class PassProcessor {
             if (currentNode.depth == 0) {
                 if (sourceIds.add(id) && mergedVisitedSet.add(currentNode.key)) {
                     mergedRootNodeBuilders.add(currentNode);
+                    currentNode.includedInClassPath = true;
                     List<NDependency> immediate = CoreFilterUtils.filterDependencies(id,
                             currentNode.getEffectiveDescriptor().getDependencies(),
                             effDependencyFilter);
@@ -68,22 +75,25 @@ class PassProcessor {
                 NDependencyInfo nextId = currentNode.key;
                 if (!mergedVisitedSet.contains(nextId) && nonMergedVisitedSet.add(nextId)) {
                     mergedVisitedSet.add(nextId);//ensure added to merged!
+                    currentNode.includedInClassPath = true;
                 } else {
                     return;
                 }
             }
             if (currentNode.depth == 0) {
                 nonMergedRootNodeBuilders.add(currentNode);
+                currentNode.includedInClassPath = true;
             } else {
                 mergedRootNodeBuilders.add(currentNode);
+                currentNode.includedInClassPath = true;
             }
             for (NDependency dependency : effectiveDescriptor.getDependencies()) {
                 if (currentNode.isAcceptableDependency(dependency)) {
-                    NDependencyTreeNodeBuild childNode = new NDependencyTreeNodeBuild(mavenNDependencySolver, currentNode, dependency, null,currentNode.depth + 1);
+                    NDependencyTreeNodeBuild childNode = new NDependencyTreeNodeBuild(mavenNDependencySolver, currentNode, dependency, null, currentNode.depth + 1);
                     currentNode.children.add(childNode);
                     if (currentNode.provided && pushProvidedElsewhere) {
-                        providedQueue.add(childNode);
-                    } else {
+                        providedQueue.add(currentNode);
+                    }else {
                         queue.add(childNode);
                     }
                 } else {
@@ -115,13 +125,16 @@ class PassProcessor {
             currentNode = queue.remove();
             processNode(currentNode, true);
         }
-        queue.addAll(providedQueue);
-
-        if (!queue.isEmpty()) {
-            currentDepth = 0;
-            processNode(currentNode, false);
+        if(mavenNDependencySolver.includedProvided) {
+            queue.addAll(providedQueue);
+            if (!queue.isEmpty()) {
+                currentDepth = 0;
+                while (!queue.isEmpty()) {
+                    currentNode = queue.remove();
+                    processNode(currentNode, false);
+                }
+            }
         }
-
         List<NDependencyTreeNode> mergedRootNodes = mergedRootNodeBuilders.stream().map(NDependencyTreeNodeBuild::build).collect(Collectors.toList());
         List<NDependencyTreeNode> nonMergedRootNodes = nonMergedRootNodeBuilders.stream().map(NDependencyTreeNodeBuild::build).collect(Collectors.toList());
         final NDependency[] mergedDepsList = mergedVisitedSet.visitedSet.values().stream().map(NDependencyInfo::getDependency)

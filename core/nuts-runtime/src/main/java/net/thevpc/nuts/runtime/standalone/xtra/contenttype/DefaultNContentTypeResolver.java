@@ -41,10 +41,7 @@ import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NRef;
 import net.thevpc.nuts.util.NStringUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
@@ -54,6 +51,7 @@ import java.util.*;
 
 @NComponentScope(NScopeType.WORKSPACE)
 public class DefaultNContentTypeResolver implements NContentTypeResolver {
+    Map<String, String> defaultExtensionToMimeType = new HashMap<>();
 
     public DefaultNContentTypeResolver() {
     }
@@ -115,35 +113,56 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
         } catch (IOException e) {
             //ignore
         }
-        if (NWorkspace.of().getOsFamily().isPosix()) {
-            if (contentType == null) {
-                try {
-                    String c = NExecCmd.of("file", "--mime-type", file.toString())
-                            .failFast()
-                            .getGrabbedOutString();
-                    if (c != null) {
-                        int i = c.lastIndexOf(':');
-                        if (i > 0) {
-                            contentType = c.substring(i + 1).trim();
-                        }
-                    }
-                } catch (Exception e) {
-                    //ignore
-                }
+        NPath nPath = NPath.of(file);
+        if (contentType == null) {
+            for (String s : findContentTypesByExtension(nPath.getNameParts(NPathExtensionType.LONG).getExtension())) {
+                contentType = s;
+                break;
             }
-            if (contentType == null) {
-                try {
-                    String c = NExecCmd.of("xdg-mime", "query", "filetype", file.toString())
-                            .failFast()
-                            .getGrabbedOutString();
-                    if (c != null) {
-                        int i = c.indexOf(':');
-                        if (i > 0) {
-                            contentType = c.substring(i + 1).trim();
+        }
+        if (contentType == null) {
+            for (String s : findContentTypesByExtension(nPath.getNameParts(NPathExtensionType.SHORT).getExtension())) {
+                contentType = s;
+                break;
+            }
+        }
+        if (contentType == null) {
+            for (String s : findContentTypesByExtension(nPath.getNameParts(NPathExtensionType.SMART).getExtension())) {
+                contentType = s;
+                break;
+            }
+        }
+        if (contentType == null) {
+            if (NWorkspace.of().getOsFamily().isPosix()) {
+                if (contentType == null) {
+                    try {
+                        String c = NExecCmd.of("file", "--mime-type", file.toString())
+                                .failFast()
+                                .getGrabbedOutString();
+                        if (c != null) {
+                            int i = c.lastIndexOf(':');
+                            if (i > 0) {
+                                contentType = c.substring(i + 1).trim();
+                            }
                         }
+                    } catch (Exception e) {
+                        //ignore
                     }
-                } catch (Exception e) {
-                    //ignore
+                }
+                if (contentType == null) {
+                    try {
+                        String c = NExecCmd.of("xdg-mime", "query", "filetype", file.toString())
+                                .failFast()
+                                .getGrabbedOutString();
+                        if (c != null) {
+                            int i = c.indexOf(':');
+                            if (i > 0) {
+                                contentType = c.substring(i + 1).trim();
+                            }
+                        }
+                    } catch (Exception e) {
+                        //ignore
+                    }
                 }
             }
         }
@@ -239,26 +258,30 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
     }
 
     public static class DefaultNContentTypeResolverModel {
-        private Map<String, Set<String>> contentTypesToExtensions;
-        private Map<String, Set<String>> extensionsToContentType;
+        private Map<String, Set<String>> contentTypesToExtensions=new HashMap<>();
+        private Map<String, Set<String>> extensionsToContentType=new HashMap<>();
 
         public DefaultNContentTypeResolverModel() {
-            contentTypesToExtensions = new HashMap<>();
-            extensionsToContentType = new HashMap<>();
-            Properties p = new Properties();
-            try (InputStream is = getClass().getResource("/net/thevpc/nuts/runtime/content-types.properties").openStream()) {
-                p.load(is);
+            try (BufferedReader is = new BufferedReader(new InputStreamReader(getClass().getResource("/net/thevpc/nuts/runtime/default-mime.types").openStream()))) {
+                String line = null;
+                while ((line = is.readLine()) != null) {
+                    line = line.trim();
+                    if (!line.isEmpty() && !line.startsWith("#")) {
+                        List<String> splitted = NStringUtils.split(line, " \t", true, true);
+                        if(splitted.size()>1){
+                            String contentType = splitted.get(0);
+                            for (int i = 0; i < splitted.size(); i++) {
+                                String ext = splitted.get(i);
+                                contentTypesToExtensions.computeIfAbsent(contentType, x -> new LinkedHashSet<>())
+                                        .add(ext);
+                                extensionsToContentType.computeIfAbsent(ext, x -> new LinkedHashSet<>())
+                                        .add(contentType);
+                            }
+                        }
+                    }
+                }
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
-            }
-            for (Map.Entry<Object, Object> e : p.entrySet()) {
-                String extension = (String) e.getKey();
-                for (String contentType : NStringUtils.split((String) e.getValue(), ",; ")) {
-                    contentTypesToExtensions.computeIfAbsent(contentType, x -> new LinkedHashSet<>())
-                            .add(extension);
-                    extensionsToContentType.computeIfAbsent(extension, x -> new LinkedHashSet<>())
-                            .add(contentType);
-                }
             }
         }
     }

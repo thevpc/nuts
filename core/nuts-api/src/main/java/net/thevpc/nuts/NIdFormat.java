@@ -144,22 +144,6 @@ public interface NIdFormat extends NFormat, NComponent {
     NIdFormat setHighlightImportedGroupId(boolean value);
 
     /**
-     * return true if omit scope
-     *
-     * @return true if omit scope
-     */
-    boolean isOmitClassifier();
-
-    /**
-     * if true omit (do not include) face when formatting the value
-     * set using {@link #setValue(NId)} .
-     *
-     * @param value new value
-     * @return {@code this} instance
-     */
-    NIdFormat setOmitClassifier(boolean value);
-
-    /**
      * query properties omitted
      *
      * @return query properties omitted

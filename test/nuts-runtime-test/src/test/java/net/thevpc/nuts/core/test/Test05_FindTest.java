@@ -24,7 +24,7 @@ public class Test05_FindTest {
 
     @Test
     public void find1() throws Exception {
-        List<NId> def = NSearchCmd.of().addId("nuts").setOptional(false).setLatest(true).setFailFast(false)
+        List<NId> def = NSearchCmd.of().addId("nuts").setLatest(true).setFailFast(false)
 //                .repository("maven-local")
                 .setDefaultVersions(true)
                 .setDefinitionFilter(NDefinitionFilters.of().byDeployed(true))
@@ -77,7 +77,10 @@ public class Test05_FindTest {
                         "net.thevpc.common:thevpc-common-io#1.3.12"
 //                "netbeans-launcher#1.1.0"
                 )
-                .setOptional(false).setInlineDependencies(true).failFast()
+                .setDependencyFilter(
+                        NDependencyFilters.of().byOptional(false)
+                )
+                .setInlineDependencies(true).failFast()
                 .setLatest(true).getResultDefinitions().findFirst().get();
         TestUtils.println(def);
     }

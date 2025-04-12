@@ -178,6 +178,7 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      * @return {@code this} instance
      */
     NDependencyBuilder setVersion(String version);
+
     /**
      * set exclusions value
      *
@@ -210,7 +211,10 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      * @return {@code this} instance
      */
     NDependencyBuilder setCondition(NEnvCondition condition);
+
     NDependencyBuilder setCondition(NEnvConditionBuilder condition);
+
+    NDependencyBuilder removeCondition();
 
     NDependencyBuilder copy();
 
@@ -279,7 +283,7 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      *
      * @return return dependency short name
      */
-    String getSimpleName();
+    String getShortName();
 
     /**
      * return dependency full name in the form

@@ -11,21 +11,49 @@ public class NStringMapFormatBuilder {
     private boolean sort = true;
     private Function<String, String> decoder;
     private Function<String, String> encoder;
+    private boolean doubleQuoteSupported;
+    private boolean simpleQuoteSupported;
+    private boolean acceptNullKeys;
 
     public NStringMapFormatBuilder() {
-    }
-
-    private NStringMapFormatBuilder(String equalsChars, String separatorChars, String escapeChars, boolean sort) {
-        this.equalsChars = equalsChars;
-        this.separatorChars = separatorChars;
-        this.escapeChars = escapeChars;
-        this.sort = sort;
     }
 
     public static NStringMapFormatBuilder of() {
         return new NStringMapFormatBuilder();
     }
 
+    public boolean isAcceptNullKeys() {
+        return acceptNullKeys;
+    }
+
+    public NStringMapFormatBuilder setAcceptNullKeys(boolean acceptNullKeys) {
+        this.acceptNullKeys = acceptNullKeys;
+        return this;
+    }
+
+    public boolean isDoubleQuoteSupported() {
+        return doubleQuoteSupported;
+    }
+
+    public NStringMapFormatBuilder setDoubleQuoteSupported(boolean doubleQuoteSupported) {
+        this.doubleQuoteSupported = doubleQuoteSupported;
+        return this;
+    }
+
+    public boolean isSimpleQuoteSupported() {
+        return simpleQuoteSupported;
+    }
+
+    public NStringMapFormatBuilder setSimpleQuoteSupported(boolean simpleQuoteSupported) {
+        this.simpleQuoteSupported = simpleQuoteSupported;
+        return this;
+    }
+
+    public NStringMapFormatBuilder setQuoteSupported(boolean quoteSupported) {
+        setDoubleQuoteSupported(quoteSupported);
+        setSimpleQuoteSupported(quoteSupported);
+        return this;
+    }
     public String getEqualsChars() {
         return equalsChars;
     }
@@ -81,7 +109,7 @@ public class NStringMapFormatBuilder {
     }
 
     public NStringMapFormat build() {
-        return NStringMapFormat.of(equalsChars, separatorChars, escapeChars, sort, decoder, encoder);
+        return new NStringMapFormat(this);
     }
 
     public NStringMapFormatBuilder copyFrom(NStringMapFormatBuilder other) {

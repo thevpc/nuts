@@ -652,6 +652,7 @@ public class URLPath implements NPathSPI {
             if (z > 0) {
                 cc.lastModified = Instant.ofEpochMilli(z);
             }
+            success=cc.responseCode>=200 && cc.responseCode<300;
             return cc;
         } catch (Exception ex) {
             success = false;

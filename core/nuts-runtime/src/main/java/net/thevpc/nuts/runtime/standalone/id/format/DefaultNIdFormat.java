@@ -107,16 +107,6 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
     }
 
     @Override
-    public boolean isOmitClassifier() {
-        return isOmitProperty(NConstants.IdProperties.CLASSIFIER);
-    }
-
-    @Override
-    public NIdFormat setOmitClassifier(boolean value) {
-        return setOmitProperty(NConstants.IdProperties.CLASSIFIER, value);
-    }
-
-    @Override
     public List<String> getOmitProperties() {
         return new ArrayList<>(omittedProperties);
     }
@@ -170,39 +160,49 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
         }
         id = idBuilder.build();
         NTextBuilder sb = NTextBuilder.of();
-        if (!isOmitGroupId()) {
-            if (!NBlankable.isBlank(id.getGroupId())) {
-                boolean importedGroup2 = NConstants.Ids.NUTS_GROUP_ID.equals(id.getGroupId());
-                boolean importedGroup = NWorkspace.of().getAllImports().contains(id.getGroupId());
-                if (!(importedGroup && isOmitImportedGroupId())) {
-                    if (importedGroup || importedGroup2) {
-                        sb.append(id.getGroupId(), NTextStyle.pale());
-                    } else {
-                        sb.append(id.getGroupId());
+        if(NBlankable.isBlank(classifier)) {
+            if (!isOmitGroupId()) {
+                if (!NBlankable.isBlank(id.getGroupId())) {
+                    boolean importedGroup2 = NConstants.Ids.NUTS_GROUP_ID.equals(id.getGroupId());
+                    boolean importedGroup = NWorkspace.of().getAllImports().contains(id.getGroupId());
+                    if (!(importedGroup && isOmitImportedGroupId())) {
+                        if (importedGroup || importedGroup2) {
+                            sb.append(id.getGroupId(), NTextStyle.pale());
+                        } else {
+                            sb.append(id.getGroupId());
+                        }
+                        sb.append(":", NTextStyle.separator());
                     }
-                    sb.append(":", NTextStyle.separator());
                 }
             }
+            sb.append(id.getArtifactId(), NTextStyle.primary1());
+        }else{
+            if (!isOmitGroupId()) {
+                if (!NBlankable.isBlank(id.getGroupId())) {
+                    boolean importedGroup2 = NConstants.Ids.NUTS_GROUP_ID.equals(id.getGroupId());
+                    boolean importedGroup = NWorkspace.of().getAllImports().contains(id.getGroupId());
+                    if (!(importedGroup && isOmitImportedGroupId())) {
+                        if (importedGroup || importedGroup2) {
+                            sb.append(id.getGroupId(), NTextStyle.pale());
+                        } else {
+                            sb.append(id.getGroupId());
+                        }
+                    }
+                }
+            }
+            sb.append(":", NTextStyle.separator());
+            sb.append(id.getArtifactId(), NTextStyle.primary1());
+            sb.append(":", NTextStyle.separator());
+            sb.append(id.getClassifier(), NTextStyle.primary2());
         }
-        sb.append(id.getArtifactId(), NTextStyle.primary1());
+
+
         if (!NBlankable.isBlank(id.getVersion().getValue())) {
             sb.append("#", NTextStyle.separator());
             sb.append(id.getVersion());
         }
         boolean firstQ = true;
 
-        if (!NBlankable.isBlank(classifier)) {
-            if (firstQ) {
-                sb.append("?", NTextStyle.separator());
-                firstQ = false;
-            } else {
-                sb.append("&", NTextStyle.separator());
-            }
-            sb.append("classifier", NTextStyle.keyword(2)).append("=", NTextStyle.separator());
-            sb.append(_encodeKey(classifier));
-        }
-
-//        if (highlightScope) {
         if (!NDependencyScopes.isDefaultScope(scope)) {
             if (firstQ) {
                 sb.append("?", NTextStyle.separator());
@@ -213,8 +213,6 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
             sb.append("scope", NTextStyle.keyword(2)).append("=", NTextStyle.separator());
             sb.append(_encodeKey(scope));
         }
-//        }
-//        if (highlightOptional) {
         if (!NBlankable.isBlank(optional) && !"false".equalsIgnoreCase(optional)) {
             if (firstQ) {
                 sb.append("?", NTextStyle.separator());
@@ -225,7 +223,6 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
             sb.append("optional", NTextStyle.keyword(2)).append("=", NTextStyle.separator());
             sb.append(_encodeKey(optional));
         }
-//        }
         if (!isOmitRepository()) {
             if (!NBlankable.isBlank(id.getRepository())) {
                 if (firstQ) {

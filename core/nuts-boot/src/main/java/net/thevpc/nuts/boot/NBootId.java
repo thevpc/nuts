@@ -99,24 +99,13 @@ public class NBootId {
         this.version = version == null ? "" : version;
     }
 
-    public NBootId(String groupId, String artifactId, String version, String classifier, String propertiesQuery, NBootEnvCondition condition) {
+    public NBootId(String groupId, String artifactId, String classifier, String version, String propertiesQuery, NBootEnvCondition condition) {
         this.groupId = NBootUtils.trimToNull(groupId);
         this.artifactId = NBootUtils.trimToNull(artifactId);
+        this.classifier = NBootUtils.trimToNull(classifier);
         this.version = version == null ? "" : version;
 
         setCondition(condition);
-        String c0 = NBootUtils.trimToNull(classifier);
-        String c1 = null;
-        Map<String, String> properties = propertiesQuery == null ? new LinkedHashMap<>() : NBootStringMapFormat.DEFAULT.parse(propertiesQuery);
-        if (!properties.isEmpty()) {
-            c1 = properties.remove(NBootConstants.IdProperties.CLASSIFIER);
-        }
-        if (c0 == null) {
-            if (c1 != null) {
-                c0 = NBootUtils.trimToNull(c1);
-            }
-        }
-        this.classifier = c0;
         setProperties(properties);
     }
 
@@ -284,10 +273,6 @@ public class NBootId {
                 condition.setProperties(NBootStringMapFormat.DEFAULT.parse(value));
                 break;
             }
-            case NBootConstants.IdProperties.CLASSIFIER: {
-                setClassifier(value);
-                break;
-            }
             case NBootConstants.IdProperties.VERSION: {
                 setVersion(value);
                 break;
@@ -371,19 +356,22 @@ public class NBootId {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (!NBootUtils.isBlank(groupId)) {
-            sb.append(groupId).append(":");
+        if (NBootUtils.isBlank(classifier)) {
+            if (!NBootUtils.isBlank(groupId)) {
+                sb.append(groupId).append(":");
+            }
+            sb.append(NBootUtils.trim(artifactId));
+        }else {
+            sb.append(NBootUtils.trim(groupId));
+            sb.append(":").append(NBootUtils.trim(artifactId));
+            sb.append(":").append(NBootUtils.trim(classifier));
         }
-        sb.append(NBootUtils.trim(artifactId));
         String v = getVersion();
         if (!NBootUtils.isBlank(v)) {
             sb.append("#");
             sb.append(v);
         }
         LinkedHashMap<String, String> m = new LinkedHashMap<>();
-        if (!NBootUtils.isBlank(classifier)) {
-            m.put(NBootConstants.IdProperties.CLASSIFIER, classifier);
-        }
         m.putAll(NBootUtils.toMap(condition));
         if (properties != null) {
             for (Map.Entry<String, String> e : properties.entrySet()) {
@@ -456,32 +444,14 @@ public class NBootId {
     }
 
 
-    public boolean isLongId() {
-        if (properties == null || properties.isEmpty()) {
-            return true;
-        }
-        Map<String, String> m = new HashMap<>(getProperties());
-        m.remove(NBootConstants.IdProperties.CLASSIFIER);
-        return m.isEmpty();
-    }
-
-
-    public boolean isShortId() {
-        return (properties == null || properties.isEmpty())
-                && NBootUtils.isBlank(version)
-                && NBootUtils.isBlank(classifier)
-                ;
-    }
-
-
     public NBootId getShortId() {
-        return new NBootId(groupId, artifactId, null, null, "",
+        return new NBootId(groupId, artifactId, classifier, null, "",
                 NBootEnvCondition.BLANK);
     }
 
 
     public NBootId getLongId() {
-        return new NBootId(groupId, artifactId, version, classifier, "", NBootEnvCondition.BLANK);
+        return new NBootId(groupId, artifactId, classifier, version, "", NBootEnvCondition.BLANK);
     }
 
 

@@ -128,7 +128,7 @@ public class NdiScriptOptions implements Cloneable {
             NId nid = resolveNutsApiId();
             if (getLauncher().getSwitchWorkspaceLocation() == null) {
                 NDefinition apiDef = NSearchCmd.of()
-                        .addId(nid).setOptional(false).setLatest(true).setContent(true).getResultDefinitions().findFirst().get();
+                        .addId(nid).setDependencyFilter(NDependencyFilters.of().byRunnable(false)).setLatest(true).setContent(true).getResultDefinitions().findFirst().get();
                 nutsApiJarPath = apiDef.getContent().orNull();
             } else {
                 NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
@@ -143,7 +143,7 @@ public class NdiScriptOptions implements Cloneable {
             NId nid = resolveNutsAppId();
             if (getLauncher().getSwitchWorkspaceLocation() == null) {
                 NDefinition appDef = NSearchCmd.of()
-                        .addId(nid).setOptional(false).setLatest(true).setContent(true).getResultDefinitions().findFirst().get();
+                        .addId(nid).setDependencyFilter(NDependencyFilters.of().byRunnable(false)).setLatest(true).setContent(true).getResultDefinitions().findFirst().get();
                 nutsAppJarPath = appDef.getContent().get();
             } else {
                 NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());

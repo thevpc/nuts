@@ -109,7 +109,6 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
             switch (e.getKey()) {
                 case NConstants.IdProperties.SCOPE:
                 case NConstants.IdProperties.OPTIONAL:
-                case NConstants.IdProperties.CLASSIFIER:
                 case NConstants.IdProperties.EXCLUSIONS:
                 case NConstants.IdProperties.TYPE:
                 {
@@ -148,16 +147,6 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
         return this;
     }
 
-
-    @Override
-    public boolean isOmitClassifier() {
-        return isOmitQueryProperty(NConstants.IdProperties.CLASSIFIER);
-    }
-
-    @Override
-    public NDependencyFormat setOmitClassifier(boolean value) {
-        return setOmitQueryProperty(NConstants.IdProperties.CLASSIFIER, value);
-    }
 
     @Override
     public boolean isOmitOptional() {

@@ -86,9 +86,8 @@ public class DefaultSourceControlHelper {
     //    @Override
     public NDefinition checkout(NId id, Path folder) {
         NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.INSTALL, "checkout");
-        NDefinition nutToInstall = NFetchCmd.of(id).setOptional(false).setDependencies(true).getResultDefinition();
+        NDefinition nutToInstall = NFetchCmd.of(id).setDependencyFilter(NDependencyFilters.of().byOptional(false)).getResultDefinition();
         if ("zip".equals(nutToInstall.getDescriptor().getPackaging())) {
-
             try {
                 ZipUtils.unzip(nutToInstall.getContent().map(Object::toString).get(), NPath.of(folder)
                         .toAbsolute().toString(), new UnzipOptions().setSkipRoot(false));

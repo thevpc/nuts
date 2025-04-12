@@ -31,7 +31,6 @@ import net.thevpc.nuts.NEnvConditionBuilder;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.reserved.NReservedUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringMapFormat;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -71,21 +70,9 @@ public class DefaultNIdBuilder implements NIdBuilder {
     public DefaultNIdBuilder(String groupId, String artifactId, NVersion version, String classifier, String propertiesQuery, NEnvCondition condition) {
         this.groupId = NStringUtils.trimToNull(groupId);
         this.artifactId = NStringUtils.trimToNull(artifactId);
+        this.classifier = NStringUtils.trimToNull(classifier);
         this.version = version == null ? NVersion.BLANK : version;
-
         setCondition(condition);
-        String c0 = NStringUtils.trimToNull(classifier);
-        String c1 = null;
-        Map<String, String> properties = propertiesQuery == null ? new LinkedHashMap<>() : NStringMapFormat.DEFAULT.parse(propertiesQuery).get();
-        if (!properties.isEmpty()) {
-            c1 = properties.remove(NConstants.IdProperties.CLASSIFIER);
-        }
-        if (c0 == null) {
-            if (c1 != null) {
-                c0 = NStringUtils.trimToNull(c1);
-            }
-        }
-        this.classifier = c0;
         setProperties(properties);
     }
 
@@ -279,7 +266,7 @@ public class DefaultNIdBuilder implements NIdBuilder {
                 break;
             }
             case NConstants.IdProperties.CONDITIONAL_PROPERTIES: {
-                condition.setProperties(NStringMapFormat.DEFAULT.parse(value).get());
+                condition.setProperties(NStringMapFormat.COMMA_FORMAT.parse(value).get());
                 break;
             }
             case NConstants.IdProperties.CLASSIFIER: {
@@ -349,12 +336,12 @@ public class DefaultNIdBuilder implements NIdBuilder {
 
     @Override
     public String getShortName() {
-        return NReservedUtils.getIdShortName(groupId, artifactId);
+        return NReservedUtils.getIdShortName(groupId,artifactId, classifier);
     }
 
     @Override
     public String getLongName() {
-        return NReservedUtils.getIdLongName(groupId, artifactId, version, classifier);
+        return NReservedUtils.getIdLongName(groupId,artifactId, version, classifier);
     }
 
 
@@ -370,34 +357,7 @@ public class DefaultNIdBuilder implements NIdBuilder {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        if (!NBlankable.isBlank(groupId)) {
-            sb.append(groupId).append(":");
-        }
-        sb.append(NStringUtils.trim(artifactId));
-        NVersion v = getVersion();
-        if (v != null && !v.isBlank()) {
-            sb.append("#");
-            sb.append(v);
-        }
-        LinkedHashMap<String, String> m = new LinkedHashMap<>();
-        if (!NBlankable.isBlank(classifier)) {
-            m.put(NConstants.IdProperties.CLASSIFIER, classifier);
-        }
-        if (condition != null) {
-            m.putAll(condition.build().toMap());
-        }
-        if (properties != null) {
-            for (Map.Entry<String, String> e : properties.entrySet()) {
-                if (!m.containsKey(e.getKey())) {
-                    m.put(e.getKey(), e.getValue());
-                }
-            }
-        }
-        if (!m.isEmpty()) {
-            sb.append("?").append(NStringMapFormat.DEFAULT.format(m));
-        }
-        return sb.toString();
+        return build().toString();
     }
 
     @Override
@@ -441,7 +401,7 @@ public class DefaultNIdBuilder implements NIdBuilder {
     @Override
     public NId build() {
         return new DefaultNId(
-                groupId, artifactId, version, classifier, properties, condition.build()
+                groupId, artifactId, classifier, version, properties, condition.build()
         );
     }
 

@@ -141,7 +141,7 @@ public interface NDependency extends Serializable, NBlankable {
      *
      * @return return dependency short name
      */
-    String getSimpleName();
+    String getShortName();
 
     /**
      * return dependency full name in the form

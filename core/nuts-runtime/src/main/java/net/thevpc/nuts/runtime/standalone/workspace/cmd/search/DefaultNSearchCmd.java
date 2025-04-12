@@ -78,292 +78,103 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
         }
         //update RepositoryFilter with effective one that takes into consideration
         // id filters and status filters
-        DefaultNSearch bs = build();
+        DefaultNSearchInfo bs = new DefaultNSearchInfoBuilder(this).build();
         t.setRepositoryFilter(bs.getRepositoryFilter());
         return t;
     }
 
-    private NRepositoryFilter createRepositoryFilter(NDefinitionFilter _idFilter) {
-        Boolean installed = NDefinitionHelper.resolveInstalled(_idFilter).orNull();
-        Boolean required = NDefinitionHelper.resolveRequired(_idFilter).orNull();
-        Boolean deployed = NDefinitionHelper.resolveRequired(_idFilter).orNull();
-        List<NRepositoryFilter> otherFilters = new ArrayList<>();
-        if(
-                Boolean.TRUE.equals(installed)
-                || Boolean.TRUE.equals(required)
-                || Boolean.TRUE.equals(deployed)
-        ){
-            otherFilters.add(NRepositoryFilters.of().installedRepo());
-        }else if(
-                (Boolean.FALSE.equals(installed) &&  Boolean.FALSE.equals(required))
-                        || Boolean.FALSE.equals(deployed)
-        ){
-            otherFilters.add(NRepositoryFilters.of().installedRepo().neg());
-        }
-        for (NDefinitionFilter nDefinitionFilter : NDefinitionHelper.flattenAnd(_idFilter)) {
-            if(nDefinitionFilter instanceof NRepositoryFilter){
-                otherFilters.add((NRepositoryFilter) nDefinitionFilter);
-            }
-        }
 
-        if (otherFilters.isEmpty()) {
-            return null;
-        }
-        NRepositoryFilter r = otherFilters.get(0);
-        for (int i = 1; i < otherFilters.size(); i++) {
-            r = r.and(otherFilters.get(i));
-        }
-        return r;
-    }
 
     //@Override
-    private DefaultNSearch build() {
-        HashSet<String> someIds = new HashSet<>();
-        for (NId id : this.getIds()) {
-            someIds.add(id.toString());
-        }
-        if (this.getIds().size() == 0 && isCompanion()) {
-            someIds.addAll(NExtensions.of().getCompanionIds().stream().map(NId::getShortName).collect(Collectors.toList()));
-        }
-        if (this.getIds().size() == 0 && isRuntime()) {
-            someIds.add(NConstants.Ids.NUTS_RUNTIME);
-        }
-        HashSet<String> goodIds = new HashSet<>();
-        HashSet<String> wildcardIds = new HashSet<>();
-        for (String someId : someIds) {
-            if (NPatternIdFilter.containsWildcad(someId)) {
-                wildcardIds.add(someId);
-            } else {
-                goodIds.add(someId);
-            }
-        }
-        NDefinitionFilter defFilter0 = getDefinitionFilter();
-        if (defFilter0 instanceof NPatternDefinitionFilter) {
-            NPatternDefinitionFilter f = (NPatternDefinitionFilter) defFilter0;
-            if (!f.isWildcard()) {
-                goodIds.add(f.getId().toString());
-                defFilter0 = null;
-            }
-        }
-        if (defFilter0 instanceof NDefinitionFilterOr) {
-            List<NDefinitionFilter> oo = new ArrayList<>(Arrays.asList(((NDefinitionFilterOr) defFilter0).getChildren()));
-            boolean someChange = false;
-            for (Iterator<NDefinitionFilter> it = oo.iterator(); it.hasNext(); ) {
-                NDefinitionFilter curr = it.next();
-                if (curr instanceof NPatternDefinitionFilter) {
-                    NPatternDefinitionFilter f = (NPatternDefinitionFilter) curr;
-                    if (!f.isWildcard()) {
-                        goodIds.add(f.getId().toString());
-                        it.remove();
-                        someChange = true;
-                    }
-                }
-            }
-            if (someChange) {
-                if (oo.isEmpty()) {
-                    defFilter0 = null;
-                } else {
-                    defFilter0 = NDefinitionFilters.of().any(oo.toArray(new NDefinitionFilter[0]));
-                }
-            }
-        }
-
-        NDefinitionFilters dfilter = NDefinitionFilters.of();
-        NDefinitionFilter _defFilter = dfilter.always();
-        NDependencyFilter depFilter = NDependencyFilters.of().always();
-        NRepositoryFilter rfilter = NRepositoryFilters.of().always();
-        for (String j : this.getScripts()) {
-            if (!NBlankable.isBlank(j)) {
-                if (CoreStringUtils.containsTopWord(j, "dependency")) {
-                    depFilter = depFilter.and(NDependencyFilters.of().parse(j));
-                } else {
-                    _defFilter = _defFilter.and(dfilter.parse(j));
-                }
-            }
-        }
-        NDefinitionFilter packs = dfilter.byPackaging(getPackaging());
-        NDefinitionFilter archs = dfilter.byArch(getArch().stream().map(x -> NArchFamily.parse(x).get()).collect(Collectors.toList()));
-        _defFilter = _defFilter.and(packs).and(archs);
-
-        NRepositoryFilter _repositoryFilter = rfilter.and(this.getRepositoryFilter());
-        _defFilter = _defFilter.and(this.getDefinitionFilter());
-
-        NDefinitionFilter _idFilter = NDefinitionFilters.of().always();
-        _idFilter = _idFilter.and(defFilter0);
-        if (getDefaultVersions() != null) {
-            _idFilter = _idFilter.and(NDefinitionFilters.of().byDefaultVersion(getDefaultVersions()));
-        }
-        if (execType != null) {
-            switch (execType) {
-                case LIB: {
-                    _defFilter = _defFilter.and(dfilter.byFlag(NDescriptorFlag.EXEC).neg());
-                    break;
-                }
-                case EXEC: {
-                    _defFilter = _defFilter.and(dfilter.byFlag(NDescriptorFlag.EXEC));
-                    break;
-                }
-                case NUTS_APPLICATION: {
-                    _defFilter = _defFilter.and(dfilter.byFlag(NDescriptorFlag.NUTS_APP));
-                    break;
-                }
-                case PLATFORM_APPLICATION: {
-                    _defFilter = _defFilter.and(dfilter.byFlag(NDescriptorFlag.PLATFORM_APP));
-                    break;
-                }
-                case EXTENSION: {
-                    _defFilter = _defFilter.and(dfilter.byExtension(targetApiVersion));
-                    break;
-                }
-                case RUNTIME: {
-                    _defFilter = _defFilter.and(dfilter.byRuntime(targetApiVersion));
-                    break;
-                }
-                case COMPANION: {
-                    _defFilter = _defFilter.and(dfilter.byCompanion(targetApiVersion));
-                    break;
-                }
-            }
-        } else {
-            if (targetApiVersion != null) {
-                _defFilter = _defFilter.and(dfilter.byApiVersion(targetApiVersion));
-            }
-        }
-        if (!lockedIds.isEmpty()) {
-            _defFilter = _defFilter.and(dfilter.byLockedIds(
-                    lockedIds.stream().map(NId::getFullName).toArray(String[]::new)
-            ));
-        }
-        if (!wildcardIds.isEmpty()) {
-            _idFilter = _idFilter.and(NDefinitionFilters.of().byName(wildcardIds.toArray(new String[0])));
-        }
-        NRepositoryFilter extraRepositoryFilter = createRepositoryFilter(_idFilter);
-        if (extraRepositoryFilter != null) {
-            _repositoryFilter = _repositoryFilter.and(extraRepositoryFilter);
-        }
-        return new DefaultNSearch(
-                goodIds.toArray(new String[0]),
-                _repositoryFilter,
-                _idFilter.and(_defFilter)
-        );
-    }
 
 
     public NIterator<NId> getResultIdIteratorBase(Boolean forceInlineDependencies) {
         boolean inlineDependencies = forceInlineDependencies == null ? isInlineDependencies() : forceInlineDependencies;
-        DefaultNSearch search = build();
+        DefaultNSearchInfo search = new DefaultNSearchInfoBuilder(this).build();
 
         List<NIterator<? extends NId>> allResults = new ArrayList<>();
         NSession session = NSession.of();
         NRepositoryFilter sRepositoryFilter = search.getRepositoryFilter();
-        String[] regularIds = search.getRegularIds();
+        DefaultNSearchInfo.RegularId[] regularIds = search.getRegularIds();
         NFetchStrategy fetchMode = NWorkspaceHelper.validate(session.getFetchStrategy().orDefault());
         Set<NRepository> consideredRepos = new HashSet<>();
         NWorkspaceUtils wu = NWorkspaceUtils.of();
         NElements elems = NElements.of();
         if (regularIds.length > 0) {
-            for (String id : regularIds) {
-                NId nutsId = NId.get(id).get();
-                if (nutsId != null) {
-                    List<NId> nutsId2 = new ArrayList<>();
-                    if (NBlankable.isBlank(nutsId.getGroupId())) {
-                        if (nutsId.getArtifactId().equals("nuts")) {
-                            nutsId2.add(nutsId.builder().setGroupId("net.thevpc.nuts").build());
-                        } else {
-                            //check if It's already installed
-                            List<NId> installedIds = Collections.emptyList();
-                            if (!nutsId.getArtifactId().contains("*")) {
-                                NRepositorySPI repoSPI = wu
-                                        .repoSPI(NWorkspaceExt.of().getInstalledRepository());
-                                NIterator<NId> it = repoSPI.search().setFetchMode(NFetchMode.LOCAL).setFilter(NDefinitionFilters.of().byName(
-                                        nutsId.builder().setGroupId("*").build().toString()
-                                )).getResult();
-                                installedIds = NIteratorUtils.toList(it);
-                            }
-                            if (!installedIds.isEmpty()) {
-                                nutsId2.addAll(installedIds);
-                            } else {
-                                for (String aImport : NWorkspace.of().getAllImports()) {
-                                    //example import(net.thevpc),search(pnote) ==>net.thevpc:pnote
-                                    nutsId2.add(nutsId.builder().setGroupId(aImport).build());
-                                    //example import(net.thevpc),search(pnote) ==>net.thevpc.pnote:pnote
-                                    nutsId2.add(nutsId.builder().setGroupId(aImport + "." + nutsId.getArtifactId()).build());
-                                }
-                            }
-                        }
-                    } else {
-                        nutsId2.add(nutsId);
+            for (DefaultNSearchInfo.RegularId rid : regularIds) {
+                NId[] nutsId2 = rid.expandedIds;
+
+                List<NIterator<? extends NId>> toConcat = new ArrayList<>();
+                for (NId nutsId1 : nutsId2) {
+                    NId nutsIdNonLatest = nutsId1;
+                    boolean latestVersion = false;
+                    boolean releaseVersion = false;
+                    if (nutsIdNonLatest.getVersion().isLatestVersion()) {
+                        latestVersion = true;
+                        nutsIdNonLatest = nutsIdNonLatest.builder().setVersion("").build();
+                    } else if (nutsIdNonLatest.getVersion().isReleaseVersion()) {
+                        releaseVersion = true;
+                        nutsIdNonLatest = nutsIdNonLatest.builder().setVersion("").build();
                     }
-                    List<NIterator<? extends NId>> toConcat = new ArrayList<>();
-                    for (NId nutsId1 : nutsId2) {
-                        NId nutsIdNonLatest = nutsId1;
-                        boolean latestVersion = false;
-                        boolean releaseVersion = false;
-                        if (nutsIdNonLatest.getVersion().isLatestVersion()) {
-                            latestVersion = true;
-                            nutsIdNonLatest = nutsIdNonLatest.builder().setVersion("").build();
-                        } else if (nutsIdNonLatest.getVersion().isReleaseVersion()) {
-                            releaseVersion = true;
-                            nutsIdNonLatest = nutsIdNonLatest.builder().setVersion("").build();
-                        }
-                        NDefinitionFilters dd = NDefinitionFilters.of();
-                        NDefinitionFilter filter = (
-                                dd.byName(nutsIdNonLatest.getFullName())
-                                        .and(dd.byEnv(nutsIdNonLatest.getProperties()))
-                                        .and(search.getDefinitionFilter())
-                        );
+                    NDefinitionFilters dd = NDefinitionFilters.of();
+                    NDefinitionFilter filter = (
+                            dd.byName(nutsIdNonLatest.getFullName())
+                                    .and(dd.byEnv(nutsIdNonLatest.getProperties()))
+                                    .and(search.getDefinitionFilter())
+                    );
 
-                        List<NRepositoryAndFetchMode> repositoryAndFetchModes = wu.filterRepositoryAndFetchModes(
-                                NRepositorySupportedAction.SEARCH, nutsIdNonLatest, sRepositoryFilter, fetchMode
-                        );
+                    List<NRepositoryAndFetchMode> repositoryAndFetchModes = wu.filterRepositoryAndFetchModes(
+                            NRepositorySupportedAction.SEARCH, nutsIdNonLatest, sRepositoryFilter, fetchMode
+                    );
 
-                        List<NIterator<? extends NId>> idLocal = new ArrayList<>();
-                        List<NIterator<? extends NId>> idRemote = new ArrayList<>();
-                        for (NFetchMode fm : new NFetchMode[]{NFetchMode.LOCAL, NFetchMode.REMOTE}) {
-                            List<NIterator<? extends NId>> idLookup = fm == NFetchMode.LOCAL ? idLocal : idRemote;
-                            for (NRepositoryAndFetchMode repoAndMode : repositoryAndFetchModes) {
-                                if (repoAndMode.getFetchMode() == fm) {
-                                    consideredRepos.add(repoAndMode.getRepository());
-                                    NRepositorySPI repoSPI = wu.repoSPI(repoAndMode.getRepository());
+                    List<NIterator<? extends NId>> idLocal = new ArrayList<>();
+                    List<NIterator<? extends NId>> idRemote = new ArrayList<>();
+                    for (NFetchMode fm : new NFetchMode[]{NFetchMode.LOCAL, NFetchMode.REMOTE}) {
+                        List<NIterator<? extends NId>> idLookup = fm == NFetchMode.LOCAL ? idLocal : idRemote;
+                        for (NRepositoryAndFetchMode repoAndMode : repositoryAndFetchModes) {
+                            if (repoAndMode.getFetchMode() == fm) {
+                                consideredRepos.add(repoAndMode.getRepository());
+                                NRepositorySPI repoSPI = wu.repoSPI(repoAndMode.getRepository());
 
-                                    NIterator<NId> z = NIteratorBuilder.of(repoSPI.searchVersions().setId(nutsIdNonLatest).setFilter(filter)
-                                                    .setFetchMode(repoAndMode.getFetchMode())
-                                                    .getResult())
-                                            .named(
-                                                    elems.ofObjectBuilder()
-                                                            .set("description", "searchVersions")
-                                                            .set("repository", repoAndMode.getRepository().getName())
-                                                            .set("filter", NEDesc.describeResolveOrDestruct(filter))
-                                                            .build()
-                                            ).safeIgnore().iterator();
-                                    z = filterLatestAndDuplicatesThenSort(z, isLatest() || latestVersion || releaseVersion, isDistinct(), false);
-                                    idLookup.add(z);
-                                }
+                                NIterator<NId> z = NIteratorBuilder.of(repoSPI.searchVersions().setId(nutsIdNonLatest).setFilter(filter)
+                                                .setFetchMode(repoAndMode.getFetchMode())
+                                                .getResult())
+                                        .named(
+                                                elems.ofObjectBuilder()
+                                                        .set("description", "searchVersions")
+                                                        .set("repository", repoAndMode.getRepository().getName())
+                                                        .set("filter", NEDesc.describeResolveOrDestruct(filter))
+                                                        .build()
+                                        ).safeIgnore().iterator();
+                                z = filterLatestAndDuplicatesThenSort(z, isLatest() || latestVersion || releaseVersion, isDistinct(), false);
+                                idLookup.add(z);
                             }
                         }
-                        toConcat.add(fetchMode.isStopFast()
-                                ? NIteratorUtils.coalesce(NIteratorUtils.concat(idLocal), NIteratorUtils.concat(idRemote))
-                                : NIteratorUtils.concatLists(idLocal, idRemote)
-                        );
                     }
-                    if (nutsId.getGroupId() == null) {
-                        //now will look with *:artifactId pattern
-                        NSearchCmd search2 = NSearchCmd.of()
-                                .setRepositoryFilter(search.getRepositoryFilter())
-                                .setDefinitionFilter(
-                                        NDefinitionFilters.of().byName(nutsId.builder().setGroupId("*").build().toString())
-                                                .and(search.getDefinitionFilter())
-                                );
-                        NIterator<NId> extraResult = search2.getResultIds().iterator();
-                        allResults.add(
-                                fetchMode.isStopFast() ?
-                                        NIteratorUtils.coalesce(NIteratorUtils.concat(toConcat), extraResult)
-                                        : NIteratorUtils.concat(NIteratorUtils.concat(toConcat), extraResult)
-                        );
-                    } else {
-                        allResults.add(NIteratorUtils.concat(toConcat));
-                    }
+                    toConcat.add(fetchMode.isStopFast()
+                            ? NIteratorUtils.coalesce(NIteratorUtils.concat(idLocal), NIteratorUtils.concat(idRemote))
+                            : NIteratorUtils.concatLists(idLocal, idRemote)
+                    );
                 }
+                allResults.add(NIteratorUtils.concat(toConcat));
+//                if (nutsId.getGroupId() == null) {
+//                    //now will look with *:artifactId pattern
+//                    NSearchCmd search2 = NSearchCmd.of()
+//                            .setRepositoryFilter(search.getRepositoryFilter())
+//                            .setDefinitionFilter(
+//                                    NDefinitionFilters.of().byName(nutsId.builder().setGroupId("*").build().toString())
+//                                            .and(search.getDefinitionFilter())
+//                            );
+//                    NIterator<NId> extraResult = search2.getResultIds().iterator();
+//                    allResults.add(
+//                            fetchMode.isStopFast() ?
+//                                    NIteratorUtils.coalesce(NIteratorUtils.concat(toConcat), extraResult)
+//                                    : NIteratorUtils.concat(NIteratorUtils.concat(toConcat), extraResult)
+//                    );
+//                } else {
+//                    allResults.add(NIteratorUtils.concat(toConcat));
+//                }
+
             }
         } else {
             NDefinitionFilter filter = search.getDefinitionFilter();
@@ -397,7 +208,6 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
             );
         }
         NIterator<NId> baseIterator = NIteratorUtils.concat(allResults);
-        NElement described = baseIterator.describe();
         if (inlineDependencies) {
             //optimize by applying latest and distinct when asking for dependencies
             baseIterator = filterLatestAndDuplicatesThenSort(baseIterator, isLatest(), isDistinct(), false);

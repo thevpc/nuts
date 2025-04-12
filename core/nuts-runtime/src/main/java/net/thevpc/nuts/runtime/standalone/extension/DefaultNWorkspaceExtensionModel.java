@@ -151,7 +151,7 @@ public class DefaultNWorkspaceExtensionModel {
         List<NExtensionInformation> ret = new ArrayList<>();
         List<String> allUrls = new ArrayList<>();
         for (String r : getExtensionRepositoryLocations(id)) {
-            String url = r + "/" + ExtraApiUtils.resolveFilePath(id, extensionType);
+            String url = r + "/" + id.getMavenPath(extensionType);
             allUrls.add(url);
             URL u = expandURL(url);
             if (u != null) {
@@ -534,9 +534,8 @@ public class DefaultNWorkspaceExtensionModel {
         NDefinition nDefinitions = NSearchCmd.of()
                 .copyFrom(options)
                 .addId(id)
-                .setOptional(false)
                 .addScope(NDependencyScopePattern.RUN)
-                .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                .setDependencyFilter(NDependencyFilters.of().byRunnable(false))
                 //
                 .setContent(true)
                 .setDependencies(true)
@@ -671,7 +670,7 @@ public class DefaultNWorkspaceExtensionModel {
     public URL[] getExtensionURLLocations(NId nutsId, String appId, String extensionType) {
         List<URL> bootUrls = new ArrayList<>();
         for (String r : getExtensionRepositoryLocations(nutsId)) {
-            String url = r + "/" + ExtraApiUtils.resolveFilePath(nutsId, extensionType);
+            String url = r + "/" + nutsId.getMavenPath(extensionType);
             URL u = expandURL(url);
             bootUrls.add(u);
         }

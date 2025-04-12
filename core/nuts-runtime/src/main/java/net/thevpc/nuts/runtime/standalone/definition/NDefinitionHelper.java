@@ -13,6 +13,9 @@ import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.UncheckedException;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -56,6 +59,35 @@ public class NDefinitionHelper {
 
     public static NDefinition ofDescriptorOnly(NDescriptor descriptor) {
         return new DefinitionForIdAndDescriptor(descriptor.getId(), descriptor);
+    }
+
+    public static NPatternDefinitionFilter[] asPatternDefinitionFilterOrList(NDefinitionFilter defFilter0) {
+        if (defFilter0 == null) {
+            return new NPatternDefinitionFilter[0];
+        }
+        List<NPatternDefinitionFilter> orResult = new ArrayList<>();
+        if (defFilter0 instanceof NDefinitionFilterOr) {
+            for (NDefinitionFilter child : ((NDefinitionFilterOr) defFilter0).getChildren()) {
+                if (child instanceof NPatternDefinitionFilter) {
+                    orResult.add((NPatternDefinitionFilter) child);
+                }
+            }
+        } else if (defFilter0 instanceof NDefinitionFilterAnd) {
+            for (NDefinitionFilter child : ((NDefinitionFilterAnd) defFilter0).getChildren()) {
+                NPatternDefinitionFilter[] found = asPatternDefinitionFilterOrList(child);
+                if (found.length > 0) {
+                    if (orResult.isEmpty()) {
+                        orResult.addAll(Arrays.asList(found));
+                    } else {
+                        // Too complex
+                        return new NPatternDefinitionFilter[0];
+                    }
+                }
+            }
+        } else if (defFilter0 instanceof NPatternDefinitionFilter) {
+            orResult.add((NPatternDefinitionFilter) defFilter0);
+        }
+        return orResult.toArray(new NPatternDefinitionFilter[0]);
     }
 
     private static class DefinitionForIdAndDescriptor extends NDefinitionDelegate {
@@ -170,10 +202,10 @@ public class NDefinitionHelper {
 
     public static NOptional<Boolean> resolveInstalled(NDefinitionFilter any) {
         for (NDefinitionFilter d : flattenAnd(any)) {
-            if(d instanceof NInstallStatusDefinitionFilter2){
+            if (d instanceof NInstallStatusDefinitionFilter2) {
                 NInstallStatusDefinitionFilter2 v = (NInstallStatusDefinitionFilter2) d;
-                switch (v.getName()){
-                    case "installed":{
+                switch (v.getName()) {
+                    case "installed": {
                         return NOptional.of(v.isValue());
                     }
                 }
@@ -184,10 +216,10 @@ public class NDefinitionHelper {
 
     public static NOptional<Boolean> resolveRequired(NDefinitionFilter any) {
         for (NDefinitionFilter d : flattenAnd(any)) {
-            if(d instanceof NInstallStatusDefinitionFilter2){
+            if (d instanceof NInstallStatusDefinitionFilter2) {
                 NInstallStatusDefinitionFilter2 v = (NInstallStatusDefinitionFilter2) d;
-                switch (v.getName()){
-                    case "required":{
+                switch (v.getName()) {
+                    case "required": {
                         return NOptional.of(v.isValue());
                     }
                 }
@@ -198,10 +230,10 @@ public class NDefinitionHelper {
 
     public static NOptional<Boolean> resolveDeployed(NDefinitionFilter any) {
         for (NDefinitionFilter d : flattenAnd(any)) {
-            if(d instanceof NInstallStatusDefinitionFilter2){
+            if (d instanceof NInstallStatusDefinitionFilter2) {
                 NInstallStatusDefinitionFilter2 v = (NInstallStatusDefinitionFilter2) d;
-                switch (v.getName()){
-                    case "deployed":{
+                switch (v.getName()) {
+                    case "deployed": {
                         return NOptional.of(v.isValue());
                     }
                 }

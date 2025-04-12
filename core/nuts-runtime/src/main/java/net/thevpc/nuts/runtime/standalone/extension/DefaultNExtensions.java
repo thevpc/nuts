@@ -182,7 +182,7 @@ public class DefaultNExtensions implements NExtensions {
         }
 
         URL nuts = classLoader.getResource("META-INF/nuts/"
-                + ExtraApiUtils.resolveIdPath(id.getShortId()) + "/nuts.json");
+                + id.getShortId().getMavenFolder() + "/nuts.json");
         if (nuts != null) {
             NDescriptor e = NDescriptorParser.of()
                     .setDescriptorStyle(NDescriptorStyle.NUTS)

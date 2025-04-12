@@ -35,9 +35,6 @@ public class RemoteNSearchCmd extends AbstractNSearchCmd {
                 .set("execType", getExecType().id())
                 .set("defaultVersions", getDefaultVersions())
                 .set("targetApiVersion", getTargetApiVersion().toString())
-                .set("optional", getOptional())
-                .set("arch", e.ofArrayBuilder().addAll(getArch().toArray(new String[0])).build())
-                .set("packaging", e.ofArrayBuilder().addAll(getPackaging().toArray(new String[0])).build())
                 .set("ids", e.ofArrayBuilder().addAll(getIds().stream()
                         .map(Object::toString).toArray(String[]::new)).build());
         if (getDefinitionFilter() != null) {

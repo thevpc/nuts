@@ -226,14 +226,12 @@ public class NRepositoryFolderHelper {
 
     public NPath getRelativeLocalGroupAndArtifactFile(NId id) {
         CoreNIdUtils.checkShortId(id);
-        return NPath.of(
-                ExtraApiUtils.resolveIdPath(id.getShortId())
-        );
+        return NPath.of(id.getShortId().getMavenFolder());
     }
 
     public NPath getLocalGroupAndArtifactFile(NId id) {
         CoreNIdUtils.checkShortId(id);
-        return getStoreLocation().resolve(ExtraApiUtils.resolveIdPath(id.getShortId()));
+        return getStoreLocation().resolve(id.getShortId().getMavenFolder());
     }
 
     public NIterator<NId> searchVersions(NId id, final NDefinitionFilter filter, boolean deep) {

@@ -65,27 +65,17 @@ public class DefaultNId implements NId {
         this.properties = "";
     }
 
-    public DefaultNId(String groupId, String artifactId, NVersion version, String classifier, Map<String, String> properties, NEnvCondition condition) {
+    public DefaultNId(String groupId, String artifactId, String classifier, NVersion version, Map<String, String> properties, NEnvCondition condition) {
         this.groupId = NStringUtils.trimToNull(groupId);
         this.artifactId = NStringUtils.trimToNull(artifactId);
         this.version = version == null ? NVersion.BLANK : version;
-        String c0 = NStringUtils.trimToNull(classifier);
-        String c1 = null;
-        if (properties != null) {
-            c1 = properties.remove(NConstants.IdProperties.CLASSIFIER);
-        }
-        if (c0 == null) {
-            if (c1 != null) {
-                c0 = NStringUtils.trimToNull(c1);
-            }
-        }
-        this.classifier = c0;
+        this.classifier = NStringUtils.trimToNull(classifier);
         this.condition = condition == null ? NEnvCondition.BLANK : condition;
         this.properties = NStringUtils.trim(NStringMapFormat.DEFAULT.format(properties));
     }
 
-    public DefaultNId(String groupId, String artifactId, NVersion version, String classifier, String properties, NEnvCondition condition) {
-        this(groupId, artifactId, version, classifier, NStringMapFormat.DEFAULT.parse(properties).get(), condition);
+    public DefaultNId(String groupId, String artifactId, String classifier, NVersion version, String properties, NEnvCondition condition) {
+        this(groupId, artifactId, classifier, version, NStringMapFormat.DEFAULT.parse(properties).get(), condition);
     }
 
     @Override
@@ -100,7 +90,9 @@ public class DefaultNId implements NId {
 
     public String getMavenFolder() {
         StringBuilder sb = new StringBuilder();
-        sb.append(String.join("/", NStringUtils.split(groupId, "./\\", true, true)));
+        if (!NBootUtils.isBlank(groupId)) {
+            sb.append(String.join("/", NStringUtils.split(groupId, "./\\", true, true)));
+        }
         if (!NBootUtils.isBlank(artifactId)) {
             if (sb.length() > 0) {
                 sb.append("/");
@@ -122,6 +114,9 @@ public class DefaultNId implements NId {
         }
         if (!NBlankable.isBlank(version)) {
             sb.append("-").append(version);
+        }
+        if (!NBlankable.isBlank(classifier)) {
+            sb.append("-").append(classifier);
         }
         if (!NBlankable.isBlank(extension)) {
             sb.append(".").append(extension);
@@ -149,7 +144,9 @@ public class DefaultNId implements NId {
             return false;
         }
         return NStringUtils.trim(groupId).equals(NStringUtils.trim(other.getGroupId()))
-                && NStringUtils.trim(artifactId).equals(NStringUtils.trim(other.getArtifactId()));
+                && NStringUtils.trim(artifactId).equals(NStringUtils.trim(other.getArtifactId()))
+                && Objects.equals(getClassifier(), other.getClassifier())
+                ;
     }
 
     @Override
@@ -157,16 +154,13 @@ public class DefaultNId implements NId {
         if (NBlankable.isBlank(properties)) {
             return true;
         }
-        Map<String, String> m = new HashMap<>(getProperties());
-        m.remove(NConstants.IdProperties.CLASSIFIER);
-        return m.isEmpty();
+        return getProperties().isEmpty();
     }
 
     @Override
     public boolean isShortId() {
         return NBlankable.isBlank(properties)
                 && NBlankable.isBlank(version)
-                && NBlankable.isBlank(classifier)
                 ;
     }
 
@@ -228,41 +222,23 @@ public class DefaultNId implements NId {
 
     @Override
     public NId getShortId() {
-        return new DefaultNId(groupId, artifactId, (NVersion) null, null, "",
+        return new DefaultNId(groupId, artifactId, classifier, (NVersion) null, "",
                 NEnvCondition.BLANK);
     }
 
     @Override
     public NId getLongId() {
-        return new DefaultNId(groupId, artifactId, version, classifier, "", NEnvCondition.BLANK);
+        return new DefaultNId(groupId, artifactId, classifier, version, "", NEnvCondition.BLANK);
     }
 
     @Override
     public String getShortName() {
-        if (NBlankable.isBlank(groupId)) {
-            return NStringUtils.trim(artifactId);
-        }
-        return NStringUtils.trim(groupId) + ":" + NStringUtils.trim(artifactId);
+        return NReservedUtils.getIdShortName(groupId,artifactId, classifier);
     }
 
     @Override
     public String getLongName() {
-        StringBuilder sb = new StringBuilder();
-        if (!NBlankable.isBlank(groupId)) {
-            sb.append(groupId).append(":");
-        }
-        sb.append(NStringUtils.trim(artifactId));
-        NVersion v = getVersion();
-        if (!v.isBlank()) {
-            sb.append("#");
-            sb.append(v);
-        }
-        if (!NBlankable.isBlank(classifier)) {
-            sb.append("?");
-            sb.append("classifier=");
-            sb.append(classifier);
-        }
-        return sb.toString();
+        return NReservedUtils.getIdLongName(groupId,artifactId, version, classifier);
     }
 
     @Override
@@ -283,19 +259,22 @@ public class DefaultNId implements NId {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (!NBlankable.isBlank(groupId)) {
-            sb.append(groupId).append(":");
+        if (NBlankable.isBlank(classifier)) {
+            if (!NBlankable.isBlank(groupId)) {
+                sb.append(groupId).append(":");
+            }
+            sb.append(NStringUtils.trim(artifactId));
+        }else {
+            sb.append(NStringUtils.trim(groupId));
+            sb.append(":").append(NStringUtils.trim(artifactId));
+            sb.append(":").append(NStringUtils.trim(classifier));
         }
-        sb.append(NStringUtils.trim(artifactId));
         NVersion v = getVersion();
         if (!v.isBlank()) {
             sb.append("#");
             sb.append(v);
         }
         LinkedHashMap<String, String> m = new LinkedHashMap<>();
-        if (!NBlankable.isBlank(classifier)) {
-            m.put(NConstants.IdProperties.CLASSIFIER, classifier);
-        }
         m.putAll(NReservedUtils.toMap(condition));
         for (Map.Entry<String, String> e : NStringMapFormat.DEFAULT.parse(properties).get().entrySet()) {
             if (!m.containsKey(e.getKey())) {

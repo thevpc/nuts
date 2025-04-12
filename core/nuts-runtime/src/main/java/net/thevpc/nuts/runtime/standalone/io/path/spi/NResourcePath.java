@@ -120,9 +120,9 @@ public class NResourcePath implements NPathSPI {
                         ).setLatest(true).setContent(true).setDependencies(true)
                         .setDependencyFilter(
                                 NDependencyFilters.of()
-                                        .byRunnable()
+                                        .byRunnable(false)
                         )
-                        .setOptional(false).getResultClassLoader();
+                        .getResultClassLoader();
                 urls = ((DefaultNClassLoader) resultClassLoader).getURLs();
                 //class loader do not expect leading '/'
                 if (loc.length() > 1 && loc.startsWith("/")) {

@@ -857,7 +857,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     || NBlankable.isBlank(d.getOptional())) {
                 NDependency standardDependencyOk = null;
                 for (NDependency standardDependency : effStandardDeps) {
-                    if (standardDependency.getSimpleName().equals(d.toId().getShortName())) {
+                    if (standardDependency.getShortName().equals(d.toId().getShortName())) {
                         standardDependencyOk = standardDependency;
                         break;
                     }
@@ -989,7 +989,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                         .content()
                         .setRepositoryFilter(NRepositoryFilters.of().installedRepo())
                         .failFast();
-                if (def.getDependencies().isPresent()) {
+                if (requireDependencies && def.getDependencies().isPresent()) {
                     fetch2.setDependencyFilter(def.getDependencies().get().filter());
                     fetch2.dependencies();
                 }
@@ -1037,13 +1037,9 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             if (reinstall) {
                 //must re-fetch def!
                 NDefinition d2 = NFetchCmd.of(def.getId())
-                        .setContent(true)
-                        .setEffective(true)
-                        .setDependencies(true)
                         .setFailFast(false)
-                        .setOptional(false)
                         .addScope(NDependencyScopePattern.RUN)
-                        .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                        .setDependencyFilter(NDependencyFilters.of().byRunnable(false))
                         .getResultDefinition();
                 if (d2 == null) {
                     // perhaps the version does no more exist
@@ -1052,9 +1048,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                             .effective()
                             .failFast()
                             .latest()
-                            .setOptional(false)
                             .addScope(NDependencyScopePattern.RUN)
-                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                            .setDependencyFilter(NDependencyFilters.of().byRunnable(false))
                             .getResultDefinitions().findFirst().get();
                 }
                 def = d2;
@@ -1125,9 +1120,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                                     .setFetchMode(NFetchMode.LOCAL)
                                     .getResult()
                                     .hasNext()) {
-                                NDefinition dd = NSearchCmd.of().addId(dependency.toId()).setContent(true).setLatest(true)
+                                NDefinition dd = NSearchCmd.of(dependency.toId()).setLatest(true)
                                         //.setDependencies(true)
-                                        .setEffective(true)
+                                        .setDependencyFilter(ndf)
+//                                        .setEffective(true)
                                         .getResultDefinitions()
                                         .findFirst().orNull();
                                 if (dd != null) {
@@ -1202,7 +1198,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                         .content()
                         .setRepositoryFilter(NRepositoryFilters.of().installedRepo())
                         .failFast();
-                if (def.getDependencies().isPresent()) {
+                if (requireDependencies && def.getDependencies().isPresent()) {
                     fetch2.setDependencyFilter(def.getDependencies().get().filter());
                     fetch2.dependencies();
                 }
@@ -1299,20 +1295,22 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             }
 
             if (def.getDescriptor().getIdType() == NIdType.EXTENSION) {
-                NExtensionListHelper h = new NExtensionListHelper(
-                        session.getWorkspace().getApiId(),
-                        this.getConfigModel().getStoredConfigBoot().getExtensions())
-                        .save();
-                NDependencies nDependencies = null;
-                if (!def.getDependencies().isPresent()) {
-                    nDependencies = NFetchCmd.of(def.getId()).setDependencies(true)
-                            .getResultDefinition().getDependencies().get();
-                } else {
-                    nDependencies = def.getDependencies().get();
+                if(requireDependencies) {
+                    NExtensionListHelper h = new NExtensionListHelper(
+                            session.getWorkspace().getApiId(),
+                            this.getConfigModel().getStoredConfigBoot().getExtensions())
+                            .save();
+                    NDependencies nDependencies = null;
+                    if (!def.getDependencies().isPresent()) {
+                        nDependencies = NFetchCmd.of(def.getId())
+                                .getResultDefinition().getDependencies().get();
+                    } else {
+                        nDependencies = def.getDependencies().get();
+                    }
+                    h.add(def.getId(), nDependencies.transitiveWithSource().toList());
+                    this.getConfigModel().getStoredConfigBoot().setExtensions(h.getConfs());
+                    this.getConfigModel().fireConfigurationChanged("extensions", ConfigEventType.BOOT);
                 }
-                h.add(def.getId(), nDependencies.transitiveWithSource().toList());
-                this.getConfigModel().getStoredConfigBoot().setExtensions(h.getConfs());
-                this.getConfigModel().fireConfigurationChanged("extensions", ConfigEventType.BOOT);
             }
         } catch (RuntimeException ex) {
             try {
@@ -1552,7 +1550,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         return callWith(() -> {
             NId nutsId = NId.getForClass(clazz).orNull();
             if (nutsId != null) {
-                NPath urlPath = NPath.of("classpath:/" + ExtraApiUtils.resolveIdPath(nutsId.getShortId()) + ".ntf", clazz == null ? null : clazz.getClassLoader());
+                NPath urlPath = NPath.of("classpath:/" + nutsId.getShortId().getMavenFolder() + ".ntf", clazz == null ? null : clazz.getClassLoader());
                 NTexts txt = NTexts.of();
                 NText n = txt.parser().parse(urlPath);
                 n = txt.transform(n, new NTextTransformConfig()
@@ -1680,7 +1678,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     //ensure installer is always well qualified!
                     CoreNIdUtils.checkShortId(installerId);
                     runnerFile = NSearchCmd.of().setId(installerId)
-                            .setOptional(false)
+                            .setDependencyFilter(NDependencyFilters.of().byRunnable(false))
                             .setContent(true)
                             .setDependencies(true)
                             .setLatest(true)
@@ -1856,7 +1854,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             nutToInstall = NSearchCmd.of().setTransitive(false).addId(id)
                     .setInlineDependencies(checkDependencies)
                     .setDefinitionFilter(NDefinitionFilters.of().byDeployed(true))
-                    .setOptional(false)
+                    .setDependencyFilter(NDependencyFilters.of().byRunnable(false))
                     .getResultDefinitions()
                     .findFirst().orNull();
             if (nutToInstall == null) {

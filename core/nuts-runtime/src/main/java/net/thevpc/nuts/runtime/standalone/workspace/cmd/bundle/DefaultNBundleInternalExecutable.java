@@ -90,6 +90,20 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     return this;
                 }
                 List<NDefinition> list = new ArrayList<>();
+//                List<NDefinition> resultDefinitions0 = NSearchCmd.of().addId(id)
+//                        .setLatest(true)
+////                        .setDistinct(false)
+//                        .setEffective(true)
+//                        .setDependencyFilter(
+//                                NDependencyFilters.of().byScope(NDependencyScopePattern.RUN, NDependencyScopePattern.COMPILE)
+//                                        .and(NDependencyFilters.of().byRegularType())
+//                        )
+//                        .setInlineDependencies(true)
+//                        .setIgnoreCurrentEnvironment(true)
+//                        .setContent(true)
+//                        .getResultDefinitions().toList();
+
+
                 NStream<NDefinition> resultDefinitions = NSearchCmd.of().addId(id)
                         .setLatest(true)
                         .setDistinct(true)
@@ -380,7 +394,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
 
         for (NDefinition d : resultingIds.classPath.values()) {
             NId id = d.getId();
-            String fullPath = ExtraApiUtils.resolveJarPath(id);
+            String fullPath = id.getMavenPath("jar");
             if (d.getContent().isPresent()) {
                 cp.from(d.getContent().get())
                         .to(bundleFolder.resolve(fullPath))
@@ -394,7 +408,10 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                 }
             }
 
-            fullPath = ExtraApiUtils.resolveNutsDescriptorPath(id);
+            fullPath = id
+                    //descriptor is not classifier aware
+                    .builder().setClassifier(null).build()
+                    .getMavenPath(NConstants.Files.DESCRIPTOR_FILE_EXTENSION_SIMPLE);
             cp.from(NDescriptorFormat.of().setValue(d.getDescriptor()).setNtf(false).toString().getBytes())
                     .to(bundleFolder.resolve(fullPath))
                     .run();
@@ -610,7 +627,8 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                         .println("# resolve current script path")
                         .println("NS_SCRIPT_PATH=\"${BASH_SOURCE[0]:-${(%):-%x}}\"")
                         .println("NS_SCRIPT_DIR=\"$(cd -- \"$(dirname -- \"$N_SCRIPT_PATH\")\" && pwd)\"")
-                        .println("NS_WS_JAR=\"$NS_SCRIPT_DIR/.nuts-bundle/lib/" + ExtraApiUtils.resolveJarPath(nutsId) + "\"")
+                        .println("NS_WS_JAR=\"$NS_SCRIPT_DIR/.nuts-bundle/lib/" + nutsId.getMavenPath("jar") + "\"")
+                        .println("NS_JAVA_OPTIONS=\"\"")
                         .println("")
                         .println("# resolve workspace options")
                         .println("NS_WS_OPTIONS=\"--repo==$NS_SCRIPT_DIR/.nuts-bundle/lib -w=$NS_SCRIPT_DIR/.nuts-bundle/ws\"")
@@ -620,9 +638,13 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                         .println("#  --verbose : for more logging")
                         .println("#  -Zy       : to reset the whole workspace")
                         .println("# NS_WS_OPTIONS=\"$NS_WS_OPTIONS --verbose\"")
+                        .println("# NS_WS_OPTIONS=\"$NS_WS_OPTIONS --embedded\"")
+                        .println("#")
+                        .println("# add other JVM options like for debug mode")
+                        .println("# NS_JAVA_OPTIONS=\"$NS_JAVA_OPTIONS -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005\"")
                         .println("")
 
-                        .println("java -jar \"$NS_WS_JAR\" $NS_WS_OPTIONS " +
+                        .println("java $NS_JAVA_OPTIONS -jar \"$NS_WS_JAR\" $NS_WS_OPTIONS " +
                                 (NConstants.Ids.NUTS_APP.equals(mainIdStr.getShortName()) ? "" : ("\"" + mainIdStr + "\""))
                                 + " \"$@\"")
                         .build()
@@ -647,7 +669,8 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                         .println(":: resolve current script path")
                         .println("SET NS_SCRIPT_PATH=%~dp0")
                         .println("SET NS_SCRIPT_DIR=%NS_SCRIPT_PATH:~0,-1%")
-                        .println("SET NS_WS_JAR=%NS_SCRIPT_DIR%\\.nuts-bundle\\lib\\" + ExtraApiUtils.resolveJarPath(nutsId).replace("/", "\\"))
+                        .println("SET NS_WS_JAR=%NS_SCRIPT_DIR%\\.nuts-bundle\\lib\\" + nutsId.getMavenPath("jar").replace("/", "\\"))
+                        .println("SET NS_JAVA_OPTIONS=")
                         .println("")
                         .println(":: resolve workspace options")
                         .println("SET NS_WS_OPTIONS=--repo==%NS_SCRIPT_DIR%\\.nuts-bundle\\lib -w=%NS_SCRIPT_DIR%\\.nuts-bundle\\ws")
@@ -657,8 +680,12 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                         .println("::  --verbose : for more logging")
                         .println("::  -Zy       : to reset the whole workspace")
                         .println("REM SET NS_WS_OPTIONS=%NS_WS_OPTIONS% --verbose")
+                        .println("REM SET NS_WS_OPTIONS=%NS_WS_OPTIONS% --embedded")
+                        .println("::")
+                        .println(":: add other JVM options like for debug mode")
+                        .println("REM SET NS_JAVA_OPTIONS=%NS_JAVA_OPTIONS% -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005")
                         .println("")
-                        .println("java.exe -jar \"%NS_WS_JAR%\" %NS_WS_OPTIONS% " +
+                        .println("java.exe %NS_JAVA_OPTIONS% -jar \"%NS_WS_JAR%\" %NS_WS_OPTIONS% " +
                                 (NConstants.Ids.NUTS_APP.equals(mainIdStr.getShortName()) ? "" : ("\"" + mainIdStr + "\""))
                                 + " %*")
                         .build()

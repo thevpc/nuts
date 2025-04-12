@@ -47,8 +47,7 @@ public interface NTreeModel {
      * return children of the given {@code node}
      *
      * @param node node to retrieve children for
-     * @param <T>  children type
      * @return node children
      */
-    <T> List<T> getChildren(Object node);
+    List<?> getChildren(Object node);
 }

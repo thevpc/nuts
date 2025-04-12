@@ -1,14 +1,18 @@
 package net.thevpc.nuts.runtime.standalone.dependency.solver.maven;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.format.NMsgFormattable;
+import net.thevpc.nuts.format.NTreeModel;
 import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.tson.impl.parser.javacc.TsonStreamParserImplTokenManager;
+import net.thevpc.nuts.util.NMsg;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MavenNDependencySolver implements NDependencySolver {
 
+    public boolean includedProvided = false;
     List<NDependencyTreeNodeBuild> defs = new ArrayList<>();
     private List<RootInfo> pending = new ArrayList<>();
     private NDependencyFilter dependencyFilter;
@@ -78,8 +82,54 @@ public class MavenNDependencySolver implements NDependencySolver {
         pending.clear();
         PassProcessor pp = new PassProcessor(this);
         NDependencies run = pp.run();
+
+//        class NDependencyTreeNodeAndFormat implements NMsgFormattable {
+//            NDependencyTreeNode node;
+//
+//            public NDependencyTreeNodeAndFormat(NDependencyTreeNode node) {
+//                this.node = node;
+//            }
+//
+//            @Override
+//            public String toString() {
+//                return node == null ? "" : node.toString();
+//            }
+//
+//            @Override
+//            public NMsg toMsg() {
+//                return NMsg.ofC("%s", node.getDependency().builder().removeCondition().build());
+//            }
+//        }
+//
+//        NSession.of().out().println(
+//                new NTreeModel() {
+//                    @Override
+//                    public Object getRoot() {
+//                        return new NDependencyTreeNodeAndFormat(null);
+//                    }
+//
+//                    @Override
+//                    public List<NDependencyTreeNodeAndFormat> getChildren(Object node) {
+//                        if (((NDependencyTreeNodeAndFormat) node).node == null) {
+//                            return run.transitiveNodes().toList().stream().map(x -> new NDependencyTreeNodeAndFormat(x)).collect(Collectors.toList());
+//                        }
+//                        return ((NDependencyTreeNodeAndFormat) node).node.getChildren().stream().map(x -> new NDependencyTreeNodeAndFormat(x)).collect(Collectors.toList());
+//                    }
+//                }
+//        );
         doLog("---- END SOLVE");
         return run;
+    }
+
+    private void doLogNode(NDependencyTreeNode n, String prefix) {
+        String p = prefix + "";
+        if (p.length() > 0) {
+            p = p + "  ";
+        }
+        System.out.println(p + n.getDependency().builder().removeCondition().build().toString());
+        for (NDependencyTreeNode child : n.getChildren()) {
+            doLogNode(child, "--" + p);
+        }
     }
 
     void doLog(String message) {
@@ -110,13 +160,14 @@ public class MavenNDependencySolver implements NDependencySolver {
     }
 
     NDefinition searchOne(NDependency dep) {
+        NDefinition def = null;
         try {
-            return search(dep)
+            def = search(dep)
                     .getResultDefinitions().findFirst().orNull();
         } catch (NNotFoundException | NoSuchElementException | NNoSuchElementException ex) {
-            //
+            doLog("Unable to load dependency: " + dep);
         }
-        return null;
+        return def;
     }
 
     public boolean isShouldIncludeContent() {

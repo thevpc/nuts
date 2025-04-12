@@ -1187,7 +1187,7 @@ public class DefaultNWorkspaceConfigModel {
                         NPath.of(n.getURL())
                 );
             }
-            String contentPath = ExtraApiUtils.resolveFilePath(id, null);
+            String contentPath = id.getMavenPath(null);
             NPath jarPath = null;
             NPath pomPath = null;
             for (NRepositoryLocation nutsRepositoryLocation : resolveBootRepositoriesBootSelectionArray()) {

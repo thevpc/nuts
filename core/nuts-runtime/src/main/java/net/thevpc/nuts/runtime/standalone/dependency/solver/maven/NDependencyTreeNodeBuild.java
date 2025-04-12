@@ -25,14 +25,18 @@ class NDependencyTreeNodeBuild {
     int depth;
     NDescriptor effDescriptor;
     NDependencyInfo key;
+    boolean built;
+    boolean includedInClassPath;
 
-    public NDependencyTreeNodeBuild(MavenNDependencySolver mavenNDependencySolver, NDependencyTreeNodeBuild parent,NDependency dependency, NDefinition def,int depth) {
+    public NDependencyTreeNodeBuild(MavenNDependencySolver mavenNDependencySolver, NDependencyTreeNodeBuild parent, NDependency dependency, NDefinition def, int depth) {
         this.mavenNDependencySolver = mavenNDependencySolver;
         this.dependency = dependency;
         this.parent = parent;
         this.depth = depth;
         this.def = def;
-        this.id = def != null ? def.getId() : dependency != null ? dependency.toId() : null;
+        this.id = def != null ? def.getId() : dependency.toId();
+        this.provided = (dependency.isProvided()) || (parent != null && parent.provided);
+        this.optional = (dependency.isOptional()) || (parent != null && parent.optional);
     }
 
 //    public NDependencyTreeNodeBuild(MavenNDependencySolver mavenNDependencySolver, NDependencyTreeNodeBuild parent, NDefinition def, NDependency dependency, NDependency effDependency, int depth) {
@@ -44,41 +48,60 @@ class NDependencyTreeNodeBuild {
 //        this.depth = depth;
 //    }
 
-    public void build0(){
-        if(this.def==null){
-            this.def=mavenNDependencySolver.searchOne(this.dependency);
+    public void build0() {
+        if (built) {
+            return;
         }
-        this.id = def != null ? def.getId() : dependency != null ? dependency.toId() : null;
-        if(parent==null){
-            effDependency = dependency.builder()
-                    .setVersion(def.getId().getVersion())
-                    .build();
-        }else {
-            effDependency = dependency.builder()
-                    .setScope(mavenNDependencySolver.combineScopes(parent.effDependency.getScope(), dependency.getScope()))
-                    .setVersion(def.getId().getVersion())
-                    .setProperty("provided-by", parent.id.toString())
-                    .build();
-        }
+        try {
+            if (this.def == null) {
+                this.def = mavenNDependencySolver.searchOne(this.dependency);
+            }
+            if (this.def == null) {
+                this.key = NDependencyInfo.of(this);
+                effDependency = dependency;
+                if (parent != null) {
+                    this.exclusions.addAll(parent.exclusions);
+                }
+                this.addExclusions(dependency);
+                if (optional) {
+                    return;
+                } else {
+                    throw new NIllegalArgumentException(NMsg.ofC(NI18n.of("missing non optional dependency %s"), dependency));
+                }
+            }
+            this.id = def.getId();
+            effDependency = dependency;
+            if (parent == null) {
+                effDependency = dependency.builder()
+                        .setVersion(def.getId().getVersion())
+                        .build();
+            } else {
+                effDependency = dependency.builder()
+                        .setScope(mavenNDependencySolver.combineScopes(parent.effDependency.getScope(), dependency.getScope()))
+                        .setVersion(def.getId().getVersion())
+                        .setProperty("provided-by", parent.id.toString())
+                        .build();
+            }
 //        this.id = def != null ? def.getId() : dependency != null ? dependency.toId() : null;
-        this.key = NDependencyInfo.of(this);
-        this.provided = (effDependency != null && effDependency.isProvided()) || (parent != null && parent.provided);
-        this.optional = (effDependency != null && effDependency.isOptional()) || (parent != null && parent.optional);
-        if(parent!=null) {
-            this.exclusions.addAll(parent.exclusions);
+            this.key = NDependencyInfo.of(this);
+            if (parent != null) {
+                this.exclusions.addAll(parent.exclusions);
+            }
+            this.addExclusions(dependency);
+        } finally {
+            this.built = true;
         }
-        this.addExclusions(dependency);
     }
 
     public boolean isAcceptableDependency(NDependency dependency) {
-        if(exclusions.contains(dependency.toId().getShortId())){
+        if (exclusions.contains(NDependencyInfo.normalizedId(dependency))) {
             return false;
         }
-        if(depth==0) {
+        if (depth == 0) {
             return mavenNDependencySolver.effDependencyFilter.acceptDependency(dependency, getEffectiveId());
-        }else{
+        } else {
             // in maven test dependencies are not propagated;
-            if(dependency.isAnyTest()) {
+            if (dependency.isAnyTest()) {
                 return false;
             }
             return mavenNDependencySolver.effDependencyFilter.acceptDependency(dependency, getEffectiveId());
@@ -124,16 +147,19 @@ class NDependencyTreeNodeBuild {
     }
 
     NDependencyTreeNode build() {
-        NDependencyTreeNode[] nchildren = new NDependencyTreeNode[children.size()];
-        for (int i = 0; i < nchildren.length; i++) {
-            nchildren[i] = children.get(i).build();
+        List<NDependencyTreeNode> nchildren = new ArrayList<>();
+        for (int i = 0; i < children.size(); i++) {
+            NDependencyTreeNodeBuild e = children.get(i);
+            if (e.includedInClassPath) {
+                nchildren.add(e.build());
+            }
         }
-        return new DefaultNDependencyTreeNode(effDependency, Arrays.asList(nchildren), alreadyVisited, optional, provided);
+        return new DefaultNDependencyTreeNode(effDependency, nchildren, alreadyVisited, optional, provided);
     }
 
     public void addExclusions(NDependency dependency) {
         for (NId exclusion : dependency.getExclusions()) {
-            this.exclusions.add(exclusion.getShortId());
+            this.exclusions.add(NDependencyInfo.normalizedId(exclusion));
         }
     }
 }

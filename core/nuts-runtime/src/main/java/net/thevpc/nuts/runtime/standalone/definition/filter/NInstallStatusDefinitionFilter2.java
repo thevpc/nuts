@@ -27,6 +27,9 @@
 package net.thevpc.nuts.runtime.standalone.definition.filter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
+import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NFilterOp;
 
@@ -106,10 +109,9 @@ public abstract class NInstallStatusDefinitionFilter2 extends AbstractDefinition
 
     @Override
     public boolean acceptDefinition(NDefinition definition) {
-        NInstallInformation n = definition.getInstallInformation().orNull();
-        if (n == null) {
-            return false;
-        }
+        NInstalledRepository installedRepository = NWorkspaceExt.of().getInstalledRepository();
+        //will always load install information
+        NInstallInformation n = installedRepository.getInstallInformation(definition.getId());
         NInstallStatus status = n.getInstallStatus();
         if (status == null) {
             return false;

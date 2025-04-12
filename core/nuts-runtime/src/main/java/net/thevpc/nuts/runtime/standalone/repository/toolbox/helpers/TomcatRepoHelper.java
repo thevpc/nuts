@@ -8,6 +8,7 @@ import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.repository.toolbox.ToolboxRepoHelper;
 import net.thevpc.nuts.runtime.standalone.repository.toolbox.ToolboxRepositoryModel;
+import net.thevpc.nuts.runtime.standalone.repository.util.SingleBaseIdFilterHelper;
 import net.thevpc.nuts.runtime.standalone.web.DefaultNWebCli;
 import net.thevpc.nuts.util.*;
 
@@ -19,8 +20,9 @@ import java.util.function.Function;
 
 
 public class TomcatRepoHelper implements ToolboxRepoHelper {
-    public static final String ID = "org.apache.catalina:apache-tomcat";
     public static final String HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT = "https://archive.apache.org/dist/tomcat/";
+
+    protected SingleBaseIdFilterHelper baseIdFilterHelper = new SingleBaseIdFilterHelper("org.apache.catalina:apache-tomcat");
 
     @Override
     public NIterator<NId> searchVersions(NId id, NDefinitionFilter filter, NRepository repository) {
@@ -29,12 +31,15 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
 
     @Override
     public boolean acceptId(NId id) {
-        return ID.equals(id.getShortName());
+        return baseIdFilterHelper.accept(id);
     }
 
     @Override
     public NDescriptor fetchDescriptor(NId id, NRepository repository) {
         //            String r = getUrl(id.getVersion(), ".zip.md5");
+        if (!acceptId(id)) {
+            return null;
+        }
         String r = getUrl(id.getVersion(), ".zip");
         URL url = null;
         boolean found = false;
@@ -120,11 +125,16 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
         return null;
     }
 
+
     @Override
     public NIterator<NId> search(NDefinitionFilter filter, NPath[] basePaths, NRepository repository) {
         //List<NutsId> all = new ArrayList<>();
 //        NutsWorkspace ws = session.getWorkspace();
+        if (!baseIdFilterHelper.accept(basePaths)) {
+            return null;
+        }
         NIdBuilder idBuilder = NIdBuilder.of("org.apache.catalina", "apache-tomcat");
+
         return NPath.of("htmlfs:https://archive.apache.org/dist/tomcat/")
                 .stream()
                 .filter(NPredicate.of((NPath x) -> x.isDirectory() && x.getName().matches("tomcat-[0-9.]+")).withDesc(NEDesc.of("directory && tomcat")))
@@ -191,14 +201,14 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
 
     @Override
     public NPath fetchContent(NId id, NDescriptor descriptor, NRepository repository) {
-        if ("org.apache.catalina:apache-tomcat".equals(id.getShortName())) {
-            String r = getUrl(id.getVersion(), ".zip");
-            NPath localPath = NPath.of(ToolboxRepositoryModel.getIdLocalFile(id.builder().setFaceContent().build(), repository));
-            NCp.of().from(NPath.of(r)).to(localPath)
-                    .addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();
-            return localPath;
+        if (!baseIdFilterHelper.accept(id)) {
+            return null;
         }
-        return null;
+        String r = getUrl(id.getVersion(), ".zip");
+        NPath localPath = NPath.of(ToolboxRepositoryModel.getIdLocalFile(id.builder().setFaceContent().build(), repository));
+        NCp.of().from(NPath.of(r)).to(localPath)
+                .addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();
+        return localPath;
     }
 
     private String getUrl(NVersion version, String extension) {

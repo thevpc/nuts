@@ -65,13 +65,11 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearchCmd> implements NSearchCmd {
 
-    protected final List<String> arch = new ArrayList<>();
     protected final List<NId> ids = new ArrayList<>();
     protected final List<NId> lockedIds = new ArrayList<>();
     protected final List<String> scripts = new ArrayList<>();
-    protected final List<String> packaging = new ArrayList<>();
     protected NComparator comparator;
-    protected NDefinitionFilter descriptorFilter;
+    protected NDefinitionFilter definitionFilter;
     protected boolean latest = false;
     protected boolean distinct = false;
     protected boolean includeBasePackage = true;
@@ -281,12 +279,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     }
 
     @Override
-    public NSearchCmd clearArch() {
-        this.arch.clear();
-        return this;
-    }
-
-    @Override
     public NSearchCmd addLockedIds(String... values) {
         if (values != null) {
             for (String s : values) {
@@ -318,72 +310,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     @Override
     public NSearchCmd clearLockedIds() {
         lockedIds.clear();
-        return this;
-    }
-
-    @Override
-    public NSearchCmd addArch(String value) {
-        if (!NBlankable.isBlank(value)) {
-            this.arch.add(value);
-        }
-        return this;
-    }
-
-    @Override
-    public NSearchCmd removeArch(String value) {
-        this.arch.remove(value);
-        return this;
-    }
-
-    @Override
-    public NSearchCmd addArch(Collection<String> values) {
-        if (values != null) {
-            addArch(values.toArray(new String[0]));
-        }
-        return this;
-    }
-
-    @Override
-    public NSearchCmd addArch(String... values) {
-        if (values != null) {
-            arch.addAll(Arrays.asList(values));
-        }
-        return this;
-    }
-
-    @Override
-    public NSearchCmd clearPackaging() {
-        packaging.clear();
-        return this;
-    }
-
-    @Override
-    public NSearchCmd addPackaging(Collection<String> values) {
-        if (values != null) {
-            addPackaging(values.toArray(new String[0]));
-        }
-        return this;
-    }
-
-    @Override
-    public NSearchCmd addPackaging(String... values) {
-        if (values != null) {
-            this.packaging.addAll(Arrays.asList(values));
-        }
-        return this;
-    }
-
-    @Override
-    public NSearchCmd addPackaging(String value) {
-        if (value != null) {
-            packaging.add(value);
-        }
-        return this;
-    }
-
-    @Override
-    public NSearchCmd removePackaging(String value) {
-        packaging.remove(value);
         return this;
     }
 
@@ -437,19 +363,15 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
             NSearchCmd o = other;
             this.ignoreCurrentEnvironment = o.isIgnoreCurrentEnvironment();
             this.comparator = o.getComparator();
-            this.descriptorFilter = o.getDefinitionFilter();
+            this.definitionFilter = o.getDefinitionFilter();
             this.latest = o.isLatest();
             this.distinct = (o.isDistinct());
             this.includeBasePackage = o.isBasePackage();
             this.sorted = o.isSorted();
-            this.arch.clear();
-            this.arch.addAll(o.getArch());
             this.ids.clear();
             this.ids.addAll(o.getIds());
             this.scripts.clear();
             this.scripts.addAll(o.getScripts());
-            this.packaging.clear();
-            this.packaging.addAll(o.getPackaging());
         }
         return this;
     }
@@ -492,29 +414,32 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NDefinitionFilter getDefinitionFilter() {
-        return descriptorFilter;
+        return definitionFilter;
     }
 
     @Override
     public NSearchCmd setDefinitionFilter(NDefinitionFilter filter) {
-        this.descriptorFilter = filter;
+        this.definitionFilter = filter;
         return this;
     }
+
+    @Override
+    public NSearchCmd addDefinitionFilter(NDefinitionFilter filter) {
+        if(filter!=null){
+            if(this.definitionFilter==null){
+                this.definitionFilter =filter;
+            }else{
+                this.definitionFilter.and(filter);
+            }
+        }
+        return this;
+    }
+
 
     @Override
     public NSearchCmd setDefinitionFilter(String filter) {
-        this.descriptorFilter = NDefinitionFilters.of().parse(filter);
+        this.definitionFilter = NDefinitionFilters.of().parse(filter);
         return this;
-    }
-
-    @Override
-    public List<String> getArch() {
-        return arch;
-    }
-
-    @Override
-    public List<String> getPackaging() {
-        return this.packaging;
     }
 
     @Override
@@ -522,31 +447,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
         return comparator;
     }
 
-    //    @Override
-//    public String toString() {
-//        StringBuilder sb = new StringBuilder("NutsSearch{");
-//        sb.append(getScope());
-//        if (ids.size() > 0) {
-//            sb.append(",ids=").append(ids);
-//        }
-//        if (lockedIds.size() > 0) {
-//            sb.append(",lockedIds=").append(lockedIds);
-//        }
-//        if (idFilter != null) {
-//            sb.append(",idFilter=").append(idFilter);
-//        }
-//        if (dependencyFilter != null) {
-//            sb.append(",dependencyFilter=").append(dependencyFilter);
-//        }
-//        if (repositoryFilter != null) {
-//            sb.append(",repositoryFilter=").append(repositoryFilter);
-//        }
-//        if (descriptorFilter != null) {
-//            sb.append(",descriptorFilter=").append(descriptorFilter);
-//        }
-//        sb.append('}');
-//        return sb.toString();
-//    }
     @Override
     public boolean isDistinct() {
         return distinct;
@@ -956,20 +856,23 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
                 return true;
             }
             case "--arch": {
-                cmdLine.withNextEntry((v, r) -> this.addArch(v));
+                cmdLine.withNextEntry((v, r) -> this.setDefinitionFilter(
+                        NDefinitionFilters.of().nonnull(this.getDefinitionFilter()).and(NDefinitionFilters.of().byArch(v))
+                ));
                 return true;
             }
             case "--packaging": {
-                cmdLine.withNextEntry((v, r) -> this.addPackaging(v));
+                cmdLine.withNextEntry((v, r) -> this.setDefinitionFilter(
+                        NDefinitionFilters.of().nonnull(this.getDefinitionFilter()).and(NDefinitionFilters.of().byPackaging(v))
+                ));
                 return true;
             }
-            case "--optional": {
-                NArg val = cmdLine.nextEntry().get();
-                if (enabled) {
-                    this.setOptional(val.getValue().asBoolean().orNull());
-                }
-                return true;
-            }
+//            case "--optional": {
+//                cmdLine.withNextFlag((v, r) -> this.setDefinitionFilter(
+//                        NDefinitionFilters.of().nonnull(this.getDefinitionFilter()).and(NDefinitionFilters.of().byOptional(v))
+//                ));
+//                return true;
+//            }
             case "--script": {
                 cmdLine.withNextEntry((v, r) -> this.addScripts(v));
                 return true;
@@ -1030,7 +933,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     public String toString() {
         return getClass().getSimpleName() + "{"
                 + "failFast=" + isFailFast()
-                + ", optional=" + getOptional()
                 + ", scope=" + getScope()
                 + ", content=" + isContent()
                 + ", inlineDependencies=" + isInlineDependencies()
@@ -1045,11 +947,9 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
                 + ", distinct=" + isDistinct()
                 + ", includeMain=" + isBasePackage()
                 + ", sorted=" + isSorted()
-                + ", arch=" + getArch()
                 + ", ids=" + getIds()
                 + ", lockedIds=" + getLockedIds()
                 + ", scripts=" + getScripts()
-                + ", packaging=" + getPackaging()
                 + ", defaultVersions=" + getDefaultVersions()
                 + ", execType='" + getExecType() + '\''
                 + ", targetApiVersion='" + getTargetApiVersion() + '\''

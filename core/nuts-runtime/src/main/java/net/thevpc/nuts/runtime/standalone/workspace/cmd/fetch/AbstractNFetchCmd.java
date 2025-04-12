@@ -114,7 +114,6 @@ public abstract class AbstractNFetchCmd extends DefaultNQueryBaseOptions<NFetchC
     public String toString() {
         return getClass().getSimpleName() + "{"
                 + "failFast=" + isFailFast()
-                + ", optional=" + getOptional()
                 + ", scope=" + getScope()
                 + ", content=" + isContent()
                 + ", inlineDependencies=" + isInlineDependencies()

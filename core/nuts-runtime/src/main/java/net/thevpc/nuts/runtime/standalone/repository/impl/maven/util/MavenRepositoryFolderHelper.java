@@ -102,7 +102,7 @@ public class MavenRepositoryFolderHelper {
 
     public NPath getLocalGroupAndArtifactFile(NId id) {
         CoreNIdUtils.checkShortId(id);
-        return getStoreLocation().resolve(ExtraApiUtils.resolveIdPath(id.getShortId()));
+        return getStoreLocation().resolve(id.getShortId().getMavenFolder());
     }
 
     public Iterator<NId> searchVersions(NId id, final NDefinitionFilter filter, boolean deep) {

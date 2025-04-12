@@ -130,9 +130,14 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
 
     public boolean isEffectiveOmitRoot() {
         NTreeModel tree = getModel();
-        return isOmitRoot()
-                || (omitEmptyRoot
-                && (tree.getRoot() == null || tree.getRoot().toString().isEmpty()));
+        if (isOmitRoot()) {
+            return true;
+        }
+        if (omitEmptyRoot) {
+            Object root = tree.getRoot();
+            return root == null || root.toString().isEmpty();
+        }
+        return false;
     }
 
     public boolean isOmitRoot() {
@@ -175,11 +180,11 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
             out.flush();
             prefixNewLine = true;
         }
-        List<Object> children = tree.getChildren(o);
+        List<?> children = tree.getChildren(o);
         if (children == null) {
             children = Collections.EMPTY_LIST;
         }
-        Iterator<Object> childrenIter = children.iterator();
+        Iterator<?> childrenIter = children.iterator();
         Object last = null;
         if (childrenIter.hasNext()) {
             last = childrenIter.next();

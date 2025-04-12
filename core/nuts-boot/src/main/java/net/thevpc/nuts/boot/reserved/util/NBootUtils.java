@@ -899,10 +899,6 @@ public final class NBootUtils {
             return;
         }
         switch (key) {
-            case NBootConstants.IdProperties.CLASSIFIER: {
-                builder.setClassifier(value);
-                break;
-            }
             case NBootConstants.IdProperties.PROFILE: {
                 sb.setProfile(splitDefault(value));
                 break;

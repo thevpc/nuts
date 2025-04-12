@@ -259,8 +259,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     private NDependencyFilter buildActualDependencyFilter() {
         NDependencyFilters ff = NDependencyFilters.of();
         return ff.byScope(getScope())
-                .and(ff.byOptional(getOptional())
-                ).and(getDependencyFilter());
+                .and(getDependencyFilter());
     }
 
 //    protected NPath fetchContent(NId id1, NDefinitionBuilder foundDefinition, NRepository repo0, NFetchStrategy nutsFetchModes, List<Exception> reasons) {

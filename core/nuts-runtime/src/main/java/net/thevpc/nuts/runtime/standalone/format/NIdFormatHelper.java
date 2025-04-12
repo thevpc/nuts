@@ -598,8 +598,8 @@ public class NIdFormatHelper {
                     this.defFetched = NFetchCmd.of(id)
                             .setFetchStrategy(NFetchStrategy.OFFLINE)
                             .setContent(true)
-                            .setOptional(false)
                             .setDependencies(this.checkDependencies)
+                            .setDependencyFilter(NDependencyFilters.of().byOptional(false))
                             .getResultDefinition();
                     this.fetched = true;
                 } else {

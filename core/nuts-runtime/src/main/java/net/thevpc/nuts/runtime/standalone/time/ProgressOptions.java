@@ -3,23 +3,19 @@ package net.thevpc.nuts.runtime.standalone.time;
 import net.thevpc.nuts.*;
 
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NRef;
-import net.thevpc.nuts.util.NStringMapFormat;
+import net.thevpc.nuts.util.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
 public class ProgressOptions {
-    public static NStringMapFormat COMMAS_FORMAT = NStringMapFormat.of("=", ",;", "", true, null, null);
 
     public static ProgressOptions of() {
         return NApp.of().getOrComputeProperty(ProgressOptions.class.getName(), NScopeType.SESSION, () -> {
             ProgressOptions o = new ProgressOptions();
             boolean enabledVisited = false;
-            Map<String, String> m = COMMAS_FORMAT.parse(NSession.of().getProgressOptions()).get();
+            Map<String, String> m = NStringMapFormat.COMMA_FORMAT.parse(NSession.of().getProgressOptions()).get();
             for (Map.Entry<String, String> e : m.entrySet()) {
                 String k = e.getKey();
                 String v = e.getValue();

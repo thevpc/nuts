@@ -51,8 +51,6 @@ public class NFetchDisplayOptions {
         this.idFormat.setOmitOtherProperties(true);
         this.idFormat.setOmitFace(true);
         this.idFormat.setOmitRepository(true);
-//        this.idFormat.setOmitAlternative(false);
-        this.idFormat.setOmitClassifier(false);
         this.idFormat.setOmitGroupId(false);
         this.idFormat.setOmitImportedGroupId(false);
     }

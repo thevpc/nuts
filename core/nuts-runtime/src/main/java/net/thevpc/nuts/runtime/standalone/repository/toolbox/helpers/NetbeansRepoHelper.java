@@ -6,13 +6,14 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.runtime.standalone.repository.toolbox.ToolboxRepoHelper;
 import net.thevpc.nuts.runtime.standalone.repository.toolbox.ToolboxRepositoryModel;
+import net.thevpc.nuts.runtime.standalone.repository.util.SingleBaseIdFilterHelper;
 import net.thevpc.nuts.util.*;
 
 import java.util.Arrays;
 
 
 public class NetbeansRepoHelper implements ToolboxRepoHelper {
-    public static final String ID = "org.apache.netbeans:netbeans";
+    protected SingleBaseIdFilterHelper baseIdFilterHelper = new SingleBaseIdFilterHelper("org.apache.netbeans:netbeans");
 
     @Override
     public NIterator<NId> searchVersions(NId id, NDefinitionFilter filter, NRepository repository) {
@@ -21,12 +22,15 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
 
     @Override
     public boolean acceptId(NId id) {
-        return ID.equals(id.getShortName());
+        return baseIdFilterHelper.accept(id);
     }
 
     @Override
     public NDescriptor fetchDescriptor(NId id, NRepository repository) {
         //            String r = getUrl(id.getVersion(), ".zip.md5");
+        if(!baseIdFilterHelper.accept(id)){
+            return null;
+        }
         String r = getUrl(id.getVersion());
         if (r == null) {
             return null;
@@ -79,6 +83,9 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
 
     @Override
     public NIterator<NId> search(NDefinitionFilter filter, NPath[] basePaths, NRepository repository) {
+        if(!baseIdFilterHelper.accept(basePaths)){
+            return null;
+        }
         //List<NutsId> all = new ArrayList<>();
 //        NutsWorkspace ws = session.getWorkspace();
         NIdBuilder idBuilder = NIdBuilder.of("org.apache.netbeans", "netbeans");
@@ -109,14 +116,14 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
 
     @Override
     public NPath fetchContent(NId id, NDescriptor descriptor, NRepository repository) {
-        if (ID.equals(id.getShortName())) {
-            String r = getUrl(id.getVersion());
-            NPath localPath = NPath.of(ToolboxRepositoryModel.getIdLocalFile(id.builder().setFaceContent().build(), repository));
-            NCp.of().from(NPath.of(r)).to(localPath)
-                    .addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();
-            return localPath;
+        if(!baseIdFilterHelper.accept(id)){
+            return null;
         }
-        return null;
+        String r = getUrl(id.getVersion());
+        NPath localPath = NPath.of(ToolboxRepositoryModel.getIdLocalFile(id.builder().setFaceContent().build(), repository));
+        NCp.of().from(NPath.of(r)).to(localPath)
+                .addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();
+        return localPath;
     }
 
     private String getUrl(NVersion version) {

@@ -2,6 +2,7 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringMapFormat;
+import net.thevpc.nuts.util.NStringMapFormatBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public class Test42_NStringMapFormat {
 
     @Test
     public void test01() {
-        NStringMapFormat t = NStringMapFormat.of("=", null, null, false, null, null);
+        NStringMapFormat t = NStringMapFormatBuilder.of().setEqualsChars("=").setQuoteSupported(true).build();
         NOptional<Map<String, List<String>>> u = t.parseDuplicates("src=\"https://protos-erp.com/assets/crm/protos-banner-fr.png\"\n" +
                 "        tf=\"p\" tn=\"banner-fr.png\" trackerSecretEmail=\"${email}\" tsc=\"${company}\"\n" +
                 "        alt=\"Banner 2024\" style=\"outline:none;text-decoration:none;border:none;max-width:100%;font-size:16px;border-radius: 25px;\" width=\"560\" align=\"middle\"/");

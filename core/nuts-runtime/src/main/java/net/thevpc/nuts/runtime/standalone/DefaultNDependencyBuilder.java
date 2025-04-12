@@ -230,9 +230,6 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
         if (!NBlankable.isBlank(optional) && !"false".equals(optional)) {
             m.put(NConstants.IdProperties.OPTIONAL, optional);
         }
-        if (!NBlankable.isBlank(classifier)) {
-            m.put(NConstants.IdProperties.CLASSIFIER, classifier);
-        }
         if (!NBlankable.isBlank(type)) {
             m.put(NConstants.IdProperties.TYPE, type);
         }
@@ -242,6 +239,7 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
         return NIdBuilder.of()
                 .setRepository(getRepository())
                 .setGroupId(getGroupId())
+                .setClassifier(getClassifier())
                 .setArtifactId(getArtifactId())
                 .setVersion(getVersion())
                 .setCondition(getCondition())
@@ -360,10 +358,6 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
                     setOptional(value);
                     break;
                 }
-                case NConstants.IdProperties.CLASSIFIER: {
-                    setClassifier(value);
-                    break;
-                }
                 case NConstants.IdProperties.REPO: {
                     setRepository(value);
                     break;
@@ -469,6 +463,12 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
         return this;
     }
 
+    @Override
+    public NDependencyBuilder removeCondition() {
+        this.condition.clear();
+        return this;
+    }
+
     public NDependencyBuilder setExclusions(String exclusions) {
         if (exclusions == null) {
             exclusions = "";
@@ -500,13 +500,13 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
     }
 
     @Override
-    public String getSimpleName() {
-        return NReservedUtils.getIdShortName(groupId, artifactId);
+    public String getShortName() {
+        return NReservedUtils.getIdShortName(groupId,artifactId, classifier);
     }
 
     @Override
     public String getLongName() {
-        return NReservedUtils.getIdLongName(groupId, artifactId, version, classifier);
+        return NReservedUtils.getIdLongName(groupId,artifactId, version, classifier);
     }
 
     public int getSupportLevel(NSupportLevelContext context) {

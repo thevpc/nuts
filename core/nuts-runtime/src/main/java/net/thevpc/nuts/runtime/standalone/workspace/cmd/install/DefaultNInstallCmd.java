@@ -95,9 +95,8 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
                     .setDependencies(includeDeps)
                     .failFast()
                     //
-                    .setOptional(false)
                     .addScope(NDependencyScopePattern.RUN)
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                    .setDependencyFilter(NDependencyFilters.of().byRunnable(false))
                     //
                     .getResultDefinition();
         } catch (NNotFoundException ee) {

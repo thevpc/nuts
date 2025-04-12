@@ -11,11 +11,11 @@ class NDependencyInfoSet {
     Map<NId, NDependencyInfo> visitedSet = new LinkedHashMap<>();
 
     public boolean isVisited(NDependency other) {
-        return visitedSet.containsKey(other.toId().getShortId());
+        return visitedSet.containsKey(NDependencyInfo.normalizedId(other));
     }
 
     public NDependencyInfo find(NDependency other) {
-        return visitedSet.get(other.toId().getShortId());
+        return visitedSet.get(NDependencyInfo.normalizedId(other));
     }
 
     public boolean contains(NDependencyInfo newDep) {

@@ -38,8 +38,6 @@ import java.util.*;
  * Created by vpc on 1/5/17.
  */
 public class DefaultNDependency implements NDependency {
-    private static NStringMapFormat COMMA_MAP = NStringMapFormat.COMMA_FORMAT.builder().setEscapeChars("&").build();
-
     public static final long serialVersionUID = 1L;
     private final String repository;
     private final String groupId;
@@ -242,14 +240,15 @@ public class DefaultNDependency implements NDependency {
     }
 
     @Override
-    public String getSimpleName() {
-        return NReservedUtils.getIdShortName(groupId, artifactId);
+    public String getShortName() {
+        return NReservedUtils.getIdShortName(groupId,artifactId, classifier);
     }
 
     @Override
     public String getLongName() {
-        return NReservedUtils.getIdLongName(groupId, artifactId, version, classifier);
+        return NReservedUtils.getIdLongName(groupId,artifactId, version, classifier);
     }
+
 
     @Override
     public String getFullName() {
@@ -301,68 +300,6 @@ public class DefaultNDependency implements NDependency {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        if (!NBlankable.isBlank(groupId)) {
-            sb.append(groupId).append(":");
-        }
-        sb.append(artifactId);
-        if (!NBlankable.isBlank(version.getValue())) {
-            sb.append("#").append(version);
-        }
-        Map<String, String> p = new HashMap<>();
-        if (!NBlankable.isBlank(classifier)) {
-            p.put(NConstants.IdProperties.CLASSIFIER, classifier);
-        }
-        if (!NBlankable.isBlank(repository)) {
-            p.put(NConstants.IdProperties.REPO, repository);
-        }
-        if (!NBlankable.isBlank(scope)) {
-            if (!scope.equals(NDependencyScope.API.id())) {
-                p.put(NConstants.IdProperties.SCOPE, scope);
-            }
-        }
-        if (!NBlankable.isBlank(optional)) {
-            if (!optional.equals("false")) {
-                p.put(NConstants.IdProperties.OPTIONAL, optional);
-            }
-        }
-        if (!NBlankable.isBlank(type)) {
-            p.put(NConstants.IdProperties.TYPE, type);
-        }
-        if (condition != null && !condition.isBlank()) {
-            if (condition.getOs().size() > 0) {
-                p.put(NConstants.IdProperties.OS, String.join(",", condition.getOs()));
-            }
-            if (condition.getOsDist().size() > 0) {
-                p.put(NConstants.IdProperties.OS_DIST, String.join(",", condition.getOsDist()));
-            }
-            if (condition.getDesktopEnvironment().size() > 0) {
-                p.put(NConstants.IdProperties.DESKTOP, String.join(",", condition.getDesktopEnvironment()));
-            }
-            if (condition.getArch().size() > 0) {
-                p.put(NConstants.IdProperties.ARCH, String.join(",", condition.getArch()));
-            }
-            if (condition.getPlatform().size() > 0) {
-                p.put(NConstants.IdProperties.PLATFORM, NReservedUtils.formatStringIdList(condition.getPlatform()));
-            }
-            if (condition.getProfiles().size() > 0) {
-                p.put(NConstants.IdProperties.PROFILE, String.join(",", condition.getProfiles()));
-            }
-            if (!condition.getProperties().isEmpty()) {
-                p.put(NConstants.IdProperties.CONDITIONAL_PROPERTIES,
-                        COMMA_MAP.format(condition.getProperties())
-                );
-            }
-        }
-        if (exclusions.size() > 0) {
-            p.put(NConstants.IdProperties.EXCLUSIONS,
-                    NReservedUtils.toDependencyExclusionListString(exclusions)
-            );
-        }
-        if (!p.isEmpty()) {
-            sb.append("?");
-            sb.append(NStringMapFormat.DEFAULT.format(p));
-        }
-        return sb.toString();
+        return toId().toString();
     }
 }

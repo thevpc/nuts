@@ -118,27 +118,44 @@ public final class NReservedUtils {
     }
 
 
-    public static String getIdShortName(String groupId, String artifactId) {
-        if (NBlankable.isBlank(groupId)) {
-            return NStringUtils.trim(artifactId);
+    public static String getIdShortName(String groupId, String artifactId, String classifier) {
+        StringBuilder sb = new StringBuilder();
+        if (NBlankable.isBlank(classifier)) {
+            if (!NBlankable.isBlank(groupId)) {
+                sb.append(groupId).append(":");
+            }
+            sb.append(NStringUtils.trim(artifactId));
+        }else{
+            if (!NBlankable.isBlank(groupId)) {
+                sb.append(groupId);
+            }
+            sb.append(":");
+            sb.append(NStringUtils.trim(artifactId));
+            sb.append(":");
+            sb.append(classifier);
         }
-        return NStringUtils.trim(groupId) + ":" + NStringUtils.trim(artifactId);
+        return sb.toString();
     }
 
     public static String getIdLongName(String groupId, String artifactId, NVersion version, String classifier) {
         StringBuilder sb = new StringBuilder();
-        if (!NBlankable.isBlank(groupId)) {
-            sb.append(groupId).append(":");
+        if (NBlankable.isBlank(classifier)) {
+            if (!NBlankable.isBlank(groupId)) {
+                sb.append(groupId).append(":");
+            }
+            sb.append(NStringUtils.trim(artifactId));
+        }else{
+            if (!NBlankable.isBlank(groupId)) {
+                sb.append(groupId);
+            }
+            sb.append(":");
+            sb.append(NStringUtils.trim(artifactId));
+            sb.append(":");
+            sb.append(classifier);
         }
-        sb.append(NStringUtils.trim(artifactId));
-        if (version != null && !version.isBlank()) {
+        if (!NBlankable.isBlank(version)) {
             sb.append("#");
             sb.append(version);
-        }
-        if (!NBlankable.isBlank(classifier)) {
-            sb.append("?");
-            sb.append("classifier=");
-            sb.append(classifier);
         }
         return sb.toString();
     }
@@ -255,19 +272,20 @@ public final class NReservedUtils {
         if (m.find()) {
             String group = m.group("group");
             String artifact = m.group("artifact");
+            String classifier = m.group("classifier");
             String version = m.group("version");
+            String query = m.group("query");
             if (artifact == null) {
                 artifact = group;
                 group = null;
             }
-            String classifier = null;
             LinkedHashSet<String> condArch = new LinkedHashSet<>();
             LinkedHashSet<String> condOs = new LinkedHashSet<>();
             LinkedHashSet<String> condDist = new LinkedHashSet<>();
             LinkedHashSet<String> condPlatform = new LinkedHashSet<>();
             LinkedHashSet<String> condDE = new LinkedHashSet<>();
             List<String> condProfiles = new ArrayList<>();
-            Map<String, String> queryMap = NStringMapFormat.DEFAULT.parse(m.group("query")).get();
+            Map<String, String> queryMap = NStringMapFormat.DEFAULT.parse(query).get();
 
             Map<String, String> idProperties = new LinkedHashMap<>();
             Map<String, String> condProperties = new LinkedHashMap<>();
@@ -314,8 +332,8 @@ public final class NReservedUtils {
                 }
             }
             return NOptional.of(new DefaultNId(
-                    group, artifact, NVersion.of(version),
-                    classifier, idProperties, new DefaultNEnvCondition(
+                    group, artifact, classifier, NVersion.of(version),
+                    idProperties, new DefaultNEnvCondition(
                     new ArrayList<>(condArch), new ArrayList<>(condOs), new ArrayList<>(condDist), new ArrayList<>(condPlatform), new ArrayList<>(condDE),
                     new ArrayList<>(condProfiles), condProperties
             )

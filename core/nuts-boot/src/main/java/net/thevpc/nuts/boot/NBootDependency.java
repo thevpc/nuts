@@ -194,9 +194,6 @@ public class NBootDependency {
         if (!NBootUtils.isBlank(optional) && !"false".equals(optional)) {
             m.put(NBootConstants.IdProperties.OPTIONAL, optional);
         }
-        if (!NBootUtils.isBlank(classifier)) {
-            m.put(NBootConstants.IdProperties.CLASSIFIER, classifier);
-        }
         if (!NBootUtils.isBlank(type)) {
             m.put(NBootConstants.IdProperties.TYPE, type);
         }
@@ -207,6 +204,7 @@ public class NBootDependency {
                 .setRepository(getRepository())
                 .setGroupId(getGroupId())
                 .setArtifactId(getArtifactId())
+                .setClassifier(getClassifier())
                 .setVersion(getVersion())
                 .setCondition(getCondition())
                 .setProperties(m)
@@ -315,10 +313,6 @@ public class NBootDependency {
                 }
                 case NBootConstants.IdProperties.OPTIONAL: {
                     setOptional(value);
-                    break;
-                }
-                case NBootConstants.IdProperties.CLASSIFIER: {
-                    setClassifier(value);
                     break;
                 }
                 case NBootConstants.IdProperties.REPO: {
@@ -436,69 +430,7 @@ public class NBootDependency {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        if (!NBootUtils.isBlank(groupId)) {
-            sb.append(groupId).append(":");
-        }
-        sb.append(artifactId);
-        if (!NBootUtils.isBlank(version)) {
-            sb.append("#").append(version);
-        }
-        Map<String, String> p = new HashMap<>();
-        if (!NBootUtils.isBlank(classifier)) {
-            p.put(NBootConstants.IdProperties.CLASSIFIER, classifier);
-        }
-        if (!NBootUtils.isBlank(repository)) {
-            p.put(NBootConstants.IdProperties.REPO, repository);
-        }
-        if (!NBootUtils.isBlank(scope)) {
-            if (!scope.equals("api")) {
-                p.put(NBootConstants.IdProperties.SCOPE, scope);
-            }
-        }
-        if (!NBootUtils.isBlank(optional)) {
-            if (!optional.equals("false")) {
-                p.put(NBootConstants.IdProperties.OPTIONAL, optional);
-            }
-        }
-        if (!NBootUtils.isBlank(type)) {
-            p.put(NBootConstants.IdProperties.TYPE, type);
-        }
-        if (condition != null && !condition.isBlank()) {
-            if (condition.getOs().size() > 0) {
-                p.put(NBootConstants.IdProperties.OS, String.join(",", condition.getOs()));
-            }
-            if (condition.getOsDist().size() > 0) {
-                p.put(NBootConstants.IdProperties.OS_DIST, String.join(",", condition.getOsDist()));
-            }
-            if (condition.getDesktopEnvironment().size() > 0) {
-                p.put(NBootConstants.IdProperties.DESKTOP, String.join(",", condition.getDesktopEnvironment()));
-            }
-            if (condition.getArch().size() > 0) {
-                p.put(NBootConstants.IdProperties.ARCH, String.join(",", condition.getArch()));
-            }
-            if (condition.getPlatform().size() > 0) {
-                p.put(NBootConstants.IdProperties.PLATFORM, NBootUtils.formatStringIdList(condition.getPlatform()));
-            }
-            if (condition.getProfiles().size() > 0) {
-                p.put(NBootConstants.IdProperties.PROFILE, String.join(",", condition.getProfiles()));
-            }
-            if (!condition.getProperties().isEmpty()) {
-                p.put(NBootConstants.IdProperties.CONDITIONAL_PROPERTIES,
-                        COMMA_MAP.format(condition.getProperties())
-                );
-            }
-        }
-        if (exclusions.size() > 0) {
-            p.put(NBootConstants.IdProperties.EXCLUSIONS,
-                    NBootUtils.toDependencyExclusionListString(exclusions)
-            );
-        }
-        if (!p.isEmpty()) {
-            sb.append("?");
-            sb.append(NBootStringMapFormat.DEFAULT.format(p));
-        }
-        return sb.toString();
+        return toId().toString();
     }
 
     public String getSimpleName() {

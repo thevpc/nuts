@@ -37,7 +37,7 @@ public class NPatternIdFilter extends AbstractIdFilter implements NIdFilter {
     public NPatternIdFilter(NId id) {
         super(NFilterOp.CUSTOM);
         this.id = id;
-        this.wildcard = containsWildcad(id.toString());
+        this.wildcard = containsWildcard(id.toString());
         g = GlobUtils.ofExact(id.getGroupId());
         n = GlobUtils.ofExact(id.getArtifactId());
         v = id.getVersion().filter();
@@ -185,9 +185,31 @@ public class NPatternIdFilter extends AbstractIdFilter implements NIdFilter {
         return id.toString();
     }
 
-    public static boolean containsWildcad(String id) {
-        return id.indexOf('*') >= 0 // ||id.indexOf('|')>=0
-                ;
+    public static boolean containsWildcard(NVersion version) {
+        if(NBlankable.isBlank(version)) {
+            return false;
+        }
+        return containsWildcardString(version.toString());
+    }
+
+    public static boolean containsWildcard(String id) {
+        if(NBlankable.isBlank(id)) {
+            return false;
+        }
+        NId nId = NId.of(id);
+        if(containsWildcardString(nId.getArtifactId())){
+            return true;
+        }
+        if(containsWildcardString(nId.getGroupId())){
+            return true;
+        }
+        if(containsWildcard(nId.getVersion())){
+            return true;
+        }
+        return id.indexOf('*') >= 0;
+    }
+    private static boolean containsWildcardString(String id) {
+        return !NBlankable.isBlank(id) && id.indexOf('*') >= 0;
     }
 
     @Override
