@@ -26,8 +26,7 @@ public class Test05_FindTest {
     public void find1() throws Exception {
         List<NId> def = NSearchCmd.of().addId("nuts").setLatest(true).setFailFast(false)
 //                .repository("maven-local")
-                .setDefaultVersions(true)
-                .setDefinitionFilter(NDefinitionFilters.of().byDeployed(true))
+                .setDefinitionFilter(NDefinitionFilters.of().byDeployed(true).and(NDefinitionFilters.of().byDefaultVersion(true)))
                 .getResultIds().toList();
 
         TestUtils.println(def);

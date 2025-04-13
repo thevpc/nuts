@@ -718,7 +718,8 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
         if (NConstants.Ids.NUTS_APP_ARTIFACT_ID.equals(nid.getShortName())) {
             nid = nid.builder().setGroupId(NConstants.Ids.NUTS_GROUP_ID).build();
         }
-        NId ff = NSearchCmd.of().addId(nid).setDependencyFilter(NDependencyFilters.of().byRunnable()).setLatest(true).setFailFast(false)
+        NSession.of().getTerminal().printProgress(NMsg.ofC("start searching for %s",nid));
+        NId ff = NSearchCmd.of(nid).setDependencyFilter(NDependencyFilters.of().byRunnable()).setLatest(true).setFailFast(false)
                 .setDefinitionFilter(NDefinitionFilters.of().byDeployed(true))
                 .getResultDefinitions().stream()
                 .sorted(Comparator.comparing(x -> !x.getInstallInformation().get().isDefaultVersion())) // default first

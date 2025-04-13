@@ -7,7 +7,6 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.bundle;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NDescriptorFormat;
-import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
@@ -41,6 +40,8 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         String withTarget = null;
         String withFormat = null;
         boolean withClean = false;
+        boolean embedded = false;
+        boolean verbose = false;
     }
 
     private class ResultingIds {
@@ -84,6 +85,33 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
             return this;
         }
 
+        private ResultingIds addBomId(NId id) {
+            if (!NBlankable.isBlank(id)) {
+                if (classPath.containsKey(id.getLongId())) {
+                    return this;
+                }
+                NDefinition imdef = NFetchCmd.of(id).getResultDefinition();
+                if (!classPath.containsKey(imdef.getId().getLongId())) {
+                    NId resultId = imdef.getId();
+                    if (imdef.getDescriptor().isPlatformApplication() || imdef.getDescriptor().isNutsApplication()) {
+                        if (isBaseId(resultId)) {
+                            executableAppIds.add(resultId);
+                        }
+                    }
+                    classPath.put(resultId.getLongId(), imdef);
+                }
+                for (NId parent : imdef.getDescriptor().getParents()) {
+                    add(parent);
+                }
+                for (NDependency standardDependency : imdef.getEffectiveDescriptor().get().getStandardDependencies()) {
+                    if (NDependencyScope.parse(standardDependency.getScope()).orElse(NDependencyScope.API) == NDependencyScope.IMPORT) {
+                        addBomId(standardDependency.toId());
+                    }
+                }
+            }
+            return this;
+        }
+
         public ResultingIds add(NId id) {
             if (!NBlankable.isBlank(id)) {
                 if (classPath.containsKey(id.getLongId())) {
@@ -96,7 +124,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                         .setDistinct(true)
                         .setDependencyFilter(
                                 NDependencyFilters.of().byScope(NDependencyScopePattern.RUN, NDependencyScopePattern.COMPILE)
-                                .and(NDependencyFilters.of().byRegularType())
+                                        .and(NDependencyFilters.of().byRegularType())
                         )
                         .setInlineDependencies(true)
                         .setIgnoreCurrentEnvironment(true)
@@ -123,6 +151,11 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     }
                     for (NId parent : def.getDescriptor().getParents()) {
                         add(parent);
+                    }
+                    for (NDependency standardDependency : def.getEffectiveDescriptor().get().getStandardDependencies()) {
+                        if (NDependencyScope.parse(standardDependency.getScope()).orElse(NDependencyScope.API) == NDependencyScope.IMPORT) {
+                            addBomId(standardDependency.toId());
+                        }
                     }
                 }
             }
@@ -413,7 +446,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
             nuts_bundle_files_config.install("/.nuts-repository", repo + "/.nuts-repository");
             for (NId executableAppId : resultingIds.executableAppIds) {
                 NTrace.println(NMsg.ofC(NI18n.of("building executable script for %s"), executableAppId));
-                createAppScripts(executableAppId, resultingIds.findNutsAppId(), bundleFolder, nuts_bundle_files_config);
+                createAppScripts(executableAppId, resultingIds.findNutsAppId(), bundleFolder, nuts_bundle_files_config, boptions);
             }
             rootFolder.resolve("META-INF/nuts-bundle-files.config").writeString(nuts_bundle_files_config.toString());
         }
@@ -565,6 +598,14 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                         });
                         break;
                     }
+                    case "--embedded": {
+                        cmdLine.withNextFlag((v, ar) -> boptions.embedded = v);
+                        break;
+                    }
+                    case "--verbose": {
+                        cmdLine.withNextFlag((v, ar) -> boptions.verbose = v);
+                        break;
+                    }
                     case "--clean": {
                         cmdLine.withNextFlag((v, ar) -> boptions.withClean = (v));
                         break;
@@ -586,7 +627,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         return mainIdStr.getArtifactId();
     }
 
-    private void createAppScripts(NId mainIdStr, NId nutsId, NPath bundleFolder, NutsBundleFilesConfig nuts_bundle_files_config) {
+    private void createAppScripts(NId mainIdStr, NId nutsId, NPath bundleFolder, NutsBundleFilesConfig nuts_bundle_files_config, BOptions options) {
         if (mainIdStr == null) {
             return;
         }
@@ -594,87 +635,102 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
 //        if(!mainIdStr.getVersion().isBlank()) {
 //            appName = appName + "-" + mainIdStr.getVersion();
 //        }
-        createPosixScript(mainIdStr, nutsId, appName, bundleFolder, nuts_bundle_files_config);
-        createWindowsScript(mainIdStr, nutsId, appName, bundleFolder, nuts_bundle_files_config);
+        createPosixScript(mainIdStr, nutsId, appName, bundleFolder, nuts_bundle_files_config, options);
+        createWindowsScript(mainIdStr, nutsId, appName, bundleFolder, nuts_bundle_files_config, options);
     }
 
-    private void createPosixScript(NId mainIdStr, NId nutsId, String appName, NPath bundleFolder, NutsBundleFilesConfig nuts_bundle_files_config) {
+    private void createPosixScript(NId mainIdStr, NId nutsId, String appName, NPath bundleFolder, NutsBundleFilesConfig nuts_bundle_files_config, BOptions options) {
         // create posix runner
-        bundleFolder.resolve(appName + "-posix-runner.sh").writeString(
-                new NStringBuilder()
-                        .println("#!/bin/sh")
-                        .println("#-------------------------------------")
-                        .println("# Nuts Bundle Launcher Script " + NWorkspace.of().getRuntimeId().getVersion())
-                        .println("# This bundle was created for " + mainIdStr.getShortName())
-                        .println("# (c) 2025 thevpc")
-                        .println("#-------------------------------------")
-                        .println("")
-                        .println("# resolve current script path")
-                        .println("NS_SCRIPT_PATH=\"${BASH_SOURCE[0]:-${(%):-%x}}\"")
-                        .println("NS_SCRIPT_DIR=\"$(cd -- \"$(dirname -- \"$N_SCRIPT_PATH\")\" && pwd)\"")
-                        .println("NS_WS_JAR=\"$NS_SCRIPT_DIR/.nuts-bundle/lib/" + nutsId.getMavenPath("jar") + "\"")
-                        .println("NS_JAVA_OPTIONS=\"\"")
-                        .println("")
-                        .println("# resolve workspace options")
-                        .println("NS_WS_OPTIONS=\"--repo==$NS_SCRIPT_DIR/.nuts-bundle/lib -w=$NS_SCRIPT_DIR/.nuts-bundle/ws\"")
-                        .println("# add workspace isolation options")
-                        .println("NS_WS_OPTIONS=\"$NS_WS_OPTIONS ---m2=false --desktop-launcher=unsupported --menu-launcher=unsupported --user-launcher=unsupported --!switch --!init-platforms --!init-scripts --!init-launchers --!install-companions\"")
-                        .println("# add other options like ...")
-                        .println("#  --verbose : for more logging")
-                        .println("#  -Zy       : to reset the whole workspace")
-                        .println("# NS_WS_OPTIONS=\"$NS_WS_OPTIONS --verbose\"")
-                        .println("# NS_WS_OPTIONS=\"$NS_WS_OPTIONS --embedded\"")
-                        .println("#")
-                        .println("# add other JVM options like for debug mode")
-                        .println("# NS_JAVA_OPTIONS=\"$NS_JAVA_OPTIONS -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005\"")
-                        .println("")
+        NStringBuilder out = new NStringBuilder()
+                .println("#!/bin/sh")
+                .println("#-------------------------------------")
+                .println("# Nuts Bundle Launcher Script " + NWorkspace.of().getRuntimeId().getVersion())
+                .println("# This bundle was created for " + mainIdStr.getShortName())
+                .println("# (c) 2025 thevpc")
+                .println("#-------------------------------------")
+                .println("")
+                .println("# resolve current script path")
+                .println("NS_SCRIPT_PATH=\"${BASH_SOURCE[0]:-${(%):-%x}}\"")
+                .println("NS_SCRIPT_DIR=\"$(cd -- \"$(dirname -- \"$N_SCRIPT_PATH\")\" && pwd)\"")
+                .println("NS_WS_JAR=\"$NS_SCRIPT_DIR/.nuts-bundle/lib/" + nutsId.getMavenPath("jar") + "\"")
+                .println("NS_JAVA_OPTIONS=\"\"")
+                .println("")
+                .println("# resolve workspace options")
+                .println("NS_WS_OPTIONS=\"--repo==$NS_SCRIPT_DIR/.nuts-bundle/lib -w=$NS_SCRIPT_DIR/.nuts-bundle/ws\"")
+                .println("# add workspace isolation options")
+                .println("NS_WS_OPTIONS=\"$NS_WS_OPTIONS ---m2=false --desktop-launcher=unsupported --menu-launcher=unsupported --user-launcher=unsupported --!switch --!init-platforms --!init-scripts --!init-launchers --!install-companions\"")
+                .println("# add other options like ...")
+                .println("#  --verbose : for more logging")
+                .println("#  -Zy       : to reset the whole workspace");
 
-                        .println("java $NS_JAVA_OPTIONS -jar \"$NS_WS_JAR\" $NS_WS_OPTIONS " +
-                                (NConstants.Ids.NUTS_APP.equals(mainIdStr.getShortName()) ? "" : ("\"" + mainIdStr + "\""))
-                                + " \"$@\"")
-                        .build()
-        );
+        if (options.verbose) {
+            out.println("NS_WS_OPTIONS=\"$NS_WS_OPTIONS --verbose\"");
+        } else {
+            out.println("# NS_WS_OPTIONS=\"$NS_WS_OPTIONS --verbose\"");
+        }
+        if (options.embedded) {
+            out.println("NS_WS_OPTIONS=\"$NS_WS_OPTIONS --embedded\"");
+        } else {
+            out.println("# NS_WS_OPTIONS=\"$NS_WS_OPTIONS --embedded\"");
+        }
+        out.println("#")
+                .println("# add other JVM options like for debug mode")
+                .println("# NS_JAVA_OPTIONS=\"$NS_JAVA_OPTIONS -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005\"")
+                .println("")
+
+                .println("java $NS_JAVA_OPTIONS -jar \"$NS_WS_JAR\" $NS_WS_OPTIONS " +
+                        (NConstants.Ids.NUTS_APP.equals(mainIdStr.getShortName()) ? "" : ("\"" + mainIdStr + "\""))
+                        + " \"$@\"");
+        bundleFolder.resolve(appName + "-posix-runner.sh").writeString(out.build());
         nuts_bundle_files_config.installPosixExecutable(
                 "/" + appName + "-posix-runner.sh",
                 "${target}/" + appName /*+ ".sh"*/ // no need for bat extension
         );
     }
 
-    private void createWindowsScript(NId mainIdStr, NId nutsId, String appName, NPath bundleFolder, NutsBundleFilesConfig nuts_bundle_files_config) {
+    private void createWindowsScript(NId mainIdStr, NId nutsId, String appName, NPath bundleFolder, NutsBundleFilesConfig nuts_bundle_files_config, BOptions options) {
         // create windows runner
-        bundleFolder.resolve(appName + "-windows-runner.bat").writeString(
-                new NStringBuilder()
-                        .println("::-------------------------------------")
-                        .println(":: Nuts Bundle Launcher Script " + NWorkspace.of().getRuntimeId().getVersion())
-                        .println(":: This bundle was created for " + mainIdStr.getShortName())
-                        .println(":: (c) 2025 thevpc")
-                        .println("::-------------------------------------")
-                        .println("")
-                        .println("@echo off")
-                        .println(":: resolve current script path")
-                        .println("SET NS_SCRIPT_PATH=%~dp0")
-                        .println("SET NS_SCRIPT_DIR=%NS_SCRIPT_PATH:~0,-1%")
-                        .println("SET NS_WS_JAR=%NS_SCRIPT_DIR%\\.nuts-bundle\\lib\\" + nutsId.getMavenPath("jar").replace("/", "\\"))
-                        .println("SET NS_JAVA_OPTIONS=")
-                        .println("")
-                        .println(":: resolve workspace options")
-                        .println("SET NS_WS_OPTIONS=--repo==%NS_SCRIPT_DIR%\\.nuts-bundle\\lib -w=%NS_SCRIPT_DIR%\\.nuts-bundle\\ws")
-                        .println(":: add workspace isolation options")
-                        .println("SET NS_WS_OPTIONS=%NS_WS_OPTIONS% ---m2=false --desktop-launcher=unsupported --menu-launcher=unsupported --user-launcher=unsupported --!switch --!init-platforms --!init-scripts --!init-launchers --!install-companions")
-                        .println(":: add other options like --verbose")
-                        .println("::  --verbose : for more logging")
-                        .println("::  -Zy       : to reset the whole workspace")
-                        .println("REM SET NS_WS_OPTIONS=%NS_WS_OPTIONS% --verbose")
-                        .println("REM SET NS_WS_OPTIONS=%NS_WS_OPTIONS% --embedded")
-                        .println("::")
-                        .println(":: add other JVM options like for debug mode")
-                        .println("REM SET NS_JAVA_OPTIONS=%NS_JAVA_OPTIONS% -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005")
-                        .println("")
-                        .println("java.exe %NS_JAVA_OPTIONS% -jar \"%NS_WS_JAR%\" %NS_WS_OPTIONS% " +
-                                (NConstants.Ids.NUTS_APP.equals(mainIdStr.getShortName()) ? "" : ("\"" + mainIdStr + "\""))
-                                + " %*")
-                        .build()
-        );
+        NStringBuilder out = new NStringBuilder();
+        out
+                .println("::-------------------------------------")
+                .println(":: Nuts Bundle Launcher Script " + NWorkspace.of().getRuntimeId().getVersion())
+                .println(":: This bundle was created for " + mainIdStr.getShortName())
+                .println(":: (c) 2025 thevpc")
+                .println("::-------------------------------------")
+                .println("")
+                .println("@echo off")
+                .println(":: resolve current script path")
+                .println("SET NS_SCRIPT_PATH=%~dp0")
+                .println("SET NS_SCRIPT_DIR=%NS_SCRIPT_PATH:~0,-1%")
+                .println("SET NS_WS_JAR=%NS_SCRIPT_DIR%\\.nuts-bundle\\lib\\" + nutsId.getMavenPath("jar").replace("/", "\\"))
+                .println("SET NS_JAVA_OPTIONS=")
+                .println("")
+                .println(":: resolve workspace options")
+                .println("SET NS_WS_OPTIONS=--repo==%NS_SCRIPT_DIR%\\.nuts-bundle\\lib -w=%NS_SCRIPT_DIR%\\.nuts-bundle\\ws")
+                .println(":: add workspace isolation options")
+                .println("SET NS_WS_OPTIONS=%NS_WS_OPTIONS% ---m2=false --desktop-launcher=unsupported --menu-launcher=unsupported --user-launcher=unsupported --!switch --!init-platforms --!init-scripts --!init-launchers --!install-companions")
+                .println(":: add other options like --verbose")
+                .println("::  --verbose : for more logging")
+                .println("::  -Zy       : to reset the whole workspace");
+        if (options.verbose) {
+            out.println("SET NS_WS_OPTIONS=%NS_WS_OPTIONS% --verbose");
+        } else {
+            out.println("REM SET NS_WS_OPTIONS=%NS_WS_OPTIONS% --verbose");
+        }
+        if (options.embedded) {
+            out.println("SET NS_WS_OPTIONS=%NS_WS_OPTIONS% --embedded");
+        } else {
+            out.println("REM SET NS_WS_OPTIONS=%NS_WS_OPTIONS% --embedded");
+        }
+        out.println("::")
+                .println(":: add other JVM options like for debug mode")
+                .println("REM SET NS_JAVA_OPTIONS=%NS_JAVA_OPTIONS% -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005")
+                .println("")
+                .println("java.exe %NS_JAVA_OPTIONS% -jar \"%NS_WS_JAR%\" %NS_WS_OPTIONS% " +
+                        (NConstants.Ids.NUTS_APP.equals(mainIdStr.getShortName()) ? "" : ("\"" + mainIdStr + "\""))
+                        + " %*")
+        ;
+        bundleFolder.resolve(appName + "-windows-runner.bat").writeString(out.build());
         nuts_bundle_files_config.installWindows("/" + appName + "-windows-runner.bat", "${target}/" + appName + ".bat");
     }
 

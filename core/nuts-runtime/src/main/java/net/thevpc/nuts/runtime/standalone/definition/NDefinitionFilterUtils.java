@@ -1,18 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.definition;
 
-import net.thevpc.nuts.NDefinitionFilter;
-import net.thevpc.nuts.NDefinitionFilters;
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.runtime.standalone.definition.filter.NDefinitionFilterAnd;
-import net.thevpc.nuts.runtime.standalone.definition.filter.NDefinitionFilterOr;
-import net.thevpc.nuts.runtime.standalone.definition.filter.NInstallStatusDefinitionFilter2;
-import net.thevpc.nuts.runtime.standalone.definition.filter.NPatternDefinitionFilter;
-import net.thevpc.nuts.util.NFilterOp;
-import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.definition.filter.*;
+import net.thevpc.nuts.util.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class NDefinitionFilterUtils {
     public static NOptional<NDefinitionFilter[]> toAndChildren(NDefinitionFilter id) {
@@ -77,47 +71,78 @@ public class NDefinitionFilterUtils {
         return any != null && any.getFilterOp() == NFilterOp.FALSE;
     }
 
-    public static NOptional<Boolean> resolveInstalled(NDefinitionFilter any) {
-        for (NDefinitionFilter d : flattenAnd(any)) {
-            if (d instanceof NInstallStatusDefinitionFilter2) {
-                NInstallStatusDefinitionFilter2 v = (NInstallStatusDefinitionFilter2) d;
-                switch (v.getName()) {
-                    case "installed": {
-                        return NOptional.of(v.isValue());
-                    }
-                }
-            }
+    public static boolean isInstallStatusFilter(NDefinitionFilter filter) {
+        if (filter instanceof NInstallStatusDefinitionFilter2) {
+            return true;
         }
-        return NOptional.ofNamedEmpty("installed");
+        if (filter.getFilterOp() == NFilterOp.AND) {
+            return filter.getSubFilters().stream().allMatch(x -> isInstallStatusFilter((NDefinitionFilter) x));
+        }
+        if (filter.getFilterOp() == NFilterOp.OR) {
+            return filter.getSubFilters().stream().allMatch(x -> isInstallStatusFilter((NDefinitionFilter) x));
+        }
+        if (filter.getFilterOp() == NFilterOp.NOT) {
+            return isInstallStatusFilter((NDefinitionFilter) filter.getSubFilters().get(0));
+        }
+        return false;
     }
 
-    public static NOptional<Boolean> resolveRequired(NDefinitionFilter any) {
-        for (NDefinitionFilter d : flattenAnd(any)) {
-            if (d instanceof NInstallStatusDefinitionFilter2) {
-                NInstallStatusDefinitionFilter2 v = (NInstallStatusDefinitionFilter2) d;
-                switch (v.getName()) {
-                    case "required": {
-                        return NOptional.of(v.isValue());
-                    }
+    public static NRepositoryFilter toRepositoryFilter(NDefinitionFilter filter) {
+        if (filter instanceof NRepositoryFilter) {
+            return (NRepositoryFilter) filter;
+        }
+        if (filter instanceof NInstallStatusDefinitionFilter2) {
+            NInstallStatusDefinitionFilter2 d = (NInstallStatusDefinitionFilter2) filter;
+            switch (d.getMode()) {
+                case REQUIRED:
+                case DEPLOYED:
+                case INSTALLED:
+                case INSTALLED_OR_REQUIRED:
+                case DEFAULT_VERSION:
+                    return NRepositoryFilters.of().installedRepo();
+                case OBSOLETE:
+                    return NRepositoryFilters.of().always();
+                case NON_DEPLOYED:
+                    return NRepositoryFilters.of().installedRepo().neg();
+            }
+            return null;
+        }
+        if (filter.getFilterOp() == NFilterOp.NOT) {
+            return toRepositoryFilter((NDefinitionFilter) filter.getSubFilters().get(0)).neg();
+        }
+        if (filter.getFilterOp() == NFilterOp.AND) {
+            NRepositoryFilter result = null;
+            for (NFilter subFilter : filter.getSubFilters()) {
+                NRepositoryFilter n = toRepositoryFilter((NDefinitionFilter) subFilter);
+                if (result == null) {
+                    result = n;
+                } else {
+                    result = result.and(n);
                 }
             }
+            if (result == null) {
+                result = NRepositoryFilters.of().always();
+            }
+            return result;
         }
-        return NOptional.ofNamedEmpty("required");
+        if (filter.getFilterOp() == NFilterOp.OR) {
+            NRepositoryFilter result = null;
+            for (NFilter subFilter : filter.getSubFilters()) {
+                NRepositoryFilter n = toRepositoryFilter((NDefinitionFilter) subFilter);
+                if (result == null) {
+                    result = n;
+                } else {
+                    result = result.or(n);
+                }
+            }
+            if (result == null) {
+                result = NRepositoryFilters.of().always();
+            }
+            return result;
+        }
+        return NRepositoryFilters.of().always();
     }
 
-    public static NOptional<Boolean> resolveDeployed(NDefinitionFilter any) {
-        for (NDefinitionFilter d : flattenAnd(any)) {
-            if (d instanceof NInstallStatusDefinitionFilter2) {
-                NInstallStatusDefinitionFilter2 v = (NInstallStatusDefinitionFilter2) d;
-                switch (v.getName()) {
-                    case "deployed": {
-                        return NOptional.of(v.isValue());
-                    }
-                }
-            }
-        }
-        return NOptional.ofNamedEmpty("deployed");
-    }
 
     public static NDefinitionFilter[] flattenAnd(NDefinitionFilter any) {
         if (any == null) {
@@ -134,6 +159,64 @@ public class NDefinitionFilterUtils {
     }
 
 
+    public static NDefinitionFilter replaceFilter(NDefinitionFilter parent, Function<NDefinitionFilter, NDefinitionFilter> replacer) {
+        if (parent == null) {
+            return null;
+        }
+        NDefinitionFilter n = replacer.apply(parent);
+        if (n == null) {
+            return null;
+        }
+        if (n != parent) {
+            return n;
+        }
+        if (parent.getFilterOp() == NFilterOp.AND) {
+            List<NDefinitionFilter> newList = new ArrayList<>();
+            boolean someChanges = false;
+            for (NFilter subFilter : parent.getSubFilters()) {
+                n = replacer.apply((NDefinitionFilter) subFilter);
+                if (n == null) {
+                    someChanges = true;
+                } else if (n == subFilter) {
+                    newList.add(n);
+                } else {
+                    someChanges = true;
+                    newList.add(n);
+                }
+            }
+            if (someChanges) {
+                return NDefinitionFilters.of().all(newList.toArray(new NDefinitionFilter[0]));
+            }
+            return parent;
+        }
+        return parent;
+    }
 
-
+    public static NDefinitionFilter addLockedIds(NDefinitionFilter parent, NId... ids) {
+        if (parent == null) {
+            return NDefinitionFilters.of().byLockedIds(ids);
+        }
+        if (ids == null) {
+            return parent;
+        }
+        NId[] validIds = Arrays.stream(ids).filter(x -> NBlankable.isBlank(x)).collect(Collectors.toSet()).toArray(new NId[0]);
+        if (ids.length == 0) {
+            return parent;
+        }
+        NRef<Boolean> found = new NRef<>(false);
+        NDefinitionFilter np = replaceFilter(parent, new NFunction<NDefinitionFilter, NDefinitionFilter>() {
+            @Override
+            public NDefinitionFilter apply(NDefinitionFilter old) {
+                if (old instanceof NLockedIdExtensionDefinitionFilter) {
+                    found.set(true);
+                    return ((NLockedIdExtensionDefinitionFilter) old).addAll(ids);
+                }
+                return old;
+            }
+        });
+        if (!found.get()) {
+            np = np.and(NDefinitionFilters.of().byLockedIds(validIds));
+        }
+        return np;
+    }
 }

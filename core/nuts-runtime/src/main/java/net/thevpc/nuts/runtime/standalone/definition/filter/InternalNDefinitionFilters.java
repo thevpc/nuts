@@ -5,6 +5,7 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NFilter;
 
 import java.util.*;
@@ -232,7 +233,14 @@ public class InternalNDefinitionFilters extends InternalNTypedFilters<NDefinitio
     @Override
     public NDefinitionFilter byLockedIds(String... ids) {
         return new NLockedIdExtensionDefinitionFilter(
-                Arrays.stream(ids).map(x -> NId.get(x).get()).toArray(NId[]::new)
+                Arrays.stream(ids).filter(NBlankable::isNonBlank).map(x -> NId.get(x).get()).toArray(NId[]::new)
+        );
+    }
+
+    @Override
+    public NDefinitionFilter byLockedIds(NId... ids) {
+        return new NLockedIdExtensionDefinitionFilter(
+                Arrays.stream(ids).filter(Objects::nonNull).toArray(NId[]::new)
         );
     }
 
@@ -457,6 +465,11 @@ public class InternalNDefinitionFilters extends InternalNTypedFilters<NDefinitio
     @Override
     public NDefinitionFilter byInstalled(boolean value) {
         return NInstallStatusDefinitionFilter2.ofInstalled(value);
+    }
+
+    @Override
+    public NDefinitionFilter byInstalledOrRequired(boolean value) {
+        return NInstallStatusDefinitionFilter2.ofInstalledOrRequired(value);
     }
 
     @Override

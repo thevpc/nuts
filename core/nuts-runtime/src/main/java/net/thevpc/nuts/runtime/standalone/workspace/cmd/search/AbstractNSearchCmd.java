@@ -31,6 +31,7 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder2;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionDelegate;
+import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 import net.thevpc.nuts.runtime.standalone.util.ValueSupplier;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
@@ -66,15 +67,12 @@ import java.util.stream.Collectors;
 public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearchCmd> implements NSearchCmd {
 
     protected final List<NId> ids = new ArrayList<>();
-    protected final List<NId> lockedIds = new ArrayList<>();
-    protected final List<String> scripts = new ArrayList<>();
     protected NComparator comparator;
     protected NDefinitionFilter definitionFilter;
     protected boolean latest = false;
     protected boolean distinct = false;
     protected boolean includeBasePackage = true;
     protected boolean sorted = false;
-    protected Boolean defaultVersions = null;
     protected boolean ignoreCurrentEnvironment;
     protected SearchExecType execType = null;
     protected NVersion targetApiVersion = null;
@@ -183,7 +181,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public boolean isExtension() {
-        return SearchExecType.EXTENSION==execType;
+        return SearchExecType.EXTENSION == execType;
     }
 
     @Override
@@ -194,7 +192,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public boolean isExec() {
-        return SearchExecType.EXEC==execType;
+        return SearchExecType.EXEC == execType;
     }
 
     @Override
@@ -236,117 +234,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
         return this;
     }
 
-    @Override
-    public NSearchCmd addScript(String value) {
-        if (value != null) {
-            scripts.add(value);
-        }
-        return this;
-    }
-
-    @Override
-    public NSearchCmd removeScript(String value) {
-        scripts.remove(value);
-        return this;
-    }
-
-    @Override
-    public NSearchCmd addScripts(Collection<String> value) {
-        if (value != null) {
-            addScripts(value.toArray(new String[0]));
-        }
-        return this;
-    }
-
-    @Override
-    public NSearchCmd addScripts(String... value) {
-        if (value != null) {
-            scripts.addAll(Arrays.asList(value));
-        }
-        return this;
-
-    }
-
-    @Override
-    public NSearchCmd clearScripts() {
-        scripts.clear();
-        return this;
-    }
-
-    @Override
-    public List<String> getScripts() {
-        return scripts;
-    }
-
-    @Override
-    public NSearchCmd addLockedIds(String... values) {
-        if (values != null) {
-            for (String s : values) {
-                if (!NBlankable.isBlank(s)) {
-                    lockedIds.add(NId.get(s).get());
-                }
-            }
-        }
-        return this;
-    }
-
-    @Override
-    public NSearchCmd addLockedIds(List<NId> values) {
-        return addLockedIds(values.toArray(new NId[0]));
-    }
-
-    @Override
-    public NSearchCmd addLockedIds(NId... values) {
-        if (values != null) {
-            for (NId s : values) {
-                if (s != null) {
-                    lockedIds.add(s);
-                }
-            }
-        }
-        return this;
-    }
-
-    @Override
-    public NSearchCmd clearLockedIds() {
-        lockedIds.clear();
-        return this;
-    }
-
-    @Override
-    public NSearchCmd addLockedId(NId id) {
-        if (id != null) {
-            addLockedId(id.toString());
-        }
-        return this;
-    }
-
-    @Override
-    public NSearchCmd removeLockedId(NId id) {
-        if (id != null) {
-            removeLockedId(id.toString());
-        }
-        return this;
-    }
-
-    @Override
-    public NSearchCmd removeLockedId(String id) {
-        lockedIds.remove(NId.get(id).get());
-        return this;
-    }
-
-    @Override
-    public NSearchCmd addLockedId(String id) {
-        if (!NBlankable.isBlank(id)) {
-            lockedIds.add(NId.get(id).get());
-        }
-        return this;
-    }
-
-    @Override
-    public List<NId> getLockedIds() {
-        return this.lockedIds;
-    }
 
 
     @Override
@@ -370,8 +257,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
             this.sorted = o.isSorted();
             this.ids.clear();
             this.ids.addAll(o.getIds());
-            this.scripts.clear();
-            this.scripts.addAll(o.getScripts());
         }
         return this;
     }
@@ -425,20 +310,13 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NSearchCmd addDefinitionFilter(NDefinitionFilter filter) {
-        if(filter!=null){
-            if(this.definitionFilter==null){
-                this.definitionFilter =filter;
-            }else{
+        if (filter != null) {
+            if (this.definitionFilter == null) {
+                this.definitionFilter = filter;
+            } else {
                 this.definitionFilter.and(filter);
             }
         }
-        return this;
-    }
-
-
-    @Override
-    public NSearchCmd setDefinitionFilter(String filter) {
-        this.definitionFilter = NDefinitionFilters.of().parse(filter);
         return this;
     }
 
@@ -580,26 +458,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
             }
         }
         return sb.toString();
-    }
-
-    /**
-     * @return default version or null
-     * @since 0.5.5
-     */
-    @Override
-    public Boolean getDefaultVersions() {
-        return defaultVersions;
-    }
-
-    /**
-     * @param acceptDefaultVersion acceptDefaultVersion
-     * @return {@code this} instance
-     * @since 0.5.5
-     */
-    @Override
-    public NSearchCmd setDefaultVersions(Boolean acceptDefaultVersion) {
-        this.defaultVersions = acceptDefaultVersion;
-        return this;
     }
 
     @Override
@@ -806,7 +664,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
             }
             case "--default":
             case "--default-versions": {
-                cmdLine.withNextOptionalFlag((v, r) -> this.setDefaultVersions(v.ifError(false).orElse(null)));
+                cmdLine.withNextOptionalFlag((v, r) -> this.addDefinitionFilter(NDefinitionFilters.of().byDefaultVersion(v.ifError(false).orElse(null))));
                 return true;
             }
             case "--duplicates": {
@@ -856,25 +714,15 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
                 return true;
             }
             case "--arch": {
-                cmdLine.withNextEntry((v, r) -> this.setDefinitionFilter(
+                cmdLine.withNextEntry((v, r) -> this.addDefinitionFilter(
                         NDefinitionFilters.of().nonnull(this.getDefinitionFilter()).and(NDefinitionFilters.of().byArch(v))
                 ));
                 return true;
             }
             case "--packaging": {
-                cmdLine.withNextEntry((v, r) -> this.setDefinitionFilter(
+                cmdLine.withNextEntry((v, r) -> this.addDefinitionFilter(
                         NDefinitionFilters.of().nonnull(this.getDefinitionFilter()).and(NDefinitionFilters.of().byPackaging(v))
                 ));
-                return true;
-            }
-//            case "--optional": {
-//                cmdLine.withNextFlag((v, r) -> this.setDefinitionFilter(
-//                        NDefinitionFilters.of().nonnull(this.getDefinitionFilter()).and(NDefinitionFilters.of().byOptional(v))
-//                ));
-//                return true;
-//            }
-            case "--script": {
-                cmdLine.withNextEntry((v, r) -> this.addScripts(v));
                 return true;
             }
             case "--id": {
@@ -882,13 +730,13 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
                 return true;
             }
             case "--locked-id": {
-                cmdLine.withNextEntry((v, r) -> this.addLockedId(v));
+                cmdLine.withNextEntry((v, r) -> setDefinitionFilter(NDefinitionFilterUtils.addLockedIds(getDefinitionFilter(), NId.of(v))));
                 return true;
             }
             case "--deployed": {
                 NArg b = cmdLine.nextFlag().get();
                 if (enabled) {
-                    this.setDefinitionFilter(NDefinitionFilters.of().byDefaultValue(b.getBooleanValue().get()).and(getDefinitionFilter()));
+                    this.addDefinitionFilter(NDefinitionFilters.of().byDefaultValue(b.getBooleanValue().get()).and(getDefinitionFilter()));
                 }
                 return true;
             }
@@ -896,21 +744,21 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
             case "--installed": {
                 NArg b = cmdLine.nextFlag().get();
                 if (enabled) {
-                    this.setDefinitionFilter(NDefinitionFilters.of().byInstalled(b.getBooleanValue().get()).and(getDefinitionFilter()));
+                    this.addDefinitionFilter(NDefinitionFilters.of().byInstalled(b.getBooleanValue().get()).and(getDefinitionFilter()));
                 }
                 return true;
             }
             case "--required": {
                 NArg b = cmdLine.nextFlag().get();
                 if (enabled) {
-                    this.setDefinitionFilter(NDefinitionFilters.of().byRequired(b.getBooleanValue().get()).and(getDefinitionFilter()));
+                    this.addDefinitionFilter(NDefinitionFilters.of().byRequired(b.getBooleanValue().get()).and(getDefinitionFilter()));
                 }
                 return true;
             }
             case "--obsolete": {
                 NArg b = cmdLine.nextFlag().get();
                 if (enabled) {
-                    this.setDefinitionFilter(NDefinitionFilters.of().byObsolete(b.getBooleanValue().get()).and(getDefinitionFilter()));
+                    this.addDefinitionFilter(NDefinitionFilters.of().byObsolete(b.getBooleanValue().get()).and(getDefinitionFilter()));
                 }
                 return true;
             }
@@ -947,9 +795,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
                 + ", includeMain=" + isBasePackage()
                 + ", sorted=" + isSorted()
                 + ", ids=" + getIds()
-                + ", lockedIds=" + getLockedIds()
-                + ", scripts=" + getScripts()
-                + ", defaultVersions=" + getDefaultVersions()
                 + ", execType='" + getExecType() + '\''
                 + ", targetApiVersion='" + getTargetApiVersion() + '\''
                 + '}';
@@ -1144,8 +989,8 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
         NIterator<Object> it = runIterator();
         NSession session = NSession.of();
         NIteratorBuilder.of(it)
-                .map(x->{
-                    if(x instanceof NDefinition) {
+                .map(x -> {
+                    if (x instanceof NDefinition) {
                         return new NDefinitionDelegate() {
                             @Override
                             protected NDefinition getBase() {
@@ -1159,7 +1004,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
                             @Override
                             public NOptional<NDescriptor> getEffectiveDescriptor() {
-                                if(isEffective() || isDependencies()) {
+                                if (isEffective() || isDependencies()) {
                                     return super.getEffectiveDescriptor();
                                 }
                                 return NOptional.ofNamedEmpty("effectiveDescriptor");
@@ -1167,7 +1012,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
                             @Override
                             public NOptional<NPath> getContent() {
-                                if(isContent()) {
+                                if (isContent()) {
                                     return super.getContent();
                                 }
                                 return NOptional.ofNamedEmpty("content");
@@ -1175,7 +1020,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
                             @Override
                             public NOptional<Set<NDescriptorFlag>> getEffectiveFlags() {
-                                if(isContent()) {
+                                if (isContent()) {
                                     return super.getEffectiveFlags();
                                 }
                                 return NOptional.ofNamedEmpty("effectiveFlags");
@@ -1183,7 +1028,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
                             @Override
                             public NOptional<NDependencies> getDependencies() {
-                                if(isDependencies() || isInlineDependencies()){
+                                if (isDependencies() || isInlineDependencies()) {
                                     return super.getDependencies();
                                 }
                                 return NOptional.ofNamedEmpty("dependencies");
@@ -1243,9 +1088,9 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
             return d;
         }
         if (!NBlankable.isBlank(d) && !NBlankable.isBlank(condition)) {
-            DefaultNDefinitionBuilder2 db=new DefaultNDefinitionBuilder2(d);
+            DefaultNDefinitionBuilder2 db = new DefaultNDefinitionBuilder2(d);
             db.setDependency(new ValueSupplier<>(dep));
-            if(false) {
+            if (false) {
                 //TODO fix me later,
                 // We need to to apply this "AND" op when needed and not here !!
                 db.setDescriptor(

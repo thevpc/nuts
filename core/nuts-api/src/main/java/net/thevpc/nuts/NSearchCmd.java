@@ -258,132 +258,6 @@ public interface NSearchCmd extends NWorkspaceCmd {
     NSearchCmd setLib(boolean enable);
 
     /**
-     * add javascript filter.
-     *
-     * @param value javascript filter
-     * @return {@code this} instance
-     */
-    NSearchCmd addScript(String value);
-
-    /**
-     * remove javascript filter.
-     *
-     * @param value javascript filter
-     * @return {@code this} instance
-     */
-    NSearchCmd removeScript(String value);
-
-    /**
-     * add javascript filter.
-     *
-     * @param value javascript filter
-     * @return {@code this} instance
-     */
-    NSearchCmd addScripts(Collection<String> value);
-
-    /**
-     * add javascript filter.
-     *
-     * @param value javascript filter
-     * @return {@code this} instance
-     */
-    NSearchCmd addScripts(String... value);
-
-    /**
-     * remove all javascript filters
-     *
-     * @return {@code this} instance
-     */
-    NSearchCmd clearScripts();
-
-    /**
-     * return javascript filters
-     *
-     * @return javascript filters
-     */
-    List<String> getScripts();
-
-
-    /**
-     * define locked ids to prevent them to be updated or the force other ids to
-     * use them (the installed version).
-     *
-     * @param values ids
-     * @return {@code this} instance
-     */
-    NSearchCmd addLockedIds(String... values);
-
-    /**
-     * define locked ids to prevent them to be updated or the force other ids to
-     * use them (the installed version).
-     *
-     * @param values ids
-     * @return {@code this} instance
-     */
-    NSearchCmd addLockedIds(NId... values);
-
-    NSearchCmd addLockedIds(List<NId> values);
-
-    /**
-     * reset locked ids
-     *
-     * @return {@code this} instance
-     */
-    NSearchCmd clearLockedIds();
-
-    /**
-     * add locked ids to prevent them to be updated or the force other ids to
-     * use them (the installed version).
-     *
-     * @param id id to lock
-     * @return {@code this} instance
-     */
-    NSearchCmd addLockedId(NId id);
-
-    /**
-     * remove locked ids to prevent them to be updated or the force other ids to
-     * use them (the installed version).
-     *
-     * @param id id to unlock
-     * @return {@code this} instance
-     */
-    NSearchCmd removeLockedId(NId id);
-
-    /**
-     * remove locked ids to prevent them to be updated or the force other ids to
-     * use them (the installed version).
-     *
-     * @param id id to unlock
-     * @return {@code this} instance
-     */
-    NSearchCmd removeLockedId(String id);
-
-    /**
-     * add locked ids to prevent them to be updated or the force other ids to
-     * use them (the installed version).
-     *
-     * @param id id to lock
-     * @return {@code this} instance
-     */
-    NSearchCmd addLockedId(String id);
-
-    /**
-     * return locked ids to prevent them to be updated or the force other ids to
-     * use them (the installed version).
-     *
-     * @return locked ids
-     */
-    List<NId> getLockedIds();
-
-    /**
-     * define repository filter.
-     *
-     * @param filter repository filter
-     * @return {@code this} instance
-     */
-    NSearchCmd setRepositoryFilter(String filter);
-
-    /**
      * sort results. Comparator should handle types of the result.
      *
      * @param comparator result comparator
@@ -476,6 +350,7 @@ public interface NSearchCmd extends NWorkspaceCmd {
      * @return {@code this} instance
      */
     NSearchCmd addDependencyFilter(NDependencyFilter filter);
+
     /**
      * define dependency filter. applicable when using
      * {@link #setInlineDependencies(boolean)}
@@ -516,21 +391,12 @@ public interface NSearchCmd extends NWorkspaceCmd {
      * @return {@code this} instance
      */
     NSearchCmd setDefinitionFilter(NDefinitionFilter filter);
+
     NSearchCmd addDefinitionFilter(NDefinitionFilter filter);
 
     ////////////////////////////////////////////////////////
     // Getters
     ////////////////////////////////////////////////////////
-
-    /**
-     * define descriptor filter.
-     *
-     * @param filter descriptor filter
-     * @return {@code this} instance
-     */
-    NSearchCmd setDefinitionFilter(String filter);
-
-
 
     /**
      * when true, NNotFoundException instances are ignored
@@ -763,28 +629,6 @@ public interface NSearchCmd extends NWorkspaceCmd {
      */
     NSearchCmd setDependencies(boolean enable);
 
-    /**
-     * search for default versions status.
-     * <ul>
-     * <li>return true of only default values are searched for</li>
-     * <li>return false of only default values are searched for</li>
-     * <li>return null of both default values and non default ones are searched
-     * for</li>
-     * </ul>
-     *
-     * @return search for default versions status
-     * @since v0.5.5
-     */
-    Boolean getDefaultVersions();
-
-    /**
-     * default version only filter
-     *
-     * @param enable if non null apply filter
-     * @return {@code this} instance
-     * @since v0.5.5
-     */
-    NSearchCmd setDefaultVersions(Boolean enable);
 
     /**
      * configure the current command with the given arguments. This is an

@@ -27,7 +27,6 @@
 package net.thevpc.nuts.runtime.standalone.definition.filter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NFilter;
@@ -40,72 +39,58 @@ import java.util.Objects;
 /**
  * Package installation status.
  */
-public abstract class NInstallStatusDefinitionFilter2 extends AbstractDefinitionFilter {
+public class NInstallStatusDefinitionFilter2 extends AbstractDefinitionFilter {
 
-    private final String name;
+    private final Mode mode;
     private final boolean value;
 
+    public static enum Mode {
+        INSTALLED,
+        REQUIRED,
+        DEPLOYED,
+        NON_DEPLOYED,
+        OBSOLETE,
+        DEFAULT_VERSION,
+        INSTALLED_OR_REQUIRED
+    }
 
     public static NDefinitionFilter ofInstalled(boolean value) {
-        return new NInstallStatusDefinitionFilter2("installed", value) {
-            @Override
-            public boolean acceptDefinitionImpl(NDefinition definition, NInstallStatus status) {
-                return status.isInstalled();
-            }
-        };
+        return new NInstallStatusDefinitionFilter2(Mode.INSTALLED, value) ;
+    }
+
+    public static NDefinitionFilter ofInstalledOrRequired(boolean value) {
+        return new NInstallStatusDefinitionFilter2(Mode.INSTALLED_OR_REQUIRED, value) ;
     }
 
     public static NDefinitionFilter ofRequired(boolean value) {
-        return new NInstallStatusDefinitionFilter2("required", value) {
-            @Override
-            public boolean acceptDefinitionImpl(NDefinition definition, NInstallStatus status) {
-                return status.isRequired();
-            }
-        };
+        return new NInstallStatusDefinitionFilter2(Mode.REQUIRED, value);
     }
 
     public static NDefinitionFilter ofObsolete(boolean value) {
-        return new NInstallStatusDefinitionFilter2("obsolete", value) {
-            @Override
-            public boolean acceptDefinitionImpl(NDefinition definition, NInstallStatus status) {
-                return status.isObsolete();
-            }
-        };
+        return new NInstallStatusDefinitionFilter2(Mode.OBSOLETE, value) ;
     }
 
     public static NDefinitionFilter ofDefaultVersion(boolean value) {
-        return new NInstallStatusDefinitionFilter2("defaultVersion", value) {
-            @Override
-            public boolean acceptDefinitionImpl(NDefinition definition, NInstallStatus status) {
-                return status.isDefaultVersion();
-            }
-        };
+        return new NInstallStatusDefinitionFilter2(Mode.DEFAULT_VERSION, value) ;
     }
 
     public static NDefinitionFilter ofDeployed(boolean value) {
-        return new NInstallStatusDefinitionFilter2("deployed", value) {
-            @Override
-            public boolean acceptDefinitionImpl(NDefinition definition, NInstallStatus status) {
-                return status.isDeployed();
-            }
-        };
+        return new NInstallStatusDefinitionFilter2(Mode.DEPLOYED, value) ;
     }
 
-    public NInstallStatusDefinitionFilter2(String name, boolean value) {
+    public NInstallStatusDefinitionFilter2(Mode mode, boolean value) {
         super(NFilterOp.CUSTOM);
-        this.name = name;
+        this.mode = mode;
         this.value = value;
     }
 
-    public String getName() {
-        return name;
+    public Mode getMode() {
+        return mode;
     }
 
     public boolean isValue() {
         return value;
     }
-
-    public abstract boolean acceptDefinitionImpl(NDefinition definition, NInstallStatus status);
 
     @Override
     public boolean acceptDefinition(NDefinition definition) {
@@ -116,7 +101,23 @@ public abstract class NInstallStatusDefinitionFilter2 extends AbstractDefinition
         if (status == null) {
             return false;
         }
-        return acceptDefinitionImpl(definition, status);
+        switch (mode) {
+            case INSTALLED:
+                return status.isInstalled();
+            case DEPLOYED:
+                return status.isDeployed();
+            case REQUIRED:
+                return status.isRequired();
+            case OBSOLETE:
+                return status.isObsolete();
+            case DEFAULT_VERSION:
+                return status.isDefaultVersion();
+            case INSTALLED_OR_REQUIRED:
+                return status.isInstalledOrRequired();
+            case NON_DEPLOYED:
+                return status.isNonDeployed();
+        }
+        return false;
     }
 
     @Override
@@ -131,7 +132,7 @@ public abstract class NInstallStatusDefinitionFilter2 extends AbstractDefinition
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, value);
+        return Objects.hash(mode, value);
     }
 
     @Override
@@ -139,7 +140,7 @@ public abstract class NInstallStatusDefinitionFilter2 extends AbstractDefinition
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NInstallStatusDefinitionFilter2 that = (NInstallStatusDefinitionFilter2) o;
-        return value == that.value && Objects.equals(name, that.name)
+        return value == that.value && Objects.equals(mode, that.mode)
                 ;
     }
 
@@ -149,7 +150,7 @@ public abstract class NInstallStatusDefinitionFilter2 extends AbstractDefinition
         if (!value) {
             sb.append("!");
         }
-        sb.append(name);
+        sb.append(mode);
         return sb.toString();
     }
 }

@@ -110,7 +110,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
         }
         if (!ids.isEmpty()) {
             for (NId nutsId : NSearchCmd.of()
-                    .addIds(ids.toArray(new NId[0])).setLatest(true).setRepositoryFilter(fromRepository).getResultIds()) {
+                    .addIds(ids.toArray(new NId[0])).setLatest(true).setRepositoryFilter(NRepositoryFilters.of().bySelector(fromRepository)).getResultIds()) {
                 NDefinition fetched = NFetchCmd.of(nutsId).getResultDefinition();
                 if (fetched.getContent().isPresent()) {
                     runDeployFile(fetched.getContent().get(), fetched.getDescriptor(), null);

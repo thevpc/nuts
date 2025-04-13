@@ -81,109 +81,54 @@ public class DefaultNSearchInfoBuilder {
                         )).collect(Collectors.toList())
         );
 
-        NDefinitionFilters dfilter = NDefinitionFilters.of();
-        NDefinitionFilter _defFilter = dfilter.always();
-        NDependencyFilter depFilter = NDependencyFilters.of().always();
-        NRepositoryFilter rfilter = NRepositoryFilters.of().always();
-        for (String j : defaultNSearchCmd.getScripts()) {
-            if (!NBlankable.isBlank(j)) {
-                if (CoreStringUtils.containsTopWord(j, "dependency")) {
-                    depFilter = depFilter.and(NDependencyFilters.of().parse(j));
-                } else {
-                    _defFilter = _defFilter.and(dfilter.parse(j));
-                }
-            }
-        }
-        NRepositoryFilter _repositoryFilter = rfilter.and(defaultNSearchCmd.getRepositoryFilter());
-        _defFilter = _defFilter.and(defaultNSearchCmd.getDefinitionFilter());
+        NDefinitionFilters d = NDefinitionFilters.of();
+        NDefinitionFilter _defFilter = d.always().and(defaultNSearchCmd.getDefinitionFilter());
 
-        if (defaultNSearchCmd.getDefaultVersions() != null) {
-            _defFilter = _defFilter.and(NDefinitionFilters.of().byDefaultVersion(defaultNSearchCmd.getDefaultVersions()));
-        }
         if (defaultNSearchCmd.getExecType() != null) {
             switch (defaultNSearchCmd.getExecType()) {
                 case LIB: {
-                    _defFilter = _defFilter.and(dfilter.byFlag(NDescriptorFlag.EXEC).neg());
+                    _defFilter = _defFilter.and(d.byFlag(NDescriptorFlag.EXEC).neg());
                     break;
                 }
                 case EXEC: {
-                    _defFilter = _defFilter.and(dfilter.byFlag(NDescriptorFlag.EXEC));
+                    _defFilter = _defFilter.and(d.byFlag(NDescriptorFlag.EXEC));
                     break;
                 }
                 case NUTS_APPLICATION: {
-                    _defFilter = _defFilter.and(dfilter.byFlag(NDescriptorFlag.NUTS_APP));
+                    _defFilter = _defFilter.and(d.byFlag(NDescriptorFlag.NUTS_APP));
                     break;
                 }
                 case PLATFORM_APPLICATION: {
-                    _defFilter = _defFilter.and(dfilter.byFlag(NDescriptorFlag.PLATFORM_APP));
+                    _defFilter = _defFilter.and(d.byFlag(NDescriptorFlag.PLATFORM_APP));
                     break;
                 }
                 case EXTENSION: {
-                    _defFilter = _defFilter.and(dfilter.byExtension(defaultNSearchCmd.getTargetApiVersion()));
+                    _defFilter = _defFilter.and(d.byExtension(defaultNSearchCmd.getTargetApiVersion()));
                     break;
                 }
                 case RUNTIME: {
-                    _defFilter = _defFilter.and(dfilter.byRuntime(defaultNSearchCmd.getTargetApiVersion()));
+                    _defFilter = _defFilter.and(d.byRuntime(defaultNSearchCmd.getTargetApiVersion()));
                     break;
                 }
                 case COMPANION: {
-                    _defFilter = _defFilter.and(dfilter.byCompanion(defaultNSearchCmd.getTargetApiVersion()));
+                    _defFilter = _defFilter.and(d.byCompanion(defaultNSearchCmd.getTargetApiVersion()));
                     break;
                 }
             }
         } else {
             if (defaultNSearchCmd.getTargetApiVersion() != null) {
-                _defFilter = _defFilter.and(dfilter.byApiVersion(defaultNSearchCmd.getTargetApiVersion()));
+                _defFilter = _defFilter.and(d.byApiVersion(defaultNSearchCmd.getTargetApiVersion()));
             }
-        }
-        if (!defaultNSearchCmd.lockedIds.isEmpty()) {
-            _defFilter = _defFilter.and(dfilter.byLockedIds(
-                    defaultNSearchCmd.lockedIds.stream().map(NId::getFullName).toArray(String[]::new)
-            ));
-        }
-        NRepositoryFilter extraRepositoryFilter = createRepositoryFilter(_defFilter);
-        if (extraRepositoryFilter != null) {
-            _repositoryFilter = _repositoryFilter.and(extraRepositoryFilter);
         }
         return new DefaultNSearchInfo(
                 regularIds.toArray(new DefaultNSearchInfo.RegularId[0]),
-                _repositoryFilter,
+                NRepositoryFilters.of().always()
+                        .and(defaultNSearchCmd.getRepositoryFilter())
+                        .and(NDefinitionFilterUtils.toRepositoryFilter(_defFilter)),
                 _defFilter
         );
     }
 
-    private NRepositoryFilter createRepositoryFilter(NDefinitionFilter _idFilter) {
-        Boolean installed = NDefinitionFilterUtils.resolveInstalled(_idFilter).orNull();
-        Boolean required = NDefinitionFilterUtils.resolveRequired(_idFilter).orNull();
-        Boolean deployed = NDefinitionFilterUtils.resolveRequired(_idFilter).orNull();
-        List<NRepositoryFilter> otherFilters = new ArrayList<>();
-        if (
-                Boolean.TRUE.equals(installed)
-                        || Boolean.TRUE.equals(required)
-                        || Boolean.TRUE.equals(deployed)
-        ) {
-            otherFilters.add(NRepositoryFilters.of().installedRepo());
-        } else if (
-                (Boolean.FALSE.equals(installed) && Boolean.FALSE.equals(required))
-                        || Boolean.FALSE.equals(deployed)
-        ) {
-            otherFilters.add(NRepositoryFilters.of().installedRepo().neg());
-        }
-        for (NDefinitionFilter nDefinitionFilter : NDefinitionFilterUtils.flattenAnd(_idFilter)) {
-            if (nDefinitionFilter instanceof NRepositoryFilter) {
-                otherFilters.add((NRepositoryFilter) nDefinitionFilter);
-            }
-        }
-
-        if (otherFilters.isEmpty()) {
-            return null;
-        }
-        NRepositoryFilter r = otherFilters.get(0);
-        for (int i = 1; i < otherFilters.size(); i++) {
-            r = r.and(otherFilters.get(i));
-        }
-        return r;
-    }
 
     private NId[] expandRegularIdPossibilities(String id) {
         NId nutsId = NId.get(id).get();

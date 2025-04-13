@@ -33,7 +33,6 @@ public class RemoteNSearchCmd extends AbstractNSearchCmd {
         NElements e = NElements.of();
         NObjectElementBuilder eb = e.ofObjectBuilder()
                 .set("execType", getExecType().id())
-                .set("defaultVersions", getDefaultVersions())
                 .set("targetApiVersion", getTargetApiVersion().toString())
                 .set("ids", e.ofArrayBuilder().addAll(getIds().stream()
                         .map(Object::toString).toArray(String[]::new)).build());

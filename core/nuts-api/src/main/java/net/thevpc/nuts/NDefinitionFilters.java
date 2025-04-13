@@ -150,6 +150,18 @@ public interface NDefinitionFilters extends NTypedFilters<NDefinitionFilter> {
     NDefinitionFilter byPlatform(String... pf);
 
 
+    /**
+     * search for default versions status.
+     * <ul>
+     * <li>return true of only default values are searched for</li>
+     * <li>return false of only default values are searched for</li>
+     * <li>return null of both default values and non default ones are searched
+     * for</li>
+     * </ul>
+     *
+     * @return search for default versions status
+     * @since v0.5.5
+     */
     NDefinitionFilter byDefaultVersion(Boolean defaultVersion);
 
     NDefinitionFilter byName(String... names);
@@ -193,6 +205,8 @@ public interface NDefinitionFilters extends NTypedFilters<NDefinitionFilter> {
 
     NDefinitionFilter byLockedIds(String... ids);
 
+    NDefinitionFilter byLockedIds(NId... ids);
+
     NDefinitionFilter byVersion(String version);
 
     NDefinitionFilter byVersion(NVersion version);
@@ -200,6 +214,8 @@ public interface NDefinitionFilters extends NTypedFilters<NDefinitionFilter> {
     NDefinitionFilter byVersion(NVersionFilter version);
 
     NDefinitionFilter byInstalled(boolean value);
+
+    NDefinitionFilter byInstalledOrRequired(boolean value);
 
     NDefinitionFilter byRequired(boolean value);
 

@@ -479,7 +479,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                 .addId(d0.getId().getShortId())
                 .setFailFast(false)
                 .setLatest(true)
-                .addLockedIds(getLockedIds())
+                .addDefinitionFilter(NDefinitionFilters.of().byLockedIds(getLockedIds().toArray(new NId[0])))
                 .addRepositoryFilter(NRepositoryFilters.of().installedRepo().neg())
                 .setDependencies(true)
                 .setDependencyFilter(NDependencyFilters.of().byOptional(isOptional() ? null : false));
@@ -756,7 +756,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                             .addId(oldFile != null ? oldFile.getId().builder().setVersion("").build().toString() : NConstants.Ids.NUTS_RUNTIME)
                             .setRuntime(true)
                             .setTargetApiVersion(bootApiVersion)
-                            .addLockedIds(getLockedIds())
+                            .addDefinitionFilter(NDefinitionFilters.of().byLockedIds(getLockedIds().toArray(new NId[0])))
                             .setLatest(true)
                             .sort(LATEST_VERSION_FIRST);
                     newId = se.getResultIds()

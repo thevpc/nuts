@@ -258,16 +258,6 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
     }
 
     //    @Override
-    public T setRepositoryFilter(String filter) {
-        if (NBlankable.isBlank(filter)) {
-            this.repositoryFilter = null;
-        } else {
-            this.repositoryFilter = NRepositoryFilters.of().bySelector(filter);
-        }
-        return (T) this;
-    }
-
-    //    @Override
     public T setRepositoryFilter(NRepositoryFilter filter) {
         this.repositoryFilter = filter;
         return (T) this;
