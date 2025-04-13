@@ -26,7 +26,7 @@ public class NutsBootNDefinitionFilter extends AbstractDefinitionFilter {
             }
         }
         // check now all transitive
-        List<NDependency> allDeps = NFetchCmd.of(definition.getId()).setDependencies(true)
+        List<NDependency> allDeps = NFetchCmd.of(definition.getId())
                 .setDependencyFilter(NDependencyFilters.of().byRunnable()).getResultDefinition().getDependencies().get()
                 .transitive().toList();
         for (NDependency dependency : allDeps) {

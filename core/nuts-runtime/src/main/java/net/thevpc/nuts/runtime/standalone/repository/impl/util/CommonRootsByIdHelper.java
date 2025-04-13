@@ -6,9 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
-import net.thevpc.nuts.runtime.standalone.definition.filter.NPatternDefinitionFilter;
-import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 
 import java.util.*;
 
@@ -127,8 +125,8 @@ public class CommonRootsByIdHelper {
 
     private static Set<NId> resolveRootId(String groupId, String artifactId, String version) {
         return new HashSet<>(Collections.singletonList(NIdBuilder.of()
-                .setGroupId(NBlankable.isBlank(groupId) ? "*" : groupId)
-                .setArtifactId(NBlankable.isBlank(artifactId) ? "*" : artifactId)
+                .setGroupId(groupId)
+                .setArtifactId(artifactId)
                 .build()));
     }
 
@@ -140,7 +138,7 @@ public class CommonRootsByIdHelper {
         Set<NId> v = resolveRootId0(filter);
         if (v == null) {
             HashSet<NId> s = new HashSet<>();
-            s.add(NId.get("*:*").get());
+            s.add(NId.BLANK);
             return s;
         }
         return v;
@@ -150,7 +148,7 @@ public class CommonRootsByIdHelper {
         if (filter == null) {
             return null;
         }
-        NDefinitionFilter[] aa = NDefinitionHelper.toAndChildren(filter).orNull();
+        NDefinitionFilter[] aa = NDefinitionFilterUtils.toAndChildren(filter).orNull();
         if(aa!=null) {
             Set<NId> xx = null;
             for (NDefinitionFilter g : aa) {
@@ -158,7 +156,7 @@ public class CommonRootsByIdHelper {
             }
             return xx;
         }
-        aa = NDefinitionHelper.toOrChildren(filter).orNull();
+        aa = NDefinitionFilterUtils.toOrChildren(filter).orNull();
         if(aa!=null) {
             if (aa.length == 0) {
                 return null;
@@ -170,7 +168,7 @@ public class CommonRootsByIdHelper {
             return xx;
         }
 
-        NId pid=NDefinitionHelper.toPatternId(filter).orNull();
+        NId pid= NDefinitionFilterUtils.toPatternId(filter).orNull();
         if ( pid!=null) {
             return resolveRootId(pid.getGroupId(), pid.getArtifactId(),pid.getVersion().toString());
         }

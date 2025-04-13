@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.search;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
+import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 import net.thevpc.nuts.runtime.standalone.id.filter.NPatternIdFilter;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -73,7 +73,7 @@ public class DefaultNSearchInfoBuilder {
             }
         }
         regularIds.addAll(
-                Arrays.stream(NDefinitionHelper.asPatternDefinitionFilterOrList(defaultNSearchCmd.getDefinitionFilter()))
+                Arrays.stream(NDefinitionFilterUtils.asPatternDefinitionFilterOrList(defaultNSearchCmd.getDefinitionFilter()))
                         .filter(x -> !x.isWildcard())
                         .map(x->new DefaultNSearchInfo.RegularId(
                                 x.getId(),
@@ -153,9 +153,9 @@ public class DefaultNSearchInfoBuilder {
     }
 
     private NRepositoryFilter createRepositoryFilter(NDefinitionFilter _idFilter) {
-        Boolean installed = NDefinitionHelper.resolveInstalled(_idFilter).orNull();
-        Boolean required = NDefinitionHelper.resolveRequired(_idFilter).orNull();
-        Boolean deployed = NDefinitionHelper.resolveRequired(_idFilter).orNull();
+        Boolean installed = NDefinitionFilterUtils.resolveInstalled(_idFilter).orNull();
+        Boolean required = NDefinitionFilterUtils.resolveRequired(_idFilter).orNull();
+        Boolean deployed = NDefinitionFilterUtils.resolveRequired(_idFilter).orNull();
         List<NRepositoryFilter> otherFilters = new ArrayList<>();
         if (
                 Boolean.TRUE.equals(installed)
@@ -169,7 +169,7 @@ public class DefaultNSearchInfoBuilder {
         ) {
             otherFilters.add(NRepositoryFilters.of().installedRepo().neg());
         }
-        for (NDefinitionFilter nDefinitionFilter : NDefinitionHelper.flattenAnd(_idFilter)) {
+        for (NDefinitionFilter nDefinitionFilter : NDefinitionFilterUtils.flattenAnd(_idFilter)) {
             if (nDefinitionFilter instanceof NRepositoryFilter) {
                 otherFilters.add((NRepositoryFilter) nDefinitionFilter);
             }
@@ -187,7 +187,7 @@ public class DefaultNSearchInfoBuilder {
 
     private NId[] expandRegularIdPossibilities(String id) {
         NId nutsId = NId.get(id).get();
-        List<NId> nutsId2 = new ArrayList<>();
+        Set<NId> nutsId2 = new LinkedHashSet<>();
         if (NBlankable.isBlank(nutsId.getGroupId())) {
             if (nutsId.getArtifactId().equals("nuts")) {
                 nutsId2.add(nutsId.builder().setGroupId("net.thevpc.nuts").build());
@@ -198,7 +198,7 @@ public class DefaultNSearchInfoBuilder {
                     NRepositorySPI repoSPI = NWorkspaceUtils.of()
                             .repoSPI(NWorkspaceExt.of().getInstalledRepository());
                     NIterator<NId> it = repoSPI.search().setFetchMode(NFetchMode.LOCAL).setFilter(NDefinitionFilters.of().byName(
-                            nutsId.builder().setGroupId("*").build().toString()
+                            nutsId.builder().setGroupId("").build().toString()
                     )).getResult();
                     installedIds = NIteratorUtils.toList(it);
                 }
@@ -211,11 +211,11 @@ public class DefaultNSearchInfoBuilder {
                     }
                 }
             }
-            nutsId2.add(nutsId.builder().setGroupId("*").build());
+            nutsId2.add(nutsId.builder().setGroupId("").build());
         } else {
             nutsId2.add(nutsId);
         }
         //remove duplicates
-        return new LinkedHashSet<>(nutsId2).toArray(new NId[0]);
+        return nutsId2.toArray(new NId[0]);
     }
 }

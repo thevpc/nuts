@@ -10,7 +10,7 @@ import java.util.*;
 import net.thevpc.nuts.NDefinitionFilter;
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
+import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 
 /**
  * @author thevpc
@@ -123,7 +123,11 @@ public class CommonRootsByPathHelper {
             }
         }
         if(a_deep || b_deep){
-            return NPath.of(sb.toString()).resolve("*");
+            if(sb.length()>0) {
+                return NPath.of(sb.toString()).resolve("*");
+            }else{
+                return NPath.of("*");
+            }
         }
         return NPath.of(sb.toString());
     }
@@ -185,7 +189,7 @@ public class CommonRootsByPathHelper {
         if (filter == null) {
             return null;
         }
-        NDefinitionFilter[] aa= NDefinitionHelper.toAndChildren(filter).orNull();
+        NDefinitionFilter[] aa= NDefinitionFilterUtils.toAndChildren(filter).orNull();
         if (aa!=null) {
             Set<NPath> xx = null;
             for (NDefinitionFilter g : aa) {
@@ -193,7 +197,7 @@ public class CommonRootsByPathHelper {
             }
             return xx;
         }
-        aa= NDefinitionHelper.toOrChildren(filter).orNull();
+        aa= NDefinitionFilterUtils.toOrChildren(filter).orNull();
         if (aa!=null) {
             if (aa.length == 0) {
                 return null;
@@ -204,7 +208,7 @@ public class CommonRootsByPathHelper {
             }
             return xx;
         }
-        NId pid=NDefinitionHelper.toPatternId(filter).orNull();
+        NId pid= NDefinitionFilterUtils.toPatternId(filter).orNull();
         if ( pid!=null) {
             return resolveRootId(pid.getGroupId(), pid.getArtifactId(),pid.getVersion().toString());
         }

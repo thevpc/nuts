@@ -331,7 +331,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
         if (NApp.of().getId().orNull() != null) {
             try {
                 NDefinition def = NSearchCmd.of().setId(NApp.of().getId().get())
-                        .setEffective(true).setLatest(true).getResultDefinitions()
+                        .setLatest(true).getResultDefinitions()
                         .findFirst().orNull();
                 if (def != null) {
                     String n = def.getEffectiveDescriptor().get().getName();

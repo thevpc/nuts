@@ -58,8 +58,7 @@ public interface NDefinition extends Serializable, Comparable<NDefinition> {
     NOptional<Set<NDescriptorFlag>> getEffectiveFlags();
 
     /**
-     * return artifact content file info (including path).
-     * this is an <strong>optional</strong> property. It must be requested (see {@link NSearchCmd#setContent(boolean)}) to be available.
+     * return artifact content file path.
      *
      * @return artifact content file info
      * @throws NElementNotFoundException if the property is not requested
@@ -76,8 +75,6 @@ public interface NDefinition extends Serializable, Comparable<NDefinition> {
 
     /**
      * return artifact effective descriptor.
-     * this is an <strong>optional</strong> property.
-     * It must be requested (see {@link NSearchCmd#setEffective(boolean)} to be available).
      *
      * @return artifact effective descriptor
      * @throws NElementNotFoundException if the property is not requested

@@ -43,10 +43,10 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
         pushId(apiId, null);
         Set<NId> deps = new HashSet<>();
         deps.add(workspace.getRuntimeId());
-        deps.addAll(NSearchCmd.of().addId("net.thevpc.nsh:nsh").setLatest(true).setContent(true).setTargetApiVersion(apiId.getVersion()).setDependencyFilter(NDependencyFilters.of().byRunnable()).setBasePackage(true).setDependencies(true).getResultIds().toList());
+        deps.addAll(NSearchCmd.of().addId("net.thevpc.nsh:nsh").setLatest(true).setTargetApiVersion(apiId.getVersion()).setDependencyFilter(NDependencyFilters.of().byRunnable()).setBasePackage(true).setDependencies(true).getResultIds().toList());
         if(ids!=null){
             for (NId id : deps) {
-                deps.addAll(NSearchCmd.of().addId(id).setLatest(true).setContent(true).setTargetApiVersion(apiId.getVersion()).setDependencyFilter(NDependencyFilters.of().byRunnable()).setBasePackage(true).setDependencies(true).getResultIds().toList());
+                deps.addAll(NSearchCmd.of().addId(id).setLatest(true).setTargetApiVersion(apiId.getVersion()).setDependencyFilter(NDependencyFilters.of().byRunnable()).setBasePackage(true).setDependencies(true).getResultIds().toList());
             }
         }
         for (NId dep : deps) {
@@ -57,7 +57,7 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
     }
 
     private void pushId(NId pid, NVersion apiIdVersion) {
-        NDefinition def = NSearchCmd.of().addId(pid).setLatest(true).setContent(true).setTargetApiVersion(apiIdVersion).getResultDefinitions().findFirst().get();
+        NDefinition def = NSearchCmd.of().addId(pid).setLatest(true).setTargetApiVersion(apiIdVersion).getResultDefinitions().findFirst().get();
         NPath apiJar = def.getContent().get();
         if (!runRemoteAsStringNoFail("ls " + remoteIdMavenJar(def.getApiId()))) {
             if (!isLocalhost()) {

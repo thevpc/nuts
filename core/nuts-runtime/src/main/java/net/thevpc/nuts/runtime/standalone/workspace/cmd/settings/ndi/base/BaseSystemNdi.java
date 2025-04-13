@@ -423,7 +423,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     private NDefinition loadIdDefinition(NId nid) {
-        return NSearchCmd.of().addId(nid).setLatest(true).setEffective(true).setDistinct(true).getResultDefinitions().findSingleton().get();
+        return NSearchCmd.of().addId(nid).setLatest(true).setDistinct(true).getResultDefinitions().findSingleton().get();
     }
 
     public NSupportMode getDesktopIntegrationSupport(NDesktopIntegrationItem target) {
@@ -727,7 +727,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
             return getPreferredIconPath(rt);
         }
-        NDefinition appDef = NSearchCmd.of().addId(appId).setLatest(true).setEffective(true).setDistinct(true).getResultDefinitions()
+        NDefinition appDef = NSearchCmd.of().addId(appId).setLatest(true).setDistinct(true).getResultDefinitions()
                 .findSingleton().get();
         String descAppIcon = resolveBestIcon(appDef.getId(),appDef.getDescriptor().getIcons());
         if (descAppIcon == null) {
@@ -791,7 +791,6 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         NDefinition appDef = NSearchCmd.of()
                 .addId(options.getId())
                 .setLatest(true)
-                .setEffective(true)
                 .setDistinct(true)
                 .getResultDefinitions()
                 .findSingleton().get();
@@ -806,7 +805,6 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         NAssert.requireNonBlank(apiVersion, "nuts-api version to link to");
         NId apiId = NWorkspace.of().getApiId().builder().setVersion(apiVersion).build();
         NDefinition apiDefinition = NSearchCmd.of().addId(apiId).failFast().latest()
-                .content()
                 .distinct()
                 .getResultDefinitions()
                 .findSingleton().get();

@@ -589,7 +589,7 @@ public class CoreFilterUtils {
         if (all.length == 1) {
             return (T) all[0].simplify();
         }
-        List<T> all2 = new ArrayList<>();
+        Set<T> all2 = new LinkedHashSet<>();
         boolean updates = false;
         boolean someFalse = false;
         for (NFilter t : all) {
@@ -621,7 +621,7 @@ public class CoreFilterUtils {
             return NFilters.of().always(cls);
         }
         if (all2.size() == 1) {
-            return all2.get(0);
+            return all2.stream().findFirst().get();
         }
         if (!updates) {
             return base;
@@ -636,7 +636,7 @@ public class CoreFilterUtils {
         if (all.length == 1) {
             return (T) all[0].simplify();
         }
-        List<T> all2 = new ArrayList<>();
+        Set<T> all2 = new LinkedHashSet<>();
         boolean updates = false;
         for (NFilter t : all) {
             T t2 = t == null ? null : (T) t.simplify();
@@ -660,11 +660,11 @@ public class CoreFilterUtils {
                 updates = true;
             }
         }
-        if (all2.size() == 0) {
+        if (all2.isEmpty()) {
             return NFilters.of().always(cls);
         }
         if (all2.size() == 1) {
-            return all2.get(0);
+            return all2.stream().findFirst().get();
         }
         if (!updates) {
             return base;

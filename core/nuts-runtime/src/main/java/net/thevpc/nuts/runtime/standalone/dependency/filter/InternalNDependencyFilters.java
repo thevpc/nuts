@@ -210,14 +210,15 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
 
     @Override
     public NDependencyFilter byRunnable(boolean optional,boolean anyEnv) {
-        return byScope(NDependencyScopePattern.RUN)
+        return byScope(NDependencyScopePattern.RUN, NDependencyScopePattern.COMPILE)
                 .and(byOptional(optional?null:false))
                 .and(byRegularType())
                 .and(anyEnv?null:byCurrentEnv());
     }
+
     @Override
     public NDependencyFilter byRunnable(boolean optional) {
-        return byScope(NDependencyScopePattern.RUN)
+        return byScope(NDependencyScopePattern.RUN, NDependencyScopePattern.COMPILE)
                 .and(byOptional(optional?null:false))
                 .and(byRegularType())
                 .and(byCurrentEnv());
@@ -225,7 +226,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
 
     @Override
     public NDependencyFilter byRunnable() {
-        return byRunnable(false);
+        return byRunnable(false,false);
     }
 
     @Override

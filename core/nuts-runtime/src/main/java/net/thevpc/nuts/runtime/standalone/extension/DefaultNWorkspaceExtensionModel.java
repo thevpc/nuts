@@ -321,7 +321,7 @@ public class DefaultNWorkspaceExtensionModel {
 //        }
 //    }
     public Set<Class<? extends NComponent>> discoverTypes(NId id, ClassLoader classLoader) {
-        URL url = NFetchCmd.of(id).setContent(true).getResultContent().toURL().get();
+        URL url = NFetchCmd.of(id).getResultContent().toURL().get();
         return objectFactory.discoverTypes(id, url, classLoader);
     }
 
@@ -451,8 +451,6 @@ public class DefaultNWorkspaceExtensionModel {
                     //load extension
                     NDefinition def = NSearchCmd.of()
                             .addId(extension).setTargetApiVersion(workspace.getApiVersion())
-                            .setContent(true)
-                            .setDependencies(true)
                             .setDependencyFilter(NDependencyFilters.of().byRunnable())
                             .setLatest(true)
                             .getResultDefinitions().findFirst().get();
@@ -487,8 +485,6 @@ public class DefaultNWorkspaceExtensionModel {
         loadedExtensionURLs.clear();
         for (NDefinition def : NSearchCmd.of().addIds(loadedExtensionIds.toArray(new NId[0]))
                 .setTargetApiVersion(workspace.getApiVersion())
-                .setContent(true)
-                .setDependencies(true)
                 .setDependencyFilter(NDependencyFilters.of().byRunnable())
                 .setLatest(true)
                 .getResultDefinitions().toList()) {
@@ -534,11 +530,8 @@ public class DefaultNWorkspaceExtensionModel {
         NDefinition nDefinitions = NSearchCmd.of()
                 .copyFrom(options)
                 .addId(id)
-                .addScope(NDependencyScopePattern.RUN)
-                .setDependencyFilter(NDependencyFilters.of().byRunnable(false))
+                .setDependencyFilter(NDependencyFilters.of().byRunnable())
                 //
-                .setContent(true)
-                .setDependencies(true)
                 .setLatest(true)
                 .getResultDefinitions().findFirst().get();
         if (!isLoadedClassPath(nDefinitions)) {

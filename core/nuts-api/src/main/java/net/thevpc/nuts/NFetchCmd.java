@@ -226,74 +226,12 @@ public interface NFetchCmd extends NWorkspaceCmd {
      */
     NFetchCmd copyFrom(NFetchCmd other);
 
-    /**
-     * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
-     *
-     * @param scope scope filter
-     * @return {@code this} instance
-     */
-    NFetchCmd addScope(NDependencyScopePattern scope);
-
     ///////////////////////
     // SHARED
     ///////////////////////
     ////////////////////////////////////////////////////////
     // Setters
     ////////////////////////////////////////////////////////
-
-    /**
-     * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
-     *
-     * @param scope scope filter
-     * @return {@code this} instance
-     */
-    NFetchCmd addScope(NDependencyScope scope);
-
-    /**
-     * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
-     *
-     * @param scope scope filter
-     * @return {@code this} instance
-     */
-    NFetchCmd addScopes(NDependencyScope... scope);
-
-    /**
-     * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
-     *
-     * @param scope scope filter
-     * @return {@code this} instance
-     */
-    NFetchCmd addScopes(NDependencyScopePattern... scope);
-
-    /**
-     * remove dependency scope filter.
-     *
-     * @param scope scope filter
-     * @return {@code this} instance
-     */
-    NFetchCmd removeScope(NDependencyScope scope);
-
-    /**
-     * remove dependency scope filter.
-     *
-     * @param scope scope filter
-     * @return {@code this} instance
-     */
-    NFetchCmd removeScope(NDependencyScopePattern scope);
-
-    /**
-     * remove all dependency scope filters.
-     *
-     * @return {@code this} instance
-     */
-    NFetchCmd clearScopes();
-
-    /**
-     * dependencies scope filters
-     *
-     * @return dependencies scope filters
-     */
-    Set<NDependencyScope> getScope();
 
 
     ////////////////////////////////////////////////////////
@@ -345,8 +283,6 @@ public interface NFetchCmd extends NWorkspaceCmd {
      */
     NFetchCmd setDependencies(boolean enable);
 
-    NFetchCmd dependencies();
-
     /**
      * return repository filter
      *
@@ -385,38 +321,6 @@ public interface NFetchCmd extends NWorkspaceCmd {
     @Override
     NFetchCmd run();
 
-//    /**
-//     * search for installed packages
-//     * @return {@code this} instance
-//     */
-//    NutsFetchCommand installed();
-//
-//    /**
-//     * search for non installed packages
-//     * @return {@code this} instance
-//     */
-//    NutsFetchCommand notInstalled();
-//
-//    /**
-//     * search for installed/non installed packages
-//     * @param value new value
-//     * @return {@code this} instance
-//     */
-//    NutsFetchCommand installed(Boolean value);
-//
-//    /**
-//     * search for installed/non installed packages
-//     * @param value new value
-//     * @return {@code this} instance
-//     */
-//    NutsFetchCommand setInstalled(Boolean value);
-//
-//    /**
-//     * return installed/non installed packages flag
-//     * @return {@code this} instance
-//     */
-//    Boolean getInstalled();
-
     /**
      * return dependency filter
      *
@@ -444,12 +348,8 @@ public interface NFetchCmd extends NWorkspaceCmd {
 
     NFetchCmd failFast();
 
-    NFetchCmd content();
-
-    NFetchCmd effective();
-
     boolean isIgnoreCurrentEnvironment();
 
-    public NFetchCmd setIgnoreCurrentEnvironment(boolean ignoreCurrentEnvironment);
+    NFetchCmd setIgnoreCurrentEnvironment(boolean ignoreCurrentEnvironment);
 
 }

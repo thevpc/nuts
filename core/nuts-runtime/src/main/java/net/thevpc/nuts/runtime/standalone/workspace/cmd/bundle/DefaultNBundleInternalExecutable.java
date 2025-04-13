@@ -90,31 +90,16 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     return this;
                 }
                 List<NDefinition> list = new ArrayList<>();
-//                List<NDefinition> resultDefinitions0 = NSearchCmd.of().addId(id)
-//                        .setLatest(true)
-////                        .setDistinct(false)
-//                        .setEffective(true)
-//                        .setDependencyFilter(
-//                                NDependencyFilters.of().byScope(NDependencyScopePattern.RUN, NDependencyScopePattern.COMPILE)
-//                                        .and(NDependencyFilters.of().byRegularType())
-//                        )
-//                        .setInlineDependencies(true)
-//                        .setIgnoreCurrentEnvironment(true)
-//                        .setContent(true)
-//                        .getResultDefinitions().toList();
-
 
                 NStream<NDefinition> resultDefinitions = NSearchCmd.of().addId(id)
                         .setLatest(true)
                         .setDistinct(true)
-                        .setEffective(true)
                         .setDependencyFilter(
                                 NDependencyFilters.of().byScope(NDependencyScopePattern.RUN, NDependencyScopePattern.COMPILE)
                                 .and(NDependencyFilters.of().byRegularType())
                         )
                         .setInlineDependencies(true)
                         .setIgnoreCurrentEnvironment(true)
-                        .setContent(true)
                         .getResultDefinitions();
                 resultDefinitions.forEach(resultDefinition -> {
                     list.add(resultDefinition);

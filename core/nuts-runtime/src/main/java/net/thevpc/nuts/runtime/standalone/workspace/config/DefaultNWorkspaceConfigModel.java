@@ -1163,7 +1163,6 @@ public class DefaultNWorkspaceConfigModel {
 
     public NBootDef fetchBootDef(NId id, boolean content) {
         NDefinition nd = NFetchCmd.of(id)
-                .setDependencies(true).setContent(content)
                 .setDependencyFilter(NDependencyFilters.of().byRunnable())
                 .setFailFast(false).getResultDefinition();
         if (nd != null) {

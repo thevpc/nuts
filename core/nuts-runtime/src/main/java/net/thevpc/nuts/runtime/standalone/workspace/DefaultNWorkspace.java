@@ -839,7 +839,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         LinkedHashSet<NDependency> effStandardDeps = new LinkedHashSet<>();
         for (NDependency standardDependency : effectiveDescriptor.getStandardDependencies()) {
             if ("import".equals(standardDependency.getScope())) {
-                NDescriptor dd = NFetchCmd.of(standardDependency.toId()).setEffective(true).getResultDescriptor();
+                NDescriptor dd = NFetchCmd.of(standardDependency.toId()).getResultEffectiveDescriptor();
                 for (NDependency dependency : dd.getStandardDependencies()) {
                     if (effectiveNDescriptorConfig.isIgnoreCurrentEnvironment() || CoreFilterUtils.acceptDependency(dependency)) {
                         effStandardDeps.add(dependency);
@@ -887,7 +887,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
             if ("import".equals(d.getScope())) {
                 someChange = true;
-                newDeps.addAll(NFetchCmd.of(d.toId()).setEffective(true).getResultDescriptor().getDependencies());
+                newDeps.addAll(NFetchCmd.of(d.toId()).getResultDescriptor().getDependencies());
             } else {
                 newDeps.add(d);
             }
@@ -985,12 +985,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     || (!def.getDescriptor().isNoContent() && def.getContent().isNotPresent())) {
                 // reload def
                 NFetchCmd fetch2 = NFetchCmd.of(def.getId())
-                        .content()
                         .setRepositoryFilter(NRepositoryFilters.of().installedRepo())
                         .failFast();
                 if (requireDependencies && def.getDependencies().isPresent()) {
                     fetch2.setDependencyFilter(def.getDependencies().get().filter());
-                    fetch2.dependencies();
                 }
                 def = fetch2.getResultDefinition();
             }
@@ -1034,18 +1032,15 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 //must re-fetch def!
                 NDefinition d2 = NFetchCmd.of(def.getId())
                         .setFailFast(false)
-                        .addScope(NDependencyScopePattern.RUN)
-                        .setDependencyFilter(NDependencyFilters.of().byRunnable(false))
+                        .setDependencyFilter(NDependencyFilters.of().byRunnable())
                         .getResultDefinition();
                 if (d2 == null) {
                     // perhaps the version does no more exist
                     // search latest!
                     d2 = NSearchCmd.of().setId(def.getId().getShortId())
-                            .effective()
                             .failFast()
                             .latest()
-                            .addScope(NDependencyScopePattern.RUN)
-                            .setDependencyFilter(NDependencyFilters.of().byRunnable(false))
+                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
                             .getResultDefinitions().findFirst().get();
                 }
                 def = d2;
@@ -1094,7 +1089,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                                 .getResult()
                                 .hasNext()) {
                             NDefinition dd = NSearchCmd.of().addId(parent).setLatest(true)
-                                    .setEffective(true)
                                     .getResultDefinitions()
                                     .findFirst().orNull();
                             if (dd != null) {
@@ -1196,12 +1190,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
                 //now should reload definition
                 NFetchCmd fetch2 = NFetchCmd.of(executionContext.getDefinition().getId())
-                        .content()
                         .setRepositoryFilter(NRepositoryFilters.of().installedRepo())
                         .failFast();
                 if (requireDependencies && def.getDependencies().isPresent()) {
                     fetch2.setDependencyFilter(def.getDependencies().get().filter());
-                    fetch2.dependencies();
                 }
                 NDefinition def2 = fetch2
                         .getResultDefinition();
@@ -1604,7 +1596,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         if ((NBlankable.isBlank(g)) || (NBlankable.isBlank(v))) {
             List<NId> parents = descriptor.getParents();
             for (NId parent : parents) {
-                NId p = NFetchCmd.of(parent).setEffective(true).getResultId();
+                NId p = NFetchCmd.of(parent).getResultId();
                 if (NBlankable.isBlank(g)) {
                     g = p.getGroupId();
                 }
@@ -1633,7 +1625,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             all.addAll(parents);
             while (!all.isEmpty()) {
                 NId parent = all.pop();
-                NDescriptor dd = NFetchCmd.of(parent).setEffective(true).getResultDescriptor();
+                NDescriptor dd = NFetchCmd.of(parent).getResultDescriptor();
                 bestId = NDescriptorUtils.applyProperties(bestId.builder(), new MapToFunction(NDescriptorUtils.getPropertiesMap(dd.getProperties()))).build();
                 if (CoreNUtils.isEffectiveId(bestId)) {
                     return bestId;
@@ -1687,9 +1679,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     //ensure installer is always well qualified!
                     CoreNIdUtils.checkShortId(installerId);
                     runnerFile = NSearchCmd.of().setId(installerId)
-                            .setDependencyFilter(NDependencyFilters.of().byRunnable(false))
-                            .setContent(true)
-                            .setDependencies(true)
+                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
                             .setLatest(true)
                             .setDistinct(true)
                             .getResultDefinitions()
@@ -1863,7 +1853,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             nutToInstall = NSearchCmd.of().setTransitive(false).addId(id)
                     .setInlineDependencies(checkDependencies)
                     .setDefinitionFilter(NDefinitionFilters.of().byDeployed(true))
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable(false))
+                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
                     .getResultDefinitions()
                     .findFirst().orNull();
             if (nutToInstall == null) {
@@ -1893,7 +1883,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     public void deployBoot(NId id, boolean withDependencies) {
         runWith(() -> {
             Map<NId, NDefinition> defs = new HashMap<>();
-            NDefinition m = NFetchCmd.of(id).setContent(true).setDependencies(true).setFailFast(false).getResultDefinition();
+            NDefinition m = NFetchCmd.of(id).setFailFast(false).getResultDefinition();
             Map<String, String> a = new LinkedHashMap<>();
             a.put("configVersion", Nuts.getVersion().toString());
             a.put("id", id.getLongName());
@@ -1905,7 +1895,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             if (withDependencies) {
                 for (NDependency dependency : m.getDependencies().get()) {
                     if (!defs.containsKey(dependency.toId().getLongId())) {
-                        m = NFetchCmd.of(id).setContent(true).setDependencies(true).setFailFast(false).getResultDefinition();
+                        m = NFetchCmd.of(id).setFailFast(false).getResultDefinition();
                         defs.put(m.getId().getLongId(), m);
                     }
                 }

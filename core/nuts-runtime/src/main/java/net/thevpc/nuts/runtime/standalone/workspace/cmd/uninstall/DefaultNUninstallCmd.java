@@ -48,11 +48,7 @@ public class DefaultNUninstallCmd extends AbstractNUninstallCmd {
                     .setTransitive(false)
                     .addId(id)
                     .setDefinitionFilter(NDefinitionFilters.of().byInstalled(true))
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable(false))
-                    .setEffective(true)
-                    .setContent(true)//include content so that we can remove it by calling executor
-                    .setDependencies(true)//include dependencies so that we can remove it by calling executor
-                    .addScope(NDependencyScopePattern.RUN)
+                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
                     .getResultDefinitions().toList();
             resultDefinitions.removeIf(it -> !it.getInstallInformation().get().isInstalledOrRequired());
             if (resultDefinitions.isEmpty()) {

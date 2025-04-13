@@ -30,6 +30,7 @@ import net.thevpc.nuts.NConstants;
 
 
 import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
 import net.thevpc.nuts.util.NBlankable;
@@ -664,7 +665,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                         .build();
                 NDefinitionFilter ff = getFilter();
                 if (ff != null) {
-                    idIter = NIteratorBuilder.of(idIter).filter(NDefinitionHelper.toIdPredicate(ff)).build();
+                    idIter = NIteratorBuilder.of(idIter).filter(NDefinitionFilterUtils.toIdPredicate(ff)).build();
                 }
                 result = idIter; //deployments.searchImpl(getFilter(), session)
                 if (result == null) {

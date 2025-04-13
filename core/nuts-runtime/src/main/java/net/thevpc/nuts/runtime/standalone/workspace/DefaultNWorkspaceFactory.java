@@ -141,7 +141,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.io.NIO": {
-                    DefaultNIO p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.WORKSPACE, () -> new DefaultNIO(workspace));
+                    DefaultNIO p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.WORKSPACE, () -> new DefaultNIO());
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.elem.NElements": {

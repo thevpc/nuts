@@ -249,53 +249,13 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
             throw ex;
         }
         if (foundDefinitionBuilder != null) {
-//            if (session.isTrace()) {
-//                NutsIterableOutput ff = CoreNutsUtils.getValidOutputFormat(session)
-//                        .session(session);
-//                ff.start();
-//                ff.next(foundDefinition);
-//                ff.complete();
-//            }
             return foundDefinitionBuilder.build();
         }
         throw new NNotFoundException(id);
     }
 
-    private NDependencyFilter buildActualDependencyFilter() {
-        NDependencyFilters ff = NDependencyFilters.of();
-        return ff.byScope(getScope())
-                .and(getDependencyFilter());
-    }
-
-//    protected NPath fetchContent(NId id1, NDefinitionBuilder foundDefinition, NRepository repo0, NFetchStrategy nutsFetchModes, List<Exception> reasons) {
-//        NRepositorySPI repoSPI = NWorkspaceUtils.of().repoSPI(repo0);
-//        for (NFetchMode mode : nutsFetchModes) {
-//            try {
-//                NPath content = repoSPI.fetchContent()
-//                        .setId(id1).setDescriptor(foundDefinition.getDescriptor())
-//                        .setFetchMode(mode)
-//                        .getResult();
-//                if (content != null) {
-//                    content = repoSPI.fetchContent()
-//                            .setId(id1).setDescriptor(foundDefinition.getDescriptor())
-//                            .setFetchMode(mode)
-//                            .getResult();
-//                    foundDefinition.setContent(content);
-//                    return content;
-//                }
-//            } catch (NNotFoundException ex) {
-//                reasons.add(ex);
-//                //
-//            }
-//        }
-//        return null;
-//    }
-
-
     protected DefaultNDefinitionBuilder2 fetchDescriptorAsDefinition(NId id, NFetchStrategy nutsFetchModes, NFetchMode mode, NRepository repo) {
-//        NSession session = NSession.of();
         NWorkspaceExt dws = NWorkspaceExt.of();
-//        boolean withCache = !(repo instanceof DefaultNInstalledRepository) && session.isCached();
         NWorkspace workspace = NWorkspace.of();
         NWorkspaceUtils wu = NWorkspaceUtils.of(workspace);
         NWorkspaceStore wstore = ((NWorkspaceExt) workspace).store();
@@ -475,7 +435,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
         public NDependencies get() {
             return NDependencySolver.of()
                     .setIgnoreCurrentEnvironment(DefaultNFetchCmd.this.isIgnoreCurrentEnvironment())
-                    .setDependencyFilter(DefaultNFetchCmd.this.buildActualDependencyFilter())
+                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
                     .add(id.toDependency(), foundDefinitionBuilder.build())
                     .setRepositoryFilter(DefaultNFetchCmd.this.getRepositoryFilter())
                     .solve();

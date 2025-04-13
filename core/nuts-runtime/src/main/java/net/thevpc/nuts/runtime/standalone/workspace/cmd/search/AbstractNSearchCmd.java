@@ -933,7 +933,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     public String toString() {
         return getClass().getSimpleName() + "{"
                 + "failFast=" + isFailFast()
-                + ", scope=" + getScope()
                 + ", content=" + isContent()
                 + ", inlineDependencies=" + isInlineDependencies()
                 + ", dependencies=" + isDependencies()

@@ -35,12 +35,12 @@ public class MvnClient {
                     NDefinition ff = NSearchCmd.of()
                             .setFetchStrategy(NFetchStrategy.ONLINE)
                             .addId(NET_VPC_APP_NUTS_MVN)
-                            .setDependencyFilter(NDependencyFilters.of().byRunnable(false))
+                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
                             .setInlineDependencies(true).setLatest(true).getResultDefinitions().findFirst().get();
                     for (NId nutsId : NSearchCmd.of().addId(ff.getId()).setInlineDependencies(true).getResultIds()) {
                         NFetchCmd.of(nutsId).setFetchStrategy(NFetchStrategy.ONLINE)
-                                .setDependencyFilter(NDependencyFilters.of().byRunnable(false))
-                                .setDependencies(true).getResultDefinition();
+                                .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                                .getResultDefinition();
                     }
                     status = Status.SUCCESS;
                 } catch (Exception ex) {

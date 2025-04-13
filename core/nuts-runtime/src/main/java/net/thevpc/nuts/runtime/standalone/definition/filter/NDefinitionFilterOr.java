@@ -8,9 +8,7 @@ import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NFilterOp;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class NDefinitionFilterOr extends AbstractDefinitionFilter implements NComplexExpressionString {
@@ -19,7 +17,7 @@ public class NDefinitionFilterOr extends AbstractDefinitionFilter implements NCo
 
     public NDefinitionFilterOr(NDefinitionFilter... all) {
         super(NFilterOp.OR);
-        List<NDefinitionFilter> valid = new ArrayList<>();
+        Set<NDefinitionFilter> valid = new LinkedHashSet<>();
         if (all != null) {
             for (NDefinitionFilter filter : all) {
                 if (filter != null) {

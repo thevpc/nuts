@@ -128,7 +128,7 @@ public class NdiScriptOptions implements Cloneable {
             NId nid = resolveNutsApiId();
             if (getLauncher().getSwitchWorkspaceLocation() == null) {
                 NDefinition apiDef = NSearchCmd.of()
-                        .addId(nid).setDependencyFilter(NDependencyFilters.of().byRunnable(false)).setLatest(true).setContent(true).getResultDefinitions().findFirst().get();
+                        .addId(nid).setDependencyFilter(NDependencyFilters.of().byRunnable()).setLatest(true).getResultDefinitions().findFirst().get();
                 nutsApiJarPath = apiDef.getContent().orNull();
             } else {
                 NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
@@ -143,7 +143,7 @@ public class NdiScriptOptions implements Cloneable {
             NId nid = resolveNutsAppId();
             if (getLauncher().getSwitchWorkspaceLocation() == null) {
                 NDefinition appDef = NSearchCmd.of()
-                        .addId(nid).setDependencyFilter(NDependencyFilters.of().byRunnable(false)).setLatest(true).setContent(true).getResultDefinitions().findFirst().get();
+                        .addId(nid).setDependencyFilter(NDependencyFilters.of().byRunnable()).setLatest(true).getResultDefinitions().findFirst().get();
                 nutsAppJarPath = appDef.getContent().get();
             } else {
                 NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
@@ -178,7 +178,7 @@ public class NdiScriptOptions implements Cloneable {
     public NPath resolveNutsApiBinFolder() {
         NWorkspaceBootConfig bootConfig = null;
         NId apiId = NWorkspace.get().get().getApiId().builder().setVersion(nutsVersion).build();
-        apiId = NSearchCmd.of().addId(apiId).latest().failFast().content()
+        apiId = NSearchCmd.of().addId(apiId).latest().failFast()
                 .distinct()
                 .getResultDefinitions()
                 .findSingleton().get().getId();
@@ -193,7 +193,6 @@ public class NdiScriptOptions implements Cloneable {
     public NDefinition resolveNutsApiDef() {
         return NSearchCmd.of().addId(resolveNutsApiId())
                 .latest()
-                .content()
                 .failFast()
                 .distinct()
                 .getResultDefinitions()

@@ -10,8 +10,6 @@ public class Test09_TestFetchTest {
     public void test(){
         TestUtils.openNewTestWorkspace();
         NDefinition resultDefinition = NFetchCmd.of("org.springframework.boot:spring-boot#2.4.1")
-                .setDependencies(true)
-                .setContent(true)
                 .getResultDefinition();
         TestUtils.println("-----------------");
         for (NDependency dependency : resultDefinition.getDescriptor().getDependencies()) {

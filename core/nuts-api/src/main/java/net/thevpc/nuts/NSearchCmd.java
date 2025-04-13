@@ -698,75 +698,6 @@ public interface NSearchCmd extends NWorkspaceCmd {
     String getResultClassPath();
 
     /**
-     * remove all dependency scope filters.
-     *
-     * @return {@code this} instance
-     */
-    NSearchCmd clearScopes();
-
-    /**
-     * add dependency scope filter. Only relevant with
-     * {@link #setDependencies(boolean)}
-     *
-     * @param scope scope filter
-     * @return {@code this} instance
-     */
-    NSearchCmd addScope(NDependencyScope scope);
-
-    /**
-     * add dependency scope filter. Only relevant with
-     * {@link #setDependencies(boolean)}
-     *
-     * @param scope scope filter
-     * @return {@code this} instance
-     */
-    NSearchCmd addScopes(NDependencyScope... scope);
-
-    /**
-     * add dependency scope filter. Only relevant with
-     * {@link #setDependencies(boolean)}
-     *
-     * @param scope scope filter
-     * @return {@code this} instance
-     */
-    NSearchCmd removeScope(NDependencyScope scope);
-
-    /**
-     * add dependency scope filter. Only relevant with
-     * {@link #setDependencies(boolean)}
-     *
-     * @param scope scope filter
-     * @return {@code this} instance
-     */
-    NSearchCmd addScope(NDependencyScopePattern scope);
-
-    /**
-     * add dependency scope filter. Only relevant with
-     * {@link #setDependencies(boolean)}
-     *
-     * @param scope scope filter
-     * @return {@code this} instance
-     */
-    NSearchCmd addScopes(NDependencyScopePattern... scope);
-
-    /**
-     * remove dependency scope filter. Only relevant with
-     * {@link #setDependencies(boolean)}
-     *
-     * @param scope scope filter
-     * @return {@code this} instance
-     */
-    NSearchCmd removeScope(NDependencyScopePattern scope);
-
-    /**
-     * scope filter. applicable with
-     * {@link #setInlineDependencies(boolean)}
-     *
-     * @return optional filter
-     */
-    Set<NDependencyScope> getScope();
-
-    /**
      * true if content is resolved
      *
      * @return true if content is resolved
@@ -785,8 +716,6 @@ public interface NSearchCmd extends NWorkspaceCmd {
      */
     NSearchCmd setContent(boolean enable);
 
-    NSearchCmd content();
-
     /**
      * true if descriptor is resolved against its effective value
      *
@@ -801,8 +730,6 @@ public interface NSearchCmd extends NWorkspaceCmd {
      * @return {@code this} instance
      */
     NSearchCmd setEffective(boolean enable);
-
-    NSearchCmd effective();
 
     /**
      * true if dependencies are inlined
@@ -835,12 +762,6 @@ public interface NSearchCmd extends NWorkspaceCmd {
      * @return {@code this} instance
      */
     NSearchCmd setDependencies(boolean enable);
-
-    NSearchCmd dependencies();
-
-    //
-    // NutsWorkspaceCommand overridden methods
-    //    
 
     /**
      * search for default versions status.

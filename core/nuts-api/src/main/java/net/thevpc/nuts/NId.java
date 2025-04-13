@@ -46,7 +46,7 @@ import java.util.regex.Pattern;
 public interface NId extends Comparable<NId>, NBlankable {
     NId API_ID = get(NConstants.Ids.NUTS_GROUP_ID, NConstants.Ids.NUTS_API_ARTIFACT_ID, "").get();
     NId RUNTIME_ID = get(NConstants.Ids.NUTS_GROUP_ID, NConstants.Ids.NUTS_RUNTIME_ARTIFACT_ID, "").get();
-    Pattern PATTERN = Pattern.compile("^((?<group>[a-zA-Z0-9_.${}*-]*):)?(?<artifact>[a-zA-Z0-9_.${}*-]+)(:(?<classifier>[a-zA-Z0-9_.${}*-]*))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
+    Pattern PATTERN = Pattern.compile("^((?<group>[a-zA-Z0-9_.${}*-]*):)?(?<artifact>[a-zA-Z0-9_.${}*-]*)(:(?<classifier>[a-zA-Z0-9_.${}*-]*))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
     NId BLANK = new DefaultNId();
 
     static NOptional<List<NId>> getList(String value) {

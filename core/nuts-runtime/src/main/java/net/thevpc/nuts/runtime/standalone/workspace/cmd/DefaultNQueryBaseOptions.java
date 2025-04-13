@@ -8,6 +8,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.runtime.standalone.dependency.NDependencyFilterUtils;
 import net.thevpc.nuts.runtime.standalone.dependency.NDependencyScopes;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.util.NBlankable;
@@ -29,7 +30,6 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
     //    private final List<String> repos = new ArrayList<>();
     protected NDependencyFilter dependencyFilter;
     private boolean failFast = false;
-    private Set<NDependencyScope> scope = EnumSet.noneOf(NDependencyScope.class);
     private boolean content = false;
     private boolean inlineDependencies = false;
     private boolean dependencies = false;
@@ -63,7 +63,6 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
             this.inlineDependencies = other.isInlineDependencies();
             this.dependencies = other.isDependencies();
             this.effective = other.isEffective();
-            this.scope = EnumSet.copyOf(other.getScope());
             this.dependencyFilter = other.getDependencyFilter();
             this.repositoryFilter = other.getRepositoryFilter();
             this.fetchStrategy=((DefaultNQueryBaseOptions<T>)other).getFetchStrategy().orNull();
@@ -100,75 +99,6 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
         return (T)this;
     }
 
-    public T clearScopes() {
-        this.scope = EnumSet.noneOf(NDependencyScope.class);
-        return (T) this;
-    }
-
-    //@Override
-    public T addScope(NDependencyScope scope) {
-        this.scope = NDependencyScopes.add(this.scope, scope);
-        return (T) this;
-    }
-
-    public T addScope(NDependencyScopePattern scope) {
-        this.scope = NDependencyScopes.add(this.scope, scope);
-        return (T) this;
-    }
-
-    //@Override
-    public T addScopes(NDependencyScope... scope) {
-        this.scope = NDependencyScopes.add(this.scope, scope);
-        return (T) this;
-    }
-
-    public T addScopes(NDependencyScopePattern... scope) {
-        this.scope = NDependencyScopes.add(this.scope, scope);
-        return (T) this;
-    }
-
-    //@Override
-    public T removeScopes(NDependencyScope... scope) {
-        this.scope = NDependencyScopes.remove(this.scope, scope);
-        return (T) this;
-    }
-
-    public T removeScopes(NDependencyScopePattern... scope) {
-        this.scope = NDependencyScopes.remove(this.scope, scope);
-        return (T) this;
-    }
-
-    //@Override
-    public T removeScope(NDependencyScope scope) {
-        this.scope = NDependencyScopes.remove(this.scope, scope);
-        return (T) this;
-    }
-
-    public T removeScope(NDependencyScopePattern scope) {
-        this.scope = NDependencyScopes.remove(this.scope, scope);
-        return (T) this;
-    }
-
-    //@Override
-    public Set<NDependencyScope> getScope() {
-        return scope;
-    }
-
-    //@Override
-    public T setScope(NDependencyScope scope) {
-        return setScope(scope == null ? null : EnumSet.of(scope));
-    }
-
-    //@Override
-    public T setScope(NDependencyScope... scope) {
-        return setScope(scope == null ? null : EnumSet.<NDependencyScope>copyOf(Arrays.asList(scope)));
-    }
-
-    //@Override
-    public T setScope(Collection<NDependencyScope> scope) {
-        this.scope = scope == null ? EnumSet.noneOf(NDependencyScope.class) : EnumSet.<NDependencyScope>copyOf(scope);
-        return (T) this;
-    }
 
     //@Override
     public boolean isContent() {
@@ -181,13 +111,6 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
         return (T) this;
     }
 
-    public T content() {
-        return setContent(true);
-    }
-
-    public T effective() {
-        return setEffective(true);
-    }
 
     //@Override
     public boolean isEffective() {
@@ -226,9 +149,6 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
         return (T) this;
     }
 
-    public T dependencies() {
-        return setDependencies(true);
-    }
 
     public boolean isFailFast() {
         return failFast;
@@ -303,7 +223,7 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
                 return true;
             }
             case "--scope": {
-                cmdLine.withNextEntry((v, r) -> this.addScope(NDependencyScopePattern.parse(v).orElse(NDependencyScopePattern.API)));
+                cmdLine.withNextEntry((v, r) -> NDependencyFilterUtils.addScope(getDependencyFilter(),NDependencyScopePattern.parse(v).orElse(NDependencyScopePattern.API)));
                 return true;
             }
 
@@ -369,7 +289,6 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
     public String toString() {
         return getClass().getSimpleName() + "("
                 + "failFast=" + failFast
-                + ", scope=" + scope
                 + ", content=" + content
                 + ", dependencyFilter=" + dependencyFilter
                 + ", inlineDependencies=" + inlineDependencies

@@ -26,13 +26,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@NComponentScope(NScopeType.WORKSPACE)
 public class DefaultNIO implements NIO {
     public DefaultNWorkspaceConfigModel cmodel;
     public DefaultNBootModel bootModel;
-    public NWorkspace workspace;
 
-    public DefaultNIO(NWorkspace workspace) {
-        this.workspace = workspace;
+    public DefaultNIO() {
         this.cmodel = NWorkspaceExt.of().getConfigModel();
         bootModel = NWorkspaceExt.of().getModel().bootModel;
     }
@@ -98,7 +97,7 @@ public class DefaultNIO implements NIO {
     }
 
     private DefaultNWorkspaceConfigModel getConfigModel() {
-        return NWorkspaceExt.of(workspace).getConfigModel();
+        return NWorkspaceExt.of().getConfigModel();
     }
 
 
@@ -173,7 +172,7 @@ public class DefaultNIO implements NIO {
         if (path == null) {
             return null;
         }
-        return createPath(new FilePath(path.toPath(), workspace));
+        return createPath(new FilePath(path.toPath()));
     }
 
     @Override
@@ -181,7 +180,7 @@ public class DefaultNIO implements NIO {
         if (path == null) {
             return null;
         }
-        return createPath(new FilePath(path, workspace));
+        return createPath(new FilePath(path));
     }
 
     @Override
@@ -189,7 +188,7 @@ public class DefaultNIO implements NIO {
         if (path == null) {
             return null;
         }
-        return createPath(new URLPath(path, workspace));
+        return createPath(new URLPath(path));
     }
 
     @Override
@@ -301,11 +300,10 @@ public class DefaultNIO implements NIO {
     }
 
     public NPath createAnyTempFile(String name, boolean folder, NPath rootFolder) {
-        NSession session = workspace.currentSession();
         if (rootFolder == null) {
             rootFolder = NWorkspace.of().getStoreLocation(NStoreType.TEMP);
         }
-        NId appId = NApp.of().getId().orElseGet(() -> session.getWorkspace().getRuntimeId());
+        NId appId = NApp.of().getId().orElseGet(() -> NWorkspace.of().getRuntimeId());
         if (appId != null) {
             rootFolder = rootFolder.resolve(NConstants.Folders.ID).resolve(NWorkspace.of().getDefaultIdBasedir(appId));
         }

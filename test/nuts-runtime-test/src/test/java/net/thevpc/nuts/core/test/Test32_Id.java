@@ -52,10 +52,11 @@ public class Test32_Id {
 
     @Test
     public void test04() {
-        String t1="net.sourceforge.cobertura:cobertura#${cobertura.version}?exclusions=asm:asm,asm:asm-tree,log4j:log4j,oro:oro&profile=coverage&cond-properties='a,b=c'";
-        NId s = NId.get(t1).get();
+        String t1="net.sourceforge.cobertura:cobertura#coberturaVersion?exclusions=asm:asm,asm:asm-tree,log4j:log4j,oro:oro&profile=coverage&cond-properties=a%2Cb%3Dc";
+        NId s = NId.of(t1);
         Assertions.assertEquals("net.sourceforge.cobertura",s.getGroupId());
         Assertions.assertEquals("cobertura",s.getArtifactId());
+        Assertions.assertEquals("coberturaVersion",s.getVersion().toString());
         Assertions.assertEquals("asm:asm,asm:asm-tree,log4j:log4j,oro:oro",s.getProperties().get("exclusions"));
         Assertions.assertEquals(null,s.getCondition().getProperties().get("a"));
         Assertions.assertEquals("c",s.getCondition().getProperties().get("b"));
@@ -103,8 +104,8 @@ public class Test32_Id {
     @Test
     public void test09() {
         NId a = NId.of("a:");
-        Assertions.assertEquals(null,a.getGroupId());
-        Assertions.assertEquals("a",a.getArtifactId());
+        Assertions.assertEquals("a",a.getGroupId());
+        Assertions.assertEquals(null,a.getArtifactId());
         Assertions.assertEquals(null,a.getClassifier());
     }
 
@@ -136,5 +137,27 @@ public class Test32_Id {
         Assertions.assertEquals("g",a.getGroupId());
         Assertions.assertEquals("a",a.getArtifactId());
         Assertions.assertEquals("c",a.getClassifier());
+    }
+    @Test
+    public void test14() {
+        NId a = NId.of("::c");
+        Assertions.assertEquals(null,a.getGroupId());
+        Assertions.assertEquals(null,a.getArtifactId());
+        Assertions.assertEquals("c",a.getClassifier());
+    }
+    @Test
+    public void test15() {
+        NId a = NId.of(":");
+        Assertions.assertEquals(null,a.getGroupId());
+        Assertions.assertEquals(null,a.getArtifactId());
+        Assertions.assertEquals(null,a.getClassifier());
+    }
+    @Test
+    public void test16() {
+        NId a = NId.of("::#2");
+        Assertions.assertEquals(null,a.getGroupId());
+        Assertions.assertEquals(null,a.getArtifactId());
+        Assertions.assertEquals(null,a.getClassifier());
+        Assertions.assertEquals("2",a.getVersion().toString());
     }
 }

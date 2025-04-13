@@ -117,10 +117,10 @@ public class NResourcePath implements NPathSPI {
                 String loc = location;
                 ClassLoader resultClassLoader = NSearchCmd.of().addIds(
                                 this.ids.toArray(new NId[0])
-                        ).setLatest(true).setContent(true).setDependencies(true)
+                        ).setLatest(true)
                         .setDependencyFilter(
                                 NDependencyFilters.of()
-                                        .byRunnable(false)
+                                        .byRunnable()
                         )
                         .getResultClassLoader();
                 urls = ((DefaultNClassLoader) resultClassLoader).getURLs();

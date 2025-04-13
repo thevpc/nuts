@@ -551,7 +551,7 @@ public class CoreNUtils {
     }
 
     public static List<NId> resolveNutsApiIdsFromId(NId id) {
-        List<NDependency> deps = NFetchCmd.of(id).setDependencies(true).getResultDefinition()
+        List<NDependency> deps = NFetchCmd.of(id).getResultDefinition()
                 .getDependencies().get().transitive().toList();
         return resolveNutsApiIdsFromDependencyList(deps);
     }

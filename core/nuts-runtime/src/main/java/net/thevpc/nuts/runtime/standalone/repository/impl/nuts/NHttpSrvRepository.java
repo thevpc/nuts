@@ -30,8 +30,7 @@ import net.thevpc.nuts.NSpeedQualifier;
 import net.thevpc.nuts.NUser;
 import net.thevpc.nuts.NUserConfig;
 import net.thevpc.nuts.format.NDescriptorFormat;
-import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
-import net.thevpc.nuts.runtime.standalone.util.reflect.NUseDefaultUtils;
+import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
@@ -50,7 +49,6 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.logging.Level;
 
-import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.io.NDigest;
@@ -154,7 +152,7 @@ public class NHttpSrvRepository extends NCachedRepository {
                 NDefinitionFilters.of().byName(id.getShortName())
         );
         if (filter2 != null) {
-            it = NIteratorBuilder.of(it).filter(NDefinitionHelper.toIdPredicate(filter2)).iterator();
+            it = NIteratorBuilder.of(it).filter(NDefinitionFilterUtils.toIdPredicate(filter2)).iterator();
         }
         return it;
     }
@@ -183,7 +181,7 @@ public class NHttpSrvRepository extends NCachedRepository {
                                 NInputSource.of(js.getBytes())).end()
                         .run()
                         .getContent().getInputStream();
-                return NIteratorBuilder.of(new NamedNIdFromStreamIterator(ret)).filter(NDefinitionHelper.toIdPredicate(filter)).iterator();
+                return NIteratorBuilder.of(new NamedNIdFromStreamIterator(ret)).filter(NDefinitionFilterUtils.toIdPredicate(filter)).iterator();
             }
         } else {
             NWebCli nWebCli = NWebCli.of();
@@ -200,7 +198,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         if (filter == null) {
             return new NamedNIdFromStreamIterator(ret);
         }
-        return NIteratorBuilder.of(new NamedNIdFromStreamIterator(ret)).filter(NDefinitionHelper.toIdPredicate(filter)).iterator();
+        return NIteratorBuilder.of(new NamedNIdFromStreamIterator(ret)).filter(NDefinitionFilterUtils.toIdPredicate(filter)).iterator();
 
     }
 

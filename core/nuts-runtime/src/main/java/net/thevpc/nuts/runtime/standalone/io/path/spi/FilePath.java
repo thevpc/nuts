@@ -29,18 +29,16 @@ import java.util.stream.Stream;
 public class FilePath implements NPathSPI {
 
     private final Path value;
-    protected final NWorkspace workspace;
 
-    public FilePath(Path value, NWorkspace workspace) {
+    public FilePath(Path value) {
         if (value == null) {
             throw new NIllegalArgumentException(NMsg.ofPlain("invalid null value"));
         }
         this.value = value;
-        this.workspace = workspace;
     }
 
-    private NPath fastPath(Path p, NWorkspace s) {
-        return NPath.of(new FilePath(p, s));
+    private NPath fastPath(Path p) {
+        return NPath.of(new FilePath(p));
     }
 
     @Override
@@ -49,7 +47,7 @@ public class FilePath implements NPathSPI {
             try {
                 try (Stream<Path> files = Files.list(value)) {
                     //ensure closed!!
-                    return NStream.ofIterable(files.collect(Collectors.toList())).map(x -> fastPath(x, getWorkspace()));
+                    return NStream.ofIterable(files.collect(Collectors.toList())).map(x -> fastPath(x));
                 }
             } catch (IOException e) {
                 //
@@ -76,10 +74,10 @@ public class FilePath implements NPathSPI {
 
     public NPath resolve(NPath basePath, String path) {
         if (NBlankable.isBlank(path)) {
-            return fastPath(value, getWorkspace());
+            return fastPath(value);
         }
         try {
-            return fastPath(value.resolve(path), getWorkspace());
+            return fastPath(value.resolve(path));
         } catch (Exception ex) {
             //always return an instance if is invalid
             return NPath.of(value + getSep() + path);
@@ -96,13 +94,13 @@ public class FilePath implements NPathSPI {
             return getParent(basePath);
         }
         try {
-            return fastPath(value.resolveSibling(path), getWorkspace());
+            return fastPath(value.resolveSibling(path));
         } catch (Exception e) {
             Path p = value.getParent();
             if (p == null) {
                 return NPath.of(path);
             }
-            return fastPath(p, workspace).resolve(path);
+            return fastPath(p).resolve(path);
         }
     }
 
@@ -270,10 +268,6 @@ public class FilePath implements NPathSPI {
         return oo.toArray(new OpenOption[0]);
     }
 
-    public NWorkspace getWorkspace() {
-        return workspace;
-    }
-
     @Override
     public void delete(NPath basePath, boolean recurse) {
         if (Files.isRegularFile(value)) {
@@ -352,7 +346,7 @@ public class FilePath implements NPathSPI {
         if (p == null) {
             return null;
         }
-        return fastPath(p, getWorkspace());
+        return fastPath(p);
     }
 
     @Override
@@ -361,14 +355,14 @@ public class FilePath implements NPathSPI {
             return basePath;
         }
         if (rootPath == null) {
-            return fastPath(value.normalize().toAbsolutePath(), workspace);
+            return fastPath(value.normalize().toAbsolutePath());
         }
         return rootPath.toAbsolute().resolve(toString());
     }
 
     @Override
     public NPath normalize(NPath basePath) {
-        return fastPath(value.normalize(), workspace);
+        return fastPath(value.normalize());
     }
 
     @Override
@@ -527,7 +521,7 @@ public class FilePath implements NPathSPI {
                 }).filter(Objects::nonNull).toArray(FileVisitOption[]::new);
         if (Files.isDirectory(value)) {
             try {
-                return NStream.ofStream(Files.walk(value, maxDepth, fileOptions).map(x -> fastPath(x, getWorkspace()))
+                return NStream.ofStream(Files.walk(value, maxDepth, fileOptions).map(x -> fastPath(x))
                 );
             } catch (IOException e) {
                 //
@@ -538,7 +532,7 @@ public class FilePath implements NPathSPI {
 
     @Override
     public NPath subpath(NPath basePath, int beginIndex, int endIndex) {
-        return fastPath(value.subpath(beginIndex, endIndex), getWorkspace());
+        return fastPath(value.subpath(beginIndex, endIndex));
     }
 
     @Override
@@ -569,7 +563,7 @@ public class FilePath implements NPathSPI {
 
     @Override
     public boolean copyTo(NPath basePath, NPath other, NPathOption... options) {
-        NCp.of().from(fastPath(value, workspace)).to(other).addOptions(options).run();
+        NCp.of().from(fastPath(value)).to(other).addOptions(options).run();
         return true;
     }
 
@@ -588,22 +582,22 @@ public class FilePath implements NPathSPI {
             Files.walkFileTree(value, foptions, maxDepth, new FileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    return fileVisitResult(visitor.preVisitDirectory(fastPath(dir, workspace)));
+                    return fileVisitResult(visitor.preVisitDirectory(fastPath(dir)));
                 }
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    return fileVisitResult(visitor.visitFile(fastPath(file, workspace)));
+                    return fileVisitResult(visitor.visitFile(fastPath(file)));
                 }
 
                 @Override
                 public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-                    return fileVisitResult(visitor.visitFileFailed(fastPath(file, workspace), exc));
+                    return fileVisitResult(visitor.visitFileFailed(fastPath(file), exc));
                 }
 
                 @Override
                 public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    return fileVisitResult(visitor.postVisitDirectory(fastPath(dir, workspace), exc));
+                    return fileVisitResult(visitor.postVisitDirectory(fastPath(dir), exc));
                 }
 
                 private FileVisitResult fileVisitResult(NTreeVisitResult z) {
@@ -817,7 +811,7 @@ public class FilePath implements NPathSPI {
                     return null;
                 }
                 Path value = Paths.get(path);
-                return NCallableSupport.of(10, () -> new FilePath(value, ws));
+                return NCallableSupport.of(10, () -> new FilePath(value));
             } catch (Exception ex) {
                 //ignore
             }

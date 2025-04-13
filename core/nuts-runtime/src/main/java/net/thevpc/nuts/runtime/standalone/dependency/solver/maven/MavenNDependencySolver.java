@@ -81,55 +81,51 @@ public class MavenNDependencySolver implements NDependencySolver {
         pending.clear();
         PassProcessor pp = new PassProcessor(this);
         NDependencies run = pp.run();
-
-//        class NDependencyTreeNodeAndFormat implements NMsgFormattable {
-//            NDependencyTreeNode node;
-//
-//            public NDependencyTreeNodeAndFormat(NDependencyTreeNode node) {
-//                this.node = node;
-//            }
-//
-//            @Override
-//            public String toString() {
-//                return node == null ? "" : node.toString();
-//            }
-//
-//            @Override
-//            public NMsg toMsg() {
-//                return NMsg.ofC("%s", node.getDependency().builder().removeCondition().build());
-//            }
-//        }
-//
-//        NSession.of().out().println(
-//                new NTreeModel() {
-//                    @Override
-//                    public Object getRoot() {
-//                        return new NDependencyTreeNodeAndFormat(null);
-//                    }
-//
-//                    @Override
-//                    public List<NDependencyTreeNodeAndFormat> getChildren(Object node) {
-//                        if (((NDependencyTreeNodeAndFormat) node).node == null) {
-//                            return run.transitiveNodes().toList().stream().map(x -> new NDependencyTreeNodeAndFormat(x)).collect(Collectors.toList());
-//                        }
-//                        return ((NDependencyTreeNodeAndFormat) node).node.getChildren().stream().map(x -> new NDependencyTreeNodeAndFormat(x)).collect(Collectors.toList());
-//                    }
-//                }
-//        );
+        doLogDependencyTree(run);
         doLog("---- END SOLVE");
         return run;
     }
 
-    private void doLogNode(NDependencyTreeNode n, String prefix) {
-        String p = prefix + "";
-        if (p.length() > 0) {
-            p = p + "  ";
+    private void doLogDependencyTree(NDependencies run) {
+        if (true) {
+            return;
         }
-        System.out.println(p + n.getDependency().builder().removeCondition().build().toString());
-        for (NDependencyTreeNode child : n.getChildren()) {
-            doLogNode(child, "--" + p);
+        class NDependencyTreeNodeAndFormat implements NMsgFormattable {
+            NDependencyTreeNode node;
+
+            public NDependencyTreeNodeAndFormat(NDependencyTreeNode node) {
+                this.node = node;
+            }
+
+            @Override
+            public String toString() {
+                return node == null ? "" : node.toString();
+            }
+
+            @Override
+            public NMsg toMsg() {
+                return NMsg.ofC("%s", node.getDependency().builder().removeCondition().setExclusions(null).build());
+            }
         }
+
+        NSession.of().out().println(
+                new NTreeModel() {
+                    @Override
+                    public Object getRoot() {
+                        return new NDependencyTreeNodeAndFormat(null);
+                    }
+
+                    @Override
+                    public List<NDependencyTreeNodeAndFormat> getChildren(Object node) {
+                        if (((NDependencyTreeNodeAndFormat) node).node == null) {
+                            return run.transitiveNodes().toList().stream().map(x -> new NDependencyTreeNodeAndFormat(x)).collect(Collectors.toList());
+                        }
+                        return ((NDependencyTreeNodeAndFormat) node).node.getChildren().stream().map(x -> new NDependencyTreeNodeAndFormat(x)).collect(Collectors.toList());
+                    }
+                }
+        );
     }
+
 
     void doLog(String message) {
 //        System.out.println(message);
@@ -160,7 +156,6 @@ public class MavenNDependencySolver implements NDependencySolver {
 
     NDefinition searchOne(NDependency dep) {
         NDefinition def = null;
-        NDefinition def2 = null;
         try {
             def = search(dep)
                     .getResultDefinitions().findFirst().orNull();

@@ -34,7 +34,7 @@ public class ClassLoaderPath extends URLPath {
     }
 
     public ClassLoaderPath(String path, ClassLoader loader, NWorkspace workspace) {
-        super(loader.getResource(fileOf(path,true)), workspace, true);
+        super(loader.getResource(fileOf(path,true)), true);
         this.path = path;
         this.effectivePath = fileOf(path,false);
         this.loader = loader;

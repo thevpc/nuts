@@ -19,7 +19,6 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.web.NWebCli;
-import sun.misc.LRUCache;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,17 +36,15 @@ import java.util.regex.Pattern;
 public class URLPath implements NPathSPI {
     public static final Pattern MOSTLY_URL_PATTERN = Pattern.compile("([a-zA-Z][a-zA-Z0-9_-]+):.*");
 
-    private final NWorkspace workspace;
     protected URL url;
     protected static final NLRUMap<URL, NCachedValue<CacheInfo>> cacheManager = new NLRUMap<URL, NCachedValue<CacheInfo>>(1024);
 
 
-    public URLPath(URL url, NWorkspace workspace) {
-        this(url, workspace, false);
+    public URLPath(URL url) {
+        this(url, false);
     }
 
-    protected URLPath(URL url, NWorkspace workspace, boolean acceptNull) {
-        this.workspace = workspace;
+    protected URLPath(URL url, boolean acceptNull) {
         if (url == null) {
             if (!acceptNull) {
                 throw new IllegalArgumentException("invalid url");
@@ -67,10 +64,6 @@ public class URLPath implements NPathSPI {
         return o;
     }
 
-
-    public NWorkspace getWorkspace() {
-        return workspace;
-    }
 
     public static String getURLParentPath(String ppath) {
         if (ppath == null) {
@@ -784,7 +777,7 @@ public class URLPath implements NPathSPI {
                     char s = path.charAt(0);
                     if (Character.isAlphabetic(s)) {
                         URL url = CoreIOUtils.urlOf(path);
-                        return NCallableSupport.of(5, () -> new URLPath(url, workspace));
+                        return NCallableSupport.of(5, () -> new URLPath(url));
                     }
                 }
             } catch (Exception ex) {

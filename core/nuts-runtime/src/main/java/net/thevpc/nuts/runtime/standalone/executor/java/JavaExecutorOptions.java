@@ -230,13 +230,8 @@ public final class JavaExecutorOptions {
                     se
                             .setTransitive(true)
                             .setDistinct(true)
-                            .setContent(true)
-                            .setDependencies(true)
                             .setLatest(true)
-                            //
-                            .addScope(NDependencyScopePattern.RUN)
-                            .setDependencyFilter(dependencyFilters.byRunnable(false))
-                            //
+                            .setDependencyFilter(dependencyFilters.byRunnable())
                             .getResultDefinitions().toList()
             );
         }

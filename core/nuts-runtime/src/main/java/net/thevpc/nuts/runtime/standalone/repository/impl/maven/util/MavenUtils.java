@@ -531,7 +531,6 @@ public class MavenUtils {
                     if (!CoreNUtils.isEffectiveId(parentId)) {
                         try {
                             parentDescriptor = NFetchCmd.of(parentId)
-                                    .setEffective(true)
                                     .setTransitive(true)
                                     .setFetchStrategy(
                                             fetchMode == NFetchMode.REMOTE ? NFetchStrategy.ONLINE
@@ -576,7 +575,7 @@ public class MavenUtils {
                         NDescriptor d = cache.get(pid);
                         if (d == null) {
                             try {
-                                d = NFetchCmd.of(pid).setEffective(true).getResultDescriptor();
+                                d = NFetchCmd.of(pid).getResultDescriptor();
                             } catch (NException ex) {
                                 throw ex;
                             } catch (Exception ex) {

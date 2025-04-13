@@ -217,70 +217,6 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
         return exec;
     }
 
-//    public NExecutableInformation whichOnTarget(NExecCmdExtension commExec, NConnexionString connexionString) {
-//        NExecInput in0 = CoreIOUtils.validateIn(in, session);
-//        NExecOutput out0 = CoreIOUtils.validateOut(out, session);
-//        NExecOutput err0 = CoreIOUtils.validateOut(err, session);
-//        NExecutableInformationExt exec = null;
-//        NExecutionType executionType = this.getExecutionType();
-//        if (executionType == null) {
-//            executionType = session.getExecutionType();
-//        }
-//        if (executionType == null) {
-//            executionType = NExecutionType.SPAWN;
-//        }
-//        switch (executionType) {
-//            case OPEN: {
-//                throw new NUnsupportedArgumentException(session, NMsg.ofC("invalid open execution type %s on host %s", connexionString));
-//            }
-//            case SYSTEM: {
-//                NExecutionType finalExecutionType = executionType;
-//                NAssert.requireNull(getCommandDefinition(), () -> NMsg.ofC("unable to run artifact as %s cmd", finalExecutionType), session);
-//                NAssert.requireNonBlank(command, "command", session);
-//                String[] ts = command.toArray(new String[0]);
-//                return new DefaultNSystemExecutableRemote(
-//                        commExec, ts,
-//                        getExecutorOptions(),
-//                        this,
-//                        in0,
-//                        out0,
-//                        err0
-//                );
-//            }
-//            case SPAWN: {
-//                if (getCommandDefinition() != null) {
-//                    String[] ts = command == null ? new String[0] : command.toArray(new String[0]);
-//                    return new DefaultSpawnExecutableNutsRemote(commExec, getCommandDefinition(), ts, getExecutorOptions(), this, in0, out0, err0);
-//                } else {
-//                    NAssert.requireNonBlank(command, "command", session);
-//                    List<String> ts = new ArrayList<>(command);
-//                    if (ts.size() == 0) {
-//                        throw new NUnsupportedArgumentException(session, NMsg.ofPlain("missing command"));
-//                    }
-//                    String id = ts.get(0);
-//                    ts.remove(0);
-//                    NDefinition def2 = NSearchCmd.of()
-//                            .addId(id)
-//                            .setContent(true)
-//                            .setLatest(true)
-//                            .setDependencies(true)
-//                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
-//                            .setFailFast(true)
-//                            .setEffective(true)
-//                            .getResultDefinitions()
-//                            .findFirst().get();
-//                    return new DefaultSpawnExecutableNutsRemote(commExec, def2, ts.toArray(new String[0]), getExecutorOptions(), this, in0, out0, err0);
-//                }
-//            }
-//            case EMBEDDED: {
-//                throw new NUnsupportedArgumentException(session, NMsg.ofC("invalid embedded execution type on host %s", connexionString));
-//            }
-//            default: {
-//                throw new NUnsupportedArgumentException(session, NMsg.ofC("invalid execution type %s on host %s", executionType, connexionString));
-//            }
-//        }
-//    }
-
     private void runLoop(NExecutableInformationExt exec) {
         int count = 0;
         NExecutionException err = null;
@@ -444,12 +380,9 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                     List<String> ts = new ArrayList<>(command);
                     NDefinition def2 = NSearchCmd.of()
                             .addId(session.getWorkspace().getApiId())
-                            .content()
                             .latest()
-                            .dependencies()
                             .setDependencyFilter(NDependencyFilters.of().byRunnable())
                             .failFast()
-                            .effective()
                             .getResultDefinitions()
                             .findFirst().get();
                     return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, def2,
@@ -544,12 +477,9 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                     ts.remove(0);
                     NDefinition def2 = NSearchCmd.of()
                             .addId(id)
-                            .content()
                             .latest()
-                            .dependencies()
                             .setDependencyFilter(NDependencyFilters.of().byRunnable())
                             .failFast()
-                            .effective()
                             .getResultDefinitions()
                             .findFirst().get();
                     return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, def2, id,ts.toArray(new String[0]),getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
@@ -761,17 +691,6 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     }
 
     private NExecutableInformationExt _runRemoteInternalCommand(String goodKw, RemoteInfo0 remoteInfo0) {
-//        NSession session = NSession.of();
-//        NDefinition def2 = NSearchCmd.of()
-//                .addId(session.getWorkspace().getApiId())
-//                .content()
-//                .latest()
-//                .dependencies()
-//                .setDependencyFilter(NDependencyFilters.of().byRunnable())
-//                .failFast()
-//                .effective()
-//                .getResultDefinitions()
-//                .findFirst().get();
         return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, null/*def2*/, goodKw,command.toArray(new String[0]), getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
     }
 
@@ -799,7 +718,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
         if (NConstants.Ids.NUTS_APP_ARTIFACT_ID.equals(nid.getShortName())) {
             nid = nid.builder().setGroupId(NConstants.Ids.NUTS_GROUP_ID).build();
         }
-        NId ff = NSearchCmd.of().addId(nid).setDependencyFilter(NDependencyFilters.of().byRunnable(false)).setLatest(true).setFailFast(false)
+        NId ff = NSearchCmd.of().addId(nid).setDependencyFilter(NDependencyFilters.of().byRunnable()).setLatest(true).setFailFast(false)
                 .setDefinitionFilter(NDefinitionFilters.of().byDeployed(true))
                 .getResultDefinitions().stream()
                 .sorted(Comparator.comparing(x -> !x.getInstallInformation().get().isDefaultVersion())) // default first
@@ -822,7 +741,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                 ff = NSearchCmd.of()
                         .setFetchStrategy(NFetchStrategy.ONLINE)
                         .addId(nid)
-                        .setDependencyFilter(NDependencyFilters.of().byRunnable(false))
+                        .setDependencyFilter(NDependencyFilters.of().byRunnable())
                         .setFailFast(false)
                         .setLatest(true)
                         //                        .configure(true,"--trace-monitor")
@@ -874,29 +793,17 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
         NDefinition def = null;
         try {
             def = NFetchCmd.of(goodId)
-                    .dependencies()
                     .failFast()
-                    .effective()
-                    .content()
-                    //
-                    .addScope(NDependencyScopePattern.RUN)
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable(false))
+                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
                     .setRepositoryFilter(NRepositoryFilters.of().installedRepo())
-                    //
                     .getResultDefinition();
         } catch (Exception ex) {
             //try to find locally
         }
         if (def == null) {
             def = NFetchCmd.of(goodId)
-                    .dependencies()
                     .failFast()
-                    .effective()
-                    .content()
-                    //
-                    .addScope(NDependencyScopePattern.RUN)
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable(false))
-                    //
+                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
                     .getResultDefinition();
         }
         return ws_execDef(def, commandName, appArgs, executorOptions, this.workspaceOptions, env, directory, failFast, executionType, runAs);

@@ -12,22 +12,26 @@ import net.thevpc.nuts.util.NFilterOp;
 
 public class NDependencyScopeFilter extends AbstractDependencyFilter {
 
-    private EnumSet<NDependencyScope> scope=EnumSet.noneOf(NDependencyScope.class);
+    private EnumSet<NDependencyScope> scopes =EnumSet.noneOf(NDependencyScope.class);
 
     public NDependencyScopeFilter() {
         super(NFilterOp.CUSTOM);
     }
 
-    private NDependencyScopeFilter(Collection<NDependencyScope> scope) {
+    private NDependencyScopeFilter(Collection<NDependencyScope> scopes) {
         super(NFilterOp.CUSTOM);
-        this.scope = EnumSet.copyOf(scope);
+        this.scopes = EnumSet.copyOf(scopes);
+    }
+
+    public EnumSet<NDependencyScope> getScopes() {
+        return scopes;
     }
 
     public NDependencyScopeFilter add(Collection<NDependencyScope> scopes) {
         if(scopes==null){
             return this;
         }
-        EnumSet<NDependencyScope> newScopes = EnumSet.copyOf(this.scope);
+        EnumSet<NDependencyScope> newScopes = EnumSet.copyOf(this.scopes);
         NCoreCollectionUtils.addAllNonNull(newScopes, scopes);
         return new NDependencyScopeFilter(newScopes);
     }
@@ -36,7 +40,7 @@ public class NDependencyScopeFilter extends AbstractDependencyFilter {
         if(scopes==null){
             return this;
         }
-        EnumSet<NDependencyScope> s2 = EnumSet.copyOf(this.scope);
+        EnumSet<NDependencyScope> s2 = EnumSet.copyOf(this.scopes);
         for (NDependencyScopePattern ss : scopes) {
             if(ss!=null) {
                 s2.addAll(ss.toScopes());
@@ -47,18 +51,18 @@ public class NDependencyScopeFilter extends AbstractDependencyFilter {
 
     @Override
     public boolean acceptDependency(NDependency dependency, NId from) {
-        return scope.isEmpty() || scope.contains(NDependencyScope.parse(dependency.getScope()).orElse(NDependencyScope.API));
+        return scopes.isEmpty() || scopes.contains(NDependencyScope.parse(dependency.getScope()).orElse(NDependencyScope.API));
     }
 
     @Override
     public String toString() {
         return CoreStringUtils.trueOrEqOrIn("scope",
-                        scope.stream().map(x-> x.id()).collect(Collectors.toList())
+                        scopes.stream().map(x-> x.id()).collect(Collectors.toList())
                 );
     }
 
     @Override
     public NDependencyFilter simplify() {
-        return scope.isEmpty()? NDependencyFilters.of().always() : this;
+        return scopes.isEmpty()? NDependencyFilters.of().always() : this;
     }
 }

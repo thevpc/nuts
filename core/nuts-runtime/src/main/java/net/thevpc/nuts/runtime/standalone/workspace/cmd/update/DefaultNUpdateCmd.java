@@ -434,29 +434,16 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         }
     }
 
-    //    private NutsSearchCommand latestDependencies(NutsSearchCommand se) {
-//        se.inlineDependencies();
-//        if (scopes.isEmpty()) {
-//            se.scope(NutsDependencyScopePattern.RUN);
-//        } else {
-//            se.scopes(scopes.toArray(new NutsDependencyScope[0]));
-//        }
-//        se.optional(includeOptional ? null : false).setLatest(true);
-//        return se;
-//    }
-    private NFetchCmd latestOnlineDependencies(NFetchCmd se) {
-        se.setDependencies(true);
+    private NFetchCmd latestOnlineDependencies() {
+        NFetchCmd se=NFetchCmd.of();
         if (scopes.isEmpty()) {
-            se.addScope(NDependencyScopePattern.RUN);
+            se.addDependencyFilter(NDependencyFilters.of().byRunnable(isOptional()));
         } else {
-            se.addScopes(scopes.toArray(new NDependencyScope[0]));
+            se.addDependencyFilter(NDependencyFilters.of().byScope(scopes.toArray(new NDependencyScope[0])));
+            if (!isOptional()) {
+                se.addDependencyFilter(NDependencyFilters.of().byOptional(false));
+            }
         }
-        if(!isOptional()){
-            se.setDependencyFilter(NDependencyFilters.of().nonnull(se.getDependencyFilter()).and(NDependencyFilters.of().byOptional(false)));
-        }
-        //TODO
-        //.setSession(se.session.copy().setFetchStrategy(NFetchStrategy.ONLINE))
-        ;
         return se;
     }
 
@@ -495,8 +482,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                 .addLockedIds(getLockedIds())
                 .addRepositoryFilter(NRepositoryFilters.of().installedRepo().neg())
                 .setDependencies(true)
-                .setDependencyFilter(NDependencyFilters.of().byOptional(isOptional() ? null : false))
-                ;
+                .setDependencyFilter(NDependencyFilters.of().byOptional(isOptional() ? null : false));
         if (updateEvenIfExisting) {
             sc.setExpireTime(now);
         }
@@ -510,11 +496,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
             sc.setTargetApiVersion(targetApiVersion);
         }
 
-        if (scopes.isEmpty()) {
-            sc.addScope(NDependencyScopePattern.RUN);
-        } else {
-            sc.addScopes(scopes.toArray(new NDependencyScope[0]));
-        }
+        sc.setDependencyFilter(resolveDependencyFilter());
         NDefinition d1 = sc.getResultDefinitions()
                 .findFirst().orNull();
         r.setInstalled(d0);
@@ -541,8 +523,17 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         return r;
     }
 
+    private NDependencyFilter resolveDependencyFilter() {
+        return NDependencyFilters.of()
+                .byRunnable(isOptional())
+                .and(
+                        NDependencyFilters.of().byScope(scopes.toArray(new NDependencyScope[0]))
+                )
+                ;
+    }
+
     private NFetchCmd fetch0() {
-        return NFetchCmd.of().setContent(true).setEffective(true);
+        return NFetchCmd.of();
     }
 
     private void applyFixes() {
@@ -719,7 +710,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                 }
                 try {
                     NId finalOldId = oldId;
-                    oldFile = session.copy().setFetchStrategy(NFetchStrategy.ONLINE).callWith(() -> fetch0().setId(finalOldId)
+                    oldFile = session.copy().setFetchStrategy(NFetchStrategy.ONLINE).callWith(() -> NFetchCmd.of(finalOldId)
                             .getResultDefinition());
                 } catch (NNotFoundException ex) {
                     //ignore
@@ -734,7 +725,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                     newFile = newId == null ? null :
                             session.copy().setFetchStrategy(NFetchStrategy.ONLINE)
                                     .callWith(() ->
-                                            latestOnlineDependencies(fetch0()).setFailFast(false)
+                                            latestOnlineDependencies().setFailFast(false)
                                                     .setId(finalNewId1).getResultDefinition()
                                     );
                 } catch (NNotFoundException ex) {
@@ -774,7 +765,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                     newFile = newId == null ? null :
 
                             session.copy().setFetchStrategy(NFetchStrategy.ONLINE)
-                                    .callWith(() -> latestOnlineDependencies(fetch0().setId(finalNewId))
+                                    .callWith(() -> latestOnlineDependencies().setId(finalNewId)
                                             .setFailFast(false)
                                             .getResultDefinition()
                                     );

@@ -265,6 +265,7 @@ public final class NReservedUtils {
      * @return nutsId
      */
     public static NOptional<NId> parseId(String nutsId) {
+        nutsId=NStringUtils.trim(nutsId);
         if (NBlankable.isBlank(nutsId)) {
             return NOptional.of(NId.BLANK);
         }
@@ -339,7 +340,7 @@ public final class NReservedUtils {
             )
             ));
         }
-        return NOptional.ofError(() -> NMsg.ofC("invalid id format : %s", nutsId));
+        return NOptional.ofError(NMsg.ofC("invalid id format : %s", nutsId));
     }
 
     private static boolean ndiAddFileLine(Path filePath, String commentLine, String goodLine, boolean force,

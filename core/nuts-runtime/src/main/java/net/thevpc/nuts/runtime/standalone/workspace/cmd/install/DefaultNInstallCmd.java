@@ -61,84 +61,72 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
         super(workspace);
     }
 
-    private NDefinition _loadIdContent(NId id, NId forId, NSession session, boolean includeDeps, InstallIdList loaded, NInstallStrategy installStrategy) {
+    private NDefinition _loadIdContent(NId id, NId forId, boolean includeDeps, InstallIdList loaded, NInstallStrategy installStrategy, boolean mandatory) {
         installStrategy = loaded.validateStrategy(installStrategy);
         NId longNameId = id.getLongId();
-        InstallIdInfo def = loaded.get(longNameId);
-        if (def != null) {
-
+        InstallIdInfo currInstallInfo = loaded.get(longNameId);
+        boolean doAddForInstall = false;
+        if (currInstallInfo != null) {
             if (forId != null) {
-                def.forIds.add(forId);
+                currInstallInfo.forIds.add(forId);
             }
-
-            if (def.definition != null) {
-                if (
-                        (def.strategy != NInstallStrategy.REQUIRE)
-                                || (def.strategy == NInstallStrategy.REQUIRE && installStrategy == NInstallStrategy.REQUIRE)
-
-                ) {
-                    return def.definition;
+            if (currInstallInfo.definition != null) {
+                if (currInstallInfo.strategy != NInstallStrategy.REQUIRE || installStrategy == NInstallStrategy.REQUIRE) {
+                    return currInstallInfo.definition;
                 }
             }
         } else {
-            def = loaded.addForInstall(id, installStrategy, false);
-            def.extra = true;
-            def.doRequire = true;
-            if (forId != null) {
-                def.forIds.add(forId);
-            }
+            doAddForInstall = true;
         }
         try {
-            def.definition = NFetchCmd.of(id)
-                    .content()
-                    .effective()
-                    .setDependencies(includeDeps)
+            NDefinition ndef = NFetchCmd.of(id)
                     .failFast()
-                    //
-                    .addScope(NDependencyScopePattern.RUN)
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable(false))
-                    //
+                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
                     .getResultDefinition();
-        } catch (NNotFoundException ee) {
-            if (!NDependencyUtils.isRequiredDependency(id.toDependency())) {
-                includeDeps = false;
-            } else {
-                throw ee;
+            if (!ndef.getDescriptor().isNoContent()) {
+                ndef.getContent().get();
             }
-        }
-        def.doRequire = true;
-        if (def.definition != null) {
-            for (NId parent : def.definition.getDescriptor().getParents()) {
-                _loadIdContent(parent, id, session, false, loaded, NInstallStrategy.REQUIRE);
-            }
+            ndef.getEffectiveDescriptor().get();
             if (includeDeps) {
-                NDependencies nDependencies = def.definition.getDependencies().get();
-                for (NDependency dependency : def.definition.getDependencies().get()) {
-                    NId did = dependency.toId();
-                    _loadIdContent(did, id, session, false, loaded, NInstallStrategy.REQUIRE);
+                ndef.getDependencies().get();
+            }
+            if (doAddForInstall) {
+                currInstallInfo = loaded.addForInstall(id, installStrategy, false);
+                currInstallInfo.extra = true;
+                currInstallInfo.doRequire = true;
+                if (forId != null) {
+                    currInstallInfo.forIds.add(forId);
                 }
             }
-        } else {
+            currInstallInfo.definition = ndef;
+            currInstallInfo.doRequire = true;
+            for (NId parent : currInstallInfo.definition.getDescriptor().getParents()) {
+                _loadIdContent(parent, id, false, loaded, NInstallStrategy.REQUIRE, true);
+            }
+            if (includeDeps) {
+                NDependencies nDependencies = currInstallInfo.definition.getDependencies().get();
+                for (NDependency dependency : nDependencies) {
+                    NId did = dependency.toId();
+                    _loadIdContent(did, id, false, loaded, NInstallStrategy.REQUIRE, NDependencyUtils.isRequiredDependency(dependency));
+                }
+            }
+            return currInstallInfo.definition;
+        } catch (RuntimeException ex) {
             _LOGOP().verb(NLogVerb.WARNING).level(Level.FINE)
-                    .log(NMsg.ofC("failed to retrieve %s", def.id));
+                    .log(NMsg.ofC("failed to retrieve %s", id));
+            if (mandatory) {
+                throw ex;
+            }
+            return null;
         }
-        return def.definition;
     }
 
-    private boolean doThis(NId id, InstallIdList list) {
+    private boolean doInstallOneImpl(NId id, InstallIdList list) {
         List<String> cmdArgs = new ArrayList<>(this.getArgs());
-//        if (session.isYes()) {
-//            cmdArgs.add(0, "--yes");
-//        }
-//        if (session.isTrace()) {
-//            cmdArgs.add(0, "--trace");
-//        }
-
-        NSession session=NSession.of();
         NWorkspaceExt dws = NWorkspaceExt.of();
         InstallIdInfo info = list.get(id);
         if (info.doInstall) {
-            _loadIdContent(info.id, null, session, true, list, info.strategy);
+            _loadIdContent(info.id, null, true, list, info.strategy, NDependencyUtils.isRequiredDependency(id.toDependency()));
             if (info.definition != null) {
                 for (ConditionalArguments conditionalArgument : conditionalArguments) {
                     if (conditionalArgument.getPredicate().test(info.definition)) {
@@ -149,7 +137,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
             dws.installImpl(info.definition, cmdArgs.toArray(new String[0]), info.doSwitchVersion);
             return true;
         } else if (info.doRequire) {
-            _loadIdContent(info.id, null, session, true, list, info.strategy);
+            _loadIdContent(info.id, null, true, list, info.strategy, NDependencyUtils.isRequiredDependency(id.toDependency()));
             dws.requireImpl(info.definition, info.doRequireDependencies, new NId[0]);
             return true;
         } else if (info.doSwitchVersion) {
@@ -175,12 +163,9 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
 
     @Override
     public NInstallCmd run() {
-        NSession session=NSession.of();
         NWorkspace ws = NWorkspace.of();
         NWorkspaceExt dws = NWorkspaceExt.of();
-        NPrintStream out = session.out();
         NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.INSTALL, "install");
-//        LinkedHashMap<NutsId, Boolean> allToInstall = new LinkedHashMap<>();
         InstallIdList list = new InstallIdList(NInstallStrategy.INSTALL);
         for (Map.Entry<NId, NInstallStrategy> idAndStrategy : this.getIdMap().entrySet()) {
             if (!list.isVisited(idAndStrategy.getKey())) {
@@ -209,14 +194,8 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
                 }
             }
         }
-//        Map<NutsId, NutsDefinition> defsAll = new LinkedHashMap<>();
-//        Map<NutsId, NutsDefinition> defsToInstall = new LinkedHashMap<>();
-//        Map<NutsId, NutsDefinition> defsToInstallForced = new LinkedHashMap<>();
-//        Map<NutsId, NutsDefinition> defsToDefVersion = new LinkedHashMap<>();
-//        Map<NutsId, NutsDefinition> defsToIgnore = new LinkedHashMap<>();
-//        Map<NutsId, NutsDefinition> defsOk = new LinkedHashMap<>();
         if (isInstalled()) {
-            // In all cases, even though search may be empty we considere that the list is not empty
+            // In all cases, even though search may be empty we consider that the list is not empty
             // so that no empty exception is thrown
             list.emptyCommand = false;
             for (NId resultId : NSearchCmd.of().setDefinitionFilter(NDefinitionFilters.of().byInstalled(true)).getResultIds()) {
@@ -234,14 +213,6 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
         for (InstallIdInfo info : list.infos()) {
             NId nid = info.id;
             info.oldInstallStatus = dws.getInstalledRepository().getInstallStatus(nid);
-//            boolean _installed = installStatus.contains(NutsInstallStatus.INSTALLED);
-//            boolean _defVer = dws.getInstalledRepository().isDefaultVersion(nid, session);
-
-//            if (defsToInstallForced.containsKey(nid)) {
-//                _installed = true;
-//            }
-//            boolean nForced = session.isForce() || nutsIdBooleanEntry.getValue();
-            //must load dependencies because will be run later!!
             NInstallStrategy strategy = getStrategy();
             if (strategy == null) {
                 strategy = NInstallStrategy.DEFAULT;
@@ -377,6 +348,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
         Map<String, List<InstallIdInfo>> error = list.infos().stream().filter(x -> x.doError != null).collect(Collectors.groupingBy(installIdInfo -> installIdInfo.doError));
         if (error.size() > 0) {
             StringBuilder sb = new StringBuilder();
+            NPrintStream out = NOut.out();
             for (Map.Entry<String, List<InstallIdInfo>> stringListEntry : error.entrySet()) {
                 out.resetLine().println("the following " + (stringListEntry.getValue().size() > 1 ? "artifacts are" : "artifact is") + " cannot be ```error installed``` (" + stringListEntry.getKey() + ") : "
                         + stringListEntry.getValue().stream().map(x -> x.id)
@@ -398,6 +370,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
         List<NId> list_installed_setdefault = list.ids(x -> x.doSwitchVersion && x.isAlreadyInstalled());
         List<NId> installed_ignored = list.ids(x -> x.ignored);
 
+        NSession session = NSession.of();
         if (!nonIgnored.isEmpty()) {
             if (session.isPlainTrace() || (!list.emptyCommand && session.getConfirm().orDefault() == NConfirmationMode.ASK)) {
                 printList(mout, "new", "installed", list_new_installed);
@@ -446,21 +419,13 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
                 }
             }
         }
-//        List<String> cmdArgs = new ArrayList<>(Arrays.asList(this.getArgs()));
-//        if (session.isForce()) {
-//            cmdArgs.add(0, "--force");
-//        }
-//        if (session.isTrace()) {
-//            cmdArgs.add(0, "--force");
-//            cmdArgs.add(0, "--trace");
-//        }
         List<NDefinition> resultList = new ArrayList<>();
         List<NId> failedList = new ArrayList<>();
         try {
             if (!list.ids(x -> !x.ignored).isEmpty()) {
                 for (InstallIdInfo info : list.infos(x -> !x.ignored)) {
                     try {
-                        if (doThis(info.id, list)) {
+                        if (doInstallOneImpl(info.id, list)) {
                             resultList.add(info.definition);
                         }
                     } catch (RuntimeException ex) {
@@ -498,7 +463,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
 
     private void printList(NPrintStream out, String skind, String saction, List<NId> all) {
         if (all.size() > 0) {
-            NSession session=NSession.of();
+            NSession session = NSession.of();
             if (session.isPlainOut()) {
                 NTexts text = NTexts.of();
                 NText kind = text.ofStyled(skind, NTextStyle.primary2());

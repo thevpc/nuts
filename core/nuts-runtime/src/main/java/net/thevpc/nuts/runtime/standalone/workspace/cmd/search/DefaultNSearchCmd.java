@@ -73,9 +73,6 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
     public NFetchCmd toFetch() {
         NFetchCmd t = new DefaultNFetchCmd().copyFromDefaultNQueryBaseOptions(this);
         t.setIgnoreCurrentEnvironment(isIgnoreCurrentEnvironment());
-        if (getDisplayOptions().isRequireDefinition()) {
-            t.setContent(true);
-        }
         //update RepositoryFilter with effective one that takes into consideration
         // id filters and status filters
         DefaultNSearchInfo bs = new DefaultNSearchInfoBuilder(this).build();
@@ -138,19 +135,36 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                                 if (repoAndMode.getFetchMode() == fm) {
                                     consideredRepos.add(repoAndMode.getRepository());
                                     NRepositorySPI repoSPI = wu.repoSPI(repoAndMode.getRepository());
-
-                                    NIterator<NId> z = NIteratorBuilder.of(repoSPI.searchVersions().setId(nutsIdNonLatest).setFilter(filter)
-                                                    .setFetchMode(repoAndMode.getFetchMode())
-                                                    .getResult())
-                                            .named(
-                                                    elems.ofObjectBuilder()
-                                                            .set("description", "searchVersions")
-                                                            .set("repository", repoAndMode.getRepository().getName())
-                                                            .set("filter", NEDesc.describeResolveOrDestruct(filter))
-                                                            .build()
-                                            ).safeIgnore().iterator();
-                                    z = filterLatestAndDuplicatesThenSort(z, isLatest() || latestVersion || releaseVersion, isDistinct(), false);
-                                    idLookup.add(z);
+                                    if (nutsIdNonLatest.getGroupId() != null) {
+                                        NIterator<NId> z = NIteratorBuilder.of(repoSPI.searchVersions().setId(nutsIdNonLatest).setFilter(filter)
+                                                        .setFetchMode(repoAndMode.getFetchMode())
+                                                        .getResult())
+                                                .named(
+                                                        elems.ofObjectBuilder()
+                                                                .set("description", "searchVersions")
+                                                                .set("repository", repoAndMode.getRepository().getName())
+                                                                .set("fetchMode", repoAndMode.getFetchMode().id())
+                                                                .set("filter", NEDesc.describeResolveOrDestruct(filter))
+                                                                .build()
+                                                ).safeIgnore().iterator();
+                                        z = filterLatestAndDuplicatesThenSort(z, isLatest() || latestVersion || releaseVersion, isDistinct(), false);
+                                        idLookup.add(z);
+                                    } else {
+                                        NDefinitionFilter restrictedFilter = (NDefinitionFilter) NDefinitionFilters.of().byName(nutsIdNonLatest.toString()).and(filter).simplify();
+                                        NIterator<NId> z = NIteratorBuilder.of(repoSPI.search().setFilter(restrictedFilter)
+                                                        .setFetchMode(repoAndMode.getFetchMode())
+                                                        .getResult())
+                                                .named(
+                                                        elems.ofObjectBuilder()
+                                                                .set("description", "search")
+                                                                .set("repository", repoAndMode.getRepository().getName())
+                                                                .set("fetchMode", repoAndMode.getFetchMode().id())
+                                                                .set("filter", NEDesc.describeResolveOrDestruct(restrictedFilter))
+                                                                .build()
+                                                ).safeIgnore().iterator();
+                                        z = filterLatestAndDuplicatesThenSort(z, isLatest() || latestVersion || releaseVersion, isDistinct(), false);
+                                        idLookup.add(z);
+                                    }
                                 }
                             }
                         }
@@ -166,7 +180,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
 //                    NSearchCmd search2 = NSearchCmd.of()
 //                            .setRepositoryFilter(search.getRepositoryFilter())
 //                            .setDefinitionFilter(
-//                                    NDefinitionFilters.of().byName(nutsId.builder().setGroupId("*").build().toString())
+//                                    NDefinitionFilters.of().byName(nutsId.builder().setGroupId("").build().toString())
 //                                            .and(search.getDefinitionFilter())
 //                            );
 //                    NIterator<NId> extraResult = search2.getResultIds().iterator();
@@ -222,7 +236,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                             NFunction.of(
                                             (NId x) -> NIteratorBuilder.of(
                                                     toFetch().setId(x).setContent(false)
-                                                            .setDependencies(true).getResultDefinition().getDependencies().get().transitiveWithSource().iterator()
+                                                            .getResultDefinition().getDependencies().get().transitiveWithSource().iterator()
                                             ).build())
                                     .withDesc(NEDesc.of("getDependencies"))
                     ).map(NFunction.of(NDependency::toId)
