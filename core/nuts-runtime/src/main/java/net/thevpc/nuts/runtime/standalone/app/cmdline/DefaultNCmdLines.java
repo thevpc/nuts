@@ -10,7 +10,7 @@ import net.thevpc.nuts.cmdline.NCmdLines;
 
 import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.option.*;
-import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;
+import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
 public class DefaultNCmdLines implements NCmdLines {

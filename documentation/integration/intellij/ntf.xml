@@ -1,0 +1,18 @@
+<filetype binary="false" default_extension="ntf" description="NTF" name="NTF">
+  <highlighting>
+    <options>
+      <option name="LINE_COMMENT" value="" />
+      <option name="COMMENT_START" value="" />
+      <option name="COMMENT_END" value="" />
+      <option name="HEX_PREFIX" value="" />
+      <option name="NUM_POSTFIXES" value="" />
+      <option name="HAS_BRACES" value="true" />
+    </options>
+    <keywords keywords="```;```cs;```java;```js;```nsh;```sh;```sql" ignore_case="false" />
+    <keywords2 keywords="#####);####);###);##)" />
+    <keywords3 keywords="##;###;####;#####;##:_:" />
+  </highlighting>
+  <extensionMap>
+    <mapping ext="ntf" />
+  </extensionMap>
+</filetype>

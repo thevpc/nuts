@@ -17,7 +17,7 @@ import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.props.DefaultNPropertiesFormat;
-import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
+import net.thevpc.nuts.runtime.standalone.format.xml.XmlUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NMsg;

@@ -27,7 +27,6 @@ package net.thevpc.nuts.runtime.standalone.format.xml;
 import java.lang.reflect.Type;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

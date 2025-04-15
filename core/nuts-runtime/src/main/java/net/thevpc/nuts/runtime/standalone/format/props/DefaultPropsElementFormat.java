@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.standalone.format.props;
 import net.thevpc.nuts.NUnsupportedOperationException;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
+import net.thevpc.nuts.runtime.standalone.format.elem.NElementStreamFormat;
 import net.thevpc.nuts.util.NHex;
 import net.thevpc.nuts.util.NMsg;
 

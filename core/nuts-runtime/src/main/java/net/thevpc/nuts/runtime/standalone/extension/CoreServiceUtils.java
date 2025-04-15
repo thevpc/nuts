@@ -30,7 +30,7 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.io.urlpart.URLPart;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
-import net.thevpc.nuts.runtime.standalone.web.DefaultNWebCli;
+import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.util.NMsg;
 

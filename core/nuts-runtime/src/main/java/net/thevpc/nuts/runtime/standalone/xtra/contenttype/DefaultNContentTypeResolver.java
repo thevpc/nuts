@@ -32,7 +32,7 @@ import net.thevpc.nuts.format.NVisitResult;
 import net.thevpc.nuts.io.NPathExtensionType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
-import net.thevpc.nuts.runtime.standalone.web.DefaultNWebCli;
+import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NContentTypeResolver;
 import net.thevpc.nuts.spi.NScopeType;

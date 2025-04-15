@@ -6,7 +6,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;
+import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.FreeDesktopEntryWriter;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptInfo;

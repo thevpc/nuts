@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
+import net.thevpc.nuts.runtime.standalone.format.xml.XmlUtils;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;

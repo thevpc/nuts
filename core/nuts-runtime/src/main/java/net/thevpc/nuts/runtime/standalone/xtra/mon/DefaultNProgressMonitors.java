@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.runtime.standalone.time.NDefaultProgressRunner;
+import net.thevpc.nuts.runtime.standalone.xtra.time.NDefaultProgressRunner;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.spi.NComponentScope;

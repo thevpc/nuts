@@ -28,7 +28,7 @@ import net.thevpc.nuts.*;
 
 
 import net.thevpc.nuts.NStoreType;
-import net.thevpc.nuts.runtime.standalone.web.DefaultNWebCli;
+import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;

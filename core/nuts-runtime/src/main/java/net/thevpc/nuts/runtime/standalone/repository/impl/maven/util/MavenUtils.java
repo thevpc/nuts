@@ -37,7 +37,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.*;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.*;
-import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
+import net.thevpc.nuts.runtime.standalone.format.xml.XmlUtils;
 import net.thevpc.nuts.runtime.standalone.util.MapToFunction;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.DefaultNVersion;

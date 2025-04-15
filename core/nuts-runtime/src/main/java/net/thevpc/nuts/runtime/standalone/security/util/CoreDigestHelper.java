@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.security.util;
 
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.web.DefaultNWebCli;
+import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.util.NHex;
 
 import java.io.ByteArrayInputStream;

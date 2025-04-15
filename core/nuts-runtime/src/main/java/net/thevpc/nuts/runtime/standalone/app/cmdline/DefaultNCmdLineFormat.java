@@ -9,7 +9,7 @@ import net.thevpc.nuts.cmdline.NCmdLines;
 import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
-import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;
+import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
 

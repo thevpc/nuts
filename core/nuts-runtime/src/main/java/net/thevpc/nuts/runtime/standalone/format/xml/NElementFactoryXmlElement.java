@@ -39,9 +39,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.function.Supplier;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringUtils;

@@ -32,7 +32,7 @@ package net.thevpc.nuts.runtime.standalone.format.yaml;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
+import net.thevpc.nuts.runtime.standalone.format.elem.NElementStreamFormat;
 import net.thevpc.nuts.runtime.standalone.format.json.ReaderLocation;
 
 import java.io.BufferedReader;

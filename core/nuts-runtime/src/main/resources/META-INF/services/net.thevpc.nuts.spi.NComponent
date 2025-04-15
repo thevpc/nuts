@@ -50,7 +50,7 @@ net.thevpc.nuts.runtime.standalone.workspace.cmd.update.DefaultNUpdateCmd
 net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.updatestats.DefaultNUpdateStatsCmd
 net.thevpc.nuts.runtime.standalone.security.DefaultNWorkspaceSecurityManager
 net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions
-net.thevpc.nuts.runtime.standalone.web.DefaultNWebCli
+net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli
 
 net.thevpc.nuts.runtime.standalone.DefaultNBootOptionsBuilder
 net.thevpc.nuts.runtime.standalone.DefaultNDependencyBuilder
@@ -81,7 +81,7 @@ net.thevpc.nuts.runtime.standalone.descriptor.format.DefaultNDescriptorFormat
 net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionFormat
 net.thevpc.nuts.runtime.standalone.dependency.format.DefaultNDependencyFormat
 
-net.thevpc.nuts.runtime.standalone.elem.DefaultNElements
+net.thevpc.nuts.runtime.standalone.format.elem.DefaultNElements
 net.thevpc.nuts.runtime.standalone.text.DefaultNTexts
 net.thevpc.nuts.runtime.standalone.text.highlighter.JavaCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.SqlCodeHighlighter
@@ -104,8 +104,8 @@ net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIO
 net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIORPI
 net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNLibPaths
 net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest
-net.thevpc.nuts.runtime.standalone.time.DefaultNInputStreamMonitor
-net.thevpc.nuts.runtime.standalone.lock.DefaultNLockBuilder
+net.thevpc.nuts.runtime.standalone.xtra.time.DefaultNInputStreamMonitor
+net.thevpc.nuts.runtime.standalone.xtra.lock.DefaultNLockBuilder
 net.thevpc.nuts.runtime.standalone.xtra.cp.DefaultNCp
 net.thevpc.nuts.runtime.standalone.xtra.ps.DefaultNPs
 net.thevpc.nuts.runtime.standalone.xtra.compress.DefaultNCompress

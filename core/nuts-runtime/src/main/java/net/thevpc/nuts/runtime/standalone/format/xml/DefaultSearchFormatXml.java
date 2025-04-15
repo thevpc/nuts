@@ -15,7 +15,6 @@ import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
-import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTexts;

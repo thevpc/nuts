@@ -6,7 +6,7 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.web.DefaultNWebCli;
+import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.OutputStream;

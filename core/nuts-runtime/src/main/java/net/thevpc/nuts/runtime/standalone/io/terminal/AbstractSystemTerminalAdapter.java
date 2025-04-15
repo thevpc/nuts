@@ -6,7 +6,7 @@ import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSystemTerminal;
-import net.thevpc.nuts.runtime.standalone.time.CProgressBar;
+import net.thevpc.nuts.runtime.standalone.xtra.time.CProgressBar;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.spi.NSystemTerminalBaseImpl;

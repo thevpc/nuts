@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.urlpart;
 
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.web.DefaultNWebCli;
+import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 
 import java.io.IOException;
 import java.io.InputStream;

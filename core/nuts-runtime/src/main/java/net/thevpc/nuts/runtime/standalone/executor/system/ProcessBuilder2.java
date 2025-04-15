@@ -32,7 +32,7 @@ import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineShellOptions;
-import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;
+import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;

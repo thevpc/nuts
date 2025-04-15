@@ -10,7 +10,7 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.runtime.standalone.time.SingletonNInputStreamProgressFactory;
+import net.thevpc.nuts.runtime.standalone.xtra.time.SingletonNInputStreamProgressFactory;
 import net.thevpc.nuts.spi.NCompressPackaging;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NBlankable;

@@ -26,11 +26,21 @@ package net.thevpc.nuts.runtime.standalone.format.tson;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.runtime.standalone.elem.NElementAnnotationImpl;
-import net.thevpc.nuts.runtime.standalone.elem.NElementCommentImpl;
-import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
+import net.thevpc.nuts.runtime.standalone.format.elem.NElementAnnotationImpl;
+import net.thevpc.nuts.runtime.standalone.format.elem.NElementCommentImpl;
+import net.thevpc.nuts.runtime.standalone.format.elem.NElementStreamFormat;
+import net.thevpc.nuts.runtime.standalone.format.tson.bundled.*;
+import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.TsonElementsFactoryImpl;
+import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.builders.TsonAnnotationBuilderImpl;
+import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.builders.TsonObjectBuilderImpl;
+import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.elements.TsonPairImpl;
+import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.format.DefaultTsonFormatConfig;
+import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.format.TsonFormatImplBuilder;
+import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.parser.ElementBuilderTsonParserVisitor;
+import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.parser.javacc.JavaccHelper;
+import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.parser.javacc.ParseException;
+import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.parser.javacc.TsonStreamParserImpl;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.runtime.standalone.tson.*;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -42,6 +52,7 @@ import java.util.stream.Collectors;
  */
 public class DefaultTsonElementFormat implements NElementStreamFormat {
 
+    private static TsonElementsFactory factory = new TsonElementsFactoryImpl();
 
     public DefaultTsonElementFormat() {
     }
@@ -54,9 +65,11 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
     }
 
     public void write(NPrintStream out, NElement data, boolean compact) {
-        TsonWriter w = Tson.writer();
-        w.setOptionCompact(compact);
-        w.write(out.asPrintStream(), toTson(data));
+        TsonFormatImplBuilder ts = new TsonFormatImplBuilder();
+        DefaultTsonFormatConfig c = new DefaultTsonFormatConfig();
+        c.setCompact(compact);
+        ts.setConfig(c);
+        out.print(ts.build().format(toTson(data)));
     }
 
     @Override
@@ -74,16 +87,26 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
 
 
     private TsonAnnotation toTsonAnn(NElementAnnotation elem) {
-        return Tson.ofAnnotation(
-                elem.name(),
+        TsonAnnotationBuilder b = new TsonAnnotationBuilderImpl().name(elem.name()).addAll(
                 elem.params() == null ? null : elem.params().stream().map(x -> toTson(x)).toArray(TsonElementBase[]::new)
         );
+        return b.build();
     }
 
     @Override
     public NElement parseElement(Reader reader, NElementFactoryContext context) {
-        TsonDocument tsonDocument = Tson.reader().readDocument(reader);
-        return toNElem(tsonDocument.getContent());
+        TsonStreamParserConfig config = new TsonStreamParserConfig();
+        ElementBuilderTsonParserVisitor r = new ElementBuilderTsonParserVisitor();
+        TsonStreamParser source = fromReader(reader, null);
+        config.setVisitor(r);
+        source.setConfig(config);
+        try {
+            source.parseElement();
+        } catch (Exception e) {
+            throw new TsonParseException(e, source.source());
+        }
+        TsonElement e = r.getElement();
+        return e == null ? NElements.of().ofNull() : toNElem(e);
     }
 
     public TsonElement[] toTsonElemArray(List<NElement> elems) {
@@ -95,68 +118,68 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
 
     public TsonElement toTson(NElement elem) {
         if (elem == null) {
-            return Tson.ofNull();
+            return factory.ofNull();
         }
         switch (elem.type()) {
             case NULL: {
-                return decorateTsonElement(Tson.ofNull(), elem);
+                return decorateTsonElement(factory.ofNull(), elem);
             }
             case INTEGER: {
-                return decorateTsonElement(Tson.ofInt(elem.asInt().get()), elem);
+                return decorateTsonElement(factory.ofInt(elem.asInt().get()), elem);
             }
             case LONG: {
-                return decorateTsonElement(Tson.ofLong(elem.asLong().get()), elem);
+                return decorateTsonElement(factory.ofLong(elem.asLong().get()), elem);
             }
             case FLOAT: {
-                return decorateTsonElement(Tson.ofFloat(elem.asFloat().get()), elem);
+                return decorateTsonElement(factory.ofFloat(elem.asFloat().get()), elem);
             }
             case DOUBLE: {
-                return decorateTsonElement(Tson.ofDouble(elem.asDouble().get()), elem);
+                return decorateTsonElement(factory.ofDouble(elem.asDouble().get()), elem);
             }
             case BYTE: {
-                return decorateTsonElement(Tson.ofByte(elem.asByte().get()), elem);
+                return decorateTsonElement(factory.ofByte(elem.asByte().get()), elem);
             }
             case LOCAL_DATE: {
-                return decorateTsonElement(Tson.ofLocalDate(elem.asPrimitive().get().asLocalDate().get()), elem);
+                return decorateTsonElement(factory.ofLocalDate(elem.asPrimitive().get().asLocalDate().get()), elem);
             }
             case LOCAL_DATETIME: {
-                return decorateTsonElement(Tson.ofLocalDatetime(elem.asPrimitive().get().asLocalDateTime().get()), elem);
+                return decorateTsonElement(factory.ofLocalDatetime(elem.asPrimitive().get().asLocalDateTime().get()), elem);
             }
             case LOCAL_TIME: {
-                return decorateTsonElement(Tson.ofLocalTime(elem.asPrimitive().get().asLocalTime().get()), elem);
+                return decorateTsonElement(factory.ofLocalTime(elem.asPrimitive().get().asLocalTime().get()), elem);
             }
             case REGEX: {
-                return decorateTsonElement(Tson.ofRegex(elem.asString().get()), elem);
+                return decorateTsonElement(factory.ofRegex(elem.asString().get()), elem);
             }
             case BIG_INTEGER: {
-                return decorateTsonElement(Tson.ofBigInt(elem.asBigInt().get()), elem);
+                return decorateTsonElement(factory.ofBigInt(elem.asBigInt().get()), elem);
             }
             case BIG_DECIMAL: {
-                return decorateTsonElement(Tson.ofBigDecimal(elem.asBigDecimal().get()), elem);
+                return decorateTsonElement(factory.ofBigDecimal(elem.asBigDecimal().get()), elem);
             }
             case SHORT: {
-                return decorateTsonElement(Tson.ofShort(elem.asShort().get()), elem);
+                return decorateTsonElement(factory.ofShort(elem.asShort().get()), elem);
             }
             case BOOLEAN: {
-                return decorateTsonElement(Tson.ofBoolean(elem.asBoolean().get()), elem);
+                return decorateTsonElement(factory.ofBoolean(elem.asBoolean().get()), elem);
             }
             case CHAR: {
-                return decorateTsonElement(Tson.ofChar(elem.asChar().get()), elem);
+                return decorateTsonElement(factory.ofChar(elem.asChar().get()), elem);
             }
             case INSTANT: {
-                return decorateTsonElement(Tson.ofInstant(elem.asInstant().get()), elem);
+                return decorateTsonElement(factory.ofInstant(elem.asInstant().get()), elem);
             }
             case BIG_COMPLEX: {
                 NBigComplex v = elem.asBigComplex().get();
-                return decorateTsonElement(Tson.ofBigComplex(v.real(), v.imag()), elem);
+                return decorateTsonElement(factory.ofBigComplex(v.real(), v.imag()), elem);
             }
             case DOUBLE_COMPLEX: {
                 NDoubleComplex v = elem.asDoubleComplex().get();
-                return decorateTsonElement(Tson.ofDoubleComplex(v.real(), v.imag()), elem);
+                return decorateTsonElement(factory.ofDoubleComplex(v.real(), v.imag()), elem);
             }
             case FLOAT_COMPLEX: {
                 NFloatComplex v = elem.asFloatComplex().get();
-                return decorateTsonElement(Tson.ofFloatComplex(v.real(), v.imag()), elem);
+                return decorateTsonElement(factory.ofFloatComplex(v.real(), v.imag()), elem);
             }
 
             case ARRAY:
@@ -165,7 +188,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
             case NAMED_PARAMETRIZED_ARRAY: {
                 NArrayElement ee = elem.asArray().get();
                 return decorateTsonElement(
-                        Tson.ofArrayBuilder()
+                        factory.ofArrayBuilder()
                                 .name(ee.name())
                                 .addParams(toTsonElemArray(ee.params()))
                                 .addAll(toTsonElemArray(ee.children()))
@@ -178,7 +201,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
             case NAMED_PARAMETRIZED_OBJECT: {
                 NObjectElement ee = elem.asObject().get();
                 return decorateTsonElement(
-                        Tson.ofObjectBuilder()
+                        new TsonObjectBuilderImpl()
                                 .name(ee.name())
                                 .addParams(toTsonElemArray(ee.params()))
                                 .addAll(toTsonElemArray(ee.children()))
@@ -189,7 +212,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
             case NAMED_UPLET: {
                 NUpletElement ee = elem.asUplet().get();
                 return decorateTsonElement(
-                        Tson.ofUpletBuilder()
+                        factory.ofUpletBuilder()
                                 .name(ee.name())
                                 .addAll(toTsonElemArray(ee.children()))
                                 .build()
@@ -198,14 +221,14 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
             case PAIR: {
                 NPairElement ee = elem.asPair().get();
                 return decorateTsonElement(
-                        Tson.ofPair(
+                        new TsonPairImpl(
                                 toTson(ee.key()),
                                 toTson(ee.value())
                         )
                         , elem);
             }
             case NAME: {
-                return decorateTsonElement(Tson.ofName(elem.asString().get()), elem);
+                return decorateTsonElement(factory.ofName(elem.asString().get()), elem);
             }
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:
@@ -214,7 +237,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
             case TRIPLE_SINGLE_QUOTED_STRING:
             case TRIPLE_ANTI_QUOTED_STRING:
             case LINE_STRING: {
-                return decorateTsonElement(Tson.ofString(
+                return decorateTsonElement(factory.ofString(
                         toTsonStringLayout(elem.asStr().get().type()),
                         elem.asStr().get().stringValue()
                 ), elem);
@@ -272,7 +295,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 nSuffix = (en.numberSuffix());
             }
             if ((nf != null && nf != TsonNumberLayout.DECIMAL) || nSuffix != null) {
-                t = Tson.ofNumber(en.numberValue(), nf, nSuffix);
+                t = factory.ofNumber(en.numberValue(), nf, nSuffix);
             }
         }
 
@@ -510,4 +533,38 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
         write(out, value, compact);
     }
 
+
+    public TsonStreamParser fromReader(Reader reader, Object source) {
+        TsonStreamParserImpl p = new TsonStreamParserImpl(reader);
+        p.source(source);
+        return new TsonStreamParser() {
+            @Override
+            public Object source() {
+                return source;
+            }
+
+            @Override
+            public void setConfig(TsonStreamParserConfig config) {
+                p.setConfig(config);
+            }
+
+            @Override
+            public void parseElement() {
+                try {
+                    p.parseElement();
+                } catch (ParseException e) {
+                    throw JavaccHelper.createTsonParseException(e, source);
+                }
+            }
+
+            @Override
+            public void parseDocument() {
+                try {
+                    p.parseDocument();
+                } catch (ParseException e) {
+                    throw JavaccHelper.createTsonParseException(e, source);
+                }
+            }
+        };
+    }
 }

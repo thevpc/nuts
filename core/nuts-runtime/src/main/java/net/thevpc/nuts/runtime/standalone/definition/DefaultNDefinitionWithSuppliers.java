@@ -26,7 +26,7 @@ package net.thevpc.nuts.runtime.standalone.definition;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.time.NLazySupplier;
+import net.thevpc.nuts.runtime.standalone.xtra.time.NLazySupplier;
 import net.thevpc.nuts.util.NImmutable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
