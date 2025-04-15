@@ -156,6 +156,7 @@ public class MavenNDependencySolver implements NDependencySolver {
 
     NDefinition searchOne(NDependency dep) {
         NDefinition def = null;
+        NDefinition def2 = null;
         try {
             def = search(dep)
                     .getResultDefinitions().findFirst().orNull();

@@ -642,7 +642,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
     private void createPosixScript(NId mainIdStr, NId nutsId, String appName, NPath bundleFolder, NutsBundleFilesConfig nuts_bundle_files_config, BOptions options) {
         // create posix runner
         NStringBuilder out = new NStringBuilder()
-                .println("#!/bin/sh")
+                .println("#!/bin/bash")
                 .println("#-------------------------------------")
                 .println("# Nuts Bundle Launcher Script " + NWorkspace.of().getRuntimeId().getVersion())
                 .println("# This bundle was created for " + mainIdStr.getShortName())

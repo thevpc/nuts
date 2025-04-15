@@ -259,6 +259,8 @@ public interface NOptional<T> extends NBlankable {
      */
     <V> NOptional<V> then(Function<T, V> mapper);
 
+    <V> NOptional<V> thenOptional(Function<T, NOptional<V>> mapper);
+
     NOptional<T> filter(NMessagedPredicate<T> predicate);
 
     NOptional<T> filter(Predicate<T> predicate);

@@ -30,7 +30,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -51,7 +50,7 @@ public interface NUpletElement extends NNamedElement,NListContainerElement, Iter
 
     boolean isNamed();
 
-    List<NElement> items();
+    List<NElement> params();
 
     Stream<NElement> stream();
 

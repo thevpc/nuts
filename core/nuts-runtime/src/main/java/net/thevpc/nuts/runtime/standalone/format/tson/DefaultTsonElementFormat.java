@@ -30,7 +30,7 @@ import net.thevpc.nuts.runtime.standalone.elem.NElementAnnotationImpl;
 import net.thevpc.nuts.runtime.standalone.elem.NElementCommentImpl;
 import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.tson.*;
+import net.thevpc.nuts.runtime.standalone.tson.*;
 
 import java.io.Reader;
 import java.io.StringReader;

@@ -27,6 +27,18 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     public NReservedOptionalImpl() {
     }
 
+    @Override
+    public <V> NOptional<V> thenOptional(Function<T, NOptional<V>> mapper) {
+        if(isPresent()){
+            NOptional<V> u = mapper.apply(get());
+            if(u==null){
+                return NOptional.ofEmpty(getMessage());
+            }
+            return u;
+        }
+        return NOptional.ofEmpty(getMessage());
+    }
+
     public T get() {
         return get(null);
     }

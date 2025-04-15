@@ -91,7 +91,7 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
     }
 
     @Override
-    public List<NElement> items() {
+    public List<NElement> params() {
         return Arrays.asList(params);
     }
 
