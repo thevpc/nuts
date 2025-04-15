@@ -1,0 +1,664 @@
+options {
+    STATIC = false ;
+    UNICODE_INPUT=true;
+}
+
+PARSER_BEGIN(TsonStreamParserImpl)
+
+package net.thevpc.tson.impl.parser.javacc;
+
+import net.thevpc.tson.*;
+
+public class TsonStreamParserImpl{
+    private TsonStreamParserConfig config;
+    private TsonParserVisitor visitor;
+    private Object source;
+
+    public Object source(){
+        return source;
+    }
+    public void source(Object source){
+        this.source=source;
+        CommentsHelper.init(config, visitor, source);
+    }
+    public void setConfig(TsonStreamParserConfig c){
+        this.config=c;
+        this.visitor=config.getVisitor();
+        CommentsHelper.init(config, visitor, source);
+    }
+
+}
+
+
+
+PARSER_END(TsonStreamParserImpl)
+
+public void parseDocument():
+{
+}
+{
+    (
+    (parseElement())*
+    )
+    {
+        visitor.visitDocumentEnd();
+    }
+}
+public void parseElement():
+{
+}
+{
+  elementLevel2()
+}
+
+void elementLevel2() :
+{
+visitor.visitInstructionStart();
+boolean simple=true;
+Token t ;
+}
+{
+    (
+    elementLevel1()
+    (t=op() elementLevel1() {simple=false;visitor.visitBinOpEnd(t.image);})?
+    ){
+        if(simple){
+            visitor.visitSimpleEnd();
+        }
+    }
+
+}
+
+
+Token op() :
+{
+        Token t;
+}{
+   (( t=< COLON >
+|    t=< OP_PLUS >
+|    t=< OP_PLUS2 >
+|    t=< OP_PLUS3 >
+|    t=< OP_MINUS >
+|    t=< OP_MINUS2 >
+|    t=< OP_MINUS3 >
+|    t=< OP_MUL >
+|    t=< OP_MUL2 >
+|    t=< OP_MUL3 >
+|    t=< OP_DIV >
+|    t=< OP_DIV3 >
+|    t=< OP_HAT >
+|    t=< OP_HAT2 >
+|    t=< OP_HAT3 >
+|    t=< OP_REM >
+|    t=< OP_REM2 >
+|    t=< OP_REM3 >
+|    t=< OP_EQ >
+|    t=< OP_EQ2 >
+|    t=< OP_EQ3 >
+|    t=< OP_TILDE >
+|    t=< OP_TILDE2 >
+|    t=< OP_TILDE3 >
+|    t=< OP_LT >
+|    t=< OP_LT2 >
+|    t=< OP_LT3 >
+|    t=< OP_GT >
+|    t=< OP_GT2 >
+|    t=< OP_GT3 >
+|    t=< OP_LTE >
+|    t=< OP_GTE >
+|    t=< OP_ASSIGN >
+|    t=< OP_ASSIGN_EQ >
+|    t=< OP_MINUS_GT >
+|    t=< OP_MINUS2_GT >
+|    t=< OP_EQ_GT >
+|    t=< OP_EQ2_GT >
+|    t=< OP_LT_MINUS2 >
+|    t=< OP_LT_EQ2 >
+|    t=< OP_PIPE >
+|    t=< OP_PIPE2 >
+|    t=< OP_PIPE3 >
+|    t=< OP_AND  >
+|    t=< OP_AND2  >
+|    t=< OP_AND3  >
+|    t=< OP_HASH  >
+|    t=< OP_HASH2  >
+|    t=< OP_HASH3  >
+|    t=< OP_HASH4  >
+|    t=< OP_HASH5  >
+|    t=< OP_HASH6  >
+|    t=< OP_HASH7  >
+|    t=< OP_HASH8  >
+|    t=< OP_HASH9  >
+|    t=< OP_HASH10 >
+|    t=< AT2 >))
+ {
+    return t;
+  }
+}
+
+
+
+
+void elementLevel1() :
+{
+    visitor.visitElementStart();
+    Token typeName=null;
+}
+{
+    (annotation())*
+    (
+    <NULL> { visitor.visitPrimitiveEnd(Tson.ofNull());}
+    | <TRUE>{ visitor.visitPrimitiveEnd(Tson.ofTrue());}
+    |<FALSE>{  visitor.visitPrimitiveEnd(Tson.ofFalse());}
+    |<DATETIME> {  visitor.visitPrimitiveEnd(Tson.parseDateTime(token.image));}
+    |<DATE> {  visitor.visitPrimitiveEnd(Tson.parseDate(token.image));}
+    |<TIME> {  visitor.visitPrimitiveEnd(Tson.parseTime(token.image));}
+    |<REGEX> {  visitor.visitPrimitiveEnd(Tson.parseRegex(token.image));}
+
+
+    |<NUMBER>{ visitor.visitPrimitiveEnd(Tson.parseNumber(token.image));}
+
+    |<SINGLE_QUOTE_STR> {  visitor.visitPrimitiveEnd(Tson.parseString(token.image));}
+    |<DOUBLE_QUOTE_STR> {  visitor.visitPrimitiveEnd(Tson.parseString(token.image));}
+    |<ANTI_QUOTE_STR> {  visitor.visitPrimitiveEnd(Tson.parseString(token.image));}
+    |<TRIPLE_DOUBLE_QUOTE_STR> {  visitor.visitPrimitiveEnd(Tson.parseString(token.image));}
+    |<TRIPLE_SINGLE_QUOTE_STR> {  visitor.visitPrimitiveEnd(Tson.parseString(token.image));}
+    |<TRIPLE_ANTI_QUOTE_STR> {  visitor.visitPrimitiveEnd(Tson.parseString(token.image));}
+    | bin()
+    | object(false)
+    | array(false)
+    | named()
+    | unnamed()
+   )
+}
+
+void bin() :
+{
+    TsonBinaryStreamBuilder bin=Tson.ofBinStream();
+}
+{
+<CHARSTREAM_START>
+{
+    bin.writeBase64(token.image);
+}
+<CHARSTREAM_END>
+{
+    visitor.visitPrimitiveEnd(bin.build());
+}
+}
+
+
+void param() :
+{
+    visitor.visitParamElementStart();
+}
+{
+    elementLevel2()
+    {
+        visitor.visitParamElementEnd();
+    }
+}
+
+void objectElement() :
+{
+    visitor.visitObjectElementStart();
+}
+{
+    elementLevel2()
+    {
+        visitor.visitObjectElementEnd();
+    }
+}
+
+void arrayElement() :
+{
+    visitor.visitArrayElementStart();
+}
+{
+    elementLevel2()
+    {
+        visitor.visitArrayElementEnd();
+    }
+}
+
+void commaSeparator() :
+{
+}
+{
+        <COMMA>{
+            visitor.listSeparator();
+        }
+
+}
+
+void semiColonSeparator() :
+{
+}
+{
+        <SEMICOLON> {
+            visitor.matrixRowSeparator();
+        }
+
+}
+
+void paramList() :
+{
+}
+{
+    (param()|commaSeparator())*
+}
+
+void objectElementList() :
+{
+}
+{
+    (objectElement()|commaSeparator())*
+}
+
+void arrayElementList() :
+{
+}
+{
+    (arrayElement() | commaSeparator() | semiColonSeparator())*
+}
+
+void annotationParamList() :
+{
+}
+{
+    (annotationParam() | commaSeparator())*
+}
+
+
+void annotation() :
+{
+  Token id=null;
+}
+{
+    <AT> [id=<NAME>]
+    {
+        visitor.visitAnnotationStart(id==null?null:id.image);
+    }
+    (
+    <LPAREN>
+    (
+        (<RPAREN>)
+         |
+         ( (annotationParamList() )
+
+         <RPAREN>)
+    )
+    )?
+    {
+         visitor.visitAnnotationEnd();
+    }
+}
+
+
+void unnamed() :
+{
+    boolean hasArr=false;
+    boolean hasObj=false;
+}
+{
+    unnamed0()
+    (
+         (array(true){hasArr=true;})
+       | (object(true){hasObj=true;})
+    )?
+    {
+    if(!hasArr && !hasObj){
+            visitor.visitUpletEnd();
+    }
+}
+}
+
+
+void named() :
+{
+  Token id;
+    boolean hasPars=false;
+    boolean hasArr=false;
+    boolean hasObj=false;
+}
+{
+    (id=<NAME>
+    {
+        visitor.visitNamedStart(id.image);
+    })
+    (
+      (unnamed0(){hasPars=true;}) ?
+    )
+    (
+        (array( true){hasArr=true;})
+        |(object(true){hasObj=true;})
+    )?
+    {
+        if(!hasArr && !hasObj){
+            if(!hasPars){
+                visitor.visitPrimitiveEnd(Tson.name(id.image));
+            }else {
+                visitor.visitFunctionEnd();
+            }
+        }
+    }
+}
+
+void unnamed0() :
+{
+}
+{
+    (<LPAREN>
+    {
+    visitor.visitParamsStart(); }
+    (
+            ( <RPAREN>)
+            |
+            (
+            paramList()
+            <RPAREN>
+            )
+            )
+    {visitor.visitParamsEnd(); }
+    )
+}
+
+
+void object(boolean named) :
+{
+}
+{
+    <LBRACE> {
+        if(named){
+            visitor.visitNamedObjectStart();
+        }else{
+            visitor.visitObjectStart();
+        }
+    }
+    (
+        ( <RBRACE>)
+        |
+        (  ( objectElementList() )
+        <RBRACE>
+        )
+        )
+        {
+            if(named){
+                visitor.visitNamedObjectEnd();
+            }else{
+                visitor.visitObjectEnd();
+            }
+        }
+}
+
+void array(boolean named) :
+{
+}
+{
+    <LBRACK>
+    {
+        if(named){
+           visitor.visitNamedArrayStart();
+        }else{
+            visitor.visitArrayStart();
+        }
+    }
+    (
+    (<RBRACK>)
+    |
+    ( arrayElementList()
+    <RBRACK>
+    )
+    )
+    {
+         if(named){
+              visitor.visitNamedArrayEnd();
+         }else{
+            visitor.visitArrayEnd();
+         }
+    }
+}
+
+void annotationParam() :
+{
+  visitor.visitAnnotationParamStart();
+}
+{
+  elementLevel2()
+  {
+    visitor.visitAnnotationParamEnd();
+  }
+}
+
+
+<DEFAULT> TOKEN :
+{
+    < DATETIME : (
+                (<DIGIT>){4} "-" (<DIGIT>){2} "-" (<DIGIT>){2}
+                ["T"](<DIGIT>){2} ":" (<DIGIT>){2} ":" (<DIGIT>){2} ("." (<DIGIT>){1,9})? ("Z" | ["+","-"](<DIGIT>){2} ":" (<DIGIT>){2})
+               )
+               >
+|    < DATE : (
+                ((<DIGIT>)){4} "-" ((<DIGIT>)){2} "-" (<DIGIT>){2}
+               )
+               >
+|    < TIME : (
+                ((<DIGIT>)){2} ":" ((<DIGIT>)){2} ":" ((<DIGIT>)){2} ("." ((<DIGIT>)){1,9})?
+               )
+               >
+|    < REGEX : "/" ((["\\"] ~["\n"])| (~["*" , "/", "\\"]))+  "/" >
+|     < LBRACE : "{" >
+|    < RBRACE: "}" >
+
+|    < NUMBER:
+        (
+            (
+                //integer decimal
+                ("-")?
+                (
+                    ("0u1_"|"0u2_"|"0u4_"|"0u8_")? ((<DIGIT>)| (<DIGIT> ("_"|<DIGIT>)* <DIGIT>))
+                    | ("0x"|"0u1x"|"0u2x"|"0u4x"|"0u8x") ("_"|["0"-"9","A","F","a","f"])+
+                    | ("0"|"0u1o"|"0u2o"|"0u4o"|"0u8o") ("_"|["0"-"7"])+
+                    | ("0b"|"0u1b"|"0u2b"|"0u4b"|"0u8b") ("_"|["0"-"1"])+
+                )
+                ("L" (["L"])?)?
+                (["%","_"](<LETTER>)*)?
+            )
+            |
+            (   //real
+                ("-")?
+                    ("0u4_"|"0u8_")?
+                    ((<DIGIT>)| (<DIGIT> ("_"|<DIGIT>)* <DIGIT>))
+                        (
+                            (<EXPONENT>)?
+                            | ("." (((<DIGIT>)| (<DIGIT> ("_"|<DIGIT>)* <DIGIT>))) (<EXPONENT>)?)
+                        )
+                        ("f"| "LL")?
+                        (["%","_"](<LETTER>)*)?
+            )
+            |
+            (   //complex
+                ("-")? (((<DIGIT>)| (<DIGIT> ("_"|<DIGIT>)* <DIGIT>))
+                        (
+                            (<EXPONENT>)?
+                            | ("." ((<DIGIT>)| (<DIGIT> ("_"|<DIGIT>)* <DIGIT>)) (<EXPONENT>)?)
+                        )
+                        ("f"| "LL")?
+                        (["+","-"])
+                        )
+                        ["i","î"]((<DIGIT>)| (<DIGIT> ("_"|<DIGIT>)* <DIGIT>))
+                                (
+                                    (<EXPONENT>)?
+                                    | ("." ((<DIGIT>)| (<DIGIT> ("_"|<DIGIT>)* <DIGIT>)) (<EXPONENT>)?)
+                                )
+                        ("f"| "LL")?
+                        (["%","_"](<LETTER>)*)?
+            )
+            |
+            (   //special
+                     "NaN"
+                |    "PInf"
+                |    "NInf"
+                |    "NaNf"
+                |    "PInff"
+                |    "NInff"
+
+                |    "0u1Min"
+                |    "0u1Max"
+                |    "0u1xMin"
+                |    "0u1xMax"
+                |    "0u1bMin"
+                |    "0u1bMax"
+                |    "0u1oMin"
+                |    "0u1oMax"
+
+                |    "0u2Min"
+                |    "0u2Max"
+                |    "0u2xMin"
+                |    "0u2xMax"
+                |    "0u2bMin"
+                |    "0u2bMax"
+                |    "0u2oMin"
+                |    "0u2oMax"
+
+                |    "0u4Min"
+                |    "0u4Max"
+                |    "0u4xMin"
+                |    "0u4xMax"
+                |    "0u4bMin"
+                |    "0u4bMax"
+                |    "0u4oMin"
+                |    "0u4oMax"
+
+                |    "0u8Min"
+                |    "0u8Max"
+                |    "0u8xMin"
+                |    "0u8xMax"
+                |    "0u8bMin"
+                |    "0u8bMax"
+                |    "0u8oMin"
+                |    "0u8oMax"
+
+                |    "0u4Minf"
+                |    "0u4Maxf"
+                |    "0u8Minf"
+                |    "0u8Maxf"
+
+                |    "0u8NaN"
+                |    "0u4NaN"
+            )
+        )
+     >
+
+
+|    < #EXPONENT: ["e","E"] (["+","-"])? (<DIGIT>)+ >
+|    < DOUBLE_QUOTE_STR: "\""  (~["\""] | "\\\"")*  "\"">
+|    < SINGLE_QUOTE_STR: "'"  (~["'"] | "\\'")*  "'">
+|    < ANTI_QUOTE_STR : "`"  (~["`"] | "\\`")*  "`" >
+|    < TRIPLE_DOUBLE_QUOTE_STR : "\"\"\""  ("\\\"\"\"" | ~["\""] | ~["\""] | ("\"" ~["\""]) | ("\"\"" ~["\""]))*  "\"\"\"" >
+|    < TRIPLE_SINGLE_QUOTE_STR : "'''"  ("\\'''" | ~["'"] | ("'" ~["'"]) | ("''" ~["'"]))*  "'''" >
+|    < TRIPLE_ANTI_QUOTE_STR : "```"  ("\\```" |  ~["`"] | ("`" ~["`"]) | ("``" ~["`"]))*  "```" >
+|    < TRUE : "true" >
+|    < FALSE : "false" >
+|    < NULL : "null" >
+//|    < DOT : "." >
+|    < LPAREN : "(" >
+|    < RPAREN : ")" >
+|    < LBRACK : "[" >
+|    < RBRACK : "]" >
+|    < COLON : ":" >
+|    < OP_PLUS : "+" >
+|    < OP_PLUS2 : "++" >
+|    < OP_PLUS3 : "+++" >
+|    < OP_MINUS : "-" >
+|    < OP_MINUS2 : "--" >
+|    < OP_MINUS3 : "---" >
+|    < OP_MUL : "*" >
+|    < OP_MUL2 : "**" >
+|    < OP_MUL3 : "***" >
+|    < OP_DIV : "/" >
+|    < OP_DIV3 : "///" >
+|    < OP_HAT : "^" >
+|    < OP_HAT2 : "^^" >
+|    < OP_HAT3 : "^^^" >
+|    < OP_REM : "%" >
+|    < OP_REM2 : "%%" >
+|    < OP_REM3 : "%%%" >
+|    < OP_EQ : "=" >
+|    < OP_EQ2 : "==" >
+|    < OP_EQ3 : "===" >
+|    < OP_TILDE : "~" >
+|    < OP_TILDE2 : "~~" >
+|    < OP_TILDE3 : "~~~" >
+|    < OP_LT : "<" >
+|    < OP_LT2 : "<<" >
+|    < OP_LT3 : "<<<" >
+|    < OP_GT : ">" >
+|    < OP_GT2 : ">>" >
+|    < OP_GT3 : ">>>" >
+|    < OP_LTE : "<=" >
+|    < OP_GTE : ">=" >
+|    < OP_ASSIGN : ":=" >
+|    < OP_ASSIGN_EQ : ":==" >
+|    < OP_MINUS_GT : "->" >
+|    < OP_MINUS2_GT : "-->" >
+|    < OP_EQ_GT : "=>" >
+|    < OP_EQ2_GT : "==>" >
+|    < OP_LT_MINUS2 : "<--" >
+|    < OP_LT_EQ2 : "<==" >
+|    < OP_PIPE : "|" >
+|    < OP_PIPE2 : "||" >
+|    < OP_PIPE3 : "|||" >
+|    < OP_AND : "&" >
+|    < OP_AND2 : "&&" >
+|    < OP_AND3 : "&&&" >
+|    < OP_HASH : "#" >
+|    < OP_HASH2 : "##" >
+|    < OP_HASH3 : "###" >
+|    < OP_HASH4 : "####" >
+|    < OP_HASH5 : "#####" >
+|    < OP_HASH6 : "######" >
+|    < OP_HASH7 : "#######" >
+|    < OP_HASH8 : "########" >
+|    < OP_HASH9 : "#########" >
+|    < OP_HASH10 : "##########" >
+|    < SEMICOLON : ";" >
+|    < SEMICOLON2 : ";;" >
+|    < COMMA : "," >
+|    < AT : "@" >
+|    < AT2 : "@@" >
+|    < CHARSTREAM_START : "^" (["a"-"z","A","Z","_","0"-"9"])* "[" > : IN_CHARSTREAM
+
+|    < ALIAS : "&" <NAME> >
+|    < NAME : (("."|"_")?(<LETTER>) (<LETTER>| <DIGIT>) *) (("."|"-"|"_") ((<LETTER>) (<LETTER>| <DIGIT>) *))* >
+|    < #LETTER:
+        ["a"-"z","A"-"Z","$"
+        //,"\u1F00"-"\u1FFF"
+        //arabic
+        //,"\u0600"-"\u06FF"
+        //greek
+        ,"\u0370"-"\u03FF"
+        ]
+    >
+|    < #DIGIT:
+        ["0"-"9"]
+     >
+}
+
+<IN_CHARSTREAM> TOKEN:{
+      < CHARSTREAM_END : "]" > : DEFAULT
+    | < CHARSTREAM_PART : (~["]"]) >
+}
+
+SKIP : {
+ <" "
+|  "\t"
+|  "\n"
+|  "\r">
+| <"/*"  (~["*"] | ("*" ~["/"]))*  "*/"> {
+    CommentsHelper.onComments(image.toString());
+}
+| <"//"  (~["\n" , "\r"])*> {
+    CommentsHelper.onComments(image.toString());
+}
+}
