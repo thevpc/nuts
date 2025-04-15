@@ -115,7 +115,7 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
     }
 
     public String getContentType(NPath basePath) {
-        return ref.contentType();
+        return ref.getContentType();
     }
 
     public String getCharset(NPath basePath) {

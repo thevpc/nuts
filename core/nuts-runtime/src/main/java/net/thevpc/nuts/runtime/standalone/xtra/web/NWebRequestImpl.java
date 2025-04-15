@@ -579,7 +579,7 @@ public class NWebRequestImpl implements NWebRequest {
                                 NInputContentProvider npath = (NInputContentProvider) e.getValue();
                                 sw.println("Content-Disposition: form-data; name=" + NLiteral.of(e.getKey()).toStringLiteral()
                                         + " ; filename=" + NLiteral.of(npath.getName()).toStringLiteral());
-                                sw.println(("Content-Type: " + NStringUtils.firstNonBlank(npath.contentType(), "application/octet-stream")));
+                                sw.println(("Content-Type: " + NStringUtils.firstNonBlank(npath.getContentType(), "application/octet-stream")));
                                 sw.println();
                                 if (npath instanceof NPath) {
                                     ((NPath) npath).copyToOutputStream(sw.tos);

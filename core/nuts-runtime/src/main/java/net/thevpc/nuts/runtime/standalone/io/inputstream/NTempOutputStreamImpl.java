@@ -92,7 +92,7 @@ class NTempOutputStreamImpl extends NTempOutputStream {
     }
 
     @Override
-    public String contentType() {
+    public String getContentType() {
         return getMetaData().getContentType().orNull();
     }
 

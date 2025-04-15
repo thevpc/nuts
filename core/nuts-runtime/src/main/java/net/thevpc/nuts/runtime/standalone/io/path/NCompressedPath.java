@@ -17,7 +17,6 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -90,8 +89,8 @@ public class NCompressedPath extends NPathBase {
     }
 
     @Override
-    public String contentType() {
-        return base.contentType();
+    public String getContentType() {
+        return base.getContentType();
     }
 
     @Override

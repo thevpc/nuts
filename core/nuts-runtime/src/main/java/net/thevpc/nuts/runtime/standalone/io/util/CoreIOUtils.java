@@ -434,7 +434,7 @@ public class CoreIOUtils {
                 .setMetadata(new DefaultNContentMetadata(
                         path,
                         NMsg.ofNtf(NText.ofStyledPath(path)),
-                        size, header.contentType(), header.getCharset(), sourceTypeName
+                        size, header.getContentType(), header.getCharset(), sourceTypeName
                 )).createInputStream()
                 ;
 

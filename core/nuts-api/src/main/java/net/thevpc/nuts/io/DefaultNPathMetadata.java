@@ -85,7 +85,7 @@ public class DefaultNPathMetadata {
 
     public NOptional<String> getContentType() {
         return NOptional.ofNamed(contentType, "contentType")
-                .orElseOf(() -> path.contentType())
+                .orElseOf(() -> path.getContentType())
                 ;
     }
 

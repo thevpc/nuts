@@ -45,7 +45,7 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
-    public String contentType() {
+    public String getContentType() {
         return base.getContentType(this);
     }
 

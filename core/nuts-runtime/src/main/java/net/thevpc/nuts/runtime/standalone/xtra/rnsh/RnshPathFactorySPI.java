@@ -154,7 +154,7 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
                 }
 
                 @Override
-                public String contentType() {
+                public String getContentType() {
                     return "application/octet-stream";
                 }
 

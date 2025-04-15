@@ -243,7 +243,7 @@ public class NResourcePath implements NPathSPI {
     public String getContentType(NPath basePath) {
         NPath up = toURLPath();
         if (up != null) {
-            return up.contentType();
+            return up.getContentType();
         }
         return null;
     }

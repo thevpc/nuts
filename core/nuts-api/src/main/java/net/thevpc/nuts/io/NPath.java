@@ -224,7 +224,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return content type if explicitly defined (from HTTP headers for
      * instance) or probe for content type.
      */
-    String contentType();
+    String getContentType();
 
     boolean isUserCache();
 

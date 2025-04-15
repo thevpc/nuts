@@ -340,7 +340,7 @@ public class URLPath implements NPathSPI {
         }
         NPath f = asFilePath(basePath);
         if (f != null) {
-            return f.contentType();
+            return f.getContentType();
         }
         try {
             CacheInfo a = cachedHeader().getValue();
@@ -360,7 +360,7 @@ public class URLPath implements NPathSPI {
         }
         NPath f = asFilePath(basePath);
         if (f != null) {
-            return f.contentType();
+            return f.getContentType();
         }
         try {
             CacheInfo a = cachedHeader().getValue();

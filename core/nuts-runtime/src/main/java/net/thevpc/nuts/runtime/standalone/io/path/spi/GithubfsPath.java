@@ -124,7 +124,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     @Override
     public String getContentType(NPath basePath) {
         NPath p = getDownloadPath();
-        return p == null ? null : p.contentType();
+        return p == null ? null : p.getContentType();
     }
 
     @Override
