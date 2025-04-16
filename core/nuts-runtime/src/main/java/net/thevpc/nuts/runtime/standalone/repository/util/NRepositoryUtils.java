@@ -54,13 +54,13 @@ public class NRepositoryUtils {
                             fileExists = true;
                             NObjectElement jsonObject = NElements.of().json().parse(bytes).asObject().get();
                             if (NBlankable.isBlank(r.getLocationType())) {
-                                String o = jsonObject.getString("repositoryType").orNull();
+                                String o = jsonObject.getStringValue("repositoryType").orNull();
                                 if (!NBlankable.isBlank(o)) {
                                     r = r.setLocationType(String.valueOf(o));
                                 }
                             }
                             if (NBlankable.isBlank(r.getName())) {
-                                String o = jsonObject.getString("repositoryName").orNull();
+                                String o = jsonObject.getStringValue("repositoryName").orNull();
                                 if (!NBlankable.isBlank(o)) {
                                     r = r.setName(String.valueOf(o));
                                 }

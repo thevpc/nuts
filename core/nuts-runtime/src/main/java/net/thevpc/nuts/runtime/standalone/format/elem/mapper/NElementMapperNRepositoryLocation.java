@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
+import net.thevpc.nuts.elem.NStringElement;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 
 import java.lang.reflect.Type;
@@ -22,7 +23,7 @@ public class NElementMapperNRepositoryLocation implements NElementMapper<NReposi
 
     @Override
     public NRepositoryLocation createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        return NRepositoryLocation.of(o.asString().get());
+        return NRepositoryLocation.of(o.asStringValue().get());
     }
 
 }

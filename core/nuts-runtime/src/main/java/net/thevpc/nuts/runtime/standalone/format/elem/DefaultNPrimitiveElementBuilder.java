@@ -192,7 +192,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         if (type().isNumber()) {
             return new DefaultNNumberElement(type, (Number) value, numberLayout(), numberSuffix(), annotations().toArray(new NElementAnnotation[0]), comments());
         }
-        if (type().isString()) {
+        if (type().isAnyString()) {
             return new DefaultNStringElement(type, (String) value, annotations().toArray(new NElementAnnotation[0]), comments());
         }
         return new DefaultNPrimitiveElement(type, value, annotations().toArray(new NElementAnnotation[0]), comments());

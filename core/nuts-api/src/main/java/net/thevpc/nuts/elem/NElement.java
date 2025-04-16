@@ -28,6 +28,12 @@ import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NOptional;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 /**
@@ -180,6 +186,8 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
     NOptional<NUpletElement> asUplet();
 
     NOptional<NPairElement> asPair();
+
+    NOptional<NNumberElement> asInt();
 
     NOptional<NStringElement> asStr();
 
@@ -336,4 +344,44 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
     NLiteral asLiteral();
 
     NOptional<NStringElement> asString();
+
+    NOptional<String> asStringValue();
+
+    NOptional<LocalTime> asLocalTimeValue();
+
+    NOptional<BigInteger> asBigIntValue();
+
+    NOptional<BigDecimal> asBigDecimalValue();
+
+    NOptional<Boolean> asBooleanValue();
+
+    NOptional<Number> asNumberValue();
+
+    NOptional<Character> asCharValue();
+
+    NOptional<Instant> asInstantValue();
+
+    NOptional<NBigComplex> asBigComplexValue();
+
+    NOptional<NDoubleComplex> asDoubleComplexValue();
+
+    NOptional<NFloatComplex> asFloatComplexValue();
+
+    NOptional<LocalDate> asLocalDateValue();
+
+    NOptional<LocalDateTime> asLocalDateTimeValue();
+
+    NOptional<Byte> asByteValue();
+
+    NOptional<Short> asShortValue();
+
+    NOptional<Integer> asIntValue();
+
+    NOptional<Long> asLongValue();
+
+    NOptional<Float> asFloatValue();
+
+    NOptional<Double> asDoubleValue();
+
+    NOptional<NNumberElement> asNumber();
 }

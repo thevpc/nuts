@@ -68,67 +68,67 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
             case LINE_STRING:
             {
                 if (c.isAssignableFrom(String.class)) {
-                    return o.asString().orNull();
+                    return o.asStringValue().orNull();
                 }
                 break;
             }
             case BOOLEAN: {
                 if (c.isAssignableFrom(Boolean.class)) {
-                    return o.asBoolean();
+                    return o.asLiteral().asBoolean();
                 }
                 break;
             }
             case DOUBLE: {
                 if (c.isAssignableFrom(Double.class)) {
-                    return o.asDouble();
+                    return o.asLiteral().asDouble();
                 }
                 break;
             }
             case FLOAT: {
                 if (c.isAssignableFrom(Float.class)) {
-                    return o.asFloat();
+                    return o.asLiteral().asFloat();
                 }
                 break;
             }
             case BYTE: {
                 if (c.isAssignableFrom(Byte.class)) {
-                    return o.asByte();
+                    return o.asLiteral().asByte();
                 }
                 break;
             }
             case BIG_DECIMAL: {
                 if (c.isAssignableFrom(BigDecimal.class)) {
-                    return o.asNumber();
+                    return o.asLiteral().asNumber();
                 }
                 break;
             }
             case BIG_INTEGER: {
                 if (c.isAssignableFrom(BigInteger.class)) {
-                    return o.asNumber();
+                    return o.asLiteral().asNumber();
                 }
                 break;
             }
             case LONG: {
                 if (c.isAssignableFrom(Long.class)) {
-                    return o.asLong();
+                    return o.asLiteral().asLong();
                 }
                 break;
             }
             case SHORT: {
                 if (c.isAssignableFrom(Short.class)) {
-                    return o.asShort();
+                    return o.asLiteral().asShort();
                 }
                 break;
             }
             case INTEGER: {
                 if (c.isAssignableFrom(Integer.class)) {
-                    return o.asInt();
+                    return o.asLiteral().asInt();
                 }
                 break;
             }
             case INSTANT: {
                 if (c.isAssignableFrom(Instant.class)) {
-                    return o.asInstant();
+                    return o.asLiteral().asInstant();
                 }
                 break;
             }

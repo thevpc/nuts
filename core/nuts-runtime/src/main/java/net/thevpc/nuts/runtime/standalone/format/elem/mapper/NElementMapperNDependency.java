@@ -55,7 +55,7 @@ public class NElementMapperNDependency implements NElementMapper<NDependency> {
     @Override
     public NDependency createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
         if (o.type().isString()) {
-            return NDependency.get(o.asString().get()).get();
+            return NDependency.get(o.asStringValue().get()).get();
         }
         NDependencyBuilder builder = context.defaultElementToObject(o, DefaultNDependencyBuilder.class);
         return NDependencyBuilder.of().copyFrom(builder).build();

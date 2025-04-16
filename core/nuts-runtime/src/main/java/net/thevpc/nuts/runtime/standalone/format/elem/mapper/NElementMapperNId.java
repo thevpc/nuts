@@ -34,7 +34,7 @@ public class NElementMapperNId implements NElementMapper<NId> {
 
     @Override
     public NId createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        return NId.get(o.asPrimitive().flatMap(NLiteral::asString).get()).get();
+        return NId.get(o.asPrimitive().flatMap(NElement::asStringValue).get()).get();
     }
 
 }

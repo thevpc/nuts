@@ -150,7 +150,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
         while (cmdLine2.hasNext()) {
             NArg r = cmdLine2.peek().get();
             if (r.isOption()) {
-                executionOptions.add(cmdLine2.next().flatMap(NLiteral::asString).get());
+                executionOptions.add(cmdLine2.next().flatMap(NArg::asString).get());
             } else {
                 break;
             }

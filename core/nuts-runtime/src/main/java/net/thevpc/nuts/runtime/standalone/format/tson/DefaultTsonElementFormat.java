@@ -126,60 +126,60 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 return decorateTsonElement(factory.ofNull(), elem);
             }
             case INTEGER: {
-                return decorateTsonElement(factory.ofInt(elem.asInt().get()), elem);
+                return decorateTsonElement(factory.ofInt(elem.asIntValue().get()), elem);
             }
             case LONG: {
-                return decorateTsonElement(factory.ofLong(elem.asLong().get()), elem);
+                return decorateTsonElement(factory.ofLong(elem.asLongValue().get()), elem);
             }
             case FLOAT: {
-                return decorateTsonElement(factory.ofFloat(elem.asFloat().get()), elem);
+                return decorateTsonElement(factory.ofFloat(elem.asFloatValue().get()), elem);
             }
             case DOUBLE: {
-                return decorateTsonElement(factory.ofDouble(elem.asDouble().get()), elem);
+                return decorateTsonElement(factory.ofDouble(elem.asDoubleValue().get()), elem);
             }
             case BYTE: {
-                return decorateTsonElement(factory.ofByte(elem.asByte().get()), elem);
+                return decorateTsonElement(factory.ofByte(elem.asByteValue().get()), elem);
             }
             case LOCAL_DATE: {
-                return decorateTsonElement(factory.ofLocalDate(elem.asPrimitive().get().asLocalDate().get()), elem);
+                return decorateTsonElement(factory.ofLocalDate(elem.asPrimitive().get().asLocalDateValue().get()), elem);
             }
             case LOCAL_DATETIME: {
-                return decorateTsonElement(factory.ofLocalDatetime(elem.asPrimitive().get().asLocalDateTime().get()), elem);
+                return decorateTsonElement(factory.ofLocalDatetime(elem.asPrimitive().get().asLocalDateTimeValue().get()), elem);
             }
             case LOCAL_TIME: {
-                return decorateTsonElement(factory.ofLocalTime(elem.asPrimitive().get().asLocalTime().get()), elem);
+                return decorateTsonElement(factory.ofLocalTime(elem.asPrimitive().get().asLocalTimeValue().get()), elem);
             }
             case REGEX: {
-                return decorateTsonElement(factory.ofRegex(elem.asString().get()), elem);
+                return decorateTsonElement(factory.ofRegex(elem.asStringValue().get()), elem);
             }
             case BIG_INTEGER: {
-                return decorateTsonElement(factory.ofBigInt(elem.asBigInt().get()), elem);
+                return decorateTsonElement(factory.ofBigInt(elem.asBigIntValue().get()), elem);
             }
             case BIG_DECIMAL: {
-                return decorateTsonElement(factory.ofBigDecimal(elem.asBigDecimal().get()), elem);
+                return decorateTsonElement(factory.ofBigDecimal(elem.asBigDecimalValue().get()), elem);
             }
             case SHORT: {
-                return decorateTsonElement(factory.ofShort(elem.asShort().get()), elem);
+                return decorateTsonElement(factory.ofShort(elem.asShortValue().get()), elem);
             }
             case BOOLEAN: {
-                return decorateTsonElement(factory.ofBoolean(elem.asBoolean().get()), elem);
+                return decorateTsonElement(factory.ofBoolean(elem.asBooleanValue().get()), elem);
             }
             case CHAR: {
-                return decorateTsonElement(factory.ofChar(elem.asChar().get()), elem);
+                return decorateTsonElement(factory.ofChar(elem.asCharValue().get()), elem);
             }
             case INSTANT: {
-                return decorateTsonElement(factory.ofInstant(elem.asInstant().get()), elem);
+                return decorateTsonElement(factory.ofInstant(elem.asInstantValue().get()), elem);
             }
             case BIG_COMPLEX: {
-                NBigComplex v = elem.asBigComplex().get();
+                NBigComplex v = elem.asBigComplexValue().get();
                 return decorateTsonElement(factory.ofBigComplex(v.real(), v.imag()), elem);
             }
             case DOUBLE_COMPLEX: {
-                NDoubleComplex v = elem.asDoubleComplex().get();
+                NDoubleComplex v = elem.asDoubleComplexValue().get();
                 return decorateTsonElement(factory.ofDoubleComplex(v.real(), v.imag()), elem);
             }
             case FLOAT_COMPLEX: {
-                NFloatComplex v = elem.asFloatComplex().get();
+                NFloatComplex v = elem.asFloatComplexValue().get();
                 return decorateTsonElement(factory.ofFloatComplex(v.real(), v.imag()), elem);
             }
 
@@ -229,7 +229,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                         , elem);
             }
             case NAME: {
-                return decorateTsonElement(factory.ofName(elem.asString().get()), elem);
+                return decorateTsonElement(factory.ofName(elem.asStringValue().get()), elem);
             }
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:

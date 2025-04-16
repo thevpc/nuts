@@ -118,10 +118,10 @@ class DefaultNCharStreamElement extends AbstractNElement implements NCharStreamE
         return true;
     }
 
-    @Override
-    public NOptional<Object> asObjectAt(int index) {
-        return NLiteral.of(value).asObjectAt(index);
-    }
+//    @Override
+//    public NOptional<Object> asObjectAt(int index) {
+//        return NLiteral.of(value).asObjectAt(index);
+//    }
 
     @Override
     public boolean isBlank() {

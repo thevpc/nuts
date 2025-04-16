@@ -135,7 +135,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                     cmdLine.throwMissingArgument(NMsg.ofC("not a valid file : %s", file));
                 }
                 if (ws == null || ws.isEmpty()) {
-                    ws = nutsWorkspaceConfigRef[0].getString("name").get();
+                    ws = nutsWorkspaceConfigRef[0].getStringValue("name").get();
                 }
                 if (ws == null || ws.isEmpty()) {
                     cmdLine.throwMissingArgument(NMsg.ofC("not a valid file : %s", file));

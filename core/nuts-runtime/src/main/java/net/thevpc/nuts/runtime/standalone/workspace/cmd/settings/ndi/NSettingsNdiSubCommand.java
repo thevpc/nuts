@@ -231,7 +231,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     if (cmdLine.isNextOption()) {
                         session.configureLast(cmdLine);
                     } else {
-                        d.idsToInstall.add(cmdLine.next().flatMap(NLiteral::asString).get());
+                        d.idsToInstall.add(cmdLine.next().flatMap(NArg::asString).get());
                         d.missingAnyArgument = false;
                     }
                 }
@@ -297,7 +297,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
             } else if (cmdLine.isNextOption()) {
                 session.configureLast(cmdLine);
             } else {
-                idsToUninstall.add(cmdLine.next().flatMap(NLiteral::asString).get());
+                idsToUninstall.add(cmdLine.next().flatMap(NArg::asString).get());
                 missingAnyArgument = false;
             }
         }
@@ -409,9 +409,9 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     if (cmdLine.isNextOption()) {
                         cmdLine.throwUnexpectedArgument();
                     } else if (d.switchWorkspaceLocation == null) {
-                        d.switchWorkspaceLocation = cmdLine.next().flatMap(NLiteral::asString).get();
+                        d.switchWorkspaceLocation = cmdLine.next().flatMap(NArg::asString).get();
                     } else if (d.switchWorkspaceApi == null) {
-                        d.switchWorkspaceApi = cmdLine.next().flatMap(NLiteral::asString).get();
+                        d.switchWorkspaceApi = cmdLine.next().flatMap(NArg::asString).get();
                     } else if (cmdLine.isNextOption()) {
                         session.configureLast(cmdLine);
                     } else {

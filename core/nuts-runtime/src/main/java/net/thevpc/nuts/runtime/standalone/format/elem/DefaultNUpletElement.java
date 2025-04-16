@@ -61,10 +61,10 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
         this.name = name;
     }
 
-    @Override
-    public NOptional<Object> asObjectAt(int index) {
-        return get(index).map(x -> x);
-    }
+//    @Override
+//    public NOptional<Object> asObjectAt(int index) {
+//        return get(index).map(x -> x);
+//    }
 
 
     @Override
@@ -117,76 +117,6 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
             return NOptional.of(params[index]);
         }
         return NOptional.ofError(() -> NMsg.ofC("invalid array index %s not in [%s,%s[", index, 0, params.length));
-    }
-
-    @Override
-    public NOptional<String> getString(int index) {
-        return get(index).flatMap(NElement::asString);
-    }
-
-    @Override
-    public NOptional<Boolean> getBoolean(int index) {
-        return get(index).flatMap(NElement::asBoolean);
-    }
-
-    @Override
-    public NOptional<Byte> getByte(int index) {
-        return get(index).flatMap(NElement::asByte);
-    }
-
-    @Override
-    public NOptional<Short> getShort(int index) {
-        return get(index).flatMap(NElement::asShort);
-    }
-
-    @Override
-    public NOptional<Integer> getInt(int index) {
-        return get(index).flatMap(NElement::asInt);
-    }
-
-    @Override
-    public NOptional<Long> getLong(int index) {
-        return get(index).flatMap(NElement::asLong);
-    }
-
-    @Override
-    public NOptional<Float> getFloat(int index) {
-        return get(index).flatMap(NElement::asFloat);
-    }
-
-    @Override
-    public NOptional<Double> getDouble(int index) {
-        return get(index).flatMap(NElement::asDouble);
-    }
-
-    @Override
-    public NOptional<Instant> getInstant(int index) {
-        return get(index).flatMap(NElement::asInstant);
-    }
-
-    @Override
-    public NOptional<LocalDate> getLocalDate(int index) {
-        return get(index).flatMap(NElement::asLocalDate);
-    }
-
-    @Override
-    public NOptional<LocalDateTime> getLocalDateTime(int index) {
-        return get(index).flatMap(NElement::asLocalDateTime);
-    }
-
-    @Override
-    public NOptional<LocalTime> getLocalTime(int index) {
-        return get(index).flatMap(NElement::asLocalTime);
-    }
-
-    @Override
-    public NOptional<NArrayElement> getArray(int index) {
-        return get(index).flatMap(NElement::asArray);
-    }
-
-    @Override
-    public NOptional<NObjectElement> getObject(int index) {
-        return get(index).flatMap(NElement::asObject);
     }
 
 
@@ -261,7 +191,7 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
                         return NOptional.of(e.value());
                     }
                 } else if (e.key().isAnyString()) {
-                    if (Objects.equals(e.key().asString().get(), s)) {
+                    if (Objects.equals(e.key().asStringValue().get(), s)) {
                         return NOptional.of(e.value());
                     }
                 }
@@ -281,7 +211,7 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
                         ret.add(e.value());
                     }
                 } else if (e.key().isAnyString()) {
-                    if (Objects.equals(e.key().asString().get(), s)) {
+                    if (Objects.equals(e.key().asStringValue().get(), s)) {
                         ret.add(e.value());
                     }
                 }
@@ -292,21 +222,21 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
 
     @Override
     public NOptional<NElement> get(NElement key) {
-        return key.isString() ? key.asString().flatMap(this::get) : key.asInt().flatMap(this::get);
+        return key.isString() ? key.asStringValue().flatMap(this::get) : key.asIntValue().flatMap(this::get);
     }
 
     @Override
     public List<NElement> getAll(NElement s) {
         int index = -1;
         if (s.isString()) {
-            NOptional<Integer> ii = NLiteral.of(s.asString().get()).asInt();
+            NOptional<Integer> ii = s.asLiteral().asInt();
             if (ii.isPresent()) {
                 index = ii.get();
             } else {
                 return Collections.emptyList();
             }
-        } else if (s.asInt().isPresent()) {
-            index = s.asInt().get();
+        } else if (s.asIntValue().isPresent()) {
+            index = s.asIntValue().get();
         } else {
             return Collections.emptyList();
         }

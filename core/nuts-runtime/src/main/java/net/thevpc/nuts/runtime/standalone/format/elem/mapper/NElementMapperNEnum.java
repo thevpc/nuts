@@ -17,7 +17,7 @@ public class NElementMapperNEnum implements NElementMapper<NEnum> {
     @Override
     public NEnum createObject(NElement json, Type typeOfResult, NElementFactoryContext context) {
         Class cc = ReflectUtils.getRawClass(typeOfResult);
-        return (NEnum) NEnum.parse(cc,json.asString().get()).get();
+        return (NEnum) NEnum.parse(cc,json.asStringValue().get()).get();
     }
 
     public NElement createElement(NEnum src, Type typeOfSrc, NElementFactoryContext context) {

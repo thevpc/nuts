@@ -567,7 +567,7 @@ public class NElementPathFilter {
         @Override
         public boolean matches(int index, NElement name, int len, Map<String, Object> matchContext) {
             if (name.isAnyString()) {
-                String sname = name.asString().get();
+                String sname = name.asStringValue().get();
                 return lower
                         ? sname.toLowerCase().matches(pat)
                         : sname.matches(pat);

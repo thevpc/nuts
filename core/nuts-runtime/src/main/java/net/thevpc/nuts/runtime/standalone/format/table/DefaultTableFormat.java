@@ -742,7 +742,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                                         k.toString()
                                 );
                             }
-                            e.cells.add(resolveColumnsFromCell(k.asString().get(), nee.value()));
+                            e.cells.add(resolveColumnsFromCell(k.asStringValue().get(), nee.value()));
                         }else{
                             e.cells.add(resolveColumnsFromCell("COL " + column,ne));
                         }

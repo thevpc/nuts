@@ -29,6 +29,12 @@ import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -62,6 +68,21 @@ public abstract class AbstractNElement implements NElement {
     @Override
     public boolean isNamedUplet() {
         return type() == NElementType.NAMED_UPLET;
+    }
+
+    @Override
+    public boolean isBigDecimal() {
+        return type() == NElementType.BIG_DECIMAL;
+    }
+
+    @Override
+    public boolean isBigInt() {
+        return type() == NElementType.BIG_INTEGER;
+    }
+
+    @Override
+    public boolean isInstant() {
+        return type() == NElementType.INSTANT;
     }
 
     @Override
@@ -112,6 +133,16 @@ public abstract class AbstractNElement implements NElement {
     @Override
     public boolean isListContainer() {
         return type().isListContainer();
+    }
+
+    @Override
+    public NOptional<NStringElement> asString() {
+        return NOptional.of((NStringElement) NElements.of().ofString(toString()));
+    }
+
+    @Override
+    public NOptional<NNumberElement> asNumber() {
+        return NOptional.ofEmpty(NMsg.ofC("%s is not a number", type().id()));
     }
 
     @Override
@@ -269,6 +300,14 @@ public abstract class AbstractNElement implements NElement {
             return NOptional.of((NUpletElement) this);
         }
         return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to uplet: %s", type().id(), this));
+    }
+
+    @Override
+    public NOptional<NNumberElement> asInt() {
+        if (isInt()) {
+            return NOptional.of((NNumberElement) this);
+        }
+        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to int: %s", type().id(), this));
     }
 
     @Override
@@ -772,5 +811,101 @@ public abstract class AbstractNElement implements NElement {
     @Override
     public NLiteral asLiteral() {
         return new NElementAsLiteral(this);
+    }
+
+
+    @Override
+    public NOptional<String> asStringValue() {
+        return asStringValue();
+    }
+
+    @Override
+    public NOptional<LocalTime> asLocalTimeValue() {
+        return asLiteral().asLocalTime();
+    }
+
+    @Override
+    public NOptional<LocalDate> asLocalDateValue() {
+        return asLiteral().asLocalDate();
+    }
+
+    @Override
+    public NOptional<LocalDateTime> asLocalDateTimeValue() {
+        return asLiteral().asLocalDateTime();
+    }
+
+    @Override
+    public NOptional<Double> asDoubleValue() {
+        return asLiteral().asDouble();
+    }
+
+    @Override
+    public NOptional<Float> asFloatValue() {
+        return asLiteral().asFloat();
+    }
+
+    @Override
+    public NOptional<Long> asLongValue() {
+        return asLiteral().asLong();
+    }
+
+    @Override
+    public NOptional<Integer> asIntValue() {
+        return asLiteral().asInt();
+    }
+
+    @Override
+    public NOptional<Short> asShortValue() {
+        return asLiteral().asShort();
+    }
+
+    @Override
+    public NOptional<Byte> asByteValue() {
+        return asLiteral().asByte();
+    }
+
+    @Override
+    public NOptional<NFloatComplex> asFloatComplexValue() {
+        return asLiteral().asFloatComplex();
+    }
+
+    @Override
+    public NOptional<NDoubleComplex> asDoubleComplexValue() {
+        return asLiteral().asDoubleComplex();
+    }
+
+    @Override
+    public NOptional<NBigComplex> asBigComplexValue() {
+        return asLiteral().asBigComplex();
+    }
+
+    @Override
+    public NOptional<Instant> asInstantValue() {
+        return asLiteral().asInstant();
+    }
+
+    @Override
+    public NOptional<Character> asCharValue() {
+        return asLiteral().asChar();
+    }
+
+    @Override
+    public NOptional<Boolean> asBooleanValue() {
+        return asLiteral().asBoolean();
+    }
+
+    @Override
+    public NOptional<BigDecimal> asBigDecimalValue() {
+        return asLiteral().asBigDecimal();
+    }
+
+    @Override
+    public NOptional<BigInteger> asBigIntValue() {
+        return asLiteral().asBigInt();
+    }
+
+    @Override
+    public NOptional<Number> asNumberValue() {
+        return asLiteral().asNumber();
     }
 }

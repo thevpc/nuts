@@ -46,8 +46,8 @@
 //        if (aBoolean.isPresent() && bBoolean.isPresent()) {
 //            return evalLong(aBoolean.get() ? 1 : 0, bBoolean.get() ? 1 : 0);
 //        }
-//        String aa = a.asString().orNull();
-//        String bb = b.asString().orNull();
+//        String aa = a.asStringValue().orNull();
+//        String bb = b.asStringValue().orNull();
 //        if (aa == null) {
 //            aa = "";
 //        }

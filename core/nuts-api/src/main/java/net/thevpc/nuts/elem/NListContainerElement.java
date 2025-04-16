@@ -52,6 +52,7 @@ public interface NListContainerElement extends NElement {
      * @return value for name or null
      */
     NOptional<NElement> get(String key);
+    NOptional<NElement> get(int index);
 
     List<NElement> getAll(String key);
 
@@ -67,6 +68,34 @@ public interface NListContainerElement extends NElement {
 
     List<NElement> getAll(NElement s);
 
+    NOptional<String> getStringValue(int index);
+
+    NOptional<LocalTime> getLocalTimeValue(int index);
+
+    NOptional<NArrayElement> getArray(int index);
+
+    NOptional<NObjectElement> getObject(int index);
+
+    NOptional<Boolean> getBooleanValue(int index);
+
+    NOptional<Byte> getByteValue(int index);
+
+    NOptional<Short> getShortValue(int index);
+
+    NOptional<Integer> getIntValue(int index);
+
+    NOptional<Long> getLongValue(int index);
+
+    NOptional<Float> getFloatValue(int index);
+
+    NOptional<Double> getDoubleValue(int index);
+
+    NOptional<Instant> getInstantValue(int index);
+
+    NOptional<LocalDate> getLocalDateValue(int index);
+
+    NOptional<LocalDateTime> getLocalDateTimeValue(int index);
+
     NOptional<NArrayElement> getArray(String key);
 
     NOptional<NArrayElement> getArray(NElement key);
@@ -79,61 +108,61 @@ public interface NListContainerElement extends NElement {
 
     NOptional<NListContainerElement> getListContainer(NElement key);
 
-    NOptional<String> getString(String key);
+    NOptional<String> getStringValue(String key);
 
-    NOptional<String> getString(NElement key);
+    NOptional<String> getStringValue(NElement key);
 
-    NOptional<Boolean> getBoolean(String key);
+    NOptional<Boolean> getBooleanValue(String key);
 
-    NOptional<Boolean> getBoolean(NElement key);
+    NOptional<Boolean> getBooleanValue(NElement key);
 
     NOptional<Number> getNumber(String key);
 
     NOptional<Number> getNumber(NElement key);
 
-    NOptional<Byte> getByte(String key);
+    NOptional<Byte> getByteValue(String key);
 
-    NOptional<Byte> getByte(NElement key);
+    NOptional<Byte> getByteValue(NElement key);
 
-    NOptional<Integer> getInt(String key);
+    NOptional<Integer> getIntValue(String key);
 
-    NOptional<Integer> getInt(NElement key);
+    NOptional<Integer> getIntValue(NElement key);
 
-    NOptional<Long> getLong(String key);
+    NOptional<Long> getLongValue(String key);
 
-    NOptional<Long> getLong(NElement key);
+    NOptional<Long> getLongValue(NElement key);
 
-    NOptional<Short> getShort(String key);
+    NOptional<Short> getShortValue(String key);
 
-    NOptional<Short> getShort(NElement key);
+    NOptional<Short> getShortValue(NElement key);
 
-    NOptional<Instant> getInstant(String key);
+    NOptional<Instant> getInstantValue(String key);
 
-    NOptional<LocalDate> getLocalDate(String key);
+    NOptional<LocalDate> getLocalDateValue(String key);
 
-    NOptional<LocalDateTime> getLocalDateTime(String key);
+    NOptional<LocalDateTime> getLocalDateTimeValue(String key);
 
-    NOptional<LocalTime> getLocalTime(String key);
+    NOptional<LocalTime> getLocalTimeValue(String key);
 
-    NOptional<Instant> getInstant(NElement key);
+    NOptional<Instant> getInstantValue(NElement key);
 
-    NOptional<LocalDate> getLocalDate(NElement key);
+    NOptional<LocalDate> getLocalDateValue(NElement key);
 
-    NOptional<LocalDateTime> getLocalDateTime(NElement key);
+    NOptional<LocalDateTime> getLocalDateTimeValue(NElement key);
 
-    NOptional<LocalTime> getLocalTime(NElement key);
+    NOptional<LocalTime> getLocalTimeValue(NElement key);
 
-    NOptional<Float> getFloat(String key);
+    NOptional<Float> getFloatValue(String key);
 
-    NOptional<Float> getFloat(NElement key);
+    NOptional<Float> getFloatValue(NElement key);
 
-    NOptional<Double> getDouble(String key);
+    NOptional<Double> getDoubleValue(String key);
 
-    NOptional<Double> getDouble(NElement key);
+    NOptional<Double> getDoubleValue(NElement key);
 
-    NOptional<BigInteger> getBigInt(NElement key);
+    NOptional<BigInteger> getBigIntValue(NElement key);
 
-    NOptional<BigDecimal> getBigDecimal(NElement key);
+    NOptional<BigDecimal> getBigDecimalValue(NElement key);
 
     /**
      * object (key,value) attributes
@@ -148,4 +177,7 @@ public interface NListContainerElement extends NElement {
      * @return element count
      */
     int size();
+
+
+
 }

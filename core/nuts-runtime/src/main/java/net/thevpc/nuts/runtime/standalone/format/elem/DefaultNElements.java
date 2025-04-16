@@ -527,25 +527,18 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
         if (stringLayout == null) {
             stringLayout = NElementType.DOUBLE_QUOTED_STRING;
         }
-        switch (stringLayout) {
-            case DOUBLE_QUOTED_STRING:
-            case SINGLE_QUOTED_STRING:
-            case ANTI_QUOTED_STRING:
-            case TRIPLE_DOUBLE_QUOTED_STRING:
-            case TRIPLE_SINGLE_QUOTED_STRING:
-            case TRIPLE_ANTI_QUOTED_STRING:
-            case LINE_STRING:
+        if (stringLayout.isAnyString()) {
                 return new DefaultNStringElement(stringLayout, str, null, null);
         }
         throw new NUnsupportedEnumException(stringLayout);
     }
 
     public NPrimitiveElement ofRegex(String str) {
-        return str == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.REGEX, str, null, null);
+        return str == null ? ofNull() : new DefaultNStringElement(NElementType.REGEX, str, null, null);
     }
 
     public NPrimitiveElement ofName(String str) {
-        return str == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.NAME, str, null, null);
+        return str == null ? ofNull() : new DefaultNStringElement(NElementType.NAME, str, null, null);
     }
 
     @Override
@@ -553,7 +546,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
         if (value == null) {
             return ofNull();
         }
-        return NElements.isValidName(value) ? new DefaultNPrimitiveElement(NElementType.NAME, value, null, null)
+        return NElements.isValidName(value) ? new DefaultNStringElement(NElementType.NAME, value, null, null)
                 : new DefaultNStringElement(NElementType.DOUBLE_QUOTED_STRING, value, null, null)
                 ;
     }
@@ -699,7 +692,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     @Override
     public NPrimitiveElement ofChar(Character value) {
-        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.CHAR, value, null, null);
+        return value == null ? ofNull() : new DefaultNStringElement(NElementType.CHAR, value, null, null);
     }
 
     @Override

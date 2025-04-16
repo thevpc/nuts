@@ -41,7 +41,7 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
             if (cmdLine.next("--search").isPresent()) {
                 List<String> extraLocations = new ArrayList<>();
                 while (cmdLine.hasNext()) {
-                    extraLocations.add(cmdLine.next().flatMap(NLiteral::asString).get());
+                    extraLocations.add(cmdLine.next().get().getImage());
                 }
                 if (extraLocations.isEmpty()) {
                     for (NPlatformLocation loc : workspace.searchSystemPlatforms(NPlatformFamily.JAVA)) {
@@ -61,7 +61,7 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
             } else {
                 while (cmdLine.hasNext()) {
                     NPlatformLocation loc = workspace.resolvePlatform(NPlatformFamily.JAVA,
-                            NPath.of(cmdLine.next().flatMap(NLiteral::asString).get()), null).orNull();
+                            NPath.of(cmdLine.next().get().getImage()), null).orNull();
                     if (loc != null) {
                         workspace.addPlatform(loc);
                     }
@@ -73,8 +73,7 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
             return true;
         } else if (cmdLine.next("remove java","java remove").isPresent()) {
             while (cmdLine.hasNext()) {
-                String name = cmdLine.next()
-                        .flatMap(NLiteral::asString).get();
+                String name = cmdLine.next().get().getImage();
                 NPlatformLocation loc = workspace.findPlatformByName(NPlatformFamily.JAVA, name).orNull();
                 if (loc == null) {
                     loc = workspace.findPlatformByName(NPlatformFamily.JAVA, name).orNull();

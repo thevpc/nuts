@@ -24,13 +24,13 @@ public class NElementMapperInstant implements NElementMapper<Instant> {
     public Instant createObject(NElement o, Type to, NElementFactoryContext context) {
         switch (o.type()) {
             case INSTANT: {
-                return o.asInstant().get();
+                return o.asLiteral().asInstant().get();
             }
             case INTEGER: {
-                return Instant.ofEpochMilli(o.asInt().get());
+                return Instant.ofEpochMilli(o.asLiteral().asInt().get());
             }
             case LONG: {
-                return Instant.ofEpochMilli(o.asLong().get());
+                return Instant.ofEpochMilli(o.asLiteral().asLong().get());
             }
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:
@@ -40,7 +40,7 @@ public class NElementMapperInstant implements NElementMapper<Instant> {
             case TRIPLE_ANTI_QUOTED_STRING:
             case LINE_STRING:
             {
-                return Instant.parse(o.asString().get());
+                return Instant.parse(o.asStringValue().get());
             }
         }
         throw new NUnsupportedEnumException(o.type());

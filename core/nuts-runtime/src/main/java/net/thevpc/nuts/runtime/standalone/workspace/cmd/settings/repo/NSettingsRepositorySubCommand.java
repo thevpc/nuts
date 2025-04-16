@@ -21,7 +21,6 @@ import net.thevpc.nuts.spi.NRepositoryDB;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NRef;
 
@@ -107,17 +106,17 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
             enableRepo(cmdLine, autoSave, session, false);
             return true;
         } else if (cmdLine.next("edit repo", "er").isPresent()) {
-            String repoId = cmdLine.nextNonOption(NArgName.of("RepositoryName")).flatMap(NLiteral::asString).get();
+            String repoId = cmdLine.nextNonOption(NArgName.of("RepositoryName")).flatMap(NArg::asString).get();
             if (cmdLine.next("add repo", "ar").isPresent()) {
-                String repositoryName = cmdLine.nextNonOption(NArgName.of("NewRepositoryName")).flatMap(NLiteral::asString).get();
-                String location = cmdLine.nextNonOption(NArgName.of("folder")).flatMap(NLiteral::asString).get();
+                String repositoryName = cmdLine.nextNonOption(NArgName.of("NewRepositoryName")).flatMap(NArg::asString).get();
+                String location = cmdLine.nextNonOption(NArgName.of("folder")).flatMap(NArg::asString).get();
 
                 NRepository editedRepo = workspace.findRepository(repoId).get();
                 NRepository repo = editedRepo.config().addMirror(new NAddRepositoryOptions().setName(repositoryName).setLocation(repositoryName).setConfig(new NRepositoryConfig().setName(repositoryName).setLocation(NRepositoryLocation.of(location))));
                 workspace.saveConfig();
 
             } else if (cmdLine.next("remove repo", "rr").isPresent()) {
-                String location = cmdLine.nextNonOption(NArgName.of("RepositoryName")).flatMap(NLiteral::asString).get();
+                String location = cmdLine.nextNonOption(NArgName.of("RepositoryName")).flatMap(NArg::asString).get();
                 NRepository editedRepo = workspace.findRepository(repoId).get();
                 editedRepo.config().removeMirror(location);
                 workspace.saveConfig();
@@ -186,7 +185,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                             } else if (parent.isNotNull()) {
                                 cmdLine.throwUnexpectedArgument();
                             } else {
-                                parent.set(cmdLine.next().flatMap(NLiteral::asString).get());
+                                parent.set(cmdLine.next().flatMap(NArg::asString).get());
                             }
                         }
                         break;
@@ -225,7 +224,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                         } else if (repositoryName.isNotNull()) {
                             cmdLine.throwUnexpectedArgument();
                         } else {
-                            repositoryName.set(cmdLine.next().flatMap(NLiteral::asString).get());
+                            repositoryName.set(cmdLine.next().flatMap(NArg::asString).get());
                         }
                     }
                     break;
@@ -289,7 +288,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                             d.repositoryName = n.getStringKey().get();
                             d.location = n.getStringValue().get();
                         } else {
-                            d.location = cmdLine.next().flatMap(NLiteral::asString).get();
+                            d.location = cmdLine.next().flatMap(NArg::asString).get();
                             NAddRepositoryOptions ro = NRepositoryDB.of().getRepositoryOptionsByName(d.location).orNull();
                             String loc2 = ro==null?null:ro.getConfig().getLocation().getFullLocation();
                             if (loc2 != null) {
@@ -339,7 +338,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                         if (aa.isOption()) {
                             cmdLine.throwUnexpectedArgument();
                         } else if (repositoryName.isNull()) {
-                            repositoryName.set(cmdLine.next().flatMap(NLiteral::asString).get());
+                            repositoryName.set(cmdLine.next().flatMap(NArg::asString).get());
                         } else {
                             cmdLine.throwUnexpectedArgument();
                         }

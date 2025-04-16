@@ -44,10 +44,10 @@ class DefaultNCustomElement extends AbstractNElement implements NCustomElement {
         this.value = value;
     }
 
-    @Override
-    public Object asRawObject() {
-        return value;
-    }
+//    @Override
+//    public Object asRawObject() {
+//        return value;
+//    }
 
     @Override
     public NOptional<NElement> resolve(String pattern) {
@@ -119,10 +119,10 @@ class DefaultNCustomElement extends AbstractNElement implements NCustomElement {
         return true;
     }
 
-    @Override
-    public NOptional<Object> asObjectAt(int index) {
-        return NLiteral.of(value).asObjectAt(index);
-    }
+//    @Override
+//    public NOptional<Object> asObjectAt(int index) {
+//        return NLiteral.of(value).asObjectAt(index);
+//    }
 
     @Override
     public boolean isBlank() {

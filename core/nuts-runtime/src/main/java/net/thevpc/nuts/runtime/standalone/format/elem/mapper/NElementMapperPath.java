@@ -30,6 +30,6 @@ public class NElementMapperPath implements NElementMapper<Path> {
 
     @Override
     public Path createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        return Paths.get(o.asString().get());
+        return Paths.get(o.asStringValue().get());
     }
 }

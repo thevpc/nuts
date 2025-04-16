@@ -43,7 +43,7 @@ public class NElementMapperMap implements NElementMapper<Map> {
                 Map.Entry e = (Map.Entry) e0;
                 NElement k = context.objectToElement(e.getKey(), null);
                 if(!(e.getKey() instanceof NElement) && k.isString()){
-                    k=context.elem().ofNameOrString(k.asString().get());
+                    k=context.elem().ofNameOrString(k.asStringValue().get());
                 }
                 NElement v = context.objectToElement(e.getValue(), null);
                 m.add(new DefaultNPairElement(k, v, new NElementAnnotation[0],null));

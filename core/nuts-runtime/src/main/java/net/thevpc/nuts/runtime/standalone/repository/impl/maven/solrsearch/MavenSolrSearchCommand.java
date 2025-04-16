@@ -128,9 +128,9 @@ public class MavenSolrSearchCommand {
                                 if (arr != null) {
                                     if (index < arr.size()) {
                                         NObjectElement d = arr.getObject(index).get();
-                                        String g = d.getString("g").orElse("");
-                                        String a = d.getString("a").orElse("");
-                                        String v = d.getString("v").orElse("");
+                                        String g = d.getStringValue("g").orElse("");
+                                        String a = d.getStringValue("a").orElse("");
+                                        String v = d.getStringValue("v").orElse("");
                                         index++;
                                         return NIdBuilder.of(g,a).setVersion(v).build();
                                     }

@@ -4,6 +4,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.elem.NStringElement;
 
 import java.lang.reflect.Type;
 
@@ -21,6 +22,6 @@ public class NElementMapperString implements NElementMapper<String> {
 
     @Override
     public String createObject(NElement o, Type to, NElementFactoryContext context) {
-        return o.asString().get();
+        return o.asStringValue().get();
     }
 }

@@ -25,8 +25,11 @@
  */
 package net.thevpc.nuts.cmdline;
 
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NLiteral;
+
+import java.util.List;
 
 /**
  * Command Line Argument
@@ -35,7 +38,7 @@ import net.thevpc.nuts.util.NLiteral;
  * @app.category Command Line
  * @since 0.5.5
  */
-public interface NArg extends NLiteral {
+public interface NArg extends NBlankable /*extends NLiteral*/ {
 
     /**
      * create instance for the given value and with the given session
@@ -212,4 +215,18 @@ public interface NArg extends NLiteral {
     String getImage();
 
     boolean isFlagOption();
+
+    NOptional<String> asString();
+
+    NOptional<Boolean> asBoolean();
+
+    boolean isBoolean();
+
+    boolean isInt();
+
+    NOptional<Integer> asInt();
+
+    boolean isLong();
+
+    NOptional<Long> asLong();
 }

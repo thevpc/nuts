@@ -7,6 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElementNotFoundException;
@@ -42,24 +43,24 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
             } else {
                 if (cmdLine.next("--repo", "-r").isPresent()) {
                     repository = NWorkspace.of().findRepository(cmdLine.nextNonOption(NArgName.of("RepositoryId"))
-                            .flatMap(NLiteral::asString).get())
+                            .get().getImage())
                             .get();
                 }
             }
             if (repository == null) {
-                String user = cmdLine.nextNonOption(NArgName.of("Username")).flatMap(NLiteral::asString).get();
-                char[] password = cmdLine.nextNonOption(NArgName.of("Password")).flatMap(NLiteral::asString).get().toCharArray();
+                String user = cmdLine.nextNonOption(NArgName.of("Username")).get().getImage();
+                char[] password = cmdLine.nextNonOption(NArgName.of("Password")).get().getImage().toCharArray();
                 if (cmdLine.isExecMode()) {
                     NWorkspaceSecurityManager.of().addUser(user).setCredentials(password).run();
                 }
             } else {
-                String user = cmdLine.nextNonOption(NArgName.of("Username")).flatMap(NLiteral::asString).get();
-                char[] password = cmdLine.nextNonOption(NArgName.of("Password")).flatMap(NLiteral::asString).get().toCharArray();
+                String user = cmdLine.nextNonOption(NArgName.of("Username")).get().getImage();
+                char[] password = cmdLine.nextNonOption(NArgName.of("Password")).get().getImage().toCharArray();
                 String mappedUser = null;
                 char[] remotePassword = null;
                 if (!cmdLine.isEmpty()) {
-                    mappedUser = cmdLine.nextNonOption(NArgName.of("RemoteId")).flatMap(NLiteral::asString).get();
-                    remotePassword = cmdLine.nextNonOption(NArgName.of("RemotePassword")).flatMap(NLiteral::asString).get().toCharArray();
+                    mappedUser = cmdLine.nextNonOption(NArgName.of("RemoteId")).get().getImage();
+                    remotePassword = cmdLine.nextNonOption(NArgName.of("RemotePassword")).get().getImage().toCharArray();
                 }
                 if (cmdLine.isExecMode()) {
                     repository.security().addUser(user).setCredentials(password).setRemoteIdentity(mappedUser).setRemoteCredentials(remotePassword).run();
@@ -81,7 +82,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                         repository = NWorkspace.of()
                                 .findRepository(
                                         cmdLine.nextNonOption(NArgName.of("repository"))
-                                                .flatMap(NLiteral::asString).get()
+                                                .get().getImage()
                                 ).get();
                     }
                 }
@@ -111,7 +112,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 } else {
                     if (cmdLine.next("--repo", "-r").isPresent()) {
                         repository = NWorkspace.of()
-                                .findRepository(cmdLine.nextNonOption(NArgName.of("RepositoryId")).flatMap(NLiteral::asString).get()
+                                .findRepository(cmdLine.nextNonOption(NArgName.of("RepositoryId")).get().getImage()
                                 ).get();
                     }
                 }
@@ -121,11 +122,11 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 char[] oldPassword = null;
                 do {
                     if (cmdLine.next("--user").isPresent()) {
-                        user = cmdLine.nextNonOption(NArgName.of("Username")).flatMap(NLiteral::asString).get();
+                        user = cmdLine.nextNonOption(NArgName.of("Username")).get().getImage();
                     } else if (cmdLine.next("--password").isPresent()) {
-                        password = cmdLine.nextNonOption(NArgName.of("Password")).flatMap(NLiteral::asString).get().toCharArray();
+                        password = cmdLine.nextNonOption(NArgName.of("Password")).get().getImage().toCharArray();
                     } else if (cmdLine.next("--old-password").isPresent()) {
-                        oldPassword = cmdLine.nextNonOption(NArgName.of("OldPassword")).flatMap(NLiteral::asString).get().toCharArray();
+                        oldPassword = cmdLine.nextNonOption(NArgName.of("OldPassword")).get().getImage().toCharArray();
                     } else {
                         cmdLine.setCommandName("config password").throwUnexpectedArgument();
                     }
@@ -161,12 +162,12 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 } else {
                     if (cmdLine.next("--repo", "-r").isPresent()) {
                         repository = NWorkspace.of().findRepository(
-                                cmdLine.nextNonOption(NArgName.of("RepositoryId")).flatMap(NLiteral::asString).get()
+                                cmdLine.nextNonOption(NArgName.of("RepositoryId")).get().getImage()
                         ).get();
                     }
                 }
 
-                String user = cmdLine.nextNonOption(NArgName.of("Username")).flatMap(NLiteral::asString).get();
+                String user = cmdLine.nextNonOption(NArgName.of("Username")).get().getImage();
                 if (cmdLine.isExecMode()) {
                     NUser u = null;
                     if (repository == null) {
@@ -206,7 +207,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     } else {
                         switch (lastOption) {
                             case "--add-group": {
-                                String a = cmdLine.nextNonOption(NArgName.of("Group")).flatMap(NLiteral::asString).get();
+                                String a = cmdLine.nextNonOption(NArgName.of("Group")).get().getImage();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
                                         repository.security().updateUser(user).addGroup(a).run();
@@ -217,7 +218,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                 break;
                             }
                             case "--remove-group": {
-                                String a = cmdLine.nextNonOption(NArgName.of("Group")).flatMap(NLiteral::asString).get();
+                                String a = cmdLine.nextNonOption(NArgName.of("Group")).get().getImage();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
                                         repository.security().updateUser(user).removeGroup(a).run();
@@ -228,7 +229,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                 break;
                             }
                             case "--add-right": {
-                                String a = cmdLine.nextNonOption(NArgName.of("Right")).flatMap(NLiteral::asString).get();
+                                String a = cmdLine.nextNonOption(NArgName.of("Right")).get().getImage();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
                                         repository.security().updateUser(user).addPermission(a).run();
@@ -239,7 +240,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                 break;
                             }
                             case "--remove-right": {
-                                String a = cmdLine.nextNonOption(NArgName.of("Right")).flatMap(NLiteral::asString).get();
+                                String a = cmdLine.nextNonOption(NArgName.of("Right")).get().getImage();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
                                         repository.security().updateUser(user).removePermission(a).run();
@@ -250,7 +251,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                 break;
                             }
                             case "--mapped-user": {
-                                String a = cmdLine.nextNonOption(NArgName.of("RemoteIdentity")).flatMap(NLiteral::asString).get();
+                                String a = cmdLine.nextNonOption(NArgName.of("RemoteIdentity")).get().getImage();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
                                         repository.security().updateUser(user).setRemoteIdentity(a).run();
@@ -261,8 +262,8 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                 break;
                             }
                             case "--password":
-                                char[] pwd = (cmdLine.nextNonOption(NArgName.of("password", "Password")).flatMap(NLiteral::asString).get()).toCharArray();
-                                char[] old = (cmdLine.nextNonOption(NArgName.of("password", "OldPassword")).flatMap(NLiteral::asString).get()).toCharArray();
+                                char[] pwd = (cmdLine.nextNonOption(NArgName.of("password", "Password")).get().getImage()).toCharArray();
+                                char[] old = (cmdLine.nextNonOption(NArgName.of("password", "OldPassword")).get().getImage()).toCharArray();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
                                         repository.security().updateUser(user).setCredentials(pwd).setOldCredentials(old).run();
@@ -291,7 +292,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 } else {
                     if (cmdLine.next("--repo", "-r").isPresent()) {
                         repository = NWorkspace.of().findRepository(
-                                cmdLine.nextNonOption(NArgName.of("RepositoryId")).flatMap(NLiteral::asString).get()
+                                cmdLine.nextNonOption(NArgName.of("RepositoryId")).get().getImage()
                         ).get();
                     }
                 }
@@ -323,7 +324,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 } else {
                     if (cmdLine.next("--repo", "-r").isPresent()) {
                         repository = NWorkspace.of().findRepository(
-                                cmdLine.nextNonOption(NArgName.of("RepositoryId")).flatMap(NLiteral::asString).get()
+                                cmdLine.nextNonOption(NArgName.of("RepositoryId")).get().getImage()
                         ).get();
                     }
                 }

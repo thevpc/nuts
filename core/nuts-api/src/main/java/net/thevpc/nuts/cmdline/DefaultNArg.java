@@ -311,182 +311,182 @@ public class DefaultNArg implements NArg {
         return image;
     }
 
-    @Override
+
     public Object asRawObject() {
         return image;
     }
 
-    @Override
+
     public NOptional<Instant> asInstant() {
         return toValue().asInstant();
     }
 
-    @Override
+
     public NOptional<LocalDate> asLocalDate() {
         return toValue().asLocalDate();
     }
 
-    @Override
+
     public NOptional<LocalDateTime> asLocalDateTime() {
         return toValue().asLocalDateTime();
     }
 
-    @Override
+
     public NOptional<LocalTime> asLocalTime() {
         return toValue().asLocalTime();
     }
 
-    @Override
+
     public NOptional<NBigComplex> asBigComplex() {
         return toValue().asBigComplex();
     }
 
-    @Override
+
     public NOptional<NDoubleComplex> asDoubleComplex() {
         return toValue().asDoubleComplex();
     }
 
-    @Override
+
     public NOptional<NFloatComplex> asFloatComplex() {
         return toValue().asFloatComplex();
     }
 
-    @Override
+
     public NOptional<Number> asNumber() {
         return toValue().asNumber();
     }
 
-    @Override
+
     public NOptional<Boolean> asBoolean() {
         return toValue().asBoolean();
     }
 
-    @Override
+
     public NOptional<Long> asLong() {
         return toValue().asLong();
     }
 
-    @Override
+
     public NOptional<Double> asDouble() {
         return toValue().asDouble();
     }
 
-    @Override
+
     public NOptional<Float> asFloat() {
         return toValue().asFloat();
     }
 
-    @Override
+
     public NOptional<Byte> asByte() {
         return toValue().asByte();
     }
 
-    @Override
+
     public NOptional<Short> asShort() {
         return toValue().asShort();
     }
 
-    @Override
+
     public NOptional<Integer> asInt() {
         return toValue().asInt();
     }
 
-    @Override
+
     public NOptional<BigInteger> asBigInt() {
         return toValue().asBigInt();
     }
 
-    @Override
+
     public NOptional<BigDecimal> asBigDecimal() {
         return toValue().asBigDecimal();
     }
 
-    @Override
+
     public boolean isBoolean() {
         return toValue().isBoolean();
     }
 
-    @Override
+
     public boolean isString() {
         return toValue().isString();
     }
 
-    @Override
+
     public boolean isComplexNumber() {
         return toValue().isComplexNumber();
     }
 
-    @Override
+
     public boolean isTemporal() {
         return toValue().isTemporal();
     }
 
-    @Override
+
     public boolean isLocalTemporal() {
         return toValue().isLocalTemporal();
     }
 
-    @Override
+
     public boolean isNull() {
         return toValue().isNull();
     }
 
-    @Override
+
     public boolean isByte() {
         return toValue().isByte();
     }
 
-    @Override
+
     public boolean isDecimalNumber() {
         return toValue().isDecimalNumber();
     }
 
-    @Override
+
     public boolean isBigNumber() {
         return toValue().isBigNumber();
     }
 
-    @Override
+
     public boolean isBigDecimal() {
         return toValue().isBigDecimal();
     }
 
-    @Override
+
     public boolean isBigInt() {
         return toValue().isBigInt();
     }
 
-    @Override
+
     public boolean isInt() {
         return toValue().isInt();
     }
 
-    @Override
+
     public boolean isLong() {
         return toValue().isLong();
     }
 
-    @Override
+
     public boolean isShort() {
         return toValue().isShort();
     }
 
-    @Override
+
     public boolean isFloat() {
         return toValue().isFloat();
     }
 
-    @Override
+
     public boolean isDouble() {
         return toValue().isDouble();
     }
 
-    @Override
+
     public boolean isInstant() {
         return toValue().isInstant();
     }
 
-    @Override
+
     public boolean isEmpty() {
         return toValue().isEmpty();
     }
@@ -496,7 +496,6 @@ public class DefaultNArg implements NArg {
         return toValue().isBlank();
     }
 
-    @Override
     public boolean isNumber() {
         return toValue().isNumber();
     }
@@ -506,77 +505,77 @@ public class DefaultNArg implements NArg {
         return toValue().asString();
     }
 
-    @Override
+
     public String toStringLiteral() {
         return toValue().toStringLiteral();
     }
 
-    @Override
+
     public NOptional<Character> asChar() {
         return toValue().asChar();
     }
 
-    @Override
+
     public boolean isSupportedType(Class<?> type) {
         return toValue().isSupportedType(type);
     }
 
-    @Override
+
     public <ET> NOptional<ET> asType(Class<ET> expectedType) {
         return toValue().asType(expectedType);
     }
 
-    @Override
+
     public <ET> NOptional<ET> asType(Type expectedType) {
         return toValue().asType(expectedType);
     }
 
-    @Override
+
     public NOptional<String> asStringAt(int index) {
         return toValue().asStringAt(index);
     }
 
-    @Override
+
     public NOptional<Long> asLongAt(int index) {
         return toValue().asLongAt(index);
     }
 
-    @Override
+
     public NOptional<Integer> asIntAt(int index) {
         return toValue().asIntAt(index);
     }
 
-    @Override
+
     public NOptional<Double> asDoubleAt(int index) {
         return toValue().asDoubleAt(index);
     }
 
-    @Override
+
     public boolean isNullAt(int index) {
         return toValue().isNullAt(index);
     }
 
-    @Override
+
     public NLiteral asLiteralAt(int index) {
         return toValue().asLiteralAt(index);
     }
 
-    @Override
+
     public NOptional<Object> asObjectAt(int index) {
         return toValue().asObjectAt(index);
     }
 
-    @Override
+
     public boolean isStream() {
         return toValue().isStream();
     }
 
-    @Override
+
     public boolean isOrdinalNumber() {
         return toValue().isOrdinalNumber();
     }
 
-    @Override
+
     public boolean isFloatingNumber() {
         return toValue().isFloatingNumber();
     }

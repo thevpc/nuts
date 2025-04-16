@@ -23,49 +23,49 @@ public class NElementMapperArray implements NElementMapper<Object> {
             case "boolean": {
                 boolean[] x = new boolean[e.size()];
                 for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get().asBoolean().get();
+                    x[i] = e.get(i).get().asLiteral().asBoolean().get();
                 }
                 return x;
             }
             case "byte": {
                 byte[] x = new byte[e.size()];
                 for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get().asByte().get();
+                    x[i] = e.get(i).get().asLiteral().asByte().get();
                 }
                 return x;
             }
             case "short": {
                 short[] x = new short[e.size()];
                 for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get().asShort().get();
+                    x[i] = e.get(i).get().asLiteral().asShort().get();
                 }
                 return x;
             }
             case "int": {
                 int[] x = new int[e.size()];
                 for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get().asInt().get();
+                    x[i] = e.get(i).get().asLiteral().asInt().get();
                 }
                 return x;
             }
             case "long": {
                 long[] x = new long[e.size()];
                 for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get().asLong().get();
+                    x[i] = e.get(i).get().asLiteral().asLong().get();
                 }
                 return x;
             }
             case "float": {
                 float[] x = new float[e.size()];
                 for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get().asFloat().get();
+                    x[i] = e.get(i).get().asLiteral().asFloat().get();
                 }
                 return x;
             }
             case "double": {
                 double[] x = new double[e.size()];
                 for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get().asDouble().get();
+                    x[i] = e.get(i).get().asLiteral().asDouble().get();
                 }
                 return x;
             }

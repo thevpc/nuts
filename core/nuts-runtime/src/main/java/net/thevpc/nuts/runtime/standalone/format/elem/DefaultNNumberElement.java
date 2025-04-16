@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.format.elem;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
 
 public class DefaultNNumberElement extends DefaultNPrimitiveElement implements NNumberElement {
@@ -8,10 +10,11 @@ public class DefaultNNumberElement extends DefaultNPrimitiveElement implements N
     private String suffix;
 
     public DefaultNNumberElement(NElementType type, Number value) {
-        this(type, value, null,null,null,null);
+        this(type, value, null, null, null, null);
     }
+
     public DefaultNNumberElement(NElementType type, Number value, NNumberLayout layout, String suffix) {
-        this(type, value, layout, suffix,null,null);
+        this(type, value, layout, suffix, null, null);
     }
 
     public DefaultNNumberElement(NElementType type, Number value,
@@ -36,5 +39,10 @@ public class DefaultNNumberElement extends DefaultNPrimitiveElement implements N
     @Override
     public String numberSuffix() {
         return suffix;
+    }
+
+    @Override
+    public NOptional<NNumberElement> asNumber() {
+        return NOptional.of(this);
     }
 }

@@ -178,7 +178,7 @@ public class JavaJarUtils {
                 NDescriptorProperty mc = descriptor.getProperty("nuts.mainClass").orNull();
                 if (mc != null) {
                     String s = NStringUtils.trim(mc.getValue().asString().get());
-                    if (s.length() > 0) {
+                    if (!s.isEmpty()) {
                         s = resolveMainClassString(s, descriptor);
                         classes.add(new DefaultNExecutionEntry(s, true, false));
                     }

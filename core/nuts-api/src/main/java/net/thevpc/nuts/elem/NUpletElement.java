@@ -62,29 +62,29 @@ public interface NUpletElement extends NNamedElement,NListContainerElement, Iter
      */
     NOptional<NElement> get(int index);
 
-    NOptional<String> getString(int index);
+    NOptional<String> getStringValue(int index);
 
-    NOptional<Boolean> getBoolean(int index);
+    NOptional<Boolean> getBooleanValue(int index);
 
-    NOptional<Byte> getByte(int index);
+    NOptional<Byte> getByteValue(int index);
 
-    NOptional<Short> getShort(int index);
+    NOptional<Short> getShortValue(int index);
 
-    NOptional<Integer> getInt(int index);
+    NOptional<Integer> getIntValue(int index);
 
-    NOptional<Long> getLong(int index);
+    NOptional<Long> getLongValue(int index);
 
-    NOptional<Float> getFloat(int index);
+    NOptional<Float> getFloatValue(int index);
 
-    NOptional<Double> getDouble(int index);
+    NOptional<Double> getDoubleValue(int index);
 
-    NOptional<Instant> getInstant(int index);
+    NOptional<Instant> getInstantValue(int index);
 
-    NOptional<LocalDate> getLocalDate(int index);
+    NOptional<LocalDate> getLocalDateValue(int index);
 
-    NOptional<LocalDateTime> getLocalDateTime(int index);
+    NOptional<LocalDateTime> getLocalDateTimeValue(int index);
 
-    NOptional<LocalTime> getLocalTime(int index);
+    NOptional<LocalTime> getLocalTimeValue(int index);
 
     NOptional<NArrayElement> getArray(int index);
 

@@ -25,6 +25,7 @@
 package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NStringElement;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NTerminalMode;
@@ -1095,7 +1096,7 @@ public final class NWorkspaceCmdLineParser {
                                     if (showError == null) {
                                         showError = new ArrayList<>();
                                     }
-                                    showError.add(NMsg.ofC("invalid argument for workspace: %s", a.asString()));
+                                    showError.add(NMsg.ofC("invalid argument for workspace: %s", a.getImage()));
                                     options.setErrors(showError);
                                 }
                                 List<String> applicationArguments = options.getApplicationArguments().orNull();

@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
+import net.thevpc.nuts.elem.NStringElement;
 import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
 import net.thevpc.nuts.util.NEnum;
 
@@ -35,7 +36,7 @@ public class NElementMapperEnum implements NElementMapper<Enum> {
             case SHORT:
             case INTEGER:
             case LONG: {
-                return (Enum) ((Class) to).getEnumConstants()[o.asInt().get()];
+                return (Enum) ((Class) to).getEnumConstants()[o.asLiteral().asInt().get()];
             }
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:
@@ -48,7 +49,7 @@ public class NElementMapperEnum implements NElementMapper<Enum> {
             case NAME:
             {
                 Class cc = ReflectUtils.getRawClass(to);
-                String name = o.asString().get();
+                String name = o.asStringValue().get();
                 if (NEnum.class.isAssignableFrom(cc)) {
                     return (Enum) NEnum.parse(cc, name).get();
                 }

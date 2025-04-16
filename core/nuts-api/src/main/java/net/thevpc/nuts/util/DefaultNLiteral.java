@@ -937,7 +937,7 @@ public class DefaultNLiteral implements NLiteral {
                 }
             }
             if (value instanceof NElement) {
-                return ((NElement) value).asObjectAt(index);
+                return ((NElement) value).asElementAt(index).map(x->x.asLiteral().asRawObject());
             }
         }
         return NOptional.ofEmpty(() -> NMsg.ofC("invalid object at %s", index));

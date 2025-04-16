@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
+import net.thevpc.nuts.elem.NStringElement;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NMsg;
 
@@ -23,7 +24,7 @@ public class NElementMapperNFilter implements NElementMapper<NFilter> {
 
     @Override
     public NFilter createObject(NElement o, Type to, NElementFactoryContext context) {
-        String s = o.asString().orNull();
+        String s = o.asStringValue().orNull();
         if(s==null || s.trim().isEmpty()){
             s="true";
         }

@@ -1,6 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.format.elem;
 
+import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
 
 public class DefaultNStringElement extends DefaultNPrimitiveElement implements NStringElement {
 
@@ -11,11 +15,26 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
     public DefaultNStringElement(NElementType type, String value,
                                  NElementAnnotation[] annotations, NElementComments comments) {
         super(type, value, annotations, comments);
+        if (type == NElementType.NAME) {
+            NAssert.requireTrue(NElements.isValidName((String) value), "valid name");
+        }
+    }
+    public DefaultNStringElement(NElementType type, Character value,
+                                 NElementAnnotation[] annotations, NElementComments comments) {
+        super(type, value, annotations, comments);
+        if (type != NElementType.CHAR) {
+            throw new NIllegalArgumentException(NMsg.ofC("expected character"));
+        }
     }
 
     @Override
     public String stringValue() {
-        return (String) value();
+        return String.valueOf(value());
+    }
+
+    @Override
+    public NOptional<NStringElement> asString() {
+        return NOptional.of(this);
     }
 
 }

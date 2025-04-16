@@ -147,12 +147,12 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
     }
 
     @Override
-    public NOptional<BigInteger> asBigInt() {
+    public NOptional<BigInteger> asBigIntValue() {
         return value.asBigInt();
     }
 
     @Override
-    public NOptional<BigDecimal> asBigDecimal() {
+    public NOptional<BigDecimal> asBigDecimalValue() {
         return value.asBigDecimal();
     }
 
@@ -208,13 +208,13 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
             case INTEGER:
             case FLOAT:
             case DOUBLE:
-                sb.append(String.valueOf(this.asNumber().get()));
+                sb.append(String.valueOf(this.asNumberValue().get()));
                 break;
             case INSTANT:
             case LOCAL_TIME:
             case LOCAL_DATE:
             case LOCAL_DATETIME:
-                sb.append(NStringUtils.formatStringLiteral(this.asInstant().get().toString(), NElementType.DOUBLE_QUOTED_STRING));
+                sb.append(NStringUtils.formatStringLiteral(this.asInstantValue().get().toString(), NElementType.DOUBLE_QUOTED_STRING));
                 break;
             default: {
                 sb.append(String.valueOf(value));
@@ -237,16 +237,16 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
         return Objects.hash(value);
     }
 
-    @Override
-    public String toStringLiteral() {
-        return value.toStringLiteral();
-    }
-
-
-    @Override
-    public NOptional<Object> asObjectAt(int index) {
-        return value.asObjectAt(index);
-    }
+//    @Override
+//    public String toStringLiteral() {
+//        return value.toStringLiteral();
+//    }
+//
+//
+//    @Override
+//    public NOptional<Object> asObjectAt(int index) {
+//        return value.asObjectAt(index);
+//    }
 
     @Override
     public NPrimitiveElementBuilder builder() {

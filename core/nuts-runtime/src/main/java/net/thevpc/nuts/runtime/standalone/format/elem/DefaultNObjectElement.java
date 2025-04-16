@@ -52,6 +52,14 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
     }
 
     @Override
+    public NOptional<NElement> get(int index) {
+        if(index < 0 || index >= values.size()) {
+            return NOptional.ofNamedEmpty("property at " + index);
+        }
+        return NOptional.of(values.get(index));
+    }
+
+    @Override
     public NOptional<NElement> get(String s) {
         if (elements == null) {
             elements = NElements.of();
@@ -64,7 +72,7 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
                         return NOptional.of(e.value());
                     }
                 } else if (e.key().isAnyString()) {
-                    if (Objects.equals(e.key().asString().get(), s)) {
+                    if (Objects.equals(e.key().asStringValue().get(), s)) {
                         return NOptional.of(e.value());
                     }
                 }
@@ -87,7 +95,7 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
                         ret.add(e.value());
                     }
                 } else if (e.key().isAnyString()) {
-                    if (Objects.equals(e.key().asString().get(), s)) {
+                    if (Objects.equals(e.key().asStringValue().get(), s)) {
                         ret.add(e.value());
                     }
                 }
@@ -189,13 +197,13 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
         return values.isEmpty();
     }
 
-    @Override
-    public NOptional<Object> asObjectAt(int index) {
-        if (index >= 0 && index < values.size()) {
-            return NOptional.of(values.get(index));
-        }
-        return NOptional.ofEmpty(() -> NMsg.ofC("invalid object at %s", index));
-    }
+//    @Override
+//    public NOptional<Object> asObjectAt(int index) {
+//        if (index >= 0 && index < values.size()) {
+//            return NOptional.of(values.get(index));
+//        }
+//        return NOptional.ofEmpty(() -> NMsg.ofC("invalid object at %s", index));
+//    }
 
 
     public String name() {

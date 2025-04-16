@@ -33,7 +33,6 @@ import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NLiteral;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -313,7 +312,7 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
             }
             case "-s":
             case "--strategy": {
-                String val = cmdLine.nextEntry().flatMap(NLiteral::asString).get();
+                String val = cmdLine.nextEntry().flatMap(NArg::asString).get();
                 if (enabled) {
                     this.setStrategy(CoreEnumUtils.parseEnumString(val, NInstallStrategy.class, false));
                 }

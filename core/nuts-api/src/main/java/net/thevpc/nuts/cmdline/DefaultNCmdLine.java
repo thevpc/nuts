@@ -26,6 +26,7 @@ package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.NExceptionHandler;
 import net.thevpc.nuts.elem.NElementType;
+import net.thevpc.nuts.elem.NStringElement;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.reserved.util.NReservedSimpleCharQueue;
@@ -981,7 +982,7 @@ public class DefaultNCmdLine implements NCmdLine {
                 return NOptional.of(createArgument(""));
             }
             if (hasNext() && (!forceNonOption || !isNextOption())) {
-                return emptyOptionalCformat("unexpected option %s", highlightText(String.valueOf(peek().get().asString())));
+                return emptyOptionalCformat("unexpected option %s", highlightText(String.valueOf(peek().get().getImage())));
             }
             return emptyOptionalCformat("missing argument %s", highlightText(String.valueOf(name == null ? "value" : name.getName())));
         }

@@ -4,6 +4,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.elem.NStringElement;
 
 import java.lang.reflect.Type;
 
@@ -21,7 +22,7 @@ public class NElementMapperChar implements NElementMapper<Character> {
 
     @Override
     public Character createObject(NElement o, Type to, NElementFactoryContext context) {
-        final String s = o.asString().get();
+        final String s = o.asStringValue().get();
         return (s == null || s.isEmpty())
                 ? (((to instanceof Class) && ((Class) to).isPrimitive()) ? '\0' : null)
                 : s.charAt(0);

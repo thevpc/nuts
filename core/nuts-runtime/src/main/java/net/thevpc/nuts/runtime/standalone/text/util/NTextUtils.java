@@ -55,7 +55,7 @@ public class NTextUtils {
             return txt.of(o);
         }
         if (o instanceof NPrimitiveElement) {
-            o = ((NPrimitiveElement) o).asRawObject();
+            o = ((NPrimitiveElement) o).asLiteral().asRawObject();
         } else if (o instanceof NArrayElement) {
             o = ((NArrayElement) o).items();
         } else if (o instanceof NObjectElement) {
