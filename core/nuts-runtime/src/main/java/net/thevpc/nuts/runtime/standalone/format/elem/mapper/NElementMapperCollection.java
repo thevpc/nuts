@@ -38,7 +38,7 @@ public class NElementMapperCollection implements NElementMapper {
     }
 
     public Collection fillObject(NElement o, Collection coll, Type elemType, Type to, NElementFactoryContext context) {
-        for (NElement nutsElement : o.asArray().get().items()) {
+        for (NElement nutsElement : o.asArray().get().children()) {
             coll.add(context.elementToObject(nutsElement, elemType));
         }
         return coll;

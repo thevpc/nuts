@@ -303,7 +303,7 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
                                     .setDependencies(new ArrayList<>(deps))
                                     .build();
                         }
-                        throw new NParseException(NMsg.ofC("unable to parse Descriptor for Manifest from %s", in));
+                        throw new NParseException(NMsg.ofC("Missing Explicit Nuts Id in Manifest from %s", in));
                     } catch (IOException ex) {
                         throw new NIOException(ex);
                     }

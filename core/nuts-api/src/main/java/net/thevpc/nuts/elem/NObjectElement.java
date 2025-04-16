@@ -50,13 +50,6 @@ public interface NObjectElement extends NNamedElement,NListContainerElement, Ite
     NObjectElementBuilder builder();
 
 
-
-    String name() ;
-
-    boolean isNamed() ;
-
-    boolean isParametrized() ;
-
     List<NElement> params() ;
 
     int paramsCount() ;

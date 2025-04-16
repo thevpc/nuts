@@ -61,7 +61,7 @@ public class NElementMapperMap implements NElementMapper<Map> {
                 all.put(context.elementToObject(k, elemType1), context.elementToObject(v, elemType2));
             }
         } else if (o.type() == NElementType.ARRAY) {
-            for (NElement ee : o.asArray().get().items()) {
+            for (NElement ee : o.asArray().get().children()) {
                 NPairElement kv = (NPairElement) ee;
                 NElement k = kv.key();
                 NElement v = kv.value();

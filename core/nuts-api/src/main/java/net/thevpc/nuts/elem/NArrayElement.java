@@ -24,12 +24,6 @@
  */
 package net.thevpc.nuts.elem;
 
-import net.thevpc.nuts.util.NOptional;
-
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
@@ -47,56 +41,7 @@ public interface NArrayElement extends NNamedElement, NListContainerElement, Ite
         return NElements.of().ofEmptyArray();
     }
 
-    /**
-     * array items
-     *
-     * @return array items
-     */
-    Collection<NElement> items();
-
     Stream<NElement> stream();
-
-    /**
-     * element at index
-     *
-     * @param index index
-     * @return element at index
-     */
-    NOptional<NElement> get(int index);
-
-    NOptional<String> getStringValue(int index);
-
-    NOptional<Boolean> getBooleanValue(int index);
-
-    NOptional<Byte> getByteValue(int index);
-
-    NOptional<Short> getShortValue(int index);
-
-    NOptional<Integer> getIntValue(int index);
-
-    NOptional<Long> getLongValue(int index);
-
-    NOptional<Float> getFloatValue(int index);
-
-    NOptional<Double> getDoubleValue(int index);
-
-    NOptional<Instant> getInstantValue(int index);
-
-    NOptional<LocalDate> getLocalDateValue(int index);
-
-    NOptional<LocalDateTime> getLocalDateTimeValue(int index);
-
-    NOptional<LocalTime> getLocalTimeValue(int index);
-
-    NOptional<NArrayElement> getArray(int index);
-
-    NOptional<NObjectElement> getObject(int index);
-
-    String name();
-
-    boolean isNamed();
-
-    boolean isParametrized();
 
     List<NElement> params();
 

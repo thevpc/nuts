@@ -52,6 +52,7 @@ public interface NListContainerElement extends NElement {
      * @return value for name or null
      */
     NOptional<NElement> get(String key);
+
     NOptional<NElement> get(int index);
 
     List<NElement> getAll(String key);
@@ -177,7 +178,6 @@ public interface NListContainerElement extends NElement {
      * @return element count
      */
     int size();
-
 
 
 }

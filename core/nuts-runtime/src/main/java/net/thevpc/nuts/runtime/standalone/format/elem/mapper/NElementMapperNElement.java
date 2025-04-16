@@ -22,7 +22,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                 );
             }
             case ARRAY: {
-                return src.asArray().get().items().stream().map(x -> context.destruct(x, null)).collect(Collectors.toList());
+                return src.asArray().get().children().stream().map(x -> context.destruct(x, null)).collect(Collectors.toList());
             }
             case OBJECT: {
                 Set<Object> visited = new HashSet<>();

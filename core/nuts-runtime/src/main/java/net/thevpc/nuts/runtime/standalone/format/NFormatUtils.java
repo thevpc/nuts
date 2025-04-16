@@ -98,7 +98,7 @@ public class NFormatUtils {
                     prefix = "";
                 }
                 int i = 0;
-                for (NElement e : value.asArray().get().items()) {
+                for (NElement e : value.asArray().get().children()) {
                     putAllInProps(prefix + (i + 1), dest, e);
                     i++;
                 }

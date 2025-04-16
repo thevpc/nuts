@@ -80,7 +80,7 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
     }
 
     @Override
-    public Collection<NElement> items() {
+    public List<NElement> children() {
         return Arrays.asList(values);
     }
 
@@ -235,11 +235,6 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
             return Arrays.asList(a.get());
         }
         return Collections.emptyList();
-    }
-
-    @Override
-    public List<NElement> children() {
-        return Arrays.asList(values);
     }
 
     public String name() {

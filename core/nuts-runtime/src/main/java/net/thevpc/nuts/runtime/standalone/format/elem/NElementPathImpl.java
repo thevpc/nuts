@@ -202,15 +202,9 @@ public class NElementPathImpl {
 
         List<NElementOrEntry> children() {
             List<NElementOrEntry> all = new ArrayList<>();
-            if (value.isArray()) {
+            if (value.isArray() || value.isObject()) {
                 int i = 0;
-                for (NElement item : value.asArray().get().items()) {
-                    all.add(new NElementOrEntry(i, item));
-                    i++;
-                }
-            } else if (value.isObject()) {
-                int i = 0;
-                for (NElement item : value.asObject().get().children()) {
+                for (NElement item : value.asListContainer().get().children()) {
                     all.add(new NElementOrEntry(i, item));
                     i++;
                 }

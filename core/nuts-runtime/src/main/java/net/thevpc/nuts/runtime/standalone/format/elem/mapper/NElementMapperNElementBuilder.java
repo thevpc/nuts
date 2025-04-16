@@ -17,7 +17,7 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
             case ARRAY: {
                 return src.build().asArray()
                         .get()
-                        .items().stream().map(x -> context.destruct(x, null)).collect(Collectors.toList());
+                        .children().stream().map(x -> context.destruct(x, null)).collect(Collectors.toList());
             }
             case OBJECT: {
                 Set<Object> visited = new HashSet<>();

@@ -706,7 +706,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
             NElement value = (NElement) obj;
             switch (value.type()) {
                 case ARRAY: {
-                    for (NElement value2 : value.asArray().get().items()) {
+                    for (NElement value2 : value.asArray().get().children()) {
                         rows.add(resolveColumnsFromRow(value2));
                     }
                     break;
@@ -753,7 +753,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                 case ARRAY: {
                     SimpleRow e = new SimpleRow();
                     int column = 1;
-                    for (NElement value2 : value.asArray().get().items()) {
+                    for (NElement value2 : value.asArray().get().children()) {
                         e.cells.add(resolveColumnsFromCell("COL " + column,value2));
                         column++;
                     }

@@ -125,10 +125,10 @@ public class NRepositoryFolderHelper {
 
 
     protected String getIdFilename(NId id) {
-        if (repo == null) {
+        //if (repo == null) {
             return NWorkspace.of().getDefaultIdFilename(id);
-        }
-        return NRepositoryExt0.of(repo).getIdFilename(id);
+        //}
+        //return NRepositoryExt0.of(repo).getIdFilename(id);
     }
 
     public NPath getGoodPath(NId id) {
@@ -146,7 +146,7 @@ public class NRepositoryFolderHelper {
         NPath versionFolder = getLongIdLocalFolder(id);
         goodFile = versionFolder.resolve(idFilename);
         if (pathExists(goodFile)) {
-            return NDescriptorParser.of().parse(goodFile).get();
+            return NDescriptorParser.of().setDescriptorStyle(NDescriptorStyle.NUTS).parse(goodFile).get();
         }
 //        String alt = id.getAlternative();
 //        String goodAlt = null;

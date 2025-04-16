@@ -209,7 +209,7 @@ public class NElementPathFilter {
         @Override
         public List<NElement> filter(NElement element) {
             if (element.type() == NElementType.ARRAY) {
-                List<NElement> arr = new ArrayList<>(element.asArray().get().items());
+                List<NElement> arr = new ArrayList<>(element.asArray().get().children());
                 List<NElement> result = new ArrayList<>();
                 int len = arr.size();
                 NElementIndexMatcher indexMatcher = matchesIndex(pattern);

@@ -166,7 +166,7 @@ public class DefaultPropsElementFormat implements NElementStreamFormat {
                     out.print('[');
                     boolean first = true;
                     String indent2 = indent + "  ";
-                    for (NElement e : arr.items()) {
+                    for (NElement e : arr.children()) {
                         if (first) {
                             first = false;
                         } else {

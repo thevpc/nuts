@@ -213,7 +213,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
             case ARRAY: {
                 Element e = doc.createElement(TAG_ARRAY);
                 int count = 0;
-                for (NElement attribute : elem.asArray().get().items()) {
+                for (NElement attribute : elem.asArray().get().children()) {
                     Node c = createObject(attribute, Element.class, context);
                     if (c != null) {
                         e.appendChild(c);

@@ -57,7 +57,7 @@ public class NTextUtils {
         if (o instanceof NPrimitiveElement) {
             o = ((NPrimitiveElement) o).asLiteral().asRawObject();
         } else if (o instanceof NArrayElement) {
-            o = ((NArrayElement) o).items();
+            o = ((NArrayElement) o).children();
         } else if (o instanceof NObjectElement) {
             Collection<NElement> c = ((NObjectElement) o).children();
             Object[] a = c.toArray();

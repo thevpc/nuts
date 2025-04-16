@@ -46,49 +46,9 @@ public interface NUpletElement extends NNamedElement,NListContainerElement, Iter
         return NElements.of().ofEmptyUplet();
     }
 
-    String name();
-
-    boolean isNamed();
-
     List<NElement> params();
 
     Stream<NElement> stream();
-
-    /**
-     * element at index
-     *
-     * @param index index
-     * @return element at index
-     */
-    NOptional<NElement> get(int index);
-
-    NOptional<String> getStringValue(int index);
-
-    NOptional<Boolean> getBooleanValue(int index);
-
-    NOptional<Byte> getByteValue(int index);
-
-    NOptional<Short> getShortValue(int index);
-
-    NOptional<Integer> getIntValue(int index);
-
-    NOptional<Long> getLongValue(int index);
-
-    NOptional<Float> getFloatValue(int index);
-
-    NOptional<Double> getDoubleValue(int index);
-
-    NOptional<Instant> getInstantValue(int index);
-
-    NOptional<LocalDate> getLocalDateValue(int index);
-
-    NOptional<LocalDateTime> getLocalDateTimeValue(int index);
-
-    NOptional<LocalTime> getLocalTimeValue(int index);
-
-    NOptional<NArrayElement> getArray(int index);
-
-    NOptional<NObjectElement> getObject(int index);
 
     /**
      * return new builder initialized with this instance
