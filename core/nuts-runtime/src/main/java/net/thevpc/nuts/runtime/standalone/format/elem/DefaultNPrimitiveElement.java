@@ -67,96 +67,6 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
     }
 
     @Override
-    public Object asRawObject() {
-        return value.asRawObject();
-    }
-
-    @Override
-    public NOptional<Instant> asInstant() {
-        return value.asInstant();
-    }
-
-    @Override
-    public NOptional<Number> asNumber() {
-        return value.asNumber();
-    }
-
-    @Override
-    public NOptional<Boolean> asBoolean() {
-        return value.asBoolean();
-    }
-
-    @Override
-    public NOptional<Long> asLong() {
-        return value.asLong();
-    }
-
-    @Override
-    public NOptional<Double> asDouble() {
-        return value.asDouble();
-    }
-
-    @Override
-    public NOptional<Float> asFloat() {
-        return value.asFloat();
-    }
-
-    @Override
-    public NOptional<LocalDate> asLocalDate() {
-        return value.asLocalDate();
-    }
-
-    @Override
-    public NOptional<LocalTime> asLocalTime() {
-        return value.asLocalTime();
-    }
-
-    @Override
-    public NOptional<NBigComplex> asBigComplex() {
-        return value.asBigComplex();
-    }
-
-    @Override
-    public NOptional<NDoubleComplex> asDoubleComplex() {
-        return value.asDoubleComplex();
-    }
-
-    @Override
-    public NOptional<NFloatComplex> asFloatComplex() {
-        return value.asFloatComplex();
-    }
-
-    @Override
-    public NOptional<LocalDateTime> asLocalDateTime() {
-        return value.asLocalDateTime();
-    }
-
-    @Override
-    public NOptional<Byte> asByte() {
-        return value.asByte();
-    }
-
-    @Override
-    public NOptional<Short> asShort() {
-        return value.asShort();
-    }
-
-    @Override
-    public NOptional<Character> asChar() {
-        return value.asChar();
-    }
-
-    @Override
-    public NOptional<Integer> asInt() {
-        return value.asInt();
-    }
-
-    @Override
-    public NOptional<String> asString() {
-        return value.asString();
-    }
-
-    @Override
     public boolean isBoolean() {
         return value.isBoolean();
     }
@@ -342,5 +252,10 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
     public NPrimitiveElementBuilder builder() {
         return new DefaultNPrimitiveElementBuilder()
                 .copyFrom(this);
+    }
+
+    @Override
+    public NLiteral asLiteral() {
+        return value;
     }
 }

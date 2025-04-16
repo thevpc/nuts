@@ -41,7 +41,7 @@ import java.util.List;
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NElement extends NElementDescribable<NElement>, NBlankable, NLiteral {
+public interface NElement extends NElementDescribable<NElement>, NBlankable/*, NLiteral*/ {
 
     /**
      * element type
@@ -51,6 +51,48 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable, NLi
     NElementType type();
 
     String toString(boolean compact);
+
+    boolean isStream();
+
+    boolean isNumber();
+
+    boolean isFloatingNumber();
+
+    boolean isOrdinalNumber();
+
+    boolean isNull();
+
+    boolean isString();
+
+    boolean isByte();
+
+    boolean isInt();
+
+    boolean isLong();
+
+    boolean isShort();
+
+    boolean isFloat();
+
+    boolean isDouble();
+
+    boolean isBoolean();
+
+    boolean isDecimalNumber();
+
+    boolean isBigNumber();
+
+    boolean isBigDecimal();
+
+    boolean isBigInt();
+
+    boolean isInstant();
+
+    boolean isComplexNumber();
+
+    boolean isTemporal();
+
+    boolean isLocalTemporal();
 
     boolean isNamed();
 
@@ -132,6 +174,8 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable, NLi
      * @return {@link NObjectElement}
      */
     NOptional<NObjectElement> asObject();
+
+    NOptional<NElement> asElementAt(int index);
 
     NOptional<NUpletElement> asUplet();
 
@@ -288,4 +332,8 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable, NLi
     NUpletElement wrapIntoNamedUplet(String name);
 
     NPairElement wrapIntoNamedPair(String name);
+
+    NLiteral asLiteral();
+
+    NOptional<NStringElement> asString();
 }

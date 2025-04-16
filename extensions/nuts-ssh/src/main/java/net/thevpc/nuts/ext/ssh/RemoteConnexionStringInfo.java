@@ -254,8 +254,8 @@ public class RemoteConnexionStringInfo {
             }
             storeLocationLib = null;
             if (workspaceJson != null && workspaceJson.isObject()) {
-                storeLocationLib = workspaceJson.asObject().get().getStringByPath("storeLocations", "lib").orNull();
-                storeLocationCache = workspaceJson.asObject().get().getStringByPath("storeLocations", "cache").orNull();
+                storeLocationLib = workspaceJson.asObject().get().getByPath("storeLocations", "lib").map(NElement::asLiteral).flatMap(NLiteral::asString).orNull();
+                storeLocationCache = workspaceJson.asObject().get().getByPath("storeLocations", "cache").map(NElement::asLiteral).flatMap(NLiteral::asString).orNull();
             }
             if (storeLocationLib == null) {
                 storeLocationLib = pHome.getWorkspaceStore(NStoreType.LIB, workspaceName);

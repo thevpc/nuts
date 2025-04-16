@@ -114,7 +114,7 @@ public class MavenSolrSearchCommand {
                                             .parse(query);
                                     if (e.isObject()) {
                                         NObjectElement o = e.asObject().get();
-                                        String status = o.getStringByPath("responseHeader","status").orElse("");
+                                        String status = o.getByPath("responseHeader","status").map(NElement::asLiteral).flatMap(NLiteral::asString).orElse("");
                                         if ("0".equals(status)) {
                                             arr = o.getArrayByPath("response","docs").orElse(NArrayElement.ofEmpty());
                                         }
