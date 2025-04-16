@@ -816,7 +816,7 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public NOptional<String> asStringValue() {
-        return asStringValue();
+        return asLiteral().asString();
     }
 
     @Override
