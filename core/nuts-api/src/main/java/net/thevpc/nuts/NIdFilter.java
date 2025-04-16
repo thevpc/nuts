@@ -26,13 +26,15 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.util.NFilter;
+
 /**
  * Class for filtering Artifact Ids
  *
  * @app.category Descriptor
  * @since 0.5.4
  */
-public interface NIdFilter extends NArtifactFilter {
+public interface NIdFilter extends NFilter {
 
     /**
      * return true when the id is to be accepted
@@ -41,11 +43,6 @@ public interface NIdFilter extends NArtifactFilter {
      * @return true when the id is to be accepted
      */
     boolean acceptId(NId id);
-
-    @Override
-    default boolean acceptSearchId(NSearchId sid) {
-        return acceptId(sid.getId());
-    }
 
     NIdFilter or(NIdFilter other);
 

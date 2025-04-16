@@ -36,6 +36,7 @@ public interface NCharStreamElementBuilder extends NElementBuilder {
     NCharStreamElementBuilder doWith(Consumer<NCharStreamElementBuilder> con);
     NCharStreamElementBuilder addAnnotations(List<NElementAnnotation> annotations);
 
+    NCharStreamElementBuilder addAnnotation(String name,NElement ...args);
     NCharStreamElementBuilder addAnnotation(NElementAnnotation annotation);
 
     NCharStreamElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);

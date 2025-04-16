@@ -137,6 +137,13 @@ public class DefaultNBinaryStreamElementBuilder extends AbstractNElementBuilder 
     }
 
     @Override
+    public NBinaryStreamElementBuilder addAnnotation(String name, NElement... args) {
+        super.addAnnotation(name,args);
+        return this;
+    }
+
+
+    @Override
     public NBinaryStreamElementBuilder addAnnotation(NElementAnnotation annotation) {
         super.addAnnotation(annotation);
         return this;

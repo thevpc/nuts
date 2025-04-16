@@ -162,6 +162,12 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
     }
 
     @Override
+    public NPairElementBuilder addAnnotation(String name, NElement... args) {
+        super.addAnnotation(name,args);
+        return this;
+    }
+
+    @Override
     public NPairElementBuilder addAnnotation(NElementAnnotation annotation) {
         super.addAnnotation(annotation);
         return this;

@@ -34,6 +34,7 @@ public interface NCustomElementBuilder extends NElementBuilder {
     NCustomElementBuilder doWith(Consumer<NCustomElementBuilder> con);
     NCustomElementBuilder addAnnotations(List<NElementAnnotation> annotations);
 
+    NCustomElementBuilder addAnnotation(String name,NElement ...args);
     NCustomElementBuilder addAnnotation(NElementAnnotation annotation);
 
     NCustomElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);

@@ -104,6 +104,11 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
     }
 
     @Override
+    public NElementBuilder addAnnotation(String name, NElement... args) {
+        return addAnnotation(new NElementAnnotationImpl(name, args));
+    }
+
+    @Override
     public NElementBuilder addAnnotation(NElementAnnotation annotation) {
         if (annotation != null) {
             annotations.add(annotation);

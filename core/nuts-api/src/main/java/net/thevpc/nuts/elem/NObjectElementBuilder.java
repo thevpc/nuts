@@ -194,6 +194,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     NObjectElementBuilder addAnnotations(List<NElementAnnotation> annotations);
 
+    NObjectElementBuilder addAnnotation(String name,NElement ...args);
     NObjectElementBuilder addAnnotation(NElementAnnotation annotation);
 
     NObjectElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);

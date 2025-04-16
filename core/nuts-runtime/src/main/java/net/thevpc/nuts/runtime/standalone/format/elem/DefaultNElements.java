@@ -16,6 +16,7 @@ import java.time.temporal.Temporal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -420,6 +421,62 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     @Override
     public NArrayElement ofEmptyArray() {
         return ofArrayBuilder().build();
+    }
+
+
+    @Override
+    public NArrayElement ofStringArray(String... items) {
+        return ofArrayBuilder().addAll(Arrays.stream(items).map(this::ofString).collect(Collectors.toList())).build();
+    }
+
+    @Override
+    public NArrayElement ofDoubleArray(double... items) {
+        return ofArrayBuilder().addAll(Arrays.stream(items).mapToObj(this::ofDouble).collect(Collectors.toList())).build();
+    }
+
+    @Override
+    public NArrayElement ofDoubleArray(Double... items) {
+        return ofArrayBuilder().addAll(Arrays.stream(items).map(this::ofDouble).collect(Collectors.toList())).build();
+    }
+
+    @Override
+    public NArrayElement ofIntArray(int... items) {
+        return ofArrayBuilder().addAll(Arrays.stream(items).mapToObj(this::ofInt).collect(Collectors.toList())).build();
+    }
+
+    @Override
+    public NArrayElement ofIntArray(Integer... items) {
+        return ofArrayBuilder().addAll(Arrays.stream(items).map(this::ofInt).collect(Collectors.toList())).build();
+    }
+
+    @Override
+    public NArrayElement ofLongArray(long... items) {
+        return ofArrayBuilder().addAll(Arrays.stream(items).mapToObj(this::ofLong).collect(Collectors.toList())).build();
+    }
+
+    @Override
+    public NArrayElement ofLongArray(Long... items) {
+        return ofArrayBuilder().addAll(Arrays.stream(items).map(this::ofLong).collect(Collectors.toList())).build();
+    }
+
+
+    @Override
+    public NArrayElement ofNumberArray(Number... items) {
+        return ofArrayBuilder().addAll(Arrays.stream(items).map(this::ofNumber).collect(Collectors.toList())).build();
+    }
+
+    @Override
+    public NArrayElement ofBooleanArray(boolean... items) {
+        NArrayElementBuilder b = ofArrayBuilder();
+        for (boolean item : items) {
+            b.add(item);
+        }
+        return b.build();
+    }
+
+    @Override
+    public NArrayElement ofBooleanArray(Boolean... items) {
+        return ofArrayBuilder().addAll(Arrays.stream(items).map(this::ofBoolean).collect(Collectors.toList())).build();
     }
 
     @Override

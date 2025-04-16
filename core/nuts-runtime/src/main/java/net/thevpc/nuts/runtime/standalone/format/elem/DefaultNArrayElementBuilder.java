@@ -463,9 +463,17 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
         return this;
     }
 
+
     @Override
     public NArrayElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
         super.addAnnotations(annotations);
+        return this;
+    }
+
+
+    @Override
+    public NArrayElementBuilder addAnnotation(String name, NElement... args) {
+        super.addAnnotation(name, args);
         return this;
     }
 

@@ -137,6 +137,12 @@ public class DefaultNCharStreamElementBuilder extends AbstractNElementBuilder im
     }
 
     @Override
+    public NCharStreamElementBuilder addAnnotation(String name, NElement... args) {
+        super.addAnnotation(name,args);
+        return this;
+    }
+
+    @Override
     public NCharStreamElementBuilder addAnnotation(NElementAnnotation annotation) {
         super.addAnnotation(annotation);
         return this;

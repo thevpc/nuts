@@ -554,6 +554,12 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     }
 
     @Override
+    public NPrimitiveElementBuilder addAnnotation(String name, NElement... args) {
+        super.addAnnotation(name,args);
+        return this;
+    }
+
+    @Override
     public NPrimitiveElementBuilder addAnnotation(NElementAnnotation annotation) {
         super.addAnnotation(annotation);
         return this;

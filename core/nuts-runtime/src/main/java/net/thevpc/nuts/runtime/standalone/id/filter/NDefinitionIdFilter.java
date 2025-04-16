@@ -30,11 +30,6 @@ public class NDefinitionIdFilter extends AbstractIdFilter implements NIdFilter, 
     }
 
     @Override
-    public boolean acceptSearchId(NSearchId sid) {
-        return acceptId(sid.getId());
-    }
-
-    @Override
     public boolean acceptId(NId id) {
         if (filter == null) {
             return true;

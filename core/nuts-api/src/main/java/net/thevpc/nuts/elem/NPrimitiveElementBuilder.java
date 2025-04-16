@@ -32,6 +32,7 @@ import java.util.function.Consumer;
  */
 public interface NPrimitiveElementBuilder extends NElementBuilder {
     NPrimitiveElementBuilder doWith(Consumer<NPrimitiveElementBuilder> con);
+
     NNumberLayout numberLayout();
 
     NPrimitiveElementBuilder numberLayout(NNumberLayout numberLayout);
@@ -41,6 +42,8 @@ public interface NPrimitiveElementBuilder extends NElementBuilder {
     NPrimitiveElementBuilder numberSuffix(String numberSuffix);
 
     NPrimitiveElementBuilder addAnnotations(List<NElementAnnotation> annotations);
+
+    NPrimitiveElementBuilder addAnnotation(String name, NElement... args);
 
     NPrimitiveElementBuilder addAnnotation(NElementAnnotation annotation);
 

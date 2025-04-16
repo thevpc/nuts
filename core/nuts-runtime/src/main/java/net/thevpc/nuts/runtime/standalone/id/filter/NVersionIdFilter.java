@@ -27,10 +27,6 @@ public class NVersionIdFilter extends AbstractIdFilter implements NIdFilter, NSi
         this.filter = filter;
     }
 
-    @Override
-    public boolean acceptSearchId(NSearchId sid) {
-        return filter == null ? true : filter.acceptSearchId(sid);
-    }
 
     @Override
     public boolean acceptId(NId other) {

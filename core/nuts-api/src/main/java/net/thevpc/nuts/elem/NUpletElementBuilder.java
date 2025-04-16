@@ -296,6 +296,8 @@ public interface NUpletElementBuilder extends NElementBuilder {
 
     NUpletElementBuilder addAnnotations(List<NElementAnnotation> annotations);
 
+    NUpletElementBuilder addAnnotation(String name, NElement... args);
+
     NUpletElementBuilder addAnnotation(NElementAnnotation annotation);
 
     NUpletElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
@@ -305,16 +307,27 @@ public interface NUpletElementBuilder extends NElementBuilder {
     NUpletElementBuilder clearAnnotations();
 
     NUpletElementBuilder addLeadingComment(NElementCommentType type, String text);
+
     NUpletElementBuilder addTrailingComment(NElementCommentType type, String text);
+
     NUpletElementBuilder addLeadingComment(NElementComment comment);
+
     NUpletElementBuilder addLeadingComments(NElementComment... comments);
+
     NUpletElementBuilder addTrailingComment(NElementComment comment);
+
     NUpletElementBuilder addTrailingComments(NElementComment... comments);
+
     NUpletElementBuilder removeLeadingComment(NElementComment comment);
+
     NUpletElementBuilder removeTrailingComment(NElementComment comment);
+
     NUpletElementBuilder removeLeadingCommentAt(int index);
+
     NUpletElementBuilder removeTrailingCommentAt(int index);
+
     NUpletElementBuilder clearComments();
+
     NUpletElementBuilder addComments(NElementComments comments);
 
 

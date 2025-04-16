@@ -8,6 +8,7 @@ public interface NPairElementBuilder extends NElementBuilder {
 
     NPairElementBuilder addAnnotations(List<NElementAnnotation> annotations);
 
+    NPairElementBuilder addAnnotation(String name,NElement ...args);
     NPairElementBuilder addAnnotation(NElementAnnotation annotation);
 
     NPairElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);

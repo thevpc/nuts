@@ -17,11 +17,6 @@ public abstract class NIdFilterDelegate extends AbstractIdFilter {
     }
 
     @Override
-    public boolean acceptSearchId(NSearchId sid) {
-        return baseNIdFilter().acceptSearchId(sid);
-    }
-
-    @Override
     public boolean acceptId(NId id) {
         return baseNIdFilter().acceptId(id);
     }

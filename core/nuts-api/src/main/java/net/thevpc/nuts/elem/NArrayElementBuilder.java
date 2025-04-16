@@ -303,6 +303,7 @@ public interface NArrayElementBuilder extends NElementBuilder {
 
     NArrayElementBuilder addAnnotations(List<NElementAnnotation> annotations);
     NArrayElementBuilder addAnnotation(NElementAnnotation annotation);
+    NArrayElementBuilder addAnnotation(String name,NElement ...args);
     NArrayElementBuilder addAnnotationAt(int index,NElementAnnotation annotation);
     NArrayElementBuilder removeAnnotationAt(int index);
     NArrayElementBuilder clearAnnotations();

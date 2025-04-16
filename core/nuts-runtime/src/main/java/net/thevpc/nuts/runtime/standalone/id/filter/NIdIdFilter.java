@@ -28,10 +28,6 @@ public class NIdIdFilter extends AbstractIdFilter implements NIdFilter, NSimplif
         this.filter = filter;
     }
 
-    @Override
-    public boolean acceptSearchId(NSearchId sid) {
-        return filter == null || acceptId(sid.getId());
-    }
 
     @Override
     public boolean acceptId(NId id) {

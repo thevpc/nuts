@@ -135,6 +135,12 @@ public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
+    public NCustomElementBuilder addAnnotation(String name, NElement... args) {
+        super.addAnnotation(name,args);
+        return this;
+    }
+
+    @Override
     public NCustomElementBuilder addAnnotation(NElementAnnotation annotation) {
         super.addAnnotation(annotation);
         return this;

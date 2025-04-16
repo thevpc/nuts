@@ -534,6 +534,12 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
+    public NObjectElementBuilder addAnnotation(String name, NElement... args) {
+        super.addAnnotation(name,args);
+        return this;
+    }
+
+    @Override
     public NObjectElementBuilder addAnnotation(NElementAnnotation annotation) {
         super.addAnnotation(annotation);
         return this;

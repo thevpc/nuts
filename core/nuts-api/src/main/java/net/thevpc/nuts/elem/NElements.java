@@ -560,7 +560,27 @@ public interface NElements extends NContentTypeFormat {
 
     NMatrixElementBuilder ofMatrixBuilder();
 
+    NArrayElement ofIntArray(int... items);
+
+    NArrayElement ofIntArray(Integer... items);
+
+    NArrayElement ofLongArray(long... items);
+
+    NArrayElement ofLongArray(Long... items);
+
+    NArrayElement ofNumberArray(Number... items);
+
+    NArrayElement ofBooleanArray(boolean... items);
+
+    NArrayElement ofBooleanArray(Boolean... items);
+
     NArrayElement ofArray(NElement... items);
+
+    NArrayElement ofStringArray(String... items);
+
+    NArrayElement ofDoubleArray(double... items);
+
+    NArrayElement ofDoubleArray(Double... items);
 
     NObjectElement ofObject(NElement... items);
 
@@ -571,7 +591,7 @@ public interface NElements extends NContentTypeFormat {
     NElementComments ofComments(NElementComment[] leading, NElementComment[] trailing);
 
 
-    NElementComment ofMultiLineComment(String ... a);
+    NElementComment ofMultiLineComment(String... a);
 
     NElementComment ofSingleLineComment(String... lines);
 

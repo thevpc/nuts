@@ -101,11 +101,12 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
         config.setVisitor(r);
         source.setConfig(config);
         try {
-            source.parseElement();
+            source.parseDocument();
         } catch (Exception e) {
             throw new TsonParseException(e, source.source());
         }
-        TsonElement e = r.getElement();
+        TsonDocument document = r.getDocument();
+        TsonElement e = document==null?null:document.getContent();
         return e == null ? NElements.of().ofNull() : toNElem(e);
     }
 

@@ -65,7 +65,7 @@ import java.util.List;
  * @app.category Descriptor
  * @since 0.5.4
  */
-public interface NVersionFilter extends NArtifactFilter {
+public interface NVersionFilter extends NFilter {
 
     /**
      * true if the version is accepted by this instance filter
@@ -74,17 +74,6 @@ public interface NVersionFilter extends NArtifactFilter {
      * @return true if the version is accepted by this instance interval
      */
     boolean acceptVersion(NVersion version);
-
-    /**
-     * true if the version is accepted by this instance filter
-     *
-     * @param sid search id
-     * @return true if accepted
-     */
-    @Override
-    default boolean acceptSearchId(NSearchId sid) {
-        return acceptVersion(sid.getId().getVersion());
-    }
 
     NVersionFilter or(NVersionFilter other);
 
@@ -96,7 +85,7 @@ public interface NVersionFilter extends NArtifactFilter {
 
     @Override
     default NElement describe() {
-        return NArtifactFilter.super.describe();
+        return NFilter.super.describe();
     }
 
     NFilter withDesc(NEDesc description);

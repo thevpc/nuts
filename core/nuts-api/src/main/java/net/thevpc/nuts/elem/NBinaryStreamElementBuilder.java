@@ -36,6 +36,7 @@ public interface NBinaryStreamElementBuilder extends NElementBuilder {
     NBinaryStreamElementBuilder doWith(Consumer<NBinaryStreamElementBuilder> con);
     NBinaryStreamElementBuilder addAnnotations(List<NElementAnnotation> annotations);
 
+    NBinaryStreamElementBuilder addAnnotation(String name,NElement ...args);
     NBinaryStreamElementBuilder addAnnotation(NElementAnnotation annotation);
 
     NBinaryStreamElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);

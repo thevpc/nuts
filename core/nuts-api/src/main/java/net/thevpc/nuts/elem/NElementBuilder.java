@@ -36,6 +36,8 @@ public interface NElementBuilder {
 
     NElementBuilder addAnnotation(NElementAnnotation annotation);
 
+    NElementBuilder addAnnotation(String name, NElement... args);
+
     NElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
 
     NElementBuilder removeAnnotationAt(int index);

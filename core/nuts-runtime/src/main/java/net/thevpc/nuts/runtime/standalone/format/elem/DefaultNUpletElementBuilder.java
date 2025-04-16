@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 /**
  * @author thevpc
  */
-public class DefaultNUpletElementBuilder  extends AbstractNElementBuilder implements NUpletElementBuilder {
+public class DefaultNUpletElementBuilder extends AbstractNElementBuilder implements NUpletElementBuilder {
 
     private final List<NElement> values = new ArrayList<>();
     private List<NElement> params;
@@ -45,7 +45,7 @@ public class DefaultNUpletElementBuilder  extends AbstractNElementBuilder implem
 
     @Override
     public NUpletElementBuilder doWith(Consumer<NUpletElementBuilder> con) {
-        if(con!=null){
+        if (con != null) {
             con.accept(this);
         }
         return this;
@@ -307,7 +307,7 @@ public class DefaultNUpletElementBuilder  extends AbstractNElementBuilder implem
     @Override
     public NUpletElement build() {
         return new DefaultNUpletElement(name, values,
-                annotations().toArray(new NElementAnnotation[0]),comments());
+                annotations().toArray(new NElementAnnotation[0]), comments());
     }
 
     @Override
@@ -414,6 +414,12 @@ public class DefaultNUpletElementBuilder  extends AbstractNElementBuilder implem
     }
 
     @Override
+    public NUpletElementBuilder addAnnotation(String name, NElement... args) {
+        super.addAnnotation(name,args);
+        return this;
+    }
+
+    @Override
     public NUpletElementBuilder addAnnotation(NElementAnnotation annotation) {
         super.addAnnotation(annotation);
         return this;
@@ -504,6 +510,7 @@ public class DefaultNUpletElementBuilder  extends AbstractNElementBuilder implem
     public NUpletElementBuilder set(String name, String value) {
         return set(_elements().ofNameOrString(name), _elements().ofString(value));
     }
+
     @Override
     public NUpletElementBuilder set(NElement name, boolean value) {
         return set(name, _elements().ofBoolean(value));
@@ -531,6 +538,7 @@ public class DefaultNUpletElementBuilder  extends AbstractNElementBuilder implem
         }
         return this;
     }
+
     @Override
     public NUpletElementBuilder add(String name, boolean value) {
         return add(_elements().ofNameOrString(name), _elements().ofBoolean(value));

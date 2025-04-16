@@ -314,6 +314,7 @@ public interface NMatrixElementBuilder extends NElementBuilder {
 
 
     NMatrixElementBuilder addAnnotations(List<NElementAnnotation> annotations);
+    NMatrixElementBuilder addAnnotation(String name,NElement ...args);
     NMatrixElementBuilder addAnnotation(NElementAnnotation annotation);
     NMatrixElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
     NMatrixElementBuilder removeAnnotationAt(int index);

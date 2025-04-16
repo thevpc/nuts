@@ -59,10 +59,6 @@ public abstract class NVersionFilterDelegate extends AbstractVersionFilter {
         return (NVersionFilter) baseVersionFilter().simplify();
     }
 
-    @Override
-    public boolean acceptSearchId(NSearchId sid) {
-        return baseVersionFilter().acceptSearchId(sid);
-    }
 
     @Override
     public NFilterOp getFilterOp() {
