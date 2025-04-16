@@ -506,6 +506,8 @@ public interface NElements extends NContentTypeFormat {
 
     NPrimitiveElement ofDouble(Double value);
 
+    NPrimitiveElement ofDouble(double value);
+
     NPrimitiveElement ofDoubleComplex(double real);
 
     NPrimitiveElement ofDoubleComplex(double real, double imag);

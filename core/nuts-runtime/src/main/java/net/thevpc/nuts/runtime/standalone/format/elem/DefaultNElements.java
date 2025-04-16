@@ -708,6 +708,11 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     @Override
+    public NPrimitiveElement ofDouble(double value) {
+        return new DefaultNNumberElement(NElementType.DOUBLE, value);
+    }
+
+    @Override
     public NPrimitiveElement ofFloat(Short value) {
         return value == null ? ofNull() : new DefaultNNumberElement(NElementType.SHORT, value);
     }
