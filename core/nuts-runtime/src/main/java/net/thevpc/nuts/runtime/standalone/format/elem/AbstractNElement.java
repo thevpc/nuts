@@ -411,6 +411,11 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public boolean isAnyDate() {
+        return type().isAnyDate();
+    }
+
+    @Override
     public boolean isShort() {
         return type() == NElementType.SHORT;
     }

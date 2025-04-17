@@ -384,4 +384,6 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
     NOptional<Double> asDoubleValue();
 
     NOptional<NNumberElement> asNumber();
+
+    boolean isAnyDate();
 }

@@ -306,6 +306,16 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    public boolean isAnyDate() {
+        switch (this) {
+            case LOCAL_DATE:
+            case LOCAL_DATETIME:
+            case INSTANT:
+                return true;
+        }
+        return false;
+    }
+
     public boolean isDecimalNumber() {
         switch (this) {
             case FLOAT:
