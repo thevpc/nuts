@@ -1,7 +1,7 @@
 /*
  Language: Gherkin
  Author: Sam Pikesley (@pikesley) <sam.pikesley@theodi.org>
- Description: Gherkin is the format for cucumber specifications. It is a domain specific language which helps you to describe business behavior without the need to go into detail of implementation.
+ Description: Gherkin is the format for cucumber specifications. It's a domain specific language which helps you to describe business behavior without the need to go into detail of implementation.
  Website: https://cucumber.io/docs/gherkin/
  */
 

@@ -387,7 +387,7 @@ const HLJS = function(hljs) {
       triggered but could not be completed.  When might this happen?  When an `endSameasBegin`
       rule sets the end rule to a specific match.  Since the overall mode termination rule that's
       being used to scan the text isn't recompiled that means that any match that LOOKS like
-      the end (but is not, because it is not an exact match to the beginning) will
+      the end (but is not, because It's not an exact match to the beginning) will
       end up here.  A definite end match, but when `doEndMatch` tries to "reapply"
       the end rule and fails to match, we wind up here, and just silently ignore the end.
 
