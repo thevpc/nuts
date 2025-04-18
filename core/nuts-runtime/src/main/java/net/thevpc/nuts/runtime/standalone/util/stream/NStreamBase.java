@@ -152,7 +152,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
 
     @Override
     public <R> NStream<R> mapUnsafe(UnsafeFunction<? super T, ? extends R> mapper) {
-        return mapUnsafe(mapper,null);
+        return mapUnsafe(mapper, null);
     }
 
     @Override
@@ -303,6 +303,88 @@ public abstract class NStreamBase<T> implements NStream<T> {
     }
 
     @Override
+    public boolean[] toBooleanArray() {
+        Boolean[] b = toArray(Boolean[]::new);
+        boolean[] c = new boolean[b.length];
+        for (int i = 0; i < b.length; i++) {
+            c[i] = b[i];
+        }
+        return c;
+    }
+
+    @Override
+    public byte[] toByteArray() {
+        Number[] b = toArray(Number[]::new);
+        byte[] c = new byte[b.length];
+        for (int i = 0; i < b.length; i++) {
+            c[i] = b[i].byteValue();
+        }
+        return c;
+    }
+
+    @Override
+    public char[] toCharArray() {
+        Character[] b = toArray(Character[]::new);
+        char[] c = new char[b.length];
+        for (int i = 0; i < b.length; i++) {
+            c[i] = b[i];
+        }
+        return c;
+    }
+
+    @Override
+    public short[] toShortArray() {
+        Short[] b = toArray(Short[]::new);
+        short[] c = new short[b.length];
+        for (int i = 0; i < b.length; i++) {
+            c[i] = b[i];
+        }
+        return c;
+    }
+
+    @Override
+    public float[] toFloatArray() {
+        Float[] b = toArray(Float[]::new);
+        float[] c = new float[b.length];
+        for (int i = 0; i < b.length; i++) {
+            c[i] = b[i];
+        }
+        return c;
+    }
+
+    @Override
+    public int[] toIntArray() {
+        return mapToInt(x->((Number)x).intValue()).toArray();
+    }
+
+    @Override
+    public long[] toLongArray() {
+        return mapToLong(x->((Number)x).longValue()).toArray();
+    }
+
+    @Override
+    public double[] toDoubleArray() {
+        return mapToDouble(x->((Number)x).doubleValue()).toArray();
+    }
+
+
+    @Override
+    public IntStream mapToInt(ToIntFunction<? super T> mapper){
+        return stream().mapToInt(mapper);
+    }
+
+    @Override
+    public LongStream mapToLong(ToLongFunction<? super T> mapper){
+        return stream().mapToLong(mapper);
+    }
+
+    @Override
+    public DoubleStream mapToDouble(ToDoubleFunction<? super T> mapper){
+        return stream().mapToDouble(mapper);
+    }
+
+
+    @Override
     public <A> A[] toArray(IntFunction<A[]> generator) {
         return stream().toArray(generator);
     }
@@ -342,7 +424,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
             public NIterator<R> iterator() {
                 NIteratorBuilder<T> r = NIteratorBuilder.of(NStreamBase.this.iterator());
                 return (NIterator<R>) r.flatMap(
-                        NFunction.of(tt -> mapper.apply((T) tt).iterator()).withDesc(()->NFunction.of(mapper).describe())
+                        NFunction.of(tt -> mapper.apply((T) tt).iterator()).withDesc(() -> NFunction.of(mapper).describe())
                 ).build()
                         ;
             }
@@ -357,7 +439,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
                 return NIteratorBuilder.of(NStreamBase.this.iterator())
                         .flatMap(
                                 NFunction.of(t -> Arrays.asList(mapper.apply((T) t)).iterator())
-                                        .withDesc(()->NFunction.of(mapper).describe())
+                                        .withDesc(() -> NFunction.of(mapper).describe())
                         ).build()
                         ;
             }
@@ -371,7 +453,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
             public NIterator<R> iterator() {
                 return (NIterator<R>) NIteratorBuilder.of(NStreamBase.this.iterator()).flatMap(
                         NFunction.of(t -> mapper.apply(t).iterator())
-                ).build().withDesc(()->NFunction.of(mapper).describe());
+                ).build().withDesc(() -> NFunction.of(mapper).describe());
             }
         };
     }
@@ -384,7 +466,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
                 return (NIterator<R>) NIteratorBuilder.of(NStreamBase.this.iterator())
                         .flatMap(
                                 NFunction.of(t -> mapper.apply(t).iterator())
-                        ).build().withDesc(()->NFunction.of(mapper).describe())
+                        ).build().withDesc(() -> NFunction.of(mapper).describe())
                         ;
             }
         };

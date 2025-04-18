@@ -249,8 +249,8 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
         return params != null;
     }
 
-    public List<NElement> params() {
-        return params == null ? null : Collections.unmodifiableList(params);
+    public NOptional<List<NElement>> params() {
+        return params == null ? NOptional.ofNamedEmpty("params") : NOptional.of(Collections.unmodifiableList(params));
     }
 
     public int paramsCount() {

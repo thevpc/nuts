@@ -272,4 +272,64 @@ public abstract class NStreamDelegate<T> implements NStream<T> {
     public NStream<T> coalesce(NStream<? extends T> other) {
         return baseStream().coalesce(other);
     }
+
+    @Override
+    public void close() {
+        baseStream().close();
+    }
+
+    @Override
+    public DoubleStream mapToDouble(ToDoubleFunction<? super T> mapper) {
+        return baseStream().mapToDouble(mapper);
+    }
+
+    @Override
+    public LongStream mapToLong(ToLongFunction<? super T> mapper) {
+        return baseStream().mapToLong(mapper);
+    }
+
+    @Override
+    public IntStream mapToInt(ToIntFunction<? super T> mapper) {
+        return baseStream().mapToInt(mapper);
+    }
+
+    @Override
+    public double[] toDoubleArray() {
+        return baseStream().toDoubleArray();
+    }
+
+    @Override
+    public long[] toLongArray() {
+        return baseStream().toLongArray();
+    }
+
+    @Override
+    public int[] toIntArray() {
+        return baseStream().toIntArray();
+    }
+
+    @Override
+    public float[] toFloatArray() {
+        return baseStream().toFloatArray();
+    }
+
+    @Override
+    public short[] toShortArray() {
+        return baseStream().toShortArray();
+    }
+
+    @Override
+    public char[] toCharArray() {
+        return baseStream().toCharArray();
+    }
+
+    @Override
+    public byte[] toByteArray() {
+        return baseStream().toByteArray();
+    }
+
+    @Override
+    public boolean[] toBooleanArray() {
+        return baseStream().toBooleanArray();
+    }
 }

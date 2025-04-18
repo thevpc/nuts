@@ -50,7 +50,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
 
     NUpletElementBuilder removeAt(int index);
 
-    List<NElement> items();
+    List<NElement> params();
 
     /**
      * element count

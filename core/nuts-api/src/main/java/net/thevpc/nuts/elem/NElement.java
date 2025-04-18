@@ -128,6 +128,8 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
 
     boolean isListContainer();
 
+    boolean isParametrizedContainer();
+
     boolean isAnyObject();
 
     boolean isAnyMatrix();
@@ -143,7 +145,6 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
     boolean isNamedParametrizedArray();
 
     boolean isNamedParametrizedArray(String name);
-
 
     boolean isNamedMatrix();
 
@@ -198,6 +199,8 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
      * @return {@link NObjectElement}
      */
     NOptional<NListContainerElement> asListContainer();
+
+    NOptional<NParametrizedContainerElement> asParametrizedContainer();
 
     NOptional<NNamedElement> asNamed();
 
@@ -325,6 +328,8 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
 
     NOptional<NArrayElement> toNamedArray();
 
+    NOptional<NNamedElement> toNamed();
+
     NOptional<NArrayElement> toArray();
 
     NArrayElement wrapIntoArray();
@@ -386,4 +391,6 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
     NOptional<NNumberElement> asNumber();
 
     boolean isAnyDate();
+
+    NOptional<NOperatorElement> asOperator();
 }

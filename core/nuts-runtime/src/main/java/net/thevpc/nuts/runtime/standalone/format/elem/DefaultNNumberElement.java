@@ -5,6 +5,9 @@ import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 public class DefaultNNumberElement extends DefaultNPrimitiveElement implements NNumberElement {
     private NNumberLayout layout;
     private String suffix;
@@ -44,5 +47,29 @@ public class DefaultNNumberElement extends DefaultNPrimitiveElement implements N
     @Override
     public NOptional<NNumberElement> asNumber() {
         return NOptional.of(this);
+    }
+
+    @Override
+    public BigDecimal bigDecimalValue() {
+        Number d = numberValue();
+        if (d instanceof BigDecimal) {
+            return (BigDecimal) d;
+        }
+        if (d instanceof BigInteger) {
+            return new BigDecimal(d.toString());
+        }
+        return BigDecimal.valueOf(d.doubleValue());
+    }
+
+    @Override
+    public BigInteger bigIntegerValue() {
+        Number d = numberValue();
+        if (d instanceof BigDecimal) {
+            return ((BigDecimal) d).toBigInteger();
+        }
+        if (d instanceof BigInteger) {
+            return (BigInteger) d;
+        }
+        return BigInteger.valueOf(d.longValue());
     }
 }

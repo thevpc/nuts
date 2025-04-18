@@ -528,7 +528,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
             stringLayout = NElementType.DOUBLE_QUOTED_STRING;
         }
         if (stringLayout.isAnyString()) {
-                return new DefaultNStringElement(stringLayout, str, null, null);
+            return new DefaultNStringElement(stringLayout, str, null, null);
         }
         throw new NUnsupportedEnumException(stringLayout);
     }
@@ -703,6 +703,16 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     @Override
     public NPrimitiveElement ofDouble(double value) {
         return new DefaultNNumberElement(NElementType.DOUBLE, value);
+    }
+
+    @Override
+    public NPrimitiveElement ofDouble(Double value, String suffix) {
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.DOUBLE, value, NNumberLayout.DECIMAL, suffix);
+    }
+
+    @Override
+    public NPrimitiveElement ofDouble(double value, String suffix) {
+        return new DefaultNNumberElement(NElementType.DOUBLE, value, NNumberLayout.DECIMAL, suffix);
     }
 
     @Override

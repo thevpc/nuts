@@ -47,6 +47,7 @@ public interface NStream<T> extends Iterable<T>, NElementDescribable<NStream<T>>
     static <T> NStream<T> ofArray(T... str) {
         return NCollectionsRPI.of().arrayToStream(str);
     }
+
     static <T> NStream<T> ofOptional(NOptional<T> str) {
         return NCollectionsRPI.of().optionalToStream(str);
     }
@@ -177,6 +178,28 @@ public interface NStream<T> extends Iterable<T>, NElementDescribable<NStream<T>>
     NStream<T> concat(NStream<? extends T> other);
 
     NStream<T> coalesce(NStream<? extends T> other);
+
+    boolean[] toBooleanArray();
+
+    byte[] toByteArray();
+
+    char[] toCharArray();
+
+    short[] toShortArray();
+
+    float[] toFloatArray();
+
+    int[] toIntArray();
+
+    long[] toLongArray();
+
+    double[] toDoubleArray();
+
+    IntStream mapToInt(ToIntFunction<? super T> mapper);
+
+    LongStream mapToLong(ToLongFunction<? super T> mapper);
+
+    DoubleStream mapToDouble(ToDoubleFunction<? super T> mapper);
 
     <A> A[] toArray(IntFunction<A[]> generator);
 

@@ -35,7 +35,7 @@ import java.util.stream.Stream;
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NObjectElement extends NNamedElement,NListContainerElement, Iterable<NElement> {
+public interface NObjectElement extends NNamedElement, NListContainerElement, NParametrizedContainerElement, Iterable<NElement> {
     static NObjectElement ofEmpty() {
         return NElements.of().ofEmptyObject();
     }
@@ -49,12 +49,6 @@ public interface NObjectElement extends NNamedElement,NListContainerElement, Ite
      */
     NObjectElementBuilder builder();
 
-
-    List<NElement> params() ;
-
-    int paramsCount() ;
-
-    NElement param(int index) ;
 
     List<NPairElement> pairs();
 }

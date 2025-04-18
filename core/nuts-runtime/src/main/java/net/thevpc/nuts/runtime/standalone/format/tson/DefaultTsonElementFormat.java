@@ -191,7 +191,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 return decorateTsonElement(
                         factory.ofArrayBuilder()
                                 .name(ee.name())
-                                .addParams(toTsonElemArray(ee.params()))
+                                .addParams(toTsonElemArray(ee.params().orNull()))
                                 .addAll(toTsonElemArray(ee.children()))
                                 .build()
                         , elem);
@@ -204,7 +204,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 return decorateTsonElement(
                         new TsonObjectBuilderImpl()
                                 .name(ee.name())
-                                .addParams(toTsonElemArray(ee.params()))
+                                .addParams(toTsonElemArray(ee.params().orNull()))
                                 .addAll(toTsonElemArray(ee.children()))
                                 .build()
                         , elem);

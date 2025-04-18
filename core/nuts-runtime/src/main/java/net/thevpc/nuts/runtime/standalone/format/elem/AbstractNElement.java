@@ -154,6 +154,14 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public NOptional<NParametrizedContainerElement> asParametrizedContainer() {
+        if (isListContainer()) {
+            return NOptional.of((NParametrizedContainerElement) this);
+        }
+        return NOptional.ofEmpty(NMsg.ofC("%s is not a list container", type().id()));
+    }
+
+    @Override
     public NOptional<NNamedElement> asNamed() {
         if (isNamed()) {
             return NOptional.of((NNamedElement) this);
@@ -416,6 +424,14 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public NOptional<NOperatorElement> asOperator() {
+        if (this instanceof NOperatorElement) {
+            return NOptional.of((NOperatorElement) this);
+        }
+        return NOptional.ofNamedEmpty("operator");
+    }
+
+    @Override
     public boolean isShort() {
         return type() == NElementType.SHORT;
     }
@@ -466,6 +482,15 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public NOptional<NNamedElement> toNamed() {
+        if (this instanceof NNamedElement) {
+            return NOptional.of((NNamedElement) this);
+        }
+        ;
+        return NOptional.ofNamedEmpty("named element");
+    }
+
+    @Override
     public boolean isParametrized() {
         return type().isParametrized();
     }
@@ -505,6 +530,11 @@ public abstract class AbstractNElement implements NElement {
         }
         NElement key = asPair().get().key();
         return key.isAnyString();
+    }
+
+    @Override
+    public boolean isParametrizedContainer() {
+        return this instanceof NParametrizedContainerElement && ((NParametrizedContainerElement) this).isParametrized();
     }
 
     @Override
@@ -657,7 +687,7 @@ public abstract class AbstractNElement implements NElement {
             case NAMED_ARRAY: {
                 NArrayElement u = asArray().orNull();
                 return NOptional.of(NElements.of().ofObjectBuilder(u.name())
-                        .addParams(u.params())
+                        .addParams(u.params().orNull())
                         .addAll(u.children().toArray(new NElement[0])).build());
             }
         }
@@ -682,7 +712,7 @@ public abstract class AbstractNElement implements NElement {
             case NAMED_OBJECT: {
                 NObjectElement u = asObject().orNull();
                 return NOptional.of(NElements.of().ofArrayBuilder(u.name())
-                        .addParams(u.params())
+                        .addParams(u.params().orNull())
                         .addAll(u.children().toArray(new NElement[0])).build());
             }
             case NAMED_ARRAY: {
@@ -719,7 +749,7 @@ public abstract class AbstractNElement implements NElement {
             case NAMED_PARAMETRIZED_OBJECT: {
                 NObjectElement u = asObject().orNull();
                 return NOptional.of(NElements.of().ofObjectBuilder()
-                        .addParams(u.params())
+                        .addParams(u.params().orNull())
                         .addAll(u.children().toArray(new NElement[0])).build());
             }
             case ARRAY:
@@ -728,7 +758,7 @@ public abstract class AbstractNElement implements NElement {
             case NAMED_PARAMETRIZED_ARRAY: {
                 NArrayElement u = asArray().orNull();
                 return NOptional.of(NElements.of().ofObjectBuilder()
-                        .addParams(u.params())
+                        .addParams(u.params().orNull())
                         .addAll(u.children().toArray(new NElement[0])).build());
             }
         }
@@ -760,7 +790,7 @@ public abstract class AbstractNElement implements NElement {
             case NAMED_PARAMETRIZED_OBJECT: {
                 NObjectElement u = asObject().orNull();
                 return NOptional.of(NElements.of().ofArrayBuilder()
-                        .addParams(u.params())
+                        .addParams(u.params().orNull())
                         .addAll(u.children().toArray(new NElement[0])).build());
             }
             case ARRAY: {

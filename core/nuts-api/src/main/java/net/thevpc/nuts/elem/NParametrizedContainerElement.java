@@ -24,27 +24,25 @@
  */
 package net.thevpc.nuts.elem;
 
-import java.util.stream.Stream;
+import net.thevpc.nuts.util.NOptional;
+
+import java.util.List;
 
 /**
- * Array implementation of Nuts Element type. Nuts Element types are generic
+ * Object implementation of Nuts Element type. Nuts Element types are generic
  * JSON like parsable objects.
  *
  * @author thevpc
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NArrayElement extends NNamedElement, NListContainerElement, NParametrizedContainerElement, Iterable<NElement> {
-    static NArrayElement ofEmpty() {
-        return NElements.of().ofEmptyArray();
-    }
+public interface NParametrizedContainerElement extends NElement {
+    boolean isParametrized();
 
-    Stream<NElement> stream();
+    NOptional<List<NElement>> params();
 
-    /**
-     * return new builder initialized with this instance
-     *
-     * @return new builder initialized with this instance
-     */
-    NArrayElementBuilder builder();
+    int paramsCount();
+
+    NElement param(int index);
+
 }

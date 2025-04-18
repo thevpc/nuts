@@ -241,9 +241,7 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
             if (other.name() != null) {
                 this.name(other.name());
             }
-            if (other.params() != null) {
-                this.addParams(other.params());
-            }
+            this.addParams(other.params().orNull());
             addAll(other.children());
         }
         return this;

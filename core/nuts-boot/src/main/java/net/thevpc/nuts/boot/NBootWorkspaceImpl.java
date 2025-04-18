@@ -646,7 +646,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                         }
                     }
                     log.log(Level.CONFIG, "START", NBootMsg.ofPlain("system-properties:"));
-                    Map<String, String> m = (Map) System.getProperties();
+                    Map<String, String> m = new LinkedHashMap<>((Map) System.getProperties());
                     int max = m.keySet().stream().mapToInt(String::length).max().getAsInt();
                     for (String k : new TreeSet<String>(m.keySet())) {
                         log.log(Level.CONFIG, "START", NBootMsg.ofC("    %s = %s", NBootUtils.formatAlign(k, max, NBootPositionTypeBoot.FIRST), NBootUtils.formatStringLiteral(m.get(k))));

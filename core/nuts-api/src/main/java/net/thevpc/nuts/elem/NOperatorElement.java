@@ -24,8 +24,6 @@
  */
 package net.thevpc.nuts.elem;
 
-import java.util.stream.Stream;
-
 /**
  * Array implementation of Nuts Element type. Nuts Element types are generic
  * JSON like parsable objects.
@@ -34,17 +32,19 @@ import java.util.stream.Stream;
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NArrayElement extends NNamedElement, NListContainerElement, NParametrizedContainerElement, Iterable<NElement> {
-    static NArrayElement ofEmpty() {
-        return NElements.of().ofEmptyArray();
-    }
+public interface NOperatorElement extends NElement {
+    String operatorName();
 
-    Stream<NElement> stream();
+    NOperatorType operatorType();
+
+    NElement first();
+
+    NElement second();
 
     /**
      * return new builder initialized with this instance
      *
      * @return new builder initialized with this instance
      */
-    NArrayElementBuilder builder();
+    NOperatorElementBuilder builder();
 }

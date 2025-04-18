@@ -96,7 +96,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
 
 
     @Override
-    public List<NElement> items() {
+    public List<NElement> params() {
         return Collections.unmodifiableList(values);
     }
 
@@ -154,7 +154,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
             if (value.name() != null) {
                 name(value.name());
             }
-            for (NElement child : value.items()) {
+            for (NElement child : value.params()) {
                 add(child);
             }
         }
@@ -312,7 +312,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public String toString() {
-        return "[" + items().stream().map(Object::toString).collect(Collectors.joining(", ")) + "]";
+        return "[" + params().stream().map(Object::toString).collect(Collectors.joining(", ")) + "]";
     }
 
     private NElement denull(NElement e) {

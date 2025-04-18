@@ -362,8 +362,7 @@ public enum NElementType implements NEnum {
             case NAMED_PARAMETRIZED_OBJECT:
             case PARAMETRIZED_MATRIX:
             case NAMED_PARAMETRIZED_MATRIX:
-            case UPLET:
-            case NAMED_UPLET: {
+            {
                 return true;
             }
         }

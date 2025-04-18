@@ -333,9 +333,7 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
             if (other.name() != null) {
                 this.name(other.name());
             }
-            if (other.params() != null) {
-                this.addParams(other.params());
-            }
+            this.addParams(other.params().orNull());
             this.addAll(other.children());
         }
         return this;
@@ -407,7 +405,7 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
 
     @Override
     public NObjectElementBuilder doWith(Consumer<NObjectElementBuilder> con) {
-        if(con!=null){
+        if (con != null) {
             con.accept(this);
         }
         return this;
@@ -535,7 +533,7 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
 
     @Override
     public NObjectElementBuilder addAnnotation(String name, NElement... args) {
-        super.addAnnotation(name,args);
+        super.addAnnotation(name, args);
         return this;
     }
 
