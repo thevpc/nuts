@@ -58,7 +58,9 @@ public class DefaultSourceControlHelper {
             String newVersion = NVersion.get(oldVersion).get().inc().getValue();
             NDefinition newVersionFound = null;
             try {
-                newVersionFound = NFetchCmd.of(d.getId().builder().setVersion(newVersion).build()).getResultDefinition();
+                newVersionFound = NFetchCmd.of(d.getId().builder().setVersion(newVersion).build())
+                        .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                        .getResultDefinition();
             } catch (NNotFoundException ex) {
                 _LOGOP().level(Level.FINE).error(ex)
                         .log(NMsg.ofC("failed to fetch %s", d.getId().builder().setVersion(newVersion).build()));
@@ -86,7 +88,9 @@ public class DefaultSourceControlHelper {
     //    @Override
     public NDefinition checkout(NId id, Path folder) {
         NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.INSTALL, "checkout");
-        NDefinition nutToInstall = NFetchCmd.of(id).setDependencyFilter(NDependencyFilters.of().byOptional(false)).getResultDefinition();
+        NDefinition nutToInstall = NFetchCmd.of(id)
+                .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                .getResultDefinition();
         if ("zip".equals(nutToInstall.getDescriptor().getPackaging())) {
             try {
                 ZipUtils.unzip(nutToInstall.getContent().map(Object::toString).get(), NPath.of(folder)

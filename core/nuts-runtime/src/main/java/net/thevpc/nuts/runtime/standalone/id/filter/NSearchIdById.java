@@ -47,7 +47,9 @@ public class NSearchIdById implements NSearchId {
 
     @Override
     public NDescriptor getDescriptor() {
-        return NFetchCmd.of(id).getResultDescriptor();
+        return NFetchCmd.of(id)
+                .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                .getResultDescriptor();
     }
 
 }

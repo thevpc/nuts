@@ -28,6 +28,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 
 
+import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder2;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
 import net.thevpc.nuts.runtime.standalone.executor.NExecutionContextUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -69,9 +70,9 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
             NDefinition definition = executionContext.getDefinition();
             NDescriptor descriptor = definition.getDescriptor();
             if (descriptor.isNutsApplication()) {
-                NDefinitionBuilder def2 = definition.builder()
+                DefaultNDefinitionBuilder2 def2 = new DefaultNDefinitionBuilder2(definition)
                         .setInstallInformation(
-                                new DefaultNInstallInfo(definition.getInstallInformation().get())
+                                ()->new DefaultNInstallInfo(definition.getInstallInformation().get())
                                         .setInstallStatus(
                                                 definition.getInstallInformation().get().getInstallStatus().withInstalled(true)
                                         )

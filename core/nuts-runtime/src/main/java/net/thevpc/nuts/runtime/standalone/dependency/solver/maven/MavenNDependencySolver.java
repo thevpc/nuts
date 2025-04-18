@@ -169,6 +169,7 @@ public class MavenNDependencySolver implements NDependencySolver {
     private NSearchCmd search(NDependency dep) {
         return NSearchCmd.of()
                 .addIds(dep.toId())
+                .setDependencyFilter(getDependencyFilter())
                 .setRepositoryFilter(getRepositoryFilter())
                 .setIgnoreCurrentEnvironment(isIgnoreCurrentEnvironment())
                 .setLatest(true)

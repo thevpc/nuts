@@ -536,6 +536,7 @@ public class MavenUtils {
                                             fetchMode == NFetchMode.REMOTE ? NFetchStrategy.ONLINE
                                                     : NFetchStrategy.OFFLINE
                                     )
+                                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
                                     .getResultDescriptor();
                         } catch (NException ex) {
                             throw ex;
@@ -575,7 +576,9 @@ public class MavenUtils {
                         NDescriptor d = cache.get(pid);
                         if (d == null) {
                             try {
-                                d = NFetchCmd.of(pid).getResultDescriptor();
+                                d = NFetchCmd.of(pid)
+                                        .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                                        .getResultDescriptor();
                             } catch (NException ex) {
                                 throw ex;
                             } catch (Exception ex) {

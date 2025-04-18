@@ -94,7 +94,10 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
 //            NWorkspaceUtils.of().installCurrentJVM();
 //        }
         if (initializeScripts || initializeLaunchers || installCompanions) {
-            NId api = NFetchCmd.of().setId(workspace.getApiId()).setFailFast(false).getResultId();
+            NId api = NFetchCmd.of()
+                    .setId(workspace.getApiId()).setFailFast(false)
+                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                    .getResultId();
             if (api != null) {
                 if (initializeScripts || initializeLaunchers) {
                     //api would be null if running in fatjar and no internet/maven is available

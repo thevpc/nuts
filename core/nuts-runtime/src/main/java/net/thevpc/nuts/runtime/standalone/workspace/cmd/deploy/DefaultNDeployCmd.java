@@ -40,7 +40,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
         super(workspace);
     }
 
-    private static CharacterizedDeployFile characterizeForDeploy(NInputSource contentFile, NFetchCmd options, List<String> parseOptions) {
+    private static CharacterizedDeployFile characterizeForDeploy(NInputSource contentFile, List<String> parseOptions) {
         if (parseOptions == null) {
             parseOptions = new ArrayList<>();
         }
@@ -111,7 +111,9 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
         if (!ids.isEmpty()) {
             for (NId nutsId : NSearchCmd.of()
                     .addIds(ids.toArray(new NId[0])).setLatest(true).setRepositoryFilter(NRepositoryFilters.of().bySelector(fromRepository)).getResultIds()) {
-                NDefinition fetched = NFetchCmd.of(nutsId).getResultDefinition();
+                NDefinition fetched = NFetchCmd.of(nutsId)
+                        .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                        .getResultDefinition();
                 if (fetched.getContent().isPresent()) {
                     runDeployFile(fetched.getContent().get(), fetched.getDescriptor(), null);
                 }
@@ -156,8 +158,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
         Path contentFile2 = null;
         try {
             if (descriptor == null) {
-                NFetchCmd p = NFetchCmd.of();
-                characterizedFile = characterizeForDeploy(contentSource, p, getParseOptions());
+                characterizedFile = characterizeForDeploy(contentSource, getParseOptions());
                 NAssert.requireNonBlank(characterizedFile.getDescriptor(), "descriptor");
                 descriptor = characterizedFile.getDescriptor();
             }

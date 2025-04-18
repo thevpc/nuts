@@ -176,7 +176,9 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 //        }
 
         if (initializeScripts || initializeLaunchers || installCompanions) {
-            NId api = NFetchCmd.of().setId(workspace.getApiId()).setFailFast(false).getResultId();
+            NId api = NFetchCmd.of().setId(workspace.getApiId())
+                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                    .setFailFast(false).getResultId();
             if (api != null) {
                 if (initializeScripts || initializeLaunchers) {
                     //api would be null if running in fatjar and no internet/maven is available

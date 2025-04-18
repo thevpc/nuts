@@ -77,6 +77,7 @@ public final class NClassLoaderUtils {
         NId id = d.toId();
         try {
             cc = NFetchCmd.of(id)
+                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
                     .setRepositoryFilter(repositoryFilter)
                     .getResultContent();
             if(cc==null){
@@ -111,6 +112,7 @@ public final class NClassLoaderUtils {
         }
         try {
             cc = NFetchCmd.of(d.getDependency().toId())
+                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
                     .setRepositoryFilter(repositoryFilter)
                     .getResultContent();
         } catch (NNotFoundException ex) {

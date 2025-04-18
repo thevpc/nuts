@@ -235,8 +235,8 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
             foundDefinitionBuilder = result;
             if (foundDefinitionBuilder != null) {
                 foundDefinitionBuilder.setEffectiveDescriptor(new NDefEffectiveDescriptorSupplier(foundDefinitionBuilder, id));
-                foundDefinitionBuilder.setDependencies(new NDefDependenciesSupplier(id, foundDefinitionBuilder));
-                foundDefinitionBuilder.setContent(new NDefContentSupplier(foundDefinitionBuilder, successfulDescriptorLocation, descTracker, reasons, wu, session, nutsFetchModes, id, startTime));
+                foundDefinitionBuilder.setDependencies(new NDefDependenciesSupplier(id, foundDefinitionBuilder,getRepositoryFilter(), getDependencyFilter(), isIgnoreCurrentEnvironment()));
+                foundDefinitionBuilder.setContent(new NDefContentSupplier(foundDefinitionBuilder, successfulDescriptorLocation, descTracker, reasons, wu, nutsFetchModes, id, startTime));
                 foundDefinitionBuilder.setInstallInformation(new NDefInstallInformationSupplier(dws, id));
                 foundDefinitionBuilder.setEffectiveFlags(new NDefNDescriptorFlagSetSupplier(id, foundDefinitionBuilder));
             }
@@ -425,19 +425,25 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     private class NDefDependenciesSupplier implements Supplier<NDependencies> {
         private final NId id;
         private final DefaultNDefinitionBuilder2 foundDefinitionBuilder;
+        private final NDependencyFilter dependencyFilter;
+        private final NRepositoryFilter repositoryFilter;
+        private final boolean ignoreCurrentEnvironment;
 
-        public NDefDependenciesSupplier(NId id, DefaultNDefinitionBuilder2 foundDefinitionBuilder) {
+        public NDefDependenciesSupplier(NId id, DefaultNDefinitionBuilder2 foundDefinitionBuilder,NRepositoryFilter repositoryFilter,NDependencyFilter dependencyFilter,boolean ignoreCurrentEnvironment) {
             this.id = id;
             this.foundDefinitionBuilder = foundDefinitionBuilder;
+            this.dependencyFilter = dependencyFilter;
+            this.repositoryFilter = repositoryFilter;
+            this.ignoreCurrentEnvironment = ignoreCurrentEnvironment;
         }
 
         @Override
         public NDependencies get() {
             return NDependencySolver.of()
-                    .setIgnoreCurrentEnvironment(DefaultNFetchCmd.this.isIgnoreCurrentEnvironment())
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                    .setIgnoreCurrentEnvironment(ignoreCurrentEnvironment)
+                    .setDependencyFilter(dependencyFilter)
                     .add(id.toDependency(), foundDefinitionBuilder.build())
-                    .setRepositoryFilter(DefaultNFetchCmd.this.getRepositoryFilter())
+                    .setRepositoryFilter(repositoryFilter)
                     .solve();
         }
     }
@@ -449,18 +455,16 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
         private final List<Exception> reasons;
         private NRepositoryAndFetchMode successfulContentLocation;
         private final NWorkspaceUtils wu;
-        private final NSession session;
         private final NFetchStrategy nutsFetchModes;
         private final NId id;
         private final long startTime;
 
-        public NDefContentSupplier(DefaultNDefinitionBuilder2 foundDefinitionBuilder, NRepositoryAndFetchMode successfulDescriptorLocation, NRepositoryAndFetchModeTracker descTracker, List<Exception> reasons, NWorkspaceUtils wu, NSession session, NFetchStrategy nutsFetchModes, NId id, long startTime) {
+        public NDefContentSupplier(DefaultNDefinitionBuilder2 foundDefinitionBuilder, NRepositoryAndFetchMode successfulDescriptorLocation, NRepositoryAndFetchModeTracker descTracker, List<Exception> reasons, NWorkspaceUtils wu, NFetchStrategy nutsFetchModes, NId id, long startTime) {
             this.foundDefinitionBuilder = foundDefinitionBuilder;
             this.successfulDescriptorLocation = successfulDescriptorLocation;
             this.descTracker = descTracker;
             this.reasons = reasons;
             this.wu = wu;
-            this.session = session;
             this.nutsFetchModes = nutsFetchModes;
             this.id = id;
             this.startTime = startTime;
@@ -519,7 +523,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                         NRepositorySPI installedRepositorySPI = wu.repoSPI(installedRepository);
 
                         NPath finalFetchedPath = fetchedPath;
-                        session.copy().setConfirm(NConfirmationMode.YES).runWith(() -> {
+                        NSession.of().copy().setConfirm(NConfirmationMode.YES).runWith(() -> {
                             installedRepositorySPI.deploy()
                                     .setId(foundDefinitionBuilder.getId().get())
                                     .setDescriptor(foundDefinitionBuilder.getDescriptor().get())

@@ -102,7 +102,9 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         NPath storeFolder = nutMainFile.getInstallInformation().get().getInstallFolder();
         HashMap<String, String> map = new HashMap<>();
         HashMap<String, String> envmap = new HashMap<>();
-        NPath nutsJarFile = NFetchCmd.ofNutsApi().getResultPath();
+        NPath nutsJarFile = NFetchCmd.ofNutsApi()
+                .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                .getResultPath();
         if (nutsJarFile != null) {
             map.put("nuts.jar", nutsJarFile.normalize().toString());
         }
@@ -157,6 +159,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 ) {
                     NDefinition nDefinition;
                     nDefinition = NFetchCmd.ofNutsApp()
+                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
                             .getResultDefinition();
                     if (nDefinition.getContent().isPresent()) {
                         return ("<::expand::> " + apply("java") + " -jar " + nDefinition.getContent());

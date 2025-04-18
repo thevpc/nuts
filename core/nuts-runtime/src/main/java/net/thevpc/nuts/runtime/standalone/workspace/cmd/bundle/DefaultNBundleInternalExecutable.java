@@ -90,7 +90,9 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                 if (classPath.containsKey(id.getLongId())) {
                     return this;
                 }
-                NDefinition imdef = NFetchCmd.of(id).getResultDefinition();
+                NDefinition imdef = NFetchCmd.of(id)
+                        .setDependencyFilter(NDependencyFilters.of().byRunnable(false,true))
+                        .getResultDefinition();
                 if (!classPath.containsKey(imdef.getId().getLongId())) {
                     NId resultId = imdef.getId();
                     if (imdef.getDescriptor().isPlatformApplication() || imdef.getDescriptor().isNutsApplication()) {
@@ -118,14 +120,10 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     return this;
                 }
                 List<NDefinition> list = new ArrayList<>();
-
                 NStream<NDefinition> resultDefinitions = NSearchCmd.of().addId(id)
                         .setLatest(true)
                         .setDistinct(true)
-                        .setDependencyFilter(
-                                NDependencyFilters.of().byScope(NDependencyScopePattern.RUN, NDependencyScopePattern.COMPILE)
-                                        .and(NDependencyFilters.of().byRegularType())
-                        )
+                        .setDependencyFilter(NDependencyFilters.of().byRunnable(false,true))
                         .setInlineDependencies(true)
                         .setIgnoreCurrentEnvironment(true)
                         .getResultDefinitions();
@@ -244,6 +242,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                                 || (c >= 'A' && c <= 'Z')
                                 || (c >= '0' && c <= '9')
                                 || (c == '_')
+                                || (c == '-')
                                 || (c == '+')
                                 || (c == '.')
                 ) {

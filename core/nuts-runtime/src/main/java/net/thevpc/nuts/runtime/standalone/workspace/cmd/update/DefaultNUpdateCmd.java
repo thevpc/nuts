@@ -436,13 +436,9 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
 
     private NFetchCmd latestOnlineDependencies() {
         NFetchCmd se=NFetchCmd.of();
-        if (scopes.isEmpty()) {
-            se.addDependencyFilter(NDependencyFilters.of().byRunnable(isOptional()));
-        } else {
+        se.addDependencyFilter(NDependencyFilters.of().byRunnable(isOptional()));
+        if (!scopes.isEmpty()) {
             se.addDependencyFilter(NDependencyFilters.of().byScope(scopes.toArray(new NDependencyScope[0])));
-            if (!isOptional()) {
-                se.addDependencyFilter(NDependencyFilters.of().byOptional(false));
-            }
         }
         return se;
     }
@@ -530,10 +526,6 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                         NDependencyFilters.of().byScope(scopes.toArray(new NDependencyScope[0]))
                 )
                 ;
-    }
-
-    private NFetchCmd fetch0() {
-        return NFetchCmd.of();
     }
 
     private void applyFixes() {
@@ -711,6 +703,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                 try {
                     NId finalOldId = oldId;
                     oldFile = session.copy().setFetchStrategy(NFetchStrategy.ONLINE).callWith(() -> NFetchCmd.of(finalOldId)
+                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
                             .getResultDefinition());
                 } catch (NNotFoundException ex) {
                     //ignore
@@ -744,7 +737,9 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                     try {
                         NId finalOldId1 = oldId;
                         oldFile = session.copy().setFetchStrategy(NFetchStrategy.ONLINE)
-                                .callWith(() -> fetch0().setId(finalOldId1).getResultDefinition());
+                                .callWith(() -> NFetchCmd.of().setId(finalOldId1)
+                                        .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                                        .getResultDefinition());
                     } catch (NNotFoundException ex) {
                         _LOGOP().level(Level.SEVERE).error(ex).log(NMsg.ofC("error : %s", ex));
                         //ignore

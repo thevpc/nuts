@@ -98,7 +98,9 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
         if (!installStatus.isInstalled()) {
             if (autoInstall) {
                 NInstallCmd.of(def.getId()).run();
-                NInstallStatus st = NFetchCmd.of(def.getId()).getResultDefinition().getInstallInformation().get().getInstallStatus();
+                NInstallStatus st = NFetchCmd.of(def.getId())
+                        .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                        .getResultDefinition().getInstallInformation().get().getInstallStatus();
                 if (!st.isInstalled()) {
                     throw new NUnexpectedException(NMsg.ofC("auto installation of %s failed", def.getId()));
                 }

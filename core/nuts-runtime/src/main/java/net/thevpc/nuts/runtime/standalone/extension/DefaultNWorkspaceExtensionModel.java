@@ -321,7 +321,9 @@ public class DefaultNWorkspaceExtensionModel {
 //        }
 //    }
     public Set<Class<? extends NComponent>> discoverTypes(NId id, ClassLoader classLoader) {
-        URL url = NFetchCmd.of(id).getResultContent().toURL().get();
+        URL url = NFetchCmd.of(id)
+                .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                .getResultContent().toURL().get();
         return objectFactory.discoverTypes(id, url, classLoader);
     }
 

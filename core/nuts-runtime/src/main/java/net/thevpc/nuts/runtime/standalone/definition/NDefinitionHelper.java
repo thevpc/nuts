@@ -106,8 +106,9 @@ public class NDefinitionHelper {
                 loaded = true;
                 try {
 //                descriptor = repository.fetchDescriptor().setId(id).setSession(session).getResult();
-                    definition = NFetchCmd.of(id).getResultDefinition();
-
+                    definition = NFetchCmd.of(id)
+                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                            .getResultDefinition();
                 } catch (Exception ex) {
                     //suppose we cannot retrieve descriptor
                     if (LOG.isLoggable(Level.FINER)) {
