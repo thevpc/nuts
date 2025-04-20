@@ -1690,7 +1690,7 @@ public final class NWorkspaceCmdLineParser {
     private static NStoreStrategy parseNutsStoreStrategy(String s) {
         NStoreStrategy m = NStoreStrategy.parse(s).orNull();
         if (m == null && !NBlankable.isBlank(s)) {
-            throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC("unable to parse value for NutsStoreStrategy : %s", s));
+            throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC("unable to parse value for NutsStoreStrategy : %s,", s));
         }
         return m;
     }

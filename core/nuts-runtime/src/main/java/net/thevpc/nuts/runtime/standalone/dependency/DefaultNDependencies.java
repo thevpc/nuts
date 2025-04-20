@@ -7,6 +7,8 @@ import net.thevpc.nuts.util.NIterator;
 import net.thevpc.nuts.util.NStream;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class DefaultNDependencies implements NDependencies {
     private String solver;
@@ -88,6 +90,11 @@ public class DefaultNDependencies implements NDependencies {
         return NStream.ofIterator(
                 NIterator.of(Arrays.asList(mergedNodes).iterator()).withDesc(description)
         );
+    }
+
+    @Override
+    public List<NDependency> toList() {
+        return transitive().toList();
     }
 
     @Override

@@ -79,6 +79,13 @@ public class NJavaSdkUtils {
         }
     }
 
+    public static boolean isJava(NId id) {
+        if(id!=null){
+            return NPlatformFamily.JAVA==NPlatformFamily.parse(id.getArtifactId()).orNull();
+        }
+        return false;
+    }
+
     protected NLogOp _LOGOP() {
         return _LOG().with();
     }
@@ -472,6 +479,48 @@ public class NJavaSdkUtils {
         return bestJavaPath;
     }
 
+    public static int normalizeJavaVersionAsInt(NVersion version) {
+        if(version==null){
+            return -1;
+        }
+        int min=-1;
+        for (NVersionInterval nVersionInterval : version.filter().intervals().orElse(new ArrayList<>())) {
+            String lowerBound = nVersionInterval.getLowerBound();
+            String upperBound = nVersionInterval.getLowerBound();
+            int m = normalizeJavaVersionAsInt0(lowerBound);
+            if(m>0){
+                if(min<m){
+                    min=m;
+                }
+            }
+            m = normalizeJavaVersionAsInt0(upperBound);
+            if(m>0){
+                if(min<m){
+                    min=m;
+                }
+            }
+        }
+        return min;
+    }
+
+    private static int normalizeJavaVersionAsInt0(String sVersion) {
+        if(sVersion==null){
+            return -1;
+        }
+        NVersion v = NVersion.of(sVersion);
+        int i1 = v.getIntegerAt(0).orElse(0);
+        int i2 = v.getIntegerAt(1).orElse(0);
+        if(i1<=0){
+            return -1;
+        }
+        if(i1==1){
+            if(i2 <=1){
+                return i1;
+            }
+            return i2;
+        }
+        return -1;
+    }
     public String resolveJavaCommandByHome(String javaHome) {
         String appSuffix = NWorkspace.of().getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
         String exe = "java" + appSuffix;

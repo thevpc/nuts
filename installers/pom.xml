@@ -12,6 +12,5 @@
 
     <modules>
         <module>nuts-installer</module>
-        <module>nuts-bundle-template</module>
     </modules>
 </project>

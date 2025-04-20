@@ -1098,7 +1098,9 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                                 .setFetchMode(NFetchMode.LOCAL)
                                 .getResult()
                                 .hasNext()) {
-                            NDefinition dd = NSearchCmd.of().addId(parent).setLatest(true)
+                            NDefinition dd = NSearchCmd.of(parent)
+                                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                                    .setLatest(true)
                                     .getResultDefinitions()
                                     .findFirst().orNull();
                             if (dd != null) {
@@ -1203,7 +1205,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                         .setDependencyFilter(NDependencyFilters.of().byRunnable())
                         .setRepositoryFilter(NRepositoryFilters.of().installedRepo())
                         .failFast();
-                if (requireDependencies && def.getDependencies().isPresent()) {
+                if (requireDependencies
+                        && def.getDependencies().isPresent()
+                        && def.getDependencies().get().filter()!=null
+                ) {
                     fetch2.setDependencyFilter(def.getDependencies().get().filter());
                 }
                 NDefinition def2 = fetch2

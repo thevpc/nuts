@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.shell;
 
 import net.thevpc.nuts.NShellFamily;
-import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 public abstract class AbstractPosixShellWriter extends AbstractShellWriter {
@@ -28,6 +27,11 @@ public abstract class AbstractPosixShellWriter extends AbstractShellWriter {
 
     @Override
     protected String lineCommentImpl(String anyString) {
+        return "## " + anyString;
+    }
+
+    @Override
+    protected String codeCommentImpl(String anyString) {
         return "# " + anyString;
     }
 
@@ -41,7 +45,7 @@ public abstract class AbstractPosixShellWriter extends AbstractShellWriter {
     @Override
     public NShellWriter echoOn() {
         // do nothing
-        out().println("set +x");
+        out().println("set -x");
         return this;
     }
 
@@ -57,7 +61,7 @@ public abstract class AbstractPosixShellWriter extends AbstractShellWriter {
         return this;
     }
 
-    public NShellWriter printlnPrepareJavaCommand(String javaCommand, String javaHomeVarName, int minJavaVersion) {
+    public NShellWriter printlnPrepareJavaCommand(String javaCommand, String javaHomeVarName, int minJavaVersion, boolean preferJavaW) {
         out().println("if [ -n \"$" + javaHomeVarName + "\" ] && [ -x \"$" + javaHomeVarName + "/bin/java\" ];  then");
         out().println("    " + javaCommand + "=\"$" + javaHomeVarName + "/bin/java\"\n");
         out().println("elif (type -p java > /dev/null) ; then\n");

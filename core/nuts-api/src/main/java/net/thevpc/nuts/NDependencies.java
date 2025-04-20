@@ -28,6 +28,8 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.util.NIterable;
 import net.thevpc.nuts.util.NStream;
 
+import java.util.List;
+
 /**
  * Package dependencies representation
  *
@@ -86,5 +88,10 @@ public interface NDependencies extends NIterable<NDependency> {
      */
     NStream<NDependencyTreeNode> sourceNodes();
 
+    /**
+     * equivalent to transitive().toList()
+     * @return transitive (all including source) dependencies
+     */
+    List<NDependency> toList();
 
 }

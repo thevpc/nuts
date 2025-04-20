@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.shell;
 
 import net.thevpc.nuts.NShellFamily;
-import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 public class WinCmdShellWriter extends AbstractShellWriter {
@@ -11,6 +10,11 @@ public class WinCmdShellWriter extends AbstractShellWriter {
 
     @Override
     protected String lineCommentImpl(String anyString) {
+        return ":: " + anyString;
+    }
+
+    @Override
+    protected String codeCommentImpl(String anyString) {
         return "REM " + anyString;
     }
 
@@ -57,6 +61,15 @@ public class WinCmdShellWriter extends AbstractShellWriter {
                 return "%" + varName + "%";
             }
         }
+    }
+
+    public NShellWriter printlnPrepareJavaCommand(String javaCommand, String javaHomeVarName, int minJavaVersion, boolean preferJavaW) {
+        if (preferJavaW) {
+            out().println("if [%" + javaCommand + "%] == [] SET \"" + javaCommand + "=javaw.exe\"");
+        } else {
+            out().println("if [%" + javaCommand + "%] == [] SET \"" + javaCommand + "=java.exe\"");
+        }
+        return this;
     }
 
 }

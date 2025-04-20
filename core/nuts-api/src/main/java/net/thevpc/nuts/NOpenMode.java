@@ -114,7 +114,7 @@ public enum NOpenMode implements NEnum {
                 case "O_N":
                 case "OPEN_NULL":
                 case "OPEN_OR_NULL":
-                case "TRY": {
+                case "TRY_OPEN": {
                     return NOptional.of(NOpenMode.OPEN_OR_NULL);
                 }
             }

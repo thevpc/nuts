@@ -179,11 +179,15 @@ public class NutsBundleRunner {
         String commandName = "install";
         String from = null;
         String to = null;
+        Path outputPath = null;
+        boolean executable = false;
         Set<String> acceptableOses = new HashSet<>();
         for (String s : r) {
             if (s.startsWith("-")) {
                 if (readOptionAcceptableOS(s, acceptableOses)) {
                     //ok
+                } else if (s.equals("--executable")) {
+                    executable = true;
                 } else {
                     doLogError("Unsupported option : " + s + " in " + commandToString(commandName, r));
                     return false;
@@ -217,9 +221,9 @@ public class NutsBundleRunner {
                 from = "/" + from;
             }
             fromFullPath = fromFullPath + from;
-            Path p = toPath.getParent();
-            if (p != null) {
-                p.toFile().mkdirs();
+            outputPath = toPath.getParent();
+            if (outputPath != null) {
+                outputPath.toFile().mkdirs();
             }
             doDebug("install " + fromFullPath + " to " + toPath);
             try (InputStream in = createInputStream(fromFullPath)) {
@@ -227,11 +231,19 @@ public class NutsBundleRunner {
                     copyStream(in, os);
                 }
             }
-            return true;
         } catch (Exception ex) {
             doLogError("unable to copy /META-INF" + fromFullPath + " to " + toPath + " : " + ex.toString() + " in " + commandToString(commandName, r));
             return false;
         }
+        try {
+            if (outputPath != null && executable) {
+                toPath.toFile().setExecutable(true);
+            }
+        } catch (Exception ex) {
+            doLogError("unable to make " + toPath + " executable : " + ex.toString() + " in " + commandToString(commandName, r));
+            return false;
+        }
+        return true;
     }
 
 
@@ -318,29 +330,29 @@ public class NutsBundleRunner {
             doDebug("resolve OS Name " + System.getProperty("os.name"));
             String property = System.getProperty("os.name").toLowerCase();
             if (property.startsWith("linux")) {
-                osFamilies=new LinkedHashSet<>(Arrays.asList("linux","posix"));
+                osFamilies = new LinkedHashSet<>(Arrays.asList("linux", "posix"));
             } else if (property.startsWith("win")) {
-                osFamilies=new LinkedHashSet<>(Arrays.asList("windows"));
+                osFamilies = new LinkedHashSet<>(Arrays.asList("windows"));
             } else if (property.startsWith("mac")) {
-                osFamilies=new LinkedHashSet<>(Arrays.asList("macos"));
+                osFamilies = new LinkedHashSet<>(Arrays.asList("macos"));
             } else if (property.startsWith("sunos") || property.startsWith("solaris")) {
-                osFamilies=new LinkedHashSet<>(Arrays.asList("sunos","posix"));
+                osFamilies = new LinkedHashSet<>(Arrays.asList("sunos", "posix", "unix"));
             } else if (property.startsWith("zos")) {
-                osFamilies=new LinkedHashSet<>(Arrays.asList("zos","posix"));
+                osFamilies = new LinkedHashSet<>(Arrays.asList("zos", "posix", "unix"));
             } else if (property.startsWith("freebsd")) {
-                osFamilies=new LinkedHashSet<>(Arrays.asList("freebsd","posix"));
+                osFamilies = new LinkedHashSet<>(Arrays.asList("freebsd", "posix", "unix"));
             } else if (property.startsWith("openbsd")) {
-                osFamilies=new LinkedHashSet<>(Arrays.asList("openbsd","posix"));
+                osFamilies = new LinkedHashSet<>(Arrays.asList("openbsd", "posix", "unix"));
             } else if (property.startsWith("netbsd")) {
-                osFamilies=new LinkedHashSet<>(Arrays.asList("netbsd","posix"));
+                osFamilies = new LinkedHashSet<>(Arrays.asList("netbsd", "posix", "unix"));
             } else if (property.startsWith("aix")) {
-                osFamilies=new LinkedHashSet<>(Arrays.asList("aix","posix"));
+                osFamilies = new LinkedHashSet<>(Arrays.asList("aix", "posix", "unix"));
             } else if (property.startsWith("hpux")) {
-                osFamilies=new LinkedHashSet<>(Arrays.asList("hpux","posix"));
+                osFamilies = new LinkedHashSet<>(Arrays.asList("hpux", "posix", "unix"));
             } else if (property.startsWith("os400") && property.length() <= 5 || !Character.isDigit(property.charAt(5))) {
-                osFamilies=new LinkedHashSet<>(Arrays.asList("os400"));
+                osFamilies = new LinkedHashSet<>(Arrays.asList("os400", "unix"));
             } else {
-                osFamilies=new LinkedHashSet<>(Arrays.asList("unknown"));
+                osFamilies = new LinkedHashSet<>(Arrays.asList("unknown"));
             }
             doDebug("resolve OS Family as " + osFamilies);
         }
@@ -375,6 +387,12 @@ public class NutsBundleRunner {
             return true;
         } else if (options.equals("--macos")) {
             acceptableOses.add("macos");
+            return true;
+        } else if (options.equals("--unix")) {
+            acceptableOses.add("unix");
+            return true;
+        } else if (options.equals("--unknown")) {
+            acceptableOses.add("unknown");
             return true;
         }
         return false;

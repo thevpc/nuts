@@ -191,7 +191,8 @@ public class NdiScriptOptions implements Cloneable {
     }
 
     public NDefinition resolveNutsApiDef() {
-        return NSearchCmd.of().addId(resolveNutsApiId())
+        return NSearchCmd.of(resolveNutsApiId())
+                .setDependencyFilter(NDependencyFilters.of().byRunnable())
                 .latest()
                 .failFast()
                 .distinct()

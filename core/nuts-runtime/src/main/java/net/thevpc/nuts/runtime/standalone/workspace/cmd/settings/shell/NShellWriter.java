@@ -15,6 +15,9 @@ public interface NShellWriter {
             case ZSH: {
                 return NOptional.of(new ZshShellWriter());
             }
+            case SH: {
+                return NOptional.of(new ShShellWriter());
+            }
             case WIN_CMD: {
                 return NOptional.of(new WinCmdShellWriter());
             }
@@ -22,9 +25,13 @@ public interface NShellWriter {
         return NOptional.ofNamedEmpty(family.id() + " shell writer");
     }
 
-    boolean isCommentsMode();
+    boolean isDisableCommand();
 
-    NShellWriter setCommentsMode(boolean commentsMode);
+    NShellWriter setEnableCommands();
+
+    NShellWriter setDisableCommands();
+
+    NShellWriter setDisableCommands(boolean disableCommand);
 
     NShellWriter printlnSetVarScriptPath(String varName);
 
@@ -45,4 +52,6 @@ public interface NShellWriter {
     NShellWriter printlnCommand(String any);
 
     String build();
+
+    NShellWriter printlnPrepareJavaCommand(String javaCommand, String javaHomeVarName, int minJavaVersion, boolean preferJavaW);
 }

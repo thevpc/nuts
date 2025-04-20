@@ -10,9 +10,10 @@
         <module>nuts-api</module>
         <module>nuts-lib</module>
         <module>nuts-app</module>
-        <module>nuts-app-full</module>
+        <module>nuts-bundle-template</module>
         <module>nuts-runtime</module>
         <module>nuts-boot-swing</module>
+        <module>nuts-app-full</module>
     </modules>
     <properties>
     </properties>

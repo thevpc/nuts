@@ -7,7 +7,7 @@ import net.thevpc.nuts.util.NStringBuilder;
 public abstract class AbstractShellWriter implements NShellWriter {
     private NShellFamily family;
     private NStringBuilder out = new NStringBuilder();
-    private boolean commentsMode;
+    private boolean disableCommand;
 
     public AbstractShellWriter(NShellFamily family) {
         this.family = family;
@@ -17,8 +17,8 @@ public abstract class AbstractShellWriter implements NShellWriter {
         return out;
     }
 
-    public boolean isCommentsMode() {
-        return commentsMode;
+    public boolean isDisableCommand() {
+        return disableCommand;
     }
 
     @Override
@@ -26,14 +26,26 @@ public abstract class AbstractShellWriter implements NShellWriter {
         return printlnSetVar(varName, "${" + varName + "}" + varExpr);
     }
 
-    public NShellWriter setCommentsMode(boolean commentsMode) {
-        this.commentsMode = commentsMode;
+    @Override
+    public NShellWriter setEnableCommands() {
+        return setDisableCommands(false);
+    }
+
+    @Override
+    public NShellWriter setDisableCommands() {
+        return setDisableCommands(true);
+    }
+
+    public NShellWriter setDisableCommands(boolean disableCommand) {
+        this.disableCommand = disableCommand;
         return this;
     }
 
     protected void printlnCommandImpl(String any) {
-        if (isCommentsMode()) {
-            out().println(lineCommentImpl(any));
+        if (isDisableCommand()) {
+            new NStringBuilder(any).lines().forEach(x -> {
+                out.println(codeCommentImpl(x));
+            });
         } else {
             out().println(any);
         }
@@ -60,6 +72,7 @@ public abstract class AbstractShellWriter implements NShellWriter {
 
     protected abstract String lineCommentImpl(String anyString);
 
+    protected abstract String codeCommentImpl(String anyString);
 
     @Override
     public String build() {

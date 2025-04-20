@@ -1908,7 +1908,7 @@ public final class NBootWorkspaceCmdLineParser {
             case "":
                 return null;
         }
-        throw new NBootException(NBootMsg.ofC("unable to parse value for NStoreStrategy : %s", s));
+        throw new NBootException(NBootMsg.ofC("unable to parse value for NStoreStrategy : %s, possible values include : exploded, standalone", s));
     }
 
     private static String parseIsolationLevel(String s) {
@@ -1924,7 +1924,7 @@ public final class NBootWorkspaceCmdLineParser {
             case "":
                 return null;
         }
-        throw new NBootException(NBootMsg.ofC("unable to parse value for NStoreStrategy : %s", s));
+        throw new NBootException(NBootMsg.ofC("unable to parse value for NStoreStrategy : %s, possible values include : system, user, confined, sandbox", s));
     }
 
     private static String parseFetchStrategy(String s) {
@@ -1940,7 +1940,7 @@ public final class NBootWorkspaceCmdLineParser {
             case "":
                 return null;
         }
-        throw new NBootException(NBootMsg.ofC("unable to parse value for NFetchStrategy : %s", s));
+        throw new NBootException(NBootMsg.ofC("unable to parse value for NFetchStrategy : %s, possible values include : offline, online, anywhere, remote", s));
     }
 
     private static String parseSupportMode(String s) {
@@ -1961,7 +1961,7 @@ public final class NBootWorkspaceCmdLineParser {
             case "":
                 return null;
         }
-        throw new NBootException(NBootMsg.ofC("unable to parse value for NSupportMode : %s", s));
+        throw new NBootException(NBootMsg.ofC("unable to parse value for NSupportMode : %s, possible values include : supported, preferred, always, never", s));
     }
 
     private static String parseStoreType(String s) {
@@ -1986,7 +1986,7 @@ public final class NBootWorkspaceCmdLineParser {
             case "":
                 return null;
         }
-        throw new NBootException(NBootMsg.ofC("unable to parse value for NStoreType : %s", s));
+        throw new NBootException(NBootMsg.ofC("unable to parse value for NStoreType : %s, possible values include : cache, bin, conf, vqr, log, temp, lib, run", s));
     }
 
     private static String parseTerminalMode(String s) {
@@ -2010,7 +2010,7 @@ public final class NBootWorkspaceCmdLineParser {
             case "":
                 return null;
         }
-        throw new NBootException(NBootMsg.ofC("unable to parse value for NTerminalMode : %s", s));
+        throw new NBootException(NBootMsg.ofC("unable to parse value for NTerminalMode : %s, possible values include : default, system, inherited, ansi, formatted, filtered", s));
     }
 
 
@@ -2118,12 +2118,12 @@ public final class NBootWorkspaceCmdLineParser {
             case "ON":
             case "O_N":
             case "OPEN_NULL":
-            case "TRY":
+            case "TRY_OPEN":
                 return "OPEN_OR_NULL";
             case "":
                 return null;
         }
-        throw new NBootException(NBootMsg.ofC("unable to parse value for NutsOpenMode : %s", s));
+        throw new NBootException(NBootMsg.ofC("unable to parse value for NutsOpenMode : %s, possible values include : open-or-create, create, open, try-open", s));
     }
 
     public static Level parseLogLevel(String value) {

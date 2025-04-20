@@ -727,7 +727,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
             return getPreferredIconPath(rt);
         }
-        NDefinition appDef = NSearchCmd.of().addId(appId).setLatest(true).setDistinct(true).getResultDefinitions()
+        NDefinition appDef = NSearchCmd.of(appId)
+                .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                .setLatest(true).setDistinct(true).getResultDefinitions()
                 .findSingleton().get();
         String descAppIcon = resolveBestIcon(appDef.getId(),appDef.getDescriptor().getIcons());
         if (descAppIcon == null) {

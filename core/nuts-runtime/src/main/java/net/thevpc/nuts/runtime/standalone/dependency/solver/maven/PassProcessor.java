@@ -20,7 +20,7 @@ class PassProcessor {
     LinkedHashSet<NDependency> immediates = new LinkedHashSet<>();
     NDependencyInfoSet mergedVisitedSet = new NDependencyInfoSet();
     NDependencyInfoSet nonMergedVisitedSet = new NDependencyInfoSet();
-    NDependencyFilter effDependencyFilter = null;
+//    NDependencyFilter effDependencyFilter = null;
     NDependencyTreeNodeBuild currentNode;
     int currentDepth;
 
@@ -66,7 +66,7 @@ class PassProcessor {
                     currentNode.includedInClassPath = true;
                     List<NDependency> immediate = CoreFilterUtils.filterDependencies(id,
                             currentNode.getEffectiveDescriptor().getDependencies(),
-                            effDependencyFilter);
+                            mavenNDependencySolver.effDependencyFilter);
                     immediates.addAll(immediate);
                 } else {
                     return;
@@ -143,7 +143,7 @@ class PassProcessor {
                 .toArray(NDependency[]::new);
         return new DefaultNDependencies(
                 mavenNDependencySolver.getName(),
-                sourceIds.toArray(new NId[0]), effDependencyFilter,
+                sourceIds.toArray(new NId[0]), mavenNDependencySolver.getDependencyFilter(),
                 immediates.toArray(new NDependency[0]),
                 nonMergedDepsList,
                 nonMergedRootNodes.toArray(new NDependencyTreeNode[0]),

@@ -308,6 +308,16 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
+    public NOptional<NArg> peekNonOption() {
+        return get(0).filter(x->x.isNonOption());
+    }
+
+    @Override
+    public NOptional<NArg> peekOption() {
+        return get(0).filter(x->x.isOption());
+    }
+
+    @Override
     public boolean hasNext() {
         return !lookahead.isEmpty() || !args.isEmpty();
     }

@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.bundle;
 
+import net.thevpc.nuts.NOsFamily;
 import net.thevpc.nuts.util.NStringBuilder;
 
 class NutsBundleFilesConfig {
@@ -12,31 +13,36 @@ class NutsBundleFilesConfig {
         );
     }
 
-    public void installWindows(String from, String to) {
-        text.println("install --windows "
+    public void install(NOsFamily osFamily, String from, String to) {
+        if (osFamily == null) {
+            install(from, to);
+            return;
+        }
+        text.println("install --" + osFamily.id() + " "
                 + from
                 + " "
                 + to
         );
     }
 
-    public void installPosixExecutable(String from, String to) {
-        installPosix(from, to);
-        setExecutablePosix(to);
-    }
-
-    public void setExecutablePosix(String to) {
-        text.println("set-executable --posix "
-                + to
-        );
-    }
-
-    public void installPosix(String from, String to) {
-        text.println("install --posix "
+    public void installExecutable(NOsFamily osFamily, String from, String to) {
+        if (osFamily == null) {
+            install(from, to);
+            return;
+        }
+        text.println("install --" + osFamily.id() + " "
                 + from
                 + " "
                 + to
         );
+        switch (osFamily) {
+            case UNIX:
+            case LINUX:
+            case MACOS: {
+                text.println("set-executable --" + osFamily.id() + " " + to);
+                break;
+            }
+        }
     }
 
     @Override
