@@ -56,7 +56,7 @@ public class NIdPathIterator extends NIteratorBase<NId> {
     private final String kind;
 
     public NIdPathIterator(NRepository repository, NPath rootFolder, NPath basePath, NDefinitionFilter filter, NIdPathIteratorModel model, int maxDepth, String kind, NObjectElement extraProperties, boolean bfs) {
-        this.stack = bfs?new OneQueue<>():new OneStack<>();
+        this.stack = bfs ? new OneQueue<>() : new OneStack<>();
         this.repository = repository;
         this.extraProperties = extraProperties;
         this.kind = kind;
@@ -85,10 +85,10 @@ public class NIdPathIterator extends NIteratorBase<NId> {
                 .name("ScanPath")
                 .set("repository", repository == null ? null : repository.getName())
                 .set("filter", NEDesc.describeResolveOrDestruct(filter))
-                .set("path", NElements.of().toElement(basePath))
+                .add(basePath == null ? null : NElements.of().ofPair("path", NElements.of().toElement(basePath)))
                 .set("root", NElements.of().toElement(rootFolder))
-                .set("maxDepth", maxDepth)
-                .addAll(extraProperties)
+                .add((maxDepth < 0 || maxDepth == Integer.MAX_VALUE) ? null : NElements.of().ofPair("maxDepth", maxDepth))
+                .addAll(extraProperties==null?null:extraProperties.children())
                 .build();
     }
 
@@ -99,18 +99,18 @@ public class NIdPathIterator extends NIteratorBase<NId> {
             PathAndDepth file = stack.remove();
             NSession session = repository.getWorkspace().currentSession();
             if (file.folder) {
-                session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm()));
+                session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s (for %s) in %s", repository.getName(), kind, "search folder", filter, file.path.toCompressedForm()));
                 visitedFoldersCount++;
                 NPath[] children = new NPath[0];
                 try {
                     children = file.path.stream().toArray(NPath[]::new);
                 } catch (NIOException ex) {
                     //just log without stack trace!
-                    session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), NText.ofStyledError("failed!")));
+                    session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s (for %s) in %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), filter, NText.ofStyledError("failed!")));
                     NLogOp.of(NIdPathIterator.class).level(Level.FINE)//.error(ex)
                             .log(NMsg.ofJ("error listing : {0} : {1} : {2}", file.path, toString(), ex.toString()));
                 } catch (Exception ex) {
-                    session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), NText.ofStyledError("failed!")));
+                    session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s (for %s) in %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), filter, NText.ofStyledError("failed!")));
                     NLogOp.of(NIdPathIterator.class).level(Level.FINE).error(ex)
                             .log(NMsg.ofJ("error listing : {0} : {1}", file.path, toString()));
                 }
@@ -182,8 +182,8 @@ public class NIdPathIterator extends NIteratorBase<NId> {
         }
     }
 
-    private static class OneStack<T> implements StackOrQueue<T>{
-        private Stack<T> all=new Stack<T>();
+    private static class OneStack<T> implements StackOrQueue<T> {
+        private Stack<T> all = new Stack<T>();
 
         @Override
         public void add(T t) {
@@ -200,8 +200,9 @@ public class NIdPathIterator extends NIteratorBase<NId> {
             return all.isEmpty();
         }
     }
-    private static class OneQueue<T> implements StackOrQueue<T>{
-        private LinkedList<T> all=new LinkedList<>();
+
+    private static class OneQueue<T> implements StackOrQueue<T> {
+        private LinkedList<T> all = new LinkedList<>();
 
         @Override
         public void add(T t) {
@@ -218,9 +219,12 @@ public class NIdPathIterator extends NIteratorBase<NId> {
             return all.isEmpty();
         }
     }
-    private interface StackOrQueue<T>{
+
+    private interface StackOrQueue<T> {
         void add(T t);
+
         T remove();
+
         boolean isEmpty();
     }
 }

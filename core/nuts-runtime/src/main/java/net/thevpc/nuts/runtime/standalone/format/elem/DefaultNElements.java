@@ -382,6 +382,61 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     @Override
+    public NPairElement ofPair(String key, Boolean value) {
+        return ofPair(ofNameOrString(key), ofBoolean(value));
+    }
+
+    @Override
+    public NPairElement ofPair(String key, Short value) {
+        return ofPair(ofNameOrString(key), ofShort(value));
+    }
+
+    @Override
+    public NPairElement ofPair(String key, Byte value) {
+        return ofPair(ofNameOrString(key), ofByte(value));
+    }
+
+    @Override
+    public NPairElement ofPair(String key, Integer value) {
+        return ofPair(ofNameOrString(key), ofInt(value));
+    }
+
+    @Override
+    public NPairElement ofPair(String key, Long value) {
+        return ofPair(ofNameOrString(key), ofLong(value));
+    }
+
+    @Override
+    public NPairElement ofPair(String key, String value) {
+        return ofPair(ofNameOrString(key), ofString(value));
+    }
+
+    @Override
+    public NPairElement ofPair(String key, Double value) {
+        return ofPair(ofNameOrString(key), ofDouble(value));
+    }
+
+    @Override
+    public NPairElement ofPair(String key, Instant value) {
+        return ofPair(ofNameOrString(key), ofInstant(value));
+    }
+
+    @Override
+    public NPairElement ofPair(String key, LocalDate value) {
+        return ofPair(ofNameOrString(key), ofLocalDate(value));
+    }
+
+    @Override
+    public NPairElement ofPair(String key, LocalDateTime value) {
+        return ofPair(ofNameOrString(key), ofLocalDateTime(value));
+    }
+
+    @Override
+    public NPairElement ofPair(String key, LocalTime value) {
+        return ofPair(ofNameOrString(key), ofLocalTime(value));
+    }
+
+    @Override
     public NPairElementBuilder ofPairBuilder(NElement key, NElement value) {
         return new DefaultNPairElementBuilder(
                 key == null ? ofNull() : key,

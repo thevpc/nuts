@@ -638,13 +638,19 @@ public class NDescriptorUtils {
             NDescriptorProperty p = finalProperties.get(s);
             if (p != null) {
                 NEnvCondition cc = p.getCondition();
-                if (NBlankable.isBlank(cc)) {
-                    return p.getValue().asString().orNull();
-                } else {
-                    throw new IllegalArgumentException("unsupported condition " + cc + " for " + p);
+                if(isAcceptProfiles(cc.getProfiles())) {
+                    if (NBlankable.isBlank(cc)) {
+                        return p.getValue().asString().orNull();
+                    } else {
+                        throw new IllegalArgumentException("unsupported condition " + cc + " for " + p);
+                    }
                 }
             }
             return null;
+        }
+
+        private boolean isAcceptProfiles(List<String> profiles) {
+            return profiles.isEmpty();
         }
     }
 }

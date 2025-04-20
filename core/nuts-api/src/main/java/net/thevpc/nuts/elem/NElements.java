@@ -427,6 +427,26 @@ public interface NElements extends NContentTypeFormat {
 
     NPairElement ofPair(String key, NElement value);
 
+    NPairElement ofPair(String key, Boolean value);
+
+    NPairElement ofPair(String key, Byte value);
+    NPairElement ofPair(String key, Short value);
+    NPairElement ofPair(String key, Integer value);
+
+    NPairElement ofPair(String key, Long value);
+
+    NPairElement ofPair(String key, String value);
+
+    NPairElement ofPair(String key, Double value);
+
+    NPairElement ofPair(String key, Instant value);
+
+    NPairElement ofPair(String key, LocalDate value);
+
+    NPairElement ofPair(String key, LocalDateTime value);
+
+    NPairElement ofPair(String key, LocalTime value);
+
     NPairElementBuilder ofPairBuilder(NElement key, NElement value);
 
     NPairElementBuilder ofPairBuilder();
@@ -508,9 +528,9 @@ public interface NElements extends NContentTypeFormat {
 
     NPrimitiveElement ofDouble(double value);
 
-    NPrimitiveElement ofDouble(Double value,String suffix);
+    NPrimitiveElement ofDouble(Double value, String suffix);
 
-    NPrimitiveElement ofDouble(double value,String suffix);
+    NPrimitiveElement ofDouble(double value, String suffix);
 
     NPrimitiveElement ofDoubleComplex(double real);
 

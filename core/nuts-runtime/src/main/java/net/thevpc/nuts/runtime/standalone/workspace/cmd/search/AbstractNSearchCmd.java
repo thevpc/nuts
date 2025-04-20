@@ -74,6 +74,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     protected boolean includeBasePackage = true;
     protected boolean sorted = false;
     protected boolean ignoreCurrentEnvironment;
+    protected boolean describe;
     protected SearchExecType execType = null;
     protected NVersion targetApiVersion = null;
 
@@ -648,6 +649,10 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
                 cmdLine.withNextFlag((v, r) -> this.setInlineDependencies(v));
                 return true;
             }
+            case "--describe": {
+                cmdLine.withNextFlag((v, r) -> this.describe=v);
+                return true;
+            }
             case "-L":
             case "--latest":
             case "--latest-versions": {
@@ -986,6 +991,10 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NSearchCmd run() {
+        if(describe){
+            NOut.println(getResultQueryPlan());
+            return this;
+        }
         NIterator<Object> it = runIterator();
         NSession session = NSession.of();
         NIteratorBuilder.of(it)
