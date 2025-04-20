@@ -151,8 +151,8 @@ public class DefaultNSearchInfoBuilder {
                     nutsId2.addAll(installedIds);
                 } else {
                     for (String aImport : NWorkspace.of().getAllImports()) {
-                        nutsId2.add(nutsId.builder().setGroupId(aImport).build());
                         nutsId2.add(nutsId.builder().setGroupId(aImport + "." + nutsId.getArtifactId()).build());
+                        nutsId2.add(nutsId.builder().setGroupId(aImport).build());
                     }
                 }
             }

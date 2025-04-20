@@ -98,10 +98,8 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
         NElements elems = NElements.of();
         if (regularIds.length > 0) {
             for (DefaultNSearchInfo.RegularId rid : regularIds) {
-                NId[] nutsId2 = rid.expandedIds;
-
-                List<NIterator<? extends NId>> toConcat = new ArrayList<>();
-                for (NId nutsId1 : nutsId2) {
+                List<NIterator<? extends NId>> resultForEachAlternative = new ArrayList<>();
+                for (NId nutsId1 : rid.expandedIds) {
                     if (NDependencyScope.parse(nutsId1.toDependency().getScope()).orNull() == NDependencyScope.SYSTEM) {
                         // TODO, fix me
                         //just ignore or should we still support it?
@@ -168,31 +166,13 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                                 }
                             }
                         }
-                        toConcat.add(fetchMode.isStopFast()
+                        resultForEachAlternative.add(fetchMode.isStopFast()
                                 ? NIteratorUtils.coalesce(NIteratorUtils.concat(idLocal), NIteratorUtils.concat(idRemote))
                                 : NIteratorUtils.concatLists(idLocal, idRemote)
                         );
                     }
                 }
-                allResults.add(NIteratorUtils.concat(toConcat));
-//                if (nutsId.getGroupId() == null) {
-//                    //now will look with *:artifactId pattern
-//                    NSearchCmd search2 = NSearchCmd.of()
-//                            .setRepositoryFilter(search.getRepositoryFilter())
-//                            .setDefinitionFilter(
-//                                    NDefinitionFilters.of().byName(nutsId.builder().setGroupId("").build().toString())
-//                                            .and(search.getDefinitionFilter())
-//                            );
-//                    NIterator<NId> extraResult = search2.getResultIds().iterator();
-//                    allResults.add(
-//                            fetchMode.isStopFast() ?
-//                                    NIteratorUtils.coalesce(NIteratorUtils.concat(toConcat), extraResult)
-//                                    : NIteratorUtils.concat(NIteratorUtils.concat(toConcat), extraResult)
-//                    );
-//                } else {
-//                    allResults.add(NIteratorUtils.concat(toConcat));
-//                }
-
+                allResults.add(NIteratorUtils.coalesce(resultForEachAlternative));
             }
         } else {
             NDefinitionFilter filter = search.getDefinitionFilter();
@@ -202,7 +182,6 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                     fetchMode
             )) {
                 consideredRepos.add(repoAndMode.getRepository());
-//                NSession finalSession1 = session;
                 all.add(
                         NIteratorBuilder.ofSupplier(() -> wu.repoSPI(repoAndMode.getRepository()).search()
                                                 .setFilter(filter)

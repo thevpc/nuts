@@ -51,7 +51,7 @@ public class NStringMapFormat {
         }
     };
     public static NStringMapFormat URL_FORMAT = NStringMapFormatBuilder.of().setEqualsChars("=").setSeparatorChars("&").setSort(true).setEncoder(URL_ENCODER).setDecoder(URL_DECODER).setAcceptNullKeys(false).build();
-    public static NStringMapFormat HTTP_HEADER_FORMAT = NStringMapFormatBuilder.of().setEqualsChars("=").setSeparatorChars(";").setSort(false).setEncoder(URL_ENCODER).setDecoder(URL_DECODER).setAcceptNullKeys(false).build();
+    public static NStringMapFormat HTTP_HEADER_FORMAT = NStringMapFormatBuilder.of().setEqualsChars("=").setSeparatorChars(";").setDoubleQuoteSupported(true).setSort(false).setEncoder(URL_ENCODER).setDecoder(URL_DECODER).setAcceptNullKeys(false).build();
     public static NStringMapFormat COMMA_FORMAT = NStringMapFormatBuilder.of().setEqualsChars("=").setSeparatorChars(",").setEscapeChars("\\").setSort(true).setQuoteSupported(true).setAcceptNullKeys(false).build();
     public static NStringMapFormat DEFAULT = URL_FORMAT;
 

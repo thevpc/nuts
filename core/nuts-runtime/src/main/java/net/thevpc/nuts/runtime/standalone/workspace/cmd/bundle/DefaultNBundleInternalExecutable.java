@@ -87,7 +87,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
 
         ResultingIds resultingIds = new ResultingIds();
 
-        NTrace.println(NMsg.ofC(NI18n.of("computing dependencies for %s"), boptions.ids));
+        NTrace.println(NMsg.ofC(NI18n.of("resolving dependencies for %s"), boptions.ids));
         NChronometer chrono = NChronometer.startNow();
         resultingIds
                 .addAllId(boptions.ids.toArray(new String[0]))
@@ -194,7 +194,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         bundleFolder.mkdirs();
 
         NCp cp = NCp.of();
-        if ("jar".equals(format)) {
+        if (format==BundleType.JAR) {
             cp
                     .from(getClass().getResource("/META-INF/bundle/NutsBundleRunner.class.template"))
                     .setMkdirs(true)
@@ -364,7 +364,6 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     break;
             }
             NShellWriter out = NShellWriter.of(shellFamily).get();
-            String dotExe = osFamily == NOsFamily.WINDOWS ? ".exe" : "";
             String dotBatOrSh = osFamily == NOsFamily.WINDOWS ? ".bat" : ".sh";
             String dotBatOrNothing = osFamily == NOsFamily.WINDOWS ? ".bat" : "";
             out
@@ -399,7 +398,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     .setDisableCommands(true).printlnSetAppendVar("NS_JAVA_OPTIONS", " --embedded")
                     .setDisableCommands(false)
                     .println()
-                    .printlnCommand("$NS_JAVA" + dotExe + " $NS_JAVA_OPTIONS -jar \"$NS_WS_JAR\" $NS_WS_OPTIONS " +
+                    .printlnCommand("$NS_JAVA $NS_JAVA_OPTIONS -jar \"$NS_WS_JAR\" $NS_WS_OPTIONS " +
                             (NConstants.Ids.NUTS_APP.equals(mainIdStr.getShortName()) ? "" : ("\"" + mainIdStr + "\""))
                             + " ${*}")
             ;

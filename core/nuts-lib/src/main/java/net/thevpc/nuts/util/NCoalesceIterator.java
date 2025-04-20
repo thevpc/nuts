@@ -53,7 +53,11 @@ public class NCoalesceIterator<T> extends NIteratorBase<T> {
         if (child == null) {
             throw new NullPointerException();
         }
-        children.add(child);
+        if (child instanceof NCoalesceIterator) {
+            children.addAll(((NCoalesceIterator<? extends T>) child).children);
+        } else {
+            children.add(child);
+        }
         size++;
     }
 

@@ -1,5 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.rnsh;
 
+import com.sun.org.apache.xml.internal.security.utils.I18n;
+import net.thevpc.nuts.NI18n;
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.*;
@@ -313,19 +315,19 @@ public class RnshHttpClient {
         c2.setProtocol("https");
         switch (c.getProtocol()) {
             case "rnsh":
-            case "rnsh-http":{
+            case "rnsh-http": {
                 c2.setProtocol("http");
                 break;
             }
             case "rnshs":
-            case "rnsh-https":{
+            case "rnsh-https": {
                 c2.setProtocol("https");
                 break;
             }
         }
         c2.setHost(c.getHost());
         c2.setPort(c.getPort());
-        c2.setPath(NStringUtils.pjoin("/",context, extra));
+        c2.setPath(NStringUtils.pjoin("/", context, extra));
         return c2.toString();
     }
 
@@ -358,8 +360,20 @@ public class RnshHttpClient {
     }
 
     public ExecResult exec(String[] command, NInputContentProvider inputSource) {
+        String cmdString;
+        if (NBlankable.isBlank(command)) {
+            return new ExecResult(
+                    254,
+                    NInputSource.of(NInputSource.of(new byte[0])),
+                    NInputSource.of(NI18n.of("missing command").getBytes())
+            );
+        } else if (command.length == 1) {
+            cmdString = command[0];
+        } else {
+            cmdString = NCmdLine.of(command).toString();
+        }
         NWebResponse r = NWebCli.of().POST(resolveUrl("exec"))
-                .setFormData("command", NCmdLine.of(command == null ? new String[0] : command).toString())
+                .setFormData("command", cmdString)
                 .setFormData(inputSource == null ? null : "in", inputSource)
                 .doWith(this::prepareSecurity)
                 .run();

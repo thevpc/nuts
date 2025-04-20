@@ -195,8 +195,10 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                     RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                     if (remoteInfo0 != null) {
                         String[] ts = command == null ? new String[0] : command.toArray(new String[0]);
-                        return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, getCommandDefinition(),
+                        return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec,
+                                getCommandDefinition(),
                                 getCommandDefinition().getId().toString(),
+                                NCmdLine.of(ts).toString(),
                                 ts, getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
                     } else {
                         String[] ts = command == null ? new String[0] : command.toArray(new String[0]);
@@ -378,15 +380,16 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                 if (remoteInfo0 != null) {
                     NAssert.requireNonBlank(command, "command");
                     List<String> ts = new ArrayList<>(command);
-                    NDefinition def2 = NSearchCmd.of()
-                            .addId(session.getWorkspace().getApiId())
-                            .latest()
-                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                            .failFast()
-                            .getResultDefinitions()
-                            .findFirst().get();
-                    return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, def2,
-                            def2.getId().toString(),
+//                    NDefinition def2 = NSearchCmd.of()
+//                            .addId(session.getWorkspace().getApiId())
+//                            .latest()
+//                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
+//                            .failFast()
+//                            .getResultDefinitions()
+//                            .findFirst().get();
+                    return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, null,
+                            !ts.isEmpty() ?ts.get(0):"",
+                            (!NBlankable.isBlank(getTarget()) && ts.size()==1)? ts.get(0):NCmdLine.of(ts).toString(),
                             ts.toArray(new String[0]), getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
                 } else {
                     CharacterizedExecFile c = null;
@@ -482,7 +485,9 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                             .failFast()
                             .getResultDefinitions()
                             .findFirst().get();
-                    return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, def2, id,ts.toArray(new String[0]),getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
+                    return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, def2, id,
+                            NCmdLine.of(ts).toString(),
+                            ts.toArray(new String[0]),getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
 
                 } else {
                     if (idToExec != null) {
@@ -691,7 +696,9 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     }
 
     private NExecutableInformationExt _runRemoteInternalCommand(String goodKw, RemoteInfo0 remoteInfo0) {
-        return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, null/*def2*/, goodKw,command.toArray(new String[0]), getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
+        return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, null/*def2*/, goodKw,
+                NCmdLine.of(command).toString(),
+                command.toArray(new String[0]), getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
     }
 
     protected NId findExecId(NId nid, NSession traceSession, boolean forceInstalled, boolean ignoreIfUserCommand) {

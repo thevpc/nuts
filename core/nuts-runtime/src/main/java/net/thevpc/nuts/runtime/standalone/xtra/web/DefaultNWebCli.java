@@ -41,7 +41,7 @@ public class DefaultNWebCli implements NWebCli {
     public static int getGlobalConnectionTimeoutOrDefault() {
         Integer v = getGlobalConnectionTimeout();
         if (v == null) {
-            return 1000;
+            return 30000;
         }
         return v;
     }
@@ -49,7 +49,8 @@ public class DefaultNWebCli implements NWebCli {
     public static Integer getGlobalReadConnectionTimeoutOrDefault() {
         Integer v = getGlobalReadTimeout();
         if (v == null) {
-            return getGlobalConnectionTimeoutOrDefault();
+//            return getGlobalConnectionTimeoutOrDefault();
+            return 30000;
         }
         return v;
     }
