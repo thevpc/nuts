@@ -29,6 +29,7 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.util.NConnexionString;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.Collection;
@@ -49,11 +50,11 @@ public interface NExecCmd extends NWorkspaceCmd {
         return NExtensions.of(NExecCmd.class);
     }
 
-    static NExecCmd of(String ...cmd) {
+    static NExecCmd of(String... cmd) {
         return of().addCommand(cmd);
     }
 
-    static NExecCmd ofSystem(String ...cmd) {
+    static NExecCmd ofSystem(String... cmd) {
         return of().addCommand(cmd).system();
     }
 
@@ -71,7 +72,7 @@ public interface NExecCmd extends NWorkspaceCmd {
      * stated in the output message
      *
      * @param failFast failFast if true an exception will be thrown if exit code
-     * is not zero
+     *                 is not zero
      * @return {@code this} instance
      */
     NExecCmd setFailFast(boolean failFast);
@@ -220,7 +221,7 @@ public interface NExecCmd extends NWorkspaceCmd {
     /**
      * set or unset env property. the property is unset if the value is null.
      *
-     * @param key env key
+     * @param key   env key
      * @param value env value
      * @return {@code this} instance
      */
@@ -386,9 +387,10 @@ public interface NExecCmd extends NWorkspaceCmd {
 
     NExecCmd setRunAs(NRunAs runAs);
 
-    Boolean getDry() ;
+    Boolean getDry();
 
     public NExecCmd setDry(Boolean dry);
+
     NExecCmd sudo();
 
     NExecCmd root();
@@ -454,7 +456,7 @@ public interface NExecCmd extends NWorkspaceCmd {
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override
@@ -489,6 +491,8 @@ public interface NExecCmd extends NWorkspaceCmd {
      * @return {@code this} instance
      */
     NExecCmd setTarget(String host);
+
+    NExecCmd setTarget(NConnexionString host);
 
     NExecCmd redirectErr();
 }

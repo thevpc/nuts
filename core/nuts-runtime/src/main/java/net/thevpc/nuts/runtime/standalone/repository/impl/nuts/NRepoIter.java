@@ -61,7 +61,7 @@ class NRepoIter extends NIdPathIteratorBase {
                             NPath gg = groupFolder.subpath(rootPath.getNameCount(), groupFolder.getNameCount());
                             StringBuilder gn = new StringBuilder();
                             for (int i = 0; i < gg.getNameCount(); i++) {
-                                String ns = gg.getLocationItem(i);
+                                String ns = gg.getName(i);
                                 if (i > 0) {
                                     gn.append('.');
                                 }
@@ -91,7 +91,7 @@ class NRepoIter extends NIdPathIteratorBase {
                             NPath gg = groupFolder.subpath(rootPath.getNameCount(), groupFolder.getNameCount());
                             StringBuilder gn = new StringBuilder();
                             for (int i = 0; i < gg.getNameCount(); i++) {
-                                String ns = gg.getLocationItem(i);
+                                String ns = gg.getName(i);
                                 if (i > 0) {
                                     gn.append('.');
                                 }

@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.util.NConnexionString;
+import net.thevpc.nuts.util.NConnexionStringBuilder;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.text.NTextBuilder;
@@ -64,7 +64,7 @@ class SshNPath implements NPathSPI {
                                         cc += "/";
                                     }
                                     cc += x;
-                                    return NPath.of(path.setPath(cc).toString());
+                                    return NPath.of(path.builder().setPath(cc).build().toString());
                                 }
 
                         ).withDesc(NEDesc.of("NPath::of"))
@@ -113,7 +113,7 @@ class SshNPath implements NPathSPI {
 //        if(true) {
                 NTexts text = NTexts.of();
                 NTextBuilder sb = text.ofBuilder();
-                String user = path.getUser();
+                String user = path.getUserName();
                 String host = path.getHost();
                 int port = NLiteral.of(path.getPort()).asInt().orElse(-1);
                 String path0 = path.getPath();
@@ -177,7 +177,7 @@ class SshNPath implements NPathSPI {
     }
 
     public NPath resolve(NPath basePath, String path) {
-        NConnexionString c = this.path.copy();
+        NConnexionStringBuilder c = this.path.builder();
         if (NBlankable.isBlank(path)) {
             return basePath;
         }
@@ -194,7 +194,7 @@ class SshNPath implements NPathSPI {
 
 
     public NPath resolveSibling(NPath basePath, String path) {
-        NConnexionString c = this.path.copy();
+        NConnexionStringBuilder c = this.path.builder();
         if (NBlankable.isBlank(path)) {
             return basePath;
         }
@@ -431,7 +431,7 @@ class SshNPath implements NPathSPI {
         if (loc == null) {
             return null;
         }
-        return NPath.of(path.copy().setPath(loc).toString());
+        return NPath.of(path.builder().setPath(loc).build().toString());
     }
 
     @Override
@@ -507,7 +507,7 @@ class SshNPath implements NPathSPI {
         if (isRoot(basePath)) {
             return basePath;
         }
-        return NPath.of(path.copy().setPath("/").toString());
+        return NPath.of(path.builder().setPath("/").build().toString());
     }
 
     @Override
@@ -537,7 +537,7 @@ class SshNPath implements NPathSPI {
                                         cc += "/";
                                     }
                                     cc += x;
-                                    return NPath.of(path.setPath(cc).toString());
+                                    return NPath.of(path.builder().setPath(cc).build().toString());
                                 }
 
                         ).withDesc(NEDesc.of("NPath::of"))
@@ -562,10 +562,10 @@ class SshNPath implements NPathSPI {
     @Override
     public boolean moveTo(NPath basePath, NPath other, NPathOption... options) {
         if (other.toString().startsWith("ssh:")) {
-            NConnexionString sp = NConnexionString.of(other.toString()).get();
+            NConnexionStringBuilder sp = DefaultNConnexionStringBuilder.of(other.toString()).get();
             if (
                     Objects.equals(sp.getHost(), path.getHost())
-                            && Objects.equals(sp.getUser(), path.getUser())
+                            && Objects.equals(sp.getUserName(), path.getUserName())
             ) {
                 int r = -1;
                 try (SShConnection c = prepareSshConnexionGrab()) {
@@ -604,7 +604,7 @@ class SshNPath implements NPathSPI {
 
     @Override
     public String toString() {
-        NConnexionString c = path.copy();
+        NConnexionStringBuilder c = path.builder();
         c.setQueryString(null);
         c.setPath(null);
         StringBuilder sb = new StringBuilder();

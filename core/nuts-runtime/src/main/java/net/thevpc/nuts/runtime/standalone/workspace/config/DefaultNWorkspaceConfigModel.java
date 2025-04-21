@@ -31,6 +31,7 @@ import net.thevpc.nuts.boot.NBootDescriptor;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
 import net.thevpc.nuts.runtime.standalone.util.*;
+import net.thevpc.nuts.runtime.standalone.xtra.rnsh.RnshPathFactorySPI;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
@@ -138,14 +139,15 @@ public class DefaultNWorkspaceConfigModel {
 
 //        this.pathExpansionConverter = NWorkspaceVarExpansionFunction.of();
         this.bootModel = workspace.getModel().bootModel;
-        addPathFactory(new FilePath.FilePathFactory(workspace));
-        addPathFactory(new ClassLoaderPath.ClasspathFactory(workspace));
-        addPathFactory(new URLPath.URLPathFactory(workspace));
-        addPathFactory(new NResourcePath.NResourceFactory(workspace));
-        addPathFactory(new HtmlfsPath.HtmlfsFactory(workspace));
+        addPathFactory(new FilePath.FilePathFactory());
+        addPathFactory(new ClassLoaderPath.ClasspathFactory());
+        addPathFactory(new URLPath.URLPathFactory());
+        addPathFactory(new NResourcePath.NResourceFactory());
+        addPathFactory(new HtmlfsPath.HtmlfsFactory());
         addPathFactory(new DotfilefsPath.DotfilefsFactory());
-        addPathFactory(new GithubfsPath.GithubfsFactory(workspace));
-        addPathFactory(new GenericFilePath.GenericPathFactory(workspace));
+        addPathFactory(new GithubfsPath.GithubfsFactory());
+        addPathFactory(new GenericFilePath.GenericPathFactory());
+        addPathFactory(new RnshPathFactorySPI());
         invalidPathFactory = new InvalidFilePathFactory();
         //        this.excludedRepositoriesSet = this.options.getExcludedRepositories() == null ? null : new HashSet<>(CoreStringUtils.split(Arrays.asList(this.options.getExcludedRepositories()), " ,;"));
     }
@@ -1519,18 +1521,21 @@ public class DefaultNWorkspaceConfigModel {
 
         ClassLoader finalClassLoader = classLoader;
         Matcher m = PRELOAD_EXTENSION_PATH_PATTERN.matcher(path);
+        final String protocol;
         if (m.find()) {
-            String protocol = m.group("protocol");
+            protocol = m.group("protocol");
             NId eid = protocolToExtensionMap.get(protocol);
             if (eid != null) {
                 NExtensions.of().loadExtension(eid);
             }
+        } else {
+            protocol = null;
         }
         NCallableSupport<NPathSPI> z = Arrays.stream(getPathFactories())
                 .map(x -> {
                     NCallableSupport<NPathSPI> v = null;
                     try {
-                        v = x.createPath(path, finalClassLoader);
+                        v = x.createPath(path, protocol, finalClassLoader);
                     } catch (Exception ex) {
                         //
                     }
@@ -1715,7 +1720,7 @@ public class DefaultNWorkspaceConfigModel {
 
     private class InvalidFilePathFactory implements NPathFactorySPI {
         @Override
-        public NCallableSupport<NPathSPI> createPath(String path, ClassLoader classLoader) {
+        public NCallableSupport<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             try {
                 return NCallableSupport.of(1, () -> new InvalidFilePath(path, workspace));
             } catch (Exception ex) {

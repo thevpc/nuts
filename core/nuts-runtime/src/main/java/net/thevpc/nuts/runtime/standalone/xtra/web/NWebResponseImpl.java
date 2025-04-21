@@ -3,7 +3,9 @@ package net.thevpc.nuts.runtime.standalone.xtra.web;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NInputSource;
+import net.thevpc.nuts.runtime.standalone.xtra.time.NLazySupplier;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NMsgCode;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.web.NHttpCode;
 import net.thevpc.nuts.web.NWebCookie;
@@ -16,21 +18,20 @@ import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class NWebResponseImpl implements NWebResponse {
-    private int code;
     private NHttpCode httpCode;
     private NMsg msg;
     private DefaultNWebHeaders headers = new DefaultNWebHeaders();
-    private NInputSource content;
-    private NMsg userMessage;
+    private NLazySupplier<NInputSource> content;
+    private NMsgCode msgCode;
 
-    public NWebResponseImpl(int code, NMsg msg, Map<String, List<String>> headers, NInputSource content) {
-        this.code = code;
-        this.httpCode = NHttpCode.of(code);
+    public NWebResponseImpl(NHttpCode code, NMsg msg, Map<String, List<String>> headers, Supplier<NInputSource> content) {
+        this.httpCode = code;
         this.msg = msg;
         this.headers.addHeadersMulti(headers, DefaultNWebHeaders.Mode.ALWAYS);
-        this.content = content;
+        this.content = new NLazySupplier<>(content);
     }
 
     @Override
@@ -40,7 +41,7 @@ public class NWebResponseImpl implements NWebResponse {
 
     @Override
     public int getIntCode() {
-        return code;
+        return httpCode.getCode();
     }
 
     public NHttpCode getCode() {
@@ -69,7 +70,7 @@ public class NWebResponseImpl implements NWebResponse {
 
     @Override
     public NInputSource getContent() {
-        return content;
+        return content.get();
     }
 
     @Override
@@ -92,7 +93,11 @@ public class NWebResponseImpl implements NWebResponse {
         if (content == null) {
             return null;
         }
-        try (InputStream in = content.getInputStream()) {
+        NInputSource content1 = getContent();
+        if (content1 == null) {
+            return null;
+        }
+        try (InputStream in = content1.getInputStream()) {
             return NElements.of()
                     .setContentType(type).parse(in, clz);
         } catch (IOException ex) {
@@ -105,7 +110,11 @@ public class NWebResponseImpl implements NWebResponse {
         if (content == null) {
             return null;
         }
-        try (InputStream in = content.getInputStream()) {
+        NInputSource content1 = getContent();
+        if (content1 == null) {
+            return null;
+        }
+        try (InputStream in = content1.getInputStream()) {
             return NElements.of()
                     .json().parse(in, clz);
         } catch (IOException ex) {
@@ -128,7 +137,11 @@ public class NWebResponseImpl implements NWebResponse {
         if (content == null) {
             return null;
         }
-        return new String(content.readBytes());
+        NInputSource content1 = getContent();
+        if (content1 == null) {
+            return null;
+        }
+        return new String(content1.readBytes());
     }
 
     @Override
@@ -136,7 +149,11 @@ public class NWebResponseImpl implements NWebResponse {
         if (content == null) {
             return null;
         }
-        return content.readBytes();
+        NInputSource content1 = getContent();
+        if (content1 == null) {
+            return null;
+        }
+        return content1.readBytes();
     }
 
     public NWebCookie[] getCookies() {
@@ -145,33 +162,32 @@ public class NWebResponseImpl implements NWebResponse {
 
     @Override
     public boolean isError() {
-        return code >= 400;
+        return httpCode.getCode() >= 400;
     }
 
     @Override
     public boolean isOk() {
+        int ic = httpCode.getCode();
         return
-                code >= 200
-                        && code < 300
+                ic >= 200
+                        && ic < 300
                 ;
     }
 
     @Override
     public NWebResponse failFast() {
         if (isError()) {
-            throw new NWebResponseException(msg, userMessage, code);
+            throw new NWebResponseException(msg, msgCode, httpCode);
         }
         return this;
     }
 
-    @Override
-    public NMsg getUserMessage() {
-        return userMessage;
+    public NMsgCode getMsgCode() {
+        return msgCode;
     }
 
-    @Override
-    public NWebResponse setUserMessage(NMsg userMessage) {
-        this.userMessage = userMessage;
+    public NWebResponse setMsgCode(NMsgCode msgCode) {
+        this.msgCode = msgCode;
         return this;
     }
 

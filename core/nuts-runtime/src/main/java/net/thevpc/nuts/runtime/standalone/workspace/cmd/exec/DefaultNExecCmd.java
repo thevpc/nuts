@@ -18,7 +18,6 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.util.NConnexionString;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineUtils;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
 import net.thevpc.nuts.runtime.standalone.descriptor.parser.NDescriptorContentResolver;
@@ -1058,7 +1057,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     private RemoteInfo0 resolveRemoteInfo0() {
         String target = getTarget();
         if (!NBlankable.isBlank(target)) {
-            NConnexionString connexionString = NConnexionString.of(target).get();
+            NConnexionString connexionString = DefaultNConnexionString.of(target).get();
             if ("ssh".equals(connexionString.getProtocol())) {
                 NExtensions.of()
                         .loadExtension(NId.get("net.thevpc.nuts.ext:next-ssh").get());

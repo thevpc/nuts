@@ -32,5 +32,5 @@ import net.thevpc.nuts.NCallableSupport;
  * @app.category Input Output
  */
 public interface NPathFactorySPI extends NComponent{
-    NCallableSupport<NPathSPI> createPath(String path, ClassLoader classLoader);
+    NCallableSupport<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader);
 }

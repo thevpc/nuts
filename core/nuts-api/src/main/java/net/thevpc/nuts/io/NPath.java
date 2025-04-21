@@ -27,6 +27,7 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NRepository;
+import net.thevpc.nuts.util.NConnexionString;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.spi.NPathSPI;
@@ -53,6 +54,10 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
     static NPath of(URL path) {
         return NIO.of().createPath(path);
+    }
+
+    static NPath of(NConnexionString path) {
+        return NIO.of().createPath(path == null ? null : path.toString());
     }
 
     static NPath of(String path, ClassLoader classLoader) {
@@ -499,7 +504,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
     NPath subpath(int beginIndex, int endIndex);
 
-    String getLocationItem(int index);
+    String getName(int index);
 
     List<String> getNames();
 

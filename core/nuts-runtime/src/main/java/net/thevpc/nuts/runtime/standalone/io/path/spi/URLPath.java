@@ -764,14 +764,12 @@ public class URLPath implements NPathSPI {
     }
 
     public static class URLPathFactory implements NPathFactorySPI {
-        NWorkspace workspace;
 
-        public URLPathFactory(NWorkspace workspace) {
-            this.workspace = workspace;
+        public URLPathFactory() {
         }
 
         @Override
-        public NCallableSupport<NPathSPI> createPath(String path, ClassLoader classLoader) {
+        public NCallableSupport<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             try {
                 if (path != null && path.length() > 0) {
                     char s = path.charAt(0);

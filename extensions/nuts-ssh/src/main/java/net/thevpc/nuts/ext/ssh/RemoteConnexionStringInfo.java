@@ -6,7 +6,7 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NConnexionString;
+import net.thevpc.nuts.util.NConnexionStringBuilder;
 import net.thevpc.nuts.util.NRef;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
@@ -225,7 +225,7 @@ public class RemoteConnexionStringInfo {
     public NElement getWorkspaceJson(NExecCmdExtension commExec) {
         if (isUpdatable(loadedWorkspaceJson)) {
             loadedWorkspaceJson = System.currentTimeMillis();
-            NConnexionString targetConnexion = NConnexionString.of(target).get().copy()
+            NConnexionStringBuilder targetConnexion = DefaultNConnexionStringBuilder.of(target).get()
                     .setQueryString(null)
                     .setPath(null);
             NPlatformHome pHome = NPlatformHome.ofPortable(NOsFamily.LINUX, false, null, p -> {

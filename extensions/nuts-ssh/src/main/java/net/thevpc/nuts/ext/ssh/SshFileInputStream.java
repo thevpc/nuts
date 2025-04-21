@@ -5,6 +5,7 @@ import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSchException;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NConnexionString;
+import net.thevpc.nuts.util.NConnexionStringBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;

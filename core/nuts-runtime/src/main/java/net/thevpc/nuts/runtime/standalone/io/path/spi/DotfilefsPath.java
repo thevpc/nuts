@@ -35,7 +35,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         }
 
         @Override
-        public NCallableSupport<NPathSPI> createPath(String path, ClassLoader classLoader) {
+        public NCallableSupport<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             if (path.startsWith(PREFIX)) {
                 return NCallableSupport.of(10, () -> new DotfilefsPath(path));
             }

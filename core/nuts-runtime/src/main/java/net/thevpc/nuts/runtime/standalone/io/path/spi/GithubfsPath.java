@@ -300,14 +300,12 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     }
 
     public static class GithubfsFactory implements NPathFactorySPI {
-        private final NWorkspace workspace;
 
-        public GithubfsFactory(NWorkspace workspace) {
-            this.workspace = workspace;
+        public GithubfsFactory() {
         }
 
         @Override
-        public NCallableSupport<NPathSPI> createPath(String path, ClassLoader classLoader) {
+        public NCallableSupport<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             if (path.startsWith(PREFIX)) {
                 return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, () -> new GithubfsPath(path));
             }

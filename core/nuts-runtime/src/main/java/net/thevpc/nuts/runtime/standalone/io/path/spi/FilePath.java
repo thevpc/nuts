@@ -798,17 +798,19 @@ public class FilePath implements NPathSPI {
     }
 
     public static class FilePathFactory implements NPathFactorySPI {
-        NWorkspace ws;
 
-        public FilePathFactory(NWorkspace ws) {
-            this.ws = ws;
+        public FilePathFactory() {
         }
 
         @Override
-        public NCallableSupport<NPathSPI> createPath(String path, ClassLoader classLoader) {
+        public NCallableSupport<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             try {
                 if (URLPath.MOSTLY_URL_PATTERN.matcher(path).matches()) {
                     return null;
+                }
+                if(NWorkspace.of().getOsFamily()==NOsFamily.WINDOWS && path.matches("^[\\\\/][a-zA-Z]:([\\\\/].*)?")){
+                    //remove trailing slash
+                    path=path.substring(1);
                 }
                 Path value = Paths.get(path);
                 return NCallableSupport.of(10, () -> new FilePath(value));

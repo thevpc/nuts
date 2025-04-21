@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.rnsh;
 import net.thevpc.nuts.NCallableSupport;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.runtime.standalone.io.inputstream.NTempOutputStreamImpl;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -15,12 +16,26 @@ import java.util.stream.Collectors;
 
 public class RnshPathFactorySPI implements NPathFactorySPI {
     @Override
-    public NCallableSupport<NPathSPI> createPath(String path, ClassLoader classLoader) {
+    public NCallableSupport<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
+        //fail fast!
+        if (protocol != null) {
+            switch (protocol) {
+                case "rnsh-http":
+                case "rnsh":
+                case "rnsh-https":
+                case "rnshs":
+                    break;
+                default:
+                    return NCallableSupport.invalid(NMsg.ofC("Invalid path: %s", path));
+            }
+        }
         if (
                 path.startsWith("rnsh-http:")
+                        || path.startsWith("rnsh:")
                         || path.startsWith("rnsh-https:")
+                        || path.startsWith("rnshs:")
         ) {
-            NConnexionString cnx = NConnexionString.of(path).orNull();
+            NConnexionString cnx = DefaultNConnexionString.of(path).orNull();
             if (cnx != null) {
                 return NCallableSupport.of(3, () -> new NServerPathSPI(cnx));
             }
@@ -33,7 +48,9 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
         String path = context.getConstraints();
         if (
                 path.startsWith("rnsh-http:")
+                        || path.startsWith("rnsh:")
                         || path.startsWith("rnsh-https:")
+                        || path.startsWith("rnshs:")
         ) {
             return NConstants.Support.DEFAULT_SUPPORT;
         }
@@ -83,7 +100,7 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
 
         @Override
         public NStream<NPath> list(NPath basePath) {
-            if(!client.ensureConnectedSafely()){
+            if (!client.ensureConnectedSafely()) {
                 return NStream.ofEmpty();
             }
             return
@@ -96,7 +113,7 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
 
         @Override
         public NPathType type(NPath basePath) {
-            if(!client.ensureConnectedSafely()){
+            if (!client.ensureConnectedSafely()) {
                 return NPathType.NOT_FOUND;
             }
             try {
@@ -113,7 +130,7 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
 
         @Override
         public boolean exists(NPath basePath) {
-            if(!client.ensureConnectedSafely()){
+            if (!client.ensureConnectedSafely()) {
                 return false;
             }
             return type(basePath) != NPathType.NOT_FOUND;
@@ -121,7 +138,7 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
 
         @Override
         public long contentLength(NPath basePath) {
-            if(!client.ensureConnectedSafely()){
+            if (!client.ensureConnectedSafely()) {
                 return -1;
             }
             try {
@@ -140,44 +157,43 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
         @Override
         public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
             String name = NPath.of(remotePath).getName();
-            PipedInputStream in = new PipedInputStream(1024 * 1024);
-            PipedOutputStream out = null;
-            try {
-                out = new PipedOutputStream(in);
-            } catch (IOException e) {
-                throw new NIOException(e);
-            }
-            client.putFile(new NInputContentProvider() {
-                @Override
-                public String getName() {
-                    return name;
-                }
+            NTempOutputStreamImpl nTempOutputStream = new NTempOutputStreamImpl();
+            nTempOutputStream.setOnCompleted(inputStream -> {
+                client.ensureConnected();
+                client.putFile(new NInputContentProvider() {
+                    @Override
+                    public String getName() {
+                        return name;
+                    }
 
-                @Override
-                public String getContentType() {
-                    return "application/octet-stream";
-                }
+                    @Override
+                    public String getContentType() {
+                        return "application/octet-stream";
+                    }
 
-                @Override
-                public String getCharset() {
-                    return null;
-                }
+                    @Override
+                    public String getCharset() {
+                        return null;
+                    }
 
-                @Override
-                public InputStream getInputStream() {
-                    return in;
-                }
-            }, remotePath);
-            return out;
+                    @Override
+                    public InputStream getInputStream() {
+                        return inputStream;
+                    }
+                }, remotePath);
+            });
+            return nTempOutputStream;
         }
 
         @Override
         public void delete(NPath basePath, boolean recurse) {
+            client.ensureConnected();
             client.exec("rm", "-R", remotePath);
         }
 
         @Override
         public void mkdir(boolean parents, NPath basePath) {
+            client.ensureConnected();
             client.exec("mkdir", parents ? "-p" : null, remotePath);
         }
 
@@ -205,6 +221,16 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
                 return null;
             }
             return NPath.of(cnx.getParent().toString());
+        }
+
+        @Override
+        public String toString() {
+            return cnx.builder().setPath(remotePath).build().toString();
+        }
+
+        @Override
+        public String getLocation(NPath basePath) {
+            return remotePath;
         }
     }
 }

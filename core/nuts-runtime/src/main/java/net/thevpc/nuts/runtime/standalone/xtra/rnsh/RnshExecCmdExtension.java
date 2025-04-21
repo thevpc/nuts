@@ -58,26 +58,26 @@ public class RnshExecCmdExtension implements NExecCmdExtension {
     }
 
     private RnshHttpClient resolveRnshHttpClient(String cnx) {
-        NConnexionString cc = NConnexionString.of(cnx).get();
-        NConnexionString c0 = cc.copy();
-        String v = NStringUtils.trimToNull(cc.getPath());
-        Map<String, List<String>> qm = c0.getQueryMap().orElse(new HashMap<>());
+        NConnexionStringBuilder cb = DefaultNConnexionStringBuilder.of(cnx).get();
+        String v = NStringUtils.trimToNull(cb.getPath());
+        Map<String, List<String>> qm = cb.getQueryMap().orElse(new HashMap<>());
         String context = NOptional.ofFirst(qm.get("context")).orElse(null);
         if (NBlankable.isBlank(context)) {
             Map<String, List<String>> qm2 = new HashMap<>(qm);
             qm2.put("context", new ArrayList<>(Arrays.asList(NStringUtils.firstNonBlank(v, "/"))));
-            c0.setQueryMap(qm2);
-            c0.setPath("/");
+            cb.setQueryMap(qm2);
+            cb.setPath("/");
         } else {
             Map<String, List<String>> qm2 = new HashMap<>(qm);
             qm2.put("context", new ArrayList<>(Arrays.asList(NStringUtils.firstNonBlank(context, v))));
-            c0.setQueryMap(qm2);
-            c0.setPath("/");
+            cb.setQueryMap(qm2);
+            cb.setPath("/");
         }
-        RnshHttpClient client = clients.get(c0);
+        NConnexionString c00 = cb.build();
+        RnshHttpClient client = clients.get(c00);
         if (client == null) {
-            client = new RnshHttpClient().setConnexionString(c0);
-            clients.put(c0, client);
+            client = new RnshHttpClient().setConnexionString(c00);
+            clients.put(c00, client);
         }
         return client;
     }
@@ -86,7 +86,7 @@ public class RnshExecCmdExtension implements NExecCmdExtension {
     public int getSupportLevel(NSupportLevelContext context) {
         Object c = context.getConstraints();
         if (c instanceof String) {
-            NConnexionString z = NConnexionString.of((String) c).orNull();
+            NConnexionString z = DefaultNConnexionString.of((String) c).orNull();
             if (z != null && isSupportedProtocol(z.getProtocol())) {
                 return NConstants.Support.DEFAULT_SUPPORT;
             }

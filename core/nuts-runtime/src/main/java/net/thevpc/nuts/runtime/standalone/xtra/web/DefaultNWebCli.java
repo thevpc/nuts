@@ -4,6 +4,7 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.boot.reserved.util.NBootLog;
 import net.thevpc.nuts.io.NCp;
+import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NInputSourceBuilder;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
@@ -429,33 +430,41 @@ public class DefaultNWebCli implements NWebCli {
                     uc.setRequestProperty("Content-Length", String.valueOf(bodyLength));
                     NCp.of().from(requestBody).to(uc.getOutputStream()).run();
                 }
-                NInputSource bytes = null;
-                if (!r.isOneWay()) {
-                    //TODO change me with a smart copy input source!
-                    HttpURLConnection uc2 = uc;
-                    bytes = NInputSourceBuilder.of(uc.getInputStream()).setCloseAction(() -> {
-                                // close connexion when fully read!
-                                if (uc2 != null) {
-                                    try {
-                                        uc2.disconnect();
-                                    } catch (Exception e) {
-                                        //
-                                    }
-                                }
-                            }
-                    ).createInputSource();
-//                    byte[] byteArrayResult = NCp.of().from(uc.getInputStream()).getByteArrayResult();
-//                    bytes = NIO.of().ofInputSource(byteArrayResult);
-                    long contentLength = uc.getContentLengthLong();
-                    if (contentLength >= 0) {
-                        bytes.getMetaData().setContentLength(contentLength);
-                    }
-                }
+
+                HttpURLConnection finalUc = uc;
                 NWebResponse httpResponse = new NWebResponseImpl(
-                        uc.getResponseCode(),
+                        NHttpCode.of(uc.getResponseCode()),
                         NMsg.ofPlain(NStringUtils.trim(uc.getResponseMessage())),
                         uc.getHeaderFields(),
-                        bytes
+                        () -> {
+                            NInputSource bytes = null;
+                            if (!r.isOneWay()) {
+                                //TODO change me with a smart copy input source!
+                                HttpURLConnection uc2 = finalUc;
+                                try {
+                                    bytes = NInputSourceBuilder.of(finalUc.getInputStream()).setCloseAction(() -> {
+                                                // close connexion when fully read!
+                                                if (uc2 != null) {
+                                                    try {
+                                                        uc2.disconnect();
+                                                    } catch (Exception e) {
+                                                        //
+                                                    }
+                                                }
+                                            }
+                                    ).createInputSource();
+                                } catch (IOException e) {
+                                    throw new NIOException(e);
+                                }
+//                    byte[] byteArrayResult = NCp.of().from(uc.getInputStream()).getByteArrayResult();
+//                    bytes = NIO.of().ofInputSource(byteArrayResult);
+                                long contentLength = finalUc.getContentLengthLong();
+                                if (contentLength >= 0) {
+                                    bytes.getMetaData().setContentLength(contentLength);
+                                }
+                            }
+                            return bytes;
+                        }
                 );
                 if (responsePostProcessor != null) {
                     NWebResponse newResp = responsePostProcessor.apply(httpResponse);

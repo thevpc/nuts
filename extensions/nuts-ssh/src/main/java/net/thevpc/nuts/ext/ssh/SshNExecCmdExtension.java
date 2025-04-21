@@ -5,12 +5,9 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NWorkspaceCmdLineParser;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NConnexionString;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NOptional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -145,7 +142,7 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
         //String[] remoteCommand = k.buildEffectiveCommand(context.getCommand(), execCommand.getRunAs(), executorOptions, this, session);
         String target = context.getTarget();
         NAssert.requireNonBlank(target, "target");
-        NConnexionString z = NConnexionString.of(target).orNull();
+        NConnexionStringBuilder z = DefaultNConnexionStringBuilder.of(target).orNull();
         NAssert.requireNonBlank(z, "target");
         NLog log = NLog.of(SshNExecCmdExtension.class);
         log.with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("[%s] %s", z, NCmdLine.of(context.getCommand())));
@@ -163,7 +160,7 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
     public int exec0(NExecCmdExtensionContext context) {
         String target = context.getTarget();
         NAssert.requireNonBlank(target, "target");
-        NConnexionString z = NConnexionString.of(target).orNull();
+        NConnexionStringBuilder z = DefaultNConnexionStringBuilder.of(target).orNull();
         NAssert.requireNonBlank(z, "target");
         NSession session = context.getSession();
         NLog log = NLog.of(SshNExecCmdExtension.class);
@@ -183,13 +180,13 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
     public int getSupportLevel(NSupportLevelContext context) {
         Object c = context.getConstraints();
         if (c instanceof String) {
-            NConnexionString z = NConnexionString.of((String) c).orNull();
+            NConnexionStringBuilder z = DefaultNConnexionStringBuilder.of((String) c).orNull();
             if (z != null && "ssh".equals(z.getProtocol())) {
                 return NConstants.Support.DEFAULT_SUPPORT;
             }
         }
-        if (c instanceof NConnexionString) {
-            NConnexionString z = (NConnexionString) c;
+        if (c instanceof DefaultNConnexionStringBuilder) {
+            NConnexionStringBuilder z = (NConnexionStringBuilder) c;
             if ("ssh".equals(z.getProtocol())) {
                 return NConstants.Support.DEFAULT_SUPPORT;
             }

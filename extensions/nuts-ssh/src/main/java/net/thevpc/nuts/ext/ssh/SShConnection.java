@@ -1,12 +1,8 @@
 package net.thevpc.nuts.ext.ssh;
 
 import com.jcraft.jsch.*;
-import net.thevpc.nuts.util.NMaps;
-import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.util.NConnexionString;
-import net.thevpc.nuts.util.NStringMapFormat;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -25,11 +21,11 @@ public class SShConnection implements AutoCloseable {
     private List<SshListener> listeners = new ArrayList<>();
 
     public SShConnection(String address, InputStream in, OutputStream out, OutputStream err) {
-        this(NConnexionString.of(address).get(), in, out, err);
+        this(DefaultNConnexionString.of(address).get(), in, out, err);
     }
 
     public SShConnection(NConnexionString address, InputStream in, OutputStream out, OutputStream err) {
-        init(address.getUser(), address.getHost(),
+        init(address.getUserName(), address.getHost(),
                 NLiteral.of(address.getPort()).asInt().orElse(-1),
                 NStringMapFormat.URL_FORMAT.parse(address.getQueryString())
                         .orElse(Collections.emptyMap()).get("key-file"),
@@ -110,7 +106,7 @@ public class SShConnection implements AutoCloseable {
         } catch (JSchException e) {
             //
             throw new UncheckedIOException(new IOException(e.getMessage() + " (" +
-                    new NConnexionString().setUser(user).setHost(host).setPort(String.valueOf(port)).setPassword(keyPassword).setQueryString(
+                    new DefaultNConnexionStringBuilder().setUserName(user).setHost(host).setPort(String.valueOf(port)).setPassword(keyPassword).setQueryString(
                             keyFilePath == null ? null : NStringMapFormat.URL_FORMAT
                                     .format(
                                             NMaps.of("key-file", keyFilePath)

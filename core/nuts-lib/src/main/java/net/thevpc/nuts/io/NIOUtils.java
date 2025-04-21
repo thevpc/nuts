@@ -22,7 +22,7 @@ import java.util.logging.Level;
 
 public class NIOUtils {
 
-    public static final int DEFAULT_BUFFER_SIZE = 1024;
+    public static final int DEFAULT_BUFFER_SIZE = 10*4*1024;
 
     public static String normalizePath(String names) {
         String string = String.join("/", normalizePathNames(NStringUtils.split(names, "/\\", false, true)));

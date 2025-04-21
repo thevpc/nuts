@@ -371,8 +371,8 @@ public class NCompressedPath extends NPathBase {
     }
 
     @Override
-    public String getLocationItem(int index) {
-        return base.getLocationItem(index);
+    public String getName(int index) {
+        return base.getName(index);
     }
 
     @Override

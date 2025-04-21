@@ -5,18 +5,24 @@ import net.thevpc.nuts.NException;
 public class NMsgCodeException extends NException implements NMsgCodeAware {
     private NMsgCode code;
 
-    public NMsgCodeException(NMsgCode code, NMsg message) {
+    public NMsgCodeException(NMsg message, NMsgCode code) {
         super(message);
-        this.code = code;
+        this.code = NMsgCode.ofMessage(
+                message.toString(),
+                code == null ? null : code.getCode(), code == null ? new String[0] : code.getParams()
+        );
     }
 
-    public NMsgCodeException(NMsgCode code, NMsg message, Throwable cause) {
+    public NMsgCodeException(NMsg message, NMsgCode code, Throwable cause) {
         super(message, cause);
-        this.code = code;
+        this.code = NMsgCode.ofMessage(
+                message.toString(),
+                code == null ? null : code.getCode(), code == null ? new String[0] : code.getParams()
+        );
     }
 
     @Override
-    public NMsgCode getNMsgCode() {
+    public NMsgCode getMsgCode() {
         return code;
     }
 }

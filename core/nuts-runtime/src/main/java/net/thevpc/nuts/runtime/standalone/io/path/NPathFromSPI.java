@@ -545,7 +545,7 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public List<NPathChildDigestInfo> listDigestInfo(String algo) {
-        List<NPathChildDigestInfo> infos = base.listDigestInfo(this,algo);
+        List<NPathChildDigestInfo> infos = base.listDigestInfo(this, algo);
         if (infos != null) {
             return infos;
         }
@@ -559,9 +559,9 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public List<NPathChildStringDigestInfo> listStringDigestInfo(String algo) {
-        List<NPathChildDigestInfo> infos = base.listDigestInfo(this,algo);
+        List<NPathChildDigestInfo> infos = base.listDigestInfo(this, algo);
         if (infos != null) {
-            return infos.stream().map(x->
+            return infos.stream().map(x ->
                     new NPathChildStringDigestInfo()
                             .setName(x.getName())
                             .setDigest(NHex.fromBytes(x.getDigest()))
@@ -617,8 +617,15 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
-    public String getLocationItem(int index) {
-        return getNames().get(index);
+    public String getName(int index) {
+        List<String> names = getNames();
+        if (index >= 0 && index < names.size()) {
+            return names.get(index);
+        }
+        if (index < 0 && -index < names.size()) {
+            return names.get(names.size() + index);
+        }
+        throw new ArrayIndexOutOfBoundsException("invalid index " + index + ". it must be >=0 and <" + names.size());
     }
 
     @Override

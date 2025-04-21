@@ -527,14 +527,12 @@ public class NResourcePath implements NPathSPI {
     }
 
     public static class NResourceFactory implements NPathFactorySPI {
-        NWorkspace workspace;
 
-        public NResourceFactory(NWorkspace workspace1) {
-            this.workspace = workspace1;
+        public NResourceFactory() {
         }
 
         @Override
-        public NCallableSupport<NPathSPI> createPath(String path, ClassLoader classLoader) {
+        public NCallableSupport<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             try {
                 if (path.startsWith("resource:")) {
                     return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, () -> new NResourcePath(path));

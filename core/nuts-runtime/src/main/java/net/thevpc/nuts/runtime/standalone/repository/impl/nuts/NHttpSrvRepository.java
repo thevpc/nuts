@@ -108,7 +108,8 @@ public class NHttpSrvRepository extends NCachedRepository {
                 .addPart("force", NDigestUtils.evalSHA1Hex(content))
                 .addPart().setName("descriptor").setFileName("Project.nuts").setBody(
                         NInputSource.of(descStream.toByteArray())).end()
-                .run();
+                .run()
+        ;
     }
 
     @Override

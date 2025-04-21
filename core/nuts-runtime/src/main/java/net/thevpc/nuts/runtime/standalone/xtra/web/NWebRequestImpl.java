@@ -566,7 +566,6 @@ public class NWebRequestImpl implements NWebRequest {
                 if (formData != null && !formData.isEmpty()) {
                     String boundary = "-------------------------------" + UUID.randomUUID().toString();
                     setContentType("multipart/form-data; boundary=" + boundary);
-                    byte[] newlineBytes = "\r\n".getBytes();
                     try {
                         sw.println(boundary);
                         for (Map.Entry<String, Object> e : formData.entrySet()) {
@@ -589,6 +588,7 @@ public class NWebRequestImpl implements NWebRequest {
                                     }
                                 }
                             }
+                            sw.println();
                             sw.println(boundary);
                         }
                     } catch (IOException ex) {

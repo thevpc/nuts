@@ -8,7 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class NConnexionString implements Cloneable {
+public class DefaultNConnexionStringBuilder implements Cloneable, NConnexionStringBuilder {
     private static Pattern CONNEXION_PATTERN = Pattern.compile(
             "((?<user>([a-zA-Z]([a-zA-Z0-9_-])*))(:(?<password>([^@]+)))?@)?" +
                     "((?<server>([a-zA-Z0-9._-]+))(:(?<port>[0-9]+))?)" +
@@ -19,19 +19,39 @@ public class NConnexionString implements Cloneable {
     );
     private static Pattern NAME_PATTERN = Pattern.compile("[a-zA-Z]([a-zA-Z0-9_-])*");
     private String protocol;
-    private String user;
+    private String userName;
     private String password;
     private String host;
     private String port;
     private String path;
     private String queryString;
 
-    public static NOptional<NConnexionString> of(String value) {
+    public DefaultNConnexionStringBuilder() {
+    }
+
+    public DefaultNConnexionStringBuilder(NConnexionString other) {
+        if (other != null) {
+            this.protocol = other.getProtocol();
+            this.userName = other.getUserName();
+            this.password = other.getPassword();
+            this.host = other.getHost();
+            this.port = other.getPort();
+            this.path = other.getPath();
+            this.queryString = other.getQueryString();
+        }
+    }
+
+    @Override
+    public NConnexionString build() {
+        return new DefaultNConnexionString(protocol, userName, password, host, port, path, queryString, getQueryMap().orNull());
+    }
+
+    public static NOptional<NConnexionStringBuilder> of(String value) {
         if (value == null || NBlankable.isBlank(value)) {
             return NOptional.ofNamedEmpty("Connexion String");
         }
         value = value.trim();
-        NConnexionString v = new NConnexionString();
+        DefaultNConnexionStringBuilder v = new DefaultNConnexionStringBuilder();
         Matcher e = PROTOCOLE_PATTERN.matcher(value);
         String protocol;
         String path;
@@ -58,7 +78,7 @@ public class NConnexionString implements Cloneable {
         } else {
             matcher = CONNEXION_PATTERN.matcher(value);
             if (matcher.matches()) {
-                v.setUser(matcher.group("user"));
+                v.setUserName(matcher.group("user"));
                 v.setPassword(matcher.group("password"));
                 v.setHost(matcher.group("server"));
                 v.setPort(matcher.group("port"));
@@ -85,42 +105,47 @@ public class NConnexionString implements Cloneable {
         return NOptional.of(v);
     }
 
-    public NConnexionString() {
+
+    @Override
+    public String getUserName() {
+        return userName;
     }
 
-
-    public String getUser() {
-        return user;
-    }
-
-    public NConnexionString setUser(String user) {
-        this.user = user;
+    @Override
+    public NConnexionStringBuilder setUserName(String userName) {
+        this.userName = userName;
         return this;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
 
-    public NConnexionString setPassword(String password) {
+    @Override
+    public NConnexionStringBuilder setPassword(String password) {
         this.password = password;
         return this;
     }
 
+    @Override
     public String getHost() {
         return host;
     }
 
-    public NConnexionString setHost(String host) {
+    @Override
+    public NConnexionStringBuilder setHost(String host) {
         this.host = host;
         return this;
     }
 
-    public NConnexionString getRoot() {
+    @Override
+    public DefaultNConnexionStringBuilder getRoot() {
         return copy().setPath("/");
     }
 
-    public NConnexionString getParent() {
+    @Override
+    public DefaultNConnexionStringBuilder getParent() {
         String ppath = path;
         if (NBlankable.isBlank(ppath) || "/".equals(ppath)) {
             return null;
@@ -140,11 +165,13 @@ public class NConnexionString implements Cloneable {
         return copy().setPath(ppath);
     }
 
+    @Override
     public String getPort() {
         return port;
     }
 
-    public NConnexionString setPort(String port) {
+    @Override
+    public DefaultNConnexionStringBuilder setPort(String port) {
         this.port = port;
         return this;
     }
@@ -156,8 +183,8 @@ public class NConnexionString implements Cloneable {
             sb.append(safeUrlEncode(NStringUtils.trim(protocol))).append(":");
             if (!fileProtocol) {
                 sb.append("//");
-                if (!NBlankable.isBlank(user)) {
-                    sb.append(safeUrlEncode(NStringUtils.trim(user)));
+                if (!NBlankable.isBlank(userName)) {
+                    sb.append(safeUrlEncode(NStringUtils.trim(userName)));
                     if (!NBlankable.isBlank(safeUrlEncode(password))) {
                         sb.append(':');
                         sb.append(safeUrlEncode(password));
@@ -175,8 +202,8 @@ public class NConnexionString implements Cloneable {
                 }
             }
         } else {
-            if (!NBlankable.isBlank(user)) {
-                sb.append(safeUrlEncode(NStringUtils.trim(user)));
+            if (!NBlankable.isBlank(userName)) {
+                sb.append(safeUrlEncode(NStringUtils.trim(userName)));
                 if (!NBlankable.isBlank(password)) {
                     sb.append(':');
                     sb.append(safeUrlEncode(password));
@@ -215,7 +242,8 @@ public class NConnexionString implements Cloneable {
         return sb.toString();
     }
 
-    public NConnexionString setQueryMap(Map<String, List<String>> queryMap) {
+    @Override
+    public NConnexionStringBuilder setQueryMap(Map<String, List<String>> queryMap) {
         if (queryMap != null) {
             NStringBuilder sb = new NStringBuilder();
             for (Map.Entry<String, List<String>> e : queryMap.entrySet()) {
@@ -251,6 +279,7 @@ public class NConnexionString implements Cloneable {
         return this;
     }
 
+    @Override
     public NOptional<Map<String, List<String>>> getQueryMap() {
         if (NBlankable.isBlank(queryString)) {
             return NOptional.ofNamedEmpty("queryMap");
@@ -261,10 +290,10 @@ public class NConnexionString implements Cloneable {
                     Map<String, List<String>> r = new LinkedHashMap<>();
                     for (Map.Entry<String, List<String>> ee : x.entrySet()) {
                         r.put(safeUrlDecode(ee.getKey()),
-                                ee.getValue().stream().map(NConnexionString::safeUrlDecode).collect(Collectors.toList())
+                                Collections.unmodifiableList(ee.getValue().stream().map(DefaultNConnexionStringBuilder::safeUrlDecode).collect(Collectors.toList()))
                         );
                     }
-                    return r;
+                    return Collections.unmodifiableMap(r);
                 }
         );
     }
@@ -273,50 +302,58 @@ public class NConnexionString implements Cloneable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        NConnexionString that = (NConnexionString) o;
-        return Objects.equals(protocol, that.protocol) && Objects.equals(user, that.user) && Objects.equals(password, that.password) && Objects.equals(host, that.host) && Objects.equals(port, that.port) && Objects.equals(path, that.path);
+        DefaultNConnexionStringBuilder that = (DefaultNConnexionStringBuilder) o;
+        return Objects.equals(protocol, that.protocol) && Objects.equals(userName, that.userName) && Objects.equals(password, that.password) && Objects.equals(host, that.host) && Objects.equals(port, that.port) && Objects.equals(path, that.path);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(protocol, user, password, host, port, path);
+        return Objects.hash(protocol, userName, password, host, port, path);
     }
 
+    @Override
     public String getPath() {
         return path;
     }
 
-    public NConnexionString setPath(String path) {
+    @Override
+    public DefaultNConnexionStringBuilder setPath(String path) {
         this.path = path;
         return this;
     }
 
+    @Override
     public String getProtocol() {
         return protocol;
     }
 
-    public NConnexionString setProtocol(String protocol) {
+    @Override
+    public DefaultNConnexionStringBuilder setProtocol(String protocol) {
         this.protocol = protocol;
         return this;
     }
 
+    @Override
     public String getQueryString() {
         return queryString;
     }
 
-    public NConnexionString setQueryString(String queryString) {
+    @Override
+    public NConnexionStringBuilder setQueryString(String queryString) {
         this.queryString = queryString;
         return this;
     }
 
-    public NConnexionString copy() {
+    @Override
+    public DefaultNConnexionStringBuilder copy() {
         try {
-            return (NConnexionString) clone();
+            return (DefaultNConnexionStringBuilder) clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
     }
 
+    @Override
     public List<String> getNames() {
         return NStringUtils.split(path, "/", true, true)
                 .stream().map(s -> s).collect(Collectors.toList());
@@ -338,7 +375,8 @@ public class NConnexionString implements Cloneable {
         }
     }
 
-    public NConnexionString resolve(String child) {
+    @Override
+    public DefaultNConnexionStringBuilder resolve(String child) {
         if (!NBlankable.isBlank(child)) {
             return copy().setPath(NStringUtils.pjoin("/", path, child));
         }

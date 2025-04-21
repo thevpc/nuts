@@ -154,5 +154,4 @@ net.thevpc.nuts.runtime.standalone.xtra.compress.NUncompressZip
 net.thevpc.nuts.runtime.standalone.xtra.compress.NUncompressGzip
 
 
-net.thevpc.nuts.runtime.standalone.xtra.rnsh.RnshPathFactorySPI
 net.thevpc.nuts.runtime.standalone.xtra.rnsh.RnshExecCmdExtension

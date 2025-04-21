@@ -2,11 +2,13 @@ package net.thevpc.nuts.web;
 
 import net.thevpc.nuts.NException;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NMsgCode;
+import net.thevpc.nuts.util.NMsgCodeAware;
 
-public class NWebResponseException extends NException {
-    public int code;
+public class NWebResponseException extends NException implements NMsgCodeAware {
+    public NHttpCode code;
     public NMsg responseMessage;
-    public NMsg userMessage;
+    public NMsgCode messageCode;
 
     /**
      * Constructs a new runtime exception with the specified detail message.
@@ -16,11 +18,11 @@ public class NWebResponseException extends NException {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public NWebResponseException(NMsg message, NMsg userMessage, int code) {
-        super(userMessage != null ? userMessage : message);
+    public NWebResponseException(NMsg message, NMsgCode messageCode, NHttpCode code) {
+        super(messageCode!=null?NMsg.ofC("%s",messageCode.getMessage()):message);
         this.code = code;
         this.responseMessage = message;
-        this.userMessage = userMessage;
+        this.messageCode = messageCode;
     }
 
     /**
@@ -38,11 +40,11 @@ public class NWebResponseException extends NException {
      *                permitted, and indicates that the cause is nonexistent or
      *                unknown.)
      */
-    public NWebResponseException(NMsg message, NMsg userMessage, int code, Throwable cause) {
-        super(userMessage != null ? userMessage : message, cause);
+    public NWebResponseException(NMsg message, NMsgCode messageCode, NHttpCode code, Throwable cause) {
+        super(messageCode!=null?NMsg.ofC("%s",messageCode.getMessage()):message, cause);
         this.code = code;
         this.responseMessage = message;
-        this.userMessage = userMessage;
+        this.messageCode = messageCode;
     }
 
     /**
@@ -58,22 +60,24 @@ public class NWebResponseException extends NException {
      * @param writableStackTrace whether or not the stack trace should
      *                           be writable
      */
-    public NWebResponseException(NMsg message, NMsg userMessage, int code, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(userMessage != null ? userMessage : message, cause, enableSuppression, writableStackTrace);
+    public NWebResponseException(NMsg message, NMsgCode messageCode, NHttpCode code, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(messageCode!=null?NMsg.ofC("%s",messageCode.getMessage()):message, cause, enableSuppression, writableStackTrace);
         this.code = code;
         this.responseMessage = message;
-        this.userMessage = userMessage;
+        this.messageCode = messageCode;
     }
 
-    public int getCode() {
+    public NHttpCode getCode() {
         return code;
+    }
+
+    @Override
+    public NMsgCode getMsgCode() {
+        return messageCode;
     }
 
     public NMsg getResponseMessage() {
         return responseMessage;
     }
 
-    public NMsg getUserMessage() {
-        return userMessage;
-    }
 }

@@ -27,13 +27,11 @@ public class GenericFilePath implements NPathSPI {
 
     private final String value;
     private final NPathPartList parts;
-    private final NWorkspace workspace;
 
 
-    public GenericFilePath(String value, NWorkspace workspace) {
+    public GenericFilePath(String value) {
         this.value = value == null ? "" : value;
         this.parts = NPathPartParser.parseParts(this.value);
-        this.workspace = workspace;
     }
 
     @Override
@@ -468,14 +466,12 @@ public class GenericFilePath implements NPathSPI {
     }
 
     public static class GenericPathFactory implements NPathFactorySPI {
-        NWorkspace ws;
 
-        public GenericPathFactory(NWorkspace ws) {
-            this.ws = ws;
+        public GenericPathFactory() {
         }
 
         @Override
-        public NCallableSupport<NPathSPI> createPath(String path, ClassLoader classLoader) {
+        public NCallableSupport<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             if (path != null) {
                 if (path.trim().length() > 0) {
                     for (char c : path.toCharArray()) {
@@ -483,7 +479,7 @@ public class GenericFilePath implements NPathSPI {
                             return null;
                         }
                     }
-                    return NCallableSupport.of(1, () -> new GenericFilePath(path, ws));
+                    return NCallableSupport.of(1, () -> new GenericFilePath(path));
                 }
             }
             return null;

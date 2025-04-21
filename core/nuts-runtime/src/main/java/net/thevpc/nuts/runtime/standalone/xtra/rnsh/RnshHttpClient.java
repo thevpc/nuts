@@ -1,14 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.xtra.rnsh;
 
-import com.sun.org.apache.xml.internal.security.utils.I18n;
 import net.thevpc.nuts.NI18n;
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.web.NWebCli;
-import net.thevpc.nuts.web.NWebRequest;
-import net.thevpc.nuts.web.NWebResponse;
+import net.thevpc.nuts.web.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,13 +34,16 @@ public class RnshHttpClient {
     }
 
     public NInputSource getFile(String remotePath) {
-        return NWebCli.of().POST(resolveUrl("get-file"))
+        NWebResponse run = NWebCli.of().POST(resolveUrl("get-file"))
                 .setJsonRequestBody(
                         NMapBuilder.ofLinked()
                                 .put("path", remotePath)
+                                .build()
                 )
                 .doWith(this::prepareSecurity)
-                .run().getContent();
+                .run();
+        rethrowError(run);
+        return run.getContent();
     }
 
     public void getFile(String remotePath, String localPath) {
@@ -111,11 +112,51 @@ public class RnshHttpClient {
     }
 
     public void putFile(NInputContentProvider localPath, String remotePath) {
-        NWebCli.of().POST(resolveUrl("put-file"))
+        NWebResponse run = NWebCli.of().POST(resolveUrl("put-file"))
                 .addFormData("content", localPath)
                 .addFormData("path", remotePath)
                 .doWith(this::prepareSecurity)
-                .run().getContent();
+                .run();
+        rethrowError(run);
+        run.getContent();
+    }
+
+    private void rethrowError(NWebResponse run) {
+        NHttpCode statusCode = run.getCode();
+        if (statusCode.getCode() >= 400) {
+            String appError = run.getHeader("X-APP-ERROR").orNull();
+            NMsgCode code = null;
+            try {
+                if (!NBlankable.isBlank(appError)) {
+                    appError = new String(Base64.getDecoder().decode(appError), "UTF-8");
+                }
+                if (appError != null) {
+                    Map parsedMap = NElements.of().json().parse(appError, Map.class);
+                    if (parsedMap != null) {
+                        List<String> params = (List) parsedMap.get("params");
+                        code = NMsgCode.ofMessage(
+                                (String) parsedMap.get("message"),
+                                (String) parsedMap.get("code"),
+                                params == null ? new String[0] : params.toArray(new String[0])
+                        );
+                    }
+                }
+            } catch (Exception ex) {
+                //
+            }
+            if (code == null && !NBlankable.isBlank(appError)) {
+                code = NMsgCode.ofMessage(appError, "error", new String[0]);
+            }
+            if (code != null) {
+                throw new NWebResponseException(NMsg.ofC("%s", code.getMessage()),
+                        code, statusCode);
+            } else {
+                throw new NWebResponseException(
+                        NMsg.ofC("%s", "unexpected error"),
+                        NMsgCode.ofMessage("unexpected error", "ERROR"),
+                        statusCode);
+            }
+        }
     }
 
     public boolean ensureConnectedSafely() {
@@ -139,7 +180,7 @@ public class RnshHttpClient {
             }
         }
         try {
-            login(connexionString.getUser(), connexionString.getPassword());
+            login(connexionString.getUserName(), connexionString.getPassword());
             return true;
         } catch (Exception e) {
             return false;
@@ -166,17 +207,15 @@ public class RnshHttpClient {
                 //
             }
         }
-        login(connexionString.getUser(), connexionString.getPassword());
+        login(connexionString.getUserName(), connexionString.getPassword());
         return this;
     }
 
     private NConnexionString toSafeConnexionString(NConnexionString connexionString) {
         if (connexionString == null) {
-            return new NConnexionString();
+            return new DefaultNConnexionString();
         }
-        NConnexionString c = connexionString.copy();
-        c.setPassword("***");
-        return c;
+        return connexionString.builder().setPassword("***").build();
     }
 
     public static class LoginResult {
@@ -233,6 +272,7 @@ public class RnshHttpClient {
                 .setJsonRequestBody(
                         NMapBuilder.ofLinked()
                                 .put("token", this.loginResult.refreshToken)
+                                .build()
                 )
                 .run();
         if (response.isOk()) {
@@ -290,7 +330,7 @@ public class RnshHttpClient {
     }
 
     private NConnexionString resolveConnexionString() {
-        NConnexionString c = connexionString == null ? new NConnexionString() : connexionString.copy();
+        NConnexionStringBuilder c = connexionString == null ? new DefaultNConnexionStringBuilder() : connexionString.builder();
         if (NBlankable.isBlank(c.getHost())) {
             c.setHost("localhost");
         }
@@ -305,12 +345,12 @@ public class RnshHttpClient {
             qm.put(CONTEXT_PATH_PARAM, new ArrayList<>(Arrays.asList(context)));
         }
         c.setQueryMap(qm);
-        return c;
+        return c.build();
     }
 
     private String resolveUrl(String extra) {
         NConnexionString c = resolveConnexionString();
-        NConnexionString c2 = new NConnexionString();
+        DefaultNConnexionStringBuilder c2 = new DefaultNConnexionStringBuilder();
         String context = NOptional.ofFirst(c.getQueryMap().orElse(new HashMap<>()).get(CONTEXT_PATH_PARAM)).orElse("/");
         c2.setProtocol("https");
         switch (c.getProtocol()) {
@@ -438,47 +478,59 @@ public class RnshHttpClient {
     }
 
     public NFileInfo getFileInfo(String remotePath) {
-        return NWebCli.of().POST(resolveUrl("file-info"))
+        NWebResponse run = NWebCli.of().POST(resolveUrl("file-info"))
                 .doWith(this::prepareSecurity)
                 .setJsonRequestBody(
                         NMapBuilder.ofLinked()
                                 .put("path", remotePath)
+                                .build()
                 )
-                .run().getContentAsJson(NFileInfo.class);
+                .run();
+        rethrowError(run);
+        return run.getContentAsJson(NFileInfo.class);
     }
 
     public String[] listNames(String remotePath) {
-        return NWebCli.of().POST(resolveUrl("directory-list-names"))
+        NWebResponse run = NWebCli.of().POST(resolveUrl("directory-list-names"))
                 .setJsonRequestBody(
                         NMapBuilder.ofLinked()
                                 .put("path", remotePath)
+                                .build()
                 )
                 .doWith(this::prepareSecurity)
-                .run().getContentAsJson(String[].class);
+                .run();
+        rethrowError(run);
+        return run.getContentAsJson(String[].class);
     }
 
     public String digest(String remotePath, String algo) {
-        Map<String, Object> path = (Map<String, Object>) NWebCli.of().POST(resolveUrl("file-digest"))
+        NWebResponse run = NWebCli.of().POST(resolveUrl("file-digest"))
                 .setJsonRequestBody(
                         NMapBuilder.ofLinked()
                                 .put("path", remotePath)
                                 .put("algo", algo)
+                                .build()
                 )
                 .doWith(this::prepareSecurity)
-                .run().getContentAsJson(Map.class);
+                .run();
+        rethrowError(run);
+        Map<String, Object> path = (Map<String, Object>) run.getContentAsJson(Map.class);
         return path == null ? null : (String) path.get("hash");
     }
 
 
     public List<NPathChildStringDigestInfo> directoryListDigest(String remotePath, String algo) {
-        Map<String, Object>[] res = (Map[]) NWebCli.of().POST(resolveUrl("directory-list-digest"))
+        NWebResponse run = NWebCli.of().POST(resolveUrl("directory-list-digest"))
                 .setJsonRequestBody(
                         NMapBuilder.ofLinked()
                                 .put("path", remotePath)
                                 .put("algo", algo)
+                                .build()
                 )
                 .doWith(this::prepareSecurity)
-                .run().getContentAsJson(Map[].class);
+                .run();
+        rethrowError(run);
+        Map<String, Object>[] res = (Map[]) run.getContentAsJson(Map[].class);
         if (res == null) {
             return new ArrayList<>();
         }
@@ -490,12 +542,15 @@ public class RnshHttpClient {
     }
 
     public NFileInfo[] listFileInfos(String remotePath) {
-        return NWebCli.of().POST(resolveUrl("directory-list-infos"))
+        NWebResponse run = NWebCli.of().POST(resolveUrl("directory-list-infos"))
                 .setJsonRequestBody(
                         NMapBuilder.ofLinked()
                                 .put("path", remotePath)
+                                .build()
                 )
                 .doWith(this::prepareSecurity)
-                .run().getContentAsJson(NFileInfo[].class);
+                .run();
+        rethrowError(run);
+        return run.getContentAsJson(NFileInfo[].class);
     }
 }

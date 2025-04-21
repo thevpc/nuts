@@ -15,7 +15,6 @@ public class ClassLoaderPath extends URLPath {
     private final String path;
     private final String effectivePath;
     private final ClassLoader loader;
-    private final NWorkspace workspace;
     private static String fileOf(String path,boolean check){
         if(path!=null){
             if(path.startsWith("classpath:")){
@@ -33,12 +32,11 @@ public class ClassLoaderPath extends URLPath {
         return null;
     }
 
-    public ClassLoaderPath(String path, ClassLoader loader, NWorkspace workspace) {
+    public ClassLoaderPath(String path, ClassLoader loader) {
         super(loader.getResource(fileOf(path,true)), true);
         this.path = path;
         this.effectivePath = fileOf(path,false);
         this.loader = loader;
-        this.workspace = workspace;
     }
 
     @Override
@@ -64,7 +62,7 @@ public class ClassLoaderPath extends URLPath {
     }
 
     protected NPath rebuildURLPath(String other) {
-        return NPath.of(new ClassLoaderPath(other, loader, workspace));
+        return NPath.of(new ClassLoaderPath(other, loader));
     }
 
     @Override
@@ -78,22 +76,19 @@ public class ClassLoaderPath extends URLPath {
 
     @Override
     public int hashCode() {
-//        return Objects.hash(super.hashCode(), path, loader);
         return Objects.hash(effectivePath, loader);
     }
 
     public static class ClasspathFactory implements NPathFactorySPI {
-        NWorkspace workspace;
 
-        public ClasspathFactory(NWorkspace workspace) {
-            this.workspace = workspace;
+        public ClasspathFactory() {
         }
 
         @Override
-        public NCallableSupport<NPathSPI> createPath(String path, ClassLoader classLoader) {
+        public NCallableSupport<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             try {
                 if (path.startsWith("classpath:")) {
-                    return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT,()->new ClassLoaderPath(path, classLoader, workspace));
+                    return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT,()->new ClassLoaderPath(path, classLoader));
                 }
             } catch (Exception ex) {
                 //ignore

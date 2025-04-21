@@ -282,6 +282,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         this.wsModel.location = data.effectiveBootOptions.getWorkspace().orNull();
 
         this.wsModel.bootModel.onInitializeWorkspace();
+
         NSystemTerminalBase termb = wsModel.extensions
                 .createComponent(NSystemTerminalBase.class).get();
         data.terminals = NIO.of();
@@ -291,6 +292,11 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         ;
         wsModel.bootModel.bootSession().setTerminal(NTerminal.of());
         ((DefaultNLog) LOG).resumeTerminal();
+
+        for (NPathFactorySPI nPathFactorySPI : wsModel.extensions.createServiceLoader(NPathFactorySPI.class, NWorkspace.class).loadAll(this)) {
+            this.wsModel.configModel.addPathFactory(nPathFactorySPI);
+        }
+
         data.text = NTexts.of();
         try {
             data.text.getTheme();

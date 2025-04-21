@@ -207,14 +207,12 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
     }
 
     public static class HtmlfsFactory implements NPathFactorySPI {
-        private final NWorkspace ws;
 
-        public HtmlfsFactory(NWorkspace ws) {
-            this.ws = ws;
+        public HtmlfsFactory() {
         }
 
         @Override
-        public NCallableSupport<NPathSPI> createPath(String path, ClassLoader classLoader) {
+        public NCallableSupport<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             if (path.startsWith(PREFIX)) {
                 return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, () -> new HtmlfsPath(path));
             }

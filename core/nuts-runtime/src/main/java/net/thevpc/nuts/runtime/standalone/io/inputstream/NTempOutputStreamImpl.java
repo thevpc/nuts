@@ -12,10 +12,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class NTempOutputStreamImpl extends NTempOutputStream {
+public class NTempOutputStreamImpl extends NTempOutputStream {
     DefaultNContentMetadata md = new DefaultNContentMetadata();
     boolean mem = true;
     long maxSize = 1024 * 1024 * 10;
@@ -23,6 +24,13 @@ class NTempOutputStreamImpl extends NTempOutputStream {
     ByteArrayOutputStream bos = new ByteArrayOutputStream();
     NPath file;
     OutputStream fos;
+    Consumer<InputStream> onCompleted;
+    boolean closed = false;
+
+    public NTempOutputStreamImpl setOnCompleted(Consumer<InputStream> onCompleted) {
+        this.onCompleted = onCompleted;
+        return this;
+    }
 
     @Override
     public void write(int b) throws IOException {
@@ -80,10 +88,25 @@ class NTempOutputStreamImpl extends NTempOutputStream {
 
     @Override
     public void close() throws IOException {
+        if (closed) {
+            return;
+        }
         if (fos != null) {
             fos.close();
+            if (onCompleted != null) {
+                try (InputStream in = file.getInputStream()) {
+                    onCompleted.accept(in);
+                }
+            }
             file.delete();
+        } else {
+            if (onCompleted != null) {
+                try (InputStream in = new ByteArrayInputStream(bos.toByteArray())) {
+                    onCompleted.accept(in);
+                }
+            }
         }
+        closed = true;
     }
 
     @Override
