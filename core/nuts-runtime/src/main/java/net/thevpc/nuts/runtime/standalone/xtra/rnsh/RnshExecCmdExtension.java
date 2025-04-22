@@ -40,8 +40,8 @@ public class RnshExecCmdExtension implements NExecCmdExtension {
         RnshHttpClient.ExecResult is = resolveRnshHttpClient(context.getTarget())
                 .ensureConnected()
                 .exec(command, NInputSource.of(new ByteArrayInputStream(out.toByteArray()),
-                        new DefaultNContentMetadata().setName("in").setContentType("octet-stream")
-                )
+                                new DefaultNContentMetadata().setName("in").setContentType("octet-stream")
+                        )
                 );
 
         try (InputStream ins = is.getOut().getInputStream()) {
@@ -58,7 +58,7 @@ public class RnshExecCmdExtension implements NExecCmdExtension {
     }
 
     private RnshHttpClient resolveRnshHttpClient(String cnx) {
-        NConnexionStringBuilder cb = DefaultNConnexionStringBuilder.of(cnx).get();
+        NConnexionStringBuilder cb = NConnexionString.of(cnx).builder();
         String v = NStringUtils.trimToNull(cb.getPath());
         Map<String, List<String>> qm = cb.getQueryMap().orElse(new HashMap<>());
         String context = NOptional.ofFirst(qm.get("context")).orElse(null);

@@ -20,10 +20,6 @@ public class DefaultNConnexionString implements NConnexionString {
     private String queryString;
     private Map<String, List<String>> queryMap;
 
-    public static NOptional<NConnexionString> of(String value) {
-        return DefaultNConnexionStringBuilder.of(value).map(NConnexionStringBuilder::build);
-    }
-
     public DefaultNConnexionString() {
         this.queryMap = Collections.emptyMap();
     }

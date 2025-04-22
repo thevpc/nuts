@@ -155,3 +155,4 @@ net.thevpc.nuts.runtime.standalone.xtra.compress.NUncompressGzip
 
 
 net.thevpc.nuts.runtime.standalone.xtra.rnsh.RnshExecCmdExtension
+net.thevpc.nuts.runtime.standalone.util.DefaultNConnexionStringBuilderFactory

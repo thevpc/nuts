@@ -1,6 +1,7 @@
 cd ~/programs/nuts-bundles/
 nuts-dev -ZyS --!switch
-nuts-dev bundle -y nserver --lib=nsh
+#nuts-dev bundle -y nserver --lib=nsh
+nuts-dev bundle -y noapi
 #nuts-dev bundle -y kifkif
 #nuts-dev bundle -y pnote
 #nuts-dev bundle -y nsite
