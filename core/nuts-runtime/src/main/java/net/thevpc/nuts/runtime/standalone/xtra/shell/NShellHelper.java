@@ -61,7 +61,7 @@ public interface NShellHelper {
 
     String getSysRcName();
 
-    String[] parseCmdLineArr(String line) ;
+    String[] parseCmdLineArr(String line, boolean lenient) ;
 
     String escapeArgument(String arg, NCmdLineShellOptions options) ;
 

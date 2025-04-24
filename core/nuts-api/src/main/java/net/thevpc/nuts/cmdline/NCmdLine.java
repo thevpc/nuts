@@ -122,13 +122,13 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     }
 
     static NOptional<NCmdLine> parse(String line) {
-        return NOptional.of(NCmdLines.of().parseCmdLine(line));
+        return NCmdLines.of().parseCmdLine(line);
     }
 
     static NOptional<NCmdLine> parse(String line, NShellFamily shellFamily) {
-        return NOptional.of(NCmdLines.of()
+        return NCmdLines.of()
                 .setShellFamily(shellFamily)
-                .parseCmdLine(line));
+                .parseCmdLine(line);
     }
 
     /**
@@ -139,7 +139,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @return new command line instance
      */
     static NCmdLine of(String line, NShellFamily shellFamily) {
-        return NCmdLines.of().setShellFamily(shellFamily).parseCmdLine(line);
+        return NCmdLines.of().setShellFamily(shellFamily).parseCmdLine(line).get();
     }
 
     /**

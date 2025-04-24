@@ -29,6 +29,7 @@ package net.thevpc.nuts.cmdline;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.NOptional;
 
 /**
  * @author thevpc
@@ -46,7 +47,7 @@ public interface NCmdLines extends NComponent {
      * @param line command line to parse
      * @return new Command line instance
      */
-    NCmdLine parseCmdLine(String line);
+    NOptional<NCmdLine> parseCmdLine(String line);
 
     /**
      * create argument name
@@ -83,4 +84,8 @@ public interface NCmdLines extends NComponent {
      * @return {@code this} instance
      */
     NCmdLines setShellFamily(NShellFamily family);
+
+    NCmdLines setLenient(boolean lenient);
+
+    boolean isLenient();
 }

@@ -7,6 +7,7 @@ import java.security.SecureRandom;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.function.IntPredicate;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
@@ -793,8 +794,56 @@ public class NStringBuilder implements CharSequence, NBlankable {
         });
     }
 
+    public String readUntil(CharPredicate predicate) {
+        int i = 0;
+        while (i < data.length()) {
+            char c = data.charAt(i);
+            if (predicate.test(c)) {
+                String l = data.substring(0, i);
+                data.delete(0, i);
+                return l;
+            } else {
+                i++;
+            }
+        }
+        String l = data.toString();
+        data.setLength(0);
+        return l;
+    }
+
+    public String readWhile(CharPredicate predicate) {
+        int i = 0;
+        while (i < data.length()) {
+            char c = data.charAt(i);
+            if (!predicate.test(c)) {
+                String l = data.substring(0, i);
+                data.delete(0, i);
+                return l;
+            } else {
+                i++;
+            }
+        }
+        String l = data.toString();
+        data.setLength(0);
+        return l;
+    }
+
     public String readLine() {
         return readLine(data);
+    }
+
+    public String readCount(int count) {
+        if (count <= 0) {
+            return "";
+        }
+        if (data.length() <= count) {
+            String s = data.toString();
+            data.setLength(0);
+            return s;
+        }
+        String s = data.substring(0, count);
+        data.delete(0, count);
+        return s;
     }
 
     private String readLine(StringBuilder data) {

@@ -12,12 +12,26 @@ import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.option.*;
 import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
 
 public class DefaultNCmdLines implements NCmdLines {
 
     private NShellFamily family = NShellFamily.getCurrent();
+    private boolean lenient;
 
     public DefaultNCmdLines() {
+    }
+
+    @Override
+    public boolean isLenient() {
+        return lenient;
+    }
+
+    @Override
+    public NCmdLines setLenient(boolean lenient) {
+        this.lenient = lenient;
+        return this;
     }
 
     public NShellFamily getShellFamily() {
@@ -30,8 +44,12 @@ public class DefaultNCmdLines implements NCmdLines {
     }
 
     @Override
-    public NCmdLine parseCmdLine(String line) {
-        return new DefaultNCmdLine(parseCmdLineArr(line));
+    public NOptional<NCmdLine> parseCmdLine(String line) {
+        try {
+            return NOptional.of(new DefaultNCmdLine(parseCmdLineArr(line)));
+        } catch (Exception e) {
+            return NOptional.ofNamedError(NMsg.ofC("%s", e));
+        }
     }
 
     private String[] parseCmdLineArr(String line) {
@@ -42,7 +60,7 @@ public class DefaultNCmdLines implements NCmdLines {
         if (f == null) {
             f = NShellFamily.getCurrent();
         }
-        return NShellHelper.of(f).parseCmdLineArr(line);
+        return NShellHelper.of(f).parseCmdLineArr(line, lenient);
     }
 
     @Override

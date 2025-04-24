@@ -86,7 +86,7 @@ public class RnshExecCmdExtension implements NExecCmdExtension {
     public int getSupportLevel(NSupportLevelContext context) {
         Object c = context.getConstraints();
         if (c instanceof String) {
-            NConnexionString z = DefaultNConnexionString.of((String) c).orNull();
+            NConnexionString z = NConnexionString.get((String) c).orNull();
             if (z != null && isSupportedProtocol(z.getProtocol())) {
                 return NConstants.Support.DEFAULT_SUPPORT;
             }

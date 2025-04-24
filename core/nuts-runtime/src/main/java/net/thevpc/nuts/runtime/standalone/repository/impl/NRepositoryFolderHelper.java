@@ -26,7 +26,6 @@ import net.thevpc.nuts.runtime.standalone.repository.NRepositoryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.DefaultNFetchContentRepositoryCmd;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.DefaultNRepositoryUndeployCmd;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
-import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -342,7 +341,7 @@ public class NRepositoryFolderHelper {
                     if (pathExists(versionFolder)) {
                         NId id2 = id.builder().setVersion(versionFolder.getName()).build();
                         if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
-                            if (filter == null || filter.acceptDefinition(NDefinitionHelper.ofIdOnly(id2))) {
+                            if (filter == null || filter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(id2,repo, "NRepositoryFolderHelper"))) {
                                 bestId = id2;
                             }
                         }

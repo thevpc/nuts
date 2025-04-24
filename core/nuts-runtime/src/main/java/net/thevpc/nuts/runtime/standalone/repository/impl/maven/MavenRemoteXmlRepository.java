@@ -77,7 +77,7 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
                             for (String version : info.getVersions()) {
                                 final NId nutsId = id.builder().setVersion(version).build();
 
-                                if (idFilter != null && !idFilter.acceptDefinition(NDefinitionHelper.ofIdOnly(nutsId))) {
+                                if (idFilter != null && !idFilter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(nutsId,MavenRemoteXmlRepository.this, "MavenRemoteXmlRepository"))) {
                                     continue;
                                 }
                                 ret.add(

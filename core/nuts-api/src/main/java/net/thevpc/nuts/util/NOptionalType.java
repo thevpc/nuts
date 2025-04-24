@@ -28,7 +28,31 @@ package net.thevpc.nuts.util;
  *
  * @author vpc
  */
-public enum NOptionalType {
-    EMPTY, PRESENT, ERROR
-    
+public enum NOptionalType implements NEnum{
+    EMPTY, PRESENT, ERROR;
+
+    /**
+     * lower-cased identifier for the enum entry
+     */
+    private final String id;
+
+    /**
+     * default constructor
+     */
+    NOptionalType() {
+        this.id = NNameFormat.ID_NAME.format(name());
+    }
+
+    public static NOptional<NOptionalType> parse(String value) {
+        return NEnumUtils.parseEnum(value, NOptionalType.class);
+    }
+
+    /**
+     * lower cased identifier.
+     *
+     * @return lower cased identifier
+     */
+    public String id() {
+        return id;
+    }
 }

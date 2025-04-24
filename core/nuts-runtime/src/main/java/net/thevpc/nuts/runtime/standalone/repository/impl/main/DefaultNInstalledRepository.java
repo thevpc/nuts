@@ -687,7 +687,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                     result=NStream.ofIterator(_wstore().searchInstalledVersions(getId()))
                                     .map(vv->{
                                         NId newId = getId().builder().setVersion(vv).build();
-                                        if (filter0.acceptVersion(vv) && (filter == null || filter.acceptDefinition(NDefinitionHelper.ofIdOnly(newId)))) {
+                                        if (filter0.acceptVersion(vv) && (filter == null || filter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(newId,repo, "DefaultNInstalledRepository")))) {
                                             return newId;
                                         }
                                         return null;

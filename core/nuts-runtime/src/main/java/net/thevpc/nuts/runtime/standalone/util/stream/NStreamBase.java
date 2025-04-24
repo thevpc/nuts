@@ -574,6 +574,26 @@ public abstract class NStreamBase<T> implements NStream<T> {
     }
 
     @Override
+    public NStream<T> skip(long n) {
+        return new NStreamBase<T>(nutsBase) {
+            @Override
+            public NIterator<T> iterator() {
+                NIterator<T> iterator = NStreamBase.this.iterator();
+                int count=0;
+                while(count<n){
+                    if(iterator.hasNext()){
+                        iterator.next();
+                    }else{
+                        return iterator;
+                    }
+                    count++;
+                }
+                return iterator;
+            }
+        };
+    }
+
+    @Override
     public void close() {
 
     }

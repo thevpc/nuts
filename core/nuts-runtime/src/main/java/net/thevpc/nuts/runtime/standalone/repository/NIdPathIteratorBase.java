@@ -16,7 +16,8 @@ public abstract class NIdPathIteratorBase implements NIdPathIteratorModel {
     }
 
     public abstract NWorkspace getWorkspace();
-    public NId validate(NId id, NDescriptor descriptor, NPath pathname, NPath rootPath, NDefinitionFilter filter, NRepository repository)  {
+
+    public NId validate(NId id, NDescriptor descriptor, NPath pathname, NPath rootPath, NDefinitionFilter filter, NRepository repository) {
         if (descriptor != null) {
             if (!CoreNUtils.isEffectiveId(descriptor.getId())) {
                 NDescriptor effectiveDescriptor = null;
@@ -28,7 +29,7 @@ public abstract class NIdPathIteratorBase implements NIdPathIteratorModel {
                                     pathname,
                                     ex));//e.printStackTrace();
                 }
-                if(effectiveDescriptor!=null){
+                if (effectiveDescriptor != null) {
                     descriptor = effectiveDescriptor;
                 }
             }
@@ -39,7 +40,7 @@ public abstract class NIdPathIteratorBase implements NIdPathIteratorModel {
             }
         }
         if (id != null) {
-            if ((filter == null || filter.acceptDefinition(NDefinitionHelper.ofIdOnly(id)))) {
+            if ((filter == null || filter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(id, repository, "NIdPathIteratorBase")))) {
                 return id;
             }
         }
@@ -47,7 +48,7 @@ public abstract class NIdPathIteratorBase implements NIdPathIteratorModel {
     }
 
     @Override
-    public NId parseId(NPath pathname, NPath rootPath, NDefinitionFilter filter, NRepository repository)  {
+    public NId parseId(NPath pathname, NPath rootPath, NDefinitionFilter filter, NRepository repository) {
         NDescriptor t = null;
         try {
             t = parseDescriptor(pathname, NInputStreamMonitor.of().setSource(pathname).create(),

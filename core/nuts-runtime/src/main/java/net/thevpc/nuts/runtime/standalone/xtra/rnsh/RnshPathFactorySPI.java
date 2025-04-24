@@ -35,7 +35,7 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
                         || path.startsWith("rnsh-https:")
                         || path.startsWith("rnshs:")
         ) {
-            NConnexionString cnx = DefaultNConnexionString.of(path).orNull();
+            NConnexionString cnx = NConnexionString.get(path).orNull();
             if (cnx != null) {
                 return NCallableSupport.of(3, () -> new NServerPathSPI(cnx));
             }

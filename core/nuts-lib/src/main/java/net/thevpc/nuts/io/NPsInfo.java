@@ -25,6 +25,9 @@
  */
 package net.thevpc.nuts.io;
 
+import java.time.Instant;
+import java.util.Set;
+
 /**
  * System Process Information
  *
@@ -46,6 +49,12 @@ public interface NPsInfo {
      */
     String getName();
 
+    NpsStatus getStatus();
+
+    NpsType getType();
+
+    Set<String> getStatusFlags();
+
     /**
      * Process Title / Window Title if available
      *
@@ -59,11 +68,27 @@ public interface NPsInfo {
      * @return Process command line
      */
     String getCmdLine();
-    
+
     /**
      * Process parsed command line (when applicable)
      *
      * @return parsed Process command line
      */
     String[] getCmdLineArgs();
+
+    String getUser();
+
+    double getPercentCpu();
+
+    double getPercentMem();
+
+    long getVirtualMemorySize();
+
+    long getResidentSetSize();
+
+    String getTerminal();
+
+    Instant getStartTime();
+
+    long getTime();
 }

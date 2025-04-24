@@ -177,6 +177,8 @@ public interface NElements extends NContentTypeFormat {
 
     NElements tson();
 
+    NElements xml();
+
     /**
      * return current value to format.
      *
@@ -430,7 +432,9 @@ public interface NElements extends NContentTypeFormat {
     NPairElement ofPair(String key, Boolean value);
 
     NPairElement ofPair(String key, Byte value);
+
     NPairElement ofPair(String key, Short value);
+
     NPairElement ofPair(String key, Integer value);
 
     NPairElement ofPair(String key, Long value);

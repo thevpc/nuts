@@ -180,7 +180,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                                                                                 String v0 = s3.substring(finalPrefix.length(), s3.length() - 4);
                                                                                 NVersion v = NVersion.get(v0).get();
                                                                                 NId id2 = idBuilder.setVersion(v).build();
-                                                                                if (filter == null || filter.acceptDefinition(NDefinitionHelper.ofIdOnly(id2))) {
+                                                                                if (filter == null || filter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(id2,repository, "TomcatRepoHelper 1"))) {
                                                                                     return id2;
                                                                                 }
                                                                                 return null;
@@ -188,7 +188,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                                                                     .<NId>nonNull();
                                                         } else {
                                                             NId id2 = idBuilder.setVersion(version).build();
-                                                            if (filter == null || filter.acceptDefinition(NDefinitionHelper.ofIdOnly(id2))) {
+                                                            if (filter == null || filter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(id2,repository, "TomcatRepoHelper 2"))) {
                                                                 return NStream.ofSingleton(id2);
                                                             }
                                                             return NStream.ofEmpty();

@@ -1057,7 +1057,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     private RemoteInfo0 resolveRemoteInfo0() {
         String target = getTarget();
         if (!NBlankable.isBlank(target)) {
-            NConnexionString connexionString = DefaultNConnexionString.of(target).get();
+            NConnexionString connexionString = NConnexionString.of(target);
             if ("ssh".equals(connexionString.getProtocol())) {
                 NExtensions.of()
                         .loadExtension(NId.get("net.thevpc.nuts.ext:next-ssh").get());

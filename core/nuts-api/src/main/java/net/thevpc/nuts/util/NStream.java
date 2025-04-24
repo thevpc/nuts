@@ -129,6 +129,8 @@ public interface NStream<T> extends Iterable<T>, NElementDescribable<NStream<T>>
     Stream<T> stream();
 
 
+    NStream<T> skip(long n);
+
     /**
      * return elements count of this result.
      * <p>

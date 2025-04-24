@@ -18,7 +18,7 @@ public abstract class AbstractWinNShellHelper implements NShellHelper {
     }
 
 
-    public String[] parseCmdLineArr(String commandLineString) {
+    public String[] parseCmdLineArr(String commandLineString, boolean lenient) {
         if (commandLineString == null) {
             return new String[0];
         }
@@ -74,7 +74,14 @@ public abstract class AbstractWinNShellHelper implements NShellHelper {
                             break;
                         }
                         case '"': {
-                            throw new NParseException(NMsg.ofC("illegal char %s", c));
+                            if(lenient) {
+                                args.add(sb.toString());
+                                sb.delete(0, sb.length());
+                                status = IN_DBQUOTED_WORD;
+                            }else{
+                                throw new NParseException(NMsg.ofC("illegal char %s", c));
+                            }
+                            break;
                         }
                         case '^': {
                             i++;
@@ -121,7 +128,10 @@ public abstract class AbstractWinNShellHelper implements NShellHelper {
                 break;
             }
             case IN_DBQUOTED_WORD: {
-                throw new NParseException(NMsg.ofPlain("expected \""));
+                if(!lenient) {
+                    throw new NParseException(NMsg.ofPlain("expected \""));
+                }
+                break;
             }
         }
         return args.toArray(new String[0]);

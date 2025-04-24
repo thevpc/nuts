@@ -1,10 +1,37 @@
 package net.thevpc.nuts.util;
 
-public enum NWordFormat {
+public enum NWordFormat implements NEnum {
     CAPITALIZED,
     UPPERCASE,
     LOWERCASE,
     UNCAPITALIZED;
+
+    /**
+     * lower-cased identifier for the enum entry
+     */
+    private final String id;
+
+    /**
+     * default constructor
+     */
+    NWordFormat() {
+        // cannot call NNameFormat because of cyclic dependency!
+        //this.id = NNameFormat.ID_NAME.format(name());
+        this.id = name().toLowerCase();
+    }
+
+    public static NOptional<NWordFormat> parse(String value) {
+        return NEnumUtils.parseEnum(value, NWordFormat.class);
+    }
+
+    /**
+     * lower cased identifier.
+     *
+     * @return lower cased identifier
+     */
+    public String id() {
+        return id;
+    }
 
     public String formatWord(String value) {
         if (value != null) {

@@ -42,26 +42,26 @@ public class MavenSolrSearchCommand {
     }
 
     public NIterator<NId> search(NDefinitionFilter filter, NId[] baseIds, NFetchMode fetchMode) {
-        if(fetchMode== NFetchMode.REMOTE){
-            if(isSolrSearchEnabled()){
-                boolean someCorrect=false;
-                boolean someIncorrect=false;
+        if (fetchMode == NFetchMode.REMOTE) {
+            if (isSolrSearchEnabled()) {
+                boolean someCorrect = false;
+                boolean someIncorrect = false;
                 List<NIterator<? extends NId>> list2 = new ArrayList<>();
-                NPath solrSearchUrl=getSolrSearchUrl();
+                NPath solrSearchUrl = getSolrSearchUrl();
                 for (NId baseId : baseIds) {
-                    MavenSolrSearchRequest r=new MavenSolrSearchRequest(
+                    MavenSolrSearchRequest r = new MavenSolrSearchRequest(
                             baseId.getGroupId(),
                             baseId.getArtifactId()
                     );
                     Iterator<NId> ii = this.search(r, solrSearchUrl, filter);
-                    if(ii!=null){
+                    if (ii != null) {
                         list2.add((NIterator) ii);
-                        someCorrect=true;
-                    }else {
+                        someCorrect = true;
+                    } else {
                         return null;
                     }
                 }
-                if(someCorrect && !someIncorrect){
+                if (someCorrect && !someIncorrect) {
                     return NIteratorUtils.concat(list2);
                 }
             }
@@ -114,9 +114,9 @@ public class MavenSolrSearchCommand {
                                             .parse(query);
                                     if (e.isObject()) {
                                         NObjectElement o = e.asObject().get();
-                                        String status = o.getByPath("responseHeader","status").map(NElement::asLiteral).flatMap(NLiteral::asString).orElse("");
+                                        String status = o.getByPath("responseHeader", "status").map(NElement::asLiteral).flatMap(NLiteral::asString).orElse("");
                                         if ("0".equals(status)) {
-                                            arr = o.getArrayByPath("response","docs").orElse(NArrayElement.ofEmpty());
+                                            arr = o.getArrayByPath("response", "docs").orElse(NArrayElement.ofEmpty());
                                         }
                                     }
                                 }
@@ -132,7 +132,7 @@ public class MavenSolrSearchCommand {
                                         String a = d.getStringValue("a").orElse("");
                                         String v = d.getStringValue("v").orElse("");
                                         index++;
-                                        return NIdBuilder.of(g,a).setVersion(v).build();
+                                        return NIdBuilder.of(g, a).setVersion(v).build();
                                     }
                                 }
                                 return null;
@@ -140,11 +140,11 @@ public class MavenSolrSearchCommand {
                         };
                     }
                 }, () -> NElements.of().ofObjectBuilder().set("url", query.toString()).build());
-                return it.filter(y->idFilter==null||idFilter.acceptDefinition(NDefinitionHelper.ofIdOnly(y)),
-                        ()->
+                return it.filter(y -> idFilter == null || idFilter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(y, repo, "MavenSolrSearchCommand")),
+                                () ->
                                         NElements.of().ofObjectBuilder().set(
-                                        "filterBy", NElements.of().ofString(idFilter==null?"true":idFilter.toString())
-                                ).build()
+                                                "filterBy", NElements.of().ofString(idFilter == null ? "true" : idFilter.toString())
+                                        ).build()
                         )
 //                        .flatMap(
 //                                NutsFunction.of(id -> repo.findNonSingleVersionImpl(id, idFilter, NutsFetchMode.REMOTE, session),

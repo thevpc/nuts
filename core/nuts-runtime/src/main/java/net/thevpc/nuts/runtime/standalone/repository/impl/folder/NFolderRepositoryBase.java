@@ -14,6 +14,7 @@ import net.thevpc.nuts.runtime.standalone.repository.NIdPathIterator;
 import net.thevpc.nuts.runtime.standalone.repository.NIdPathIteratorBase;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NCachedRepository;
 import net.thevpc.nuts.runtime.standalone.repository.util.NIdLocationUtils;
+import net.thevpc.nuts.spi.NFetchDescriptorRepositoryCmd;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.log.NLogVerb;
@@ -203,7 +204,10 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                                     NId expectedId = NIdBuilder.of(groupId, artifactId).setVersion(versionName).build();
                                     if (isValidArtifactVersionFolder(expectedId, versionFolder)) {
                                         final NId nutsId = id.builder().setVersion(versionFolder.getName()).build();
-                                        if (idFilter == null || idFilter.acceptDefinition(NDefinitionHelper.ofIdOnly(nutsId))) {
+                                        if (idFilter == null || idFilter.acceptDefinition(NDefinitionHelper.ofIdAndLazyDescriptor(
+                                                nutsId,
+                                                ()-> fetchDescriptor().setId(nutsId).getResult(),
+                                                "NFolderRepositoryBase::findNonSingleVersionImpl"))) {
                                             return expectedId;
                                         }
                                     }

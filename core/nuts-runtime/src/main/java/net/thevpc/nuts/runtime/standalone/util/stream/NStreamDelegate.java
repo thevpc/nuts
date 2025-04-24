@@ -58,6 +58,11 @@ public abstract class NStreamDelegate<T> implements NStream<T> {
 
 
     @Override
+    public NStream<T> skip(long n) {
+        return baseStream().skip(n);
+    }
+
+    @Override
     public <R> NStream<R> mapUnsafe(UnsafeFunction<? super T, ? extends R> mapper, Function<Exception, ? extends R> onError) {
         return baseStream().mapUnsafe(mapper, onError);
     }

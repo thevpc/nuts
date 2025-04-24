@@ -13,7 +13,9 @@ import net.thevpc.nuts.io.NPs;
 import net.thevpc.nuts.util.NIteratorBuilder;
 
 import java.io.File;
+import java.io.StringReader;
 import java.util.*;
+
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 
@@ -54,9 +56,27 @@ public class DefaultNPs implements NPs {
 
     @Override
     public boolean killProcess(String processId) {
-        return NExecCmd.of()
-                .addCommand("kill", "-9", processId)
-                .getResultCode() == 0;
+        switch (NWorkspace.of().getOsFamily()) {
+            case LINUX:
+            case MACOS:
+            case UNIX: {
+                return NExecCmd.of()
+                        .addCommand("kill", "-9", processId)
+                        .setFailFast(isFailFast())
+                        .getResultCode() == 0;
+            }
+            case WINDOWS: {
+                return NExecCmd.of()
+                        .addCommand("taskkill", "/PID", processId, "/F")
+                        .setFailFast(isFailFast())
+                        .getResultCode() == 0;
+            }
+        }
+        if (isFailFast()) {
+            throw new NUnsupportedOperationException(NMsg.ofC("unsupported kill process in : %s", NWorkspace.of().getOsFamily().id()));
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -107,8 +127,8 @@ public class DefaultNPs implements NPs {
         }
         throw new NExecutionException(
                 NMsg.ofC("unable to resolve a valid jdk installation. "
-                        + "Either run nuts with a valid JDK/SDK (not JRE) or register a valid one using 'nuts settings' command. "
-                        + "All the followings are invalid : \n%s",
+                                + "Either run nuts with a valid JDK/SDK (not JRE) or register a valid one using 'nuts settings' command. "
+                                + "All the followings are invalid : \n%s",
                         String.join("\n", detectedJavaHomes)
                 ),
                 NExecutionException.ERROR_2);
@@ -133,15 +153,39 @@ public class DefaultNPs implements NPs {
         } else if (processType.equalsIgnoreCase("java")) {
             return getResultListJava("");
         } else {
+            switch (NWorkspace.of().getOsFamily()) {
+                case LINUX:{
+                    NExecCmd u = NExecCmd.of()
+                            .addCommand("ps", "-eo", "user,pid,%cpu,%mem,vsz,rss,tty,stat,lstart,time,command")
+                            .setFailFast(isFailFast())
+                            .grabOut();
+                    return new LinuxPsParser().parse(new StringReader(u.getGrabbedOutString()));
+                }
+                case UNIX:
+                case MACOS: {
+                    NExecCmd u = NExecCmd.of()
+                            .addCommand("ps", "aux")
+                            .setFailFast(isFailFast())
+                            .grabOut();
+                    return new UnixPsParser().parse(new StringReader(u.getGrabbedOutString()));
+                }
+                case WINDOWS: {
+                    NExecCmd u = NExecCmd.of()
+                            .addCommand(
+                                    "powershell.exe", "-Command", "Get-WmiObject Win32_Process | ForEach-Object { $o = $_.GetOwner(); $user = if ($o) { $o.User } else { 'N/A' }; $mem = Get-WmiObject Win32_ComputerSystem; $state = if ($_.ExecutionState -eq 0) { 'Running' } elseif ($_.ExecutionState -eq 2) { 'Sleeping' } else { 'Suspended' }; $start = if ($_.CreationDate) { $_.CreationDate.Substring(0, 12) } else { 'N/A' }; New-Object PSObject -Property @{ USER=$user; PID=$_.ProcessId; CPU=([math]::Round(($_.KernelModeTime + $_.UserModeTime)/1e7, 2)); MEM=([math]::Round($_.WorkingSetSize / $mem.TotalPhysicalMemory * 100, 2)); VSZ=[int]($_.VirtualSize / 1KB); RSS=[int]($_.WorkingSetSize / 1KB); TTY='N/A'; STAT=$state; START=$start; TIME=([math]::Round(($_.KernelModeTime + $_.UserModeTime)/1e7, 2)); COMMAND=$_.CommandLine } }"
+                            )
+                            .setFailFast(isFailFast());
+                    return new WindowsPsParser().parse(new StringReader(u.getGrabbedOutString()));
+                }
+            }
             if (isFailFast()) {
                 throw new NIllegalArgumentException(NMsg.ofC("unsupported list processes of type : %s", processType));
             }
-            return new NStreamEmpty<>( "process-" + processType);
+            return new NStreamEmpty<>("process-" + processType);
         }
     }
 
     private NStream<NPsInfo> getResultListJava(String version) {
-        NWorkspace workspace = NWorkspace.of();
         NIterator<NPsInfo> it = NIteratorBuilder.ofSupplier(() -> {
             String cmd = "jps";
             NExecCmd b = null;
@@ -167,6 +211,7 @@ public class DefaultNPs implements NPs {
         }, () -> NElements.of().ofString("jps")).map(
                 NFunction.of(
                         (String line) -> {
+                            DefaultNPsInfoBuilder p = new DefaultNPsInfoBuilder();
                             int s1 = line.indexOf(' ');
                             int s2 = line.indexOf(' ', s1 + 1);
                             String pid = line.substring(0, s1).trim();
@@ -174,11 +219,13 @@ public class DefaultNPs implements NPs {
                             String cmdLineString = s2 >= 0 ? line.substring(s2 + 1).trim() : "";
                             String[] parsedCmdLine = betterArgs(pid);
                             if (parsedCmdLine == null) {
-                                parsedCmdLine= NCmdLine.of(cmdLineString,null).toStringArray();
+                                parsedCmdLine = NCmdLine.of(cmdLineString, null).toStringArray();
                             }
-                            return (NPsInfo) new DefaultNPsInfo(
-                                    pid, cls, null, cmdLineString,parsedCmdLine
-                            );
+                            p.setId(pid)
+                                    .setName(cls)
+                                    .setCmdLine(cmdLineString)
+                                    .setCmdLineArgs(parsedCmdLine);
+                            return p.build();
                         }).withDesc(NEDesc.of("processInfo"))).build();
         return new NStreamFromNIterator<>("process-" + getType(), it);
     }

@@ -160,6 +160,11 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     @Override
+    public NElements xml() {
+        return setContentType(NContentType.XML);
+    }
+
+    @Override
     public Object getValue() {
         return value;
     }

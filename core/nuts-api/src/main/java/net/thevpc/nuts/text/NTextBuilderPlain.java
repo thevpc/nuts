@@ -1,18 +1,18 @@
 package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.NI18n;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStream;
-import net.thevpc.nuts.util.NStringBuilder;
+import net.thevpc.nuts.util.NStringUtils;
 
-import java.io.ByteArrayOutputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 public class NTextBuilderPlain implements NTextBuilder {
-    private NStringBuilder sb=new NStringBuilder();
+    private StringBuilder sb=new StringBuilder();
 
     public NTextBuilderPlain() {
     }
@@ -349,7 +349,7 @@ public class NTextBuilderPlain implements NTextBuilder {
 
     @Override
     public NTextBuilder readLine() {
-        String line = sb.readLine();
+        String line = NStringUtils.readLine(sb);
         if(line==null){
             return null;
         }
@@ -373,12 +373,12 @@ public class NTextBuilderPlain implements NTextBuilder {
 
     @Override
     public boolean isEmpty() {
-        return sb.isEmpty();
+        return sb.length()==0;
     }
 
     @Override
     public boolean isBlank() {
-        return sb.isBlank();
+        return NBlankable.isBlank(sb.toString());
     }
 
     @Override

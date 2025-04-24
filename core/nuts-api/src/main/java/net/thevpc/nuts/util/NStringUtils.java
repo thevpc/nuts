@@ -498,6 +498,7 @@ public class NStringUtils {
                 case LINE_STRING: {
                     sb.insert(0, "¶ ");
                     sb.append("\n");
+                    break;
                 }
                 default: {
                     throw new IllegalArgumentException("Unsupported quote type: " + quoteType);
@@ -1012,8 +1013,31 @@ public class NStringUtils {
         return dp[str1.length()][str2.length()];
     }
 
+    public static String readLine(StringBuilder data) {
+        int i = 0;
+        while (i < data.length()) {
+            char c = data.charAt(i);
+            if (c == '\n') {
+                if (i + 1 < data.length() && data.charAt(i + 1) == '\r') {
+                    i++;
+                    String l = data.substring(0, i - 2);
+                    data.delete(0, i);
+                    return l;
+                }
+                String l = data.substring(0, i - 1);
+                data.delete(0, i);
+                return l;
+            } else {
+                i++;
+            }
+        }
+        String l = data.toString();
+        data.setLength(0);
+        return l;
+    }
+
     public static String pjoin(String delimiter, String... items) {
-        NStringBuilder builder = new NStringBuilder();
+        StringBuilder builder = new StringBuilder();
         if (delimiter == null) {
             delimiter = "";
         }
@@ -1026,7 +1050,8 @@ public class NStringUtils {
         } else {
             for (String item : items) {
                 if (item != null && !item.isEmpty()) {
-                    if (!builder.isEmpty() && !(builder.endsWith(delimiter) || item.startsWith(delimiter))) {
+                    int length = builder.length();
+                    if (length >0 && !(builder.substring(length - delimiter.length(), length).equals(delimiter) || item.startsWith(delimiter))) {
                         builder.append(delimiter);
                     }
                     builder.append(item);

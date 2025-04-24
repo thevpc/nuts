@@ -19,7 +19,7 @@ public class SshPathFactory implements NPathFactorySPI {
     public NCallableSupport<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
         try{
             if(path.startsWith("ssh:")){
-                NConnexionString a= DefaultNConnexionString.of(path).orNull();
+                NConnexionString a= NConnexionString.get(path).orNull();
                 if(a!=null) {
                     return NCallableSupport.of(3, () -> new SshNPath(a));
                 }

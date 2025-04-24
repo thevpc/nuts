@@ -21,7 +21,7 @@ public class SShConnection implements AutoCloseable {
     private List<SshListener> listeners = new ArrayList<>();
 
     public SShConnection(String address, InputStream in, OutputStream out, OutputStream err) {
-        this(DefaultNConnexionString.of(address).get(), in, out, err);
+        this(NConnexionString.of(address), in, out, err);
     }
 
     public SShConnection(NConnexionString address, InputStream in, OutputStream out, OutputStream err) {
