@@ -239,7 +239,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                 break;
             }
             if (multipleRunsSafeTimeMs > 0) {
-                NWorkspaceProfilerImpl.sleep(multipleRunsSafeTimeMs,"DefaultNExecCmd::runLoop");
+                NWorkspaceProfilerImpl.sleep(multipleRunsSafeTimeMs, "DefaultNExecCmd::runLoop");
             }
         }
         if (err != null) {
@@ -387,8 +387,8 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
 //                            .getResultDefinitions()
 //                            .findFirst().get();
                     return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, null,
-                            !ts.isEmpty() ?ts.get(0):"",
-                            (!NBlankable.isBlank(getTarget()) && ts.size()==1)? ts.get(0):NCmdLine.of(ts).toString(),
+                            !ts.isEmpty() ? ts.get(0) : "",
+                            (!NBlankable.isBlank(getTarget()) && ts.size() == 1) ? ts.get(0) : NCmdLine.of(ts).toString(),
                             ts.toArray(new String[0]), getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
                 } else {
                     CharacterizedExecFile c = null;
@@ -403,7 +403,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                         NDescriptor descriptor = c.getDescriptor();
                         if (descriptor != null) {
                             try {
-                                descriptor = NWorkspace.of().resolveEffectiveDescriptor(descriptor,new NDescriptorEffectiveConfig().setIgnoreCurrentEnvironment(true));
+                                descriptor = NWorkspace.of().resolveEffectiveDescriptor(descriptor, new NDescriptorEffectiveConfig().setIgnoreCurrentEnvironment(true));
                             } catch (NNotFoundException ex) {
                                 //ignore
                                 _LOGOP().level(Level.WARNING).verb(NLogVerb.WARNING)
@@ -413,13 +413,12 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                             }
                             NId _id = descriptor.getId();
 
-                            NDefinitionBuilder nutToRun =new DefaultNDefinitionBuilder()
+                            NDefinitionBuilder nutToRun = new DefaultNDefinitionBuilder()
                                     .setId(_id.getLongId())
                                     .setDependency(_id.toDependency())
                                     .setDescriptor(descriptor)
                                     .setContent(NPath.of(c.getContentFile()).setUserCache(false).setUserTemporary(!c.getTemps().isEmpty()))
-                                    .setInstallInformation(DefaultNInstallInfo.notInstalled(_id))
-                                    ;
+                                    .setInstallInformation(DefaultNInstallInfo.notInstalled(_id));
 
                             NDependencySolver resolver = NDependencySolver.of();
                             NDependencyFilters ff = NDependencyFilters.of();
@@ -486,7 +485,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                             .findFirst().get();
                     return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, def2, id,
                             NCmdLine.of(ts).toString(),
-                            ts.toArray(new String[0]),getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
+                            ts.toArray(new String[0]), getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
 
                 } else {
                     if (idToExec != null) {
@@ -497,14 +496,14 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                 }
             }
             case KEYWORD: {
-                Map<String, NInternalCommand> internalCommands=NWorkspaceExt.of().getCommandModel().getInternalCommands();
+                Map<String, NInternalCommand> internalCommands = NWorkspaceExt.of().getCommandModel().getInternalCommands();
                 NInternalCommand ic = internalCommands.get(goodKw);
-                if(ic!=null){
+                if (ic != null) {
                     RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                     if (remoteInfo0 != null) {
                         return _runRemoteInternalCommand(goodKw, remoteInfo0);
                     }
-                    return new DefaultInternalNExecutableCommand(ic,args, this);
+                    return new DefaultInternalNExecutableCommand(ic, args, this);
                 }
                 switch (goodKw) {
                     case "update": {
@@ -704,8 +703,8 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
         if (nid == null) {
             return null;
         }
-        switch (NStringUtils.firstNonNull(nid.getShortName(),"")){
-            case NConstants.Ids.NUTS_APP_ARTIFACT_ID:{
+        switch (NStringUtils.firstNonNull(nid.getShortName(), "")) {
+            case NConstants.Ids.NUTS_APP_ARTIFACT_ID: {
                 nid = nid.builder().setGroupId(NConstants.Ids.NUTS_GROUP_ID).build();
                 break;
             }
@@ -716,16 +715,16 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
             case "net.thevpc.nuts:nuts-boot":
             case "nuts-boot":
             case "net.thevpc.nuts:nuts-lib":
-            case "nuts-lib":
-            {
-                throw new NNotFoundException(nid,NMsg.ofC("%s is not executable",nid));
+            case "nuts-lib": {
+                throw new NNotFoundException(nid, NMsg.ofC("%s is not executable", nid));
             }
         }
         if (NConstants.Ids.NUTS_APP_ARTIFACT_ID.equals(nid.getShortName())) {
             nid = nid.builder().setGroupId(NConstants.Ids.NUTS_GROUP_ID).build();
         }
-        NSession.of().getTerminal().printProgress(NMsg.ofC("start searching for %s",nid));
-        NId ff = NSearchCmd.of(nid).setDependencyFilter(NDependencyFilters.of().byRunnable()).setLatest(true).setFailFast(false)
+        NSession.of().getTerminal().printProgress(NMsg.ofC("start searching for %s", nid));
+        NId ff = NSearchCmd.of(nid)
+                .setDependencyFilter(NDependencyFilters.of().byRunnable()).setLatest(true).setFailFast(false)
                 .setDefinitionFilter(NDefinitionFilters.of().byDeployed(true))
                 .getResultDefinitions().stream()
                 .sorted(Comparator.comparing(x -> !x.getInstallInformation().get().isDefaultVersion())) // default first
@@ -738,21 +737,34 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                 //now search online
                 // this helps recover from "invalid default parseVersion" issue
                 if (traceSession.isPlainTrace()) {
-                    traceSession.out().resetLine().println(NMsg.ofC("%s is %s, will search for it online. Type %s to stop...",
+                    traceSession.out().resetLine().println(NMsg.ofC("%s is %s, will search for it...",
                             nid,
-                            NText.ofStyledError("not installed"),
-                            NText.ofStyledError("CTRL^C")
+                            NText.ofStyledError("not installed")
                     ));
                     traceSession.out().flush();
                 }
-                ff = NSearchCmd.of()
-                        .setFetchStrategy(NFetchStrategy.ONLINE)
-                        .addId(nid)
+                ff = NSearchCmd.of(nid)
+                        .setFetchStrategy(NFetchStrategy.OFFLINE)
                         .setDependencyFilter(NDependencyFilters.of().byRunnable())
                         .setFailFast(false)
                         .setLatest(true)
-                        //                        .configure(true,"--trace-monitor")
                         .getResultIds().findFirst().orElse(null);
+                if (ff == null && NSession.of().getFetchStrategy().orElse(NFetchStrategy.ONLINE) != NFetchStrategy.OFFLINE) {
+                    if (traceSession.isPlainTrace()) {
+                        traceSession.out().resetLine().println(NMsg.ofC("%s is %s, will search for it online. Type %s to stop...",
+                                nid,
+                                NText.ofStyledError("not installed"),
+                                NText.ofStyledError("CTRL^C")
+                        ));
+                        traceSession.out().flush();
+                    }
+                    ff = NSearchCmd.of(nid)
+                            .setFetchStrategy(NFetchStrategy.ONLINE)
+                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                            .setFailFast(false)
+                            .setLatest(true)
+                            .getResultIds().findFirst().orElse(null);
+                }
             }
         }
         if (ff == null) {
