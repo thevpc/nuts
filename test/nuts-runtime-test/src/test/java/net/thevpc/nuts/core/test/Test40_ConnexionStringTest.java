@@ -5,7 +5,7 @@ import net.thevpc.nuts.util.NConnexionStringBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class Test40_NConnexionStringTest {
+public class Test40_ConnexionStringTest {
 
     @Test
     public void test01() {

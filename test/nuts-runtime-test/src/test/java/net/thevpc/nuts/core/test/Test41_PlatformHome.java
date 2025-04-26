@@ -5,7 +5,7 @@ import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class Test41_NPlatformHome {
+public class Test41_PlatformHome {
     @BeforeAll
     public static void init() {
         TestUtils.openNewTestWorkspace();

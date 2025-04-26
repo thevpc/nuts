@@ -15,7 +15,7 @@ import java.time.temporal.ChronoUnit;
 /**
  * @author thevpc
  */
-public class Test36_NutsDuration {
+public class Test36_Duration {
 
     @Test
     public void test01() {

@@ -5,7 +5,7 @@ import net.thevpc.nuts.util.NToStringBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class Test54_NToStringBuilder {
+public class Test54_ToStringBuilder {
 
     @Test
     public void test1() {

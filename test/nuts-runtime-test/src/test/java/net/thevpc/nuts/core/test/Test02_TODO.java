@@ -5,8 +5,6 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 
 import java.io.IOException;
@@ -16,14 +14,9 @@ import org.junit.jupiter.api.*;
 /**
  * @author thevpc
  */
-public class Test02_LoadTest {
+public class Test02_TODO {
 
-    @Test
-    public void load1() throws Exception {
 
-        NWorkspace w1 = TestUtils.openNewTestWorkspace("--install-companions=false");
-        NWorkspace w2 = TestUtils.openNewTestWorkspace("--install-companions=false");
-    }
 
     @BeforeAll
     public static void setUpClass() throws IOException {

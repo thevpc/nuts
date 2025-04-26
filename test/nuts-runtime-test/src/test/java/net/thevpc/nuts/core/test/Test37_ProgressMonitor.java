@@ -5,7 +5,6 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.time.NProgressEventType;
@@ -22,7 +21,7 @@ import java.io.PrintStream;
 /**
  * @author thevpc
  */
-public class Test37_NProgressMonitor {
+public class Test37_ProgressMonitor {
     @BeforeAll
     public static void init() {
         TestUtils.openNewTestWorkspace();

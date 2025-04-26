@@ -33,13 +33,9 @@ public class Test29_DependencyTest {
 
     @Test
     public void testSearchDescriptor() {
-//        NStringMapFormat f = NStringMapFormat.of("=", "&", "\\", false);
-//        NOptional<Map<String, List<String>>> u = f.parseDuplicates("b\\=c");
-//        NOptional<Map<String, List<String>>> u = f.parseDuplicates("d=a,b\\=c");
-//        NOptional<Map<String, List<String>>> u = f.parseDuplicates("cond-properties=a,b\\=c&exclusions=asm:asm,asm:asm-tree,log4j:log4j,oro:oro&profile=coverage");
-        String t1="net.sourceforge.cobertura:cobertura#${cobertura.version}?cond-properties=a,b\\=c&exclusions=asm:asm,asm:asm-tree,log4j:log4j,oro:oro&profile=coverage";
-        String t2="net.sourceforge.cobertura:cobertura#${cobertura.version}?cond-properties='a,b=c'&exclusions=asm:asm,asm:asm-tree,log4j:log4j,oro:oro&profile=coverage";
-        NDependency s = NDependency.get(t1).get();
+        String t1="net.sourceforge.cobertura:cobertura#${cobertura.version}?a,b=c";
+        String t2="net.sourceforge.cobertura:cobertura#${cobertura.version}?ca%2Cb=c";
+        NDependency s = NDependency.of(t1);
         TestUtils.println(t2);
         TestUtils.println(s.toString());
         Assertions.assertTrue(
@@ -63,8 +59,6 @@ public class Test29_DependencyTest {
         cond.setProperties(NMaps.of("a","b"));
         b.setCondition(cond);
         System.out.println(b);
-
-
     }
 
 }
