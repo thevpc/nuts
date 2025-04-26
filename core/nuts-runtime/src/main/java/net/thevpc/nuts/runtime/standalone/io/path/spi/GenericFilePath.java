@@ -5,6 +5,7 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.runtime.standalone.io.path.NPathFromSPI;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathFactorySPI;
@@ -453,11 +454,7 @@ public class GenericFilePath implements NPathSPI {
         if (isRoot(basePath)) {
             return basePath;
         }
-        NPath r = basePath.getParent();
-        if (r != null) {
-            return r.getRoot();
-        }
-        return null;
+        return new NPathFromSPI(new GenericFilePath(""));
     }
 
     @Override
