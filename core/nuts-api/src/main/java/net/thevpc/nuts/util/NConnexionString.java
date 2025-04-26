@@ -41,4 +41,6 @@ public interface NConnexionString extends NImmutable {
     NConnexionString resolve(String child);
 
     NConnexionStringBuilder builder();
+
+    NConnexionString withPath(String path);
 }
