@@ -44,11 +44,6 @@ class DefaultNCustomElement extends AbstractNElement implements NCustomElement {
         this.value = value;
     }
 
-//    @Override
-//    public Object asRawObject() {
-//        return value;
-//    }
-
     @Override
     public NOptional<NElement> resolve(String pattern) {
         pattern = NStringUtils.trimToNull(pattern);

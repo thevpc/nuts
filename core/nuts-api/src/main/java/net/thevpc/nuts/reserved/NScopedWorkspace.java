@@ -69,12 +69,6 @@ public class NScopedWorkspace {
 
     public static void runWith(NWorkspace ws, NRunnable runnable) {
         if (runnable != null) {
-            runWith0(ws, ()->ws.currentSession().runWith(runnable));
-        }
-    }
-
-    public static void runWith0(NWorkspace ws, NRunnable runnable) {
-        if (runnable != null) {
             Stack<NWorkspace> workspaceScopes = workspaceScopes();
             if (!workspaceScopes.isEmpty()) {
                 NWorkspace l = workspaceScopes.peek();

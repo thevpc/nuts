@@ -2,22 +2,12 @@ package net.thevpc.nuts.runtime.standalone.format.elem;
 
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NOptional;
 
-import java.lang.reflect.Type;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder implements NPrimitiveElementBuilder, NLiteral {
+public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder implements NPrimitiveElementBuilder {
     private Object value;
     private NNumberLayout numberLayout;
     private String numberSuffix;
@@ -204,276 +194,8 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     }
 
     @Override
-    public Object asRawObject() {
-        return value;
-    }
-
-    @Override
     public Object value() {
         return value;
-    }
-
-    @Override
-    public NOptional<Instant> asInstant() {
-        return NLiteral.of(value).asInstant();
-    }
-
-    @Override
-    public NOptional<LocalDate> asLocalDate() {
-        return NLiteral.of(value).asLocalDate();
-    }
-
-    @Override
-    public NOptional<LocalDateTime> asLocalDateTime() {
-        return NLiteral.of(value).asLocalDateTime();
-    }
-
-    @Override
-    public NOptional<LocalTime> asLocalTime() {
-        return NLiteral.of(value).asLocalTime();
-    }
-
-    @Override
-    public NOptional<NBigComplex> asBigComplex() {
-        return NLiteral.of(value).asBigComplex();
-    }
-
-    @Override
-    public NOptional<NDoubleComplex> asDoubleComplex() {
-        return NLiteral.of(value).asDoubleComplex();
-    }
-
-    @Override
-    public NOptional<NFloatComplex> asFloatComplex() {
-        return NLiteral.of(value).asFloatComplex();
-    }
-
-    @Override
-    public NOptional<Number> asNumber() {
-        return NLiteral.of(value).asNumber();
-    }
-
-    @Override
-    public NOptional<Boolean> asBoolean() {
-        return NLiteral.of(value).asBoolean();
-    }
-
-    @Override
-    public NOptional<Long> asLong() {
-        return NLiteral.of(value).asLong();
-    }
-
-    @Override
-    public NOptional<Double> asDouble() {
-        return NLiteral.of(value).asDouble();
-    }
-
-    @Override
-    public NOptional<Float> asFloat() {
-        return NLiteral.of(value).asFloat();
-    }
-
-    @Override
-    public NOptional<Byte> asByte() {
-        return NLiteral.of(value).asByte();
-    }
-
-    @Override
-    public NOptional<Short> asShort() {
-        return NLiteral.of(value).asShort();
-    }
-
-    @Override
-    public NOptional<Character> asChar() {
-        return NLiteral.of(value).asChar();
-    }
-
-    @Override
-    public NOptional<Integer> asInt() {
-        return NLiteral.of(value).asInt();
-    }
-
-    @Override
-    public NOptional<String> asString() {
-        return NLiteral.of(value).asString();
-    }
-
-    @Override
-    public NOptional<BigInteger> asBigInt() {
-        return NLiteral.of(value).asBigInt();
-    }
-
-    @Override
-    public NOptional<BigDecimal> asBigDecimal() {
-        return NLiteral.of(value).asBigDecimal();
-    }
-
-    @Override
-    public boolean isBoolean() {
-        return NLiteral.of(value).isBoolean();
-    }
-
-    @Override
-    public boolean isDecimalNumber() {
-        return NLiteral.of(value).isDecimalNumber();
-    }
-
-    @Override
-    public boolean isBigNumber() {
-        return NLiteral.of(value).isBigNumber();
-    }
-
-    @Override
-    public boolean isBigDecimal() {
-        return NLiteral.of(value).isBigDecimal();
-    }
-
-    @Override
-    public boolean isBigInt() {
-        return NLiteral.of(value).isBigInt();
-    }
-
-    @Override
-    public boolean isNull() {
-        return value == null;
-    }
-
-    @Override
-    public boolean isString() {
-        return NLiteral.of(value).isString();
-    }
-
-    @Override
-    public boolean isByte() {
-        return NLiteral.of(value).isByte();
-    }
-
-    @Override
-    public boolean isInt() {
-        return NLiteral.of(value).isInt();
-    }
-
-    @Override
-    public boolean isLong() {
-        return NLiteral.of(value).isLong();
-    }
-
-    @Override
-    public boolean isShort() {
-        return NLiteral.of(value).isShort();
-    }
-
-    @Override
-    public boolean isFloat() {
-        return NLiteral.of(value).isFloat();
-    }
-
-    @Override
-    public boolean isDouble() {
-        return NLiteral.of(value).isDouble();
-    }
-
-    @Override
-    public boolean isInstant() {
-        return NLiteral.of(value).isInstant();
-    }
-
-    @Override
-    public String toStringLiteral() {
-        return NLiteral.of(value).toStringLiteral();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return NLiteral.of(value).isEmpty();
-    }
-
-    @Override
-    public NOptional<String> asStringAt(int index) {
-        return NLiteral.of(value).asStringAt(index);
-    }
-
-    @Override
-    public NOptional<Long> asLongAt(int index) {
-        return NLiteral.of(value).asLongAt(index);
-    }
-
-    @Override
-    public NOptional<Integer> asIntAt(int index) {
-        return NLiteral.of(value).asIntAt(index);
-    }
-
-    @Override
-    public NOptional<Double> asDoubleAt(int index) {
-        return NLiteral.of(value).asDoubleAt(index);
-    }
-
-    @Override
-    public boolean isNullAt(int index) {
-        return NLiteral.of(value).isNullAt(index);
-    }
-
-    @Override
-    public NLiteral asLiteralAt(int index) {
-        return NLiteral.of(value).asLiteralAt(index);
-    }
-
-    @Override
-    public NOptional<Object> asObjectAt(int index) {
-        return NLiteral.of(value).asObjectAt(index);
-    }
-
-    @Override
-    public boolean isBlank() {
-        return NBlankable.isBlank(value);
-    }
-
-    @Override
-    public boolean isNumber() {
-        return NLiteral.of(value).isNumber();
-    }
-
-    @Override
-    public boolean isSupportedType(Class<?> type) {
-        if (type == null) {
-            return false;
-        }
-        switch (type.getName()) {
-            case "java.lang.String":
-            case "java.lang.Boolean":
-            case "boolean":
-            case "java.lang.Byte":
-            case "byte":
-            case "java.lang.Short":
-            case "short":
-            case "java.lang.Character":
-            case "char":
-            case "java.lang.Integer":
-            case "int":
-            case "java.lang.Long":
-            case "long":
-            case "java.lang.Float":
-            case "float":
-            case "java.lang.Double":
-            case "double":
-            case "java.time.Instant":
-            case "java.lang.Number":
-                return true;
-        }
-        if (Number.class.isAssignableFrom(type)) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public <ET> NOptional<ET> asType(Class<ET> expectedType) {
-        return NLiteral.of(value).asType(expectedType);
-    }
-
-    @Override
-    public <ET> NOptional<ET> asType(Type expectedType) {
-        return NLiteral.of(value).asType(expectedType);
     }
 
 
@@ -589,26 +311,6 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         return this;
     }
 
-    @Override
-    public boolean isStream() {
-        return type().isStream();
-    }
-
-    @Override
-    public boolean isComplexNumber() {
-        return type().isStream();
-    }
-
-    @Override
-    public boolean isTemporal() {
-        return type().isTemporal();
-    }
-
-    @Override
-    public boolean isLocalTemporal() {
-        return type().isLocalTemporal();
-    }
-
     public NPrimitiveElementBuilder copyFrom(NPrimitiveElement element) {
         if (element != null) {
             addAnnotations(element.annotations());
@@ -632,16 +334,6 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
             numberSuffix(element.numberSuffix());
         }
         return this;
-    }
-
-    @Override
-    public boolean isOrdinalNumber() {
-        return type().isOrdinalNumber();
-    }
-
-    @Override
-    public boolean isFloatingNumber() {
-        return type().isFloatingNumber();
     }
 
     @Override

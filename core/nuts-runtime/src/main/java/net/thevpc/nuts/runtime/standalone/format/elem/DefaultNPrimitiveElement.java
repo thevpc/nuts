@@ -63,7 +63,7 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
 
     @Override
     public Object value() {
-        return value.asRawObject();
+        return value.asObject().orNull();
     }
 
     @Override
@@ -160,6 +160,7 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
     public boolean isNumber() {
         return value.isNumber();
     }
+
     @Override
     public boolean isFloatingNumber() {
         return value.isFloatingNumber();

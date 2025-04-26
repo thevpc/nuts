@@ -12,13 +12,13 @@ public class NElementMapperNLiteral implements NElementMapper<NLiteral> {
     @Override
     public Object destruct(NLiteral src, Type typeOfSrc, NElementFactoryContext context) {
         return context.defaultDestruct(
-                src.asRawObject(), null
+                src.asObject().orNull(), null
         );
     }
 
     @Override
     public NElement createElement(NLiteral o, Type typeOfSrc, NElementFactoryContext context) {
-        return context.defaultObjectToElement(o.asRawObject(), null);
+        return context.defaultObjectToElement(o.asObject().orNull(), null);
     }
 
     @Override

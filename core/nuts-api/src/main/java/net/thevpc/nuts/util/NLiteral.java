@@ -19,7 +19,7 @@ public interface NLiteral extends NBlankable {
         return DefaultNLiteral.of(any);
     }
 
-    Object asRawObject();
+    NOptional<Object> asObject();
 
     NOptional<Instant> asInstant();
 

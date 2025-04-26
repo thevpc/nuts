@@ -138,112 +138,6 @@ public class DefaultNLiteral implements NLiteral {
     }
 
     @Override
-    public Object asRawObject() {
-        return value;
-    }
-
-    @Override
-    public NOptional<LocalDateTime> asLocalDateTime() {
-        if (value == null) {
-            return NOptional.ofEmpty(() -> NMsg.ofPlain("empty instant"));
-        }
-        if (value instanceof Boolean) {
-            return NOptional.ofEmpty(() -> NMsg.ofPlain("cannot convert boolean to Instant"));
-        }
-        if (value instanceof Date) {
-            return NOptional.of(((Date) value).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-        }
-        if (value instanceof Instant) {
-            return NOptional.of(((Instant) value).atZone(ZoneId.systemDefault()).toLocalDateTime());
-        }
-        String s = String.valueOf(value);
-        if (s.trim().isEmpty()) {
-            return NOptional.ofEmpty(() -> NMsg.ofPlain("empty instant"));
-        }
-        try {
-            return NOptional.of(DateTimeFormatter.ISO_INSTANT.parse(s, Instant::from).atZone(ZoneId.systemDefault()).toLocalDateTime());
-        } catch (Exception ex) {
-            //
-        }
-        for (String f : DATE_TIME_FORMATS) {
-            try {
-                return NOptional.of(new SimpleDateFormat(f).parse(s).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-            } catch (Exception ex) {
-                //
-            }
-        }
-        if (isLong()) {
-            try {
-                try {
-                    return NOptional.of(Instant.ofEpochMilli(((Number) value).longValue()).atZone(ZoneId.systemDefault()).toLocalDateTime());
-                } catch (Exception any) {
-                    //
-                }
-            } catch (Exception ex) {
-                //
-            }
-        }
-        if (isNumber()) {
-            return NOptional.ofEmpty(() -> NMsg.ofPlain("cannot convert number to Instant"));
-        }
-        return NOptional.ofEmpty(() -> NMsg.ofPlain("cannot convert to Instant"));
-    }
-
-    @Override
-    public NOptional<LocalDate> asLocalDate() {
-        if (value == null) {
-            return NOptional.ofEmpty(() -> NMsg.ofPlain("empty instant"));
-        }
-        if (value instanceof Boolean) {
-            return NOptional.ofEmpty(() -> NMsg.ofPlain("cannot convert boolean to Instant"));
-        }
-        if (value instanceof Date) {
-            return NOptional.of(((Date) value).toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-        }
-        if (value instanceof Instant) {
-            return NOptional.of(((Instant) value).atZone(ZoneId.systemDefault()).toLocalDate());
-        }
-        String s = String.valueOf(value);
-        if (s.trim().isEmpty()) {
-            return NOptional.ofEmpty(() -> NMsg.ofPlain("empty instant"));
-        }
-        try {
-            return NOptional.of(DateTimeFormatter.ISO_INSTANT.parse(s, Instant::from).atZone(ZoneId.systemDefault()).toLocalDate());
-        } catch (Exception ex) {
-            //
-        }
-        for (String f : DATE_TIME_FORMATS) {
-            try {
-                return NOptional.of(new SimpleDateFormat(f).parse(s).toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-            } catch (Exception ex) {
-                //
-            }
-        }
-        for (String f : DATE_FORMATS) {
-            try {
-                return NOptional.of(new SimpleDateFormat(f).parse(s).toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-            } catch (Exception ex) {
-                //
-            }
-        }
-        if (isLong()) {
-            try {
-                try {
-                    return NOptional.of(Instant.ofEpochMilli(((Number) value).longValue()).atZone(ZoneId.systemDefault()).toLocalDate());
-                } catch (Exception any) {
-                    //
-                }
-            } catch (Exception ex) {
-                //
-            }
-        }
-        if (isNumber()) {
-            return NOptional.ofEmpty(() -> NMsg.ofPlain("cannot convert number to Instant"));
-        }
-        return NOptional.ofEmpty(() -> NMsg.ofPlain("cannot convert to Instant"));
-    }
-
-    @Override
     public NOptional<NFloatComplex> asFloatComplex() {
         if (value == null) {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty FloatComplex"));
@@ -320,60 +214,51 @@ public class DefaultNLiteral implements NLiteral {
         if (value == null) {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty instant"));
         }
-        if (value instanceof Boolean) {
-            return NOptional.ofEmpty(() -> NMsg.ofPlain("cannot convert boolean to Instant"));
+        if (value instanceof LocalDateTime) {
+            return NOptional.of(((LocalDateTime) value).toLocalTime());
         }
-        if (value instanceof Date) {
-            return NOptional.of(((Date) value).toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
+        if (value instanceof LocalDate) {
+            return NOptional.of(LocalTime.MIN);
         }
-        if (value instanceof Instant) {
-            return NOptional.of(((Instant) value).atZone(ZoneId.systemDefault()).toLocalTime());
+        if (value instanceof LocalTime) {
+            return NOptional.of((LocalTime) value);
         }
-        String s = String.valueOf(value);
-        if (s.trim().isEmpty()) {
+        return asInstant().map(x->x.atZone(ZoneId.systemDefault()).toLocalTime());
+    }
+
+
+    @Override
+    public NOptional<LocalDateTime> asLocalDateTime() {
+        if (value == null) {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty instant"));
         }
-        try {
-            return NOptional.of(DateTimeFormatter.ISO_INSTANT.parse(s, Instant::from).atZone(ZoneId.systemDefault()).toLocalTime());
-        } catch (Exception ex) {
-            //
+        if (value instanceof LocalDateTime) {
+            return NOptional.of((LocalDateTime) value);
         }
-        for (String f : TIME_FORMATS) {
-            try {
-                return NOptional.of(new SimpleDateFormat(f).parse(s).toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
-            } catch (Exception ex) {
-                //
-            }
+        if (value instanceof LocalDate) {
+            return NOptional.of(((LocalDate) value).atStartOfDay());
         }
-        for (String f : DATE_TIME_FORMATS) {
-            try {
-                return NOptional.of(new SimpleDateFormat(f).parse(s).toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
-            } catch (Exception ex) {
-                //
-            }
+        if (value instanceof LocalTime) {
+            return NOptional.of(LocalDateTime.of(LocalDate.now(), (LocalTime) value));
         }
-        for (String f : DATE_FORMATS) {
-            try {
-                return NOptional.of(new SimpleDateFormat(f).parse(s).toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
-            } catch (Exception ex) {
-                //
-            }
+        return asInstant().map(x -> x.atZone(ZoneId.systemDefault()).toLocalDateTime());
+    }
+
+    @Override
+    public NOptional<LocalDate> asLocalDate() {
+        if (value == null) {
+            return NOptional.ofEmpty(() -> NMsg.ofPlain("empty instant"));
         }
-        if (isLong()) {
-            try {
-                try {
-                    return NOptional.of(Instant.ofEpochMilli(((Number) value).longValue()).atZone(ZoneId.systemDefault()).toLocalTime());
-                } catch (Exception any) {
-                    //
-                }
-            } catch (Exception ex) {
-                //
-            }
+        if (value instanceof LocalDateTime) {
+            return NOptional.of(((LocalDateTime) value).toLocalDate());
         }
-        if (isNumber()) {
-            return NOptional.ofEmpty(() -> NMsg.ofPlain("cannot convert number to Instant"));
+        if (value instanceof LocalDate) {
+            return NOptional.of((LocalDate) value);
         }
-        return NOptional.ofEmpty(() -> NMsg.ofPlain("cannot convert to Instant"));
+        if (value instanceof LocalTime) {
+            return NOptional.of(LocalDate.now());
+        }
+        return asInstant().map(x -> x.atZone(ZoneId.systemDefault()).toLocalDate());
     }
 
     @Override
@@ -390,8 +275,19 @@ public class DefaultNLiteral implements NLiteral {
         if (value instanceof Instant) {
             return NOptional.of(((Instant) value));
         }
-        String s = String.valueOf(value);
-        if (s.trim().isEmpty()) {
+        if (value instanceof LocalDateTime) {
+            return NOptional.of(((LocalDateTime) value).atZone(ZoneId.systemDefault()).toInstant());
+        }
+        if (value instanceof LocalDate) {
+            return NOptional.of(((LocalDate) value).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+        }
+        if (value instanceof LocalTime) {
+            return NOptional.of(LocalDateTime.of(LocalDate.now(), (LocalTime) value)
+                    .atZone(ZoneId.systemDefault())
+                    .toInstant());
+        }
+        String s = String.valueOf(value).trim();
+        if (s.isEmpty()) {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty instant"));
         }
         try {
@@ -406,6 +302,31 @@ public class DefaultNLiteral implements NLiteral {
                 //
             }
         }
+        try {
+            String sd = s.replace("/", "-");
+            if (sd.matches("\\d{2}-\\d{2}-\\d{4}")) {
+                String y = sd.substring(6, 10);
+                String m = sd.substring(3, 5);
+                String d = sd.substring(0, 2);
+                return NOptional.of(Instant.parse(y + "-" + m + "-" + d + "T00:00:00Z"));
+            } else if (sd.matches("\\d{4}-\\d{2}-\\d{2}")) {
+                sd = sd + "T00:00:00Z";
+            } else if (sd.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}")) {
+                sd = sd.replace(" ", "T") + "Z";
+            } else if (sd.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}")) {
+                sd = sd.replace(" ", "T") + ":00:00Z";
+            } else if (sd.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}")) {
+                sd = sd.replace(" ", "T") + ":00Z";
+            } else if (sd.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}[hH]\\d{2}")) {
+                sd = sd.replace(" ", "T").replace("h", ":").replace("H", ":") + ":00Z";
+            } else if (sd.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}[hH]")) {
+                sd = sd.replace(" ", "T").substring(0, sd.length() - 1) + ":00:00Z";
+            }
+            return NOptional.of(Instant.parse(sd));
+        } catch (Exception ex) {
+            //
+        }
+
         if (isLong()) {
             try {
                 try {
@@ -420,8 +341,14 @@ public class DefaultNLiteral implements NLiteral {
         if (isNumber()) {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("cannot convert number to Instant"));
         }
-        return NOptional.ofEmpty(() -> NMsg.ofPlain("cannot convert to Instant"));
+        return NOptional.ofEmpty(() -> NMsg.ofC("cannot convert to Instant %s", value));
     }
+
+    @Override
+    public NOptional<Object> asObject() {
+        return NOptional.of(value);
+    }
+
 
     @Override
     public NOptional<Number> asNumber() {
@@ -681,11 +608,11 @@ public class DefaultNLiteral implements NLiteral {
     public NOptional<Byte> asByte() {
         return asLong()
                 .ifEmptyUse(() -> NOptional.ofEmpty(() -> NMsg.ofPlain("empty Byte")))
-                .ifErrorUse(() -> NOptional.ofError(() -> NMsg.ofC("invalid Byte : %s", asRawObject())))
+                .ifErrorUse(() -> NOptional.ofError(() -> NMsg.ofC("invalid Byte : %s", asObject().orNull())))
                 .flatMap(value -> {
                     byte smallValue = value.byteValue();
                     if (!Long.valueOf(smallValue).equals(value)) {
-                        return NOptional.ofError(() -> NMsg.ofC("invalid Byte : %s", asRawObject()));
+                        return NOptional.ofError(() -> NMsg.ofC("invalid Byte : %s", asObject().orNull()));
                     }
                     return NOptional.of(smallValue);
                 });
@@ -695,11 +622,11 @@ public class DefaultNLiteral implements NLiteral {
     public NOptional<Short> asShort() {
         return asLong()
                 .ifEmptyUse(() -> NOptional.ofEmpty(() -> NMsg.ofPlain("empty Short")))
-                .ifErrorUse(() -> NOptional.ofError(() -> NMsg.ofC("invalid Short : %s", asRawObject())))
+                .ifErrorUse(() -> NOptional.ofError(() -> NMsg.ofC("invalid Short : %s", asObject().orNull())))
                 .flatMap(value -> {
                     short smallValue = value.shortValue();
                     if (!Long.valueOf(smallValue).equals(value)) {
-                        return NOptional.ofError(() -> NMsg.ofC("invalid Short : %s", asRawObject()));
+                        return NOptional.ofError(() -> NMsg.ofC("invalid Short : %s", asObject().orNull()));
                     }
                     return NOptional.of(smallValue);
                 });
@@ -709,11 +636,11 @@ public class DefaultNLiteral implements NLiteral {
     public NOptional<Integer> asInt() {
         return asLong()
                 .ifEmptyUse(() -> NOptional.ofEmpty(() -> NMsg.ofPlain("empty Integer")))
-                .ifErrorUse(() -> NOptional.ofError(() -> NMsg.ofC("invalid Integer : %s", asRawObject())))
+                .ifErrorUse(() -> NOptional.ofError(() -> NMsg.ofC("invalid Integer : %s", asObject().orNull())))
                 .flatMap(value -> {
                     int smallValue = value.intValue();
                     if (!Long.valueOf(smallValue).equals(value)) {
-                        return NOptional.ofError(() -> NMsg.ofC("invalid Integer : %s", asRawObject()));
+                        return NOptional.ofError(() -> NMsg.ofC("invalid Integer : %s", asObject().orNull()));
                     }
                     return NOptional.of(smallValue);
                 });
@@ -826,7 +753,7 @@ public class DefaultNLiteral implements NLiteral {
 
     @Override
     public String toString() {
-        return Objects.toString(asRawObject());
+        return Objects.toString(asObject().orNull());
     }
 
     @Override
@@ -876,8 +803,7 @@ public class DefaultNLiteral implements NLiteral {
             case TRIPLE_DOUBLE_QUOTED_STRING:
             case TRIPLE_SINGLE_QUOTED_STRING:
             case TRIPLE_ANTI_QUOTED_STRING:
-            case LINE_STRING:
-            {
+            case LINE_STRING: {
                 return toString().isEmpty();
             }
         }
@@ -937,7 +863,7 @@ public class DefaultNLiteral implements NLiteral {
                 }
             }
             if (value instanceof NElement) {
-                return ((NElement) value).asElementAt(index).map(x->x.asLiteral().asRawObject());
+                return ((NElement) value).asElementAt(index).map(x -> x.asLiteral().asObject().orNull());
             }
         }
         return NOptional.ofEmpty(() -> NMsg.ofC("invalid object at %s", index));
@@ -1070,8 +996,7 @@ public class DefaultNLiteral implements NLiteral {
             case TRIPLE_DOUBLE_QUOTED_STRING:
             case TRIPLE_SINGLE_QUOTED_STRING:
             case TRIPLE_ANTI_QUOTED_STRING:
-            case LINE_STRING:
-            {
+            case LINE_STRING: {
                 String s = asString().get();
                 s = s.trim();
                 try {

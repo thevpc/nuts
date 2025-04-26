@@ -131,7 +131,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     @Override
     public void runWith(NRunnable runnable) {
         if (runnable != null) {
-            NScopedWorkspace.runWith0(workspace, () -> {
+            NScopedWorkspace.runWith(workspace, () -> {
                 Stack<NSession> nSessions = NWorkspaceExt.of().sessionScopes();
                 if (!nSessions.isEmpty()) {
                     NSession l = nSessions.peek();

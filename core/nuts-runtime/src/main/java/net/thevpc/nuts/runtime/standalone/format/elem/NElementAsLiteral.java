@@ -65,8 +65,8 @@ public class NElementAsLiteral implements NLiteral {
     }
 
     @Override
-    public Object asRawObject() {
-        return null;
+    public NOptional<Object> asObject() {
+        return NOptional.of(elem);
     }
 
     @Override
@@ -177,6 +177,7 @@ public class NElementAsLiteral implements NLiteral {
     public NOptional<BigDecimal> asBigDecimal() {
         return elem.asPrimitive().map(NElement::asLiteral).flatMap(NLiteral::asBigDecimal);
     }
+
     @Override
     public boolean isBigDecimal() {
         return elem.type() == NElementType.BIG_DECIMAL;
@@ -284,7 +285,7 @@ public class NElementAsLiteral implements NLiteral {
     @Override
     public NOptional<Object> asObjectAt(int index) {
         return elem.asElementAt(index)
-                .map(x->x.asLiteral().asRawObject());
+                .map(x -> x.asLiteral().asObject().orNull());
     }
 
     @Override
