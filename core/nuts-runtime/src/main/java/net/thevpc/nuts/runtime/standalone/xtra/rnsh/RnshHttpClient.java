@@ -337,7 +337,7 @@ public class RnshHttpClient {
         if (NBlankable.isBlank(c.getPort())) {
             c.setPort("8899");
         }
-        Map<String, List<String>> qm = c.getQueryMap().orElse(new HashMap<>());
+         Map<String, List<String>> qm = new LinkedHashMap<>(c.getQueryMap().orElse(new HashMap<>()));
         String context = NOptional.ofFirst(qm.get(CONTEXT_PATH_PARAM)).orElse(null);
         if (NBlankable.isBlank(context)) {
             qm.put(CONTEXT_PATH_PARAM, new ArrayList<>(Arrays.asList("/")));
@@ -417,6 +417,7 @@ public class RnshHttpClient {
                 .setFormData(inputSource == null ? null : "in", inputSource)
                 .doWith(this::prepareSecurity)
                 .run();
+        rethrowError(r);
         return new ExecResult(
                 r.getHeader("X-EXEC-CODE").flatMap(x -> NLiteral.of(x).asInt()).orElse(0),
                 r.getContent(),

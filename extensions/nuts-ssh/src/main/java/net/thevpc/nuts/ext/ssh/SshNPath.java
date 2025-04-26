@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.spi.NPathSPIAware;
 import net.thevpc.nuts.util.NConnexionStringBuilder;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathSPI;
@@ -585,8 +586,22 @@ class SshNPath implements NPathSPI {
     @Override
     public boolean copyTo(NPath basePath, NPath other, NPathOption... options) {
         //TODO check if the two files are on the same ssh filesystem ?
-        NCp.of().from(basePath).to(other).addOptions(options).run();
-        return true;
+        if (basePath instanceof NPathSPIAware && other instanceof NPathSPIAware) {
+            NPathSPI spi1 = ((NPathSPIAware) basePath).spi();
+            NPathSPI spi2 = ((NPathSPIAware) other).spi();
+            if (spi1 instanceof SshNPath && spi2 instanceof SshNPath) {
+                SshNPath ssh1 = (SshNPath) spi1;
+                SshNPath ssh2 = (SshNPath) spi2;
+                if (ssh1.path.withPath("/").equals(ssh2.path.withPath("/"))) {
+                    // same filesystem
+                    try (SShConnection session = prepareSshConnexion()) {
+                        session.exec("cp", "-r", ssh1.path.getPath(), ssh2.path.getPath());
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Override

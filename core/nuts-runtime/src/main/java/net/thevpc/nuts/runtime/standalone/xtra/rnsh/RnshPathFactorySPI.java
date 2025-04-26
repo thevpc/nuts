@@ -6,6 +6,7 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.inputstream.NTempOutputStreamImpl;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
+import net.thevpc.nuts.spi.NPathSPIAware;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.*;
 
@@ -109,6 +110,25 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
                                     NPath.of(cnx.resolve(x).toString())
                             )
                     ;
+        }
+
+        @Override
+        public boolean copyTo(NPath basePath, NPath other, NPathOption... options) {
+            //TODO check if the two files are on the same ssh filesystem ?
+            if (basePath instanceof NPathSPIAware && other instanceof NPathSPIAware) {
+                NPathSPI spi1 = ((NPathSPIAware) basePath).spi();
+                NPathSPI spi2 = ((NPathSPIAware) other).spi();
+                if (spi1 instanceof NServerPathSPI && spi2 instanceof NServerPathSPI) {
+                    NServerPathSPI ssh1 = (NServerPathSPI) spi1;
+                    NServerPathSPI ssh2 = (NServerPathSPI) spi2;
+                    if (ssh1.cnx.withPath("/").equals(ssh2.cnx.withPath("/"))) {
+                        // same filesystem
+                        client.exec("cp", "-r", ssh1.remotePath, ssh2.remotePath);
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         @Override

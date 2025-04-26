@@ -7,6 +7,7 @@ import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.io.util.AbstractMultiReadNInputSource;
+import net.thevpc.nuts.spi.NPathSPIAware;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
@@ -19,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class NPathBase extends AbstractMultiReadNInputSource implements NPath {
+public abstract class NPathBase extends AbstractMultiReadNInputSource implements NPath, NPathSPIAware {
 
     public static final int BUFFER_SIZE = 8192;
     private DefaultNPathMetadata omd = new DefaultNPathMetadata(this);

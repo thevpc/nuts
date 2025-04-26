@@ -30,6 +30,11 @@ public class NPathFromSPI extends NPathBase {
         this.base = base;
     }
 
+    @Override
+    public NPathSPI spi() {
+        return base;
+    }
+
     public NPathSPI getBase() {
         return base;
     }
