@@ -6,6 +6,8 @@ import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
+import net.thevpc.nuts.spi.NPathSPI;
+import net.thevpc.nuts.spi.NPathSPIAware;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NOptional;
@@ -34,6 +36,11 @@ public class NCompressedPath extends NPathBase {
         this.formattedCompressedForm = compressedPathHelper.toCompressedString(base);
         this.compressedForm = this.formattedCompressedForm.filteredText();
         this.compressedPathHelper = compressedPathHelper;
+    }
+
+    @Override
+    public NPathSPI spi() {
+        return ((NPathSPIAware)base).spi();
     }
 
     public NPath getBase() {
