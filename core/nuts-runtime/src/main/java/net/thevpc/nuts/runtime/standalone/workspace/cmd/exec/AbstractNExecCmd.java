@@ -823,6 +823,16 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
     }
 
     @Override
+    public NExecCmd at(String host) {
+        return setTarget(host);
+    }
+
+    @Override
+    public NExecCmd at(NConnexionString host) {
+        return setTarget(host);
+    }
+
+    @Override
     public NExecCmd setTarget(NConnexionString target) {
         if (!NBlankable.isBlank(target.getHost())) {
             this.target = target.toString();

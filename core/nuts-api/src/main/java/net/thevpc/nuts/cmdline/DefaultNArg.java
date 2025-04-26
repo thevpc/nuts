@@ -297,7 +297,7 @@ public class DefaultNArg implements NArg {
         return false;
     }
 
-    private NLiteral toValue() {
+    public NLiteral toLiteral() {
         return NLiteral.of(image);
     }
 
@@ -312,271 +312,266 @@ public class DefaultNArg implements NArg {
     }
 
 
-    public Object asRawObject() {
-        return image;
-    }
-
-
     public NOptional<Instant> asInstant() {
-        return toValue().asInstant();
+        return toLiteral().asInstant();
     }
 
 
     public NOptional<LocalDate> asLocalDate() {
-        return toValue().asLocalDate();
+        return toLiteral().asLocalDate();
     }
 
 
     public NOptional<LocalDateTime> asLocalDateTime() {
-        return toValue().asLocalDateTime();
+        return toLiteral().asLocalDateTime();
     }
 
 
     public NOptional<LocalTime> asLocalTime() {
-        return toValue().asLocalTime();
+        return toLiteral().asLocalTime();
     }
 
 
     public NOptional<NBigComplex> asBigComplex() {
-        return toValue().asBigComplex();
+        return toLiteral().asBigComplex();
     }
 
 
     public NOptional<NDoubleComplex> asDoubleComplex() {
-        return toValue().asDoubleComplex();
+        return toLiteral().asDoubleComplex();
     }
 
 
     public NOptional<NFloatComplex> asFloatComplex() {
-        return toValue().asFloatComplex();
+        return toLiteral().asFloatComplex();
     }
 
 
     public NOptional<Number> asNumber() {
-        return toValue().asNumber();
+        return toLiteral().asNumber();
     }
 
 
     public NOptional<Boolean> asBoolean() {
-        return toValue().asBoolean();
+        return toLiteral().asBoolean();
     }
 
 
     public NOptional<Long> asLong() {
-        return toValue().asLong();
+        return toLiteral().asLong();
     }
 
 
     public NOptional<Double> asDouble() {
-        return toValue().asDouble();
+        return toLiteral().asDouble();
     }
 
 
     public NOptional<Float> asFloat() {
-        return toValue().asFloat();
+        return toLiteral().asFloat();
     }
 
 
     public NOptional<Byte> asByte() {
-        return toValue().asByte();
+        return toLiteral().asByte();
     }
 
 
     public NOptional<Short> asShort() {
-        return toValue().asShort();
+        return toLiteral().asShort();
     }
 
 
     public NOptional<Integer> asInt() {
-        return toValue().asInt();
+        return toLiteral().asInt();
     }
 
 
     public NOptional<BigInteger> asBigInt() {
-        return toValue().asBigInt();
+        return toLiteral().asBigInt();
     }
 
 
     public NOptional<BigDecimal> asBigDecimal() {
-        return toValue().asBigDecimal();
+        return toLiteral().asBigDecimal();
     }
 
 
     public boolean isBoolean() {
-        return toValue().isBoolean();
+        return toLiteral().isBoolean();
     }
 
 
     public boolean isString() {
-        return toValue().isString();
+        return toLiteral().isString();
     }
 
 
     public boolean isComplexNumber() {
-        return toValue().isComplexNumber();
+        return toLiteral().isComplexNumber();
     }
 
 
     public boolean isTemporal() {
-        return toValue().isTemporal();
+        return toLiteral().isTemporal();
     }
 
 
     public boolean isLocalTemporal() {
-        return toValue().isLocalTemporal();
+        return toLiteral().isLocalTemporal();
     }
 
 
     public boolean isNull() {
-        return toValue().isNull();
+        return toLiteral().isNull();
     }
 
 
     public boolean isByte() {
-        return toValue().isByte();
+        return toLiteral().isByte();
     }
 
 
     public boolean isDecimalNumber() {
-        return toValue().isDecimalNumber();
+        return toLiteral().isDecimalNumber();
     }
 
 
     public boolean isBigNumber() {
-        return toValue().isBigNumber();
+        return toLiteral().isBigNumber();
     }
 
 
     public boolean isBigDecimal() {
-        return toValue().isBigDecimal();
+        return toLiteral().isBigDecimal();
     }
 
 
     public boolean isBigInt() {
-        return toValue().isBigInt();
+        return toLiteral().isBigInt();
     }
 
 
     public boolean isInt() {
-        return toValue().isInt();
+        return toLiteral().isInt();
     }
 
 
     public boolean isLong() {
-        return toValue().isLong();
+        return toLiteral().isLong();
     }
 
 
     public boolean isShort() {
-        return toValue().isShort();
+        return toLiteral().isShort();
     }
 
 
     public boolean isFloat() {
-        return toValue().isFloat();
+        return toLiteral().isFloat();
     }
 
 
     public boolean isDouble() {
-        return toValue().isDouble();
+        return toLiteral().isDouble();
     }
 
 
     public boolean isInstant() {
-        return toValue().isInstant();
+        return toLiteral().isInstant();
     }
 
 
     public boolean isEmpty() {
-        return toValue().isEmpty();
+        return toLiteral().isEmpty();
     }
 
     @Override
     public boolean isBlank() {
-        return toValue().isBlank();
+        return toLiteral().isBlank();
     }
 
     public boolean isNumber() {
-        return toValue().isNumber();
+        return toLiteral().isNumber();
     }
 
     @Override
     public NOptional<String> asString() {
-        return toValue().asString();
+        return toLiteral().asString();
     }
 
 
     public String toStringLiteral() {
-        return toValue().toStringLiteral();
+        return toLiteral().toStringLiteral();
     }
 
 
     public NOptional<Character> asChar() {
-        return toValue().asChar();
+        return toLiteral().asChar();
     }
 
 
     public boolean isSupportedType(Class<?> type) {
-        return toValue().isSupportedType(type);
+        return toLiteral().isSupportedType(type);
     }
 
 
     public <ET> NOptional<ET> asType(Class<ET> expectedType) {
-        return toValue().asType(expectedType);
+        return toLiteral().asType(expectedType);
     }
 
 
     public <ET> NOptional<ET> asType(Type expectedType) {
-        return toValue().asType(expectedType);
+        return toLiteral().asType(expectedType);
     }
 
 
     public NOptional<String> asStringAt(int index) {
-        return toValue().asStringAt(index);
+        return toLiteral().asStringAt(index);
     }
 
 
     public NOptional<Long> asLongAt(int index) {
-        return toValue().asLongAt(index);
+        return toLiteral().asLongAt(index);
     }
 
 
     public NOptional<Integer> asIntAt(int index) {
-        return toValue().asIntAt(index);
+        return toLiteral().asIntAt(index);
     }
 
 
     public NOptional<Double> asDoubleAt(int index) {
-        return toValue().asDoubleAt(index);
+        return toLiteral().asDoubleAt(index);
     }
 
 
     public boolean isNullAt(int index) {
-        return toValue().isNullAt(index);
+        return toLiteral().isNullAt(index);
     }
 
 
     public NLiteral asLiteralAt(int index) {
-        return toValue().asLiteralAt(index);
+        return toLiteral().asLiteralAt(index);
     }
 
 
     public NOptional<Object> asObjectAt(int index) {
-        return toValue().asObjectAt(index);
+        return toLiteral().asObjectAt(index);
     }
 
 
     public boolean isStream() {
-        return toValue().isStream();
+        return toLiteral().isStream();
     }
 
 
     public boolean isOrdinalNumber() {
-        return toValue().isOrdinalNumber();
+        return toLiteral().isOrdinalNumber();
     }
 
 
     public boolean isFloatingNumber() {
-        return toValue().isFloatingNumber();
+        return toLiteral().isFloatingNumber();
     }
 }

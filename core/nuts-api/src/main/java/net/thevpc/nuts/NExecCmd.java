@@ -492,6 +492,10 @@ public interface NExecCmd extends NWorkspaceCmd {
      */
     NExecCmd setTarget(String host);
 
+    NExecCmd at(String host);
+
+    NExecCmd at(NConnexionString host);
+
     NExecCmd setTarget(NConnexionString host);
 
     NExecCmd redirectErr();

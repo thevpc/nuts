@@ -216,4 +216,9 @@ public class DefaultNConnexionString implements NConnexionString {
         }
         return this;
     }
+
+    @Override
+    public NConnexionString withPath(String path) {
+        return builder().setPath(path).build();
+    }
 }
