@@ -16,12 +16,21 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class NUncompressZip implements NUncompressPackaging {
     public NUncompressZip() {
+    }
+
+    private String extractRoot(String fileName){
+        int si = fileName.indexOf("/");
+        if(si>=0){
+            return fileName.substring(0,si+1);
+        }
+        return "";
     }
 
     public void uncompressPackage(NUncompress uncompress, NInputSource source) {
@@ -33,7 +42,7 @@ public class NUncompressZip implements NUncompressPackaging {
             }
             Path folder = _target.toPath().get();
             NPath.of(folder).mkdirs();
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[10*4*1024];
             InputStream _in = source.getInputStream();
             try {
                 try (ZipInputStream zis = new ZipInputStream(_in)) {
@@ -41,23 +50,15 @@ public class NUncompressZip implements NUncompressPackaging {
                     ZipEntry ze = zis.getNextEntry();
                     String root = null;
                     while (ze != null) {
-
                         String fileName = ze.getName();
                         if (uncompress.isSkipRoot()) {
+                            String root2=extractRoot(fileName);
                             if (root == null) {
-                                if (fileName.endsWith("/")) {
-                                    root = fileName;
-                                    ze = zis.getNextEntry();
-                                    continue;
-                                } else {
-                                    throw new IOException("not a single root zip");
-                                }
+                                root=root2;
+                            }else if(!Objects.equals(root2,root)){
+                                throw new IOException("not a single root zip : '"+root2+"' <> '"+root+"'");
                             }
-                            if (fileName.startsWith(root)) {
-                                fileName = fileName.substring(root.length());
-                            } else {
-                                throw new IOException("not a single root zip");
-                            }
+                            fileName = fileName.substring(root.length());
                         }
                         if (fileName.endsWith("/")) {
                             Path newFile = folder.resolve(fileName);
