@@ -45,12 +45,12 @@ public class RnshExecCmdExtension implements NExecCmdExtension {
                 );
 
         try (InputStream ins = is.getOut().getInputStream()) {
-            NIOUtils.copy(ins, NSession.of().out().asPrintStream());
+            NIOUtils.copy(ins, context.out());
         } catch (IOException e) {
             throw new NIOException(e);
         }
         try (InputStream ins = is.getErr().getInputStream()) {
-            NIOUtils.copy(ins, NSession.of().err().asPrintStream());
+            NIOUtils.copy(ins, context.err());
         } catch (IOException e) {
             throw new NIOException(e);
         }

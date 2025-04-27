@@ -55,7 +55,7 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
                 wOptions.setOutputFormatOptions(session.getOutputFormatOptions());
 
                 String[] executorOptions = execCommand.getExecutorOptions().toArray(new String[0]);
-                RemoteConnexionStringInfo k = RemoteConnexionStringInfo.of(execCommand.getTarget());
+                RemoteConnexionStringInfo k = RemoteConnexionStringInfo.of(execCommand.getConnexionString());
                 wOptions.setWorkspace(k.getWorkspaceName(this));
                 cmd.add(k.getJavaCommand(this));
                 cmd.add("-jar");

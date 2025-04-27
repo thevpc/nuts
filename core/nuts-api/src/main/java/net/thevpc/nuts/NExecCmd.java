@@ -481,7 +481,7 @@ public interface NExecCmd extends NWorkspaceCmd {
      * @return host
      * @since 0.8.4
      */
-    String getTarget();
+    String getConnexionString();
 
     /**
      * update host connexion string. when host is not blank, this connexion
@@ -490,13 +490,13 @@ public interface NExecCmd extends NWorkspaceCmd {
      * @param host host
      * @return {@code this} instance
      */
-    NExecCmd setTarget(String host);
+    NExecCmd setConnexionString(String host);
 
     NExecCmd at(String host);
 
     NExecCmd at(NConnexionString host);
 
-    NExecCmd setTarget(NConnexionString host);
+    NExecCmd setConnexionString(NConnexionString host);
 
     NExecCmd redirectErr();
 }

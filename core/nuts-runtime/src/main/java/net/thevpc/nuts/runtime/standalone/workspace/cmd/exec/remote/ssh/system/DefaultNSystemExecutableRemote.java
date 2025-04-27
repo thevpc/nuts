@@ -96,7 +96,7 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformati
             public int exec() {
                 NExecCmd execCommand = getExecCommand();
                 try(DefaultNExecCmdExtensionContext d=new DefaultNExecCmdExtensionContext(
-                        execCommand.getTarget(),
+                        execCommand.getConnexionString(),
                         cmd,
                         session,
                         in,

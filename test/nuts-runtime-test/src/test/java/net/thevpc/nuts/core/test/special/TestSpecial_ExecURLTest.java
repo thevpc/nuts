@@ -34,7 +34,7 @@ public class TestSpecial_ExecURLTest {
     public void testNtf2() {
         TestUtils.println(NVersionFormat.of());
         String result = NExecCmd.of()
-                .setTarget("ssh://vpc:a@192.168.1.36")
+                .setConnexionString("ssh://vpc:a@192.168.1.36")
                 //.addCommand("ls","-l")
                 .addCommand("nuts","info")
                 .failFast()

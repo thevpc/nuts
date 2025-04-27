@@ -99,7 +99,7 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
     private int runOnce(String[] cmd) {
         int e;
         try (DefaultNExecCmdExtensionContext d = new DefaultNExecCmdExtensionContext(
-                getExecCommand().getTarget(),
+                getExecCommand().getConnexionString(),
                 cmd, NSession.of(),
                 in,
                 out,

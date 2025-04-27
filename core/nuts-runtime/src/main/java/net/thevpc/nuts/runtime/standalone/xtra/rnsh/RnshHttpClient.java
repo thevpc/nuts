@@ -418,9 +418,12 @@ public class RnshHttpClient {
                 .doWith(this::prepareSecurity)
                 .run();
         rethrowError(r);
+        NInputSource content = r.getContent();
+//        byte[] bytes = content.readBytes();
+//        content=NInputSource.of(bytes);
         return new ExecResult(
                 r.getHeader("X-EXEC-CODE").flatMap(x -> NLiteral.of(x).asInt()).orElse(0),
-                r.getContent(),
+                content,
                 NInputSource.of(NInputSource.of(new byte[0]))
         );
     }

@@ -146,7 +146,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
             case OPEN: {
                 NAssert.requireNonNull(getCommandDefinition(), "artifact definition");
                 NAssert.requireNonBlank(command, "command");
-                String target = getTarget();
+                String target = getConnexionString();
                 if (!NBlankable.isBlank(target)) {
                     throw new NIllegalArgumentException(NMsg.ofC("cannot run %s command remotely", executionType));
                 }
@@ -388,7 +388,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
 //                            .findFirst().get();
                     return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, null,
                             !ts.isEmpty() ? ts.get(0) : "",
-                            (!NBlankable.isBlank(getTarget()) && ts.size() == 1) ? ts.get(0) : NCmdLine.of(ts).toString(),
+                            (!NBlankable.isBlank(getConnexionString()) && ts.size() == 1) ? ts.get(0) : NCmdLine.of(ts).toString(),
                             ts.toArray(new String[0]), getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
                 } else {
                     CharacterizedExecFile c = null;
@@ -1067,7 +1067,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     }
 
     private RemoteInfo0 resolveRemoteInfo0() {
-        String target = getTarget();
+        String target = getConnexionString();
         if (!NBlankable.isBlank(target)) {
             NConnexionString connexionString = NConnexionString.of(target);
             if ("ssh".equals(connexionString.getProtocol())) {

@@ -26,6 +26,7 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.util.NConnexionString;
 import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.spi.NComponent;
 
@@ -108,4 +109,28 @@ public interface NPs extends NComponent {
      * @return {@code this} instance
      */
     NPs failFast();
+
+    /**
+     * return host connexion string. when host is not blank, this connexion
+     * string will be used to connect to a remote host for execution
+     *
+     * @return host
+     * @since 0.8.4
+     */
+    String getConnexionString();
+
+    /**
+     * update host connexion string. when host is not blank, this connexion
+     * string will be used to connect to a remote host for execution
+     *
+     * @param host host
+     * @return {@code this} instance
+     */
+    NPs setConnexionString(String host);
+    NPs setConnexionString(NConnexionString host);
+
+    NPs at(String host);
+
+    NPs at(NConnexionString host);
+
 }

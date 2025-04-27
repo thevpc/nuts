@@ -507,7 +507,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
         setFailFast(other.isFailFast());
         setExecutionType(other.getExecutionType());
         setRunAs(other.getRunAs());
-        setTarget(other.getTarget());
+        setConnexionString(other.getConnexionString());
         setDry(other.getDry());
         setBot(other.getBot());
         return this;
@@ -663,7 +663,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
                 return true;
             }
             case "--target": {
-                cmdLine.withNextEntry((v, ar) -> this.setTarget(v));
+                cmdLine.withNextEntry((v, ar) -> this.setConnexionString(v));
                 return true;
             }
             case "--rerun": {
@@ -813,27 +813,27 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
         return getCommandString();
     }
 
-    public String getTarget() {
+    public String getConnexionString() {
         return target;
     }
 
-    public NExecCmd setTarget(String host) {
+    public NExecCmd setConnexionString(String host) {
         this.target = host;
         return this;
     }
 
     @Override
     public NExecCmd at(String host) {
-        return setTarget(host);
+        return setConnexionString(host);
     }
 
     @Override
     public NExecCmd at(NConnexionString host) {
-        return setTarget(host);
+        return setConnexionString(host);
     }
 
     @Override
-    public NExecCmd setTarget(NConnexionString target) {
+    public NExecCmd setConnexionString(NConnexionString target) {
         if (!NBlankable.isBlank(target.getHost())) {
             this.target = target.toString();
         } else {
