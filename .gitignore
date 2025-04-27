@@ -253,3 +253,7 @@ core/nuts-app-full/target
 /extensions/nuts-term/target/
 /libraries/nlib-doc/target/
 /libraries/nlib-md/target/
+/core/nuts-bundle-template/target/
+/nuts-http-server.log
+/nuts-http-server.pid
+/server-config.tson

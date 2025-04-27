@@ -20,14 +20,19 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 
-public class WindowsPsParser {
+public class WindowsPsCsvParser {
     public NStream<NPsInfo> parse(Reader reader) {
         BufferedReader br = new BufferedReader(reader);
         return NStream.ofIterator(new Iterator<NPsInfo>() {
             NPsInfo last = null;
+            boolean headerRead;
 
             @Override
             public boolean hasNext() {
+                if(!headerRead){
+                    String[] colsLine = readLine(br);
+                    headerRead=true;
+                }
                 last = readNext(br);
                 return last != null;
             }

@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.time.NProgressEvent;
@@ -13,6 +14,7 @@ import net.thevpc.nuts.time.NProgressListener;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -63,6 +65,8 @@ public class InputStreamExt extends InputStream implements NInterruptible<InputS
                 if (l >= 0) {
                     length = l;
                 }
+            }else {
+                length= NCoreIOUtils.detectLength(base);
             }
         }
         this.length = length;
@@ -222,6 +226,10 @@ public class InputStreamExt extends InputStream implements NInterruptible<InputS
     @Override
     public boolean markSupported() {
         return base.markSupported();
+    }
+
+    public Long getLength() {
+        return length;
     }
 
     private void onBeforeRead() {

@@ -775,31 +775,40 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     }
 
     public boolean isUserCommand(String s) {
-        String p = NWorkspace.of().getSysEnv("PATH").orNull();
-        if (p != null) {
-            char r = File.pathSeparatorChar;
-            for (String z : p.split("" + r)) {
-                Path t = Paths.get(z);
-                switch (NWorkspace.of().getOsFamily()) {
-                    case WINDOWS: {
-                        if (Files.isRegularFile(t.resolve(s))) {
-                            return true;
-                        }
-                        if (Files.isRegularFile(t.resolve(s + ".exe"))) {
-                            return true;
-                        }
-                        if (Files.isRegularFile(t.resolve(s + ".bat"))) {
-                            return true;
-                        }
-                        break;
+        char pathSeparatorChar = File.pathSeparatorChar;
+        switch (NWorkspace.of().getOsFamily()) {
+            case WINDOWS: {
+                List<String> paths = NStringUtils.split(NWorkspace.of().getSysEnv("PATH").orNull(), "" + pathSeparatorChar, true, true);
+                List<String> execExtensions = NStringUtils.split(NWorkspace.of().getSysEnv("PATHEXT").orNull(), "" + pathSeparatorChar, true, true);
+                if (paths.isEmpty()) {
+                    paths.addAll(Arrays.asList("C:\\Windows\\system32", "C:\\Windows"));
+                }
+                if (execExtensions.isEmpty()) {
+                    execExtensions.addAll(Arrays.asList(".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC"));
+                }
+                for (String z : paths) {
+                    Path t = Paths.get(z);
+                    if (Files.isRegularFile(t.resolve(s))) {
+                        return true;
                     }
-                    default: {
-                        Path fp = t.resolve(s);
-                        if (Files.isRegularFile(fp)) {
-                            //if(Files.isExecutable(fp)) {
+                    for (String ext : execExtensions) {
+                        ext = ext.toLowerCase();
+                        if (!(s.toLowerCase().endsWith(ext)) && Files.isRegularFile(t.resolve(s + ext))) {
                             return true;
-                            //}
                         }
+                    }
+                }
+                break;
+            }
+            default: {
+                List<String> paths = NStringUtils.split(NWorkspace.of().getSysEnv("PATH").orNull(), "" + pathSeparatorChar, true, true);
+                for (String z : paths) {
+                    Path t = Paths.get(z);
+                    Path fp = t.resolve(s);
+                    if (Files.isRegularFile(fp)) {
+                        //if(Files.isExecutable(fp)) {
+                        return true;
+                        //}
                     }
                 }
             }

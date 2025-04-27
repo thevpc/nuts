@@ -223,7 +223,7 @@ public class DefaultNLiteral implements NLiteral {
         if (value instanceof LocalTime) {
             return NOptional.of((LocalTime) value);
         }
-        return asInstant().map(x->x.atZone(ZoneId.systemDefault()).toLocalTime());
+        return asInstant().map(x -> x.atZone(ZoneId.systemDefault()).toLocalTime());
     }
 
 
@@ -368,32 +368,34 @@ public class DefaultNLiteral implements NLiteral {
             return NOptional.of(((Instant) value).toEpochMilli());
         }
         String s = String.valueOf(value);
-        if (s.indexOf('.') >= 0 || s.toLowerCase().indexOf('e') >= 0) {
-            try {
-                return NOptional.of(Double.parseDouble(s));
-            } catch (NumberFormatException ex) {
-                //just ignore!
-            }
-            try {
-                return NOptional.of(new BigDecimal(s));
-            } catch (NumberFormatException ex) {
-                //just ignore!
-            }
-        } else {
-            try {
-                return NOptional.of(Integer.parseInt(s));
-            } catch (NumberFormatException ex) {
-                //just ignore!
-            }
-            try {
-                return NOptional.of(Long.parseLong(s));
-            } catch (NumberFormatException ex) {
-                //just ignore!
-            }
-            try {
-                return NOptional.of(new BigInteger(s));
-            } catch (NumberFormatException ex) {
-                //just ignore!
+        if(isCouldBeNumber(s)) {
+            if (s.indexOf('.') >= 0 || s.toLowerCase().indexOf('e') >= 0) {
+                try {
+                    return NOptional.of(Double.parseDouble(s));
+                } catch (NumberFormatException ex) {
+                    //just ignore!
+                }
+                try {
+                    return NOptional.of(new BigDecimal(s));
+                } catch (NumberFormatException ex) {
+                    //just ignore!
+                }
+            } else {
+                try {
+                    return NOptional.of(Integer.parseInt(s));
+                } catch (NumberFormatException ex) {
+                    //just ignore!
+                }
+                try {
+                    return NOptional.of(Long.parseLong(s));
+                } catch (NumberFormatException ex) {
+                    //just ignore!
+                }
+                try {
+                    return NOptional.of(new BigInteger(s));
+                } catch (NumberFormatException ex) {
+                    //just ignore!
+                }
             }
         }
         return NOptional.ofError(() -> NMsg.ofPlain("cannot convert to Number"));
@@ -448,33 +450,51 @@ public class DefaultNLiteral implements NLiteral {
             return NOptional.of(((Date) value).getTime());
         }
         if (value instanceof CharSequence) {
-            String s = value.toString();
-            if (s.indexOf('.') >= 0 || s.toLowerCase().indexOf('e') >= 0) {
-                try {
-                    double a = Double.parseDouble(s);
-                    if (a == (long) a) {
-                        return NOptional.of((long) a);
+            String s = value.toString().trim();
+            if(isCouldBeNumber(s)) {
+                if (s.indexOf('.') >= 0 || s.toLowerCase().indexOf('e') >= 0) {
+                    try {
+                        double a = Double.parseDouble(s);
+                        if (a == (long) a) {
+                            return NOptional.of((long) a);
+                        }
+                    } catch (NumberFormatException ex) {
+                        // ignore
                     }
-                } catch (NumberFormatException ex) {
-                    // ignore
-                }
-                return NOptional.ofError(() -> NMsg.ofC("invalid Long %s", value));
-            } else {
-                try {
-                    if (s.startsWith("0x")) {
-                        return NOptional.of(Long.parseLong(s.substring(2), 16));
+                    return NOptional.ofError(() -> NMsg.ofC("invalid Long %s", value));
+                } else {
+                    try {
+                        if (s.startsWith("0x")) {
+                            return NOptional.of(Long.parseLong(s.substring(2), 16));
+                        }
+                        return NOptional.of(Long.parseLong(s));
+                    } catch (NumberFormatException ex) {
+                        // ignore
                     }
-                    return NOptional.of(Long.parseLong(s));
-                } catch (NumberFormatException ex) {
-                    // ignore
+                    return NOptional.ofError(() -> NMsg.ofC("invalid Long %s", value));
                 }
-                return NOptional.ofError(() -> NMsg.ofC("invalid Long %s", value));
             }
         }
         if (value instanceof Boolean) {
             return NOptional.of(((Boolean) value) ? 1L : 0L);
         }
         return NOptional.ofError(() -> NMsg.ofC("invalid Long %s", value));
+    }
+
+    private boolean isCouldBeNumber(String s) {
+        s = s.trim();
+        if (!s.isEmpty()) {
+            char c = s.charAt(0);
+            if (c == '-' || c == '+') {
+                s = s.substring(1);
+                if (s.isEmpty()) {
+                    return false;
+                }
+                c = s.charAt(0);
+            }
+            return (c >= '0' && c <= '9') || c == '.';
+        }
+        return false;
     }
 
     @Override

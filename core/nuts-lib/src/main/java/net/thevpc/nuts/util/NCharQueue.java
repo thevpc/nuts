@@ -15,7 +15,6 @@ public class NCharQueue implements CharSequence {
     private char[] content;
     private int increment;
     private int from;
-    //    private int count;
     private int to;
     private boolean eof;
     private Map<String, Pattern> cachedPatterns = new HashMap<>();

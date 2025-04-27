@@ -233,6 +233,11 @@ public class DefaultNWorkspaceConfigModel {
     public Map<String, String> sysEnv() {
         Stack<Map<String, String>> s = currentEnv.get();
         if (s == null || s.isEmpty()) {
+            switch (workspace.getEnvModel().getOsFamily()) {
+                case WINDOWS: {
+                    return new NCaseInsensitiveStringMap(System.getenv());
+                }
+            }
             return System.getenv();
         }
         return s.peek();
@@ -1276,7 +1281,7 @@ public class DefaultNWorkspaceConfigModel {
                     .setDescriptor(descriptor)
                     .setContent(NPath.of(tmp).setUserCache(true).setUserTemporary(true))
                     .setInstallInformation(new DefaultNInstallInfo(descriptor.getId(), NInstallStatus.NONE, null, null, null, null, null, null, false, false)
-            ).build();
+                    ).build();
             ins.install(b);
             return true;
         }

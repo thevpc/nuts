@@ -12,13 +12,13 @@
  * <br>
  * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
@@ -27,11 +27,14 @@ package net.thevpc.nuts.runtime.standalone.io.util;
 
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
+import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,6 +47,11 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
     private NContentMetadata md;
     private InputStream base;
     private NMsg sourceName;
+    private long lastReadTime;
+    private NByteArrayQueue buffer = new NByteArrayQueue();
+    private boolean enqueing;
+    private long expectedSize;
+    private long lengthRead;
 
     public NNonBlockingInputStreamAdapter(InputStream base, NContentMetadata md, NMsg sourceName) {
         super(base);
@@ -62,6 +70,37 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
             }
         }
         this.sourceName = sourceName;
+        this.expectedSize = NUtils.firstNonNull(NCoreIOUtils.detectLength(base), -1L);
+    }
+
+    public long getLastReadTime() {
+        return lastReadTime;
+    }
+
+    public void enqueue() {
+        boolean doEnqueue = false;
+        synchronized (this) {
+            if (!enqueing) {
+                enqueing = true;
+                doEnqueue = true;
+            }
+        }
+        if (doEnqueue) {
+            new Thread(() -> {
+                byte[] b = new byte[256];
+                int x = 0;
+                try {
+                    x = read(b);
+                    if (x > 0) {
+                        buffer.write(b, 0, x);
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    enqueing = false;
+                }
+            }).start();
+        }
     }
 
     private void checkInterrupted() {
@@ -95,6 +134,9 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
         int read = super.read();
         if (read < 0) {
             hasMoreBytes = false;
+        } else {
+            lengthRead++;
+            lastReadTime = System.currentTimeMillis();
         }
         return read;
     }
@@ -108,6 +150,9 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
         int read = super.read(b);
         if (read < 0) {
             hasMoreBytes = false;
+        } else {
+            lengthRead+=read;
+            lastReadTime = System.currentTimeMillis();
         }
         return read;
     }
@@ -130,6 +175,9 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
         }
         if (read < 0) {
             hasMoreBytes = false;
+        } else {
+            lengthRead+=read;
+            lastReadTime = System.currentTimeMillis();
         }
         return read;
     }
@@ -178,30 +226,51 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
 
     @Override
     public int readNonBlocking(byte[] b, int off, int len, long timeout) throws IOException {
+        if (len <= 0) {
+            if (closed || !hasMoreBytes()) {
+                return -1;
+            }
+            return 0;
+        }
         checkInterrupted();
         long now = System.currentTimeMillis();
         long then = now + timeout;
         long tic = 100;
 //        int read=0;
-        while (true) {
-            checkInterrupted();
-            if (closed) {
-                break;
+        checkInterrupted();
+        if (closed) {
+            return -1;
+        }
+        int available = available();
+        if (available < 0) {
+            hasMoreBytes = false;
+            return -1;
+        } else if (available > 0) {
+            return read(b, off, len);
+        } else if (!hasMoreBytes()) {
+            return -1;
+        } else {
+            if (buffer.canRead()) {
+                return buffer.read(b, off, len);
+            } else {
+                enqueue();
+                while (true) {
+                    if (!enqueing) {
+                        if (buffer.canRead()) {
+                            return buffer.read(b, off, len);
+                        } else if (closed || !hasMoreBytes()) {
+                            return -1;
+                        }
+                        return 0;
+                    } else {
+                        now = System.currentTimeMillis();
+                        if (now > then) {
+                            break;
+                        }
+                        NWorkspaceProfilerImpl.sleep(tic, "NNonBlockingInputStreamAdapter::readNonBlocking");
+                    }
+                }
             }
-            int available = available();
-            if (available < 0) {
-                hasMoreBytes = false;
-                break;
-            } else if (available > 0) {
-                return read(b, off, len);
-            } else if (!hasMoreBytes()) {
-                break;
-            }
-            now = System.currentTimeMillis();
-            if (now > then) {
-                break;
-            }
-            NWorkspaceProfilerImpl.sleep(tic,"NNonBlockingInputStreamAdapter::readNonBlocking");
         }
         return 0;
     }
@@ -220,6 +289,9 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
         } else if (available > 0) {
             return read(b, off, len);
         } else if (!hasMoreBytes()) {
+            return -1;
+        } else if (buffer.canRead()) {
+            return buffer.read(b, off, len);
         }
         return 0;
     }
@@ -230,7 +302,13 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
 
     @Override
     public boolean hasMoreBytes() {
-        return hasMoreBytes;
+        if (!hasMoreBytes) {
+            return false;
+        }
+        if (expectedSize >= 0 && lengthRead >= 0) {
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -256,7 +334,7 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
         if (m.isPresent()) {
             out.print(m.get());
         } else if (sourceName != null) {
-            out.print(NText.ofStyled(sourceName,NTextStyle.path()));
+            out.print(NText.ofStyled(sourceName, NTextStyle.path()));
         } else {
             out.print(getClass().getSimpleName(), NTextStyle.path());
         }

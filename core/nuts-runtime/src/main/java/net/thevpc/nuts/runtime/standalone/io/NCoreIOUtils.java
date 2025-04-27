@@ -2,9 +2,11 @@ package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.NBootOptions;
 import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.io.NullInputStream;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.InputStreamExt;
 import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NBlankable;
@@ -34,10 +36,30 @@ public class NCoreIOUtils {
             if (child.startsWith("/") || child.startsWith("\\")) {
                 child = child.substring(1);
             }
-            if(child.isEmpty()){
+            if (child.isEmpty()) {
                 return "/";
             }
             return child;
+        }
+        return null;
+    }
+
+    public static Long detectLength(InputStream is) {
+        if (is == null) {
+            return 0L;
+        }
+        if (is instanceof NullInputStream) {
+            return 0L;
+        }
+        if (is instanceof ByteArrayInputStream) {
+            try {
+                return (long) is.available();
+            } catch (IOException e) {
+                return null;
+            }
+        }
+        if (is instanceof InputStreamExt) {
+            return ((InputStreamExt) is).getLength();
         }
         return null;
     }

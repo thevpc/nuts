@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.ps;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 
+import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
@@ -185,7 +186,9 @@ public class DefaultNPs implements NPs {
                 switch (NWorkspace.of().getOsFamily()) {
                     case LINUX: {
                         NExecCmd u = NExecCmd.of()
+                                .setIn(NExecInput.ofNull())
                                 .addCommand("ps", "-eo", "user,pid,%cpu,%mem,vsz,rss,tty,stat,lstart,time,command")
+                                .grabErr()
                                 .setFailFast(isFailFast())
                                 .grabOut();
                         String grabbedOutString = u.getGrabbedOutString();
@@ -194,18 +197,26 @@ public class DefaultNPs implements NPs {
                     case UNIX:
                     case MACOS: {
                         NExecCmd u = NExecCmd.of()
+                                .setIn(NExecInput.ofNull())
                                 .addCommand("ps", "aux")
+                                .grabErr()
                                 .setFailFast(isFailFast())
                                 .grabOut();
                         return new UnixPsParser().parse(new StringReader(u.getGrabbedOutString()));
                     }
                     case WINDOWS: {
                         NExecCmd u = NExecCmd.of()
+                                .setIn(NExecInput.ofNull())
+                                .grabErr()
+                                .grabOut()
                                 .addCommand(
-                                        "powershell.exe", "-Command", "Get-WmiObject Win32_Process | ForEach-Object { $o = $_.GetOwner(); $user = if ($o) { $o.User } else { 'N/A' }; $mem = Get-WmiObject Win32_ComputerSystem; $state = if ($_.ExecutionState -eq 0) { 'Running' } elseif ($_.ExecutionState -eq 2) { 'Sleeping' } else { 'Suspended' }; $start = if ($_.CreationDate) { $_.CreationDate.Substring(0, 12) } else { 'N/A' }; New-Object PSObject -Property @{ USER=$user; PID=$_.ProcessId; CPU=([math]::Round(($_.KernelModeTime + $_.UserModeTime)/1e7, 2)); MEM=([math]::Round($_.WorkingSetSize / $mem.TotalPhysicalMemory * 100, 2)); VSZ=[int]($_.VirtualSize / 1KB); RSS=[int]($_.WorkingSetSize / 1KB); TTY='N/A'; STAT=$state; START=$start; TIME=([math]::Round(($_.KernelModeTime + $_.UserModeTime)/1e7, 2)); COMMAND=$_.CommandLine } }"
+                                        "powershell.exe", "-Command",
+                                        "Get-WmiObject Win32_Process | ForEach-Object { $o = $_.GetOwner(); $user = if ($o) { $o.User } else { 'N/A' }; $mem = Get-WmiObject Win32_ComputerSystem; $state = if ($_.ExecutionState -eq 0) { 'Running' } elseif ($_.ExecutionState -eq 2) { 'Sleeping' } else { 'Suspended' }; $start = if ($_.CreationDate) { $_.CreationDate.Substring(0, 12) } else { 'N/A' }; New-Object PSObject -Property @{ USER=$user; PID=$_.ProcessId; CPU=([math]::Round(($_.KernelModeTime + $_.UserModeTime)/1e7, 2)); MEM=([math]::Round($_.WorkingSetSize / $mem.TotalPhysicalMemory * 100, 2)); VSZ=[int]($_.VirtualSize / 1KB); RSS=[int]($_.WorkingSetSize / 1KB); TTY='N/A'; STAT=$state; START=$start; TIME=([math]::Round(($_.KernelModeTime + $_.UserModeTime)/1e7, 2)); COMMAND=$_.CommandLine } }"
+//                                        "$mem=(Get-WmiObject Win32_ComputerSystem).TotalPhysicalMemory; Get-WmiObject Win32_Process|ForEach-Object{ $o=$_.GetOwner();$user=if($o){$o.User}else{'N/A'};$state=if($_.ExecutionState -eq 0){'Running'}elseif($_.ExecutionState -eq 2){'Sleeping'}else{'Suspended'};$start=if($_.CreationDate){$_.CreationDate.Substring(0,12)}else{'N/A'};New-Object PSObject -Property @{USER=$user;PID=$_.ProcessId;CPU=[math]::Round(($_.KernelModeTime+$_.UserModeTime)/1e7,2);MEM=[math]::Round($_.WorkingSetSize/$mem*100,2);VSZ=[int]($_.VirtualSize/1KB);RSS=[int]($_.WorkingSetSize/1KB);TTY='N/A';STAT=$state;START=$start;TIME=[math]::Round(($_.KernelModeTime+$_.UserModeTime)/1e7,2);COMMAND=$_.CommandLine}}|ConvertTo-Csv -NoTypeInformation  | Out-String -Width 1000"
                                 )
                                 .setFailFast(isFailFast());
-                        return new WindowsPsParser().parse(new StringReader(u.getGrabbedOutString()));
+                        String grabbedOutString = u.getGrabbedOutString();
+                        return new WindowsPsCsvParser().parse(new StringReader(grabbedOutString));
                     }
                 }
                 if (isFailFast()) {

@@ -32,6 +32,7 @@ import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineShellOptions;
+import net.thevpc.nuts.runtime.standalone.io.util.NNonBlockingInputStreamAdapter;
 import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.text.NText;
@@ -66,7 +67,7 @@ public class ProcessBuilder2 {
     private NExecOutput2 err = new NExecOutput2(NExecOutput.ofInherit());
 
 
-    ////////////////////// EXEC VARS
+    /// /////////////////// EXEC VARS
 
     private ProcessBuilder base = new ProcessBuilder();
     private List<PipeRunnable> pipesList = new ArrayList<>();
@@ -205,7 +206,7 @@ public class ProcessBuilder2 {
         return this;
     }
 
-    ////////////////// OUT
+    /// /////////////// OUT
 
     public NExecInput getIn() {
         return in.base;
@@ -235,7 +236,7 @@ public class ProcessBuilder2 {
     }
 
 
-    ////////////////// RESULTS
+    /// /////////////// RESULTS
 
     public byte[] getOutputBytes() {
         return out.base.getResultBytes();
@@ -424,7 +425,7 @@ public class ProcessBuilder2 {
         switch (in.base.getType()) {
             case NULL: {
                 String pname = "pipe-in-proc-" + procString;
-                in.termIn = createNonBlockingInput(NullInputStream.INSTANCE, pname);
+                in.termIn = createNonBlockingInput(NullInputStream.INSTANCE, pname, true);
                 PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "in", in.termIn, proc.getOutputStream());
                 if (pipes == null) {
                     pipes = Executors.newCachedThreadPool();
@@ -435,7 +436,7 @@ public class ProcessBuilder2 {
             }
             case STREAM: {
                 String pname = "pipe-in-proc-" + procString;
-                in.termIn = createNonBlockingInput(in.base.getStream(), pname);
+                in.termIn = createNonBlockingInput(in.base.getStream(), pname, true);
                 PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "in", in.termIn, proc.getOutputStream());
                 if (pipes == null) {
                     pipes = Executors.newCachedThreadPool();
@@ -448,7 +449,7 @@ public class ProcessBuilder2 {
         switch (out.base.getType()) {
             case NULL: {
                 String pname = "pipe-out-proc-" + procString;
-                NNonBlockingInputStream procInput = createNonBlockingInput(proc.getInputStream(), pname);
+                NNonBlockingInputStream procInput = createNonBlockingInput(proc.getInputStream(), pname, false);
                 PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "out", procInput,
                         NIO.ofNullRawOutputStream()
                 );
@@ -461,7 +462,7 @@ public class ProcessBuilder2 {
             }
             case STREAM: {
                 String pname = "pipe-out-proc-" + procString;
-                NNonBlockingInputStream procInput = createNonBlockingInput(proc.getInputStream(), pname);
+                NNonBlockingInputStream procInput = createNonBlockingInput(proc.getInputStream(), pname, false);
                 PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "out", procInput, out.base.getStream());
                 if (pipes == null) {
                     pipes = Executors.newCachedThreadPool();
@@ -472,7 +473,7 @@ public class ProcessBuilder2 {
             }
             case GRAB_STREAM: {
                 String pname = "pipe-out-proc-" + procString;
-                NNonBlockingInputStream procInput = createNonBlockingInput(proc.getInputStream(), pname);
+                NNonBlockingInputStream procInput = createNonBlockingInput(proc.getInputStream(), pname, false);
                 PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "out", procInput, out.tempStream);
                 if (pipes == null) {
                     pipes = Executors.newCachedThreadPool();
@@ -485,7 +486,7 @@ public class ProcessBuilder2 {
                 if (out.tempStream != null) {
                     //this happens when the path is not local
                     String pname = "pipe-out-proc-" + procString;
-                    NNonBlockingInputStream procInput = createNonBlockingInput(proc.getInputStream(), pname);
+                    NNonBlockingInputStream procInput = createNonBlockingInput(proc.getInputStream(), pname, false);
                     PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "out", procInput, out.tempStream);
                     if (pipes == null) {
                         pipes = Executors.newCachedThreadPool();
@@ -499,7 +500,7 @@ public class ProcessBuilder2 {
         switch (err.base.getType()) {
             case STREAM: {
                 String pname = "pipe-err-proc-" + procString;
-                NNonBlockingInputStream procInput = createNonBlockingInput(proc.getErrorStream(), pname);
+                NNonBlockingInputStream procInput = createNonBlockingInput(proc.getErrorStream(), pname, false);
                 PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "err", procInput, err.base.getStream());
                 if (pipes == null) {
                     pipes = Executors.newCachedThreadPool();
@@ -510,7 +511,7 @@ public class ProcessBuilder2 {
             }
             case GRAB_STREAM: {
                 String pname = "pipe-err-proc-" + procString;
-                NNonBlockingInputStream procInput = createNonBlockingInput(proc.getErrorStream(), pname);
+                NNonBlockingInputStream procInput = createNonBlockingInput(proc.getErrorStream(), pname, false);
                 PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "err", procInput, err.tempStream);
                 if (pipes == null) {
                     pipes = Executors.newCachedThreadPool();
@@ -523,7 +524,7 @@ public class ProcessBuilder2 {
                 if (err.tempStream != null) {
                     //this happens when the path is not local
                     String pname = "pipe-err-proc-" + procString;
-                    NNonBlockingInputStream procInput = createNonBlockingInput(proc.getErrorStream(), pname);
+                    NNonBlockingInputStream procInput = createNonBlockingInput(proc.getErrorStream(), pname, false);
                     PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "err", procInput, err.tempStream);
                     if (pipes == null) {
                         pipes = Executors.newCachedThreadPool();
@@ -554,13 +555,36 @@ public class ProcessBuilder2 {
                     break;
                 }
                 if (sleepMillis > 0) {
-                    NWorkspaceProfilerImpl.sleep(sleepMillis,"ProcessBuilder2::waitFor");
+                    NWorkspaceProfilerImpl.sleep(sleepMillis, "ProcessBuilder2::waitFor");
                 }
             }
         }
 
         try {
-            result = proc.waitFor();
+            while (true) {
+                boolean b = proc.waitFor(10, TimeUnit.SECONDS);
+                if (b) {
+                    break;
+                }
+//                long now = System.currentTimeMillis();
+//                boolean someRunning = false;
+//                for (PipeRunnable pipeRunnable : pipesList) {
+//                    NNonBlockingInputStreamAdapter i = (NNonBlockingInputStreamAdapter) pipeRunnable.getIn();
+//                    if (now - i.getLastReadTime() < 30000) {
+//                        someRunning = true;
+//                    }
+//                }
+//                if (!someRunning) {
+//                    for (PipeRunnable pipeRunnable : pipesList) {
+//                        NNonBlockingInputStreamAdapter i = (NNonBlockingInputStreamAdapter) pipeRunnable.getIn();
+//                        if (now - i.getLastReadTime() >= 30000) {
+//                            //force close
+//                            i.close();
+//                        }
+//                    }
+//                }
+            }
+            result = proc.exitValue();
         } catch (InterruptedException e) {
             throw new IOException(CoreStringUtils.exceptionToString(e));
         }
@@ -654,7 +678,7 @@ public class ProcessBuilder2 {
         return this;
     }
 
-    private NNonBlockingInputStream createNonBlockingInput(InputStream proc, String pname) {
+    private NNonBlockingInputStream createNonBlockingInput(InputStream proc, String pname, boolean closeFast) {
         return NInputSourceBuilder.of(proc)
                 .setMetadata(new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)))
                 .createNonBlockingInputStream()
