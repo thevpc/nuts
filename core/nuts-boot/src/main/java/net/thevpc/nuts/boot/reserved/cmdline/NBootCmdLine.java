@@ -28,6 +28,13 @@ import net.thevpc.nuts.boot.NBootException;
 import net.thevpc.nuts.boot.reserved.util.NBootMsg;
 import net.thevpc.nuts.boot.reserved.util.*;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,23 +59,24 @@ public class NBootCmdLine {
     /**
      * argument that may or may not accept value.
      */
-    private static final int ARG_TYPE_DEFAULT=0;
+    private static final int ARG_TYPE_DEFAULT = 0;
     /**
      * argument that accepts a string as value. Either the string is included in
      * the argument itself (--option=value) or succeeds it (--option value).
      */
-    private static final int ARG_TYPE_ENTRY=1;
+    private static final int ARG_TYPE_ENTRY = 1;
     /**
      * argument that accepts a boolean as value. Either the boolean is not
      * defined (--option), is included in the argument itself (--option=true) or
      * succeeds it (--option true). Parsing boolean is also aware of negated
      * options (--!option) that will be interpreted as (--option=false).
      */
-    private static final int ARG_TYPE_FLAG=2;
+    private static final int ARG_TYPE_FLAG = 2;
 
     protected LinkedList<String> args = new LinkedList<>();
     protected List<NBootArg> lookahead = new ArrayList<>();
     protected boolean expandSimpleOptions = true;
+    protected boolean expandArgumentsFile = true;
     protected Set<String> specialSimpleOptions = new HashSet<>();
     protected String commandName;
     private int wordIndex = 0;
@@ -347,7 +355,7 @@ public class NBootCmdLine {
                                 NBootArg r2 = peek();
                                 if (r2 != null && !r2.isOption()) {
                                     skip();
-                                    return (createArgument(NBootUtils.<String>firstNonNull(p==null?null:p.toString(),"") + eq + NBootUtils.firstNonNull(r2,"")));
+                                    return (createArgument(NBootUtils.<String>firstNonNull(p == null ? null : p.toString(), "") + eq + NBootUtils.firstNonNull(r2, "")));
                                 } else {
                                     return (p);
                                 }
@@ -487,7 +495,7 @@ public class NBootCmdLine {
             return (lookahead.get(index));
         }
         while (!args.isEmpty() && index >= lookahead.size()) {
-            if (!ensureNext(isExpandSimpleOptions(), true)) {
+            if (!ensureNext(isExpandSimpleOptions(), expandArgumentsFile, true)) {
                 break;
             }
         }
@@ -620,7 +628,7 @@ public class NBootCmdLine {
     }
 
     public NBootArg next(boolean expandSimpleOptions) {
-        if (ensureNext(expandSimpleOptions, false)) {
+        if (ensureNext(expandSimpleOptions, expandArgumentsFile, false)) {
             if (!lookahead.isEmpty()) {
                 return (lookahead.remove(0));
             }
@@ -650,8 +658,53 @@ public class NBootCmdLine {
         return sb.toString();
     }
 
+    private List<String> loadArgs(Path path, Path currentDir, Set<String> visited) {
+        if (!path.isAbsolute()) {
+            path = currentDir.resolve(path);
+        }
+        path = path.toAbsolutePath().normalize();
+        if (Files.isRegularFile(path)) {
+            if (visited.contains(path.toString())) {
+                return Collections.emptyList();
+            }
+            visited.add(path.toString());
+            List<String> all = new ArrayList<>();
+            List<String> subArgs=new ArrayList<>();
+            try {
+                try(BufferedReader br=new BufferedReader(Files.newBufferedReader(path))) {
+                    String line=null;
+                    while((line=br.readLine())!=null){
+                        if (!NBootUtils.isBlank(line) && !line.trim().startsWith("#")) {
+                            subArgs.addAll(Arrays.asList(parseDefault(line)));
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+            for (String arg : subArgs) {
+                if (arg.length() > 3 && arg.startsWith("--@")) {
+                    Path nPath = Paths.get(arg.substring(3));
+                    Path parent = path.getParent();
+                    if (parent == null) {
+                        parent = currentDir;
+                    }
+                    all.addAll(loadArgs(nPath, parent, visited));
+                }else{
+                    all.add(arg);
+                }
+            }
+            return all;
+        } else {
+            if (Files.exists(path)) {
+                throw new IllegalArgumentException(NBootMsg.ofC("argument file does not exist %s", path).toString());
+            } else {
+                throw new IllegalArgumentException(NBootMsg.ofC("argument file is not a valid regular file %s", path).toString());
+            }
+        }
+    }
 
-    private boolean ensureNext(boolean expandSimpleOptions, boolean ignoreExistingExpanded) {
+    private boolean ensureNext(boolean expandSimpleOptions, boolean expandArgumentsFile, boolean ignoreExistingExpanded) {
         if (!ignoreExistingExpanded) {
             if (!lookahead.isEmpty()) {
                 return true;
@@ -659,9 +712,20 @@ public class NBootCmdLine {
         }
         if (!args.isEmpty()) {
             // -!abc=true
-            String v = args.removeFirst();
-            if (expandSimpleOptions && v.length() > 2 && !isSpecialSimpleOption(v) && ((v.charAt(0) == '-' && v.charAt(1) != '-') || (v.charAt(0) == '+' && v.charAt(1) != '+')) && (v.charAt(1) != '/' || v.charAt(2) == '/')) {
-                NBootSimpleCharQueue vv = new NBootSimpleCharQueue(v.toCharArray());
+            String arg = args.removeFirst();
+
+            if (expandArgumentsFile) {
+                if (arg.length() > 3 && arg.startsWith("--@")) {
+                    Path nPath = Paths.get(arg.substring(3));
+                    args.addAll(0, loadArgs(nPath, Paths.get(System.getProperty("user.dir")), new HashSet<>()));
+                    if (args.isEmpty()) {
+                        return false;
+                    }
+                    arg = args.removeFirst();
+                }
+            }
+            if (expandSimpleOptions && arg.length() > 2 && !isSpecialSimpleOption(arg) && ((arg.charAt(0) == '-' && arg.charAt(1) != '-') || (arg.charAt(0) == '+' && arg.charAt(1) != '+')) && (arg.charAt(1) != '/' || arg.charAt(2) == '/')) {
+                NBootSimpleCharQueue vv = new NBootSimpleCharQueue(arg.toCharArray());
                 char start = vv.read();
                 char negChar = '\0';
                 boolean negate = false;
@@ -697,7 +761,7 @@ public class NBootCmdLine {
                     }
                 }
             } else {
-                lookahead.add(createArgument(v));
+                lookahead.add(createArgument(arg));
             }
             return true;
         }

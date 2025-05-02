@@ -77,7 +77,9 @@ public interface NElements extends NContentTypeFormat {
                     return false;
                 }
             } else {
-                if (!Character.isJavaIdentifierPart(c)) {
+                if (!Character.isJavaIdentifierPart(c)
+                        && c != '.'
+                ) {
                     return false;
                 }
             }

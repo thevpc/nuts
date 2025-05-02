@@ -121,6 +121,11 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public boolean isNamedObject(String name) {
+        return type() == NElementType.NAMED_OBJECT && isNamed(name);
+    }
+
+    @Override
     public boolean isAnyArray() {
         return type().isAnyArray();
     }

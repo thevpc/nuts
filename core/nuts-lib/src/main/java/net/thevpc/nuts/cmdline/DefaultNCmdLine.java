@@ -25,8 +25,10 @@
 package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.NExceptionHandler;
+import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.elem.NElementType;
-import net.thevpc.nuts.elem.NStringElement;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.reserved.util.NReservedSimpleCharQueue;
@@ -58,33 +60,47 @@ public class DefaultNCmdLine implements NCmdLine {
     protected LinkedList<String> args = new LinkedList<>();
     protected List<NArg> lookahead = new ArrayList<>();
     protected boolean expandSimpleOptions = true;
+    protected boolean expandArgumentsFile = true;
     protected Set<String> specialSimpleOptions = new HashSet<>();
     protected String commandName;
     private int wordIndex = 0;
     private NCmdLineAutoComplete autoComplete;
     private char eq = '=';
+    private NShellFamily shellFamily = NShellFamily.BASH;
 
     //Constructors
     public DefaultNCmdLine() {
 
     }
 
-    public DefaultNCmdLine(String[] args, NCmdLineAutoComplete autoComplete) {
-        setArguments(args);
-        setAutoComplete(autoComplete);
-    }
-
-    public DefaultNCmdLine(String[] args) {
+    public DefaultNCmdLine(String[] args, NShellFamily shellFamily) {
+        this.shellFamily = shellFamily == null ? NShellFamily.getCurrent() : NShellFamily.BASH;
         setArguments(args);
     }
 
-    public DefaultNCmdLine(List<String> args, NCmdLineAutoComplete autoComplete) {
-        setArguments(args);
-        setAutoComplete(autoComplete);
+
+    public NShellFamily getShellFamily() {
+        return shellFamily;
+    }
+
+    public NCmdLine setShellFamily(NShellFamily shellFamily) {
+        this.shellFamily = shellFamily;
+        return this;
     }
 
     public DefaultNCmdLine(List<String> args) {
         setArguments(args);
+    }
+
+    @Override
+    public boolean isExpandArgumentsFile() {
+        return expandArgumentsFile;
+    }
+
+    @Override
+    public NCmdLine setExpandArgumentsFile(boolean expandArgumentsFile) {
+        this.expandArgumentsFile = expandArgumentsFile;
+        return this;
     }
 
     //End Constructors
@@ -271,7 +287,7 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public NOptional<NArg> next() {
-        return next(expandSimpleOptions);
+        return next(expandSimpleOptions, expandArgumentsFile);
     }
 
     @Override
@@ -309,12 +325,12 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public NOptional<NArg> peekNonOption() {
-        return get(0).filter(x->x.isNonOption());
+        return get(0).filter(x -> x.isNonOption());
     }
 
     @Override
     public NOptional<NArg> peekOption() {
-        return get(0).filter(x->x.isOption());
+        return get(0).filter(x -> x.isOption());
     }
 
     @Override
@@ -517,8 +533,8 @@ public class DefaultNCmdLine implements NCmdLine {
     @Override
     public boolean withFirst(NCmdLineProcessor... consumers) {
         for (NCmdLineProcessor consumer : consumers) {
-            if(consumer.process(this)) {
-               return true;
+            if (consumer.process(this)) {
+                return true;
             }
         }
         return false;
@@ -750,7 +766,7 @@ public class DefaultNCmdLine implements NCmdLine {
             return NOptional.of(lookahead.get(index));
         }
         while (!args.isEmpty() && index >= lookahead.size()) {
-            if (!ensureNext(isExpandSimpleOptions(), true)) {
+            if (!ensureNext(isExpandSimpleOptions(), true, expandArgumentsFile)) {
                 break;
             }
         }
@@ -834,7 +850,11 @@ public class DefaultNCmdLine implements NCmdLine {
         this.lookahead.clear();
         this.args.clear();
         if (arguments != null) {
-            Collections.addAll(this.args, arguments);
+            for (String a : arguments) {
+                if (a != null) {
+                    this.args.add(a);
+                }
+            }
         }
         return this;
     }
@@ -999,8 +1019,8 @@ public class DefaultNCmdLine implements NCmdLine {
         //ignored
     }
 
-    public NOptional<NArg> next(boolean expandSimpleOptions) {
-        if (ensureNext(expandSimpleOptions, false)) {
+    public NOptional<NArg> next(boolean expandSimpleOptions, boolean expandArgumentsFile) {
+        if (ensureNext(expandSimpleOptions, false, expandArgumentsFile)) {
             if (!lookahead.isEmpty()) {
                 return NOptional.of(lookahead.remove(0));
             }
@@ -1030,8 +1050,49 @@ public class DefaultNCmdLine implements NCmdLine {
         return sb.toString();
     }
 
+    private List<String> loadArgs(NPath path, NPath currentDir, Set<String> visited) {
+        path = path.toAbsolute(currentDir).normalize();
+        if (path.isRegularFile()) {
+            if (visited.contains(path.toString())) {
+                return Collections.emptyList();
+            }
+            visited.add(path.toString());
+            List<String> all = new ArrayList<>();
+            NShellFamily s = shellFamily;
+            if (s == null) {
+                s = NShellFamily.getCurrent();
+//                s = NShellFamily.BASH;
+            }
+            String fileContent = path.readString();
+            List<String> parsed = new ArrayList<>();
+            for (String line : new NStringBuilder(fileContent).lines().toList()) {
+                if (!NBlankable.isBlank(line) && !line.trim().startsWith("#")) {
+                    NCmdLine subCmd = NCmdLines.of().setShellFamily(s).parseCmdLine(line).get();
+                    subCmd.setExpandArgumentsFile(false);
+                    subCmd.setExpandArgumentsFile(false);
+                    parsed.addAll(subCmd.toStringList());
+                }
+            }
+            for (String arg : parsed) {
+                if (arg.length() > 3 && arg.startsWith("--@")) {
+                    NPath nPath = NPath.of(arg.substring(3));
+                    NPath parent = path.getParent();
+                    all.addAll(loadArgs(nPath, parent == null ? currentDir : parent, visited));
+                }else{
+                    all.add(arg);
+                }
+            }
+            return all;
+        } else {
+            if (path.exists()) {
+                throw new NIllegalArgumentException(NMsg.ofC("argument file does not exist %s", path));
+            } else {
+                throw new NIllegalArgumentException(NMsg.ofC("argument file is not a valid regular file %s", path));
+            }
+        }
+    }
 
-    private boolean ensureNext(boolean expandSimpleOptions, boolean ignoreExistingExpanded) {
+    private boolean ensureNext(boolean expandSimpleOptions, boolean ignoreExistingExpanded, boolean expandArgumentsFile) {
         if (!ignoreExistingExpanded) {
             if (!lookahead.isEmpty()) {
                 return true;
@@ -1039,9 +1100,19 @@ public class DefaultNCmdLine implements NCmdLine {
         }
         if (!args.isEmpty()) {
             // -!abc=true
-            String v = args.removeFirst();
-            if (expandSimpleOptions && v.length() > 2 && !isSpecialSimpleOption(v) && ((v.charAt(0) == '-' && v.charAt(1) != '-') || (v.charAt(0) == '+' && v.charAt(1) != '+')) && (v.charAt(1) != '/' || v.charAt(2) == '/')) {
-                NReservedSimpleCharQueue vv = new NReservedSimpleCharQueue(v.toCharArray());
+            String arg = args.removeFirst();
+            if (arg.length() > 3 && expandArgumentsFile) {
+                if (arg.startsWith("--@")) {
+                    NPath nPath = NPath.of(arg.substring(3));
+                    args.addAll(0, loadArgs(nPath, NPath.ofUserDirectory(), new HashSet<>()));
+                    if (args.isEmpty()) {
+                        return false;
+                    }
+                    arg = args.removeFirst();
+                }
+            }
+            if (expandSimpleOptions && arg.length() > 2 && !isSpecialSimpleOption(arg) && ((arg.charAt(0) == '-' && arg.charAt(1) != '-') || (arg.charAt(0) == '+' && arg.charAt(1) != '+')) && (arg.charAt(1) != '/' || arg.charAt(2) == '/')) {
+                NReservedSimpleCharQueue vv = new NReservedSimpleCharQueue(arg.toCharArray());
                 char start = vv.read();
                 char negChar = '\0';
                 boolean negate = false;
@@ -1077,7 +1148,7 @@ public class DefaultNCmdLine implements NCmdLine {
                     }
                 }
             } else {
-                lookahead.add(createArgument(v));
+                lookahead.add(createArgument(arg));
             }
             return true;
         }
@@ -1093,8 +1164,14 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     public NCmdLine copy() {
-        DefaultNCmdLine c = new DefaultNCmdLine(toStringArray(), autoComplete);
+        DefaultNCmdLine c = new DefaultNCmdLine();
+        c.setArguments(toStringArray());
+        c.autoComplete = autoComplete;
+        c.setShellFamily(shellFamily);
+        c.setExpandArgumentsFile(expandArgumentsFile);
+        c.setExpandSimpleOptions(expandSimpleOptions);
         c.eq = this.eq;
+        c.specialSimpleOptions = new HashSet<>(specialSimpleOptions);
         c.commandName = this.commandName;
         return c;
     }
@@ -1127,6 +1204,10 @@ public class DefaultNCmdLine implements NCmdLine {
 
 
     public static NOptional<String[]> parseDefaultList(String commandLineString) {
+        return parseDefaultList(commandLineString, null, new HashSet<>());
+    }
+
+    private static NOptional<String[]> parseDefaultList(String commandLineString, String currentFolder, Set<String> loaded) {
         if (commandLineString == null) {
             return NOptional.of(new String[0]);
         }
@@ -1409,17 +1490,17 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public NCmdLine forEachPeek(NCmdLineProcessor ...actions) {
-        NAssert.requireTrue(actions.length>0,()->NMsg.ofC("missing actions"));
-        while(hasNext()){
-            boolean some=false;
+    public NCmdLine forEachPeek(NCmdLineProcessor... actions) {
+        NAssert.requireTrue(actions.length > 0, () -> NMsg.ofC("missing actions"));
+        while (hasNext()) {
+            boolean some = false;
             for (NCmdLineProcessor action : actions) {
-                if(action.process(this)){
-                    some=true;
+                if (action.process(this)) {
+                    some = true;
                     break;
                 }
             }
-            if(!some){
+            if (!some) {
                 throwUnexpectedArgument();
             }
         }
@@ -1473,29 +1554,30 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public NCmdLineNamedAction with(String... names) {
-        boolean acceptable0=false;
+        boolean acceptable0 = false;
         for (String name : names) {
             String[] nameSeqArray = NStringUtils.split(name, " ").toArray(new String[0]);
-            boolean acceptable=true;
+            boolean acceptable = true;
             for (int i = 0; i < nameSeqArray.length; i++) {
                 NOptional<NArg> c = get(i);
-                if(!c.isPresent() || !c.get().key().equals(nameSeqArray[i])){
-                    acceptable=false;
+                if (!c.isPresent() || !c.get().key().equals(nameSeqArray[i])) {
+                    acceptable = false;
                 }
             }
-            if(acceptable){
-                acceptable0=true;
+            if (acceptable) {
+                acceptable0 = true;
                 break;
             }
         }
         boolean finalAcceptable = acceptable0;
         return new NCmdLineNamedAction() {
-            public boolean isAcceptable(){
+            public boolean isAcceptable() {
                 return finalAcceptable;
             }
+
             @Override
             public boolean consumeFlag(NArgProcessor<Boolean> consumer) {
-                if(!finalAcceptable){
+                if (!finalAcceptable) {
                     return false;
                 }
                 NOptional<NArg> v = next(NArgType.FLAG, names);
@@ -1512,7 +1594,7 @@ public class DefaultNCmdLine implements NCmdLine {
 
             @Override
             public boolean consumeOptionalFlag(NArgProcessor<NOptional<Boolean>> consumer) {
-                if(!finalAcceptable){
+                if (!finalAcceptable) {
                     return false;
                 }
                 NOptional<NArg> v = next(NArgType.FLAG, names);
@@ -1529,7 +1611,7 @@ public class DefaultNCmdLine implements NCmdLine {
 
             @Override
             public boolean consumeTrueFlag(NArgProcessor<Boolean> consumer) {
-                if(!finalAcceptable){
+                if (!finalAcceptable) {
                     return false;
                 }
                 return consumeFlag((value, arg) -> {
@@ -1541,7 +1623,7 @@ public class DefaultNCmdLine implements NCmdLine {
 
             @Override
             public boolean consumeOptionalEntry(NArgProcessor<NOptional<String>> consumer) {
-                if(!finalAcceptable){
+                if (!finalAcceptable) {
                     return false;
                 }
                 NOptional<NArg> v = next(NArgType.ENTRY, names);
@@ -1558,7 +1640,7 @@ public class DefaultNCmdLine implements NCmdLine {
 
             @Override
             public boolean consumeEntry(NArgProcessor<String> consumer) {
-                if(!finalAcceptable){
+                if (!finalAcceptable) {
                     return false;
                 }
                 NOptional<NArg> v = next(NArgType.ENTRY, names);
@@ -1575,7 +1657,7 @@ public class DefaultNCmdLine implements NCmdLine {
 
             @Override
             public boolean consumeEntryValue(NArgProcessor<NLiteral> consumer) {
-                if(!finalAcceptable){
+                if (!finalAcceptable) {
                     return false;
                 }
                 NOptional<NArg> v = next(NArgType.ENTRY, names);

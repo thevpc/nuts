@@ -74,6 +74,9 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
         if (params != null) {
             for (NElement a : params) {
                 if (a != null) {
+                    if (this.params == null) {
+                        this.params = new ArrayList<>();
+                    }
                     this.params.add(a);
                 }
             }
@@ -84,8 +87,8 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     @Override
     public NObjectElementBuilder addParam(NElement param) {
         if (param != null) {
-            if (params == null) {
-                params = new ArrayList<>();
+            if (this.params == null) {
+                this.params = new ArrayList<>();
             }
             this.params.add(param);
         }
@@ -95,8 +98,8 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     @Override
     public NObjectElementBuilder addParamAt(int index, NElement param) {
         if (param != null) {
-            if (params == null) {
-                params = new ArrayList<>();
+            if (this.params == null) {
+                this.params = new ArrayList<>();
             }
             params.add(index, param);
         }
@@ -121,7 +124,7 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
 
     @Override
     public List<NElement> params() {
-        return params;
+        return params == null ? null : Collections.unmodifiableList(params);
     }
 
 
@@ -449,10 +452,16 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
 
     @Override
     public NElementType type() {
-        return name == null && params == null ? NElementType.OBJECT
-                : name == null && params != null ? NElementType.PARAMETRIZED_OBJECT
-                : name != null && params == null ? NElementType.NAMED_OBJECT
-                : NElementType.NAMED_PARAMETRIZED_OBJECT;
+        if (name != null && params != null) {
+            return NElementType.NAMED_PARAMETRIZED_OBJECT;
+        }
+        if (name != null) {
+            return NElementType.NAMED_OBJECT;
+        }
+        if (params != null) {
+            return NElementType.PARAMETRIZED_OBJECT;
+        }
+        return NElementType.OBJECT;
     }
 
     // ------------------------------------------

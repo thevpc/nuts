@@ -46,10 +46,15 @@ public class DefaultNCmdLines implements NCmdLines {
     @Override
     public NOptional<NCmdLine> parseCmdLine(String line) {
         try {
-            return NOptional.of(new DefaultNCmdLine(parseCmdLineArr(line)));
+            return NOptional.of(new DefaultNCmdLine(parseCmdLineArr(line),family));
         } catch (Exception e) {
             return NOptional.ofNamedError(NMsg.ofC("%s", e));
         }
+    }
+
+    @Override
+    public NCmdLine of(String[] args) {
+        return new DefaultNCmdLine(args,family);
     }
 
     private String[] parseCmdLineArr(String line) {

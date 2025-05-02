@@ -18,13 +18,13 @@ import java.util.Arrays;
 import java.util.function.Function;
 
 /**
- *
  * @author thevpc
  */
 public class StringTest {
 
     @BeforeAll
     public static void init() {
+//        TestUtils.openNewMinTestWorkspace();
     }
 
     @Test
@@ -40,43 +40,47 @@ public class StringTest {
             }
         });
 
-        Assertions.assertEquals("AX.C XA hello",q);
+        Assertions.assertEquals("AX.C XA hello", q);
     }
-   @Test
+
+    @Test
     public void test02() {
-       Assertions.assertEquals(
-               Arrays.asList("",""),
-               NStringUtils.split(",", ",", true, false)
-       );
+        Assertions.assertEquals(
+                Arrays.asList("", ""),
+                NStringUtils.split(",", ",", true, false)
+        );
     }
-   @Test
+
+    @Test
     public void test03() {
-       NOptional<NTerminalMode> a = NTerminalMode.parse("never");
-       a.get();
-   }
+        NOptional<NTerminalMode> a = NTerminalMode.parse("never");
+        a.get();
+    }
 
 
     @Test
     public void test04() {
         String[] a = NNameFormat.parse("aBc_r");
         Assertions.assertArrayEquals(
-                new String[]{"a","Bc","r"},
+                new String[]{"a", "Bc", "r"},
                 a
         );
     }
+
     @Test
     public void test05() {
         String[] a = NNameFormat.parse("setName");
         Assertions.assertArrayEquals(
-                new String[]{"set","Name"},
+                new String[]{"set", "Name"},
                 a
         );
     }
+
     @Test
     public void test06() {
         String[] a = NNameFormat.parse("setTHEName");
         Assertions.assertArrayEquals(
-                new String[]{"set","THEName"},
+                new String[]{"set", "THEName"},
                 a
         );
     }
@@ -85,7 +89,7 @@ public class StringTest {
     public void test07() {
         String[] a = NNameFormat.parse("/a/dAt");
         Assertions.assertArrayEquals(
-                new String[]{"a","d","At"},
+                new String[]{"a", "d", "At"},
                 a
         );
     }
@@ -97,5 +101,19 @@ public class StringTest {
                 new String[]{"Net"},
                 a
         );
+    }
+
+    @Test
+    public void test09() {
+        Assertions.assertEquals(2, NStringUtils.readLines(new StringBuilder("a\nb")).size());
+        Assertions.assertEquals(1, NStringUtils.readLines(new StringBuilder("a\n")).size());
+        Assertions.assertEquals(3, NStringUtils.readLines(new StringBuilder("\na\n\n")).size());
+        Assertions.assertEquals(2, NStringUtils.readLines(new StringBuilder("a\rb")).size());
+        Assertions.assertEquals(1, NStringUtils.readLines(new StringBuilder("a\r")).size());
+        Assertions.assertEquals(3, NStringUtils.readLines(new StringBuilder("\ra\r\r")).size());
+
+        Assertions.assertEquals(2, NStringUtils.readLines(new StringBuilder("a\r\nb")).size());
+        Assertions.assertEquals(1, NStringUtils.readLines(new StringBuilder("a\r\n")).size());
+        Assertions.assertEquals(3, NStringUtils.readLines(new StringBuilder("\ra\r\n\r\n")).size());
     }
 }

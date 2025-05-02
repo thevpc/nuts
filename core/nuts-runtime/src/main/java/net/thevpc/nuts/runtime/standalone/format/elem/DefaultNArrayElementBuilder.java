@@ -69,8 +69,8 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
 
     public NArrayElementBuilder setParametrized(boolean parametrized) {
         if (parametrized) {
-            if (params == null) {
-                params = new ArrayList<>();
+            if (this.params == null) {
+                this.params = new ArrayList<>();
             }
         } else {
             params = null;
@@ -133,7 +133,7 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public List<NElement> params() {
-        return Collections.unmodifiableList(params);
+        return params == null ? null : Collections.unmodifiableList(params);
     }
 
 
@@ -385,10 +385,16 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public NElementType type() {
-        return name == null && params == null ? NElementType.ARRAY
-                : name == null && params != null ? NElementType.PARAMETRIZED_ARRAY
-                : name != null && params == null ? NElementType.NAMED_ARRAY
-                : NElementType.NAMED_PARAMETRIZED_ARRAY;
+        if (name != null && params != null) {
+            return NElementType.NAMED_PARAMETRIZED_ARRAY;
+        }
+        if (name != null) {
+            return NElementType.NAMED_ARRAY;
+        }
+        if (params != null) {
+            return NElementType.PARAMETRIZED_ARRAY;
+        }
+        return NElementType.ARRAY;
     }
 
     // ------------------------------------------

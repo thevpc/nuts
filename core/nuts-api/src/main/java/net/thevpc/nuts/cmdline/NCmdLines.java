@@ -49,6 +49,8 @@ public interface NCmdLines extends NComponent {
      */
     NOptional<NCmdLine> parseCmdLine(String line);
 
+    NCmdLine of(String[] args);
+
     /**
      * create argument name
      *

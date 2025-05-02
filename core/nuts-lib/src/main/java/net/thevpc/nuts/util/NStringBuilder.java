@@ -783,7 +783,7 @@ public class NStringBuilder implements CharSequence, NBlankable {
                 if (data2.length() == 0) {
                     return false;
                 }
-                nextLine = readLine(data2);
+                nextLine = NStringUtils.readLine(data2);
                 return nextLine != null;
             }
 
@@ -829,7 +829,7 @@ public class NStringBuilder implements CharSequence, NBlankable {
     }
 
     public String readLine() {
-        return readLine(data);
+        return NStringUtils.readLine(data);
     }
 
     public String readCount(int count) {
@@ -846,28 +846,6 @@ public class NStringBuilder implements CharSequence, NBlankable {
         return s;
     }
 
-    private String readLine(StringBuilder data) {
-        int i = 0;
-        while (i < data.length()) {
-            char c = data.charAt(i);
-            if (c == '\n') {
-                if (i + 1 < data.length() && data.charAt(i + 1) == '\r') {
-                    i++;
-                    String l = data.substring(0, i - 2);
-                    data.delete(0, i);
-                    return l;
-                }
-                String l = data.substring(0, i - 1);
-                data.delete(0, i);
-                return l;
-            } else {
-                i++;
-            }
-        }
-        String l = data.toString();
-        data.setLength(0);
-        return l;
-    }
 
     public boolean isMultiLine() {
         return lines().count() > 1;

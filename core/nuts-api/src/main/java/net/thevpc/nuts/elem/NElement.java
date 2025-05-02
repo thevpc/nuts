@@ -110,6 +110,8 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
 
     boolean isNamedObject();
 
+    boolean isNamedObject(String name);
+
     boolean isAnyNamedObject();
 
     boolean isAnyNamedObject(String name);

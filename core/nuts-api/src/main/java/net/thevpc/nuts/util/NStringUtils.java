@@ -1013,19 +1013,39 @@ public class NStringUtils {
         return dp[str1.length()][str2.length()];
     }
 
+    public static List<String> readLines(StringBuilder data) {
+        List<String> all = new ArrayList<>();
+        while (data.length() > 0) {
+            all.add(readLine(data));
+        }
+        return all;
+    }
+
     public static String readLine(StringBuilder data) {
         int i = 0;
         while (i < data.length()) {
             char c = data.charAt(i);
             if (c == '\n') {
-                if (i + 1 < data.length() && data.charAt(i + 1) == '\r') {
+                if (i == 0) {
+                    data.delete(0, i + 1);
+                    return "";
+                }
+                String l = data.substring(0, i);
+                data.delete(0, i + 1);
+                return l;
+            } else if (c == '\r') {
+                if (i + 1 < data.length() && data.charAt(i + 1) == '\n') {
                     i++;
-                    String l = data.substring(0, i - 2);
-                    data.delete(0, i);
+                    String l = data.substring(0, i - 1);
+                    data.delete(0, i+1);
                     return l;
                 }
-                String l = data.substring(0, i - 1);
-                data.delete(0, i);
+                if (i == 0) {
+                    data.delete(0, i + 1);
+                    return "";
+                }
+                String l = data.substring(0, i);
+                data.delete(0, i + 1);
                 return l;
             } else {
                 i++;
@@ -1051,7 +1071,7 @@ public class NStringUtils {
             for (String item : items) {
                 if (item != null && !item.isEmpty()) {
                     int length = builder.length();
-                    if (length >0 && !(builder.substring(length - delimiter.length(), length).equals(delimiter) || item.startsWith(delimiter))) {
+                    if (length > 0 && !(builder.substring(length - delimiter.length(), length).equals(delimiter) || item.startsWith(delimiter))) {
                         builder.append(delimiter);
                     }
                     builder.append(item);

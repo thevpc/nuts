@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.core.test;
 
+import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.cmdline.DefaultNCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -246,7 +247,7 @@ public class CmdLineTest {
 
     @Test
     public void testArgument13(){
-        NCmdLine c=new DefaultNCmdLine(new String[]{"-1=15"}).setExpandSimpleOptions(true);
+        NCmdLine c=new DefaultNCmdLine(new String[]{"-1=15"}, NShellFamily.BASH).setExpandSimpleOptions(true);
         NArg a = c.next().get();
         Assertions.assertEquals("-1",a.getStringKey().get());
     }
