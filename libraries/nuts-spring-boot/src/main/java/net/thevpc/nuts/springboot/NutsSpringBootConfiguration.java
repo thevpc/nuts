@@ -3,6 +3,7 @@ package net.thevpc.nuts.springboot;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootArguments;
 import net.thevpc.nuts.boot.reserved.cmdline.NBootCmdLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLines;
 import net.thevpc.nuts.concurrent.NScheduler;
 
@@ -43,13 +44,6 @@ public class NutsSpringBootConfiguration {
         return nutsSession(applicationArguments).out();
     }
 
-    @Bean
-    public NWorkspace nutsWorkspace(ApplicationArguments applicationArguments) {
-        return Nuts.openWorkspace(
-                NBootArguments.of(resolveNutsArgs())
-                        .setAppArgs(applicationArguments.getSourceArgs())
-        );
-    }
 
     @Bean
     public NSession nutsSession(ApplicationArguments applicationArguments) {
@@ -163,14 +157,28 @@ public class NutsSpringBootConfiguration {
 
 
     @Bean
+    public NWorkspace nutsWorkspace(ApplicationArguments applicationArguments) {
+        return Nuts.openWorkspace(
+                NBootArguments.of(resolveNutsArgs())
+                        .setAppArgs(applicationArguments.getSourceArgs())
+        );
+    }
+
+    @Bean
     public CommandLineRunner nutsCommandLineRunner(ApplicationArguments applicationArguments) {
         return args -> NApplications.runApplication(
                 new NMainArgs()
                         .setApplicationInstance(nutsApplication())
-                        .setNutsArgsLine(env.getProperty("nuts.args"),new String[]{"--shared-instance=true"})
+                        .setNutsArgs(resolveNutsArgs())
                         .setArgs(applicationArguments.getSourceArgs())
                         .setHandleMode(NApplicationHandleMode.PROPAGATE))
                 ;
     }
 
+    private String[] resolveNutsArgs() {
+        List<String> args = new ArrayList<>(Arrays.asList(NBootCmdLine.parseDefault(env.getProperty("nuts.args"))));
+        //always enable main instance in spring apps
+        args.add("--shared-instance=true");
+        return args.toArray(new String[0]);
+    }
 }
