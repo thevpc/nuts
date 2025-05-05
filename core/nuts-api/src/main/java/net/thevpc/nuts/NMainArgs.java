@@ -1,5 +1,11 @@
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.reserved.cmdline.NBootCmdLine;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class NMainArgs {
     private NApplicationHandleMode handleMode = NApplicationHandleMode.HANDLE;
     private NApplication applicationInstance;
@@ -63,6 +69,25 @@ public class NMainArgs {
 
     public NMainArgs setNutsArgs(String[] nutsArgs) {
         this.nutsArgs = nutsArgs;
+        return this;
+    }
+
+    public NMainArgs setNutsArgsLine(String nutsArgs) {
+        this.nutsArgs = NBootCmdLine.parseDefault(nutsArgs);
+        return this;
+    }
+
+    public NMainArgs setNutsArgsLine(String nutsArgs, String[] extraArgs) {
+        List<String> all = new ArrayList<>();
+        all.addAll(Arrays.asList(NBootCmdLine.parseDefault(nutsArgs)));
+        if (extraArgs != null) {
+            for (String s : all) {
+                if (s != null) {
+                    all.add(s);
+                }
+            }
+        }
+        this.nutsArgs = all.toArray(new String[0]);
         return this;
     }
 

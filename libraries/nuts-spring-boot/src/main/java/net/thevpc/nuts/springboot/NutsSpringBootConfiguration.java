@@ -2,7 +2,7 @@ package net.thevpc.nuts.springboot;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootArguments;
-import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.boot.reserved.cmdline.NBootCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLines;
 import net.thevpc.nuts.concurrent.NScheduler;
 
@@ -167,17 +167,10 @@ public class NutsSpringBootConfiguration {
         return args -> NApplications.runApplication(
                 new NMainArgs()
                         .setApplicationInstance(nutsApplication())
-                        .setNutsArgs(resolveNutsArgs())
+                        .setNutsArgsLine(env.getProperty("nuts.args"),new String[]{"--shared-instance=true"})
                         .setArgs(applicationArguments.getSourceArgs())
                         .setHandleMode(NApplicationHandleMode.PROPAGATE))
                 ;
-    }
-
-    private String[] resolveNutsArgs() {
-        List<String> args = NCmdLine.parseDefault(env.getProperty("nuts.args")).get().toStringList();
-        //always enable main instance in spring apps
-        args.add("--shared-instance=true");
-        return args.toArray(new String[0]);
     }
 
 }
