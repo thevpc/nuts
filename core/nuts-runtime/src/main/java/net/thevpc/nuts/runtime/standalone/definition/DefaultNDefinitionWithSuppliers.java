@@ -26,7 +26,7 @@ package net.thevpc.nuts.runtime.standalone.definition;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.xtra.time.NLazySupplier;
+import net.thevpc.nuts.util.NCallOnceSupplier;
 import net.thevpc.nuts.util.NImmutable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -40,20 +40,20 @@ import java.util.function.Supplier;
  */
 public class DefaultNDefinitionWithSuppliers implements NDefinition, NImmutable {
 
-    final NLazySupplier<NId> id;
-    final NLazySupplier<String> repositoryUuid;
-    final NLazySupplier<String> repositoryName;
+    final NCallOnceSupplier<NId> id;
+    final NCallOnceSupplier<String> repositoryUuid;
+    final NCallOnceSupplier<String> repositoryName;
 
-    final NLazySupplier<NId> apiId;
-    final NLazySupplier<NDependency> dependency;
+    final NCallOnceSupplier<NId> apiId;
+    final NCallOnceSupplier<NDependency> dependency;
 
 
-    final NLazySupplier<NDescriptor> descriptor;
-    final NLazySupplier<NPath> content;
-    final NLazySupplier<NInstallInformation> installInformation;
-    final NLazySupplier<NDependencies> dependencies;
-    final NLazySupplier<NDescriptor> effectiveDescriptor;
-    final NLazySupplier<Set<NDescriptorFlag>> effectiveFlags;
+    final NCallOnceSupplier<NDescriptor> descriptor;
+    final NCallOnceSupplier<NPath> content;
+    final NCallOnceSupplier<NInstallInformation> installInformation;
+    final NCallOnceSupplier<NDependencies> dependencies;
+    final NCallOnceSupplier<NDescriptor> effectiveDescriptor;
+    final NCallOnceSupplier<Set<NDescriptorFlag>> effectiveFlags;
 
 
 
@@ -66,17 +66,17 @@ public class DefaultNDefinitionWithSuppliers implements NDefinition, NImmutable 
             , Supplier<NDependency> dependency
             , Supplier<Set<NDescriptorFlag>> effectiveFlags
     ) {
-        this.id = new NLazySupplier<>(id);
-        this.descriptor = new NLazySupplier<>(descriptor);
-        this.content = new NLazySupplier<>(content);
-        this.installInformation = new NLazySupplier<>(install);
-        this.repositoryUuid = new NLazySupplier<>(repoUuid);
-        this.repositoryName = new NLazySupplier<>(repoName);
-        this.apiId = new NLazySupplier<>(apiId);
-        this.effectiveDescriptor = new NLazySupplier<>(effectiveDescriptor);
-        this.dependencies = new NLazySupplier<>(dependencies);
-        this.dependency = new NLazySupplier<>(dependency);
-        this.effectiveFlags = new NLazySupplier<>(effectiveFlags);
+        this.id = new NCallOnceSupplier<>(id);
+        this.descriptor = new NCallOnceSupplier<>(descriptor);
+        this.content = new NCallOnceSupplier<>(content);
+        this.installInformation = new NCallOnceSupplier<>(install);
+        this.repositoryUuid = new NCallOnceSupplier<>(repoUuid);
+        this.repositoryName = new NCallOnceSupplier<>(repoName);
+        this.apiId = new NCallOnceSupplier<>(apiId);
+        this.effectiveDescriptor = new NCallOnceSupplier<>(effectiveDescriptor);
+        this.dependencies = new NCallOnceSupplier<>(dependencies);
+        this.dependency = new NCallOnceSupplier<>(dependency);
+        this.effectiveFlags = new NCallOnceSupplier<>(effectiveFlags);
     }
 
     public NDependency getDependency() {

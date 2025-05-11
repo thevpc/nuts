@@ -1,14 +1,14 @@
-package net.thevpc.nuts.runtime.standalone.xtra.time;
+package net.thevpc.nuts.util;
 
 import java.util.function.Supplier;
 
-public class NLazySupplier<T> implements Supplier<T> {
+public class NCallOnceSupplier<T> implements Supplier<T> {
     private Supplier<T> supplier;
     private boolean executed;
     private T executedValue;
     private RuntimeException executedError;
 
-    public NLazySupplier(Supplier<T> supplier) {
+    public NCallOnceSupplier(Supplier<T> supplier) {
         this.supplier = supplier;
     }
 

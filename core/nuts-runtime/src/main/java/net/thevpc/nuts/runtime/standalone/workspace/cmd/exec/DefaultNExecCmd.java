@@ -72,7 +72,6 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -86,7 +85,6 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     public DefaultNExecCmd(NWorkspace workspace) {
         super(workspace);
     }
-
 
     private void refactorCommand() {
         if (getCommandDefinition() != null) {
@@ -426,8 +424,8 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                             resolver
                                     .setRepositoryFilter(null)
                                     .setDependencyFilter(ff.byScope(NDependencyScopePattern.RUN)
-//                            .and(ff.byOptional(getOptional())
-//                            ).and(getDependencyFilter())
+                                    //                            .and(ff.byOptional(getOptional())
+                                    //                            ).and(getDependencyFilter())
                                     );
                             for (NDependency dependency : descriptor.getDependencies()) {
                                 resolver.add(dependency);
@@ -787,13 +785,13 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                     execExtensions.addAll(Arrays.asList(".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC"));
                 }
                 for (String z : paths) {
-                    Path t = Paths.get(z);
-                    if (Files.isRegularFile(t.resolve(s))) {
+                    NPath t = NPath.of(z);
+                    if (t.resolve(s).isRegularFile()) {
                         return true;
                     }
                     for (String ext : execExtensions) {
                         ext = ext.toLowerCase();
-                        if (!(s.toLowerCase().endsWith(ext)) && Files.isRegularFile(t.resolve(s + ext))) {
+                        if (!(s.toLowerCase().endsWith(ext)) && t.resolve(s + ext).isRegularFile()) {
                             return true;
                         }
                     }
@@ -803,9 +801,9 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
             default: {
                 List<String> paths = NStringUtils.split(NWorkspace.of().getSysEnv("PATH").orNull(), "" + pathSeparatorChar, true, true);
                 for (String z : paths) {
-                    Path t = Paths.get(z);
-                    Path fp = t.resolve(s);
-                    if (Files.isRegularFile(fp)) {
+                    NPath t = NPath.of(z);
+                    NPath fp = t.resolve(s);
+                    if (fp.isRegularFile()) {
                         //if(Files.isExecutable(fp)) {
                         return true;
                         //}
@@ -817,7 +815,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     }
 
     protected NExecutableInformationExt ws_execId(NId goodId, String commandName, String[] appArgs, List<String> executorOptions,
-                                                  List<String> workspaceOptions, NExecutionType executionType, NRunAs runAs) {
+            List<String> workspaceOptions, NExecutionType executionType, NRunAs runAs) {
         NDefinition def = null;
         try {
             def = NFetchCmd.of(goodId)
@@ -842,13 +840,13 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     }
 
     public int ws_execId(NDefinition def, String commandName, String[] appArgs,
-                         List<String> executorOptions,
-                         List<String> workspaceOptions, Map<String, String> env, NPath dir, boolean failFast, boolean temporary,
-                         NExecInput in,
-                         NExecOutput out,
-                         NExecOutput err,
-                         NExecutionType executionType,
-                         NRunAs runAs
+            List<String> executorOptions,
+            List<String> workspaceOptions, Map<String, String> env, NPath dir, boolean failFast, boolean temporary,
+            NExecInput in,
+            NExecOutput out,
+            NExecOutput err,
+            NExecutionType executionType,
+            NRunAs runAs
     ) {
         NExecutorComponentAndContext e = ws_execId2(def, commandName, appArgs,
                 executorOptions,
@@ -862,6 +860,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     }
 
     public static class NExecutorComponentAndContext {
+
         NExecutorComponent component;
         NExecutionContext executionContext;
 
@@ -880,13 +879,13 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     }
 
     public NExecutorComponentAndContext ws_execId2(NDefinition def, String commandName, String[] appArgs,
-                                                   List<String> executorOptions,
-                                                   List<String> workspaceOptions, Map<String, String> env, NPath dir, boolean failFast, boolean temporary,
-                                                   NExecInput in,
-                                                   NExecOutput out,
-                                                   NExecOutput err,
-                                                   NExecutionType executionType,
-                                                   NRunAs runAs
+            List<String> executorOptions,
+            List<String> workspaceOptions, Map<String, String> env, NPath dir, boolean failFast, boolean temporary,
+            NExecInput in,
+            NExecOutput out,
+            NExecOutput err,
+            NExecutionType executionType,
+            NRunAs runAs
     ) {
         //TODO ! one of the sessions needs to be removed!
         NSession session = NSession.of();
@@ -1099,6 +1098,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     }
 
     private static class RemoteInfo0 {
+
         NExecCmdExtension commExec;
         NExecInput in0;
         NExecOutput out0;

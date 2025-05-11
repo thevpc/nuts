@@ -34,7 +34,7 @@ public class DefaultNUndeployCmd extends AbstractNUndeployCmd {
                     .getResultDefinitions().findFirst().get();
             NRepository repository1 = workspace
                     .findRepository(p.getRepositoryUuid()).get();
-            NRepositorySPI repoSPI = NWorkspaceUtils.of(workspace).repoSPI(repository1);
+            NRepositorySPI repoSPI = NWorkspaceUtils.of(workspace).toRepositorySPI(repository1);
             repoSPI.undeploy()
                     .setId(p.getId())
                     //                    .setFetchMode(NutsFetchMode.LOCAL)

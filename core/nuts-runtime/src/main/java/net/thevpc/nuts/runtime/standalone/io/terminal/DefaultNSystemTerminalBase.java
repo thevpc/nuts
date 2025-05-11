@@ -10,7 +10,7 @@ import net.thevpc.nuts.NBootOptions;
 
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamSystem;
-import net.thevpc.nuts.runtime.standalone.util.NCachedValue;
+import net.thevpc.nuts.util.NCachedSupplier;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NTerminalCmd;
@@ -24,8 +24,8 @@ import java.util.Scanner;
 @NComponentScope(NScopeType.PROTOTYPE)
 public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     public static final int THIRTY_SECONDS = 30000;
-    NCachedValue<Cursor> termCursor;
-    NCachedValue<Size> termSize;
+    NCachedSupplier<Cursor> termCursor;
+    NCachedSupplier<Size> termSize;
 
     private Scanner scanner;
     private NTerminalMode outMode = NTerminalMode.FORMATTED;
@@ -55,11 +55,11 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
             }
         }
         if (bootStdFd.getFlags().contains("tty")) {
-            termCursor = new NCachedValue<>(() -> CoreAnsiTermHelper.evalCursor(), THIRTY_SECONDS);
-            termSize = new NCachedValue<>(() -> CoreAnsiTermHelper.evalSize(), THIRTY_SECONDS);
+            termCursor = new NCachedSupplier<>(() -> CoreAnsiTermHelper.evalCursor(), THIRTY_SECONDS);
+            termSize = new NCachedSupplier<>(() -> CoreAnsiTermHelper.evalSize(), THIRTY_SECONDS);
         } else {
-            termCursor = new NCachedValue<>(() -> null, THIRTY_SECONDS);
-            termSize = new NCachedValue<>(() -> null, THIRTY_SECONDS);
+            termCursor = new NCachedSupplier<>(() -> null, THIRTY_SECONDS);
+            termSize = new NCachedSupplier<>(() -> null, THIRTY_SECONDS);
         }
         this.out = new NPrintStreamSystem(bootStdFd.getOut(), null, null, bootStdFd.getFlags().contains("ansi"),
                  this).setTerminalMode(terminalMode);

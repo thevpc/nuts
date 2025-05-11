@@ -37,7 +37,7 @@ public class DefaultNUpdateStatsCmd extends AbstractNUpdateStatsCmd {
         for (String repository : getRepositories()) {
             processed = true;
             NRepository repo = NWorkspace.of().findRepository(repository).get();
-            NRepositorySPI repoSPI = NWorkspaceUtils.of().repoSPI(repo);
+            NRepositorySPI repoSPI = NWorkspaceUtils.of().toRepositorySPI(repo);
             repoSPI.updateStatistics()
                     //                    .setFetchMode(NutsFetchMode.LOCAL)
                     .run();
@@ -86,7 +86,7 @@ public class DefaultNUpdateStatsCmd extends AbstractNUpdateStatsCmd {
                 if (session.isPlainTrace()) {
                     NOut.resetLine().println(NMsg.ofC("%s updating stats %s", NWorkspace.of().getWorkspaceLocation(), repo));
                 }
-                NWorkspaceUtils.of().repoSPI(repo).updateStatistics()
+                NWorkspaceUtils.of().toRepositorySPI(repo).updateStatistics()
                         //                        .setFetchMode(NutsFetchMode.LOCAL)
                         .run();
             }

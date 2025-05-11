@@ -297,7 +297,7 @@ public class NRepositoryFolderHelper {
                             .setFetchMode(NFetchMode.LOCAL)
                             .setId(id));
                 } else {
-                    NRepositorySPI repoSPI = NWorkspaceUtils.of().repoSPI(repo);
+                    NRepositorySPI repoSPI = NWorkspaceUtils.of().toRepositorySPI(repo);
                     repoSPI.undeploy().setId(id)
                             //.setFetchMode(NutsFetchMode.LOCAL)
                             .run();

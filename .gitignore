@@ -257,3 +257,4 @@ core/nuts-app-full/target
 /nuts-http-server.log
 /nuts-http-server.pid
 /server-config.tson
+/core/nuts-lib/nbproject/

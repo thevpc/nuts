@@ -3,15 +3,13 @@ package net.thevpc.nuts.runtime.standalone.definition;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenRepositoryFolderHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.xtra.time.NLazySupplier;
+import net.thevpc.nuts.util.NCallOnceSupplier;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.UncheckedException;
 
-import javax.management.Descriptor;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -23,7 +21,7 @@ public class NDefinitionHelper {
     }
 
     public static NDefinition ofIdOnlyFromRepo(NId id, NRepository repo,String callerName) {
-        NRepositorySPI repoSPI = NWorkspaceUtils.of(repo.getWorkspace()).repoSPI(repo);
+        NRepositorySPI repoSPI = NWorkspaceUtils.of(repo.getWorkspace()).toRepositorySPI(repo);
         return ofIdAndLazyDescriptor(id,()->repoSPI.fetchDescriptor().setId(id).getResult(),callerName);
     }
 
@@ -100,13 +98,13 @@ public class NDefinitionHelper {
 
     private static class DefinitionForIdAndLazyDescriptor extends NDefinitionDelegate {
         private final NId id;
-        private final NLazySupplier<NDescriptor> descriptor;
+        private final NCallOnceSupplier<NDescriptor> descriptor;
         private final String caller;
 
         public DefinitionForIdAndLazyDescriptor(NId id, Supplier<NDescriptor> descriptor, String caller) {
             this.id = id;
             this.caller = caller;
-            this.descriptor = new NLazySupplier<>(descriptor);
+            this.descriptor = new NCallOnceSupplier<>(descriptor);
         }
 
         @Override
@@ -126,7 +124,7 @@ public class NDefinitionHelper {
     }
 
     private static class LazyLoadingNDefinition extends NDefinitionDelegate {
-        NLog LOG = NLog.of(MavenRepositoryFolderHelper.class);
+        NLog LOG = NLog.of(NDefinitionHelper.class);
         NDefinition definition;
         private final NId id;
         boolean loaded;
@@ -144,7 +142,7 @@ public class NDefinitionHelper {
         protected NDefinition getBase() {
             if (!loaded) {
                 if (LOG == null) {
-                    LOG = NLog.of(MavenRepositoryFolderHelper.class);
+                    LOG = NLog.of(LazyLoadingNDefinition.class);
                 }
                 loaded = true;
                 try {

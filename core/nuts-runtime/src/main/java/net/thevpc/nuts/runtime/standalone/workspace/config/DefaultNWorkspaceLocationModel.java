@@ -96,7 +96,7 @@ public class DefaultNWorkspaceLocationModel {
             return getStoreLocation(folderType);
         }
         NRepository repositoryById = workspace.findRepository(repositoryIdOrName).get();
-        NRepositorySPI nRepositorySPI = NWorkspaceUtils.of().repoSPI(repositoryById);
+        NRepositorySPI nRepositorySPI = NWorkspaceUtils.of().toRepositorySPI(repositoryById);
         return nRepositorySPI.config().getStoreLocation(folderType);
     }
 

@@ -231,7 +231,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
                             .sorted(Comparator.comparingInt(x -> x.config().getDeployWeight()))
                             .collect(Collectors.toList())) {
                         int deployOrder = repo.config().getDeployWeight();
-                        NRepositorySPI repoSPI = wu.repoSPI(repo);
+                        NRepositorySPI repoSPI = wu.toRepositorySPI(repo);
                         repoSPI.deploy()
                                 //.setFetchMode(NutsFetchMode.LOCAL)
                                 .setId(effId).setContent(contentFile).setDescriptor(descriptor)
@@ -245,7 +245,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
                         throw new NRepositoryDisabledException(repository);
                     }
                     effId = CoreNIdUtils.createContentFaceId(effId.builder().setPropertiesQuery("").build(), descriptor);
-                    NRepositorySPI repoSPI = wu.repoSPI(repo);
+                    NRepositorySPI repoSPI = wu.toRepositorySPI(repo);
                     repoSPI.deploy()
                             .setId(effId)
                             .setContent(contentFile)

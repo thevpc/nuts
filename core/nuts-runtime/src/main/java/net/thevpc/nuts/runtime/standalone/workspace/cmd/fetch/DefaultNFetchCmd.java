@@ -284,7 +284,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
 //            }
 //        }
 
-        NRepositorySPI repoSPI = wu.repoSPI(repo);
+        NRepositorySPI repoSPI = wu.toRepositorySPI(repo);
         NDescriptor descriptor = repoSPI.fetchDescriptor().setId(id)
                 .setFetchMode(mode)
                 .getResult();
@@ -520,7 +520,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                     if (loadedFromInstallRepo && successfulContentLocation != successfulDescriptorLocation) {
                         //this happens if the jar content is no more installed while its descriptor is still installed.
                         NInstalledRepository installedRepository = NWorkspaceExt.of().getInstalledRepository();
-                        NRepositorySPI installedRepositorySPI = wu.repoSPI(installedRepository);
+                        NRepositorySPI installedRepositorySPI = wu.toRepositorySPI(installedRepository);
 
                         NPath finalFetchedPath = fetchedPath;
                         NSession.of().copy().setConfirm(NConfirmationMode.YES).runWith(() -> {
@@ -543,7 +543,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
         }
 
         protected NPath fetchContent(NId id1, NRepositoryAndFetchMode repo, List<Exception> reasons) {
-            NRepositorySPI repoSPI = NWorkspaceUtils.of().repoSPI(repo.getRepository());
+            NRepositorySPI repoSPI = NWorkspaceUtils.of().toRepositorySPI(repo.getRepository());
             try {
                 NDescriptor baseDescriptor = foundDefinitionBuilder.getDescriptor().get();
                 return repoSPI.fetchContent()

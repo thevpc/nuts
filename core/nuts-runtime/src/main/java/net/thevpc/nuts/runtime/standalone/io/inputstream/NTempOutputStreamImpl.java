@@ -13,10 +13,13 @@ import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class NTempOutputStreamImpl extends NTempOutputStream {
+
     DefaultNContentMetadata md = new DefaultNContentMetadata();
     boolean mem = true;
     long maxSize = 1024 * 1024 * 10;
@@ -79,10 +82,15 @@ public class NTempOutputStreamImpl extends NTempOutputStream {
     private void ensureBucket() {
         if (mem && contentLength > maxSize) {
             file = NPath.ofTempFile();
-            file.writeBytes(bos.toByteArray());
+            byte[] currBytes = bos.toByteArray();
             bos = null;
             mem = false;
             fos = file.getOutputStream();
+            try {
+                fos.write(currBytes);
+            } catch (IOException ex) {
+                throw new NIOException(ex);
+            }
         }
     }
 
@@ -124,12 +132,10 @@ public class NTempOutputStreamImpl extends NTempOutputStream {
         return getMetaData().getCharset().orNull();
     }
 
-
     @Override
     public Stream<String> getLines() {
         return getLines(null);
     }
-
 
     @Override
     public String readString() {
@@ -149,7 +155,6 @@ public class NTempOutputStreamImpl extends NTempOutputStream {
     public BufferedReader getBufferedReader() {
         return getBufferedReader(null);
     }
-
 
     @Override
     public BufferedReader getBufferedReader(Charset cs) {
@@ -194,7 +199,6 @@ public class NTempOutputStreamImpl extends NTempOutputStream {
     public List<String> tail(int count) {
         return tail(count, null);
     }
-
 
     @Override
     public Stream<String> getLines(Charset cs) {

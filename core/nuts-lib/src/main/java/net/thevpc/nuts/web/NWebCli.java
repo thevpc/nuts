@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 public interface NWebCli extends NComponent {
+
     static NWebCli of() {
         return NExtensions.of(NWebCli.class);
     }
@@ -23,7 +24,6 @@ public interface NWebCli extends NComponent {
     NWebRequest req(NHttpMethod method);
 
     NWebCookie[] getCookies();
-
 
     NWebCli setHeader(String name, String value);
 
@@ -46,6 +46,7 @@ public interface NWebCli extends NComponent {
     NWebCli removeCookie(NWebCookie cookie);
 
     boolean containsCookie(String cookieName);
+
     NWebCli removeCookie(String cookieName);
 
     NWebCli addCookies(NWebCookie[] cookies);

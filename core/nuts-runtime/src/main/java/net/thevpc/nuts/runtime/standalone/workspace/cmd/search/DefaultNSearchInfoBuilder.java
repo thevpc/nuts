@@ -141,7 +141,7 @@ public class DefaultNSearchInfoBuilder {
                 List<NId> installedIds = Collections.emptyList();
                 if (!nutsId.getArtifactId().contains("*")) {
                     NRepositorySPI repoSPI = NWorkspaceUtils.of()
-                            .repoSPI(NWorkspaceExt.of().getInstalledRepository());
+                            .toRepositorySPI(NWorkspaceExt.of().getInstalledRepository());
                     NIterator<NId> it = repoSPI.search().setFetchMode(NFetchMode.LOCAL).setFilter(NDefinitionFilters.of().byName(
                             nutsId.builder().setGroupId("").build().toString()
                     )).getResult();

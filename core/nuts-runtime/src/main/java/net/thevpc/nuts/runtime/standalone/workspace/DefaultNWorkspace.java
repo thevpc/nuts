@@ -1042,7 +1042,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     }
                 }
             }
-            NRepositorySPI installedRepositorySPI = wu.repoSPI(installedRepository);
+            NRepositorySPI installedRepositorySPI = wu.toRepositorySPI(installedRepository);
             if (reinstall) {
                 //must re-fetch def!
                 NDefinition d2 = NFetchCmd.of(def.getId())

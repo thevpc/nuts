@@ -9,7 +9,7 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.NPathParts;
-import net.thevpc.nuts.runtime.standalone.util.NCachedValue;
+import net.thevpc.nuts.util.NCachedSupplier;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathFactorySPI;
@@ -37,7 +37,7 @@ public class URLPath implements NPathSPI {
     public static final Pattern MOSTLY_URL_PATTERN = Pattern.compile("([a-zA-Z][a-zA-Z0-9_-]+):.*");
 
     protected URL url;
-    protected static final NLRUMap<URL, NCachedValue<CacheInfo>> cacheManager = new NLRUMap<URL, NCachedValue<CacheInfo>>(1024);
+    protected static final NLRUMap<URL, NCachedSupplier<CacheInfo>> cacheManager = new NLRUMap<URL, NCachedSupplier<CacheInfo>>(1024);
 
 
     public URLPath(URL url) {
@@ -53,10 +53,10 @@ public class URLPath implements NPathSPI {
         this.url = url;
     }
 
-    private NCachedValue<CacheInfo> cachedHeader() {
-        NCachedValue<CacheInfo> o = cacheManager.get(url);
+    private NCachedSupplier<CacheInfo> cachedHeader() {
+        NCachedSupplier<CacheInfo> o = cacheManager.get(url);
         if (o == null) {
-            o = new NCachedValue<>(
+            o = new NCachedSupplier<>(
                     () -> loadCacheInfo(url), 5000
             );
             cacheManager.put(url, o);

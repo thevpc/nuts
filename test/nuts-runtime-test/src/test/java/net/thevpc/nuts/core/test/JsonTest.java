@@ -230,4 +230,11 @@ public class JsonTest {
         m.put("é","à");
         NElements.ofPlainJson(m).println();
     }
+
+    @Test
+    public void test4()  {
+        Map<String,String> m=new HashMap<>();
+        m.put("a","\"dwm.exe\\");
+        NElements.ofPlainJson(m).println();
+    }
 }

@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.web;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NInputSource;
-import net.thevpc.nuts.runtime.standalone.xtra.time.NLazySupplier;
+import net.thevpc.nuts.util.NCallOnceSupplier;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NMsgCode;
 import net.thevpc.nuts.util.NOptional;
@@ -24,14 +24,14 @@ public class NWebResponseImpl implements NWebResponse {
     private NHttpCode httpCode;
     private NMsg msg;
     private DefaultNWebHeaders headers = new DefaultNWebHeaders();
-    private NLazySupplier<NInputSource> content;
+    private NCallOnceSupplier<NInputSource> content;
     private NMsgCode msgCode;
 
     public NWebResponseImpl(NHttpCode code, NMsg msg, Map<String, List<String>> headers, Supplier<NInputSource> content) {
         this.httpCode = code;
         this.msg = msg;
         this.headers.addHeadersMulti(headers, DefaultNWebHeaders.Mode.ALWAYS);
-        this.content = new NLazySupplier<>(content);
+        this.content = new NCallOnceSupplier<>(content);
     }
 
     @Override

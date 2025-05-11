@@ -146,7 +146,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
         if (wrapper != null && wrapper.get(id, config().getLocationPath().toString())) {
             NRepository repo = getLocalMavenRepo();
             if (repo != null) {
-                NRepositorySPI repoSPI = NWorkspaceUtils.of(workspace).repoSPI(repo);
+                NRepositorySPI repoSPI = NWorkspaceUtils.of(workspace).toRepositorySPI(repo);
                 return repoSPI.fetchContent()
                         .setId(id)
                         .setDescriptor(descriptor)

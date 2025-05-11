@@ -68,7 +68,6 @@ public class NBootMsg {
         return of("PLAIN", message, NO_PARAMS, null, null);
     }
 
-    @Deprecated
     public static NBootMsg ofC(String message) {
         return of("CFORMAT", message, NO_PARAMS, null, null);
     }

@@ -7,21 +7,19 @@
  * for runtime execution. Nuts is the ultimate companion for maven (and other
  * build managers) as it helps installing all package dependencies at runtime.
  * Nuts is not tied to java and is a good choice to share shell scripts and
- * other 'things' . It's based on an extensible architecture to help supporting a
- * large range of sub managers / repositories.
+ * other 'things' . It's based on an extensible architecture to help supporting
+ * a large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
- * you may  not use this file except in compliance with the License. You may obtain
- * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the GNU LESSER GENERAL PUBLIC
+ * LICENSE Version 3 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * https://www.gnu.org/licenses/lgpl-3.0.en.html Unless required by applicable
+ * law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
+ * <br> ====================================================================
  */
 package net.thevpc.nuts.cmdline;
 
@@ -105,7 +103,6 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
         return NCmdLines.of().of(args);
     }
 
-
     static NCmdLine of(List<String> args) {
         return NCmdLines.of().of(args == null ? null : args.toArray(new String[0]));
     }
@@ -133,7 +130,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     /**
      * parses the line into a command line using the provided shell family
      *
-     * @param line        line to parse
+     * @param line line to parse
      * @param shellFamily shell family
      * @return new command line instance
      */
@@ -186,7 +183,6 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @return {@code this} instance
      */
     NCmdLine registerSpecialSimpleOption(String option);
-
 
     /**
      * test if the option is a registered simple option This method helps
@@ -269,7 +265,6 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     NCmdLine throwMissingArgument(NMsg errorMessage);
 
     NCmdLine throwMissingArgument(String argumentName);
-
 
     /**
      * throw exception if command line is not empty
@@ -354,16 +349,14 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     NOptional<NArg> nextFlag(String... names);
 
     /**
-     * next argument with boolean value equivalent to
-     * next(NArgType.ENTRY,{})
+     * next argument with boolean value equivalent to next(NArgType.ENTRY,{})
      *
      * @return next argument
      */
     NOptional<NArg> nextFlag();
 
     /**
-     * next argument with string value. equivalent to
-     * next(NArgType.ENTRY,names)
+     * next argument with string value. equivalent to next(NArgType.ENTRY,names)
      *
      * @param names names
      * @return next argument
@@ -395,11 +388,9 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
 
     boolean withNextTrueFlag(NArgProcessor<Boolean> consumer, String... names);
 
-
     boolean withNextOptionalEntry(NArgProcessor<NOptional<String>> consumer);
 
     boolean withNextOptionalEntry(NArgProcessor<NOptional<String>> consumer, String... names);
-
 
     /**
      * consume next argument with string value and run {@code consumer}
@@ -415,7 +406,6 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @return true if active
      */
     boolean withNextEntry(NArgProcessor<String> consumer, String... names);
-
 
     /**
      * consume next argument and run {@code consumer}
@@ -437,8 +427,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     NCmdLineNamedAction with(String... names);
 
     /**
-     * next argument as entry (key=value). equivalent to
-     * next(NArgType.ENTRY,{})
+     * next argument as entry (key=value). equivalent to next(NArgType.ENTRY,{})
      *
      * @return next argument
      */
@@ -447,7 +436,6 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     NOptional<NLiteral> nextEntryValue(String... names);
 
     NOptional<NLiteral> nextFlagValue(String... names);
-
 
     NOptional<NLiteral> nextEntryValue();
 
@@ -466,7 +454,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * next argument with any value type (may having not a value).
      *
      * @param expectValue expected value type
-     * @param names       names
+     * @param names names
      * @return next argument
      */
     NOptional<NArg> next(NArgType expectValue, String... names);
@@ -530,7 +518,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     /**
      * true if arguments start at index {@code index} with the given suite.
      *
-     * @param index  starting index
+     * @param index starting index
      * @param values arguments suite
      * @return true if arguments start with the given suite.
      */
@@ -640,8 +628,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     void throwError(NText message);
 
     /**
-     * add new argument (ignoring null values)
-     * since 0.8.4
+     * add new argument (ignoring null values) since 0.8.4
      *
      * @param argument new argument
      * @return reset this instance
@@ -661,8 +648,9 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     NCmdLine append(String... args);
 
     /**
-     * creates an iterator from a snapshot of the current CmdLine.
-     * Will not consume any argument in the current NCmdLine instance. use forEachPeek instead.
+     * creates an iterator from a snapshot of the current CmdLine. Will not
+     * consume any argument in the current NCmdLine instance. use forEachPeek
+     * instead.
      *
      * @return Iterator<NArg>
      */
@@ -670,8 +658,10 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     Iterator<NArg> iterator();
 
     /**
-     * Performs the given action for each element of the Iterable until all elements have been processed or the action throws an exception.
-     * Will not consume any argument in the current NCmdLine instance. use forEachPeek instead.
+     * Performs the given action for each element of the Iterable until all
+     * elements have been processed or the action throws an exception. Will not
+     * consume any argument in the current NCmdLine instance. use forEachPeek
+     * instead.
      *
      * @param action The action to be performed for each element
      */
@@ -700,18 +690,19 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     boolean lookupNextFlag(NArgProcessor<Boolean> consumer);
 
     /**
-     * search for the given named flag without consuming ar altering the current Commandline.
-     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
+     * search for the given named flag without consuming ar altering the current
+     * Commandline. WARNING: this method can be slow as it might work on a copy
+     * of the current NCommandLine instance
      *
      * @param consumer consumer to call when the argument is found
      * @return true if found and the consumer is invoked
      */
     boolean lookupNextOptionalFlag(NArgProcessor<NOptional<Boolean>> consumer);
 
-
     /**
-     * search for the given named flag without consuming ar altering the current Commandline.
-     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
+     * search for the given named flag without consuming ar altering the current
+     * Commandline. WARNING: this method can be slow as it might work on a copy
+     * of the current NCommandLine instance
      *
      * @param consumer consumer to call when the argument is found
      * @return true if found and the consumer is invoked
@@ -719,8 +710,9 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     boolean lookupNextOptionalFlag(NArgProcessor<NOptional<Boolean>> consumer, String... names);
 
     /**
-     * search for the given named flag without consuming ar altering the current Commandline.
-     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
+     * search for the given named flag without consuming ar altering the current
+     * Commandline. WARNING: this method can be slow as it might work on a copy
+     * of the current NCommandLine instance
      *
      * @param consumer consumer to call when the argument is found
      * @return true if found and the consumer is invoked
@@ -728,8 +720,9 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     boolean lookupNextTrueFlag(NArgProcessor<Boolean> consumer);
 
     /**
-     * search for the given named flag without consuming ar altering the current Commandline.
-     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
+     * search for the given named flag without consuming ar altering the current
+     * Commandline. WARNING: this method can be slow as it might work on a copy
+     * of the current NCommandLine instance
      *
      * @param consumer consumer to call when the argument is found
      * @return true if found and the consumer is invoked
@@ -737,18 +730,19 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     boolean lookupNextFlag(NArgProcessor<Boolean> consumer, String... names);
 
     /**
-     * search for the given named flag without consuming ar altering the current Commandline.
-     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
+     * search for the given named flag without consuming ar altering the current
+     * Commandline. WARNING: this method can be slow as it might work on a copy
+     * of the current NCommandLine instance
      *
      * @param consumer consumer to call when the argument is found
      * @return true if found and the consumer is invoked
      */
     boolean lookupNextTrueFlag(NArgProcessor<Boolean> consumer, String... names);
 
-
     /**
-     * search for the given named flag without consuming ar altering the current Commandline.
-     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
+     * search for the given named flag without consuming ar altering the current
+     * Commandline. WARNING: this method can be slow as it might work on a copy
+     * of the current NCommandLine instance
      *
      * @param consumer consumer to call when the argument is found
      * @return true if found and the consumer is invoked
@@ -756,18 +750,19 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     boolean lookupNextOptionalEntry(NArgProcessor<NOptional<String>> consumer);
 
     /**
-     * search for the given named flag without consuming ar altering the current Commandline.
-     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
+     * search for the given named flag without consuming ar altering the current
+     * Commandline. WARNING: this method can be slow as it might work on a copy
+     * of the current NCommandLine instance
      *
      * @param consumer consumer to call when the argument is found
      * @return true if found and the consumer is invoked
      */
     boolean lookupNextOptionalEntry(NArgProcessor<NOptional<String>> consumer, String... names);
 
-
     /**
-     * search for the given named flag without consuming ar altering the current Commandline.
-     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
+     * search for the given named flag without consuming ar altering the current
+     * Commandline. WARNING: this method can be slow as it might work on a copy
+     * of the current NCommandLine instance
      *
      * @param consumer consumer to call when the argument is found
      * @return true if found and the consumer is invoked
@@ -775,18 +770,19 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     boolean lookupNextEntry(NArgProcessor<String> consumer);
 
     /**
-     * search for the given named flag without consuming ar altering the current Commandline.
-     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
+     * search for the given named flag without consuming ar altering the current
+     * Commandline. WARNING: this method can be slow as it might work on a copy
+     * of the current NCommandLine instance
      *
      * @param consumer consumer to call when the argument is found
      * @return true if found and the consumer is invoked
      */
     boolean lookupNextEntry(NArgProcessor<String> consumer, String... names);
 
-
     /**
-     * search for the given named flag without consuming ar altering the current Commandline.
-     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
+     * search for the given named flag without consuming ar altering the current
+     * Commandline. WARNING: this method can be slow as it might work on a copy
+     * of the current NCommandLine instance
      *
      * @param consumer consumer to call when the argument is found
      * @return true if found and the consumer is invoked
@@ -794,8 +790,9 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     boolean lookupNextEntryValue(NArgProcessor<NLiteral> consumer);
 
     /**
-     * search for the given named flag without consuming ar altering the current Commandline.
-     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
+     * search for the given named flag without consuming ar altering the current
+     * Commandline. WARNING: this method can be slow as it might work on a copy
+     * of the current NCommandLine instance
      *
      * @param consumer consumer to call when the argument is found
      * @return true if found and the consumer is invoked
@@ -803,8 +800,9 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     boolean lookupNextEntryValue(NArgProcessor<NLiteral> consumer, String... names);
 
     /**
-     * search for the given named flag without consuming ar altering the current Commandline.
-     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
+     * search for the given named flag without consuming ar altering the current
+     * Commandline. WARNING: this method can be slow as it might work on a copy
+     * of the current NCommandLine instance
      *
      * @param consumer consumer to call when the argument is found
      * @return true if found and the consumer is invoked

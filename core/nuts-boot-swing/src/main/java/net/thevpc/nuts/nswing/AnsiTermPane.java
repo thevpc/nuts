@@ -8,7 +8,8 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 
 /**
- * thanks to https://stackoverflow.com/questions/6913983/jtextpane-removing-first-line
+ * thanks to
+ * https://stackoverflow.com/questions/6913983/jtextpane-removing-first-line
  */
 public class AnsiTermPane extends JTextPane {
     //    public static Color colorForeground = Color.BLACK;//cReset;
@@ -42,10 +43,44 @@ public class AnsiTermPane extends JTextPane {
     public void setDarkMode(boolean darkMode) {
         ansiColors.cResetBackground = getBackground();
         ansiColors.setDarkMode(darkMode);
-        setFont(new Font("Courier New", Font.PLAIN, 14));
+        applyFont();
         setForeground(ansiColors.cResetForeground);
         setBackground(ansiColors.preferredBackground);
         resetCurr();
+    }
+
+    private void applyFont() {
+        final Font font = getFont();
+        float mulFactor = 1;
+        try {
+            String s = System.getProperty("flatlaf.uiScale");
+            if (s != null) {
+                float f = Float.parseFloat(s);
+                if (f > 0) {
+                    mulFactor = f;
+                }
+            }
+        } catch (Exception e) {
+            //
+        }
+        float expectedSize = 14 * mulFactor;
+        if (font == null || font.getName().equals("Courrier New") || font.getSize2D() != expectedSize) {
+            SwingUtilities.invokeLater(() -> {
+                setFont(new Font("Courier New", Font.PLAIN, (int) expectedSize).deriveFont(expectedSize));
+            });
+        }
+    }
+
+    private long lastCheckedTime = 0;
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        final long now = System.currentTimeMillis();
+        if (lastCheckedTime == 0 || now - lastCheckedTime > 1000) {
+            lastCheckedTime = now;
+            applyFont();
+        }
+        super.paintComponent(g);
     }
 
     public void clearLastLine() {
@@ -58,8 +93,8 @@ public class AnsiTermPane extends JTextPane {
                 e.printStackTrace();
             }
         }
+        applyFont();
     }
-
 
     public void append(int color256, String s) {
         append(currentStyle.copy().setForeColor(ansiColors.color256(color256)), s);
@@ -86,6 +121,7 @@ public class AnsiTermPane extends JTextPane {
         // there is no selection, so inserts at caret
         ensureMaxRows();
         setEditable(editable);
+        applyFont();
     }
 
     private void ensureMaxRows() {
@@ -109,20 +145,20 @@ public class AnsiTermPane extends JTextPane {
         if (ps == null) {
             ps = new PrintStream(
                     new OutputStream() {
-                        @Override
-                        public void write(int b) throws IOException {
-                            UIHelper.withinGUI(() -> {
-                                appendANSI(String.valueOf((char) b));
-                            });
-                        }
+                @Override
+                public void write(int b) throws IOException {
+                    UIHelper.withinGUI(() -> {
+                        appendANSI(String.valueOf((char) b));
+                    });
+                }
 
-                        @Override
-                        public void write(byte[] b, int off, int len) throws IOException {
-                            UIHelper.withinGUI(() -> {
-                                appendANSI(new String(b, off, len));
-                            });
-                        }
-                    }
+                @Override
+                public void write(byte[] b, int off, int len) throws IOException {
+                    UIHelper.withinGUI(() -> {
+                        appendANSI(new String(b, off, len));
+                    });
+                }
+            }
             );
         }
         return ps;
@@ -199,6 +235,7 @@ public class AnsiTermPane extends JTextPane {
 
             } // while there's text in the input buffer
         }
+        applyFont();
     }
 
     public void applyANSIColor(String ANSIColor) {
@@ -207,5 +244,6 @@ public class AnsiTermPane extends JTextPane {
 
     public void clearScreen() {
         setText("");
+        applyFont();
     }
 }

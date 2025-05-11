@@ -73,7 +73,7 @@ public class NWorkspaceUtils {
         return NLog.of(NWorkspaceUtils.class);
     }
 
-    public NRepositorySPI repoSPI(NRepository repo) {
+    public NRepositorySPI toRepositorySPI(NRepository repo) {
         return NWorkspaceExt.of().getRepositoryModel().toRepositorySPI(repo);
     }
 
@@ -164,7 +164,7 @@ public class NWorkspaceUtils {
             /*repository.isAvailable()*/
             if (repository.isEnabled()
                     && (fmode == NRepositorySupportedAction.SEARCH || repository.isSupportedDeploy())
-                    && repoSPI(repository).isAcceptFetchMode(mode)
+                    && toRepositorySPI(repository).isAcceptFetchMode(mode)
                     && (repositoryFilter == null || repositoryFilter.acceptRepository(repository))) {
                 int d = 0;
                 if (fmode == NRepositorySupportedAction.DEPLOY) {

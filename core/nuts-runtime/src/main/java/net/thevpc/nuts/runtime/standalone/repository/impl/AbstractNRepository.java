@@ -32,7 +32,7 @@ import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepoConfigManager;
 import net.thevpc.nuts.runtime.standalone.repository.config.NRepositoryConfigModel;
-import net.thevpc.nuts.runtime.standalone.util.NCachedValue;
+import net.thevpc.nuts.util.NCachedSupplier;
 import net.thevpc.nuts.util.NDefaultObservableMap;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.spi.NRepositoryLocation;
@@ -58,7 +58,7 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     protected DefaultNRepositorySecurityModel securityModel;
     protected NRepositoryConfigModel configModel;
     protected NObservableMap<String, Object> userProperties;
-    protected NCachedValue<Boolean> available;
+    protected NCachedSupplier<Boolean> available;
     protected boolean supportsDeploy;
     protected boolean enabled = true;
 
@@ -66,7 +66,7 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
         this.workspace=NWorkspace.of();
         this.userProperties = new NDefaultObservableMap<>();
         this.securityModel = new DefaultNRepositorySecurityModel(this);
-        this.available = new NCachedValue<>(() -> isAvailableImpl(), 0);;
+        this.available = new NCachedSupplier<>(() -> isAvailableImpl(), 0);;
     }
 
     public boolean isPreview() {

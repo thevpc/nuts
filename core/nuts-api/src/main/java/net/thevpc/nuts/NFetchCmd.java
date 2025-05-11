@@ -32,7 +32,6 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NOptional;
 
 import java.time.Instant;
-import java.util.Set;
 
 /**
  * Fetch command class helps fetching/retrieving a artifact with all of its

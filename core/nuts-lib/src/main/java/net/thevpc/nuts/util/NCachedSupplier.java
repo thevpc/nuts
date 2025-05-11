@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thevpc.nuts.runtime.standalone.util;
+package net.thevpc.nuts.util;
 
 import java.util.function.Supplier;
 
 /**
  * @author thevpc
  */
-public class NCachedValue<T> {
+public class NCachedSupplier<T> {
 
     private final Supplier<T> supplier;
     private T lastValue;
@@ -18,7 +18,7 @@ public class NCachedValue<T> {
     private long timeoutMilliSeconds;
     private boolean updating = false;
 
-    public NCachedValue(Supplier<T> callable, long timeoutMilliSeconds) {
+    public NCachedSupplier(Supplier<T> callable, long timeoutMilliSeconds) {
         this.supplier = callable;
         this.timeoutMilliSeconds = timeoutMilliSeconds;
     }

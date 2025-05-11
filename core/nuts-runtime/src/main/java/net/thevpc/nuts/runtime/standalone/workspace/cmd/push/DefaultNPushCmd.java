@@ -79,7 +79,7 @@ public class DefaultNPushCmd extends AbstractDefaultNPushCmd {
                 boolean ok = false;
                 for (NRepository repo : wu.filterRepositoriesDeploy(file.getId(), repositoryFilter)) {
                     NDescriptor descr = null;
-                    NRepositorySPI repoSPI = wu.repoSPI(repo);
+                    NRepositorySPI repoSPI = wu.toRepositorySPI(repo);
                     try {
                         descr = repoSPI.fetchDescriptor().setFetchMode(fetchMode).setId(file.getId()).getResult();
                     } catch (Exception e) {
@@ -117,7 +117,7 @@ public class DefaultNPushCmd extends AbstractDefaultNPushCmd {
                 }
                 NId effId = CoreNIdUtils.createContentFaceId(id.builder().setPropertiesQuery("").build(), file.getDescriptor()) //                        .setAlternative(NutsUtilStrings.trim(file.getDescriptor().getAlternative()))
                         ;
-                NRepositorySPI repoSPI = wu.repoSPI(repo);
+                NRepositorySPI repoSPI = wu.toRepositorySPI(repo);
                 repoSPI.deploy()
                         .setId(effId)
                         .setContent(file.getContent().orNull())

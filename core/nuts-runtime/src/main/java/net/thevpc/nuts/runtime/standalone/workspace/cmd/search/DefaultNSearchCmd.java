@@ -132,7 +132,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                             for (NRepositoryAndFetchMode repoAndMode : repositoryAndFetchModes) {
                                 if (repoAndMode.getFetchMode() == fm) {
                                     consideredRepos.add(repoAndMode.getRepository());
-                                    NRepositorySPI repoSPI = wu.repoSPI(repoAndMode.getRepository());
+                                    NRepositorySPI repoSPI = wu.toRepositorySPI(repoAndMode.getRepository());
                                     if (nutsIdNonLatest.getGroupId() != null) {
                                         NIterator<NId> z = NIteratorBuilder.of(repoSPI.searchVersions().setId(nutsIdNonLatest).setFilter(filter)
                                                         .setFetchMode(repoAndMode.getFetchMode())
@@ -183,7 +183,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
             )) {
                 consideredRepos.add(repoAndMode.getRepository());
                 all.add(
-                        NIteratorBuilder.ofSupplier(() -> wu.repoSPI(repoAndMode.getRepository()).search()
+                        NIteratorBuilder.ofSupplier(() -> wu.toRepositorySPI(repoAndMode.getRepository()).search()
                                                 .setFilter(filter)
                                                 .setFetchMode(repoAndMode.getFetchMode())
                                                 .getResult(),
