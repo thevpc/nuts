@@ -63,6 +63,26 @@ public interface NListContainerElement extends NElement {
 
     NOptional<NObjectElement> getObjectByPath(String... keys);
 
+    NOptional<Boolean> getBooleanValueByPath(String... keys);
+
+    NOptional<Byte> getByteValueByPath(String... keys);
+
+    NOptional<Short> getShortValueByPath(String... keys);
+
+    NOptional<Integer> getIntValueByPath(String... keys);
+
+    NOptional<Long> getLongValueByPath(String... keys);
+
+    NOptional<Float> getFloatValueByPath(String... keys);
+
+    NOptional<Double> getDoubleValueByPath(String... keys);
+
+    NOptional<Instant> getInstantValueByPath(String... keys);
+
+    NOptional<LocalDate> getLocalDateValueByPath(String... keys);
+
+    NOptional<LocalDateTime> getLocalDateTimeValueByPath(String... keys);
+
     NOptional<NListContainerElement> getListContainerByPath(String... keys);
 
     NOptional<NElement> get(NElement key);
@@ -96,6 +116,10 @@ public interface NListContainerElement extends NElement {
     NOptional<LocalDate> getLocalDateValue(int index);
 
     NOptional<LocalDateTime> getLocalDateTimeValue(int index);
+
+    NOptional<String> getStringValueByPath(String... keys);
+
+    NOptional<LocalTime> getLocalTimeValueByPath(String... keys);
 
     NOptional<NArrayElement> getArray(String key);
 

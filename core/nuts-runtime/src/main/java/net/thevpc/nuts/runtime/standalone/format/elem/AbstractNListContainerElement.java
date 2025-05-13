@@ -24,7 +24,7 @@ public abstract class AbstractNListContainerElement extends AbstractNElement imp
 
     @Override
     public NOptional<LocalTime> getLocalTimeValue(int index) {
-        return get(index).flatMap(x->x.asLiteral().asLocalTime());
+        return get(index).flatMap(x -> x.asLiteral().asLocalTime());
     }
 
     @Override
@@ -39,52 +39,52 @@ public abstract class AbstractNListContainerElement extends AbstractNElement imp
 
     @Override
     public NOptional<Boolean> getBooleanValue(int index) {
-        return get(index).flatMap(x->x.asLiteral().asBoolean());
+        return get(index).flatMap(x -> x.asLiteral().asBoolean());
     }
 
     @Override
     public NOptional<Byte> getByteValue(int index) {
-        return get(index).flatMap(x->x.asLiteral().asByte());
+        return get(index).flatMap(x -> x.asLiteral().asByte());
     }
 
     @Override
     public NOptional<Short> getShortValue(int index) {
-        return get(index).flatMap(x->x.asLiteral().asShort());
+        return get(index).flatMap(x -> x.asLiteral().asShort());
     }
 
     @Override
     public NOptional<Integer> getIntValue(int index) {
-        return get(index).flatMap(x->x.asLiteral().asInt());
+        return get(index).flatMap(x -> x.asLiteral().asInt());
     }
 
     @Override
     public NOptional<Long> getLongValue(int index) {
-        return get(index).flatMap(x->x.asLiteral().asLong());
+        return get(index).flatMap(x -> x.asLiteral().asLong());
     }
 
     @Override
     public NOptional<Float> getFloatValue(int index) {
-        return get(index).flatMap(x->x.asLiteral().asFloat());
+        return get(index).flatMap(x -> x.asLiteral().asFloat());
     }
 
     @Override
     public NOptional<Double> getDoubleValue(int index) {
-        return get(index).flatMap(x->x.asLiteral().asDouble());
+        return get(index).flatMap(x -> x.asLiteral().asDouble());
     }
 
     @Override
     public NOptional<Instant> getInstantValue(int index) {
-        return get(index).flatMap(x->x.asLiteral().asInstant());
+        return get(index).flatMap(x -> x.asLiteral().asInstant());
     }
 
     @Override
     public NOptional<LocalDate> getLocalDateValue(int index) {
-        return get(index).flatMap(x->x.asLiteral().asLocalDate());
+        return get(index).flatMap(x -> x.asLiteral().asLocalDate());
     }
 
     @Override
     public NOptional<LocalDateTime> getLocalDateTimeValue(int index) {
-        return get(index).flatMap(x->x.asLiteral().asLocalDateTime());
+        return get(index).flatMap(x -> x.asLiteral().asLocalDateTime());
     }
 
 //    @Override
@@ -337,7 +337,7 @@ public abstract class AbstractNListContainerElement extends AbstractNElement imp
     public NOptional<NElement> getByPath(String... keys) {
         NOptional<NElement> r = NOptional.of(this);
         for (String key : keys) {
-            r=r.flatMap(NElement::asListContainer).flatMap(x->x.get(key));
+            r = r.flatMap(NElement::asListContainer).flatMap(x -> x.get(key));
         }
         return r;
     }
@@ -355,5 +355,65 @@ public abstract class AbstractNListContainerElement extends AbstractNElement imp
     @Override
     public NOptional<NListContainerElement> getListContainerByPath(String... keys) {
         return getByPath(keys).flatMap(NElement::asListContainer);
+    }
+
+    @Override
+    public NOptional<LocalDateTime> getLocalDateTimeValueByPath(String... keys) {
+        return getByPath(keys).flatMap(NElement::asLocalDateTimeValue);
+    }
+
+    @Override
+    public NOptional<LocalDate> getLocalDateValueByPath(String... keys) {
+        return getByPath(keys).flatMap(NElement::asLocalDateValue);
+    }
+
+    @Override
+    public NOptional<Instant> getInstantValueByPath(String... keys) {
+        return getByPath(keys).flatMap(NElement::asInstantValue);
+    }
+
+    @Override
+    public NOptional<Double> getDoubleValueByPath(String... keys) {
+        return getByPath(keys).flatMap(NElement::asDoubleValue);
+    }
+
+    @Override
+    public NOptional<Float> getFloatValueByPath(String... keys) {
+        return getByPath(keys).flatMap(NElement::asFloatValue);
+    }
+
+    @Override
+    public NOptional<Long> getLongValueByPath(String... keys) {
+        return getByPath(keys).flatMap(NElement::asLongValue);
+    }
+
+    @Override
+    public NOptional<Integer> getIntValueByPath(String... keys) {
+        return getByPath(keys).flatMap(NElement::asIntValue);
+    }
+
+    @Override
+    public NOptional<Short> getShortValueByPath(String... keys) {
+        return getByPath(keys).flatMap(NElement::asShortValue);
+    }
+
+    @Override
+    public NOptional<Byte> getByteValueByPath(String... keys) {
+        return getByPath(keys).flatMap(NElement::asByteValue);
+    }
+
+    @Override
+    public NOptional<Boolean> getBooleanValueByPath(String... keys) {
+        return getByPath(keys).flatMap(NElement::asBooleanValue);
+    }
+
+    @Override
+    public NOptional<String> getStringValueByPath(String... keys) {
+        return getByPath(keys).flatMap(NElement::asStringValue);
+    }
+
+    @Override
+    public NOptional<LocalTime> getLocalTimeValueByPath(String... keys) {
+        return getByPath(keys).flatMap(NElement::asLocalTimeValue);
     }
 }
