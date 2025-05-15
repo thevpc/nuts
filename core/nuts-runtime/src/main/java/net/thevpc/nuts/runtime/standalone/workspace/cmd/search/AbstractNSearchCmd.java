@@ -421,8 +421,8 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     @Override
     public ClassLoader getResultClassLoader(ClassLoader parent) {
         //force content and dependencies!
-        setContent(true);
-        setDependencies(true);
+//        setContent(true);
+//        setDependencies(true);
 
         List<NDefinition> nDefinitions = getResultDefinitions().toList();
         URL[] allURLs = new URL[nDefinitions.size()];
@@ -786,10 +786,10 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     public String toString() {
         return getClass().getSimpleName() + "{"
                 + "failFast=" + isFailFast()
-                + ", content=" + isContent()
+//                + ", content=" + isContent()
                 + ", inlineDependencies=" + isInlineDependencies()
-                + ", dependencies=" + isDependencies()
-                + ", effective=" + isEffective()
+//                + ", dependencies=" + isDependencies()
+//                + ", effective=" + isEffective()
                 + ", displayOptions=" + getDisplayOptions()
                 + ", comparator=" + getComparator()
                 + ", dependencyFilter=" + getDependencyFilter()
@@ -824,7 +824,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     public <T> NIterator<T> runIterator() {
         NDisplayProperty[] a = getDisplayOptions().getDisplayProperties();
         NStream r = null;
-        if (isDependencies() && !isInlineDependencies()) {
+        if (/*isDependencies() && */!isInlineDependencies()) {
             NContentType of = getSearchSession().getOutputFormat().orDefault();
             if (of == null) {
                 of = NContentType.TREE;
@@ -948,8 +948,8 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
             }
             if (r == null) {
                 //this is custom case
-                boolean _content = isContent();
-                boolean _effective = isEffective();
+//                boolean _content = isContent();
+//                boolean _effective = isEffective();
                 for (NDisplayProperty display : getDisplayOptions().getDisplayProperties()) {
                     switch (display) {
                         case NAME:
@@ -999,51 +999,51 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
         NSession session = NSession.of();
         NIteratorBuilder.of(it)
                 .map(x -> {
-                    if (x instanceof NDefinition) {
-                        return new NDefinitionDelegate() {
-                            @Override
-                            protected NDefinition getBase() {
-                                return (NDefinition) x;
-                            }
-
-                            @Override
-                            public NOptional<NInstallInformation> getInstallInformation() {
-                                return super.getInstallInformation();
-                            }
-
-                            @Override
-                            public NOptional<NDescriptor> getEffectiveDescriptor() {
-                                if (isEffective() || isDependencies()) {
-                                    return super.getEffectiveDescriptor();
-                                }
-                                return NOptional.ofNamedEmpty("effectiveDescriptor");
-                            }
-
-                            @Override
-                            public NOptional<NPath> getContent() {
-                                if (isContent()) {
-                                    return super.getContent();
-                                }
-                                return NOptional.ofNamedEmpty("content");
-                            }
-
-                            @Override
-                            public NOptional<Set<NDescriptorFlag>> getEffectiveFlags() {
-                                if (isContent()) {
-                                    return super.getEffectiveFlags();
-                                }
-                                return NOptional.ofNamedEmpty("effectiveFlags");
-                            }
-
-                            @Override
-                            public NOptional<NDependencies> getDependencies() {
-                                if (isDependencies() || isInlineDependencies()) {
-                                    return super.getDependencies();
-                                }
-                                return NOptional.ofNamedEmpty("dependencies");
-                            }
-                        }.builder().build();
-                    }
+//                    if (x instanceof NDefinition) {
+//                        return new NDefinitionDelegate() {
+//                            @Override
+//                            protected NDefinition getBase() {
+//                                return (NDefinition) x;
+//                            }
+//
+////                            @Override
+////                            public NOptional<NInstallInformation> getInstallInformation() {
+////                                return super.getInstallInformation();
+////                            }
+//
+////                            @Override
+////                            public NOptional<NDescriptor> getEffectiveDescriptor() {
+////                                if (isEffective() /*|| isDependencies()*/) {
+////                                    return super.getEffectiveDescriptor();
+////                                }
+////                                return NOptional.ofNamedEmpty("effectiveDescriptor");
+////                            }
+//
+////                            @Override
+////                            public NOptional<NPath> getContent() {
+////                                if (isContent()) {
+////                                    return super.getContent();
+////                                }
+////                                return NOptional.ofNamedEmpty("content");
+////                            }
+//
+////                            @Override
+////                            public NOptional<Set<NDescriptorFlag>> getEffectiveFlags() {
+////                                if (isContent()) {
+////                                    return super.getEffectiveFlags();
+////                                }
+////                                return NOptional.ofNamedEmpty("effectiveFlags");
+////                            }
+//
+////                            @Override
+////                            public NOptional<NDependencies> getDependencies() {
+////                                if (/*isDependencies() || */isInlineDependencies()) {
+////                                    return super.getDependencies();
+////                                }
+////                                return NOptional.ofNamedEmpty("dependencies");
+////                            }
+//                        }.builder().build();
+//                    }
                     return x;
                 });
 

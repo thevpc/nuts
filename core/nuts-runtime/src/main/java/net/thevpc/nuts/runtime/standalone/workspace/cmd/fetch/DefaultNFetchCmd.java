@@ -69,9 +69,9 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     public NId getResultId() {
         try {
             NDefinition def = fetchDefinition(getId());
-            if (isEffective()) {
-                return NWorkspaceExt.of().resolveEffectiveId(def.getEffectiveDescriptor().get());
-            }
+//            if (isEffective()) {
+//                return NWorkspaceExt.of().resolveEffectiveId(def.getEffectiveDescriptor().get());
+//            }
             return def.getId();
         } catch (NNotFoundException ex) {
             if (!isFailFast()) {
@@ -122,9 +122,9 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     public NDescriptor getResultDescriptor() {
         try {
             NDefinition def = fetchDefinition(getId());
-            if (isEffective()) {
-                return def.getEffectiveDescriptor().get();
-            }
+//            if (isEffective()) {
+//                return def.getEffectiveDescriptor().get();
+//            }
             return def.getDescriptor();
         } catch (NNotFoundException ex) {
             if (!isFailFast()) {

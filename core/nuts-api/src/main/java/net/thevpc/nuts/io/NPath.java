@@ -27,7 +27,9 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NRepository;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NConnexionString;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.spi.NPathSPI;
@@ -282,6 +284,28 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
     NPath writeString(String string, NPathOption... options);
 
+    default NPath writeObject(Object any, NPathOption... options) {
+        try (NPrintStream out = this.getNPrintStream(options)) {
+            out.print(any);
+        }
+        return this;
+    }
+
+    default NPath writeMsg(NMsg any, NPathOption... options) {
+        try (NPrintStream out = this.getNPrintStream(options)) {
+            out.print(any);
+        }
+        return this;
+    }
+
+    default NPath writeText(NText any, NPathOption... options) {
+        try (NPrintStream out = this.getNPrintStream(options)) {
+            out.print(any);
+        }
+        return this;
+    }
+
+
     /**
      * path protocol or null if undefined. This is somehow similar to url
      * protocol Particularly file system paths have an empty (aka "") protocol
@@ -325,6 +349,8 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
     PrintStream getPrintStream(Charset cs, NPathOption... options);
 
     PrintStream getPrintStream(NPathOption... options);
+
+    NPrintStream getNPrintStream(NPathOption... options);
 
     OutputStream getOutputStream(NPathOption... options);
 

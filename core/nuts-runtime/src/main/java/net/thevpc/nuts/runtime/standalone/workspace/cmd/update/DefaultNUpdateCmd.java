@@ -477,7 +477,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                 .setLatest(true)
                 .addDefinitionFilter(NDefinitionFilters.of().byLockedIds(getLockedIds().toArray(new NId[0])))
                 .addRepositoryFilter(NRepositoryFilters.of().installedRepo().neg())
-                .setDependencies(true)
+//                .setDependencies(true)
                 .setDependencyFilter(NDependencyFilters.of().byOptional(isOptional() ? null : false));
         if (updateEvenIfExisting) {
             sc.setExpireTime(now);

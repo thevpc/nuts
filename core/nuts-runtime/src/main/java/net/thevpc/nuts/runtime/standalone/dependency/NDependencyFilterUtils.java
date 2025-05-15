@@ -74,7 +74,7 @@ public class NDependencyFilterUtils {
         if (scope == null) {
             return parent;
         }
-        NRef<Boolean> found = new NRef<>(false);
+        NRef<Boolean> found = NRef.of(false);
         NDependencyFilter np = replaceFilter(parent, new NFunction<NDependencyFilter, NDependencyFilter>() {
             @Override
             public NDependencyFilter apply(NDependencyFilter old) {

@@ -30,10 +30,10 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
     //    private final List<String> repos = new ArrayList<>();
     protected NDependencyFilter dependencyFilter;
     private boolean failFast = false;
-    private boolean content = false;
+//    private boolean content = false;
     private boolean inlineDependencies = false;
-    private boolean dependencies = false;
-    private boolean effective = false;
+//    private boolean dependencies = false;
+//    private boolean effective = false;
     private NFetchDisplayOptions displayOptions;
     private NRepositoryFilter repositoryFilter;
     private NFetchStrategy fetchStrategy;
@@ -59,10 +59,10 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
         if (other != null) {
             super.copyFromWorkspaceCommandBase(other);
             this.failFast = other.isFailFast();
-            this.content = other.isContent();
+//            this.content = other.isContent();
             this.inlineDependencies = other.isInlineDependencies();
-            this.dependencies = other.isDependencies();
-            this.effective = other.isEffective();
+//            this.dependencies = other.isDependencies();
+//            this.effective = other.isEffective();
             this.dependencyFilter = other.getDependencyFilter();
             this.repositoryFilter = other.getRepositoryFilter();
             this.fetchStrategy=((DefaultNQueryBaseOptions<T>)other).getFetchStrategy().orNull();
@@ -100,29 +100,29 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
     }
 
 
-    //@Override
-    public boolean isContent() {
-        return content;
-    }
+//    //@Override
+//    public boolean isContent() {
+//        return content;
+//    }
+//
+//    //@Override
+//    public T setContent(boolean includeContent) {
+//        this.content = includeContent;
+//        return (T) this;
+//    }
 
-    //@Override
-    public T setContent(boolean includeContent) {
-        this.content = includeContent;
-        return (T) this;
-    }
 
-
-    //@Override
-    public boolean isEffective() {
-        return effective;
-    }
-
-    //@Override
-    public T setEffective(boolean includeEffectiveDesc) {
-        this.effective = includeEffectiveDesc;
-        return (T) this;
-    }
-
+//    //@Override
+//    public boolean isEffective() {
+//        return effective;
+//    }
+//
+//    //@Override
+//    public T setEffective(boolean includeEffectiveDesc) {
+//        this.effective = includeEffectiveDesc;
+//        return (T) this;
+//    }
+//
     //@Override
     public boolean isInlineDependencies() {
         return inlineDependencies;
@@ -139,15 +139,15 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
         return (T) this;
     }
 
-    public boolean isDependencies() {
-        return dependencies;
-    }
-
-    //@Override
-    public T setDependencies(boolean include) {
-        dependencies = include;
-        return (T) this;
-    }
+//    public boolean isDependencies() {
+//        return dependencies;
+//    }
+//
+//    //@Override
+//    public T setDependencies(boolean include) {
+//        dependencies = include;
+//        return (T) this;
+//    }
 
 
     public boolean isFailFast() {
@@ -218,10 +218,7 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
                 cmdLine.withNextEntry((v, r) -> addRepositoryFilter(NRepositoryFilters.of().bySelector(v)));
                 return true;
             }
-            case "--dependencies": {
-                cmdLine.withNextFlag((v, r) -> this.setDependencies(v));
-                return true;
-            }
+
             case "--scope": {
                 cmdLine.withNextEntry((v, r) -> NDependencyFilterUtils.addScope(getDependencyFilter(),NDependencyScopePattern.parse(v).orElse(NDependencyScopePattern.API)));
                 return true;
@@ -240,14 +237,7 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
                                 .orNull()))));
                 return true;
             }
-            case "--effective": {
-                cmdLine.withNextFlag((v, r) -> this.setEffective(v));
-                return true;
-            }
-            case "--content": {
-                cmdLine.withNextFlag((v, r) -> this.setContent(v));
-                return true;
-            }
+
         }
         return false;
     }
@@ -279,11 +269,9 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
     public String toString() {
         return getClass().getSimpleName() + "("
                 + "failFast=" + failFast
-                + ", content=" + content
                 + ", dependencyFilter=" + dependencyFilter
                 + ", inlineDependencies=" + inlineDependencies
-                + ", dependencies=" + dependencies
-                + ", effective=" + effective
+//                + ", effective=" + effective
 //                + ", repos=" + repos
                 + ", displayOptions=" + displayOptions
                 + ')';

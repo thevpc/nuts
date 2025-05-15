@@ -66,7 +66,7 @@ public class DefaultNCollectionsRPI implements NCollectionsRPI {
 
     @Override
     public <T> NIterator<T> emptyIterator() {
-        return new NIteratorEmpty<>();
+        return NIteratorBuilder.emptyIterator();
     }
 
     @Override

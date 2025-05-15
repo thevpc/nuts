@@ -237,50 +237,35 @@ public interface NFetchCmd extends NWorkspaceCmd {
     // Getters
     ////////////////////////////////////////////////////////
 
-    /**
-     * content filter
-     *
-     * @return content filter
-     */
-    boolean isContent();
+//    /**
+//     * effective filter
+//     *
+//     * @return effective filter
+//     */
+//    boolean isEffective();
+//
+//    /**
+//     * enable/disable effective descriptor evaluation
+//     *
+//     * @param enable if true evaluation is enabled.
+//     * @return {@code this} instance
+//     */
+//    NFetchCmd setEffective(boolean enable);
 
-    /**
-     * enable/disable retrieval of content info
-     *
-     * @param enable if true retrieval is enabled.
-     * @return {@code this} instance
-     */
-    NFetchCmd setContent(boolean enable);
-
-    /**
-     * effective filter
-     *
-     * @return effective filter
-     */
-    boolean isEffective();
-
-    /**
-     * enable/disable effective descriptor evaluation
-     *
-     * @param enable if true evaluation is enabled.
-     * @return {@code this} instance
-     */
-    NFetchCmd setEffective(boolean enable);
-
-    /**
-     * if true dependencies list is retrieved
-     *
-     * @return dependencies list retrieval status
-     */
-    boolean isDependencies();
-
-    /**
-     * enable/disable dependencies list retrieval
-     *
-     * @param enable if true retrieval is enabled.
-     * @return {@code this} instance
-     */
-    NFetchCmd setDependencies(boolean enable);
+//    /**
+//     * if true dependencies list is retrieved
+//     *
+//     * @return dependencies list retrieval status
+//     */
+//    boolean isDependencies();
+//
+//    /**
+//     * enable/disable dependencies list retrieval
+//     *
+//     * @param enable if true retrieval is enabled.
+//     * @return {@code this} instance
+//     */
+//    NFetchCmd setDependencies(boolean enable);
 
     /**
      * return repository filter

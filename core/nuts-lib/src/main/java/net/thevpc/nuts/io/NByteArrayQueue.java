@@ -98,8 +98,7 @@ public class NByteArrayQueue {
             return count;
         } else {
             count = to - from;
-            byte[] r = new byte[to - from];
-            System.arraycopy(content, from, r, 0, count);
+            System.arraycopy(content, from, buffer, offset, count);
             from = 0;
             to = 0;
             return count;

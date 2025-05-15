@@ -77,7 +77,7 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
         return lastReadTime;
     }
 
-    public void enqueue() {
+    public boolean enqueue() {
         boolean doEnqueue = false;
         synchronized (this) {
             if (!enqueing) {
@@ -100,7 +100,9 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
                     enqueing = false;
                 }
             }).start();
+            return true;
         }
+        return false;
     }
 
     private void checkInterrupted() {
@@ -251,13 +253,15 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
             return -1;
         } else {
             if (buffer.canRead()) {
-                return buffer.read(b, off, len);
+                int bb = buffer.read(b, off, len);
+                return bb;
             } else {
                 enqueue();
                 while (true) {
                     if (!enqueing) {
                         if (buffer.canRead()) {
-                            return buffer.read(b, off, len);
+                            int bb = buffer.read(b, off, len);
+                            return bb;
                         } else if (closed || !hasMoreBytes()) {
                             return -1;
                         }

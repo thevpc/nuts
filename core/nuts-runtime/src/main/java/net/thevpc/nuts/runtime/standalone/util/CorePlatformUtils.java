@@ -364,7 +364,7 @@ public class CorePlatformUtils {
     }
 
     public static <T> T runWithinLoader(Callable<T> callable, ClassLoader loader) {
-        NRef<T> ref = new NRef<>();
+        NRef<T> ref = NRef.ofNull();
         Thread thread = new Thread(() -> {
             try {
                 ref.set(callable.call());

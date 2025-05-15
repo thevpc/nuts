@@ -24,7 +24,8 @@ public class NTrace {
 
 
     public static NPrintStream close() {
-        return out().close();
+        out().close();
+        return out();
     }
 
     public static NPrintStream writeRaw(byte[] buf, int off, int len) {

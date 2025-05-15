@@ -26,7 +26,6 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.parser;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.DefaultNArtifactCall;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -80,9 +79,9 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
             return null;
         }
         final NId JAVA = NId.get("java").get();
-        final NRef<NDescriptor> nutsjson = new NRef<>();
-        final NRef<NDescriptor> metainf = new NRef<>();
-        final NRef<NDescriptor> maven = new NRef<>();
+        final NRef<NDescriptor> nutsjson = NRef.ofNull();
+        final NRef<NDescriptor> metainf = NRef.ofNull();
+        final NRef<NDescriptor> maven = NRef.ofNull();
 //        final NutsRef<String> mainClass = new NutsRef<>();
 
         ZipUtils.visitZipStream(parserContext.getFullStream(), (path, inputStream) -> {

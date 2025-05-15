@@ -368,6 +368,11 @@ public abstract class NPrintStreamBase implements NPrintStream {
     }
 
     @Override
+    public void close() {
+        flush();
+    }
+
+    @Override
     public NPrintStream print(CharSequence csq) {
         print(csq, 0, csq.length());
         return this;

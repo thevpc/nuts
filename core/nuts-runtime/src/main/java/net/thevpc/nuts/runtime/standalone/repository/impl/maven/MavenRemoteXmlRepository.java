@@ -68,7 +68,7 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
                     session.getTerminal().printProgress(NMsg.ofC("looking for versions of %s at %s", id,metadataURL.toCompressedForm()));
                     try {
                         try {
-                            metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNConstants.QueryFaces.CATALOG).build(), "artifact catalog", "retrieve");
+                            metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNConstants.QueryFaces.CATALOG).build(), "artifact catalog", NMsg.ofC("retrieve %s",id.getLongId()));
                         } catch (UncheckedIOException | NIOException ex) {
                             return NIteratorBuilder.emptyIterator();
                         }

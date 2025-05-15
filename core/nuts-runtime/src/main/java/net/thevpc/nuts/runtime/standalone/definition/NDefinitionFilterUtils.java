@@ -203,7 +203,7 @@ public class NDefinitionFilterUtils {
         if (ids.length == 0) {
             return parent;
         }
-        NRef<Boolean> found = new NRef<>(false);
+        NRef<Boolean> found = NRef.of(false);
         NDefinitionFilter np = replaceFilter(parent, new NFunction<NDefinitionFilter, NDefinitionFilter>() {
             @Override
             public NDefinitionFilter apply(NDefinitionFilter old) {

@@ -73,6 +73,11 @@ public class DefaultNDependency implements NDependency {
         } else if ("true".equalsIgnoreCase(o)) {
             o = "true";//remove case and formatting
         }
+        NDependencyScopePattern s = NDependencyScopePattern.parse(scope).orElse(null);
+        if(s!=null && s==NDependencyScopePattern.SYSTEM){
+            //force to true when system
+            o="true";
+        }
         this.optional = o;
         this.exclusions = NReservedLangUtils.unmodifiableList(exclusions);
         for (NId exclusion : this.exclusions) {

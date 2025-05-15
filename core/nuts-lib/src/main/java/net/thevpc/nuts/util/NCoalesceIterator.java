@@ -58,7 +58,7 @@ public class NCoalesceIterator<T> extends NIteratorBase<T> {
         } else {
             children.add(child);
         }
-        size++;
+        size=children.size();
     }
 
     public int size() {
@@ -98,7 +98,7 @@ public class NCoalesceIterator<T> extends NIteratorBase<T> {
 
     @Override
     public String toString() {
-        return "CoalesceIterator(" +
+        return "Coalesce(" +
                 children +
                 ')';
     }

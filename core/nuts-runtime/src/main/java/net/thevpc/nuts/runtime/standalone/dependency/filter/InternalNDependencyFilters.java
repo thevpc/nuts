@@ -134,7 +134,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (optional == null) {
             return always();
         }
-        return new NDependencyOptionFilter(optional).simplify();
+        return new NDependencyOptionalFilter(optional).simplify();
     }
 
     @Override

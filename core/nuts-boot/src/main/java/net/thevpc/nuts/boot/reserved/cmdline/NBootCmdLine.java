@@ -7,18 +7,17 @@
  * for runtime execution. Nuts is the ultimate companion for maven (and other
  * build managers) as it helps installing all package dependencies at runtime.
  * Nuts is not tied to java and is a good choice to share shell scripts and
- * other 'things' . It's based on an extensible architecture to help supporting a
- * large range of sub managers / repositories.
+ * other 'things' . It's based on an extensible architecture to help supporting
+ * a large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
- * you may  not use this file except in compliance with the License. You may obtain
- * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the GNU LESSER GENERAL PUBLIC
+ * LICENSE Version 3 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * https://www.gnu.org/licenses/lgpl-3.0.en.html Unless required by applicable
+ * law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
@@ -56,6 +55,7 @@ import java.util.stream.Collectors;
  * </pre>
  */
 public class NBootCmdLine {
+
     /**
      * argument that may or may not accept value.
      */
@@ -95,17 +95,14 @@ public class NBootCmdLine {
         setArguments(args);
     }
 
-
     public NBootCmdLine unregisterSpecialSimpleOption(String option) {
         specialSimpleOptions.remove(option);
         return this;
     }
 
-
     public String[] getSpecialSimpleOptions() {
         return specialSimpleOptions.toArray(new String[0]);
     }
-
 
     public NBootCmdLine registerSpecialSimpleOption(String option) {
         if (option.length() > 2) {
@@ -120,7 +117,6 @@ public class NBootCmdLine {
         throwError(NBootMsg.ofC("invalid special option %s", option));
         return this;
     }
-
 
     public boolean isSpecialSimpleOption(String option) {
         if (option == null) {
@@ -143,33 +139,27 @@ public class NBootCmdLine {
         return false;
     }
 
-
     public int getWordIndex() {
         return wordIndex;
     }
 
-
     public String getCommandName() {
         return commandName;
     }
-
 
     public NBootCmdLine setCommandName(String commandName) {
         this.commandName = commandName;
         return this;
     }
 
-
     public boolean isExpandSimpleOptions() {
         return expandSimpleOptions;
     }
-
 
     public NBootCmdLine setExpandSimpleOptions(boolean expand) {
         this.expandSimpleOptions = expand;
         return this;
     }
-
 
     public NBootCmdLine throwUnexpectedArgument(NBootMsg errorMessage) {
         if (!isEmpty()) {
@@ -186,14 +176,12 @@ public class NBootCmdLine {
         return this;
     }
 
-
     public NBootCmdLine throwMissingArgument() {
         if (isEmpty()) {
             throwError(NBootMsg.ofPlain("missing argument"));
         }
         return this;
     }
-
 
     public NBootCmdLine throwMissingArgument(String argumentName) {
         if (NBootUtils.isBlank(argumentName)) {
@@ -206,7 +194,6 @@ public class NBootCmdLine {
         }
         return this;
     }
-
 
     public NBootCmdLine throwMissingArgument(NBootMsg errorMessage) {
         if (isEmpty()) {
@@ -222,11 +209,9 @@ public class NBootCmdLine {
         return this;
     }
 
-
     public NBootCmdLine throwUnexpectedArgument() {
         return throwUnexpectedArgument((NBootMsg) null);
     }
-
 
     public NBootCmdLine pushBack(NBootArg arg) {
         NBootUtils.requireNonNull(arg, "argument");
@@ -234,17 +219,14 @@ public class NBootCmdLine {
         return this;
     }
 
-
     public NBootArg next() {
         return next(expandSimpleOptions);
     }
-
 
     public String nextString() {
         NBootArg a = next();
         return a == null ? null : a.toString();
     }
-
 
     public NBootArg nextOption(String option) {
         if (!new NBootArg(option).isOption()) {
@@ -252,7 +234,6 @@ public class NBootCmdLine {
         }
         return next(option, true);
     }
-
 
     public boolean isNextOption() {
         NBootArg a = peek();
@@ -262,7 +243,6 @@ public class NBootCmdLine {
         return false;
     }
 
-
     public boolean isNextNonOption() {
         NBootArg a = peek();
         if (a != null) {
@@ -271,41 +251,33 @@ public class NBootCmdLine {
         return false;
     }
 
-
     public NBootArg peek() {
         return get(0);
     }
-
 
     public boolean hasNext() {
         return !lookahead.isEmpty() || !args.isEmpty();
     }
 
-
     public boolean hasNextOption() {
         return hasNext() && peek().isOption();
     }
-
 
     public boolean hasNextNonOption() {
         return hasNext() && peek().isNonOption();
     }
 
-
     public NBootArg nextFlag(String... names) {
         return next(ARG_TYPE_FLAG, names);
     }
-
 
     public NBootArg nextEntry(String... names) {
         return next(ARG_TYPE_ENTRY, names);
     }
 
-
     public NBootArg nextEntry() {
         return nextEntry(new String[0]);
     }
-
 
     public NBootArg nextFlag() {
         return nextFlag(new String[0]);
@@ -314,7 +286,6 @@ public class NBootCmdLine {
     public NBootArg next(String... names) {
         return next(ARG_TYPE_DEFAULT, names);
     }
-
 
     private NBootArg next(int expectedValue, String... names) {
         if (names.length == 0) {
@@ -414,11 +385,9 @@ public class NBootCmdLine {
         throw new NBootException(NBootMsg.ofC(str, args));
     }
 
-
     public NBootArg nextNonOption(String name) {
         return next(name, true);
     }
-
 
     public NBootArg nextNonOption() {
         if (hasNext() && !isNextOption()) {
@@ -426,7 +395,6 @@ public class NBootCmdLine {
         }
         return null;
     }
-
 
     public int skipAll() {
         int count = 0;
@@ -436,11 +404,9 @@ public class NBootCmdLine {
         return count;
     }
 
-
     public int skip() {
         return skip(1);
     }
-
 
     public int skip(int count) {
         if (count < 0) {
@@ -458,11 +424,9 @@ public class NBootCmdLine {
         return count;
     }
 
-
     public boolean accept(String... values) {
         return accept(0, values);
     }
-
 
     public boolean accept(int index, String... values) {
         for (int i = 0; i < values.length; i++) {
@@ -477,7 +441,6 @@ public class NBootCmdLine {
         return true;
     }
 
-
     public NBootArg find(String name) {
         int index = indexOf(name);
         if (index >= 0) {
@@ -485,7 +448,6 @@ public class NBootCmdLine {
         }
         return null;
     }
-
 
     public NBootArg get(int index) {
         if (index < 0) {
@@ -505,11 +467,9 @@ public class NBootCmdLine {
         return emptyOptionalCformat("missing argument");
     }
 
-
     public boolean contains(String name) {
         return indexOf(name) >= 0;
     }
-
 
     public int indexOf(String name) {
         int i = 0;
@@ -523,21 +483,17 @@ public class NBootCmdLine {
         return -1;
     }
 
-
     public int length() {
         return lookahead.size() + args.size();
     }
-
 
     public boolean isEmpty() {
         return !hasNext();
     }
 
-
     public String[] toStringArray() {
         return toStringList().toArray(new String[0]);
     }
-
 
     public List<String> toStringList() {
         List<String> all = new ArrayList<>(length());
@@ -548,7 +504,6 @@ public class NBootCmdLine {
         return all;
     }
 
-
     public NBootArg[] toArgumentArray() {
         List<NBootArg> aa = new ArrayList<>();
         while (hasNext()) {
@@ -558,7 +513,6 @@ public class NBootCmdLine {
         return aa.toArray(new NBootArg[0]);
     }
 
-
     public boolean isOption(int index) {
         NBootArg a = get(index);
         if (a != null) {
@@ -566,7 +520,6 @@ public class NBootCmdLine {
         }
         return false;
     }
-
 
     public boolean isNonOption(int index) {
         NBootArg a = get(index);
@@ -591,7 +544,6 @@ public class NBootCmdLine {
         }
         return this;
     }
-
 
     public void throwError(NBootMsg message) {
         if (NBootUtils.isBlank(commandName)) {
@@ -639,7 +591,6 @@ public class NBootCmdLine {
         }
     }
 
-
     public String toString() {
         return toStringList().stream().map(x -> NBootUtils.formatStringLiteral(x, NBootQuoteTypeBoot.DOUBLE, NBootSupportMode.PREFERRED)).collect(Collectors.joining(" "));
     }
@@ -669,11 +620,11 @@ public class NBootCmdLine {
             }
             visited.add(path.toString());
             List<String> all = new ArrayList<>();
-            List<String> subArgs=new ArrayList<>();
+            List<String> subArgs = new ArrayList<>();
             try {
-                try(BufferedReader br=new BufferedReader(Files.newBufferedReader(path))) {
-                    String line=null;
-                    while((line=br.readLine())!=null){
+                try (BufferedReader br = new BufferedReader(Files.newBufferedReader(path))) {
+                    String line = null;
+                    while ((line = br.readLine()) != null) {
                         if (!NBootUtils.isBlank(line) && !line.trim().startsWith("#")) {
                             subArgs.addAll(Arrays.asList(parseDefault(line)));
                         }
@@ -690,7 +641,7 @@ public class NBootCmdLine {
                         parent = currentDir;
                     }
                     all.addAll(loadArgs(nPath, parent, visited));
-                }else{
+                } else {
                     all.add(arg);
                 }
             }
@@ -772,7 +723,6 @@ public class NBootCmdLine {
         return new NBootArg(v, eq);
     }
 
-
     public NBootCmdLine copy() {
         NBootCmdLine c = new NBootCmdLine(toStringArray());
         c.eq = this.eq;
@@ -801,11 +751,9 @@ public class NBootCmdLine {
         return false;
     }
 
-
     public Iterator<NBootArg> iterator() {
         return Arrays.asList(toArgumentArray()).iterator();
     }
-
 
     public static String[] parseDefault(String commandLineString) {
         if (commandLineString == null) {
@@ -873,6 +821,9 @@ public class NBootCmdLine {
                         }
                         case '\\': {
                             i++;
+                            if (i >= charArray.length) {
+                                throw new NBootException(NBootMsg.ofC("encountered end of string while expecting escaped character %s", c));
+                            }
                             sb.append(charArray[i]);
                             break;
                         }
@@ -966,14 +917,12 @@ public class NBootCmdLine {
         return i;
     }
 
-
     public NBootCmdLine add(String argument) {
         if (argument != null) {
             args.add(argument);
         }
         return this;
     }
-
 
     public NBootCmdLine addAll(List<String> arguments) {
         if (arguments != null) {
@@ -984,11 +933,9 @@ public class NBootCmdLine {
         return this;
     }
 
-
     public boolean isBlank() {
         return isEmpty();
     }
-
 
     public NBootCmdLine pushBack(NBootArg... args) {
         if (args != null) {
@@ -1010,6 +957,5 @@ public class NBootCmdLine {
         }
         return this;
     }
-
 
 }

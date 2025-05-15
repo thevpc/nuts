@@ -44,6 +44,8 @@ public class NFetchDisplayOptions {
 
     private NIdFormat idFormat;
     private List<NDisplayProperty> displays = new ArrayList<>();
+    private boolean dependencies;
+    private boolean content;
 
     public NFetchDisplayOptions() {
         this.idFormat = NIdFormat.of();
@@ -53,6 +55,24 @@ public class NFetchDisplayOptions {
         this.idFormat.setOmitRepository(true);
         this.idFormat.setOmitGroupId(false);
         this.idFormat.setOmitImportedGroupId(false);
+    }
+
+    public boolean isDependencies() {
+        return dependencies;
+    }
+
+    public NFetchDisplayOptions setDependencies(boolean dependencies) {
+        this.dependencies = dependencies;
+        return this;
+    }
+
+    public boolean isContent() {
+        return content;
+    }
+
+    public NFetchDisplayOptions setContent(boolean content) {
+        this.content = content;
+        return this;
     }
 
     public void setIdFormat(NIdFormat idFormat) {
@@ -177,7 +197,14 @@ public class NFetchDisplayOptions {
                 }
                 return true;
             }
-
+            case "--dependencies": {
+                cmdLine.withNextFlag((v, r) -> this.setDependencies(v));
+                return true;
+            }
+            case "--content": {
+                cmdLine.withNextFlag((v, r) -> this.setContent(v));
+                return true;
+            }
         }
         return false;
     }

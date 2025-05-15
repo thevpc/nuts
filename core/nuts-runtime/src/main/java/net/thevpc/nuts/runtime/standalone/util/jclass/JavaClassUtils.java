@@ -68,10 +68,10 @@ public class JavaClassUtils {
      * @return main class type for the given
      */
     public static MainClassType getMainClassType(InputStream stream, NWorkspace workspace) {
-        final NRef<Boolean> mainClass = new NRef<>();
-        final NRef<Boolean> nutsApp = new NRef<>();
-        final NRef<String> nutsAppVer = new NRef<>();
-        final NRef<String> className = new NRef<>();
+        final NRef<Boolean> mainClass = NRef.ofNull();
+        final NRef<Boolean> nutsApp = NRef.ofNull();
+        final NRef<String> nutsAppVer = NRef.ofNull();
+        final NRef<String> className = NRef.ofNull();
         JavaClassByteCode.Visitor cl = new JavaClassByteCode.Visitor() {
             @Override
             public NVisitResult visitClassDeclaration(int access, String name, String superName, String[] interfaces) {

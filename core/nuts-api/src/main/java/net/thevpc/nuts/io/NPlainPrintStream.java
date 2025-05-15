@@ -40,8 +40,7 @@ public class NPlainPrintStream implements NPrintStream {
     }
 
     @Override
-    public NPrintStream close() {
-        return this;
+    public void close() {
     }
 
     @Override

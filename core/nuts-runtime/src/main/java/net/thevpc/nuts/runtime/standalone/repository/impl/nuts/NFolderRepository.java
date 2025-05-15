@@ -146,7 +146,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
                 byte[] bytes = null;
                 String name = null;
                 try {
-                    stream = openStream(id, pomURL, id, "artifact descriptor", "retrieve");
+                    stream = openStream(id, pomURL, id, "artifact descriptor", NMsg.ofC("retrieve %s",id.getLongId()));
                     bytes = NIOUtils.loadByteArray(stream, true);
                     name = NInputSource.of(stream).getMetaData().getName().orElse("no-name");
                     nutsDescriptor = NDescriptorParser.of()

@@ -3,26 +3,24 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  *
  * <br>
  * <p>
- * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
- * you may  not use this file except in compliance with the License. You may obtain
- * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the GNU LESSER GENERAL PUBLIC
+ * LICENSE Version 3 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * https://www.gnu.org/licenses/lgpl-3.0.en.html Unless required by applicable
+ * law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
+ * <br> ====================================================================
  */
 package net.thevpc.nuts.util;
 
@@ -516,7 +514,6 @@ public class NStringUtils {
         return NReservedLangUtils.parseAndTrimToDistinctList(s);
     }
 
-
     public static List<String> split(String value, String chars) {
         return split(value, chars, true, false);
     }
@@ -568,7 +565,6 @@ public class NStringUtils {
         return sb.toString();
     }
 
-
     public static List<String> split(String value, String chars, boolean trim, boolean ignoreEmpty) {
         if (value == null) {
             value = "";
@@ -605,53 +601,64 @@ public class NStringUtils {
     }
 
     /**
-     * replace all placeholders in a text string with values from a given mapper.
-     * Here is an example :
+     * replace all placeholders in a text string with values from a given
+     * mapper. Here is an example :
      * <pre>
      *     String result=NMsgVarTextParser.replacePlaceholder("a${b}ad","${(?&lt;var&gt;[a-z]+)}",x->x+x);
      *     // result is abbad
      * </pre>
      *
-     * @param text   text to replace the placeholders in
-     * @param regexp regular expression of the placeholder. The regexp MUST define the 'var' group
-     * @param mapper mapper function that replaces each placeholder. When it returns null, no changes are made
-     * @return text with all placeholders replaces with values from <code>mapper</code>
+     * @param text text to replace the placeholders in
+     * @param regexp regular expression of the placeholder. The regexp MUST
+     * define the 'var' group
+     * @param mapper mapper function that replaces each placeholder. When it
+     * returns null, no changes are made
+     * @return text with all placeholders replaces with values from
+     * <code>mapper</code>
      */
     public static String replacePlaceholder(String text, String regexp, Function<String, String> mapper) {
         return replacePlaceholder(text, Pattern.compile(regexp), null, mapper);
     }
 
     /**
-     * replace all placeholders in a text string with values from a given mapper.
-     * Here is an example :
+     * replace all placeholders in a text string with values from a given
+     * mapper. Here is an example :
      * <pre>
      *     String result=NMsgVarTextParser.replacePlaceholder("a${b}ad","${(?&lt;var&gt;[a-z]+)}","var",x->x+x);
      *     // result is abbad
      * </pre>
      *
-     * @param text    text to replace the placeholders in
-     * @param regexp  regular expression of the placeholder. The regexp MUST define the varName
-     * @param varName the varName in the regex, defaults to <code>NMsgVarTextParser.DEFAULT_VAR_NAME</code> aka <code>"var"</code>
-     * @param mapper  mapper function that replaces each placeholder. When it returns null, no changes are made
-     * @return text with all placeholders replaces with values from <code>mapper</code>
+     * @param text text to replace the placeholders in
+     * @param regexp regular expression of the placeholder. The regexp MUST
+     * define the varName
+     * @param varName the varName in the regex, defaults to
+     * <code>NMsgVarTextParser.DEFAULT_VAR_NAME</code> aka <code>"var"</code>
+     * @param mapper mapper function that replaces each placeholder. When it
+     * returns null, no changes are made
+     * @return text with all placeholders replaces with values from
+     * <code>mapper</code>
      */
     public static String replacePlaceholder(String text, String regexp, String varName, Function<String, String> mapper) {
         return replacePlaceholder(text, Pattern.compile(regexp), varName, mapper);
     }
 
     /**
-     * replace all placeholders in a text string with values from a given mapper.
-     * Here is an example :
+     * replace all placeholders in a text string with values from a given
+     * mapper. Here is an example :
      * <pre>
      *     String result=NMsgVarTextParser.replacePlaceholder("a${b}ad",Pattern.compile("${(?&lt;var&gt;[a-z]+)}"),"var",x->x+x);
      *     // result is abbad
      * </pre>
      *
-     * @param text    text to replace the placeholders in
-     * @param regexp  regular expression of the placeholder. The regexp MUST define the varName
-     * @param varName the varName in the regex, defaults to <code>NMsgVarTextParser.DEFAULT_VAR_NAME</code> aka <code>"var"</code>
-     * @param mapper  mapper function that replaces each placeholder. When it returns null, no changes are made
-     * @return text with all placeholders replaces with values from <code>mapper</code>
+     * @param text text to replace the placeholders in
+     * @param regexp regular expression of the placeholder. The regexp MUST
+     * define the varName
+     * @param varName the varName in the regex, defaults to
+     * <code>NMsgVarTextParser.DEFAULT_VAR_NAME</code> aka <code>"var"</code>
+     * @param mapper mapper function that replaces each placeholder. When it
+     * returns null, no changes are made
+     * @return text with all placeholders replaces with values from
+     * <code>mapper</code>
      */
     public static String replacePlaceholder(String text, Pattern regexp, String varName, Function<String, String> mapper) {
         if (text == null) {
@@ -1013,7 +1020,17 @@ public class NStringUtils {
         return dp[str1.length()][str2.length()];
     }
 
+    public static List<String> splitLines(String data) {
+        if (data == null) {
+            return new ArrayList<>();
+        }
+        return readLines(new StringBuilder(data));
+    }
+
     public static List<String> readLines(StringBuilder data) {
+        if (data == null) {
+            return new ArrayList<>();
+        }
         List<String> all = new ArrayList<>();
         while (data.length() > 0) {
             all.add(readLine(data));
@@ -1023,6 +1040,9 @@ public class NStringUtils {
 
     public static String readLine(StringBuilder data) {
         int i = 0;
+        if (data == null) {
+            return null;
+        }
         while (i < data.length()) {
             char c = data.charAt(i);
             if (c == '\n') {
@@ -1037,7 +1057,7 @@ public class NStringUtils {
                 if (i + 1 < data.length() && data.charAt(i + 1) == '\n') {
                     i++;
                     String l = data.substring(0, i - 1);
-                    data.delete(0, i+1);
+                    data.delete(0, i + 1);
                     return l;
                 }
                 if (i == 0) {

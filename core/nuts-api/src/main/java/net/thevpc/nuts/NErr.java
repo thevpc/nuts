@@ -22,7 +22,8 @@ public class NErr {
 
 
     public static NPrintStream close(){
-        return err().close();
+        err().close();
+        return err();
     }
 
     public static NPrintStream writeRaw(byte[] buf, int off, int len){

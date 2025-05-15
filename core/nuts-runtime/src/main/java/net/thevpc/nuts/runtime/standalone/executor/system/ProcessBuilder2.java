@@ -7,18 +7,17 @@
  * for runtime execution. Nuts is the ultimate companion for maven (and other
  * build managers) as it helps installing all package dependencies at runtime.
  * Nuts is not tied to java and is a good choice to share shell scripts and
- * other 'things' . It's based on an extensible architecture to help supporting a
- * large range of sub managers / repositories.
+ * other 'things' . It's based on an extensible architecture to help supporting
+ * a large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
- * you may  not use this file except in compliance with the License. You may obtain
- * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the GNU LESSER GENERAL PUBLIC
+ * LICENSE Version 3 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * https://www.gnu.org/licenses/lgpl-3.0.en.html Unless required by applicable
+ * law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
@@ -32,7 +31,6 @@ import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineShellOptions;
-import net.thevpc.nuts.runtime.standalone.io.util.NNonBlockingInputStreamAdapter;
 import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.text.NText;
@@ -66,7 +64,6 @@ public class ProcessBuilder2 {
     private NExecOutput2 out = new NExecOutput2(NExecOutput.ofInherit());
     private NExecOutput2 err = new NExecOutput2(NExecOutput.ofInherit());
 
-
     /// /////////////////// EXEC VARS
 
     private ProcessBuilder base = new ProcessBuilder();
@@ -74,7 +71,7 @@ public class ProcessBuilder2 {
     private ExecutorService pipes = null;
     private int result;
     private Process proc;
-    private long pid;
+    private Long pid;
 
     public ProcessBuilder2() {
     }
@@ -103,22 +100,25 @@ public class ProcessBuilder2 {
         return sb.toString();
     }
 
-    public static long getProcessId(Process p) {
+    public long getProcessId() {
+        if (pid != null) {
+            return pid;
+        }
         try {
             //for windows
-            if (p.getClass().getName().equals("java.lang.Win32Process") || p.getClass().getName().equals("java.lang.ProcessImpl")) {
-                Field f = p.getClass().getDeclaredField("handle");
+            if (proc.getClass().getName().equals("java.lang.Win32Process") || proc.getClass().getName().equals("java.lang.ProcessImpl")) {
+                Field f = proc.getClass().getDeclaredField("handle");
                 f.setAccessible(true);
-                long handle = f.getLong(p);
+                long handle = f.getLong(proc);
 //                Kernel32 kernel = Kernel32.INSTANCE;
 //                WinNT.HANDLE hand = new WinNT.HANDLE();
 //                hand.setPointer(Pointer.createConstant(handl));
 //                pid = kernel.GetProcessId(hand);
-            } else if (p.getClass().getName().equals("java.lang.UNIXProcess")) {
+            } else if (proc.getClass().getName().equals("java.lang.UNIXProcess")) {
                 //for unix based operating systems
-                Field f = p.getClass().getDeclaredField("pid");
+                Field f = proc.getClass().getDeclaredField("pid");
                 f.setAccessible(true);
-                return f.getLong(p);
+                return f.getLong(proc);
             }
         } catch (Exception anyException) {
             //ignore
@@ -234,7 +234,6 @@ public class ProcessBuilder2 {
         this.err.base = err == null ? NExecOutput.ofInherit() : err;
         return this;
     }
-
 
     /// /////////////// RESULTS
 
@@ -408,7 +407,6 @@ public class ProcessBuilder2 {
             }
         }
         proc = base.start();
-        pid = getProcessId(proc);
         return this;
     }
 
@@ -419,8 +417,9 @@ public class ProcessBuilder2 {
         if (proc == null) {
             throw new IOException("Not started");
         }
+        long ppid = getProcessId();
         String procString = NPath.of(command.get(0)).getName()
-                + "-" + (pid < 0 ? ("unknown-pid" + String.valueOf(-pid)) : String.valueOf(pid));
+                + "-" + (ppid < 0 ? ("unknown-pid" + String.valueOf(-ppid)) : String.valueOf(ppid));
         String cmdStr = String.join(" ", command);
         switch (in.base.getType()) {
             case NULL: {
@@ -559,7 +558,6 @@ public class ProcessBuilder2 {
                 }
             }
         }
-
         try {
             while (true) {
                 boolean b = proc.waitFor(10, TimeUnit.SECONDS);
@@ -681,8 +679,7 @@ public class ProcessBuilder2 {
     private NNonBlockingInputStream createNonBlockingInput(InputStream proc, String pname, boolean closeFast) {
         return NInputSourceBuilder.of(proc)
                 .setMetadata(new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)))
-                .createNonBlockingInputStream()
-                ;
+                .createNonBlockingInputStream();
     }
 
     public int getResult() {
@@ -924,21 +921,20 @@ public class ProcessBuilder2 {
         return setFailFast(true);
     }
 
-
     @Override
     public String toString() {
-        return "ProcessBuilder2{" +
-                "command=" + command +
-                ", env=" + env +
-                ", directory=" + directory +
-                ", failFast=" + failFast +
-                ", sleepMillis=" + sleepMillis +
-                ", in=" + in +
-                ", out=" + out +
-                ", err=" + err +
-                ", result=" + result +
-                ", pid=" + pid +
-                '}';
+        return "ProcessBuilder2{"
+                + "command=" + command
+                + ", env=" + env
+                + ", directory=" + directory
+                + ", failFast=" + failFast
+                + ", sleepMillis=" + sleepMillis
+                + ", in=" + in
+                + ", out=" + out
+                + ", err=" + err
+                + ", result=" + result
+                + ", pid=" + getProcessId()
+                + '}';
     }
 
     public interface CommandStringFormat {

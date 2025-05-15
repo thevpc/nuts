@@ -54,7 +54,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
         return "default";
     }
 
-    private String defaultRepoDiscriminator(NAddRepositoryOptions d){
+    private String defaultRepoDiscriminator(NAddRepositoryOptions d) {
         NPath repositoriesRoot = NWorkspaceExt.of().getConfigModel().getRepositoriesRoot();
         if (d.getConfig() != null && d.getConfig().getLocation() != null && d.getConfig().getLocation().getPath() != null) {
             return NPath.of(d.getConfig().getLocation().getPath()).toAbsolute(repositoriesRoot).toString();
@@ -81,7 +81,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
         for (NAddRepositoryOptions d : workspace.getDefaultRepositories()) {
             String discriminator = defaultRepoDiscriminator(d);
             String name = d.getName();
-            if(NBlankable.isBlank(name)) {
+            if (NBlankable.isBlank(name)) {
                 if (d.getConfig() != null && !NBlankable.isBlank(d.getConfig().getName())) {
                     name = d.getConfig().getName();
                 } else if (d.getRepositoryModel() != null) {
@@ -160,8 +160,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
         if (nIsolationLevel == NIsolationLevel.MEMORY) {
             return;
         }
-        boolean isolated = nIsolationLevel == NIsolationLevel.SANDBOX
-                || nIsolationLevel == NIsolationLevel.CONFINED;
+        boolean isolated = nIsolationLevel!=null && nIsolationLevel.ordinal() >= NIsolationLevel.CONFINED.ordinal();
 //        boolean initializePlatforms = boot.getBootOptions().getInitPlatforms().ifEmpty(false).get(session);
 //        boolean initializeJava = boot.getBootOptions().getInitJava().ifEmpty(initializePlatforms).get(session);
         boolean initializeScripts = workspace.getBootOptions().getInitScripts().orElse(!isolated);

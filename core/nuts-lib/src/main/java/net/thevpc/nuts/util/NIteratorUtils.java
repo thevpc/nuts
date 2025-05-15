@@ -31,7 +31,27 @@ public class NIteratorUtils {
     }
 
     public static <T> boolean isNullOrEmpty(Iterator<T> t) {
-        return t == null || t == NIteratorBuilder.EMPTY_ITERATOR;
+        if (t == null) {
+            return true;
+        }
+        if (t == NIteratorBuilder.EMPTY_ITERATOR) {
+            return true;
+        }
+        if (t == Collections.emptyIterator()) {
+            return true;
+        }
+        if (t instanceof NIteratorWithDescription) {
+            NIterator<T> base = ((NIteratorWithDescription<T>) t).getBase();
+            return isNullOrEmpty(base);
+        }
+        if (t instanceof NIteratorAdapter) {
+            Iterator<T> base = ((NIteratorAdapter<T>) t).getBase();
+            return isNullOrEmpty(base);
+        }
+        if (t instanceof NIteratorEmpty) {
+            return true;
+        }
+        return false;
     }
 
     public static <T> NIterator<T> nonNull(NIterator<T> t) {
@@ -115,36 +135,6 @@ public class NIteratorUtils {
         }
         return t;
     }
-
-//    public static <T> Iterator<T> filter(Iterator<T> from, Predicate<? super T> filter) {
-//        if (from == null) {
-//            return IteratorBuilder.emptyIterator();
-//        }
-//        if (filter == null) {
-//            return from;
-//        }
-//        return new FilteredIterator<>(from, filter);
-//    }
-
-//    public static <T> Iterator<T> flatIterator(Iterator<Iterator<T>> from) {
-//        return flatMap(from, (c -> c));
-//    }
-
-    //? super T, ? extends Iterator<? extends R>
-//    public static <T, R> Iterator<R> flatMap(Iterator<T> from, Function<? super T, ? extends Iterator<? extends R>> fun) {
-//        if (from == null) {
-//            return IteratorBuilder.emptyIterator();
-//        }
-//        return new FlatMapIterator<>(from, fun);
-//    }
-
-
-//    public static <F, T> Iterator<T> map(Iterator<F> from, Function<? super F, ? extends T> converter) {
-//        if (isNullOrEmpty(from)) {
-//            return IteratorBuilder.emptyIterator();
-//        }
-//        return new ConvertedIterator<>(from, converter);
-//    }
 
     public static <F, T> NIterator<T> convertNonNull(NIterator<F> from, Function<F, T> converter, String name) {
         if (isNullOrEmpty(from)) {

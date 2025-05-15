@@ -45,7 +45,7 @@ public class ExecTest {
         NAssert.requireNonEmpty(nutsIds, "not found hadra-build-tool");
         TestUtils.println(nutsIds);
         List<NDependencies> allDeps = NSearchCmd.of().addId("net.thevpc.hl:hl#0.1.0")
-                .setDependencies(true)
+//                .setDependencies(true)
                 .getResultDependencies().toList();
         for (NDependencies ds : allDeps) {
             for (NDependency d : ds.transitiveWithSource()) {

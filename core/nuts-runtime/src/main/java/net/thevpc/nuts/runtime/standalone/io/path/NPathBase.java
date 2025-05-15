@@ -79,6 +79,15 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     }
 
     @Override
+    public NPrintStream getNPrintStream(NPathOption... options) {
+        OutputStream out = getOutputStream(options);
+        if (out instanceof NPrintStream) {
+            return (NPrintStream) out;
+        }
+        return NPrintStream.of(out);
+    }
+
+    @Override
     public PrintStream getPrintStream() {
         OutputStream out = getOutputStream();
         if (out instanceof PrintStream) {

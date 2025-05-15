@@ -32,10 +32,40 @@ import net.thevpc.nuts.util.NNameFormat;
 import net.thevpc.nuts.util.NOptional;
 
 public enum NIsolationLevel implements NEnum {
-    SYSTEM,
+
+    /**
+     * The User Workspace Isolation Level runs a workspace in a dedicated location under the regular user's privileges.
+     * Only the current user has access to the workspace configuration.
+     */
     USER,
+
+    /**
+     * The System Workspace Isolation Level is used to share a workspace among all users on the same machine.
+     */
+    SYSTEM,
+
+    /**
+     * The Confined Workspace Isolation Level runs a workspace in a specific location as a regular user,
+     * without interfering with other workspaces belonging to the same user.
+     * Global shortcuts, .bashrc, and main workspace configurations remain unmodified.
+     * However, it may still access user-level resources (e.g., Maven repositories) and system-level workspaces.
+     */
     CONFINED,
+
+    /**
+     * The Sandbox Isolation Level runs the workspace in a temporary location,
+     * spawning a fresh instance each time. It does not interfere with other workspaces,
+     * and does not modify global shortcuts, `.bashrc`, or other user environment configurations.
+     * However, it may still access user-level resources (e.g., Maven repositories) and system-level workspaces.
+     */
     SANDBOX,
+
+    /**
+     * The Memory Isolation Level runs the workspace entirely in memory, without storing its configuration on disk.
+     * Similar to the Sandbox level, but avoids any disk allocation for configuration.
+     * Temporary files may still be used for downloading resources.
+     * User-level resources (e.g., Maven repositories) and system-level workspaces remain accessible.
+     */
     MEMORY
     ;
     private final String id;

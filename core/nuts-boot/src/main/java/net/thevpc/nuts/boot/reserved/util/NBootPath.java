@@ -97,7 +97,7 @@ public class NBootPath {
 
     public URL getUrl() {
         if (url == null) {
-            url = new NRef<>();
+            url = NRef.ofNull();
             if (path != null) {
                 try {
                     url.set(NBootUtils.urlOf(path));
@@ -111,7 +111,7 @@ public class NBootPath {
 
     public boolean isRemote() {
         if (remote == null) {
-            remote = new NRef<>();
+            remote = NRef.ofNull();
             if (NBootUtils.isBlank(path)) {
                 remote.set(false);
                 return false;

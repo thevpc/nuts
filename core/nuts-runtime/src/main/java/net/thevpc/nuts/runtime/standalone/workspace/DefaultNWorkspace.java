@@ -584,16 +584,68 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                                 .append(")")
                 );
             }
-            NTableFormat.of()
-                    .setValue(
-                            NTableModel.of()
-                                    .addCell(
-                                            data.text.ofBuilder()
-                                                    .append(" This is the first time ")
-                                                    .appendCode("sh", "nuts")
-                                                    .append(" is launched for this workspace ")
-                                    )
-                    ).println(out);
+            NIsolationLevel il = wsModel.bootModel.getBootUserOptions().getIsolationLevel().orElse(NIsolationLevel.USER);
+            switch (il){
+                case USER: {
+                    NTableFormat.of()
+                            .setValue(
+                                    NTableModel.of()
+                                            .addCell(
+                                                    data.text.ofBuilder()
+                                                            .append(" This is the first time ")
+                                                            .appendCode("sh", "nuts")
+                                                            .append(" is launched for this workspace ")
+                                            )
+                            ).println(out);
+                    break;
+                }
+                case SYSTEM: {
+                    NTableFormat.of()
+                            .setValue(
+                                    NTableModel.of()
+                                            .addCell(
+                                                    data.text.ofBuilder()
+                                                            .append(" This is the first time ")
+                                                            .appendCode("sh", "nuts")
+                                                            .append(" is launched as system for this workspace ")
+                                            )
+                            ).println(out);
+                    break;
+                }
+                case CONFINED: {
+                    NTableFormat.of()
+                            .setValue(
+                                    NTableModel.of()
+                                            .addCell(
+                                                    data.text.ofBuilder()
+                                                            .append(" This is a confined workspace ")
+                                            )
+                            ).println(out);
+                    break;
+                }
+                case SANDBOX: {
+                    NTableFormat.of()
+                            .setValue(
+                                    NTableModel.of()
+                                            .addCell(
+                                                    data.text.ofBuilder()
+                                                            .append(" This is a sandbox workspace ")
+                                            )
+                            ).println(out);
+                    break;
+                }
+                case MEMORY: {
+                    NTableFormat.of()
+                            .setValue(
+                                    NTableModel.of()
+                                            .addCell(
+                                                    data.text.ofBuilder()
+                                                            .append(" This is an in-memory workspace ")
+                                            )
+                            ).println(out);
+                    break;
+                }
+            }
             out.println();
         }
         if (wsModel.bootModel.getBootUserOptions().getIsolationLevel().orNull() != NIsolationLevel.MEMORY) {

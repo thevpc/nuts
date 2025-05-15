@@ -438,7 +438,7 @@ public class NStringMapFormat {
             if (sort) {
                 map = new TreeMap<>(map);
             }
-            String escapedChars = separatorChars + equalsChars + escapeChars;
+//            String escapedChars = separatorChars + equalsChars + escapeChars;
             Set<String> sortedKeys = map.keySet();
             for (String k : sortedKeys) {
                 List<String> strings = map.get(k);
@@ -449,21 +449,26 @@ public class NStringMapFormat {
                         }
                         if (v.isEmpty()) {
                             sb.append(
-                                    NStringUtils.formatStringLiteral(encoder.apply(k), NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED, escapedChars)
+                                    //NStringUtils.formatStringLiteral(encoder.apply(k), NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED, escapedChars)
+                                    encoder.apply(k)
                             );
                         } else {
-                            sb.append(
-                                            NStringUtils.formatStringLiteral(encoder.apply(k), NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED, escapedChars))
+                            sb
+//                                    .append(NStringUtils.formatStringLiteral(encoder.apply(k), NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED, escapedChars))
+//                                    .append(equalsChars)
+//                                    .append(NStringUtils.formatStringLiteral(encoder.apply(v), NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED, escapedChars))
+                                    .append(encoder.apply(k))
                                     .append(equalsChars)
-                                    .append(NStringUtils.formatStringLiteral(encoder.apply(v), NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED, escapedChars)
-                                    );
+                                    .append(encoder.apply(v))
+                            ;
                         }
                     } else {
                         if (sb.length() > 0) {
                             sb.append(separatorChars);
                         }
                         sb.append(
-                                NStringUtils.formatStringLiteral(encoder.apply(k), NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED, escapedChars)
+//                                NStringUtils.formatStringLiteral(encoder.apply(k), NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED, escapedChars)
+                                encoder.apply(k)
                         );
                     }
                 }

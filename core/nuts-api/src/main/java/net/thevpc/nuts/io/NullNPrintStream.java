@@ -38,8 +38,8 @@ public class NullNPrintStream implements NPrintStream {
     }
 
     @Override
-    public NPrintStream close() {
-        return this;
+    public void close() {
+
     }
 
     @Override

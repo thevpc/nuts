@@ -3,125 +3,157 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
- * you may  not use this file except in compliance with the License. You may obtain
- * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the GNU LESSER GENERAL PUBLIC
+ * LICENSE Version 3 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * https://www.gnu.org/licenses/lgpl-3.0.en.html Unless required by applicable
+ * law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
+ * <br> ====================================================================
  */
 package net.thevpc.nuts.util;
 
-import java.util.Objects;
 import java.util.function.Supplier;
 
-public class NRef<T> implements Supplier<T> {
+public interface NRef<T> extends Supplier<T> {
 
-    private T value;
-    private boolean set;
-
-    public static <T> NRef<T> of(T t) {
-        return new NRef<>(t);
+    static <T> NRef<T> of() {
+        return new NObjectRef<>(null);
     }
 
-    public static <T> NRef<T> of(T t, Class<T> type) {
-        return new NRef<>(t);
+    static <T> NRef<T> of(T t) {
+        return new NObjectRef<>(t);
     }
 
-    public static <T> NRef<T> ofNull(Class<T> t) {
-        return new NRef<>(null);
+    static <T> NRef<T> of(T t, Class<T> type) {
+        return new NObjectRef<>(t);
     }
 
-    public static <T> NRef<T> ofNull() {
+    static <T> NRef<T> ofNull(Class<T> t) {
+        return new NObjectRef<>(null);
+    }
+
+    static <T> NRef<T> ofNull() {
         return of(null);
     }
 
-    public NRef() {
+    static NLongRef ofLong(Long value) {
+        return new NLongRef(value);
     }
 
-    public NRef(T value) {
-        this.value = value;
+    static NLongRef ofLong(long value) {
+        return new NLongRef(value);
     }
 
-    public T get() {
-        return value;
+    static NLongRef ofLong() {
+        return new NLongRef(null);
     }
 
-    public T orElse(T other) {
-        if (value == null) {
-            return other;
-        }
-        return value;
+    static NIntRef ofInt(Integer value) {
+        return new NIntRef(value);
     }
 
-    public void setNonNull(T value) {
-        if (value != null) {
-            set(value);
-        }
+    static NIntRef ofInt(int value) {
+        return new NIntRef(value);
     }
 
-    public void set(T value) {
-        this.value = value;
-        this.set = true;
+    static NIntRef ofInt() {
+        return new NIntRef(null);
     }
 
-    public void unset() {
-        this.value = null;
-        this.set = false;
+    static NBooleanRef ofBoolean(Boolean value) {
+        return new NBooleanRef(value);
     }
 
-    public boolean isNotNull() {
-        return value != null;
+    static NBooleanRef ofBoolean(boolean value) {
+        return new NBooleanRef(value);
     }
 
-    public boolean isBlank() {
-        return NBlankable.isBlank(value);
+    static NBooleanRef ofBoolean() {
+        return new NBooleanRef(null);
     }
 
-    public boolean isEmpty() {
-        return value == null || String.valueOf(value).isEmpty();
+    static NByteRef ofByte(Byte value) {
+        return new NByteRef(value);
     }
 
-    public boolean isNull() {
-        return value == null;
+    static NByteRef ofByte(byte value) {
+        return new NByteRef(value);
     }
 
-    public boolean isSet() {
-        return set;
+    static NByteRef ofByte() {
+        return new NByteRef(null);
     }
+
+    static NShortRef ofShort(Short value) {
+        return new NShortRef(value);
+    }
+
+    static NShortRef ofShort(short value) {
+        return new NShortRef(value);
+    }
+
+    static NShortRef ofShort() {
+        return new NShortRef(null);
+    }
+
+    static NFloatRef ofFloat(Float value) {
+        return new NFloatRef(value);
+    }
+
+    static NFloatRef ofFloat(float value) {
+        return new NFloatRef(value);
+    }
+
+    static NFloatRef ofFloat() {
+        return new NFloatRef(null);
+    }
+
+    static NDoubleRef ofDouble(Double value) {
+        return new NDoubleRef(value);
+    }
+
+    static NDoubleRef ofDouble(double value) {
+        return new NDoubleRef(value);
+    }
+
+    static NDoubleRef ofDouble() {
+        return new NDoubleRef(null);
+    }
+
+    T get();
+
+    T orElse(T other);
+
+    void setNonNull(T value);
+
+    void set(T value);
+
+    void unset();
+
+    boolean isNotNull();
+
+    boolean isBlank();
+
+    boolean isEmpty();
+
+    boolean isNull();
+
+    boolean isSet();
 
     @Override
-    public String toString() {
-        return String.valueOf(value);
-    }
+    String toString();
 
-    public boolean isValue(Object o) {
-        return Objects.equals(value, o);
-    }
+    boolean isValue(Object o);
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        NRef<?> nRef = (NRef<?>) o;
-        return set == nRef.set && Objects.equals(value, nRef.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(value, set);
-    }
 }

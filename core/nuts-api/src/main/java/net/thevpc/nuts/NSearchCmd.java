@@ -563,39 +563,24 @@ public interface NSearchCmd extends NWorkspaceCmd {
      */
     String getResultClassPath();
 
-    /**
-     * true if content is resolved
-     *
-     * @return true if content is resolved
-     */
-    boolean isContent();
-
     ////////////////////////////////////////////////////////
     // Getters
     ////////////////////////////////////////////////////////
 
-    /**
-     * enable/disable retrieval of content info
-     *
-     * @param enable if true retrieval is enabled.
-     * @return {@code this} instance
-     */
-    NSearchCmd setContent(boolean enable);
-
-    /**
-     * true if descriptor is resolved against its effective value
-     *
-     * @return true if descriptor is resolved against its effective value
-     */
-    boolean isEffective();
-
-    /**
-     * enable/disable effective descriptor evaluation
-     *
-     * @param enable if true evaluation is enabled.
-     * @return {@code this} instance
-     */
-    NSearchCmd setEffective(boolean enable);
+//    /**
+//     * true if descriptor is resolved against its effective value
+//     *
+//     * @return true if descriptor is resolved against its effective value
+//     */
+//    boolean isEffective();
+//
+//    /**
+//     * enable/disable effective descriptor evaluation
+//     *
+//     * @param enable if true evaluation is enabled.
+//     * @return {@code this} instance
+//     */
+//    NSearchCmd setEffective(boolean enable);
 
     /**
      * true if dependencies are inlined
@@ -614,20 +599,20 @@ public interface NSearchCmd extends NWorkspaceCmd {
 
     NSearchCmd failFast();
 
-    /**
-     * true if dependencies as list is activated
-     *
-     * @return true if dependencies as list is activated
-     */
-    boolean isDependencies();
-
-    /**
-     * enable/disable dependencies list retrieval
-     *
-     * @param enable if true retrieval is enabled.
-     * @return {@code this} instance
-     */
-    NSearchCmd setDependencies(boolean enable);
+//    /**
+//     * true if dependencies as list is activated
+//     *
+//     * @return true if dependencies as list is activated
+//     */
+//    boolean isDependencies();
+//
+//    /**
+//     * enable/disable dependencies list retrieval
+//     *
+//     * @param enable if true retrieval is enabled.
+//     * @return {@code this} instance
+//     */
+//    NSearchCmd setDependencies(boolean enable);
 
 
     /**

@@ -13,9 +13,7 @@ import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.*;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NStringUtils;
-import net.thevpc.nuts.util.NSupportMode;
+import net.thevpc.nuts.util.*;
 
 import java.util.*;
 
@@ -282,11 +280,13 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
     }
 
     private String _encodeValue(String s) {
-        return NStringUtils.formatStringLiteral(s, NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED,"=&");
+        return NStringMapFormat.URL_ENCODER.apply(s);
+//        return NStringUtils.formatStringLiteral(s, NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED,"=&");
     }
 
     private String _encodeKey(String s) {
-        return NStringUtils.formatStringLiteral(s, NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED,"=&");
+        return NStringMapFormat.URL_ENCODER.apply(s);
+        //return NStringUtils.formatStringLiteral(s, NElementType.SINGLE_QUOTED_STRING, NSupportMode.PREFERRED,"=&");
     }
 
     @Override

@@ -22,7 +22,8 @@ public class NOut {
 
 
     public static NPrintStream close(){
-        return out().close();
+        out().close();
+        return out();
     }
 
     public static NPrintStream writeRaw(byte[] buf, int off, int len){

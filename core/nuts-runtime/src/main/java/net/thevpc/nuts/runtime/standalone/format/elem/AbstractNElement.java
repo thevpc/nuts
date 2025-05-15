@@ -736,7 +736,7 @@ public abstract class AbstractNElement implements NElement {
                     NElement v = u.value();
                     return NOptional.of(NElements.of().ofObjectBuilder(u.name()).add(v).build());
                 }
-                break;
+                return NOptional.of(NElements.of().ofObjectBuilder().add(this).build());
             }
             case NAMED_UPLET: {
                 NUpletElement u = asUplet().orNull();
@@ -753,7 +753,7 @@ public abstract class AbstractNElement implements NElement {
             case PARAMETRIZED_OBJECT:
             case NAMED_PARAMETRIZED_OBJECT: {
                 NObjectElement u = asObject().orNull();
-                return NOptional.of(NElements.of().ofObjectBuilder()
+                return NOptional.of(NElements.of().ofObjectBuilder().name(u.name())
                         .addParams(u.params().orNull())
                         .addAll(u.children().toArray(new NElement[0])).build());
             }
@@ -762,12 +762,14 @@ public abstract class AbstractNElement implements NElement {
             case PARAMETRIZED_ARRAY:
             case NAMED_PARAMETRIZED_ARRAY: {
                 NArrayElement u = asArray().orNull();
-                return NOptional.of(NElements.of().ofObjectBuilder()
+                return NOptional.of(NElements.of().ofObjectBuilder().name(u.name())
                         .addParams(u.params().orNull())
                         .addAll(u.children().toArray(new NElement[0])).build());
             }
+            default:{
+                return NOptional.of(NElements.of().ofObjectBuilder().add(this).build());
+            }
         }
-        return NOptional.ofNamedEmpty("named-object");
     }
 
     @Override
@@ -779,7 +781,7 @@ public abstract class AbstractNElement implements NElement {
                     NElement v = u.value();
                     return NOptional.of(NElements.of().ofArrayBuilder(u.name()).add(v).build());
                 }
-                break;
+                return NOptional.of(NElements.of().ofArrayBuilder().add(this).build());
             }
             case NAMED_UPLET: {
                 NUpletElement u = asUplet().orNull();
@@ -808,8 +810,10 @@ public abstract class AbstractNElement implements NElement {
                 return NOptional.of(NElements.of().ofArrayBuilder()
                         .addAll(u.children().toArray(new NElement[0])).build());
             }
+            default:{
+                return NOptional.of(NElements.of().ofArrayBuilder().add(this).build());
+            }
         }
-        return NOptional.ofNamedEmpty("named-array");
     }
 
     @Override

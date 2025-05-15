@@ -284,7 +284,7 @@ public class JavaJarUtils {
     }
 
     public static String parseDefaultModuleName(InputStream jarStream) {
-        NRef<String> automaticModuleName = new NRef<>();
+        NRef<String> automaticModuleName = NRef.ofNull();
         ZipUtils.visitZipStream(jarStream, (path, inputStream) -> {
             if ("META-INF/MANIFEST.MF".equals(path)) {
                 try {
@@ -319,7 +319,7 @@ public class JavaJarUtils {
         if (!(jarStream instanceof BufferedInputStream)) {
             jarStream = new BufferedInputStream(jarStream);
         }
-        NRef<JavaClassByteCode.ModuleInfo> ref = new NRef<>();
+        NRef<JavaClassByteCode.ModuleInfo> ref = NRef.ofNull();
         ZipUtils.visitZipStream(jarStream, (path, inputStream) -> {
             if (path.equals("module-info.class")) {
                 JavaClassByteCode s = new JavaClassByteCode(inputStream, new JavaClassByteCode.Visitor() {

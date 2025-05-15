@@ -14,6 +14,10 @@ public class NIteratorWithDescription<T> extends NIteratorDelegate<T> {
         this.description = description;
     }
 
+    public NIterator<T> getBase() {
+        return base;
+    }
+
     @Override
     public NIterator<T> baseIterator() {
         return base;

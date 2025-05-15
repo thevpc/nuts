@@ -97,13 +97,12 @@ public class NPrintStreamSystem extends NPrintStreamBase {
 
 
     @Override
-    public NPrintStream close() {
+    public void close() {
         if (getTerminalMode() == NTerminalMode.ANSI) {
             print("\033[0m".getBytes());
             flush();
         }
         base.close();
-        return this;
     }
 
     @Override

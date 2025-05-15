@@ -3,11 +3,11 @@ package net.thevpc.nuts.runtime.standalone.dependency.filter;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.util.NFilterOp;
 
-public class NDependencyOptionFilter extends AbstractDependencyFilter{
+public class NDependencyOptionalFilter extends AbstractDependencyFilter{
 
     private final Boolean optional;
 
-    public NDependencyOptionFilter(Boolean optional) {
+    public NDependencyOptionalFilter(Boolean optional) {
         super(NFilterOp.CUSTOM);
         this.optional = optional;
     }

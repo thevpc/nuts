@@ -38,10 +38,9 @@ public abstract class NPrintStreamRendered extends NPrintStreamBase {
     }
 
     @Override
-    public NPrintStream close() {
+    public void close() {
         flush();
         base.close();
-        return this;
     }
 
     @Override

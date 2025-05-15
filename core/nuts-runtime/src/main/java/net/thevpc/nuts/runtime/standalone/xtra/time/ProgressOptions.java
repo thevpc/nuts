@@ -78,7 +78,7 @@ public class ProgressOptions {
 
     public Level getArmedLogLevel() {
         if (cachedLevel == null) {
-            cachedLevel = new NRef<>(
+            cachedLevel = NRef.of(
                     getArmedLogLevel0()
             );
         }

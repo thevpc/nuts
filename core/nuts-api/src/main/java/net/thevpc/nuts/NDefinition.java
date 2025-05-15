@@ -85,7 +85,6 @@ public interface NDefinition extends Serializable, Comparable<NDefinition> {
      * return all or some of the transitive dependencies of the current Nuts as List
      * result of the search command
      * this is an <strong>optional</strong> property.
-     * It must be requested (see {@link NSearchCmd#setDependencies(boolean)} to be available.
      *
      * @return all or some of the transitive dependencies of the current Nuts as List
      * result of the search command.

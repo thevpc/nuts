@@ -37,6 +37,7 @@ import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NContentTypeResolver;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NRef;
 import net.thevpc.nuts.util.NStringUtils;
@@ -48,6 +49,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @NComponentScope(NScopeType.WORKSPACE)
 public class DefaultNContentTypeResolver implements NContentTypeResolver {
@@ -114,22 +116,20 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
             //ignore
         }
         NPath nPath = NPath.of(file);
+        Set<String> extensions=new HashSet<>();
+        extensions.add(nPath.getNameParts(NPathExtensionType.LONG).getExtension());
+        extensions.add(nPath.getNameParts(NPathExtensionType.SHORT).getExtension());
+        extensions.add(nPath.getNameParts(NPathExtensionType.SMART).getExtension());
+        extensions=extensions.stream().filter(NBlankable::isNonBlank).filter(x->!x.isEmpty()).collect(Collectors.toSet());
         if (contentType == null) {
-            for (String s : findContentTypesByExtension(nPath.getNameParts(NPathExtensionType.LONG).getExtension())) {
-                contentType = s;
-                break;
-            }
-        }
-        if (contentType == null) {
-            for (String s : findContentTypesByExtension(nPath.getNameParts(NPathExtensionType.SHORT).getExtension())) {
-                contentType = s;
-                break;
-            }
-        }
-        if (contentType == null) {
-            for (String s : findContentTypesByExtension(nPath.getNameParts(NPathExtensionType.SMART).getExtension())) {
-                contentType = s;
-                break;
+            for (String extension : extensions) {
+                if (contentType != null) {
+                    break;
+                }
+                for (String s : findContentTypesByExtension(extension)) {
+                    contentType = s;
+                    break;
+                }
             }
         }
         if (contentType == null) {
@@ -137,6 +137,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
                 if (contentType == null) {
                     try {
                         String c = NExecCmd.of("file", "--mime-type", file.toString())
+                                .system()
                                 .failFast()
                                 .getGrabbedOutString();
                         if (c != null) {
@@ -152,6 +153,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
                 if (contentType == null) {
                     try {
                         String c = NExecCmd.of("xdg-mime", "query", "filetype", file.toString())
+                                .system()
                                 .failFast()
                                 .getGrabbedOutString();
                         if (c != null) {

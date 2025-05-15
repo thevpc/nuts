@@ -244,11 +244,11 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                     () -> {
                         List<NId> ret = new ArrayList<>();
                         if (metadataURL.isRegularFile()) {
-                            session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s", getName(), "found", metadataURL.toCompressedForm()));
+                            session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s %s", getName(), "found",id.getLongId(), metadataURL.toCompressedForm()));
                             // ok found!!
                             ret.add(id);
                         }else{
-                            session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s", getName(), "missing", metadataURL.toCompressedForm()));
+                            session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s %s", getName(), "missing",id.getLongId(), metadataURL.toCompressedForm()));
                         }
                         return ret.iterator();
                     }
@@ -268,7 +268,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
 
     public InputStream getStream(NId id, String typeName, String action) {
         NPath url = getIdRemotePath(id);
-        return openStream(id, url, id, typeName, action);
+        return openStream(id, url, id, typeName, action==null?NMsg.ofC("retrieve %s",id.getLongId()):NMsg.ofC("%s %s",action,id.getLongId()));
     }
 
     public String getStreamAsString(NId id, String typeName, String action) {
@@ -276,7 +276,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                 .addOptions(NPathOption.LOG, NPathOption.TRACE, NPathOption.SAFE)
                 .from(getIdRemotePath(id))
                 .setSourceOrigin(id)
-                .setActionMessage(action == null ? null : NMsg.ofPlain(action))
+                .setActionMessage(action == null ? NMsg.ofC("copy %s",id.getLongId()) : NMsg.ofC("%s %s",action,id.getLongId()))
                 .setSourceTypeName(action)
                 .getByteArrayResult();
         return new String(barr);
@@ -330,7 +330,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
         return hash.split("[ \n\r]")[0];
     }
 
-    public InputStream openStream(NId id, NPath path, Object source, String typeName, String action) {
+    public InputStream openStream(NId id, NPath path, Object source, String typeName, NMsg action) {
         NSession session = getWorkspace().currentSession();
         session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s %s", getName(), action, NNameFormat.LOWER_KEBAB_CASE.format(typeName), path.toCompressedForm()));
         return NInputStreamMonitor.of().setSource(path).setOrigin(source).setSourceTypeName(typeName).create();

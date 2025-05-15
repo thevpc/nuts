@@ -27,6 +27,9 @@ public class NFunctionWithDescription<T, V> implements NFunction<T, V>,NImmutabl
 
     @Override
     public String toString() {
+        if(description!=null){
+            return description.get().toString();
+        }
         return "Function{" + base + '}';
     }
 

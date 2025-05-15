@@ -16,6 +16,10 @@ public class NIteratorAdapter<T> extends NIteratorBase<T> {
         this.info = info;
     }
 
+    public Iterator<T> getBase() {
+        return base;
+    }
+
     @Override
     public boolean hasNext() {
         return base.hasNext();

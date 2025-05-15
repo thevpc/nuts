@@ -40,4 +40,8 @@ public interface NMemoryPrintStream extends NPrintStream {
     byte[] getBytes();
 
     NInputSource asInputSource();
+
+    @Override
+    default void close() {
+    }
 }
