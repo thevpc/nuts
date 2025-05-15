@@ -19,8 +19,6 @@ import org.w3c.dom.Node;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -320,7 +318,7 @@ public class JavaJarUtils {
         if (!(jarStream instanceof BufferedInputStream)) {
             jarStream = new BufferedInputStream(jarStream);
         }
-        NRef<JavaClassByteCode.ModuleInfo> ref = new NRef<>();
+        NRef<JavaClassByteCode.ModuleInfo> ref = NRef.ofNull();
         ZipUtils.visitZipStream(jarStream, (path, inputStream) -> {
             if (path.equals("module-info.class")) {
                 JavaClassByteCode s = new JavaClassByteCode(inputStream, new JavaClassByteCode.Visitor() {

@@ -25,7 +25,7 @@ public class RenameTableCmd<C extends NdbConfig> extends NdbCmd<C> {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         C otherOptions = createConfigInstance();
         ExtendedQuery eq = new ExtendedQuery(getName());
-        NRef<String> table = new NRef<>();
+        NRef<String> table = NRef.ofNull();
         while (cmdLine.hasNext()) {
             NArg arg = cmdLine.peek().get(session);
             switch (arg.key()) {
