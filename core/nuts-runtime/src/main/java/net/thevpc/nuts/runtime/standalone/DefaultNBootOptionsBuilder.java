@@ -155,6 +155,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
      * option-type : exported (inherited in child workspaces)
      */
     private List<String> repositories;
+    private List<String> bootRepositories;
 
     /**
      * option-type : exported (inherited in child workspaces)
@@ -397,7 +398,6 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
-//    private String bootRepositories;
     private Instant expireTime;
     private List<NMsg> errors;
     private Boolean skipErrors;
@@ -422,11 +422,6 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     private NSupportMode userLauncher;
 
 
-    /**
-     * bootRepositories list (; separated) where to look for runtime
-     * dependencies special
-     */
-    private String bootRepositories;
     /**
      * special
      */
@@ -749,6 +744,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.setExcludedExtensions(other.getExcludedExtensions().orNull());
 //        this.setExcludedRepositories(other.getExcludedRepositories() == null ? null : Arrays.copyOf(other.getExcludedRepositories(), other.getExcludedRepositories().length));
         this.setRepositories(other.getRepositories().orNull());
+        this.setBootRepositories(other.getBootRepositories().orNull());
         this.setApplicationArguments(other.getApplicationArguments().orNull());
         this.setCustomOptions(other.getCustomOptions().orNull());
         this.setExpireTime(other.getExpireTime().orNull());
@@ -768,7 +764,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.setUserLauncher(other.getUserLauncher().orNull());
         this.setSharedInstance(other.getSharedInstance().orNull());
         this.setPreviewRepo(other.getPreviewRepo().orNull());
-        this.setBootRepositories(other.getBootRepositories().orNull());
+//        this.setBootRepositories(other.getBootRepositories().orNull());
         this.setRuntimeBootDependencyNode(other.getRuntimeBootDependencyNode().orNull());
         this.setExtensionBootDescriptors(other.getExtensionBootDescriptors().orNull());
         this.setExtensionBootDependencyNodes(other.getExtensionBootDependencyNodes().orNull());
@@ -781,15 +777,15 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         return this;
     }
 
-    public NOptional<String> getBootRepositories() {
-        return NOptional.of(bootRepositories);
-    }
-
-    @Override
-    public DefaultNBootOptionsBuilder setBootRepositories(String bootRepositories) {
-        this.bootRepositories = NStringUtils.trimToNull(bootRepositories);
-        return this;
-    }
+//    public NOptional<String> getBootRepositories() {
+//        return NOptional.of(bootRepositories);
+//    }
+//
+//    @Override
+//    public DefaultNBootOptionsBuilder setBootRepositories(String bootRepositories) {
+//        this.bootRepositories = NStringUtils.trimToNull(bootRepositories);
+//        return this;
+//    }
 
     public NOptional<NClassLoaderNode> getRuntimeBootDependencyNode() {
         return NOptional.of(runtimeBootDependencyNode);
@@ -1456,10 +1452,8 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         r.setStdout(this.getStdout().orNull());
         r.setStderr(this.getStderr().orNull());
         r.setExecutorService(this.getExecutorService().orNull());
-//        r.setBootRepositories(this.getBootRepositories());
 
         r.setExcludedExtensions(this.getExcludedExtensions().orNull());
-//        r.setExcludedRepositories(this.getExcludedRepositories() == null ? null : Arrays.copyOf(this.getExcludedRepositories(), this.getExcludedRepositories().length));
         r.setRepositories(this.getRepositories().orNull());
         r.setApplicationArguments(this.getApplicationArguments().orNull());
         r.setCustomOptions(this.getCustomOptions().orNull());
@@ -2036,6 +2030,10 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     public NOptional<List<String>> getRepositories() {
         return NOptional.ofNamed(repositories, "repositories");
     }
+    @Override
+    public NOptional<List<String>> getBootRepositories() {
+        return NOptional.ofNamed(bootRepositories, "bootRepositories");
+    }
 
     /**
      * set repositories
@@ -2048,6 +2046,14 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.repositories = repositories;
         return this;
     }
+
+    @Override
+    public NBootOptionsBuilder setBootRepositories(List<String> bootRepositories) {
+        this.bootRepositories = bootRepositories;
+        return this;
+    }
+
+
 
     @Override
     public NOptional<String> getUserName() {
@@ -2608,11 +2614,10 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.setStdout(other.getStdout());
         this.setStderr(other.getStderr());
         this.setExecutorService(other.getExecutorService());
-//        this.setBootRepositories(other.getBootRepositories());
 
         this.setExcludedExtensions(other.getExcludedExtensions());
-//        this.setExcludedRepositories(other.getExcludedRepositories() == null ? null : Arrays.copyOf(other.getExcludedRepositories(), other.getExcludedRepositories().length));
         this.setRepositories(other.getRepositories());
+        this.setBootRepositories(other.getBootRepositories());
         this.setApplicationArguments(other.getApplicationArguments());
         this.setCustomOptions(other.getCustomOptions());
         this.setExpireTime(other.getExpireTime());

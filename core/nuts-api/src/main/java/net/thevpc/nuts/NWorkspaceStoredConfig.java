@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -71,7 +72,7 @@ public interface NWorkspaceStoredConfig {
 
     String getRuntimeDependencies();
 
-    String getBootRepositories();
+    List<String> getBootRepositories();
 
     String getJavaCommand();
 

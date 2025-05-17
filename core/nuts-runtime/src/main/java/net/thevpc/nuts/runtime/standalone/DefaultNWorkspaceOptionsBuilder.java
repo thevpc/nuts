@@ -11,14 +11,14 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
@@ -338,6 +338,14 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      */
     private NStoreStrategy repositoryStoreStrategy;
 
+
+    /**
+     * repositories used for the creation of the workspace.
+     * irrelevant if the workspace is alreayd created
+     * option-type : create (inherited in child workspaces)
+     */
+    private List<String> bootRepositories;
+
     /**
      * option-type : exported (inherited in child workspaces)
      */
@@ -425,17 +433,17 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<NSupportMode> getDesktopLauncher() {
-        return NOptional.ofNamed(desktopLauncher,"desktopLauncher");
+        return NOptional.ofNamed(desktopLauncher, "desktopLauncher");
     }
 
     @Override
     public NOptional<NSupportMode> getMenuLauncher() {
-        return NOptional.ofNamed(menuLauncher,"menuLauncher");
+        return NOptional.ofNamed(menuLauncher, "menuLauncher");
     }
 
     @Override
     public NOptional<NSupportMode> getUserLauncher() {
-        return NOptional.ofNamed(userLauncher,"userLauncher");
+        return NOptional.ofNamed(userLauncher, "userLauncher");
     }
 
     @Override
@@ -494,7 +502,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<NVersion> getApiVersion() {
-        return NOptional.ofNamed(apiVersion,"apiVersion");
+        return NOptional.ofNamed(apiVersion, "apiVersion");
     }
 
     /**
@@ -511,7 +519,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<List<String>> getApplicationArguments() {
-        return NOptional.ofNamed(applicationArguments,"applicationArguments");
+        return NOptional.ofNamed(applicationArguments, "applicationArguments");
     }
 
     /**
@@ -528,7 +536,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<String> getArchetype() {
-        return NOptional.ofNamed(archetype,"archetype");
+        return NOptional.ofNamed(archetype, "archetype");
     }
 
     /**
@@ -545,7 +553,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<Supplier<ClassLoader>> getClassLoaderSupplier() {
-        return NOptional.ofNamed(classLoaderSupplier,"classLoaderSupplier");
+        return NOptional.ofNamed(classLoaderSupplier, "classLoaderSupplier");
     }
 
     /**
@@ -562,7 +570,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<NConfirmationMode> getConfirm() {
-        return NOptional.ofNamed(confirm,"confirm");
+        return NOptional.ofNamed(confirm, "confirm");
     }
 
     /**
@@ -579,12 +587,12 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<Boolean> getDry() {
-        return NOptional.ofNamed(dry,"dry");
+        return NOptional.ofNamed(dry, "dry");
     }
 
     @Override
     public NOptional<Boolean> getShowStacktrace() {
-        return NOptional.ofNamed(showStacktrace,"showStacktrace");
+        return NOptional.ofNamed(showStacktrace, "showStacktrace");
     }
 
     /**
@@ -614,7 +622,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<Instant> getCreationTime() {
-        return NOptional.ofNamed(creationTime,"creationTime");
+        return NOptional.ofNamed(creationTime, "creationTime");
     }
 
     /**
@@ -631,7 +639,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<List<String>> getExcludedExtensions() {
-        return NOptional.ofNamed(excludedExtensions,"excludedExtensions");
+        return NOptional.ofNamed(excludedExtensions, "excludedExtensions");
     }
 
     /**
@@ -648,7 +656,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<NExecutionType> getExecutionType() {
-        return NOptional.ofNamed(executionType,"executionType");
+        return NOptional.ofNamed(executionType, "executionType");
     }
 
     /**
@@ -665,7 +673,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<NRunAs> getRunAs() {
-        return NOptional.ofNamed(runAs,"runAs");
+        return NOptional.ofNamed(runAs, "runAs");
     }
 
     /**
@@ -681,7 +689,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<List<String>> getExecutorOptions() {
-        return NOptional.ofNamed(executorOptions,"executorOptions");
+        return NOptional.ofNamed(executorOptions, "executorOptions");
     }
 
     /**
@@ -698,12 +706,12 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<String> getHomeLocation(NHomeLocation location) {
-        return NOptional.ofNamed(homeLocations==null?null:homeLocations.get(location),"homeLocations["+location+"]");
+        return NOptional.ofNamed(homeLocations == null ? null : homeLocations.get(location), "homeLocations[" + location + "]");
     }
 
     @Override
     public NOptional<Map<NHomeLocation, String>> getHomeLocations() {
-        return NOptional.ofNamed(homeLocations,"homeLocations");
+        return NOptional.ofNamed(homeLocations, "homeLocations");
     }
 
     @Override
@@ -721,7 +729,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<String> getJavaCommand() {
-        return NOptional.ofNamed(javaCommand,"javaCommand");
+        return NOptional.ofNamed(javaCommand, "javaCommand");
     }
 
     @Override
@@ -732,7 +740,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<String> getJavaOptions() {
-        return NOptional.ofNamed(javaOptions,"javaOptions");
+        return NOptional.ofNamed(javaOptions, "javaOptions");
     }
 
     /**
@@ -749,7 +757,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<NLogConfig> getLogConfig() {
-        return NOptional.ofNamed(logConfig,"logConfig");
+        return NOptional.ofNamed(logConfig, "logConfig");
     }
 
     /**
@@ -766,7 +774,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<String> getName() {
-        return NOptional.ofNamed(name,"name");
+        return NOptional.ofNamed(name, "name");
     }
 
     /**
@@ -783,7 +791,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<NOpenMode> getOpenMode() {
-        return NOptional.ofNamed(openMode,"openMode");
+        return NOptional.ofNamed(openMode, "openMode");
     }
 
     /**
@@ -800,7 +808,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<NContentType> getOutputFormat() {
-        return NOptional.ofNamed(outputFormat,"outputFormat");
+        return NOptional.ofNamed(outputFormat, "outputFormat");
     }
 
     /**
@@ -817,7 +825,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<List<String>> getOutputFormatOptions() {
-        return NOptional.ofNamed(outputFormatOptions,"outputFormatOptions");
+        return NOptional.ofNamed(outputFormatOptions, "outputFormatOptions");
     }
 
     /**
@@ -850,7 +858,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<char[]> getCredentials() {
-        return NOptional.ofNamed(credentials,"credentials");
+        return NOptional.ofNamed(credentials, "credentials");
     }
 
     /**
@@ -867,7 +875,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<NStoreStrategy> getRepositoryStoreStrategy() {
-        return NOptional.ofNamed(repositoryStoreStrategy,"repositoryStoreStrategy");
+        return NOptional.ofNamed(repositoryStoreStrategy, "repositoryStoreStrategy");
     }
 
     /**
@@ -884,7 +892,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<NId> getRuntimeId() {
-        return NOptional.ofNamed(runtimeId,"runtimeId");
+        return NOptional.ofNamed(runtimeId, "runtimeId");
     }
 
     /**
@@ -901,12 +909,12 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<String> getStoreType(NStoreType folder) {
-        return NOptional.ofNamed(storeLocations==null?null:storeLocations.get(folder),"storeLocations["+folder+"]");
+        return NOptional.ofNamed(storeLocations == null ? null : storeLocations.get(folder), "storeLocations[" + folder + "]");
     }
 
     @Override
     public NOptional<NOsFamily> getStoreLayout() {
-        return NOptional.ofNamed(storeLayout,"storeLayout");
+        return NOptional.ofNamed(storeLayout, "storeLayout");
     }
 
     /**
@@ -923,7 +931,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<NStoreStrategy> getStoreStrategy() {
-        return NOptional.ofNamed(storeStrategy,"storeStrategy");
+        return NOptional.ofNamed(storeStrategy, "storeStrategy");
     }
 
     /**
@@ -940,7 +948,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<Map<NStoreType, String>> getStoreLocations() {
-        return NOptional.ofNamed(storeLocations,"storeLocations");
+        return NOptional.ofNamed(storeLocations, "storeLocations");
     }
 
     @Override
@@ -959,7 +967,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<NTerminalMode> getTerminalMode() {
-        return NOptional.ofNamed(terminalMode,"terminalMode");
+        return NOptional.ofNamed(terminalMode, "terminalMode");
     }
 
     /**
@@ -976,7 +984,12 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<List<String>> getRepositories() {
-        return NOptional.ofNamed(repositories,"repositories");
+        return NOptional.ofNamed(repositories, "repositories");
+    }
+
+    @Override
+    public NOptional<List<String>> getBootRepositories() {
+        return NOptional.ofNamed(bootRepositories, "bootRepositories");
     }
 
     /**
@@ -991,14 +1004,26 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         return this;
     }
 
+    /**
+     * set initRepositories
+     *
+     * @param repositories new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NWorkspaceOptionsBuilder setBootRepositories(List<String> repositories) {
+        this.bootRepositories = repositories;
+        return this;
+    }
+
     @Override
     public NOptional<String> getUserName() {
-        return NOptional.ofNamed(userName,"userName");
+        return NOptional.ofNamed(userName, "userName");
     }
 
     @Override
     public NOptional<String> getWorkspace() {
-        return NOptional.ofNamed(workspace,"workspace");
+        return NOptional.ofNamed(workspace, "workspace");
     }
 
     /**
@@ -1015,7 +1040,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<String> getDebug() {
-        return NOptional.ofNamed(debug,"debug");
+        return NOptional.ofNamed(debug, "debug");
     }
 
     /**
@@ -1032,7 +1057,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<Boolean> getSystem() {
-        return NOptional.ofNamed(system,"system");
+        return NOptional.ofNamed(system, "system");
     }
 
     /**
@@ -1049,7 +1074,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<Boolean> getGui() {
-        return NOptional.ofNamed(gui,"gui");
+        return NOptional.ofNamed(gui, "gui");
     }
 
     /**
@@ -1066,7 +1091,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<Boolean> getInherited() {
-        return NOptional.ofNamed(inherited,"inherited");
+        return NOptional.ofNamed(inherited, "inherited");
     }
 
     /**
@@ -1083,7 +1108,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<Boolean> getReadOnly() {
-        return NOptional.ofNamed(readOnly,"readOnly");
+        return NOptional.ofNamed(readOnly, "readOnly");
     }
 
     /**
@@ -1100,7 +1125,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<Boolean> getRecover() {
-        return NOptional.ofNamed(recover,"recover");
+        return NOptional.ofNamed(recover, "recover");
     }
 
     /**
@@ -1117,7 +1142,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<Boolean> getReset() {
-        return NOptional.ofNamed(reset,"reset");
+        return NOptional.ofNamed(reset, "reset");
     }
 
     /**
@@ -1135,7 +1160,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<Boolean> getResetHard() {
-        return NOptional.ofNamed(resetHard,"resetHard");
+        return NOptional.ofNamed(resetHard, "resetHard");
     }
 
     @Override
@@ -1147,7 +1172,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<Boolean> getCommandVersion() {
-        return NOptional.ofNamed(commandVersion,"commandVersion");
+        return NOptional.ofNamed(commandVersion, "commandVersion");
     }
 
     @Override
@@ -1158,7 +1183,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<Boolean> getCommandHelp() {
-        return NOptional.ofNamed(commandHelp,"commandHelp");
+        return NOptional.ofNamed(commandHelp, "commandHelp");
     }
 
     @Override
@@ -1169,7 +1194,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<Boolean> getInstallCompanions() {
-        return NOptional.ofNamed(installCompanions,"installCompanions");
+        return NOptional.ofNamed(installCompanions, "installCompanions");
     }
 
     /**
@@ -1186,7 +1211,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<Boolean> getSkipWelcome() {
-        return NOptional.ofNamed(skipWelcome,"skipWelcome");
+        return NOptional.ofNamed(skipWelcome, "skipWelcome");
     }
 
     /**
@@ -1203,7 +1228,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<String> getOutLinePrefix() {
-        return NOptional.ofNamed(outLinePrefix,"outLinePrefix");
+        return NOptional.ofNamed(outLinePrefix, "outLinePrefix");
     }
 
     @Override
@@ -1214,7 +1239,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<String> getErrLinePrefix() {
-        return NOptional.ofNamed(errLinePrefix,"errLinePrefix");
+        return NOptional.ofNamed(errLinePrefix, "errLinePrefix");
     }
 
     @Override
@@ -1225,7 +1250,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<Boolean> getSkipBoot() {
-        return NOptional.ofNamed(skipBoot,"skipBoot");
+        return NOptional.ofNamed(skipBoot, "skipBoot");
     }
 
     /**
@@ -1242,7 +1267,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<Boolean> getTrace() {
-        return NOptional.ofNamed(trace,"trace");
+        return NOptional.ofNamed(trace, "trace");
     }
 
     /**
@@ -1258,7 +1283,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     public NOptional<String> getProgressOptions() {
-        return NOptional.ofNamed(progressOptions,"progressOptions");
+        return NOptional.ofNamed(progressOptions, "progressOptions");
     }
 
     @Override
@@ -1269,7 +1294,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<Boolean> getCached() {
-        return NOptional.ofNamed(cached,"cached");
+        return NOptional.ofNamed(cached, "cached");
     }
 
     @Override
@@ -1280,7 +1305,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<Boolean> getIndexed() {
-        return NOptional.ofNamed(indexed,"indexed");
+        return NOptional.ofNamed(indexed, "indexed");
     }
 
     @Override
@@ -1291,7 +1316,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<Boolean> getTransitive() {
-        return NOptional.ofNamed(transitive,"transitive");
+        return NOptional.ofNamed(transitive, "transitive");
     }
 
     @Override
@@ -1302,7 +1327,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<Boolean> getBot() {
-        return NOptional.ofNamed(bot,"bot");
+        return NOptional.ofNamed(bot, "bot");
     }
 
     @Override
@@ -1313,7 +1338,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<Boolean> getPreviewRepo() {
-        return NOptional.ofNamed(previewRepo,"previewRepo");
+        return NOptional.ofNamed(previewRepo, "previewRepo");
     }
 
     @Override
@@ -1324,7 +1349,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<NFetchStrategy> getFetchStrategy() {
-        return NOptional.ofNamed(fetchStrategy,"fetchStrategy");
+        return NOptional.ofNamed(fetchStrategy, "fetchStrategy");
     }
 
     @Override
@@ -1335,7 +1360,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<InputStream> getStdin() {
-        return NOptional.ofNamed(stdin,"stdin");
+        return NOptional.ofNamed(stdin, "stdin");
     }
 
     @Override
@@ -1346,7 +1371,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<PrintStream> getStdout() {
-        return NOptional.ofNamed(stdout,"stdout");
+        return NOptional.ofNamed(stdout, "stdout");
     }
 
     @Override
@@ -1357,7 +1382,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<PrintStream> getStderr() {
-        return NOptional.ofNamed(stderr,"stderr");
+        return NOptional.ofNamed(stderr, "stderr");
     }
 
     @Override
@@ -1368,7 +1393,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<ExecutorService> getExecutorService() {
-        return NOptional.ofNamed(executorService,"executorService");
+        return NOptional.ofNamed(executorService, "executorService");
     }
 
     @Override
@@ -1379,7 +1404,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<Instant> getExpireTime() {
-        return NOptional.ofNamed(expireTime,"expireTime");
+        return NOptional.ofNamed(expireTime, "expireTime");
     }
 
     @Override
@@ -1390,7 +1415,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<Boolean> getSkipErrors() {
-        return NOptional.ofNamed(skipErrors,"skipErrors");
+        return NOptional.ofNamed(skipErrors, "skipErrors");
     }
 
     @Override
@@ -1401,7 +1426,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<Boolean> getSwitchWorkspace() {
-        return NOptional.ofNamed(switchWorkspace,"switchWorkspace");
+        return NOptional.ofNamed(switchWorkspace, "switchWorkspace");
     }
 
     public NWorkspaceOptionsBuilder setSwitchWorkspace(Boolean switchWorkspace) {
@@ -1411,7 +1436,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<List<NMsg>> getErrors() {
-        return NOptional.ofNamed(errors,"errors");
+        return NOptional.ofNamed(errors, "errors");
     }
 
     @Override
@@ -1422,7 +1447,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<List<String>> getCustomOptions() {
-        return NOptional.ofNamed(customOptions,"customOptions");
+        return NOptional.ofNamed(customOptions, "customOptions");
     }
 
     @Override
@@ -1433,7 +1458,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<String> getLocale() {
-        return NOptional.ofNamed(locale,"locale");
+        return NOptional.ofNamed(locale, "locale");
     }
 
     @Override
@@ -1444,7 +1469,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<String> getTheme() {
-        return NOptional.ofNamed(theme,"theme");
+        return NOptional.ofNamed(theme, "theme");
     }
 
     @Override
@@ -1455,7 +1480,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NWorkspaceOptionsBuilder copyFrom(NWorkspaceOptions other) {
-        if(other==null){
+        if (other == null) {
             return this;
         }
         this.setApiVersion(other.getApiVersion().orNull());
@@ -1541,7 +1566,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NWorkspaceOptionsBuilder copyFrom(NWorkspaceOptionsBuilder other) {
-        if(other==null){
+        if (other == null) {
             return this;
         }
         this.setApiVersion(other.getApiVersion().orNull());
@@ -1629,10 +1654,10 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     public NWorkspaceOptionsBuilder copyFrom(NBootOptionsInfo other) {
-        this.setApiVersion(other.getApiVersion()==null?null:NVersion.get(other.getApiVersion()).orNull());
-        this.setRuntimeId(other.getRuntimeId()==null?null:
-                        other.getRuntimeId().contains("#")?NId.get(other.getRuntimeId()).orNull():
-                NId.getRuntime(other.getRuntimeId()).orNull()
+        this.setApiVersion(other.getApiVersion() == null ? null : NVersion.get(other.getApiVersion()).orNull());
+        this.setRuntimeId(other.getRuntimeId() == null ? null :
+                other.getRuntimeId().contains("#") ? NId.get(other.getRuntimeId()).orNull() :
+                        NId.getRuntime(other.getRuntimeId()).orNull()
         );
         this.setJavaCommand(other.getJavaCommand());
         this.setJavaOptions(other.getJavaOptions());
@@ -1652,8 +1677,8 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         {
             NBootLogConfig c = other.getLogConfig();
             NLogConfig v = null;
-            if(c!=null){
-                v=new NLogConfig();
+            if (c != null) {
+                v = new NLogConfig();
                 v.setLogFileBase(c.getLogFileBase());
                 v.setLogFileLevel(c.getLogFileLevel());
                 v.setLogFileFilter(c.getLogFileFilter());
@@ -1689,9 +1714,9 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         this.setStoreStrategy(NStoreStrategy.parse(other.getStoreStrategy()).orNull());
         {
             Map<NBootHomeLocation, String> c = other.getHomeLocations();
-            Map<NHomeLocation, String> v =null;
-            if(c!=null){
-                v=new HashMap<>();
+            Map<NHomeLocation, String> v = null;
+            if (c != null) {
+                v = new HashMap<>();
                 for (Map.Entry<NBootHomeLocation, String> e : c.entrySet()) {
                     v.put(NHomeLocation.of(
                             NOsFamily.parse(e.getKey().getOsFamily()).get(),
@@ -1703,9 +1728,9 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         }
         {
             Map<String, String> c = other.getStoreLocations();
-            Map<NStoreType, String> v =null;
-            if(c!=null){
-                v=new HashMap<>();
+            Map<NStoreType, String> v = null;
+            if (c != null) {
+                v = new HashMap<>();
                 for (Map.Entry<String, String> e : c.entrySet()) {
                     v.put(NStoreType.parse(e.getKey()).get(), e.getValue());
                 }
@@ -1729,10 +1754,11 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         this.setExcludedExtensions(other.getExcludedExtensions());
 //        this.setExcludedRepositories(other.getExcludedRepositories() == null ? null : Arrays.copyOf(other.getExcludedRepositories(), other.getExcludedRepositories().length));
         this.setRepositories(other.getRepositories());
+        this.setBootRepositories(other.getBootRepositories());
         this.setApplicationArguments(other.getApplicationArguments());
         this.setCustomOptions(other.getCustomOptions());
         this.setExpireTime(other.getExpireTime());
-        this.setErrors(other.getErrors()==null?new ArrayList<>():other.getErrors().stream().map(x->NMsg.ofPlain(x)).collect(Collectors.toList()));
+        this.setErrors(other.getErrors() == null ? new ArrayList<>() : other.getErrors().stream().map(x -> NMsg.ofPlain(x)).collect(Collectors.toList()));
         this.setSkipErrors(other.getSkipErrors());
         this.setSwitchWorkspace(other.getSwitchWorkspace());
         this.setLocale(other.getLocale());
@@ -1752,10 +1778,10 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
-    public NWorkspaceOptionsBuilder copyFrom(NWorkspaceOptions other,NMapStrategy strategy) {
+    public NWorkspaceOptionsBuilder copyFrom(NWorkspaceOptions other, NMapStrategy strategy) {
         if (other != null) {
-            if(strategy==null){
-                strategy=NMapStrategy.ANY;
+            if (strategy == null) {
+                strategy = NMapStrategy.ANY;
             }
             strategy.applyOptional(this::getApiVersion, other::getApiVersion, this::setApiVersion);
             strategy.applyOptional(this::getRuntimeId, other::getRuntimeId, this::setRuntimeId);
@@ -1812,6 +1838,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
             strategy.applyOptional(this::getExecutorService, other::getExecutorService, this::setExecutorService);
             strategy.applyOptional(this::getExcludedExtensions, other::getExcludedExtensions, this::setExcludedExtensions);
             strategy.applyOptional(this::getRepositories, other::getRepositories, this::setRepositories);
+            strategy.applyOptional(this::getBootRepositories, other::getBootRepositories, this::setBootRepositories);
             strategy.applyOptional(this::getApplicationArguments, other::getApplicationArguments, this::setApplicationArguments);
             strategy.applyOptional(this::getCustomOptions, other::getCustomOptions, this::setCustomOptions);
             strategy.applyOptional(this::getExpireTime, other::getExpireTime, this::setExpireTime);
@@ -1846,6 +1873,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         NWorkspaceCmdLineParser.parseNutsArguments(args, this);
         return this;
     }
+
     public NOptional<Boolean> getSharedInstance() {
         return NOptional.ofNamed(sharedInstance, "sharedInstance");
     }
@@ -1939,7 +1967,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<String> getDependencySolver() {
-        return NOptional.ofNamed(dependencySolver,"dependencySolver");
+        return NOptional.ofNamed(dependencySolver, "dependencySolver");
     }
 
     @Override
@@ -1973,7 +2001,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
                 getIsolationLevel().orNull(), getInitLaunchers().orNull(), getInitScripts().orNull(), getInitPlatforms().orNull(),
                 getInitJava().orNull(), getStdin().orNull(), getStdout().orNull(), getStdout().orNull(), getExecutorService().orNull(),
                 getClassLoaderSupplier().orNull(), getApplicationArguments().orNull(), getOutputFormatOptions().orNull(),
-                getCustomOptions().orNull(), getExcludedExtensions().orNull(), getRepositories().orNull(),
+                getCustomOptions().orNull(), getExcludedExtensions().orNull(), getRepositories().orNull(), getBootRepositories().orNull(),
                 getExecutorOptions().orNull(), getErrors().orNull(), getStoreLocations().orNull(), getHomeLocations().orNull(),
                 getDesktopLauncher().orNull(), getMenuLauncher().orNull(), getUserLauncher().orNull()
                 , getPreviewRepo().orNull()
@@ -1998,27 +2026,27 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NOptional<NIsolationLevel> getIsolationLevel() {
-        return NOptional.ofNamed(isolationLevel,"isolationLevel");
+        return NOptional.ofNamed(isolationLevel, "isolationLevel");
     }
 
     @Override
     public NOptional<Boolean> getInitLaunchers() {
-        return NOptional.ofNamed(initLaunchers,"initLaunchers");
+        return NOptional.ofNamed(initLaunchers, "initLaunchers");
     }
 
     @Override
     public NOptional<Boolean> getInitScripts() {
-        return NOptional.ofNamed(initScripts,"initScripts");
+        return NOptional.ofNamed(initScripts, "initScripts");
     }
 
     @Override
     public NOptional<Boolean> getInitPlatforms() {
-        return NOptional.ofNamed(initPlatforms,"initPlatforms");
+        return NOptional.ofNamed(initPlatforms, "initPlatforms");
     }
 
     @Override
     public NOptional<Boolean> getInitJava() {
-        return NOptional.ofNamed(initJava,"initJava");
+        return NOptional.ofNamed(initJava, "initJava");
     }
 
     @Override
@@ -2047,6 +2075,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         setStoreLocations(null);
         setHomeLocations(null);
         setSwitchWorkspace(null);
+        setBootRepositories(null);
         return this;
     }
 

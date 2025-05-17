@@ -55,7 +55,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
             if (cmdLine.isExecMode()) {
                 List<String> all = new ArrayList<>();
                 all.add(NWorkspace.of().getWorkspaceLocation().toPath().get()
-                        .resolve("nuts-workspace.json").toString()
+                        .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME).toString()
                 );
                 for (NStoreType value : NStoreType.values()) {
                     NPath r = NWorkspace.of().getStoreLocation(value);
@@ -122,7 +122,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
 
                             @Override
                             public boolean visitFile(String path, InputStream inputStream) {
-                                if ("/nuts-workspace.json".equals(path)) {
+                                if (("/"+NConstants.Files.WORKSPACE_CONFIG_FILE_NAME).equals(path)) {
                                     NObjectElement e = elem.json()
                                             .parse(inputStream, NObjectElement.class).asObject().get();
                                     nutsWorkspaceConfigRef[0] = e;

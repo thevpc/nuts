@@ -155,17 +155,17 @@ public interface NRepository {
      *
      * @return true if config is enabled and runtime is enabled
      */
-    boolean isAvailable();
+    boolean isAccessible();
 
     /**
      * available if local and the folder exists or remote and could ping the
      * repository
      *
      * @param force when force, check immediate availability and do not rely on
-     * cache
+     *              cache
      * @return true if config is enabled and runtime is enabled
      */
-    boolean isAvailable(boolean force);
+    boolean isAccessible(boolean force);
 
     /**
      * available if local or remote repo exists and could deploy to
@@ -178,7 +178,7 @@ public interface NRepository {
      * available if local or remote repo exists and could deploy to
      *
      * @param force when force, check immediate availability and do not rely on
-     * cache
+     *              cache
      * @return true if config is enabled and runtime is enabled
      */
     boolean isSupportedDeploy(boolean force);
@@ -199,4 +199,8 @@ public interface NRepository {
     NRepository setEnabled(boolean enabled);
 
     boolean isRemote();
+
+    String getBootConnectionString();
+
+    boolean isTemporary();
 }

@@ -48,7 +48,7 @@ public interface NWorkspaceBootConfig {
 
     List<Extension> getExtensions();
 
-    String getBootRepositories();
+    List<String> getBootRepositories();
 
     Map<NStoreType, String> getStoreLocations();
 

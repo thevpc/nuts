@@ -44,11 +44,11 @@ import java.util.function.Supplier;
 public final class NBootOptionsInfo {
 
     private static final long serialVersionUID = 1;
-    /**
-     * bootRepositories list (; separated) where to look for runtime
-     * dependencies special
-     */
-    private String bootRepositories;
+//    /**
+//     * bootRepositories list (; separated) where to look for runtime
+//     * dependencies special
+//     */
+//    private String bootRepositories;
     /**
      * special
      */
@@ -191,6 +191,8 @@ public final class NBootOptionsInfo {
      * option-type : exported (inherited in child workspaces)
      */
     private List<String> repositories;
+
+    private List<String> bootRepositories;
 
     /**
      * option-type : exported (inherited in child workspaces)
@@ -1012,6 +1014,10 @@ public final class NBootOptionsInfo {
         return repositories;
     }
 
+    public List<String> getBootRepositories() {
+        return bootRepositories;
+    }
+
     /**
      * set repositories
      *
@@ -1021,6 +1027,18 @@ public final class NBootOptionsInfo {
 
     public NBootOptionsInfo setRepositories(List<String> repositories) {
         this.repositories = repositories;
+        return this;
+    }
+
+    /**
+     * set initRepositories
+     *
+     * @param bootRepositories new value
+     * @return {@code this} instance
+     */
+
+    public NBootOptionsInfo setBootRepositories(List<String> bootRepositories) {
+        this.bootRepositories = bootRepositories;
         return this;
     }
 
@@ -1543,6 +1561,7 @@ public final class NBootOptionsInfo {
         this.setExcludedExtensions(other.getExcludedExtensions());
 //        this.setExcludedRepositories(other.getExcludedRepositories() == null ? null : Arrays.copyOf(other.getExcludedRepositories(), other.getExcludedRepositories().length));
         this.setRepositories(other.getRepositories());
+        this.setBootRepositories(other.getBootRepositories());
         this.setApplicationArguments(other.getApplicationArguments());
         this.setCustomOptions(other.getCustomOptions());
         this.setExpireTime(other.getExpireTime());
@@ -1562,7 +1581,7 @@ public final class NBootOptionsInfo {
         this.setUserLauncher(other.getUserLauncher());
         this.setSharedInstance(other.getSharedInstance());
         this.setPreviewRepo(other.getPreviewRepo());
-        this.setBootRepositories(other.getBootRepositories());
+//        this.setBootRepositories(other.getBootRepositories());
         this.setRuntimeBootDependencyNode(other.getRuntimeBootDependencyNode());
         this.setExtensionBootDescriptors(other.getExtensionBootDescriptors());
         this.setExtensionBootDependencyNodes(other.getExtensionBootDependencyNodes());
@@ -1744,6 +1763,9 @@ public final class NBootOptionsInfo {
             if (o.getRepositories() != null) {
                 this.setRepositories(o.getRepositories());
             }
+            if (o.getBootRepositories() != null) {
+                this.setBootRepositories(o.getBootRepositories());
+            }
             if (o.getApplicationArguments() != null) {
                 this.setApplicationArguments(o.getApplicationArguments());
             }
@@ -1801,9 +1823,9 @@ public final class NBootOptionsInfo {
             if (o.getSharedInstance() != null) {
                 this.setSharedInstance(o.getSharedInstance());
             }
-            if (o.getBootRepositories() != null) {
-                setBootRepositories(o.getBootRepositories());
-            }
+//            if (o.getBootRepositories() != null) {
+//                setBootRepositories(o.getBootRepositories());
+//            }
             if (o.getRuntimeBootDependencyNode() != null) {
                 setRuntimeBootDependencyNode(o.getRuntimeBootDependencyNode());
             }
@@ -2054,16 +2076,15 @@ public final class NBootOptionsInfo {
 
     /// /////////////////////////////////
 
-    public String getBootRepositories() {
-        return bootRepositories;
-    }
-
-
-    public NBootOptionsInfo setBootRepositories(String bootRepositories) {
-        this.bootRepositories = NBootUtils.trimToNull(bootRepositories);
-        return this;
-    }
-
+//    public String getBootRepositories() {
+//        return bootRepositories;
+//    }
+//
+//
+//    public NBootOptionsInfo setBootRepositories(String bootRepositories) {
+//        this.bootRepositories = NBootUtils.trimToNull(bootRepositories);
+//        return this;
+//    }
     public NBootClassLoaderNode getRuntimeBootDependencyNode() {
         return runtimeBootDependencyNode;
     }

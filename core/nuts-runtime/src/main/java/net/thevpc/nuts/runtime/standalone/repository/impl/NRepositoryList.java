@@ -41,9 +41,9 @@ public class NRepositoryList extends NCachedRepository {
     }
 
     @Override
-    protected boolean isAvailableImpl() {
+    protected boolean isAccessibleImpl() {
         for (NRepository repoItem : repoItems) {
-            if (repoItem.isAvailable()) {
+            if (repoItem.isAccessible()) {
                 return true;
             }
         }

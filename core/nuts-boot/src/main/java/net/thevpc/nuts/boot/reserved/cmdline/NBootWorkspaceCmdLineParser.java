@@ -882,6 +882,28 @@ public final class NBootWorkspaceCmdLineParser {
                         }
                     }
 
+                    case "--boot-repository":
+                    case "--boot-repositories":
+                    case "--boot-repo":
+                    case "--boot-repos":
+                    {
+                        a = cmdLine.nextEntry();
+                        String v = a.getStringValue();
+                        if (active) {
+                            if (options != null) {
+                                List<String> old = options.getBootRepositories();
+                                if (old == null) {
+                                    old = new ArrayList<>();
+                                }
+                                old.add(v);
+                                options.setBootRepositories(old);
+                            }
+                            return (Collections.singletonList(a));
+                        } else {
+                            return (Collections.singletonList(a));
+                        }
+                    }
+
                     case "--output-format-option":
                     case "-T": {
                         if (active) {

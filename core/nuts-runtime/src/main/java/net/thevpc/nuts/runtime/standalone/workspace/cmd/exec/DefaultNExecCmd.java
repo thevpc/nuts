@@ -729,7 +729,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                 .map(NDefinition::getId).findFirst().orElse(null);
         if (ff == null) {
             if (!forceInstalled) {
-                if (ignoreIfUserCommand && isUserCommand(nid.toString())) {
+                if (ignoreIfUserCommand && NWorkspace.of().findSysCommand(nid.toString()).isPresent()) {
                     return null;
                 }
                 //now search online
@@ -773,45 +773,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     }
 
     public boolean isUserCommand(String s) {
-        char pathSeparatorChar = File.pathSeparatorChar;
-        switch (NWorkspace.of().getOsFamily()) {
-            case WINDOWS: {
-                List<String> paths = NStringUtils.split(NWorkspace.of().getSysEnv("PATH").orNull(), "" + pathSeparatorChar, true, true);
-                List<String> execExtensions = NStringUtils.split(NWorkspace.of().getSysEnv("PATHEXT").orNull(), "" + pathSeparatorChar, true, true);
-                if (paths.isEmpty()) {
-                    paths.addAll(Arrays.asList("C:\\Windows\\system32", "C:\\Windows"));
-                }
-                if (execExtensions.isEmpty()) {
-                    execExtensions.addAll(Arrays.asList(".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC"));
-                }
-                for (String z : paths) {
-                    NPath t = NPath.of(z);
-                    if (t.resolve(s).isRegularFile()) {
-                        return true;
-                    }
-                    for (String ext : execExtensions) {
-                        ext = ext.toLowerCase();
-                        if (!(s.toLowerCase().endsWith(ext)) && t.resolve(s + ext).isRegularFile()) {
-                            return true;
-                        }
-                    }
-                }
-                break;
-            }
-            default: {
-                List<String> paths = NStringUtils.split(NWorkspace.of().getSysEnv("PATH").orNull(), "" + pathSeparatorChar, true, true);
-                for (String z : paths) {
-                    NPath t = NPath.of(z);
-                    NPath fp = t.resolve(s);
-                    if (fp.isRegularFile()) {
-                        //if(Files.isExecutable(fp)) {
-                        return true;
-                        //}
-                    }
-                }
-            }
-        }
-        return false;
+        return NWorkspace.of().findSysCommand(s).isPresent();
     }
 
     protected NExecutableInformationExt ws_execId(NId goodId, String commandName, String[] appArgs, List<String> executorOptions,

@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config.compat.v506;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigBoot;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
 
@@ -331,7 +332,7 @@ public final class NWorkspaceConfigBoot506 extends NConfigItem {
         c.setName(this.getName());
         c.setWorkspace(this.getWorkspace());
         c.setConfigVersion(this.getConfigVersion());
-        c.setBootRepositories(this.getBootRepositories());
+        c.setBootRepositories(NStringUtils.split(getBootRepositories(),";,\n"));
         c.setStoreLocations(this.getStoreLocations() == null ? null : new LinkedHashMap<>(this.getStoreLocations()));
         c.setHomeLocations(this.getHomeLocations() == null ? null : new LinkedHashMap<>(this.getHomeLocations()));
         c.setRepositoryStoreStrategy(this.getRepositoryStoreLocationStrategy());

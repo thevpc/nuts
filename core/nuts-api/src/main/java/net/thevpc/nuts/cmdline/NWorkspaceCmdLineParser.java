@@ -25,7 +25,6 @@
 package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NStringElement;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NTerminalMode;
@@ -648,6 +647,28 @@ public final class NWorkspaceCmdLineParser {
                                 }
                                 old.add(v);
                                 options.setRepositories(old);
+                            }
+                            return NOptional.of(Collections.singletonList(a));
+                        } else {
+                            return NOptional.of(Collections.singletonList(a));
+                        }
+                    }
+
+                    case "--boot-repository":
+                    case "--boot-repositories":
+                    case "--boot-repo":
+                    case "--boot-repos":
+                    {
+                        a = cmdLine.nextEntry().get();
+                        String v = a.getStringValue().get();
+                        if (active) {
+                            if (options != null) {
+                                List<String> old = options.getBootRepositories().orNull();
+                                if (old == null) {
+                                    old = new ArrayList<>();
+                                }
+                                old.add(v);
+                                options.setBootRepositories(old);
                             }
                             return NOptional.of(Collections.singletonList(a));
                         } else {

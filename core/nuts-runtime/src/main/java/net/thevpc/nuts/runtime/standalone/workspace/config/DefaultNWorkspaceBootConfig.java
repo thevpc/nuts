@@ -20,7 +20,7 @@ public class DefaultNWorkspaceBootConfig implements NWorkspaceBootConfig {
     private boolean system;
     private String name = null;
     private String workspace = null;
-    private String bootRepositories = null;
+    private List<String> bootRepositories = null;
 
     private Map<NStoreType, String> storeLocations = null;
     private Map<NHomeLocation, String> homeLocations = null;
@@ -96,7 +96,7 @@ public class DefaultNWorkspaceBootConfig implements NWorkspaceBootConfig {
     }
 
     @Override
-    public String getBootRepositories() {
+    public List<String> getBootRepositories() {
         return bootRepositories;
     }
 

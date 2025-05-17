@@ -28,7 +28,7 @@ public final class DefaultNWorkspaceCurrentConfig {
     private NId bootRuntime;
     private NDescriptor runtimeBootDescriptor;
     private List<NDescriptor> extensionBootDescriptors;
-    private String bootRepositories;
+    private List<String> bootRepositories;
     private String bootJavaCommand;
     private String bootJavaOptions;
     private NStoreStrategy storeStrategy;
@@ -307,11 +307,11 @@ public final class DefaultNWorkspaceCurrentConfig {
         return this;
     }
 
-    public String getBootRepositories() {
+    public List<String> getBootRepositories() {
         return bootRepositories;
     }
 
-    public DefaultNWorkspaceCurrentConfig setBootRepositories(String bootRepositories) {
+    public DefaultNWorkspaceCurrentConfig setBootRepositories(List<String> bootRepositories) {
         this.bootRepositories = bootRepositories;
         return this;
     }

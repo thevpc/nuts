@@ -465,7 +465,7 @@ public class DefaultNWorkspaceConfigModel {
         return indexStoreClientFactory;
     }
 
-    public String getBootRepositories() {
+    public List<String> getBootRepositories() {
         return current().getBootRepositories();
     }
 
@@ -851,7 +851,7 @@ public class DefaultNWorkspaceConfigModel {
         }
     }
 
-    public void setBootRepositories(String value) {
+    public void setBootRepositories(List<String> value) {
         if (!Objects.equals(value, storeModelBoot.getBootRepositories())) {
 //            options = CoreNutsUtils.validate(options, ws);
             storeModelBoot.setBootRepositories(value);
@@ -1702,7 +1702,7 @@ public class DefaultNWorkspaceConfigModel {
         }
 
         @Override
-        public String getBootRepositories() {
+        public List<String> getBootRepositories() {
             return getStoredConfigBoot().getBootRepositories();
         }
 

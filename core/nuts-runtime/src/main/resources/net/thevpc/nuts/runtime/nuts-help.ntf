@@ -529,6 +529,14 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
                                             Remember that boot time repos are only used for installing ```sh nuts``` itself (and its
                                             dependencies).
 
+ ```sh --boot-repository   <repository-path>```
+ ```sh --boot-repositories <repository-path>```
+ ```sh --boot-repos        <repository-path>```
+      register one or multiple (comma ',' separated) repositories at initialization time.
+      It works just like ```sh --repos``` but this is only relevant when the workspace is created.
+      It is discarded otherwise. When no  ```sh --boot-repos```, the workspace will be created using ```sh --repos``` configuration.
+
+
  ```sh --yes | -y | --force```
       disables interactive mode and assumes ```kw yes``` for all questions
 

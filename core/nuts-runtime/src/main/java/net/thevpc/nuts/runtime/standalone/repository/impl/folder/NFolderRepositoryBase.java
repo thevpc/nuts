@@ -45,7 +45,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
     }
 
     @Override
-    protected boolean isAvailableImpl() {
+    protected boolean isAccessibleImpl() {
         long now = System.currentTimeMillis();
         try {
             NPath loc = config().getLocationPath();

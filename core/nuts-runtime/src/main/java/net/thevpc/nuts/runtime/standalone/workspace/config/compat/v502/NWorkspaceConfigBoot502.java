@@ -34,6 +34,7 @@ import net.thevpc.nuts.NStoreStrategy;
 import net.thevpc.nuts.NUserConfig;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigBoot;
 import net.thevpc.nuts.NOsFamily;
+import net.thevpc.nuts.util.NStringUtils;
 
 /**
  *
@@ -647,7 +648,7 @@ public final class NWorkspaceConfigBoot502 implements Serializable {
     public NWorkspaceConfigBoot toWorkspaceConfig() {
         NWorkspaceConfigBoot c = new NWorkspaceConfigBoot();
         c.setConfigVersion(createApiVersion);
-        c.setBootRepositories(bootRepositories);
+        c.setBootRepositories(NStringUtils.split(bootRepositories,";,\n"));
 //         c.setConfigVersion(createApiVersion);
         Map<String, String> storeLocations = new LinkedHashMap<>();
         storeLocations.put("apps", programsStoreLocation);

@@ -10,19 +10,19 @@
  * other 'things' . It's based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.*;
@@ -81,7 +81,7 @@ public final class NBootConfig implements Cloneable, Serializable {
     /**
      * bootRepositories list (; separated) where to look for runtime dependencies
      */
-    private String bootRepositories;
+    private List<String> bootRepositories;
 
     /**
      * java executable command to run nuts binaries
@@ -137,8 +137,6 @@ public final class NBootConfig implements Cloneable, Serializable {
             this.storeLocations = NCoreCollectionUtils.nonNullMap(options.getStoreLocations().orNull());
             this.homeLocations = NCoreCollectionUtils.nonNullMap(options.getHomeLocations().orNull());
             this.setRuntimeId(options.getRuntimeId().orNull());
-//            this.setRuntimeDependencies(options.getBootRuntimeDependencies());
-//            this.setRepositories(options.getBootRepositories());
             this.system = options.getSystem().orElse(false);
             this.runtimeId = options.getRuntimeId().orNull();
         }
@@ -247,11 +245,11 @@ public final class NBootConfig implements Cloneable, Serializable {
         return this;
     }
 
-    public String getBootRepositories() {
+    public List<String> getBootRepositories() {
         return bootRepositories;
     }
 
-    public NBootConfig setRepositories(String repositories) {
+    public NBootConfig setBootRepositories(List<String> repositories) {
         this.bootRepositories = repositories;
         return this;
     }
@@ -290,7 +288,7 @@ public final class NBootConfig implements Cloneable, Serializable {
         return storeLayout;
     }
 
-//    public NutsBootConfig setStoreLocation(NutsStoreLocation folder, String value) {
+    //    public NutsBootConfig setStoreLocation(NutsStoreLocation folder, String value) {
 //        this.storeLocations[folder.ordinal()] = value;
 //        return this;
 //    }
@@ -347,7 +345,7 @@ public final class NBootConfig implements Cloneable, Serializable {
             }
             sb.append("runtimeId='").append(runtimeId).append('\'');
         }
-        if (runtimeBootDescriptor !=null) {
+        if (runtimeBootDescriptor != null) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
@@ -357,7 +355,7 @@ public final class NBootConfig implements Cloneable, Serializable {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
-            sb.append("repositories='").append(bootRepositories).append('\'');
+            sb.append("bootRepositories='").append(bootRepositories).append('\'');
         }
         if (!NBlankable.isBlank(javaCommand)) {
             if (sb.length() > 0) {

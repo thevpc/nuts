@@ -1051,8 +1051,14 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
             displayDryQueryPlan(it);
         } else {
             it = NWorkspaceUtils.of().decoratePrint(it, getDisplayOptions());
+            long count=0;
             while (it.hasNext()) {
                 it.next();
+                count++;
+            }
+            NErr.resetLine();
+            if(count==0){
+                throw new NExecutionException(NMsg.ofC("No results found."),1 );
             }
         }
         return this;
@@ -1075,7 +1081,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
             f = NContentType.TREE;
         }
         NSession session2 = session.copy().setOutputFormat(f);
-        session2.out().println(n);
+        session2.out().resetLine().println(n);
     }
 
     private NDefinition loadedIdToDefinition(NId next) {

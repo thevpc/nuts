@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.logging.Level;
 
 public class NReservedBootConfigLoaderOld {
+
     /**
      * best effort to load config object from jsonObject saved with nuts version
      * "0.5.6" and later.
@@ -34,7 +35,13 @@ public class NReservedBootConfigLoaderOld {
         config.setStoreStrategy(((String) jsonObject.get("storeLocationStrategy")));
         config.setStoreLayout(((String) jsonObject.get("storeLocationLayout")));
         config.setRepositoryStoreStrategy(((String) jsonObject.get("repositoryStoreLocationStrategy")));
-        config.setBootRepositories((String) jsonObject.get("bootRepositories"));
+        if(jsonObject.get("bootRepositories") ==null) {
+            config.setBootRepositories(null);
+        }else if(jsonObject.get("bootRepositories") instanceof List) {
+            config.setBootRepositories((List<String>) jsonObject.get("bootRepositories"));
+        }else if(jsonObject.get("bootRepositories") instanceof String){
+            config.setBootRepositories(new ArrayList<>(Arrays.asList((String)jsonObject.get("bootRepositories"))));
+        }
 
         List<Map<String, Object>> extensions = (List<Map<String, Object>>) jsonObject.get("extensions");
         if (extensions != null) {

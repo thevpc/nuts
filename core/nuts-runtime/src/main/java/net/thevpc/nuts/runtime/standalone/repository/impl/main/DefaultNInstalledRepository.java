@@ -117,6 +117,16 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     @Override
+    public String getBootConnectionString() {
+        return null;
+    }
+
+    @Override
+    public boolean isTemporary() {
+        return false;
+    }
+
+    @Override
     public NIterator<NInstallInformation> searchInstallInformation() {
         return NStream.ofIterator(_wstore().searchInstalledVersions())
                 .map(x -> {

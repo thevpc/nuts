@@ -24,7 +24,9 @@ import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class DefaultNRepositoryModel {
 
@@ -143,6 +145,7 @@ public class DefaultNRepositoryModel {
             NWorkspace.of().saveConfig();
             NWorkspaceExt.of(workspace).getConfigModel().fireConfigurationChanged("config-main", ConfigEventType.MAIN);
             NWorkspaceUtils.of(workspace).events().fireOnRemoveRepository(new DefaultNWorkspaceEvent(session, repository, "repository", repository, null));
+            updateBootRepositories();
         }
     }
 
@@ -152,6 +155,16 @@ public class DefaultNRepositoryModel {
         }
     }
 
+    private void updateBootRepositories() {
+        NWorkspaceExt.of().getConfigModel().setBootRepositories(
+                Arrays.stream(getRepositories())
+                        .filter(x -> x.isEnabled() && ! x.isTemporary())
+                        .map(x -> x.getBootConnectionString())
+                        .filter(x -> NBlankable.isNonBlank(x))
+                        .collect(Collectors.toList())
+        );
+    }
+
     protected void addRepository(NRepository repo, boolean temp, boolean enabled) {
         repositoryRegistryHelper.addRepository(repo);
         repo.config().setEnabled(enabled);
@@ -159,13 +172,12 @@ public class DefaultNRepositoryModel {
         if (!temp) {
             NSession session = workspace.currentSession();
             NWorkspaceExt.of(workspace).getConfigModel().fireConfigurationChanged("config-main", ConfigEventType.MAIN);
-            if (repo != null) {
-                // repo would be null if the repo is not accessible
-                // like for system repo, if not already created
-                NWorkspaceUtils.of(workspace).events().fireOnAddRepository(
-                        new DefaultNWorkspaceEvent(session, repo, "repository", null, repo)
-                );
-            }
+            // repo would be null if the repo is not accessible
+            // like for system repo, if not already created
+            NWorkspaceUtils.of(workspace).events().fireOnAddRepository(
+                    new DefaultNWorkspaceEvent(session, repo, "repository", null, repo)
+            );
+            updateBootRepositories();
         }
     }
 
@@ -314,13 +326,12 @@ public class DefaultNRepositoryModel {
     }
 
     public NRepositoryConfig loadRepository(NAddRepositoryOptions options) {
-        return ((NWorkspaceExt)workspace).store().loadRepoConfig(options.getLocation(),options.getName());
+        return ((NWorkspaceExt) workspace).store().loadRepoConfig(options.getLocation(), options.getName());
     }
 
     public NRepositorySPI toRepositorySPI(NRepository repo) {
         return (NRepositorySPI) repo;
     }
-
 
 
 }

@@ -61,7 +61,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
             null, null,
             null,
             null, null, null,
-            null, null, null, null, null);
+            null, null, null, null, null,null);
 
     private static final long serialVersionUID = 1;
     /**
@@ -160,6 +160,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
      * option-type : exported (inherited in child workspaces)
      */
     private final List<String> repositories;
+    private final List<String> bootRepositories;
 
     /**
      * option-type : exported (inherited in child workspaces)
@@ -397,7 +398,6 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
-//    private String bootRepositories = null;
     private final Instant expireTime;
     private final List<NMsg> errors;
     private final Boolean skipErrors;
@@ -437,7 +437,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
                                     NIsolationLevel isolationLevel, Boolean initLaunchers, Boolean initScripts, Boolean initPlatforms, Boolean initJava, InputStream stdin, PrintStream stdout, PrintStream stderr,
                                     ExecutorService executorService, Supplier<ClassLoader> classLoaderSupplier,
                                     List<String> applicationArguments, List<String> outputFormatOptions,
-                                    List<String> customOptions, List<String> excludedExtensions, List<String> repositories,
+                                    List<String> customOptions, List<String> excludedExtensions, List<String> repositories, List<String> bootRepositories,
                                     List<String> executorOptions, List<NMsg> errors, Map<NStoreType, String> storeLocations,
                                     Map<NHomeLocation, String> homeLocations, NSupportMode desktopLauncher, NSupportMode menuLauncher,
                                     NSupportMode userLauncher,
@@ -448,6 +448,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
         this.customOptions = NReservedLangUtils.unmodifiableOrNullList(customOptions);
         this.excludedExtensions = NReservedLangUtils.unmodifiableOrNullList(excludedExtensions);
         this.repositories = NReservedLangUtils.unmodifiableOrNullList(repositories);
+        this.bootRepositories = NReservedLangUtils.unmodifiableOrNullList(bootRepositories);
         this.applicationArguments = NReservedLangUtils.unmodifiableOrNullList(applicationArguments);
         this.errors = NReservedLangUtils.unmodifiableOrNullList(errors);
         this.executorOptions = NReservedLangUtils.unmodifiableOrNullList(executorOptions);
@@ -616,11 +617,10 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
         r.setStdout(this.getStdout().orNull());
         r.setStderr(this.getStderr().orNull());
         r.setExecutorService(this.getExecutorService().orNull());
-//        r.setBootRepositories(this.getBootRepositories());
 
         r.setExcludedExtensions(this.getExcludedExtensions().orNull());
-//        r.setExcludedRepositories(this.getExcludedRepositories() == null ? null : Arrays.copyOf(this.getExcludedRepositories(), this.getExcludedRepositories().length));
         r.setRepositories(this.getRepositories().orNull());
+        r.setBootRepositories(this.getBootRepositories().orNull());
         r.setApplicationArguments(this.getApplicationArguments().orNull());
         r.setCustomOptions(this.getCustomOptions().orNull());
         r.setExpireTime(this.getExpireTime().orNull());
@@ -840,6 +840,11 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
     @Override
     public NOptional<List<String>> getRepositories() {
         return NOptional.ofNamed(repositories, "repositories");
+    }
+
+    @Override
+    public NOptional<List<String>> getBootRepositories() {
+        return NOptional.ofNamed(bootRepositories, "initRepositories");
     }
 
     @Override

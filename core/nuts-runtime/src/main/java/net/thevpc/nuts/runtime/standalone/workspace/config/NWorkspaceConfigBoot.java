@@ -45,7 +45,7 @@ public final class NWorkspaceConfigBoot extends NConfigItem implements Cloneable
     private boolean system;
     private String name = null;
     private String workspace = null;
-    private String bootRepositories = null;
+    private List<String> bootRepositories = null;
 
     // folder types and layout types are exploded so that It's easier
     // to extract from json file even though no json library is available
@@ -91,11 +91,11 @@ public final class NWorkspaceConfigBoot extends NConfigItem implements Cloneable
     }
 
 
-    public String getBootRepositories() {
+    public List<String> getBootRepositories() {
         return bootRepositories;
     }
 
-    public NWorkspaceConfigBoot setBootRepositories(String bootRepositories) {
+    public NWorkspaceConfigBoot setBootRepositories(List<String> bootRepositories) {
         this.bootRepositories = bootRepositories;
         return this;
     }

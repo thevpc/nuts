@@ -390,10 +390,9 @@ public class NBootWorkspaceCmdLineFormatter {
         }
         fillOption("--exclude-extension", "-X", options.getExcludedExtensions(), ";", arguments, false);
 
-        if (isApiVersionOrAfter(V081)) {
-            fillOption("--repositories", "-r", options.getRepositories(), ";", arguments, false);
-        } else {
-            fillOption("--repository", "-r", options.getRepositories(), ";", arguments, false);
+        fillOption("--repositories", "-r", options.getRepositories(), ";", arguments, false);
+        if (isApiVersionOrAfter(V085)) {
+            fillOption("--boot-repositories", null, options.getBootRepositories(), ";", arguments, false);
         }
 
         fillOption("--global", "-g", options.getSystem(), false, arguments, false);

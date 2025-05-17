@@ -32,7 +32,7 @@ public interface NBootOptionsBuilder extends NComponent {
 
     NBootOptions build();
 
-    NBootOptionsBuilder setBootRepositories(String bootRepositories);
+//    NBootOptionsBuilder setBootRepositories(String bootRepositories);
 
     NBootOptionsBuilder setRuntimeBootDependencyNode(NClassLoaderNode runtimeBootDependencyNode);
 
@@ -163,6 +163,7 @@ public interface NBootOptionsBuilder extends NComponent {
     NBootOptionsBuilder setTerminalMode(NTerminalMode terminalMode);
 
     NBootOptionsBuilder setRepositories(List<String> transientRepositories);
+    NBootOptionsBuilder setBootRepositories(List<String> transientRepositories);
 
     NBootOptionsBuilder setWorkspace(String workspace);
 
@@ -366,7 +367,7 @@ public interface NBootOptionsBuilder extends NComponent {
     NBootOptionsBuilder setPreviewRepo(Boolean bot);
 
 
-    NOptional<String> getBootRepositories();
+//    NOptional<String> getBootRepositories();
 
     NOptional<NClassLoaderNode> getRuntimeBootDependencyNode();
 
@@ -708,6 +709,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return repositories to register temporarily when running the workspace.
      */
     NOptional<List<String>> getRepositories();
+    NOptional<List<String>> getBootRepositories();
 
     /**
      * username to log into when running workspace.

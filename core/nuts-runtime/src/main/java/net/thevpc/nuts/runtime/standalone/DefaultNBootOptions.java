@@ -55,11 +55,8 @@ import java.util.stream.Collectors;
 public class DefaultNBootOptions implements NBootOptions {
 
     private static final long serialVersionUID = 1;
-    /**
-     * bootRepositories list (; separated) where to look for runtime
-     * dependencies special
-     */
-    private final String bootRepositories;
+
+    private final List<String> bootRepositories;
     /**
      * special
      */
@@ -436,7 +433,6 @@ public class DefaultNBootOptions implements NBootOptions {
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
-//    private String bootRepositories = null;
     private final Instant expireTime;
     private final List<NMsg> errors;
     private final Boolean skipErrors;
@@ -478,7 +474,7 @@ public class DefaultNBootOptions implements NBootOptions {
                                InputStream stdin,
                                PrintStream stdout, PrintStream stderr, ExecutorService executorService,
                                Instant expireTime, List<NMsg> errors, Boolean skipErrors, String locale,
-                               String theme, String uuid, String bootRepositories, NClassLoaderNode runtimeBootDependencyNode,
+                               String theme, String uuid, List<String> bootRepositories, NClassLoaderNode runtimeBootDependencyNode,
                                List<NBootDescriptor> extensionBootDescriptors, List<NClassLoaderNode> extensionBootDependencyNodes,
                                List<URL> classWorldURLs, Set<String> extensionsSet, NBootWorkspaceFactory bootWorkspaceFactory, NBootDescriptor runtimeBootDescriptor, ClassLoader classWorldLoader,
                                NSupportMode desktopLauncher, NSupportMode menuLauncher, NSupportMode userLauncher, Boolean previewRepo, Boolean sharedInstance) {
@@ -995,7 +991,7 @@ public class DefaultNBootOptions implements NBootOptions {
     }
 
     @Override
-    public NOptional<String> getBootRepositories() {
+    public NOptional<List<String>> getBootRepositories() {
         return NOptional.ofNamed(bootRepositories, "bootRepositories");
     }
 

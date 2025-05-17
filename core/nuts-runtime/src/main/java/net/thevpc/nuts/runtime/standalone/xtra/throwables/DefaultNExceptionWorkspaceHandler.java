@@ -66,9 +66,9 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
         if (fout != null) {
             if (session.getOutputFormat().orDefault() == NContentType.PLAIN) {
                 if (fm != null) {
-                    fout.println(fm);
+                    fout.resetLine().println(fm);
                 } else {
-                    fout.println(m);
+                    fout.resetLine().println(m);
                 }
                 if (showTrace) {
                     throwable.printStackTrace(fout.asPrintStream());
@@ -76,6 +76,7 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
                 fout.flush();
             } else {
                 if (fm != null) {
+                    session.out().resetLine();
                     session.eout().add(NElements.of().ofObjectBuilder()
                             .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().orNull()))
                             .set("error", NText.of(fm).filteredText())
@@ -93,6 +94,7 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
                     }
                     fout.flush();
                 } else {
+                    session.out().resetLine();
                     session.eout().add(NElements.of().ofObjectBuilder()
                             .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().orNull()))
                             .set("error", m)

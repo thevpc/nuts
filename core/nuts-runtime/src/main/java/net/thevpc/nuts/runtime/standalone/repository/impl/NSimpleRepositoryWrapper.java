@@ -22,7 +22,12 @@ public class NSimpleRepositoryWrapper extends NCachedRepository {
         cache.setWriteEnabled((this.mode & NRepositoryModel.CACHE_WRITE) != 0);
         this.base = base;
     }
-    
+
+    @Override
+    public String getBootConnectionString() {
+        return null;
+    }
+
     public NIterator<NId> searchVersionsCore(NId id, NDefinitionFilter idFilter, NFetchMode fetchMode) {
         return base.searchVersions(id, idFilter, fetchMode, this);
     }

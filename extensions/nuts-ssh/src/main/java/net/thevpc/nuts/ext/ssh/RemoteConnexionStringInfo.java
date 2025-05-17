@@ -242,7 +242,7 @@ public class RemoteConnexionStringInfo {
             try {
                 workspaceJson = null;
                 NPath rpath = NPath.of(targetConnexion.copy()
-                        .setPath(pHome.getHome() + "/ws/" + workspaceName + "/nuts-workspace.json")
+                        .setPath(pHome.getHome() + "/ws/" + workspaceName + "/"+NConstants.Files.WORKSPACE_CONFIG_FILE_NAME)
                         .toString());
                 if (rpath.isRegularFile()) {
                     workspaceJson = NElements.of()

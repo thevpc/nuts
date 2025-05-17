@@ -239,6 +239,12 @@ public class AnsiTermPane extends JTextPane {
     }
 
     public void applyANSIColor(String ANSIColor) {
+        switch (ANSIColor) {
+            case "[2K":{
+                clearLastLine();
+                return;
+            }
+        }
         currentStyle = ansiColors.applyANSIColor(ANSIColor, currentStyle);
     }
 

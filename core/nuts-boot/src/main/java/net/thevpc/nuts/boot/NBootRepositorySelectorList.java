@@ -61,10 +61,9 @@ public class NBootRepositorySelectorList {
                 t = t.trim();
                 if (!t.isEmpty()) {
                     NBootRepositorySelectorList r = of(t, db);
-                    if (r == null) {
-                        return null;
+                    if (r != null) {
+                        result = result.merge(r);
                     }
-                    result = result.merge(r);
                 }
             }
         }

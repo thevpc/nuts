@@ -61,12 +61,19 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     protected NCachedSupplier<Boolean> available;
     protected boolean supportsDeploy;
     protected boolean enabled = true;
+    protected NAddRepositoryOptions options;
 
     public AbstractNRepository() {
-        this.workspace=NWorkspace.of();
+        this.workspace = NWorkspace.of();
         this.userProperties = new NDefaultObservableMap<>();
         this.securityModel = new DefaultNRepositorySecurityModel(this);
-        this.available = new NCachedSupplier<>(() -> isAvailableImpl(), 0);;
+        this.available = new NCachedSupplier<>(() -> isAccessibleImpl(), 0);
+        ;
+    }
+
+    @Override
+    public boolean isTemporary() {
+        return options != null && options.isTemporary();
     }
 
     public boolean isPreview() {
@@ -96,12 +103,12 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     }
 
     @Override
-    public boolean isAvailable() {
-        return isAvailable(false);
+    public boolean isAccessible() {
+        return isAccessible(false);
     }
 
     @Override
-    public boolean isAvailable(boolean force) {
+    public boolean isAccessible(boolean force) {
         if (force) {
             return available.update();
         }
@@ -118,7 +125,7 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
         return supportsDeploy;
     }
 
-    protected boolean isAvailableImpl() {
+    protected boolean isAccessibleImpl() {
         return true;
     }
 

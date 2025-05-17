@@ -412,6 +412,14 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         return null;
     }
 
+    @Override
+    public String getBootConnectionString() {
+        if(options.getConfig()!=null && options.getConfig().getLocation()!=null){
+            return getName()+"="+options.getConfig().getLocation().toString();
+        }
+        return null;
+    }
+
     public void updateStatisticsImpl() {
 
     }

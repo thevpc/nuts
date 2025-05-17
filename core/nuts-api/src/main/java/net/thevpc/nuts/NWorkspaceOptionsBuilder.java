@@ -183,6 +183,8 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
 
     NWorkspaceOptionsBuilder setTerminalMode(NTerminalMode terminalMode);
 
+    NWorkspaceOptionsBuilder setBootRepositories(List<String> repositories);
+
     NWorkspaceOptionsBuilder setRepositories(List<String> transientRepositories);
 
     NWorkspaceOptionsBuilder setWorkspace(String workspace);
@@ -374,8 +376,8 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
 
 
     /**
-     * @since 0.8.5
      * @return this
+     * @since 0.8.5
      */
     NWorkspaceOptionsBuilder setPreviewRepo(Boolean bot);
 
@@ -703,6 +705,12 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
     NOptional<List<String>> getRepositories();
 
     /**
+     * @return
+     * @since 0.8.5
+     */
+    NOptional<List<String>> getBootRepositories();
+
+    /**
      * username to log into when running workspace.
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
@@ -923,14 +931,14 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
     NOptional<Boolean> getBot();
 
     /**
-     * @since 0.8.5
      * @return application is running in preview mode (using preview repositories)
+     * @since 0.8.5
      */
     NOptional<Boolean> getPreviewRepo();
 
     /**
-     * @since 0.8.5
      * @return workspace is running as shared Workspace instance (Singleton)
+     * @since 0.8.5
      */
     NOptional<Boolean> getSharedInstance();
 

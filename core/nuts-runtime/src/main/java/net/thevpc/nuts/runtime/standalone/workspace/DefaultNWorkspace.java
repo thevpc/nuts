@@ -206,7 +206,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     private static class InitWorkspaceData {
         NBootOptions initialBootOptions;
         NBootOptions effectiveBootOptions;
-        String repositories;
+        List<String> bootRepositories;
         NTexts text;
         NElements elems;
         boolean justInstalled;
@@ -258,7 +258,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         data.effectiveBootOptions = this.wsModel.bootModel.getBootEffectiveOptions();
         this.wsModel.configModel = new DefaultNWorkspaceConfigModel(this);
         String workspaceLocation = data.effectiveBootOptions.getWorkspace().orNull();
-        data.repositories = data.effectiveBootOptions.getBootRepositories().orNull();
+        data.bootRepositories = data.effectiveBootOptions.getBootRepositories().orNull();
         NBootWorkspaceFactory bootFactory = data.effectiveBootOptions.getBootWorkspaceFactory().orNull();
         ClassLoader bootClassLoader = data.effectiveBootOptions.getClassWorldLoader().orNull();
         this.wsModel.extensionModel = new DefaultNWorkspaceExtensionModel(this, bootFactory,
@@ -507,7 +507,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         );
         rconfig.setId(this.wsModel.askedRuntimeId);
 
-        bconfig.setBootRepositories(data.repositories);
+        bconfig.setBootRepositories(data.bootRepositories);
         bconfig.setStoreStrategy(effectiveBootOptions.getStoreStrategy().orNull());
         bconfig.setRepositoryStoreStrategy(effectiveBootOptions.getRepositoryStoreStrategy().orNull());
         bconfig.setStoreLayout(effectiveBootOptions.getStoreLayout().orNull());
@@ -585,7 +585,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 );
             }
             NIsolationLevel il = wsModel.bootModel.getBootUserOptions().getIsolationLevel().orElse(NIsolationLevel.USER);
-            switch (il){
+            switch (il) {
                 case USER: {
                     NTableFormat.of()
                             .setValue(
@@ -649,7 +649,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             out.println();
         }
         if (wsModel.bootModel.getBootUserOptions().getIsolationLevel().orNull() != NIsolationLevel.MEMORY) {
-            wsModel.configModel.installBootIds();
+            //wsModel.configModel.installBootIds();
         }
     }
 
@@ -976,16 +976,16 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         if (NBlankable.isBlank(archetype)) {
             archetype = "default";
         }
-        NWorkspaceArchetypeComponent instance = null;
+        NWorkspaceArchetypeComponent archetypeInstance = null;
         TreeSet<String> validValues = new TreeSet<>();
         for (NWorkspaceArchetypeComponent ac : wsModel.extensions.createComponents(NWorkspaceArchetypeComponent.class, archetype)) {
             if (archetype.equals(ac.getName())) {
-                instance = ac;
+                archetypeInstance = ac;
                 break;
             }
             validValues.add(ac.getName());
         }
-        if (instance == null) {
+        if (archetypeInstance == null) {
             //get the default implementation
             throw new NException(
                     NMsg.ofC("invalid archetype %s. Valid values are : %s", archetype, validValues)
@@ -996,12 +996,13 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         //no right nor group is needed for admin user
         NWorkspaceSecurityManager.of().updateUser(NConstants.Users.ADMIN).setCredentials("admin".toCharArray()).run();
 
-        instance.initializeWorkspace();
-        NWorkspace envs = this;
-        if (!envs.isReadOnly()) {
-            envs.saveConfig();
+        archetypeInstance.initializeWorkspace();
+        //now that all repos are created we need to update boot repositories
+
+        if (!isReadOnly()) {
+            saveConfig();
         }
-        return instance;
+        return archetypeInstance;
     }
 
     private NId resolveApiId(NId id, Set<NId> visited) {
@@ -1265,7 +1266,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                         .failFast();
                 if (requireDependencies
                         && def.getDependencies().isPresent()
-                        && def.getDependencies().get().filter()!=null
+                        && def.getDependencies().get().filter() != null
                 ) {
                     fetch2.setDependencyFilter(def.getDependencies().get().filter());
                 }
@@ -2669,6 +2670,58 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     }
 
     @Override
+    public NOptional<String> findSysCommand(String commandName) {
+        char pathSeparatorChar = File.pathSeparatorChar;
+        if (!NBlankable.isBlank(commandName)) {
+            if (!commandName.contains("/") && !commandName.contains("\\") && !commandName.equals(".") && !commandName.equals("..")) {
+                switch (NWorkspace.of().getOsFamily()) {
+                    case WINDOWS: {
+                        List<String> paths = NStringUtils.split(NWorkspace.of().getSysEnv("PATH").orNull(), "" + pathSeparatorChar, true, true);
+                        List<String> execExtensions = NStringUtils.split(NWorkspace.of().getSysEnv("PATHEXT").orNull(), "" + pathSeparatorChar, true, true);
+                        if (paths.isEmpty()) {
+                            paths.addAll(Arrays.asList("C:\\Windows\\system32", "C:\\Windows"));
+                        }
+                        if (execExtensions.isEmpty()) {
+                            execExtensions.addAll(Arrays.asList(".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC"));
+                        }
+                        for (String z : paths) {
+                            NPath t = NPath.of(z);
+                            NPath p = t.resolve(commandName);
+                            if (p.isRegularFile()) {
+                                return NOptional.of(p.toString());
+                            }
+                            for (String ext : execExtensions) {
+                                ext = ext.toLowerCase();
+                                if (!(commandName.toLowerCase().endsWith(ext))) {
+                                    p = t.resolve(commandName + ext);
+                                    if (p.isRegularFile()) {
+                                        return NOptional.of(p.toString());
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    }
+                    default: {
+                        List<String> paths = NStringUtils.split(NWorkspace.of().getSysEnv("PATH").orNull(), "" + pathSeparatorChar, true, true);
+                        for (String z : paths) {
+                            NPath t = NPath.of(z);
+                            NPath p = t.resolve(commandName);
+                            if (p.isRegularFile()) {
+                                //if(Files.isExecutable(fp)) {
+                                return NOptional.of(p.toString());
+                                //}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return NOptional.ofNamedEmpty(NMsg.ofC("command %s", commandName));
+    }
+
+
+    @Override
     public NOptional<String> getSysEnv(String name) {
         return NOptional.of(getSysEnv().get(name));
     }
@@ -2977,7 +3030,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     }
 
     @Override
-    public String getBootRepositories() {
+    public List<String> getBootRepositories() {
         return getConfigModel().getBootRepositories();
     }
 

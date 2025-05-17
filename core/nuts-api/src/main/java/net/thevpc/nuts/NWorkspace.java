@@ -377,6 +377,8 @@ public interface NWorkspace extends NWorkspaceBase, NEnvContext, NComponent, Clo
 
     /// /
 
+    NOptional<String> findSysCommand(String name);
+
     NOptional<String> getSysEnv(String name);
 
     Map<String, String> getSysEnv();
@@ -570,7 +572,7 @@ public interface NWorkspace extends NWorkspaceBase, NEnvContext, NComponent, Clo
 
     List<URL> getBootClassWorldURLs();
 
-    String getBootRepositories();
+    List<String> getBootRepositories();
 
     Instant getCreationStartTime();
 

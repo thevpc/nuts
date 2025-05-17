@@ -8,6 +8,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.clinfo.NCliInfo
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.web.NWebCli;
 
 import java.util.Locale;
 import java.util.Map;
@@ -41,15 +42,18 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
     public abstract <T> T post(String url, RequestQueryInfo ri, Class<T> resultType);
 
     public void validateRequest(RequestQueryInfo ri) {
-        NSession session= NSession.of();
+        NSession session = NSession.of();
         NWorkspace workspace = NWorkspace.of();
-        NLiteral endPointURL = workspace.getProperty("nuts-endpoint-url").orNull();
+        String endPointURL = workspace.getProperty("nuts-endpoint-url").flatMap(x->x.asString()).orNull();
         if (NBlankable.isBlank(ri.server)) {
-            if (endPointURL == null || endPointURL.isBlank()) {
+            if (NBlankable.isBlank(endPointURL)) {
                 String defaultURL = resolveDefaultEndpointURL();
-                workspace.setProperty("nuts-endpoint-url", defaultURL);
+                if (!NBlankable.isBlank(defaultURL)) {
+                    workspace.setProperty("nuts-endpoint-url", defaultURL);
+                    ri.server = defaultURL;
+                }
             } else {
-                ri.server = endPointURL.asString().get();
+                ri.server = endPointURL;
             }
         }
         RequestAgent agent = ri.q.getAgent();
@@ -103,21 +107,24 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
                 p = "http://" + p + "/public/nuts";
             } else if (p.matches("[a-zAzZ]+(:[0-9]+)?") || p.matches("[0-9]+[.][0-9]+[.][0-9]+[.][0-9]+(:[0-9]+)?")) {
                 p = "https://" + p + "/public/nuts";
-            } else {
-                //
             }
+            return p;
         } else {
+            String s = null;
             try {
-                String s = NStringUtils.trimToNull(NPath.of("https://raw.githubusercontent.com/thevpc/nuts/master/.endpoint").readString());
-                if (s != null && s.startsWith("https://")) {
-                    return s;
-                }
+                NWebCli cli = NWebCli.of();
+                cli.setConnectTimeout(500);
+                s = NStringUtils.trim(cli.GET("https://raw.githubusercontent.com/thevpc/nuts/master/.endpoint")
+                        .run().getContent().readString());
             } catch (Exception ex) {
                 //error;
             }
-            return "https://nuts-pm.net/public/nuts";
+            if (!NBlankable.isBlank(s) && s.startsWith("https://")) {
+                return s;
+            } else {
+                return "https://nuts-pm.net/public/nuts";
+            }
         }
-        return p;
     }
 
 }

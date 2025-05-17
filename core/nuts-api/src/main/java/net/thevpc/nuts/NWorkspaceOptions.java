@@ -376,6 +376,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @return repositories to register temporarily when running the workspace.
      */
     NOptional<List<String>> getRepositories();
+    NOptional<List<String>> getBootRepositories();
 
     /**
      * username to log into when running workspace.

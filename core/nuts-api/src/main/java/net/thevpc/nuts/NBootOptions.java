@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 
 public interface NBootOptions {
 
-    NOptional<String> getBootRepositories();
+    NOptional<List<String>> getBootRepositories();
 
     NOptional<NClassLoaderNode> getRuntimeBootDependencyNode();
 
