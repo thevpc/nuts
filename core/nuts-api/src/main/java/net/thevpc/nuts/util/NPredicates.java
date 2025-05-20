@@ -63,7 +63,7 @@ public class NPredicates {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> Predicate<T> nonNull() {
+    public static <T> NPredicate<T> nonNull() {
         return NULL.negate();
     }
 

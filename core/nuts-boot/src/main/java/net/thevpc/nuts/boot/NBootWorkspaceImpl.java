@@ -213,12 +213,12 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
         });
     }
 
-    private static void revalidateLocations(NBootOptionsInfo bootOptions, String workspaceName, boolean immediateLocation, String sandboxMode) {
+    private static void revalidateLocations(NBootOptionsInfo bootOptions, String workspaceName, boolean immediateLocation, String isolationLevel) {
         if (NBootUtils.isBlank(bootOptions.getName())) {
             bootOptions.setName(workspaceName);
         }
         boolean system = NBootUtils.firstNonNull(bootOptions.getSystem(), false);
-        if (NBootUtils.sameEnum(sandboxMode, "SANDBOX") || NBootUtils.sameEnum(sandboxMode, "MEMORY")) {
+        if (NBootUtils.sameEnum(isolationLevel, "SANDBOX") || NBootUtils.sameEnum(isolationLevel, "MEMORY")) {
             bootOptions.setStoreStrategy("STANDALONE");
             bootOptions.setRepositoryStoreStrategy("EXPLODED");
             system = false;
@@ -769,20 +769,23 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                     newWorkspace = true;
                     previousRepositories=new ArrayList<>();
                 } else if (resetFlag) {
-                    //force loading version early, it will be used later-on
-                    log.log(isAskConfirm(getOptions()) ? Level.OFF : Level.WARNING, "WARNING", NBootMsg.ofPlain(NI18n.of("reset workspace")));
-                    if (dryFlag) {
-                        //
-                    } else {
-                        if (lastWorkspaceOptions != null) {
-                            revalidateLocations(lastWorkspaceOptions, workspaceName, immediateLocation, isolationLevel);
-                            getFallbackCache(NBootId.RUNTIME_ID, true, true);
-                            countDeleted = NBootUtils.deleteStoreLocations(lastWorkspaceOptions, getOptions(), true, NBootPlatformHome.storeTypes(), () -> scanner.nextLine());
+                    boolean sandboxOrInMemory = NBootUtils.sameEnum(isolationLevel, "SANDBOX") || NBootUtils.sameEnum(isolationLevel, "MEMORY");
+                    if(!sandboxOrInMemory) {
+                        //force loading version early, it will be used later-on
+                        log.log(isAskConfirm(getOptions()) ? Level.OFF : Level.WARNING, "WARNING", NBootMsg.ofPlain(NI18n.of("reset workspace")));
+                        if (dryFlag) {
+                            //
                         } else {
-                            getFallbackCache(NBootId.RUNTIME_ID, false, true);
-                            countDeleted = NBootUtils.deleteStoreLocations(options, getOptions(), true, NBootPlatformHome.storeTypes(), () -> scanner.nextLine());
+                            if (lastWorkspaceOptions != null) {
+                                revalidateLocations(lastWorkspaceOptions, workspaceName, immediateLocation, isolationLevel);
+                                getFallbackCache(NBootId.RUNTIME_ID, true, true);
+                                countDeleted = NBootUtils.deleteStoreLocations(lastWorkspaceOptions, getOptions(), true, NBootPlatformHome.storeTypes(), () -> scanner.nextLine());
+                            } else {
+                                getFallbackCache(NBootId.RUNTIME_ID, false, true);
+                                countDeleted = NBootUtils.deleteStoreLocations(options, getOptions(), true, NBootPlatformHome.storeTypes(), () -> scanner.nextLine());
+                            }
+                            NBootUtils.ndiUndo(workspaceName, true);
                         }
-                        NBootUtils.ndiUndo(workspaceName, true);
                     }
                     newWorkspace = true;
                     // retain all existing repositories
@@ -1098,16 +1101,20 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             ClassLoader workspaceClassLoader;
             NWorkspaceBase wsInstance = null;
             NBootErrorInfoList errorList = new NBootErrorInfoList();
+            String isolationLevel = NBootUtils.firstNonNull(options.getIsolationLevel(), "");
             try {
-                Path configFile = Paths.get(options.getWorkspace()).resolve(NBootConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
-                if (NBootUtils.sameEnum(options.getOpenMode(), "OPEN_OR_ERROR")) {
-                    //add fail fast test!!
-                    if (!Files.isRegularFile(configFile)) {
-                        throw new NBootWorkspaceNotFoundException(options.getWorkspace());
-                    }
-                } else if (NBootUtils.sameEnum(options.getOpenMode(), "CREATE_OR_ERROR")) {
-                    if (Files.exists(configFile)) {
-                        throw new NBootWorkspaceAlreadyExistsException(options.getWorkspace());
+                boolean sandboxOrInMemory = NBootUtils.sameEnum(isolationLevel, "SANDBOX") || NBootUtils.sameEnum(isolationLevel, "MEMORY");
+                if (!sandboxOrInMemory) {
+                    Path configFile = Paths.get(options.getWorkspace()).resolve(NBootConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
+                    if (NBootUtils.sameEnum(options.getOpenMode(), "OPEN_OR_ERROR")) {
+                        //add fail fast test!!
+                        if (!Files.isRegularFile(configFile)) {
+                            throw new NBootWorkspaceNotFoundException(options.getWorkspace());
+                        }
+                    } else if (NBootUtils.sameEnum(options.getOpenMode(), "CREATE_OR_ERROR")) {
+                        if (Files.exists(configFile)) {
+                            throw new NBootWorkspaceAlreadyExistsException(options.getWorkspace());
+                        }
                     }
                 }
                 if (NBootUtils.isBlank(options.getApiVersion())

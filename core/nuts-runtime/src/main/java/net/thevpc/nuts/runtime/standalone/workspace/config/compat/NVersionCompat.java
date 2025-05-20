@@ -8,11 +8,14 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.compat.v502.NVersionC
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.v506.NVersionCompat506;
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.v507.NVersionCompat507;
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.v803.NVersionCompat803;
+import net.thevpc.nuts.runtime.standalone.workspace.config.compat.v805.NVersionCompat805;
 
 public interface NVersionCompat {
     static NVersionCompat of(NVersion apiVersion) {
         int buildNumber = CoreNUtils.getApiVersionOrdinalNumber(apiVersion);
-        if (buildNumber >= 803) {
+        if (buildNumber >= 805) {
+            return new NVersionCompat805(apiVersion);
+        }else if (buildNumber >= 803) {
             return new NVersionCompat803(apiVersion);
         } else if (buildNumber >= 507) {
             return new NVersionCompat507(apiVersion);

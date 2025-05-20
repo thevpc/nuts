@@ -246,6 +246,8 @@ public interface TsonElementsFactory {
 
     TsonElement parseLocalDateTime(String s);
 
+    TsonElement parseInstant(String s);
+
     TsonElement parseLocalDate(String s);
 
     TsonElement parseLocalTime(String s);

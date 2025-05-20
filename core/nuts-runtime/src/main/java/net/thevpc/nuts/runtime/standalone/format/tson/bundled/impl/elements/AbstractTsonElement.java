@@ -144,6 +144,11 @@ public abstract class AbstractTsonElement extends AbstractTsonElementBase {
     }
 
     @Override
+    public TsonInstant toInstant() {
+        return throwPrimitive(TsonElementType.INSTANT);
+    }
+
+    @Override
     public TsonLocalTime toLocalTime() {
         return throwPrimitive(TsonElementType.LOCAL_TIME);
     }

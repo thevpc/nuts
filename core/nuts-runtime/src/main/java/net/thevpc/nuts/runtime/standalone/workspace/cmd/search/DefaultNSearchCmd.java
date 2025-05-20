@@ -223,12 +223,19 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
             baseIterator = NIteratorBuilder.of(curr)
                     .flatMap(
                             NFunction.of(
-                                            (NId x) -> NIteratorBuilder.of(
-                                                    toFetch().setId(x)
-                                                            .getResultDefinition().getDependencies().get().transitiveWithSource().iterator()
-                                            ).build())
+                                            (NId x) -> {
+                                                NDefinition de = toFetch().setId(x)
+                                                        .getResultDefinition();
+                                                if(de==null){
+                                                    return null;
+                                                }
+                                                return NIteratorBuilder.of(
+                                                        de.getDependencies().get().transitiveWithSource().iterator()
+                                                ).build();
+                                            })
                                     .withDesc(NEDesc.of("getDependencies"))
-                    ).map(NFunction.of(NDependency::toId)
+                    ).filter(NPredicates.nonNull())
+                    .map(NFunction.of(NDependency::toId)
                             .withDesc(NEDesc.of("DependencyToId"))
                     )
                     .build();

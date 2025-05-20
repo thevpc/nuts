@@ -62,7 +62,8 @@ public class NWorkspaceUtils {
 
     public static boolean isUserDefaultWorkspace() {
         String defaultWorkspaceLocation = NPlatformHome.USER.getWorkspaceLocation(null);
-        return defaultWorkspaceLocation.equals(NWorkspace.of().getLocation().toString());
+        NPath location = NWorkspace.of().getLocation();
+        return location!=null&& defaultWorkspaceLocation.equals(location.toString());
     }
 
     protected NLogOp _LOGOP() {

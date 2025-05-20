@@ -27,13 +27,12 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NRepository;
+import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.boot.reserved.util.NBootPlatformHome;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.util.NConnexionString;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.util.NStream;
 
 import java.io.*;
 import java.net.URL;
@@ -89,6 +88,16 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      */
     static NPath ofUserHome() {
         return NPath.of(Paths.get(System.getProperty("user.home")));
+    }
+
+    static NPath ofUserStore(NStoreType storeType) {
+        NAssert.requireNonBlank(storeType, "storeType");
+        return NPath.of(NBootPlatformHome.of(null).getStore(storeType.id()));
+    }
+
+    static NPath ofSystemStore(NStoreType storeType) {
+        NAssert.requireNonBlank(storeType, "storeType");
+        return NPath.of(NBootPlatformHome.ofSystem(null).getStore(storeType.id()));
     }
 
     /**

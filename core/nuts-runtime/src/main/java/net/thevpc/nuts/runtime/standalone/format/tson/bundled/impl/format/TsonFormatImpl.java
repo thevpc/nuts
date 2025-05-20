@@ -216,6 +216,9 @@ public class TsonFormatImpl implements TsonFormat, Cloneable {
                 case LOCAL_TIME:
                     writer.append(String.valueOf(element.localTimeValue()));
                     return;
+                case INSTANT:
+                    writer.append(String.valueOf(element.instantValue()));
+                    return;
                 case REGEX: {
                     writer.append(TsonUtils.toRegex(element.regexValue().toString()));
                     return;

@@ -5,9 +5,9 @@ options {
 
 PARSER_BEGIN(TsonStreamParserImpl)
 
-package net.thevpc.tson.impl.parser.javacc;
+package net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.parser.javacc;
 
-import net.thevpc.tson.*;
+import net.thevpc.nuts.runtime.standalone.format.tson.bundled.*;
 
 public class TsonStreamParserImpl{
     private TsonStreamParserConfig config;
@@ -151,6 +151,7 @@ void elementLevel1() :
     | <TRUE>{ visitor.visitPrimitiveEnd(Tson.ofTrue());}
     |<FALSE>{  visitor.visitPrimitiveEnd(Tson.ofFalse());}
     |<DATETIME> {  visitor.visitPrimitiveEnd(Tson.parseLocalDateTime(token.image));}
+    |<INSTANT> {  visitor.visitPrimitiveEnd(Tson.parseInstant(token.image));}
     |<DATE> {  visitor.visitPrimitiveEnd(Tson.parseLocalDate(token.image));}
     |<TIME> {  visitor.visitPrimitiveEnd(Tson.parseLocalTime(token.image));}
     |<REGEX> {  visitor.visitPrimitiveEnd(Tson.parseRegex(token.image));}
@@ -440,9 +441,19 @@ void annotationParam() :
 
 <DEFAULT> TOKEN :
 {
-    < DATETIME : (
+    < INSTANT : (
                 (<DIGIT>){4} "-" (<DIGIT>){2} "-" (<DIGIT>){2}
-                ["T"](<DIGIT>){2} ":" (<DIGIT>){2} ":" (<DIGIT>){2} ("." (<DIGIT>){1,9})? ("Z" | ["+","-"](<DIGIT>){2} ":" (<DIGIT>){2})
+                ["T"]
+                    (<DIGIT>){2} ":" (<DIGIT>){2} ":" (<DIGIT>){2}
+                    ("." (<DIGIT>){1,9})?
+                    "Z"
+               )
+               >
+|    < DATETIME : (
+                (<DIGIT>){4} "-" (<DIGIT>){2} "-" (<DIGIT>){2}
+                "T"
+                    (<DIGIT>){2} ":" (<DIGIT>){2} ":" (<DIGIT>){2}
+                    ("." (<DIGIT>){1,9})?
                )
                >
 |    < DATE : (

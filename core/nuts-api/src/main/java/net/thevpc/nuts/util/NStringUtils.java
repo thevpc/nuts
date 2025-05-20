@@ -608,11 +608,11 @@ public class NStringUtils {
      *     // result is abbad
      * </pre>
      *
-     * @param text text to replace the placeholders in
+     * @param text   text to replace the placeholders in
      * @param regexp regular expression of the placeholder. The regexp MUST
-     * define the 'var' group
+     *               define the 'var' group
      * @param mapper mapper function that replaces each placeholder. When it
-     * returns null, no changes are made
+     *               returns null, no changes are made
      * @return text with all placeholders replaces with values from
      * <code>mapper</code>
      */
@@ -628,13 +628,13 @@ public class NStringUtils {
      *     // result is abbad
      * </pre>
      *
-     * @param text text to replace the placeholders in
-     * @param regexp regular expression of the placeholder. The regexp MUST
-     * define the varName
+     * @param text    text to replace the placeholders in
+     * @param regexp  regular expression of the placeholder. The regexp MUST
+     *                define the varName
      * @param varName the varName in the regex, defaults to
-     * <code>NMsgVarTextParser.DEFAULT_VAR_NAME</code> aka <code>"var"</code>
-     * @param mapper mapper function that replaces each placeholder. When it
-     * returns null, no changes are made
+     *                <code>NMsgVarTextParser.DEFAULT_VAR_NAME</code> aka <code>"var"</code>
+     * @param mapper  mapper function that replaces each placeholder. When it
+     *                returns null, no changes are made
      * @return text with all placeholders replaces with values from
      * <code>mapper</code>
      */
@@ -650,13 +650,13 @@ public class NStringUtils {
      *     // result is abbad
      * </pre>
      *
-     * @param text text to replace the placeholders in
-     * @param regexp regular expression of the placeholder. The regexp MUST
-     * define the varName
+     * @param text    text to replace the placeholders in
+     * @param regexp  regular expression of the placeholder. The regexp MUST
+     *                define the varName
      * @param varName the varName in the regex, defaults to
-     * <code>NMsgVarTextParser.DEFAULT_VAR_NAME</code> aka <code>"var"</code>
-     * @param mapper mapper function that replaces each placeholder. When it
-     * returns null, no changes are made
+     *                <code>NMsgVarTextParser.DEFAULT_VAR_NAME</code> aka <code>"var"</code>
+     * @param mapper  mapper function that replaces each placeholder. When it
+     *                returns null, no changes are made
      * @return text with all placeholders replaces with values from
      * <code>mapper</code>
      */
@@ -1099,5 +1099,27 @@ public class NStringUtils {
             }
         }
         return builder.toString();
+    }
+
+    public static String truncate(String s, int maxLength) {
+        return truncate(s, maxLength, null);
+    }
+
+    public static String truncate(String s, int maxLength, String suffix) {
+        if (s == null || maxLength < 0) {
+            return s;
+        }
+        if (s.length() <= maxLength) {
+            return s;
+        }
+        if (NBlankable.isBlank(suffix)) {
+            return s.substring(0, maxLength);
+        }
+        int l2 = maxLength - suffix.length();
+        if (l2 >= 0) {
+            return s.substring(0, l2) + suffix;
+        } else {
+            return suffix.substring(0, maxLength);
+        }
     }
 }

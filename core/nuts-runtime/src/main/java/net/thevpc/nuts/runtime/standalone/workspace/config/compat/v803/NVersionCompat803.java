@@ -8,6 +8,10 @@ import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.AbstractNVersionCompat;
+import net.thevpc.nuts.runtime.standalone.workspace.config.compat.v507.NWorkspaceConfigBoot507;
+import net.thevpc.nuts.util.NStringUtils;
+
+import java.util.stream.Collectors;
 
 public class NVersionCompat803 extends AbstractNVersionCompat {
     public NVersionCompat803(NVersion apiVersion) {
@@ -16,7 +20,33 @@ public class NVersionCompat803 extends AbstractNVersionCompat {
 
     @Override
     public NWorkspaceConfigBoot parseConfig(byte[] bytes) {
-        return bytes==null?null: NElements.of().json().parse(bytes, NWorkspaceConfigBoot.class);
+        NWorkspaceConfigBoot507 w = bytes == null ? null : NElements.of().json().parse(bytes, NWorkspaceConfigBoot507.class);
+        NWorkspaceConfigBoot v=new NWorkspaceConfigBoot();
+         v.setUuid(w.getUuid());
+        v.setSystem(w.isSystem());
+        v.setName(w.getName());
+        v.setWorkspace(w.getWorkspace());
+        v.setBootRepositories(NStringUtils.split(w.getBootRepositories(),";",true,true));
+
+        v.setStoreLocations(w.getStoreLocations());
+        v.setHomeLocations(w.getHomeLocations());
+
+        v.setRepositoryStoreStrategy(w.getRepositoryStoreStrategy());
+        v.setStoreStrategy(w.getStoreStrategy());
+        v.setStoreLayout(w.getStoreLayout());
+        v.setConfigVersion(w.getConfigVersion());
+        v.setExtensions(w.getExtensions()==null?null:w.getExtensions().stream().map(x->{
+            if(x==null){
+                return null;
+            }
+            NWorkspaceConfigBoot.ExtensionConfig c = new NWorkspaceConfigBoot.ExtensionConfig();
+            c.setDependencies(x.getDependencies());
+            c.setEnabled(x.isEnabled());
+            c.setId(x.getId());
+            c.setConfigVersion(x.getConfigVersion());
+            return c;
+        }).collect(Collectors.toList()));
+        return v;
     }
 
     @Override

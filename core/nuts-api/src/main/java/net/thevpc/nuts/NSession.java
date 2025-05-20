@@ -152,8 +152,8 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
     NOptional<Boolean> getBot();
 
     /**
-     * @since 0.8.5
      * @return preview repo
+     * @since 0.8.5
      */
     NOptional<Boolean> getPreviewRepo();
 
@@ -552,9 +552,17 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
 
     Level getLogTermLevel();
 
+    boolean isLogTermLevel(Level level);
+
+    boolean isLogFileLevel(Level level);
+
     NSession setLogTermLevel(Level level);
 
     Filter getLogTermFilter();
+
+    boolean isVerboseTerm();
+
+    boolean isVerboseFile();
 
     NSession setLogFilter(Filter filter);
 
@@ -603,9 +611,10 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
 
     ////////////////////////////////////////
     //COMMANDS
-    ////////////////////////////////////
+
+    /// /////////////////////////////////
     /// CONFIG
-    ////////////////////////////////////
+    /// /////////////////////////////////
     NSession sudo();
 
     NSession root();

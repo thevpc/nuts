@@ -95,7 +95,12 @@ public class DefaultNBootModel implements NBootModel {
         NativeImageHelper.prepare(this.workspace);
         this.bootTerminal = detectAnsiTerminalSupport(effOptions, true, ((DefaultNWorkspace) workspace).LOG);
         workspaceModel.uuid = effOptions.getUuid().orNull();
-        workspaceModel.name = Paths.get(effOptions.getWorkspace().get()).getFileName().toString();
+        String wsp = effOptions.getWorkspace().orNull();
+        try {
+            workspaceModel.name = NBlankable.isBlank(wsp) ? null : Paths.get(wsp).getFileName().toString();
+        }catch (Exception e){
+            //just ignore
+        }
         DefaultSystemTerminal sys = new DefaultSystemTerminal(new DefaultNSystemTerminalBaseBoot(this));
         this.systemTerminal = new NSystemTerminalRef(NutsSystemTerminal_of_NutsSystemTerminalBase(sys));
         this.bootSession.setTerminal(new DefaultNTerminalFromSystem(this.systemTerminal));

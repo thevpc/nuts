@@ -106,6 +106,11 @@ public class TsonNullImpl extends AbstractTsonElementBase implements TsonNull {
     }
 
     @Override
+    public TsonInstant toInstant() {
+        throw new ClassCastException("Cannot cast Null to Non Null type");
+    }
+
+    @Override
     public LocalDateTime localDateTimeValue() {
         return null;
     }

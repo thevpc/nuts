@@ -1,0 +1,4 @@
+#!/bin/bash
+cd /home/vpc/xprojects/nuts-world/nuts/core/nuts-runtime/src/main/java/net/thevpc/nuts/runtime/standalone/format/tson/bundled/impl/parser/javacc/
+# javacc-javacc-7.0.13
+java -classpath /home/vpc/programs/dev/javacc/bootstrap/javacc.jar javacc tson_v06.jj

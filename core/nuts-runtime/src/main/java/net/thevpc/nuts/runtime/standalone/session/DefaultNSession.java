@@ -1773,4 +1773,23 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
 //    }
 
 
+    @Override
+    public boolean isLogTermLevel(Level level) {
+        return level != null && this.logTermLevel != null && this.logTermLevel.intValue() <= level.intValue();
+    }
+
+    @Override
+    public boolean isVerboseTerm() {
+        return isLogTermLevel(Level.FINEST);
+    }
+
+    @Override
+    public boolean isLogFileLevel(Level level) {
+        return level != null && this.logFileLevel != null && this.logFileLevel.intValue() <= level.intValue();
+    }
+
+    @Override
+    public boolean isVerboseFile() {
+        return isLogFileLevel(Level.FINEST);
+    }
 }

@@ -95,6 +95,8 @@ public abstract class TsonElementDecorator extends AbstractTsonElementBase {
                 return new AsAlias((TsonAlias) base, comments, annotations);
             case REGEX:
                 return new AsRegex((TsonRegex) base, comments, annotations);
+            case INSTANT:
+                return new AsInstant((TsonInstant) base, comments, annotations);
             case LOCAL_DATE:
                 return new AsLocalLocalDate((TsonLocalDate) base, comments, annotations);
             case LOCAL_DATETIME:
@@ -411,6 +413,11 @@ public abstract class TsonElementDecorator extends AbstractTsonElementBase {
     @Override
     public TsonLocalDate toLocalDate() {
         return base.toLocalDate();
+    }
+
+    @Override
+    public TsonInstant toInstant() {
+        return base.toInstant();
     }
 
     @Override
@@ -1000,6 +1007,23 @@ public abstract class TsonElementDecorator extends AbstractTsonElementBase {
 
         @Override
         public Pattern value() {
+            return getBase().value();
+        }
+    }
+
+    public static class AsInstant extends AsPrimitive<TsonInstant> implements TsonInstant {
+
+        public AsInstant(TsonInstant base, TsonComments comments, TsonAnnotation[] annotations) {
+            super(base, comments, annotations);
+        }
+
+        @Override
+        public TsonInstant toInstant() {
+            return this;
+        }
+
+        @Override
+        public Instant value() {
             return getBase().value();
         }
     }

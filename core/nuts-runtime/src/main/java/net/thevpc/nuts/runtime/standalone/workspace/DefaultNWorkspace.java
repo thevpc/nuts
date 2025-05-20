@@ -267,8 +267,9 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         this.wsModel.installedRepository = new DefaultNInstalledRepository(data.effectiveBootOptions);
         this.wsModel.envModel = new DefaultNWorkspaceEnvManagerModel(this);
         this.wsModel.sdkModel = new DefaultNPlatformModel(this.wsModel.envModel);
+        this.wsModel.location = data.effectiveBootOptions.getWorkspace().orNull();
         this.wsModel.locationsModel = new DefaultNWorkspaceLocationModel(this,
-                Paths.get(data.effectiveBootOptions.getWorkspace().orNull()).toString());
+                this.wsModel.location==null?null:Paths.get(this.wsModel.location).toString());
 
         this.wsModel.extensionModel.onInitializeWorkspace(data.effectiveBootOptions, bootClassLoader);
         this.wsModel.textModel.loadExtensions();
@@ -279,7 +280,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         data.cfg.setRuntimeBootDescriptor(NBootHelper.toDescriptor(data.effectiveBootOptions.getRuntimeBootDescriptor().orNull()));
         data.cfg.setExtensionBootDescriptors(NBootHelper.toDescriptorList(data.effectiveBootOptions.getExtensionBootDescriptors().orNull()));
 
-        this.wsModel.location = data.effectiveBootOptions.getWorkspace().orNull();
 
         this.wsModel.bootModel.onInitializeWorkspace();
 
@@ -564,7 +564,16 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     .setProcessAll(true)
             );
             out.println(n == null ? "no help found" : n);
-            if (NWorkspaceUtils.isUserDefaultWorkspace()) {
+            NIsolationLevel il = wsModel.bootModel.getBootUserOptions().getIsolationLevel().orElse(NIsolationLevel.USER);
+            if (il==NIsolationLevel.MEMORY) {
+                out.println(
+                        data.text.ofBuilder()
+                                .append("location", NTextStyle.underlined())
+                                .append(":")
+                                .append("<in-memory>")
+                                .append(" ")
+                );
+            }else if (NWorkspaceUtils.isUserDefaultWorkspace()) {
                 out.println(
                         data.text.ofBuilder()
                                 .append("location", NTextStyle.underlined())
@@ -584,7 +593,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                                 .append(")")
                 );
             }
-            NIsolationLevel il = wsModel.bootModel.getBootUserOptions().getIsolationLevel().orElse(NIsolationLevel.USER);
             switch (il) {
                 case USER: {
                     NTableFormat.of()

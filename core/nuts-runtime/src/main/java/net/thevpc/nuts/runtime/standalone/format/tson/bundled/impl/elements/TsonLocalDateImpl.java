@@ -40,11 +40,6 @@ public class TsonLocalDateImpl extends AbstractTemporalTsonElement implements Ts
     }
 
     @Override
-    public TsonLocalDateTime toLocalDateTime() {
-        return (TsonLocalDateTime) Tson.of(this.localDateTimeValue());
-    }
-
-    @Override
     public LocalDate localDateValue() {
         return value();
     }

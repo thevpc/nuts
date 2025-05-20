@@ -48,7 +48,7 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
                         : NElementType.NAMED_UPLET,
                 annotations, comments);
         if(name!=null){
-            NAssert.requireTrue(NElements.isValidName(name), "valid name");
+            NAssert.requireTrue(NElements.isValidName(name), "valid name : " + name);
         }
         this.params = params.toArray(new NElement[0]);
         this.name = name;
