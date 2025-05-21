@@ -44,7 +44,7 @@ public class DefaultPropsElementFormat implements NElementStreamFormat {
 
     public NElement parseElement(String string, NElementFactoryContext context) {
         if (string == null) {
-            throw new NullPointerException("string is null");
+            string="";
         }
         return parseElement(new StringReader(string), context);
     }

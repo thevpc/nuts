@@ -17,10 +17,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 public class NSysExecUtils {
@@ -119,6 +116,37 @@ public class NSysExecUtils {
         );
     }
 
+    private static List<String> prepareCommand(String[] cmd, Function<String, String[]> patterns) {
+        List<String> ret = new ArrayList<>();
+        for (String s : cmd) {
+            if (s.matches("[$][a-zA-Z]+")) {
+                String[] a = patterns.apply(s.substring(1));
+                if (a == null) {
+                    throw new NIllegalArgumentException(NMsg.ofC("invalid pattern %s", s));
+                }
+                ret.addAll(Arrays.asList(a));
+            }else if (s.matches("[$][{][a-zA-Z]+[}]")) {
+                String[] a = patterns.apply(s.substring(2,s.length()-1));
+                if (a == null) {
+                    throw new NIllegalArgumentException(NMsg.ofC("invalid pattern %s", s));
+                }
+                ret.addAll(Arrays.asList(a));
+            }else{
+                ret.add(NMsg.ofV(s,r->{
+                    String[] qq = patterns.apply(r);
+                    if(qq==null){
+                        throw new NIllegalArgumentException(NMsg.ofC("invalid pattern %s", r));
+                    }
+                    if(qq.length>1){
+                        throw new NIllegalArgumentException(NMsg.ofC("invalid pattern %s, toot many values", r));
+                    }
+                    return qq[0];
+                }).toString());
+            }
+        }
+        return ret;
+    }
+
     public static List<String> buildEffectiveCommand(String[] cmd,
                                                      NRunAs runAsMode,
                                                      Set<NDesktopEnvironmentFamily> de,
@@ -167,6 +195,15 @@ public class NSysExecUtils {
                 break;
             }
         }
+        NRunAs finalRunAsMode = runAsMode;
+        Function<String,String[]> cm= s -> {
+            switch (s){
+                case "user":return new String[]{finalRunAsMode.getMode() == NRunAs.Mode.USER ? finalRunAsMode.getUser() : rootUserName};
+                case "command":return command.toArray(new String[0]);
+                case "rootUser":return new String[]{rootUserName};
+            }
+            return null;
+        };
         switch (runAsMode.getMode()) {
             case CURRENT_USER: {
                 List<String> cc = new ArrayList<>();
@@ -175,36 +212,26 @@ public class NSysExecUtils {
             }
             case ROOT:
             case USER: {
-                String runAsEffective = runAsMode.getMode() == NRunAs.Mode.USER ? runAsMode.getUser() : rootUserName;
                 List<String> cc = new ArrayList<>();
                 switch (sysFamily) {
                     case LINUX:
                     case MACOS:
                     case UNIX: {
                         if (runWithGui) {
-                            String currSu = guiSu(de, sysWhich).get();
-                            cc.add(currSu);
-                            cc.add(runAsEffective);
+                            cc.addAll(prepareCommand(guiPosixSu(de, sysWhich).get(),cm));
                         } else {
-                            String su = sysWhich.apply("su");
-                            if (NBlankable.isBlank(su)) {
-                                throw new NIllegalArgumentException(NMsg.ofPlain("unable to resolve su application"));
-                            }
-                            cc.add(su);
-                            cc.add(runAsEffective);
-                            cc.add("-c");
+                            cc.addAll(prepareCommand(termPosixSu(de, sysWhich).get(),cm));
                         }
                         break;
                     }
                     case WINDOWS: {
-                        cc.addAll(Arrays.asList("runas", "/noprofile", "/user:" + runAsEffective));
+                        cc.addAll(prepareCommand(guiWindowsSu(de,sysWhich).get(),cm));
                         break;
                     }
                     default: {
-                        throw new NIllegalArgumentException(NMsg.ofC("cannot run as %s on unknown system OS family", runAsEffective));
+                        throw new NIllegalArgumentException(NMsg.ofC("cannot run as %s on unknown system OS family", finalRunAsMode.getMode() == NRunAs.Mode.USER ? finalRunAsMode.getUser() : rootUserName));
                     }
                 }
-                cc.addAll(command);
                 return cc;
             }
             case SUDO: {
@@ -214,136 +241,161 @@ public class NSysExecUtils {
                     case MACOS:
                     case UNIX: {
                         if (runWithGui) {
-                            String currSu = guiSudo(de, sysWhich).get();
-                            cc.add(currSu);
+                            cc.addAll(prepareCommand(guiPosixSudo(de, sysWhich).get(), cm));
                         } else {
-                            NCmdLine cmdLine = NCmdLine.of(executorOptions);
-                            NRef<Boolean> changePrompt = NRef.of(false);
-                            NRef<String> newPromptValue = NRef.of("");
-                            while (cmdLine.hasNext()) {
-                                NArg ac = cmdLine.peek().get();
-                                switch (ac.key()) {
-                                    case "--sudo-prompt": {
-                                        if (ac.getValue().isNull()) {
-                                            cmdLine.withNextFlag((v, a) -> {
-                                                if (v) {
-                                                    // --sudo-prompt will reset the prompt to its defaults!
-                                                    changePrompt.set(false);
-                                                    newPromptValue.set(null);
-                                                } else {
-                                                    // --!sudo-prompt is equivalent to "--!no-sudo-prompt="
-                                                    changePrompt.set(true);
-                                                    newPromptValue.set("");
-                                                }
-                                            });
-                                        } else if (ac.getValue().isString()) {
-                                            cmdLine.withNextEntry((v, a) -> {
-                                                changePrompt.set(true);
-                                                newPromptValue.set(v);
-                                            });
-                                        } else {
-                                            cmdLine.skip();
-                                        }
-                                        break;
-                                    }
-                                    default: {
-                                        cmdLine.skip();
-                                    }
-                                }
-                            }
-                            String su = sysWhich.apply("sudo");
-                            if (NBlankable.isBlank(su)) {
-                                throw new NIllegalArgumentException(NMsg.ofPlain("unable to resolve sudo application"));
-                            }
-                            cc.add(su);
-                            cc.add("-S");
-                            if (changePrompt.get()) {
-                                cc.add("-p");
-                                cc.add(newPromptValue.get());
-                            }
+                            cc.addAll(prepareCommand(termPosixSudo(executorOptions, de, sysWhich).get(), cm));
                         }
                         break;
                     }
                     case WINDOWS: {
-                        cc.addAll(Arrays.asList("runas", "/noprofile", "/user:" + rootUserName));
+                        cc.addAll(prepareCommand(guiWindowsSudo(de,sysWhich).get(),cm));
                         break;
                     }
                     default: {
                         throw new NIllegalArgumentException(NMsg.ofC("cannot run sudo %s on unknown system OS family", currentUserName));
                     }
                 }
-                cc.addAll(command);
                 return cc;
             }
         }
         throw new NIllegalArgumentException(NMsg.ofPlain("cannot run as admin/root on unknown system OS family"));
     }
 
-    private static NOptional<String> guiSu(Set<NDesktopEnvironmentFamily> de, Function<String, String> sysWhich) {
-        if (de == null) {
-            de = NWorkspace.of().getDesktopEnvironmentFamilies();
-        }
-        String currSu = null;
-        if (de.contains(NDesktopEnvironmentFamily.KDE)) {
-            String kdesu = sysWhich.apply("kdesu");
-            if (kdesu != null) {
-                currSu = kdesu;
-            }
-        } else if (de.contains(NDesktopEnvironmentFamily.GNOME)) {
-            String gksu = sysWhich.apply("gksu");
-            if (gksu != null) {
-                currSu = gksu;
-            }
-        }
-        if (currSu == null) {
-            String gksu = sysWhich.apply("gksu");
-            if (gksu != null) {
-                currSu = gksu;
-            }
-        }
-        if (currSu == null) {
-            String kdesu = sysWhich.apply("kdesu");
-            if (kdesu != null) {
-                currSu = kdesu;
-            }
-        }
-        if (currSu == null) {
-            return NOptional.ofNamedEmpty("gui su application (kdesu,gksu,...)");
-        }
-        return NOptional.of(currSu);
+    private static NOptional<String[]> guiWindowsSudo(Set<NDesktopEnvironmentFamily> de, Function<String, String> sysWhich) {
+        return NOptional.of(new String[]{"runas", "/noprofile", "/user:$rootUser","$command"});
     }
 
-    private static NOptional<String> guiSudo(Set<NDesktopEnvironmentFamily> de, Function<String, String> sysWhich) {
+    private static NOptional<String[]> guiWindowsSu(Set<NDesktopEnvironmentFamily> de, Function<String, String> sysWhich) {
+        return NOptional.of(new String[]{"runas", "/noprofile", "/user:$user","$command"});
+    }
+
+    private static NOptional<String[]> termPosixSu(Set<NDesktopEnvironmentFamily> de, Function<String, String> sysWhich) {
+        String su = sysWhich.apply("su");
+        if (NBlankable.isBlank(su)) {
+            return NOptional.ofNamedEmpty("su application");
+        }
+        return NOptional.of(new String[]{su,"-","$user","-c","$command"});
+    }
+
+    private static NOptional<String[]> termPosixSudo(String[] executorOptions, Set<NDesktopEnvironmentFamily> de, Function<String, String> sysWhich){
+        NCmdLine cmdLine = NCmdLine.of(executorOptions);
+        NRef<Boolean> changePrompt = NRef.of(false);
+        NRef<String> newPromptValue = NRef.of("");
+        while (cmdLine.hasNext()) {
+            NArg ac = cmdLine.peek().get();
+            switch (ac.key()) {
+                case "--sudo-prompt": {
+                    if (ac.getValue().isNull()) {
+                        cmdLine.withNextFlag((v, a) -> {
+                            if (v) {
+                                // --sudo-prompt will reset the prompt to its defaults!
+                                changePrompt.set(false);
+                                newPromptValue.set(null);
+                            } else {
+                                // --!sudo-prompt is equivalent to "--!no-sudo-prompt="
+                                changePrompt.set(true);
+                                newPromptValue.set("");
+                            }
+                        });
+                    } else if (ac.getValue().isString()) {
+                        cmdLine.withNextEntry((v, a) -> {
+                            changePrompt.set(true);
+                            newPromptValue.set(v);
+                        });
+                    } else {
+                        cmdLine.skip();
+                    }
+                    break;
+                }
+                default: {
+                    cmdLine.skip();
+                }
+            }
+        }
+        String su = sysWhich.apply("sudo");
+        if (NBlankable.isBlank(su)) {
+            return NOptional.ofNamedEmpty("sudo application");
+        }
+        List<String> rr=new ArrayList<>();
+        rr.add(su);
+        rr.add("-S");
+        if (changePrompt.get()) {
+            rr.add("-p");
+            rr.add(newPromptValue.get());
+        }
+        rr.add("$command");
+        return NOptional.of(rr.toArray(new String[0]));
+    }
+
+    private static NOptional<String[]> guiPosixSu
+            (Set<NDesktopEnvironmentFamily> de, Function<String, String> sysWhich) {
         if (de == null) {
             de = NWorkspace.of().getDesktopEnvironmentFamilies();
         }
         String currSu = null;
+        currSu = sysWhich.apply("pkexec");
+        if (currSu != null) {
+            return NOptional.of(new String[]{currSu, "sudo", "-u", "$user", "$command"});
+        }
         if (de.contains(NDesktopEnvironmentFamily.KDE)) {
-            String kdesu = sysWhich.apply("kdesudo");
-            if (kdesu != null) {
-                currSu = kdesu;
+            currSu = sysWhich.apply("kdesu");
+            if (currSu != null) {
+                return NOptional.of(new String[]{currSu, "-u", "$user", "$command"});
             }
         } else if (de.contains(NDesktopEnvironmentFamily.GNOME)) {
-            String gksu = sysWhich.apply("gksudo");
-            if (gksu != null) {
-                currSu = gksu;
+            currSu = sysWhich.apply("gksu");
+            if (currSu != null) {
+                return NOptional.of(new String[]{currSu, "-u", "$user", "$command"});
             }
         }
         if (currSu == null) {
-            String gksu = sysWhich.apply("gksudo");
-            if (gksu != null) {
-                currSu = gksu;
+            currSu = sysWhich.apply("gksu");
+            if (currSu != null) {
+                return NOptional.of(new String[]{currSu, "-u", "$user", "$command"});
             }
         }
         if (currSu == null) {
-            String kdesu = sysWhich.apply("kdesudo");
-            if (kdesu != null) {
-                currSu = kdesu;
+            currSu = sysWhich.apply("kdesu");
+            if (currSu != null) {
+                return NOptional.of(new String[]{currSu, "-u", "$user", "$command"});
+            }
+        }
+        return NOptional.ofNamedEmpty("gui su application (pkexec,kdesu,gksu,...)");
+    }
+
+    private static NOptional<String[]> guiPosixSudo
+            (Set<NDesktopEnvironmentFamily> de, Function<String, String> sysWhich) {
+        if (de == null) {
+            de = NWorkspace.of().getDesktopEnvironmentFamilies();
+        }
+        String currSu = null;
+        currSu = sysWhich.apply("pkexec");
+        if (currSu != null) {
+            return NOptional.of(new String[]{currSu, "$command"});
+        }
+        if (de.contains(NDesktopEnvironmentFamily.KDE)) {
+            currSu = sysWhich.apply("kdesudo");
+            if (currSu != null) {
+                return NOptional.of(new String[]{currSu, "$command"});
+            }
+        } else if (de.contains(NDesktopEnvironmentFamily.GNOME)) {
+            currSu = sysWhich.apply("gksudo");
+            if (currSu != null) {
+                return NOptional.of(new String[]{currSu, "$command"});
             }
         }
         if (currSu == null) {
-            return NOptional.ofNamedEmpty("gui su application (kdesudo,gksudo,...)");
+            currSu = sysWhich.apply("gksudo");
+            if (currSu != null) {
+                return NOptional.of(new String[]{currSu, "$command"});
+            }
         }
-        return NOptional.of(currSu);
+        if (currSu == null) {
+            currSu = sysWhich.apply("kdesudo");
+            if (currSu != null) {
+                return NOptional.of(new String[]{currSu, "$command"});
+            }
+        }
+        return NOptional.ofNamedEmpty("gui su application (pkexec,kdesudo,gksudo,...)");
     }
 }

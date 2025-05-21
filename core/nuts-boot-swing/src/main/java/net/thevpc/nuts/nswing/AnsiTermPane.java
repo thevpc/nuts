@@ -37,7 +37,7 @@ public class AnsiTermPane extends JTextPane {
     }
 
     public void resetCurr() {
-        currentStyle = ansiColors.restStyle();
+        currentStyle = ansiColors.resetStyle();
     }
 
     public void setDarkMode(boolean darkMode) {
@@ -88,7 +88,14 @@ public class AnsiTermPane extends JTextPane {
         if (root.getElementCount() > 0) {
             Element first = root.getElement(root.getElementCount() - 1);
             try {
-                getDocument().remove(first.getStartOffset(), first.getEndOffset());
+                int offs = first.getStartOffset();
+                int len = first.getEndOffset()-offs-1;
+                int length = getDocument().getLength();
+                if (offs < 0 || (offs + len) > length) {
+
+                }else {
+                    getDocument().remove(offs, len);
+                }
             } catch (BadLocationException e) {
                 e.printStackTrace();
             }
@@ -240,7 +247,7 @@ public class AnsiTermPane extends JTextPane {
 
     public void applyANSIColor(String ANSIColor) {
         switch (ANSIColor) {
-            case "[2K":{
+            case "\u001B[2K":{
                 clearLastLine();
                 return;
             }

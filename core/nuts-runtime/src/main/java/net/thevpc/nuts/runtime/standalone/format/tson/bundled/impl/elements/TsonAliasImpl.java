@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.elements;
 
 import net.thevpc.nuts.runtime.standalone.format.tson.bundled.*;
 import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.builders.TsonPrimitiveElementBuilderImpl;
+import net.thevpc.nuts.util.NAssert;
 
 import java.util.Objects;
 
@@ -10,9 +11,7 @@ public class TsonAliasImpl extends AbstractPrimitiveTsonElement implements TsonA
 
     public TsonAliasImpl(String value) {
         super(TsonElementType.ALIAS);
-        if(value==null){
-            throw new NullPointerException();
-        }
+        NAssert.requireNonNull(value, "value");
         this.value = value;
     }
 

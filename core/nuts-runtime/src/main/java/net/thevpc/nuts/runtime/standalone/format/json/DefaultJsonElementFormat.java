@@ -29,6 +29,7 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.elem.NElementStreamFormat;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NHex;
 import net.thevpc.nuts.util.NMsg;
 
@@ -46,7 +47,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
 
     public NElement parseElement(String string, NElementFactoryContext context) {
         if (string == null) {
-            throw new NullPointerException("string is null");
+            string="";
         }
         return parseElement(new StringReader(string), context);
     }
@@ -459,9 +460,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
         }
 
         public NElement parseElement(Reader reader) {
-            if (reader == null) {
-                throw new NullPointerException("reader is null");
-            }
+            NAssert.requireNonNull(reader, "reader");
             this.reader = (reader instanceof BufferedReader) ? (BufferedReader) reader : new BufferedReader(reader);
             fileOffset = 0;
             lineNumber = 1;

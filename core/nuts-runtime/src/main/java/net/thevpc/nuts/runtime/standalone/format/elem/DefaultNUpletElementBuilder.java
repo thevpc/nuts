@@ -163,9 +163,6 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public NUpletElementBuilder add(NElement e) {
-        if (e == null) {
-            throw new NullPointerException();
-        }
         values.add(denull(e));
         return this;
     }

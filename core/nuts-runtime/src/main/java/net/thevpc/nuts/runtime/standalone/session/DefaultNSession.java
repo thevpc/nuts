@@ -502,6 +502,14 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                     //ignore
                     return true;
                 }
+                case "--gui":{
+                    a = cmdLine.nextFlag().get();
+                    if (active) {
+                        setGui(a.getBooleanValue().get());
+                    }
+                    //ignore
+                    return true;
+                }
                 case "--external":
                 case "--spawn":
                 case "-x": {

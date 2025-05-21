@@ -25,6 +25,7 @@
 package net.thevpc.nuts.runtime.standalone.format.tson;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.elem.NElementAnnotationImpl;
 import net.thevpc.nuts.runtime.standalone.format.elem.NElementCommentImpl;
@@ -59,7 +60,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
 
     public NElement parseElement(String string, NElementFactoryContext context) {
         if (string == null) {
-            throw new NullPointerException("string is null");
+            string="";
         }
         return parseElement(new StringReader(string), context);
     }
@@ -231,7 +232,13 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                         , elem);
             }
             case NAME: {
-                return decorateTsonElement(factory.ofName(elem.asStringValue().get()), elem);
+                String s = elem.asStringValue().get();
+                if(NElements.isValidElementName(s, NContentType.TSON)) {
+                    return decorateTsonElement(factory.ofName(s), elem);
+                }else{
+                    //some names include ':' and they are not supported in tson
+                    return decorateTsonElement(factory.ofDoubleQuotedString(s), elem);
+                }
             }
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:

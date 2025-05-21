@@ -186,9 +186,6 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public NArrayElementBuilder add(NElement e) {
-        if (e == null) {
-            throw new NullPointerException();
-        }
         values.add(denull(e));
         return this;
     }

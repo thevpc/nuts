@@ -92,7 +92,7 @@ public class TsonNullImpl extends AbstractTsonElementBase implements TsonNull {
 
     @Override
     public short shortValue() {
-        throw new NullPointerException();
+        throw new ClassCastException("Cannot cast Null to Non Null type");
     }
 
     @Override
@@ -127,37 +127,37 @@ public class TsonNullImpl extends AbstractTsonElementBase implements TsonNull {
 
     @Override
     public float floatValue() {
-        throw new NullPointerException();
+        throw new ClassCastException("Cannot cast Null to Non Null type");
     }
 
     @Override
     public double doubleValue() {
-        throw new NullPointerException();
+        throw new ClassCastException("Cannot cast Null to Non Null type");
     }
 
     @Override
     public byte byteValue() {
-        throw new NullPointerException();
+        throw new ClassCastException("Cannot cast Null to Non Null type");
     }
 
     @Override
     public char charValue() {
-        throw new NullPointerException();
+        throw new ClassCastException("Cannot cast Null to Non Null type");
     }
 
     @Override
     public boolean booleanValue() {
-        throw new NullPointerException();
+        throw new ClassCastException("Cannot cast Null to Non Null type");
     }
 
     @Override
     public int intValue() {
-        throw new NullPointerException();
+        throw new ClassCastException("Cannot cast Null to Non Null type");
     }
 
     @Override
     public long longValue() {
-        throw new NullPointerException();
+        throw new ClassCastException("Cannot cast Null to Non Null type");
     }
 
     @Override

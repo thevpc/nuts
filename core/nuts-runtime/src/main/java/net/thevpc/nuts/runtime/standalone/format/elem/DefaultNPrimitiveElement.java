@@ -48,7 +48,7 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
     DefaultNPrimitiveElement(NElementType type, Object value, NElementAnnotation[] annotations, NElementComments comments) {
         super(type, annotations, comments);
         if (type == NElementType.NAME) {
-            NAssert.requireTrue(NElements.isValidName((String) value), "valid name : " + (String) value);
+            NAssert.requireTrue(NElements.isValidElementName((String) value), "valid name : " + (String) value);
         }
         this.value = NLiteral.of(value);
     }

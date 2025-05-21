@@ -30,6 +30,7 @@ import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NIteratorBase;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalledRepository;
 import net.thevpc.nuts.log.NLog;
@@ -63,9 +64,7 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
         this.model = model;
         this.name = name;
         this.maxDepth = maxDepth;
-        if (folder == null) {
-            throw new NullPointerException("could not iterate over null folder");
-        }
+        NAssert.requireNonNull(folder, "folder");
         this.folder = folder;
         stack.push(new PathAndDepth(folder, 0));
     }

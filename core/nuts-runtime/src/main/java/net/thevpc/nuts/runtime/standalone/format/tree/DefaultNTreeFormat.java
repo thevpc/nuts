@@ -18,6 +18,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NStringUtils;
 
 public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implements NTreeFormat {
@@ -71,9 +72,7 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
         if (linkFormatter == null) {
             linkFormatter = LINK_ASCII_FORMATTER;
         }
-        if (tree == null) {
-            throw new NullPointerException("Null Tree");
-        }
+        NAssert.requireNonNull(tree, "tree");
         this.formatter = formatter;
         this.linkFormatter = linkFormatter;
         this.tree = tree;

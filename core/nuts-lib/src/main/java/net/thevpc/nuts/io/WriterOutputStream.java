@@ -1,5 +1,7 @@
 package net.thevpc.nuts.io;
 
+import net.thevpc.nuts.util.NAssert;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
@@ -9,9 +11,7 @@ public class WriterOutputStream extends OutputStream {
 
     // Constructor accepting a Writer
     public WriterOutputStream(Writer writer) {
-        if (writer == null) {
-            throw new NullPointerException("Writer cannot be null");
-        }
+        NAssert.requireNonNull(writer, "writer");
         this.writer = writer;
     }
 

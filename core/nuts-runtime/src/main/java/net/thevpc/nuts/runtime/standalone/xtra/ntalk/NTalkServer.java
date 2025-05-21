@@ -1,5 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.ntalk;
 
+import net.thevpc.nuts.util.NAssert;
+
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
@@ -35,12 +37,8 @@ public class NTalkServer implements Closeable{
         this.port = port <= 0 ? NTalkConstants.DEFAULT_PORT : port;
         this.service = service;
         this.action = action;
-        if (service == null) {
-            throw new NullPointerException("null service");
-        }
-        if (action == null) {
-            throw new NullPointerException("null action");
-        }
+        NAssert.requireNonNull(service, "service");
+        NAssert.requireNonNull(action, "action");
     }
 
     public ExecutorService getThreadPool() {

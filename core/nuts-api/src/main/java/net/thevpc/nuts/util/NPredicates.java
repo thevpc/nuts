@@ -182,9 +182,7 @@ public class NPredicates {
         private final Predicate<T> base;
 
         public Not(Predicate<T> base) {
-            if (base == null) {
-                throw new NullPointerException();
-            }
+            NAssert.requireNonNull(base, "base");
             this.base = base;
         }
 
@@ -217,12 +215,8 @@ public class NPredicates {
         private final Predicate<? super T> right;
 
         public Or(Predicate<T> left, Predicate<? super T> right) {
-            if (left == null) {
-                throw new NullPointerException();
-            }
-            if (right == null) {
-                throw new NullPointerException();
-            }
+            NAssert.requireNonNull(left, "left");
+            NAssert.requireNonNull(right, "right");
             this.left = left;
             this.right = right;
         }
@@ -259,12 +253,8 @@ public class NPredicates {
         private final Predicate<? super T> right;
 
         public And(Predicate<T> left, Predicate<? super T> right) {
-            if (left == null) {
-                throw new NullPointerException();
-            }
-            if (right == null) {
-                throw new NullPointerException();
-            }
+            NAssert.requireNonNull(left, "left");
+            NAssert.requireNonNull(right, "right");
             this.left = left;
             this.right = right;
         }

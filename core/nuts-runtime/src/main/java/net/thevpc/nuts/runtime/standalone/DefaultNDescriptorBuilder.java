@@ -477,13 +477,12 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
     @Override
     public NDescriptorBuilder addDependency(NDependency dependency) {
-        if (dependency == null) {
-            throw new NullPointerException();
+        if (!NBlankable.isBlank(dependency)) {
+            if (this.dependencies == null) {
+                this.dependencies = new ArrayList<>();
+            }
+            this.dependencies.add(dependency);
         }
-        if (this.dependencies == null) {
-            this.dependencies = new ArrayList<>();
-        }
-        this.dependencies.add(dependency);
         return this;
     }
 

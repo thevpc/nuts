@@ -148,13 +148,12 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
 
     @Override
     public NUpdateCmd addArg(String arg) {
-        if (this.args == null) {
-            this.args = new ArrayList<>();
+        if (arg != null) {
+            if (this.args == null) {
+                this.args = new ArrayList<>();
+            }
+            this.args.add(arg);
         }
-        if (arg == null) {
-            throw new NullPointerException();
-        }
-        this.args.add(arg);
         return this;
     }
 
@@ -176,10 +175,9 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
         }
         if (args != null) {
             for (String arg : args) {
-                if (arg == null) {
-                    throw new NullPointerException();
+                if (arg != null) {
+                    this.args.add(arg);
                 }
-                this.args.add(arg);
             }
         }
         return this;

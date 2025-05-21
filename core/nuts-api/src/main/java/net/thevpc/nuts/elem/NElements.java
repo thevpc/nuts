@@ -62,7 +62,77 @@ public interface NElements extends NContentTypeFormat {
 
     NElement normalize(NElement e);
 
-    static boolean isValidName(String name) {
+
+    static boolean isValidElementNameChar(char c, boolean start) {
+        if (start) {
+            if (!Character.isJavaIdentifierStart(c)
+                    && c != '.'
+                    && c != ':'
+                    && c != '@'
+            ) {
+                return false;
+            }
+        } else {
+            if (!Character.isJavaIdentifierPart(c)
+                    && c != '.'
+                    && c != '-'
+                    && c != ':'
+                    && c != '@'
+            ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    static boolean isValidElementNameChar(char c, boolean start, NContentType contentType) {
+        if (contentType == null) {
+            return isValidElementNameChar(c, start);
+        }
+        switch (contentType) {
+            case XML: {
+                if (start) {
+                    if (!Character.isJavaIdentifierStart(c)
+                            && c != '.'
+                            && c != ':'
+                    ) {
+                        return false;
+                    }
+                } else {
+                    if (!Character.isJavaIdentifierPart(c)
+                            && c != '.'
+                            && c != '-'
+                            && c != ':'
+                    ) {
+                        return false;
+                    }
+                }
+            }
+            case TSON: {
+                if (start) {
+                    if (!Character.isJavaIdentifierStart(c)
+                            && c != '.'
+                            && c != '@'
+                    ) {
+                        return false;
+                    }
+                } else {
+                    if (!Character.isJavaIdentifierPart(c)
+                            && c != '.'
+                            && c != '-'
+                            && c != '@'
+                    ) {
+                        return false;
+                    }
+                }
+            }
+            default: {
+                return true;
+            }
+        }
+    }
+
+    static boolean isValidElementName(String name) {
         if (name == null) {
             return false;
         }
@@ -75,6 +145,8 @@ public interface NElements extends NContentTypeFormat {
             if (i == 0) {
                 if (!Character.isJavaIdentifierStart(c)
                         && c != '.'
+                        && c != '@'
+                        && c != ':'
                 ) {
                     return false;
                 }
@@ -82,9 +154,73 @@ public interface NElements extends NContentTypeFormat {
                 if (!Character.isJavaIdentifierPart(c)
                         && c != '.'
                         && c != '-'
+                        && c != '@'
+                        && c != ':'
                 ) {
                     return false;
                 }
+            }
+        }
+        return true;
+    }
+
+    static boolean isValidElementName(String name, NContentType contentType) {
+        if (contentType == null) {
+            return isValidElementName(name);
+        }
+        if (name == null) {
+            return false;
+        }
+        if (name.isEmpty()) {
+            return false;
+        }
+        char[] charArray = name.toCharArray();
+        switch (contentType) {
+            case XML: {
+                //wont call isValidElementNameChar for performance
+                for (int i = 0; i < charArray.length; i++) {
+                    char c = charArray[i];
+                    if (i == 0) {
+                        if (!Character.isJavaIdentifierStart(c)
+                                && c != '.'
+                                && c != ':'
+                        ) {
+                            return false;
+                        }
+                    } else {
+                        if (!Character.isJavaIdentifierPart(c)
+                                && c != '.'
+                                && c != '-'
+                                && c != ':'
+                        ) {
+                            return false;
+                        }
+                    }
+                }
+                break;
+            }
+            case JSON: {
+                //wont call isValidElementNameChar for performance
+                for (int i = 0; i < charArray.length; i++) {
+                    char c = charArray[i];
+                    if (i == 0) {
+                        if (!Character.isJavaIdentifierStart(c)
+                                && c != '.'
+                                && c != '@'
+                        ) {
+                            return false;
+                        }
+                    } else {
+                        if (!Character.isJavaIdentifierPart(c)
+                                && c != '.'
+                                && c != '-'
+                                && c != '@'
+                        ) {
+                            return false;
+                        }
+                    }
+                }
+                break;
             }
         }
         return true;
@@ -514,47 +650,77 @@ public interface NElements extends NContentTypeFormat {
     NPrimitiveElement ofLocalTime(LocalTime localTime);
 
     NPrimitiveElement ofFloat(Float value);
+
     NPrimitiveElement ofFloat(float value);
 
-    NPrimitiveElement ofFloat(Float value,String suffix);
-    NPrimitiveElement ofFloat(float value,String suffix);
+    NPrimitiveElement ofFloat(Float value, String suffix);
+
+    NPrimitiveElement ofFloat(float value, String suffix);
 
     NPrimitiveElement ofByte(Byte value);
+
     NPrimitiveElement ofByte(byte value);
-    NPrimitiveElement ofByte(Byte value,NNumberLayout layout,String suffix);
-    NPrimitiveElement ofByte(byte value,NNumberLayout layout,String suffix);
-    NPrimitiveElement ofByte(Byte value,NNumberLayout layout);
-    NPrimitiveElement ofByte(byte value,NNumberLayout layout);
-    NPrimitiveElement ofByte(Byte value,String suffix);
-    NPrimitiveElement ofByte(byte value,String suffix);
+
+    NPrimitiveElement ofByte(Byte value, NNumberLayout layout, String suffix);
+
+    NPrimitiveElement ofByte(byte value, NNumberLayout layout, String suffix);
+
+    NPrimitiveElement ofByte(Byte value, NNumberLayout layout);
+
+    NPrimitiveElement ofByte(byte value, NNumberLayout layout);
+
+    NPrimitiveElement ofByte(Byte value, String suffix);
+
+    NPrimitiveElement ofByte(byte value, String suffix);
 
     NPrimitiveElement ofShort(Short value);
+
     NPrimitiveElement ofShort(short value);
-    NPrimitiveElement ofShort(Short value,NNumberLayout layout,String suffix);
-    NPrimitiveElement ofShort(short value,NNumberLayout layout,String suffix);
-    NPrimitiveElement ofShort(Short value,NNumberLayout layout);
-    NPrimitiveElement ofShort(short value,NNumberLayout layout);
-    NPrimitiveElement ofShort(Short value,String suffix);
-    NPrimitiveElement ofShort(short value,String suffix);
+
+    NPrimitiveElement ofShort(Short value, NNumberLayout layout, String suffix);
+
+    NPrimitiveElement ofShort(short value, NNumberLayout layout, String suffix);
+
+    NPrimitiveElement ofShort(Short value, NNumberLayout layout);
+
+    NPrimitiveElement ofShort(short value, NNumberLayout layout);
+
+    NPrimitiveElement ofShort(Short value, String suffix);
+
+    NPrimitiveElement ofShort(short value, String suffix);
 
 
     NPrimitiveElement ofInt(Integer value);
+
     NPrimitiveElement ofInt(int value);
-    NPrimitiveElement ofInt(Integer value,String suffix);
-    NPrimitiveElement ofInt(int value,String suffix);
-    NPrimitiveElement ofInt(Integer value,NNumberLayout layout,String suffix);
-    NPrimitiveElement ofInt(int value,NNumberLayout layout,String suffix);
-    NPrimitiveElement ofInt(Integer value,NNumberLayout layout);
-    NPrimitiveElement ofInt(int value,NNumberLayout layout);
+
+    NPrimitiveElement ofInt(Integer value, String suffix);
+
+    NPrimitiveElement ofInt(int value, String suffix);
+
+    NPrimitiveElement ofInt(Integer value, NNumberLayout layout, String suffix);
+
+    NPrimitiveElement ofInt(int value, NNumberLayout layout, String suffix);
+
+    NPrimitiveElement ofInt(Integer value, NNumberLayout layout);
+
+    NPrimitiveElement ofInt(int value, NNumberLayout layout);
 
     NPrimitiveElement ofLong(Long value);
+
     NPrimitiveElement ofLong(long value);
-    NPrimitiveElement ofLong(Long value,String suffix);
-    NPrimitiveElement ofLong(long value,String suffix);
-    NPrimitiveElement ofLong(Long value,NNumberLayout layout,String suffix);
-    NPrimitiveElement ofLong(long value,NNumberLayout layout,String suffix);
-    NPrimitiveElement ofLong(Long value,NNumberLayout layout);
-    NPrimitiveElement ofLong(long value,NNumberLayout layout);
+
+    NPrimitiveElement ofLong(Long value, String suffix);
+
+    NPrimitiveElement ofLong(long value, String suffix);
+
+    NPrimitiveElement ofLong(Long value, NNumberLayout layout, String suffix);
+
+    NPrimitiveElement ofLong(long value, NNumberLayout layout, String suffix);
+
+    NPrimitiveElement ofLong(Long value, NNumberLayout layout);
+
+    NPrimitiveElement ofLong(long value, NNumberLayout layout);
 
 
     NPrimitiveElement ofNull();
@@ -591,12 +757,16 @@ public interface NElements extends NContentTypeFormat {
     NPrimitiveElement ofNumber(Number value);
 
     NPrimitiveElement ofBigDecimal(BigDecimal value);
-    NPrimitiveElement ofBigDecimal(BigDecimal value,String suffix);
+
+    NPrimitiveElement ofBigDecimal(BigDecimal value, String suffix);
 
     NPrimitiveElement ofBigInteger(BigInteger value);
-    NPrimitiveElement ofBigInteger(BigInteger value,NNumberLayout layout,String suffix);
-    NPrimitiveElement ofBigInteger(BigInteger value,NNumberLayout layout);
-    NPrimitiveElement ofBigInteger(BigInteger value,String suffix);
+
+    NPrimitiveElement ofBigInteger(BigInteger value, NNumberLayout layout, String suffix);
+
+    NPrimitiveElement ofBigInteger(BigInteger value, NNumberLayout layout);
+
+    NPrimitiveElement ofBigInteger(BigInteger value, String suffix);
 
     Predicate<Class<?>> getIndestructibleObjects();
 
@@ -675,7 +845,7 @@ public interface NElements extends NContentTypeFormat {
 
     NCharStreamElementBuilder ofCharStreamBuilder();
 
-    NElementAnnotation ofAnnotation(String name,NElement ...values);
+    NElementAnnotation ofAnnotation(String name, NElement... values);
 
 
 }

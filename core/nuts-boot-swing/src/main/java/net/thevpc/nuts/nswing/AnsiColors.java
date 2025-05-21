@@ -114,7 +114,7 @@ public class AnsiColors {
         int bb = valid255(b);
         return new Color(rr,gg,bb);
     }
-    public TextStyle restStyle() {
+    public TextStyle resetStyle() {
         return new TextStyle().setForeColor(cResetForeground).setBackColor(cResetBackground);
     }
     public TextStyle applyANSIColor(String ANSIColor,TextStyle currentStyle) {
@@ -129,7 +129,7 @@ public class AnsiColors {
             switch (a) {
                 case 0: {
 //                    currentStyle=currentStyle.copy().setForeColor(color256(0));
-                    currentStyle = restStyle();// new Style().setForeColor(color256(0));
+                    currentStyle = resetStyle();// new Style().setForeColor(color256(0));
                     break;
                 }
                 case 1: {

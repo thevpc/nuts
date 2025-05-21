@@ -28,6 +28,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -165,13 +166,12 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
 
     @Override
     public NPushCmd addArg(String arg) {
-        if (this.args == null) {
-            this.args = new ArrayList<>();
+        if(arg!=null) {
+            if (this.args == null) {
+                this.args = new ArrayList<>();
+            }
+            this.args.add(arg);
         }
-        if (arg == null) {
-            throw new NullPointerException();
-        }
-        this.args.add(arg);
         return this;
     }
 
@@ -187,10 +187,9 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
         }
         if (args != null) {
             for (String arg : args) {
-                if (arg == null) {
-                    throw new NullPointerException();
+                if(arg!=null) {
+                    this.args.add(arg);
                 }
-                this.args.add(arg);
             }
         }
         return this;

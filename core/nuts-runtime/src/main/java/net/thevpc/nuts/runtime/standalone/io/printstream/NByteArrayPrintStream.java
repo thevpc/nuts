@@ -5,6 +5,7 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.AbstractMultiReadNInputSource;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextTransformConfig;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.*;
@@ -226,9 +227,8 @@ public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPri
         }
 
         public synchronized int read(byte[] buffer, int off, int len, int pointer) {
-            if (buffer == null) {
-                throw new NullPointerException();
-            } else if (off < 0 || len < 0 || len > buffer.length - off) {
+            NAssert.requireNonNull(buffer, "buffer");
+            if (off < 0 || len < 0 || len > buffer.length - off) {
                 throw new IndexOutOfBoundsException();
             }
 

@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts.log;
 
+import net.thevpc.nuts.util.NAssert;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -79,9 +81,7 @@ public final class NLogVerb {
     private final String name;
 
     public NLogVerb(String name) {
-        if (name == null) {
-            throw new NullPointerException("null log verb");
-        }
+        NAssert.requireNonBlank(name, "log verb");
         this.name = name;
     }
 

@@ -606,7 +606,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
         if (value == null) {
             return ofNull();
         }
-        return NElements.isValidName(value) ? new DefaultNStringElement(NElementType.NAME, value, null, null)
+        return NElements.isValidElementName(value) ? new DefaultNStringElement(NElementType.NAME, value, null, null)
                 : new DefaultNStringElement(NElementType.DOUBLE_QUOTED_STRING, value, null, null)
                 ;
     }

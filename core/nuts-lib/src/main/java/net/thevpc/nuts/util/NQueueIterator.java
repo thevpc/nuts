@@ -69,9 +69,7 @@ public class NQueueIterator<T> extends NIteratorBase<T> {
     }
 
     public void add(NIterator<? extends T> child) {
-        if (child == null) {
-            throw new NullPointerException();
-        }
+        NAssert.requireNonNull(child, "child");
         children.add(child);
         size++;
     }

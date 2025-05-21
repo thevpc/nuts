@@ -80,11 +80,6 @@ public class DefaultNDependency implements NDependency {
         }
         this.optional = o;
         this.exclusions = NReservedLangUtils.unmodifiableList(exclusions);
-        for (NId exclusion : this.exclusions) {
-            if (exclusion == null) {
-                throw new NullPointerException();
-            }
-        }
         this.condition = condition == null ? NEnvCondition.BLANK : condition;
         this.type = NStringUtils.trimToNull(type);
         this.properties = NStringUtils.trim(NStringMapFormat.DEFAULT.format(NStringMapFormat.DEFAULT.parse(properties).get()));
