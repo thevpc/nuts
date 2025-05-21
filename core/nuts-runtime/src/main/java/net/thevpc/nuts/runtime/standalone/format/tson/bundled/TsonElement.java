@@ -48,6 +48,7 @@ public interface TsonElement extends TsonElementBase, Comparable<TsonElement> {
     TsonLocalDate toLocalDate();
 
     TsonLocalDateTime toLocalDateTime();
+
     TsonInstant toInstant();
 
     TsonLocalTime toLocalTime();

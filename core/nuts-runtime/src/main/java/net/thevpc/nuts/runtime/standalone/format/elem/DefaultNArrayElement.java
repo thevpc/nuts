@@ -53,7 +53,7 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
                         : NElementType.NAMED_PARAMETRIZED_ARRAY,
                 annotations, comments);
         if (name != null) {
-            NAssert.requireTrue(NElements.isValidName(name), "valid name");
+            NAssert.requireTrue(NElements.isValidName(name), "valid name : "+name);
         }
         this.values = values.toArray(new NElement[0]);
         this.name = name;

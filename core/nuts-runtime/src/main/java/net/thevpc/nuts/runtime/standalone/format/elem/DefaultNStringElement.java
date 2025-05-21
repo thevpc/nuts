@@ -16,7 +16,7 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
                                  NElementAnnotation[] annotations, NElementComments comments) {
         super(type, value, annotations, comments);
         if (type == NElementType.NAME) {
-            NAssert.requireTrue(NElements.isValidName((String) value), "valid name");
+            NAssert.requireTrue(NElements.isValidName((String) value), "valid name : "+value);
         }
     }
     public DefaultNStringElement(NElementType type, Character value,

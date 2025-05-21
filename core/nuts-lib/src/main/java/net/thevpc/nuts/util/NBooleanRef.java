@@ -17,6 +17,11 @@ public class NBooleanRef extends NObjectRef<Boolean> {
         return this;
     }
 
+    public NBooleanRef set() {
+        set(true);
+        return this;
+    }
+
     public NBooleanRef setTrue() {
         set(true);
         return this;

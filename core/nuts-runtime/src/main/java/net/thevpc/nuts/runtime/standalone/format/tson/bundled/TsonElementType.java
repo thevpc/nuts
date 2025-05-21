@@ -26,10 +26,10 @@ public enum TsonElementType {
     BOOLEAN,
     NAME,
     ALIAS,
-    LOCAL_TIME,
-    LOCAL_DATE,
-    LOCAL_DATETIME,
     INSTANT,
+    LOCAL_DATETIME,
+    LOCAL_DATE,
+    LOCAL_TIME,
     REGEX,
 
     OP,

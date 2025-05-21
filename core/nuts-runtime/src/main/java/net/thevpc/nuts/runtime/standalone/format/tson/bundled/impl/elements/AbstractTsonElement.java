@@ -139,13 +139,13 @@ public abstract class AbstractTsonElement extends AbstractTsonElementBase {
     }
 
     @Override
-    public TsonLocalDateTime toLocalDateTime() {
-        return throwPrimitive(TsonElementType.LOCAL_DATETIME);
+    public TsonInstant toInstant() {
+        return throwPrimitive(TsonElementType.INSTANT);
     }
 
     @Override
-    public TsonInstant toInstant() {
-        return throwPrimitive(TsonElementType.INSTANT);
+    public TsonLocalDateTime toLocalDateTime() {
+        return throwPrimitive(TsonElementType.LOCAL_DATETIME);
     }
 
     @Override

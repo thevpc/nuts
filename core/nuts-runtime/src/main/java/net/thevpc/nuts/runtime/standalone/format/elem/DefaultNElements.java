@@ -652,9 +652,60 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
         return value == null ? ofNull() : new DefaultNNumberElement(NElementType.FLOAT, value);
     }
 
+
+    @Override
+    public NPrimitiveElement ofFloat(float value) {
+        return new DefaultNNumberElement(NElementType.FLOAT, value);
+    }
+
+    @Override
+    public NPrimitiveElement ofFloat(Float value, String suffix) {
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.FLOAT, value,null,suffix);
+    }
+
+    @Override
+    public NPrimitiveElement ofFloat(float value, String suffix) {
+        return new DefaultNNumberElement(NElementType.FLOAT, value,null,suffix);
+    }
+
     @Override
     public NPrimitiveElement ofInt(Integer value) {
         return value == null ? ofNull() : new DefaultNNumberElement(NElementType.INTEGER, value);
+    }
+
+    @Override
+    public NPrimitiveElement ofInt(int value) {
+        return new DefaultNNumberElement(NElementType.INTEGER, value, null, null);
+    }
+
+    @Override
+    public NPrimitiveElement ofInt(Integer value, String suffix) {
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.INTEGER, value, null, suffix);
+    }
+
+    @Override
+    public NPrimitiveElement ofInt(int value, String suffix) {
+        return new DefaultNNumberElement(NElementType.INTEGER, value, null, suffix);
+    }
+
+    @Override
+    public NPrimitiveElement ofInt(Integer value, NNumberLayout layout, String suffix) {
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.INTEGER, value, layout, suffix);
+    }
+
+    @Override
+    public NPrimitiveElement ofInt(int value, NNumberLayout layout, String suffix) {
+        return new DefaultNNumberElement(NElementType.INTEGER, value, layout, suffix);
+    }
+
+    @Override
+    public NPrimitiveElement ofInt(Integer value, NNumberLayout layout) {
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.INTEGER, value, layout, null);
+    }
+
+    @Override
+    public NPrimitiveElement ofInt(int value, NNumberLayout layout) {
+        return new DefaultNNumberElement(NElementType.INTEGER, value, layout, null);
     }
 
     @Override
@@ -678,8 +729,48 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     @Override
+    public NElementAnnotation ofAnnotation(String name, NElement... values) {
+        return new NElementAnnotationImpl(name, values);
+    }
+
+    @Override
     public NPrimitiveElement ofLong(Long value) {
         return value == null ? ofNull() : new DefaultNNumberElement(NElementType.LONG, value);
+    }
+
+    @Override
+    public NPrimitiveElement ofLong(long value, NNumberLayout layout) {
+        return new DefaultNNumberElement(NElementType.LONG, value, layout, null);
+    }
+
+    @Override
+    public NPrimitiveElement ofLong(Long value, NNumberLayout layout) {
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.LONG, value, layout, null);
+    }
+
+    @Override
+    public NPrimitiveElement ofLong(long value, NNumberLayout layout, String suffix) {
+        return new DefaultNNumberElement(NElementType.LONG, value, layout, suffix);
+    }
+
+    @Override
+    public NPrimitiveElement ofLong(Long value, NNumberLayout layout, String suffix) {
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.LONG, value, layout, suffix);
+    }
+
+    @Override
+    public NPrimitiveElement ofLong(long value, String suffix) {
+        return new DefaultNNumberElement(NElementType.LONG, value, null, suffix);
+    }
+
+    @Override
+    public NPrimitiveElement ofLong(Long value, String suffix) {
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.LONG, value, null, suffix);
+    }
+
+    @Override
+    public NPrimitiveElement ofLong(long value) {
+        return new DefaultNNumberElement(NElementType.LONG, value, null, null);
     }
 
     @Override
@@ -746,8 +837,79 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     @Override
+    public NPrimitiveElement ofByte(Byte value, String suffix) {
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.BYTE, value, null, suffix);
+    }
+
+    @Override
+    public NPrimitiveElement ofByte(byte value) {
+        return new DefaultNNumberElement(NElementType.BYTE, value);
+    }
+
+    @Override
+    public NPrimitiveElement ofByte(Byte value, NNumberLayout layout, String suffix) {
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.BYTE, value, layout, suffix);
+    }
+
+    @Override
+    public NPrimitiveElement ofByte(byte value, NNumberLayout layout, String suffix) {
+        return new DefaultNNumberElement(NElementType.BYTE, value, layout, suffix);
+    }
+
+    @Override
+    public NPrimitiveElement ofByte(Byte value, NNumberLayout layout) {
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.BYTE, value, layout, null);
+    }
+
+    @Override
+    public NPrimitiveElement ofByte(byte value, NNumberLayout layout) {
+        return new DefaultNNumberElement(NElementType.BYTE, value, layout, null);
+    }
+
+    @Override
+    public NPrimitiveElement ofByte(byte value, String suffix) {
+        return new DefaultNNumberElement(NElementType.BYTE, value, null, suffix);
+    }
+
+    @Override
     public NPrimitiveElement ofShort(Short value) {
         return value == null ? ofNull() : new DefaultNNumberElement(NElementType.SHORT, value);
+    }
+
+
+    @Override
+    public NPrimitiveElement ofShort(short value) {
+        return new DefaultNNumberElement(NElementType.SHORT, value, null, null);
+    }
+
+    @Override
+    public NPrimitiveElement ofShort(Short value, NNumberLayout layout, String suffix) {
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.SHORT, value, layout, suffix);
+    }
+
+    @Override
+    public NPrimitiveElement ofShort(short value, NNumberLayout layout, String suffix) {
+        return new DefaultNNumberElement(NElementType.SHORT, value, layout, suffix);
+    }
+
+    @Override
+    public NPrimitiveElement ofShort(Short value, NNumberLayout layout) {
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.SHORT, value, layout, null);
+    }
+
+    @Override
+    public NPrimitiveElement ofShort(short value, NNumberLayout layout) {
+        return new DefaultNNumberElement(NElementType.SHORT, value, layout, null);
+    }
+
+    @Override
+    public NPrimitiveElement ofShort(Short value, String suffix) {
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.SHORT, value, null, suffix);
+    }
+
+    @Override
+    public NPrimitiveElement ofShort(short value, String suffix) {
+        return new DefaultNNumberElement(NElementType.SHORT, value, null, suffix);
     }
 
     @Override
@@ -775,10 +937,6 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
         return new DefaultNNumberElement(NElementType.DOUBLE, value, NNumberLayout.DECIMAL, suffix);
     }
 
-    @Override
-    public NPrimitiveElement ofFloat(Short value) {
-        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.SHORT, value);
-    }
 
     @Override
     public NPrimitiveElement ofBigDecimal(BigDecimal value) {
@@ -789,11 +947,31 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     @Override
+    public NPrimitiveElement ofBigDecimal(BigDecimal value, String suffix) {
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.BIG_DECIMAL, value, NNumberLayout.DECIMAL, suffix);
+    }
+
+    @Override
     public NPrimitiveElement ofBigInteger(BigInteger value) {
         if (value == null) {
             return ofNull();
         }
         return new DefaultNNumberElement(NElementType.BIG_INTEGER, value);
+    }
+
+    @Override
+    public NPrimitiveElement ofBigInteger(BigInteger value, NNumberLayout layout, String suffix) {
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.BIG_INTEGER, value, layout, suffix);
+    }
+
+    @Override
+    public NPrimitiveElement ofBigInteger(BigInteger value, NNumberLayout layout) {
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.BIG_INTEGER, value, layout, null);
+    }
+
+    @Override
+    public NPrimitiveElement ofBigInteger(BigInteger value, String suffix) {
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.BIG_INTEGER, value, null, suffix);
     }
 
     @Override

@@ -13,11 +13,11 @@ import java.util.Objects;
 public class TsonAnnotationImpl implements TsonAnnotation {
 
     private String name;
-    private TsonElementList params;
+    private List<TsonElement> params;
 
-    public TsonAnnotationImpl(String name, UnmodifiableArrayList<TsonElement> params) {
+    public TsonAnnotationImpl(String name, List<TsonElement> params) {
         this.name = name;
-        this.params = params == null ? null : new TsonElementListImpl(new ArrayList<>(params));
+        this.params = params == null ? null : new ArrayList<>(params);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class TsonAnnotationImpl implements TsonAnnotation {
     }
 
     @Override
-    public TsonElementList params() {
+    public List<TsonElement> params() {
         return params;
     }
 
@@ -52,12 +52,12 @@ public class TsonAnnotationImpl implements TsonAnnotation {
 
     @Override
     public TsonElement param(int index) {
-        return params.getAt(index);
+        return params.get(index);
     }
 
     @Override
     public List<TsonElement> children() {
-        return params == null ? Collections.emptyList() : params.toList();
+        return params == null ? null : Collections.unmodifiableList(params);
     }
 
     @Override
@@ -86,11 +86,12 @@ public class TsonAnnotationImpl implements TsonAnnotation {
         if (i != 0) {
             return i;
         }
-        return TsonUtils.compareElementsArray(params == null ? null : params.toArray(), o.params() == null ? null : o.params().toArray());
+        List<TsonElement> params1 = o.params();
+        return TsonUtils.compareElementsArray(params == null ? null : params.toArray(new TsonElement[0]), params1 == null ? null : params1.toArray(new TsonElement[0]));
     }
 
     @Override
     public String toString(boolean compact) {
-        return "@" + Tson.ofUplet(name, params.toArray()).toString(compact);
+        return "@" + Tson.ofUplet(name, params.toArray(new TsonElement[0])).toString(compact);
     }
 }

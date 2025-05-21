@@ -22,7 +22,7 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
                         : NElementType.NAMED_PARAMETRIZED_OBJECT,
                 annotations, comments);
         if (name != null) {
-            NAssert.requireTrue(NElements.isValidName(name), "valid name");
+            NAssert.requireTrue(NElements.isValidName(name), "valid name : "+name);
         }
         this.name = name;
         this.params = params;

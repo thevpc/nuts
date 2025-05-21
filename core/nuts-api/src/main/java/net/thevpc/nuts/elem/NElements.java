@@ -73,7 +73,9 @@ public interface NElements extends NContentTypeFormat {
         for (int i = 0; i < charArray.length; i++) {
             char c = charArray[i];
             if (i == 0) {
-                if (!Character.isJavaIdentifierStart(c)) {
+                if (!Character.isJavaIdentifierStart(c)
+                        && c != '.'
+                ) {
                     return false;
                 }
             } else {
@@ -512,10 +514,48 @@ public interface NElements extends NContentTypeFormat {
     NPrimitiveElement ofLocalTime(LocalTime localTime);
 
     NPrimitiveElement ofFloat(Float value);
+    NPrimitiveElement ofFloat(float value);
+
+    NPrimitiveElement ofFloat(Float value,String suffix);
+    NPrimitiveElement ofFloat(float value,String suffix);
+
+    NPrimitiveElement ofByte(Byte value);
+    NPrimitiveElement ofByte(byte value);
+    NPrimitiveElement ofByte(Byte value,NNumberLayout layout,String suffix);
+    NPrimitiveElement ofByte(byte value,NNumberLayout layout,String suffix);
+    NPrimitiveElement ofByte(Byte value,NNumberLayout layout);
+    NPrimitiveElement ofByte(byte value,NNumberLayout layout);
+    NPrimitiveElement ofByte(Byte value,String suffix);
+    NPrimitiveElement ofByte(byte value,String suffix);
+
+    NPrimitiveElement ofShort(Short value);
+    NPrimitiveElement ofShort(short value);
+    NPrimitiveElement ofShort(Short value,NNumberLayout layout,String suffix);
+    NPrimitiveElement ofShort(short value,NNumberLayout layout,String suffix);
+    NPrimitiveElement ofShort(Short value,NNumberLayout layout);
+    NPrimitiveElement ofShort(short value,NNumberLayout layout);
+    NPrimitiveElement ofShort(Short value,String suffix);
+    NPrimitiveElement ofShort(short value,String suffix);
+
 
     NPrimitiveElement ofInt(Integer value);
+    NPrimitiveElement ofInt(int value);
+    NPrimitiveElement ofInt(Integer value,String suffix);
+    NPrimitiveElement ofInt(int value,String suffix);
+    NPrimitiveElement ofInt(Integer value,NNumberLayout layout,String suffix);
+    NPrimitiveElement ofInt(int value,NNumberLayout layout,String suffix);
+    NPrimitiveElement ofInt(Integer value,NNumberLayout layout);
+    NPrimitiveElement ofInt(int value,NNumberLayout layout);
 
     NPrimitiveElement ofLong(Long value);
+    NPrimitiveElement ofLong(long value);
+    NPrimitiveElement ofLong(Long value,String suffix);
+    NPrimitiveElement ofLong(long value,String suffix);
+    NPrimitiveElement ofLong(Long value,NNumberLayout layout,String suffix);
+    NPrimitiveElement ofLong(long value,NNumberLayout layout,String suffix);
+    NPrimitiveElement ofLong(Long value,NNumberLayout layout);
+    NPrimitiveElement ofLong(long value,NNumberLayout layout);
+
 
     NPrimitiveElement ofNull();
 
@@ -524,10 +564,6 @@ public interface NElements extends NContentTypeFormat {
     NPrimitiveElement ofInstant(Date value);
 
     NPrimitiveElement ofInstant(String value);
-
-    NPrimitiveElement ofByte(Byte value);
-
-    NPrimitiveElement ofShort(Short value);
 
     NPrimitiveElement ofChar(Character value);
 
@@ -551,13 +587,16 @@ public interface NElements extends NContentTypeFormat {
 
     NPrimitiveElement ofBigComplex(BigDecimal real, BigDecimal imag);
 
-    NPrimitiveElement ofFloat(Short value);
 
     NPrimitiveElement ofNumber(Number value);
 
     NPrimitiveElement ofBigDecimal(BigDecimal value);
+    NPrimitiveElement ofBigDecimal(BigDecimal value,String suffix);
 
     NPrimitiveElement ofBigInteger(BigInteger value);
+    NPrimitiveElement ofBigInteger(BigInteger value,NNumberLayout layout,String suffix);
+    NPrimitiveElement ofBigInteger(BigInteger value,NNumberLayout layout);
+    NPrimitiveElement ofBigInteger(BigInteger value,String suffix);
 
     Predicate<Class<?>> getIndestructibleObjects();
 
@@ -635,4 +674,8 @@ public interface NElements extends NContentTypeFormat {
     NBinaryStreamElementBuilder ofBinaryStreamBuilder();
 
     NCharStreamElementBuilder ofCharStreamBuilder();
+
+    NElementAnnotation ofAnnotation(String name,NElement ...values);
+
+
 }

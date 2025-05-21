@@ -240,10 +240,15 @@ public abstract class TsonElementDecorator extends AbstractTsonElementBase {
         }
         for (TsonAnnotation annotation : annotations()) {
             visitor.visitAnnotationStart(annotation.name());
-            for (TsonElement param : annotation.params()) {
-                visitor.visitAnnotationParamStart();
-                param.visit(visitor);
-                visitor.visitAnnotationParamEnd();
+            List<TsonElement> params = annotation.params();
+            if(params!=null) {
+                visitor.visitAnnotationParamsStart();
+                for (TsonElement param : params) {
+                    visitor.visitAnnotationParamStart();
+                    param.visit(visitor);
+                    visitor.visitAnnotationParamEnd();
+                }
+                visitor.visitAnnotationParamsEnd();
             }
             visitor.visitAnnotationEnd();
         }

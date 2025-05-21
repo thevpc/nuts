@@ -49,8 +49,6 @@ public interface NElementAnnotation extends NBlankable {
 
     List<NElement> params();
 
-    List<NElement> children();
-
     boolean isParametrized();
 
     boolean isNamed();

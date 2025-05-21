@@ -670,77 +670,6 @@ Token t ;
     }
   }
 
-  final public void annotationParamList() throws ParseException {
-            visitor.visitAnnotationParamStart();
-    label_6:
-    while (true) {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case INSTANT:
-      case DATETIME:
-      case DATE:
-      case TIME:
-      case REGEX:
-      case LBRACE:
-      case NUMBER:
-      case DOUBLE_QUOTE_STR:
-      case SINGLE_QUOTE_STR:
-      case LINE_STR:
-      case ANTI_QUOTE_STR:
-      case TRIPLE_DOUBLE_QUOTE_STR:
-      case TRIPLE_SINGLE_QUOTE_STR:
-      case TRIPLE_ANTI_QUOTE_STR:
-      case TRUE:
-      case FALSE:
-      case NULL:
-      case LPAREN:
-      case LBRACK:
-      case COMMA:
-      case AT:
-      case CHARSTREAM_START:
-      case NAME:
-        ;
-        break;
-      default:
-        jj_la1[11] = jj_gen;
-        break label_6;
-      }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case INSTANT:
-      case DATETIME:
-      case DATE:
-      case TIME:
-      case REGEX:
-      case LBRACE:
-      case NUMBER:
-      case DOUBLE_QUOTE_STR:
-      case SINGLE_QUOTE_STR:
-      case LINE_STR:
-      case ANTI_QUOTE_STR:
-      case TRIPLE_DOUBLE_QUOTE_STR:
-      case TRIPLE_SINGLE_QUOTE_STR:
-      case TRIPLE_ANTI_QUOTE_STR:
-      case TRUE:
-      case FALSE:
-      case NULL:
-      case LPAREN:
-      case LBRACK:
-      case AT:
-      case CHARSTREAM_START:
-      case NAME:
-        annotationParam();
-        break;
-      case COMMA:
-        commaSeparator();
-        break;
-      default:
-        jj_la1[12] = jj_gen;
-        jj_consume_token(-1);
-        throw new ParseException();
-      }
-    }
-            visitor.visitAnnotationParamEnd();
-  }
-
   final public void annotation() throws ParseException {
   Token id=null;
     jj_consume_token(AT);
@@ -749,13 +678,14 @@ Token t ;
       id = jj_consume_token(NAME);
       break;
     default:
-      jj_la1[13] = jj_gen;
+      jj_la1[11] = jj_gen;
       ;
     }
         visitor.visitAnnotationStart(id==null?null:id.image);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case LPAREN:
       jj_consume_token(LPAREN);
+         visitor.visitAnnotationParamsStart();
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case RPAREN:
         jj_consume_token(RPAREN);
@@ -783,7 +713,72 @@ Token t ;
       case AT:
       case CHARSTREAM_START:
       case NAME:
-        annotationParamList();
+        label_6:
+        while (true) {
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case INSTANT:
+          case DATETIME:
+          case DATE:
+          case TIME:
+          case REGEX:
+          case LBRACE:
+          case NUMBER:
+          case DOUBLE_QUOTE_STR:
+          case SINGLE_QUOTE_STR:
+          case LINE_STR:
+          case ANTI_QUOTE_STR:
+          case TRIPLE_DOUBLE_QUOTE_STR:
+          case TRIPLE_SINGLE_QUOTE_STR:
+          case TRIPLE_ANTI_QUOTE_STR:
+          case TRUE:
+          case FALSE:
+          case NULL:
+          case LPAREN:
+          case LBRACK:
+          case COMMA:
+          case AT:
+          case CHARSTREAM_START:
+          case NAME:
+            ;
+            break;
+          default:
+            jj_la1[12] = jj_gen;
+            break label_6;
+          }
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case INSTANT:
+          case DATETIME:
+          case DATE:
+          case TIME:
+          case REGEX:
+          case LBRACE:
+          case NUMBER:
+          case DOUBLE_QUOTE_STR:
+          case SINGLE_QUOTE_STR:
+          case LINE_STR:
+          case ANTI_QUOTE_STR:
+          case TRIPLE_DOUBLE_QUOTE_STR:
+          case TRIPLE_SINGLE_QUOTE_STR:
+          case TRIPLE_ANTI_QUOTE_STR:
+          case TRUE:
+          case FALSE:
+          case NULL:
+          case LPAREN:
+          case LBRACK:
+          case AT:
+          case CHARSTREAM_START:
+          case NAME:
+            annotationParam();
+            break;
+          case COMMA:
+            commaSeparator();
+            break;
+          default:
+            jj_la1[13] = jj_gen;
+            jj_consume_token(-1);
+            throw new ParseException();
+          }
+        }
         jj_consume_token(RPAREN);
         break;
       default:
@@ -791,6 +786,7 @@ Token t ;
         jj_consume_token(-1);
         throw new ParseException();
       }
+         visitor.visitAnnotationParamsEnd();
       break;
     default:
       jj_la1[15] = jj_gen;
@@ -1042,13 +1038,13 @@ Token t ;
       jj_la1_init_2();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x5ffd7e,0xff000000,0xff000000,0x0,0x5ffd7e,0x5ffd7e,0x5ffd7e,0x5ffd7e,0x5ffd7e,0x5ffd7e,0x5ffd7e,0x5ffd7e,0x5ffd7e,0x0,0x7ffd7e,0x100000,0x400040,0x400040,0x100000,0x400040,0x400040,0x7ffd7e,0x5ffdfe,0xdffd7e,};
+      jj_la1_0 = new int[] {0x5ffd7e,0xff000000,0xff000000,0x0,0x5ffd7e,0x5ffd7e,0x5ffd7e,0x5ffd7e,0x5ffd7e,0x5ffd7e,0x5ffd7e,0x0,0x5ffd7e,0x5ffd7e,0x7ffd7e,0x100000,0x400040,0x400040,0x100000,0x400040,0x400040,0x7ffd7e,0x5ffdfe,0xdffd7e,};
    }
    private static void jj_la1_init_1() {
       jj_la1_1 = new int[] {0x0,0xffffffff,0xffffffff,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_init_2() {
-      jj_la1_2 = new int[] {0xa80000,0x10ffff,0x10ffff,0x80000,0xa00000,0xac0000,0xac0000,0xac0000,0xac0000,0xad0000,0xad0000,0xac0000,0xac0000,0x800000,0xac0000,0x0,0x0,0x0,0x0,0x0,0x0,0xac0000,0xac0000,0xad0000,};
+      jj_la1_2 = new int[] {0xa80000,0x10ffff,0x10ffff,0x80000,0xa00000,0xac0000,0xac0000,0xac0000,0xac0000,0xad0000,0xad0000,0x800000,0xac0000,0xac0000,0xac0000,0x0,0x0,0x0,0x0,0x0,0x0,0xac0000,0xac0000,0xad0000,};
    }
 
   /** Constructor with InputStream. */

@@ -128,7 +128,7 @@ public class NAssert {
     }
 
     public static boolean requireEmpty(Collection<?> value, String name) {
-        return requireTrue(value.isEmpty(), () -> NMsg.ofC("should be empty %s", createName(name)));
+        return requireTrue(value.isEmpty(), () -> NMsg.ofC("should be empty %s, was %s", createName(name),value==null?"null":value.size()));
     }
 
     public static boolean requireNonEmpty(CharSequence value, String name) {
@@ -136,7 +136,7 @@ public class NAssert {
     }
 
     public static boolean requireEmpty(CharSequence value, String name) {
-        return requireTrue(value.length() == 0, () -> NMsg.ofC("should be empty %s", createName(name)));
+        return requireTrue(value.length() == 0, () -> NMsg.ofC("should be empty %s, was %s", createName(name),value));
     }
 
     public static boolean requireNonEmpty(Object[] value, String name) {
@@ -144,7 +144,7 @@ public class NAssert {
     }
 
     public static boolean requireEmpty(Object[] value, String name) {
-        return requireTrue(value.length == 0, () -> NMsg.ofC("should be empty %s", createName(name)));
+        return requireTrue(value.length == 0, () -> NMsg.ofC("should be empty %s, was %s", createName(name),value.length));
     }
 
     public static boolean requireNonEmpty(boolean[] value, String name) {
@@ -152,7 +152,7 @@ public class NAssert {
     }
 
     public static boolean requireEmpty(boolean[] value, String name) {
-        return requireTrue(value.length == 0, () -> NMsg.ofC("should be empty %s", createName(name)));
+        return requireTrue(value.length == 0, () -> NMsg.ofC("should be empty %s, was %s", createName(name),value.length));
     }
 
     public static boolean requireNonEmpty(byte[] value, String name) {
@@ -160,7 +160,7 @@ public class NAssert {
     }
 
     public static boolean requireEmpty(byte[] value, String name) {
-        return requireTrue(value.length == 0, () -> NMsg.ofC("should be empty %s", createName(name)));
+        return requireTrue(value.length == 0, () -> NMsg.ofC("should be empty %s", createName(name),value.length));
     }
 
     public static boolean requireNonEmpty(short[] value, String name) {
@@ -168,7 +168,7 @@ public class NAssert {
     }
 
     public static boolean requireEmpty(short[] value, String name) {
-        return requireTrue(value.length == 0, () -> NMsg.ofC("should be empty %s", createName(name)));
+        return requireTrue(value.length == 0, () -> NMsg.ofC("should be empty %s, was %s", createName(name),value.length));
     }
 
     public static boolean requireNonEmpty(char[] value, String name) {
@@ -176,7 +176,7 @@ public class NAssert {
     }
 
     public static boolean requireEmpty(char[] value, String name) {
-        return requireTrue(value.length == 0, () -> NMsg.ofC("should be empty %s", createName(name)));
+        return requireTrue(value.length == 0, () -> NMsg.ofC("should be empty %s, was %s", createName(name),value.length));
     }
 
     public static boolean requireNonEmpty(int[] value, String name) {
@@ -184,7 +184,7 @@ public class NAssert {
     }
 
     public static boolean requireEmpty(int[] value, String name) {
-        return requireTrue(value.length == 0, () -> NMsg.ofC("should be empty %s", createName(name)));
+        return requireTrue(value.length == 0, () -> NMsg.ofC("should be empty %s, was %s", createName(name),value.length));
     }
 
     public static boolean requireNonEmpty(long[] value, String name) {
@@ -192,7 +192,7 @@ public class NAssert {
     }
 
     public static boolean requireEmpty(long[] value, String name) {
-        return requireTrue(value.length == 0, () -> NMsg.ofC("should be empty %s", createName(name)));
+        return requireTrue(value.length == 0, () -> NMsg.ofC("should be empty %s, was %s", createName(name),value.length));
     }
 
     public static boolean requireNonEmpty(float[] value, String name) {
@@ -200,7 +200,7 @@ public class NAssert {
     }
 
     public static boolean requireEmpty(float[] value, String name) {
-        return requireTrue(value.length == 0, () -> NMsg.ofC("should be empty %s", createName(name)));
+        return requireTrue(value.length == 0, () -> NMsg.ofC("should be empty %s, was %s", createName(name),value.length));
     }
 
     public static boolean requireNonEmpty(double[] value, String name) {
@@ -208,7 +208,7 @@ public class NAssert {
     }
 
     public static boolean requireEmpty(double[] value, String name) {
-        return requireTrue(value.length == 0, () -> NMsg.ofC("should be empty %s", createName(name)));
+        return requireTrue(value.length == 0, () -> NMsg.ofC("should be empty %s, was %s", createName(name),value.length));
     }
 
 }

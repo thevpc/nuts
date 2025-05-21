@@ -4,6 +4,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementAnnotation;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringBuilder;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,11 +48,6 @@ public class NElementAnnotationImpl implements NElementAnnotation {
     }
 
     @Override
-    public List<NElement> children() {
-        return params == null ? Collections.emptyList() : Arrays.asList(params);
-    }
-
-    @Override
     public boolean isBlank() {
         return NBlankable.isBlank(name) && (params == null || params.length == 0);
     }
@@ -63,7 +59,7 @@ public class NElementAnnotationImpl implements NElementAnnotation {
     @Override
     public String toString(boolean compact) {
         NStringBuilder sb = new NStringBuilder();
-        NElementToStringHelper.appendUplet("@" + name, params == null ? null : Arrays.asList(params), compact, sb);
+        NElementToStringHelper.appendUplet("@" + (NStringUtils.trim(name)), params == null ? null : Arrays.asList(params), compact, sb);
         return sb.toString();
     }
 

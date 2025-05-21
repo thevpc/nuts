@@ -79,16 +79,18 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
 
 
     private NElementAnnotation toNElemAnn(TsonAnnotation elem) {
+        List<TsonElement> params = elem.params();
         return new NElementAnnotationImpl(
                 elem.name(),
-                elem.params() == null ? null : elem.params().toList().stream().map(x -> toNElem(x)).toArray(NElement[]::new)
+                params == null ? null : params.stream().map(x -> toNElem(x)).toArray(NElement[]::new)
         );
     }
 
 
     private TsonAnnotation toTsonAnn(NElementAnnotation elem) {
+        List<NElement> params = elem.params();
         TsonAnnotationBuilder b = new TsonAnnotationBuilderImpl().name(elem.name()).addAll(
-                elem.params() == null ? null : elem.params().stream().map(x -> toTson(x)).toArray(TsonElementBase[]::new)
+                params == null ? null : params.stream().map(x -> toTson(x)).toArray(TsonElementBase[]::new)
         );
         return b.build();
     }
@@ -383,31 +385,31 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 return decorateNElement(elems.ofNull(), tsonElem);
             }
             case BYTE: {
-                return decorateNElement(elems.ofByte(tsonElem.byteValue()), tsonElem);
+                return decorateNElement(elems.ofByte(tsonElem.byteValue(), toTsonNumberLayout(((TsonNumber) tsonElem).numberLayout()),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
             }
             case SHORT: {
-                return decorateNElement(elems.ofShort(tsonElem.shortValue()), tsonElem);
+                return decorateNElement(elems.ofShort(tsonElem.shortValue(), toTsonNumberLayout(((TsonNumber) tsonElem).numberLayout()),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
             }
             case CHAR: {
                 return decorateNElement(elems.ofChar(tsonElem.charValue()), tsonElem);
             }
             case INTEGER: {
-                return decorateNElement(elems.ofInt(tsonElem.intValue()), tsonElem);
+                return decorateNElement(elems.ofInt(tsonElem.intValue(), toTsonNumberLayout(((TsonNumber) tsonElem).numberLayout()),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
             }
             case LONG: {
-                return decorateNElement(elems.ofLong(tsonElem.longValue()), tsonElem);
+                return decorateNElement(elems.ofLong(tsonElem.longValue(), toTsonNumberLayout(((TsonNumber) tsonElem).numberLayout()),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
             }
             case FLOAT: {
-                return decorateNElement(elems.ofFloat(tsonElem.floatValue()), tsonElem);
+                return decorateNElement(elems.ofFloat(tsonElem.floatValue(),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
             }
             case DOUBLE: {
-                return decorateNElement(elems.ofDouble(tsonElem.doubleValue()), tsonElem);
+                return decorateNElement(elems.ofDouble(tsonElem.doubleValue(),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
             }
             case BIG_INTEGER: {
-                return decorateNElement(elems.ofBigInteger(tsonElem.bigIntegerValue()), tsonElem);
+                return decorateNElement(elems.ofBigInteger(tsonElem.bigIntegerValue(), toTsonNumberLayout(((TsonNumber) tsonElem).numberLayout()),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
             }
             case BIG_DECIMAL: {
-                return decorateNElement(elems.ofBigDecimal(tsonElem.bigDecimalValue()), tsonElem);
+                return decorateNElement(elems.ofBigDecimal(tsonElem.bigDecimalValue(),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
             }
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:
@@ -504,6 +506,19 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
             }
         }
         throw new IllegalArgumentException("not implemented Tson Type " + tsonElem.type());
+    }
+
+    private static NNumberLayout toTsonNumberLayout(TsonNumberLayout tsonElem) {
+        if(tsonElem==null){
+            return null;
+        }
+        switch (tsonElem) {
+            case OCTAL:return NNumberLayout.OCTAL;
+            case DECIMAL:return NNumberLayout.DECIMAL;
+            case HEXADECIMAL:return NNumberLayout.HEXADECIMAL;
+            case BINARY:return NNumberLayout.BINARY;
+        }
+        throw new IllegalArgumentException("not implemented TsonNumberLayout " + tsonElem);
     }
 
     private NElementType toNStringLayout(TsonElementType layout) {

@@ -264,19 +264,6 @@ void arrayElementList() :
     (arrayElement() | commaSeparator() | semiColonSeparator())*
 }
 
-void annotationParamList() :
-{
-}
-{
-    {
-            visitor.visitAnnotationParamStart();
-    }
-    (annotationParam() | commaSeparator())*
-    {
-            visitor.visitAnnotationParamEnd();
-    }
-}
-
 
 void annotation() :
 {
@@ -289,13 +276,20 @@ void annotation() :
     }
     (
     <LPAREN>
+    {
+         visitor.visitAnnotationParamsStart();
+    }
     (
         (<RPAREN>)
          |
-         ( (annotationParamList() )
+         ( ((annotationParam() | commaSeparator())* )
 
          <RPAREN>)
     )
+    {
+         visitor.visitAnnotationParamsEnd();
+    }
+
     )?
     {
          visitor.visitAnnotationEnd();
@@ -480,7 +474,7 @@ void annotationParam() :
                     | ("0b"|"0u1b"|"0u2b"|"0u4b"|"0u8b") ("_"|["0"-"1"])+
                 )
                 ("L" (["L"])?)?
-                (["%","_"](<LETTER>)*)?
+                ((["%","_","$"] | <LETTER>)*)
             )
             |
             (   //real
@@ -492,7 +486,7 @@ void annotationParam() :
                             | ("." (((<DIGIT>)| (<DIGIT> ("_"|<DIGIT>)* <DIGIT>))) (<EXPONENT>)?)
                         )
                         ("f"| "LL")?
-                        (["%","_"](<LETTER>)*)?
+                        ((["%","_","$"] | <LETTER>)*)
             )
             |
             (   //complex
@@ -510,7 +504,7 @@ void annotationParam() :
                                     | ("." ((<DIGIT>)| (<DIGIT> ("_"|<DIGIT>)* <DIGIT>)) (<EXPONENT>)?)
                                 )
                         ("f"| "LL")?
-                        (["%","_"](<LETTER>)*)?
+                        ((["%","_","$"] | <LETTER>)*)
             )
             |
             (   //special

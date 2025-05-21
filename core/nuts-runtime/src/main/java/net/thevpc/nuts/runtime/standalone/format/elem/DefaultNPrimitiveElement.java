@@ -33,6 +33,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -47,7 +48,7 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
     DefaultNPrimitiveElement(NElementType type, Object value, NElementAnnotation[] annotations, NElementComments comments) {
         super(type, annotations, comments);
         if (type == NElementType.NAME) {
-            NAssert.requireTrue(NElements.isValidName((String) value), "valid name");
+            NAssert.requireTrue(NElements.isValidName((String) value), "valid name : " + (String) value);
         }
         this.value = NLiteral.of(value);
     }
@@ -195,12 +196,6 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
             case LINE_STRING:
                 sb.append(NStringUtils.formatStringLiteral(String.valueOf(value), type()));
                 break;
-            case NAME:
-                sb.append(String.valueOf(value));
-                break;
-            case BOOLEAN:
-                sb.append(String.valueOf(value));
-                break;
             case BYTE:
             case LONG:
             case BIG_DECIMAL:
@@ -209,14 +204,37 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
             case INTEGER:
             case FLOAT:
             case DOUBLE:
-                sb.append(String.valueOf(this.asNumberValue().get()));
+                NNumberElement r = asNumber().get();
+                NNumberLayout layout = r.numberLayout();
+                String suffix = r.numberSuffix();
+                switch (layout) {
+                    case DECIMAL: {
+                        sb.append(String.valueOf(this.asNumberValue().get()));
+                        break;
+                    }
+                    case HEXADECIMAL: {
+                        sb.append(asBigIntValue().get().toString(16));
+                        break;
+                    }
+                    case OCTAL: {
+                        sb.append(asBigIntValue().get().toString(8));
+                        break;
+                    }
+                    case BINARY: {
+                        sb.append(asBigIntValue().get().toString(2));
+                        break;
+                    }
+                }
+                if (!NBlankable.isBlank(suffix)) {
+                    sb.append(suffix);
+                }
                 break;
             case INSTANT:
             case LOCAL_TIME:
             case LOCAL_DATE:
             case LOCAL_DATETIME:
-                sb.append(NStringUtils.formatStringLiteral(this.asInstantValue().get().toString(), NElementType.DOUBLE_QUOTED_STRING));
-                break;
+            case NAME:
+            case BOOLEAN:
             default: {
                 sb.append(String.valueOf(value));
             }
@@ -258,5 +276,13 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
     @Override
     public NLiteral asLiteral() {
         return value;
+    }
+
+    @Override
+    public NOptional<Temporal> asTemporalValue() {
+        if (value != null && value instanceof Temporal) {
+            return NOptional.of((Temporal) value);
+        }
+        return super.asTemporalValue();
     }
 }

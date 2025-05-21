@@ -61,7 +61,7 @@ public class TsonFormatImpl implements TsonFormat, Cloneable {
     }
 
     public void formatAnnotation(TsonAnnotation a, boolean showComments, boolean showAnnotations, Writer sb) {
-        final TsonElementList params = a.params();
+        final List<TsonElement> params = a.params();
         try {
             sb.append('@');
             if (a.name() != null) {
@@ -213,11 +213,11 @@ public class TsonFormatImpl implements TsonFormat, Cloneable {
                 case LOCAL_DATE:
                     writer.append(String.valueOf(element.localDateValue()));
                     return;
-                case LOCAL_TIME:
-                    writer.append(String.valueOf(element.localTimeValue()));
-                    return;
                 case INSTANT:
                     writer.append(String.valueOf(element.instantValue()));
+                    return;
+                case LOCAL_TIME:
+                    writer.append(String.valueOf(element.localTimeValue()));
                     return;
                 case REGEX: {
                     writer.append(TsonUtils.toRegex(element.regexValue().toString()));

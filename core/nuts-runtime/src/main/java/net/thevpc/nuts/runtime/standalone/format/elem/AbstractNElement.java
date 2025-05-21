@@ -35,6 +35,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.Temporal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -284,7 +285,7 @@ public abstract class AbstractNElement implements NElement {
         if (this instanceof NPrimitiveElement) {
             return NOptional.of((NPrimitiveElement) this);
         }
-        return NOptional.ofError(() -> NMsg.ofC("unable to cast % to primitive: %s", type().id(), this));
+        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to primitive: %s", type().id(), this));
     }
 
     @Override
@@ -951,5 +952,9 @@ public abstract class AbstractNElement implements NElement {
     @Override
     public NOptional<Number> asNumberValue() {
         return asLiteral().asNumber();
+    }
+    @Override
+    public NOptional<Temporal> asTemporalValue() {
+        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to temporal: %s", type().id(), this));
     }
 }

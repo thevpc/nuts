@@ -26,59 +26,61 @@ public class TsonDocumentHeaderBuilderImpl implements TsonDocumentHeaderBuilder 
     @Override
     public TsonDocumentHeaderBuilderImpl parse(TsonAnnotation a) {
         if (a.name().equals("tson")) {
-            TsonElementList params = a.params();
-            boolean acceptStr=true;
-            for (TsonElement param : params) {
-                switch (param.type()) {
-                    case PAIR: {
-                        acceptStr=false;
-                        TsonPair kv = param.toPair();
-                        switch (kv.key().stringValue()) {
-                            case "version": {
-                                version = kv.value().stringValue();
-                                break;
-                            }
-                            case "encoding": {
-                                encoding = kv.value().stringValue();
-                                break;
-                            }
-                            default: {
-                                this.params.add(kv);
-                            }
-                        }
-                        break;
-                    }
-                    case DOUBLE_QUOTED_STRING:
-                    case SINGLE_QUOTED_STRING:
-                    case ANTI_QUOTED_STRING:
-                    case TRIPLE_DOUBLE_QUOTED_STRING:
-                    case TRIPLE_SINGLE_QUOTED_STRING:
-                    case TRIPLE_ANTI_QUOTED_STRING:
-                    case LINE_STRING:
-                    case CHAR:
-                    case NAME: {
-                        if(acceptStr) {
-                            String v = param.stringValue();
-                            if (version == null && v.startsWith("v")) {
-                                version = v.substring(1);
-                            } else if (encoding == null) {
-                                String y = param.stringValue();
-                                if (Charset.availableCharsets().containsKey(y)) {
-                                    encoding = y;
+            List<TsonElement> params = a.params();
+            boolean acceptStr = true;
+            if (params != null) {
+                for (TsonElement param : params) {
+                    switch (param.type()) {
+                        case PAIR: {
+                            acceptStr = false;
+                            TsonPair kv = param.toPair();
+                            switch (kv.key().stringValue()) {
+                                case "version": {
+                                    version = kv.value().stringValue();
+                                    break;
                                 }
-                                acceptStr=false;
+                                case "encoding": {
+                                    encoding = kv.value().stringValue();
+                                    break;
+                                }
+                                default: {
+                                    this.params.add(kv);
+                                }
+                            }
+                            break;
+                        }
+                        case DOUBLE_QUOTED_STRING:
+                        case SINGLE_QUOTED_STRING:
+                        case ANTI_QUOTED_STRING:
+                        case TRIPLE_DOUBLE_QUOTED_STRING:
+                        case TRIPLE_SINGLE_QUOTED_STRING:
+                        case TRIPLE_ANTI_QUOTED_STRING:
+                        case LINE_STRING:
+                        case CHAR:
+                        case NAME: {
+                            if (acceptStr) {
+                                String v = param.stringValue();
+                                if (version == null && v.startsWith("v")) {
+                                    version = v.substring(1);
+                                } else if (encoding == null) {
+                                    String y = param.stringValue();
+                                    if (Charset.availableCharsets().containsKey(y)) {
+                                        encoding = y;
+                                    }
+                                    acceptStr = false;
+                                } else {
+                                    acceptStr = false;
+                                    this.params.add(param);
+                                }
                             } else {
-                                acceptStr=false;
                                 this.params.add(param);
                             }
-                        }else{
+                            break;
+                        }
+                        default: {
+                            acceptStr = false;
                             this.params.add(param);
                         }
-                        break;
-                    }
-                    default: {
-                        acceptStr=false;
-                        this.params.add(param);
                     }
                 }
             }

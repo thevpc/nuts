@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.format.elem.mapper;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.util.NBooleanRef;
+import net.thevpc.nuts.util.NRef;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -21,10 +23,23 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                         context.defaultDestruct(p.value(), NElement.class)
                 );
             }
-            case ARRAY: {
+            case UPLET:
+            case NAMED_UPLET:
+            {
+                return src.asUplet().get().params().stream().map(x -> context.destruct(x, null)).collect(Collectors.toList());
+            }
+            case ARRAY:
+            case NAMED_PARAMETRIZED_ARRAY:
+            case NAMED_ARRAY:
+            case PARAMETRIZED_ARRAY:
+            {
                 return src.asArray().get().children().stream().map(x -> context.destruct(x, null)).collect(Collectors.toList());
             }
-            case OBJECT: {
+            case OBJECT:
+            case PARAMETRIZED_OBJECT:
+            case NAMED_OBJECT:
+            case NAMED_PARAMETRIZED_OBJECT:
+            {
                 Set<Object> visited = new HashSet<>();
                 boolean map = true;
                 List<Object> all = new ArrayList<>();
@@ -71,52 +86,79 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
         switch (src.type()) {
             case PAIR: {
                 NPairElement p = src.asPair().get();
-                NElement k = p.key();
-                NElement v = p.value();
-                boolean someChange0;
-                NElement k2 = context.objectToElement(k, null);
-                NElement v2 = context.objectToElement(v, null);
-                if (k2 == k || v2 == v) {
-                    return p.builder().key(k2).value(v2).build();
+                NBooleanRef someChange = NRef.ofBoolean(false);
+                NElement k = convertOne_objectToElement(p.key(), src, typeOfSrc, context, someChange);
+                NElement v = convertOne_objectToElement(p.value(), src, typeOfSrc, context, someChange);
+                List<NElementAnnotation> anns = convertAnn_objectToElement(p.annotations(), src, typeOfSrc, context, someChange);
+                if (someChange.get()) {
+                    NPairElementBuilder obj2 = context.elem().ofPairBuilder();
+                    obj2.key(k);
+                    obj2.value(v);
+                    obj2.addAnnotations(anns);
+                    obj2.addComments(p.comments());
+                    return obj2.build();
                 }
                 return p;
             }
-            case ARRAY: {
-                NArrayElement arr = src.asArray().get();
-                List<NElement> children = new ArrayList<>(arr.size());
-                boolean someChange = false;
-                for (NElement c : arr) {
-                    NElement v2 = context.objectToElement(c, null);
-                    if (!someChange) {
-                        someChange = v2 != c;
-                    }
-                    children.add(v2);
-                }
-                if (someChange) {
-                    return context.elem().ofArrayBuilder().addAll(children.toArray(new NElement[0])).build();
+            case UPLET:
+            case NAMED_UPLET:
+            {
+                NUpletElement arr = src.asUplet().get();
+                NBooleanRef someChange = NRef.ofBoolean(false);
+                List<NElement> params = convertList_objectToElement(arr.params(), src, typeOfSrc, context, someChange);
+                List<NElementAnnotation> anns = convertAnn_objectToElement(arr.annotations(), src, typeOfSrc, context, someChange);
+                if (someChange.get()) {
+                    NUpletElementBuilder obj2 = context.elem().ofUpletBuilder();
+                    obj2.addAll(params.toArray(new NElement[0]));
+                    obj2.name(arr.name());
+                    obj2.addAnnotations(anns);
+                    obj2.addComments(arr.comments());
+                    return obj2.build();
                 }
                 return src;
             }
-            case OBJECT: {
-                NObjectElement obj = src.asObject().get();
-                List<NElement> children = new ArrayList<>(obj.size());
-                boolean someChange = false;
-                for (NElement e : obj) {
-                    boolean someChange0;
-                    NElement k2 = context.objectToElement(e, null);
-                    someChange0 = k2 != e;
-                    if (someChange0) {
-                        if (!someChange) {
-                            someChange = true;
-                        }
-                        children.add(k2);
-                    } else {
-                        children.add(e);
+            case ARRAY:
+            case NAMED_ARRAY:
+            case NAMED_PARAMETRIZED_ARRAY:
+            case PARAMETRIZED_ARRAY:
+            {
+                NArrayElement arr = src.asArray().get();
+                NBooleanRef someChange = NRef.ofBoolean(false);
+                List<NElement> children = convertList_objectToElement(arr.children(), src, typeOfSrc, context, someChange);
+                List<NElement> params = convertList_objectToElement(arr.params().orNull(), src, typeOfSrc, context, someChange);
+                List<NElementAnnotation> anns = convertAnn_objectToElement(arr.annotations(), src, typeOfSrc, context, someChange);
+                if (someChange.get()) {
+                    NArrayElementBuilder obj2 = context.elem().ofArrayBuilder();
+                    obj2.addAll(children.toArray(new NElement[0]));
+                    if(params!=null){
+                        obj2.addParams(params);
                     }
+                    obj2.name(arr.name());
+                    obj2.addAnnotations(anns);
+                    obj2.addComments(arr.comments());
+                    return obj2.build();
                 }
-                if (someChange) {
+                return src;
+            }
+            case OBJECT:
+            case NAMED_OBJECT:
+            case NAMED_PARAMETRIZED_OBJECT:
+            case PARAMETRIZED_OBJECT:
+            {
+                NObjectElement obj = src.asObject().get();
+                NBooleanRef someChange = NRef.ofBoolean(false);
+                List<NElement> children = convertList_objectToElement(obj.children(), src, typeOfSrc, context, someChange);
+                List<NElement> params = convertList_objectToElement(obj.params().orNull(), src, typeOfSrc, context, someChange);
+                List<NElementAnnotation> anns = convertAnn_objectToElement(obj.annotations(), src, typeOfSrc, context, someChange);
+                if (someChange.get()) {
                     NObjectElementBuilder obj2 = context.elem().ofObjectBuilder();
                     obj2.addAll(children.toArray(new NElement[0]));
+                    if(params!=null){
+                        obj2.addParams(params);
+                    }
+                    obj2.name(obj.name());
+                    obj2.addAnnotations(anns);
+                    obj2.addComments(obj.comments());
                     return obj2.build();
                 }
                 return src;
@@ -130,6 +172,56 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
             }
         }
         return src;
+    }
+
+    private List<NElementAnnotation> convertAnn_objectToElement(List<NElementAnnotation> oldList, NElement src, Type typeOfSrc, NElementFactoryContext context, NBooleanRef someChange){
+        List<NElementAnnotation> newList = null;
+        if(oldList!=null){
+            newList=new ArrayList<>(oldList.size());
+            boolean anyChange00=false;
+            for (NElementAnnotation e : oldList) {
+                NBooleanRef someChange0= NRef.ofBoolean(false);
+                List<NElement> sub = convertList_objectToElement(e.params(), src, typeOfSrc, context, someChange0);
+                if(someChange0.get()){
+                    newList.add(context.elem().ofAnnotation(e.name(), sub.toArray(new NElement[0])));
+                    someChange.set(true);
+                    anyChange00=true;
+                }else{
+                    newList.add(e);
+                }
+            }
+            if(anyChange00){
+                return newList;
+            }
+        }
+        return oldList;
+    }
+
+    private NElement convertOne_objectToElement(NElement k, NElement src, Type typeOfSrc, NElementFactoryContext context, NBooleanRef someChange){
+        NElement k2 = context.objectToElement(k, null);
+        if(k2!=k){
+            someChange.set();
+            return k2;
+        }
+        return k;
+    }
+    private List<NElement> convertList_objectToElement(List<NElement> oldParams, NElement src, Type typeOfSrc, NElementFactoryContext context, NBooleanRef someChange){
+        List<NElement> newParams = null;
+        if(oldParams!=null){
+            newParams=new ArrayList<>(oldParams.size());
+            for (NElement e : oldParams) {
+                boolean someChange0;
+                NElement k2 = context.objectToElement(e, null);
+                someChange0 = k2 != e;
+                if (someChange0) {
+                    someChange.set(true);
+                    newParams.add(k2);
+                } else {
+                    newParams.add(e);
+                }
+            }
+        }
+        return newParams;
     }
 
     @Override

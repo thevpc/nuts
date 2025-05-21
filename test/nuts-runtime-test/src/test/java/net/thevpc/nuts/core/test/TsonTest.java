@@ -22,4 +22,19 @@ public class TsonTest {
     }
 
 
+    @Test
+    public void test02() {
+        String tson = "x:1.2%g";
+        NElement parsed = NElements.of().tson().parse(tson);
+        TestUtils.println(parsed.toString());
+    }
+
+    @Test
+    public void test03() {
+        String tson = "@(here){a:b}";
+        NElement parsed = NElements.of().tson().parse(tson);
+        TestUtils.println(parsed.toString());
+    }
+
+
 }

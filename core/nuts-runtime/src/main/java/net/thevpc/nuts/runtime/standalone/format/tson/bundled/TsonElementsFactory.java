@@ -15,8 +15,6 @@ import java.util.regex.Pattern;
 
 public interface TsonElementsFactory {
 
-    TsonElement ofString(TsonElementType stringType, String value);
-
     TsonElement ofNull();
 
     TsonElement ofBoolean(boolean val);
@@ -174,6 +172,8 @@ public interface TsonElementsFactory {
     TsonElement ofCharStream(String value, String language);
 
     TsonElement ofCharStream(Path value, String language);
+
+    TsonElement ofString(TsonElementType stringType, String value);
 
     TsonElement ofStopStream(String value, String stopWord);
 

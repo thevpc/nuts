@@ -10,7 +10,7 @@ public interface TsonAnnotation extends Comparable<TsonAnnotation> {
 
     TsonElement param(int index);
 
-    TsonElementList params();
+    List<TsonElement> params();
 
     /**
      * like params but never null

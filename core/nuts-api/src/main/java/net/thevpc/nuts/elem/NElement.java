@@ -34,6 +34,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.Temporal;
 import java.util.List;
 
 /**
@@ -363,6 +364,8 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
     NOptional<Boolean> asBooleanValue();
 
     NOptional<Number> asNumberValue();
+
+    NOptional<Temporal> asTemporalValue();
 
     NOptional<Character> asCharValue();
 

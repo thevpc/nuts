@@ -574,7 +574,8 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             runtimeLoaded = false;
             try {
                 Class<?> c = Class.forName("net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace");
-                runtimeLoadedId = (NBootId) c.getField("RUNTIME_ID").get(null);
+                String runtimeVersionString = (String) c.getField("RUNTIME_VERSION_STRING").get(null);
+                runtimeLoadedId = NBootId.of(runtimeVersionString);
                 runtimeLoaded = true;
             } catch (Exception ex) {
                 //
@@ -1131,7 +1132,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
 
                 String workspaceBootLibFolder = options.getStoreType("LIB") + File.separator + NBootConstants.Folders.ID;
 
-                NBootRepositoryLocation[] repositories = options.getBootRepositories().stream().flatMap(x -> NBootUtils.split(x, "\n;", true, true).stream().map(NBootRepositoryLocation::of)).toArray(NBootRepositoryLocation[]::new);
+                NBootRepositoryLocation[] repositories = options.getBootRepositories()==null?new NBootRepositoryLocation[0]:options.getBootRepositories().stream().flatMap(x -> NBootUtils.split(x, "\n;", true, true).stream().map(NBootRepositoryLocation::of)).toArray(NBootRepositoryLocation[]::new);
 
                 NBootRepositoryLocation workspaceBootLibFolderRepo = NBootRepositoryLocation.of("nuts@" + workspaceBootLibFolder);
                 options.setRuntimeBootDependencyNode(
