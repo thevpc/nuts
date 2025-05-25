@@ -294,6 +294,66 @@ public interface NElements extends NContentTypeFormat {
         return of().setValue(any).setNtf(true).setContentType(NContentType.TABLE);
     }
 
+    static NElements ofPlainJson() {
+        return of().setNtf(false).json();
+    }
+
+    static NElements ofPlainProps() {
+        return of().setNtf(false).setContentType(NContentType.PROPS);
+    }
+
+    static NElements ofPlainXml() {
+        return of().setNtf(false).setContentType(NContentType.XML);
+    }
+
+    static NElements ofPlainTree() {
+        return of().setNtf(false).setContentType(NContentType.TREE);
+    }
+
+    static NElements ofPlain() {
+        return of().setNtf(false).setContentType(NContentType.PLAIN);
+    }
+
+    static NElements ofPlainTson() {
+        return of().setNtf(false).setContentType(NContentType.TSON);
+    }
+
+    static NElements ofPlainYaml() {
+        return of().setNtf(false).setContentType(NContentType.YAML);
+    }
+
+    static NElements ofPlainTable() {
+        return of().setNtf(false).setContentType(NContentType.TABLE);
+    }
+
+    static NElements ofNtfJson() {
+        return of().setNtf(true).json();
+    }
+
+    static NElements ofNtfProps() {
+        return of().setNtf(true).setContentType(NContentType.PROPS);
+    }
+
+    static NElements ofNtfXml() {
+        return of().setNtf(true).setContentType(NContentType.XML);
+    }
+
+    static NElements ofNtfTree() {
+        return of().setNtf(true).setContentType(NContentType.TREE);
+    }
+
+    static NElements ofNtfTson() {
+        return of().setNtf(true).setContentType(NContentType.TSON);
+    }
+
+    static NElements ofNtfYaml() {
+        return of().setNtf(true).setContentType(NContentType.YAML);
+    }
+
+    static NElements ofNtfTable() {
+        return of().setNtf(true).setContentType(NContentType.TABLE);
+    }
+
     /**
      * return parse content type
      *
@@ -847,5 +907,5 @@ public interface NElements extends NContentTypeFormat {
 
     NElementAnnotation ofAnnotation(String name, NElement... values);
 
-
+    NPrimitiveElementBuilder ofPrimitiveBuilder();
 }

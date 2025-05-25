@@ -180,7 +180,7 @@ public class TsonAnnotationBuilderImpl implements TsonAnnotationBuilder {
 
     @Override
     public TsonAnnotationBuilder merge(TsonAnnotation element) {
-        this.name = element.name();
+        this.name = element.name().orNull();
         List<TsonElement> params1 = element.params();
         if(params1!=null) {
             addAll(params1);

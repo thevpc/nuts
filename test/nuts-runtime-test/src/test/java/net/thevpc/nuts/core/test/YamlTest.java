@@ -47,10 +47,15 @@ public class YamlTest {
     @Test
     public void test1() throws Exception {
         String path = "net/thevpc/nuts/core/test/blackbox/yaml1.yml";
-        NElements elem = NElements.of();
-        NElement e = elem.setContentType(NContentType.YAML)
-                .parse(getClass().getClassLoader().getResource(path), NElement.class);
+        NElements elem = NElements.ofPlainYaml();
+        NElement e = elem.parse(getClass().getClassLoader().getResource(path), NElement.class);
         elem.json().setValue(e)
+                .setCompact(false)
+                .println();
+        elem.tson().setValue(e)
+                .setCompact(false)
+                .println();
+        elem.yaml().setValue(e)
                 .setCompact(false)
                 .println();
     }

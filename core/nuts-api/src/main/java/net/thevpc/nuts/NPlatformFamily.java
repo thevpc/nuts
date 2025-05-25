@@ -37,10 +37,40 @@ import net.thevpc.nuts.util.NOptional;
  * @since 0.8.1
  */
 public enum NPlatformFamily implements NEnum {
+    /**
+     * Represents the operating system platform family.
+     * This is used to classify and identify operating system-based platforms.
+     */
+    OS,
+    /**
+     * Represents the Java platform family.
+     * This is used to classify and identify Java-based platforms,
+     * including JDK, JRE, and related technologies.
+     */
     JAVA,
+    /**
+     * Represents the .NET platform family.
+     * This is used to classify and identify .NET-based platforms,
+     * including frameworks such as .NET Core, .NET Framework, and associated technologies.
+     */
     DOTNET,
+    /**
+     * Represents the Python platform family.
+     * This is used to classify and identify Python-based platforms,
+     * including implementations such as CPython, PyPy, and related technologies.
+     */
     PYTHON,
+    /**
+     * Represents the JavaScript platform family.
+     * This is used to classify and identify JavaScript-based platforms,
+     * including runtime environments such as Node.js, browsers, and related technologies.
+     */
     JAVASCRIPT,
+    /**
+     * Represents an unknown platform family.
+     * This is used as a fallback for platforms that do not match any
+     * of the predefined categories or are unrecognized.
+     */
     UNKNOWN;
 
     /**
@@ -55,6 +85,9 @@ public enum NPlatformFamily implements NEnum {
     public static NOptional<NPlatformFamily> parse(String value) {
         return NEnumUtils.parseEnum(value, NPlatformFamily.class, s->{
             switch (s.getNormalizedValue()) {
+                case "OS":
+                    return NOptional.of(OS);
+
                 case "JAVA":
                 case "JAVAW":
                 case "JRE":

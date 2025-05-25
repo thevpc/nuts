@@ -1,0 +1,14 @@
+
+meld /home/vpc/xprojects/nuts-world/nuts/core/nuts-runtime/src/main/java/net/thevpc/nuts/runtime/standalone/format/tson/bundled/ /home/vpc/xprojects/base-world/commons/tson/core/tson-api/src/main/java/net/thevpc/tson/
+
+
+meld /home/vpc/xprojects/nuts-world/nuts/core/nuts-runtime/src/main/java/net/thevpc/nuts/runtime/standalone/format/tson/bundled/impl/ /home/vpc/xprojects/base-world/commons/tson/core/tson-impl/src/main/java/net/thevpc/tson/impl/
+
+
+meld /home/vpc/xprojects/nuts-world/nuts/core/nuts-runtime/src/main/java/net/thevpc/nuts/runtime/standalone/format/tson/bundled/impl/parser/javacc/ /home/vpc/xprojects/base-world/commons/tson/modules/tson-parser-javacc/src/main/java/net/thevpc/tson/impl/parser/javacc/
+
+
+
+
+
+

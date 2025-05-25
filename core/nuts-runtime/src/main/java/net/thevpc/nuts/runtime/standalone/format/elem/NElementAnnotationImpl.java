@@ -19,6 +19,18 @@ public class NElementAnnotationImpl implements NElementAnnotation {
         this.params = params;
     }
 
+    @Override
+    public boolean isCustomTree() {
+        if(params!=null){
+            for (NElement param : params) {
+                if(param.isCustomTree()){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public boolean isParametrized() {
         return params != null;
     }

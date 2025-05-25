@@ -110,7 +110,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                 if (someChange.get()) {
                     NUpletElementBuilder obj2 = context.elem().ofUpletBuilder();
                     obj2.addAll(params.toArray(new NElement[0]));
-                    obj2.name(arr.name());
+                    obj2.name(arr.name().orNull());
                     obj2.addAnnotations(anns);
                     obj2.addComments(arr.comments());
                     return obj2.build();
@@ -133,7 +133,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                     if(params!=null){
                         obj2.addParams(params);
                     }
-                    obj2.name(arr.name());
+                    obj2.name(arr.name().orNull());
                     obj2.addAnnotations(anns);
                     obj2.addComments(arr.comments());
                     return obj2.build();
@@ -156,7 +156,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                     if(params!=null){
                         obj2.addParams(params);
                     }
-                    obj2.name(obj.name());
+                    obj2.name(obj.name().orNull());
                     obj2.addAnnotations(anns);
                     obj2.addComments(obj.comments());
                     return obj2.build();

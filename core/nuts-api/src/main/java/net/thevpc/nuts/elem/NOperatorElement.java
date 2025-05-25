@@ -24,6 +24,8 @@
  */
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.util.NOptional;
+
 /**
  * Array implementation of Nuts Element type. Nuts Element types are generic
  * JSON like parsable objects.
@@ -37,9 +39,9 @@ public interface NOperatorElement extends NElement {
 
     NOperatorType operatorType();
 
-    NElement first();
+    NOptional<NElement> first();
 
-    NElement second();
+    NOptional<NElement> second();
 
     /**
      * return new builder initialized with this instance

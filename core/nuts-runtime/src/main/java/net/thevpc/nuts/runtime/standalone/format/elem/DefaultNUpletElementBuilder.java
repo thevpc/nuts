@@ -25,6 +25,8 @@
 package net.thevpc.nuts.runtime.standalone.format.elem;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NOptional;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -36,12 +38,131 @@ import java.util.stream.Collectors;
  */
 public class DefaultNUpletElementBuilder extends AbstractNElementBuilder implements NUpletElementBuilder {
 
-    private final List<NElement> values = new ArrayList<>();
-    private List<NElement> params;
+    private List<NElement> params=new ArrayList<>();
     private String name;
 
     public DefaultNUpletElementBuilder() {
     }
+
+    @Override
+    public NUpletElementBuilder copyFrom(NElementBuilder other) {
+        copyFrom(other,NMapStrategy.ANY);
+        return this;
+    }
+
+    @Override
+    public NUpletElementBuilder copyFrom(NElement other) {
+        copyFrom(other,NMapStrategy.ANY);
+        return this;
+    }
+
+    @Override
+    public NUpletElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy) {
+        if (other == null) {
+            return this;
+        }
+        super.copyFrom(other,strategy);
+        if (other instanceof NPairElementBuilder) {
+            NPairElementBuilder from = (NPairElementBuilder) other;
+            add(from.key());
+            add(from.value());
+            return this;
+        }
+        if (other instanceof NUpletElementBuilder) {
+            NUpletElementBuilder from = (NUpletElementBuilder) other;
+            for (int i = 0; i < from.size(); i++) {
+                add(from.get(i).get());
+            }
+            return this;
+        }
+        if (other instanceof NObjectElementBuilder) {
+            NObjectElementBuilder from = (NObjectElementBuilder) other;
+            List<NElement> p = from.params().orNull();
+            if (p != null) {
+                this.addAll(p);
+            }
+            for (int i = 0; i < from.size(); i++) {
+                add(from.getAt(i).get());
+            }
+            name(from.name().orNull());
+            return this;
+        }
+        if (other instanceof NArrayElementBuilder) {
+            NArrayElementBuilder from = (NArrayElementBuilder) other;
+            List<NElement> p = from.params().orNull();
+            if (p != null) {
+                this.addAll(p);
+            }
+            for (int i = 0; i < from.size(); i++) {
+                add(from.get(i).get());
+            }
+            name(from.name().orNull());
+            return this;
+        }
+        return this;
+    }
+
+    @Override
+    public NUpletElementBuilder copyFrom(NElement other, NMapStrategy strategy) {
+        if (other == null) {
+            return this;
+        }
+        super.copyFrom(other,strategy);
+        if (other instanceof NPairElementBuilder) {
+            NPairElementBuilder from = (NPairElementBuilder) other;
+            add(from.key());
+            add(from.value());
+            return this;
+        }
+        if (other instanceof NUpletElement) {
+            NUpletElement from = (NUpletElement) other;
+            for (int i = 0; i < from.size(); i++) {
+                add(from.get(i).get());
+            }
+            return this;
+        }
+        if (other instanceof NObjectElement) {
+            NObjectElement from = (NObjectElement) other;
+            List<NElement> p = from.params().orNull();
+            if (p != null) {
+                this.addAll(p);
+            }
+            for (int i = 0; i < from.size(); i++) {
+                add(from.getAt(i).get());
+            }
+            name(from.name().orNull());
+            return this;
+        }
+        if (other instanceof NArrayElement) {
+            NArrayElement from = (NArrayElement) other;
+            List<NElement> p = from.params().orNull();
+            if (p != null) {
+                this.addAll(p);
+            }
+            for (int i = 0; i < from.size(); i++) {
+                add(from.get(i).get());
+            }
+            name(from.name().orNull());
+            return this;
+        }
+        return this;
+    }
+
+    @Override
+    public boolean isCustomTree() {
+        if(super.isCustomTree()){
+            return true;
+        }
+        if(params!=null){
+            for (NElement value : params) {
+                if(value.isCustomTree()){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
     @Override
     public NUpletElementBuilder doWith(Consumer<NUpletElementBuilder> con) {
@@ -51,8 +172,8 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
         return this;
     }
 
-    public String name() {
-        return name;
+    public NOptional<String> name() {
+        return NOptional.ofNamed(name,name);
     }
 
     public NUpletElementBuilder name(String name) {
@@ -97,17 +218,20 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public List<NElement> params() {
-        return Collections.unmodifiableList(values);
+        return Collections.unmodifiableList(params);
     }
 
     @Override
     public int size() {
-        return values.size();
+        return params.size();
     }
 
     @Override
-    public NElement get(int index) {
-        return values.get(index);
+    public NOptional<NElement> get(int index) {
+        if (index >= 0 && index < params.size()) {
+            return NOptional.of(params.get(index));
+        }
+        return NOptional.ofNamedEmpty("element at index " + index);
     }
 
     @Override
@@ -115,8 +239,8 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
         if (value != null) {
             addAnnotations(value.annotations());
             addComments(value.comments());
-            if (value.name() != null) {
-                name(value.name());
+            if (value.isNamed()) {
+                name(value.name().get());
             }
             for (NElement child : value.children()) {
                 add(child);
@@ -151,8 +275,8 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
         if (value != null) {
             addAnnotations(value.annotations());
             addComments(value.comments());
-            if (value.name() != null) {
-                name(value.name());
+            if (value.name().isPresent()) {
+                name(value.name().get());
             }
             for (NElement child : value.params()) {
                 add(child);
@@ -163,31 +287,31 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public NUpletElementBuilder add(NElement e) {
-        values.add(denull(e));
+        params.add(denull(e));
         return this;
     }
 
     @Override
     public NUpletElementBuilder insert(int index, NElement e) {
-        values.add(index, denull(e));
+        params.add(index, denull(e));
         return this;
     }
 
     @Override
     public NUpletElementBuilder set(int index, NElement e) {
-        values.set(index, denull(e));
+        params.set(index, denull(e));
         return this;
     }
 
     @Override
     public NUpletElementBuilder clear() {
-        values.clear();
+        params.clear();
         return this;
     }
 
     @Override
     public NUpletElementBuilder remove(int index) {
-        values.remove(index);
+        params.remove(index);
         return this;
     }
 
@@ -303,7 +427,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public NUpletElement build() {
-        return new DefaultNUpletElement(name, values,
+        return new DefaultNUpletElement(name, params,
                 annotations().toArray(new NElementAnnotation[0]), comments());
     }
 
@@ -412,7 +536,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public NUpletElementBuilder addAnnotation(String name, NElement... args) {
-        super.addAnnotation(name,args);
+        super.addAnnotation(name, args);
         return this;
     }
 
@@ -462,16 +586,16 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     public NUpletElementBuilder set(NElement name, NElement value) {
         name = denull(name);
         value = denull(value);
-        for (int i = 0; i < values.size(); i++) {
-            NElement nElement = values.get(i);
+        for (int i = 0; i < params.size(); i++) {
+            NElement nElement = params.get(i);
             if (nElement instanceof NPairElement) {
                 NElement k = ((NPairElement) nElement).key();
                 if (Objects.equals(k, name)) {
-                    values.set(i, pair(name, value));
+                    params.set(i, pair(name, value));
                     return this;
                 }
             } else if (Objects.equals(nElement, name)) {
-                values.set(i, pair(name, value));
+                params.set(i, pair(name, value));
                 return this;
             }
         }

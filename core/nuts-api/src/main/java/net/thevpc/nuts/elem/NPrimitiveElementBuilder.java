@@ -24,6 +24,14 @@
  */
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.util.NMapStrategy;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -61,10 +69,65 @@ public interface NPrimitiveElementBuilder extends NElementBuilder {
 
     NPrimitiveElementBuilder copyFrom(NPrimitiveElement element);
 
-    NPrimitiveElementBuilder copyFrom(NPrimitiveElementBuilder element);
-
+    NPrimitiveElementBuilder setValue(Object value);
 
     NPrimitiveElementBuilder value(Object value);
+
+    NPrimitiveElementBuilder setInstant(Instant value);
+
+    NPrimitiveElementBuilder setLocalDate(LocalDate value);
+
+    NPrimitiveElementBuilder setLocalDateTime(LocalDateTime value);
+
+    NPrimitiveElementBuilder setLocalTime(LocalTime value);
+
+    NPrimitiveElementBuilder setString(String value);
+
+    NPrimitiveElementBuilder setString(String value, NElementType stringLayout);
+
+    NPrimitiveElementBuilder setBoolean(Boolean value);
+
+    NPrimitiveElementBuilder setBoolean(boolean value);
+
+    NPrimitiveElementBuilder setSingleQuotedString(String value);
+
+    NPrimitiveElementBuilder setDoubleQuotedString(String value);
+
+    NPrimitiveElementBuilder setAntiQuotedString(String value);
+
+    NPrimitiveElementBuilder setTripleSingleQuotedString(String value);
+
+    NPrimitiveElementBuilder setTripleDoubleQuotedString(String value);
+
+    NPrimitiveElementBuilder setTripleAntiQuotedString(String value);
+
+    NPrimitiveElementBuilder setLineString(String value);
+
+    NPrimitiveElementBuilder setInt(Integer value);
+
+    NPrimitiveElementBuilder setLong(Long value);
+
+    NPrimitiveElementBuilder setNull();
+
+    NPrimitiveElementBuilder setByte(Byte value);
+
+    NPrimitiveElementBuilder setShort(Short value);
+
+    NPrimitiveElementBuilder setChar(char value);
+
+    NPrimitiveElementBuilder setChar(Character value);
+
+    NPrimitiveElementBuilder setShort(short value);
+
+    NPrimitiveElementBuilder setDouble(double value);
+
+    NPrimitiveElementBuilder setFloat(Float value);
+
+    NPrimitiveElementBuilder setDouble(Double value);
+
+    NPrimitiveElementBuilder setBigInteger(BigInteger value);
+
+    NPrimitiveElementBuilder setBigDecimal(BigDecimal value);
 
     NPrimitiveElementBuilder setInt(int value);
 
@@ -100,4 +163,10 @@ public interface NPrimitiveElementBuilder extends NElementBuilder {
 
     NPrimitiveElementBuilder addComments(NElementComments comments);
 
+    NPrimitiveElementBuilder copyFrom(NElementBuilder other);
+
+    NPrimitiveElementBuilder copyFrom(NElement other);
+    NPrimitiveElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy);
+
+    NPrimitiveElementBuilder copyFrom(NElement other, NMapStrategy strategy);
 }

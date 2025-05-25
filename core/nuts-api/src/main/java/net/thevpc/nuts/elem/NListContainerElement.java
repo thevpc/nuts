@@ -53,6 +53,7 @@ public interface NListContainerElement extends NElement {
      */
     NOptional<NElement> get(String key);
 
+    NOptional<NElement> getAt(int index);
     NOptional<NElement> get(int index);
 
     List<NElement> getAll(String key);

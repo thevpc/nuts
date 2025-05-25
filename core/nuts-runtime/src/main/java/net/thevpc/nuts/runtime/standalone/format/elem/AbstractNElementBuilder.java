@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.format.elem;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NMapStrategy;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +11,18 @@ import java.util.List;
 public abstract class AbstractNElementBuilder implements NElementBuilder {
     private NElementCommentsBuilderImpl comments = new NElementCommentsBuilderImpl();
     private final List<NElementAnnotation> annotations = new ArrayList<>();
+
+    @Override
+    public boolean isCustomTree() {
+        if(annotations!=null){
+            for (NElementAnnotation annotation : annotations) {
+                if(annotation.isCustomTree()){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     public NElementBuilder addLeadingComment(NElementCommentType type, String text) {
         NAssert.requireNonNull(type, "comment type");
@@ -141,4 +154,41 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
         return Collections.unmodifiableList(annotations);
     }
 
+
+    @Override
+    public NElementBuilder copyFrom(NElementBuilder other) {
+        copyFrom(other,NMapStrategy.ANY);
+        return this;
+    }
+
+    @Override
+    public NElementBuilder copyFrom(NElement other) {
+        if(other!=null){
+            copyFrom(other.builder());
+        }
+        return this;
+    }
+
+    @Override
+    public NElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy) {
+        if(other==null){
+            return this;
+        }
+        this.comments.addLeading(other.leadingComments().toArray(new NElementComment[0]));
+        this.comments.addTrailing(other.trailingComments().toArray(new NElementComment[0]));
+        this.annotations.addAll(other.annotations());
+        return this;
+    }
+
+    @Override
+    public NElementBuilder copyFrom(NElement other, NMapStrategy strategy) {
+        if(other==null){
+            return this;
+        }
+        NElementComments cmt = other.comments();
+        this.comments.addLeading(cmt.leadingComments().toArray(new NElementComment[0]));
+        this.comments.addTrailing(cmt.trailingComments().toArray(new NElementComment[0]));
+        this.annotations.addAll(other.annotations());
+        return this;
+    }
 }

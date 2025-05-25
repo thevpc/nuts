@@ -50,11 +50,25 @@ public class DefaultNPairElement extends AbstractNElement implements NPairElemen
     }
 
     @Override
-    public String name() {
-        if (key.isAnyString()) {
-            return key.asStringValue().orNull();
+    public boolean isCustomTree() {
+        if(super.isCustomTree()){
+            return true;
         }
-        return null;
+        if(key!=null && key.isCustomTree()){
+            return true;
+        }
+        if(value!=null && value.isCustomTree()){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public NOptional<String> name() {
+        if (key.isAnyString()) {
+            return key.asStringValue();
+        }
+        return NOptional.ofNamedEmpty("name");
     }
 
     @Override

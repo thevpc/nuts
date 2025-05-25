@@ -25,6 +25,9 @@
  */
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NOptional;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +47,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
         return NElements.of().ofUpletBuilder();
     }
 
-    String name();
+    NOptional<String> name();
 
     NUpletElementBuilder name(String name);
 
@@ -66,7 +69,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param index index
      * @return element at index
      */
-    NElement get(int index);
+    NOptional<NElement> get(int index);
 
     /**
      * all all elements in the given array
@@ -366,5 +369,13 @@ public interface NUpletElementBuilder extends NElementBuilder {
     NUpletElementBuilder add(String name, String value);
 
     NUpletElementBuilder addAll(Map<NElement, NElement> other);
+
+    NUpletElementBuilder copyFrom(NElementBuilder other);
+
+    NUpletElementBuilder copyFrom(NElement other);
+
+    NUpletElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy);
+
+    NUpletElementBuilder copyFrom(NElement other, NMapStrategy strategy);
 
 }

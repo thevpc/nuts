@@ -24,6 +24,8 @@
  */
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.util.NMapStrategy;
+
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -64,4 +66,11 @@ public interface NCustomElementBuilder extends NElementBuilder {
     NCustomElementBuilder value(Object value);
     Object value();
     NCustomElement build();
+
+    NCustomElementBuilder copyFrom(NElementBuilder other);
+
+    NCustomElementBuilder copyFrom(NElement other);
+    NCustomElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy);
+
+    NCustomElementBuilder copyFrom(NElement other, NMapStrategy strategy);
 }

@@ -49,6 +49,7 @@ public interface NMatrixElement {
      *
      * @return array items
      */
+    String name();
     List<NArrayElement> rows();
 
     List<NArrayElement> columns();
@@ -57,7 +58,8 @@ public interface NMatrixElement {
     /**
      * element at index
      *
-     * @param index index
+     * @param column column index
+     * @param row row index
      * @return element at index
      */
     NOptional<NElement> get(int column, int row);
@@ -89,6 +91,20 @@ public interface NMatrixElement {
     NOptional<NArrayElement> getArray(int index);
 
     NOptional<NObjectElement> getObject(int index);
+
+
+    /**
+     * element count
+     *
+     * @return element count
+     */
+    int rowsCount();
+
+    int columnsCount();
+
+    List<NElement> getRow(int row);
+
+    List<NElement> getColumn(int column);
 
     /**
      * return new builder initialized with this instance

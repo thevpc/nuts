@@ -25,6 +25,7 @@
 package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.io.NInputStreamProvider;
+import net.thevpc.nuts.util.NMapStrategy;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -64,7 +65,16 @@ public interface NBinaryStreamElementBuilder extends NElementBuilder {
     NBinaryStreamElementBuilder clearComments();
     NBinaryStreamElementBuilder addComments(NElementComments comments);
 
+    NBinaryStreamElementBuilder setValue(NInputStreamProvider value);
     NBinaryStreamElementBuilder value(NInputStreamProvider value);
     NInputStreamProvider value();
+    NInputStreamProvider getValue();
     NBinaryStreamElement build();
+
+    NBinaryStreamElementBuilder copyFrom(NElementBuilder other);
+
+    NBinaryStreamElementBuilder copyFrom(NElement other);
+    NBinaryStreamElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy);
+
+    NBinaryStreamElementBuilder copyFrom(NElement other, NMapStrategy strategy);
 }

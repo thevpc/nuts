@@ -1226,5 +1226,8 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
         return NElementCommentImpl.ofSingleLine(lines);
     }
 
-
+    @Override
+    public NPrimitiveElementBuilder ofPrimitiveBuilder() {
+        return new DefaultNPrimitiveElementBuilder();
+    }
 }

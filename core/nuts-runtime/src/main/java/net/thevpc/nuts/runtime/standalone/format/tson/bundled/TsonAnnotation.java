@@ -1,10 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.format.tson.bundled;
 
+import net.thevpc.nuts.util.NOptional;
+
 import java.util.List;
 
 public interface TsonAnnotation extends Comparable<TsonAnnotation> {
 
-    String name();
+    NOptional<String> name();
 
     int size();
 

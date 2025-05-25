@@ -4,6 +4,7 @@ import net.thevpc.nuts.runtime.standalone.format.tson.bundled.*;
 import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.builders.TsonAnnotationBuilderImpl;
 import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.util.TsonUtils;
 import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.util.UnmodifiableArrayList;
+import net.thevpc.nuts.util.NOptional;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,8 +37,8 @@ public class TsonAnnotationImpl implements TsonAnnotation {
     }
 
     @Override
-    public String name() {
-        return name;
+    public NOptional<String> name() {
+        return NOptional.ofNamed(name,"name");
     }
 
     @Override
@@ -82,7 +83,7 @@ public class TsonAnnotationImpl implements TsonAnnotation {
 
     @Override
     public int compareTo(TsonAnnotation o) {
-        int i = TsonUtils.compare(name, o.name());
+        int i = TsonUtils.compare(name, o.name().orNull());
         if (i != 0) {
             return i;
         }

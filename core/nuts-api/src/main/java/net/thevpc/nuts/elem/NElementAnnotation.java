@@ -45,6 +45,8 @@ public interface NElementAnnotation extends NBlankable {
 
     int size();
 
+    boolean isCustomTree();
+
     NElement param(int index);
 
     List<NElement> params();

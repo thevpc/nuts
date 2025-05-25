@@ -45,6 +45,11 @@ class DefaultNCustomElement extends AbstractNElement implements NCustomElement {
     }
 
     @Override
+    public boolean isCustomTree() {
+        return true;
+    }
+
+    @Override
     public NOptional<NElement> resolve(String pattern) {
         pattern = NStringUtils.trimToNull(pattern);
         if (pattern == null || pattern.equals(".")) {

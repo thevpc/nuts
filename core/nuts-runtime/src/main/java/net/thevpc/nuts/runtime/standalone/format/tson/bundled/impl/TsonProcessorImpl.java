@@ -27,7 +27,7 @@ public class TsonProcessorImpl implements TsonProcessor {
         SimpleTsonParserVisitor v = new SimpleTsonParserVisitor() {
             @Override
             protected TsonAnnotation onAddAnnotation(TsonAnnotation a) {
-                if (a.name() == null && a.size() == 1) {
+                if (a.name().isEmpty() && a.size() == 1) {
                     TsonElement aliasParam = a.param(0);
                     if (aliasParam.type() == TsonElementType.NAME) {
                         //this is an alias definition

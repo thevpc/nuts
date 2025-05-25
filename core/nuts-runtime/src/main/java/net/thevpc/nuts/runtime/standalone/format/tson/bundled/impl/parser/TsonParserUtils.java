@@ -572,7 +572,7 @@ public class TsonParserUtils {
             return elementToDocument(roots[0]);
         } else {
             List<TsonAnnotation> annotations = roots[0].annotations();
-            if (annotations != null && annotations.size() > 0 && "tson".equals(annotations.get(0).name())) {
+            if (annotations != null && annotations.size() > 0 && "tson".equals(annotations.get(0).name().orNull())) {
                 // will remove it
                 ArrayList<TsonAnnotation> newAnn = new ArrayList<>(annotations);
                 newAnn.remove(0);
@@ -587,7 +587,7 @@ public class TsonParserUtils {
 
     public static TsonDocument elementToDocument(TsonElement root) {
         List<TsonAnnotation> annotations = root.annotations();
-        if (annotations != null && annotations.size() > 0 && "tson".equals(annotations.get(0).name())) {
+        if (annotations != null && annotations.size() > 0 && "tson".equals(annotations.get(0).name().orNull())) {
             // will remove it
             ArrayList<TsonAnnotation> newAnn = new ArrayList<>(annotations);
             newAnn.remove(0);

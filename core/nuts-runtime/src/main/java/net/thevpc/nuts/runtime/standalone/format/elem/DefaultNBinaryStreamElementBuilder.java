@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.format.elem;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NInputStreamProvider;
+import net.thevpc.nuts.util.NMapStrategy;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -14,15 +15,46 @@ public class DefaultNBinaryStreamElementBuilder extends AbstractNElementBuilder 
     }
 
     @Override
+    public NBinaryStreamElementBuilder copyFrom(NElementBuilder other) {
+        copyFrom(other,NMapStrategy.ANY);
+        return this;
+    }
+
+    @Override
+    public NBinaryStreamElementBuilder copyFrom(NElement other) {
+        copyFrom(other,NMapStrategy.ANY);
+        return this;
+    }
+
+    @Override
+    public NBinaryStreamElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy) {
+        return (NBinaryStreamElementBuilder) super.copyFrom(other,strategy);
+    }
+
+    @Override
+    public NBinaryStreamElementBuilder copyFrom(NElement other, NMapStrategy strategy) {
+        return (NBinaryStreamElementBuilder) super.copyFrom(other,strategy);
+    }
+
+    @Override
     public NBinaryStreamElementBuilder doWith(Consumer<NBinaryStreamElementBuilder> con) {
-        if(con!=null){
+        if (con != null) {
             con.accept(this);
         }
         return this;
     }
 
+    @Override
+    public NInputStreamProvider getValue() {
+        return value;
+    }
+
     public NInputStreamProvider value() {
         return value;
+    }
+
+    public NBinaryStreamElementBuilder setValue(NInputStreamProvider value) {
+        return value(value);
     }
 
     public NBinaryStreamElementBuilder value(NInputStreamProvider value) {
@@ -138,7 +170,7 @@ public class DefaultNBinaryStreamElementBuilder extends AbstractNElementBuilder 
 
     @Override
     public NBinaryStreamElementBuilder addAnnotation(String name, NElement... args) {
-        super.addAnnotation(name,args);
+        super.addAnnotation(name, args);
         return this;
     }
 

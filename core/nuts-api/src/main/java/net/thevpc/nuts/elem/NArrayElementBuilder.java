@@ -25,6 +25,9 @@
  */
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NOptional;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
@@ -64,7 +67,7 @@ public interface NArrayElementBuilder extends NElementBuilder {
      * @param index index
      * @return element at index
      */
-    NElement get(int index);
+    NOptional<NElement> get(int index);
 
 
     /**
@@ -277,13 +280,6 @@ public interface NArrayElementBuilder extends NElementBuilder {
      */
     NArrayElementBuilder remove(int index);
 
-    /**
-     * reset this instance with the given array
-     *
-     * @param other array
-     * @return {@code this} instance
-     */
-    NArrayElementBuilder copyFrom(NArrayElementBuilder other);
 
     /**
      * reset this instance with the given array
@@ -300,6 +296,13 @@ public interface NArrayElementBuilder extends NElementBuilder {
      */
     NArrayElement build();
 
+    NArrayElementBuilder copyFrom(NElementBuilder other);
+
+    NArrayElementBuilder copyFrom(NElement other);
+
+    NArrayElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy);
+
+    NArrayElementBuilder copyFrom(NElement other, NMapStrategy strategy);
 
     NArrayElementBuilder addAnnotations(List<NElementAnnotation> annotations);
     NArrayElementBuilder addAnnotation(NElementAnnotation annotation);
@@ -327,8 +330,8 @@ public interface NArrayElementBuilder extends NElementBuilder {
     NArrayElementBuilder addParamAt(int index, NElement param) ;
     NArrayElementBuilder removeParamAt(int index) ;
     NArrayElementBuilder clearParams() ;
-    List<NElement> params();
-    String name() ;
+    NOptional<List<NElement>> params();
+    NOptional<String> name() ;
     NArrayElementBuilder name(String name) ;
     boolean isParametrized() ;
     NArrayElementBuilder setParametrized(boolean parametrized);

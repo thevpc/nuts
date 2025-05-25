@@ -1,5 +1,8 @@
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NOptional;
+
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -25,15 +28,13 @@ public interface NPairElementBuilder extends NElementBuilder {
 
     NElement value();
 
+    NOptional<String> name();
+
     NPairElementBuilder key(String value);
 
     NPairElementBuilder key(NElement value);
 
     NPairElementBuilder value(NElement value);
-
-    NPairElementBuilder copyFrom(NPairElement other);
-
-    NPairElementBuilder copyFrom(NPairElementBuilder element);
 
     NPairElementBuilder addLeadingComment(NElementCommentType type, String text);
 
@@ -57,4 +58,10 @@ public interface NPairElementBuilder extends NElementBuilder {
 
     NPairElementBuilder addComments(NElementComments comments);
 
+    NPairElementBuilder copyFrom(NElementBuilder other);
+
+    NPairElementBuilder copyFrom(NElement other);
+    NPairElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy);
+
+    NPairElementBuilder copyFrom(NElement other, NMapStrategy strategy);
 }

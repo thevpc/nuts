@@ -131,6 +131,8 @@ public abstract class AbstractWinNShellHelper implements NShellHelper {
                 if(!lenient) {
                     throw new NParseException(NMsg.ofPlain("expected \""));
                 }
+                args.add(sb.toString());
+                sb.delete(0, sb.length());
                 break;
             }
         }

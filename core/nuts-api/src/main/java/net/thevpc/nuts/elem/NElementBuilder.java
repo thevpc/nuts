@@ -24,6 +24,8 @@
  */
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.util.NMapStrategy;
+
 import java.util.List;
 
 /**
@@ -31,6 +33,8 @@ import java.util.List;
  */
 public interface NElementBuilder {
     NElementType type();
+
+    boolean isCustomTree();
 
     NElementBuilder addAnnotations(List<NElementAnnotation> annotations);
 
@@ -75,6 +79,14 @@ public interface NElementBuilder {
     NElementComments comments();
 
     List<NElementAnnotation> annotations();
+
+    NElementBuilder copyFrom(NElementBuilder other);
+
+    NElementBuilder copyFrom(NElement other);
+
+    NElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy);
+
+    NElementBuilder copyFrom(NElement other, NMapStrategy strategy);
 
     NElement build();
 }

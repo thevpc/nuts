@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.util.NMapStrategy;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
@@ -86,6 +87,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
      * @return this {@code this} instance
      */
     NObjectElementBuilder clear();
+    NObjectElementBuilder clearChildren();
 
     /**
      * remove property
@@ -105,6 +107,8 @@ public interface NObjectElementBuilder extends NElementBuilder {
      * @return value for name or null
      */
     NOptional<NElement> get(String name);
+
+    NOptional<NElement> getAt(int index);
 
     /**
      * object (key,value) attributes
@@ -131,15 +135,6 @@ public interface NObjectElementBuilder extends NElementBuilder {
      * @return this {@code this} instance
      */
     NObjectElementBuilder copyFrom(NObjectElement other);
-
-    /**
-     * set all properties from the given {@code other} instance.
-     * all properties not found in {@code other} will be removed.
-     *
-     * @param other other instance
-     * @return this {@code this} instance
-     */
-    NObjectElementBuilder copyFrom(NObjectElementBuilder other);
 
     /**
      * add entry key value binding
@@ -214,9 +209,9 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     NObjectElementBuilder clearParams();
 
-    List<NElement> params();
+    NOptional<List<NElement>> params();
 
-    String name();
+    NOptional<String> name();
 
     NObjectElementBuilder name(String name);
 
@@ -248,4 +243,10 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     NObjectElementBuilder addComments(NElementComments comments);
 
+    NObjectElementBuilder copyFrom(NElementBuilder other);
+
+    NObjectElementBuilder copyFrom(NElement other);
+    NObjectElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy);
+
+    NObjectElementBuilder copyFrom(NElement other, NMapStrategy strategy);
 }

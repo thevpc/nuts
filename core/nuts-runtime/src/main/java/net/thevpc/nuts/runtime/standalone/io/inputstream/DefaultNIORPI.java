@@ -24,6 +24,7 @@ import net.thevpc.nuts.reserved.rpi.NIORPI;
 import net.thevpc.nuts.util.*;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -218,9 +219,53 @@ public class DefaultNIORPI implements NIORPI {
         }
         if(metadata==null){
             DefaultNContentMetadata metadata2 = new DefaultNContentMetadata(NMsg.ofPlain("Provider"), null, null, null, null);
-            return new inputStreamProviderToNInputSourceAdapter(metadata2, inputStreamProvider);
+            return new InputStreamProviderToNInputSourceAdapter(metadata2, inputStreamProvider);
         }
-        return new inputStreamProviderToNInputSourceAdapter(metadata, inputStreamProvider);
+        return new InputStreamProviderToNInputSourceAdapter(metadata, inputStreamProvider);
+    }
+
+    @Override
+    public NInputSource ofInputSource(NReaderProvider readerProvider, NContentMetadata metadata) {
+        if (readerProvider == null) {
+            return null;
+        }
+        if (readerProvider instanceof NInputSource) {
+            if(metadata==null){
+                return (NInputSource) readerProvider;
+            }
+            NInputSource o = (NInputSource) readerProvider;
+            return new AbstractNInputSource() {
+                @Override
+                public boolean isMultiRead() {
+                    return o.isMultiRead();
+                }
+
+                @Override
+                public boolean isKnownContentLength() {
+                    return o.isKnownContentLength();
+                }
+
+                @Override
+                public long contentLength() {
+                    return o.contentLength();
+                }
+
+                @Override
+                public NContentMetadata getMetaData() {
+                    return metadata;
+                }
+
+                @Override
+                public InputStream getInputStream() {
+                    return o.getInputStream();
+                }
+            };
+        }
+        if(metadata==null){
+            DefaultNContentMetadata metadata2 = new DefaultNContentMetadata(NMsg.ofPlain("Provider"), null, null, null, null);
+            return new ReaderProviderToNInputSourceAdapter(metadata2, readerProvider);
+        }
+        return new ReaderProviderToNInputSourceAdapter(metadata, readerProvider);
     }
 
     @Override
@@ -407,11 +452,11 @@ public class DefaultNIORPI implements NIORPI {
         return Collections.emptyList();
     }
 
-    private class inputStreamProviderToNInputSourceAdapter extends AbstractNInputSource {
+    private class InputStreamProviderToNInputSourceAdapter extends AbstractNInputSource {
         private final NContentMetadata metadata2;
         private final NInputStreamProvider inputStreamProvider;
 
-        public inputStreamProviderToNInputSourceAdapter(NContentMetadata metadata2, NInputStreamProvider inputStreamProvider) {
+        public InputStreamProviderToNInputSourceAdapter(NContentMetadata metadata2, NInputStreamProvider inputStreamProvider) {
             super();
             this.metadata2 = metadata2;
             this.inputStreamProvider = inputStreamProvider;
@@ -440,6 +485,51 @@ public class DefaultNIORPI implements NIORPI {
         @Override
         public InputStream getInputStream() {
             return inputStreamProvider.getInputStream();
+        }
+    }
+    private class ReaderProviderToNInputSourceAdapter extends AbstractNInputSource {
+        private final NContentMetadata metadata2;
+        private final NReaderProvider inputStreamProvider;
+
+        public ReaderProviderToNInputSourceAdapter(NContentMetadata metadata2, NReaderProvider inputStreamProvider) {
+            super();
+            this.metadata2 = metadata2;
+            this.inputStreamProvider = inputStreamProvider;
+        }
+
+        @Override
+        public boolean isMultiRead() {
+            return false;
+        }
+
+        @Override
+        public boolean isKnownContentLength() {
+            return false;
+        }
+
+        @Override
+        public long contentLength() {
+            return -1;
+        }
+
+        @Override
+        public NContentMetadata getMetaData() {
+            return metadata2;
+        }
+
+        @Override
+        public InputStream getInputStream() {
+            return new ReaderInputStream(inputStreamProvider.getReader(),null);
+        }
+
+        @Override
+        public Reader getReader() {
+            return inputStreamProvider.getReader();
+        }
+
+        @Override
+        public Reader getReader(Charset cs) {
+            return inputStreamProvider.getReader();
         }
     }
 }

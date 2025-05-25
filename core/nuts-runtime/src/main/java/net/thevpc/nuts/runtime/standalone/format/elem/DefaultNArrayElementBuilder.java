@@ -25,6 +25,8 @@
 package net.thevpc.nuts.runtime.standalone.format.elem;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NOptional;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,6 +49,147 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
+    public NArrayElementBuilder copyFrom(NElementBuilder other) {
+        copyFrom(other,NMapStrategy.ANY);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder copyFrom(NElement other) {
+        return (NArrayElementBuilder) super.copyFrom(other);
+    }
+
+    @Override
+    public NArrayElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy) {
+        if (other == null) {
+            return this;
+        }
+        super.copyFrom(other, strategy);
+        if (other instanceof NPairElementBuilder) {
+            NPairElementBuilder from = (NPairElementBuilder) other;
+            add(from.key());
+            add(from.value());
+            return this;
+        }
+        if (other instanceof NUpletElementBuilder) {
+            NUpletElementBuilder from = (NUpletElementBuilder) other;
+            for (int i = 0; i < from.size(); i++) {
+                add(from.get(i).get());
+            }
+            return this;
+        }
+        if (other instanceof NObjectElementBuilder) {
+            NObjectElementBuilder from = (NObjectElementBuilder) other;
+            for (int i = 0; i < from.size(); i++) {
+                add(from.getAt(i).get());
+            }
+            List<NElement> p = from.params().orNull();
+            if (p != null) {
+                this.addParams(p);
+            }
+            name(from.name().orNull());
+            return this;
+        }
+        if (other instanceof NArrayElementBuilder) {
+            NArrayElementBuilder from = (NArrayElementBuilder) other;
+            for (int i = 0; i < from.size(); i++) {
+                add(from.get(i).get());
+            }
+            List<NElement> p = from.params().orNull();
+            if (p != null) {
+                this.addParams(p);
+            }
+            name(from.name().orNull());
+            return this;
+        }
+        if (other instanceof NMatrixElementBuilder) {
+            NMatrixElementBuilder from = (NMatrixElementBuilder) other;
+            for (NArrayElement row : from.rows()) {
+                add(row);
+            }
+            name(from.name().orNull());
+            return this;
+        }
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder copyFrom(NElement other, NMapStrategy strategy) {
+        if (other == null) {
+            return this;
+        }
+        super.copyFrom(other, strategy);
+        if (other instanceof NPairElementBuilder) {
+            NPairElementBuilder from = (NPairElementBuilder) other;
+            add(from.key());
+            add(from.value());
+            return this;
+        }
+        if (other instanceof NUpletElement) {
+            NUpletElement from = (NUpletElement) other;
+            for (int i = 0; i < from.size(); i++) {
+                add(from.get(i).get());
+            }
+            return this;
+        }
+        if (other instanceof NObjectElement) {
+            NObjectElement from = (NObjectElement) other;
+            for (int i = 0; i < from.size(); i++) {
+                add(from.getAt(i).get());
+            }
+            List<NElement> p = from.params().orNull();
+            if (p != null) {
+                this.addParams(p);
+            }
+            name(from.name().orNull());
+            return this;
+        }
+        if (other instanceof NArrayElement) {
+            NArrayElement from = (NArrayElement) other;
+            for (int i = 0; i < from.size(); i++) {
+                add(from.get(i).get());
+            }
+            List<NElement> p = from.params().orNull();
+            if (p != null) {
+                this.addParams(p);
+            }
+            name(from.name().orNull());
+            return this;
+        }
+        if (other instanceof NMatrixElement) {
+            NMatrixElement from = (NMatrixElement) other;
+            for (NArrayElement row : from.rows()) {
+                add(row);
+            }
+            name(from.name());
+            return this;
+        }
+        return this;
+    }
+
+    @Override
+    public boolean isCustomTree() {
+        if(super.isCustomTree()){
+            return true;
+        }
+        if(params!=null){
+            for (NElement value : params) {
+                if(value.isCustomTree()){
+                    return true;
+                }
+            }
+        }
+        if(values!=null){
+            for (NElement value : values) {
+                if(value.isCustomTree()){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
     public NArrayElementBuilder doWith(Consumer<NArrayElementBuilder> con) {
         if (con != null) {
             con.accept(this);
@@ -54,8 +197,8 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
         return this;
     }
 
-    public String name() {
-        return name;
+    public NOptional<String> name() {
+        return NOptional.ofNamed(name,name);
     }
 
     public NArrayElementBuilder name(String name) {
@@ -132,8 +275,11 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public List<NElement> params() {
-        return params == null ? null : Collections.unmodifiableList(params);
+    public NOptional<List<NElement>> params() {
+        if (params == null) {
+            return NOptional.ofNamedEmpty("params");
+        }
+        return NOptional.of(Collections.unmodifiableList(params));
     }
 
 
@@ -148,8 +294,11 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NElement get(int index) {
-        return values.get(index);
+    public NOptional<NElement> get(int index) {
+        if (index >= 0 && index < values.size()) {
+            return NOptional.of(values.get(index));
+        }
+        return NOptional.ofNamedEmpty("element at index " + index);
     }
 
     @Override
@@ -214,29 +363,14 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
         return this;
     }
 
-    @Override
-    public NArrayElementBuilder copyFrom(NArrayElementBuilder other) {
-        if (other != null) {
-            addAnnotations(other.annotations());
-            addComments(other.comments());
-            if (other.name() != null) {
-                this.name(other.name());
-            }
-            if (other.params() != null) {
-                this.addParams(other.params());
-            }
-            addAll(other.items());
-        }
-        return this;
-    }
 
     @Override
     public NArrayElementBuilder copyFrom(NArrayElement other) {
         if (other != null) {
             addAnnotations(other.annotations());
             addComments(other.comments());
-            if (other.name() != null) {
-                this.name(other.name());
+            if (other.isNamed()) {
+                this.name(other.name().orNull());
             }
             this.addParams(other.params().orNull());
             addAll(other.children());

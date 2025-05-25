@@ -82,7 +82,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
     private NElementAnnotation toNElemAnn(TsonAnnotation elem) {
         List<TsonElement> params = elem.params();
         return new NElementAnnotationImpl(
-                elem.name(),
+                elem.name().orNull(),
                 params == null ? null : params.stream().map(x -> toNElem(x)).toArray(NElement[]::new)
         );
     }
@@ -193,7 +193,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 NArrayElement ee = elem.asArray().get();
                 return decorateTsonElement(
                         factory.ofArrayBuilder()
-                                .name(ee.name())
+                                .name(ee.name().orNull())
                                 .addParams(toTsonElemArray(ee.params().orNull()))
                                 .addAll(toTsonElemArray(ee.children()))
                                 .build()
@@ -206,7 +206,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 NObjectElement ee = elem.asObject().get();
                 return decorateTsonElement(
                         new TsonObjectBuilderImpl()
-                                .name(ee.name())
+                                .name(ee.name().orNull())
                                 .addParams(toTsonElemArray(ee.params().orNull()))
                                 .addAll(toTsonElemArray(ee.children()))
                                 .build()
@@ -217,7 +217,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 NUpletElement ee = elem.asUplet().get();
                 return decorateTsonElement(
                         factory.ofUpletBuilder()
-                                .name(ee.name())
+                                .name(ee.name().orNull())
                                 .addAll(toTsonElemArray(ee.children()))
                                 .build()
                         , elem);

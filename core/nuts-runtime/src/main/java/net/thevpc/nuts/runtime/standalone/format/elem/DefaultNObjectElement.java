@@ -10,7 +10,6 @@ import java.util.stream.Stream;
 public class DefaultNObjectElement extends AbstractNListContainerElement implements NObjectElement {
 
     private List<NElement> values = new ArrayList<>();
-    private NElements elements;
     private String name;
     private List<NElement> params;
 
@@ -22,7 +21,7 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
                         : NElementType.NAMED_PARAMETRIZED_OBJECT,
                 annotations, comments);
         if (name != null) {
-            NAssert.requireTrue(NElements.isValidElementName(name), "valid name : "+name);
+            NAssert.requireTrue(NElements.isValidElementName(name), "valid name : " + name);
         }
         this.name = name;
         this.params = params;
@@ -35,6 +34,27 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
         }
     }
 
+    @Override
+    public boolean isCustomTree() {
+        if (super.isCustomTree()) {
+            return true;
+        }
+        if (params != null) {
+            for (NElement value : params) {
+                if (value.isCustomTree()) {
+                    return true;
+                }
+            }
+        }
+        if (values != null) {
+            for (NElement value : values) {
+                if (value.isCustomTree()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     @Override
     public boolean isNamed(String name) {
@@ -53,7 +73,15 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
 
     @Override
     public NOptional<NElement> get(int index) {
-        if(index < 0 || index >= values.size()) {
+        if (index < 0 || index >= values.size()) {
+            return NOptional.ofNamedEmpty("property at " + index);
+        }
+        return NOptional.of(values.get(index));
+    }
+
+    @Override
+    public NOptional<NElement> getAt(int index) {
+        if (index < 0 || index >= values.size()) {
             return NOptional.ofNamedEmpty("property at " + index);
         }
         return NOptional.of(values.get(index));
@@ -61,9 +89,7 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
 
     @Override
     public NOptional<NElement> get(String s) {
-        if (elements == null) {
-            elements = NElements.of();
-        }
+        NElements elements = NElements.of();
         for (NElement x : values) {
             if (x instanceof NPairElement) {
                 NPairElement e = (NPairElement) x;
@@ -83,9 +109,6 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
 
     @Override
     public List<NElement> getAll(String s) {
-        if (elements == null) {
-            elements = NElements.of();
-        }
         List<NElement> ret = new ArrayList<>();
         for (NElement x : values) {
             if (x instanceof NPairElement) {
@@ -206,8 +229,8 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
 //    }
 
 
-    public String name() {
-        return name;
+    public NOptional<String> name() {
+        return NOptional.ofNamed(name, name);
     }
 
     public boolean isNamed() {

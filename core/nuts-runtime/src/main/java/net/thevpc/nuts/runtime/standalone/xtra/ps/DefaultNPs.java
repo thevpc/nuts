@@ -27,7 +27,7 @@ import net.thevpc.nuts.util.*;
 
 public class DefaultNPs implements NPs {
 
-    private String processType;
+    private NPlatformFamily platformFamily;
     private String connexionString;
     private boolean failFast;
 
@@ -119,18 +119,13 @@ public class DefaultNPs implements NPs {
     }
 
     @Override
-    public String getType() {
-        return processType;
+    public NPlatformFamily getPlatformFamily() {
+        return platformFamily;
     }
 
-    public NPs setType(String processType) {
-        this.processType = processType;
+    public NPs setPlatformFamily(NPlatformFamily platformFamily) {
+        this.platformFamily = platformFamily;
         return this;
-    }
-
-    @Override
-    public NPs type(String processType) {
-        return setType(processType);
     }
 
     private static String getJpsJavaHome2(String version) {
@@ -176,54 +171,17 @@ public class DefaultNPs implements NPs {
     @Override
     public NStream<NPsInfo> getResultList() {
         if (NBlankable.isBlank(connexionString)) {
-            String processType = NStringUtils.trim(getType());
-            if (processType.toLowerCase().startsWith("java#")) {
-                return getResultListJava(processType.substring("java#".length()));
-            } else if (processType.equalsIgnoreCase("java")) {
-                return getResultListJava("");
-            } else {
-                switch (NWorkspace.of().getOsFamily()) {
-                    case LINUX: {
-                        NExecCmd u = NExecCmd.of()
-                                .setIn(NExecInput.ofNull())
-                                .addCommand("ps", "-eo", "user,pid,%cpu,%mem,vsz,rss,tty,stat,lstart,time,command")
-                                .grabErr()
-                                .setFailFast(isFailFast())
-                                .grabOut();
-                        String grabbedOutString = u.getGrabbedOutString();
-                        return new LinuxPsParser().parse(new StringReader(grabbedOutString));
-                    }
-                    case UNIX:
-                    case MACOS: {
-                        NExecCmd u = NExecCmd.of()
-                                .setIn(NExecInput.ofNull())
-                                .addCommand("ps", "aux")
-                                .grabErr()
-                                .setFailFast(isFailFast())
-                                .grabOut();
-                        return new UnixPsParser().parse(new StringReader(u.getGrabbedOutString()));
-                    }
-                    case WINDOWS: {
-                        NExecCmd u = NExecCmd.of()
-                                .setIn(NExecInput.ofNull())
-                                .grabErr()
-                                .grabOut()
-                                .addCommand(
-                                        "powershell.exe", "-Command",
-                                        "Get-WmiObject Win32_Process | ForEach-Object { $o = $_.GetOwner(); $user = if ($o) { $o.User } else { 'N/A' }; $mem = Get-WmiObject Win32_ComputerSystem; $state = if ($_.ExecutionState -eq 0) { 'Running' } elseif ($_.ExecutionState -eq 2) { 'Sleeping' } else { 'Suspended' }; $start = if ($_.CreationDate) { $_.CreationDate.Substring(0, 12) } else { 'N/A' }; New-Object PSObject -Property @{ USER=$user; PID=$_.ProcessId; CPU=([math]::Round(($_.KernelModeTime + $_.UserModeTime)/1e7, 2)); MEM=([math]::Round($_.WorkingSetSize / $mem.TotalPhysicalMemory * 100, 2)); VSZ=[int]($_.VirtualSize / 1KB); RSS=[int]($_.WorkingSetSize / 1KB); TTY='N/A'; STAT=$state; START=$start; TIME=([math]::Round(($_.KernelModeTime + $_.UserModeTime)/1e7, 2)); COMMAND=$_.CommandLine } }"
-                                //                                        "$mem=(Get-WmiObject Win32_ComputerSystem).TotalPhysicalMemory; Get-WmiObject Win32_Process|ForEach-Object{ $o=$_.GetOwner();$user=if($o){$o.User}else{'N/A'};$state=if($_.ExecutionState -eq 0){'Running'}elseif($_.ExecutionState -eq 2){'Sleeping'}else{'Suspended'};$start=if($_.CreationDate){$_.CreationDate.Substring(0,12)}else{'N/A'};New-Object PSObject -Property @{USER=$user;PID=$_.ProcessId;CPU=[math]::Round(($_.KernelModeTime+$_.UserModeTime)/1e7,2);MEM=[math]::Round($_.WorkingSetSize/$mem*100,2);VSZ=[int]($_.VirtualSize/1KB);RSS=[int]($_.WorkingSetSize/1KB);TTY='N/A';STAT=$state;START=$start;TIME=[math]::Round(($_.KernelModeTime+$_.UserModeTime)/1e7,2);COMMAND=$_.CommandLine}}|ConvertTo-Csv -NoTypeInformation  | Out-String -Width 1000"
-                                )
-                                .setFailFast(isFailFast());
-                        String grabbedOutString = u.getGrabbedOutString();
-                        NPath.ofTempIdFile("ps-result.txt", NId.API_ID).writeString(connexionString);
-                        return new WindowsPsCsvParser().parse(new StringReader(grabbedOutString));
-                    }
-                }
-                if (isFailFast()) {
-                    throw new NIllegalArgumentException(NMsg.ofC("unsupported list processes of type : %s", processType));
-                }
-                return new NStreamEmpty<>("process-" + processType);
+            NPlatformFamily processType = NUtils.firstNonNull(platformFamily,NPlatformFamily.OS);
+            switch (processType) {
+                case JAVA:
+                    return getResultListJava();
+                case OS:
+                    return getResultListOS();
             }
+            if (isFailFast()) {
+                throw new NIllegalArgumentException(NMsg.ofC("unsupported list processes of type : %s",processType));
+            }
+            return new NStreamEmpty<>("process-"+processType.id());
         } else {
             String str = NExecCmd.of("ps", "--json", "aux")
                     .at(connexionString)
@@ -237,13 +195,57 @@ public class DefaultNPs implements NPs {
         }
     }
 
-    private NStream<NPsInfo> getResultListJava(String version) {
+    private NStream<NPsInfo> getResultListOS() {
+        switch (NWorkspace.of().getOsFamily()) {
+            case LINUX: {
+                NExecCmd u = NExecCmd.of()
+                        .setIn(NExecInput.ofNull())
+                        .addCommand("ps", "-eo", "user,pid,%cpu,%mem,vsz,rss,tty,stat,lstart,time,command")
+                        .grabErr()
+                        .setFailFast(isFailFast())
+                        .grabOut();
+                String grabbedOutString = u.getGrabbedOutString();
+                return new LinuxPsParser().parse(new StringReader(grabbedOutString));
+            }
+            case UNIX:
+            case MACOS: {
+                NExecCmd u = NExecCmd.of()
+                        .setIn(NExecInput.ofNull())
+                        .addCommand("ps", "aux")
+                        .grabErr()
+                        .setFailFast(isFailFast())
+                        .grabOut();
+                return new UnixPsParser().parse(new StringReader(u.getGrabbedOutString()));
+            }
+            case WINDOWS: {
+                NExecCmd u = NExecCmd.of()
+                        .setIn(NExecInput.ofNull())
+                        .grabErr()
+                        .grabOut()
+                        .addCommand(
+                                "powershell.exe", "-Command",
+                                "Get-WmiObject Win32_Process | ForEach-Object { $o = $_.GetOwner(); $user = if ($o) { $o.User } else { 'N/A' }; $mem = Get-WmiObject Win32_ComputerSystem; $state = if ($_.ExecutionState -eq 0) { 'Running' } elseif ($_.ExecutionState -eq 2) { 'Sleeping' } else { 'Suspended' }; $start = if ($_.CreationDate) { $_.CreationDate.Substring(0, 12) } else { 'N/A' }; New-Object PSObject -Property @{ USER=$user; PID=$_.ProcessId; CPU=([math]::Round(($_.KernelModeTime + $_.UserModeTime)/1e7, 2)); MEM=([math]::Round($_.WorkingSetSize / $mem.TotalPhysicalMemory * 100, 2)); VSZ=[int]($_.VirtualSize / 1KB); RSS=[int]($_.WorkingSetSize / 1KB); TTY='N/A'; STAT=$state; START=$start; TIME=([math]::Round(($_.KernelModeTime + $_.UserModeTime)/1e7, 2)); COMMAND=$_.CommandLine } }"
+                                //                                        "$mem=(Get-WmiObject Win32_ComputerSystem).TotalPhysicalMemory; Get-WmiObject Win32_Process|ForEach-Object{ $o=$_.GetOwner();$user=if($o){$o.User}else{'N/A'};$state=if($_.ExecutionState -eq 0){'Running'}elseif($_.ExecutionState -eq 2){'Sleeping'}else{'Suspended'};$start=if($_.CreationDate){$_.CreationDate.Substring(0,12)}else{'N/A'};New-Object PSObject -Property @{USER=$user;PID=$_.ProcessId;CPU=[math]::Round(($_.KernelModeTime+$_.UserModeTime)/1e7,2);MEM=[math]::Round($_.WorkingSetSize/$mem*100,2);VSZ=[int]($_.VirtualSize/1KB);RSS=[int]($_.WorkingSetSize/1KB);TTY='N/A';STAT=$state;START=$start;TIME=[math]::Round(($_.KernelModeTime+$_.UserModeTime)/1e7,2);COMMAND=$_.CommandLine}}|ConvertTo-Csv -NoTypeInformation  | Out-String -Width 1000"
+                        )
+                        .setFailFast(isFailFast());
+                String grabbedOutString = u.getGrabbedOutString();
+                NPath.ofTempIdFile("ps-result.txt", NId.API_ID).writeString(connexionString);
+                return new WindowsPsCsvParser().parse(new StringReader(grabbedOutString));
+            }
+        }
+        if (isFailFast()) {
+            throw new NIllegalArgumentException(NMsg.ofC("unsupported list processes of type : OS"));
+        }
+        return new NStreamEmpty<>("process");
+    }
+
+    private NStream<NPsInfo> getResultListJava() {
         NIterator<NPsInfo> it = NIteratorBuilder.ofSupplier(() -> {
             String cmd = "jps";
             NExecCmd b = null;
             boolean mainArgs = true;
             boolean vmArgs = true;
-            String jdkHome = getJpsJavaHome2(version);
+            String jdkHome = getJpsJavaHome2("");
             if (jdkHome != null) {
                 cmd = jdkHome + File.separator + "bin" + File.separator + cmd;
             }
@@ -279,7 +281,7 @@ public class DefaultNPs implements NPs {
                                     .setCmdLineArgs(parsedCmdLine);
                             return p.build();
                         }).withDesc(NEDesc.of("processInfo"))).build();
-        return new NStreamFromNIterator<>("process-" + getType(), it);
+        return new NStreamFromNIterator<>("process-" + getPlatformFamily(), it);
     }
 
     private String[] betterArgs(String pid) {

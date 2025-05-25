@@ -73,6 +73,27 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
         this.params = params;
     }
 
+    @Override
+    public boolean isCustomTree() {
+        if(super.isCustomTree()){
+            return true;
+        }
+        if(params!=null){
+            for (NElement value : params) {
+                if(value.isCustomTree()){
+                    return true;
+                }
+            }
+        }
+        if(values!=null){
+            for (NElement value : values) {
+                if(value.isCustomTree()){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     @Override
     public boolean isNamed(String name) {
@@ -96,6 +117,15 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
 
     @Override
     public NOptional<NElement> get(int index) {
+        if (index >= 0 && index < values.length) {
+            return NOptional.of(values[index]);
+        }
+        return NOptional.ofError(() -> NMsg.ofC("invalid array index %s not in [%s,%s[", index, 0, values.length));
+    }
+
+
+    @Override
+    public NOptional<NElement> getAt(int index) {
         if (index >= 0 && index < values.length) {
             return NOptional.of(values[index]);
         }
@@ -237,8 +267,8 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
         return Collections.emptyList();
     }
 
-    public String name() {
-        return name;
+    public NOptional<String> name() {
+        return NOptional.ofNamed(name,name);
     }
 
     public boolean isNamed() {

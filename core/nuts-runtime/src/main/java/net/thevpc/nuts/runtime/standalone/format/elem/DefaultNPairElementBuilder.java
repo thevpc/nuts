@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.format.elem;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -12,6 +14,126 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
     public DefaultNPairElementBuilder() {
         key = NElements.of().ofNull();
         value = NElements.of().ofNull();
+    }
+
+    @Override
+    public NPairElementBuilder copyFrom(NElementBuilder other) {
+        copyFrom(other,NMapStrategy.ANY);
+        return this;
+    }
+
+    @Override
+    public NOptional<String> name() {
+        if (key.isAnyString()) {
+            return key.asStringValue();
+        }
+        return NOptional.ofNamedEmpty("name");
+    }
+
+    @Override
+    public NPairElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy) {
+        if(other==null){
+            return this;
+        }
+        super.copyFrom(other, strategy);
+        if(other instanceof NPairElementBuilder){
+            NPairElementBuilder from = (NPairElementBuilder) other;
+            this.key = from.key();
+            this.value = from.value();
+            return this;
+        }
+        if(other instanceof NUpletElementBuilder){
+            NUpletElementBuilder from = (NUpletElementBuilder) other;
+            if(from.size()>0) {
+                this.key = from.get(0).get();
+            }
+            if(from.size()>1) {
+                this.value = from.get(1).get();
+            }
+            return this;
+        }
+        if(other instanceof NObjectElementBuilder){
+            NObjectElementBuilder from = (NObjectElementBuilder) other;
+            if(from.size()>0) {
+                this.key = from.getAt(0).get();
+            }
+            if(from.size()>1) {
+                this.value = from.getAt(1).get();
+            }
+            return this;
+        }
+        if(other instanceof NArrayElementBuilder){
+            NArrayElementBuilder from = (NArrayElementBuilder) other;
+            if(from.size()>0) {
+                this.key = from.get(0).get();
+            }
+            if(from.size()>1) {
+                this.value = from.get(1).get();
+            }
+            return this;
+        }
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder copyFrom(NElement other, NMapStrategy strategy) {
+        if(other==null){
+            return this;
+        }
+        super.copyFrom(other, strategy);
+        if(other instanceof NPairElement){
+            NPairElement from = (NPairElement) other;
+            this.key = from.key();
+            this.value = from.value();
+            return this;
+        }
+        if(other instanceof NUpletElement){
+            NUpletElement from = (NUpletElement) other;
+            if(from.size()>0) {
+                this.key = from.get(0).get();
+            }
+            if(from.size()>1) {
+                this.value = from.get(1).get();
+            }
+            return this;
+        }
+        if(other instanceof NObjectElement){
+            NObjectElement from = (NObjectElement) other;
+            if(from.size()>0) {
+                this.key = from.getAt(0).get();
+            }
+            if(from.size()>1) {
+                this.value = from.getAt(1).get();
+            }
+            return this;
+        }
+        if(other instanceof NArrayElement){
+            NArrayElement from = (NArrayElement) other;
+            if(from.size()>0) {
+                this.key = from.get(0).get();
+            }
+            if(from.size()>1) {
+                this.value = from.get(1).get();
+            }
+            return this;
+        }
+        return this;
+    }
+
+
+
+    @Override
+    public boolean isCustomTree() {
+        if(super.isCustomTree()){
+            return true;
+        }
+        if(key!=null && key.isCustomTree()){
+            return true;
+        }
+        if(value!=null && value.isCustomTree()){
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -33,25 +155,6 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
         return this;
     }
 
-    public NPairElementBuilder copyFrom(NPairElement element) {
-        if (element != null) {
-            addAnnotations(element.annotations());
-            addComments(element.comments());
-            key(element.key());
-            value(element.value());
-        }
-        return this;
-    }
-
-    public NPairElementBuilder copyFrom(NPairElementBuilder element) {
-        if (element != null) {
-            addAnnotations(element.annotations());
-            addComments(element.comments());
-            key(element.key());
-            value(element.value());
-        }
-        return this;
-    }
 
     public NPairElementBuilder key(NElement key) {
         this.key = key == null ? NElements.of().ofNull() : key;
@@ -194,6 +297,12 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
     @Override
     public NPairElementBuilder clearComments() {
         super.clearComments();
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder copyFrom(NElement other) {
+        copyFrom(other,NMapStrategy.ANY);
         return this;
     }
 

@@ -97,6 +97,16 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
                         NIORPI.of().ofInputSource(other, metadata);
     }
 
+    static NInputSource of(NReaderProvider other) {
+        return of(other, null);
+    }
+
+    static NInputSource of(NReaderProvider other, NContentMetadata metadata) {
+        return other == null ? null :
+                (other instanceof NInputSource && metadata == null) ? (NInputSource)other :
+                        NIORPI.of().ofInputSource(other, metadata);
+    }
+
     byte[] readBytes();
 
     default String readString() {

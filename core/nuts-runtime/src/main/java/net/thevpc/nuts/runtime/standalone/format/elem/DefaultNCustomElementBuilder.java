@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.format.elem;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.util.NMapStrategy;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -13,8 +14,35 @@ public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
+    public NCustomElementBuilder copyFrom(NElementBuilder other) {
+        copyFrom(other,NMapStrategy.ANY);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder copyFrom(NElement other) {
+        copyFrom(other,NMapStrategy.ANY);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy) {
+        return (NCustomElementBuilder) super.copyFrom(other,strategy);
+    }
+
+    @Override
+    public NCustomElementBuilder copyFrom(NElement other, NMapStrategy strategy) {
+        return (NCustomElementBuilder) super.copyFrom(other,strategy);
+    }
+
+    @Override
+    public boolean isCustomTree() {
+        return true;
+    }
+
+    @Override
     public NCustomElementBuilder doWith(Consumer<NCustomElementBuilder> con) {
-        if(con!=null){
+        if (con != null) {
             con.accept(this);
         }
         return this;
@@ -136,7 +164,7 @@ public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implem
 
     @Override
     public NCustomElementBuilder addAnnotation(String name, NElement... args) {
-        super.addAnnotation(name,args);
+        super.addAnnotation(name, args);
         return this;
     }
 

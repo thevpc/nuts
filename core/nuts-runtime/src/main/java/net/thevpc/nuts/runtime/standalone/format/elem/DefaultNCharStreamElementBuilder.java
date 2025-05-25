@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.format.elem;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NReaderProvider;
+import net.thevpc.nuts.util.NMapStrategy;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -11,6 +12,29 @@ public class DefaultNCharStreamElementBuilder extends AbstractNElementBuilder im
 
 
     public DefaultNCharStreamElementBuilder() {
+    }
+
+
+    @Override
+    public NCharStreamElementBuilder copyFrom(NElementBuilder other) {
+        copyFrom(other,NMapStrategy.ANY);
+        return this;
+    }
+
+    @Override
+    public NCharStreamElementBuilder copyFrom(NElement other) {
+        copyFrom(other,NMapStrategy.ANY);
+        return this;
+    }
+
+    @Override
+    public NCharStreamElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy) {
+        return (NCharStreamElementBuilder) super.copyFrom(other,strategy);
+    }
+
+    @Override
+    public NCharStreamElementBuilder copyFrom(NElement other, NMapStrategy strategy) {
+        return (NCharStreamElementBuilder) super.copyFrom(other,strategy);
     }
 
     @Override

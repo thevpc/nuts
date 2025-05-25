@@ -59,6 +59,8 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
 
     String toString(boolean compact);
 
+    boolean isCustomTree();
+
     boolean isStream();
 
     boolean isNumber();

@@ -64,8 +64,8 @@ public class TsonFormatImpl implements TsonFormat, Cloneable {
         final List<TsonElement> params = a.params();
         try {
             sb.append('@');
-            if (a.name() != null) {
-                sb.append(a.name());
+            if (a.name().isPresent()) {
+                sb.append(a.name().get());
             }
             if (params != null) {
                 sb.append('(');
@@ -120,7 +120,7 @@ public class TsonFormatImpl implements TsonFormat, Cloneable {
 
             if (ann != null && !ann.isEmpty()) {
                 for (TsonAnnotation a : ann) {
-                    if ("format".equals(a.name())) {
+                    if ("format".equals(a.name().orNull())) {
                         formatAnnotation = a;
                         if (showAnnotations) {
                             if (!config.showFormatNumber) {

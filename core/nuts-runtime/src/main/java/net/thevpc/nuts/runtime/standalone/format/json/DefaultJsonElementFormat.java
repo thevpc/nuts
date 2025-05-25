@@ -380,7 +380,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                     return elems.ofObjectBuilder()
                             .add("value", p.build())
                             .add(a.isEmpty() ? null : elems.ofPair("@annotations", _jsonAnnotations(a)))
-                            .add(!p0.isNamed() ? null : elems.ofPair("@name", elems.ofString(p0.name())))
+                            .add(!p0.isNamed() ? null : elems.ofPair("@name", elems.ofString(p0.name().orNull())))
                             .add(!p0.isParametrized() ? null : elems.ofPair("@params", elems.ofArray(p0.params().get().stream().map(x -> ensureJson(x)).toArray(NElement[]::new))))
                             .build();
                 }
@@ -401,7 +401,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                     return elems.ofObjectBuilder()
                             .add("value", p.build())
                             .add(a.isEmpty() ? null : elems.ofPair("@annotations", _jsonAnnotations(a)))
-                            .add(!p0.isNamed() ? null : elems.ofPair("@name", elems.ofString(p0.name())))
+                            .add(!p0.isNamed() ? null : elems.ofPair("@name", elems.ofString(p0.name().orNull())))
                             .add(!p0.isParametrized() ? null : elems.ofPair("@params", elems.ofArray(p0.params().get().stream().map(x -> ensureJson(x)).toArray(NElement[]::new))))
                             .build();
                 }
@@ -420,7 +420,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                     return elems.ofObjectBuilder()
                             .add("value", p.build())
                             .add(a.isEmpty() ? null : elems.ofPair("@annotations", _jsonAnnotations(a)))
-                            .add(!p0.isNamed() ? null : elems.ofPair("@name", elems.ofString(p0.name())))
+                            .add(!p0.isNamed() ? null : elems.ofPair("@name", elems.ofString(p0.name().orNull())))
                             .build();
                 }
             }

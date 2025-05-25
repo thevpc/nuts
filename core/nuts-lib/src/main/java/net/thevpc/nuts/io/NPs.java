@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts.io;
 
+import net.thevpc.nuts.NPlatformFamily;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.util.NConnexionString;
 import net.thevpc.nuts.util.NStream;
@@ -47,7 +48,7 @@ public interface NPs extends NComponent {
      *
      * @return process type to consider. Supported 'java'
      */
-    String getType();
+    NPlatformFamily getPlatformFamily();
 
     /**
      * set process type to consider.
@@ -56,21 +57,12 @@ public interface NPs extends NComponent {
      * @param processType new type
      * @return return {@code this} instance
      */
-    NPs setType(String processType);
+    NPs setPlatformFamily(NPlatformFamily processType);
 
     /**
-     * set process type to consider.
-     * Supported 'java' or 'java#version'
+     * list all processes of type {@link #getPlatformFamily()}
      *
-     * @param processType new type
-     * @return return {@code this} instance
-     */
-    NPs type(String processType);
-
-    /**
-     * list all processes of type {@link #getType()}
-     *
-     * @return list all processes of type {@link #getType()}
+     * @return list all processes of type {@link #getPlatformFamily()}
      */
     NStream<NPsInfo> getResultList();
 

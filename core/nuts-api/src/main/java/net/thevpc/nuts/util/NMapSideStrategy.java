@@ -1,7 +1,5 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NOsServiceType;
-
 public enum NMapSideStrategy implements NEnum{
     NON_NULL,
     NON_BLANK,

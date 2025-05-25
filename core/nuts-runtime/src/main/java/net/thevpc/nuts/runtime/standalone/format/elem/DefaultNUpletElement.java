@@ -61,6 +61,21 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
         this.name = name;
     }
 
+    @Override
+    public boolean isCustomTree() {
+        if(super.isCustomTree()){
+            return true;
+        }
+        if(params!=null){
+            for (NElement value : params) {
+                if(value.isCustomTree()){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 //    @Override
 //    public NOptional<Object> asObjectAt(int index) {
 //        return get(index).map(x -> x);
@@ -80,9 +95,8 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
         return isNamed() && Objects.equals(name, this.name);
     }
 
-    @Override
-    public String name() {
-        return name;
+    public NOptional<String> name() {
+        return NOptional.ofNamed(name,name);
     }
 
     @Override
@@ -113,6 +127,14 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
 
     @Override
     public NOptional<NElement> get(int index) {
+        if (index >= 0 && index < params.length) {
+            return NOptional.of(params[index]);
+        }
+        return NOptional.ofError(() -> NMsg.ofC("invalid array index %s not in [%s,%s[", index, 0, params.length));
+    }
+
+    @Override
+    public NOptional<NElement> getAt(int index) {
         if (index >= 0 && index < params.length) {
             return NOptional.of(params[index]);
         }

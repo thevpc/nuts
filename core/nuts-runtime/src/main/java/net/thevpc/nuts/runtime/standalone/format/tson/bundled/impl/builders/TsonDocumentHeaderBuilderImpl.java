@@ -7,6 +7,7 @@ import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.util.TsonUtil
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class TsonDocumentHeaderBuilderImpl implements TsonDocumentHeaderBuilder {
     private String version = null;
@@ -25,7 +26,7 @@ public class TsonDocumentHeaderBuilderImpl implements TsonDocumentHeaderBuilder 
 
     @Override
     public TsonDocumentHeaderBuilderImpl parse(TsonAnnotation a) {
-        if (a.name().equals("tson")) {
+        if (Objects.equals(a.name().orNull(),"tson")) {
             List<TsonElement> params = a.params();
             boolean acceptStr = true;
             if (params != null) {

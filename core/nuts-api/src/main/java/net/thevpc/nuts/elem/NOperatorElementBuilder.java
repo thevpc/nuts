@@ -24,6 +24,9 @@
  */
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NOptional;
+
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -78,11 +81,11 @@ public interface NOperatorElementBuilder extends NElementBuilder {
 
     NOperatorElementBuilder first(NElement value);
 
-    NElement first();
+    NOptional<NElement> first();
 
     NOperatorElementBuilder second(NElement value);
 
-    NElement second();
+    NOptional<NElement> second();
 
     NOperatorElementBuilder operatorName(String value);
 
@@ -93,4 +96,11 @@ public interface NOperatorElementBuilder extends NElementBuilder {
     NOperatorType operatorType();
 
     NOperatorElement build();
+
+    NOperatorElementBuilder copyFrom(NElementBuilder other);
+
+    NOperatorElementBuilder copyFrom(NElement other);
+    NOperatorElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy);
+
+    NOperatorElementBuilder copyFrom(NElement other, NMapStrategy strategy);
 }

@@ -491,7 +491,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     @Override
     public NPath writeString(String string, Charset cs, NPathOption... options) {
-        return writeBytes(string.getBytes(nonNullCharset(cs)));
+        return writeBytes(string==null?new byte[0]:string.getBytes(nonNullCharset(cs)));
     }
 
     @Override

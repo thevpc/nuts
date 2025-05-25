@@ -25,6 +25,7 @@
 package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.io.NReaderProvider;
+import net.thevpc.nuts.util.NMapStrategy;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -80,4 +81,12 @@ public interface NCharStreamElementBuilder extends NElementBuilder {
     NReaderProvider value();
 
     NCharStreamElement build();
+
+
+    NCharStreamElementBuilder copyFrom(NElementBuilder other);
+
+    NCharStreamElementBuilder copyFrom(NElement other);
+    NCharStreamElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy);
+
+    NCharStreamElementBuilder copyFrom(NElement other, NMapStrategy strategy);
 }
