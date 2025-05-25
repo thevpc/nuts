@@ -7,6 +7,7 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPsInfo;
 import net.thevpc.nuts.io.NpsStatus;
 import net.thevpc.nuts.io.NpsType;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.util.NStringUtils;
@@ -26,15 +27,39 @@ public class WindowsPsCsvParser {
         return NStream.ofIterator(new Iterator<NPsInfo>() {
             NPsInfo last = null;
             boolean headerRead;
+            String[] columns;
 
             @Override
             public boolean hasNext() {
-                if(!headerRead){
-                    String[] colsLine = readLine(br);
-                    headerRead=true;
+                while (true) {
+                    String line = null;
+                    try {
+                        line = br.readLine();
+                    } catch (IOException e) {
+                        throw new NIOException(e);
+                    }
+                    if (line == null) {
+                        last = null;
+                        return false;
+                    }
+                    if (!headerRead) {
+                        columns = readColumns(line);
+                        headerRead = true;
+                        try {
+                            line = br.readLine();
+                        } catch (IOException e) {
+                            throw new NIOException(e);
+                        }
+                        if (line == null) {
+                            return false;
+                        }
+                    }
+                    String[] value = readColumns(line);
+                    last = createNPsInfo(value, columns);
+                    if (last != null) {
+                        return true;
+                    }
                 }
-                last = readNext(br);
-                return last != null;
             }
 
             @Override
@@ -44,147 +69,126 @@ public class WindowsPsCsvParser {
         });
     }
 
-    private String[] readLine(BufferedReader r) {
-        String line = null;
-        try {
-            line = r.readLine();
-        } catch (IOException e) {
-            throw new NIOException(e);
+    private String[] readColumns(String line) {
+        if (line.isEmpty()) return new String[0];
+        java.util.List<String> fields = new java.util.ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        boolean inQuotes = false;
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+            if (c == '"') {
+                if (inQuotes && i + 1 < line.length() && line.charAt(i + 1) == '"') {
+                    sb.append('"'); // double quote inside quoted string
+                    i++;
+                } else {
+                    inQuotes = !inQuotes;
+                }
+            } else if (c == ',' && !inQuotes) {
+                fields.add(sb.toString());
+                sb.setLength(0);
+            } else {
+                sb.append(c);
+            }
         }
-        if (line == null) {
-            return null;
-        }
-        return new String[]{
-                normalizeLine(line).trim(),
-                line,
-        };
+        fields.add(sb.toString());
+        return fields.toArray(new String[0]);
     }
 
-    private NPsInfo readNext(BufferedReader r) {
+
+    private NPsInfo createNPsInfo(String[] values, String[] columns) {
         DefaultNPsInfoBuilder v = new DefaultNPsInfoBuilder();
         boolean empty = true;
-        String line;
-        while (true) {
-            String[] unsafeLine = readLine(r);
-            if (unsafeLine == null) {
-                break;
-            }
-            line = unsafeLine[0];
-            int x = line.indexOf(":");
-            try {
-                if (x > 0) {
-                    String key = line.substring(0, x).trim();
-                    String value = line.substring(x + 1).trim();
-                    switch (key) {
-                        case "VSZ": {
-                            v.setVirtualMemorySize(NLiteral.of(value).asLong().orElse(0L));
-                            empty = false;
-                            break;
-                        }
-                        case "RSS": {
-                            v.setResidentSetSize(NLiteral.of(value).asLong().orElse(0L));
-                            empty = false;
-                            return _build(v);
-                        }
-                        case "PID": {
-                            v.setId(value);
-                            empty = false;
-                            break;
-                        }
-                        case "TIME": {
-                            String normalized = value.replace(',', '.');
-                            BigDecimal seconds = new BigDecimal(normalized);
-                            long millis = seconds.multiply(BigDecimal.valueOf(1000)).longValueExact();
-                            v.setTime(millis);
-                            empty = false;
-                            break;
-                        }
-                        case "STAT": {
-                            switch (NStringUtils.trim(value).toLowerCase()) {
-                                case "suspended": {
-                                    v.setStatus(NpsStatus.SUSPENDED);
-                                    break;
-                                }
-                                case "sleeping": {
-                                    v.setStatus(NpsStatus.WAITING_FOR_EVENT);
-                                    break;
-                                }
-                                case "running": {
-                                    v.setStatus(NpsStatus.RUNNING);
-                                    break;
-                                }
-                                case "idle": {
-                                    v.setStatus(NpsStatus.IDLE);
-                                    break;
-                                }
-                                default: {
-                                    v.setStatus(NpsStatus.UNKNOWN);
-                                    break;
-                                }
-                            }
-                            empty = false;
-                            break;
-                        }
-                        case "MEM": {
-                            v.setPercentMem(NLiteral.of(value.replace(",", ".")).asDouble().orElse(0.0));
-                            empty = false;
-                            break;
-                        }
-                        case "USER": {
-                            v.setUser(value);
-                            empty = false;
-                            break;
-                        }
-                        case "TTY": {
-                            //
-                            empty = false;
-                            break;
-                        }
-                        case "START": {
-                            if ("N/A".equals(value)) {
-                                //ignore
-                            } else {
-                                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
-
-                                // Parse the string into a LocalDateTime
-                                LocalDateTime localDateTime = LocalDateTime.parse(value, formatter);
-
-                                // Convert LocalDateTime to Instant (Assuming UTC for simplicity)
-                                v.setStartTime(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                            }
-                            empty = false;
-                            break;
-                        }
-                        case "COMMAND": {
-                            StringBuilder sb = new StringBuilder();
-                            sb.append(value);
-                            while (true) {
-                                unsafeLine = readLine(r);
-                                if (unsafeLine == null) {
-                                    break;
-                                }
-                                line = unsafeLine[0];
-                                if (line.startsWith("RSS") && line.indexOf(":") > 0 && line.split(":")[0].trim().equals("RSS")) {
-                                    x = line.indexOf(":");
-                                    key = line.substring(0, x).trim();
-                                    value = line.substring(x + 1).trim();
-                                    v.setResidentSetSize(NLiteral.of(value).asLong().orElse(0L));
-                                    empty = false;
-                                    setCommand(v, sb.toString());
-                                    return _build(v);
-                                } else {
-                                    sb.append(line);
-                                }
-                            }
-                            setCommand(v, sb.toString());
-                            empty = false;
-                            break;
-                        }
-
-                    }
+        for (int i = 0; i < columns.length; i++) {
+            String key = columns[i];
+            String value = values[i];
+            switch (key) {
+                case "VSZ": {
+                    v.setVirtualMemorySize(NLiteral.of(value).asLong().orElse(0L));
+                    empty = false;
+                    break;
                 }
-            } catch (RuntimeException e) {
-                throw e;
+                case "RSS": {
+                    v.setResidentSetSize(NLiteral.of(value).asLong().orElse(0L));
+                    empty = false;
+                    break;
+                }
+                case "PID": {
+                    v.setId(value);
+                    empty = false;
+                    break;
+                }
+                case "TIME": {
+                    String normalized = value.replace(',', '.');
+                    BigDecimal seconds = new BigDecimal(normalized);
+                    long millis = seconds.multiply(BigDecimal.valueOf(1000)).longValueExact();
+                    v.setTime(millis);
+                    empty = false;
+                    break;
+                }
+                case "STAT": {
+                    switch (NStringUtils.trim(value).toLowerCase()) {
+                        case "suspended": {
+                            v.setStatus(NpsStatus.SUSPENDED);
+                            break;
+                        }
+                        case "sleeping": {
+                            v.setStatus(NpsStatus.WAITING_FOR_EVENT);
+                            break;
+                        }
+                        case "running": {
+                            v.setStatus(NpsStatus.RUNNING);
+                            break;
+                        }
+                        case "idle": {
+                            v.setStatus(NpsStatus.IDLE);
+                            break;
+                        }
+                        default: {
+                            v.setStatus(NpsStatus.UNKNOWN);
+                            break;
+                        }
+                    }
+                    empty = false;
+                    break;
+                }
+                case "MEM": {
+                    v.setPercentMem(NLiteral.of(value.replace(",", ".")).asDouble().orElse(0.0));
+                    empty = false;
+                    break;
+                }
+                case "USER": {
+                    v.setUser(value);
+                    empty = false;
+                    break;
+                }
+                case "TTY": {
+                    if ("N/A".equals(value)) {
+                        //ignore
+                    }
+                    //
+                    empty = false;
+                    break;
+                }
+                case "START": {
+                    if ("N/A".equals(value)) {
+                        //ignore
+                    } else {
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+
+                        // Parse the string into a LocalDateTime
+                        LocalDateTime localDateTime = LocalDateTime.parse(value, formatter);
+
+                        // Convert LocalDateTime to Instant (Assuming UTC for simplicity)
+                        v.setStartTime(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+                    }
+                    empty = false;
+                    break;
+                }
+                case "COMMAND": {
+                    setCommand(v, value);
+                    empty = false;
+                    break;
+                }
             }
         }
         if (empty) {
@@ -231,34 +235,5 @@ public class WindowsPsCsvParser {
                 v.setName(NStringUtils.trimToNull(v.getCmdLine()));
             }
         }
-    }
-
-    private String normalizeLine(String line) {
-        String line0 = line;
-        line = line.trim();
-        if (line.isEmpty()) {
-            return "";
-        }
-        line = line.replaceAll("\\p{C}", ""); // removes control characters
-        line = line.replaceAll("\\s+", " ");  // optional: normalize whitespace
-        StringBuilder sb = new StringBuilder();
-        for (char c : line.toCharArray()) {
-            if (c == 0) {
-                //ignore
-            } else {
-                sb.append(c);
-            }
-        }
-        String ss = sb.toString();
-        int v = 0;
-        for (char c : ss.toCharArray()) {
-            if (c == ':') {
-                v++;
-            }
-        }
-        if (v >= 2) {
-
-        }
-        return ss;
     }
 }

@@ -60,7 +60,20 @@ public class PsTest {
     }
 
     @Test
-    public void test04() {
+    public void test05() {
+        try (Reader r = new InputStreamReader(PsTest.class.getClassLoader().getResourceAsStream("net/thevpc/nuts/core/test/windows-ps-result-10.txt"), Charset.forName("windows-1252"))) {
+            WindowsPsParser p = new WindowsPsParser();
+            List<NPsInfo> parsed = p.parse(r).toList();
+            for (NPsInfo nPsInfo : parsed) {
+                System.out.println(nPsInfo);
+            }
+        } catch (Exception ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    @Test
+    public void test06() {
         for (NPsInfo nPsInfo : NPs.of().getResultList()) {
             System.out.println(nPsInfo);
         }

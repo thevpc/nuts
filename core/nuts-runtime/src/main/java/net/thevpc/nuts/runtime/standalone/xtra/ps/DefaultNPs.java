@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 
 import net.thevpc.nuts.io.NExecInput;
+import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
@@ -15,6 +16,7 @@ import net.thevpc.nuts.util.NIteratorBuilder;
 
 import java.io.File;
 import java.io.StringReader;
+import java.nio.file.Path;
 import java.util.*;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -89,16 +91,18 @@ public class DefaultNPs implements NPs {
             case LINUX:
             case MACOS:
             case UNIX: {
-                return NExecCmd.of()
-                        .addCommand("kill", "-9", processId)
+                return NExecCmd.ofSystem("kill", "-9", processId)
                         .setFailFast(isFailFast())
                         .getResultCode() == 0;
             }
             case WINDOWS: {
-                return NExecCmd.of()
-                        .addCommand("taskkill", "/PID", processId, "/F")
-                        .setFailFast(isFailFast())
-                        .getResultCode() == 0;
+                String taskkill = NWorkspace.of().findSysCommand("taskkill").orNull();
+                if (taskkill != null) {
+                    return NExecCmd.ofSystem(taskkill, "/PID", processId, "/F")
+                            .setFailFast(isFailFast())
+                            .getResultCode() == 0;
+                }
+                throw new NUnsupportedOperationException(NMsg.ofC("unsupported kill process in : %s", NWorkspace.of().getOsFamily().id()));
             }
         }
         if (isFailFast()) {
@@ -150,8 +154,8 @@ public class DefaultNPs implements NPs {
         }
         throw new NExecutionException(
                 NMsg.ofC("unable to resolve a valid jdk installation. "
-                        + "Either run nuts with a valid JDK/SDK (not JRE) or register a valid one using 'nuts settings' command. "
-                        + "All the followings are invalid : \n%s",
+                                + "Either run nuts with a valid JDK/SDK (not JRE) or register a valid one using 'nuts settings' command. "
+                                + "All the followings are invalid : \n%s",
                         String.join("\n", detectedJavaHomes)
                 ),
                 NExecutionException.ERROR_2);
@@ -171,7 +175,7 @@ public class DefaultNPs implements NPs {
     @Override
     public NStream<NPsInfo> getResultList() {
         if (NBlankable.isBlank(connexionString)) {
-            NPlatformFamily processType = NUtils.firstNonNull(platformFamily,NPlatformFamily.OS);
+            NPlatformFamily processType = NUtils.firstNonNull(platformFamily, NPlatformFamily.OS);
             switch (processType) {
                 case JAVA:
                     return getResultListJava();
@@ -179,9 +183,9 @@ public class DefaultNPs implements NPs {
                     return getResultListOS();
             }
             if (isFailFast()) {
-                throw new NIllegalArgumentException(NMsg.ofC("unsupported list processes of type : %s",processType));
+                throw new NIllegalArgumentException(NMsg.ofC("unsupported list processes of type : %s", processType));
             }
-            return new NStreamEmpty<>("process-"+processType.id());
+            return new NStreamEmpty<>("process-" + processType.id());
         } else {
             String str = NExecCmd.of("ps", "--json", "aux")
                     .at(connexionString)
@@ -218,19 +222,30 @@ public class DefaultNPs implements NPs {
                 return new UnixPsParser().parse(new StringReader(u.getGrabbedOutString()));
             }
             case WINDOWS: {
-                NExecCmd u = NExecCmd.of()
-                        .setIn(NExecInput.ofNull())
-                        .grabErr()
-                        .grabOut()
-                        .addCommand(
-                                "powershell.exe", "-Command",
-                                "Get-WmiObject Win32_Process | ForEach-Object { $o = $_.GetOwner(); $user = if ($o) { $o.User } else { 'N/A' }; $mem = Get-WmiObject Win32_ComputerSystem; $state = if ($_.ExecutionState -eq 0) { 'Running' } elseif ($_.ExecutionState -eq 2) { 'Sleeping' } else { 'Suspended' }; $start = if ($_.CreationDate) { $_.CreationDate.Substring(0, 12) } else { 'N/A' }; New-Object PSObject -Property @{ USER=$user; PID=$_.ProcessId; CPU=([math]::Round(($_.KernelModeTime + $_.UserModeTime)/1e7, 2)); MEM=([math]::Round($_.WorkingSetSize / $mem.TotalPhysicalMemory * 100, 2)); VSZ=[int]($_.VirtualSize / 1KB); RSS=[int]($_.WorkingSetSize / 1KB); TTY='N/A'; STAT=$state; START=$start; TIME=([math]::Round(($_.KernelModeTime + $_.UserModeTime)/1e7, 2)); COMMAND=$_.CommandLine } }"
-                                //                                        "$mem=(Get-WmiObject Win32_ComputerSystem).TotalPhysicalMemory; Get-WmiObject Win32_Process|ForEach-Object{ $o=$_.GetOwner();$user=if($o){$o.User}else{'N/A'};$state=if($_.ExecutionState -eq 0){'Running'}elseif($_.ExecutionState -eq 2){'Sleeping'}else{'Suspended'};$start=if($_.CreationDate){$_.CreationDate.Substring(0,12)}else{'N/A'};New-Object PSObject -Property @{USER=$user;PID=$_.ProcessId;CPU=[math]::Round(($_.KernelModeTime+$_.UserModeTime)/1e7,2);MEM=[math]::Round($_.WorkingSetSize/$mem*100,2);VSZ=[int]($_.VirtualSize/1KB);RSS=[int]($_.WorkingSetSize/1KB);TTY='N/A';STAT=$state;START=$start;TIME=[math]::Round(($_.KernelModeTime+$_.UserModeTime)/1e7,2);COMMAND=$_.CommandLine}}|ConvertTo-Csv -NoTypeInformation  | Out-String -Width 1000"
-                        )
-                        .setFailFast(isFailFast());
-                String grabbedOutString = u.getGrabbedOutString();
-                NPath.ofTempIdFile("ps-result.txt", NId.API_ID).writeString(connexionString);
-                return new WindowsPsCsvParser().parse(new StringReader(grabbedOutString));
+                NPath tempPath = null;
+                try {
+                    tempPath = NPath.ofTempFile();
+                    String cmd = "Get-WmiObject Win32_Process | ForEach-Object { $o=$_.GetOwner(); $user=if($o){$o.User}else{'N/A'}; $mem=Get-WmiObject Win32_ComputerSystem; $state=if ($_.ExecutionState -eq 0) {'Running'} elseif ($_.ExecutionState -eq 2) {'Sleeping'} else {'Suspended'}; $start=if ($_.CreationDate) {$_.CreationDate.Substring(0,12)} else {'N/A'}; New-Object PSObject -Property @{ USER=$user; PID=$_.ProcessId; CPU=([math]::Round(($_.KernelModeTime+$_.UserModeTime)/1e7,2)); MEM=([math]::Round($_.WorkingSetSize/$mem.TotalPhysicalMemory*100,2)); VSZ=[long]($_.VirtualSize/1KB); RSS=[long]($_.WorkingSetSize/1KB); TTY='N/A'; STAT=$state; START=$start; TIME=([math]::Round(($_.KernelModeTime+$_.UserModeTime)/1e7,2)); COMMAND=$_.CommandLine } } | Export-Csv -NoTypeInformation -Encoding UTF8 \"" + tempPath.toString() + "\"";
+                    NExecCmd u = NExecCmd.of()
+                            .setIn(NExecInput.ofNull())
+                            .grabErr()
+                            .grabOut()
+                            .addCommand(
+                                    "powershell.exe", "-Command",
+                                    //"Get-WmiObject Win32_Process | ForEach-Object { $o = $_.GetOwner(); $user = if ($o) { $o.User } else { 'N/A' }; $mem = Get-WmiObject Win32_ComputerSystem; $state = if ($_.ExecutionState -eq 0) { 'Running' } elseif ($_.ExecutionState -eq 2) { 'Sleeping' } else { 'Suspended' }; $start = if ($_.CreationDate) { $_.CreationDate.Substring(0, 12) } else { 'N/A' }; New-Object PSObject -Property @{ USER=$user; PID=$_.ProcessId; CPU=([math]::Round(($_.KernelModeTime + $_.UserModeTime)/1e7, 2)); MEM=([math]::Round($_.WorkingSetSize / $mem.TotalPhysicalMemory * 100, 2)); VSZ=[long]($_.VirtualSize / 1KB); RSS=[long]($_.WorkingSetSize / 1KB); TTY='N/A'; STAT=$state; START=$start; TIME=([math]::Round(($_.KernelModeTime + $_.UserModeTime)/1e7, 2)); COMMAND=$_.CommandLine } }"
+                                    cmd
+                                    //                                        "$mem=(Get-WmiObject Win32_ComputerSystem).TotalPhysicalMemory; Get-WmiObject Win32_Process|ForEach-Object{ $o=$_.GetOwner();$user=if($o){$o.User}else{'N/A'};$state=if($_.ExecutionState -eq 0){'Running'}elseif($_.ExecutionState -eq 2){'Sleeping'}else{'Suspended'};$start=if($_.CreationDate){$_.CreationDate.Substring(0,12)}else{'N/A'};New-Object PSObject -Property @{USER=$user;PID=$_.ProcessId;CPU=[math]::Round(($_.KernelModeTime+$_.UserModeTime)/1e7,2);MEM=[math]::Round($_.WorkingSetSize/$mem*100,2);VSZ=[long]($_.VirtualSize/1KB);RSS=[long]($_.WorkingSetSize/1KB);TTY='N/A';STAT=$state;START=$start;TIME=[math]::Round(($_.KernelModeTime+$_.UserModeTime)/1e7,2);COMMAND=$_.CommandLine}}|ConvertTo-Csv -NoTypeInformation  | Out-String -Width 1000"
+                            )
+                            .setFailFast(isFailFast());
+                    String grabbedOutString = u.getGrabbedOutString();
+                    String tempValue = tempPath.isRegularFile() ? tempPath.readString() : "";
+//                    NPath.ofTempIdFile("ps-result.txt", NId.API_ID).writeString(connexionString);
+                    return new WindowsPsCsvParser().parse(new StringReader(tempValue));
+                } finally {
+                    if (tempPath != null && tempPath.isRegularFile()) {
+                        tempPath.delete();
+                    }
+                }
             }
         }
         if (isFailFast()) {

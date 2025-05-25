@@ -7,6 +7,7 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPsInfo;
 import net.thevpc.nuts.io.NpsStatus;
 import net.thevpc.nuts.io.NpsType;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.util.NStringUtils;
@@ -47,10 +48,15 @@ public class WindowsPsParser {
             throw new NIOException(e);
         }
         if (line == null) {
+            System.out.println(">> " + line);
             return null;
         }
+        String normalized = normalizeLine(line).trim();
+//        System.out.println(">> " + line);
+//        System.out.println(">>>> " + normalized);
+        System.out.println(line);
         return new String[]{
-                normalizeLine(line).trim(),
+                normalized,
                 line,
         };
     }
@@ -65,6 +71,9 @@ public class WindowsPsParser {
                 break;
             }
             line = unsafeLine[0];
+            if(NBlankable.isBlank(line) && !empty){
+                return _build(v);
+            }
             int x = line.indexOf(":");
             try {
                 if (x > 0) {
@@ -79,7 +88,7 @@ public class WindowsPsParser {
                         case "RSS": {
                             v.setResidentSetSize(NLiteral.of(value).asLong().orElse(0L));
                             empty = false;
-                            return _build(v);
+                            break;
                         }
                         case "PID": {
                             v.setId(value);
@@ -131,6 +140,9 @@ public class WindowsPsParser {
                             break;
                         }
                         case "TTY": {
+                            if ("N/A".equals(value)) {
+                                //ignore
+                            }
                             //
                             empty = false;
                             break;
@@ -159,21 +171,18 @@ public class WindowsPsParser {
                                     break;
                                 }
                                 line = unsafeLine[0];
-                                if (line.startsWith("RSS") && line.indexOf(":") > 0 && line.split(":")[0].trim().equals("RSS")) {
-                                    x = line.indexOf(":");
-                                    key = line.substring(0, x).trim();
-                                    value = line.substring(x + 1).trim();
-                                    v.setResidentSetSize(NLiteral.of(value).asLong().orElse(0L));
-                                    empty = false;
-                                    setCommand(v, sb.toString());
-                                    return _build(v);
-                                } else {
+                                if(NBlankable.isBlank(line) ){
+                                    break;
+                                }else{
                                     sb.append(line);
                                 }
                             }
                             setCommand(v, sb.toString());
                             empty = false;
                             break;
+                        }
+                        default:{
+                            System.out.println("what");
                         }
 
                     }
