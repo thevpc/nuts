@@ -985,73 +985,73 @@ Automatic-Module-Name: yourgroupid.yourartifactid.YourClass
 <p class="md-phrase"><mark class="md-code md-code-``` ">NOptional</mark> is extensively used in Nuts Package Manager itself.</p>
 <H4 class="md-title-2">Non Null Assertion</H4>
 Java has a builtin null Check mechanism but it does not enable customized messages or exceptions. Optional are described as per Java's (c) Documentation "A container object which may or may not contain a non-null value". NOptional is more of an Object Wrapper than addes several useful null related operators like '??' '?.' and '!' in typescript. 
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi10-tab" data-toggle="tab" href="#idi10" role="tab" aria-controls="idi10" aria-selected="false">windows</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="idi11-tab" data-toggle="tab" href="#idi11" role="tab" aria-controls="idi11" aria-selected="false">java</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="idi12-tab" data-toggle="tab" href="#idi12" role="tab" aria-controls="idi12" aria-selected="true">NAF</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="idi13-tab" data-toggle="tab" href="#idi13" role="tab" aria-controls="idi13" aria-selected="false"></a></li>
+</ul>
+<div class="tab-content my-3"><div class="tab-pane fade show " id="idi10" role="tabpanel" aria-labelledby="idi10-tab"><pre class="md-code md-code-``` typescript"><code class="typescript"> 
+    if(stringWord==null){
+        throw new Exception("missing user name");
+    }
+    stringWord!.toUpperCase()
+</code></pre></div>
+<div class="tab-pane fade show " id="idi11" role="tabpanel" aria-labelledby="idi11-tab"><pre class="md-code md-code-``` java"><code class="java">
+    if(stringWord==null){
+        throw new IllegalArgumentException("missing user name");
+    }
+    stringWord.toUpperCase()
+</code></pre></div>
+<div class="tab-pane fade show active" id="idi12" role="tabpanel" aria-labelledby="idi12-tab"><pre class="md-code md-code-``` java"><code class="java"> 
+    NOptional.ofNamed(stringWord,"user name").get().toUpperCase();
+    // will throw an IllegalArgumentException|NIllegalArgumentException with "missing user name" message;
+</code></pre></div>
+<div class="tab-pane fade show " id="idi13" role="tabpanel" aria-labelledby="idi13-tab">#
+#
+ Nullish Coalescing
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi20-tab" data-toggle="tab" href="#idi20" role="tab" aria-controls="idi20" aria-selected="false">windows</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="idi21-tab" data-toggle="tab" href="#idi21" role="tab" aria-controls="idi21" aria-selected="false">java</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="idi22-tab" data-toggle="tab" href="#idi22" role="tab" aria-controls="idi22" aria-selected="true">NAF</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="idi23-tab" data-toggle="tab" href="#idi23" role="tab" aria-controls="idi23" aria-selected="false"></a></li>
+</ul>
+<div class="tab-content my-3"><div class="tab-pane fade show " id="idi20" role="tabpanel" aria-labelledby="idi20-tab"><pre class="md-code md-code-``` typescript"><code class="typescript"> 
+    var roadNumber=road.number??10;
+</code></pre></div>
+<div class="tab-pane fade show " id="idi21" role="tabpanel" aria-labelledby="idi21-tab"><pre class="md-code md-code-``` java"><code class="java">
+    Number roadNumber=road.number!=null?road.number:10;
+</code></pre></div>
+<div class="tab-pane fade show active" id="idi22" role="tabpanel" aria-labelledby="idi22-tab"><pre class="md-code md-code-``` java"><code class="java"> 
+    Number roadNumber=NOptional.of(road.number).orElse(10);
+</code></pre></div>
+<div class="tab-pane fade show " id="idi23" role="tabpanel" aria-labelledby="idi23-tab">#
+#
+ Optional Chaining
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi30-tab" data-toggle="tab" href="#idi30" role="tab" aria-controls="idi30" aria-selected="false">windows</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link " id="idi31-tab" data-toggle="tab" href="#idi31" role="tab" aria-controls="idi31" aria-selected="false">java</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link active" id="idi32-tab" data-toggle="tab" href="#idi32" role="tab" aria-controls="idi32" aria-selected="true">NAF</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link " id="idi33-tab" data-toggle="tab" href="#idi33" role="tab" aria-controls="idi33" aria-selected="false"></a></li>
 </ul>
 <div class="tab-content my-3"><div class="tab-pane fade show " id="idi30" role="tabpanel" aria-labelledby="idi30-tab"><pre class="md-code md-code-``` typescript"><code class="typescript"> 
-    if(stringWord==null){
-        throw new Exception("missing user name");
-    }
-    stringWord!.toUpperCase()
+    var roadNumber=app?.person?.address?.road?.number;
 </code></pre></div>
 <div class="tab-pane fade show " id="idi31" role="tabpanel" aria-labelledby="idi31-tab"><pre class="md-code md-code-``` java"><code class="java">
-    if(stringWord==null){
-        throw new IllegalArgumentException("missing user name");
-    }
-    stringWord.toUpperCase()
+    Number roadNumber=(app!=null &amp;&amp; app.person!=null &amp;&amp; app.person.road!=null)? app.person.address.road.number:null;
 </code></pre></div>
 <div class="tab-pane fade show active" id="idi32" role="tabpanel" aria-labelledby="idi32-tab"><pre class="md-code md-code-``` java"><code class="java"> 
-    NOptional.ofNamed(stringWord,"user name").get().toUpperCase();
-    // will throw an IllegalArgumentException|NIllegalArgumentException with "missing user name" message;
+    Number roadNumber=NOptional.of(app).then(v-&gt;v.person).then(v-&gt;v.road).then(v-&gt;v.number).orNull();
 </code></pre></div>
 <div class="tab-pane fade show " id="idi33" role="tabpanel" aria-labelledby="idi33-tab">#
 #
- Nullish Coalescing
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi40-tab" data-toggle="tab" href="#idi40" role="tab" aria-controls="idi40" aria-selected="false">windows</a></li>
+ Combining Optional Chaining
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi40-tab" data-toggle="tab" href="#idi40" role="tab" aria-controls="idi40" aria-selected="false">typescript</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link " id="idi41-tab" data-toggle="tab" href="#idi41" role="tab" aria-controls="idi41" aria-selected="false">java</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link active" id="idi42-tab" data-toggle="tab" href="#idi42" role="tab" aria-controls="idi42" aria-selected="true">NAF</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link " id="idi43-tab" data-toggle="tab" href="#idi43" role="tab" aria-controls="idi43" aria-selected="false"></a></li>
 </ul>
 <div class="tab-content my-3"><div class="tab-pane fade show " id="idi40" role="tabpanel" aria-labelledby="idi40-tab"><pre class="md-code md-code-``` typescript"><code class="typescript"> 
-    var roadNumber=road.number??10;
-</code></pre></div>
-<div class="tab-pane fade show " id="idi41" role="tabpanel" aria-labelledby="idi41-tab"><pre class="md-code md-code-``` java"><code class="java">
-    Number roadNumber=road.number!=null?road.number:10;
-</code></pre></div>
-<div class="tab-pane fade show active" id="idi42" role="tabpanel" aria-labelledby="idi42-tab"><pre class="md-code md-code-``` java"><code class="java"> 
-    Number roadNumber=NOptional.of(road.number).orElse(10);
-</code></pre></div>
-<div class="tab-pane fade show " id="idi43" role="tabpanel" aria-labelledby="idi43-tab">#
-#
- Optional Chaining
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi50-tab" data-toggle="tab" href="#idi50" role="tab" aria-controls="idi50" aria-selected="false">windows</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi51-tab" data-toggle="tab" href="#idi51" role="tab" aria-controls="idi51" aria-selected="false">java</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link active" id="idi52-tab" data-toggle="tab" href="#idi52" role="tab" aria-controls="idi52" aria-selected="true">NAF</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi53-tab" data-toggle="tab" href="#idi53" role="tab" aria-controls="idi53" aria-selected="false"></a></li>
-</ul>
-<div class="tab-content my-3"><div class="tab-pane fade show " id="idi50" role="tabpanel" aria-labelledby="idi50-tab"><pre class="md-code md-code-``` typescript"><code class="typescript"> 
-    var roadNumber=app?.person?.address?.road?.number;
-</code></pre></div>
-<div class="tab-pane fade show " id="idi51" role="tabpanel" aria-labelledby="idi51-tab"><pre class="md-code md-code-``` java"><code class="java">
-    Number roadNumber=(app!=null &amp;&amp; app.person!=null &amp;&amp; app.person.road!=null)? app.person.address.road.number:null;
-</code></pre></div>
-<div class="tab-pane fade show active" id="idi52" role="tabpanel" aria-labelledby="idi52-tab"><pre class="md-code md-code-``` java"><code class="java"> 
-    Number roadNumber=NOptional.of(app).then(v-&gt;v.person).then(v-&gt;v.road).then(v-&gt;v.number).orNull();
-</code></pre></div>
-<div class="tab-pane fade show " id="idi53" role="tabpanel" aria-labelledby="idi53-tab">#
-#
- Combining Optional Chaining
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi60-tab" data-toggle="tab" href="#idi60" role="tab" aria-controls="idi60" aria-selected="false">typescript</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi61-tab" data-toggle="tab" href="#idi61" role="tab" aria-controls="idi61" aria-selected="false">java</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link active" id="idi62-tab" data-toggle="tab" href="#idi62" role="tab" aria-controls="idi62" aria-selected="true">NAF</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi63-tab" data-toggle="tab" href="#idi63" role="tab" aria-controls="idi63" aria-selected="false"></a></li>
-</ul>
-<div class="tab-content my-3"><div class="tab-pane fade show " id="idi60" role="tabpanel" aria-labelledby="idi60-tab"><pre class="md-code md-code-``` typescript"><code class="typescript"> 
     var roadNumber=app?.person?.address!.road?.number??0;
 </code></pre></div>
-<div class="tab-pane fade show " id="idi61" role="tabpanel" aria-labelledby="idi61-tab"><pre class="md-code md-code-``` java"><code class="java">
+<div class="tab-pane fade show " id="idi41" role="tabpanel" aria-labelledby="idi41-tab"><pre class="md-code md-code-``` java"><code class="java">
     Address address=(app!=null &amp;&amp; app.person!=null)?app.person.address:null;
     if(address==null){
        throw new IllegalArgumentException("missing address"); 
@@ -1060,10 +1060,10 @@ Java has a builtin null Check mechanism but it does not enable customized messag
         &amp;&amp; address.road!=null)
         ? address.road.number:0;
 </code></pre></div>
-<div class="tab-pane fade show active" id="idi62" role="tabpanel" aria-labelledby="idi62-tab"><pre class="md-code md-code-``` java"><code class="java"> 
+<div class="tab-pane fade show active" id="idi42" role="tabpanel" aria-labelledby="idi42-tab"><pre class="md-code md-code-``` java"><code class="java"> 
     Number roadNumber=NOptional.of(app).then(v-&gt;v.person).then(v-&gt;v.address).get().then(v-&gt;v.road).then(v-&gt;v.number).orElse(0);
 </code></pre></div>
-<div class="tab-pane fade show " id="idi63" role="tabpanel" aria-labelledby="idi63-tab"></div>
+<div class="tab-pane fade show " id="idi43" role="tabpanel" aria-labelledby="idi43-tab"></div>
 </div>
 
 </div>
@@ -1135,7 +1135,7 @@ supported formats/protocols are:
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-04-17-202420
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-05-26-114652
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>

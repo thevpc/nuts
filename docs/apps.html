@@ -1084,6 +1084,14 @@ NUTS CREATE OPTIONS:
 <span style="color: #0000A3" class="">                                            Remember that boot time repos are only used for installing </span><span style="color: #0000A3" class=""><span style="color: #000055" class="">nuts</span></span><span style="color: #0000A3" class=""> itself (and its</span>
 <span style="color: #0000A3" class="">                                            dependencies).</span>
 
+<span style="color: #0000A3" class=""> </span><span style="color: #0000A3" class=""><span style="color: #005078" class="">--boot-repository</span></span><span style="color: #0000A3" class="">   </span><span style="color: #0000A3" class=""><</span><span style="color: #0000A3" class="">repository-path</span><span style="color: #0000A3" class="">></span>
+<span style="color: #0000A3" class=""> </span><span style="color: #0000A3" class=""><span style="color: #005078" class="">--boot-repositories</span></span><span style="color: #0000A3" class=""> </span><span style="color: #0000A3" class=""><</span><span style="color: #0000A3" class="">repository-path</span><span style="color: #0000A3" class="">></span>
+<span style="color: #0000A3" class=""> </span><span style="color: #0000A3" class=""><span style="color: #005078" class="">--boot-repos</span></span><span style="color: #0000A3" class="">        </span><span style="color: #0000A3" class=""><</span><span style="color: #0000A3" class="">repository-path</span><span style="color: #0000A3" class="">></span>
+<span style="color: #0000A3" class="">      register one or multiple (comma ',' separated) repositories at initialization time.</span>
+<span style="color: #0000A3" class="">      It works just like </span><span style="color: #0000A3" class=""><span style="color: #005078" class="">--repos</span></span><span style="color: #0000A3" class=""> but this is only relevant when the workspace is created.</span>
+<span style="color: #0000A3" class="">      It is discarded otherwise. When no  </span><span style="color: #0000A3" class=""><span style="color: #005078" class="">--boot-repos</span></span><span style="color: #0000A3" class="">, the workspace will be created using </span><span style="color: #0000A3" class=""><span style="color: #005078" class="">--repos</span></span><span style="color: #0000A3" class=""> configuration.</span>
+
+
 <span style="color: #0000A3" class=""> </span><span style="color: #0000A3" class=""><span style="color: #005078" class="">--yes</span></span><span style="color: #0000A3" class=""> </span><span style="color: #0000A3" class="">|</span><span style="color: #0000A3" class=""> </span><span style="color: #0000A3" class=""><span style="color: #005078" class="">-y</span></span><span style="color: #0000A3" class=""> </span><span style="color: #0000A3" class="">|</span><span style="color: #0000A3" class=""> </span><span style="color: #0000A3" class=""><span style="color: #005078" class="">--force</span></span>
 <span style="color: #0000A3" class="">      disables interactive mode and assumes </span><span style="color: #0000A3" class=""><span style="color: #000055" class="">yes</span></span><span style="color: #0000A3" class=""> for all questions</span>
 
@@ -2722,7 +2730,7 @@ nuts ntomcat --start
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-04-17-202420
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-05-26-114652
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
