@@ -42,7 +42,7 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
         NWorkspaceOptions bbo = bo.build();
         boolean showGui = NApiUtilsRPI.resolveGui(bbo);
         boolean showTrace = NApiUtilsRPI.resolveShowStackTrace(bbo);
-        int errorCode = NExceptionHandler.resolveExitCode(throwable).orElse(204);
+        int errorCode = NExceptions.resolveExitCode(throwable).orElse(204);
         NMsg fm = NSessionAwareExceptionBase.resolveSessionAwareExceptionBase(throwable)
                 .map(NSessionAwareExceptionBase::getFormattedMessage).orNull();
         String m = throwable.getMessage();

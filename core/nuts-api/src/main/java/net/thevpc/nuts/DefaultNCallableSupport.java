@@ -38,7 +38,7 @@ public class DefaultNCallableSupport<T> implements NCallableSupport<T> {
             return value.get();
         } else {
             NMsg nMsg = NApiUtilsRPI.resolveValidErrorMessage(() -> emptyMessage.get());
-            throw NExceptionHandler.ofSafeNoSuchElementException(nMsg);
+            throw NExceptions.ofSafeNoSuchElementException(nMsg);
         }
     }
 

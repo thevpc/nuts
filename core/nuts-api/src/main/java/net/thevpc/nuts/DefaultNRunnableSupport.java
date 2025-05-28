@@ -36,7 +36,7 @@ public class DefaultNRunnableSupport implements NRunnableSupport {
             value.run();
         } else {
             NMsg nMsg = NApiUtilsRPI.resolveValidErrorMessage(() -> emptyMessage.get());
-            throw NExceptionHandler.ofSafeNoSuchElementException(nMsg);
+            throw NExceptions.ofSafeNoSuchElementException(nMsg);
         }
     }
 

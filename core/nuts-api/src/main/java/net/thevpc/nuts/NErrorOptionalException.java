@@ -1,6 +1,5 @@
-package net.thevpc.nuts.reserved.optional;
+package net.thevpc.nuts;
 
-import net.thevpc.nuts.NException;
 import net.thevpc.nuts.util.NMsg;
 
 public class NErrorOptionalException extends NException {

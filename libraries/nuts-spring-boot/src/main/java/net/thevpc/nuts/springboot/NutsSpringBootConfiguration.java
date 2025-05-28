@@ -3,7 +3,6 @@ package net.thevpc.nuts.springboot;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootArguments;
 import net.thevpc.nuts.boot.reserved.cmdline.NBootCmdLine;
-import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLines;
 import net.thevpc.nuts.concurrent.NScheduler;
 
@@ -78,7 +77,7 @@ public class NutsSpringBootConfiguration {
     }
 
     @Bean
-    public NDefinitionFilters nutsFeinitionFilters(ApplicationArguments applicationArguments) {
+    public NDefinitionFilters nutsDefinitionFilters(ApplicationArguments applicationArguments) {
         return nutsSession(applicationArguments).callWith(() -> {
             return NDefinitionFilters.of();
         });

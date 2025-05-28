@@ -66,7 +66,6 @@ import net.thevpc.nuts.spi.NExecutorComponent;
 import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.util.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -281,7 +280,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                 }
             } catch (Exception ex) {
                 String p = getExtraErrorMessage();
-                int exceptionExitCode = NExceptionHandler.resolveExitCode(ex).orElse(NExecutionException.ERROR_255);
+                int exceptionExitCode = NExceptions.resolveExitCode(ex).orElse(NExecutionException.ERROR_255);
                 if (exceptionExitCode != NExecutionException.SUCCESS) {
                     if (!NBlankable.isBlank(p)) {
                         resultException = new NExecutionException(

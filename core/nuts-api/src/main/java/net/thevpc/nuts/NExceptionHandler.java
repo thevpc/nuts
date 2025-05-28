@@ -22,7 +22,6 @@ import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
 
-import java.util.NoSuchElementException;
 import java.util.logging.Level;
 
 public class NExceptionHandler {
@@ -89,53 +88,6 @@ public class NExceptionHandler {
     }
 
     public NExceptionHandler() {
-    }
-
-    public static RuntimeException ofSafeIllegalArgumentException(NMsg e) {
-        if (!NWorkspace.get().isPresent()) {
-            return new IllegalArgumentException(e.toString());
-        }
-        return new NIllegalArgumentException(e);
-    }
-
-    public static RuntimeException ofSafeIllegalArgumentException(NMsg message, Throwable ex) {
-        if (!NWorkspace.get().isPresent()) {
-            return new IllegalArgumentException(message.toString(), ex);
-        }
-        return new NIllegalArgumentException(message, ex);
-    }
-
-    public static RuntimeException ofSafeNoSuchElementException(NMsg message) {
-        if (!NWorkspace.get().isPresent()) {
-            return new NoSuchElementException(message.toString());
-        }
-        return new NNoSuchElementException(message);
-    }
-
-    public static RuntimeException ofSafeUnexpectedException(NMsg message) {
-        if (!NWorkspace.get().isPresent()) {
-            return new NoSuchElementException(message.toString());
-        }
-        return new NNoSuchElementException(message);
-    }
-
-    public static RuntimeException ofSafeUnsupportedEnumException(Enum e) {
-        if (!NWorkspace.get().isPresent()) {
-            return new NoSuchElementException(NMsg.ofC(NI18n.of("unsupported enum value %s"),e).toString());
-        }
-        return new NUnsupportedEnumException(e);
-    }
-
-    public static NOptional<NExceptionBase> resolveExceptionBase(Throwable th) {
-        return NReservedLangUtils.findThrowable(th, NExceptionBase.class, null);
-    }
-
-    public static NOptional<NExceptionWithExitCodeBase> resolveWithExitCodeExceptionBase(Throwable th) {
-        return NReservedLangUtils.findThrowable(th, NExceptionWithExitCodeBase.class, null);
-    }
-
-    public static NOptional<Integer> resolveExitCode(Throwable th) {
-        return resolveWithExitCodeExceptionBase(th).map(NExceptionWithExitCodeBase::getExitCode);
     }
 
 
@@ -211,7 +163,7 @@ public class NExceptionHandler {
             setCode(0);
             return this;
         }
-        int errorCode = resolveExitCode(ex).orElse(204);
+        int errorCode = NExceptions.resolveExitCode(ex).orElse(204);
         setCode(errorCode);
         if (errorCode == 0) {
             return this;
@@ -219,7 +171,7 @@ public class NExceptionHandler {
         setSession(NSessionAwareExceptionBase.resolveSession(ex).orNull());
         messageFormatted = NSessionAwareExceptionBase.resolveSessionAwareExceptionBase(ex).map(NSessionAwareExceptionBase::getFormattedMessage)
                 .orNull();
-        messageString = NExceptionHandler.getErrorMessage(ex);
+        messageString = NExceptions.getErrorMessage(ex);
         if (getOut() == null) {
             if (getSession() != null) {
                 try {
@@ -259,7 +211,7 @@ public class NExceptionHandler {
         if (ex == null) {
             return this;
         }
-        NOptional<NExceptionWithExitCodeBase> u = resolveWithExitCodeExceptionBase(ex);
+        NOptional<NExceptionWithExitCodeBase> u = NExceptions.resolveWithExitCodeExceptionBase(ex);
         if (u.isPresent()) {
             NExceptionWithExitCodeBase o = u.get();
             if (o instanceof RuntimeException) {
@@ -404,11 +356,4 @@ public class NExceptionHandler {
         System.exit(showError().getCode());
     }
 
-    public static String getErrorMessage(Throwable ex) {
-        String m = ex.getMessage();
-        if (m == null || m.length() < 5) {
-            m = ex.toString();
-        }
-        return m;
-    }
 }

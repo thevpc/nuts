@@ -36,6 +36,6 @@ import net.thevpc.nuts.boot.NBootOptionsInfo;
  * @app.category Exceptions
  * @since 0.5.4
  */
-public interface NExceptionBootAware {
+public interface NAnyBootAwareExceptionBase extends NAnyExceptionBase{
     int processThrowable(NBootOptionsInfo options);
 }

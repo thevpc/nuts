@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.util.NMsg;
+
 /**
  * Base Nuts Exception Interface. Parent of all Nuts defined Exceptions.
  *
@@ -33,7 +35,12 @@ package net.thevpc.nuts;
  * @app.category Exceptions
  * @since 0.5.4
  */
-public interface NExceptionBase extends NAnyFormattedExceptionBase {
+public interface NAnyFormattedExceptionBase extends NAnyExceptionBase{
 
+
+    NMsg getFormattedMessage();
+
+
+    String getMessage();
 
 }

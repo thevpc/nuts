@@ -23,7 +23,7 @@
  */
 package net.thevpc.nuts.cmdline;
 
-import net.thevpc.nuts.NExceptionHandler;
+import net.thevpc.nuts.NExceptions;
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.elem.NElementType;
@@ -857,10 +857,7 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public void throwError(NMsg message) {
-        if (NBlankable.isBlank(commandName)) {
-            throw NExceptionHandler.ofSafeIllegalArgumentException(message);
-        }
-        throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC("%s : %s", commandName, message));
+        throw NExceptions.ofSafeCmdLineException(NMsg.ofC("%s : %s", NStringUtils.firstNonBlank(commandName,"command"), message));
     }
 
     @Override
@@ -870,7 +867,7 @@ public class DefaultNCmdLine implements NCmdLine {
             m.append(commandName).append(" : ");
         }
         m.append(message);
-        throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofNtf(m.build().toString()));
+        throw NExceptions.ofSafeCmdLineException(NMsg.ofNtf(m.build().toString()));
     }
 
     private NArgCandidate[] resolveRecommendations(NArgType expectValue, String[] names, int autoCompleteCurrentWordIndex) {

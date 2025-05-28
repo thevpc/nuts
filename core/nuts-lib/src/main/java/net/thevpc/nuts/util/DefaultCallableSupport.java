@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NExceptionHandler;
+import net.thevpc.nuts.NExceptions;
 
 import java.util.function.Supplier;
 
@@ -39,7 +39,7 @@ public class DefaultCallableSupport<T> implements CallableSupport<T> {
             if (m == null) {
                 m = NMsg.ofMissingValue();
             }
-            throw NExceptionHandler.ofSafeNoSuchElementException(m);
+            throw NExceptions.ofSafeNoSuchElementException(m);
         }
     }
 
