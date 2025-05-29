@@ -24,8 +24,8 @@ To create your first ```NAF``` application, you will need to add nuts as a depen
     <dependencies>
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
-            <artifactId>nuts-api</artifactId>
-            <version>0.8.5</version>
+            <artifactId>nuts-lib</artifactId>
+            <version>0.8.5.0</version>
         </dependency>
         <dependency>
             <groupId>jexcelapi</groupId>
@@ -59,14 +59,14 @@ public class App implements NApplication {
 
     public static void main(String[] args) {
         // just create an instance and call runAndExit in the main method
-        // this method ensures that exist code is well propagted
+        // this method ensures that exist code is well propagated
         // from exceptions to caller processes
         new App().run(NAppRunOptions.ofExit(args));
     }
 
     @Override
-    public void run(NSession session) {
-        NCmdLine cmd = session.getAppCmdLine();
+    public void run() {
+        NCmdLine cmd = NApp.of().getCmdLine();
         File file = new File("file.xls");
         while (cmd.hasNext()) {
             switch (cmd.getKey().getString()) {
@@ -93,18 +93,18 @@ public class App implements NApplication {
     }
 
     @Override // this method is not required, implement when needed
-    public void onInstallApplication(NSession s) {
-        s.out().printf("we are installing My Application : %s%n", s.getAppId());
+    public void onInstallApplication() {
+        NOut.println(NMsg.ofC("we are installing My Application : %s%n", NApp.of().getId()));
     }
 
     @Override // this method is not required, implement when needed
     public void onUninstallApplication(NSession s) {
-        s.out().printf("we are uninstalling My Application : %s%n", s.getAppId());
+        NOut.println(NMsg.ofC("we are uninstalling My Application : %s%n", NApp.of().getId()));
     }
 
     @Override // this method is not required, implement when needed
     public void onUpdateApplication(NSession s) {
-        s.out().printf("we are updating My Application : %s%n", s.getAppId());
+        NOut.println(NMsg.ofC("we are updating My Application : %s%n", NApp.of().getId()));
     }
 }
 

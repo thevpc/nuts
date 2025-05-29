@@ -123,42 +123,96 @@
         <div class="idocs-navigation bg-light">
             <ul class="nav flex-column ">
                 
-                <li class="nav-item"><a class="nav-link" href="#ApplicationFramework">1 Application Framework</a>
+                <li class="nav-item"><a class="nav-link" href="#NutsLibrary">1 Nuts Library</a>
                     
                     
                     <ul class="nav flex-column">
                         
-                        <li class="nav-item"><a class="nav-link" href="#nutsAppNAF">1.1 Nuts Application Framework</a>
+                        <li class="nav-item"><a class="nav-link" href="#UB1942FD1C6415FC0D7F329D6A5CF94061450098F">1.1 Maven Dependency</a>
                             
                             
                         </li>
                         
-                        <li class="nav-item"><a class="nav-link" href="#nutsApp">1.2 Your first Application using nuts</a>
+                        <li class="nav-item"><a class="nav-link" href="#NCmdLine">1.2 NCmdLine</a>
                             
                             
                         </li>
                         
-                        <li class="nav-item"><a class="nav-link" href="#NCmdLine">1.3 Command Line Arguments</a>
+                        <li class="nav-item"><a class="nav-link" href="#NOptional">1.3 NOptional</a>
                             
                             
                         </li>
                         
-                        <li class="nav-item"><a class="nav-link" href="#nutsDescriptorIntegration">1.4 Nuts Descriptor Integration</a>
+                        <li class="nav-item"><a class="nav-link" href="#NPath">1.4 NPath</a>
                             
                             
                         </li>
                         
-                        <li class="nav-item"><a class="nav-link" href="#NOptional">1.5 NOptional</a>
+                        <li class="nav-item"><a class="nav-link" href="#NStream">1.5 NStream</a>
                             
                             
                         </li>
                         
-                        <li class="nav-item"><a class="nav-link" href="#NPath">1.6 NPath</a>
+                        <li class="nav-item"><a class="nav-link" href="#UC7262BEA761941EDDBC88B3741DFBECA3A02FE7A">1.6 NSession</a>
                             
                             
                         </li>
                         
-                        <li class="nav-item"><a class="nav-link" href="#NStream">1.7 NStream</a>
+                        <li class="nav-item"><a class="nav-link" href="#U722FCD457ECA357130DFA5B1DC41D84235C41520">1.7 NMsg</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#U34210CE0153D2A5CAA47BC2997F5869D10D6B1EE">1.8 NOut/NErr</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#U35A6654D9BB56E4CE6182B452D58B0D95B56A263">1.9 IO</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#UF05C07A8CEB5ED057AA06C52C9201282EE73DF87">1.10 Exec/Ps</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#U5C10C22A3931AE6C50F03A7226FE07EE01E7F53E">1.11 NExpr</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#U5B02FF09E19A9741BF23C9FB1DC19936306A2EAA">1.12 Spring Boot Integration</a>
+                            
+                            
+                        </li>
+                        
+                    </ul>
+                    
+                </li>
+                
+                <li class="nav-item"><a class="nav-link" href="#ApplicationFramework">2 Nuts Application Framework</a>
+                    
+                    
+                    <ul class="nav flex-column">
+                        
+                        <li class="nav-item"><a class="nav-link" href="#nutsAppNAF">2.1 Nuts Application Framework</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#nutsApp">2.2 Your first Application using nuts</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#NCmdLine">2.3 Command Line Arguments</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#nutsDescriptorIntegration">2.4 Nuts Descriptor Integration</a>
                             
                             
                         </li>
@@ -177,16 +231,608 @@
 
                 
                     <!--pageLevel1-->
+                    <section id="NutsLibrary" >
+                        <h2 class="main-section1"><a href="#NutsLibrary">1 Nuts Library</a></h2>
+                        <div class="text-card">
+                        <p class="md-phrase"><mark class="md-code md-code-` ">nuts</mark> is a package manager that can be embedded in your application as a general purpose library. This library can affords lots of functionalities </p>
+
+                        </div>
+                        
+                            <!--pageLevel2-->
+                            <section id="UB1942FD1C6415FC0D7F329D6A5CF94061450098F" >
+                                <h3 class="main-section2"><a href="#NutsLibrary">1.1 Maven Dependency</a></h3>
+                                <div class="text-card">
+                                <p class="md-phrase">to make use of <b class="md-bold">nuts</b> library  you need add the dependency  <code class="md-code md-code-``` net">.thevpc.nuts#nuts-lib:0.8.5.0</code> and provide a hint to maven to point to the right repository <code class="md-code md-code-``` "> https://maven.thevpc.net</code></p>
+<H4 class="md-title-2">Configure your pom.xml</H4>
+<pre class="md-code md-code-``` xml"><code class="xml">
+    &lt;dependencie&gt;
+        &lt;dependency&gt;&lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;&lt;artifactId&gt;nuts-lib&lt;/artifactId&gt;&lt;version&gt;0.8.5.0&lt;/version&gt;&lt;/dependency&gt;
+    &lt;/dependencie&gt;
+    &lt;repositories&gt;
+        &lt;repository&gt;&lt;id&gt;thevpc&lt;/id&gt;&lt;url&gt;https://maven.thevpc.net&lt;/url&gt;&lt;/repository&gt;
+    &lt;/repositories&gt;
+    
+</code></pre>
+
+
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
+                            <section id="NCmdLine" >
+                                <h3 class="main-section2"><a href="#NutsLibrary">1.2 NCmdLine</a></h3>
+                                <div class="text-card">
+                                <p class="md-phrase"><b class="md-bold">nuts</b> provides a useful commandline parser <mark class="md-code md-code-``` ">NCmdLine</mark>  it supports command lines in the following forms</p>
+<pre class="md-code md-code-``` sh"><code class="sh">
+my-app -o=y --name='some name' -ex --extra value arg1 arg2
+</code></pre>
+<p class="md-phrase">where the command here supports short and long options (short ones are <mark class="md-code md-code-``` ">-o</mark>, <mark class="md-code md-code-``` ">-e</mark> and <mark class="md-code md-code-``` ">-x</mark>, where <mark class="md-code md-code-``` ">-e</mark> and <mark class="md-code md-code-``` ">-x</mark> are combined as <mark class="md-code md-code-``` ">-ex</mark>),  and of course non options or regular arguments (here <mark class="md-code md-code-``` ">arg1</mark> and <mark class="md-code md-code-``` ">arg2</mark>). Not also that <mark class="md-code md-code-``` ">value</mark> could be interpreted as a value for <mark class="md-code md-code-``` ">--extra</mark> (or not; depending on how you configure your parser, for  this option).</p>
+<H4 class="md-title-2">Short vs Long Options</H4>
+Options can be long options (starts with double hyphen) or short options (start with a single hyphen).  Many arguments support both forms. For instance "-w" and "--workspace" are the supported forms to define the workspace location in the nuts command.
+
+<H4 class="md-title-2">Valued / Non-valued Options</H4>
+Options can also support a value of type string or boolean. The value can be suffixed to the option while separated with '=' sign or immediately after the option. 
+As an example, all are equivalent.  
+Of course, not all options can support values, an not all options neither support the suffixed and/or the non-suffixed mode. Please relate to the documentation of nuts or the application you are using to know how to use the options.
+
+<H4 class="md-title-2">Boolean Options</H4>
+Particularly, when the value is a boolean, the value do not need to be defined. As a result "--install-companions" and "--install-companions=true" are equivalent. However "--install-companions true" is not (because the option is of type boolean) and "true" will be parsed as a NonOption.
+<p class="md-phrase">To define a <mark class="md-code md-code-``` ">false</mark> value to the boolean option we can either suffix with <code class="md-code md-code-``` ">=false</code> or prefix with <code class="md-code md-code-` ">!</code> or <code class="md-code md-code-` ">~</code> sign.  Hence, <code class="md-code md-code-``` --install-companions">=false</code>, <code class="md-code md-code-``` --">!install-companions</code> and <code class="md-code md-code-``` --">~install-companions</code> are all equivalent. Note also that <code class="md-code md-code-` ">~</code> if referred to <code class="md-code md-code-` ">!</code> because in bash shells (and some other shells) <code class="md-code md-code-` ">!</code> will be expanded in a special manner.</p>
+
+<H4 class="md-title-2">Combo Simple Options</H4>
+Simple options can be grouped in a single word. "-ls" is equivalent to "-l -s". So one should be careful.  One exception though. For portability reasons, "-version" is considered a single short option.
+
+<H4 class="md-title-2">Ignoring Options, Comments</H4>
+Options starting with "-//" and "--//" are simply ignored by the command line parser.
+
+<H4 class="md-title-2">Creating NCmdLine</H4>
+Command line can either created manually or parsed.
+You can create a command by simply providing  the arguments:
+<pre class="md-code md-code-``` java"><code class="java">
+    NCmdLine c1= NCmdLine.ofArgs("ls","-l");
+</code></pre>
+You can also create a commandline by parsing a string.
+<p class="md-phrase"><b class="md-bold">nuts</b> supports multiple commandline dialects (bash/linux, bat/Windows,...)</p>
+<pre class="md-code md-code-``` java"><code class="java">
+    NCmdLine c1= NCmdLine.of("ls -l", NShellFamily.BASH);
+</code></pre>
+When you do not specify the NShellFamily, runtime OS default is considered.
+<pre class="md-code md-code-``` java"><code class="java">
+    NCmdLine c1= NCmdLine.parse("ls -l");
+</code></pre>
+<p class="md-phrase">You would want to be portable across all operating systems, you can use <mark class="md-code md-code-``` ">ofDefault</mark> method.</p>
+<pre class="md-code md-code-``` java"><code class="java">
+    NCmdLine c1= NCmdLine.ofDefault("ls -l");
+</code></pre>
+
+<H4 class="md-title-2">Configuring NCmdLine</H4>
+<code class="md-code md-code-` ">setCommandName(true|false)</code>
+<p class="md-phrase">This method help defining the name of the command supporting this command line. This is helpful when generating errors/exception so that the message is relevant for instance, you would call <code class="md-code md-code-``` setCommandName">("ls")</code>, so that all errors are in the form of <code class="md-code md-code-``` ls:"> unexpected argument --how</code></p>
+<code class="md-code md-code-` ">setExpandSimpleOptions(true|false)</code>
+<p class="md-phrase">This method can change the default behavior of NCmdLine (defaulted to <mark class="md-code md-code-` ">true</mark>). When <mark class="md-code md-code-` ">true</mark>, options in the form <mark class="md-code md-code-` ">-ex</mark> are expanded to <code class="md-code md-code-` ">-e -x</code>.</p>
+<code class="md-code md-code-` ">registerSpecialSimpleOption(argName)</code>
+<p class="md-phrase">This method limits <mark class="md-code md-code-` ">setExpandSimpleOptions</mark> application so that for some options that start with <mark class="md-code md-code-` ">-</mark> (simple options), they are not expanded.  A useful example is '-version'. You wouldnt whant it ti be interpreted as '-v -e -r -s -i -o -n', would you?</p>
+<code class="md-code md-code-` ">setExpandArgumentsFile(true|false)</code>
+<p class="md-phrase">This method can change the default behavior of NCmdLine (defaulted to <mark class="md-code md-code-` ">true</mark>). When <mark class="md-code md-code-` ">false</mark>, options in the form <code class="md-code md-code-` ">@path/to/arg/file</code> are not supported. When true (which is the default), the parser will load arguments from the given file.</p>
+
+<H4 class="md-title-2">Using CommandLine</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+NCmdLine cmdLine = yourCommandLine();
+boolean boolOption = false;
+String stringOption = null;
+List  others = new ArrayList&lt;&gt;();
+NArg a;
+while (cmdLine. hasNext()) {
+  a = cmdLine. peek().get();
+  if (a.isOption()) {
+      switch (a.key()) {
+          case "-o":
+          case "--option": {
+              a = cmdLine. nextFlag().get(session);
+              if (a.isEnabled()) {
+                  boolOption = a.getBooleanValue().get(session);
+              }
+              break;
+          }
+          case "-n":
+          case "--name": {
+              a = cmdLine.nextEntry().get(session);
+              if (a.isEnabled()) {
+                  stringOption = a.getStringValue().get(session);
+              }
+              break;
+          }
+          default: {
+              session. configureLast(cmdLine);
+          }
+      }
+  } else {
+      others. add(cmdLine. next().get().toString());
+  }
+}
+NOut.println(NMsg. ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
+</code></pre>
+
+<H4 class="md-title-2">Using CommandLine, The recommended way...</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+NCmdLine cmdLine = NApp.of().getCmdLine();
+NBooleanRef  boolOption = NRef.of(false);
+NRef&lt;String&gt;  stringOption = NRef.ofNull();
+List&lt;String&gt;  others = new ArrayList&lt;&gt;();
+cmdLine.forEachPeek ((a,l,c)-&gt; {
+  if (a.isOption()) {
+      switch (a.key()) {
+          case "-o":
+          case "--option": {
+              cmdLine.withNextFlag((v, e, s)-&gt;boolOption.set(v));
+              return true;
+          }
+          case "-n":
+          case "--name": {
+              cmdLine.withNextEntry((v, e, s)-&gt;stringOption.set(v));
+              return true;
+          }
+      }
+      return false;
+  } else {
+      nonOptions.add(l.next().get().toString());
+      return true;
+  }
+});
+
+</code></pre>
+
+
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
+                            <section id="NOptional" >
+                                <h3 class="main-section2"><a href="#NutsLibrary">1.3 NOptional</a></h3>
+                                <div class="text-card">
+                                <p class="md-phrase"><b class="md-bold">nuts</b> introduces a concept very similar to java's Optional but with better extension builtin mechanisms and helper methods : <mark class="md-code md-code-``` ">NOptional</mark></p>
+<p class="md-phrase"><mark class="md-code md-code-``` ">NOptional</mark> is extensively used in Nuts Package Manager itself.</p>
+<H4 class="md-title-2">Non Null Assertion</H4>
+Java has a builtin null Check mechanism but it does not enable customized messages or exceptions. Optional are described as per Java's (c) Documentation "A container object which may or may not contain a non-null value". NOptional is more of an Object Wrapper than addes several useful null related operators like '??' '?.' and '!' in typescript. 
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi30-tab" data-toggle="tab" href="#idi30" role="tab" aria-controls="idi30" aria-selected="false">java</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="idi31-tab" data-toggle="tab" href="#idi31" role="tab" aria-controls="idi31" aria-selected="true">NAF</a></li>
+</ul>
+<div class="tab-content my-3"><div class="tab-pane fade show " id="idi30" role="tabpanel" aria-labelledby="idi30-tab"><pre class="md-code md-code-``` java"><code class="java">
+    if(stringWord==null){
+        throw new IllegalArgumentException("missing user name");
+    }
+    stringWord.toUpperCase()
+</code></pre></div>
+<div class="tab-pane fade show active" id="idi31" role="tabpanel" aria-labelledby="idi31-tab"><pre class="md-code md-code-``` java"><code class="java"> 
+   // expected : stringWord!..toUpperCase()
+    NOptional.ofNamed(stringWord,"user name").get().toUpperCase();
+    // will throw an IllegalArgumentException|NIllegalArgumentException with "missing user name" message;
+</code></pre></div>
+</div>
+
+
+<H4 class="md-title-2">Nullish Coalescing</H4>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi40-tab" data-toggle="tab" href="#idi40" role="tab" aria-controls="idi40" aria-selected="false">java</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="idi41-tab" data-toggle="tab" href="#idi41" role="tab" aria-controls="idi41" aria-selected="true">NAF</a></li>
+</ul>
+<div class="tab-content my-3"><div class="tab-pane fade show " id="idi40" role="tabpanel" aria-labelledby="idi40-tab"><pre class="md-code md-code-``` java"><code class="java">
+    Number roadNumber=road.number!=null?road.number:10;
+</code></pre></div>
+<div class="tab-pane fade show active" id="idi41" role="tabpanel" aria-labelledby="idi41-tab"><pre class="md-code md-code-``` java"><code class="java"> 
+    // expected : var roadNumber=road.number??10;
+    Number roadNumber=NOptional.of(road.number).orElse(10);
+</code></pre></div>
+</div>
+
+
+<H4 class="md-title-2">Optional Chaining</H4>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi50-tab" data-toggle="tab" href="#idi50" role="tab" aria-controls="idi50" aria-selected="false">java</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="idi51-tab" data-toggle="tab" href="#idi51" role="tab" aria-controls="idi51" aria-selected="true">NAF</a></li>
+</ul>
+<div class="tab-content my-3"><div class="tab-pane fade show " id="idi50" role="tabpanel" aria-labelledby="idi50-tab"><pre class="md-code md-code-``` java"><code class="java">
+    Number roadNumber=(app!=null &amp;&amp; app.person!=null &amp;&amp; app.person.road!=null)? app.person.address.road.number:null;
+</code></pre></div>
+<div class="tab-pane fade show active" id="idi51" role="tabpanel" aria-labelledby="idi51-tab"><pre class="md-code md-code-``` java"><code class="java"> 
+    // expected var roadNumber=app?.person?.address?.road?.number;
+    Number roadNumber=NOptional.of(app).then(v-&gt;v.person).then(v-&gt;v.road).then(v-&gt;v.number).orNull();
+</code></pre></div>
+</div>
+
+
+<H4 class="md-title-2">Combining Optional Chaining</H4>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi60-tab" data-toggle="tab" href="#idi60" role="tab" aria-controls="idi60" aria-selected="false">java</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="idi61-tab" data-toggle="tab" href="#idi61" role="tab" aria-controls="idi61" aria-selected="true">NAF</a></li>
+</ul>
+<div class="tab-content my-3"><div class="tab-pane fade show " id="idi60" role="tabpanel" aria-labelledby="idi60-tab"><pre class="md-code md-code-``` java"><code class="java">
+    Address address=(app!=null &amp;&amp; app.person!=null)?app.person.address:null;
+    if(address==null){
+       throw new IllegalArgumentException("missing address"); 
+    }
+    Number roadNumber=(address!=null 
+        &amp;&amp; address.road!=null)
+        ? address.road.number:0;
+</code></pre></div>
+<div class="tab-pane fade show active" id="idi61" role="tabpanel" aria-labelledby="idi61-tab"><pre class="md-code md-code-``` java"><code class="java"> 
+    // expected : var roadNumber=app?.person?.address!.road?.number??0;
+    Number roadNumber=NOptional.of(app).then(v-&gt;v.person).then(v-&gt;v.address).get().then(v-&gt;v.road).then(v-&gt;v.number).orElse(0);
+</code></pre></div>
+</div>
+
+
+
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
+                            <section id="NPath" >
+                                <h3 class="main-section2"><a href="#NutsLibrary">1.4 NPath</a></h3>
+                                <div class="text-card">
+                                <p class="md-phrase"><b class="md-bold">nuts</b> introduces a concept very similar to java's URL but with better extension builtin mechanisms and helper methods : <mark class="md-code md-code-``` ">NPath</mark></p>
+supported formats/protocols are:
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase">file format   <code class="md-code md-code-``` ">/path/to/to/resource</code> or <code class="md-code md-code-``` "> c:\path\to\resource</code></p></li><li class="md-uli"><p class="md-phrase">file URL <code class="md-code md-code-``` "> file:/path/to/to/resource</code> or <code class="md-code md-code-``` "> file:c:/path/to/resource</code></p></li><li class="md-uli"><p class="md-phrase">http/https URLs (or any other Java supported URL) <code class="md-code md-code-``` http:">//some-url</code> or <code class="md-code md-code-``` https:">//some-url</code></p></li><li class="md-uli"><p class="md-phrase">classpath <code class="md-code md-code-``` "> classpath:/path/to/to/resource</code> (you must provide the used classpath upon creation)</p></li><li class="md-uli"><p class="md-phrase">resource Path <code class="md-code md-code-``` "> resource://groupId1:artifactId1#version1;groupId2:artifactId2#version2/path/to/resource</code> or <code class="md-code md-code-``` resource:">//(groupId1:artifactId1#version1;groupId2:artifactId2#version2)/path/to/resource</code> in that case the resource is looked up in any of the artifact classpaths (including dependencies)</p></li></ul>
+
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
+                            <section id="NStream" >
+                                <h3 class="main-section2"><a href="#NutsLibrary">1.5 NStream</a></h3>
+                                <div class="text-card">
+                                <p class="md-phrase"><b class="md-bold">nuts</b> introduces a concept very similar to java's Stream but with better extension builtin mechanisms and helper methods : <mark class="md-code md-code-``` ">NStream</mark></p>
+<p class="md-phrase"><mark class="md-code md-code-``` ">NStream</mark> is actually a wrapper to java's Stream, Iterator and Iterable and you can create a stream using <code class="md-code md-code-``` NStream">.of(...)</code> methods.</p>
+<p class="md-phrase"><mark class="md-code md-code-``` ">NStream</mark> is extensively used in Search Command.</p>
+
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
+                            <section id="UC7262BEA761941EDDBC88B3741DFBECA3A02FE7A" >
+                                <h3 class="main-section2"><a href="#NutsLibrary">1.6 NSession</a></h3>
+                                <div class="text-card">
+                                <p class="md-phrase"><b class="md-bold">nuts</b> session holds current configuration and options</p>
+To get the current session instance :
+<pre class="md-code md-code-``` java"><code class="java">
+    NSession session=NSession.of();
+</code></pre>
+To run with a different session instance :
+<pre class="md-code md-code-``` java"><code class="java">
+    NSession session=NSession.of();
+    session=session.copy().setConfirm(NConfirmationMode.ASK);
+    session.runWith(()-&gt;{
+        // here run with new options
+    });
+</code></pre>
+Here another example
+<pre class="md-code md-code-``` java"><code class="java">
+    // share allows NSession/NWorkspace to be accessible globally as a singleton
+    Nuts.openWorkspace("-Z","-S","y","--json").share();
+    // then you can get the current session anywhere in your code
+    NSession session=NSession.of();
+    session.setConfirm(NConfirmationMode.ASK);
+    session.setOutputFormat(NContentType.XML);
+
+    NOut.println("Hello");
+    NOut.printlnf("Hello");
+
+    NOut.println(Arrays.asList("Hello"));
+    NOut.printlnf("Hello %s","world");
+    NOut.println(NMsg.ofC("Hello %s","world"));
+    NOut.println(NMsg.ofJ("Hello {0}","world"));
+    NOut.println(NMsg.ofV("Hello $v",NMaps.of("v","world"));
+</code></pre>
+
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
+                            <section id="U722FCD457ECA357130DFA5B1DC41D84235C41520" >
+                                <h3 class="main-section2"><a href="#NutsLibrary">1.7 NMsg</a></h3>
+                                <div class="text-card">
+                                <p class="md-phrase"><b class="md-bold">nuts</b> Library allows multiple variants of string interpolation</p>
+<pre class="md-code md-code-``` java"><code class="java">
+    NSession session=NSession.of();
+    session.setConfirm(NConfirmationMode.ASK);
+    session.setOutputFormat(NContentType.XML);
+
+    NOut.println("Hello");
+    NOut.printlnf("Hello");
+    NOut.println(Arrays.asList("Hello"));
+    NOut.printlnf("Hello %s","world");
+    NOut.println(NMsg.ofC("Hello %s","world"));
+    NOut.println(NMsg.ofJ("Hello {0}","world"));
+    NOut.println(NMsg.ofV("Hello $v",NMaps.of("v","world"));
+</code></pre>
+
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
+                            <section id="U34210CE0153D2A5CAA47BC2997F5869D10D6B1EE" >
+                                <h3 class="main-section2"><a href="#NutsLibrary">1.8 NOut/NErr</a></h3>
+                                <div class="text-card">
+                                <p class="md-phrase"><b class="md-bold">nuts</b> Library suppors colorful and structured output</p>
+<pre class="md-code md-code-``` java"><code class="java">
+    Nuts.openWorkspace("-Z","-S","y","--json").share();
+NSession session=NSession.of();
+    NOut.println("Hello");
+    NOut.printlnf("Hello");
+
+    NOut.println(Arrays.asList("Hello"));
+        NOut.printlnf("Hello");
+
+    session.err()....;
+    session.in()....;
+</code></pre>
+<pre class="md-code md-code-``` java"><code class="java">
+    NOut.printlnf("#Hello1# ##Hello2## ##:_:Hello3## ");
+    NOut.printlnf("</code></pre>
+java public static class MyClass {}
+<pre class="md-code md-code-``` "><code class="">");
+    NOut.printlnf("</code></pre>
+js public static class MyClass {}
+<pre class="md-code md-code-``` "><code class="">");
+    NOut.printlnf("</code></pre>
+xml 
+null
+<pre class="md-code md-code-``` "><code class="">");
+    NOut.printlnf("</code></pre>
+json {a:'hello'}
+<pre class="md-code md-code-``` "><code class="">");
+</code></pre>
+<pre class="md-code md-code-``` java"><code class="java">
+    NErr.printlnf("#Hello1# ##Hello2## ##:_:Hello3## ");
+    NErr.printlnf("</code></pre>
+java public static class MyClass {}
+<pre class="md-code md-code-``` "><code class="">");
+    NErr.printlnf("</code></pre>
+js public static class MyClass {}
+<pre class="md-code md-code-``` "><code class="">");
+    NErr.printlnf("</code></pre>
+xml 
+null
+<pre class="md-code md-code-``` "><code class="">");
+    NErr.printlnf("</code></pre>
+json {a:'hello'}
+<pre class="md-code md-code-``` "><code class="">");
+</code></pre>
+<pre class="md-code md-code-``` java"><code class="java">
+    NSession session=...;
+    class Customer{String id;String name;}
+    Customer customer1,customer2,customer3; ...
+    //
+    session.setOutputFormat(NContentType.JSON).out().printlnf(Arrays.asList(customer1,customer2,customer3))
+    session.setOutputFormat(NContentType.TREE).out().printlnf(Arrays.asList(customer1,customer2,customer3))
+    session.setOutputFormat(NContentType.PLAIN).out().printlnf(Arrays.asList(customer1,customer2,customer3))
+    session.setOutputFormat(NContentType.XML).out().printlnf(Arrays.asList(customer1,customer2,customer3))
+    session.setOutputFormat(NContentType.PROPS).out().printlnf(Arrays.asList(customer1,customer2,customer3))
+    NOut.printlnf(Arrays.asList(customer1,customer2,customer3))
+</code></pre>
+
+
+
+
+
+
+
+
+<H4 class="md-title-2">Working with Tables</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+    NSession session=...;
+    Object a,b,c,d; ...
+    NMutableTableModel m = NMutableTableModel.of();
+    m.newRow().addCells(a,b,c,d);
+    NOut.printlnf(m);
+</code></pre>
+
+<H4 class="md-title-2">Working with Trees</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+    NSession session=...;
+    Object a,b,c,d; ...
+    NMutableTableModel m = NMutableTableModel.of();
+    m.newRow().addCells(a,b,c,d);
+    NOut.printlnf(m);
+</code></pre>
+
+
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
+                            <section id="U35A6654D9BB56E4CE6182B452D58B0D95B56A263" >
+                                <h3 class="main-section2"><a href="#NutsLibrary">1.9 IO</a></h3>
+                                <div class="text-card">
+                                <p class="md-phrase"><b class="md-bold">nuts</b> Library allows multiple variants of string interpolation</p>
+<H4 class="md-title-2">NCp</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+    NCp.of()
+        .from("http://my-server.com/file.pdf")
+        .to("/home/my-file")
+        .setProgressMonitor(true)
+        .setValidator((in)-&gt;checkSHA1Hash(in))
+        .run();
+
+    NPs ps=NPs.of()
+        if(ps.isSupportedKillProcess()){
+            ps.killProcess("1234");
+        }
+</code></pre>
+
+<H4 class="md-title-2">NCompress/NUncompress</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+    NCompress aa = NCompress.of()
+        .setTarget(options.outZip);
+        for (NPath file : options.files) {
+        aa.addSource(file);
+        }
+        aa.run();
+        
+</code></pre>
+<pre class="md-code md-code-``` java"><code class="java">
+    NUncompress.of()
+                    .from(is)
+                    .visit(new NUncompressVisitor() {
+    @Override
+    public boolean visitFolder(String path) {
+        return true;
+    }
+
+    @Override
+    public boolean visitFile(String path, InputStream inputStream) {
+        if ("META-INF/MANIFEST.MF".equals(path)) {
+            ...
+        } else) {
+            ...
+        }
+        return true;
+    }
+}).run();
+</code></pre>
+
+<H4 class="md-title-2">NDigest</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+   String digest=NDigest.of().setSource(x.getPath().getBytes()).computeString();
+}).run();
+</code></pre>
+
+
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
+                            <section id="UF05C07A8CEB5ED057AA06C52C9201282EE73DF87" >
+                                <h3 class="main-section2"><a href="#NutsLibrary">1.10 Exec/Ps</a></h3>
+                                <div class="text-card">
+                                <p class="md-phrase"><b class="md-bold">nuts</b> Library simplify creating and manipulating processes</p>
+<H4 class="md-title-2">To create a new process</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+    NSession session=Nuts.openWorkspace("-Z","-S");
+int code=NExecCmd.of("ls", "-l").system().getResult();
+String out=NExecCmd.of("nsh", "ls","--table")
+        .getOutputString();
+</code></pre>
+
+<H4 class="md-title-2">Find processes</H4>
+    NPs ps=NPs.of();     List
+null
+
+
+
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
+                            <section id="U5C10C22A3931AE6C50F03A7226FE07EE01E7F53E" >
+                                <h3 class="main-section2"><a href="#NutsLibrary">1.11 NExpr</a></h3>
+                                <div class="text-card">
+                                <p class="md-phrase"><b class="md-bold">nuts</b> expressions</p>
+<pre class="md-code md-code-``` java"><code class="java">
+NExprMutableDeclarations expr = NExprs.of().newMutableDeclarations();
+NExprNode n1 = expr.parse("1+2*3").get();
+NExprNode n = expr.parse("a.b&gt;1").get();
+</code></pre>
+<pre class="md-code md-code-``` java"><code class="java">
+NExprs nExprs = NExprs.of();
+NDocNExprVar v = new NDocNExprVar();
+decl = nExprs.newMutableDeclarations(true, new NExprEvaluator() {
+    @Override
+    public NOptional&lt;NExprVar&gt; getVar(String varName, NExprDeclarations context2) {
+        return NOptional.of(new MyVar());
+    }
+});
+
+decl.declareConstant("cwd", System.getProperty("user.dir"));
+decl.declareFunction("myfct", new MyFct());
+</code></pre>
+
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
+                            <section id="U5B02FF09E19A9741BF23C9FB1DC19936306A2EAA" >
+                                <h3 class="main-section2"><a href="#NutsLibrary">1.12 Spring Boot Integration</a></h3>
+                                <div class="text-card">
+                                nuts can work flawlessly with spring boot applications. You just need one dependency and implement a NApplication interface.
+Add the following dependency to you spring boot project
+<pre class="md-code md-code-``` xml"><code class="xml">
+    &lt;dependency&gt;
+        &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
+        &lt;artifactId&gt;nuts-spring-boot&lt;/artifactId&gt;
+        &lt;version&gt;0.8.5.0&lt;/version&gt;
+    &lt;/dependency&gt;
+</code></pre>
+<p class="md-phrase">Implement interface <mark class="md-code md-code-` ">NApplication</mark> in your <mark class="md-code md-code-` ">SpringBootApplication</mark> top class.</p>
+<pre class="md-code md-code-``` java"><code class="java">
+@SpringBootApplication
+@Import(NutsSpringBootConfig.class)
+public class AppExample implements NApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(AppExample.class, args);
+    }
+
+    @Override
+    public void run() {
+        NOut.println("Hello ##World##");
+    }
+}
+</code></pre>
+Now you can inject Nuts objects in your beans
+<pre class="md-code md-code-``` java"><code class="java">
+@Component
+public class MyBean {
+    @Autowired NSession session;
+    @Autowired NWorkspace workspace;
+    @Autowired NElements elems;
+    @Autowired NIO nio;
+    @Autowired NScheduler scheduler;
+    @Autowired NTerminal term;
+    @Autowired NPrintStream out;
+}
+
+</code></pre>
+
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                    </section>
+                    <hr class="divider">
+                
+                    <!--pageLevel1-->
                     <section id="ApplicationFramework" >
-                        <h2 class="main-section1"><a href="#ApplicationFramework">1 Application Framework</a></h2>
+                        <h2 class="main-section1"><a href="#ApplicationFramework">2 Nuts Application Framework</a></h2>
                         <div class="text-card">
                         <p class="md-phrase"><mark class="md-code md-code-` ">nuts</mark> is a package manager that can be embedded in your application and hence present a solid Application Framework and tooling to make the applicable more robust and more portable.</p>
+<p class="md-phrase"><mark class="md-code md-code-` ">nuts</mark> as a Framework :</p>
+<ul class="md-ul"><li class="md-uli">Adds support for Application Lifecycle (Hooks for install, update, uninstall)</li><li class="md-uli">Adds support for auto update</li><li class="md-uli">Adds support for isolated input/output (via session in/out)</li><li class="md-uli">Adds support for Desktop Integration<ul class="md-ul"><li class="md-uli">Adds Shortcuts, Menus</li><li class="md-uli">Adds Aliases</li></ul></li><li class="md-uli">Adds support for Base Directory API<ul class="md-ul"><li class="md-uli">API to manage per application directories (log, cache, config,...)</li></ul></li><li class="md-uli">Adds support for Base Commandline API<ul class="md-ul"><li class="md-uli">standardized commandline options</li><li class="md-uli">inherit common options (--table, --json, ...)</li></ul></li></ul>
 
                         </div>
                         
                             <!--pageLevel2-->
                             <section id="nutsAppNAF" >
-                                <h3 class="main-section2"><a href="#ApplicationFramework">1.1 Nuts Application Framework</a></h3>
+                                <h3 class="main-section2"><a href="#ApplicationFramework">2.1 Nuts Application Framework</a></h3>
                                 <div class="text-card">
                                 <H4 class="md-title-1">Using Nuts Application Framework (NAF)</H4>
 <p class="md-phrase">Using <mark class="md-code md-code-``` ">nuts</mark> is transparent as we have seen so far. It's transparent both at build time and runtime. However, <mark class="md-code md-code-``` ">nuts</mark> can provide our application a set of unique helpful features, such as install and uninstall hooks, comprehensive command line support and so on.</p>
@@ -203,8 +849,8 @@
     &lt;dependencies&gt;
         &lt;dependency&gt;
             &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
-            &lt;artifactId&gt;nuts-api&lt;/artifactId&gt;
-            &lt;version&gt;0.8.5&lt;/version&gt;
+            &lt;artifactId&gt;nuts-lib&lt;/artifactId&gt;
+            &lt;version&gt;0.8.5.0&lt;/version&gt;
         &lt;/dependency&gt;
         &lt;dependency&gt;
             &lt;groupId&gt;jexcelapi&lt;/groupId&gt;
@@ -234,14 +880,14 @@ public class App implements NApplication {
 
     public static void main(String[] args) {
         // just create an instance and call runAndExit in the main method
-        // this method ensures that exist code is well propagted
+        // this method ensures that exist code is well propagated
         // from exceptions to caller processes
         new App().run(NAppRunOptions.ofExit(args));
     }
 
     @Override
-    public void run(NSession session) {
-        NCmdLine cmd = session.getAppCmdLine();
+    public void run() {
+        NCmdLine cmd = NApp.of().getCmdLine();
         File file = new File("file.xls");
         while (cmd.hasNext()) {
             switch (cmd.getKey().getString()) {
@@ -268,18 +914,18 @@ public class App implements NApplication {
     }
 
     @Override // this method is not required, implement when needed
-    public void onInstallApplication(NSession s) {
-        s.out().printf("we are installing My Application : %s%n", s.getAppId());
+    public void onInstallApplication() {
+        NOut.println(NMsg.ofC("we are installing My Application : %s%n", NApp.of().getId()));
     }
 
     @Override // this method is not required, implement when needed
     public void onUninstallApplication(NSession s) {
-        s.out().printf("we are uninstalling My Application : %s%n", s.getAppId());
+        NOut.println(NMsg.ofC("we are uninstalling My Application : %s%n", NApp.of().getId()));
     }
 
     @Override // this method is not required, implement when needed
     public void onUpdateApplication(NSession s) {
-        s.out().printf("we are updating My Application : %s%n", s.getAppId());
+        NOut.println(NMsg.ofC("we are updating My Application : %s%n", NApp.of().getId()));
     }
 }
 
@@ -298,7 +944,7 @@ nuts -y uninstall com.mycompany.app:my-app
                         
                             <!--pageLevel2-->
                             <section id="nutsApp" >
-                                <h3 class="main-section2"><a href="#ApplicationFramework">1.2 Your first Application using nuts</a></h3>
+                                <h3 class="main-section2"><a href="#ApplicationFramework">2.2 Your first Application using nuts</a></h3>
                                 <div class="text-card">
                                 <H4 class="md-title-2">Running your application with Nuts</H4>
 <p class="md-phrase">Lets take, step by step, an example of an application that you will run using <mark class="md-code md-code-``` ">nuts</mark> package manager</p>
@@ -407,8 +1053,8 @@ nuts -y com my-app-1.0.0-SNAPSHOT.jar
     &lt;dependencies&gt;
         &lt;dependency&gt;
             &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
-            &lt;artifactId&gt;nuts-api&lt;/artifactId&gt;
-            &lt;version&gt;0.8.5&lt;/version&gt;
+            &lt;artifactId&gt;nuts-lib&lt;/artifactId&gt;
+            &lt;version&gt;0.8.5.0&lt;/version&gt;
         &lt;/dependency&gt;
         &lt;dependency&gt;
             &lt;groupId&gt;jexcelapi&lt;/groupId&gt;
@@ -438,12 +1084,14 @@ public class App implements NApplication {
 
     public static void main(String[] args) {
         // just create an instance and call runAndExit in the main method
+        // this method ensures that exist code is well propagated
+        // from exceptions to caller processes
         new App().run(NAppRunOptions.ofExit(args));
     }
 
     @Override
-    public void run(NSession session) {
-        NCmdLine cmd = session.getAppCmdLine();
+    public void run() {
+        NCmdLine cmd = NApp.of().getCmdLine();
         File file = new File("file.xls");
         while (cmd.hasNext()) {
             switch (cmd.getKey().getString()) {
@@ -469,19 +1117,19 @@ public class App implements NApplication {
         }
     }
 
-    @Override
-    public void onInstallApplication(NSession s) {
-        s.out().printf("we are installing My Application : %s%n", s.getAppId());
+    @Override // this method is not required, implement when needed
+    public void onInstallApplication() {
+        NOut.println(NMsg.ofC("we are installing My Application : %s%n", NApp.of().getId()));
     }
 
-    @Override
+    @Override // this method is not required, implement when needed
     public void onUninstallApplication(NSession s) {
-        s.out().printf("we are uninstalling My Application : %s%n", s.getAppId());
+        NOut.println(NMsg.ofC("we are uninstalling My Application : %s%n", NApp.of().getId()));
     }
 
-    @Override
+    @Override // this method is not required, implement when needed
     public void onUpdateApplication(NSession s) {
-        s.out().printf("we are updating My Application : %s%n", s.getAppId());
+        NOut.println(NMsg.ofC("we are updating My Application : %s%n", NApp.of().getId()));
     }
 }
 
@@ -500,34 +1148,24 @@ nuts -y uninstall com.mycompany.app:my-app
                         
                             <!--pageLevel2-->
                             <section id="NCmdLine" >
-                                <h3 class="main-section2"><a href="#ApplicationFramework">1.3 Command Line Arguments</a></h3>
+                                <h3 class="main-section2"><a href="#ApplicationFramework">2.3 Command Line Arguments</a></h3>
                                 <div class="text-card">
                                 <p class="md-phrase"><b class="md-bold">nuts</b> supports a specific format for command line arguments. This format is the format supported in <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> Application Framework (NAF) and as such all NAF applications support the same command line arguments format. Arguments in <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> can be options or non options. Options always start with hyphen (-). </p>
-<H4 class="md-title-2">Short vs Long Options</H4>
-Options can be long options (starts with double hyphen) or short options (start with a single hyphen).  Many arguments support both forms. For instance "-w" and "--workspace" are the supported forms to define the workspace location in the nuts command.
-
-<H4 class="md-title-2">Valued / Non-valued Options</H4>
-Options can also support a value of type string or boolean. The value can be suffixed to the option while separated with '=' sign or immediately after the option. 
-As an example, all are equivalent.  
-<pre class="md-code md-code-``` sh"><code class="sh">
-nuts -w=/myfolder/myworkspace
-nuts -w /myfolder/myworkspace
-nuts --workspace /myfolder/myworkspace
-nuts --workspace=/myfolder/myworkspace
+<H4 class="md-title-2">Nuts Application Framework CommandLine</H4>
+<p class="md-phrase">Application Command line can be retrieved via <mark class="md-code md-code-` ">NApp</mark> instance:</p>
+<pre class="md-code md-code-``` java"><code class="java">
+    NCmdLine c1= NApp.of().getCmdine();
 </code></pre>
-Of course, not all options can support values, an not all options neither support the suffixed and/or the non-suffixed mode. Please relate to the documentation of nuts or the application you are using to know how to use the options.
 
-<H4 class="md-title-2">Boolean Options</H4>
-Particularly, when the value is a boolean, the value do not need to be defined. As a result "--install-companions" and "--install-companions=true" are equivalent. However "--install-companions true" is not (because the option is of type boolean) and "true" will be parsed as a NonOption.
-<p class="md-phrase">To define a "false" value to the boolean option we can either suffix with "=false" or prefix with "!" or "~" sign.  Hence, "--install-companions=false", "--!install-companions" and "--~install-companions" are all equivalent. Note also that <code class="md-code md-code-` ">~</code> if referred to <code class="md-code md-code-` ">!</code> because in bash shells (and som other shells) <code class="md-code md-code-` ">!</code> will be expanded in a special manner.</p>
+<H4 class="md-title-2">Exec / Autocomplete modes</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+    NCmdLine c= NApp.of().getCmdine();
+    if(c.isExecMode()){
+        ///    
+    }
+</code></pre>
 
-<H4 class="md-title-2">Combo Simple Options</H4>
-Simple options can be grouped in a single word. "-ls" is equivalent to "-l -s". So one should be careful.  One exception though. For portability reasons, "-version" is considered a single short option.
-
-<H4 class="md-title-2">Ignoring Options, Comments</H4>
-Options starting with "-//" and "--//" are simply ignored by the command line parser.
-
-<H4 class="md-title-2">Nuts Application Framework Default Options</H4>
+<H4 class="md-title-2">Default Options</H4>
 All Applications inherit some default and useful options (see Nuts Command Line options for details). These options affect current session behaviour.
 <ul class="md-ul"><li class="md-uli"><mark class="md-code md-code-` ">-T</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--output-format-option</mark></li><li class="md-uli"><mark class="md-code md-code-` ">-O</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--output-format</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--tson</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--yaml</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--json</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--props</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--plain</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--table</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--tree</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--xml</mark></li><li class="md-uli"><mark class="md-code md-code-` ">-y</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--yes</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--ask</mark></li><li class="md-uli"><mark class="md-code md-code-` ">-n</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--no</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--error</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--trace</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--solver</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--progress</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--debug</mark></li><li class="md-uli"><mark class="md-code md-code-` ">-f</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--fetch</mark></li><li class="md-uli"><mark class="md-code md-code-` ">-a</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--anywhere</mark></li><li class="md-uli"><mark class="md-code md-code-` ">-F</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--offline</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--online</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--remote</mark></li><li class="md-uli"><mark class="md-code md-code-` ">-c</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--color</mark></li><li class="md-uli"><mark class="md-code md-code-` ">-B</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--bot</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--dry</mark></li><li class="md-uli"><mark class="md-code md-code-` ">-D</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--out-line-prefix</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--err-line-prefix</mark></li><li class="md-uli"><mark class="md-code md-code-` ">--line-prefix</mark>
 <pre class="md-code md-code-` "><code class="">
@@ -774,56 +1412,7 @@ help
 skip-event
 <pre class="md-code md-code-` "><code class="">
 * </code></pre>
--
--
-version
-<pre class="md-code md-code-` "><code class="">
-
-
-## Creating NCmdLine
-
-Command line can either created manually or parsed.
-
-You can create a command by simply providing  the arguments:
-
-</code></pre>
-<p class="md-phrase"><code class="md-code md-code-` "></code>java     NCmdLine c1= NCmdLine.of("ls","-l");</p>
-<pre class="md-code md-code-``` "><code class="">
-
-You can also create a commandline by parsing a string.
-
-*nuts* supports multiple commandline dialects (bash/linux, bat/Windows,...)
-
-</code></pre>
-java     NCmdLine c1= NCmdLine.parse("ls -l", NShellFamily.BASH,session);
-<pre class="md-code md-code-``` "><code class="">
-
-When you do not specify the NShellFamily, runtime OS default is considered.
-
-</code></pre>
-java     NCmdLine c1= NCmdLine.parse("ls -l", session);
-<pre class="md-code md-code-``` "><code class="">
-
-You would want to be portable across all operating systems, you can use "parseDefault" method.
-
-</code></pre>
-java     NCmdLine c1= NCmdLine.parseDefault("ls -l");
-<pre class="md-code md-code-``` "><code class="">
-
-## Using CommandLine
-
-</code></pre>
-java NCmdLine cmdLine = yourCommandLine(); boolean boolOption = false; String stringOption = null; List  others = new ArrayList<>(); NArg a; while (cmdLine. hasNext()) {   a = cmdLine. peek().get();   if (a.isOption()) {       switch (a.key()) {           case "-o":           case "--option": {               a = cmdLine. nextFlag().get(session);               if (a.isEnabled()) {                   boolOption = a.getBooleanValue().get(session);               }               break;           }           case "-n":           case "--name": {               a = cmdLine.nextEntry().get(session);               if (a.isEnabled()) {                   stringOption = a.getStringValue().get(session);               }               break;           }           default: {               session. configureLast(cmdLine);           }       }   } else {       others. add(cmdLine. next().get().toString());   } } // test if application is running in exec mode // (and not in autoComplete mode) if (cmdLine. isExecMode()) {   // do the good staff here   session. out().println(NMsg. ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others)); }
-<pre class="md-code md-code-``` "><code class="">
-
-## Using CommandLine, The recommended way...
-
-
-</code></pre>
-java NCmdLine cmdLine = session. getCmdLine(); NRef
-null
-
-
+<p class="md-phrase">--version<code class="md-code md-code-` "></code></p>
 
 
 
@@ -882,7 +1471,7 @@ null
                         
                             <!--pageLevel2-->
                             <section id="nutsDescriptorIntegration" >
-                                <h3 class="main-section2"><a href="#ApplicationFramework">1.4 Nuts Descriptor Integration</a></h3>
+                                <h3 class="main-section2"><a href="#ApplicationFramework">2.4 Nuts Descriptor Integration</a></h3>
                                 <div class="text-card">
                                 <H4 class="md-title-2">Nuts Descriptor Integration</H4>
 <ul class="md-ul"><li class="md-uli">Seamless integration</li><li class="md-uli">Maven Solver</li></ul>
@@ -977,137 +1566,6 @@ Automatic-Module-Name: yourgroupid.yourartifactid.YourClass
                             </section>
                             <hr class="divider">
                         
-                            <!--pageLevel2-->
-                            <section id="NOptional" >
-                                <h3 class="main-section2"><a href="#ApplicationFramework">1.5 NOptional</a></h3>
-                                <div class="text-card">
-                                <p class="md-phrase"><b class="md-bold">nuts</b> introduces a concept very similar to java's Optional but with better extension builtin mechanisms and helper methods : <mark class="md-code md-code-``` ">NOptional</mark></p>
-<p class="md-phrase"><mark class="md-code md-code-``` ">NOptional</mark> is extensively used in Nuts Package Manager itself.</p>
-<H4 class="md-title-2">Non Null Assertion</H4>
-Java has a builtin null Check mechanism but it does not enable customized messages or exceptions. Optional are described as per Java's (c) Documentation "A container object which may or may not contain a non-null value". NOptional is more of an Object Wrapper than addes several useful null related operators like '??' '?.' and '!' in typescript. 
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi30-tab" data-toggle="tab" href="#idi30" role="tab" aria-controls="idi30" aria-selected="false">windows</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi31-tab" data-toggle="tab" href="#idi31" role="tab" aria-controls="idi31" aria-selected="false">java</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link active" id="idi32-tab" data-toggle="tab" href="#idi32" role="tab" aria-controls="idi32" aria-selected="true">NAF</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi33-tab" data-toggle="tab" href="#idi33" role="tab" aria-controls="idi33" aria-selected="false"></a></li>
-</ul>
-<div class="tab-content my-3"><div class="tab-pane fade show " id="idi30" role="tabpanel" aria-labelledby="idi30-tab"><pre class="md-code md-code-``` typescript"><code class="typescript"> 
-    if(stringWord==null){
-        throw new Exception("missing user name");
-    }
-    stringWord!.toUpperCase()
-</code></pre></div>
-<div class="tab-pane fade show " id="idi31" role="tabpanel" aria-labelledby="idi31-tab"><pre class="md-code md-code-``` java"><code class="java">
-    if(stringWord==null){
-        throw new IllegalArgumentException("missing user name");
-    }
-    stringWord.toUpperCase()
-</code></pre></div>
-<div class="tab-pane fade show active" id="idi32" role="tabpanel" aria-labelledby="idi32-tab"><pre class="md-code md-code-``` java"><code class="java"> 
-    NOptional.ofNamed(stringWord,"user name").get().toUpperCase();
-    // will throw an IllegalArgumentException|NIllegalArgumentException with "missing user name" message;
-</code></pre></div>
-<div class="tab-pane fade show " id="idi33" role="tabpanel" aria-labelledby="idi33-tab">#
-#
- Nullish Coalescing
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi40-tab" data-toggle="tab" href="#idi40" role="tab" aria-controls="idi40" aria-selected="false">windows</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi41-tab" data-toggle="tab" href="#idi41" role="tab" aria-controls="idi41" aria-selected="false">java</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link active" id="idi42-tab" data-toggle="tab" href="#idi42" role="tab" aria-controls="idi42" aria-selected="true">NAF</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi43-tab" data-toggle="tab" href="#idi43" role="tab" aria-controls="idi43" aria-selected="false"></a></li>
-</ul>
-<div class="tab-content my-3"><div class="tab-pane fade show " id="idi40" role="tabpanel" aria-labelledby="idi40-tab"><pre class="md-code md-code-``` typescript"><code class="typescript"> 
-    var roadNumber=road.number??10;
-</code></pre></div>
-<div class="tab-pane fade show " id="idi41" role="tabpanel" aria-labelledby="idi41-tab"><pre class="md-code md-code-``` java"><code class="java">
-    Number roadNumber=road.number!=null?road.number:10;
-</code></pre></div>
-<div class="tab-pane fade show active" id="idi42" role="tabpanel" aria-labelledby="idi42-tab"><pre class="md-code md-code-``` java"><code class="java"> 
-    Number roadNumber=NOptional.of(road.number).orElse(10);
-</code></pre></div>
-<div class="tab-pane fade show " id="idi43" role="tabpanel" aria-labelledby="idi43-tab">#
-#
- Optional Chaining
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi50-tab" data-toggle="tab" href="#idi50" role="tab" aria-controls="idi50" aria-selected="false">windows</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi51-tab" data-toggle="tab" href="#idi51" role="tab" aria-controls="idi51" aria-selected="false">java</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link active" id="idi52-tab" data-toggle="tab" href="#idi52" role="tab" aria-controls="idi52" aria-selected="true">NAF</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi53-tab" data-toggle="tab" href="#idi53" role="tab" aria-controls="idi53" aria-selected="false"></a></li>
-</ul>
-<div class="tab-content my-3"><div class="tab-pane fade show " id="idi50" role="tabpanel" aria-labelledby="idi50-tab"><pre class="md-code md-code-``` typescript"><code class="typescript"> 
-    var roadNumber=app?.person?.address?.road?.number;
-</code></pre></div>
-<div class="tab-pane fade show " id="idi51" role="tabpanel" aria-labelledby="idi51-tab"><pre class="md-code md-code-``` java"><code class="java">
-    Number roadNumber=(app!=null &amp;&amp; app.person!=null &amp;&amp; app.person.road!=null)? app.person.address.road.number:null;
-</code></pre></div>
-<div class="tab-pane fade show active" id="idi52" role="tabpanel" aria-labelledby="idi52-tab"><pre class="md-code md-code-``` java"><code class="java"> 
-    Number roadNumber=NOptional.of(app).then(v-&gt;v.person).then(v-&gt;v.road).then(v-&gt;v.number).orNull();
-</code></pre></div>
-<div class="tab-pane fade show " id="idi53" role="tabpanel" aria-labelledby="idi53-tab">#
-#
- Combining Optional Chaining
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi60-tab" data-toggle="tab" href="#idi60" role="tab" aria-controls="idi60" aria-selected="false">typescript</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi61-tab" data-toggle="tab" href="#idi61" role="tab" aria-controls="idi61" aria-selected="false">java</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link active" id="idi62-tab" data-toggle="tab" href="#idi62" role="tab" aria-controls="idi62" aria-selected="true">NAF</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi63-tab" data-toggle="tab" href="#idi63" role="tab" aria-controls="idi63" aria-selected="false"></a></li>
-</ul>
-<div class="tab-content my-3"><div class="tab-pane fade show " id="idi60" role="tabpanel" aria-labelledby="idi60-tab"><pre class="md-code md-code-``` typescript"><code class="typescript"> 
-    var roadNumber=app?.person?.address!.road?.number??0;
-</code></pre></div>
-<div class="tab-pane fade show " id="idi61" role="tabpanel" aria-labelledby="idi61-tab"><pre class="md-code md-code-``` java"><code class="java">
-    Address address=(app!=null &amp;&amp; app.person!=null)?app.person.address:null;
-    if(address==null){
-       throw new IllegalArgumentException("missing address"); 
-    }
-    Number roadNumber=(address!=null 
-        &amp;&amp; address.road!=null)
-        ? address.road.number:0;
-</code></pre></div>
-<div class="tab-pane fade show active" id="idi62" role="tabpanel" aria-labelledby="idi62-tab"><pre class="md-code md-code-``` java"><code class="java"> 
-    Number roadNumber=NOptional.of(app).then(v-&gt;v.person).then(v-&gt;v.address).get().then(v-&gt;v.road).then(v-&gt;v.number).orElse(0);
-</code></pre></div>
-<div class="tab-pane fade show " id="idi63" role="tabpanel" aria-labelledby="idi63-tab"></div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-
-                                </div>
-                                
-                            </section>
-                            <hr class="divider">
-                        
-                            <!--pageLevel2-->
-                            <section id="NPath" >
-                                <h3 class="main-section2"><a href="#ApplicationFramework">1.6 NPath</a></h3>
-                                <div class="text-card">
-                                <p class="md-phrase"><b class="md-bold">nuts</b> introduces a concept very similar to java's URL but with better extension builtin mechanisms and helper methods : <mark class="md-code md-code-``` ">NPath</mark></p>
-supported formats/protocols are:
-<ul class="md-ul"><li class="md-uli"><p class="md-phrase">file format   <code class="md-code md-code-``` ">/path/to/to/resource</code> or <code class="md-code md-code-``` c:">\\path\\to\\resource</code></p></li><li class="md-uli"><p class="md-phrase">file URL <code class="md-code md-code-``` file:">/path/to/to/resource</code> or <code class="md-code md-code-``` file:c:">/path/to/resource</code></p></li><li class="md-uli"><p class="md-phrase">http/https URLs (or any other Java supported URL) <code class="md-code md-code-``` http:">//some-url</code> or <code class="md-code md-code-``` https:">//some-url</code></p></li><li class="md-uli"><p class="md-phrase">classpath <code class="md-code md-code-``` classpath:">/path/to/to/resource</code> (you must provide the used classpath upon creation)</p></li><li class="md-uli"><p class="md-phrase">resource Path <code class="md-code md-code-``` resource:">//groupId1:artifactId1#version1;groupId2:artifactId2#version2/path/to/resource</code> or <code class="md-code md-code-``` resource:">//(groupId1:artifactId1#version1;groupId2:artifactId2#version2)/path/to/resource</code> in that case the resource is looked up in any of the artifact classpaths (including dependencies)</p></li></ul>
-
-                                </div>
-                                
-                            </section>
-                            <hr class="divider">
-                        
-                            <!--pageLevel2-->
-                            <section id="NStream" >
-                                <h3 class="main-section2"><a href="#ApplicationFramework">1.7 NStream</a></h3>
-                                <div class="text-card">
-                                <p class="md-phrase"><b class="md-bold">nuts</b> introduces a concept very similar to java's Stream but with better extension builtin mechanisms and helper methods : <mark class="md-code md-code-``` ">NStream</mark></p>
-<p class="md-phrase"><mark class="md-code md-code-``` ">NStream</mark> is actually a wrapper to java's Stream, Iterator and Iterable and you can create a stream using <code class="md-code md-code-``` NStream">.of(...)</code> methods.</p>
-<p class="md-phrase"><mark class="md-code md-code-``` ">NStream</mark> is extensively used in Search Command.</p>
-
-                                </div>
-                                
-                            </section>
-                            <hr class="divider">
-                        
                     </section>
                     <hr class="divider">
                 
@@ -1135,7 +1593,7 @@ supported formats/protocols are:
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-05-28-231510
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-05-29-154050
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>

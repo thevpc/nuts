@@ -10,7 +10,7 @@ Installation of `nuts` for preview/test/evaluation or simply for personal use is
 
 Here are all **```nuts```** requirements :
 
-- **Java** : **```nuts```** requires a valid Java Runtime Environment (JRE) or Java Development Kit (JDK) version **8** or above to execute. Please note that you need to update your 1.8 version to the latest update (update 150+)
+- **Java** : **```nuts```** requires a valid Java Runtime Environment (JRE) or Java Development Kit (JDK) version **8** or above to execute (tested against java **24**). Please note that you need to update your 1.8 version to the latest update (update 150+)
 - **System Memory**: **```nuts```** memory footprint is very little and has no minimum RAM requirements.
 - **Disk**: 5Mo on the disk are required for the **```nuts```** installation itself. In addition to that, additional disk space will be used for your local Nuts workspace. The size of your local workspace will vary depending on usage but expect at least 500MB.
 - **Operating System**: **```nuts```** is able to run on any java enabled Operating System including all recent versions of Windows, Linux and MacOS.
@@ -22,13 +22,13 @@ java -version
 ```
 
 The result would be equivalent to the following. Just be sure the version is 1.8 or over. In this example, 
-the java version is 1.8.0_211
+the java version is 24.0.1
 
 ```bash
 $ java -version
-java version "1.8.0_211"
-Java(TM) SE Runtime Environment (build 1.8.0_211-b12)
-Java HotSpot(TM) 64-Bit Server VM (build 25.211-b12, mixed mode)
+openjdk version "24.0.1" 2025-04-15
+OpenJDK Runtime Environment (build 24.0.1+9-suse-1.1-x8664)
+OpenJDK 64-Bit Server VM (build 24.0.1+9-suse-1.1-x8664, mixed mode, sharing)
 ```
 
 

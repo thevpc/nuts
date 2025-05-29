@@ -671,17 +671,17 @@ nuts --exec -Xms1G -Xmx2G ./my-app.jar argument-1 argument-2
                                 <p class="md-phrase">This is mostly the recommanded installation mode if you are not sure what mode suits you the best. Preview mode helps you using the most uptodate/bug free version and with newest features as well. Installation of <mark class="md-code md-code-` ">nuts</mark> for preview/test/evaluation or simply for personal use is based on a rolling <mark class="md-code md-code-` ">nuts</mark> binaries version that is released a faster pace than the production version (generally a semi-monthly schedule). Versions are not rock solid but still they are "very" usable and more importantly they include all latest features. Preview releases are deployed to a development repository and hence are made accessible using a repository swith option.</p>
 <H4 class="md-title-2">System Requirements</H4>
 <p class="md-phrase">Here are all <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> requirements :</p>
-<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">Java</b> : <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> requires a valid Java Runtime Environment (JRE) or Java Development Kit (JDK) version <b class="md-bold">8</b> or above to execute. Please note that you need to update your 1.8 version to the latest update (update 150+)</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">System Memory</b>: <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> memory footprint is very little and has no minimum RAM requirements.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Disk</b>: 5Mo on the disk are required for the <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> installation itself. In addition to that, additional disk space will be used for your local Nuts workspace. The size of your local workspace will vary depending on usage but expect at least 500MB.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Operating System</b>: <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> is able to run on any java enabled Operating System including all recent versions of Windows, Linux and MacOS.</p></li></ul>
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">Java</b> : <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> requires a valid Java Runtime Environment (JRE) or Java Development Kit (JDK) version <b class="md-bold">8</b> or above to execute (tested against java <b class="md-bold">24</b>). Please note that you need to update your 1.8 version to the latest update (update 150+)</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">System Memory</b>: <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> memory footprint is very little and has no minimum RAM requirements.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Disk</b>: 5Mo on the disk are required for the <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> installation itself. In addition to that, additional disk space will be used for your local Nuts workspace. The size of your local workspace will vary depending on usage but expect at least 500MB.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Operating System</b>: <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> is able to run on any java enabled Operating System including all recent versions of Windows, Linux and MacOS.</p></li></ul>
 To check if you have a valid java installation type
 <pre class="md-code md-code-``` bash"><code class="bash">
 java -version
 </code></pre>
-The result would be equivalent to the following. Just be sure the version is 1.8 or over. In this example,  the java version is 1.8.0_211
+The result would be equivalent to the following. Just be sure the version is 1.8 or over. In this example,  the java version is 24.0.1
 <pre class="md-code md-code-``` bash"><code class="bash">
 $ java -version
-java version "1.8.0_211"
-Java(TM) SE Runtime Environment (build 1.8.0_211-b12)
-Java HotSpot(TM) 64-Bit Server VM (build 25.211-b12, mixed mode)
+openjdk version "24.0.1" 2025-04-15
+OpenJDK Runtime Environment (build 24.0.1+9-suse-1.1-x8664)
+OpenJDK 64-Bit Server VM (build 24.0.1+9-suse-1.1-x8664, mixed mode, sharing)
 </code></pre>
 
 <H4 class="md-title-2">Installation</H4>
@@ -816,17 +816,17 @@ Several commands are available, and you can always manually run any java and non
                                 <p class="md-phrase">Installation of <mark class="md-code md-code-` ">nuts</mark> in production is based on stable <mark class="md-code md-code-` ">nuts</mark> binaries that are released according to a semi-annual schedule. Stable versions are deployed to maven-central and hence are made accessible very easily to all users. Releases include most of the time updates to the core nuts api (and bootstrap). Update/Fix releases can occur to fix blocking/serious/security issues is faster pace.</p>
 <H4 class="md-title-2">System Requirements</H4>
 <p class="md-phrase">Here are all <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> requirements :</p>
-<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">Java</b> : <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> requires a valid Java Runtime Environment (JRE) or Java Development Kit (JDK) version <b class="md-bold">8</b> or above to execute. Please note that you need to update your 1.8 version to the latest update (update 150+)</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">System Memory</b>: <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> memory footprint is very little and has no minimum RAM requirements.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Disk</b>: 5Mo on the disk are required for the <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> installation itself. In addition to that, additional disk space will be used for your local Nuts workspace. The size of your local workspace will vary depending on usage but expect at least 500MB.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Operating System</b>: <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> is able to run on any java enabled Operating System including all recent versions of Windows, Linux and MacOS.</p></li></ul>
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">Java</b> : <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> requires a valid Java Runtime Environment (JRE) or Java Development Kit (JDK) version <b class="md-bold">8</b> or above to execute (tested against java <b class="md-bold">24</b>). Please note that you need to update your 1.8 version to the latest update (update 150+)</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">System Memory</b>: <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> memory footprint is very little and has no minimum RAM requirements.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Disk</b>: 5Mo on the disk are required for the <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> installation itself. In addition to that, additional disk space will be used for your local Nuts workspace. The size of your local workspace will vary depending on usage but expect at least 500MB.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Operating System</b>: <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> is able to run on any java enabled Operating System including all recent versions of Windows, Linux and MacOS.</p></li></ul>
 To check if you have a valid java installation type
 <pre class="md-code md-code-``` bash"><code class="bash">
 java -version
 </code></pre>
-The result would be equivalent to the following. Just be sure the version is 1.8 or over. In this example,  the java version is 1.8.0_211
+The result would be equivalent to the following. Just be sure the version is 1.8 or over. In this example,  the java version is 24.0.1
 <pre class="md-code md-code-``` bash"><code class="bash">
 $&gt; java -version
-java version "1.8.0_211"
-Java(TM) SE Runtime Environment (build 1.8.0_211-b12)
-Java HotSpot(TM) 64-Bit Server VM (build 25.211-b12, mixed mode)
+openjdk version "24.0.1" 2025-04-15
+OpenJDK Runtime Environment (build 24.0.1+9-suse-1.1-x8664)
+OpenJDK 64-Bit Server VM (build 24.0.1+9-suse-1.1-x8664, mixed mode, sharing)
 </code></pre>
 
 <H4 class="md-title-2">Installation</H4>
@@ -1073,8 +1073,9 @@ docker run -it -v $(pwd):/workspace openjdk:8 sh
 Now that you are in a container
 <pre class="md-code md-code-``` bash"><code class="bash">
 cd /workspace
-wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
-java -jar nuts.jar -y &lt;your-app&gt;...
+curl -sL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar &amp;&amp; java -jar nuts.jar -ZyS
+. ~/.bashrc
+nuts -y &lt;your-app&gt;...
 </code></pre>
 <p class="md-phrase">As an example here where you can run <code class="md-code md-code-` ">net.thevpc.nuts.toolbox:noapi#0.8.5.0</code> on your config file <code class="md-code md-code-` ">myrest-apis.json</code>.</p>
 <p class="md-phrase"><mark class="md-code md-code-` ">noapi</mark> is actually an OpenAPI documentation tool that generates a pdf file based on a opn api definition in <mark class="md-code md-code-` ">JSON</mark>, <mark class="md-code md-code-` ">YAML</mark> or <mark class="md-code md-code-` ">TSON</mark> formats.</p>
@@ -1085,7 +1086,7 @@ java -jar nuts.jar -P=%s -ZyS net.thevpc.nuts.toolbox:noapi#0.8.5.0 myrest-apis.
 </code></pre>
 
 <H4 class="md-title-2">Creating your app Dockerfile</H4>
-<p class="md-phrase">If you are willing to deploy your application in a docker isolated environment you can use this example pf <mark class="md-code md-code-` ">Dockerfile</mark> </p>
+<p class="md-phrase">If you are willing to deploy your application in a docker isolated environment you can use this example of <mark class="md-code md-code-` ">Dockerfile</mark> </p>
 <pre class="md-code md-code-``` Dockerfile"><code class="Dockerfile">
 FROM openjdk:8
 RUN wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
@@ -1094,11 +1095,11 @@ CMD java -jar nuts.jar -y &lt;your application&gt;
 docker run -it -v $(pwd):/workspace openjdk:8 sh
 cd /workspace
 wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
-java -jar nuts.jar -P=no -ZyS -r=+thevpc net.thevpc.nuts.toolbox:noapi#0.8.5.0 buat-insurance-connector.json
+java -jar nuts.jar -P=no -ZyS -r=+thevpc net.thevpc.nuts.toolbox:noapi#0.8.5.0 my-connector.json
 #############
 
 </code></pre>
-<p class="md-phrase">This is a docker file to run <code class="md-code md-code-` ">net.thevpc.nuts.toolbox:noapi</code> an OpenAPI documentatation tool.</p>
+<p class="md-phrase">This is a docker file to run <code class="md-code md-code-` ">net.thevpc.nuts.toolbox:noapi</code> an OpenAPI documentation tool.</p>
 <pre class="md-code md-code-``` Dockerfile"><code class="Dockerfile">
 FROM openjdk:8
 RUN wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
@@ -4204,7 +4205,7 @@ EXAMPLES
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-05-28-231510
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-05-29-154050
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>

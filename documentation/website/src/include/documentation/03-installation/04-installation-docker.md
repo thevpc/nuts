@@ -17,8 +17,9 @@ Now that you are in a container
 
 ```bash
 cd /workspace
-wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
-java -jar nuts.jar -y <your-app>...
+curl -sL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar && java -jar nuts.jar -ZyS
+. ~/.bashrc
+nuts -y <your-app>...
 ```
 
 As an example here where you can run `net.thevpc.nuts.toolbox:noapi#0.8.5.0` on your config file `myrest-apis.json`.
@@ -34,7 +35,7 @@ java -jar nuts.jar -P=%s -ZyS net.thevpc.nuts.toolbox:noapi#0.8.5.0 myrest-apis.
 
 ## Creating your app Dockerfile
 
-If you are willing to deploy your application in a docker isolated environment you can use this example pf `Dockerfile` 
+If you are willing to deploy your application in a docker isolated environment you can use this example of `Dockerfile` 
 
 ```Dockerfile
 FROM openjdk:8
@@ -44,12 +45,12 @@ CMD java -jar nuts.jar -y <your application>
 docker run -it -v $(pwd):/workspace openjdk:8 sh
 cd /workspace
 wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
-java -jar nuts.jar -P=no -ZyS -r=+thevpc net.thevpc.nuts.toolbox:noapi#0.8.5.0 buat-insurance-connector.json
+java -jar nuts.jar -P=no -ZyS -r=+thevpc net.thevpc.nuts.toolbox:noapi#0.8.5.0 my-connector.json
 #############
 
 ```
 
-This is a docker file to run `net.thevpc.nuts.toolbox:noapi` an OpenAPI documentatation tool.
+This is a docker file to run `net.thevpc.nuts.toolbox:noapi` an OpenAPI documentation tool.
 
 ```Dockerfile
 FROM openjdk:8
