@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.id.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElements;
 
 
@@ -139,8 +140,7 @@ public class CoreNIdUtils {
         }
         NPath apiBoot = NWorkspace.of().getStoreLocation(apiId(apiVersion), NStoreType.CONF).resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
         if (apiBoot.isRegularFile()) {
-            NWorkspaceConfigApi c = NElements.of()
-                    .json().parse(apiBoot, NWorkspaceConfigApi.class);
+            NWorkspaceConfigApi c = NElementParser.ofJson().parse(apiBoot, NWorkspaceConfigApi.class);
             if (!NBlankable.isBlank(c.getRuntimeId())) {
                 return c.getRuntimeId();
             }

@@ -81,17 +81,17 @@ public class SimpleYaml implements NElementStreamFormat {
             case TRIPLE_SINGLE_QUOTED_STRING:
             case INSTANT:
             case CUSTOM: {
-                return NElements.of().ofPrimitiveBuilder().copyFrom(value).setString(value.toString()).build();
+                return NElements.ofPrimitiveBuilder().copyFrom(value).setString(value.toString()).build();
             }
             case BINARY_STREAM: {
                 NBinaryStreamElement value1 = (NBinaryStreamElement) value;
                 String s = Base64.getEncoder().encodeToString(NInputSource.of(value1.value()).readBytes());
-                return NElements.of().ofPrimitiveBuilder().copyFrom(value).setString(s).build();
+                return NElements.ofPrimitiveBuilder().copyFrom(value).setString(s).build();
             }
             case CHAR_STREAM: {
                 NCharStreamElement value1 = (NCharStreamElement) value;
                 String s = NInputSource.of(value1.value()).readString();
-                return NElements.of().ofPrimitiveBuilder().copyFrom(value).setString(s).build();
+                return NElements.ofPrimitiveBuilder().copyFrom(value).setString(s).build();
             }
             case NAMED_OBJECT:
             case PARAMETRIZED_OBJECT:
@@ -102,7 +102,7 @@ public class SimpleYaml implements NElementStreamFormat {
                     value1.name(null);
                 }
                 if (value1.params().isPresent()) {
-                    value1.set("$params", NElements.of().ofArray(value1.params().get().toArray(new NElement[0])));
+                    value1.set("$params", NElements.ofArray(value1.params().get().toArray(new NElement[0])));
                     value1.setParametrized(false);
                 }
                 return value1.build();
@@ -110,21 +110,21 @@ public class SimpleYaml implements NElementStreamFormat {
             case NAMED_ARRAY:
             case PARAMETRIZED_ARRAY:
             case NAMED_PARAMETRIZED_ARRAY: {
-                NObjectElementBuilder value1 = NElements.of().ofObjectBuilder().copyFrom(value);
+                NObjectElementBuilder value1 = NElements.ofObjectBuilder().copyFrom(value);
                 if (value1.name().isPresent()) {
                     value1.set("$name", value1.name().get());
                     value1.name(null);
                 }
                 if (value1.params().isPresent()) {
-                    value1.set("$params", NElements.of().ofArray(value1.params().get().toArray(new NElement[0])));
+                    value1.set("$params", NElements.ofArray(value1.params().get().toArray(new NElement[0])));
                     value1.setParametrized(false);
                 }
-                value1.set("$array", NElements.of().ofArray(value1.children().toArray(new NElement[0])));
+                value1.set("$array", NElements.ofArray(value1.children().toArray(new NElement[0])));
                 return value1.build();
             }
             case UPLET:
             case NAMED_UPLET: {
-                NObjectElementBuilder value1 = NElements.of().ofObjectBuilder().copyFrom(value);
+                NObjectElementBuilder value1 = NElements.ofObjectBuilder().copyFrom(value);
                 List<NElement> children = value1.children();
                 value1.clearChildren();
                 if (value1.name().isPresent()) {
@@ -132,19 +132,19 @@ public class SimpleYaml implements NElementStreamFormat {
                     value1.name(null);
                 }
                 if (value1.params().isPresent()) {
-                    value1.set("$params", NElements.of().ofArray(value1.params().get().toArray(new NElement[0])));
+                    value1.set("$params", NElements.ofArray(value1.params().get().toArray(new NElement[0])));
                     value1.setParametrized(false);
                 }
-                value1.set("$array", NElements.of().ofArray(children.toArray(new NElement[0])));
+                value1.set("$array", NElements.ofArray(children.toArray(new NElement[0])));
                 return value1.build();
             }
             case MATRIX: {
-                return NElements.of().ofArrayBuilder().copyFrom(value).build();
+                return NElements.ofArrayBuilder().copyFrom(value).build();
             }
             case NAMED_PARAMETRIZED_MATRIX:
             case PARAMETRIZED_MATRIX:
             case NAMED_MATRIX: {
-                NObjectElementBuilder value1 = NElements.of().ofObjectBuilder().copyFrom(value);
+                NObjectElementBuilder value1 = NElements.ofObjectBuilder().copyFrom(value);
                 List<NElement> children = value1.children();
                 value1.clearChildren();
                 if (value1.name().isPresent()) {
@@ -152,19 +152,19 @@ public class SimpleYaml implements NElementStreamFormat {
                     value1.name(null);
                 }
                 if (value1.params().isPresent()) {
-                    value1.set("$params", NElements.of().ofArray(value1.params().get().toArray(new NElement[0])));
+                    value1.set("$params", NElements.ofArray(value1.params().get().toArray(new NElement[0])));
                     value1.setParametrized(false);
                 }
-                value1.set("$array", NElements.of().ofArray(children.toArray(new NElement[0])));
+                value1.set("$array", NElements.ofArray(children.toArray(new NElement[0])));
                 return value1.build();
             }
             case PAIR: {
-                NObjectElementBuilder value1 = NElements.of().ofObjectBuilder().copyFrom(value);
+                NObjectElementBuilder value1 = NElements.ofObjectBuilder().copyFrom(value);
                 return value1.build();
             }
             case OP: {
                 NOperatorElement ope = (NOperatorElement) value;
-                NObjectElementBuilder value1 = NElements.of().ofObjectBuilder().copyFrom(value);
+                NObjectElementBuilder value1 = NElements.ofObjectBuilder().copyFrom(value);
                 value1.clearChildren();
                 if (ope.operatorName()!=null) {
                     value1.set("op", ope.operatorName());
@@ -335,7 +335,6 @@ public class SimpleYaml implements NElementStreamFormat {
 
         private BufferedReader reader;
         private final NElementFactoryContext context;
-        private NElements ebuilder;
         private int fileOffset;
         private int lineNumber;
         private int lineOffset;
@@ -431,13 +430,6 @@ public class SimpleYaml implements NElementStreamFormat {
             } catch (IOException ex) {
                 throw new NIOException(ex);
             }
-        }
-
-        public NElements builder() {
-            if (ebuilder == null) {
-                ebuilder = NElements.of();
-            }
-            return ebuilder;
         }
 
         private boolean readChar(char ch) {
@@ -570,7 +562,7 @@ public class SimpleYaml implements NElementStreamFormat {
                 String postComment = readComments();
                 skipWhiteSpace();
 
-                return builder().ofString(sb.toString());
+                return NElements.ofString(sb.toString());
             } else {
                 StringBuilder sb = new StringBuilder();
                 boolean str = false;
@@ -598,7 +590,7 @@ public class SimpleYaml implements NElementStreamFormat {
                 skipWhiteSpace();
                 String trimmed = sb.toString().trim();
                 if (!str && sb.length() > 0) {
-                    return builder().ofNumber(trimmed);
+                    return NElements.ofNumber(trimmed);
 //                    if (dot || E) {
 //                        try {
 //                            double d = Double.parseDouble(trimmed);
@@ -621,11 +613,11 @@ public class SimpleYaml implements NElementStreamFormat {
                 }
                 switch (trimmed) {
                     case "true":
-                        return builder().ofTrue();
+                        return NElements.ofTrue();
                     case "false":
-                        return builder().ofFalse();
+                        return NElements.ofFalse();
                 }
-                return builder().ofString(trimmed);
+                return NElements.ofString(trimmed);
             }
         }
 
@@ -635,7 +627,7 @@ public class SimpleYaml implements NElementStreamFormat {
                 case LITERAL:
                     return a.getElement();
                 case OBJECT_ELEMENT: {
-                    NObjectElementBuilder obj = builder().ofObjectBuilder().add(a.getEntry());
+                    NObjectElementBuilder obj = NElements.ofObjectBuilder().add(a.getEntry());
                     while (true) {
                         readNewLine();
                         int newIndent = peekIndent();
@@ -656,7 +648,7 @@ public class SimpleYaml implements NElementStreamFormat {
                     return obj.build();
                 }
                 case ARRAY_ELEMENT: {
-                    NArrayElementBuilder arr = builder().ofArrayBuilder().add(a.getElement());
+                    NArrayElementBuilder arr = NElements.ofArrayBuilder().add(a.getElement());
                     while (true) {
                         readNewLine();
                         int newIndent = peekIndent();
@@ -710,7 +702,7 @@ public class SimpleYaml implements NElementStreamFormat {
                             NElement li = readElement(newIndent);
                             return Node.forArrayElement(li);
                         } else {
-                            return Node.forArrayElement(builder().ofString(""));
+                            return Node.forArrayElement(NElements.ofString(""));
                         }
                     } else {
                         readerReset();
@@ -743,7 +735,7 @@ public class SimpleYaml implements NElementStreamFormat {
                         readNewLine();
                         skipWhiteSpace();
                         NElement v = readNode(indent, true).getElement();
-                        return Node.forObjectElement(builder().ofPair(li, v));
+                        return Node.forObjectElement(NElements.ofPair(li, v));
                     } else if (current == '\n' || current == ';') {
                         readNewLine();
                         int newIndent = peekIndent();
@@ -758,7 +750,7 @@ public class SimpleYaml implements NElementStreamFormat {
                             readNewLine();
                             skipWhiteSpace();
                             NElement v = readNode(newIndent, true).getElement();
-                            return Node.forObjectElement(builder().ofPair(li, v));
+                            return Node.forObjectElement(NElements.ofPair(li, v));
                         } else {
                             NElement li = readNode(indent, true).getElement();
                             skipWhiteSpace();
@@ -769,7 +761,7 @@ public class SimpleYaml implements NElementStreamFormat {
                             readNewLine();
                             skipWhiteSpace();
                             NElement v = readNode(indent, true).getElement();
-                            return Node.forObjectElement(builder().ofPair(li, v));
+                            return Node.forObjectElement(NElements.ofPair(li, v));
                         }
                     } else {
                         readerReset();
@@ -791,14 +783,14 @@ public class SimpleYaml implements NElementStreamFormat {
                             if (newIndent > indent) {
                                 skipWhiteSpace();
                                 NElement v = readElement(newIndent);
-                                return Node.forObjectElement(builder().ofPair(li, v));
+                                return Node.forObjectElement(NElements.ofPair(li, v));
                             } else {
-                                return Node.forObjectElement(builder().ofPair(li, builder().ofString("")));
+                                return Node.forObjectElement(NElements.ofPair(li, NElements.ofString("")));
                             }
                         } else {
                             Node n = readNode(indent, true);
                             NElement v = n.getElement();
-                            return Node.forObjectElement(builder().ofPair(li, v));
+                            return Node.forObjectElement(NElements.ofPair(li, v));
                         }
                     }
                     return Node.forLiteral(li);

@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.NCancelExceptionBase;
+import net.thevpc.nuts.NAnyCancelExceptionBase;
 import net.thevpc.nuts.boot.reserved.util.NBootMsg;
 
 /**
@@ -35,7 +35,7 @@ import net.thevpc.nuts.boot.reserved.util.NBootMsg;
  * @app.category Exceptions
  * @since 0.5.4
  */
-public class NBootCancelException extends NBootException implements NCancelExceptionBase {
+public class NBootCancelException extends NBootException implements NAnyCancelExceptionBase {
 
     public NBootCancelException() {
         super(NBootMsg.ofC("cancel"));

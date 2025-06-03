@@ -42,7 +42,7 @@ import java.util.function.Consumer;
 public interface NArrayElementBuilder extends NElementBuilder {
 
     static NArrayElementBuilder of() {
-        return NElements.of().ofArrayBuilder();
+        return NElements.ofArrayBuilder();
     }
 
     NArrayElementBuilder doWith(Consumer<NArrayElementBuilder> con);
@@ -336,4 +336,15 @@ public interface NArrayElementBuilder extends NElementBuilder {
     boolean isParametrized() ;
     NArrayElementBuilder setParametrized(boolean parametrized);
 
+    NArrayElementBuilder addParam(String name, NElement value);
+
+    NArrayElementBuilder addParam(String name, String value);
+
+    NArrayElementBuilder addParam(String name, Integer value);
+
+    NArrayElementBuilder addParam(String name, Long value);
+
+    NArrayElementBuilder addParam(String name, Double value);
+
+    NArrayElementBuilder addParam(String name, Boolean value);
 }

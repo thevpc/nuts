@@ -82,6 +82,9 @@ net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionFormat
 net.thevpc.nuts.runtime.standalone.dependency.format.DefaultNDependencyFormat
 
 net.thevpc.nuts.runtime.standalone.format.elem.DefaultNElements
+net.thevpc.nuts.runtime.standalone.format.elem.DefaultNElementFactory
+net.thevpc.nuts.runtime.standalone.format.elem.parser.DefaultNElementParser
+
 net.thevpc.nuts.runtime.standalone.text.DefaultNTexts
 net.thevpc.nuts.runtime.standalone.text.highlighter.JavaCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.SqlCodeHighlighter

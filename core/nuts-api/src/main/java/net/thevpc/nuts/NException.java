@@ -37,7 +37,7 @@ import net.thevpc.nuts.util.NMsg;
  * @app.category Exceptions
  * @since 0.5.4
  */
-public class NException extends RuntimeException implements NSessionAwareExceptionBase, NExceptionBootAware {
+public class NException extends RuntimeException implements NSessionAwareExceptionBase, NAnyBootAwareExceptionBase {
 
     private final NSession session;
     private final NMsg formattedMessage;

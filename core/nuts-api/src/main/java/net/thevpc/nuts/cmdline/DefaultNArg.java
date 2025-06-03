@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts.cmdline;
 
-import net.thevpc.nuts.NExceptionHandler;
+import net.thevpc.nuts.NExceptions;
 import net.thevpc.nuts.elem.NBigComplex;
 import net.thevpc.nuts.elem.NDoubleComplex;
 import net.thevpc.nuts.elem.NFloatComplex;
@@ -233,7 +233,7 @@ public class DefaultNArg implements NArg {
     @Override
     public NArg required() {
         if (image == null) {
-            throw NExceptionHandler.ofSafeNoSuchElementException(NMsg.ofPlain("missing value"));
+            throw NExceptions.ofSafeNoSuchElementException(NMsg.ofPlain("missing value"));
         }
         return this;
     }

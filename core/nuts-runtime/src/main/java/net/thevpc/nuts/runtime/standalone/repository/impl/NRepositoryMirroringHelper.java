@@ -65,7 +65,7 @@ public class NRepositoryMirroringHelper {
                             NIteratorBuilder.of(repoSPI.searchVersions().setId(id).setFilter(idFilter)
                                             .setFetchMode(fetchMode)
                                             .getResult())
-                                    .named(NElements.of().ofUplet("searchInMirror",NElements.of().ofString(repo.getName())))
+                                    .named(NElements.ofUplet("searchInMirror",NElements.ofString(repo.getName())))
                                     .safeIgnore()
                                     .build()
                     );

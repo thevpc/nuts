@@ -135,8 +135,7 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
 
     @Override
     public NArrayElementBuilder builder() {
-        return NElements.of()
-                .ofArrayBuilder()
+        return NElements.ofArrayBuilder()
                 .copyFrom(this);
     }
 

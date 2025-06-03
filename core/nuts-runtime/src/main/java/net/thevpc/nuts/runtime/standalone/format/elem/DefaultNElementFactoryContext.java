@@ -32,8 +32,11 @@ import java.util.function.Predicate;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
+import net.thevpc.nuts.elem.NElementMapper;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.reflect.NReflectRepository;
+import net.thevpc.nuts.runtime.standalone.format.elem.parser.DefaultNElementParser;
+import net.thevpc.nuts.runtime.standalone.format.elem.parser.mapperstore.UserElementMapperStore;
 import net.thevpc.nuts.util.NMsg;
 
 /**
@@ -43,14 +46,20 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
 
     private final Map<String, Object> properties = new HashMap<>();
     private final Set<RefItem> visited = new LinkedHashSet<>();
-    private final DefaultNElements base;
+    private final DefaultNElementParser base;
     private final NReflectRepository repository;
     private boolean ntf;
+    private UserElementMapperStore userElementMapperStore;
 
-    public DefaultNElementFactoryContext(DefaultNElements base, NReflectRepository repository) {
+    public DefaultNElementFactoryContext(DefaultNElementParser base, NReflectRepository repository, UserElementMapperStore userElementMapperStore) {
         this.base = base;
         this.repository = repository;
         this.ntf = base.isNtf();
+        this.userElementMapperStore = userElementMapperStore;
+    }
+
+    public NElementMapper getMapper(Type type, boolean defaultOnly){
+        return userElementMapperStore.getMapper(type, defaultOnly);
     }
 
     @Override
@@ -58,10 +67,6 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
         return base.getIndestructibleObjects();
     }
 
-    @Override
-    public NElements elem() {
-        return base;
-    }
 
     @Override
     public Map<String, Object> getProperties() {
@@ -209,5 +214,10 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
         public String toString() {
             return step + "(" + o + ')';
         }
+    }
+
+    @Override
+    public NReflectRepository getTypesRepository() {
+        return repository;
     }
 }

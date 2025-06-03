@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class SshNExecCmdExtension implements NExecCmdExtension {
     private String[] resolveNutsExecutableCommand(NExecCmdExtensionContext context) {
-        NSession session = context.getSession();
+        NSession session = NSession.of();
         NExecCmd execCommand = context.getExecCommand();
         NDefinition def = execCommand.getCommandDefinition();
         NExecutionType executionType = execCommand.getExecutionType();
@@ -135,11 +135,6 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
 
     @Override
     public int exec(NExecCmdExtensionContext context) {
-//        NExecCmd execCommand = context.getExecCommand();
-        NSession session = context.getSession();
-        //String[] executorOptions = execCommand.getExecutorOptions().toArray(new String[0]);
-        //RemoteConnexionStringInfo k = RemoteConnexionStringInfo.of(execCommand.getTarget(), session);
-        //String[] remoteCommand = k.buildEffectiveCommand(context.getCommand(), execCommand.getRunAs(), executorOptions, this, session);
         String target = context.getTarget();
         NAssert.requireNonBlank(target, "target");
         NConnexionStringBuilder z = DefaultNConnexionStringBuilder.of(target).orNull();
@@ -162,7 +157,6 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
         NAssert.requireNonBlank(target, "target");
         NConnexionStringBuilder z = DefaultNConnexionStringBuilder.of(target).orNull();
         NAssert.requireNonBlank(z, "target");
-        NSession session = context.getSession();
         NLog log = NLog.of(SshNExecCmdExtension.class);
         log.with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("[%s] %s", z, NCmdLine.of(context.getCommand())));
         try (SShConnection c = new SShConnection(

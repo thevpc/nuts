@@ -435,7 +435,7 @@ public class NPlatformHome {
                 }
             }
         }
-        throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("unsupported getDefaultPlatformHomeFolderBase %s/%s"), platformOsFamily, location));
+        throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("unsupported getDefaultPlatformHomeFolderBase %s/%s"), platformOsFamily, location));
     }
 
     public String getWindowsProgramFiles() {
@@ -521,7 +521,7 @@ public class NPlatformHome {
         for (NStoreType location : NStoreType.values()) {
             String platformHomeFolder = getWorkspaceLocation(location, homeLocations, workspaceLocation);
             if (NBlankable.isBlank(platformHomeFolder)) {
-                throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("missing Home for %s"), location.id()));
+                throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("missing Home for %s"), location.id()));
             }
             homes[location.ordinal()] = platformHomeFolder;
         }
@@ -533,7 +533,7 @@ public class NPlatformHome {
             for (Map.Entry<NStoreType, String> e : baseLocations.entrySet()) {
                 NStoreType loc = e.getKey();
                 if (loc == null) {
-                    throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofPlain(NI18n.of("null location")));
+                    throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofPlain(NI18n.of("null location")));
                 }
                 storeLocations.put(loc, e.getValue());
             }

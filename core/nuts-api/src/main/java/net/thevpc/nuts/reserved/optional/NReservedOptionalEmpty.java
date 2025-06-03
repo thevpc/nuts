@@ -1,5 +1,7 @@
 package net.thevpc.nuts.reserved.optional;
 
+import net.thevpc.nuts.NDetachedEmptyOptionalException;
+import net.thevpc.nuts.NEmptyOptionalException;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.util.NMsg;
@@ -131,12 +133,12 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
         RuntimeException exception = null;
         ExceptionFactory exceptionFactory = getExceptionFactory();
         if (exceptionFactory != null) {
-            exception = exceptionFactory.createEmptyException(m);
+            exception = exceptionFactory.createOptionalEmptyException(m);
         }
         if (exception == null) {
             exceptionFactory = NOptional.getDefaultExceptionFactory();
             if (exceptionFactory != null) {
-                exception = exceptionFactory.createEmptyException(m);
+                exception = exceptionFactory.createOptionalEmptyException(m);
             }
         }
         if (exception == null) {

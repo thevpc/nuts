@@ -1,6 +1,6 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NExceptionHandler;
+import net.thevpc.nuts.NExceptions;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -23,7 +23,7 @@ public class NAssert {
 
     public static <T> T requireNonNull(T object, Supplier<NMsg> msg) {
         if (object == null) {
-            throw creatIllegalArgumentException(createMessage(msg));
+            throw NExceptions.ofSafeAssertException(createMessage(msg));
         }
         return object;
     }
@@ -40,20 +40,20 @@ public class NAssert {
 
     public static void requireNull(Object object, String name) {
         if (object != null) {
-            throw creatIllegalArgumentException(NMsg.ofC("%s must be null", createName(name)));
+            throw NExceptions.ofSafeAssertException(NMsg.ofC("%s must be null", createName(name)));
         }
     }
 
     public static void requireNull(Object object, Supplier<NMsg> message) {
         if (object != null) {
-            throw creatIllegalArgumentException(createMessage(message));
+            throw NExceptions.ofSafeAssertException(createMessage(message));
         }
     }
 
 
     public static <T> T requireNonBlank(T object, String name) {
         if (NBlankable.isBlank(object)) {
-            throw creatIllegalArgumentException(NMsg.ofC("%s should not be blank", createName(name)));
+            throw NExceptions.ofSafeAssertException(NMsg.ofC("%s should not be blank", createName(name)));
         }
         return object;
     }
@@ -61,14 +61,12 @@ public class NAssert {
 
     public static <T> T requireNonBlank(T object, Supplier<NMsg> msg) {
         if (NBlankable.isBlank(object)) {
-            throw creatIllegalArgumentException(createMessage(msg));
+            throw NExceptions.ofSafeAssertException(createMessage(msg));
         }
         return object;
     }
 
-    private static RuntimeException creatIllegalArgumentException(NMsg m) {
-        throw NExceptionHandler.ofSafeIllegalArgumentException(m);
-    }
+
 
     // NO SESSION
 
@@ -84,14 +82,14 @@ public class NAssert {
 
     public static boolean requireTrue(boolean object, Supplier<NMsg> msg) {
         if (!object) {
-            throw creatIllegalArgumentException(createMessage(msg));
+            throw NExceptions.ofSafeAssertException(createMessage(msg));
         }
         return object;
     }
 
     public static <T> T requireEquals(T a, T b, Supplier<NMsg> msg) {
         if (!Objects.equals(a, b)) {
-            throw creatIllegalArgumentException(createMessage(msg));
+            throw NExceptions.ofSafeAssertException(createMessage(msg));
         }
         return a;
     }
@@ -102,7 +100,7 @@ public class NAssert {
 
     public static <T> T requireNotEquals(T a, T b, Supplier<NMsg> msg) {
         if (Objects.equals(a, b)) {
-            throw creatIllegalArgumentException(createMessage(msg));
+            throw NExceptions.ofSafeAssertException(createMessage(msg));
         }
         return a;
     }
@@ -118,7 +116,7 @@ public class NAssert {
 
     public static boolean requireFalse(boolean value, Supplier<NMsg> msg) {
         if (!value) {
-            throw creatIllegalArgumentException(createMessage(msg));
+            throw NExceptions.ofSafeAssertException(createMessage(msg));
         }
         return value;
     }

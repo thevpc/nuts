@@ -16,7 +16,7 @@ public class NElementMapperBoolean implements NElementMapper<Boolean> {
 
     @Override
     public NElement createElement(Boolean o, Type typeOfSrc, NElementFactoryContext context) {
-        return context.elem().ofBoolean((Boolean) o);
+        return NElements.ofBoolean((Boolean) o);
     }
 
     @Override

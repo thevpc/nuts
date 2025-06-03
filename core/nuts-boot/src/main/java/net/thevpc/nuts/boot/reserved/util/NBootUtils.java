@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts.boot.reserved.util;
 
-import net.thevpc.nuts.NExceptionBootAware;
+import net.thevpc.nuts.NAnyBootAwareExceptionBase;
 import net.thevpc.nuts.boot.*;
 import net.thevpc.nuts.boot.reserved.cmdline.NBootArg;
 import net.thevpc.nuts.boot.reserved.cmdline.NBootWorkspaceCmdLineParser;
@@ -2984,7 +2984,7 @@ public final class NBootUtils {
         if (ex == null) {
             return 0;
         } else {
-            NExceptionBootAware u = findThrowable(ex, NExceptionBootAware.class, null);
+            NAnyBootAwareExceptionBase u = findThrowable(ex, NAnyBootAwareExceptionBase.class, null);
             if (u != null) {
                 return u.processThrowable(bootOptions);
             } else {

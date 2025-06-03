@@ -31,18 +31,12 @@ import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.format.NContentTypeFormat;
 import net.thevpc.nuts.format.NIterableFormat;
 import net.thevpc.nuts.io.NInputStreamProvider;
-import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NReaderProvider;
 import net.thevpc.nuts.time.NProgressFactory;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.net.URL;
-import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -444,150 +438,6 @@ public interface NElements extends NContentTypeFormat {
     NElements setCompact(boolean compact);
 
     /**
-     * parse url as a valid object of the given type
-     *
-     * @param url   source url
-     * @param clazz target type
-     * @param <T>   target type
-     * @return new instance of the given class
-     */
-    <T> T parse(URL url, Class<T> clazz);
-
-    /**
-     * parse path as a valid object of the given type
-     *
-     * @param path  source path
-     * @param clazz target type
-     * @param <T>   target type
-     * @return new instance of the given class
-     */
-    <T> T parse(NPath path, Class<T> clazz);
-
-    /**
-     * parse inputStream as a valid object of the given type
-     *
-     * @param inputStream source inputStream
-     * @param clazz       target type
-     * @param <T>         target type
-     * @return new instance of the given class
-     */
-    <T> T parse(InputStream inputStream, Class<T> clazz);
-
-    /**
-     * parse inputStream as a valid object of the given type
-     *
-     * @param string source as json string
-     * @param clazz  target type
-     * @param <T>    target type
-     * @return new instance of the given class
-     */
-    <T> T parse(String string, Class<T> clazz);
-
-    /**
-     * parse bytes as a valid object of the given type
-     *
-     * @param bytes source bytes
-     * @param clazz target type
-     * @param <T>   target type
-     * @return new instance of the given class
-     */
-    <T> T parse(byte[] bytes, Class<T> clazz);
-
-    /**
-     * parse reader as a valid object of the given type
-     *
-     * @param reader source reader
-     * @param clazz  target type
-     * @param <T>    target type
-     * @return new instance of the given class
-     */
-    <T> T parse(Reader reader, Class<T> clazz);
-
-    /**
-     * parse file as a valid object of the given type
-     *
-     * @param file  source url
-     * @param clazz target type
-     * @param <T>   target type
-     * @return new instance of the given class
-     */
-    <T> T parse(Path file, Class<T> clazz);
-
-    /**
-     * parse file as a valid object of the given type
-     *
-     * @param file  source URL
-     * @param clazz target type
-     * @param <T>   target type
-     * @return new instance of the given class
-     */
-    <T> T parse(File file, Class<T> clazz);
-
-    /**
-     * parse url as a valid object of the given type
-     *
-     * @param url source url
-     * @return element
-     */
-    NElement parse(URL url);
-
-    /**
-     * parse inputStream as a valid object of the given type
-     *
-     * @param inputStream source inputStream
-     * @return element
-     */
-    NElement parse(InputStream inputStream);
-
-    /**
-     * parse string as a valid NutsElement.
-     * If the string is null, NutsElement.NULL is returned
-     *
-     * @param string source as json string
-     * @return element
-     */
-    NElement parse(String string);
-
-    /**
-     * parse bytes as a valid object of the given type
-     *
-     * @param bytes source bytes
-     * @return element
-     */
-    NElement parse(byte[] bytes);
-
-    /**
-     * parse reader as a valid object of the given type
-     *
-     * @param reader source reader
-     * @return element
-     */
-    NElement parse(Reader reader);
-
-    /**
-     * parse file as a valid object of the given type
-     *
-     * @param file source url
-     * @return element
-     */
-    NElement parse(Path file);
-
-    /**
-     * parse file as a valid object of the given type
-     *
-     * @param file source URL
-     * @return element
-     */
-    NElement parse(File file);
-
-    /**
-     * parse file as a valid object of the given type
-     *
-     * @param file source URL
-     * @return element
-     */
-    NElement parse(NPath file);
-
     /**
      * convert element to the specified object if applicable or throw an
      * exception.
@@ -625,208 +475,6 @@ public interface NElements extends NContentTypeFormat {
 
     <T> T fromElement(NElement o, Class<T> to);
 
-    //    NutsElementEntryBuilder forEntry();
-    NPairElement ofPair(NElement key, NElement value);
-
-    NPairElement ofPair(String key, NElement value);
-
-    NPairElement ofPair(String key, Boolean value);
-
-    NPairElement ofPair(String key, Byte value);
-
-    NPairElement ofPair(String key, Short value);
-
-    NPairElement ofPair(String key, Integer value);
-
-    NPairElement ofPair(String key, Long value);
-
-    NPairElement ofPair(String key, String value);
-
-    NPairElement ofPair(String key, Double value);
-
-    NPairElement ofPair(String key, Instant value);
-
-    NPairElement ofPair(String key, LocalDate value);
-
-    NPairElement ofPair(String key, LocalDateTime value);
-
-    NPairElement ofPair(String key, LocalTime value);
-
-    NPairElementBuilder ofPairBuilder(NElement key, NElement value);
-
-    NPairElementBuilder ofPairBuilder();
-
-    /**
-     * create object element builder (mutable)
-     *
-     * @return object element
-     */
-    NObjectElementBuilder ofObjectBuilder();
-
-    NObjectElementBuilder ofObjectBuilder(String name);
-
-    /**
-     * create array element builder (mutable)
-     *
-     * @return array element
-     */
-    NArrayElementBuilder ofArrayBuilder();
-
-    NArrayElementBuilder ofArrayBuilder(String name);
-
-    NArrayElement ofEmptyArray();
-
-    NObjectElement ofEmptyObject();
-
-    //    public NutsPrimitiveElement forNutsString(NutsString str) {
-    //        return str == null ? DefaultNPrimitiveElementBuilder.NULL : new DefaultNPrimitiveElement(NutsElementType.NUTS_STRING, str);
-    //    }
-    NPrimitiveElement ofBoolean(String value);
-
-    NPrimitiveElement ofBoolean(boolean value);
-
-    NPrimitiveElement ofRegex(String value);
-
-    NPrimitiveElement ofName(String value);
-
-    NPrimitiveElement ofNameOrString(String value);
-
-    NPrimitiveElement ofString(String str);
-
-    NPrimitiveElement ofString(String str, NElementType stringLayout);
-
-    NCustomElement ofCustom(Object object);
-
-    NPrimitiveElement ofTrue();
-
-    NPrimitiveElement ofFalse();
-
-    NPrimitiveElement ofInstant(Instant instant);
-
-    NPrimitiveElement ofLocalDate(LocalDate localDate);
-
-    NPrimitiveElement ofLocalDateTime(LocalDateTime localDateTime);
-
-    NPrimitiveElement ofLocalTime(LocalTime localTime);
-
-    NPrimitiveElement ofFloat(Float value);
-
-    NPrimitiveElement ofFloat(float value);
-
-    NPrimitiveElement ofFloat(Float value, String suffix);
-
-    NPrimitiveElement ofFloat(float value, String suffix);
-
-    NPrimitiveElement ofByte(Byte value);
-
-    NPrimitiveElement ofByte(byte value);
-
-    NPrimitiveElement ofByte(Byte value, NNumberLayout layout, String suffix);
-
-    NPrimitiveElement ofByte(byte value, NNumberLayout layout, String suffix);
-
-    NPrimitiveElement ofByte(Byte value, NNumberLayout layout);
-
-    NPrimitiveElement ofByte(byte value, NNumberLayout layout);
-
-    NPrimitiveElement ofByte(Byte value, String suffix);
-
-    NPrimitiveElement ofByte(byte value, String suffix);
-
-    NPrimitiveElement ofShort(Short value);
-
-    NPrimitiveElement ofShort(short value);
-
-    NPrimitiveElement ofShort(Short value, NNumberLayout layout, String suffix);
-
-    NPrimitiveElement ofShort(short value, NNumberLayout layout, String suffix);
-
-    NPrimitiveElement ofShort(Short value, NNumberLayout layout);
-
-    NPrimitiveElement ofShort(short value, NNumberLayout layout);
-
-    NPrimitiveElement ofShort(Short value, String suffix);
-
-    NPrimitiveElement ofShort(short value, String suffix);
-
-
-    NPrimitiveElement ofInt(Integer value);
-
-    NPrimitiveElement ofInt(int value);
-
-    NPrimitiveElement ofInt(Integer value, String suffix);
-
-    NPrimitiveElement ofInt(int value, String suffix);
-
-    NPrimitiveElement ofInt(Integer value, NNumberLayout layout, String suffix);
-
-    NPrimitiveElement ofInt(int value, NNumberLayout layout, String suffix);
-
-    NPrimitiveElement ofInt(Integer value, NNumberLayout layout);
-
-    NPrimitiveElement ofInt(int value, NNumberLayout layout);
-
-    NPrimitiveElement ofLong(Long value);
-
-    NPrimitiveElement ofLong(long value);
-
-    NPrimitiveElement ofLong(Long value, String suffix);
-
-    NPrimitiveElement ofLong(long value, String suffix);
-
-    NPrimitiveElement ofLong(Long value, NNumberLayout layout, String suffix);
-
-    NPrimitiveElement ofLong(long value, NNumberLayout layout, String suffix);
-
-    NPrimitiveElement ofLong(Long value, NNumberLayout layout);
-
-    NPrimitiveElement ofLong(long value, NNumberLayout layout);
-
-
-    NPrimitiveElement ofNull();
-
-    NPrimitiveElement ofNumber(String value);
-
-    NPrimitiveElement ofInstant(Date value);
-
-    NPrimitiveElement ofInstant(String value);
-
-    NPrimitiveElement ofChar(Character value);
-
-    NPrimitiveElement ofDouble(Double value);
-
-    NPrimitiveElement ofDouble(double value);
-
-    NPrimitiveElement ofDouble(Double value, String suffix);
-
-    NPrimitiveElement ofDouble(double value, String suffix);
-
-    NPrimitiveElement ofDoubleComplex(double real);
-
-    NPrimitiveElement ofDoubleComplex(double real, double imag);
-
-    NPrimitiveElement ofFloatComplex(float real);
-
-    NPrimitiveElement ofFloatComplex(float real, float imag);
-
-    NPrimitiveElement ofBigComplex(BigDecimal real);
-
-    NPrimitiveElement ofBigComplex(BigDecimal real, BigDecimal imag);
-
-
-    NPrimitiveElement ofNumber(Number value);
-
-    NPrimitiveElement ofBigDecimal(BigDecimal value);
-
-    NPrimitiveElement ofBigDecimal(BigDecimal value, String suffix);
-
-    NPrimitiveElement ofBigInteger(BigInteger value);
-
-    NPrimitiveElement ofBigInteger(BigInteger value, NNumberLayout layout, String suffix);
-
-    NPrimitiveElement ofBigInteger(BigInteger value, NNumberLayout layout);
-
-    NPrimitiveElement ofBigInteger(BigInteger value, String suffix);
 
     Predicate<Class<?>> getIndestructibleObjects();
 
@@ -836,7 +484,6 @@ public interface NElements extends NContentTypeFormat {
 
     NIterableFormat iter(NPrintStream out);
 
-    <T> NElements setMapper(Class<T> type, NElementMapper<T> mapper);
 
     boolean isLogProgress();
 
@@ -850,62 +497,295 @@ public interface NElements extends NContentTypeFormat {
 
     NElements setProgressFactory(NProgressFactory progressFactory);
 
-    NUpletElementBuilder ofUpletBuilder();
+/// ///////////////////////////////////////////////////////////////////////////////////
 
-    NUpletElementBuilder ofUpletBuilder(String name);
+    static NPairElement ofPair(NElement key, NElement value){return NElementFactory.of().ofPair(key,value);}
 
-    NUpletElement ofEmptyUplet();
+    static NPairElement ofPair(String key, NElement value){return NElementFactory.of().ofPair(key,value);}
 
-    NUpletElement ofUplet(NElement... items);
+    static NPairElement ofPair(String key, Boolean value){return NElementFactory.of().ofPair(key,value);}
 
-    NUpletElement ofUplet(String name, NElement... items);
+    static NPairElement ofPair(String key, Byte value){return NElementFactory.of().ofPair(key,value);}
 
-    NMatrixElementBuilder ofMatrixBuilder();
+    static NPairElement ofPair(String key, Short value){return NElementFactory.of().ofPair(key,value);}
 
-    NArrayElement ofIntArray(int... items);
+    static NPairElement ofPair(String key, Integer value){return NElementFactory.of().ofPair(key,value);}
 
-    NArrayElement ofIntArray(Integer... items);
+    static NPairElement ofPair(String key, Long value){return NElementFactory.of().ofPair(key,value);}
 
-    NArrayElement ofLongArray(long... items);
+    static NPairElement ofPair(String key, String value){return NElementFactory.of().ofPair(key,value);}
 
-    NArrayElement ofLongArray(Long... items);
+    static NPairElement ofPair(String key, Double value){return NElementFactory.of().ofPair(key,value);}
 
-    NArrayElement ofNumberArray(Number... items);
+    static NPairElement ofPair(String key, Instant value){return NElementFactory.of().ofPair(key,value);}
 
-    NArrayElement ofBooleanArray(boolean... items);
+    static NPairElement ofPair(String key, LocalDate value){return NElementFactory.of().ofPair(key,value);}
 
-    NArrayElement ofBooleanArray(Boolean... items);
+    static NPairElement ofPair(String key, LocalDateTime value){return NElementFactory.of().ofPair(key,value);}
 
-    NArrayElement ofArray(NElement... items);
+    static NPairElement ofPair(String key, LocalTime value){return NElementFactory.of().ofPair(key,value);}
 
-    NArrayElement ofStringArray(String... items);
+    static NPairElementBuilder ofPairBuilder(NElement key, NElement value){return NElementFactory.of().ofPairBuilder(key,value);}
 
-    NArrayElement ofDoubleArray(double... items);
+    static NPairElementBuilder ofPairBuilder(){return NElementFactory.of().ofPairBuilder();}
 
-    NArrayElement ofDoubleArray(Double... items);
+    /**
+     * create object element builder (mutable)
+     *
+     * @return object element
+     */
+    static NObjectElementBuilder ofObjectBuilder(){return NElementFactory.of().ofObjectBuilder();}
 
-    NObjectElement ofObject(NElement... items);
+    static NObjectElementBuilder ofObjectBuilder(String name){return NElementFactory.of().ofObjectBuilder(name);}
 
-    NElementComments ofMultiLineComments(String... a);
+    /**
+     * create array element builder (mutable)
+     *
+     * @return array element
+     */
+    static NArrayElementBuilder ofArrayBuilder(){return NElementFactory.of().ofArrayBuilder();}
 
-    NElementComments ofSingleLineComments(String... a);
+    static NArrayElementBuilder ofArrayBuilder(String name){return NElementFactory.of().ofArrayBuilder(name);}
 
-    NElementComments ofComments(NElementComment[] leading, NElementComment[] trailing);
+    static NArrayElement ofArray(){return NElementFactory.of().ofArray();}
+
+    static NObjectElement ofObject(){return NElementFactory.of().ofObject();}
+
+    static NPrimitiveElement ofBoolean(String value){return NElementFactory.of().ofBoolean(value);}
+
+    static NPrimitiveElement ofBoolean(boolean value){return NElementFactory.of().ofBoolean(value);}
+
+    static NPrimitiveElement ofRegex(String value){return NElementFactory.of().ofRegex(value);}
+
+    static NPrimitiveElement ofName(String value){return NElementFactory.of().ofName(value);}
+
+    static NPrimitiveElement ofNameOrString(String value){return NElementFactory.of().ofNameOrString(value);}
+
+    static NPrimitiveElement ofString(String value){return NElementFactory.of().ofString(value);}
+
+    static NPrimitiveElement ofString(String value, NElementType stringLayout){return NElementFactory.of().ofString(value,stringLayout);}
+
+    static NCustomElement ofCustom(Object value){return NElementFactory.of().ofCustom(value);}
+
+    static NPrimitiveElement ofTrue(){return NElementFactory.of().ofTrue();}
+
+    static NPrimitiveElement ofFalse(){return NElementFactory.of().ofFalse();}
+
+    static NPrimitiveElement ofInstant(Instant value){return NElementFactory.of().ofInstant(value);}
+
+    static NPrimitiveElement ofLocalDate(LocalDate value){return NElementFactory.of().ofLocalDate(value);}
+
+    static NPrimitiveElement ofLocalDateTime(LocalDateTime value){return NElementFactory.of().ofLocalDateTime(value);}
+
+    static NPrimitiveElement ofLocalTime(LocalTime value){return NElementFactory.of().ofLocalTime(value);}
+
+    static NPrimitiveElement ofFloat(Float value){return NElementFactory.of().ofFloat(value);}
+
+    static NPrimitiveElement ofFloat(float value){return NElementFactory.of().ofFloat(value);}
+
+    static NPrimitiveElement ofFloat(Float value, String suffix){return NElementFactory.of().ofFloat(value,suffix);}
+
+    static NPrimitiveElement ofFloat(float value, String suffix){return NElementFactory.of().ofFloat(value,suffix);}
+
+    static NPrimitiveElement ofByte(Byte value){return NElementFactory.of().ofByte(value);}
+
+    static NPrimitiveElement ofByte(byte value){return NElementFactory.of().ofByte(value);}
+
+    static NPrimitiveElement ofByte(Byte value, NNumberLayout layout, String suffix){return NElementFactory.of().ofByte(value,layout,suffix);}
+
+    static NPrimitiveElement ofByte(byte value, NNumberLayout layout, String suffix){return NElementFactory.of().ofByte(value,layout,suffix);}
+
+    static NPrimitiveElement ofByte(Byte value, NNumberLayout layout){return NElementFactory.of().ofByte(value,layout);}
+
+    static NPrimitiveElement ofByte(byte value, NNumberLayout layout){return NElementFactory.of().ofByte(value,layout);}
+
+    static NPrimitiveElement ofByte(Byte value, String suffix){return NElementFactory.of().ofByte(value,suffix);}
+
+    static NPrimitiveElement ofByte(byte value, String suffix){return NElementFactory.of().ofByte(value,suffix);}
+
+    static NPrimitiveElement ofShort(Short value){return NElementFactory.of().ofShort(value);}
+
+    static NPrimitiveElement ofShort(short value){return NElementFactory.of().ofShort(value);}
+
+    static NPrimitiveElement ofShort(Short value, NNumberLayout layout, String suffix){return NElementFactory.of().ofShort(value,layout,suffix);}
+
+    static NPrimitiveElement ofShort(short value, NNumberLayout layout, String suffix){return NElementFactory.of().ofShort(value,layout,suffix);}
+
+    static NPrimitiveElement ofShort(Short value, NNumberLayout layout){return NElementFactory.of().ofShort(value,layout);}
+
+    static NPrimitiveElement ofShort(short value, NNumberLayout layout){return NElementFactory.of().ofShort(value,layout);}
+
+    static NPrimitiveElement ofShort(Short value, String suffix){return NElementFactory.of().ofShort(value,suffix);}
+
+    static NPrimitiveElement ofShort(short value, String suffix){return NElementFactory.of().ofShort(value,suffix);}
+
+    static NPrimitiveElement ofInt(Integer value){return NElementFactory.of().ofInt(value);}
+
+    static NPrimitiveElement ofInt(int value){return NElementFactory.of().ofInt(value);}
+
+    static NPrimitiveElement ofInt(Integer value, String suffix){return NElementFactory.of().ofInt(value,suffix);}
+
+    static NPrimitiveElement ofInt(int value, String suffix){return NElementFactory.of().ofInt(value,suffix);}
+
+    static NPrimitiveElement ofInt(Integer value, NNumberLayout layout, String suffix){return NElementFactory.of().ofInt(value,layout,suffix);}
+
+    static NPrimitiveElement ofInt(int value, NNumberLayout layout, String suffix){return NElementFactory.of().ofInt(value,layout,suffix);}
+
+    static NPrimitiveElement ofInt(Integer value, NNumberLayout layout){return NElementFactory.of().ofInt(value,layout);}
+
+    static NPrimitiveElement ofInt(int value, NNumberLayout layout){return NElementFactory.of().ofInt(value,layout);}
+
+    static NPrimitiveElement ofLong(Long value){return NElementFactory.of().ofLong(value);}
+
+    static NPrimitiveElement ofLong(long value){return NElementFactory.of().ofLong(value);}
+
+    static NPrimitiveElement ofLong(Long value, String suffix){return NElementFactory.of().ofLong(value,suffix);}
+
+    static NPrimitiveElement ofLong(long value, String suffix){return NElementFactory.of().ofLong(value,suffix);}
+
+    static NPrimitiveElement ofLong(Long value, NNumberLayout layout, String suffix){return NElementFactory.of().ofLong(value,layout,suffix);}
+
+    static NPrimitiveElement ofLong(long value, NNumberLayout layout, String suffix){return NElementFactory.of().ofLong(value,layout,suffix);}
+
+    static NPrimitiveElement ofLong(Long value, NNumberLayout layout){return NElementFactory.of().ofLong(value,layout);}
+
+    static NPrimitiveElement ofLong(long value, NNumberLayout layout){return NElementFactory.of().ofLong(value,layout);}
+
+    static NPrimitiveElement ofNull(){return NElementFactory.of().ofNull();}
+
+    static NPrimitiveElement ofNumber(String value){return NElementFactory.of().ofNumber(value);}
+
+    static NPrimitiveElement ofInstant(Date value){return NElementFactory.of().ofInstant(value);}
+
+    static NPrimitiveElement ofInstant(String value){return NElementFactory.of().ofInstant(value);}
+
+    static NPrimitiveElement ofChar(Character value){return NElementFactory.of().ofChar(value);}
+
+    static NPrimitiveElement ofDouble(Double value){return NElementFactory.of().ofDouble(value);}
+
+    static NPrimitiveElement ofDouble(double value){return NElementFactory.of().ofDouble(value);}
+
+    static NPrimitiveElement ofDouble(Double value, String suffix){return NElementFactory.of().ofDouble(value,suffix);}
+
+    static NPrimitiveElement ofDouble(double value, String suffix){return NElementFactory.of().ofDouble(value,suffix);}
+
+    static NPrimitiveElement ofDoubleComplex(double real){return NElementFactory.of().ofDoubleComplex(real);}
+
+    static NPrimitiveElement ofDoubleComplex(double real, double imag){return NElementFactory.of().ofDoubleComplex(real,imag);}
+
+    static NPrimitiveElement ofFloatComplex(float real){return NElementFactory.of().ofFloatComplex(real);}
+
+    static NPrimitiveElement ofFloatComplex(float real, float imag){return NElementFactory.of().ofFloatComplex(real,imag);}
+
+    static NPrimitiveElement ofBigComplex(BigDecimal real){return NElementFactory.of().ofBigComplex(real);}
+
+    static NPrimitiveElement ofBigComplex(BigDecimal real, BigDecimal imag){return NElementFactory.of().ofBigComplex(real,imag);}
 
 
-    NElementComment ofMultiLineComment(String... a);
+    static NPrimitiveElement ofNumber(Number value){return NElementFactory.of().ofNumber(value);}
 
-    NElementComment ofSingleLineComment(String... lines);
+    static NPrimitiveElement ofBigDecimal(BigDecimal value){return NElementFactory.of().ofBigDecimal(value);}
 
-    NElement ofBinaryStream(NInputStreamProvider value);
+    static NPrimitiveElement ofBigDecimal(BigDecimal value, String suffix){return NElementFactory.of().ofBigDecimal(value,suffix);}
 
-    NElement ofCharStream(NReaderProvider value);
+    static NPrimitiveElement ofBigInteger(BigInteger value){return NElementFactory.of().ofBigInteger(value);}
 
-    NBinaryStreamElementBuilder ofBinaryStreamBuilder();
+    static NPrimitiveElement ofBigInteger(BigInteger value, NNumberLayout layout, String suffix){return NElementFactory.of().ofBigInteger(value,layout,suffix);}
 
-    NCharStreamElementBuilder ofCharStreamBuilder();
+    static NPrimitiveElement ofBigInteger(BigInteger value, NNumberLayout layout){return NElementFactory.of().ofBigInteger(value,layout);}
 
-    NElementAnnotation ofAnnotation(String name, NElement... values);
+    static NPrimitiveElement ofBigInteger(BigInteger value, String suffix){return NElementFactory.of().ofBigInteger(value,suffix);}
 
-    NPrimitiveElementBuilder ofPrimitiveBuilder();
+
+    static NUpletElementBuilder ofUpletBuilder(){return NElementFactory.of().ofUpletBuilder();}
+
+    static NUpletElementBuilder ofUpletBuilder(String name){return NElementFactory.of().ofUpletBuilder(name);}
+
+    static NUpletElement ofUplet(){return NElementFactory.of().ofUplet();}
+
+    static NUpletElement ofUplet(NElement... items){return NElementFactory.of().ofUplet(items);}
+
+    static NUpletElement ofUplet(String name, NElement... items){return NElementFactory.of().ofUplet(name,items);}
+
+    static NUpletElement ofNamedUplet(String name, NElement... items){return NElementFactory.of().ofNamedUplet(name,items);}
+
+    static NMatrixElementBuilder ofMatrixBuilder(){return NElementFactory.of().ofMatrixBuilder();}
+
+    static NArrayElement ofIntArray(int... items){return NElementFactory.of().ofIntArray(items);}
+
+    static NArrayElement ofIntArray(Integer... items){return NElementFactory.of().ofIntArray(items);}
+
+    static NArrayElement ofLongArray(long... items){return NElementFactory.of().ofLongArray(items);}
+
+    static NArrayElement ofLongArray(Long... items){return NElementFactory.of().ofLongArray(items);}
+
+    static NArrayElement ofNumberArray(Number... items){return NElementFactory.of().ofNumberArray(items);}
+
+    static NArrayElement ofBooleanArray(boolean... items){return NElementFactory.of().ofBooleanArray(items);}
+
+    static NArrayElement ofBooleanArray(Boolean... items){return NElementFactory.of().ofBooleanArray(items);}
+
+    static NArrayElement ofArray(NElement... items){return NElementFactory.of().ofArray(items);}
+
+    static NArrayElement ofArray(String name, NElement... items){return NElementFactory.of().ofArray(name,items);}
+
+    static NArrayElement ofNamedArray(String name, NElement... items){return NElementFactory.of().ofNamedArray(name,items);}
+
+    static NArrayElement ofNamedParametrizedArray(String name, NElement[] params, NElement... items){return NElementFactory.of().ofNamedParametrizedArray(name,items);}
+
+    static NArrayElement ofArray(String name, NElement[] params, NElement... items){return NElementFactory.of().ofArray(name,params,items);}
+
+    static NArrayElement ofParametrizedArray(NElement[] params, NElement... items){return NElementFactory.of().ofParametrizedArray(params,items);}
+
+    static NArrayElement ofParametrizedArray(NElement... params){return NElementFactory.of().ofParametrizedArray(params);}
+
+    static NArrayElement ofParametrizedArray(String name, NElement[] params, NElement... items){return NElementFactory.of().ofParametrizedArray(name,params,items);}
+
+    static NArrayElement ofParametrizedArray(String name, NElement... params){return NElementFactory.of().ofParametrizedArray(name,params);}
+
+    static NArrayElement ofStringArray(String... items){return NElementFactory.of().ofStringArray(items);}
+
+    static NArrayElement ofDoubleArray(double... items){return NElementFactory.of().ofDoubleArray(items);}
+
+    static NArrayElement ofDoubleArray(Double... items){return NElementFactory.of().ofDoubleArray(items);}
+
+    static NObjectElement ofObject(NElement... items){return NElementFactory.of().ofObject(items);}
+
+    static NObjectElement ofObject(String name, NElement... items){return NElementFactory.of().ofObject(name,items);}
+
+    static NObjectElement ofNamedObject(String name, NElement... items){return NElementFactory.of().ofNamedObject(name,items);}
+
+    static NObjectElement ofNamedParametrizedObject(String name, NElement[] params, NElement... items){return NElementFactory.of().ofNamedParametrizedObject(name,params,items);}
+
+    static NObjectElement ofParametrizedObject(NElement[] params, NElement... items){return NElementFactory.of().ofParametrizedObject(params,items);}
+
+    static NObjectElement ofParametrizedObject(NElement... params){return NElementFactory.of().ofParametrizedObject(params);}
+
+    static NObjectElement ofParametrizedObject(String name, NElement[] params, NElement... items){return NElementFactory.of().ofParametrizedObject(name,params,items);}
+
+    static NObjectElement ofObject(String name, NElement[] params, NElement... items){return NElementFactory.of().ofObject(name,params,items);}
+
+    static NObjectElement ofParametrizedObject(String name, NElement... params){return NElementFactory.of().ofParametrizedObject(name,params);}
+
+    static NElementComments ofMultiLineComments(String... comments){return NElementFactory.of().ofMultiLineComments();}
+
+    static NElementComments ofSingleLineComments(String... comments){return NElementFactory.of().ofSingleLineComments(comments);}
+
+    static NElementComments ofComments(NElementComment[] leading, NElementComment[] trailing){return NElementFactory.of().ofComments(leading,trailing);}
+
+    static NElementComment ofMultiLineComment(String... comments){return NElementFactory.of().ofMultiLineComment(comments);}
+
+    static NElementComment ofSingleLineComment(String... lines){return NElementFactory.of().ofSingleLineComment(lines);}
+
+    static NElement ofBinaryStream(NInputStreamProvider value){return NElementFactory.of().ofBinaryStream(value);}
+
+    static NElement ofCharStream(NReaderProvider value){return NElementFactory.of().ofCharStream(value);}
+
+    static NBinaryStreamElementBuilder ofBinaryStreamBuilder(){return NElementFactory.of().ofBinaryStreamBuilder();}
+
+    static NCharStreamElementBuilder ofCharStreamBuilder(){return NElementFactory.of().ofCharStreamBuilder();}
+
+    static NElementAnnotation ofAnnotation(String name, NElement... values){return NElementFactory.of().ofAnnotation(name, values);}
+
+    static NPrimitiveElementBuilder ofPrimitiveBuilder(){return NElementFactory.of().ofPrimitiveBuilder();}
 }

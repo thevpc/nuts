@@ -46,7 +46,7 @@ public class NPrintIterator<T> extends NIteratorBase<T> {
     public NElement describe() {
         return NEDesc.describeResolveOrDestructAsObject(curr)
                 .builder()
-                .set("print", NElements.of().ofObjectBuilder().set("format",listFormat.getOutputFormat().id()).build())
+                .set("print", NElements.ofObjectBuilder().set("format",listFormat.getOutputFormat().id()).build())
                 .build();
     }
 

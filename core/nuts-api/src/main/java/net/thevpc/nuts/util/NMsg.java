@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NExceptionHandler;
+import net.thevpc.nuts.NExceptions;
 import net.thevpc.nuts.format.NMsgFormattable;
 import net.thevpc.nuts.text.*;
 
@@ -84,9 +84,9 @@ public class NMsg {
             return NMsg.ofC("invalid %s", valueName);
         }
         if (NBlankable.isBlank(valueName)) {
-            return ofC("invalid value : %s", NExceptionHandler.getErrorMessage(throwable));
+            return ofC("invalid value : %s", NExceptions.getErrorMessage(throwable));
         }
-        return ofC("invalid %s : %s", valueName, NExceptionHandler.getErrorMessage(throwable));
+        return ofC("invalid %s : %s", valueName, NExceptions.getErrorMessage(throwable));
     }
 
     public static NMsg ofInvalidValue(Throwable throwable, NMsg valueName) {
@@ -97,9 +97,9 @@ public class NMsg {
             return NMsg.ofC("invalid %s", valueName);
         }
         if (NBlankable.isBlank(valueName)) {
-            return ofC("invalid value : %s", NExceptionHandler.getErrorMessage(throwable));
+            return ofC("invalid value : %s", NExceptions.getErrorMessage(throwable));
         }
-        return ofC("invalid %s : %s", valueName, NExceptionHandler.getErrorMessage(throwable));
+        return ofC("invalid %s : %s", valueName, NExceptions.getErrorMessage(throwable));
     }
 
     private static NMsg of(NTextFormatType format, Object message, Object[] params, NTextStyles styles, String codeLang, Level level) {
@@ -133,15 +133,15 @@ public class NMsg {
     }
 
     public static NMsg ofNtf(String message) {
-        return of(NTextFormatType.NTF, message, NO_PARAMS, null, null, null);
+        return of(NTextFormatType.NTF, NStringUtils.firstNonNull(message,""), NO_PARAMS, null, null, null);
     }
 
     public static NMsg ofCode(String lang, String text) {
-        return of(NTextFormatType.CODE, text, NO_PARAMS, null, lang, null);
+        return of(NTextFormatType.CODE, NStringUtils.firstNonNull(text,""), NO_PARAMS, null, lang, null);
     }
 
     public static NMsg ofCode(String text) {
-        return of(NTextFormatType.CODE, text, NO_PARAMS, null, null, null);
+        return of(NTextFormatType.CODE, NStringUtils.firstNonNull(text,""), NO_PARAMS, null, null, null);
     }
 
     public static NMsg ofStringLiteral(String literal) {
@@ -152,11 +152,11 @@ public class NMsg {
     }
 
     public static NMsg ofStyled(String message, NTextStyle style) {
-        return of(NTextFormatType.STYLED, message, NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null);
+        return of(NTextFormatType.STYLED, NStringUtils.firstNonNull(message,""), NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null);
     }
 
     public static NMsg ofStyled(String message, NTextStyles styles) {
-        return of(NTextFormatType.STYLED, message, NO_PARAMS, styles, null, null);
+        return of(NTextFormatType.STYLED, NStringUtils.firstNonNull(message,""), NO_PARAMS, styles, null, null);
     }
 
     public static NMsg ofStyled(NMsg message, NTextStyle style) {
@@ -180,15 +180,15 @@ public class NMsg {
     }
 
     public static NMsg ofPlain(String message) {
-        return of(NTextFormatType.PLAIN, message, NO_PARAMS, null, null, null);
+        return of(NTextFormatType.PLAIN, NStringUtils.firstNonNull(message,""), NO_PARAMS, null, null, null);
     }
 
     public static NMsg ofC(String message) {
-        return of(NTextFormatType.CFORMAT, message, NO_PARAMS, null, null, null);
+        return of(NTextFormatType.CFORMAT, NStringUtils.firstNonNull(message,""), NO_PARAMS, null, null, null);
     }
 
     public static NMsg ofC(String message, Object... params) {
-        return of(NTextFormatType.CFORMAT, message, params, null, null, null);
+        return of(NTextFormatType.CFORMAT, NStringUtils.firstNonNull(message,""), params, null, null, null);
     }
 
     public static NMsg ofV(String message, NMsgParam... params) {
@@ -215,11 +215,11 @@ public class NMsg {
     }
 
     public static NMsg ofV(String message, Map<String, ?> vars) {
-        return of(NTextFormatType.VFORMAT, message, new Object[]{vars}, null, null, null);
+        return of(NTextFormatType.VFORMAT, NStringUtils.firstNonNull(message,""), new Object[]{vars}, null, null, null);
     }
 
     public static NMsg ofV(String message, Function<String, ?> vars) {
-        return of(NTextFormatType.VFORMAT, message, new Object[]{vars}, null, null, null);
+        return of(NTextFormatType.VFORMAT, NStringUtils.firstNonNull(message,""), new Object[]{vars}, null, null, null);
     }
 
     public static NMsg ofJ(String message, NMsgParam... params) {
@@ -240,11 +240,11 @@ public class NMsg {
 
     @Deprecated
     public static NMsg ofJ(String message) {
-        return of(NTextFormatType.JFORMAT, message, NO_PARAMS, null, null, null);
+        return of(NTextFormatType.JFORMAT, NStringUtils.firstNonNull(message,""), NO_PARAMS, null, null, null);
     }
 
     public static NMsg ofJ(String message, Object... params) {
-        return of(NTextFormatType.JFORMAT, message, params, null, null, null);
+        return of(NTextFormatType.JFORMAT, NStringUtils.firstNonNull(message,""), params, null, null, null);
     }
 
     public NTextFormatType getFormat() {
@@ -279,7 +279,7 @@ public class NMsg {
             return ((NMsgFormattable) o).toMsg();
         }
         if (o instanceof Throwable) {
-            return NExceptionHandler.getErrorMessage((Throwable) o);
+            return NExceptions.getErrorMessage((Throwable) o);
         }
         return o;
     }

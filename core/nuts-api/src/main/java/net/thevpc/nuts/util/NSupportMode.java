@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NExceptionHandler;
+import net.thevpc.nuts.NExceptions;
 
 public enum NSupportMode implements NEnum {
     SUPPORTED,
@@ -90,7 +90,7 @@ public enum NSupportMode implements NEnum {
                         return false;
                     }
                     default: {
-                        throw NExceptionHandler.ofSafeUnsupportedEnumException(request);
+                        throw NExceptions.ofSafeUnsupportedEnumException(request);
                     }
                 }
             }
@@ -104,12 +104,12 @@ public enum NSupportMode implements NEnum {
                         return true;
                     }
                     default: {
-                        throw NExceptionHandler.ofSafeUnsupportedEnumException(request);
+                        throw NExceptions.ofSafeUnsupportedEnumException(request);
                     }
                 }
             }
             default: {
-                throw NExceptionHandler.ofSafeUnsupportedEnumException(this);
+                throw NExceptions.ofSafeUnsupportedEnumException(this);
             }
         }
     }

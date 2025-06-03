@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config.compat.v506;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElements;
 
 
@@ -92,7 +93,7 @@ public class NVersionCompat506 extends AbstractNVersionCompat {
     }
 
     private NWorkspaceConfigBoot506 parseConfig506(byte[] bytes) {
-        return NElements.of().json().parse(bytes, NWorkspaceConfigBoot506.class);
+        return NElementParser.ofJson().parse(bytes, NWorkspaceConfigBoot506.class);
     }
 
 }

@@ -110,7 +110,7 @@ public final class NApplications {
                                 return appType.cast(o);
                             }
                         } else {
-                            throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("createApplicationInstance must return an instance of type %s"), appType.getName()));
+                            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("createApplicationInstance must return an instance of type %s"), appType.getName()));
                         }
                         break;
                     }
@@ -134,13 +134,13 @@ public final class NApplications {
             if (c instanceof Error) {
                 throw (Error) c;
             }
-            throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("unable to instantiate application %s"), appType.getName()), ex);
+            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("unable to instantiate application %s"), appType.getName()), ex);
         } catch (IllegalAccessException ex) {
-            throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("illegal access to default constructor for %s"), appType.getName()), ex);
+            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("illegal access to default constructor for %s"), appType.getName()), ex);
         } catch (InvocationTargetException ex) {
-            throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("invocation exception for %s"), appType.getName()), ex);
+            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("invocation exception for %s"), appType.getName()), ex);
         }
-        throw NExceptionHandler.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("missing application constructor for %s from of : \n\t static createApplicationInstance(NSession,String[])\n\t Constructor(NSession,String[])\n\t Constructor()"), appType.getName()));
+        throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("missing application constructor for %s from of : \n\t static createApplicationInstance(NSession,String[])\n\t Constructor(NSession,String[])\n\t Constructor()"), appType.getName()));
     }
 
     /**

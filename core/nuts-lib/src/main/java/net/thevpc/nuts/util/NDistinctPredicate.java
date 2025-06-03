@@ -25,7 +25,7 @@ class NDistinctPredicate<T> extends AbstractNPredicate<T> {
 
     @Override
     public NElement describe() {
-        return NElements.of().ofString("distinct");
+        return NElements.ofString("distinct");
     }
 
 }

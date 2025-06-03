@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
+import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NFormats;
 
 import java.lang.reflect.Type;
@@ -22,7 +23,7 @@ public class NElementMapperNVersion implements NElementMapper<NVersion> {
     @Override
     public NElement createElement(NVersion o, Type typeOfSrc, NElementFactoryContext context) {
         if (context.isNtf()) {
-            return context.elem().ofString(NFormats.of().ofFormat(o).get().setNtf(true).format().toString());
+            return NElements.ofString(NFormats.of().ofFormat(o).get().setNtf(true).format().toString());
         } else {
             return context.defaultObjectToElement(o.toString(), null);
         }

@@ -4,6 +4,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.elem.NElements;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -15,7 +16,7 @@ public class NElementMapperMapEntry implements NElementMapper<Map.Entry> {
     @Override
     public NElement createElement(Map.Entry o, Type typeOfSrc, NElementFactoryContext context) {
         Map.Entry je = (Map.Entry) o;
-        return context.elem().ofObjectBuilder()
+        return NElements.ofObjectBuilder()
                 .set("key", context.objectToElement(je.getKey(), null))
                 .set("value", context.objectToElement(je.getValue(), null))
                 .build();

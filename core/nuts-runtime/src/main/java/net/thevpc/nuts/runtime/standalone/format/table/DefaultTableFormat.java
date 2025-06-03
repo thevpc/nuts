@@ -589,10 +589,10 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
         }
         if (o instanceof String || o instanceof Number || o instanceof Date || o instanceof Temporal || o instanceof Path || o instanceof File) {
             List<NElement> a = new ArrayList<>();
-            a.add(_elems().toElement(o));
-            return createTableModel(_elems().toElement(a));
+            a.add(NElements.of().toElement(o));
+            return createTableModel(NElements.of().toElement(a));
         }
-        o = _elems().setIndestructibleFormat().destruct(o);
+        o = NElements.of().setIndestructibleFormat().destruct(o);
         if (o instanceof Collection) {
             return _model2(o);
         }
@@ -623,7 +623,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
             return model;
         }
         if (!(o instanceof NElement)) {
-            return createTableModel(_elems().toElement(o));
+            return createTableModel(NElements.of().toElement(o));
         }
         NElement elem = (NElement) o;
         switch (elem.type()) {
@@ -642,10 +642,10 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
             case NULL: {
                 List<NElement> a = new ArrayList<>();
                 a.add(elem);
-                return createTableModel(_elems().toElement(a));
+                return createTableModel(NElements.of().toElement(a));
             }
             case OBJECT: {
-                return createTableModel(_elems().toElement(elem.asObject().get().children()));
+                return createTableModel(NElements.of().toElement(elem.asObject().get().children()));
             }
             case ARRAY: {
 
@@ -738,7 +738,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                             NPairElement nee=(NPairElement) ne;
                             NElement k = nee.key();
                             if (!k.isString()) {
-                                k = _elems().ofString(
+                                k = NElements.ofString(
                                         k.toString()
                                 );
                             }
@@ -792,10 +792,6 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
 
     public SimpleCell resolveColumnsFromCell(String title, Object obj) {
         return new SimpleCell(title, obj == null ? null : formatObject(obj));
-    }
-
-    private NElements _elems() {
-        return NElements.of();
     }
 
     @Override

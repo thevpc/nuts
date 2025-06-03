@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.rnsh;
 import net.thevpc.nuts.NI18n;
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.util.*;
@@ -131,7 +132,7 @@ public class RnshHttpClient {
                     appError = new String(Base64.getDecoder().decode(appError), "UTF-8");
                 }
                 if (appError != null) {
-                    Map parsedMap = NElements.of().json().parse(appError, Map.class);
+                    Map parsedMap = NElementParser.ofJson().parse(appError, Map.class);
                     if (parsedMap != null) {
                         List<String> params = (List) parsedMap.get("params");
                         code = NMsgCode.ofMessage(

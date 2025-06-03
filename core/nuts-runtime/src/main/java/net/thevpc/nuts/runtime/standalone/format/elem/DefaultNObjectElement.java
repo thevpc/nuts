@@ -165,7 +165,7 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
 
     @Override
     public NObjectElementBuilder builder() {
-        return NElements.of().ofObjectBuilder().copyFrom(this);
+        return NElements.ofObjectBuilder().copyFrom(this);
     }
 
     @Override

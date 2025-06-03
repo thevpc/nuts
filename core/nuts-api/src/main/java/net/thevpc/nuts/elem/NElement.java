@@ -107,6 +107,8 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
 
     boolean isParametrized();
 
+    boolean isUplet();
+
     boolean isNamedUplet();
 
     boolean isNamedUplet(String name);
@@ -243,9 +245,9 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
 
 
     /**
-     * return true if this element can be cast to {@link NObjectElement}
+     * return true if this element can be cast to {@link NObjectElement} and is a simple object
      *
-     * @return true if this element can be cast to {@link NObjectElement}
+     * @return true if this element can be cast to {@link NObjectElement} and is a simple object
      */
     boolean isObject();
 

@@ -20,14 +20,13 @@ public class NElementMapperNPlatformLocation implements NElementMapper<NPlatform
     @Override
     public NPlatformLocation createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
         NObjectElement obj = o.asObject().get();
-        NElements _prm = context.elem();
-        NId id = context.elementToObject(obj.get("id").orElse(_prm.ofString("")), NId.class);
-        String product = context.elementToObject(obj.get("product").orElse(_prm.ofString("")), String.class);
-        String name = context.elementToObject(obj.get("name").orElse(_prm.ofString("")), String.class);
-        String path = context.elementToObject(obj.get("path").orElse(_prm.ofString("")), String.class);
-        String version = context.elementToObject(obj.get("version").orElse(_prm.ofString("")), String.class);
-        String packaging = context.elementToObject(obj.get("packaging").orElse(_prm.ofString("")), String.class);
-        int priority = context.elementToObject(obj.get("priority").orElse(_prm.ofInt(0)), int.class);
+        NId id = context.elementToObject(obj.get("id").orElse(NElements.ofString("")), NId.class);
+        String product = context.elementToObject(obj.get("product").orElse(NElements.ofString("")), String.class);
+        String name = context.elementToObject(obj.get("name").orElse(NElements.ofString("")), String.class);
+        String path = context.elementToObject(obj.get("path").orElse(NElements.ofString("")), String.class);
+        String version = context.elementToObject(obj.get("version").orElse(NElements.ofString("")), String.class);
+        String packaging = context.elementToObject(obj.get("packaging").orElse(NElements.ofString("")), String.class);
+        int priority = context.elementToObject(obj.get("priority").orElse(NElements.ofInt(0)), int.class);
         return new NPlatformLocation(id, product, name, path, version, packaging, priority);
     }
 

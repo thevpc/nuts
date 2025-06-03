@@ -33,7 +33,7 @@ public class NIndexFirstIterator<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        return NElements.of()
+        return NElements
                 .ofObjectBuilder()
                 .name("IndexFirst")
                 .set("index", NEDesc.describeResolveOrDestruct(index))

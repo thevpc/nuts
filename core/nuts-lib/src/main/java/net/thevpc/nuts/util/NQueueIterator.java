@@ -44,7 +44,7 @@ public class NQueueIterator<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        return NElements.of().ofObjectBuilder()
+        return NElements.ofObjectBuilder()
                 .name("Queue")
                 .addAll(
                         children

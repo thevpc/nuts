@@ -18,10 +18,8 @@ import java.util.stream.Collectors;
 
 public class NElementMapperCollection implements NElementMapper {
 
-    private final DefaultNElementFactoryService defaultNutsElementFactoryService;
 
-    public NElementMapperCollection(DefaultNElementFactoryService defaultNutsElementFactoryService) {
-        this.defaultNutsElementFactoryService = defaultNutsElementFactoryService;
+    public NElementMapperCollection() {
     }
 
     @Override
@@ -86,7 +84,7 @@ public class NElementMapperCollection implements NElementMapper {
                 return fillObject(o, new ArrayList(), elemType, to, context);
             }
             default: {
-                NReflectType m = defaultNutsElementFactoryService.getTypesRepository().getType(to);
+                NReflectType m = context.getTypesRepository().getType(to);
                 return fillObject(o, (Collection) m.newInstance(), elemType, to, context);
             }
         }

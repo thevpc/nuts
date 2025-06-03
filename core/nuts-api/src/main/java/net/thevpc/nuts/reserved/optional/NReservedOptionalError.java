@@ -2,6 +2,8 @@ package net.thevpc.nuts.reserved.optional;
 
 import java.util.Objects;
 
+import net.thevpc.nuts.NDetachedErrorOptionalException;
+import net.thevpc.nuts.NErrorOptionalException;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.util.NMsg;
@@ -128,12 +130,12 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
         RuntimeException exception = null;
         ExceptionFactory exceptionFactory = getExceptionFactory();
         if (exceptionFactory != null) {
-            exception = exceptionFactory.createErrorException(m, cause);
+            exception = exceptionFactory.createOptionalErrorException(m, cause);
         }
         if (exception == null) {
             exceptionFactory = NOptional.getDefaultExceptionFactory();
             if (exceptionFactory != null) {
-                exception = exceptionFactory.createErrorException(m, cause);
+                exception = exceptionFactory.createOptionalErrorException(m, cause);
             }
         }
         if (exception == null) {

@@ -99,6 +99,10 @@ import java.util.function.Consumer;
  */
 public interface NCmdLine extends Iterable<NArg>, NBlankable {
 
+    static NCmdLine ofArgs(String... args) {
+        return NCmdLines.of().of(args);
+    }
+
     static NCmdLine of(String[] args) {
         return NCmdLines.of().of(args);
     }
@@ -108,7 +112,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     }
 
     /**
-     * parses the line into a command line using system shell family
+     * parses the line into a command line using default shell family (always BASH)
      *
      * @param line line to parse
      * @return new command line instance
@@ -130,12 +134,32 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     /**
      * parses the line into a command line using the provided shell family
      *
-     * @param line line to parse
+     * @param line        line to parse
      * @param shellFamily shell family
      * @return new command line instance
      */
     static NCmdLine of(String line, NShellFamily shellFamily) {
-        return NCmdLines.of().setShellFamily(shellFamily).parseCmdLine(line).get();
+        return parse(line, shellFamily).get();
+    }
+
+    /**
+     * parses the line into a command line using the current system's  shell family
+     *
+     * @param line line to parse
+     * @return
+     */
+    static NCmdLine of(String line) {
+        return parse(line).get();
+    }
+
+    /**
+     * parses the line into a command line using the default shell family (always BASH)
+     *
+     * @param line
+     * @return
+     */
+    static NCmdLine ofDefault(String line) {
+        return parseDefault(line).get();
     }
 
     boolean isExpandArgumentsFile();
@@ -454,7 +478,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * next argument with any value type (may having not a value).
      *
      * @param expectValue expected value type
-     * @param names names
+     * @param names       names
      * @return next argument
      */
     NOptional<NArg> next(NArgType expectValue, String... names);
@@ -518,7 +542,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     /**
      * true if arguments start at index {@code index} with the given suite.
      *
-     * @param index starting index
+     * @param index  starting index
      * @param values arguments suite
      * @return true if arguments start with the given suite.
      */

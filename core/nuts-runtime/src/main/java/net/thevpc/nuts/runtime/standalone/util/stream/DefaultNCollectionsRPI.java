@@ -28,7 +28,7 @@ public class DefaultNCollectionsRPI implements NCollectionsRPI {
         if (str == null) {
             return new NStreamEmpty<T>(name);
         }
-        return iterableToStream((Iterable<T>) Arrays.asList(str)).withDesc(() -> NElements.of().ofString("array"));
+        return iterableToStream((Iterable<T>) Arrays.asList(str)).withDesc(() -> NElements.ofString("array"));
     }
 
     @Override

@@ -741,7 +741,7 @@ public class DefaultNWorkspaceConfigModel {
 
                     @Override
                     public NElement describe() {
-                        return NElements.of().ofString("reverseOrder");
+                        return NElements.ofString("reverseOrder");
                     }
                 }).map(x -> apiId.builder().setVersion(x).build())
                 .withDesc(NEDesc.of("toId"))

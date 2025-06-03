@@ -290,7 +290,7 @@ public interface NApp extends NComponent {
      *
      * @param commandLineRunner an instance of NCmdLineRunner responsible for handling the command line input
      */
-    void processCmdLine(NCmdLineRunner commandLineRunner);
+    void runCmdLine(NCmdLineRunner commandLineRunner);
 
     /**
      * Retrieves the folder path associated with the specified storage type location.

@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.NExceptionBootAware;
+import net.thevpc.nuts.NAnyBootAwareExceptionBase;
 import net.thevpc.nuts.NExceptionWithExitCodeBase;
 import net.thevpc.nuts.NI18n;
 import net.thevpc.nuts.NWorkspaceBase;
@@ -1295,7 +1295,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             NExceptionWithExitCodeBase ec = NBootUtils.findThrowable(ex, NExceptionWithExitCodeBase.class, null);
             int c = ec == null ? 254 : ec.getExitCode();
             if (c != 0) {
-                NExceptionBootAware u = NBootUtils.findThrowable(ex, NExceptionBootAware.class, null);
+                NAnyBootAwareExceptionBase u = NBootUtils.findThrowable(ex, NAnyBootAwareExceptionBase.class, null);
                 if (u != null) {
                     try {
                         u.processThrowable(options);

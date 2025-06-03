@@ -5,6 +5,7 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.*;
@@ -235,7 +236,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
 
     private Object load(NPath p) {
         NElements elems = NElements.of();
-        NElement e = elems.json().parse(ref);
+        NElement e = NElementParser.ofJson().parse(ref);
         if (e != null) {
             if (e.isArray()) {
                 return NStream.ofArray(elems.convert(e, Info[].class)).toArray(Info[]::new);

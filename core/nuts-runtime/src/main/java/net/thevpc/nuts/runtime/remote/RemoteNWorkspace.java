@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.remote;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
 
@@ -22,13 +23,13 @@ public abstract class RemoteNWorkspace extends AbstractNWorkspace {
     public NElement createCall(String commandName, NElement body) {
         try (NTalkClient cli = new NTalkClient()) {
             NElements e = NElements.of().json();
-            NObjectElement q = e.ofObjectBuilder()
+            NObjectElement q = NElements.ofObjectBuilder()
                     .set("cmd", commandName)
                     .set("body", body).build();
             NText json = e.setValue(q).format();
             String wsURL = NWorkspace.of().getBootOptions().getWorkspace().orNull();
             byte[] result = cli.request("nuts/ws:"+wsURL, json.toString().getBytes());
-            NObjectElement resultObject = e.parse(result, NObjectElement.class);
+            NObjectElement resultObject = NElementParser.ofJson().parse(result, NObjectElement.class);
             NElements prv = NElements.of();
             boolean success = resultObject.getBooleanValue("success").get();
             if (success) {
@@ -42,12 +43,11 @@ public abstract class RemoteNWorkspace extends AbstractNWorkspace {
     }
 
     public NElement createCall(String commandName, String callId, NElement body) {
-        NElements e = NElements.of();
-        return e.ofObjectBuilder()
+        return NElements.ofObjectBuilder()
                 .set(
                         "cmd",
-                        e.ofString(commandName))
-                .set("id", e.ofString(callId))
+                        NElements.ofString(commandName))
+                .set("id", NElements.ofString(callId))
                 .set("body", body).build();
     }
 

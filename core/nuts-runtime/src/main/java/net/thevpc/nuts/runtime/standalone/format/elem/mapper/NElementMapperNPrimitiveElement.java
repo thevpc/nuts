@@ -28,6 +28,6 @@ public class NElementMapperNPrimitiveElement implements NElementMapper<NPrimitiv
         if (o.type().isPrimitive()) {
             return o.asPrimitive().get();
         }
-        return context.elem().ofString(o.toString());
+        return NElements.ofString(o.toString());
     }
 }

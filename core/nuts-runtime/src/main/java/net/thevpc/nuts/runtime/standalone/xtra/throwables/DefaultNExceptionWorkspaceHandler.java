@@ -42,7 +42,7 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
         NWorkspaceOptions bbo = bo.build();
         boolean showGui = NApiUtilsRPI.resolveGui(bbo);
         boolean showTrace = NApiUtilsRPI.resolveShowStackTrace(bbo);
-        int errorCode = NExceptionHandler.resolveExitCode(throwable).orElse(204);
+        int errorCode = NExceptions.resolveExitCode(throwable).orElse(204);
         NMsg fm = NSessionAwareExceptionBase.resolveSessionAwareExceptionBase(throwable)
                 .map(NSessionAwareExceptionBase::getFormattedMessage).orNull();
         String m = throwable.getMessage();
@@ -77,14 +77,14 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
             } else {
                 if (fm != null) {
                     session.out().resetLine();
-                    session.eout().add(NElements.of().ofObjectBuilder()
+                    session.eout().add(NElements.ofObjectBuilder()
                             .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().orNull()))
                             .set("error", NText.of(fm).filteredText())
                             .build()
                     );
                     if (showTrace) {
-                        session.eout().add(NElements.of().ofObjectBuilder().set("errorTrace",
-                                NElements.of().ofArrayBuilder().addAll(NStringUtils.stacktraceArray(throwable)).build()
+                        session.eout().add(NElements.ofObjectBuilder().set("errorTrace",
+                                NElements.ofArrayBuilder().addAll(NStringUtils.stacktraceArray(throwable)).build()
                         ).build());
                     }
                     NArrayElementBuilder e = session.eout();
@@ -95,13 +95,13 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
                     fout.flush();
                 } else {
                     session.out().resetLine();
-                    session.eout().add(NElements.of().ofObjectBuilder()
+                    session.eout().add(NElements.ofObjectBuilder()
                             .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().orNull()))
                             .set("error", m)
                             .build());
                     if (showTrace) {
-                        session.eout().add(NElements.of().ofObjectBuilder().set("errorTrace",
-                                NElements.of().ofArrayBuilder().addAll(NStringUtils.stacktraceArray(throwable)).build()
+                        session.eout().add(NElements.ofObjectBuilder().set("errorTrace",
+                                NElements.ofArrayBuilder().addAll(NStringUtils.stacktraceArray(throwable)).build()
                         ).build());
                     }
                     NArrayElementBuilder e = session.eout();

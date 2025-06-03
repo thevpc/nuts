@@ -32,6 +32,7 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.boot.NBootWorkspaceAlreadyExistsException;
 import net.thevpc.nuts.boot.NBootWorkspaceNotFoundException;
 import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
+import net.thevpc.nuts.elem.NElementFactory;
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.format.NVersionFormat;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
@@ -209,7 +210,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         NBootOptions effectiveBootOptions;
         List<String> bootRepositories;
         NTexts text;
-        NElements elems;
+        NElementFactory elems;
         boolean justInstalled;
         NWorkspaceArchetypeComponent justInstalledArchetype;
         NBootConfig cfg;
@@ -308,7 +309,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         }
 
 //        NutsFormatManager formats = this.formats().setSession(defaultSession());
-        data.elems = NElements.of();
+        data.elems = NElementFactory.of();
         _initLog(data);
         wsModel.securityModel = new DefaultNWorkspaceSecurityModel(this);
 

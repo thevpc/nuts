@@ -22,7 +22,7 @@ public interface NOptional<T> extends NBlankable {
      * @return default ExceptionFactory
      */
     static ExceptionFactory getDefaultExceptionFactory() {
-        return NReservedOptionalImpl.getDefaultExceptionFactory();
+        return NExceptions.getDefaultExceptionFactory();
     }
 
     /**
@@ -35,7 +35,7 @@ public interface NOptional<T> extends NBlankable {
      * @return default ExceptionFactory
      */
     static void setDefaultExceptionFactory(ExceptionFactory defaultExceptionFactory) {
-        NReservedOptionalImpl.setDefaultExceptionFactory(defaultExceptionFactory);
+        NExceptions.setDefaultExceptionFactory(defaultExceptionFactory);
     }
 
     static <T> NOptional<T> ofNamedEmpty(String name) {
@@ -379,8 +379,12 @@ public interface NOptional<T> extends NBlankable {
     NOptional<T> withExceptionFactory(ExceptionFactory exceptionFactory);
 
     interface ExceptionFactory {
-        RuntimeException createEmptyException(NMsg message);
+        RuntimeException createOptionalEmptyException(NMsg message);
 
-        RuntimeException createErrorException(NMsg message, Throwable e);
+        RuntimeException createOptionalErrorException(NMsg message, Throwable e);
+
+        RuntimeException createAssertException(NMsg message, Throwable e);
+
+        RuntimeException createCmdLineException(NMsg message, Throwable e);
     }
 }

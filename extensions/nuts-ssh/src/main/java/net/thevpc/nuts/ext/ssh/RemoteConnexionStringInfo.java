@@ -2,7 +2,7 @@ package net.thevpc.nuts.ext.ssh;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPath;
@@ -117,7 +117,7 @@ public class RemoteConnexionStringInfo {
         NSession session = NSession.of();
         try (MyNExecCmdExtensionContext d = new MyNExecCmdExtensionContext(
                 NExecCmd.of().setConnexionString(target).system(),
-                commExec, target, session, cmd, out, err)) {
+                commExec, target, cmd, out, err)) {
             e = commExec.exec(d);
         } catch (RuntimeException ex) {
             throw new NExecutionException(NMsg.ofC("command failed :%s", ex), ex);
@@ -245,7 +245,7 @@ public class RemoteConnexionStringInfo {
                         .setPath(pHome.getHome() + "/ws/" + workspaceName + "/"+NConstants.Files.WORKSPACE_CONFIG_FILE_NAME)
                         .toString());
                 if (rpath.isRegularFile()) {
-                    workspaceJson = NElements.of()
+                    workspaceJson = NElementParser.ofJson()
                             .parse(
                                     rpath
                             );
@@ -328,18 +328,16 @@ public class RemoteConnexionStringInfo {
     private static class MyNExecCmdExtensionContext implements NExecCmdExtensionContext, AutoCloseable {
         NExecCmdExtension commExec;
         String target;
-        NSession session;
         String[] cmd;
         OutputStream out;
         OutputStream err;
         InputStream nullInput;
         NExecCmd ec;
 
-        public MyNExecCmdExtensionContext(NExecCmd ec, NExecCmdExtension commExec, String target, NSession session, String[] cmd, OutputStream out, OutputStream err) {
+        public MyNExecCmdExtensionContext(NExecCmd ec, NExecCmdExtension commExec, String target, String[] cmd, OutputStream out, OutputStream err) {
             this.ec = ec;
             this.commExec = commExec;
             this.target = target;
-            this.session = session;
             this.cmd = cmd;
             this.out = out;
             this.err = err;
@@ -374,11 +372,6 @@ public class RemoteConnexionStringInfo {
         @Override
         public NExecCmd getExecCommand() {
             return ec;
-        }
-
-        @Override
-        public NSession getSession() {
-            return session;
         }
 
         @Override

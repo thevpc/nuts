@@ -37,7 +37,7 @@ import java.util.stream.Stream;
  */
 public interface NObjectElement extends NNamedElement, NListContainerElement, NParametrizedContainerElement, Iterable<NElement> {
     static NObjectElement ofEmpty() {
-        return NElements.of().ofEmptyObject();
+        return NElements.ofObject();
     }
 
     Stream<NElement> stream();

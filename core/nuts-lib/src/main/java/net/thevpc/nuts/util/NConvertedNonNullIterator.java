@@ -56,7 +56,7 @@ public class NConvertedNonNullIterator<F, T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        return NElements.of().ofObjectBuilder()
+        return NElements.ofObjectBuilder()
                 .name("Map")
                 .set("accept", "isNotNull")
                 .set("mapper", NEDesc.describeResolveOrDestructAsObject(converter)

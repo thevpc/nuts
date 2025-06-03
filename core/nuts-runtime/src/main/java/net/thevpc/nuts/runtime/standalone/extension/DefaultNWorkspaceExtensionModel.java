@@ -11,6 +11,7 @@ import net.thevpc.nuts.NBootOptions;
 import net.thevpc.nuts.NConstants;
 
 
+import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElements;
@@ -157,7 +158,7 @@ public class DefaultNWorkspaceExtensionModel {
             if (u != null) {
                 NExtensionInformation[] s = new NExtensionInformation[0];
                 try (Reader rr = new InputStreamReader(NPath.of(u).getInputStream())) {
-                    s = NElements.of().json().parse(rr, DefaultNExtensionInformation[].class);
+                    s = NElementParser.ofJson().parse(rr, DefaultNExtensionInformation[].class);
                 } catch (IOException ex) {
                     _LOGOP().level(Level.SEVERE).error(ex)
                             .log(NMsg.ofC("failed to parse NutsExtensionInformation from %s : %s", u, ex));

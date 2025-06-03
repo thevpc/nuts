@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.web;
 
+import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
@@ -445,7 +446,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     private Map<String, List<String>> _mapFromJsonFile(NPath path) {
-        Map<String, Object> map = NElements.of().parse(path.getReader(), Map.class);
+        Map<String, Object> map = NElementParser.ofJson().parse(path.getReader(), Map.class);
         Map<String, List<String>> newHeaders = new LinkedHashMap<>();
         for (Map.Entry<String, Object> e : map.entrySet()) {
             String k = e.getKey();

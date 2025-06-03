@@ -30,6 +30,7 @@ import net.thevpc.nuts.NConstants;
 
 
 import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
@@ -81,7 +82,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         this.deployments = new NRepositoryFolderHelper(this,
                 NPath.of(bOptions.getStoreType(NStoreType.LIB).get()).resolve(NConstants.Folders.ID)
                 , false,
-                "lib", NElements.of().ofObjectBuilder().set("repoKind", "lib").build()
+                "lib", NElements.ofObjectBuilder().set("repoKind", "lib").build()
         );
         configModel = new InstalledRepositoryConfigModel(workspace, this);
     }
@@ -553,9 +554,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     public <T> T readJson(NId id, String name, Class<T> clazz) {
-        return NElements.of()
-                .json()
-                .parse(getPath(id, name), clazz);
+        return NElementParser.ofJson().parse(getPath(id, name), clazz);
     }
 
     public void printJson(NId id, String name, InstallInfoConfig value) {
@@ -704,7 +703,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                                     }).nonNull().withDesc(NEDesc.of("FileToVersion")).iterator();
 //                } else {
 //                    this.result = NIteratorBuilder.of(deployments.searchVersions(getId(), getFilter(), true))
-//                            .named(NElements.of().ofUplet("searchVersionsInMain"))
+//                            .named(NElements.ofUplet("searchVersionsInMain"))
 //                            .build()
 //                    ;
 //                }

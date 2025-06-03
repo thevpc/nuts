@@ -149,7 +149,7 @@ class PassProcessor {
                 nonMergedRootNodes.toArray(new NDependencyTreeNode[0]),
                 mergedDepsList,
                 mergedRootNodes.toArray(new NDependencyTreeNode[0]),
-                () -> NElements.of().ofString("solver")
+                () -> NElements.ofString("solver")
         );
     }
 

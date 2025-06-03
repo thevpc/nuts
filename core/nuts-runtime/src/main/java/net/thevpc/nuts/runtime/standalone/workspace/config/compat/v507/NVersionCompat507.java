@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config.compat.v507;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElements;
 
 
@@ -27,7 +28,7 @@ public class NVersionCompat507 extends AbstractNVersionCompat {
 
     @Override
     public NWorkspaceConfigBoot parseConfig(byte[] bytes) {
-        NWorkspaceConfigBoot507 w = bytes == null ? null : NElements.of().json().parse(bytes, NWorkspaceConfigBoot507.class);
+        NWorkspaceConfigBoot507 w = bytes == null ? null : NElementParser.ofJson().parse(bytes, NWorkspaceConfigBoot507.class);
         NWorkspaceConfigBoot v=new NWorkspaceConfigBoot();
          v.setUuid(w.getUuid());
         v.setSystem(w.isSystem());
@@ -61,8 +62,7 @@ public class NVersionCompat507 extends AbstractNVersionCompat {
         NPath path = NWorkspace.of().getStoreLocation(nutsApiId, NStoreType.CONF)
                 .resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
-        NWorkspaceConfigApi c = bytes==null?null: NElements.of()
-                .json().parse(bytes, NWorkspaceConfigApi.class);
+        NWorkspaceConfigApi c = bytes==null?null: NElementParser.ofJson().parse(bytes, NWorkspaceConfigApi.class);
         // Removed test because we would have incoherence between ApiVersion and RuntimeVersion
         // Actually I dont know was the initial need was for doing this test!
 //        if (c != null) {
@@ -76,8 +76,7 @@ public class NVersionCompat507 extends AbstractNVersionCompat {
         NPath path = NWorkspace.of().getStoreLocation(NWorkspace.of().getRuntimeId(), NStoreType.CONF)
                 .resolve(NConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
-        NWorkspaceConfigRuntime c = bytes==null?null: NElements.of()
-                .json().parse(bytes, NWorkspaceConfigRuntime.class);
+        NWorkspaceConfigRuntime c = bytes==null?null: NElementParser.ofJson().parse(bytes, NWorkspaceConfigRuntime.class);
         return c;
     }
 
@@ -87,8 +86,7 @@ public class NVersionCompat507 extends AbstractNVersionCompat {
                 , NStoreType.CONF)
                 .resolve(CoreNConstants.Files.WORKSPACE_SECURITY_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
-        NWorkspaceConfigSecurity c = bytes==null?null: NElements.of()
-                .json().parse(bytes, NWorkspaceConfigSecurity.class);
+        NWorkspaceConfigSecurity c = bytes==null?null: NElementParser.ofJson().parse(bytes, NWorkspaceConfigSecurity.class);
         return c;
     }
 
@@ -98,8 +96,7 @@ public class NVersionCompat507 extends AbstractNVersionCompat {
                         nutsApiId, NStoreType.CONF)
                 .resolve(CoreNConstants.Files.WORKSPACE_MAIN_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
-        NWorkspaceConfigMain507 c = bytes==null?null: NElements.of()
-                .json().parse(bytes, NWorkspaceConfigMain507.class);
+        NWorkspaceConfigMain507 c = bytes==null?null: NElementParser.ofJson().parse(bytes, NWorkspaceConfigMain507.class);
         if(c==null){
             return null;
         }

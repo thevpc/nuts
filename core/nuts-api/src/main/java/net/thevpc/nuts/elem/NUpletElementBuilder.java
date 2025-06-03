@@ -44,7 +44,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
     NUpletElementBuilder doWith(Consumer<NUpletElementBuilder> con);
 
     static NUpletElementBuilder of() {
-        return NElements.of().ofUpletBuilder();
+        return NElements.ofUpletBuilder();
     }
 
     NOptional<String> name();

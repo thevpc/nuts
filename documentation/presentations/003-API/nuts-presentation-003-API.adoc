@@ -67,7 +67,7 @@ image::images/nuts-components.png[scaledwidth=80%]
 <<<
 == Nuts as A Library
 
-* You can also add runtime to force the runtime version
+* You can also add runtime to enforce the runtime version
 
 ```xml
 <dependency>
@@ -82,8 +82,8 @@ image::images/nuts-components.png[scaledwidth=80%]
 === Session API
 
 ```java
-    // setSharedInstance allows NSession/NWorkspace to be accessible globally as a singleton
-    Nuts.openWorkspace("-Z","-S","y","--json").setSharedInstance();
+    // share allows NSession/NWorkspace to be accessible globally as a singleton
+    Nuts.openWorkspace("-Z","-S","y","--json").share();
     // then you can get the current session anywhere in your code
     NSession session=NSession.of();
     session.setConfirm(NConfirmationMode.ASK);
@@ -123,7 +123,7 @@ image::images/nuts-components.png[scaledwidth=80%]
 === Std In/Out/Err API
 
 ```java
-    Nuts.openWorkspace("-Z","-S","y","--json").setSharedInstance();
+    Nuts.openWorkspace("-Z","-S","y","--json").share();
     NSession session=NSession.of();
     NOut.println("Hello");
     NOut.printlnf("Hello");
@@ -162,7 +162,6 @@ image::images/nuts-components.png[scaledwidth=80%]
 === ClassPath API
 
 ```java
-    NSession session=...;
     ClassLoader loader=NSearchCmd.of()
         .addId("org.jedit:jedit")
         .addId("org.spring.framework:spring-context")
@@ -175,7 +174,6 @@ image::images/nuts-components.png[scaledwidth=80%]
 === NTF API
 
 ```java
-    NSession session=...;
     NOut.printlnf("#Hello1# ##Hello2## ##:_:Hello3## ");
     NOut.printlnf("```java public static class MyClass {}```");
     NOut.printlnf("```js public static class MyClass {}```");
@@ -337,7 +335,7 @@ while adding the following maven dependency
 ```xml
 		<dependency>
 			<groupId>net.thevpc.nuts</groupId>
-			<artifactId>nlib-spring-boot</artifactId>
+			<artifactId>nuts-spring-boot</artifactId>
 			<version>0.8.5.0</version>
 		</dependency>
 ```

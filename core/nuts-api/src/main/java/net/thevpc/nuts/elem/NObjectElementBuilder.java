@@ -41,7 +41,7 @@ import java.util.function.Consumer;
 public interface NObjectElementBuilder extends NElementBuilder {
 
     static NObjectElementBuilder of() {
-        return NElements.of().ofObjectBuilder();
+        return NElements.ofObjectBuilder();
     }
 
     /**
@@ -87,6 +87,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
      * @return this {@code this} instance
      */
     NObjectElementBuilder clear();
+
     NObjectElementBuilder clearChildren();
 
     /**
@@ -189,7 +190,8 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     NObjectElementBuilder addAnnotations(List<NElementAnnotation> annotations);
 
-    NObjectElementBuilder addAnnotation(String name,NElement ...args);
+    NObjectElementBuilder addAnnotation(String name, NElement... args);
+
     NObjectElementBuilder addAnnotation(NElementAnnotation annotation);
 
     NObjectElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
@@ -200,6 +202,18 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
 
     NObjectElementBuilder addParams(List<NElement> params);
+
+    NObjectElementBuilder addParam(String name, NElement value);
+
+    NObjectElementBuilder addParam(String name, String value);
+
+    NObjectElementBuilder addParam(String name, Integer value);
+
+    NObjectElementBuilder addParam(String name, Long value);
+
+    NObjectElementBuilder addParam(String name, Double value);
+
+    NObjectElementBuilder addParam(String name, Boolean value);
 
     NObjectElementBuilder addParam(NElement param);
 
@@ -246,6 +260,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
     NObjectElementBuilder copyFrom(NElementBuilder other);
 
     NObjectElementBuilder copyFrom(NElement other);
+
     NObjectElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy);
 
     NObjectElementBuilder copyFrom(NElement other, NMapStrategy strategy);

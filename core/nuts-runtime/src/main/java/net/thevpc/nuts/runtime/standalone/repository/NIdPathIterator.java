@@ -81,13 +81,13 @@ public class NIdPathIterator extends NIteratorBase<NId> {
 
     @Override
     public NElement describe() {
-        return NElements.of().ofObjectBuilder()
+        return NElements.ofObjectBuilder()
                 .name("ScanPath")
                 .set("repository", repository == null ? null : repository.getName())
                 .set("filter", NEDesc.describeResolveOrDestruct(filter))
-                .add(basePath == null ? null : NElements.of().ofPair("path", NElements.of().toElement(basePath)))
+                .add(basePath == null ? null : NElements.ofPair("path", NElements.of().toElement(basePath)))
                 .set("root", NElements.of().toElement(rootFolder))
-                .add((maxDepth < 0 || maxDepth == Integer.MAX_VALUE) ? null : NElements.of().ofPair("maxDepth", maxDepth))
+                .add((maxDepth < 0 || maxDepth == Integer.MAX_VALUE) ? null : NElements.ofPair("maxDepth", maxDepth))
                 .addAll(extraProperties==null?null:extraProperties.children())
                 .build();
     }

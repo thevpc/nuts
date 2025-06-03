@@ -146,8 +146,8 @@
 /core/nuts/target-11/
 /core/nuts-lib/target/
 /companions/nstore/target/
-/libraries/nlib-spring-boot/target/
-/libraries/nlib-spring-boot/.pom.xml.kate-swp
+/libraries/nuts-spring-boot/target/
+/libraries/nuts-spring-boot/.pom.xml.kate-swp
 /core/nuts/module-info.class
 /installers/installer-builder.iml
 /tutorials/ugly-jar-projects/dependency-project/dependency-project.iml
@@ -159,7 +159,7 @@
 /third-party-companions/ndb/ndb.iml
 /libraries/nlib-talk-agent/nlib-talk-agent.iml
 /libraries/nlib-ssh/nlib-ssh.iml
-/libraries/nlib-spring-boot/nlib-spring-boot.iml
+/libraries/nuts-spring-boot/nlib-spring-boot.iml
 /libraries/nlib-servlet/nlib-servlet.iml
 /incubating/ntalk-agent/ntalk-agent.iml
 /third-party-companions/nmvn/nmvn.iml
@@ -259,3 +259,7 @@ core/nuts-app-full/target
 /server-config.tson
 /core/nuts-lib/nbproject/
 /core/target/
+/documentation/website/src/resources/download/nuts-stable.jar
+/documentation/website/src/resources/nuts-preview.jar
+/documentation/website/src/resources/download/nuts-preview.jar
+/documentation/website/src/resources/download/nuts-app-0.8.5.jar
