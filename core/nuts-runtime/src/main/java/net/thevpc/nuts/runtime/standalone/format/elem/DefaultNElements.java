@@ -545,8 +545,87 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     @Override
+    public NArrayElement ofArray(String name, NElement... items) {
+        return ofArrayBuilder().name(name).addAll(items).build();
+    }
+
+    @Override
+    public NArrayElement ofNamedArray(String name, NElement... items) {
+        return ofArrayBuilder().name(name).addAll(items).build();
+    }
+
+    @Override
+    public NArrayElement ofNamedParametrizedArray(String name, NElement[] params, NElement... items) {
+        return ofArrayBuilder().name(name).addParams(params==null?null:Arrays.asList(params)).addAll(items).build();
+    }
+
+    @Override
+    public NArrayElement ofArray(String name, NElement[] params, NElement... items) {
+        return ofArrayBuilder().name(name).addParams(params==null?null:Arrays.asList(params)).addAll(items).build();
+    }
+
+    @Override
+    public NArrayElement ofParametrizedArray(NElement... params) {
+        return ofArrayBuilder().addParams(params==null?null:Arrays.asList(params)).build();
+    }
+
+
+
+    @Override
+    public NArrayElement ofParametrizedArray(NElement[] params, NElement... items) {
+        return ofArrayBuilder().addParams(params==null?null:Arrays.asList(params)).addAll(items).build();
+    }
+
+    @Override
+    public NArrayElement ofParametrizedArray(String name, NElement[] params, NElement... items) {
+        return ofArrayBuilder().name(name).addParams(params==null?null:Arrays.asList(params)).addAll(items).build();
+    }
+
+    @Override
     public NObjectElement ofObject(NElement... items) {
         return ofObjectBuilder().addAll(items).build();
+    }
+
+    @Override
+    public NArrayElement ofParametrizedArray(String name, NElement... params) {
+        return ofArrayBuilder().name(name).addParams(params==null?null:Arrays.asList(params)).build();
+    }
+
+    @Override
+    public NObjectElement ofObject(String name, NElement... items) {
+        return ofObjectBuilder().name(name).addAll(items).build();
+    }
+    @Override
+    public NObjectElement ofParametrizedObject(NElement[] params, NElement... items) {
+        return ofObjectBuilder().addParams(params==null?null:Arrays.asList(params)).addAll(items).build();
+    }
+
+    @Override
+    public NObjectElement ofParametrizedObject(String name, NElement[] params, NElement... items) {
+        return ofObjectBuilder().name(name).addParams(params==null?null:Arrays.asList(params)).addAll(items).build();
+    }
+    @Override
+    public NObjectElement ofObject(String name, NElement[] params, NElement... items) {
+        return ofObjectBuilder().name(name).addParams(params==null?null:Arrays.asList(params)).addAll(items).build();
+    }
+    @Override
+    public NObjectElement ofNamedObject(String name, NElement... items) {
+        return ofObjectBuilder().name(name).addAll(items).build();
+    }
+
+    @Override
+    public NObjectElement ofNamedParametrizedObject(String name, NElement[] params, NElement... items) {
+        return ofObjectBuilder().name(name).addParams(params==null?null:Arrays.asList(params)).addAll(items).build();
+    }
+
+    @Override
+    public NObjectElement ofParametrizedObject(NElement... params) {
+        return ofObjectBuilder().addParams(params==null?null:Arrays.asList(params)).build();
+    }
+
+    @Override
+    public NObjectElement ofParametrizedObject(String name, NElement... params) {
+        return ofObjectBuilder().name(name).addParams(params==null?null:Arrays.asList(params)).build();
     }
 
     @Override
@@ -991,6 +1070,11 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     @Override
     public NUpletElement ofUplet(String name, NElement... items) {
+        return ofUpletBuilder().name(name).addAll(items).build();
+    }
+
+    @Override
+    public NUpletElement ofNamedUplet(String name, NElement... items) {
         return ofUpletBuilder().name(name).addAll(items).build();
     }
 

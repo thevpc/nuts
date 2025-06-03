@@ -40,7 +40,7 @@ import net.thevpc.nuts.NSessionProvider;
  * @author thevpc
  * @app.category Command Line
  */
-public interface NCmdLineContext extends NSessionProvider {
+public interface NCmdLineContext  {
     default Object getSource() {
         return null;
     }

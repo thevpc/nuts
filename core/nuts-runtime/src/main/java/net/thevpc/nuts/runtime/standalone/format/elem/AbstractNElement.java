@@ -82,6 +82,10 @@ public abstract class AbstractNElement implements NElement {
         return type() == NElementType.NAMED_UPLET;
     }
 
+    public boolean isUplet() {
+        return type() == NElementType.UPLET;
+    }
+
     @Override
     public boolean isBigDecimal() {
         return type() == NElementType.BIG_DECIMAL;

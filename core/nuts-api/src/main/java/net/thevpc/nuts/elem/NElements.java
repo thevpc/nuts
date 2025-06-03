@@ -860,6 +860,8 @@ public interface NElements extends NContentTypeFormat {
 
     NUpletElement ofUplet(String name, NElement... items);
 
+    NUpletElement ofNamedUplet(String name, NElement... items);
+
     NMatrixElementBuilder ofMatrixBuilder();
 
     NArrayElement ofIntArray(int... items);
@@ -878,6 +880,22 @@ public interface NElements extends NContentTypeFormat {
 
     NArrayElement ofArray(NElement... items);
 
+    NArrayElement ofArray(String name, NElement... items);
+
+    NArrayElement ofNamedArray(String name, NElement... items);
+
+    NArrayElement ofNamedParametrizedArray(String name, NElement[] params, NElement... items);
+
+    NArrayElement ofArray(String name, NElement[] params, NElement... items);
+
+    NArrayElement ofParametrizedArray(NElement[] params, NElement... items);
+
+    NArrayElement ofParametrizedArray(NElement... params);
+
+    NArrayElement ofParametrizedArray(String name, NElement[] params, NElement... items);
+
+    NArrayElement ofParametrizedArray(String name, NElement... params);
+
     NArrayElement ofStringArray(String... items);
 
     NArrayElement ofDoubleArray(double... items);
@@ -886,12 +904,27 @@ public interface NElements extends NContentTypeFormat {
 
     NObjectElement ofObject(NElement... items);
 
+    NObjectElement ofObject(String name, NElement... items);
+
+    NObjectElement ofNamedObject(String name, NElement... items);
+
+    NObjectElement ofNamedParametrizedObject(String name, NElement[] params, NElement... items);
+
+    NObjectElement ofParametrizedObject(NElement[] params, NElement... items);
+
+    NObjectElement ofParametrizedObject(NElement... params);
+
+    NObjectElement ofParametrizedObject(String name, NElement[] params, NElement... items);
+
+    NObjectElement ofObject(String name, NElement[] params, NElement... items);
+
+    NObjectElement ofParametrizedObject(String name, NElement... params);
+
     NElementComments ofMultiLineComments(String... a);
 
     NElementComments ofSingleLineComments(String... a);
 
     NElementComments ofComments(NElementComment[] leading, NElementComment[] trailing);
-
 
     NElementComment ofMultiLineComment(String... a);
 

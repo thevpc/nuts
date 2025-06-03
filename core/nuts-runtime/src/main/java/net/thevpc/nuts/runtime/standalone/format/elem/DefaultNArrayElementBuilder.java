@@ -641,4 +641,34 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
         super.clearComments();
         return this;
     }
+
+    @Override
+    public NArrayElementBuilder addParam(String name, NElement value) {
+        return addParam(NElements.of().ofPair(name,value));
+    }
+
+    @Override
+    public NArrayElementBuilder addParam(String name, String value) {
+        return addParam(NElements.of().ofPair(name,value));
+    }
+
+    @Override
+    public NArrayElementBuilder addParam(String name, Integer value) {
+        return addParam(NElements.of().ofPair(name,value));
+    }
+
+    @Override
+    public NArrayElementBuilder addParam(String name, Long value) {
+        return addParam(NElements.of().ofPair(name,value));
+    }
+
+    @Override
+    public NArrayElementBuilder addParam(String name, Double value) {
+        return addParam(NElements.of().ofPair(name,value));
+    }
+
+    @Override
+    public NArrayElementBuilder addParam(String name, Boolean value) {
+        return addParam(NElements.of().ofPair(name,value));
+    }
 }

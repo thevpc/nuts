@@ -716,4 +716,33 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
         return this;
     }
 
+    @Override
+    public NObjectElementBuilder addParam(String name, NElement value) {
+        return addParam(NElements.of().ofPair(name,value));
+    }
+
+    @Override
+    public NObjectElementBuilder addParam(String name, String value) {
+        return addParam(NElements.of().ofPair(name,value));
+    }
+
+    @Override
+    public NObjectElementBuilder addParam(String name, Integer value) {
+        return addParam(NElements.of().ofPair(name,value));
+    }
+
+    @Override
+    public NObjectElementBuilder addParam(String name, Long value) {
+        return addParam(NElements.of().ofPair(name,value));
+    }
+
+    @Override
+    public NObjectElementBuilder addParam(String name, Double value) {
+        return addParam(NElements.of().ofPair(name,value));
+    }
+
+    @Override
+    public NObjectElementBuilder addParam(String name, Boolean value) {
+        return addParam(NElements.of().ofPair(name,value));
+    }
 }
