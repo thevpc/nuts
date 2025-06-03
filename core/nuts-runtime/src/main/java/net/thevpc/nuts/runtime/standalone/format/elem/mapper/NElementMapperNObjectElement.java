@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.format.elem.mapper;
 
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementType;
-import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.elem.*;
 
 import java.lang.reflect.Type;
 
@@ -18,6 +15,6 @@ public class NElementMapperNObjectElement extends NElementMapperNElement {
         if (o.type() == NElementType.OBJECT) {
             return o.asObject().get();
         }
-        return context.elem().ofObjectBuilder().set("value", o).build();
+        return NElements.ofObjectBuilder().set("value", o).build();
     }
 }

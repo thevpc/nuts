@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.ps;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 
+import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.util.NBlankable;
@@ -191,7 +192,7 @@ public class DefaultNPs implements NPs {
                     .at(connexionString)
                     .failFast()
                     .getGrabbedOutOnlyString();
-            DefaultNPsInfoBuilder[] arr = NElements.of().json().parse(str, DefaultNPsInfoBuilder[].class);
+            DefaultNPsInfoBuilder[] arr = NElementParser.ofJson().parse(str, DefaultNPsInfoBuilder[].class);
             return NStream.ofArray(arr).map(
                     DefaultNPsInfoBuilder::build
             );
@@ -277,7 +278,7 @@ public class DefaultNPs implements NPs {
                 return Arrays.asList(split).iterator();
             }
             return NIteratorBuilder.emptyIterator();
-        }, () -> NElements.of().ofString("jps")).map(
+        }, () -> NElements.ofString("jps")).map(
                 NFunction.of(
                         (String line) -> {
                             DefaultNPsInfoBuilder p = new DefaultNPsInfoBuilder();

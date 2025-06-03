@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config.compat.v502;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElements;
 
 
@@ -84,7 +85,7 @@ public class NVersionCompat502 extends AbstractNVersionCompat {
     }
 
     private NWorkspaceConfigBoot502 parseConfig502(byte[] bytes) {
-        return NElements.of().json().parse(bytes, NWorkspaceConfigBoot502.class);
+        return NElementParser.ofJson().parse(bytes, NWorkspaceConfigBoot502.class);
     }
 
 

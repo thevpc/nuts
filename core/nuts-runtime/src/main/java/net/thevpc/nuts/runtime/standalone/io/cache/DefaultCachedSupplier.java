@@ -4,6 +4,7 @@ package net.thevpc.nuts.runtime.standalone.io.cache;
 import net.thevpc.nuts.NWorkspace;
 
 import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.NLocationKey;
@@ -143,7 +144,7 @@ public class DefaultCachedSupplier<T> implements CachedSupplier<T> {
                         }
                     } else {
                         try {
-                            T d = elems.json().parse(cachePath, clazz);
+                            T d = NElementParser.ofJson().parse(cachePath, clazz);
                             if (d != null) {
                                 if (validator != null && !validator.isValidValue(d)) {
                                     //this is invalid cache!

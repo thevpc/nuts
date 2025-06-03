@@ -34,7 +34,7 @@ class NDistinctWithConverterPredicate<F, T> extends AbstractNPredicate<F> {
 
     @Override
     public NElement describe() {
-        return NElements.of().ofObjectBuilder()
+        return NElements.ofObjectBuilder()
                 .set("distinctBy", NEDesc.describeResolveOrDestruct(converter))
                 .build()
                 ;

@@ -21,7 +21,7 @@ public class NIterableFromJavaIterable<T> implements NIterable<T> {
 
     @Override
     public NElement describe() {
-        return NEDesc.describeResolveOr(base, () -> NElements.of().ofObjectBuilder().build())
+        return NEDesc.describeResolveOr(base, () -> NElements.ofObjectBuilder().build())
                 .asObject().get();
     }
 }

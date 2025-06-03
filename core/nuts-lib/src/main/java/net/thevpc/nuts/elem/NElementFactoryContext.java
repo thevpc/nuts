@@ -24,8 +24,7 @@
  */
 package net.thevpc.nuts.elem;
 
-import net.thevpc.nuts.NSessionProvider;
-import net.thevpc.nuts.NWorkspaceProvider;
+import net.thevpc.nuts.reflect.NReflectRepository;
 
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -37,8 +36,6 @@ import java.util.function.Predicate;
 public interface NElementFactoryContext {
 
     Predicate<Class<?>> getIndestructibleObjects();
-
-    NElements elem();
 
     Map<String, Object> getProperties();
 
@@ -60,4 +57,7 @@ public interface NElementFactoryContext {
 
     boolean isNtf();
 
+    NReflectRepository getTypesRepository();
+
+    <T> NElementMapper<T> getMapper(Type expectedType, boolean defaultOnly);
 }

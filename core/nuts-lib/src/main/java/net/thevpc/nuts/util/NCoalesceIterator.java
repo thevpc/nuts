@@ -24,7 +24,7 @@ public class NCoalesceIterator<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        return NElements.of().ofObjectBuilder()
+        return NElements.ofObjectBuilder()
                 .name("Coalesce")
                 .addAll(
                         children

@@ -58,7 +58,7 @@ public interface NUnsafeCallable<T> extends NElementDescribable<NUnsafeCallable<
     T call() throws Exception;
 
     default NElement describe() {
-        return NElements.of().ofString(toString());
+        return NElements.ofString(toString());
     }
 
     @Override

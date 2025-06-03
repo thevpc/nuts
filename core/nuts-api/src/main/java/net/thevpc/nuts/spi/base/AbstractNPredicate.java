@@ -35,6 +35,6 @@ public abstract class AbstractNPredicate<T> implements NPredicate<T> {
 
     @Override
     public NElement describe() {
-        return NElements.of().ofString(toString());
+        return NElements.ofString(toString());
     }
 }

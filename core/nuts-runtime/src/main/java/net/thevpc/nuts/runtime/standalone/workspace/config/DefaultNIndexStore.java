@@ -29,6 +29,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElements;
 
 import net.thevpc.nuts.NIndexStore;
@@ -73,7 +74,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
 //                , NutsUtilStrings.trim(id.getAlternative())
                     );
                     try {
-                        Map[] array = NElements.of().json().parse(new InputStreamReader(NPath.of(uu).getInputStream()), Map[].class);
+                        Map[] array = NElementParser.ofJson().parse(new InputStreamReader(NPath.of(uu).getInputStream()), Map[].class);
                         return Arrays.stream(array)
                                 .map(s -> NId.get(s.get("stringId").toString()).get())
                                 .collect(Collectors.toList()).iterator();
@@ -82,7 +83,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
                         return NIteratorBuilder.emptyIterator();
                     }
                 },
-                ()-> NElements.of()
+                ()-> NElements
                         .ofUpletBuilder()
                         .name("SearchIndexVersionsAt")
                         .add(getIndexURL().resolve( NConstants.Folders.ID).resolve( "allVersions").toString())
@@ -92,7 +93,6 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
 
     @Override
     public NIterator<NId> search(NDefinitionFilter filter) {
-        NElements elems = NElements.of();
         return NIteratorBuilder.ofSupplier(
                 () -> {
                     if (isInaccessible()) {
@@ -101,7 +101,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
                     }
                     String uu = getIndexURL().resolve(NConstants.Folders.ID) + "?repositoryUuid=" + getRepository().getUuid();
                     try {
-                        Map[] array = elems.json().parse(new InputStreamReader(NPath.of(uu).getInputStream()), Map[].class);
+                        Map[] array = NElementParser.ofJson().parse(new InputStreamReader(NPath.of(uu).getInputStream()), Map[].class);
                         return Arrays.stream(array)
                                 .map(s -> NId.get(s.get("stringId").toString()).get())
                                 .filter(new NDefinitionFilterToNIdPredicate2(filter))
@@ -112,7 +112,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
 //                        return IteratorUtils.emptyIterator();
                     }
                 },
-                ()-> NElements.of()
+                ()-> NElements
                         .ofObjectBuilder().name("SearchIndexPackages")
                         .set("source", getIndexURL().resolve(NConstants.Folders.ID).toString())
                         .set("filter", NEDesc.describeResolveOrToString(filter))

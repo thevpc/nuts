@@ -55,8 +55,7 @@ public class NFilteredIterator<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        return NElements.of()
-                .ofObjectBuilder()
+        return NElements.ofObjectBuilder()
                 .name("Filter")
                 .set("base", NEDesc.describeResolveOrDestruct(base))
                 .set("accept", NEDesc.describeResolveOrToString(filter))

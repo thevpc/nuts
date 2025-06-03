@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config.compat.v803;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElements;
 
 
@@ -20,7 +21,7 @@ public class NVersionCompat803 extends AbstractNVersionCompat {
 
     @Override
     public NWorkspaceConfigBoot parseConfig(byte[] bytes) {
-        NWorkspaceConfigBoot507 w = bytes == null ? null : NElements.of().json().parse(bytes, NWorkspaceConfigBoot507.class);
+        NWorkspaceConfigBoot507 w = bytes == null ? null : NElementParser.ofJson().parse(bytes, NWorkspaceConfigBoot507.class);
         NWorkspaceConfigBoot v=new NWorkspaceConfigBoot();
          v.setUuid(w.getUuid());
         v.setSystem(w.isSystem());

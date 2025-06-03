@@ -2,7 +2,7 @@ package net.thevpc.nuts.ext.ssh;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPath;
@@ -245,7 +245,7 @@ public class RemoteConnexionStringInfo {
                         .setPath(pHome.getHome() + "/ws/" + workspaceName + "/"+NConstants.Files.WORKSPACE_CONFIG_FILE_NAME)
                         .toString());
                 if (rpath.isRegularFile()) {
-                    workspaceJson = NElements.of()
+                    workspaceJson = NElementParser.ofJson()
                             .parse(
                                     rpath
                             );

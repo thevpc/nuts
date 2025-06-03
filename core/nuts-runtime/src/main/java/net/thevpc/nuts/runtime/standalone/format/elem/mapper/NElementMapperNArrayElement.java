@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.format.elem.mapper;
 
-import net.thevpc.nuts.elem.NArrayElement;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementType;
+import net.thevpc.nuts.elem.*;
 
 import java.lang.reflect.Type;
 
@@ -18,6 +15,6 @@ public class NElementMapperNArrayElement extends NElementMapperNElement {
         if (o.type() == NElementType.ARRAY) {
             return o.asArray().get();
         }
-        return context.elem().ofArrayBuilder().add(o).build();
+        return NElements.ofArrayBuilder().add(o).build();
     }
 }

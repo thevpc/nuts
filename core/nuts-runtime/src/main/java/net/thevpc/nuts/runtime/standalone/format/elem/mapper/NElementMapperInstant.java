@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
+import net.thevpc.nuts.elem.NElements;
 
 import java.lang.reflect.Type;
 import java.time.Instant;
@@ -17,7 +18,7 @@ public class NElementMapperInstant implements NElementMapper<Instant> {
 
     @Override
     public NElement createElement(Instant o, Type typeOfSrc, NElementFactoryContext context) {
-        return context.elem().ofInstant((Instant) o);
+        return NElements.ofInstant((Instant) o);
     }
 
     @Override

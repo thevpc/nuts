@@ -255,8 +255,7 @@ public class NRepositoryFolderHelper {
                         }
                         return NIteratorBuilder.emptyIterator();
                     },
-                    () -> NElements.of()
-                            .ofObjectBuilder()
+                    () -> NElements.ofObjectBuilder()
                             .name("SearchSingleVersion")
                             .set("repository", repo == null ? null : repo.getName())
                             .set("id", id.toString())

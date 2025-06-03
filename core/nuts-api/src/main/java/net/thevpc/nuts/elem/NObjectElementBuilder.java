@@ -41,7 +41,7 @@ import java.util.function.Consumer;
 public interface NObjectElementBuilder extends NElementBuilder {
 
     static NObjectElementBuilder of() {
-        return NElements.of().ofObjectBuilder();
+        return NElements.ofObjectBuilder();
     }
 
     /**

@@ -298,7 +298,7 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
 
     @Override
     public NOptional<NElement> get(String s) {
-        return get(_elements().ofString(s));
+        return get(NElements.ofString(s));
     }
 
     @Override
@@ -316,7 +316,7 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
 
     @Override
     public NObjectElementBuilder add(String name, NElement value) {
-        return add(_elements().ofString(name), denull(value));
+        return add(NElements.ofString(name), denull(value));
     }
 
     @Override
@@ -352,27 +352,27 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
 
     @Override
     public NObjectElementBuilder set(String name, NElement value) {
-        return set(_elements().ofNameOrString(name), denull(value));
+        return set(NElements.ofNameOrString(name), denull(value));
     }
 
     @Override
     public NObjectElementBuilder set(String name, boolean value) {
-        return set(_elements().ofNameOrString(name), _elements().ofBoolean(value));
+        return set(NElements.ofNameOrString(name), NElements.ofBoolean(value));
     }
 
     @Override
     public NObjectElementBuilder set(String name, int value) {
-        return set(_elements().ofNameOrString(name), _elements().ofInt(value));
+        return set(NElements.ofNameOrString(name), NElements.ofInt(value));
     }
 
     @Override
     public NObjectElementBuilder set(String name, double value) {
-        return set(_elements().ofNameOrString(name), _elements().ofDouble(value));
+        return set(NElements.ofNameOrString(name), NElements.ofDouble(value));
     }
 
     @Override
     public NObjectElementBuilder set(String name, String value) {
-        return set(_elements().ofNameOrString(name), _elements().ofString(value));
+        return set(NElements.ofNameOrString(name), NElements.ofString(value));
     }
 
     @Override
@@ -413,12 +413,12 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
 
     @Override
     public NObjectElementBuilder remove(String name) {
-        return remove(_elements().ofString(name));
+        return remove(NElements.ofString(name));
     }
 
     @Override
     public NObjectElementBuilder removeAll(String name) {
-        return removeAll(_elements().ofString(name));
+        return removeAll(NElements.ofString(name));
     }
 
 
@@ -456,22 +456,22 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
 
     @Override
     public NObjectElementBuilder set(NElement name, boolean value) {
-        return set(name, _elements().ofBoolean(value));
+        return set(name, NElements.ofBoolean(value));
     }
 
     @Override
     public NObjectElementBuilder set(NElement name, int value) {
-        return set(name, _elements().ofInt(value));
+        return set(name, NElements.ofInt(value));
     }
 
     @Override
     public NObjectElementBuilder set(NElement name, double value) {
-        return set(name, _elements().ofDouble(value));
+        return set(name, NElements.ofDouble(value));
     }
 
     @Override
     public NObjectElementBuilder set(NElement name, String value) {
-        return set(name, _elements().ofString(value));
+        return set(name, NElements.ofString(value));
     }
 
     @Override
@@ -528,22 +528,22 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
 
     @Override
     public NObjectElementBuilder add(String name, boolean value) {
-        return add(_elements().ofNameOrString(name), _elements().ofBoolean(value));
+        return add(NElements.ofNameOrString(name), NElements.ofBoolean(value));
     }
 
     @Override
     public NObjectElementBuilder add(String name, int value) {
-        return add(_elements().ofNameOrString(name), _elements().ofInt(value));
+        return add(NElements.ofNameOrString(name), NElements.ofInt(value));
     }
 
     @Override
     public NObjectElementBuilder add(String name, double value) {
-        return add(_elements().ofNameOrString(name), _elements().ofDouble(value));
+        return add(NElements.ofNameOrString(name), NElements.ofDouble(value));
     }
 
     @Override
     public NObjectElementBuilder add(String name, String value) {
-        return add(_elements().ofNameOrString(name), _elements().ofString(value));
+        return add(NElements.ofNameOrString(name), NElements.ofString(value));
     }
 
     @Override
@@ -581,13 +581,9 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
 
     private NElement denull(NElement e) {
         if (e == null) {
-            return _elements().ofNull();
+            return NElements.ofNull();
         }
         return e;
-    }
-
-    private NElements _elements() {
-        return NElements.of();
     }
 
     @Override
@@ -718,31 +714,31 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
 
     @Override
     public NObjectElementBuilder addParam(String name, NElement value) {
-        return addParam(NElements.of().ofPair(name,value));
+        return addParam(NElements.ofPair(name,value));
     }
 
     @Override
     public NObjectElementBuilder addParam(String name, String value) {
-        return addParam(NElements.of().ofPair(name,value));
+        return addParam(NElements.ofPair(name,value));
     }
 
     @Override
     public NObjectElementBuilder addParam(String name, Integer value) {
-        return addParam(NElements.of().ofPair(name,value));
+        return addParam(NElements.ofPair(name,value));
     }
 
     @Override
     public NObjectElementBuilder addParam(String name, Long value) {
-        return addParam(NElements.of().ofPair(name,value));
+        return addParam(NElements.ofPair(name,value));
     }
 
     @Override
     public NObjectElementBuilder addParam(String name, Double value) {
-        return addParam(NElements.of().ofPair(name,value));
+        return addParam(NElements.ofPair(name,value));
     }
 
     @Override
     public NObjectElementBuilder addParam(String name, Boolean value) {
-        return addParam(NElements.of().ofPair(name,value));
+        return addParam(NElements.ofPair(name,value));
     }
 }

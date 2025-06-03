@@ -195,7 +195,7 @@ public class NElementPathImpl {
                 this.key = ee.key();
                 this.value = ee.value();
             }else{
-                this.key = NElements.of().ofInt(index);
+                this.key = NElements.ofInt(index);
                 this.value = value;
             }
         }

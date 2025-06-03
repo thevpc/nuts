@@ -89,6 +89,6 @@ public abstract class AbstractNFilter implements NFilter {
 
     @Override
     public NElement describe() {
-        return NElements.of().ofString(toString());
+        return NElements.ofString(toString());
     }
 }

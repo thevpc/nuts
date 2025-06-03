@@ -1,10 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.format.elem.mapper;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementMapper;
-import net.thevpc.nuts.elem.NStringElement;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NMsg;
 
@@ -19,7 +16,7 @@ public class NElementMapperNFilter implements NElementMapper<NFilter> {
 
     @Override
     public NElement createElement(NFilter o, Type typeOfSrc, NElementFactoryContext context) {
-        return context.elem().ofString(o.toString());
+        return NElements.ofString(o.toString());
     }
 
     @Override

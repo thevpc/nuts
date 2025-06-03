@@ -26,7 +26,7 @@ public class NElementMapperNId implements NElementMapper<NId> {
 //                NutsWorkspace ws = context.getSession().getWorkspace();
 //                NutsText n = ws.text().toText(ws.id().formatter(o).setNtf(true).format());
 //                return ws.elem().forPrimitive().buildNutsString(n);
-            return context.elem().ofString(NFormats.of().ofFormat(o).get().setNtf(true).format().toString());
+            return NElements.ofString(NFormats.of().ofFormat(o).get().setNtf(true).format().toString());
         } else {
             return context.defaultObjectToElement(o.toString(), null);
         }

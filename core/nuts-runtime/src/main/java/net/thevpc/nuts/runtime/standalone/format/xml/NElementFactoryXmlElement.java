@@ -298,10 +298,9 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
 
 
     public NElement createElement(String type, String value, NElementFactoryContext context) {
-        NElements f = NElements.of();
         switch (type) {
             case TAG_NULL: {
-                return f.ofNull();
+                return NElements.ofNull();
             }
             case "number": {
                 return context.objectToElement(value, Number.class);
@@ -310,10 +309,10 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
                 return context.objectToElement(value, Boolean.class);
             }
             case "true": {
-                return f.ofTrue();
+                return NElements.ofTrue();
             }
             case "false": {
-                return f.ofFalse();
+                return NElements.ofFalse();
             }
             case "byte": {
                 return context.objectToElement(value, Byte.class);
@@ -531,16 +530,15 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
     }
 
     public NElement createElementObject(Node node, Type typeOfSrc, NElementFactoryContext context, boolean includeTagName) {
-        NElements elements = NElements.of();
         Element element = (Element) node;
         NodeInfo ni = new NodeInfo(element);
 //special object
         String tagName = element.getTagName();
-        NObjectElementBuilder obj = elements.ofObjectBuilder();
+        NObjectElementBuilder obj = NElements.ofObjectBuilder();
         int content = 0;
         int nonContent = 0;
         if (includeTagName) {
-            setObjectField(obj, FIELD_TAG_NAME, elements.ofString(tagName));
+            setObjectField(obj, FIELD_TAG_NAME, NElements.ofString(tagName));
         }
         NamedNodeMap attrs = element.getAttributes();
         for (int i = 0; i < attrs.getLength(); i++) {
@@ -576,34 +574,33 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
             }
         }
         if (content == 0 && nonContent == 0) {
-            return elements.ofString("");
+            return NElements.ofString("");
         }
         if (content >= 0 && nonContent == 0) {
-            return elements.ofString(allContent.toString());
+            return NElements.ofString(allContent.toString());
         }
         return obj.build();
     }
 
     public NElement createElement(Node node, Type typeOfSrc, NElementFactoryContext context, boolean includeTagName) {
-        NElements elements = NElements.of();
         if (node instanceof Attr) {
             Attr at = (Attr) node;
-            return elements.ofObjectBuilder().set(at.getName(), context.objectToElement(at.getValue(), String.class)).build();
+            return NElements.ofObjectBuilder().set(at.getName(), context.objectToElement(at.getValue(), String.class)).build();
         }
         if (node instanceof CDATASection) {
             CDATASection d = (CDATASection) node;
-            return elements.ofString(d.getWholeText());
+            return NElements.ofString(d.getWholeText());
         }
         if (node instanceof Text) {
             Text d = (Text) node;
-            return elements.ofString(d.getWholeText());
+            return NElements.ofString(d.getWholeText());
         }
         Element element = (Element) node;
         NodeInfo ni = new NodeInfo(element);
         switch (ni.type) {
             case TAG_ARRAY: {
                 if (element.getAttributes().getLength() == 0) {
-                    NArrayElementBuilder obj = elements.ofArrayBuilder();
+                    NArrayElementBuilder obj = NElements.ofArrayBuilder();
                     NodeList nodes = element.getChildNodes();
                     for (int i = 0; i < nodes.getLength(); i++) {
                         Node n = (Node) nodes.item(i);
@@ -616,7 +613,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
             }
             case TAG_TRUE: {
                 if (isEmptyXmlElement(element)) {
-                    return elements.ofTrue();
+                    return NElements.ofTrue();
                 }
                 return createElementObject(node, typeOfSrc, context, includeTagName);
             }

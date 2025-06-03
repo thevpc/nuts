@@ -43,7 +43,7 @@ public interface NMatrixElementBuilder extends NElementBuilder {
     NMatrixElementBuilder doWith(Consumer<NMatrixElementBuilder> con);
 
     static NMatrixElementBuilder of() {
-        return NElements.of().ofMatrixBuilder();
+        return NElements.ofMatrixBuilder();
     }
 
 

@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElements;
 
 
@@ -51,7 +52,7 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
     public NCommandConfig findCommand(String name) {
         NPath file = getCommandsFolder().resolve(name + NConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         if (file.exists()) {
-            NCommandConfig c = NElements.of().json().parse(file, NCommandConfig.class);
+            NCommandConfig c = NElementParser.ofJson().parse(file, NCommandConfig.class);
             if (c != null) {
                 c.setName(name);
                 return c;
@@ -106,7 +107,7 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
             if (file.getName().endsWith(NConstants.Files.NUTS_COMMAND_FILE_EXTENSION)) {
                 NCommandConfig c = null;
                 try {
-                    c = NElements.of().json().parse(file, NCommandConfig.class);
+                    c = NElementParser.ofJson().parse(file, NCommandConfig.class);
                 } catch (Exception ex) {
                     _LOGOP().level(Level.FINE).error(ex).log(NMsg.ofC("unable to parse %s", file));
                     //

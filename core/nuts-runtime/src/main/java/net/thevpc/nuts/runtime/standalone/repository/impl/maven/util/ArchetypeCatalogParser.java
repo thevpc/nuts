@@ -73,7 +73,7 @@ public class ArchetypeCatalogParser {
 
         @Override
         public NElement describe() {
-            return NElements.of().ofObjectBuilder()
+            return NElements.ofObjectBuilder()
                     .name("ScanArchetypeCatalog")
                     .set("source",stream.toString())
                     .build();

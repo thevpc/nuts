@@ -8,6 +8,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.backup;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
 
@@ -111,7 +112,6 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
             }
             if (cmdLine.isExecMode()) {
                 NObjectElement[] nutsWorkspaceConfigRef = new NObjectElement[1];
-                NElements elem = NElements.of();
                 NUncompress.of()
                         .from(NPath.of(file))
                         .visit(new NUncompressVisitor() {
@@ -123,8 +123,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                             @Override
                             public boolean visitFile(String path, InputStream inputStream) {
                                 if (("/"+NConstants.Files.WORKSPACE_CONFIG_FILE_NAME).equals(path)) {
-                                    NObjectElement e = elem.json()
-                                            .parse(inputStream, NObjectElement.class).asObject().get();
+                                    NObjectElement e = NElementParser.ofJson().parse(inputStream, NObjectElement.class).asObject().get();
                                     nutsWorkspaceConfigRef[0] = e;
                                     return false;
                                 }

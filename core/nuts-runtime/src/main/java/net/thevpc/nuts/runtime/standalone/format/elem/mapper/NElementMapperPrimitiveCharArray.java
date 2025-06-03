@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.format.elem.mapper;
 
-import net.thevpc.nuts.elem.NArrayElement;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementMapper;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.format.elem.DefaultNElementFactoryService;
 
 import java.lang.reflect.Type;
@@ -20,7 +17,7 @@ public class NElementMapperPrimitiveCharArray implements NElementMapper<char[]> 
 
     @Override
     public NElement createElement(char[] src, Type typeOfSrc, NElementFactoryContext context) {
-        return context.elem().ofString(new String(src));
+        return NElements.ofString(new String(src));
     }
 
     @Override

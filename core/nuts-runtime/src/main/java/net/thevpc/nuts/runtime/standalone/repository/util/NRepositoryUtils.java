@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.repository.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.io.NPath;
@@ -52,7 +53,7 @@ public class NRepositoryUtils {
                         byte[] bytes = r2.readBytes();
                         if (bytes != null) {
                             fileExists = true;
-                            NObjectElement jsonObject = NElements.of().json().parse(bytes).asObject().get();
+                            NObjectElement jsonObject = NElementParser.ofJson().parse(bytes).asObject().get();
                             if (NBlankable.isBlank(r.getLocationType())) {
                                 String o = jsonObject.getStringValue("repositoryType").orNull();
                                 if (!NBlankable.isBlank(o)) {

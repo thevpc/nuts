@@ -1,10 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.solrsearch;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NArrayElement;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.MavenFolderRepository;
@@ -109,7 +106,7 @@ public class MavenSolrSearchCommand {
                             @Override
                             public boolean hasNext() {
                                 if (arr == null) {
-                                    NElement e = NElements.of()
+                                    NElement e = NElementParser.ofJson()
                                             .setLogProgress(true)
                                             .parse(query);
                                     if (e.isObject()) {
@@ -139,11 +136,11 @@ public class MavenSolrSearchCommand {
                             }
                         };
                     }
-                }, () -> NElements.of().ofObjectBuilder().set("url", query.toString()).build());
+                }, () -> NElements.ofObjectBuilder().set("url", query.toString()).build());
                 return it.filter(y -> idFilter == null || idFilter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(y, repo, "MavenSolrSearchCommand")),
                                 () ->
-                                        NElements.of().ofObjectBuilder().set(
-                                                "filterBy", NElements.of().ofString(idFilter == null ? "true" : idFilter.toString())
+                                        NElements.ofObjectBuilder().set(
+                                                "filterBy", NElements.ofString(idFilter == null ? "true" : idFilter.toString())
                                         ).build()
                         )
 //                        .flatMap(

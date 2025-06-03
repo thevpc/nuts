@@ -13,10 +13,7 @@ import java.util.*;
 
 public class NElementMapperMap implements NElementMapper<Map> {
 
-    private final DefaultNElementFactoryService defaultNutsElementFactoryService;
-
-    public NElementMapperMap(DefaultNElementFactoryService defaultNutsElementFactoryService) {
-        this.defaultNutsElementFactoryService = defaultNutsElementFactoryService;
+    public NElementMapperMap() {
     }
 
     @Override
@@ -43,7 +40,7 @@ public class NElementMapperMap implements NElementMapper<Map> {
                 Map.Entry e = (Map.Entry) e0;
                 NElement k = context.objectToElement(e.getKey(), null);
                 if(!(e.getKey() instanceof NElement) && k.isString()){
-                    k=context.elem().ofNameOrString(k.asStringValue().get());
+                    k=NElements.ofNameOrString(k.asStringValue().get());
                 }
                 NElement v = context.objectToElement(e.getValue(), null);
                 m.add(new DefaultNPairElement(k, v, new NElementAnnotation[0],null));
@@ -104,7 +101,7 @@ public class NElementMapperMap implements NElementMapper<Map> {
                 return fillObject(o, new TreeMap(), elemType1, elemType2, to, context);
             }
             default: {
-                return fillObject(o, (Map) defaultNutsElementFactoryService.getTypesRepository().getType(to).newInstance(), elemType1, elemType2, to, context);
+                return fillObject(o, (Map) context.getTypesRepository().getType(to).newInstance(), elemType1, elemType2, to, context);
             }
         }
     }

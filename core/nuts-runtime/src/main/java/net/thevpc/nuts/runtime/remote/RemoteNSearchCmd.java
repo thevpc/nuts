@@ -30,17 +30,16 @@ public class RemoteNSearchCmd extends AbstractNSearchCmd {
 
     @Override
     protected NIterator<NId> getResultIdIteratorBase(Boolean forceInlineDependencies) {
-        NElements e = NElements.of();
-        NObjectElementBuilder eb = e.ofObjectBuilder()
+        NObjectElementBuilder eb = NElements.ofObjectBuilder()
                 .set("execType", getExecType().id())
                 .set("targetApiVersion", getTargetApiVersion().toString())
-                .set("ids", e.ofArrayBuilder().addAll(getIds().stream()
+                .set("ids", NElements.ofArrayBuilder().addAll(getIds().stream()
                         .map(Object::toString).toArray(String[]::new)).build());
         if (getDefinitionFilter() != null) {
             eb.set("filter", NElements.of().toElement(getDefinitionFilter()));
         }
         if (getRepositoryFilter() != null) {
-            eb.set("repositories", e.ofString(getRepositoryFilter().toString()));
+            eb.set("repositories", NElements.ofString(getRepositoryFilter().toString()));
         }
 
         RemoteNWorkspace ws=(RemoteNWorkspace)NWorkspace.get();

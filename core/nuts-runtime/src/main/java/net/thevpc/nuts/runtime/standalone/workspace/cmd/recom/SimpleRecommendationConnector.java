@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.recom;
 import java.io.IOException;
 
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
@@ -52,7 +53,7 @@ public class SimpleRecommendationConnector extends AbstractRecommendationConnect
             try (OutputStream os = http.getOutputStream()) {
                 os.write(out.getBytes(StandardCharsets.UTF_8));
             }
-            return elems.parse(http.getInputStream(), resultType);
+            return NElementParser.ofJson().parse(http.getInputStream(), resultType);
         } catch (IOException | UncheckedIOException ex) {
             throw new NIOException(NMsg.ofC("recommendations are not available : %s", ex.toString()), ex);
         } catch (Exception ex) {

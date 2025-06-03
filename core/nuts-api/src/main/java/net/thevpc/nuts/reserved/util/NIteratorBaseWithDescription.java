@@ -47,7 +47,7 @@
 //    @Override
 //    public NElement describe() {
 //        return NEDesc.safeDescribeOfBase(description, base);
-////        NObjectElement b = NDescribables.resolveOr(base, session, () -> NElements.of().ofObject().build())
+////        NObjectElement b = NDescribables.resolveOr(base, session, () -> NElements.ofObject().build())
 ////                .asObject().get(session);
 ////        NElement a = description.apply(session);
 ////        if (b.isEmpty()) {

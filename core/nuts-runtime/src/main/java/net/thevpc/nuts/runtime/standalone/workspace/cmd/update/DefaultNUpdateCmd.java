@@ -55,7 +55,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
 
         @Override
         public NElement describe() {
-            return NElements.of().ofString("latestVersionFirst");
+            return NElements.ofString("latestVersionFirst");
         }
     };
     private final NComparator<NId> DEFAULT_THEN_LATEST_VERSION_FIRST = new NComparator<NId>() {
@@ -73,7 +73,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
 
         @Override
         public NElement describe() {
-            return NElements.of().ofString("defaultThenLatestVersionFirst");
+            return NElements.ofString("defaultThenLatestVersionFirst");
         }
     };
     private boolean checkFixes = false;

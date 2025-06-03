@@ -248,14 +248,14 @@ public class NExceptionHandler {
                         sessionOut.flush();
                     } else {
                         if (messageFormatted != null) {
-                            session.eout().add(NElements.of().ofObjectBuilder()
+                            session.eout().add(NElements.ofObjectBuilder()
                                     .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().get()))
                                     .set("error", NText.of(messageFormatted).filteredText())
                                     .build()
                             );
                             if (stacktrace) {
-                                session.eout().add(NElements.of().ofObjectBuilder().set("errorTrace",
-                                        NElements.of().ofArrayBuilder().addAll(NStringUtils.stacktraceArray(ex)).build()
+                                session.eout().add(NElements.ofObjectBuilder().set("errorTrace",
+                                        NElements.ofArrayBuilder().addAll(NStringUtils.stacktraceArray(ex)).build()
                                 ).build());
                             }
                             NArrayElementBuilder e = session.eout();
@@ -265,13 +265,13 @@ public class NExceptionHandler {
                             }
                             sessionOut.flush();
                         } else {
-                            session.eout().add(NElements.of().ofObjectBuilder()
+                            session.eout().add(NElements.ofObjectBuilder()
                                     .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().get()))
                                     .set("error", messageString)
                                     .build());
                             if (stacktrace) {
-                                session.eout().add(NElements.of().ofObjectBuilder().set("errorTrace",
-                                        NElements.of().ofArrayBuilder().addAll(NStringUtils.stacktraceArray(ex)).build()
+                                session.eout().add(NElements.ofObjectBuilder().set("errorTrace",
+                                        NElements.ofArrayBuilder().addAll(NStringUtils.stacktraceArray(ex)).build()
                                 ).build());
                             }
                             NArrayElementBuilder e = session.eout();

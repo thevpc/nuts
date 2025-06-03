@@ -24,12 +24,6 @@
  */
 package net.thevpc.nuts.elem;
 
-import net.thevpc.nuts.util.NOptional;
-
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -43,7 +37,7 @@ import java.util.stream.Stream;
  */
 public interface NUpletElement extends NNamedElement, NListContainerElement, Iterable<NElement> {
     static NUpletElement ofEmpty() {
-        return NElements.of().ofEmptyUplet();
+        return NElements.ofUplet();
     }
 
     List<NElement> params();

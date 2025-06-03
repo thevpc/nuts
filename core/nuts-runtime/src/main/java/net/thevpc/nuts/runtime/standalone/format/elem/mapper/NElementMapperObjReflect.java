@@ -19,15 +19,13 @@ import java.util.Map;
 
 public class NElementMapperObjReflect implements NElementMapper<Object> {
 
-    private final DefaultNElementFactoryService defaultNutsElementFactoryService;
 
-    public NElementMapperObjReflect(DefaultNElementFactoryService defaultNutsElementFactoryService) {
-        this.defaultNutsElementFactoryService = defaultNutsElementFactoryService;
+    public NElementMapperObjReflect() {
     }
 
     @Override
     public Object destruct(Object src, Type typeOfSrc, NElementFactoryContext context) {
-        NReflectType m = defaultNutsElementFactoryService.getTypesRepository().getType(typeOfSrc);
+        NReflectType m = context.getTypesRepository().getType(typeOfSrc);
         Map<String, Object> obj = new LinkedHashMap<>();
         for (NReflectProperty property : m.getProperties()) {
             final Object v = property.read(src);
@@ -40,8 +38,8 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
 
     @Override
     public NElement createElement(Object src, Type typeOfSrc, NElementFactoryContext context) {
-        NReflectType m = defaultNutsElementFactoryService.getTypesRepository().getType(typeOfSrc);
-        NObjectElementBuilder obj = context.elem().ofObjectBuilder();
+        NReflectType m = context.getTypesRepository().getType(typeOfSrc);
+        NObjectElementBuilder obj = NElements.ofObjectBuilder();
         for (NReflectProperty property : m.getProperties()) {
             final Object v = property.read(src);
             if (!property.isDefaultValue(v)) {
@@ -152,10 +150,10 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
         if (Modifier.isAbstract(mod)) {
             throw new NIllegalArgumentException(NMsg.ofC("cannot instantiate abstract class %s", typeOfResult));
         }
-        NReflectType m = defaultNutsElementFactoryService.getTypesRepository().getType(typeOfResult);
+        NReflectType m = context.getTypesRepository().getType(typeOfResult);
         Object instance = m.newInstance();
         NObjectElement eobj = o.asObject().get();
-//        NElements prv = context.elem();
+//        NElements prv = NElements;
         for (NReflectProperty property : m.getProperties()) {
             if (property.isWrite()) {
                 NElement v = eobj.get(property.getName()).orNull();

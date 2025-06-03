@@ -158,7 +158,7 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public NOptional<NStringElement> asString() {
-        return NOptional.of((NStringElement) NElements.of().ofString(toString()));
+        return NOptional.of((NStringElement) NElements.ofString(toString()));
     }
 
     @Override
@@ -564,7 +564,7 @@ public abstract class AbstractNElement implements NElement {
             return asListContainer();
         }
         if (isNamedPair()) {
-            NArrayElementBuilder ab = NElements.of().ofArrayBuilder();
+            NArrayElementBuilder ab = NElements.ofArrayBuilder();
             ab.name(asNamed().get().name().orNull());
             NPairElement pair = asPair().get();
             NElement value = pair.value();
@@ -580,7 +580,7 @@ public abstract class AbstractNElement implements NElement {
             }
             return NOptional.of(ab.build());
         } else {
-            NArrayElementBuilder ab = NElements.of().ofArrayBuilder();
+            NArrayElementBuilder ab = NElements.ofArrayBuilder();
             ab.add(this);
             return NOptional.of(ab.build());
         }
@@ -629,25 +629,25 @@ public abstract class AbstractNElement implements NElement {
                 }
                 NPairElement u = asPair().orNull();
                 if (u.isNamed()) {
-                    return NOptional.of(NElements.of().ofPair(u.name().orNull(), u.value()));
+                    return NOptional.of(NElements.ofPair(u.name().orNull(), u.value()));
                 }
                 break;
             }
             case NAMED_UPLET: {
                 NUpletElement u = asUplet().orNull();
-                return NOptional.of(NElements.of().ofPair(u.name().orNull(), u.builder().name(null).build()));
+                return NOptional.of(NElements.ofPair(u.name().orNull(), u.builder().name(null).build()));
             }
             case NAMED_OBJECT: {
                 NObjectElement u = asObject().orNull();
                 if (u.isNamed() && !u.isParametrized()) {
-                    return NOptional.of(NElements.of().ofPair(u.name().orNull(), u.builder().name(null).build()));
+                    return NOptional.of(NElements.ofPair(u.name().orNull(), u.builder().name(null).build()));
                 }
                 break;
             }
             case NAMED_ARRAY: {
                 NArrayElement u = asArray().orNull();
                 if (u.isNamed() && !u.isParametrized()) {
-                    return NOptional.of(NElements.of().ofPair(u.name().orNull(), u.builder().name(null).build()));
+                    return NOptional.of(NElements.ofPair(u.name().orNull(), u.builder().name(null).build()));
                 }
                 break;
             }
@@ -662,7 +662,7 @@ public abstract class AbstractNElement implements NElement {
                 NPairElement u = asPair().orNull();
                 if (u.isNamed()) {
                     NElement v = u.value();
-                    return NOptional.of(NElements.of().ofUplet(u.name().orNull(), v));
+                    return NOptional.of(NElements.ofUplet(u.name().orNull(), v));
                 }
                 break;
             }
@@ -672,14 +672,14 @@ public abstract class AbstractNElement implements NElement {
             case NAMED_OBJECT: {
                 NObjectElement u = asObject().orNull();
                 if (!u.isParametrized()) {
-                    return NOptional.of(NElements.of().ofUplet(u.name().orNull(), u.children().toArray(new NElement[0])));
+                    return NOptional.of(NElements.ofUplet(u.name().orNull(), u.children().toArray(new NElement[0])));
                 }
                 break;
             }
             case NAMED_ARRAY: {
                 NArrayElement u = asArray().orNull();
                 if (!u.isParametrized()) {
-                    return NOptional.of(NElements.of().ofUplet(u.name().orNull(), u.children().toArray(new NElement[0])));
+                    return NOptional.of(NElements.ofUplet(u.name().orNull(), u.children().toArray(new NElement[0])));
                 }
                 break;
             }
@@ -694,20 +694,20 @@ public abstract class AbstractNElement implements NElement {
                 NPairElement u = asPair().orNull();
                 if (u.isNamed()) {
                     NElement v = u.value();
-                    return NOptional.of(NElements.of().ofObjectBuilder(u.name().orNull()).add(v).build());
+                    return NOptional.of(NElements.ofObjectBuilder(u.name().orNull()).add(v).build());
                 }
                 break;
             }
             case NAMED_UPLET: {
                 NUpletElement u = asUplet().orNull();
-                return NOptional.of(NElements.of().ofObjectBuilder(u.name().orNull()).addAll(u.children().toArray(new NElement[0])).build());
+                return NOptional.of(NElements.ofObjectBuilder(u.name().orNull()).addAll(u.children().toArray(new NElement[0])).build());
             }
             case NAMED_OBJECT: {
                 return NOptional.of((NObjectElement) this);
             }
             case NAMED_ARRAY: {
                 NArrayElement u = asArray().orNull();
-                return NOptional.of(NElements.of().ofObjectBuilder(u.name().orNull())
+                return NOptional.of(NElements.ofObjectBuilder(u.name().orNull())
                         .addParams(u.params().orNull())
                         .addAll(u.children().toArray(new NElement[0])).build());
             }
@@ -722,17 +722,17 @@ public abstract class AbstractNElement implements NElement {
                 NPairElement u = asPair().orNull();
                 if (u.isNamed()) {
                     NElement v = u.value();
-                    return NOptional.of(NElements.of().ofArrayBuilder(u.name().orNull()).add(v).build());
+                    return NOptional.of(NElements.ofArrayBuilder(u.name().orNull()).add(v).build());
                 }
                 break;
             }
             case NAMED_UPLET: {
                 NUpletElement u = asUplet().orNull();
-                return NOptional.of(NElements.of().ofArrayBuilder(u.name().orNull()).addAll(u.children().toArray(new NElement[0])).build());
+                return NOptional.of(NElements.ofArrayBuilder(u.name().orNull()).addAll(u.children().toArray(new NElement[0])).build());
             }
             case NAMED_OBJECT: {
                 NObjectElement u = asObject().orNull();
-                return NOptional.of(NElements.of().ofArrayBuilder(u.name().orNull())
+                return NOptional.of(NElements.ofArrayBuilder(u.name().orNull())
                         .addParams(u.params().orNull())
                         .addAll(u.children().toArray(new NElement[0])).build());
             }
@@ -750,17 +750,17 @@ public abstract class AbstractNElement implements NElement {
                 NPairElement u = asPair().orNull();
                 if (u.isNamed()) {
                     NElement v = u.value();
-                    return NOptional.of(NElements.of().ofObjectBuilder(u.name().orNull()).add(v).build());
+                    return NOptional.of(NElements.ofObjectBuilder(u.name().orNull()).add(v).build());
                 }
-                return NOptional.of(NElements.of().ofObjectBuilder().add(this).build());
+                return NOptional.of(NElements.ofObjectBuilder().add(this).build());
             }
             case NAMED_UPLET: {
                 NUpletElement u = asUplet().orNull();
-                return NOptional.of(NElements.of().ofObjectBuilder().addAll(u.children().toArray(new NElement[0])).build());
+                return NOptional.of(NElements.ofObjectBuilder().addAll(u.children().toArray(new NElement[0])).build());
             }
             case UPLET: {
                 NUpletElement u = asUplet().orNull();
-                return NOptional.of(NElements.of().ofObjectBuilder().addAll(u.children().toArray(new NElement[0])).build());
+                return NOptional.of(NElements.ofObjectBuilder().addAll(u.children().toArray(new NElement[0])).build());
             }
             case OBJECT: {
                 return NOptional.of((NObjectElement) this);
@@ -769,7 +769,7 @@ public abstract class AbstractNElement implements NElement {
             case PARAMETRIZED_OBJECT:
             case NAMED_PARAMETRIZED_OBJECT: {
                 NObjectElement u = asObject().orNull();
-                return NOptional.of(NElements.of().ofObjectBuilder().name(u.name().orNull())
+                return NOptional.of(NElements.ofObjectBuilder().name(u.name().orNull())
                         .addParams(u.params().orNull())
                         .addAll(u.children().toArray(new NElement[0])).build());
             }
@@ -778,12 +778,12 @@ public abstract class AbstractNElement implements NElement {
             case PARAMETRIZED_ARRAY:
             case NAMED_PARAMETRIZED_ARRAY: {
                 NArrayElement u = asArray().orNull();
-                return NOptional.of(NElements.of().ofObjectBuilder().name(u.name().orNull())
+                return NOptional.of(NElements.ofObjectBuilder().name(u.name().orNull())
                         .addParams(u.params().orNull())
                         .addAll(u.children().toArray(new NElement[0])).build());
             }
             default:{
-                return NOptional.of(NElements.of().ofObjectBuilder().add(this).build());
+                return NOptional.of(NElements.ofObjectBuilder().add(this).build());
             }
         }
     }
@@ -795,24 +795,24 @@ public abstract class AbstractNElement implements NElement {
                 NPairElement u = asPair().orNull();
                 if (u.isNamed()) {
                     NElement v = u.value();
-                    return NOptional.of(NElements.of().ofArrayBuilder(u.name().orNull()).add(v).build());
+                    return NOptional.of(NElements.ofArrayBuilder(u.name().orNull()).add(v).build());
                 }
-                return NOptional.of(NElements.of().ofArrayBuilder().add(this).build());
+                return NOptional.of(NElements.ofArrayBuilder().add(this).build());
             }
             case NAMED_UPLET: {
                 NUpletElement u = asUplet().orNull();
-                return NOptional.of(NElements.of().ofArrayBuilder().addAll(u.children().toArray(new NElement[0])).build());
+                return NOptional.of(NElements.ofArrayBuilder().addAll(u.children().toArray(new NElement[0])).build());
             }
             case UPLET: {
                 NUpletElement u = asUplet().orNull();
-                return NOptional.of(NElements.of().ofArrayBuilder().addAll(u.children().toArray(new NElement[0])).build());
+                return NOptional.of(NElements.ofArrayBuilder().addAll(u.children().toArray(new NElement[0])).build());
             }
             case OBJECT:
             case NAMED_OBJECT:
             case PARAMETRIZED_OBJECT:
             case NAMED_PARAMETRIZED_OBJECT: {
                 NObjectElement u = asObject().orNull();
-                return NOptional.of(NElements.of().ofArrayBuilder()
+                return NOptional.of(NElements.ofArrayBuilder()
                         .addParams(u.params().orNull())
                         .addAll(u.children().toArray(new NElement[0])).build());
             }
@@ -823,49 +823,48 @@ public abstract class AbstractNElement implements NElement {
             case PARAMETRIZED_ARRAY:
             case NAMED_PARAMETRIZED_ARRAY: {
                 NArrayElement u = asArray().orNull();
-                return NOptional.of(NElements.of().ofArrayBuilder()
+                return NOptional.of(NElements.ofArrayBuilder()
                         .addAll(u.children().toArray(new NElement[0])).build());
             }
             default:{
-                return NOptional.of(NElements.of().ofArrayBuilder().add(this).build());
+                return NOptional.of(NElements.ofArrayBuilder().add(this).build());
             }
         }
     }
 
     @Override
     public NArrayElement wrapIntoArray() {
-        return NElements.of().ofArray(this);
+        return NElements.ofArray(this);
     }
 
     @Override
     public NObjectElement wrapIntoObject() {
-        return NElements.of().ofObjectBuilder().add(this).build();
+        return NElements.ofObjectBuilder().add(this).build();
     }
 
     @Override
     public NUpletElement wrapIntoUplet() {
-        return NElements.of().ofUplet(this);
+        return NElements.ofUplet(this);
     }
 
     @Override
     public NArrayElement wrapIntoNamedArray(String name) {
-        return NElements.of().ofArrayBuilder(name).add(this).build();
+        return NElements.ofArrayBuilder(name).add(this).build();
     }
 
     @Override
     public NObjectElement wrapIntoNamedObject(String name) {
-        return NElements.of().ofObjectBuilder(name).add(this).build();
+        return NElements.ofObjectBuilder(name).add(this).build();
     }
 
     @Override
     public NUpletElement wrapIntoNamedUplet(String name) {
-        return NElements.of().ofUpletBuilder(name).add(this).build();
+        return NElements.ofUpletBuilder(name).add(this).build();
     }
 
     @Override
     public NPairElement wrapIntoNamedPair(String name) {
-        NElements e = NElements.of();
-        return e.ofPairBuilder().key(name).value(this).build();
+        return NElements.ofPair(name,this);
     }
 
     @Override

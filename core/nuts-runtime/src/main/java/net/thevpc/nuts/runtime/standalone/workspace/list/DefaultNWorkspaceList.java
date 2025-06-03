@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.list;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElements;
 
 
@@ -29,7 +30,7 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
         setName(null);
         NPath file = getConfigFile();
         if (file.exists()) {
-            this.config = NElements.of().json().parse(file, NWorkspaceListConfig.class);
+            this.config = NElementParser.ofJson().parse(file, NWorkspaceListConfig.class);
             for (NWorkspaceLocation var : this.config.getWorkspaces()) {
                 this.workspaces.put(var.getUuid(), var);
             }

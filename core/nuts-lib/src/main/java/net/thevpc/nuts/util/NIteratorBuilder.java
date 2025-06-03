@@ -78,7 +78,7 @@ public class NIteratorBuilder<T> {
     }
 
     public static <T> NIteratorBuilder<T> ofArrayValues(T[] t, String n) {
-        return ofArrayValues(t, () -> NElements.of().ofString(n));
+        return ofArrayValues(t, () -> NElements.ofString(n));
     }
 
     public static <T> NIteratorBuilder<T> ofArrayValues(T[] t, Supplier<NElement> n) {

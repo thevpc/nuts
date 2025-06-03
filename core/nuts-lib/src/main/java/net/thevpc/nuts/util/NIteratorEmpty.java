@@ -36,6 +36,6 @@ public class NIteratorEmpty<E> extends NIteratorBase<E> {
 
     @Override
     public NElement describe() {
-        return NElements.of().ofString("empty");
+        return NElements.ofString("empty");
     }
 }

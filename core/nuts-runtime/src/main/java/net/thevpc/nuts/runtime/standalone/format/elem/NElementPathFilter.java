@@ -168,22 +168,20 @@ public class NElementPathFilter {
     }
 
     private static class ArrItemCollectorJsonPath implements NElementPath {
-        private final NElements builder;
 
         public ArrItemCollectorJsonPath() {
-            builder = NElements.of();
         }
 
         @Override
         public List<NElement> filter(NElement element) {
-            NArrayElementBuilder aa = builder.ofArrayBuilder();
+            NArrayElementBuilder aa = NElements.ofArrayBuilder();
             aa.add(element);
             return aa.items();
         }
 
         @Override
         public List<NElement> filter(List<NElement> elements) {
-            NArrayElementBuilder aa = builder.ofArrayBuilder();
+            NArrayElementBuilder aa = NElements.ofArrayBuilder();
             for (NElement element : elements) {
                 aa.add(element);
             }
