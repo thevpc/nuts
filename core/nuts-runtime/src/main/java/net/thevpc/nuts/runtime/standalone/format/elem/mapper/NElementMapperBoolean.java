@@ -4,6 +4,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.elem.NElements;
 
 import java.lang.reflect.Type;
 

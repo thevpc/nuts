@@ -46,13 +46,13 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
 
     private final Map<String, Object> properties = new HashMap<>();
     private final Set<RefItem> visited = new LinkedHashSet<>();
-    private final DefaultNElementParser base;
     private final NReflectRepository repository;
     private boolean ntf;
     private UserElementMapperStore userElementMapperStore;
+    private Predicate<Class<?>> indestructibleObjects;
 
-    public DefaultNElementFactoryContext(DefaultNElementParser base, NReflectRepository repository, UserElementMapperStore userElementMapperStore) {
-        this.base = base;
+    public DefaultNElementFactoryContext(DefaultNElementParser base, NReflectRepository repository, UserElementMapperStore userElementMapperStore,Predicate<Class<?>> indestructibleObjects) {
+        this.indestructibleObjects = indestructibleObjects;
         this.repository = repository;
         this.ntf = base.isNtf();
         this.userElementMapperStore = userElementMapperStore;
@@ -64,7 +64,7 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
 
     @Override
     public Predicate<Class<?>> getIndestructibleObjects() {
-        return base.getIndestructibleObjects();
+        return indestructibleObjects;
     }
 
 

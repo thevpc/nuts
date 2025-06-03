@@ -144,8 +144,7 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
 
     @Override
     public NUpletElementBuilder builder() {
-        return NElements.of()
-                .ofUpletBuilder()
+        return NElements.ofUpletBuilder()
                 .copyFrom(this);
     }
 

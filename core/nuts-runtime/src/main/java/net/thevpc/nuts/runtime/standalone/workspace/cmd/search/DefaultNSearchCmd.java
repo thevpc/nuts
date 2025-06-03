@@ -94,7 +94,6 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
         NFetchStrategy fetchMode = NWorkspaceHelper.validate(session.getFetchStrategy().orDefault());
         Set<NRepository> consideredRepos = new HashSet<>();
         NWorkspaceUtils wu = NWorkspaceUtils.of();
-        NElements elems = NElements.of();
         if (regularIds.length > 0) {
             for (DefaultNSearchInfo.RegularId rid : regularIds) {
                 List<NIterator<? extends NId>> resultForEachAlternative = new ArrayList<>();
@@ -139,7 +138,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                                         if(!NIteratorUtils.isNullOrEmpty(baseIter)) {
                                             NIterator<NId> z = NIteratorBuilder.of(baseIter)
                                                     .named(
-                                                            elems.ofObjectBuilder()
+                                                            NElements.ofObjectBuilder()
                                                                     .set("description", "searchVersions")
                                                                     .set("repository", repoAndMode.getRepository().getName())
                                                                     .set("fetchMode", repoAndMode.getFetchMode().id())
@@ -157,7 +156,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                                         if(!NIteratorUtils.isNullOrEmpty(baseIter)) {
                                             NIterator<NId> z = NIteratorBuilder.of(baseIter)
                                                     .named(
-                                                            elems.ofObjectBuilder()
+                                                            NElements.ofObjectBuilder()
                                                                     .set("description", "search")
                                                                     .set("repository", repoAndMode.getRepository().getName())
                                                                     .set("fetchMode", repoAndMode.getFetchMode().id())
@@ -197,7 +196,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                                                 .setFilter(filter)
                                                 .setFetchMode(repoAndMode.getFetchMode())
                                                 .getResult(),
-                                        NEDesc.of(elems.ofObjectBuilder()
+                                        NEDesc.of(NElements.ofObjectBuilder()
                                                 .set("description", "searchRepository")
                                                 .set("repository", repoAndMode.getRepository().getName())
                                                 .set("fetchMode", repoAndMode.getFetchMode().id())

@@ -13,11 +13,10 @@ public class RemoteNExecCmd extends AbstractNExecCmd {
 
     @Override
     public NExecutableInformation which() {
-        NElements e = NElements.of();
         RemoteNWorkspace ws=(RemoteNWorkspace)NWorkspace.get();
         return ws.remoteCall(
                 ws.createCall("workspace.which",
-                        e.ofObjectBuilder()
+                        NElements.ofObjectBuilder()
                                 .build()
                 ),
                 NExecutableInformation.class
@@ -27,12 +26,11 @@ public class RemoteNExecCmd extends AbstractNExecCmd {
     @Override
     public NExecCmd run() {
         NSession session=NSession.of();
-        NElements e = NElements.of();
         RemoteNWorkspace ws=(RemoteNWorkspace)NWorkspace.get();
         try {
             int r = ws.remoteCall(
                     ws.createCall("workspace.exec",
-                            e.ofObjectBuilder()
+                            NElements.ofObjectBuilder()
                                     .set("dry", session.isDry())
                                     .set("failFast", failFast)
                                     .build()

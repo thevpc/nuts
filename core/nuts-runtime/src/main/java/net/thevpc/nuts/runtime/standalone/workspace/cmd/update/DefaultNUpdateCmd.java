@@ -393,36 +393,34 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                 }
             }
         } else {
-            NElements e = NElements.of();
-
             if (updates.size() == 0 && notInstalled.size() == 0) {
-                out.println(e.ofObjectBuilder()
+                out.println(NElements.ofObjectBuilder()
                         .set("message", "all packages are up-to-date. You are running latest version" + (result.getAllResults().size() > 1 ? "s" : "") + ".")
                         .build());
             } else {
-                NArrayElementBuilder arrayElementBuilder = e.ofArrayBuilder();
+                NArrayElementBuilder arrayElementBuilder = NElements.ofArrayBuilder();
                 for (NUpdateResult update : all) {
                     if (update.getInstalled() == null) {
-                        arrayElementBuilder.add(e.ofObjectBuilder()
+                        arrayElementBuilder.add(NElements.ofObjectBuilder()
                                 .set("package", update.getId().getShortName())
                                 .set("status", "not-installed")
                                 .build());
                     } else if (update.isUpdateVersionAvailable()) {
-                        arrayElementBuilder.add(e.ofObjectBuilder()
+                        arrayElementBuilder.add(NElements.ofObjectBuilder()
                                 .set("package", update.getAvailable().getId().getShortName())
                                 .set("status", "update-version-available")
                                 .set("localVersion", update.getInstalled().getId().getVersion().toString())
                                 .set("newVersion", update.getAvailable().getId().getVersion().toString())
                                 .build());
                     } else if (update.isUpdateStatusAvailable()) {
-                        arrayElementBuilder.add(e.ofObjectBuilder()
+                        arrayElementBuilder.add(NElements.ofObjectBuilder()
                                 .set("package", update.getAvailable().getId().getShortName())
                                 .set("localVersion", update.getInstalled().getId().getVersion().toString())
                                 .set("status", "update-default-available")
                                 .set("newVersion", "set as default")
                                 .build());
                     } else {
-                        arrayElementBuilder.add(e.ofObjectBuilder()
+                        arrayElementBuilder.add(NElements.ofObjectBuilder()
                                 .set("package", update.getId().getShortName())
                                 .set("localVersion", update.getInstalled().getId().getVersion().toString())
                                 .set("status", "up-to-date")
