@@ -3,7 +3,7 @@ package net.thevpc.nuts;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public interface NExecCmdExtensionContext extends NSessionProvider {
+public interface NExecCmdExtensionContext  {
     String getTarget();
 
     String[] getCommand();

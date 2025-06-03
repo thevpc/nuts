@@ -8,7 +8,6 @@ import java.io.*;
 public class DefaultNExecCmdExtensionContext implements NExecCmdExtensionContext, Closeable {
     private String target;
     private String[] command;
-    private NSession session;
     private NExecInput xin;
     private NExecOutput xout;
     private NExecOutput xerr;
@@ -17,14 +16,14 @@ public class DefaultNExecCmdExtensionContext implements NExecCmdExtensionContext
     private OutHolder herr;
     private NExecCmd execCommand;
 
-    public DefaultNExecCmdExtensionContext(String target, String[] command, NSession session, NExecInput in, NExecOutput out, NExecOutput err, NExecCmd execCommand) {
+    public DefaultNExecCmdExtensionContext(String target, String[] command, NExecInput in, NExecOutput out, NExecOutput err, NExecCmd execCommand) {
         this.target = target;
         this.command = command;
-        this.session = session;
         this.xin = in;
         this.xout = out;
         this.xerr = err;
         this.execCommand = execCommand;
+        NSession session = NSession.of();
         switch (in.getType()) {
             case NULL: {
                 hin = new MyInHolder(NIO.ofNullRawInputStream(), false, null);
@@ -152,11 +151,6 @@ public class DefaultNExecCmdExtensionContext implements NExecCmdExtensionContext
     @Override
     public String[] getCommand() {
         return command;
-    }
-
-    @Override
-    public NSession getSession() {
-        return session;
     }
 
     @Override

@@ -90,7 +90,6 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformati
 //                session);
 
 
-        NSession session = NSession.of();
         return new AbstractSyncIProcessExecHelper() {
             @Override
             public int exec() {
@@ -98,7 +97,6 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformati
                 try(DefaultNExecCmdExtensionContext d=new DefaultNExecCmdExtensionContext(
                         execCommand.getConnexionString(),
                         cmd,
-                        session,
                         in,
                         out,
                         err,
