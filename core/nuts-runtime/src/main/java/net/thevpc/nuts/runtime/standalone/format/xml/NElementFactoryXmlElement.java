@@ -300,58 +300,58 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
     public NElement createElement(String type, String value, NElementFactoryContext context) {
         switch (type) {
             case TAG_NULL: {
-                return NElements.ofNull();
+                return NElement.ofNull();
             }
             case "number": {
-                return context.objectToElement(value, Number.class);
+                return context.createElement(value, Number.class);
             }
             case "boolean": {
-                return context.objectToElement(value, Boolean.class);
+                return context.createElement(value, Boolean.class);
             }
             case "true": {
-                return NElements.ofTrue();
+                return NElement.ofTrue();
             }
             case "false": {
-                return NElements.ofFalse();
+                return NElement.ofFalse();
             }
             case "byte": {
-                return context.objectToElement(value, Byte.class);
+                return context.createElement(value, Byte.class);
             }
             case "short": {
-                return context.objectToElement(value, Short.class);
+                return context.createElement(value, Short.class);
             }
             case "int": {
-                return context.objectToElement(value, Integer.class);
+                return context.createElement(value, Integer.class);
             }
             case "long": {
-                return context.objectToElement(value, Long.class);
+                return context.createElement(value, Long.class);
             }
             case "float": {
-                return context.objectToElement(value, Float.class);
+                return context.createElement(value, Float.class);
             }
             case "double": {
-                return context.objectToElement(value, Double.class);
+                return context.createElement(value, Double.class);
             }
             case "char": {
-                return context.objectToElement(value, Character.class);
+                return context.createElement(value, Character.class);
             }
             case "string": {
-                return context.objectToElement(value, String.class);
+                return context.createElement(value, String.class);
             }
             case "nuts-string": {
-                return context.objectToElement(value, NText.class);
+                return context.createElement(value, NText.class);
             }
             case "instant": {
-                return context.objectToElement(value, Instant.class);
+                return context.createElement(value, Instant.class);
             }
             case "date": {
-                return context.objectToElement(value, Date.class);
+                return context.createElement(value, Date.class);
             }
             case "file": {
-                return context.objectToElement(value, File.class);
+                return context.createElement(value, File.class);
             }
             case "path": {
-                return context.objectToElement(value, Path.class);
+                return context.createElement(value, Path.class);
             }
             default: {
                 //special object
@@ -534,16 +534,16 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
         NodeInfo ni = new NodeInfo(element);
 //special object
         String tagName = element.getTagName();
-        NObjectElementBuilder obj = NElements.ofObjectBuilder();
+        NObjectElementBuilder obj = NElement.ofObjectBuilder();
         int content = 0;
         int nonContent = 0;
         if (includeTagName) {
-            setObjectField(obj, FIELD_TAG_NAME, NElements.ofString(tagName));
+            setObjectField(obj, FIELD_TAG_NAME, NElement.ofString(tagName));
         }
         NamedNodeMap attrs = element.getAttributes();
         for (int i = 0; i < attrs.getLength(); i++) {
             Attr n = (Attr) attrs.item(i);
-            setObjectField(obj, n.getName(), context.objectToElement(n.getValue(), null));
+            setObjectField(obj, n.getName(), context.createElement(n.getValue()));
             nonContent++;
         }
         NodeList children = element.getChildNodes();
@@ -574,10 +574,10 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
             }
         }
         if (content == 0 && nonContent == 0) {
-            return NElements.ofString("");
+            return NElement.ofString("");
         }
         if (content >= 0 && nonContent == 0) {
-            return NElements.ofString(allContent.toString());
+            return NElement.ofString(allContent.toString());
         }
         return obj.build();
     }
@@ -585,22 +585,22 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
     public NElement createElement(Node node, Type typeOfSrc, NElementFactoryContext context, boolean includeTagName) {
         if (node instanceof Attr) {
             Attr at = (Attr) node;
-            return NElements.ofObjectBuilder().set(at.getName(), context.objectToElement(at.getValue(), String.class)).build();
+            return NElement.ofObjectBuilder().set(at.getName(), context.createElement(at.getValue(), String.class)).build();
         }
         if (node instanceof CDATASection) {
             CDATASection d = (CDATASection) node;
-            return NElements.ofString(d.getWholeText());
+            return NElement.ofString(d.getWholeText());
         }
         if (node instanceof Text) {
             Text d = (Text) node;
-            return NElements.ofString(d.getWholeText());
+            return NElement.ofString(d.getWholeText());
         }
         Element element = (Element) node;
         NodeInfo ni = new NodeInfo(element);
         switch (ni.type) {
             case TAG_ARRAY: {
                 if (element.getAttributes().getLength() == 0) {
-                    NArrayElementBuilder obj = NElements.ofArrayBuilder();
+                    NArrayElementBuilder obj = NElement.ofArrayBuilder();
                     NodeList nodes = element.getChildNodes();
                     for (int i = 0; i < nodes.getLength(); i++) {
                         Node n = (Node) nodes.item(i);
@@ -613,85 +613,85 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
             }
             case TAG_TRUE: {
                 if (isEmptyXmlElement(element)) {
-                    return NElements.ofTrue();
+                    return NElement.ofTrue();
                 }
                 return createElementObject(node, typeOfSrc, context, includeTagName);
             }
             case TAG_BOOLEAN: {
                 if (isTextOnlyXmlElement(element)) {
-                    return context.objectToElement(resolveValue(element), Boolean.class);
+                    return context.createElement(resolveValue(element), Boolean.class);
                 }
                 return createElementObject(node, typeOfSrc, context, includeTagName);
             }
             case TAG_BYTE: {
                 if (isTextOnlyXmlElement(element)) {
-                    return context.objectToElement(resolveValue(element), Byte.class);
+                    return context.createElement(resolveValue(element), Byte.class);
                 }
                 return createElementObject(node, typeOfSrc, context, includeTagName);
             }
             case TAG_SHORT: {
                 if (isTextOnlyXmlElement(element)) {
-                    return context.objectToElement(resolveValue(element), Short.class);
+                    return context.createElement(resolveValue(element), Short.class);
                 }
                 return createElementObject(node, typeOfSrc, context, includeTagName);
             }
             case TAG_INT: {
                 if (isTextOnlyXmlElement(element)) {
-                    return context.objectToElement(resolveValue(element), Integer.class);
+                    return context.createElement(resolveValue(element), Integer.class);
                 }
                 return createElementObject(node, typeOfSrc, context, includeTagName);
             }
             case TAG_LONG: {
                 if (isTextOnlyXmlElement(element)) {
-                    return context.objectToElement(resolveValue(element), Long.class);
+                    return context.createElement(resolveValue(element), Long.class);
                 }
                 return createElementObject(node, typeOfSrc, context, includeTagName);
             }
             case TAG_FLOAT: {
                 if (isTextOnlyXmlElement(element)) {
-                    return context.objectToElement(resolveValue(element), Float.class);
+                    return context.createElement(resolveValue(element), Float.class);
                 }
                 return createElementObject(node, typeOfSrc, context, includeTagName);
             }
             case TAG_DOUBLE: {
                 if (isTextOnlyXmlElement(element)) {
-                    return context.objectToElement(resolveValue(element), Double.class);
+                    return context.createElement(resolveValue(element), Double.class);
                 }
                 return createElementObject(node, typeOfSrc, context, includeTagName);
             }
             case TAG_CHAR: {
                 if (isTextOnlyXmlElement(element)) {
-                    return context.objectToElement(resolveValue(element), Character.class);
+                    return context.createElement(resolveValue(element), Character.class);
                 }
                 return createElementObject(node, typeOfSrc, context, includeTagName);
             }
             case TAG_STRING: {
                 if (isTextOnlyXmlElement(element)) {
-                    return context.objectToElement(resolveValue(element), String.class);
+                    return context.createElement(resolveValue(element), String.class);
                 }
                 return createElementObject(node, typeOfSrc, context, includeTagName);
             }
             case TAG_INSTANT: {
                 if (isTextOnlyXmlElement(element)) {
-                    return context.objectToElement(resolveValue(element), Instant.class);
+                    return context.createElement(resolveValue(element), Instant.class);
                 }
                 return createElementObject(node, typeOfSrc, context, includeTagName);
             }
             case TAG_DATE: {
                 if (isTextOnlyXmlElement(element)) {
-                    return context.objectToElement(resolveValue(element), Date.class);
+                    return context.createElement(resolveValue(element), Date.class);
                 }
                 return createElementObject(node, typeOfSrc, context, includeTagName);
             }
             case TAG_FILE: {
                 if (isTextOnlyXmlElement(element)) {
-                    return context.objectToElement(resolveValue(element), File.class);
+                    return context.createElement(resolveValue(element), File.class);
                 }
                 return createElementObject(node, typeOfSrc, context, includeTagName);
             }
             case TAG_PATH: {
                 if (isTextOnlyXmlElement(element)) {
-                    return context.objectToElement(resolveValue(element), Path.class);
+                    return context.createElement(resolveValue(element), Path.class);
                 }
                 return createElementObject(node, typeOfSrc, context, includeTagName);
             }

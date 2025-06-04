@@ -3,8 +3,6 @@ package net.thevpc.nuts.runtime.standalone.format.elem.mapper;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.elem.NElements;
 
 import java.lang.reflect.Type;
 
@@ -17,7 +15,7 @@ public class NElementMapperBoolean implements NElementMapper<Boolean> {
 
     @Override
     public NElement createElement(Boolean o, Type typeOfSrc, NElementFactoryContext context) {
-        return NElements.ofBoolean((Boolean) o);
+        return NElement.ofBoolean((Boolean) o);
     }
 
     @Override

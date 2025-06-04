@@ -19,14 +19,14 @@ public class NElementMapperNDescriptorLicense implements NElementMapper<NDescrip
 
     @Override
     public NElement createElement(NDescriptorLicense o, Type typeOfSrc, NElementFactoryContext context) {
-        return context.defaultObjectToElement(
+        return context.defaultCreateElement(
                 new DefaultNDescriptorLicenseBuilder(o), null
         );
     }
 
     @Override
     public NDescriptorLicense createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        DefaultNDescriptorLicenseBuilder builder = (DefaultNDescriptorLicenseBuilder) context.defaultElementToObject(o, DefaultNDescriptorLicenseBuilder.class);
+        DefaultNDescriptorLicenseBuilder builder = (DefaultNDescriptorLicenseBuilder) context.defaultCreateObject(o, DefaultNDescriptorLicenseBuilder.class);
         return new DefaultNDescriptorLicenseBuilder(builder).build();
     }
 

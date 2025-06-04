@@ -7,7 +7,6 @@ import net.thevpc.nuts.elem.NElementMapper;
 import net.thevpc.nuts.reflect.NReflectType;
 import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
 import net.thevpc.nuts.runtime.standalone.format.elem.DefaultNArrayElement;
-import net.thevpc.nuts.runtime.standalone.format.elem.DefaultNElementFactoryService;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -31,13 +30,13 @@ public class NElementMapperCollection implements NElementMapper {
     @Override
     public NElement createElement(Object o, Type typeOfSrc, NElementFactoryContext context) {
         Collection<Object> coll = (Collection) o;
-        List<NElement> collect = coll.stream().map(x -> context.objectToElement(x, null)).collect(Collectors.toList());
+        List<NElement> collect = coll.stream().map(x -> context.createElement(x)).collect(Collectors.toList());
         return new DefaultNArrayElement(null,null,collect, new NElementAnnotation[0],null);
     }
 
     public Collection fillObject(NElement o, Collection coll, Type elemType, Type to, NElementFactoryContext context) {
         for (NElement nutsElement : o.asArray().get().children()) {
-            coll.add(context.elementToObject(nutsElement, elemType));
+            coll.add(context.createObject(nutsElement, elemType));
         }
         return coll;
     }

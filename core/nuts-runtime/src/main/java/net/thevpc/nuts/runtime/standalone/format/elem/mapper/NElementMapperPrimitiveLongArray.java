@@ -28,7 +28,7 @@ public class NElementMapperPrimitiveLongArray implements NElementMapper<long[]> 
         NArrayElement earr = o.asArray().get();
         long[] arr = new long[earr.size()];
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = (long) context.elementToObject(earr.get(i).get(), long.class);
+            arr[i] = (long) context.createObject(earr.get(i).get(), long.class);
         }
         return arr;
     }

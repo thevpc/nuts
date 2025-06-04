@@ -1,7 +1,6 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
 
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -36,6 +35,6 @@ public class NIteratorEmpty<E> extends NIteratorBase<E> {
 
     @Override
     public NElement describe() {
-        return NElements.ofString("empty");
+        return NElement.ofString("empty");
     }
 }

@@ -4,8 +4,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NInputStreamProvider;
 import net.thevpc.nuts.io.NReaderProvider;
-import net.thevpc.nuts.runtime.standalone.text.DefaultNTextManagerModel;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -340,7 +338,7 @@ public class DefaultNElementFactory  implements NElementFactory {
         if (value == null) {
             return ofNull();
         }
-        return NElements.isValidElementName(value) ? new DefaultNStringElement(NElementType.NAME, value, null, null)
+        return NElementUtils.isValidElementName(value) ? new DefaultNStringElement(NElementType.NAME, value, null, null)
                 : new DefaultNStringElement(NElementType.DOUBLE_QUOTED_STRING, value, null, null)
                 ;
     }

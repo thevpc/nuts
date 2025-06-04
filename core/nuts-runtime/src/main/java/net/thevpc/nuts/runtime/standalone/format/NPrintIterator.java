@@ -8,9 +8,7 @@ package net.thevpc.nuts.runtime.standalone.format;
 import java.util.Iterator;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NEDesc;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.format.NIterableFormat;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.util.NIteratorBase;
@@ -35,7 +33,7 @@ public class NPrintIterator<T> extends NIteratorBase<T> {
         this.listFormat = NSession.of().getIterableOutput();
         this.displayOptions = displayOptions;
         if (this.listFormat == null) {
-            this.listFormat = NElements.of().setContentType(NSession.of().getOutputFormat().orDefault()).iter(out);
+            this.listFormat = NElementFormat.of().setContentType(NSession.of().getOutputFormat().orDefault()).iter(out);
         }
         this.listFormat
                 .configure(true, displayOptions.toCmdLineOptions())
@@ -46,7 +44,7 @@ public class NPrintIterator<T> extends NIteratorBase<T> {
     public NElement describe() {
         return NEDesc.describeResolveOrDestructAsObject(curr)
                 .builder()
-                .set("print", NElements.ofObjectBuilder().set("format",listFormat.getOutputFormat().id()).build())
+                .set("print", NElement.ofObjectBuilder().set("format",listFormat.getOutputFormat().id()).build())
                 .build();
     }
 

@@ -45,7 +45,7 @@ public class NElementMapperNDependency implements NElementMapper<NDependency> {
         NText format = NFormats.of().ofFormat(o).get()
                 .setNtf(context.isNtf())
                 .format();
-        return context.defaultObjectToElement(
+        return context.defaultCreateElement(
                 format, null);
 //                }
 //            }
@@ -57,7 +57,7 @@ public class NElementMapperNDependency implements NElementMapper<NDependency> {
         if (o.type().isString()) {
             return NDependency.get(o.asStringValue().get()).get();
         }
-        NDependencyBuilder builder = context.defaultElementToObject(o, DefaultNDependencyBuilder.class);
+        NDependencyBuilder builder = context.defaultCreateObject(o, DefaultNDependencyBuilder.class);
         return NDependencyBuilder.of().copyFrom(builder).build();
     }
 

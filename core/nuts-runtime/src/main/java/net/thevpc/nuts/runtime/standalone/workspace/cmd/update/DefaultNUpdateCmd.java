@@ -12,7 +12,6 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.format.NPositionType;
@@ -55,7 +54,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
 
         @Override
         public NElement describe() {
-            return NElements.ofString("latestVersionFirst");
+            return NElement.ofString("latestVersionFirst");
         }
     };
     private final NComparator<NId> DEFAULT_THEN_LATEST_VERSION_FIRST = new NComparator<NId>() {
@@ -73,7 +72,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
 
         @Override
         public NElement describe() {
-            return NElements.ofString("defaultThenLatestVersionFirst");
+            return NElement.ofString("defaultThenLatestVersionFirst");
         }
     };
     private boolean checkFixes = false;
@@ -394,33 +393,33 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
             }
         } else {
             if (updates.size() == 0 && notInstalled.size() == 0) {
-                out.println(NElements.ofObjectBuilder()
+                out.println(NElement.ofObjectBuilder()
                         .set("message", "all packages are up-to-date. You are running latest version" + (result.getAllResults().size() > 1 ? "s" : "") + ".")
                         .build());
             } else {
-                NArrayElementBuilder arrayElementBuilder = NElements.ofArrayBuilder();
+                NArrayElementBuilder arrayElementBuilder = NElement.ofArrayBuilder();
                 for (NUpdateResult update : all) {
                     if (update.getInstalled() == null) {
-                        arrayElementBuilder.add(NElements.ofObjectBuilder()
+                        arrayElementBuilder.add(NElement.ofObjectBuilder()
                                 .set("package", update.getId().getShortName())
                                 .set("status", "not-installed")
                                 .build());
                     } else if (update.isUpdateVersionAvailable()) {
-                        arrayElementBuilder.add(NElements.ofObjectBuilder()
+                        arrayElementBuilder.add(NElement.ofObjectBuilder()
                                 .set("package", update.getAvailable().getId().getShortName())
                                 .set("status", "update-version-available")
                                 .set("localVersion", update.getInstalled().getId().getVersion().toString())
                                 .set("newVersion", update.getAvailable().getId().getVersion().toString())
                                 .build());
                     } else if (update.isUpdateStatusAvailable()) {
-                        arrayElementBuilder.add(NElements.ofObjectBuilder()
+                        arrayElementBuilder.add(NElement.ofObjectBuilder()
                                 .set("package", update.getAvailable().getId().getShortName())
                                 .set("localVersion", update.getInstalled().getId().getVersion().toString())
                                 .set("status", "update-default-available")
                                 .set("newVersion", "set as default")
                                 .build());
                     } else {
-                        arrayElementBuilder.add(NElements.ofObjectBuilder()
+                        arrayElementBuilder.add(NElement.ofObjectBuilder()
                                 .set("package", update.getId().getShortName())
                                 .set("localVersion", update.getInstalled().getId().getVersion().toString())
                                 .set("status", "up-to-date")

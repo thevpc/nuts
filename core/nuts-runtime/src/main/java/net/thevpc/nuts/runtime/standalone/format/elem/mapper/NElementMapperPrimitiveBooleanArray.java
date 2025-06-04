@@ -28,7 +28,7 @@ public class NElementMapperPrimitiveBooleanArray implements NElementMapper<boole
         NArrayElement earr = o.asArray().get();
         boolean[] arr = new boolean[earr.size()];
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = (boolean) context.elementToObject(earr.get(i).get(), boolean.class);
+            arr[i] = (boolean) context.createObject(earr.get(i).get(), boolean.class);
         }
         return arr;
     }

@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.format.elem.mapper;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.format.elem.DefaultNPairElement;
-import net.thevpc.nuts.runtime.standalone.format.elem.DefaultNElementFactoryService;
 import net.thevpc.nuts.runtime.standalone.format.elem.DefaultNObjectElement;
 import net.thevpc.nuts.util.NMsg;
 
@@ -38,11 +37,11 @@ public class NElementMapperMap implements NElementMapper<Map> {
         if (je != null) {
             for (Object e0 : je.entrySet()) {
                 Map.Entry e = (Map.Entry) e0;
-                NElement k = context.objectToElement(e.getKey(), null);
+                NElement k = context.createElement(e.getKey());
                 if(!(e.getKey() instanceof NElement) && k.isString()){
-                    k=NElements.ofNameOrString(k.asStringValue().get());
+                    k= NElement.ofNameOrString(k.asStringValue().get());
                 }
-                NElement v = context.objectToElement(e.getValue(), null);
+                NElement v = context.createElement(e.getValue());
                 m.add(new DefaultNPairElement(k, v, new NElementAnnotation[0],null));
             }
         }
@@ -55,14 +54,14 @@ public class NElementMapperMap implements NElementMapper<Map> {
                 NPairElement kv = (NPairElement) ee;
                 NElement k = kv.key();
                 NElement v = kv.value();
-                all.put(context.elementToObject(k, elemType1), context.elementToObject(v, elemType2));
+                all.put(context.createObject(k, elemType1), context.createObject(v, elemType2));
             }
         } else if (o.type() == NElementType.ARRAY) {
             for (NElement ee : o.asArray().get().children()) {
                 NPairElement kv = (NPairElement) ee;
                 NElement k = kv.key();
                 NElement v = kv.value();
-                all.put(context.elementToObject(k, elemType1), context.elementToObject(v, elemType2));
+                all.put(context.createObject(k, elemType1), context.createObject(v, elemType2));
             }
         } else {
             throw new NUnsupportedEnumException(o.type());

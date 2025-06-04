@@ -17,12 +17,12 @@ public class NElementMapperNIdLocation implements NElementMapper<NIdLocation> {
 
     @Override
     public NElement createElement(NIdLocation o, Type typeOfSrc, NElementFactoryContext context) {
-        return context.defaultObjectToElement(o, null);
+        return context.defaultCreateElement(o, null);
     }
 
     @Override
     public NIdLocation createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        Map builder = context.defaultElementToObject(o, Map.class);
+        Map builder = context.defaultCreateObject(o, Map.class);
         return new NIdLocation(
                 (String) builder.get("url"),
                 (String) builder.get("region"),

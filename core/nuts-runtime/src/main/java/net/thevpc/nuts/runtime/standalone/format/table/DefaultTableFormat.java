@@ -738,7 +738,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                             NPairElement nee=(NPairElement) ne;
                             NElement k = nee.key();
                             if (!k.isString()) {
-                                k = NElements.ofString(
+                                k = NElement.ofString(
                                         k.toString()
                                 );
                             }

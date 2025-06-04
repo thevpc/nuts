@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.list;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.elem.NElements;
 
 
@@ -116,9 +117,7 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
                 ? null
                 : new ArrayList<>(this.workspaces.values()));
         NPath file = getConfigFile();
-        NElements.of().json().setValue(this.config)
-                .setNtf(false)
-                .print(file);
+        NElementWriter.ofJson().write(this.config,file);
     }
 
     public DefaultNWorkspaceList setWorkspaces(Map<String, NWorkspaceLocation> workspaces) {

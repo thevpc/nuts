@@ -28,7 +28,6 @@ package net.thevpc.nuts.elem;
 import net.thevpc.nuts.util.NMapStrategy;
 import net.thevpc.nuts.util.NOptional;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -43,7 +42,7 @@ public interface NMatrixElementBuilder extends NElementBuilder {
     NMatrixElementBuilder doWith(Consumer<NMatrixElementBuilder> con);
 
     static NMatrixElementBuilder of() {
-        return NElements.ofMatrixBuilder();
+        return NElement.ofMatrixBuilder();
     }
 
 

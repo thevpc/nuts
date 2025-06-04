@@ -7,7 +7,6 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
 
 import java.util.Arrays;
@@ -78,7 +77,7 @@ public class NIteratorBuilder<T> {
     }
 
     public static <T> NIteratorBuilder<T> ofArrayValues(T[] t, String n) {
-        return ofArrayValues(t, () -> NElements.ofString(n));
+        return ofArrayValues(t, () -> NElement.ofString(n));
     }
 
     public static <T> NIteratorBuilder<T> ofArrayValues(T[] t, Supplier<NElement> n) {

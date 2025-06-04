@@ -29,7 +29,6 @@ package net.thevpc.nuts.util;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElementDescribable;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.reserved.util.NUnsafeCallableBaseFromJavaCallable;
 import net.thevpc.nuts.reserved.util.NUnsafeCallableFromCallable;
 import net.thevpc.nuts.reserved.util.NUnsafeCallableWithDescription;
@@ -58,7 +57,7 @@ public interface NUnsafeCallable<T> extends NElementDescribable<NUnsafeCallable<
     T call() throws Exception;
 
     default NElement describe() {
-        return NElements.ofString(toString());
+        return NElement.ofString(toString());
     }
 
     @Override

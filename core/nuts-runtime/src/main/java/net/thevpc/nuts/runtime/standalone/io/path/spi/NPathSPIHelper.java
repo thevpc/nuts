@@ -94,7 +94,7 @@ public class NPathSPIHelper {
 
         @Override
         public NElement describe() {
-            return NElements.ofObjectBuilder()
+            return NElement.ofObjectBuilder()
                     .name("ScanPath")
                     .set("path", NElements.of().toElement(basePath))
                     .set("maxDepth",maxDepth)

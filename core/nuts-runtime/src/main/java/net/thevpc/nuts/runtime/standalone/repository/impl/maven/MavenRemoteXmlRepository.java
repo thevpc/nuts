@@ -25,7 +25,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
@@ -100,7 +100,7 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
                     }
                     return ret.iterator();
                 }
-                , () -> NElements.ofObjectBuilder()
+                , () -> NElement.ofObjectBuilder()
                         .name("ScanMavenMetadataXml")
                         .set("path", metadataURL.toString())
                         .build()

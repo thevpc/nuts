@@ -28,7 +28,7 @@ public class NElementMapperFloatArray implements NElementMapper<float[]> {
         NArrayElement earr = o.asArray().get();
         float[] arr = new float[earr.size()];
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = (float) context.elementToObject(earr.get(i).get(), float.class);
+            arr[i] = (float) context.createObject(earr.get(i).get(), float.class);
         }
         return arr;
     }

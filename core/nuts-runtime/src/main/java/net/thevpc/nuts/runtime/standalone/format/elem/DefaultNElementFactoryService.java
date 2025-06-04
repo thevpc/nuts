@@ -26,44 +26,22 @@ package net.thevpc.nuts.runtime.standalone.format.elem;
 
 import net.thevpc.nuts.elem.*;
 
-import java.io.File;
-
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.NEnvCondition;
-import net.thevpc.nuts.NEnvConditionBuilder;
-import net.thevpc.nuts.NIdLocation;
-import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.format.elem.mapper.*;
 import net.thevpc.nuts.runtime.standalone.format.elem.parser.mapperstore.DefaultElementMapperStore;
-import net.thevpc.nuts.runtime.standalone.format.xml.NElementFactoryXmlDocument;
-import net.thevpc.nuts.runtime.standalone.format.xml.NElementFactoryXmlElement;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.util.NClassMap;
-import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.reflect.NReflectRepository;
-import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.spi.NRepositoryLocation;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.util.NFilter;
-import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMsg;
 
 /**
  *
@@ -205,14 +183,14 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
 
     protected NElement createElement(Object o, Type expectedType, NElementFactoryContext context, boolean defaultOnly) {
         if (o == null) {
-            return NElements.ofNull();
+            return NElement.ofNull();
         }
         if (expectedType == null) {
             expectedType = o.getClass();
         }
         if (context.getIndestructibleObjects() != null) {
             if (context.getIndestructibleObjects().test(o.getClass())) {
-                return NElements.ofCustom(o);
+                return NElement.ofCustom(o);
             }
         }
         NElementMapper mapper = context.getMapper(expectedType, defaultOnly);
@@ -251,12 +229,12 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
             List<NElement> preloaded = new ArrayList<>();
             int length = Array.getLength(array);
             for (int i = 0; i < length; i++) {
-                preloaded.add(context.objectToElement(Array.get(array, i), null));
+                preloaded.add(context.createElement(Array.get(array, i)));
             }
             return new DefaultNArrayElement(null,null,preloaded, new NElementAnnotation[0],null);
         } else {
             return new DefaultNArrayElement(null,null,
-                    Arrays.stream((Object[]) array).map(x -> context.objectToElement(x, null)).collect(Collectors.toList())
+                    Arrays.stream((Object[]) array).map(x -> context.createElement(x)).collect(Collectors.toList())
                     ,new NElementAnnotation[0],null
             );
         }

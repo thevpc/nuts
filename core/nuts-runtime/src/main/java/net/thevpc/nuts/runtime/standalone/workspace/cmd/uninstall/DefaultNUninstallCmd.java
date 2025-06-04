@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.io.NMemoryPrintStream;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -104,11 +104,11 @@ public class DefaultNUninstallCmd extends AbstractNUninstallCmd {
                         );
                 out.resetLine().println(msg);
             } else {
-                session.eout().add(NElements.ofObjectBuilder()
+                session.eout().add(NElement.ofObjectBuilder()
                         .set("command", "warning")
                         .set("artifact-kind", skind)
                         .set("action-warning", saction)
-                        .set("artifacts", NElements.ofArrayBuilder().addAll(
+                        .set("artifacts", NElement.ofArrayBuilder().addAll(
                                 all.stream().map(Object::toString).toArray(String[]::new)
                         ).build())
                         .build()

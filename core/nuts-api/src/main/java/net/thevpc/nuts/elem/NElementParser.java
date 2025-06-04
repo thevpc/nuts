@@ -9,7 +9,6 @@ import net.thevpc.nuts.time.NProgressFactory;
 import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
-import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.function.Predicate;
@@ -78,7 +77,7 @@ public interface NElementParser extends NComponent {
 
     NElementParser setIndestructibleObjects(Predicate<Class<?>> destructTypeFilter);
 
-    <T> NElementParser setMapper(Type type, NElementMapper<T> mapper);
+    NElementMapperStore mappers();
 
     /*
      * parse url as a valid object of the given type

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
@@ -43,8 +44,7 @@ public class SimpleRecommendationConnector extends AbstractRecommendationConnect
                 loc = Locale.getDefault().toString();
             }
             http.setRequestProperty("Accept-Language", loc);
-            NElements elems = NElements.of();
-            String out = elems.setValue(ri.q).json().setNtf(false).format().filteredText();
+            String out = NElementWriter.ofJson().toString(ri.q);
             int length = out.length();
             http.setFixedLengthStreamingMode(length);
             http.setConnectTimeout(1000);

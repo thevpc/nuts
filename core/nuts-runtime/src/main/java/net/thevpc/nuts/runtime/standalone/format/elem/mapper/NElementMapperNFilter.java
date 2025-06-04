@@ -16,7 +16,7 @@ public class NElementMapperNFilter implements NElementMapper<NFilter> {
 
     @Override
     public NElement createElement(NFilter o, Type typeOfSrc, NElementFactoryContext context) {
-        return NElements.ofString(o.toString());
+        return NElement.ofString(o.toString());
     }
 
     @Override

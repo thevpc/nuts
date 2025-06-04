@@ -324,7 +324,7 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     @Override
     public NArrayElementBuilder addAll(NArrayElementBuilder value) {
         if (value == null) {
-            add(NElements.ofNull());
+            add(NElement.ofNull());
         } else {
             for (NElement child : value.items()) {
                 add(child);
@@ -444,47 +444,47 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public NArrayElementBuilder add(int value) {
-        return add(NElements.ofInt(value));
+        return add(NElement.ofInt(value));
     }
 
     @Override
     public NArrayElementBuilder add(long value) {
-        return add(NElements.ofLong(value));
+        return add(NElement.ofLong(value));
     }
 
     @Override
     public NArrayElementBuilder add(double value) {
-        return add(NElements.ofDouble(value));
+        return add(NElement.ofDouble(value));
     }
 
     @Override
     public NArrayElementBuilder add(float value) {
-        return add(NElements.ofFloat(value));
+        return add(NElement.ofFloat(value));
     }
 
     @Override
     public NArrayElementBuilder add(byte value) {
-        return add(NElements.ofByte(value));
+        return add(NElement.ofByte(value));
     }
 
     @Override
     public NArrayElementBuilder add(boolean value) {
-        return add(NElements.ofBoolean(value));
+        return add(NElement.ofBoolean(value));
     }
 
     @Override
     public NArrayElementBuilder add(char value) {
-        return add(NElements.ofString(String.valueOf(value)));
+        return add(NElement.ofString(String.valueOf(value)));
     }
 
     @Override
     public NArrayElementBuilder add(Number value) {
-        return add(NElements.ofNumber(value));
+        return add(NElement.ofNumber(value));
     }
 
     @Override
     public NArrayElementBuilder add(String value) {
-        return add(NElements.ofString(value));
+        return add(NElement.ofString(value));
     }
 
     @Override
@@ -500,7 +500,7 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
 
     private NElement denull(NElement e) {
         if (e == null) {
-            return NElements.ofNull();
+            return NElement.ofNull();
         }
         return e;
     }
@@ -635,31 +635,31 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public NArrayElementBuilder addParam(String name, NElement value) {
-        return addParam(NElements.ofPair(name,value));
+        return addParam(NElement.ofPair(name,value));
     }
 
     @Override
     public NArrayElementBuilder addParam(String name, String value) {
-        return addParam(NElements.ofPair(name,value));
+        return addParam(NElement.ofPair(name,value));
     }
 
     @Override
     public NArrayElementBuilder addParam(String name, Integer value) {
-        return addParam(NElements.ofPair(name,value));
+        return addParam(NElement.ofPair(name,value));
     }
 
     @Override
     public NArrayElementBuilder addParam(String name, Long value) {
-        return addParam(NElements.ofPair(name,value));
+        return addParam(NElement.ofPair(name,value));
     }
 
     @Override
     public NArrayElementBuilder addParam(String name, Double value) {
-        return addParam(NElements.ofPair(name,value));
+        return addParam(NElement.ofPair(name,value));
     }
 
     @Override
     public NArrayElementBuilder addParam(String name, Boolean value) {
-        return addParam(NElements.ofPair(name,value));
+        return addParam(NElement.ofPair(name,value));
     }
 }

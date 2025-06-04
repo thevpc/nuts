@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.concurrent.NLock;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.io.NIOException;
@@ -126,7 +127,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
     }
 
     public void storeObject(Object anyObject, String file) {
-        NElements.of().json().setValue(anyObject).setNtf(false).print(NPath.of(file));
+        NElementWriter.ofJson().write(anyObject, NPath.of(file));
     }
 
     public NWorkspaceConfigBoot loadWorkspaceConfigBoot(NPath workspacePath) {
@@ -214,9 +215,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
             created = true;
         }
         repository.config().getStoreLocation().mkdirs();
-        NElements.of().json().setValue(config)
-                .setNtf(false)
-                .print(file);
+        NElementWriter.ofJson().write(config, file);
         return created;
     }
 
@@ -293,9 +292,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
     public void saveInstallInfoConfig(InstallInfoConfig installInfoConfig) {
         NWorkspace workspace = NWorkspace.of();
         NPath path = workspace.getStoreLocation(installInfoConfig.getId(), NStoreType.CONF).resolve(DefaultNInstalledRepository.NUTS_INSTALL_FILE);
-        NElements.of().setNtf(false)
-                .json().setValue(installInfoConfig)
-                .print(path);
+        NElementWriter.ofJson().write(installInfoConfig, path);
     }
 
     @Override
@@ -343,7 +340,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
             public InstallInfoConfig parseObject(NPath path) {
                 try {
                     InstallInfoConfig u = NElementParser.ofJson().parse(path, InstallInfoConfig.class);
-                    if(u!=null && u.getId()!=null){
+                    if (u != null && u.getId() != null) {
                         return loadInstallInfoConfig(u.getId());
                     }
                 } catch (Exception ex) {
@@ -379,8 +376,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
 //            path = getPath(id, NUTS_INSTALL_FILE);
 //        }
         if (path.isRegularFile()) {
-            NElements elem = NElements.of();
-            InstallInfoConfig c = NLock.ofIdPath(id,DefaultNInstalledRepository.NUTS_INSTALL_FILE).callWith(
+            InstallInfoConfig c = NLock.ofIdPath(id, DefaultNInstalledRepository.NUTS_INSTALL_FILE).callWith(
                     () -> NElementParser.ofJson().parse(path, InstallInfoConfig.class),
                     CoreNUtils.LOCK_TIME, CoreNUtils.LOCK_TIME_UNIT
             ).orNull();
@@ -412,9 +408,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
                                 _LOG().with().level(Level.CONFIG)
                                         .log(NMsg.ofC("install-info upgraded %s", path));
                                 c.setConfigVersion(workspace.getApiVersion());
-                                elem.json().setValue(c)
-                                        .setNtf(false)
-                                        .print(path);
+                                NElementWriter.ofJson().write(c, path);
                                 return null;
                             },
                             CoreNUtils.LOCK_TIME, CoreNUtils.LOCK_TIME_UNIT
@@ -481,11 +475,11 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
     @Override
     public void saveLocationKey(NLocationKey k, Object value) {
         NPath path = NWorkspace.of().getStoreLocation(k);
-        if(value==null) {
+        if (value == null) {
             path.delete();
-        }else if(value instanceof String) {
+        } else if (value instanceof String) {
             path.mkParentDirs().writeString((String) value);
-        }else if(value instanceof NDescriptor) {
+        } else if (value instanceof NDescriptor) {
             try {
                 NDescriptorFormat.of((NDescriptor) value).setNtf(false).print(path);
             } catch (Exception ex) {
@@ -493,8 +487,8 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
                         .log(NMsg.ofC("failed to print %s", path));
                 //
             }
-        }else{
-            NElements.of().json().setNtf(false).setValue(value).print(path);
+        } else {
+            NElementWriter.ofJson().write(value, path);
         }
     }
 
@@ -502,7 +496,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
     public <T> T loadLocationKey(NLocationKey k, Class<T> type) {
         NPath path = NWorkspace.of().getStoreLocation(k);
         invalidateIfObsolete(k, path);
-        if(path.isRegularFile()) {
+        if (path.isRegularFile()) {
             if (String.class.equals(type)) {
                 return (T) path.readString();
             } else if (NDescriptor.class.equals(type)) {
@@ -517,7 +511,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
     @Override
     public boolean deleteLocationKey(NLocationKey k) {
         NPath path = NWorkspace.of().getStoreLocation(k);
-        if(path.isRegularFile()) {
+        if (path.isRegularFile()) {
             path.delete();
             return true;
         }

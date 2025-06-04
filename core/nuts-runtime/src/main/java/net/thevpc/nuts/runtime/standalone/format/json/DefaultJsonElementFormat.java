@@ -243,17 +243,17 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
     }
 
     private NElement _jsonAnnotations(List<NElementAnnotation> a) {
-        return NElements.ofArray(
+        return NElement.ofArray(
                 a.stream().map(x -> _jsonAnnotation(x)).toArray(NElement[]::new)
         );
     }
 
     private NElement _jsonAnnotation(NElementAnnotation a) {
-        NObjectElementBuilder u = NElements.ofObjectBuilder()
+        NObjectElementBuilder u = NElement.ofObjectBuilder()
                 .add("annotationName", a.name());
         if (a.params() != null) {
             u.add("annotationParams",
-                    NElements.ofArray(
+                    NElement.ofArray(
                             a.params().stream().map(x -> ensureJson(x)).toArray(NElement[]::new)
                     )
             );
@@ -281,9 +281,9 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                 if (a.isEmpty()) {
                     return e;
                 } else {
-                    return NElements.ofObjectBuilder()
+                    return NElement.ofObjectBuilder()
                             .add("value", e.builder().clearAnnotations().build())
-                            .add(a.isEmpty() ? null : NElements.ofPair("@annotations", _jsonAnnotations(a)))
+                            .add(a.isEmpty() ? null : NElement.ofPair("@annotations", _jsonAnnotations(a)))
                             .build();
                 }
             }
@@ -311,22 +311,22 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
             {
                 List<NElementAnnotation> a = e.annotations();
                 if (a.isEmpty()) {
-                    return NElements.ofString(e.asStringValue().get());
+                    return NElement.ofString(e.asStringValue().get());
                 } else {
-                    return NElements.ofObjectBuilder()
+                    return NElement.ofObjectBuilder()
                             .add("value", e.builder().clearAnnotations().build())
-                            .add(a.isEmpty() ? null : NElements.ofPair("@annotations", _jsonAnnotations(a)))
+                            .add(a.isEmpty() ? null : NElement.ofPair("@annotations", _jsonAnnotations(a)))
                             .build();
                 }
             }
             case ALIAS: {
                 List<NElementAnnotation> a = e.annotations();
                 if (a.isEmpty()) {
-                    return NElements.ofString("&" + e.asStringValue().get());
+                    return NElement.ofString("&" + e.asStringValue().get());
                 } else {
-                    return NElements.ofObjectBuilder()
+                    return NElement.ofObjectBuilder()
                             .add("value", "&" + e.builder().clearAnnotations().build().asStringValue().get())
-                            .add(a.isEmpty() ? null : NElements.ofPair("@annotations", _jsonAnnotations(a)))
+                            .add(a.isEmpty() ? null : NElement.ofPair("@annotations", _jsonAnnotations(a)))
                             .build();
                 }
             }
@@ -340,23 +340,23 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                     if (a.isEmpty()) {
                         return p.build();
                     } else {
-                        return NElements.ofObjectBuilder()
+                        return NElement.ofObjectBuilder()
                                 .add("value", p.build())
-                                .add(a.isEmpty() ? null : NElements.ofPair("@annotations", _jsonAnnotations(a)))
+                                .add(a.isEmpty() ? null : NElement.ofPair("@annotations", _jsonAnnotations(a)))
                                 .build();
                     }
                 } else {
                     if (a.isEmpty()) {
-                        return NElements.ofObjectBuilder()
+                        return NElement.ofObjectBuilder()
                                 .add("key", p.key())
                                 .add("value", p.value())
-                                .add(a.isEmpty() ? null : NElements.ofPair("@annotations", _jsonAnnotations(a)))
+                                .add(a.isEmpty() ? null : NElement.ofPair("@annotations", _jsonAnnotations(a)))
                                 .build();
                     } else {
-                        return NElements.ofObjectBuilder()
+                        return NElement.ofObjectBuilder()
                                 .add("key", p.key())
                                 .add("value", p.value())
-                                .add(a.isEmpty() ? null : NElements.ofPair("@annotations", _jsonAnnotations(a)))
+                                .add(a.isEmpty() ? null : NElement.ofPair("@annotations", _jsonAnnotations(a)))
                                 .build();
                     }
                 }
@@ -368,17 +368,17 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                 List<NElementAnnotation> a = e.annotations();
 
                 NArrayElement p0 = e.asArray().get();
-                NArrayElementBuilder p = NElements.ofArrayBuilder()
+                NArrayElementBuilder p = NElement.ofArrayBuilder()
                         .addAll(p0.children().stream().map(x -> ensureJson(x)).toArray(NElement[]::new));
 
                 if (a.isEmpty() && !p0.isNamed() && !p0.isParametrized()) {
                     return p.build();
                 } else {
-                    return NElements.ofObjectBuilder()
+                    return NElement.ofObjectBuilder()
                             .add("value", p.build())
-                            .add(a.isEmpty() ? null : NElements.ofPair("@annotations", _jsonAnnotations(a)))
-                            .add(!p0.isNamed() ? null : NElements.ofPair("@name", NElements.ofString(p0.name().orNull())))
-                            .add(!p0.isParametrized() ? null : NElements.ofPair("@params", NElements.ofArray(p0.params().get().stream().map(x -> ensureJson(x)).toArray(NElement[]::new))))
+                            .add(a.isEmpty() ? null : NElement.ofPair("@annotations", _jsonAnnotations(a)))
+                            .add(!p0.isNamed() ? null : NElement.ofPair("@name", NElement.ofString(p0.name().orNull())))
+                            .add(!p0.isParametrized() ? null : NElement.ofPair("@params", NElement.ofArray(p0.params().get().stream().map(x -> ensureJson(x)).toArray(NElement[]::new))))
                             .build();
                 }
             }
@@ -389,17 +389,17 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                 List<NElementAnnotation> a = e.annotations();
 
                 NObjectElement p0 = e.asObject().get();
-                NObjectElementBuilder p = NElements.ofObjectBuilder()
+                NObjectElementBuilder p = NElement.ofObjectBuilder()
                         .addAll(p0.children().stream().map(x -> ensureJson(x)).toArray(NElement[]::new));
 
                 if (a.isEmpty() && !p0.isNamed() && !p0.isParametrized()) {
                     return p.build();
                 } else {
-                    return NElements.ofObjectBuilder()
+                    return NElement.ofObjectBuilder()
                             .add("value", p.build())
-                            .add(a.isEmpty() ? null : NElements.ofPair("@annotations", _jsonAnnotations(a)))
-                            .add(!p0.isNamed() ? null : NElements.ofPair("@name", NElements.ofString(p0.name().orNull())))
-                            .add(!p0.isParametrized() ? null : NElements.ofPair("@params", NElements.ofArray(p0.params().get().stream().map(x -> ensureJson(x)).toArray(NElement[]::new))))
+                            .add(a.isEmpty() ? null : NElement.ofPair("@annotations", _jsonAnnotations(a)))
+                            .add(!p0.isNamed() ? null : NElement.ofPair("@name", NElement.ofString(p0.name().orNull())))
+                            .add(!p0.isParametrized() ? null : NElement.ofPair("@params", NElement.ofArray(p0.params().get().stream().map(x -> ensureJson(x)).toArray(NElement[]::new))))
                             .build();
                 }
             }
@@ -408,16 +408,16 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                 List<NElementAnnotation> a = e.annotations();
 
                 NUpletElement p0 = e.asUplet().get();
-                NArrayElementBuilder p = NElements.ofArrayBuilder()
+                NArrayElementBuilder p = NElement.ofArrayBuilder()
                         .addAll(p0.children().stream().map(x -> ensureJson(x)).toArray(NElement[]::new));
 
                 if (a.isEmpty() && !p0.isNamed() && !p0.isParametrized()) {
                     return p.build();
                 } else {
-                    return NElements.ofObjectBuilder()
+                    return NElement.ofObjectBuilder()
                             .add("value", p.build())
-                            .add(a.isEmpty() ? null : NElements.ofPair("@annotations", _jsonAnnotations(a)))
-                            .add(!p0.isNamed() ? null : NElements.ofPair("@name", NElements.ofString(p0.name().orNull())))
+                            .add(a.isEmpty() ? null : NElement.ofPair("@annotations", _jsonAnnotations(a)))
+                            .add(!p0.isNamed() ? null : NElement.ofPair("@name", NElement.ofString(p0.name().orNull())))
                             .build();
                 }
             }
@@ -477,23 +477,23 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                 case 'n': {
                     String n = readStringLiteralUnQuoted();
                     if ("null".equals(n)) {
-                        return NElements.ofNull();
+                        return NElement.ofNull();
                     }
-                    return NElements.ofString(n);
+                    return NElement.ofString(n);
                 }
                 case 't': {
                     String n = readStringLiteralUnQuoted();
                     if ("true".equals(n)) {
-                        return NElements.ofTrue();
+                        return NElement.ofTrue();
                     }
-                    return NElements.ofString(n);
+                    return NElement.ofString(n);
                 }
                 case 'f': {
                     String n = readStringLiteralUnQuoted();
                     if ("false".equals(n)) {
-                        return NElements.ofFalse();
+                        return NElement.ofFalse();
                     }
-                    return NElements.ofString(n);
+                    return NElement.ofString(n);
                 }
                 case '0':
                 case '1':
@@ -530,7 +530,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
         }
 
         private NElement readJsonArray() {
-            NArrayElementBuilder array = NElements.ofArrayBuilder();
+            NArrayElementBuilder array = NElement.ofArrayBuilder();
             readNext();
             skipWhiteSpaceAndComments();
             if (readChar(']')) {
@@ -553,7 +553,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
         }
 
         private NElement readJsonObject() {
-            NObjectElementBuilder object = NElements.ofObjectBuilder();
+            NObjectElementBuilder object = NElement.ofObjectBuilder();
             readNext();
             skipWhiteSpaceAndComments();
             if (readChar('}')) {
@@ -606,7 +606,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
         }
 
         private NElement readJsonString() {
-            return NElements.ofString(readStringLiteral());
+            return NElement.ofString(readStringLiteral());
         }
 
         private String readStringLiteral() {
@@ -896,7 +896,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                     }
                 }
             }
-            return NElements.ofNumber(sb.toString());
+            return NElement.ofNumber(sb.toString());
         }
 
         private boolean readChar(char ch) {

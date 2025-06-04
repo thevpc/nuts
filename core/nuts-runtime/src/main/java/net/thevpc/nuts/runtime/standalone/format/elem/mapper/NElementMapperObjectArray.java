@@ -28,7 +28,7 @@ public class NElementMapperObjectArray implements NElementMapper<Object[]> {
         NArrayElement earr = o.asArray().get();
         Object[] arr = new Object[earr.size()];
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = (Object) context.elementToObject(earr.get(i).get(), Object.class);
+            arr[i] = (Object) context.createObject(earr.get(i).get(), Object.class);
         }
         return arr;
     }

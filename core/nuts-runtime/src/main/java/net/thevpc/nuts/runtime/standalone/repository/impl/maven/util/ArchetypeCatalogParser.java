@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomId;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.PomIdFilter;
 import net.thevpc.nuts.util.NIteratorBase;
@@ -73,7 +72,7 @@ public class ArchetypeCatalogParser {
 
         @Override
         public NElement describe() {
-            return NElements.ofObjectBuilder()
+            return NElement.ofObjectBuilder()
                     .name("ScanArchetypeCatalog")
                     .set("source",stream.toString())
                     .build();

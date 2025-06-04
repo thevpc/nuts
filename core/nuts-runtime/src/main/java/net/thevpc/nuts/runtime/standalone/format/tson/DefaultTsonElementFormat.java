@@ -42,6 +42,7 @@ import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.parser.javacc
 import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.parser.javacc.ParseException;
 import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.parser.javacc.TsonStreamParserImpl;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NElementUtils;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -110,7 +111,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
         }
         TsonDocument document = r.getDocument();
         TsonElement e = document==null?null:document.getContent();
-        return e == null ? NElements.ofNull() : toNElem(e);
+        return e == null ? NElement.ofNull() : toNElem(e);
     }
 
     public TsonElement[] toTsonElemArray(List<NElement> elems) {
@@ -233,7 +234,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
             }
             case NAME: {
                 String s = elem.asStringValue().get();
-                if(NElements.isValidElementName(s, NContentType.TSON)) {
+                if(NElementUtils.isValidElementName(s, NContentType.TSON)) {
                     return decorateTsonElement(factory.ofName(s), elem);
                 }else{
                     //some names include ':' and they are not supported in tson
@@ -389,34 +390,34 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
         NElements elems = NElements.of();
         switch (tsonElem.type()) {
             case NULL: {
-                return decorateNElement(NElements.ofNull(), tsonElem);
+                return decorateNElement(NElement.ofNull(), tsonElem);
             }
             case BYTE: {
-                return decorateNElement(NElements.ofByte(tsonElem.byteValue(), toTsonNumberLayout(((TsonNumber) tsonElem).numberLayout()),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
+                return decorateNElement(NElement.ofByte(tsonElem.byteValue(), toTsonNumberLayout(((TsonNumber) tsonElem).numberLayout()),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
             }
             case SHORT: {
-                return decorateNElement(NElements.ofShort(tsonElem.shortValue(), toTsonNumberLayout(((TsonNumber) tsonElem).numberLayout()),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
+                return decorateNElement(NElement.ofShort(tsonElem.shortValue(), toTsonNumberLayout(((TsonNumber) tsonElem).numberLayout()),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
             }
             case CHAR: {
-                return decorateNElement(NElements.ofChar(tsonElem.charValue()), tsonElem);
+                return decorateNElement(NElement.ofChar(tsonElem.charValue()), tsonElem);
             }
             case INTEGER: {
-                return decorateNElement(NElements.ofInt(tsonElem.intValue(), toTsonNumberLayout(((TsonNumber) tsonElem).numberLayout()),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
+                return decorateNElement(NElement.ofInt(tsonElem.intValue(), toTsonNumberLayout(((TsonNumber) tsonElem).numberLayout()),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
             }
             case LONG: {
-                return decorateNElement(NElements.ofLong(tsonElem.longValue(), toTsonNumberLayout(((TsonNumber) tsonElem).numberLayout()),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
+                return decorateNElement(NElement.ofLong(tsonElem.longValue(), toTsonNumberLayout(((TsonNumber) tsonElem).numberLayout()),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
             }
             case FLOAT: {
-                return decorateNElement(NElements.ofFloat(tsonElem.floatValue(),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
+                return decorateNElement(NElement.ofFloat(tsonElem.floatValue(),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
             }
             case DOUBLE: {
-                return decorateNElement(NElements.ofDouble(tsonElem.doubleValue(),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
+                return decorateNElement(NElement.ofDouble(tsonElem.doubleValue(),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
             }
             case BIG_INTEGER: {
-                return decorateNElement(NElements.ofBigInteger(tsonElem.bigIntegerValue(), toTsonNumberLayout(((TsonNumber) tsonElem).numberLayout()),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
+                return decorateNElement(NElement.ofBigInteger(tsonElem.bigIntegerValue(), toTsonNumberLayout(((TsonNumber) tsonElem).numberLayout()),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
             }
             case BIG_DECIMAL: {
-                return decorateNElement(NElements.ofBigDecimal(tsonElem.bigDecimalValue(),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
+                return decorateNElement(NElement.ofBigDecimal(tsonElem.bigDecimalValue(),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
             }
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:
@@ -425,47 +426,47 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
             case TRIPLE_SINGLE_QUOTED_STRING:
             case TRIPLE_ANTI_QUOTED_STRING:
             case LINE_STRING: {
-                return decorateNElement(NElements.ofString(tsonElem.toStr().stringValue(), toNStringLayout(tsonElem.toStr().type())), tsonElem);
+                return decorateNElement(NElement.ofString(tsonElem.toStr().stringValue(), toNStringLayout(tsonElem.toStr().type())), tsonElem);
             }
             case BOOLEAN: {
-                return decorateNElement(NElements.ofBoolean(tsonElem.booleanValue()), tsonElem);
+                return decorateNElement(NElement.ofBoolean(tsonElem.booleanValue()), tsonElem);
             }
             case INSTANT: {
-                return decorateNElement(NElements.ofInstant(tsonElem.instantValue()), tsonElem);
+                return decorateNElement(NElement.ofInstant(tsonElem.instantValue()), tsonElem);
             }
             case LOCAL_DATE: {
-                return decorateNElement(NElements.ofLocalDate(tsonElem.localDateValue()), tsonElem);
+                return decorateNElement(NElement.ofLocalDate(tsonElem.localDateValue()), tsonElem);
             }
             case LOCAL_TIME: {
-                return decorateNElement(NElements.ofLocalTime(tsonElem.localTimeValue()), tsonElem);
+                return decorateNElement(NElement.ofLocalTime(tsonElem.localTimeValue()), tsonElem);
             }
             case LOCAL_DATETIME: {
-                return decorateNElement(NElements.ofLocalDateTime(tsonElem.localDateTimeValue()), tsonElem);
+                return decorateNElement(NElement.ofLocalDateTime(tsonElem.localDateTimeValue()), tsonElem);
             }
             case BIG_COMPLEX: {
                 TsonBigComplex v = tsonElem.toBigComplex();
-                return decorateNElement(NElements.ofBigComplex(v.real(), v.imag()), tsonElem);
+                return decorateNElement(NElement.ofBigComplex(v.real(), v.imag()), tsonElem);
             }
             case FLOAT_COMPLEX: {
                 TsonFloatComplex v = tsonElem.toFloatComplex();
-                return decorateNElement(NElements.ofFloatComplex(v.real(), v.imag()), tsonElem);
+                return decorateNElement(NElement.ofFloatComplex(v.real(), v.imag()), tsonElem);
             }
             case DOUBLE_COMPLEX: {
                 TsonDoubleComplex v = tsonElem.toDoubleComplex();
-                return decorateNElement(NElements.ofDoubleComplex(v.real(), v.imag()), tsonElem);
+                return decorateNElement(NElement.ofDoubleComplex(v.real(), v.imag()), tsonElem);
             }
             case REGEX: {
-                return decorateNElement(NElements.ofRegex(tsonElem.stringValue()), tsonElem);
+                return decorateNElement(NElement.ofRegex(tsonElem.stringValue()), tsonElem);
             }
             case NAME: {
-                return decorateNElement(NElements.ofName(tsonElem.stringValue()), tsonElem);
+                return decorateNElement(NElement.ofName(tsonElem.stringValue()), tsonElem);
             }
             case ARRAY:
             case NAMED_ARRAY:
             case PARAMETRIZED_ARRAY:
             case NAMED_PARAMETRIZED_ARRAY: {
                 TsonArray array = tsonElem.toArray();
-                NArrayElementBuilder u = NElements.ofArrayBuilder();
+                NArrayElementBuilder u = NElement.ofArrayBuilder();
                 for (TsonElement item : array) {
                     u.add(toNElem(item));
                 }
@@ -482,7 +483,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
             case PARAMETRIZED_OBJECT:
             case NAMED_PARAMETRIZED_OBJECT: {
                 TsonObject obj = tsonElem.toObject();
-                NObjectElementBuilder u = NElements.ofObjectBuilder();
+                NObjectElementBuilder u = NElement.ofObjectBuilder();
                 for (TsonElement item : obj) {
                     u.add(toNElem(item));
                 }
@@ -497,7 +498,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
             case UPLET:
             case NAMED_UPLET: {
                 TsonUplet obj = tsonElem.toUplet();
-                NUpletElementBuilder u = NElements.ofUpletBuilder();
+                NUpletElementBuilder u = NElement.ofUpletBuilder();
                 for (TsonElement item : obj) {
                     u.add(toNElem(item));
                 }
@@ -508,7 +509,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
             }
             case PAIR: {
                 TsonPair pair = tsonElem.toPair();
-                NPairElementBuilder b = NElements.ofPairBuilder(toNElem(pair.key()), toNElem(pair.value()));
+                NPairElementBuilder b = NElement.ofPairBuilder(toNElem(pair.key()), toNElem(pair.value()));
                 return decorateNElement(b.build(), tsonElem);
             }
         }

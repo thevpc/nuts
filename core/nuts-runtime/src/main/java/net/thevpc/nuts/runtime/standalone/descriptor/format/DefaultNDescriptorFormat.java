@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.descriptor.format;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.io.NPrintStream;
@@ -69,14 +70,14 @@ public class DefaultNDescriptorFormat extends DefaultFormatBase<NDescriptorForma
     @Override
     public void print(NPrintStream out) {
         if (isNtf()) {
-            ByteArrayOutputStream os=new ByteArrayOutputStream();
-            NElements.ofNtfJson(desc).setCompact(isCompact())
-                    .print(os);
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            NElementWriter.ofJson().setNtf(true).setCompact(isCompact())
+                    .write(desc, os);
             NTextCode r = NText.ofCode("json", os.toString());
             out.print(r);
         } else {
-            NElements.ofPlainJson(desc).setCompact(isCompact())
-                    .print(out);
+            NElementWriter.ofJson().setCompact(isCompact())
+                    .write(desc, out);
         }
     }
 

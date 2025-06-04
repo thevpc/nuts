@@ -14,19 +14,19 @@ public class NElementMapperNPlatformLocation implements NElementMapper<NPlatform
 
     @Override
     public NElement createElement(NPlatformLocation o, Type typeOfSrc, NElementFactoryContext context) {
-        return context.defaultObjectToElement(o, null);
+        return context.defaultCreateElement(o, null);
     }
 
     @Override
     public NPlatformLocation createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
         NObjectElement obj = o.asObject().get();
-        NId id = context.elementToObject(obj.get("id").orElse(NElements.ofString("")), NId.class);
-        String product = context.elementToObject(obj.get("product").orElse(NElements.ofString("")), String.class);
-        String name = context.elementToObject(obj.get("name").orElse(NElements.ofString("")), String.class);
-        String path = context.elementToObject(obj.get("path").orElse(NElements.ofString("")), String.class);
-        String version = context.elementToObject(obj.get("version").orElse(NElements.ofString("")), String.class);
-        String packaging = context.elementToObject(obj.get("packaging").orElse(NElements.ofString("")), String.class);
-        int priority = context.elementToObject(obj.get("priority").orElse(NElements.ofInt(0)), int.class);
+        NId id = context.createObject(obj.get("id").orElse(NElement.ofString("")), NId.class);
+        String product = context.createObject(obj.get("product").orElse(NElement.ofString("")), String.class);
+        String name = context.createObject(obj.get("name").orElse(NElement.ofString("")), String.class);
+        String path = context.createObject(obj.get("path").orElse(NElement.ofString("")), String.class);
+        String version = context.createObject(obj.get("version").orElse(NElement.ofString("")), String.class);
+        String packaging = context.createObject(obj.get("packaging").orElse(NElement.ofString("")), String.class);
+        int priority = context.createObject(obj.get("priority").orElse(NElement.ofInt(0)), int.class);
         return new NPlatformLocation(id, product, name, path, version, packaging, priority);
     }
 

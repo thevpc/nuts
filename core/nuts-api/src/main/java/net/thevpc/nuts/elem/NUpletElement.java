@@ -37,7 +37,7 @@ import java.util.stream.Stream;
  */
 public interface NUpletElement extends NNamedElement, NListContainerElement, Iterable<NElement> {
     static NUpletElement ofEmpty() {
-        return NElements.ofUplet();
+        return NElement.ofUplet();
     }
 
     List<NElement> params();

@@ -76,9 +76,9 @@ public class NElementNotFoundException extends NException {
      * @param message            the detail message.
      * @param cause              the cause.  (A {@code null} value is permitted,
      *                           and indicates that the cause is nonexistent or unknown.)
-     * @param enableSuppression  whether or not suppression is enabled
+     * @param enableSuppression  whether suppression is enabled
      *                           or disabled
-     * @param writableStackTrace whether or not the stack trace should
+     * @param writableStackTrace whether the stack trace should
      *                           be writable
      */
     public NElementNotFoundException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {

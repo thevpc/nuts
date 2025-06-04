@@ -3,12 +3,11 @@ package net.thevpc.nuts.runtime.standalone.xtra.ps;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.io.NExecInput;
-import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NEDesc;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.NOsFamily;
 import net.thevpc.nuts.NPlatformFamily;
 import net.thevpc.nuts.io.NPsInfo;
@@ -17,7 +16,6 @@ import net.thevpc.nuts.util.NIteratorBuilder;
 
 import java.io.File;
 import java.io.StringReader;
-import java.nio.file.Path;
 import java.util.*;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -278,7 +276,7 @@ public class DefaultNPs implements NPs {
                 return Arrays.asList(split).iterator();
             }
             return NIteratorBuilder.emptyIterator();
-        }, () -> NElements.ofString("jps")).map(
+        }, () -> NElement.ofString("jps")).map(
                 NFunction.of(
                         (String line) -> {
                             DefaultNPsInfoBuilder p = new DefaultNPsInfoBuilder();

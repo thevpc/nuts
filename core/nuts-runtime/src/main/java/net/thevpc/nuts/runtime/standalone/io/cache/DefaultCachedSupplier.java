@@ -5,6 +5,7 @@ import net.thevpc.nuts.NWorkspace;
 
 import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.NLocationKey;
@@ -23,7 +24,6 @@ public class DefaultCachedSupplier<T> implements CachedSupplier<T> {
     private RuntimeException exception;
     private final Class<T> clazz;
     private final CacheValidator<T> validator;
-    private NElements elems;
     private NPath cachePath;
     private NPath cacheIdPath;
     private NCacheLevel level;
@@ -76,7 +76,6 @@ public class DefaultCachedSupplier<T> implements CachedSupplier<T> {
                 throw new IllegalArgumentException("expected cache store");
             }
             NWorkspace ws = NWorkspace.of();
-            this.elems = NElements.of();
             this.cachePath = ws.getStoreLocation(key.getId(), key.getStoreType(), key.getRepoUuid())
                     .resolve(ws.getDefaultIdFilename(key.getId().builder().setFace(key.getName() + ".value.cache").build()));
             this.cacheIdPath = ws.getStoreLocation(key.getId(), key.getStoreType(), key.getRepoUuid())
@@ -139,7 +138,7 @@ public class DefaultCachedSupplier<T> implements CachedSupplier<T> {
                 if (validator == null || validator.isValidCacheId(loadCacheId)) {
                     if (CoreIOUtils.isObsoletePath(cachePath)) {
                         //this is invalid cache!
-                        if(cachePath.isRegularFile()) {
+                        if (cachePath.isRegularFile()) {
                             cachePath.delete();
                         }
                     } else {
@@ -148,7 +147,7 @@ public class DefaultCachedSupplier<T> implements CachedSupplier<T> {
                             if (d != null) {
                                 if (validator != null && !validator.isValidValue(d)) {
                                     //this is invalid cache!
-                                    if(cachePath.isRegularFile()) {
+                                    if (cachePath.isRegularFile()) {
                                         cachePath.delete();
                                     }
                                 }
@@ -181,12 +180,12 @@ public class DefaultCachedSupplier<T> implements CachedSupplier<T> {
                 }
                 if (value != null) {
                     try {
-                        elems.json().setValue(value).setNtf(false).print(cachePath);
+                        NElementWriter.ofJson().write(value, cachePath);
                     } catch (Exception ex) {
                         //
                     }
                 } else {
-                    if(cachePath.isRegularFile()) {
+                    if (cachePath.isRegularFile()) {
                         cachePath.delete();
                     }
                 }

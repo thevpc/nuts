@@ -27,10 +27,6 @@ package net.thevpc.nuts.runtime.standalone.format.elem;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.*;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -48,7 +44,7 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
                         : NElementType.NAMED_UPLET,
                 annotations, comments);
         if(name!=null){
-            NAssert.requireTrue(NElements.isValidElementName(name), "valid name : " + name);
+            NAssert.requireTrue(NElementUtils.isValidElementName(name), "valid name : " + name);
         }
         this.params = params.toArray(new NElement[0]);
         this.name = name;
@@ -144,7 +140,7 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
 
     @Override
     public NUpletElementBuilder builder() {
-        return NElements.ofUpletBuilder()
+        return NElement.ofUpletBuilder()
                 .copyFrom(this);
     }
 

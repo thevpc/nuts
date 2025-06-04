@@ -3,8 +3,6 @@ package net.thevpc.nuts.runtime.standalone.format.elem.mapper;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.elem.NElements;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -19,7 +17,7 @@ public class NElementMapperNumber implements NElementMapper<Number> {
 
     @Override
     public NElement createElement(Number o, Type typeOfSrc, NElementFactoryContext context) {
-        return NElements.ofNumber((Number) o);
+        return NElement.ofNumber((Number) o);
     }
 
     @Override

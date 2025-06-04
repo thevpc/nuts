@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . It's based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
@@ -26,6 +26,8 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NContentType;
 import org.junit.jupiter.api.BeforeAll;
@@ -47,17 +49,16 @@ public class YamlTest {
     @Test
     public void test1() throws Exception {
         String path = "net/thevpc/nuts/core/test/blackbox/yaml1.yml";
-        NElements elem = NElements.ofPlainYaml();
-        NElement e = elem.parse(getClass().getClassLoader().getResource(path), NElement.class);
-        elem.json().setValue(e)
+        NElement e = NElementParser.ofYaml().parse(getClass().getClassLoader().getResource(path), NElement.class);
+        NElementWriter.ofJson()
                 .setCompact(false)
-                .println();
-        elem.tson().setValue(e)
+                .writeln(e);
+        NElementWriter.ofTson()
                 .setCompact(false)
-                .println();
-        elem.yaml().setValue(e)
+                .writeln(e);
+        NElementWriter.ofYaml()
                 .setCompact(false)
-                .println();
+                .writeln(e);
     }
 
 }

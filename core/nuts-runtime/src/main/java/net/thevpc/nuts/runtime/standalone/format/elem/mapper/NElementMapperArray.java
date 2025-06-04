@@ -72,7 +72,7 @@ public class NElementMapperArray implements NElementMapper<Object> {
             default: {
                 Object[] x = (Object[]) Array.newInstance(componentType, e.size());
                 for (int i = 0; i < e.size(); i++) {
-                    x[i] = context.elementToObject(e.get(i).get(), componentType);
+                    x[i] = context.createObject(e.get(i).get(), componentType);
                 }
                 return x;
             }

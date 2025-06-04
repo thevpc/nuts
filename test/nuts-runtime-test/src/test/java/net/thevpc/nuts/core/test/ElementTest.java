@@ -31,9 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.text.*;
 import org.junit.jupiter.api.*;
@@ -51,45 +49,44 @@ public class ElementTest {
 
     @Test
     public void test1() {
-        NElements e = NElements.of();
         NElement p
-                = e.ofArrayBuilder()
+                = NElement.ofArrayBuilder()
                 .add(
-                        e.ofObjectBuilder().set("first",
-                                        e.ofObjectBuilder()
-                                                .set("name", e.ofString("first name"))
-                                                .set("valid", e.ofTrue())
+                        NElement.ofObjectBuilder().set("first",
+                                        NElement.ofObjectBuilder()
+                                                .set("name", NElement.ofString("first name"))
+                                                .set("valid", NElement.ofTrue())
                                                 .set("children",
-                                                        e.ofArrayBuilder().add(
-                                                                        e.ofObjectBuilder()
-                                                                                .set("path", e.ofString("path1"))
-                                                                                .set("color", e.ofString("red"))
+                                                        NElement.ofArrayBuilder().add(
+                                                                        NElement.ofObjectBuilder()
+                                                                                .set("path", NElement.ofString("path1"))
+                                                                                .set("color", NElement.ofString("red"))
                                                                                 .build())
                                                                 .add(
-                                                                        e.ofObjectBuilder()
-                                                                                .set("path", e.ofString("path2"))
-                                                                                .set("color", e.ofString("green"))
+                                                                        NElement.ofObjectBuilder()
+                                                                                .set("path", NElement.ofString("path2"))
+                                                                                .set("color", NElement.ofString("green"))
                                                                                 .build()
                                                                 ).build()
                                                 )
                                                 .build()
                                 )
                                 .build()
-                ).add(e.ofObjectBuilder().set("second",
-                        e.ofObjectBuilder()
-                                .set("name", e.ofString("second name"))
-                                .set("valid", e.ofTrue())
+                ).add(NElement.ofObjectBuilder().set("second",
+                        NElement.ofObjectBuilder()
+                                .set("name", NElement.ofString("second name"))
+                                .set("valid", NElement.ofTrue())
                                 .set("children",
-                                        e.ofArrayBuilder().add(
-                                                        e.ofObjectBuilder()
-                                                                .set("path", e.ofString("path3"))
-                                                                .set("color", e.ofString("yellow"))
+                                        NElement.ofArrayBuilder().add(
+                                                        NElement.ofObjectBuilder()
+                                                                .set("path", NElement.ofString("path3"))
+                                                                .set("color", NElement.ofString("yellow"))
                                                                 .build()
                                                 )
                                                 .add(
-                                                        e.ofObjectBuilder()
-                                                                .set("path", e.ofString("path4"))
-                                                                .set("color", e.ofString("magenta"))
+                                                        NElement.ofObjectBuilder()
+                                                                .set("path", NElement.ofString("path4"))
+                                                                .set("color", NElement.ofString("magenta"))
                                                                 .build()
                                                 ).build()
                                 )
@@ -207,7 +204,7 @@ public class ElementTest {
         }) {
             TestUtils.println("=====================================");
             TestUtils.println("CHECKING : '" + tt.path + "'");
-            List<NElement> filtered1 = e.compilePath(tt.path).filter(p);
+            List<NElement> filtered1 = NElementPath.of(tt.path).filter(p);
             ss.setValue(filtered1).println();
             NText sexpected = NText.ofPlain(tt.expected.get(0));
             NText sresult = ss.format().immutable();
@@ -227,7 +224,7 @@ public class ElementTest {
 
         //styled element are destructed to strings
         NElement q = e.toElement(h);
-        NElement expected=e.ofObjectBuilder()
+        NElement expected= NElement.ofObjectBuilder()
                 .set("a","13")
                 .set("b","Hello").build();
         Assertions.assertEquals(expected,q);
@@ -236,23 +233,23 @@ public class ElementTest {
         //prevent styled element to be destructed
         e.setIndestructibleObjects(c->c instanceof Class && NTextStyled.class.isAssignableFrom((Class<?>) c));
         q = e.toElement(h);
-        expected=e.ofObjectBuilder()
+        expected= NElement.ofObjectBuilder()
                 .set("a","13")
                 .set("b",
-                        e.ofCustom(NText.ofStyled("Hello", NTextStyle.success()))
+                        NElement.ofCustom(NText.ofStyled("Hello", NTextStyle.success()))
                         ).build();
         Assertions.assertEquals(expected,q);
 
         //destruct custom elements
         e.setIndestructibleObjects(null);
-        NObjectElement b = e.ofObjectBuilder()
+        NObjectElement b = NElement.ofObjectBuilder()
                 .set("a", "13")
                 .set("b",
-                        e.ofCustom(NText.ofStyled("Hello", NTextStyle.success()))
+                        NElement.ofCustom(NText.ofStyled("Hello", NTextStyle.success()))
                 ).build();
 
         q = e.toElement(b);
-        expected=e.ofObjectBuilder()
+        expected= NElement.ofObjectBuilder()
                 .set("a","13")
                 .set("b","Hello").build();
         Assertions.assertEquals(expected,q);

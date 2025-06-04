@@ -29,14 +29,14 @@ public class NElementMapperIterator implements NElementMapper<Iterator> {
         Iterator nl = (Iterator) o;
         List<NElement> values = new ArrayList<>();
         while (nl.hasNext()) {
-            values.add(context.objectToElement(nl.next(), null));
+            values.add(context.createElement(nl.next()));
         }
         return new DefaultNArrayElement(null,null,values,new NElementAnnotation[0],null);
     }
 
     @Override
     public Iterator createObject(NElement o, Type to, NElementFactoryContext context) {
-        return o.asArray().get().children().stream().map(x -> context.elementToObject(x, Object.class)).collect(
+        return o.asArray().get().children().stream().map(x -> context.createObject(x, Object.class)).collect(
                 Collectors.toList()).iterator();
     }
 

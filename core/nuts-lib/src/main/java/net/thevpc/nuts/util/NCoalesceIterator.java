@@ -7,12 +7,9 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.stream.Collectors;
 
 /**
  * @author thevpc
@@ -24,7 +21,7 @@ public class NCoalesceIterator<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        return NElements.ofObjectBuilder()
+        return NElement.ofObjectBuilder()
                 .name("Coalesce")
                 .addAll(
                         children

@@ -30,7 +30,6 @@ import net.thevpc.nuts.NConstants;
 
 import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder2;
-import net.thevpc.nuts.runtime.standalone.definition.NDefinitionDelegate;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 import net.thevpc.nuts.runtime.standalone.util.ValueSupplier;
 import net.thevpc.nuts.util.NBlankable;
@@ -38,7 +37,6 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NPath;
@@ -1066,7 +1064,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     private NElement toQueryPlan(NIterator it) {
         return
-                NElements.ofObjectBuilder()
+                NElement.ofObjectBuilder()
                         .set("SearchQueryPlan",
                                 NEDesc.describeResolveOrDestruct(it))
                         .build();

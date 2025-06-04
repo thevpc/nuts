@@ -17,13 +17,13 @@ public class NElementMapperPrimitiveCharArray implements NElementMapper<char[]> 
 
     @Override
     public NElement createElement(char[] src, Type typeOfSrc, NElementFactoryContext context) {
-        return NElements.ofString(new String(src));
+        return NElement.ofString(new String(src));
     }
 
     @Override
     public char[] createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
         NArrayElement earr = o.asArray().get();
-        String s = (String) context.elementToObject(o, String.class);
+        String s = (String) context.createObject(o, String.class);
         return s.toCharArray();
     }
 }

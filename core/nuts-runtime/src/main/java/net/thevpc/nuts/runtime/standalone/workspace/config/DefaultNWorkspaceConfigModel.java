@@ -28,6 +28,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NBootOptions;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.boot.NBootDescriptor;
+import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
 import net.thevpc.nuts.runtime.standalone.util.*;
@@ -741,7 +742,7 @@ public class DefaultNWorkspaceConfigModel {
 
                     @Override
                     public NElement describe() {
-                        return NElements.ofString("reverseOrder");
+                        return NElement.ofString("reverseOrder");
                     }
                 }).map(x -> apiId.builder().setVersion(x).build())
                 .withDesc(NEDesc.of("toId"))
@@ -785,8 +786,7 @@ public class DefaultNWorkspaceConfigModel {
                 .resolve(NConstants.Folders.ID).resolve(NWorkspace.of().getDefaultIdBasedir(extensionId));
         NPath afile = runtimeVersionSpecificLocation.resolve(NConstants.Files.EXTENSION_BOOT_CONFIG_FILE_NAME);
         cc.setConfigVersion(current().getApiVersion());
-        NElements.of().json().setValue(cc)
-                .setNtf(false).print(afile);
+        NElementWriter.ofJson().write(cc, afile);
     }
 
     public void setExtraBootRuntimeId(NId apiId, NId runtimeId, List<NDependency> deps) {
@@ -814,9 +814,7 @@ public class DefaultNWorkspaceConfigModel {
         estoreModelApi.setConfigVersion(current().getApiVersion());
         NPath apiVersionSpecificLocation = NWorkspace.of().getStoreLocation(apiId, NStoreType.CONF);
         NPath afile = apiVersionSpecificLocation.resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
-        NElements elems = NElements.of();
-        elems.json().setValue(estoreModelApi)
-                .setNtf(false).print(afile);
+        NElementWriter.ofJson().write(estoreModelApi, afile);
 
         NWorkspaceConfigRuntime storeModelRuntime = new NWorkspaceConfigRuntime();
         storeModelRuntime.setId(runtimeId);
@@ -828,8 +826,7 @@ public class DefaultNWorkspaceConfigModel {
                 .resolve(NConstants.Folders.ID).resolve(NWorkspace.of().getDefaultIdBasedir(runtimeId));
         afile = runtimeVersionSpecificLocation.resolve(NConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
         storeModelRuntime.setConfigVersion(current().getApiVersion());
-        elems.json().setValue(storeModelRuntime)
-                .setNtf(false).print(afile);
+        NElementWriter.ofJson().write(storeModelRuntime, afile);
 
     }
 

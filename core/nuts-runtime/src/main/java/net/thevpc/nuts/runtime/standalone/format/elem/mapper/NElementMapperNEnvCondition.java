@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.format.elem.mapper;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
@@ -21,12 +20,12 @@ public class NElementMapperNEnvCondition implements NElementMapper<NEnvCondition
 
     @Override
     public NElement createElement(NEnvCondition o, Type typeOfSrc, NElementFactoryContext context) {
-        return context.defaultObjectToElement(new DefaultNEnvConditionBuilder(o), null);
+        return context.defaultCreateElement(new DefaultNEnvConditionBuilder(o), null);
     }
 
     @Override
     public NEnvCondition createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        NEnvConditionBuilder builder = context.defaultElementToObject(o, DefaultNEnvConditionBuilder.class);
+        NEnvConditionBuilder builder = context.defaultCreateObject(o, DefaultNEnvConditionBuilder.class);
         return new DefaultNEnvConditionBuilder(builder).build();
     }
 

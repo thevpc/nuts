@@ -33,7 +33,6 @@ import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.repository.util.NIdLocationUtils;
 import net.thevpc.nuts.util.NIteratorBase;
@@ -312,7 +311,7 @@ public class NHttpSrvRepository extends NCachedRepository {
 
         @Override
         public NElement describe() {
-            return NElements.ofObjectBuilder()
+            return NElement.ofObjectBuilder()
                     .name("ScanArchetypeCatalog")
                     .set("source", source0.toString())
                     .build();

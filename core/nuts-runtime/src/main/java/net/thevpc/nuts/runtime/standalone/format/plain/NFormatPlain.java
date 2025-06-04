@@ -9,10 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.elem.NArrayElement;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
@@ -99,9 +96,7 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
         } else if (value instanceof Properties) {
             NPropertiesFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
         } else if (value instanceof NElement) {
-            NElements.of().setValue(value).setNtf(isNtf())
-                    .setCompact(isCompact())
-                    .configure(true, extraConfig.toArray(new String[0])).print(w);
+            ew().write(value, w);
         } else if (value instanceof org.w3c.dom.Document) {
             XmlUtils.writeDocument((org.w3c.dom.Document) value, new StreamResult(w.asPrintStream()), false, true);
         } else if (value instanceof org.w3c.dom.Element) {
@@ -112,28 +107,28 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
         } else {
             NElements element = NElements.of();
             Object newVal = element.setNtf(true).setIndestructibleFormat().destruct(value);
-            Flags f=new Flags();
-            collectFlags(newVal,f,300);
-            if(f.map){
-                if(f.msg || f.formattable){
+            Flags f = new Flags();
+            collectFlags(newVal, f, 300);
+            if (f.map) {
+                if (f.msg || f.formattable) {
                     NTreeFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
-                }else if(f.elems){
-                    NElements.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
-                }else {
+                } else if (f.elems) {
+                    ew().write(value,w);
+                } else {
                     //defaults to elements
-                    NElements.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+                    ew().write(value,w);
                 }
-            }else if(f.list){
-                if(f.msg || f.formattable){
+            } else if (f.list) {
+                if (f.msg || f.formattable) {
                     NTableFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
                     //table.configure(true, "--no-header", "--border=spaces");
-                }else if(f.elems){
-                    NElements.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
-                }else {
+                } else if (f.elems) {
+                    ew().write(value,w);
+                } else {
                     //defaults to elements
-                    NElements.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+                    ew().write(value,w);
                 }
-            }else{
+            } else {
                 NPrintStream out = getValidPrintStream(w);
                 out.print(NText.of(value));
                 out.flush();
@@ -141,7 +136,11 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
         }
     }
 
-    public void collectFlags(Object value, Flags flags, int depth) {
+    private NElementWriter ew() {
+        return NElementWriter.of().setNtf(isNtf()).setCompact(isCompact()).configure(true, extraConfig.toArray(new String[0]));
+    }
+
+    private void collectFlags(Object value, Flags flags, int depth) {
         if (depth < 0) {
             return;
         }
@@ -153,24 +152,24 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
             }
         } else if (value instanceof List) {
             flags.list = true;
-            Flags f2=new Flags();
+            Flags f2 = new Flags();
             for (Object entry : ((List) value)) {
                 collectFlags(entry, f2, depth - 1);
             }
-            if(f2.list || f2.map){
-                flags.map=true;
+            if (f2.list || f2.map) {
+                flags.map = true;
             }
-            flags.elems|=f2.elems;
-            flags.msg|=f2.msg;
-            flags.primitives|=f2.primitives;
-            flags.formattable|=f2.formattable;
+            flags.elems |= f2.elems;
+            flags.msg |= f2.msg;
+            flags.primitives |= f2.primitives;
+            flags.formattable |= f2.formattable;
         } else if (value instanceof Formattable) {
             flags.formattable = true;
         } else if (value instanceof NElement) {
             flags.elems = true;
-            if(value instanceof NObjectElement){
+            if (value instanceof NObjectElement) {
                 flags.map = true;
-            }else if(value instanceof NArrayElement){
+            } else if (value instanceof NArrayElement) {
                 flags.list = true;
             }
         } else if (value instanceof NMsg) {

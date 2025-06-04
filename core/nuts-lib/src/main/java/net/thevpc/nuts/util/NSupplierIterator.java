@@ -17,10 +17,10 @@ public class NSupplierIterator<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        return NElements.ofObjectBuilder()
+        return NElement.ofObjectBuilder()
                 .name("Supplier")
                 .set("template",
-                        NEDesc.describeResolveOr(from, ()-> NElements.ofObjectBuilder().name("Compiled").addAll(name).build())
+                        NEDesc.describeResolveOr(from, ()-> NElement.ofObjectBuilder().name("Compiled").addAll(name).build())
                 )
                 .build();
     }

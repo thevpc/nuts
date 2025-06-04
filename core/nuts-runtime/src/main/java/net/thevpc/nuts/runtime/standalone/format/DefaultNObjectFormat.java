@@ -29,6 +29,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NElementFormat;
 import net.thevpc.nuts.elem.NElements;
 
 
@@ -201,7 +202,7 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
             case JSON:
             case TSON:
             case YAML: {
-                NElements ee = NElements.of().setNtf(isNtf())
+                NElementFormat ee = NElementFormat.of().setNtf(isNtf())
                         .setCompact(isCompact())
                         .setContentType(session.getOutputFormat().orDefault());
                 if (value instanceof NText) {

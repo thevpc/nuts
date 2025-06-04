@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.remote;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecCmd;
 import net.thevpc.nuts.util.NMsg;
 
@@ -16,7 +16,7 @@ public class RemoteNExecCmd extends AbstractNExecCmd {
         RemoteNWorkspace ws=(RemoteNWorkspace)NWorkspace.get();
         return ws.remoteCall(
                 ws.createCall("workspace.which",
-                        NElements.ofObjectBuilder()
+                        NElement.ofObjectBuilder()
                                 .build()
                 ),
                 NExecutableInformation.class
@@ -30,7 +30,7 @@ public class RemoteNExecCmd extends AbstractNExecCmd {
         try {
             int r = ws.remoteCall(
                     ws.createCall("workspace.exec",
-                            NElements.ofObjectBuilder()
+                            NElement.ofObjectBuilder()
                                     .set("dry", session.isDry())
                                     .set("failFast", failFast)
                                     .build()

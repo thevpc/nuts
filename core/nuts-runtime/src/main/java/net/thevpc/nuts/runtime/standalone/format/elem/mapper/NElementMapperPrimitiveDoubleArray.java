@@ -28,7 +28,7 @@ public class NElementMapperPrimitiveDoubleArray implements NElementMapper<double
         NArrayElement earr = o.asArray().get();
         double[] arr = new double[earr.size()];
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = (double) context.elementToObject(earr.get(i).get(), double.class);
+            arr[i] = (double) context.createObject(earr.get(i).get(), double.class);
         }
         return arr;
     }

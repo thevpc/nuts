@@ -54,7 +54,7 @@ public class NElementFactoryXmlDocument implements NElementMapper {
         Document doc = (Document) o;
         Element e = doc.getDocumentElement();
         NElement x = NElementFactoryXmlElement.runWithDoc(context,
-                () -> context.objectToElement(e, Element.class),
+                () -> context.createElement(e, Element.class),
                 doc);
         return x;
     }
@@ -64,7 +64,7 @@ public class NElementFactoryXmlDocument implements NElementMapper {
         Document doc = XmlUtils.createDocument();
         Node source = NElementFactoryXmlElement.runWithDoc(
                 context,
-                () -> (Node) context.elementToObject(o, Element.class),
+                () -> (Node) context.createObject(o, Element.class),
                 doc);
         doc.insertBefore(source,null);
 //        doc.adoptNode(source);

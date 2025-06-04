@@ -30,13 +30,11 @@ import net.thevpc.nuts.NConstants;
 
 
 import net.thevpc.nuts.NStoreType;
-import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.elem.NEDesc;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NCollections;
@@ -82,7 +80,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         this.deployments = new NRepositoryFolderHelper(this,
                 NPath.of(bOptions.getStoreType(NStoreType.LIB).get()).resolve(NConstants.Folders.ID)
                 , false,
-                "lib", NElements.ofObjectBuilder().set("repoKind", "lib").build()
+                "lib", NElement.ofObjectBuilder().set("repoKind", "lib").build()
         );
         configModel = new InstalledRepositoryConfigModel(workspace, this);
     }
@@ -559,9 +557,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
 
     public void printJson(NId id, String name, InstallInfoConfig value) {
         value.setConfigVersion(workspace.getApiVersion());
-        NElements.of().setNtf(false)
-                .json().setValue(value)
-                .print(getPath(id, name));
+        NElementWriter.ofJson().write(value, getPath(id, name));
     }
 
     public void remove(NId id, String name) {
@@ -580,7 +576,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     /////////////////////////////////////////////////////////////////////////////////////////////
     // implementation of repository
 
-    /////////////////////////////////////////////////////////////////////////////////////////////
+    /// //////////////////////////////////////////////////////////////////////////////////////////
     @Override
     public NRepositorySecurityManager security() {
         throw new IllegalArgumentException("unsupported security() for " + getName() + " repository");
@@ -692,15 +688,15 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
             @Override
             public NSearchVersionsRepositoryCmd run() {
 //                if (getFilter() instanceof NInstallStatusDefinitionFilter) {
-                    final NVersionFilter filter0 = getId().getVersion().filter();
-                    result=NStream.ofIterator(_wstore().searchInstalledVersions(getId()))
-                                    .map(vv->{
-                                        NId newId = getId().builder().setVersion(vv).build();
-                                        if (filter0.acceptVersion(vv) && (filter == null || filter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(newId,repo, "DefaultNInstalledRepository")))) {
-                                            return newId;
-                                        }
-                                        return null;
-                                    }).nonNull().withDesc(NEDesc.of("FileToVersion")).iterator();
+                final NVersionFilter filter0 = getId().getVersion().filter();
+                result = NStream.ofIterator(_wstore().searchInstalledVersions(getId()))
+                        .map(vv -> {
+                            NId newId = getId().builder().setVersion(vv).build();
+                            if (filter0.acceptVersion(vv) && (filter == null || filter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(newId, repo, "DefaultNInstalledRepository")))) {
+                                return newId;
+                            }
+                            return null;
+                        }).nonNull().withDesc(NEDesc.of("FileToVersion")).iterator();
 //                } else {
 //                    this.result = NIteratorBuilder.of(deployments.searchVersions(getId(), getFilter(), true))
 //                            .named(NElements.ofUplet("searchVersionsInMain"))

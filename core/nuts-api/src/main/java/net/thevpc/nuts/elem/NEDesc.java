@@ -7,11 +7,11 @@ import java.util.function.Supplier;
  */
 public interface NEDesc extends Supplier<NElement> {
     static NEDesc ofLateString(Supplier<String> name) {
-        return name == null ? null : () -> NElements.ofString(name.get());
+        return name == null ? null : () -> NElement.ofString(name.get());
     }
 
     static NEDesc ofLateToString(Object any) {
-        return () -> NElements.ofString(String.valueOf(any));
+        return () -> NElement.ofString(String.valueOf(any));
     }
 
     static NEDesc ofPossibleDescribable(Object any) {
@@ -24,7 +24,7 @@ public interface NEDesc extends Supplier<NElement> {
     }
 
     static NEDesc of(String name) {
-        return name == null ? null : () -> NElements.ofString(name);
+        return name == null ? null : () -> NElement.ofString(name);
     }
 
     static NEDesc of(NElement element) {
@@ -57,7 +57,7 @@ public interface NEDesc extends Supplier<NElement> {
     }
 
     static NElement describeResolveOrToString(Object o) {
-        return describeResolveOr(o, () -> NElements.ofString(o.toString()));
+        return describeResolveOr(o, () -> NElement.ofString(o.toString()));
     }
 
     static NElement describeResolveOr(Object o, Supplier<NElement> d) {
@@ -73,7 +73,7 @@ public interface NEDesc extends Supplier<NElement> {
         if (e instanceof NObjectElement) {
             return (NObjectElement) e;
         }
-        return NElements.ofObjectBuilder()
+        return NElement.ofObjectBuilder()
                 .set("value", e)
                 .build();
     }

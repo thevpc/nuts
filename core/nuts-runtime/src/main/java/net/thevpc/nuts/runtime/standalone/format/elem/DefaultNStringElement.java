@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.format.elem;
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NElementUtils;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
@@ -16,7 +17,7 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
                                  NElementAnnotation[] annotations, NElementComments comments) {
         super(type, value, annotations, comments);
         if (type == NElementType.NAME) {
-            NAssert.requireTrue(NElements.isValidElementName((String) value), "valid name : "+value);
+            NAssert.requireTrue(NElementUtils.isValidElementName((String) value), "valid name : "+value);
         }
     }
     public DefaultNStringElement(NElementType type, Character value,

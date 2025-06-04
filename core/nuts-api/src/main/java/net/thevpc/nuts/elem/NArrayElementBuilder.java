@@ -42,7 +42,7 @@ import java.util.function.Consumer;
 public interface NArrayElementBuilder extends NElementBuilder {
 
     static NArrayElementBuilder of() {
-        return NElements.ofArrayBuilder();
+        return NElement.ofArrayBuilder();
     }
 
     NArrayElementBuilder doWith(Consumer<NArrayElementBuilder> con);

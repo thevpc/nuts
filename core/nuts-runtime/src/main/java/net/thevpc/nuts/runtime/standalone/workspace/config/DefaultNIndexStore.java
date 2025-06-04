@@ -29,14 +29,13 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementParser;
-import net.thevpc.nuts.elem.NElements;
 
 import net.thevpc.nuts.NIndexStore;
 
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterToNIdPredicate;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterToNIdPredicate2;
 import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.util.*;
@@ -83,7 +82,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
                         return NIteratorBuilder.emptyIterator();
                     }
                 },
-                ()-> NElements
+                ()-> NElement
                         .ofUpletBuilder()
                         .name("SearchIndexVersionsAt")
                         .add(getIndexURL().resolve( NConstants.Folders.ID).resolve( "allVersions").toString())
@@ -112,7 +111,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
 //                        return IteratorUtils.emptyIterator();
                     }
                 },
-                ()-> NElements
+                ()-> NElement
                         .ofObjectBuilder().name("SearchIndexPackages")
                         .set("source", getIndexURL().resolve(NConstants.Folders.ID).toString())
                         .set("filter", NEDesc.describeResolveOrToString(filter))

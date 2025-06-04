@@ -73,7 +73,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                 return src.asCustom().get();
             }
             default: {
-                return context.objectToElement(src, NPrimitiveElement.class);
+                return context.createElement(src, NPrimitiveElement.class);
             }
         }
     }
@@ -91,7 +91,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                 NElement v = convertOne_objectToElement(p.value(), src, typeOfSrc, context, someChange);
                 List<NElementAnnotation> anns = convertAnn_objectToElement(p.annotations(), src, typeOfSrc, context, someChange);
                 if (someChange.get()) {
-                    NPairElementBuilder obj2 = NElements.ofPairBuilder();
+                    NPairElementBuilder obj2 = NElement.ofPairBuilder();
                     obj2.key(k);
                     obj2.value(v);
                     obj2.addAnnotations(anns);
@@ -108,7 +108,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                 List<NElement> params = convertList_objectToElement(arr.params(), src, typeOfSrc, context, someChange);
                 List<NElementAnnotation> anns = convertAnn_objectToElement(arr.annotations(), src, typeOfSrc, context, someChange);
                 if (someChange.get()) {
-                    NUpletElementBuilder obj2 = NElements.ofUpletBuilder();
+                    NUpletElementBuilder obj2 = NElement.ofUpletBuilder();
                     obj2.addAll(params.toArray(new NElement[0]));
                     obj2.name(arr.name().orNull());
                     obj2.addAnnotations(anns);
@@ -128,7 +128,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                 List<NElement> params = convertList_objectToElement(arr.params().orNull(), src, typeOfSrc, context, someChange);
                 List<NElementAnnotation> anns = convertAnn_objectToElement(arr.annotations(), src, typeOfSrc, context, someChange);
                 if (someChange.get()) {
-                    NArrayElementBuilder obj2 = NElements.ofArrayBuilder();
+                    NArrayElementBuilder obj2 = NElement.ofArrayBuilder();
                     obj2.addAll(children.toArray(new NElement[0]));
                     if(params!=null){
                         obj2.addParams(params);
@@ -151,7 +151,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                 List<NElement> params = convertList_objectToElement(obj.params().orNull(), src, typeOfSrc, context, someChange);
                 List<NElementAnnotation> anns = convertAnn_objectToElement(obj.annotations(), src, typeOfSrc, context, someChange);
                 if (someChange.get()) {
-                    NObjectElementBuilder obj2 = NElements.ofObjectBuilder();
+                    NObjectElementBuilder obj2 = NElement.ofObjectBuilder();
                     obj2.addAll(children.toArray(new NElement[0]));
                     if(params!=null){
                         obj2.addParams(params);
@@ -168,7 +168,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                 if (context.getIndestructibleObjects() != null && context.getIndestructibleObjects().test(v1.getClass())) {
                     return src;
                 }
-                return context.objectToElement(v1, null);
+                return context.createElement(v1);
             }
         }
         return src;
@@ -183,7 +183,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                 NBooleanRef someChange0= NRef.ofBoolean(false);
                 List<NElement> sub = convertList_objectToElement(e.params(), src, typeOfSrc, context, someChange0);
                 if(someChange0.get()){
-                    newList.add(NElements.ofAnnotation(e.name(), sub.toArray(new NElement[0])));
+                    newList.add(NElement.ofAnnotation(e.name(), sub.toArray(new NElement[0])));
                     someChange.set(true);
                     anyChange00=true;
                 }else{
@@ -198,7 +198,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
     }
 
     private NElement convertOne_objectToElement(NElement k, NElement src, Type typeOfSrc, NElementFactoryContext context, NBooleanRef someChange){
-        NElement k2 = context.objectToElement(k, null);
+        NElement k2 = context.createElement(k);
         if(k2!=k){
             someChange.set();
             return k2;
@@ -211,7 +211,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
             newParams=new ArrayList<>(oldParams.size());
             for (NElement e : oldParams) {
                 boolean someChange0;
-                NElement k2 = context.objectToElement(e, null);
+                NElement k2 = context.createElement(e);
                 someChange0 = k2 != e;
                 if (someChange0) {
                     someChange.set(true);

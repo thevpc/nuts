@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.install;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NEDesc;
-import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NMemoryPrintStream;
@@ -487,11 +487,11 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
                         );
                 out.resetLine().println(msg);
             } else {
-                session.eout().add(NElements.ofObjectBuilder()
+                session.eout().add(NElement.ofObjectBuilder()
                         .set("command", "warning")
                         .set("artifact-kind", skind)
                         .set("action-warning", saction)
-                        .set("artifacts", NElements.ofArrayBuilder().addAll(
+                        .set("artifacts", NElement.ofArrayBuilder().addAll(
                                 all.stream().map(x -> x.toString()).toArray(String[]::new)
                         ).build())
                         .build()

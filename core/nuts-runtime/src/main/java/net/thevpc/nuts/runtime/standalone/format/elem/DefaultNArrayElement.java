@@ -24,14 +24,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.format.elem;
 
-import java.time.Instant;
-
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -53,7 +48,7 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
                         : NElementType.NAMED_PARAMETRIZED_ARRAY,
                 annotations, comments);
         if (name != null) {
-            NAssert.requireTrue(NElements.isValidElementName(name), "valid name : "+name);
+            NAssert.requireTrue(NElementUtils.isValidElementName(name), "valid name : "+name);
         }
         this.values = values.toArray(new NElement[0]);
         this.name = name;
@@ -135,7 +130,7 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
 
     @Override
     public NArrayElementBuilder builder() {
-        return NElements.ofArrayBuilder()
+        return NElement.ofArrayBuilder()
                 .copyFrom(this);
     }
 

@@ -382,47 +382,47 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public NUpletElementBuilder add(int value) {
-        return add(NElements.ofInt(value));
+        return add(NElement.ofInt(value));
     }
 
     @Override
     public NUpletElementBuilder add(long value) {
-        return add(NElements.ofLong(value));
+        return add(NElement.ofLong(value));
     }
 
     @Override
     public NUpletElementBuilder add(double value) {
-        return add(NElements.ofDouble(value));
+        return add(NElement.ofDouble(value));
     }
 
     @Override
     public NUpletElementBuilder add(float value) {
-        return add(NElements.ofFloat(value));
+        return add(NElement.ofFloat(value));
     }
 
     @Override
     public NUpletElementBuilder add(byte value) {
-        return add(NElements.ofByte(value));
+        return add(NElement.ofByte(value));
     }
 
     @Override
     public NUpletElementBuilder add(boolean value) {
-        return add(NElements.ofBoolean(value));
+        return add(NElement.ofBoolean(value));
     }
 
     @Override
     public NUpletElementBuilder add(char value) {
-        return add(NElements.ofString(String.valueOf(value)));
+        return add(NElement.ofString(String.valueOf(value)));
     }
 
     @Override
     public NUpletElementBuilder add(Number value) {
-        return add(NElements.ofNumber(value));
+        return add(NElement.ofNumber(value));
     }
 
     @Override
     public NUpletElementBuilder add(String value) {
-        return add(NElements.ofString(value));
+        return add(NElement.ofString(value));
     }
 
     @Override
@@ -438,7 +438,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
 
     private NElement denull(NElement e) {
         if (e == null) {
-            return NElements.ofNull();
+            return NElement.ofNull();
         }
         return e;
     }
@@ -564,7 +564,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public NUpletElementBuilder add(String name, NElement value) {
-        return add(NElements.ofString(name), denull(value));
+        return add(NElement.ofString(name), denull(value));
     }
 
     @Override
@@ -600,47 +600,47 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public NUpletElementBuilder set(String name, NElement value) {
-        return set(NElements.ofNameOrString(name), denull(value));
+        return set(NElement.ofNameOrString(name), denull(value));
     }
 
     @Override
     public NUpletElementBuilder set(String name, boolean value) {
-        return set(NElements.ofNameOrString(name), NElements.ofBoolean(value));
+        return set(NElement.ofNameOrString(name), NElement.ofBoolean(value));
     }
 
     @Override
     public NUpletElementBuilder set(String name, int value) {
-        return set(NElements.ofNameOrString(name), NElements.ofInt(value));
+        return set(NElement.ofNameOrString(name), NElement.ofInt(value));
     }
 
     @Override
     public NUpletElementBuilder set(String name, double value) {
-        return set(NElements.ofNameOrString(name), NElements.ofDouble(value));
+        return set(NElement.ofNameOrString(name), NElement.ofDouble(value));
     }
 
     @Override
     public NUpletElementBuilder set(String name, String value) {
-        return set(NElements.ofNameOrString(name), NElements.ofString(value));
+        return set(NElement.ofNameOrString(name), NElement.ofString(value));
     }
 
     @Override
     public NUpletElementBuilder set(NElement name, boolean value) {
-        return set(name, NElements.ofBoolean(value));
+        return set(name, NElement.ofBoolean(value));
     }
 
     @Override
     public NUpletElementBuilder set(NElement name, int value) {
-        return set(name, NElements.ofInt(value));
+        return set(name, NElement.ofInt(value));
     }
 
     @Override
     public NUpletElementBuilder set(NElement name, double value) {
-        return set(name, NElements.ofDouble(value));
+        return set(name, NElement.ofDouble(value));
     }
 
     @Override
     public NUpletElementBuilder set(NElement name, String value) {
-        return set(name, NElements.ofString(value));
+        return set(name, NElement.ofString(value));
     }
 
     @Override
@@ -653,22 +653,22 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public NUpletElementBuilder add(String name, boolean value) {
-        return add(NElements.ofNameOrString(name), NElements.ofBoolean(value));
+        return add(NElement.ofNameOrString(name), NElement.ofBoolean(value));
     }
 
     @Override
     public NUpletElementBuilder add(String name, int value) {
-        return add(NElements.ofNameOrString(name), NElements.ofInt(value));
+        return add(NElement.ofNameOrString(name), NElement.ofInt(value));
     }
 
     @Override
     public NUpletElementBuilder add(String name, double value) {
-        return add(NElements.ofNameOrString(name), NElements.ofDouble(value));
+        return add(NElement.ofNameOrString(name), NElement.ofDouble(value));
     }
 
     @Override
     public NUpletElementBuilder add(String name, String value) {
-        return add(NElements.ofNameOrString(name), NElements.ofString(value));
+        return add(NElement.ofNameOrString(name), NElement.ofString(value));
     }
 
     @Override

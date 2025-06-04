@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.folder;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NEDesc;
-import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.NSpeedQualifier;
 import net.thevpc.nuts.NStoreStrategy;
 import net.thevpc.nuts.format.NTreeVisitResult;
@@ -14,7 +14,6 @@ import net.thevpc.nuts.runtime.standalone.repository.NIdPathIterator;
 import net.thevpc.nuts.runtime.standalone.repository.NIdPathIteratorBase;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NCachedRepository;
 import net.thevpc.nuts.runtime.standalone.repository.util.NIdLocationUtils;
-import net.thevpc.nuts.spi.NFetchDescriptorRepositoryCmd;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.log.NLogVerb;
@@ -218,7 +217,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                         return NIterator.ofEmpty();
                     }
                 }
-                , () -> NElements.ofObjectBuilder()
+                , () -> NElement.ofObjectBuilder()
                         .name("NonSingleVersion")
                         .set("path", foldersFileUrl.toString())
                         .build()
@@ -252,7 +251,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                         }
                         return ret.iterator();
                     }
-                    , () -> NElements.ofObjectBuilder()
+                    , () -> NElement.ofObjectBuilder()
                             .name("SingleVersionAt")
                             .add("path",metadataURL.toString())
                             .build()

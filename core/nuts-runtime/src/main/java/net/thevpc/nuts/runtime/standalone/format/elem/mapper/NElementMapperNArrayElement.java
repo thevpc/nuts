@@ -15,6 +15,6 @@ public class NElementMapperNArrayElement extends NElementMapperNElement {
         if (o.type() == NElementType.ARRAY) {
             return o.asArray().get();
         }
-        return NElements.ofArrayBuilder().add(o).build();
+        return NElement.ofArrayBuilder().add(o).build();
     }
 }

@@ -2,7 +2,6 @@ package net.thevpc.nuts.spi.base;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NFilterOp;
 
@@ -89,6 +88,6 @@ public abstract class AbstractNFilter implements NFilter {
 
     @Override
     public NElement describe() {
-        return NElements.ofString(toString());
+        return NElement.ofString(toString());
     }
 }

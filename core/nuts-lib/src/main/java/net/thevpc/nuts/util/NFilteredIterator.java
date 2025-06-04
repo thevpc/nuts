@@ -28,7 +28,6 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
 
 import java.util.Iterator;
 import java.util.function.Predicate;
@@ -55,7 +54,7 @@ public class NFilteredIterator<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        return NElements.ofObjectBuilder()
+        return NElement.ofObjectBuilder()
                 .name("Filter")
                 .set("base", NEDesc.describeResolveOrDestruct(base))
                 .set("accept", NEDesc.describeResolveOrToString(filter))

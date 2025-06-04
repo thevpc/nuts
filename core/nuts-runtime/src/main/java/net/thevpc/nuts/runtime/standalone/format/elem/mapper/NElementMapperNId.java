@@ -4,7 +4,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NFormats;
 
 import java.lang.reflect.Type;
@@ -26,9 +25,9 @@ public class NElementMapperNId implements NElementMapper<NId> {
 //                NutsWorkspace ws = context.getSession().getWorkspace();
 //                NutsText n = ws.text().toText(ws.id().formatter(o).setNtf(true).format());
 //                return ws.elem().forPrimitive().buildNutsString(n);
-            return NElements.ofString(NFormats.of().ofFormat(o).get().setNtf(true).format().toString());
+            return NElement.ofString(NFormats.of().ofFormat(o).get().setNtf(true).format().toString());
         } else {
-            return context.defaultObjectToElement(o.toString(), null);
+            return context.defaultCreateElement(o.toString(), null);
         }
     }
 

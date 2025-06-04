@@ -16,12 +16,12 @@ public class NElementMapperNPath implements NElementMapper<NPath> {
 
     @Override
     public NElement createElement(NPath o, Type typeOfSrc, NElementFactoryContext context) {
-        return context.defaultObjectToElement(destruct(o, null, context), null);
+        return context.defaultCreateElement(destruct(o, null, context), null);
     }
 
     @Override
     public NPath createObject(NElement o, Type to, NElementFactoryContext context) {
-        String i = context.defaultElementToObject(o, String.class);
+        String i = context.defaultCreateObject(o, String.class);
         return NPath.of(i);
     }
 }

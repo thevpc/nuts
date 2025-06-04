@@ -7,6 +7,7 @@ package net.thevpc.nuts.runtime.standalone.format.json;
 
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NPrintStream;
@@ -17,7 +18,6 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 
 /**
- *
  * @author thevpc
  */
 public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
@@ -54,9 +54,9 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
         if (getDisplayOptions().configureFirst(cmdLine)) {
             return true;
         }
-        switch(aa.key()) {
+        switch (aa.key()) {
             case "--compact": {
-                cmdLine.withNextFlag((v, a) -> this.compact=v);
+                cmdLine.withNextFlag((v, a) -> this.compact = v);
                 return true;
             }
         }
@@ -67,14 +67,12 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
     public void next(Object object, long index) {
         if (index > 0) {
             getWriter().print(", ");
-        }else{
+        } else {
             getWriter().print("  ");
         }
-        String json = NElements.of()
-                .json().setNtf(false).setValue(object).setCompact(isCompact())
-                .format()
-                .filteredText()
-                ;
+        String json = NElementWriter.ofJson()
+                .setCompact(isCompact())
+                .toString(object);
         NText ee = codeFormat.stringToText(json, txt);
         getWriter().println(ee);
         getWriter().flush();

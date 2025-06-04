@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.format.elem.mapper;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 
 import java.lang.reflect.Type;
@@ -25,6 +24,6 @@ public class NElementMapperNPrimitiveElement implements NElementMapper<NPrimitiv
         if (o.type().isPrimitive()) {
             return o.asPrimitive().get();
         }
-        return NElements.ofString(o.toString());
+        return NElement.ofString(o.toString());
     }
 }

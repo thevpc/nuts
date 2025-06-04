@@ -2,7 +2,6 @@ package net.thevpc.nuts.spi.base;
 
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.reserved.util.NPredicateWithDescription;
 import net.thevpc.nuts.util.NPredicate;
 import net.thevpc.nuts.util.NPredicates;
@@ -35,6 +34,6 @@ public abstract class AbstractNPredicate<T> implements NPredicate<T> {
 
     @Override
     public NElement describe() {
-        return NElements.ofString(toString());
+        return NElement.ofString(toString());
     }
 }

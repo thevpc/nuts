@@ -25,13 +25,10 @@
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
 import net.thevpc.nuts.NIllegalArgumentException;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NArrays;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.reflect.*;
 
 import java.lang.reflect.*;
 import java.util.*;

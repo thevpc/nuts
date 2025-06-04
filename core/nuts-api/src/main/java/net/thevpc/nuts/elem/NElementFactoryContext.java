@@ -11,14 +11,14 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
@@ -39,25 +39,29 @@ public interface NElementFactoryContext {
 
     Map<String, Object> getProperties();
 
-    NElement defaultObjectToElement(Object o, Type expectedType);
+    NElement defaultCreateElement(Object o, Type expectedType);
 
     Object defaultDestruct(Object o, Type expectedType);
 
-    NElement objectToElement(Object o, Type expectedType);
+    NElement createElement(Object o);
+
+    NElement createElement(Object o, Type expectedType);
 
     Object destruct(Object o, Type expectedType);
 
-    <T> T elementToObject(NElement o, Class<T> type);
+    <T> T createObject(NElement o, Class<T> type);
 
-    Object elementToObject(NElement o, Type type);
+    Object createObject(NElement o, Type type);
 
-    <T> T defaultElementToObject(NElement o, Class<T> type);
+    <T> T defaultCreateObject(NElement o, Class<T> type);
 
-    Object defaultElementToObject(NElement o, Type type);
+    <T> T defaultCreateObject(NElement o, Type type);
 
     boolean isNtf();
 
     NReflectRepository getTypesRepository();
 
     <T> NElementMapper<T> getMapper(Type expectedType, boolean defaultOnly);
+
+    <T> NElementMapper<T> getMapper(NElement element, boolean defaultOnly);
 }

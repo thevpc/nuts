@@ -28,7 +28,7 @@ public class NElementMapperPrimitiveShortArray implements NElementMapper<short[]
         NArrayElement earr = o.asArray().get();
         short[] arr = new short[earr.size()];
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = (short) context.elementToObject(earr.get(i).get(), short.class);
+            arr[i] = (short) context.createObject(earr.get(i).get(), short.class);
         }
         return arr;
     }

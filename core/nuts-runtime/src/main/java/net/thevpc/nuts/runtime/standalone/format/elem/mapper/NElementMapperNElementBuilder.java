@@ -52,7 +52,7 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
                 return src.build().asCustom().get();
             }
             default: {
-                return context.objectToElement(src, NPrimitiveElement.class);
+                return context.createElement(src, NPrimitiveElement.class);
             }
         }
     }
@@ -68,14 +68,14 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
                 List<NElement> children=new ArrayList<>(arr.size());
                 boolean someChange=false;
                 for (NElement c : arr) {
-                    NElement v2 = context.objectToElement(c, null);
+                    NElement v2 = context.createElement(c);
                     if(!someChange){
                         someChange=v2!=c;
                     }
                     children.add(v2);
                 }
                 if(someChange){
-                    return NElements.ofArrayBuilder().addAll(children.toArray(new NElement[0])).build();
+                    return NElement.ofArrayBuilder().addAll(children.toArray(new NElement[0])).build();
                 }
                 return src.build();
             }
@@ -85,7 +85,7 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
                 boolean someChange = false;
                 for (NElement e : obj) {
                     boolean someChange0;
-                    NElement k2 = context.objectToElement(e, null);
+                    NElement k2 = context.createElement(e);
                     someChange0 = k2 != e;
                     if (someChange0) {
                         if (!someChange) {
@@ -97,8 +97,8 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
                     }
                 }
                 if (someChange) {
-                    NObjectElementBuilder obj2 = NElements.ofObjectBuilder();
-                    obj2.addAll(children.toArray(new NPairElement[0]));
+                    NObjectElementBuilder obj2 = NElement.ofObjectBuilder();
+                    obj2.addAll(children.toArray(new NElement[0]));
                     return obj2.build();
                 }
                 return src.build();
@@ -108,7 +108,7 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
                 if(context.getIndestructibleObjects()!=null && context.getIndestructibleObjects().test(v1.getClass())){
                     return src.build();
                 }
-                return context.objectToElement(v1, null);
+                return context.createElement(v1);
             }
         }
         return src.build();

@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.format.elem.parser;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.format.NContentType;
-import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.reflect.NReflectRepository;
 import net.thevpc.nuts.runtime.standalone.format.elem.*;
@@ -12,7 +11,6 @@ import net.thevpc.nuts.runtime.standalone.text.DefaultNTextManagerModel;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.time.NProgressFactory;
 import net.thevpc.nuts.util.*;
 
@@ -20,8 +18,6 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.file.Path;
-import java.time.temporal.Temporal;
-import java.util.Date;
 import java.util.function.Predicate;
 
 public class DefaultNElementParser implements NElementParser {
@@ -29,46 +25,7 @@ public class DefaultNElementParser implements NElementParser {
     //    public static final NutsPrimitiveElement NULL = new DefaultNPrimitiveElement(NutsElementType.NULL, null);
 //    public static final NutsPrimitiveElement TRUE = new DefaultNPrimitiveElement(NutsElementType.BOOLEAN, true);
 //    public static final NutsPrimitiveElement FALSE = new DefaultNPrimitiveElement(NutsElementType.BOOLEAN, false);
-    private static Predicate<Class<?>> DEFAULT_INDESTRUCTIBLE_FORMAT = new Predicate<Class<?>>() {
-        @Override
-        public boolean test(Class x) {
-            switch (x.getName()) {
-                case "boolean":
-                case "byte":
-                case "short":
-                case "int":
-                case "long":
-                case "float":
-                case "double":
-                case "java.lang.String":
-                case "java.lang.StringBuilder":
-                case "java.lang.Boolean":
-                case "java.lang.Byte":
-                case "java.lang.Short":
-                case "java.lang.Integer":
-                case "java.lang.Long":
-                case "java.lang.Float":
-                case "java.lang.Double":
-                case "java.math.BigDecimal":
-                case "java.math.BigInteger":
-                case "java.util.Date":
-                case "java.sql.Time":
-                    return true;
-            }
-            if (Temporal.class.isAssignableFrom(x)) {
-                return true;
-            }
-            if (Date.class.isAssignableFrom(x)) {
-                return true;
-            }
-            return (
-                    NText.class.isAssignableFrom(x)
-                            || NElement.class.isAssignableFrom(x)
-                            || NFormattable.class.isAssignableFrom(x)
-                            || NMsg.class.isAssignableFrom(x)
-            );
-        }
-    };
+
     private final DefaultNTextManagerModel model;
     private NContentType contentType = NContentType.JSON;
     private boolean logProgress;
@@ -302,7 +259,7 @@ public class DefaultNElementParser implements NElementParser {
     @Override
     public NElement parse(String string) {
         if (string == null || string.isEmpty()) {
-            return NElements.ofNull();
+            return NElement.ofNull();
         }
         return parse(string, NElement.class);
     }
@@ -338,7 +295,7 @@ public class DefaultNElementParser implements NElementParser {
 
     @Override
     public NElementParser setIndestructibleFormat() {
-        return setIndestructibleObjects(DEFAULT_INDESTRUCTIBLE_FORMAT);
+        return setIndestructibleObjects(CoreNElementUtils.DEFAULT_INDESTRUCTIBLE_FORMAT);
     }
 
     @Override
@@ -357,7 +314,7 @@ public class DefaultNElementParser implements NElementParser {
 
     private DefaultNElementFactoryContext createFactoryContext() {
         NReflectRepository reflectRepository = NWorkspaceUtils.of().getReflectRepository();
-        DefaultNElementFactoryContext c = new DefaultNElementFactoryContext(this, reflectRepository, userElementMapperStore);
+        DefaultNElementFactoryContext c = new DefaultNElementFactoryContext(isNtf(), reflectRepository, userElementMapperStore,indestructibleObjects);
         switch (getContentType()) {
             case XML:
             case JSON:
@@ -371,11 +328,7 @@ public class DefaultNElementParser implements NElementParser {
     }
 
     public Object elementToObject(NElement o, Type type) {
-        return createFactoryContext().elementToObject(o, type);
-    }
-
-    public NElementFactoryService getElementFactoryService() {
-        return model.getElementFactoryService();
+        return createFactoryContext().createObject(o, type);
     }
 
     @Override

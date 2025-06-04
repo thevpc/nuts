@@ -25,20 +25,12 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.search;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
 
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
-import net.thevpc.nuts.runtime.standalone.definition.filter.NDefinitionFilterOr;
-import net.thevpc.nuts.runtime.standalone.definition.filter.NPatternDefinitionFilter;
 import net.thevpc.nuts.runtime.standalone.format.desc.NEDescHelper;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
-import net.thevpc.nuts.runtime.standalone.id.filter.NPatternIdFilter;
-import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.util.NIteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceHelper;
@@ -48,9 +40,6 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.NRepositoryAndFetchMode;
 import net.thevpc.nuts.spi.NRepositorySPI;
 
 import java.util.*;
-import java.util.stream.Collectors;
-
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 
 /**
  * @author thevpc
@@ -138,7 +127,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                                         if(!NIteratorUtils.isNullOrEmpty(baseIter)) {
                                             NIterator<NId> z = NIteratorBuilder.of(baseIter)
                                                     .named(
-                                                            NElements.ofObjectBuilder()
+                                                            NElement.ofObjectBuilder()
                                                                     .set("description", "searchVersions")
                                                                     .set("repository", repoAndMode.getRepository().getName())
                                                                     .set("fetchMode", repoAndMode.getFetchMode().id())
@@ -156,7 +145,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                                         if(!NIteratorUtils.isNullOrEmpty(baseIter)) {
                                             NIterator<NId> z = NIteratorBuilder.of(baseIter)
                                                     .named(
-                                                            NElements.ofObjectBuilder()
+                                                            NElement.ofObjectBuilder()
                                                                     .set("description", "search")
                                                                     .set("repository", repoAndMode.getRepository().getName())
                                                                     .set("fetchMode", repoAndMode.getFetchMode().id())
@@ -196,7 +185,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                                                 .setFilter(filter)
                                                 .setFetchMode(repoAndMode.getFetchMode())
                                                 .getResult(),
-                                        NEDesc.of(NElements.ofObjectBuilder()
+                                        NEDesc.of(NElement.ofObjectBuilder()
                                                 .set("description", "searchRepository")
                                                 .set("repository", repoAndMode.getRepository().getName())
                                                 .set("fetchMode", repoAndMode.getFetchMode().id())

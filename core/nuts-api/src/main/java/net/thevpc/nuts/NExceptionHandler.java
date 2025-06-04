@@ -6,7 +6,7 @@ import net.thevpc.nuts.boot.reserved.cmdline.NBootWorkspaceCmdLineParser;
 import net.thevpc.nuts.boot.reserved.util.NBootMsg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
-import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
@@ -248,14 +248,14 @@ public class NExceptionHandler {
                         sessionOut.flush();
                     } else {
                         if (messageFormatted != null) {
-                            session.eout().add(NElements.ofObjectBuilder()
+                            session.eout().add(NElement.ofObjectBuilder()
                                     .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().get()))
                                     .set("error", NText.of(messageFormatted).filteredText())
                                     .build()
                             );
                             if (stacktrace) {
-                                session.eout().add(NElements.ofObjectBuilder().set("errorTrace",
-                                        NElements.ofArrayBuilder().addAll(NStringUtils.stacktraceArray(ex)).build()
+                                session.eout().add(NElement.ofObjectBuilder().set("errorTrace",
+                                        NElement.ofArrayBuilder().addAll(NStringUtils.stacktraceArray(ex)).build()
                                 ).build());
                             }
                             NArrayElementBuilder e = session.eout();
@@ -265,13 +265,13 @@ public class NExceptionHandler {
                             }
                             sessionOut.flush();
                         } else {
-                            session.eout().add(NElements.ofObjectBuilder()
+                            session.eout().add(NElement.ofObjectBuilder()
                                     .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().get()))
                                     .set("error", messageString)
                                     .build());
                             if (stacktrace) {
-                                session.eout().add(NElements.ofObjectBuilder().set("errorTrace",
-                                        NElements.ofArrayBuilder().addAll(NStringUtils.stacktraceArray(ex)).build()
+                                session.eout().add(NElement.ofObjectBuilder().set("errorTrace",
+                                        NElement.ofArrayBuilder().addAll(NStringUtils.stacktraceArray(ex)).build()
                                 ).build());
                             }
                             NArrayElementBuilder e = session.eout();

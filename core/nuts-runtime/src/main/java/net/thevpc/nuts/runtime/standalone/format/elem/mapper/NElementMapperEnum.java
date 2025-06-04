@@ -21,9 +21,9 @@ public class NElementMapperEnum implements NElementMapper<Enum> {
     @Override
     public NElement createElement(Enum o, Type typeOfSrc, NElementFactoryContext context) {
         if (o instanceof NEnum) {
-            return NElements.ofString(((NEnum) o).id());
+            return NElement.ofString(((NEnum) o).id());
         }
-        return NElements.ofString(String.valueOf(o));
+        return NElement.ofString(String.valueOf(o));
     }
 
     @Override

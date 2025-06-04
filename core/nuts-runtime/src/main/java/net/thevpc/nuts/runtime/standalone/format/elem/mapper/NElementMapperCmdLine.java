@@ -16,12 +16,12 @@ public class NElementMapperCmdLine implements NElementMapper<NCmdLine> {
 
     @Override
     public NElement createElement(NCmdLine o, Type typeOfSrc, NElementFactoryContext context) {
-        return context.defaultObjectToElement(destruct(o, null, context), null);
+        return context.defaultCreateElement(destruct(o, null, context), null);
     }
 
     @Override
     public NCmdLine createObject(NElement o, Type to, NElementFactoryContext context) {
-        String[] i = context.defaultElementToObject(o, String[].class);
+        String[] i = context.defaultCreateObject(o, String[].class);
         return NCmdLine.of(i);
     }
 }

@@ -2,10 +2,7 @@ package net.thevpc.nuts.runtime.remote;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootOptionsInfo;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementParser;
-import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.elem.*;
 
 import net.thevpc.nuts.runtime.standalone.workspace.AbstractNWorkspace;
 import net.thevpc.nuts.runtime.standalone.xtra.ntalk.NTalkClient;
@@ -22,13 +19,12 @@ public abstract class RemoteNWorkspace extends AbstractNWorkspace {
 
     public NElement createCall(String commandName, NElement body) {
         try (NTalkClient cli = new NTalkClient()) {
-            NElements e = NElements.of().json();
-            NObjectElement q = NElements.ofObjectBuilder()
+            NObjectElement q = NElement.ofObjectBuilder()
                     .set("cmd", commandName)
                     .set("body", body).build();
-            NText json = e.setValue(q).format();
+            String json = NElementWriter.ofJson().toString(q);
             String wsURL = NWorkspace.of().getBootOptions().getWorkspace().orNull();
-            byte[] result = cli.request("nuts/ws:"+wsURL, json.toString().getBytes());
+            byte[] result = cli.request("nuts/ws:"+wsURL, json.getBytes());
             NObjectElement resultObject = NElementParser.ofJson().parse(result, NObjectElement.class);
             NElements prv = NElements.of();
             boolean success = resultObject.getBooleanValue("success").get();
@@ -43,11 +39,11 @@ public abstract class RemoteNWorkspace extends AbstractNWorkspace {
     }
 
     public NElement createCall(String commandName, String callId, NElement body) {
-        return NElements.ofObjectBuilder()
+        return NElement.ofObjectBuilder()
                 .set(
                         "cmd",
-                        NElements.ofString(commandName))
-                .set("id", NElements.ofString(callId))
+                        NElement.ofString(commandName))
+                .set("id", NElement.ofString(callId))
                 .set("body", body).build();
     }
 

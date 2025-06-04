@@ -7,6 +7,8 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLines;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NPath;
@@ -31,17 +33,21 @@ public class PsManualTest {
     public static void init() {
         TestUtils.openNewMinTestWorkspace();
     }
-    class A{
+
+    class A {
         B b;
     }
-    class B{
+
+    class B {
         C c;
     }
-    class C{
+
+    class C {
         double x;
     }
+
     @Test
-    public void test1(){
+    public void test1() {
         NOut.println("Hello ##world##");
 //        System.out.printf("hello %s","toto");
 //        Logger.getAnonymousLogger().log(Level.INFO, "hello {0}","A");
@@ -68,8 +74,8 @@ public class PsManualTest {
         for (NPsInfo notepad : notepads) {
             NPs.of().killProcess(notepad.getPid());
         }
-        String str = NElements.ofPlainJson(nPsInfos).formatPlain();
-        NElement parsed = NElements.ofPlainJson().parse(str);
+        String str = NElementWriter.ofJson().toString(nPsInfos);
+        NElement parsed = NElementParser.ofJson().parse(str);
         for (NPsInfo nPsInfo : nPsInfos) {
             NOut.print(nPsInfo);
         }

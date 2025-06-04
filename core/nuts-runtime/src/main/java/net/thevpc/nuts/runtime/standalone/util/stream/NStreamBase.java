@@ -30,7 +30,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.util.NIteratorUtils;
 import net.thevpc.nuts.util.*;
@@ -484,7 +483,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
         Set<Map.Entry<K, List<T>>> entries = (Set) it.collect(Collectors.groupingBy(classifier)).entrySet();
         return new NStreamFromNIterator<Map.Entry<K, List<T>>>(
                 nutsBase, NIterator.of(entries.iterator()).withDesc(
-                () -> NElements.ofObjectBuilder()
+                () -> NElement.ofObjectBuilder()
                         .name("GroupBy")
                         .set("by", NFunction.of(classifier).describe())
                         .set("base", iterator().describe())

@@ -2,7 +2,6 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
 
 import java.util.Iterator;
 import java.util.function.Supplier;
@@ -20,12 +19,12 @@ public class NSupplierIteratorJ<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        return NElements.ofObjectBuilder()
+        return NElement.ofObjectBuilder()
                 .name("Supplier")
                 .set("template",
                         NEDesc.describeResolveOr(from, () -> {
                             NElement t = name.get();
-                            return NElements.ofObjectBuilder().name("Compiled")
+                            return NElement.ofObjectBuilder().name("Compiled")
                                     .addAll(t == null ? null : t.asObject().orNull())
                                     .build();
                         })

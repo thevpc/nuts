@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.clinfo;
 
 import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.NPlatformHome;
@@ -42,10 +43,9 @@ public class NCliInfo {
                 varVal = generator.get();
                 if (varVal != null) {
                     m.put(name, varVal);
-                    NElements elems = NElements.of();
                     try {
                         Path userConfig = getConfigFile();
-                        elems.json().setValue(m).print(userConfig);
+                        NElementWriter.ofJson().write(m, userConfig);
                     } catch (Exception ex) {
                         //ignore
                     }
@@ -65,10 +65,9 @@ public class NCliInfo {
             } else {
                 m.put(name, value);
             }
-            NElements elems = NElements.of();
             try {
                 Path userConfig = getConfigFile();
-                elems.json().setValue(m).print(userConfig);
+                NElementWriter.ofJson().write(m, userConfig);
             } catch (Exception ex) {
                 //ignore
             }

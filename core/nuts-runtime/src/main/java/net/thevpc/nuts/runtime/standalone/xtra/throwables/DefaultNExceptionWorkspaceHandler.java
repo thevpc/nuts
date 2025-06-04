@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.throwables;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
-import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.NElement;
 
 
 import net.thevpc.nuts.format.NContentType;
@@ -77,14 +77,14 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
             } else {
                 if (fm != null) {
                     session.out().resetLine();
-                    session.eout().add(NElements.ofObjectBuilder()
+                    session.eout().add(NElement.ofObjectBuilder()
                             .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().orNull()))
                             .set("error", NText.of(fm).filteredText())
                             .build()
                     );
                     if (showTrace) {
-                        session.eout().add(NElements.ofObjectBuilder().set("errorTrace",
-                                NElements.ofArrayBuilder().addAll(NStringUtils.stacktraceArray(throwable)).build()
+                        session.eout().add(NElement.ofObjectBuilder().set("errorTrace",
+                                NElement.ofArrayBuilder().addAll(NStringUtils.stacktraceArray(throwable)).build()
                         ).build());
                     }
                     NArrayElementBuilder e = session.eout();
@@ -95,13 +95,13 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
                     fout.flush();
                 } else {
                     session.out().resetLine();
-                    session.eout().add(NElements.ofObjectBuilder()
+                    session.eout().add(NElement.ofObjectBuilder()
                             .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().orNull()))
                             .set("error", m)
                             .build());
                     if (showTrace) {
-                        session.eout().add(NElements.ofObjectBuilder().set("errorTrace",
-                                NElements.ofArrayBuilder().addAll(NStringUtils.stacktraceArray(throwable)).build()
+                        session.eout().add(NElement.ofObjectBuilder().set("errorTrace",
+                                NElement.ofArrayBuilder().addAll(NStringUtils.stacktraceArray(throwable)).build()
                         ).build());
                     }
                     NArrayElementBuilder e = session.eout();

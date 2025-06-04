@@ -34,6 +34,9 @@ import java.util.List;
  * @app.category Elements
  */
 public interface NElementPath {
+    static NElementPath of(String any){
+        return NElements.of().compilePath(any);
+    }
 
     /**
      * filter element to a valid children list

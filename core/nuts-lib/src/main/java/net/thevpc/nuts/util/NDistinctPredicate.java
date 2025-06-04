@@ -1,7 +1,6 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.spi.base.AbstractNPredicate;
 
 import java.util.HashSet;
@@ -25,7 +24,7 @@ class NDistinctPredicate<T> extends AbstractNPredicate<T> {
 
     @Override
     public NElement describe() {
-        return NElements.ofString("distinct");
+        return NElement.ofString("distinct");
     }
 
 }

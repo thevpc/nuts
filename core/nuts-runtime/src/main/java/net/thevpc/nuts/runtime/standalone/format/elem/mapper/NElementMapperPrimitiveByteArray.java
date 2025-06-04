@@ -28,7 +28,7 @@ public class NElementMapperPrimitiveByteArray implements NElementMapper<byte[]> 
         NArrayElement earr = o.asArray().get();
         byte[] arr = new byte[earr.size()];
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = (byte) context.elementToObject(earr.get(i).get(), byte.class);
+            arr[i] = (byte) context.createObject(earr.get(i).get(), byte.class);
         }
         return arr;
     }

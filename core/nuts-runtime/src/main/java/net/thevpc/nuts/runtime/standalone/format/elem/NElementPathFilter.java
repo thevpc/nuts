@@ -174,14 +174,14 @@ public class NElementPathFilter {
 
         @Override
         public List<NElement> filter(NElement element) {
-            NArrayElementBuilder aa = NElements.ofArrayBuilder();
+            NArrayElementBuilder aa = NElement.ofArrayBuilder();
             aa.add(element);
             return aa.items();
         }
 
         @Override
         public List<NElement> filter(List<NElement> elements) {
-            NArrayElementBuilder aa = NElements.ofArrayBuilder();
+            NArrayElementBuilder aa = NElement.ofArrayBuilder();
             for (NElement element : elements) {
                 aa.add(element);
             }
@@ -630,8 +630,7 @@ public class NElementPathFilter {
                 u = new HashSet<>();
                 matchContext.put("unique", u);
             }
-            String v = NElements.of().json().setNtf(false).setValue(value).format()
-                    .filteredText();
+            String v = NElementWriter.ofJson().toString(value);
             if (u.contains(v)) {
                 return false;
             }

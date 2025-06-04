@@ -19,14 +19,14 @@ public class NElementMapperNDescriptorProperty implements NElementMapper<NDescri
 
     @Override
     public NElement createElement(NDescriptorProperty o, Type typeOfSrc, NElementFactoryContext context) {
-        return context.defaultObjectToElement(
+        return context.defaultCreateElement(
                 new DefaultNDescriptorPropertyBuilder(o), null
         );
     }
 
     @Override
     public NDescriptorProperty createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        DefaultNDescriptorPropertyBuilder builder = (DefaultNDescriptorPropertyBuilder) context.defaultElementToObject(o, DefaultNDescriptorPropertyBuilder.class);
+        DefaultNDescriptorPropertyBuilder builder = (DefaultNDescriptorPropertyBuilder) context.defaultCreateObject(o, DefaultNDescriptorPropertyBuilder.class);
         return new DefaultNDescriptorPropertyBuilder(builder).build();
     }
 

@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.elem.NElements;
 
 
@@ -86,8 +87,7 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
 
     public void installCommand(NCommandConfig command) {
         NPath path = getCommandsFolder().resolve(command.getName() + NConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
-        NElements.of().json().setValue(command)
-                .setNtf(false).print(path);
+        NElementWriter.ofJson().setNtf(false).write(command,path);
         NWorkspaceExt.of().getConfigModel().fireConfigurationChanged("command", ConfigEventType.MAIN);
     }
 

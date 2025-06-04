@@ -21,7 +21,7 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
                         : NElementType.NAMED_PARAMETRIZED_OBJECT,
                 annotations, comments);
         if (name != null) {
-            NAssert.requireTrue(NElements.isValidElementName(name), "valid name : " + name);
+            NAssert.requireTrue(NElementUtils.isValidElementName(name), "valid name : " + name);
         }
         this.name = name;
         this.params = params;
@@ -165,7 +165,7 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
 
     @Override
     public NObjectElementBuilder builder() {
-        return NElements.ofObjectBuilder().copyFrom(this);
+        return NElement.ofObjectBuilder().copyFrom(this);
     }
 
     @Override

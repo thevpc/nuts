@@ -33,10 +33,10 @@ import java.util.function.Predicate;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.reflect.NReflectRepository;
-import net.thevpc.nuts.runtime.standalone.format.elem.parser.DefaultNElementParser;
 import net.thevpc.nuts.runtime.standalone.format.elem.parser.mapperstore.UserElementMapperStore;
+import net.thevpc.nuts.runtime.standalone.text.DefaultNTextManagerModel;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NMsg;
 
 /**
@@ -49,13 +49,18 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
     private final NReflectRepository repository;
     private boolean ntf;
     private UserElementMapperStore userElementMapperStore;
-    private Predicate<Class<?>> indestructibleObjects;
+    private final DefaultNTextManagerModel model;
 
-    public DefaultNElementFactoryContext(DefaultNElementParser base, NReflectRepository repository, UserElementMapperStore userElementMapperStore,Predicate<Class<?>> indestructibleObjects) {
-        this.indestructibleObjects = indestructibleObjects;
+    public DefaultNElementFactoryContext(boolean ntf, NReflectRepository repository, UserElementMapperStore userElementMapperStore,Predicate<Class<?>> indestructibleObjects) {
         this.repository = repository;
-        this.ntf = base.isNtf();
+        this.ntf = ntf;
         this.userElementMapperStore = userElementMapperStore;
+        this.model = NWorkspaceExt.of().getModel().textModel;
+    }
+
+    @Override
+    public NElement createElement(Object o) {
+        return createElement(o, null);
     }
 
     public NElementMapper getMapper(Type type, boolean defaultOnly){
@@ -63,8 +68,13 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
     }
 
     @Override
+    public <T> NElementMapper<T> getMapper(NElement element, boolean defaultOnly) {
+        return userElementMapperStore.getMapper(element, defaultOnly);
+    }
+
+    @Override
     public Predicate<Class<?>> getIndestructibleObjects() {
-        return indestructibleObjects;
+        return userElementMapperStore.getIndestructibleObjects();
     }
 
 
@@ -90,7 +100,7 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
     }
 
     @Override
-    public NElement defaultObjectToElement(Object o, Type expectedType) {
+    public NElement defaultCreateElement(Object o, Type expectedType) {
         if (o != null) {
             RefItem ro = new RefItem(o, "defaultObjectToElement");
             if (visited.contains(ro)) {
@@ -98,12 +108,12 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
             }
             visited.add(ro);
             try {
-                return base.getElementFactoryService().defaultCreateElement(o, expectedType, this);
+                return model.getElementFactoryService().defaultCreateElement(o, expectedType, this);
             } finally {
                 visited.remove(ro);
             }
         }
-        return base.getElementFactoryService().defaultCreateElement(o, expectedType, this);
+        return model.getElementFactoryService().defaultCreateElement(o, expectedType, this);
     }
 
     @Override
@@ -115,16 +125,16 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
             }
             visited.add(ro);
             try {
-                return base.getElementFactoryService().defaultDestruct(o, expectedType, this);
+                return model.getElementFactoryService().defaultDestruct(o, expectedType, this);
             } finally {
                 visited.remove(ro);
             }
         }
-        return base.getElementFactoryService().defaultDestruct(o, expectedType, this);
+        return model.getElementFactoryService().defaultDestruct(o, expectedType, this);
     }
 
     @Override
-    public NElement objectToElement(Object o, Type expectedType) {
+    public NElement createElement(Object o, Type expectedType) {
         if (o != null) {
             RefItem ro = new RefItem(o, "objectToElement");
             if (visited.contains(ro)) {
@@ -132,12 +142,12 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
             }
             visited.add(ro);
             try {
-                return base.getElementFactoryService().createElement(o, expectedType, this);
+                return model.getElementFactoryService().createElement(o, expectedType, this);
             } finally {
                 visited.remove(ro);
             }
         } else {
-            return base.getElementFactoryService().createElement(o, expectedType, this);
+            return model.getElementFactoryService().createElement(o, expectedType, this);
         }
     }
 
@@ -150,32 +160,32 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
             }
             visited.add(ro);
             try {
-                return base.getElementFactoryService().destruct(o, expectedType, this);
+                return model.getElementFactoryService().destruct(o, expectedType, this);
             } finally {
                 visited.remove(ro);
             }
         }
-        return base.getElementFactoryService().destruct(o, expectedType, this);
+        return model.getElementFactoryService().destruct(o, expectedType, this);
     }
 
     @Override
-    public <T> T elementToObject(NElement o, Class<T> type) {
-        return (T) elementToObject(o, (Type) type);
+    public <T> T createObject(NElement o, Class<T> type) {
+        return (T) createObject(o, (Type) type);
     }
 
     @Override
-    public Object elementToObject(NElement o, Type type) {
-        return base.getElementFactoryService().createObject(o, type, this);
+    public Object createObject(NElement o, Type type) {
+        return model.getElementFactoryService().createObject(o, type, this);
     }
 
     @Override
-    public <T> T defaultElementToObject(NElement o, Class<T> type) {
-        return (T) defaultElementToObject(o, (Type) type);
+    public <T> T defaultCreateObject(NElement o, Class<T> type) {
+        return (T) defaultCreateObject(o, (Type) type);
     }
 
     @Override
-    public Object defaultElementToObject(NElement o, Type type) {
-        return base.getElementFactoryService().defaultCreateObject(o, type, this);
+    public <T> T defaultCreateObject(NElement o, Type type) {
+        return (T) model.getElementFactoryService().defaultCreateObject(o, type, this);
     }
 
     @Override

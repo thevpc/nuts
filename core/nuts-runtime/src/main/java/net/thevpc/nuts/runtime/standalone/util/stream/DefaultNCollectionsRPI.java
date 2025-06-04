@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.util.stream;
 
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.reserved.rpi.NCollectionsRPI;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.spi.NComponentScope;
@@ -28,7 +28,7 @@ public class DefaultNCollectionsRPI implements NCollectionsRPI {
         if (str == null) {
             return new NStreamEmpty<T>(name);
         }
-        return iterableToStream((Iterable<T>) Arrays.asList(str)).withDesc(() -> NElements.ofString("array"));
+        return iterableToStream((Iterable<T>) Arrays.asList(str)).withDesc(() -> NElement.ofString("array"));
     }
 
     @Override

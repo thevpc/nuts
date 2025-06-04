@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.remote;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElementBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.search.AbstractNSearchCmd;
@@ -30,16 +31,16 @@ public class RemoteNSearchCmd extends AbstractNSearchCmd {
 
     @Override
     protected NIterator<NId> getResultIdIteratorBase(Boolean forceInlineDependencies) {
-        NObjectElementBuilder eb = NElements.ofObjectBuilder()
+        NObjectElementBuilder eb = NElement.ofObjectBuilder()
                 .set("execType", getExecType().id())
                 .set("targetApiVersion", getTargetApiVersion().toString())
-                .set("ids", NElements.ofArrayBuilder().addAll(getIds().stream()
+                .set("ids", NElement.ofArrayBuilder().addAll(getIds().stream()
                         .map(Object::toString).toArray(String[]::new)).build());
         if (getDefinitionFilter() != null) {
             eb.set("filter", NElements.of().toElement(getDefinitionFilter()));
         }
         if (getRepositoryFilter() != null) {
-            eb.set("repositories", NElements.ofString(getRepositoryFilter().toString()));
+            eb.set("repositories", NElement.ofString(getRepositoryFilter().toString()));
         }
 
         RemoteNWorkspace ws=(RemoteNWorkspace)NWorkspace.get();

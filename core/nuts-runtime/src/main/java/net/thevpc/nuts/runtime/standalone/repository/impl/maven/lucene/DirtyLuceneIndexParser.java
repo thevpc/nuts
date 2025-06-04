@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.lucene;
 
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.util.NEvictingIntQueue;
 import net.thevpc.nuts.util.NIteratorBase;
@@ -23,7 +22,7 @@ public class DirtyLuceneIndexParser extends NIteratorBase<String> implements Clo
 
     @Override
     public NElement describe() {
-        return NElements.ofObjectBuilder()
+        return NElement.ofObjectBuilder()
                 .name("ScanLucene")
                 .set("source",source0.toString())
                 .build();

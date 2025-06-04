@@ -2,7 +2,6 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
 
 import java.util.Iterator;
 import java.util.List;
@@ -26,7 +25,7 @@ class NIteratorSorted<T> extends NIteratorBase<T> {
         return NEDesc.describeResolveOrDestructAsObject(base)
                 .builder()
                 .set("sort",
-                        NElements.ofObjectBuilder()
+                        NElement.ofObjectBuilder()
                                 .set("comparator", NEDesc.describeResolveOrDestruct(c))
                                 .set("distinct", removeDuplicates)
                                 .build()

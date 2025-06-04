@@ -19,14 +19,14 @@ public class NElementMapperNDescriptorContributor implements NElementMapper<NDes
 
     @Override
     public NElement createElement(NDescriptorContributor o, Type typeOfSrc, NElementFactoryContext context) {
-        return context.defaultObjectToElement(
+        return context.defaultCreateElement(
                 new DefaultNDescriptorContributorBuilder(o), null
         );
     }
 
     @Override
     public NDescriptorContributor createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        DefaultNDescriptorContributorBuilder builder = (DefaultNDescriptorContributorBuilder) context.defaultElementToObject(o, DefaultNDescriptorContributorBuilder.class);
+        DefaultNDescriptorContributorBuilder builder = (DefaultNDescriptorContributorBuilder) context.defaultCreateObject(o, DefaultNDescriptorContributorBuilder.class);
         return new DefaultNDescriptorContributorBuilder(builder).build();
     }
 

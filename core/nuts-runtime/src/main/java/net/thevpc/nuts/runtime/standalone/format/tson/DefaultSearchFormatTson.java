@@ -7,6 +7,7 @@ package net.thevpc.nuts.runtime.standalone.format.tson;
 
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NPrintStream;
@@ -70,10 +71,9 @@ public class DefaultSearchFormatTson extends DefaultSearchFormatBase {
         }else{
             getWriter().print("  ");
         }
-        String json = NElements.of()
-                .tson().setNtf(false).setValue(object).setCompact(isCompact())
-                .format()
-                .filteredText()
+        String json = NElementWriter.ofTson()
+                .setCompact(isCompact())
+                .toString(object)
                 ;
         NText ee = codeFormat.stringToText(json, txt);
         getWriter().println(ee);

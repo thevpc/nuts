@@ -21,14 +21,14 @@ public class NElementMapperNEnvConditionBuilder implements NElementMapper<NEnvCo
 
     @Override
     public NElement createElement(NEnvConditionBuilder o, Type typeOfSrc, NElementFactoryContext context) {
-        return context.defaultObjectToElement(
+        return context.defaultCreateElement(
                 new DefaultNEnvConditionBuilder(o), null
         );
     }
 
     @Override
     public NEnvConditionBuilder createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        NEnvCondition builder = context.defaultElementToObject(o, DefaultNEnvCondition.class);
+        NEnvCondition builder = context.defaultCreateObject(o, DefaultNEnvCondition.class);
         return new DefaultNEnvConditionBuilder(builder);
     }
 

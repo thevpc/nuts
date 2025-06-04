@@ -2,7 +2,6 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.spi.base.AbstractNPredicate;
 
 import java.util.HashSet;
@@ -34,7 +33,7 @@ class NDistinctWithConverterPredicate<F, T> extends AbstractNPredicate<F> {
 
     @Override
     public NElement describe() {
-        return NElements.ofObjectBuilder()
+        return NElement.ofObjectBuilder()
                 .set("distinctBy", NEDesc.describeResolveOrDestruct(converter))
                 .build()
                 ;

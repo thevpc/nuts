@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.format.elem.mapper;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 
@@ -23,9 +22,9 @@ public class NElementMapperFile implements NElementMapper<File> {
 //                NutsText n = ws.text().forStyled(o.toString(), NutsTextStyle.path());
 //                return ws.elem().forPrimitive().buildNutsString(n);
             NText n = NText.ofStyled(o.toString(), NTextStyle.path());
-            return NElements.ofString(n.toString());
+            return NElement.ofString(n.toString());
         } else {
-            return context.defaultObjectToElement(o.toString(), null);
+            return context.defaultCreateElement(o.toString(), null);
         }
     }
 

@@ -19,14 +19,14 @@ public class NElementMapperNDescriptorOrganization implements NElementMapper<NDe
 
     @Override
     public NElement createElement(NDescriptorOrganization o, Type typeOfSrc, NElementFactoryContext context) {
-        return context.defaultObjectToElement(
+        return context.defaultCreateElement(
                 new DefaultNDescriptorOrganizationBuilder(o), null
         );
     }
 
     @Override
     public NDescriptorOrganization createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        DefaultNDescriptorOrganizationBuilder builder = (DefaultNDescriptorOrganizationBuilder) context.defaultElementToObject(o, DefaultNDescriptorOrganizationBuilder.class);
+        DefaultNDescriptorOrganizationBuilder builder = (DefaultNDescriptorOrganizationBuilder) context.defaultCreateObject(o, DefaultNDescriptorOrganizationBuilder.class);
         return new DefaultNDescriptorOrganizationBuilder(builder).build();
     }
 

@@ -3,8 +3,6 @@ package net.thevpc.nuts.runtime.standalone.format.elem.mapper;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.elem.NElements;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -16,9 +14,9 @@ public class NElementMapperMapEntry implements NElementMapper<Map.Entry> {
     @Override
     public NElement createElement(Map.Entry o, Type typeOfSrc, NElementFactoryContext context) {
         Map.Entry je = (Map.Entry) o;
-        return NElements.ofObjectBuilder()
-                .set("key", context.objectToElement(je.getKey(), null))
-                .set("value", context.objectToElement(je.getValue(), null))
+        return NElement.ofObjectBuilder()
+                .set("key", context.createElement(je.getKey()))
+                .set("value", context.createElement(je.getValue()))
                 .build();
     }
 
@@ -36,13 +34,13 @@ public class NElementMapperMapEntry implements NElementMapper<Map.Entry> {
         if (to instanceof ParameterizedType) {
             Type[] kvt = ((ParameterizedType) to).getActualTypeArguments();
             return new AbstractMap.SimpleEntry(
-                    context.elementToObject(o.asObject().get().get("key").orNull(), kvt[0]),
-                    context.elementToObject(o.asObject().get().get("value").orNull(), kvt[0])
+                    context.createObject(o.asObject().get().get("key").orNull(), kvt[0]),
+                    context.createObject(o.asObject().get().get("value").orNull(), kvt[0])
             );
         }
         return new AbstractMap.SimpleEntry(
-                context.elementToObject(o.asObject().get().get("key").orNull(), Object.class),
-                context.elementToObject(o.asObject().get().get("value").orNull(), Object.class)
+                context.createObject(o.asObject().get().get("key").orNull(), Object.class),
+                context.createObject(o.asObject().get().get("value").orNull(), Object.class)
         );
     }
 

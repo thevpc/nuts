@@ -2,7 +2,6 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -22,7 +21,7 @@ public class NFlatMapIterator<TT, RR> extends NIteratorBase<RR> {
 
     @Override
     public NElement describe() {
-        return NElements.ofObjectBuilder()
+        return NElement.ofObjectBuilder()
                 .name("FlatMap")
                 .set("base", NEDesc.describeResolveOrDestruct(from))
                 .set("mapper", NEDesc.describeResolveOrDestruct(converter))

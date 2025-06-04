@@ -18,12 +18,12 @@ public class NElementMapperNLiteral implements NElementMapper<NLiteral> {
 
     @Override
     public NElement createElement(NLiteral o, Type typeOfSrc, NElementFactoryContext context) {
-        return context.defaultObjectToElement(o.asObject().orNull(), null);
+        return context.defaultCreateElement(o.asObject().orNull(), null);
     }
 
     @Override
     public NLiteral createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        Object any = context.defaultElementToObject(o, Object.class);
+        Object any = context.defaultCreateObject(o, Object.class);
         return NLiteral.of(any);
     }
 

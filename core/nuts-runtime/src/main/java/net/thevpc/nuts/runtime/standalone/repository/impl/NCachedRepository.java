@@ -29,9 +29,9 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NSpeedQualifier;
 import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.concurrent.NLock;
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NEDesc;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
@@ -68,10 +68,10 @@ public class NCachedRepository extends AbstractNRepositoryBase {
     public NCachedRepository(NAddRepositoryOptions options, NRepository parent, NSpeedQualifier speed, boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
         super(options, parent, speed, supportedMirroring, repositoryType, supportsDeploy);
         cache = new NRepositoryFolderHelper(this, config().getStoreLocation(NStoreType.CACHE).resolve(NConstants.Folders.ID), true,
-                "cache", NElements.ofObjectBuilder().set("repoKind", "cache").build()
+                "cache", NElement.ofObjectBuilder().set("repoKind", "cache").build()
         );
         lib = new NRepositoryFolderHelper(this, config().getStoreLocation(NStoreType.LIB).resolve(NConstants.Folders.ID), false,
-                "lib", NElements.ofObjectBuilder().set("repoKind", "lib").build()
+                "lib", NElement.ofObjectBuilder().set("repoKind", "lib").build()
         );
         mirroring = new NRepositoryMirroringHelper(this, cache);
     }
@@ -195,7 +195,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
             if (lib.isReadEnabled()) {
                 all.add(NIteratorBuilder.of(
                                         lib.searchVersions(id, idFilter, true)
-                                ).named(NElements.ofUplet("searchVersionInLib",NElements.ofString(getName())))
+                                ).named(NElement.ofUplet("searchVersionInLib", NElement.ofString(getName())))
                                 .build()
 
                 );
@@ -208,7 +208,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                             NIteratorBuilder.of(
                                     cache.searchVersions(id, idFilter, true)
                             )
-                                    .named(NElements.ofUplet("searchVersionInCache",NElements.ofString(getName())))
+                                    .named(NElement.ofUplet("searchVersionInCache", NElement.ofString(getName())))
                                     .build());
                 }
 //                Iterator<NutsId> p = null;
@@ -231,7 +231,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
             if (p != null) {
                 all.add(
                         NIteratorBuilder.of(p)
-                                .named(NElements.ofUplet("searchVersionInCore",NElements.ofString(getName())))
+                                .named(NElement.ofUplet("searchVersionInCore", NElement.ofString(getName())))
                                 .build());
             }
         } catch (NNotFoundException ex) {
@@ -250,7 +250,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         return NIteratorBuilder.of(
                 mirroring.searchVersionsImpl_appendMirrors(namedNutIdIterator, id, idFilter, fetchMode)
         )
-                .named(NElements.ofUplet("searchVersion",NElements.ofString(getName())))
+                .named(NElement.ofUplet("searchVersion", NElement.ofString(getName())))
                 .build();
 
     }

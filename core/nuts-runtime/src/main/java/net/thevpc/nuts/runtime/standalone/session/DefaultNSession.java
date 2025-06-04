@@ -28,6 +28,7 @@ import net.thevpc.nuts.*;
 
 import net.thevpc.nuts.NBootOptions;
 
+import net.thevpc.nuts.elem.NElementFormat;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.*;
@@ -502,7 +503,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                     //ignore
                     return true;
                 }
-                case "--gui":{
+                case "--gui": {
                     a = cmdLine.nextFlag().get();
                     if (active) {
                         setGui(a.getBooleanValue().get());
@@ -1210,15 +1211,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
         if (!iterableOut) {
             return null;
         }
-        return NElements.of().setContentType(getOutputFormat().orDefault()).iter(out());
-//        if (iterFormatHandler == null) {
-//            return null;
-//        }
-//        if (iterFormat == null) {
-//            iterFormat = new CustomNutsIncrementalOutputFormat(ws, iterFormatHandler);
-//            iterFormat.setSession(this);
-//        }
-//        return iterFormat;
+        return NElementFormat.of().setContentType(getOutputFormat().orDefault()).iter(out());
     }
 
     @Override

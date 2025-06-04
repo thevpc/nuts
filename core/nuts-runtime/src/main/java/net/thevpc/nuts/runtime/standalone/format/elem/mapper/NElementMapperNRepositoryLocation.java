@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.format.elem.mapper;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 
@@ -15,7 +14,7 @@ public class NElementMapperNRepositoryLocation implements NElementMapper<NReposi
 
     @Override
     public NElement createElement(NRepositoryLocation o, Type typeOfSrc, NElementFactoryContext context) {
-        return NElements.ofString(o.toString());
+        return NElement.ofString(o.toString());
     }
 
     @Override

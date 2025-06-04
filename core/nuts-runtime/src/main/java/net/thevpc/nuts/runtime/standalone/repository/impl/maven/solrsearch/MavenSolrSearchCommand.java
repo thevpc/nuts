@@ -136,11 +136,11 @@ public class MavenSolrSearchCommand {
                             }
                         };
                     }
-                }, () -> NElements.ofObjectBuilder().set("url", query.toString()).build());
+                }, () -> NElement.ofObjectBuilder().set("url", query.toString()).build());
                 return it.filter(y -> idFilter == null || idFilter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(y, repo, "MavenSolrSearchCommand")),
                                 () ->
-                                        NElements.ofObjectBuilder().set(
-                                                "filterBy", NElements.ofString(idFilter == null ? "true" : idFilter.toString())
+                                        NElement.ofObjectBuilder().set(
+                                                "filterBy", NElement.ofString(idFilter == null ? "true" : idFilter.toString())
                                         ).build()
                         )
 //                        .flatMap(

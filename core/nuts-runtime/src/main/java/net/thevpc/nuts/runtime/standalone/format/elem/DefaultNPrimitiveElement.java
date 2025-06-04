@@ -29,10 +29,6 @@ import net.thevpc.nuts.util.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,7 +44,7 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
     DefaultNPrimitiveElement(NElementType type, Object value, NElementAnnotation[] annotations, NElementComments comments) {
         super(type, annotations, comments);
         if (type == NElementType.NAME) {
-            NAssert.requireTrue(NElements.isValidElementName((String) value), "valid name : " + (String) value);
+            NAssert.requireTrue(NElementUtils.isValidElementName((String) value), "valid name : " + (String) value);
         }
         this.value = NLiteral.of(value);
     }

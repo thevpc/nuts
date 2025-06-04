@@ -28,7 +28,7 @@ public class NElementMapperPrimitiveIntArray implements NElementMapper<int[]> {
         NArrayElement earr = o.asArray().get();
         int[] arr = new int[earr.size()];
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = (int) context.elementToObject(earr.get(i).get(), int.class);
+            arr[i] = (int) context.createObject(earr.get(i).get(), int.class);
         }
         return arr;
     }

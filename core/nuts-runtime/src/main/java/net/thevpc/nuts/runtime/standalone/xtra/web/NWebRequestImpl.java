@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.xtra.web;
 
 import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.web.*;
 
@@ -633,9 +633,7 @@ public class NWebRequestImpl implements NWebRequest {
             this.requestBody = null;
             setMode(Mode.NONE);
         } else {
-            this.requestBody = NInputSource.of(NElements.of().json()
-                    .setValue(body).setNtf(false).formatPlain().getBytes()
-            );
+            this.requestBody = NInputSource.of(NElementWriter.ofJson().toString(body).getBytes());
             setMode(Mode.BODY);
         }
         setContentType("application/json");

@@ -5,7 +5,6 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.reflect.NReflectProperty;
 import net.thevpc.nuts.reflect.NReflectType;
 import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
-import net.thevpc.nuts.runtime.standalone.format.elem.DefaultNElementFactoryService;
 import net.thevpc.nuts.util.NMsg;
 
 import java.lang.reflect.Modifier;
@@ -39,11 +38,11 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
     @Override
     public NElement createElement(Object src, Type typeOfSrc, NElementFactoryContext context) {
         NReflectType m = context.getTypesRepository().getType(typeOfSrc);
-        NObjectElementBuilder obj = NElements.ofObjectBuilder();
+        NObjectElementBuilder obj = NElement.ofObjectBuilder();
         for (NReflectProperty property : m.getProperties()) {
             final Object v = property.read(src);
             if (!property.isDefaultValue(v)) {
-                obj.set(property.getName(), context.objectToElement(v, null));
+                obj.set(property.getName(), context.createElement(v));
             }
         }
         return obj.build();
@@ -132,13 +131,13 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
             }
             case ARRAY: {
                 if (c.isAssignableFrom(List.class)) {
-                    return context.elementToObject(o,List.class);
+                    return context.createObject(o,List.class);
                 }
                 break;
             }
             case OBJECT: {
                 if (c.equals(Object.class)) {
-                    return context.elementToObject(o,Map.class);
+                    return context.createObject(o,Map.class);
                 }
                 break;
             }
@@ -158,7 +157,7 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
             if (property.isWrite()) {
                 NElement v = eobj.get(property.getName()).orNull();
                 if (v != null) {
-                    property.write(instance, context.elementToObject(v, property.getPropertyType().getJavaType()));
+                    property.write(instance, context.createObject(v, property.getPropertyType().getJavaType()));
                 }
             }
         }

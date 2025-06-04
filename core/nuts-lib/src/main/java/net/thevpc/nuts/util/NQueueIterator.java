@@ -28,10 +28,8 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 1/7/17.
@@ -44,7 +42,7 @@ public class NQueueIterator<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        return NElements.ofObjectBuilder()
+        return NElement.ofObjectBuilder()
                 .name("Queue")
                 .addAll(
                         children

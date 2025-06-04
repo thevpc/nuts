@@ -36,7 +36,7 @@ import java.util.stream.Stream;
  */
 public interface NArrayElement extends NNamedElement, NListContainerElement, NParametrizedContainerElement, Iterable<NElement> {
     static NArrayElement ofEmpty() {
-        return NElements.ofArray();
+        return NElement.ofArray();
     }
 
     Stream<NElement> stream();

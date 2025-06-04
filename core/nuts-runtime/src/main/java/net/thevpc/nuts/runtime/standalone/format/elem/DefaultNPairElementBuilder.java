@@ -12,8 +12,8 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
     private NElement value;
 
     public DefaultNPairElementBuilder() {
-        key = NElements.ofNull();
-        value = NElements.ofNull();
+        key = NElement.ofNull();
+        value = NElement.ofNull();
     }
 
     @Override
@@ -145,25 +145,25 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
     }
 
     public DefaultNPairElementBuilder(NElement key, NElement value) {
-        this.key = key == null ? NElements.ofNull() : key;
-        this.value = value == null ? NElements.ofNull() : value;
+        this.key = key == null ? NElement.ofNull() : key;
+        this.value = value == null ? NElement.ofNull() : value;
     }
 
 
     public NPairElementBuilder value(NElement value) {
-        this.value = value == null ? NElements.ofNull() : value;
+        this.value = value == null ? NElement.ofNull() : value;
         return this;
     }
 
 
     public NPairElementBuilder key(NElement key) {
-        this.key = key == null ? NElements.ofNull() : key;
+        this.key = key == null ? NElement.ofNull() : key;
         return this;
     }
 
     @Override
     public NPairElementBuilder key(String key) {
-        this.key = key == null ? NElements.ofNull() : NElements.ofNameOrString(key);
+        this.key = key == null ? NElement.ofNull() : NElement.ofNameOrString(key);
         return this;
     }
 

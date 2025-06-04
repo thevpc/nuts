@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.format.elem.mapper;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
-import net.thevpc.nuts.elem.NElements;
 
 import java.lang.reflect.Type;
 
@@ -16,7 +15,7 @@ public class NElementMapperNull implements NElementMapper<Object> {
 
     @Override
     public NElement createElement(Object o, Type typeOfSrc, NElementFactoryContext context) {
-        return NElements.ofNull();
+        return NElement.ofNull();
     }
 
     @Override

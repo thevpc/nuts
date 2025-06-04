@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.format.elem.mapper;
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.NSession;
 
 import java.lang.reflect.Type;
 
@@ -14,7 +13,7 @@ public class NElementMapperString implements NElementMapper<String> {
 
     @Override
     public NElement createElement(String o, Type typeOfSrc, NElementFactoryContext context) {
-        return NElements.ofString(String.valueOf(o));
+        return NElement.ofString(String.valueOf(o));
     }
 
     @Override

@@ -1,10 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.format.elem.mapper;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
 import net.thevpc.nuts.util.NEnum;
 
@@ -22,7 +20,7 @@ public class NElementMapperNEnum implements NElementMapper<NEnum> {
     }
 
     public NElement createElement(NEnum src, Type typeOfSrc, NElementFactoryContext context) {
-        return NElements.ofString(src.id());
+        return NElement.ofString(src.id());
     }
 
     @Override

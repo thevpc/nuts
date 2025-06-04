@@ -28,7 +28,6 @@ package net.thevpc.nuts.runtime.standalone.io.util;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NIteratorBase;
@@ -71,9 +70,9 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        return NElements.ofObjectBuilder()
+        return NElement.ofObjectBuilder()
                 .name("ScanPath")
-                .addParam(NElements.ofString(name))
+                .addParam(NElement.ofString(name))
                 .set("path", NEDesc.describeResolveOrDestruct(folder))
                 .set("maxDepth", maxDepth)
                 .set("filter", NEDesc.describeResolveOrDestruct(filter))
