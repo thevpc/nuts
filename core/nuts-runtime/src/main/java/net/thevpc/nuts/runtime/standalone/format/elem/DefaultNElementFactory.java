@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.stream.Collectors;
 
 @NComponentScope(NScopeType.WORKSPACE)
-public class DefaultNElementFactory  implements NElementFactory {
+public class DefaultNElementFactory implements NElementFactory {
 
     public DefaultNElementFactory() {
     }
@@ -211,29 +211,28 @@ public class DefaultNElementFactory  implements NElementFactory {
 
     @Override
     public NArrayElement ofNamedParametrizedArray(String name, NElement[] params, NElement... items) {
-        return ofArrayBuilder().name(name).addParams(params==null?null:Arrays.asList(params)).addAll(items).build();
+        return ofArrayBuilder().name(name).addParams(params == null ? null : Arrays.asList(params)).addAll(items).build();
     }
 
     @Override
     public NArrayElement ofArray(String name, NElement[] params, NElement... items) {
-        return ofArrayBuilder().name(name).addParams(params==null?null:Arrays.asList(params)).addAll(items).build();
+        return ofArrayBuilder().name(name).addParams(params == null ? null : Arrays.asList(params)).addAll(items).build();
     }
 
     @Override
     public NArrayElement ofParametrizedArray(NElement... params) {
-        return ofArrayBuilder().addParams(params==null?null:Arrays.asList(params)).build();
+        return ofArrayBuilder().addParams(params == null ? null : Arrays.asList(params)).build();
     }
-
 
 
     @Override
     public NArrayElement ofParametrizedArray(NElement[] params, NElement... items) {
-        return ofArrayBuilder().addParams(params==null?null:Arrays.asList(params)).addAll(items).build();
+        return ofArrayBuilder().addParams(params == null ? null : Arrays.asList(params)).addAll(items).build();
     }
 
     @Override
     public NArrayElement ofParametrizedArray(String name, NElement[] params, NElement... items) {
-        return ofArrayBuilder().name(name).addParams(params==null?null:Arrays.asList(params)).addAll(items).build();
+        return ofArrayBuilder().name(name).addParams(params == null ? null : Arrays.asList(params)).addAll(items).build();
     }
 
     @Override
@@ -243,26 +242,29 @@ public class DefaultNElementFactory  implements NElementFactory {
 
     @Override
     public NArrayElement ofParametrizedArray(String name, NElement... params) {
-        return ofArrayBuilder().name(name).addParams(params==null?null:Arrays.asList(params)).build();
+        return ofArrayBuilder().name(name).addParams(params == null ? null : Arrays.asList(params)).build();
     }
 
     @Override
     public NObjectElement ofObject(String name, NElement... items) {
         return ofObjectBuilder().name(name).addAll(items).build();
     }
+
     @Override
     public NObjectElement ofParametrizedObject(NElement[] params, NElement... items) {
-        return ofObjectBuilder().addParams(params==null?null:Arrays.asList(params)).addAll(items).build();
+        return ofObjectBuilder().addParams(params == null ? null : Arrays.asList(params)).addAll(items).build();
     }
 
     @Override
     public NObjectElement ofParametrizedObject(String name, NElement[] params, NElement... items) {
-        return ofObjectBuilder().name(name).addParams(params==null?null:Arrays.asList(params)).addAll(items).build();
+        return ofObjectBuilder().name(name).addParams(params == null ? null : Arrays.asList(params)).addAll(items).build();
     }
+
     @Override
     public NObjectElement ofObject(String name, NElement[] params, NElement... items) {
-        return ofObjectBuilder().name(name).addParams(params==null?null:Arrays.asList(params)).addAll(items).build();
+        return ofObjectBuilder().name(name).addParams(params == null ? null : Arrays.asList(params)).addAll(items).build();
     }
+
     @Override
     public NObjectElement ofNamedObject(String name, NElement... items) {
         return ofObjectBuilder().name(name).addAll(items).build();
@@ -270,17 +272,17 @@ public class DefaultNElementFactory  implements NElementFactory {
 
     @Override
     public NObjectElement ofNamedParametrizedObject(String name, NElement[] params, NElement... items) {
-        return ofObjectBuilder().name(name).addParams(params==null?null:Arrays.asList(params)).addAll(items).build();
+        return ofObjectBuilder().name(name).addParams(params == null ? null : Arrays.asList(params)).addAll(items).build();
     }
 
     @Override
     public NObjectElement ofParametrizedObject(NElement... params) {
-        return ofObjectBuilder().addParams(params==null?null:Arrays.asList(params)).build();
+        return ofObjectBuilder().addParams(params == null ? null : Arrays.asList(params)).build();
     }
 
     @Override
     public NObjectElement ofParametrizedObject(String name, NElement... params) {
-        return ofObjectBuilder().name(name).addParams(params==null?null:Arrays.asList(params)).build();
+        return ofObjectBuilder().name(name).addParams(params == null ? null : Arrays.asList(params)).build();
     }
 
     @Override
@@ -308,6 +310,17 @@ public class DefaultNElementFactory  implements NElementFactory {
         } else {
             return new DefaultNPrimitiveElement(NElementType.BOOLEAN, false, null, null);
         }
+    }
+
+    @Override
+    public <T extends Enum<T>> NPrimitiveElement ofEnum(Enum<T> value) {
+        if (value == null) {
+            return ofNull();
+        }
+        if (value instanceof NEnum) {
+            return ofName(((NEnum) value).id());
+        }
+        return ofName(value.name());
     }
 
     public NPrimitiveElement ofString(String str) {
@@ -394,12 +407,12 @@ public class DefaultNElementFactory  implements NElementFactory {
 
     @Override
     public NPrimitiveElement ofFloat(Float value, String suffix) {
-        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.FLOAT, value,null,suffix);
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.FLOAT, value, null, suffix);
     }
 
     @Override
     public NPrimitiveElement ofFloat(float value, String suffix) {
-        return new DefaultNNumberElement(NElementType.FLOAT, value,null,suffix);
+        return new DefaultNNumberElement(NElementType.FLOAT, value, null, suffix);
     }
 
     @Override
@@ -812,7 +825,7 @@ public class DefaultNElementFactory  implements NElementFactory {
         return NConstants.Support.DEFAULT_SUPPORT;
     }
 
-       @Override
+    @Override
     public NMatrixElementBuilder ofMatrixBuilder() {
         throw new NUnsupportedOperationException(NMsg.ofC("not implemented yet ofMatrixBuilder()"));
     }

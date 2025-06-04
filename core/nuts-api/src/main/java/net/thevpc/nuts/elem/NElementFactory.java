@@ -48,7 +48,7 @@ import java.util.Date;
  */
 public interface NElementFactory extends NComponent {
 
-    static NElementFactory of(){
+    static NElementFactory of() {
         return NExtensions.of(NElementFactory.class);
     }
 
@@ -116,6 +116,8 @@ public interface NElementFactory extends NComponent {
     NPrimitiveElement ofName(String value);
 
     NPrimitiveElement ofNameOrString(String value);
+
+    <T extends Enum<T>> NPrimitiveElement ofEnum(Enum<T> value);
 
     NPrimitiveElement ofString(String str);
 

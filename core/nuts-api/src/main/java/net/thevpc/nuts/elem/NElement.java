@@ -173,6 +173,10 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
         return NElementFactory.of().ofString(value);
     }
 
+    static <T extends Enum<T>> NPrimitiveElement ofEnum(Enum<T> value) {
+        return NElementFactory.of().ofEnum(value);
+    }
+
     static NPrimitiveElement ofString(String value, NElementType stringLayout) {
         return NElementFactory.of().ofString(value, stringLayout);
     }
