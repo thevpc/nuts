@@ -106,7 +106,7 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
             XmlUtils.writeDocument(doc, new StreamResult(w.asPrintStream()), false, false);
         } else {
             NElements element = NElements.of();
-            Object newVal = element.setNtf(true).setIndestructibleFormat().destruct(value);
+            Object newVal = element.destruct(value);
             Flags f = new Flags();
             collectFlags(newVal, f, 300);
             if (f.map) {

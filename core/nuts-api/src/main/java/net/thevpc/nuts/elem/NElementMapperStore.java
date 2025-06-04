@@ -14,6 +14,16 @@ public interface NElementMapperStore {
 
     <K, T> NElementMapperStore setMapper(NElementKeyResolver<K> resolver, K key, Type type, NElementMapper<T> instance);
 
+    <T> NElementMapper<T> getMapper(NElement element, boolean defaultOnly);
+
+    <T> NElementMapper<T> getMapper(Type type, boolean defaultOnly);
+
+    <T> NElementMapper<T> getMapper(NElement element);
+
+    <T> NElementMapper<T> getMapper(Type type);
+
+    NElementMapperStore copyFrom(NElementMapperStore other);
+
     interface NElementKeyResolver<T> {
         T keyOf(NElement e);
     }
@@ -23,9 +33,13 @@ public interface NElementMapperStore {
         CASE_INSENSITIVE,
         FORMAT_INSENSITIVE,
     }
+    <T> NElementMapperBuilder<T> builderOf(Type type);
+    <T> NElementMapperBuilder<T> builderOf(Class<T> type);
 
 
     public Predicate<Class<?>> getIndestructibleObjects();
-    public NElementMapperStore setIndestructibleFormat();
-    public NElementMapperStore setIndestructibleObjects(Predicate<Class<?>> destructTypeFilter) ;
+
+    public NElementMapperStore setDefaultIndestructibleFilter();
+
+    public NElementMapperStore setIndestructibleFilter(Predicate<Class<?>> destructTypeFilter);
 }

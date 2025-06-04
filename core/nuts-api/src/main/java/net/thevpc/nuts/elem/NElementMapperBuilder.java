@@ -4,7 +4,7 @@ package net.thevpc.nuts.elem;
 import java.lang.reflect.Type;
 
 public interface NElementMapperBuilder<T> {
-    NElementMapper<T> build2();
+    NElementMapper<T> build();
 
     NElementMapperBuilder<T> addAllFields();
 

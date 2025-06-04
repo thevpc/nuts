@@ -592,7 +592,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
             a.add(NElements.of().toElement(o));
             return createTableModel(NElements.of().toElement(a));
         }
-        o = NElements.of().setIndestructibleFormat().destruct(o);
+        o = NElements.of().destruct(o);
         if (o instanceof Collection) {
             return _model2(o);
         }

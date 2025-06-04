@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util.reflect.mapper;
 
+import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.util.reflect.DefaultConvertersByType;
 import net.thevpc.nuts.runtime.standalone.util.reflect.NReflectMapperImpl;
@@ -122,8 +123,7 @@ public class NReflectMapperContextImpl implements NReflectMapperContext {
         return eq;
     }
 
-    @Override
-    public NReflectMapperContext setEqqualizer(NEqualizer<Object> eq) {
+    public NReflectMapperContext setEqualizer(NEqualizer<Object> eq) {
         this.eq = eq == null ? NEqualizer.ofDefault() : eq;
         return this;
     }

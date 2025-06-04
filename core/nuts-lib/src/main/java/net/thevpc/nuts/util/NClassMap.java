@@ -115,7 +115,7 @@ public class NClassMap<V> {
         return u;
     }
 
-    public Set<V> keySet() {
+    public Set<Class> keySet() {
         return new HashSet(values.keySet());
     }
 

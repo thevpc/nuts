@@ -3,10 +3,10 @@ package net.thevpc.nuts.runtime.standalone.format.elem.parser.mapperstore;
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.reflect.NReflectRepository;
 import net.thevpc.nuts.runtime.standalone.format.elem.CoreNElementUtils;
+import net.thevpc.nuts.runtime.standalone.format.elem.mapper.DefaultNElementMapperBuilder;
 import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NClassMap;
 import net.thevpc.nuts.util.NMsg;
@@ -25,16 +25,62 @@ public class UserElementMapperStore implements NElementMapperStore {
     private DefaultElementMapperStore defaultElementMapperStore;
     private final NClassMap<NElementMapper> lvl1_customMappersByType = new NClassMap<>(null, NElementMapper.class);
     private final List<NElementKeyResolverEntry> lvl2_customMappersByKey = new ArrayList<>();
-    private Predicate<Class<?>> indestructibleObjects;
+    private Predicate<Class<?>> indestructibleObjects=CoreNElementUtils.DEFAULT_INDESTRUCTIBLE;
+    private NReflectRepository reflectRepository;
 
     static class NElementKeyResolverEntry<T> {
         NElementKeyResolver<T> resolver;
         Map<T, NElementMapper> byKey = new HashMap<>();
-        Class<T> type;
+        Type type;
 
         public NElementKeyResolverEntry(NElementKeyResolver<T> resolver) {
             this.resolver = resolver;
         }
+    }
+
+    public UserElementMapperStore() {
+    }
+
+    public NReflectRepository getReflectRepository() {
+        return reflectRepository;
+    }
+
+    public UserElementMapperStore setReflectRepository(NReflectRepository reflectRepository) {
+        this.reflectRepository = reflectRepository;
+        return this;
+    }
+
+    @Override
+    public NElementMapperStore copyFrom(NElementMapperStore other) {
+        if(other!=null) {
+            if (other instanceof UserElementMapperStore) {
+                UserElementMapperStore u = (UserElementMapperStore) other;
+                for (Class c : u.lvl1_customMappersByType.keySet()) {
+                    setMapper(c, u.lvl1_customMappersByType.get(c));
+                }
+                for (NElementKeyResolverEntry e : u.lvl2_customMappersByKey) {
+                    for (Object eeo : e.byKey.entrySet()) {
+                        Map.Entry ee = (Map.Entry) eeo;
+                        NElementKeyResolver<Object> resolver = e.resolver;
+                        Object key = ee.getKey();
+                        NElementMapper value = (NElementMapper) ee.getValue();
+                        setMapper(resolver, key, (Type) e.type, value);
+                    }
+                }
+            }
+            this.indestructibleObjects = other.getIndestructibleObjects();
+        }
+        return this;
+    }
+
+    @Override
+    public <T> NElementMapperBuilder<T> builderOf(Type type) {
+        return new DefaultNElementMapperBuilder<>(reflectRepository,type);
+    }
+
+    @Override
+    public <T> NElementMapperBuilder<T> builderOf(Class<T> type) {
+        return new DefaultNElementMapperBuilder<>(reflectRepository,type);
     }
 
     public Predicate<Class<?>> getIndestructibleObjects() {
@@ -42,23 +88,19 @@ public class UserElementMapperStore implements NElementMapperStore {
     }
 
     @Override
-    public NElements setIndestructibleFormat() {
-        return setIndestructibleObjects(CoreNElementUtils.DEFAULT_INDESTRUCTIBLE_FORMAT);
+    public UserElementMapperStore setDefaultIndestructibleFilter() {
+        return setIndestructibleFilter(CoreNElementUtils.DEFAULT_INDESTRUCTIBLE);
     }
 
-    public NElements setIndestructibleObjects(Predicate<Class<?>> destructTypeFilter) {
+    public UserElementMapperStore setIndestructibleFilter(Predicate<Class<?>> destructTypeFilter) {
         this.indestructibleObjects = destructTypeFilter;
         return this;
     }
 
 
-    public UserElementMapperStore() {
-        NWorkspaceModel model = NWorkspaceExt.of().getModel();
-        coreElementMapperStore = model.coreElementMapperStore;
-        defaultElementMapperStore = model.defaultElementMapperStore;
-    }
 
-    public final void setMapper(Type cls, NElementMapper instance) {
+
+    public final UserElementMapperStore setMapper(Type cls, NElementMapper instance) {
         if (instance == null) {
             NElementMapper cc = coreElementMapperStore.getCoreMappers().get(cls);
             if (cc != null) {
@@ -69,9 +111,10 @@ public class UserElementMapperStore implements NElementMapperStore {
         } else {
             lvl1_customMappersByType.put((Class) cls, instance);
         }
+        return this;
     }
 
-    public final <K, T> void setMapper(NElementKeyResolver<K> resolver, K key, Class<T> type, NElementMapper<T> instance) {
+    public final <K, T> NElementMapperStore setMapper(NElementKeyResolver<K> resolver, K key, Type type, NElementMapper<T> instance) {
         NElementKeyResolverEntry ok = null;
         for (NElementKeyResolverEntry e : lvl2_customMappersByKey) {
             if (e.resolver.equals(resolver)) {
@@ -84,29 +127,36 @@ public class UserElementMapperStore implements NElementMapperStore {
             ok.type = type;
             lvl2_customMappersByKey.add(ok);
         }
-        lvl1_customMappersByType.put(type, instance);
+        if (type instanceof Class) {
+            lvl1_customMappersByType.put((Class) type, instance);
+        }
         ok.byKey.put(key, instance);
+        return this;
     }
 
-    public final <T> void setMapper(NElementType elementType, Class<T> type, NElementMapper instance) {
-        setMapper(NELEMENTTYPE_KEY_RESOLVER, elementType, type, instance);
+    public <T> NElementMapperStore setMapper(NElementType elementType, Type type, NElementMapper<T> instance) {
+        return setMapper(NELEMENTTYPE_KEY_RESOLVER, elementType, type, instance);
     }
 
-    public final <T> void setMapper(NElementType elementType, String name, NMappedNameStrategy mappedName, Class<T> type, NElementMapper instance) {
-        setMapper(NELEMENTTYPE_AND_NAME_KEY_RESOLVER, new NElementTypeAndName(elementType, name), type, instance);
+    public final <T> NElementMapperStore setMapper(NElementType elementType, String name, NElementMappedNameStrategy mappedName, Type type, NElementMapper<T> instance) {
+        return setMapper(NELEMENTTYPE_AND_NAME_KEY_RESOLVER, new NElementTypeAndName(elementType, name), type, instance);
     }
 
-    public final <T> void setMapper(NElementType elementType, String name, Class<T> type, NElementMapper instance) {
-        setMapper(NELEMENTTYPE_AND_NAME_KEY_RESOLVER, new NElementTypeAndName(elementType, name), type, instance);
+    public final <T> NElementMapperStore setMapper(NElementType elementType, String name, Type type, NElementMapper<T> instance) {
+        return setMapper(NELEMENTTYPE_AND_NAME_KEY_RESOLVER, new NElementTypeAndName(elementType, name), type, instance);
     }
 
-    public static enum NMappedNameStrategy {
-        IGNORE,
-        CASE_INSENSITIVE,
-        FORMAT_INSENSITIVE,
+    @Override
+    public <T> NElementMapper<T> getMapper(NElement element) {
+        return getMapper(element, false);
     }
 
-    public NElementMapper getMapper(Type type, boolean defaultOnly) {
+    @Override
+    public <T> NElementMapper<T> getMapper(Type type) {
+        return getMapper(type, false);
+    }
+
+    public <T> NElementMapper<T> getMapper(Type type, boolean defaultOnly) {
         if (type == null) {
             return DefaultElementMapperStore.F_NULL;
         }
@@ -142,17 +192,22 @@ public class UserElementMapperStore implements NElementMapperStore {
     public <T> NElementMapper<T> getMapper(NElement element, boolean defaultOnly) {
         NAssert.requireNonNull(element, "element");
         if (!defaultOnly) {
-            NElementMapper f = lvl1_customMappersByType.get(cls);
-            if (f != null) {
-                return f;
+            for (NElementKeyResolverEntry e : lvl2_customMappersByKey) {
+                Object k = e.resolver.keyOf(element);
+                if (k != null) {
+                    NElementMapper u = (NElementMapper) e.byKey.get(k);
+                    if (u != null) {
+                        return u;
+                    }
+                }
             }
         }
-        final NElementMapper r = defaultElementMapperStore.getDefaultMappers().get(cls);
+        final NElementMapper r = defaultElementMapperStore.getMapper(element, this);
         if (r != null) {
             return r;
         }
         throw new NIllegalArgumentException(NMsg.ofC(
-                "unable to find serialization factory for %s", type
+                "unable to find serialization factory for %s", element
         ));
     }
 

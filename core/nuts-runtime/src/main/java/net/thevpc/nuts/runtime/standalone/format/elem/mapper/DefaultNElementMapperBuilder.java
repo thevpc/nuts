@@ -327,7 +327,7 @@ public class DefaultNElementMapperBuilder<T> implements NElementMapperBuilder<T>
     }
 
     @Override
-    public NElementMapper<T> build2() {
+    public NElementMapper<T> build() {
         prepareBuilder();
         return new MyNElementMapper<>(this);
     }

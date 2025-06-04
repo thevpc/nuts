@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.format.elem;
 
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.NUnsupportedOperationException;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.*;
@@ -30,7 +29,7 @@ import net.thevpc.nuts.time.NProgressFactory;
 import net.thevpc.nuts.util.NMsg;
 
 import java.lang.reflect.Type;
-import java.util.function.Predicate;
+import java.util.function.Consumer;
 
 public class DefaultNElementFormat extends DefaultFormatBase<NElementFormat> implements NElementFormat {
     private final DefaultNTextManagerModel model;
@@ -40,7 +39,6 @@ public class DefaultNElementFormat extends DefaultFormatBase<NElementFormat> imp
     private boolean logProgress;
     private boolean traceProgress;
     private NProgressFactory progressFactory;
-    private Predicate<Class<?>> indestructibleObjects;
     private UserElementMapperStore userElementMapperStore;
 
 
@@ -48,10 +46,19 @@ public class DefaultNElementFormat extends DefaultFormatBase<NElementFormat> imp
         super("element-format");
         this.model = NWorkspaceExt.of().getModel().textModel;
         this.userElementMapperStore = new UserElementMapperStore();
+        this.userElementMapperStore.setReflectRepository(NReflectRepository.of());
     }
 
-    public NElementMapperStore mappers() {
+    public NElementMapperStore mapperStore() {
         return userElementMapperStore;
+    }
+
+    @Override
+    public NElementFormat doWithMapperStore(Consumer<NElementMapperStore> doWith) {
+        if(doWith != null) {
+            doWith.accept(mapperStore());
+        }
+        return this;
     }
 
     public boolean isLogProgress() {
@@ -82,13 +89,6 @@ public class DefaultNElementFormat extends DefaultFormatBase<NElementFormat> imp
         if (contentType == null) {
             this.contentType = NContentType.JSON;
         } else {
-//            switch (contentType) {
-//                case TREE:
-//                case TABLE:
-//                case PLAIN: {
-//                    throw new NutsIllegalArgumentException(session, "invalid content type " + contentType + ". Only structured content types are allowed.");
-//                }
-//            }
             this.contentType = contentType;
         }
         return this;
@@ -126,11 +126,6 @@ public class DefaultNElementFormat extends DefaultFormatBase<NElementFormat> imp
     }
 
     @Override
-    public NElementPath compilePath(String pathExpression) {
-        return NElementPathFilter.compile(pathExpression);
-    }
-
-    @Override
     public boolean isCompact() {
         return compact;
     }
@@ -138,20 +133,6 @@ public class DefaultNElementFormat extends DefaultFormatBase<NElementFormat> imp
     @Override
     public NElementFormat setCompact(boolean compact) {
         this.compact = compact;
-        return this;
-    }
-
-    public Predicate<Class<?>> getIndestructibleObjects() {
-        return indestructibleObjects;
-    }
-
-    @Override
-    public NElementFormat setIndestructibleFormat() {
-        return setIndestructibleObjects(CoreNElementUtils.DEFAULT_INDESTRUCTIBLE_FORMAT);
-    }
-
-    public NElementFormat setIndestructibleObjects(Predicate<Class<?>> destructTypeFilter) {
-        this.indestructibleObjects = destructTypeFilter;
         return this;
     }
 
@@ -176,31 +157,10 @@ public class DefaultNElementFormat extends DefaultFormatBase<NElementFormat> imp
         throw new NUnsupportedOperationException(NMsg.ofC("unsupported iterator for %s", getContentType()));
     }
 
-    public NElement normalize(NElement e) {
-        return resolveStructuredFormat().normalize(e == null ? NElement.ofNull() : e);
-    }
-
-    private NElementStreamFormat resolveStructuredFormat() {
-        switch (contentType) {
-            case JSON: {
-                return model.getJsonMan();
-            }
-            case YAML: {
-                return model.getYamlMan();
-            }
-            case XML: {
-                return model.getXmlMan();
-            }
-            case TSON: {
-                return model.getTsonMan();
-            }
-        }
-        throw new NIllegalArgumentException(NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
-    }
 
     private DefaultNElementFactoryContext createFactoryContext() {
         NReflectRepository reflectRepository = NWorkspaceUtils.of().getReflectRepository();
-        DefaultNElementFactoryContext c = new DefaultNElementFactoryContext(isNtf(), reflectRepository, userElementMapperStore,indestructibleObjects);
+        DefaultNElementFactoryContext c = new DefaultNElementFactoryContext(isNtf(), reflectRepository, userElementMapperStore);
         switch (getContentType()) {
             case XML:
             case JSON:
@@ -213,13 +173,14 @@ public class DefaultNElementFormat extends DefaultFormatBase<NElementFormat> imp
         return c;
     }
 
+
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
         return false;
     }
 
     private void print(NPrintStream out, NElementStreamFormat format) {
-        NElement elem = NElements.of().setIndestructibleObjects(indestructibleObjects).toElement(value);
+        NElement elem = NElements.of().doWithMapperStore(d->d.copyFrom(mapperStore())).toElement(value);
         if (out.isNtf()) {
             NPrintStream bos = NMemoryPrintStream.of();
             format.printElement(elem, bos, compact, createFactoryContext());
@@ -235,7 +196,7 @@ public class DefaultNElementFormat extends DefaultFormatBase<NElementFormat> imp
         if (contentType == NContentType.PLAIN) {
             print(out, model.getJsonMan());
         } else {
-            print(out, resolveStructuredFormat());
+            print(out, model.getStreamFormat(contentType==null?NContentType.JSON : contentType));
         }
     }
 

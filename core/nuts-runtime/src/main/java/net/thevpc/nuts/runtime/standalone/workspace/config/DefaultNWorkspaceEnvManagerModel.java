@@ -398,11 +398,6 @@ public class DefaultNWorkspaceEnvManagerModel {
 
     public NElement getPropertyElement(String property) {
         return NElements.of()
-                .setIndestructibleObjects(x -> !x.isPrimitive()
-                        && !Number.class.isAssignableFrom(x)
-                        && !Boolean.class.isAssignableFrom(x)
-                        && !String.class.isAssignableFrom(x)
-                        && !Instant.class.isAssignableFrom(x))
                 .toElement(getProperty(property));
     }
 

@@ -2,8 +2,8 @@ package net.thevpc.nuts.runtime.standalone.format.elem.mapper;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.runtime.standalone.format.elem.DefaultNPairElement;
-import net.thevpc.nuts.runtime.standalone.format.elem.DefaultNObjectElement;
+import net.thevpc.nuts.runtime.standalone.format.elem.item.DefaultNPairElement;
+import net.thevpc.nuts.runtime.standalone.format.elem.item.DefaultNObjectElement;
 import net.thevpc.nuts.util.NMsg;
 
 import java.lang.reflect.ParameterizedType;

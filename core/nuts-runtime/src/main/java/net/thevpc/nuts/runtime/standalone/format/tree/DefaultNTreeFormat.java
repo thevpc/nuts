@@ -113,8 +113,6 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
             return (NTreeModel) tree;
         }
         Object destructredObject = NElements.of()
-                .setNtf(true)
-                .setIndestructibleFormat()
                 .destruct(tree);
         return new NElementTreeModel(
                 XNode.root(destructredObject, rootName, xNodeFormatter)

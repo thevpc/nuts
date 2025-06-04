@@ -18,6 +18,7 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class DefaultNElementParser implements NElementParser {
@@ -32,13 +33,13 @@ public class DefaultNElementParser implements NElementParser {
     private boolean ntf;
     private boolean traceProgress;
     private NProgressFactory progressFactory;
-    private Predicate<Class<?>> indestructibleObjects;
     private UserElementMapperStore userElementMapperStore;
 
 
     public DefaultNElementParser() {
         this.model = NWorkspaceExt.of().getModel().textModel;
         userElementMapperStore = new UserElementMapperStore();
+        this.userElementMapperStore.setReflectRepository(NReflectRepository.of());
     }
 
 
@@ -212,28 +213,10 @@ public class DefaultNElementParser implements NElementParser {
         throw new NIllegalArgumentException(NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
     }
 
-    private NElementStreamFormat resolveStructuredFormat() {
-        switch (contentType) {
-            case JSON: {
-                return model.getJsonMan();
-            }
-            case YAML: {
-                return model.getYamlMan();
-            }
-            case XML: {
-                return model.getXmlMan();
-            }
-            case TSON: {
-                return model.getTsonMan();
-            }
-        }
-        throw new NIllegalArgumentException(NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
-    }
-
 
     @Override
     public <T> T parse(Reader reader, Class<T> clazz) {
-        return (T) elementToObject(resolveStructuredFormat().parseElement(reader, createFactoryContext()), clazz);
+        return (T) createFactoryContext().createObject(model.getStreamFormat(contentType == null ? NContentType.JSON : contentType).parseElement(reader, createFactoryContext()), clazz);
     }
 
     @Override
@@ -289,32 +272,14 @@ public class DefaultNElementParser implements NElementParser {
         return parse(file, NElement.class);
     }
 
-    public Predicate<Class<?>> getIndestructibleObjects() {
-        return indestructibleObjects;
-    }
-
     @Override
-    public NElementParser setIndestructibleFormat() {
-        return setIndestructibleObjects(CoreNElementUtils.DEFAULT_INDESTRUCTIBLE_FORMAT);
+    public NElementMapperStore mapperStore() {
+        return userElementMapperStore;
     }
-
-    @Override
-    public NElementParser setIndestructibleObjects(Predicate<Class<?>> destructTypeFilter) {
-        this.indestructibleObjects = destructTypeFilter;
-        return this;
-    }
-
-
-    @Override
-    public <T> NElementParser setMapper(Type type, NElementMapper<T> mapper) {
-        this.userElementMapperStore.setMapper(type, mapper);
-        return this;
-    }
-
 
     private DefaultNElementFactoryContext createFactoryContext() {
         NReflectRepository reflectRepository = NWorkspaceUtils.of().getReflectRepository();
-        DefaultNElementFactoryContext c = new DefaultNElementFactoryContext(isNtf(), reflectRepository, userElementMapperStore,indestructibleObjects);
+        DefaultNElementFactoryContext c = new DefaultNElementFactoryContext(isNtf(), reflectRepository, userElementMapperStore);
         switch (getContentType()) {
             case XML:
             case JSON:
@@ -326,7 +291,13 @@ public class DefaultNElementParser implements NElementParser {
         }
         return c;
     }
-
+    @Override
+    public NElementParser doWithMapperStore(Consumer<NElementMapperStore> doWith) {
+        if(doWith != null) {
+            doWith.accept(mapperStore());
+        }
+        return this;
+    }
     public Object elementToObject(NElement o, Type type) {
         return createFactoryContext().createObject(o, type);
     }

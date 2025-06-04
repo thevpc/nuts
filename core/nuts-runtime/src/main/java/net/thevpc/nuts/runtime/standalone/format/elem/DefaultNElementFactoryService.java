@@ -27,17 +27,14 @@ package net.thevpc.nuts.runtime.standalone.format.elem;
 import net.thevpc.nuts.elem.*;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.format.elem.item.DefaultNArrayElement;
 import net.thevpc.nuts.runtime.standalone.format.elem.parser.mapperstore.DefaultElementMapperStore;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.reflect.NReflectRepository;
@@ -72,74 +69,9 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
             return DefaultElementMapperStore.F_NULL.createObject(o, to, context);
         }
         if (to == null) {
-            switch (o.type()) {
-                case OBJECT: {
-                    to = Map.class;
-                    break;
-                }
-                case ARRAY: {
-                    to = List.class;
-                    break;
-                }
-                case DOUBLE_QUOTED_STRING:
-                case SINGLE_QUOTED_STRING:
-                case ANTI_QUOTED_STRING:
-                case TRIPLE_DOUBLE_QUOTED_STRING:
-                case TRIPLE_SINGLE_QUOTED_STRING:
-                case TRIPLE_ANTI_QUOTED_STRING:
-                case LINE_STRING:
-                case REGEX:
-                case NAME:
-                {
-                    to = String.class;
-                    break;
-                }
-                case INTEGER: {
-                    to = Integer.class;
-                    break;
-                }
-                case FLOAT: {
-                    to = Float.class;
-                    break;
-                }
-                case DOUBLE: {
-                    to = Double.class;
-                    break;
-                }
-                case BOOLEAN: {
-                    to = Boolean.class;
-                    break;
-                }
-                case INSTANT: {
-                    to = Instant.class;
-                    break;
-                }
-                case BIG_DECIMAL: {
-                    to = BigDecimal.class;
-                    break;
-                }
-                case BIG_INTEGER: {
-                    to = BigInteger.class;
-                    break;
-                }
-                case LONG: {
-                    to = Long.class;
-                    break;
-                }
-                case BYTE: {
-                    to = Byte.class;
-                    break;
-                }
-                case SHORT: {
-                    to = Short.class;
-                    break;
-                }
-                case NULL: {
-                    return null;
-                }
-                default: {
-                    throw new NUnsupportedEnumException(o.type());
-                }
+            NElementMapper f = context.getMapper(o, defaultOnly);
+            if(f==null){
+                throw new NUnsupportedEnumException(o.type());
             }
         }
         NElementMapper f = context.getMapper(to, defaultOnly);

@@ -10,7 +10,7 @@ import net.thevpc.nuts.util.NLiteral;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CoreElementMapperStore implements NElementMapperStore {
+public class CoreElementMapperStore  {
     private final Map<Class, NElementMapper> coreMappers = new HashMap<>();
     public CoreElementMapperStore() {
 //        addHierarchyFactory(JsonElement.class, F_JSONELEMENT);

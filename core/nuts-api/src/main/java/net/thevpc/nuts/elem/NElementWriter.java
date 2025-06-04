@@ -39,6 +39,7 @@ import java.io.File;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.nio.file.Path;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
@@ -163,12 +164,8 @@ public interface NElementWriter extends NComponent, NCmdLineConfigurable {
      */
     NElementWriter setCompact(boolean compact);
 
-    Predicate<Class<?>> getIndestructibleObjects();
-
-    NElementWriter setIndestructibleFormat();
-
-    NElementWriter setIndestructibleObjects(Predicate<Class<?>> destructTypeFilter);
-
+    NElementMapperStore mapperStore();
+    NElementWriter doWithMapperStore(Consumer<NElementMapperStore> doWith);
 
     boolean isLogProgress();
 

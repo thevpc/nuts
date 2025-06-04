@@ -3,11 +3,13 @@ package net.thevpc.nuts.runtime.standalone.format.elem;
 import net.thevpc.nuts.*;
 
 import java.lang.reflect.Type;
+import java.util.function.Consumer;
 
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.runtime.standalone.format.elem.parser.mapperstore.UserElementMapperStore;
+import net.thevpc.nuts.runtime.standalone.format.elem.path.NElementPathFilter;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTextManagerModel;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -24,6 +26,7 @@ public class DefaultNElements implements NElements {
     public DefaultNElements() {
         this.model = NWorkspaceExt.of().getModel().textModel;
         this.userElementMapperStore = new UserElementMapperStore();
+        this.userElementMapperStore.setReflectRepository(NReflectRepository.of());
     }
 
     public boolean isNtf() {
@@ -70,7 +73,13 @@ public class DefaultNElements implements NElements {
     public NElementMapperStore mapperStore() {
         return userElementMapperStore;
     }
-
+    @Override
+    public NElements doWithMapperStore(Consumer<NElementMapperStore> doWith) {
+        if(doWith != null) {
+            doWith.accept(mapperStore());
+        }
+        return this;
+    }
     @Override
     public NElement normalizeJson(NElement e) {
         return normalize(e, NContentType.JSON);
@@ -92,30 +101,14 @@ public class DefaultNElements implements NElements {
     }
 
     public NElement normalize(NElement e, NContentType contentType) {
-        return resolveStructuredFormat(contentType).normalize(e == null ? NElement.ofNull() : e);
+        return model.getStreamFormat(contentType==null?NContentType.JSON : contentType).normalize(e == null ? NElement.ofNull() : e);
     }
 
-    private NElementStreamFormat resolveStructuredFormat(NContentType contentType) {
-        switch (contentType) {
-            case JSON: {
-                return model.getJsonMan();
-            }
-            case YAML: {
-                return model.getYamlMan();
-            }
-            case XML: {
-                return model.getXmlMan();
-            }
-            case TSON: {
-                return model.getTsonMan();
-            }
-        }
-        throw new NIllegalArgumentException(NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
-    }
+
 
     private DefaultNElementFactoryContext createFactoryContext() {
         NReflectRepository reflectRepository = NWorkspaceUtils.of().getReflectRepository();
-        DefaultNElementFactoryContext c = new DefaultNElementFactoryContext(false, reflectRepository, userElementMapperStore, indestructibleObjects);
+        DefaultNElementFactoryContext c = new DefaultNElementFactoryContext(false, reflectRepository, userElementMapperStore);
         return c;
     }
 

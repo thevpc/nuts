@@ -72,7 +72,8 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
     }
 
     public Map buildModel() {
-        Object value = NElements.of().setIndestructibleFormat().destruct(getValue());
+        NElements e = NElements.of();
+        Object value = e.destruct(getValue());
         LinkedHashMap<NText, NText> map = new LinkedHashMap<>();
         fillMap(NText.of((rootName==null?"":rootName)), value, map);
         return map;

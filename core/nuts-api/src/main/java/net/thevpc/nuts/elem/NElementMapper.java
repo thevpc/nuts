@@ -31,9 +31,6 @@ import java.lang.reflect.Type;
  * @since 0.8.1
  */
 public interface NElementMapper<T> {
-    static <T> NElementMapperBuilder<T> ofBuilder(Type type) {
-        return NElementMappers.of().mapperBuilder(type);
-    }
 
     default Object destruct(T src, Type typeOfSrc, NElementFactoryContext context){
         return context.defaultDestruct(src,typeOfSrc);

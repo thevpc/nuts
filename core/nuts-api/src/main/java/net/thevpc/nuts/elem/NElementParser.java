@@ -11,7 +11,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.function.Predicate;
+import java.util.function.Consumer;
 
 public interface NElementParser extends NComponent {
     static NElementParser of() {
@@ -73,11 +73,10 @@ public interface NElementParser extends NComponent {
 
     NElementParser xml();
 
-    NElementParser setIndestructibleFormat();
 
-    NElementParser setIndestructibleObjects(Predicate<Class<?>> destructTypeFilter);
+    NElementMapperStore mapperStore();
 
-    NElementMapperStore mappers();
+    NElementParser doWithMapperStore(Consumer<NElementMapperStore> doWith);
 
     /*
      * parse url as a valid object of the given type

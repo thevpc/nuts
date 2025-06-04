@@ -29,6 +29,7 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.spi.NComponent;
 
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
@@ -106,11 +107,7 @@ public interface NElements extends NComponent {
     <T> T fromElement(NElement o, Class<T> to);
 
 
-    Predicate<Class<?>> getIndestructibleObjects();
-
-    NElements setIndestructibleFormat();
-
-    NElements setIndestructibleObjects(Predicate<Class<?>> destructTypeFilter);
+    NElements doWithMapperStore(Consumer<NElementMapperStore> doWith);
 
     NElementMapperStore mapperStore();
 }

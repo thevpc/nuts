@@ -6,7 +6,7 @@ import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
 import net.thevpc.nuts.reflect.NReflectType;
 import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
-import net.thevpc.nuts.runtime.standalone.format.elem.DefaultNArrayElement;
+import net.thevpc.nuts.runtime.standalone.format.elem.item.DefaultNArrayElement;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

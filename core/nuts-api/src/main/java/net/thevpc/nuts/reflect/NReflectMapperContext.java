@@ -25,7 +25,7 @@ public interface NReflectMapperContext {
 
     NEqualizer<Object> equalizer();
 
-    NReflectMapperContext setEqqualizer(NEqualizer<Object> eq);
+    NReflectMapperContext setEqualizer(NEqualizer<Object> eq);
 
     NMapStrategy mapStrategy();
 

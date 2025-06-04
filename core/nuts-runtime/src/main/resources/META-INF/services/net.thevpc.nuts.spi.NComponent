@@ -84,8 +84,7 @@ net.thevpc.nuts.runtime.standalone.dependency.format.DefaultNDependencyFormat
 net.thevpc.nuts.runtime.standalone.format.elem.DefaultNElements
 net.thevpc.nuts.runtime.standalone.format.elem.DefaultNElementFactory
 net.thevpc.nuts.runtime.standalone.format.elem.DefaultNElementFormat
-net.thevpc.nuts.runtime.standalone.format.elem.DefaultNElementWriter
-net.thevpc.nuts.runtime.standalone.format.elem.mapper.DefaultNElementMappers
+net.thevpc.nuts.runtime.standalone.format.elem.writer.DefaultNElementWriter
 net.thevpc.nuts.runtime.standalone.format.elem.parser.DefaultNElementParser
 
 net.thevpc.nuts.runtime.standalone.text.DefaultNTexts

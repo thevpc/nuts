@@ -33,7 +33,7 @@ import net.thevpc.nuts.format.NIterableFormat;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.time.NProgressFactory;
 
-import java.util.function.Predicate;
+import java.util.function.Consumer;
 
 /**
  * Class responsible of manipulating {@link NElement} type. It help parsing
@@ -236,19 +236,6 @@ public interface NElementFormat extends NContentTypeFormat {
     NElementFormat setNtf(boolean ntf);
 
     /**
-     * compile pathExpression into a valid NutsElementPath that helps filtering
-     * elements tree. JSONPath expressions refer to a JSON structure the same
-     * way as XPath expression are used with XML documents. JSONPath expressions
-     * can use the dot notation and/or bracket notations .store.book[0].title
-     * The trailing root is not necessary : .store.book[0].title You can also
-     * use bracket notation store['book'][0].title for input paths.
-     *
-     * @param pathExpression element path expression
-     * @return Element Path filter
-     */
-    NElementPath compilePath(String pathExpression);
-
-    /**
      * true is compact json flag is armed
      *
      * @return true is compact json flag is armed
@@ -263,14 +250,7 @@ public interface NElementFormat extends NContentTypeFormat {
      */
     NElementFormat setCompact(boolean compact);
 
-    Predicate<Class<?>> getIndestructibleObjects();
-
-    NElementFormat setIndestructibleFormat();
-
-    NElementFormat setIndestructibleObjects(Predicate<Class<?>> destructTypeFilter);
-
     NIterableFormat iter(NPrintStream out);
-
 
     boolean isLogProgress();
 
@@ -284,5 +264,6 @@ public interface NElementFormat extends NContentTypeFormat {
 
     NElementFormat setProgressFactory(NProgressFactory progressFactory);
 
-    NElementMapperStore mappers();
+    NElementMapperStore mapperStore();
+    NElementFormat doWithMapperStore(Consumer<NElementMapperStore> doWith);
 }

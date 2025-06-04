@@ -29,6 +29,7 @@ import net.thevpc.nuts.NBootOptions;
 
 import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.format.NFormats;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.format.elem.DefaultNElementFactoryService;
@@ -285,6 +286,24 @@ public class DefaultNTextManagerModel {
             elementFactoryService = new DefaultNElementFactoryService(workspace);
         }
         return elementFactoryService;
+    }
+
+    public NElementStreamFormat getStreamFormat(NContentType contentType) {
+            switch (contentType) {
+                case JSON: {
+                    return getJsonMan();
+                }
+                case YAML: {
+                    return getYamlMan();
+                }
+                case XML: {
+                    return getXmlMan();
+                }
+                case TSON: {
+                    return getTsonMan();
+                }
+            }
+            throw new NIllegalArgumentException(NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
     }
 
     public NElementStreamFormat getJsonMan() {

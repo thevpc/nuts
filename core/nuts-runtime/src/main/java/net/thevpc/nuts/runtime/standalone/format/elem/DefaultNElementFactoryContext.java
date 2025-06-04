@@ -51,7 +51,7 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
     private UserElementMapperStore userElementMapperStore;
     private final DefaultNTextManagerModel model;
 
-    public DefaultNElementFactoryContext(boolean ntf, NReflectRepository repository, UserElementMapperStore userElementMapperStore,Predicate<Class<?>> indestructibleObjects) {
+    public DefaultNElementFactoryContext(boolean ntf, NReflectRepository repository, UserElementMapperStore userElementMapperStore) {
         this.repository = repository;
         this.ntf = ntf;
         this.userElementMapperStore = userElementMapperStore;
