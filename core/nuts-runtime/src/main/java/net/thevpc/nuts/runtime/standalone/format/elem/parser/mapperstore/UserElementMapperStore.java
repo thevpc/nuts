@@ -5,7 +5,7 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.reflect.NReflectRepository;
 import net.thevpc.nuts.runtime.standalone.format.elem.CoreNElementUtils;
-import net.thevpc.nuts.runtime.standalone.format.elem.mapper.DefaultNElementMapperBuilder;
+import net.thevpc.nuts.runtime.standalone.format.elem.mapper.builder.DefaultNElementMapperBuilder;
 import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NClassMap;
@@ -18,14 +18,14 @@ import java.util.function.Predicate;
 
 public class UserElementMapperStore implements NElementMapperStore {
     public static final NElementTypeNElementKeyResolver NELEMENTTYPE_KEY_RESOLVER = new NElementTypeNElementKeyResolver();
-    public static final NElementTypeAndNameNElementKeyResolver NELEMENTTYPE_AND_NAME_KEY_RESOLVER = new NElementTypeAndNameNElementKeyResolver();
-    public static final NElementTypeAndNameNoCaseNElementKeyResolver NELEMENTTYPE_AND_NAME_NO_CASE_KEY_RESOLVER = new NElementTypeAndNameNoCaseNElementKeyResolver();
-    public static final NElementTypeAndNameNoFormatNElementKeyResolver NELEMENTTYPE_AND_NAME_NO_FORMAT_KEY_RESOLVER = new NElementTypeAndNameNoFormatNElementKeyResolver();
+    public static final NElementTypeAndNameNElementKeyResolver CASE_SENSITIVE_NAME_RESOLVER = new NElementTypeAndNameNElementKeyResolver();
+    public static final NElementTypeAndNameNoCaseNElementKeyResolver CASE_INSENSITIVE_NAME_RESOLVER = new NElementTypeAndNameNoCaseNElementKeyResolver();
+    public static final NElementTypeAndNameNoFormatNElementKeyResolver FORMAT_INSENSITIVE_NAME_RESOLVER = new NElementTypeAndNameNoFormatNElementKeyResolver();
     private CoreElementMapperStore coreElementMapperStore;
     private DefaultElementMapperStore defaultElementMapperStore;
     private final NClassMap<NElementMapper> lvl1_customMappersByType = new NClassMap<>(null, NElementMapper.class);
     private final List<NElementKeyResolverEntry> lvl2_customMappersByKey = new ArrayList<>();
-    private Predicate<Class<?>> indestructibleObjects=CoreNElementUtils.DEFAULT_INDESTRUCTIBLE;
+    private Predicate<Class<?>> indestructibleObjects = CoreNElementUtils.DEFAULT_INDESTRUCTIBLE;
     private NReflectRepository reflectRepository;
 
     static class NElementKeyResolverEntry<T> {
@@ -52,7 +52,7 @@ public class UserElementMapperStore implements NElementMapperStore {
 
     @Override
     public NElementMapperStore copyFrom(NElementMapperStore other) {
-        if(other!=null) {
+        if (other != null) {
             if (other instanceof UserElementMapperStore) {
                 UserElementMapperStore u = (UserElementMapperStore) other;
                 for (Class c : u.lvl1_customMappersByType.keySet()) {
@@ -75,12 +75,12 @@ public class UserElementMapperStore implements NElementMapperStore {
 
     @Override
     public <T> NElementMapperBuilder<T> builderOf(Type type) {
-        return new DefaultNElementMapperBuilder<>(reflectRepository,type);
+        return new DefaultNElementMapperBuilder<>(reflectRepository, type);
     }
 
     @Override
     public <T> NElementMapperBuilder<T> builderOf(Class<T> type) {
-        return new DefaultNElementMapperBuilder<>(reflectRepository,type);
+        return new DefaultNElementMapperBuilder<>(reflectRepository, type);
     }
 
     public Predicate<Class<?>> getIndestructibleObjects() {
@@ -96,8 +96,6 @@ public class UserElementMapperStore implements NElementMapperStore {
         this.indestructibleObjects = destructTypeFilter;
         return this;
     }
-
-
 
 
     public final UserElementMapperStore setMapper(Type cls, NElementMapper instance) {
@@ -138,12 +136,70 @@ public class UserElementMapperStore implements NElementMapperStore {
         return setMapper(NELEMENTTYPE_KEY_RESOLVER, elementType, type, instance);
     }
 
-    public final <T> NElementMapperStore setMapper(NElementType elementType, String name, NElementMappedNameStrategy mappedName, Type type, NElementMapper<T> instance) {
-        return setMapper(NELEMENTTYPE_AND_NAME_KEY_RESOLVER, new NElementTypeAndName(elementType, name), type, instance);
+    public final <T> NElementMapperStore setMapper(NElementType elementType, String name, NNameSelectorStrategy nameSelectorStrategy, Type type, NElementMapper<T> instance) {
+        if (nameSelectorStrategy == null) {
+            nameSelectorStrategy = NNameSelectorStrategy.CASE_SENSITIVE;
+        }
+        NElementKeyResolver<NElementTypeAndName> resolver = CASE_SENSITIVE_NAME_RESOLVER;
+        switch (nameSelectorStrategy) {
+            case CASE_INSENSITIVE: {
+                resolver = CASE_INSENSITIVE_NAME_RESOLVER;
+                break;
+            }
+            case FORMAT_INSENSITIVE: {
+                resolver = FORMAT_INSENSITIVE_NAME_RESOLVER;
+                break;
+            }
+        }
+        return setMapper(resolver, new NElementTypeAndName(elementType, name), type, instance);
     }
 
     public final <T> NElementMapperStore setMapper(NElementType elementType, String name, Type type, NElementMapper<T> instance) {
-        return setMapper(NELEMENTTYPE_AND_NAME_KEY_RESOLVER, new NElementTypeAndName(elementType, name), type, instance);
+        return setMapper(CASE_SENSITIVE_NAME_RESOLVER, new NElementTypeAndName(elementType, name), type, instance);
+    }
+
+    @Override
+    public <T> NElementMapperStore setMapper(NElementType[] elementTypes, Type type, NElementMapper<T> instance) {
+        for (NElementType elementType : elementTypes) {
+            setMapper(elementType, type, instance);
+        }
+        return this;
+    }
+
+    @Override
+    public <T> NElementMapperStore setMapper(NElementType[] elementTypes, String name, NNameSelectorStrategy nameSelectorStrategy, Type type, NElementMapper<T> instance) {
+        for (NElementType elementType : elementTypes) {
+            setMapper(elementType, name, nameSelectorStrategy, type, instance);
+        }
+        return this;
+    }
+
+    @Override
+    public <T> NElementMapperStore setMapper(NElementType[] elementTypes, String name, Type type, NElementMapper<T> instance) {
+        for (NElementType elementType : elementTypes) {
+            setMapper(elementType, name, type, instance);
+        }
+        return this;
+    }
+
+    @Override
+    public <T> NElementMapperStore setMapper(NElementType[] elementTypes, String[] names, NNameSelectorStrategy nameSelectorStrategy, Type type, NElementMapper<T> instance) {
+        for (NElementType elementType : elementTypes) {
+            for (String name : names) {
+                setMapper(elementType, name, nameSelectorStrategy, type, instance);
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public <T> NElementMapperStore setMapper(NElementType[] elementTypes, String[] names, Type type, NElementMapper<T> instance) {
+        for (NElementType elementType : elementTypes) {
+            for (String name : names) {
+                setMapper(elementType, name, type, instance);
+            }
+        }
+        return this;
     }
 
     @Override

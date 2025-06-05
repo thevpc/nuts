@@ -8,9 +8,19 @@ public interface NElementMapperStore {
 
     <T> NElementMapperStore setMapper(NElementType elementType, Type type, NElementMapper<T> instance);
 
-    <T> NElementMapperStore setMapper(NElementType elementType, String name, NElementMappedNameStrategy mappedName, Type type, NElementMapper<T> instance);
+    <T> NElementMapperStore setMapper(NElementType elementType, String name, NNameSelectorStrategy nameSelectorStrategy, Type type, NElementMapper<T> instance);
 
     <T> NElementMapperStore setMapper(NElementType elementType, String name, Type type, NElementMapper<T> instance);
+
+    <T> NElementMapperStore setMapper(NElementType[] elementType, Type type, NElementMapper<T> instance);
+
+    <T> NElementMapperStore setMapper(NElementType[] elementType, String name, NNameSelectorStrategy nameSelectorStrategy, Type type, NElementMapper<T> instance);
+
+    <T> NElementMapperStore setMapper(NElementType[] elementType, String name, Type type, NElementMapper<T> instance);
+
+    <T> NElementMapperStore setMapper(NElementType[] elementType, String[] name, NNameSelectorStrategy nameSelectorStrategy, Type type, NElementMapper<T> instance);
+
+    <T> NElementMapperStore setMapper(NElementType[] elementType, String[] name, Type type, NElementMapper<T> instance);
 
     <K, T> NElementMapperStore setMapper(NElementKeyResolver<K> resolver, K key, Type type, NElementMapper<T> instance);
 
@@ -28,12 +38,8 @@ public interface NElementMapperStore {
         T keyOf(NElement e);
     }
 
-    public static enum NElementMappedNameStrategy {
-        IGNORE,
-        CASE_INSENSITIVE,
-        FORMAT_INSENSITIVE,
-    }
     <T> NElementMapperBuilder<T> builderOf(Type type);
+
     <T> NElementMapperBuilder<T> builderOf(Class<T> type);
 
 

@@ -2,11 +2,14 @@ package net.thevpc.nuts.elem;
 
 
 import java.lang.reflect.Type;
+import java.util.function.Predicate;
 
 public interface NElementMapperBuilder<T> {
     NElementMapper<T> build();
 
     NElementMapperBuilder<T> addAllFields();
+
+    NElementMapperBuilder<T> addFields(Predicate<String> fieldFilter);
 
     NElementMapperBuilder<T> setWrapCollections(boolean wrapCollections);
 
@@ -14,25 +17,33 @@ public interface NElementMapperBuilder<T> {
 
     NElementMapperBuilder<T> addFields(String... names);
 
-    NElementMapperBuilder<T> onUnsupportedArg(MissingFieldConfigurer<T> a);
+    NElementMapperBuilder<T> onUnsupportedParam(NElementMapperBuilderFieldConfigurer<T> a);
 
-    NElementMapperBuilder<T> onUnsupportedBody(MissingFieldConfigurer<T> a);
+    NElementMapperBuilder<T> onUnsupportedChild(NElementMapperBuilderFieldConfigurer<T> a);
 
-    NElementMapperBuilder<T> postProcess(InstanceConfigurer<T> a);
+    NElementMapperBuilder<T> onInitializeInstance(NElementMapperBuilderInitializer<T> a);
 
     NElementMapperBuilder.FieldConfig<T> addField(String name);
 
-    NElementMapperBuilder<T> setDefaultValueByType(Type type, Object defaultValue);
+    NElementMapperBuilder<T> removeFields(String... names);
 
-    NElementMapperBuilder<T> setInstanceFactory(InstanceFactory<T> instanceFactory);
+    boolean removeField(String name);
 
-    NElementMapperBuilder<T> setTrueDefault();
+    NElementMapperBuilder<T> setTypeDefaultValue(Type type, Object defaultValue);
+
+    NElementMapperBuilder<T> setInstanceFactory(NElementMapperBuilderInstanceFactory<T> instanceFactory);
+
+    NElementMapperBuilder<T> setBooleanDefaultTrue();
+
+    NElementMapperBuilder<T> setBooleanDefaultFalse();
 
     NElementMapperBuilder<T> configureLenient();
 
     interface FieldConfig<T> {
 
-        FieldConfig<T> setTrueDefault();
+        FieldConfig<T> setBooleanDefaultTrue();
+
+        FieldConfig<T> setBooleanDefaultFalse();
 
         FieldConfig<T> setDefaultValue(Object valueWhenMissing);
 
@@ -40,58 +51,11 @@ public interface NElementMapperBuilder<T> {
 
         FieldConfig<T> setContainerIsCollection(Boolean value);
 
-        FieldConfig<T> setArg(boolean arg);
+        FieldConfig<T> setParam(boolean param);
 
-        FieldConfig<T> setBody(boolean body);
+        FieldConfig<T> setChild(boolean child);
 
         NElementMapperBuilder<T> end();
     }
 
-    interface InstanceFactory<T2> {
-        T2 newInstance(FactoryConfigurerContext<T2> context);
-    }
-
-    interface FactoryConfigurerContext<T2> {
-        NElement element();
-
-        Class<T2> to();
-
-        <T> NElement elem(T any);
-
-        <T> T obj(NElement element, Class<T> clazz);
-    }
-
-    interface InstanceConfigurerContext<T2> {
-        T2 instance();
-
-        NElement element();
-
-        Class<T2> to();
-
-        <T> NElement elem(T any);
-
-        <T> T obj(NElement element, Class<T> clazz);
-    }
-
-    interface FieldConfigurerContext<T2> {
-        T2 instance();
-
-        NElement field();
-
-        NElement element();
-
-        Class<T2> to();
-
-        <T> NElement elem(T any);
-
-        <T> T obj(NElement element, Class<T> clazz);
-    }
-
-    interface InstanceConfigurer<T2> {
-        boolean prepareInstance(InstanceConfigurerContext<T2> context);
-    }
-
-    interface MissingFieldConfigurer<T2> {
-        boolean prepareField(FieldConfigurerContext<T2> context);
-    }
 }
