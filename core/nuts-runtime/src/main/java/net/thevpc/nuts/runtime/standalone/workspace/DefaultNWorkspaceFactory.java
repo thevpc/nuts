@@ -35,9 +35,12 @@ import net.thevpc.nuts.reserved.rpi.NCollectionsRPI;
 import net.thevpc.nuts.reserved.rpi.NIORPI;
 import net.thevpc.nuts.runtime.standalone.*;
 import net.thevpc.nuts.runtime.standalone.app.NAppImpl;
+import net.thevpc.nuts.runtime.standalone.format.elem.DefaultNElementFactory;
 import net.thevpc.nuts.runtime.standalone.format.elem.DefaultNElements;
 import net.thevpc.nuts.runtime.standalone.format.DefaultNObjectFormat;
 import net.thevpc.nuts.runtime.standalone.format.NFormatsImpl;
+import net.thevpc.nuts.runtime.standalone.format.elem.parser.DefaultNElementParser;
+import net.thevpc.nuts.runtime.standalone.format.elem.writer.DefaultNElementWriter;
 import net.thevpc.nuts.runtime.standalone.id.format.DefaultNIdFormat;
 import net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIO;
 import net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIORPI;
@@ -146,6 +149,18 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 }
                 case "net.thevpc.nuts.elem.NElements": {
                     DefaultNElements p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNElements());
+                    return NOptional.of((T) p);
+                }
+                case "net.thevpc.nuts.elem.NElementWriter": {
+                    DefaultNElementWriter p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNElementWriter());
+                    return NOptional.of((T) p);
+                }
+                case "net.thevpc.nuts.elem.NElementParser": {
+                    DefaultNElementParser p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNElementParser());
+                    return NOptional.of((T) p);
+                }
+                case "net.thevpc.nuts.elem.NElementFactory": {
+                    DefaultNElementFactory p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNElementFactory());
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.NLibPaths": {

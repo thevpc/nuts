@@ -17,8 +17,28 @@ public class NElementFactoryContextAdapter implements NElementFactoryContext {
     }
 
     @Override
-    public Predicate<Class<?>> getIndestructibleObjects() {
-        return base.getIndestructibleObjects();
+    public Predicate<Type> getIndestructibleTypesFilter() {
+        return base.getIndestructibleTypesFilter();
+    }
+
+    @Override
+    public boolean isIndestructibleObject(Object any) {
+        return base.isIndestructibleObject(any);
+    }
+
+    @Override
+    public boolean isIndestructibleType(Type any) {
+        return base.isIndestructibleType(any);
+    }
+
+    @Override
+    public boolean isSimpleObject(Object any) {
+        return base.isSimpleObject(any);
+    }
+
+    @Override
+    public boolean isSimpleType(Type any) {
+        return base.isSimpleType(any);
     }
 
     @Override

@@ -35,7 +35,15 @@ import java.util.function.Predicate;
  */
 public interface NElementFactoryContext {
 
-    Predicate<Class<?>> getIndestructibleObjects();
+    boolean isIndestructibleObject(Object any);
+
+    boolean isIndestructibleType(Type any);
+
+    boolean isSimpleObject(Object any);
+
+    boolean isSimpleType(Type any);
+
+    Predicate<Type> getIndestructibleTypesFilter();
 
     Map<String, Object> getProperties();
 

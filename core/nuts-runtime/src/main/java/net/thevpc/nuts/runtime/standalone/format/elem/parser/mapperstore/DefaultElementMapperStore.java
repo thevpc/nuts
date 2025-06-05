@@ -1,15 +1,18 @@
 package net.thevpc.nuts.runtime.standalone.format.elem.parser.mapperstore;
 
-import net.thevpc.nuts.NUnsupportedEnumException;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.format.elem.mapper.*;
 import net.thevpc.nuts.runtime.standalone.format.xml.NElementFactoryXmlDocument;
 import net.thevpc.nuts.runtime.standalone.format.xml.NElementFactoryXmlElement;
+import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NClassMap;
+import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.util.NFilter;
+import net.thevpc.nuts.util.NLiteral;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -58,12 +61,33 @@ public class DefaultElementMapperStore {
     public static final NElementMapper F_DESCRIPTOR_PROPERTY_BUILDER = new NElementMapperNDescriptorPropertyBuilder();
     public static final NElementMapper F_NUTS_ENUM = new NElementMapperNEnum();
     public static final NElementMapper F_NUTS_REPO_LOCATION = new NElementMapperNRepositoryLocation();
+    public static final NElementMapper F_LITERAL = new NElementMapperNLiteral();
+    public static final NElementMapperPrimitiveBooleanArray F_BOOLEAN_ARRAY = new NElementMapperPrimitiveBooleanArray();
+    public static final NElementMapperPrimitiveByteArray B_BYTE_ARRAY = new NElementMapperPrimitiveByteArray();
+    public static final NElementMapperPrimitiveShortArray F_SHORT_ARRAY = new NElementMapperPrimitiveShortArray();
+    public static final NElementMapperPrimitiveCharArray F_CHAR_ARRAY = new NElementMapperPrimitiveCharArray();
+    public static final NElementMapperPrimitiveIntArray F_INT_ARRAY = new NElementMapperPrimitiveIntArray();
+    public static final NElementMapperPrimitiveLongArray F_LONG_ARRAY = new NElementMapperPrimitiveLongArray();
+    public static final NElementMapperFloatArray F_FLOAT_ARRAY = new NElementMapperFloatArray();
+    public static final NElementMapperPrimitiveDoubleArray F_DOUBLE_ARRAY = new NElementMapperPrimitiveDoubleArray();
+    public static final NElementMapperObjectArray F_OBJECT_ARRAY = new NElementMapperObjectArray();
+    public static final NElementMapperNPrimitiveElement F_PRIMITIVE_ELEMENT = new NElementMapperNPrimitiveElement();
+    public static final NElementMapperNArrayElement F_ARRAY_ELEMENT = new NElementMapperNArrayElement();
+    public static final NElementMapperNObjectElement F_OBJECT_ELEMENT = new NElementMapperNObjectElement();
+    public static final NElementMapperNElementBuilder F_ARRAY_ELEMENT_BUILDER = new NElementMapperNElementBuilder();
+    public static final NElementMapperNElementBuilder F_OBJECT_ELEMENT_BUILDER = new NElementMapperNElementBuilder();
+    public static final NElementMapperNElement F_ELEMENT = new NElementMapperNElement();
+    public static final NElementMapperCmdLine F_CMDLINE = new NElementMapperCmdLine();
+    public static final NElementMapperNText F_NTEXT = new NElementMapperNText();
+    public static final NElementMapperNPath F_NPATH = new NElementMapperNPath();
+    public static final NElementMapperNFilter F_NFILTER = new NElementMapperNFilter();
     public final NElementMapper F_OBJ = new NElementMapperObjReflect();
 
     public final NElementMapper F_COLLECTION = new NElementMapperCollection();
     public final NElementMapper F_MAP = new NElementMapperMap();
 
     private final NClassMap<NElementMapper> defaultMappers = new NClassMap<>(null, NElementMapper.class);
+    private final NClassMap<NElementMapper> coreMappers = new NClassMap<>(null, NElementMapper.class);
 
     public DefaultElementMapperStore() {
         addDefaultMapper(Boolean.class, F_BOOLEANS);
@@ -96,27 +120,60 @@ public class DefaultElementMapperStore {
         addDefaultMapper(Map.Entry.class, F_MAPENTRY);
         addDefaultMapper(org.w3c.dom.Element.class, F_XML_ELEMENT);
         addDefaultMapper(org.w3c.dom.Document.class, F_XML_DOCUMENT);
-        addDefaultMapper(boolean[].class, new NElementMapperPrimitiveBooleanArray());
-        addDefaultMapper(byte[].class, new NElementMapperPrimitiveByteArray());
-        addDefaultMapper(short[].class, new NElementMapperPrimitiveShortArray());
-        addDefaultMapper(char[].class, new NElementMapperPrimitiveCharArray());
-        addDefaultMapper(int[].class, new NElementMapperPrimitiveIntArray());
-        addDefaultMapper(long[].class, new NElementMapperPrimitiveLongArray());
-        addDefaultMapper(float[].class, new NElementMapperFloatArray());
-        addDefaultMapper(double[].class, new NElementMapperPrimitiveDoubleArray());
-        addDefaultMapper(Object[].class, new NElementMapperObjectArray());
-        addDefaultMapper(NPrimitiveElement.class, new NElementMapperNPrimitiveElement());
-        addDefaultMapper(NArrayElement.class, new NElementMapperNArrayElement());
-        addDefaultMapper(NObjectElement.class, new NElementMapperNObjectElement());
-        addDefaultMapper(NArrayElementBuilder.class, new NElementMapperNElementBuilder());
-        addDefaultMapper(NObjectElementBuilder.class, new NElementMapperNElementBuilder());
-        addDefaultMapper(NElement.class, new NElementMapperNElement());
+        addDefaultMapper(boolean[].class, F_BOOLEAN_ARRAY);
+        addDefaultMapper(byte[].class, B_BYTE_ARRAY);
+        addDefaultMapper(short[].class, F_SHORT_ARRAY);
+        addDefaultMapper(char[].class, F_CHAR_ARRAY);
+        addDefaultMapper(int[].class, F_INT_ARRAY);
+        addDefaultMapper(long[].class, F_LONG_ARRAY);
+        addDefaultMapper(float[].class, F_FLOAT_ARRAY);
+        addDefaultMapper(double[].class, F_DOUBLE_ARRAY);
+        addDefaultMapper(Object[].class, F_OBJECT_ARRAY);
+        addDefaultMapper(NPrimitiveElement.class, F_PRIMITIVE_ELEMENT);
+        addDefaultMapper(NArrayElement.class, F_ARRAY_ELEMENT);
+        addDefaultMapper(NObjectElement.class, F_OBJECT_ELEMENT);
+        addDefaultMapper(NArrayElementBuilder.class, F_ARRAY_ELEMENT_BUILDER);
+        addDefaultMapper(NObjectElementBuilder.class, F_OBJECT_ELEMENT_BUILDER);
+        addDefaultMapper(NElement.class, F_ELEMENT);
 //        addDefaultMapper(NPairElement.class, F_NPAIR_ELEM);
-        addDefaultMapper(NCmdLine.class, new NElementMapperCmdLine());
+        addDefaultMapper(NCmdLine.class, F_CMDLINE);
 //        addDefaultMapper(NText.class, new NElementMapperNString());
-        addDefaultMapper(NText.class, new NElementMapperNText());
-        addDefaultMapper(NPath.class, new NElementMapperNPath());
-        addDefaultMapper(NFilter.class, new NElementMapperNFilter());
+        addDefaultMapper(NText.class, F_NTEXT);
+        addDefaultMapper(NPath.class, F_NPATH);
+        addDefaultMapper(NFilter.class, F_NFILTER);
+
+        /// /////  Core
+
+        addCoreMapper(NDefinition.class, F_NUTS_DEF);
+        addCoreMapper(NId.class, F_NUTS_ID);
+        addCoreMapper(NVersion.class, F_NUTS_VERSION);
+        addCoreMapper(NDescriptor.class, F_NUTS_DESCRIPTOR);
+        addCoreMapper(NDependency.class, F_NUTS_DEPENDENCY);
+        addCoreMapper(NIdLocation.class, F_NUTS_ID_LOCATION);
+        addCoreMapper(NArtifactCall.class, F_ARTIFACT_CALL);
+        addCoreMapper(NPlatformLocation.class, F_NUTS_SDK_LOCATION);
+        addCoreMapper(NEnvCondition.class, F_NUTS_ENV_CONDITION);
+        addCoreMapper(NEnvConditionBuilder.class, F_NUTS_ENV_CONDITION_BUILDER);
+        addCoreMapper(NDescriptorProperty.class, F_DESCRIPTOR_PROPERTY);
+        addCoreMapper(NDescriptorPropertyBuilder.class, F_DESCRIPTOR_PROPERTY_BUILDER);
+        addCoreMapper(NDescriptorContributor.class, F_DESCRIPTOR_CONTRIBUTOR);
+        addCoreMapper(NDescriptorContributorBuilder.class, F_DESCRIPTOR_CONTRIBUTOR);
+        addCoreMapper(NDescriptorLicense.class, F_DESCRIPTOR_LICENSE);
+        addCoreMapper(NDescriptorLicenseBuilder.class, F_DESCRIPTOR_LICENSE);
+        addCoreMapper(NDescriptorOrganization.class, F_DESCRIPTOR_ORGANIZATION);
+        addCoreMapper(NDescriptorOrganizationBuilder.class, F_DESCRIPTOR_ORGANIZATION);
+        addCoreMapper(NEnum.class, F_NUTS_ENUM);
+        addCoreMapper(NRepositoryLocation.class, F_NUTS_REPO_LOCATION);
+        addCoreMapper(NLiteral.class, F_LITERAL);
+
+    }
+
+    public final void addCoreMapper(Class cls, NElementMapper instance) {
+        defaultMappers.put(cls, instance);
+    }
+
+    public NClassMap<NElementMapper> getCoreMappers() {
+        return coreMappers;
     }
 
     public final void addDefaultMapper(Class cls, NElementMapper instance) {

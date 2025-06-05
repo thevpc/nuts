@@ -7,6 +7,7 @@ import net.thevpc.nuts.reflect.NReflectRepository;
 import net.thevpc.nuts.runtime.standalone.format.elem.CoreNElementUtils;
 import net.thevpc.nuts.runtime.standalone.format.elem.mapper.builder.DefaultNElementMapperBuilder;
 import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NClassMap;
 import net.thevpc.nuts.util.NMsg;
@@ -21,11 +22,10 @@ public class UserElementMapperStore implements NElementMapperStore {
     public static final NElementTypeAndNameNElementKeyResolver CASE_SENSITIVE_NAME_RESOLVER = new NElementTypeAndNameNElementKeyResolver();
     public static final NElementTypeAndNameNoCaseNElementKeyResolver CASE_INSENSITIVE_NAME_RESOLVER = new NElementTypeAndNameNoCaseNElementKeyResolver();
     public static final NElementTypeAndNameNoFormatNElementKeyResolver FORMAT_INSENSITIVE_NAME_RESOLVER = new NElementTypeAndNameNoFormatNElementKeyResolver();
-    private CoreElementMapperStore coreElementMapperStore;
     private DefaultElementMapperStore defaultElementMapperStore;
     private final NClassMap<NElementMapper> lvl1_customMappersByType = new NClassMap<>(null, NElementMapper.class);
     private final List<NElementKeyResolverEntry> lvl2_customMappersByKey = new ArrayList<>();
-    private Predicate<Class<?>> indestructibleObjects = CoreNElementUtils.DEFAULT_INDESTRUCTIBLE;
+    private Predicate<Type> indestructibleObjects = CoreNElementUtils.DEFAULT_INDESTRUCTIBLE;
     private NReflectRepository reflectRepository;
 
     static class NElementKeyResolverEntry<T> {
@@ -39,6 +39,7 @@ public class UserElementMapperStore implements NElementMapperStore {
     }
 
     public UserElementMapperStore() {
+        this.defaultElementMapperStore = NWorkspaceExt.of().getModel().defaultElementMapperStore;
     }
 
     public NReflectRepository getReflectRepository() {
@@ -83,7 +84,7 @@ public class UserElementMapperStore implements NElementMapperStore {
         return new DefaultNElementMapperBuilder<>(reflectRepository, type);
     }
 
-    public Predicate<Class<?>> getIndestructibleObjects() {
+    public Predicate<Type> getIndestructibleObjects() {
         return indestructibleObjects;
     }
 
@@ -92,7 +93,7 @@ public class UserElementMapperStore implements NElementMapperStore {
         return setIndestructibleFilter(CoreNElementUtils.DEFAULT_INDESTRUCTIBLE);
     }
 
-    public UserElementMapperStore setIndestructibleFilter(Predicate<Class<?>> destructTypeFilter) {
+    public UserElementMapperStore setIndestructibleFilter(Predicate<Type> destructTypeFilter) {
         this.indestructibleObjects = destructTypeFilter;
         return this;
     }
@@ -100,12 +101,7 @@ public class UserElementMapperStore implements NElementMapperStore {
 
     public final UserElementMapperStore setMapper(Type cls, NElementMapper instance) {
         if (instance == null) {
-            NElementMapper cc = coreElementMapperStore.getCoreMappers().get(cls);
-            if (cc != null) {
-                lvl1_customMappersByType.put((Class) cls, cc);
-            } else {
-                lvl1_customMappersByType.remove((Class) cls);
-            }
+            lvl1_customMappersByType.remove((Class) cls);
         } else {
             lvl1_customMappersByType.put((Class) cls, instance);
         }
@@ -223,7 +219,7 @@ public class UserElementMapperStore implements NElementMapperStore {
             ));
         }
         if (cls.isArray()) {
-            NElementMapper f = defaultElementMapperStore.getDefaultMappers().getExact(cls);
+            NElementMapper f = defaultElementMapperStore.getCoreMappers().getExact(cls);
             if (f != null) {
                 return f;
             }
@@ -234,13 +230,17 @@ public class UserElementMapperStore implements NElementMapperStore {
             if (f != null) {
                 return f;
             }
+            final NElementMapper r = defaultElementMapperStore.getCoreMappers().get(cls);
+            if (r != null) {
+                return r;
+            }
         }
         final NElementMapper r = defaultElementMapperStore.getDefaultMappers().get(cls);
         if (r != null) {
             return r;
         }
         throw new NIllegalArgumentException(NMsg.ofC(
-                "unable to find serialization factory for %s", type
+                "unable to find element mapper for type : %s", type
         ));
     }
 
@@ -263,7 +263,7 @@ public class UserElementMapperStore implements NElementMapperStore {
             return r;
         }
         throw new NIllegalArgumentException(NMsg.ofC(
-                "unable to find serialization factory for %s", element
+                "unable to find element mapper for element type %s. element is : %s", element.type().id(),element
         ));
     }
 

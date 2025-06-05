@@ -41,7 +41,6 @@ import net.thevpc.nuts.reflect.NReflectRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 
 /**
- *
  * @author thevpc
  */
 public class DefaultNElementFactoryService implements NElementFactoryService {
@@ -59,18 +58,13 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
     }
 
 
-
-
-
-
-
     protected Object createObject(NElement o, Type to, NElementFactoryContext context, boolean defaultOnly) {
         if (o == null || o.type() == NElementType.NULL) {
             return DefaultElementMapperStore.F_NULL.createObject(o, to, context);
         }
         if (to == null) {
             NElementMapper f = context.getMapper(o, defaultOnly);
-            if(f==null){
+            if (f == null) {
                 throw new NUnsupportedEnumException(o.type());
             }
         }
@@ -95,10 +89,8 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
         if (expectedType == null) {
             expectedType = o.getClass();
         }
-        if (context.getIndestructibleObjects() != null) {
-            if (context.getIndestructibleObjects().test(o.getClass())) {
-                return o;
-            }
+        if (!context.isSimpleObject(o) && context.isIndestructibleObject(o)) {
+            return o;
         }
         return context.getMapper(expectedType, defaultOnly).destruct(o, expectedType, context);
     }
@@ -120,10 +112,9 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
         if (expectedType == null) {
             expectedType = o.getClass();
         }
-        if (context.getIndestructibleObjects() != null) {
-            if (context.getIndestructibleObjects().test(o.getClass())) {
-                return NElement.ofCustom(o);
-            }
+        boolean simpleObject = context.isSimpleObject(o);
+        if (!simpleObject && context.isIndestructibleObject(o)) {
+            return NElement.ofCustom(o);
         }
         NElementMapper mapper = context.getMapper(expectedType, defaultOnly);
         return mapper.createElement(o, expectedType, context);
@@ -163,11 +154,11 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
             for (int i = 0; i < length; i++) {
                 preloaded.add(context.createElement(Array.get(array, i)));
             }
-            return new DefaultNArrayElement(null,null,preloaded, new NElementAnnotation[0],null);
+            return new DefaultNArrayElement(null, null, preloaded, new NElementAnnotation[0], null);
         } else {
-            return new DefaultNArrayElement(null,null,
+            return new DefaultNArrayElement(null, null,
                     Arrays.stream((Object[]) array).map(x -> context.createElement(x)).collect(Collectors.toList())
-                    ,new NElementAnnotation[0],null
+                    , new NElementAnnotation[0], null
             );
         }
     }

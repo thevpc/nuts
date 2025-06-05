@@ -5,7 +5,6 @@ import net.thevpc.nuts.NBootOptions;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions;
-import net.thevpc.nuts.runtime.standalone.format.elem.parser.mapperstore.CoreElementMapperStore;
 import net.thevpc.nuts.runtime.standalone.format.elem.parser.mapperstore.DefaultElementMapperStore;
 import net.thevpc.nuts.runtime.standalone.io.cache.CachedSupplier;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
@@ -67,7 +66,6 @@ public class NWorkspaceModel {
     public DefaultNExtensions extensions;
     public NWorkspaceStore store;
     public DefaultElementMapperStore defaultElementMapperStore=new DefaultElementMapperStore();
-    public CoreElementMapperStore coreElementMapperStore=new CoreElementMapperStore();
     public InheritableThreadLocal<Stack<NProgressMonitor>> currentProgressMonitors = new InheritableThreadLocal<>();
 
     public NWorkspaceModel(NWorkspace workspace, NBootOptions initialBootOptions,NLog LOG) {

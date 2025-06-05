@@ -165,7 +165,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
             }
             case CUSTOM: {
                 Object v1 = src.asCustom().get().value();
-                if (context.getIndestructibleObjects() != null && context.getIndestructibleObjects().test(v1.getClass())) {
+                if (context.isIndestructibleObject(v1)) {
                     return src;
                 }
                 return context.createElement(v1);

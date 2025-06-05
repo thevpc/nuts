@@ -11,14 +11,14 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.format.elem;
 
 import net.thevpc.nuts.*;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.Predicate;
@@ -63,7 +64,7 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
         return createElement(o, null);
     }
 
-    public NElementMapper getMapper(Type type, boolean defaultOnly){
+    public NElementMapper getMapper(Type type, boolean defaultOnly) {
         return userElementMapperStore.getMapper(type, defaultOnly);
     }
 
@@ -73,10 +74,49 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
     }
 
     @Override
-    public Predicate<Class<?>> getIndestructibleObjects() {
+    public Predicate<Type> getIndestructibleTypesFilter() {
         return userElementMapperStore.getIndestructibleObjects();
     }
 
+    @Override
+    public boolean isIndestructibleObject(Object any) {
+        if (any == null) {
+            return true;
+        }
+        Predicate<Type> f = userElementMapperStore.getIndestructibleObjects();
+        if (f == null) {
+            return true;
+        }
+        return f.test(any.getClass());
+    }
+
+    @Override
+    public boolean isIndestructibleType(Type any) {
+        if (any == null) {
+            return true;
+        }
+        Predicate<Type> f = userElementMapperStore.getIndestructibleObjects();
+        if (f == null) {
+            return true;
+        }
+        return f.test(any);
+    }
+
+    @Override
+    public boolean isSimpleObject(Object any) {
+        if (any == null) {
+            return true;
+        }
+        return isSimpleType(any.getClass());
+    }
+
+    @Override
+    public boolean isSimpleType(Type any) {
+        if (any == null) {
+            return true;
+        }
+        return CoreNElementUtils.DEFAULT_SIMPLE_TYPE.test(any);
+    }
 
     @Override
     public Map<String, Object> getProperties() {
