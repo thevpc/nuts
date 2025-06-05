@@ -169,7 +169,7 @@ public class DefaultElementMapperStore {
     }
 
     public final void addCoreMapper(Class cls, NElementMapper instance) {
-        defaultMappers.put(cls, instance);
+        coreMappers.put(cls, instance);
     }
 
     public NClassMap<NElementMapper> getCoreMappers() {
