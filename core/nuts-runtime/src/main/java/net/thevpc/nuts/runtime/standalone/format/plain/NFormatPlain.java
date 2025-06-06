@@ -55,7 +55,7 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
         NArg n = cmdLine.peek().orNull();
         if (n != null) {
             NArg a;
-            boolean enabled = n.isActive();
+            boolean enabled = n.isNonCommented();
             if ((a = cmdLine.nextEntry(DefaultNPropertiesFormat.OPTION_MULTILINE_PROPERTY).orNull()) != null) {
                 if (enabled) {
                     NArg i = NArg.of(a.getStringValue().get());
@@ -64,7 +64,7 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
                 }
             } else {
                 a = cmdLine.next().get();
-                if (!a.isOption() || a.isActive()) {
+                if (!a.isOption() || a.isNonCommented()) {
                     extraConfig.add(a.asString().get());
                 }
             }

@@ -201,7 +201,7 @@ public class DefaultCustomCommandsModel {
             if (session.isPlainTrace()) {
                 NPrintStream out = session.getTerminal().out();
                 NTexts text = NTexts.of();
-                out.println(NMsg.ofC("%s command %s",
+                out.resetLine().println(NMsg.ofC("%s command %s",
                         text.ofStyled("install", NTextStyle.success()),
                         text.ofStyled(command.getName(), NTextStyle.primary3())));
             }
@@ -231,7 +231,7 @@ public class DefaultCustomCommandsModel {
             if (session.isPlainTrace()) {
                 NPrintStream out = session.getTerminal().out();
                 NTexts text = NTexts.of();
-                out.println(NMsg.ofC("%s command %s",
+                out.resetLine().println(NMsg.ofC("%s command %s",
                         text.ofStyled("update ", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined())),
                         text.ofStyled(command.getName(), NTextStyle.primary3())));
             }
@@ -260,7 +260,7 @@ public class DefaultCustomCommandsModel {
         NSession session = workspace.currentSession();
         if (session.isPlainTrace()) {
             NPrintStream out = session.getTerminal().out();
-            out.println(NMsg.ofC("%s command %s", "uninstall", NText.ofStyled(name, NTextStyle.primary3())));
+            out.resetLine().println(NMsg.ofC("%s command %s", "uninstall", NText.ofStyled(name, NTextStyle.primary3())));
         }
     }
 

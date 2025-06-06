@@ -162,6 +162,16 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
         return parseDefault(line).get();
     }
 
+    Object getSource();
+
+    NCmdLine setSource(Object source);
+
+    boolean isSafe();
+
+    NCmdLine setSafe(boolean safe);
+
+    NCmdLineConfigurable getConfigurable();
+
     boolean isExpandArgumentsFile();
 
     NCmdLine setExpandArgumentsFile(boolean expandArgumentsFile);
@@ -661,9 +671,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
 
     NCmdLine addAll(List<String> arguments);
 
-    void forEachPeek(NCmdLineRunner processor);
-
-    void forEachPeek(NCmdLineRunner processor, NCmdLineContext context);
+    void run(NCmdLineRunner processor);
 
     NCmdLine pushBack(NArg... args);
 
@@ -693,8 +701,6 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     default void forEach(Consumer<? super NArg> action) {
         Iterable.super.forEach(action);
     }
-
-    NCmdLine forEachPeek(NCmdLineConsumer action, NCmdLineContext context);
 
     NCmdLine forEachPeek(NCmdLineConsumer action);
 

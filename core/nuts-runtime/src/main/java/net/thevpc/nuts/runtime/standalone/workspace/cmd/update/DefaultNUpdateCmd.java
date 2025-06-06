@@ -104,7 +104,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         if (a == null) {
             return false;
         }
-        boolean enabled = a.isActive();
+        boolean enabled = a.isNonCommented();
         switch (a.key()) {
             case "--check-fixes": {
                 cmdLine.skip();

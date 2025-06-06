@@ -595,7 +595,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
             command.add(a.asString().get());
             return true;
         }
-        boolean enabled = a.isActive();
+        boolean enabled = a.isNonCommented();
         switch (a.key()) {
             case "--external":
             case "--spawn":

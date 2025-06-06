@@ -251,6 +251,20 @@ public class NStringUtils {
         return t;
     }
 
+    public static int firstIndexOf(String string, char... chars) {
+        if (string != null && chars != null) {
+            char[] value = string.toCharArray();
+            for (int i = 0; i < value.length; i++) {
+                for (int j = 0; j < chars.length; j++) {
+                    if (value[i] == chars[j]) {
+                        return i;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
     public static String firstNonNull(String... values) {
         return firstNonNull(values == null ? null : Arrays.asList(values));
     }

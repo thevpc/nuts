@@ -67,6 +67,17 @@ public class DefaultNCmdLine implements NCmdLine {
     private char eq = '=';
     private NShellFamily shellFamily = NShellFamily.BASH;
 
+    private Object source;
+
+    boolean safe;
+
+    /**
+     * configurable or null
+     *
+     * @return configurable or null
+     */
+    NCmdLineConfigurable configurable;
+
     //Constructors
     public DefaultNCmdLine() {
 
@@ -88,6 +99,39 @@ public class DefaultNCmdLine implements NCmdLine {
 
     public DefaultNCmdLine(List<String> args) {
         setArguments(args);
+    }
+
+
+    @Override
+    public Object getSource() {
+        return source;
+    }
+
+    @Override
+    public NCmdLine setSource(Object source) {
+        this.source = source;
+        return this;
+    }
+
+    @Override
+    public boolean isSafe() {
+        return safe;
+    }
+
+    @Override
+    public NCmdLine setSafe(boolean safe) {
+        this.safe = safe;
+        return this;
+    }
+
+    @Override
+    public NCmdLineConfigurable getConfigurable() {
+        return configurable;
+    }
+
+    public NCmdLine setConfigurable(NCmdLineConfigurable configurable) {
+        this.configurable = configurable;
+        return this;
     }
 
     @Override
@@ -371,7 +415,7 @@ public class DefaultNCmdLine implements NCmdLine {
         NOptional<NArg> v = nextFlag();
         if (v.isPresent()) {
             NArg a = v.get();
-            if (a.isActive()) {
+            if (a.isNonCommented()) {
                 consumer.run(a.getBooleanValue(), a);
                 return true;
             }
@@ -384,7 +428,7 @@ public class DefaultNCmdLine implements NCmdLine {
         NOptional<NArg> v = nextFlag(names);
         if (v.isPresent()) {
             NArg a = v.get();
-            if (a.isActive()) {
+            if (a.isNonCommented()) {
                 consumer.run(a.getBooleanValue(), a);
                 return true;
             }
@@ -397,7 +441,7 @@ public class DefaultNCmdLine implements NCmdLine {
         NOptional<NArg> v = nextEntry();
         if (v.isPresent()) {
             NArg a = v.get();
-            if (a.isActive()) {
+            if (a.isNonCommented()) {
                 consumer.run(a.getStringValue(), a);
                 return true;
             }
@@ -410,7 +454,7 @@ public class DefaultNCmdLine implements NCmdLine {
         NOptional<NArg> v = nextEntry(names);
         if (v.isPresent()) {
             NArg a = v.get();
-            if (a.isActive()) {
+            if (a.isNonCommented()) {
                 consumer.run(a.getStringValue(), a);
                 return true;
             }
@@ -423,7 +467,7 @@ public class DefaultNCmdLine implements NCmdLine {
         NOptional<NArg> v = nextFlag();
         if (v.isPresent()) {
             NArg a = v.get();
-            if (a.isActive()) {
+            if (a.isNonCommented()) {
                 consumer.run(a.getBooleanValue().get(), a);
                 return true;
             }
@@ -454,7 +498,7 @@ public class DefaultNCmdLine implements NCmdLine {
         NOptional<NArg> v = nextFlag(names);
         if (v.isPresent()) {
             NArg a = v.get();
-            if (a.isActive()) {
+            if (a.isNonCommented()) {
                 consumer.run(a.getBooleanValue().get(), a);
                 return true;
             }
@@ -467,7 +511,7 @@ public class DefaultNCmdLine implements NCmdLine {
         NOptional<NArg> v = nextEntry();
         if (v.isPresent()) {
             NArg a = v.get();
-            if (a.isActive()) {
+            if (a.isNonCommented()) {
                 consumer.run(a.getStringValue().get(), a);
                 return true;
             }
@@ -480,7 +524,7 @@ public class DefaultNCmdLine implements NCmdLine {
         NOptional<NArg> v = nextEntry(names);
         if (v.isPresent()) {
             NArg a = v.get();
-            if (a.isActive()) {
+            if (a.isNonCommented()) {
                 consumer.run(a.getStringValue().get(), a);
                 return true;
             }
@@ -493,7 +537,7 @@ public class DefaultNCmdLine implements NCmdLine {
         NOptional<NArg> v = nextEntry();
         if (v.isPresent()) {
             NArg a = v.get();
-            if (a.isActive()) {
+            if (a.isNonCommented()) {
                 consumer.run(a.getValue(), a);
                 return true;
             }
@@ -506,7 +550,7 @@ public class DefaultNCmdLine implements NCmdLine {
         NOptional<NArg> v = nextEntry(names);
         if (v.isPresent()) {
             NArg a = v.get();
-            if (a.isActive()) {
+            if (a.isNonCommented()) {
                 consumer.run(a.getValue(), a);
                 return true;
             }
@@ -519,7 +563,7 @@ public class DefaultNCmdLine implements NCmdLine {
         NOptional<NArg> v = next();
         if (v.isPresent()) {
             NArg a = v.get();
-            if (a.isActive()) {
+            if (a.isNonCommented()) {
                 consumer.run(a.getValue(), a);
                 return true;
             }
@@ -857,7 +901,7 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public void throwError(NMsg message) {
-        throw NExceptions.ofSafeCmdLineException(NMsg.ofC("%s : %s", NStringUtils.firstNonBlank(commandName,"command"), message));
+        throw NExceptions.ofSafeCmdLineException(NMsg.ofC("%s : %s", NStringUtils.firstNonBlank(commandName, "command"), message));
     }
 
     @Override
@@ -1382,26 +1426,21 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public void forEachPeek(NCmdLineRunner processor) {
-        forEachPeek(processor, null);
-    }
-
-    @Override
-    public void forEachPeek(NCmdLineRunner processor, NCmdLineContext context) {
+    public void run(NCmdLineRunner processor) {
         if (context == null) {
             context = new DefaultNCmdLineContext(null);
         }
         NCmdLineConfigurable configurable = context.getConfigurable();
         NCmdLine cmd = this;
         NArg a;
-        processor.init(cmd, context);
-        if (context.isSafe()) {
+        processor.init(cmd);
+        if (isSafe()) {
             while ((a = peek().orNull()) != null) {
                 boolean consumed;
                 if (a.isOption()) {
-                    consumed = processor.nextOption(a, cmd, context);
+                    consumed = processor.nextOption(a, cmd);
                 } else {
-                    consumed = processor.nextNonOption(a, cmd, context);
+                    consumed = processor.nextNonOption(a, cmd);
                 }
                 if (consumed) {
                     // safe
@@ -1416,9 +1455,9 @@ public class DefaultNCmdLine implements NCmdLine {
                 a = cmd.peek().get();
                 boolean consumed;
                 if (a.isOption()) {
-                    consumed = processor.nextOption(a, cmd, context);
+                    consumed = processor.nextOption(a, cmd);
                 } else {
-                    consumed = processor.nextNonOption(a, cmd, context);
+                    consumed = processor.nextNonOption(a, cmd);
                 }
                 if (consumed) {
                     NArg next = cmd.peek().orNull();
@@ -1443,15 +1482,15 @@ public class DefaultNCmdLine implements NCmdLine {
                 }
             }
         }
-        processor.validate(cmd, context);
+        processor.validate(cmd);
 
         // test if application is running in exec mode
         // (and not in autoComplete mode)
         if (this.isExecMode()) {
             //do the good staff here
-            processor.run(cmd, context);
+            processor.run(cmd);
         } else if (this.getAutoComplete() != null) {
-            processor.autoComplete(this.getAutoComplete(), context);
+            processor.autoComplete(this);
         }
     }
 
@@ -1483,7 +1522,7 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public NCmdLine forEachPeek(NCmdLineProcessor... actions) {
-        NAssert.requireTrue(actions.length > 0, () -> NMsg.ofC("missing actions"));
+        NAssert.requireTrue(actions.length > 0, () -> NMsg.ofC("missing processors"));
         while (hasNext()) {
             boolean some = false;
             for (NCmdLineProcessor action : actions) {
@@ -1500,16 +1539,13 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public NCmdLine forEachPeek(NCmdLineConsumer action, NCmdLineContext context) {
-        NAssert.requireNonNull(action, "action");
-        if (context == null) {
-            context = new DefaultNCmdLineContext(null);
-        }
-        NCmdLineConfigurable configurable = context.getConfigurable();
-        if (context.isSafe()) {
+    public NCmdLine forEachPeek(NCmdLineProcessor consumer) {
+        NAssert.requireNonNull(consumer, "consumer");
+        NCmdLineConfigurable configurable = getConfigurable();
+        if (isSafe()) {
             NArg a;
             while ((a = peek().orNull()) != null) {
-                boolean consumed = action.next(a, this, context);
+                boolean consumed = consumer.process(this);
                 if (consumed) {
                     // safe
                 } else if (configurable != null && configurable.configureFirst(this)) {
@@ -1521,7 +1557,7 @@ public class DefaultNCmdLine implements NCmdLine {
         } else {
             NArg a;
             while ((a = peek().orNull()) != null) {
-                boolean consumed = action.next(a, this, context);
+                boolean consumed = consumer.process(this);
                 if (consumed) {
                     NArg next = this.peek().orNull();
                     //reference equality!
@@ -1568,14 +1604,14 @@ public class DefaultNCmdLine implements NCmdLine {
             }
 
             @Override
-            public boolean consumeFlag(NArgProcessor<Boolean> consumer) {
+            public boolean nextFlag(NArgProcessor<Boolean> consumer) {
                 if (!finalAcceptable) {
                     return false;
                 }
                 NOptional<NArg> v = next(NArgType.FLAG, names);
                 if (v.isPresent()) {
                     NArg a = v.get();
-                    if (a.isActive()) {
+                    if (a.isNonCommented()) {
                         consumer.run(a.getBooleanValue().get(), a);
                         return true;
                     }
@@ -1585,14 +1621,14 @@ public class DefaultNCmdLine implements NCmdLine {
             }
 
             @Override
-            public boolean consumeOptionalFlag(NArgProcessor<NOptional<Boolean>> consumer) {
+            public boolean nextOptionalFlag(NArgProcessor<NOptional<Boolean>> consumer) {
                 if (!finalAcceptable) {
                     return false;
                 }
                 NOptional<NArg> v = next(NArgType.FLAG, names);
                 if (v.isPresent()) {
                     NArg a = v.get();
-                    if (a.isActive()) {
+                    if (a.isNonCommented()) {
                         consumer.run(a.getBooleanValue(), a);
                         return true;
                     }
@@ -1602,11 +1638,11 @@ public class DefaultNCmdLine implements NCmdLine {
             }
 
             @Override
-            public boolean consumeTrueFlag(NArgProcessor<Boolean> consumer) {
+            public boolean nextTrueFlag(NArgProcessor<Boolean> consumer) {
                 if (!finalAcceptable) {
                     return false;
                 }
-                return consumeFlag((value, arg) -> {
+                return nextFlag((value, arg) -> {
                     if (value) {
                         consumer.run(true, arg);
                     }
@@ -1614,14 +1650,14 @@ public class DefaultNCmdLine implements NCmdLine {
             }
 
             @Override
-            public boolean consumeOptionalEntry(NArgProcessor<NOptional<String>> consumer) {
+            public boolean nextOptionalEntry(NArgProcessor<NOptional<String>> consumer) {
                 if (!finalAcceptable) {
                     return false;
                 }
                 NOptional<NArg> v = next(NArgType.ENTRY, names);
                 if (v.isPresent()) {
                     NArg a = v.get();
-                    if (a.isActive()) {
+                    if (a.isNonCommented()) {
                         consumer.run(a.getStringValue(), a);
                         return true;
                     }
@@ -1631,14 +1667,14 @@ public class DefaultNCmdLine implements NCmdLine {
             }
 
             @Override
-            public boolean consumeEntry(NArgProcessor<String> consumer) {
+            public boolean nextEntry(NArgProcessor<String> consumer) {
                 if (!finalAcceptable) {
                     return false;
                 }
                 NOptional<NArg> v = next(NArgType.ENTRY, names);
                 if (v.isPresent()) {
                     NArg a = v.get();
-                    if (a.isActive()) {
+                    if (a.isNonCommented()) {
                         consumer.run(a.getStringValue().get(), a);
                         return true;
                     }
@@ -1655,7 +1691,7 @@ public class DefaultNCmdLine implements NCmdLine {
                 NOptional<NArg> v = next(NArgType.ENTRY, names);
                 if (v.isPresent()) {
                     NArg a = v.get();
-                    if (a.isActive()) {
+                    if (a.isNonCommented()) {
                         consumer.run(a.getValue(), a);
                         return true;
                     }

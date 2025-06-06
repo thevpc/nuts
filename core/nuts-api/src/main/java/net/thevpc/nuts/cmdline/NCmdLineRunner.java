@@ -40,22 +40,17 @@ package net.thevpc.nuts.cmdline;
  */
 public interface NCmdLineRunner {
     NCmdLineRunner NOP = new NCmdLineRunner() {
-        @Override
-        public void run(NCmdLine cmdLine, NCmdLineContext context) {
-
-        }
     };
 
     /**
      * process the given option argument that was peeked from the command line.Implementations <strong>MUST</strong> call one of
- the "next" methods to
+     * the "next" methods to
      *
-     * @param option      peeked argument
+     * @param option  peeked argument
      * @param cmdLine associated cmdLine
-     * @param context session
      * @return true if the argument can be processed, false otherwise.
      */
-    default boolean nextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context){
+    default boolean nextOption(NArg option, NCmdLine cmdLine) {
         return false;
     }
 
@@ -64,22 +59,21 @@ public interface NCmdLineRunner {
      * Implementations <strong>MUST</strong> call one of
      * the "next" methods to
      *
-     * @param nonOption   peeked argument
-     * @param cmdLine associated cmdLine
-     * @param context session
+     * @param nonOption peeked argument
+     * @param cmdLine   associated cmdLine
      * @return true if the argument can be processed, false otherwise.
      */
-    default boolean nextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context){
+    default boolean nextNonOption(NArg nonOption, NCmdLine cmdLine) {
         return false;
     }
 
     /**
      * initialize the processor.
      * Called before any other method.
-     *  @param cmdLine associated cmdLine
-     * @param context session
+     *
+     * @param cmdLine associated cmdLine
      */
-    default void init(NCmdLine cmdLine, NCmdLineContext context) {
+    default void init(NCmdLine cmdLine) {
 
     }
 
@@ -88,26 +82,27 @@ public interface NCmdLineRunner {
      * Called after all next methods and before execute and autoComplete methods
      *
      * @param cmdLine associated cmdLine
-     * @param context session
      */
-    default void validate(NCmdLine cmdLine, NCmdLineContext context) {
+    default void validate(NCmdLine cmdLine) {
 
     }
 
     /**
      * execute options, called after all options was processed and
      * cmdLine.isExecMode() returns true.
+     *
      * @param cmdLine associated cmdLine
-     * @param context session
      */
-    void run(NCmdLine cmdLine, NCmdLineContext context);
+    default void run(NCmdLine cmdLine) {
+
+    }
 
     /**
      * called when auto-complete ({@code autoComplete} is not null)
-     *  @param autoComplete autoComplete instance
-     * @param context session
+     *
+     * @param cmdLine cmdLine
      */
-    default void autoComplete(NCmdLineAutoComplete autoComplete, NCmdLineContext context) {
+    default void autoComplete(NCmdLine cmdLine) {
 
     }
 

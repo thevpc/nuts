@@ -29,8 +29,6 @@ import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NLiteral;
 
-import java.util.List;
-
 /**
  * Command Line Argument
  *
@@ -113,7 +111,7 @@ public interface NArg extends NBlankable /*extends NLiteral*/ {
      *
      * @return true if the argument is enable and false if It's commented
      */
-    boolean isActive();
+    boolean isNonCommented();
 
     /**
      * true if option is in one of the following forms :
@@ -125,7 +123,7 @@ public interface NArg extends NBlankable /*extends NLiteral*/ {
      *
      * @return true if the argument is enable and false if It's commented
      */
-    boolean isInactive();
+    boolean isCommented();
 
     /**
      * Throw an exception if the argument is null

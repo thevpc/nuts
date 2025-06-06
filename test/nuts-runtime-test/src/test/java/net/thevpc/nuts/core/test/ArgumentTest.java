@@ -16,7 +16,7 @@ public class ArgumentTest {
     public void test01() {
         DefaultNArg a = new DefaultNArg("-a=2");
         Assertions.assertTrue(a.isOption());
-        Assertions.assertTrue(a.isActive());
+        Assertions.assertTrue(a.isNonCommented());
         Assertions.assertFalse(a.isNegated());
         Assertions.assertEquals("-a", a.getKey().asString().get());
         Assertions.assertEquals("2", a.getStringValue().get());
@@ -29,7 +29,7 @@ public class ArgumentTest {
     public void test02() {
         DefaultNArg a = new DefaultNArg("-//a=2");
         Assertions.assertTrue(a.isOption());
-        Assertions.assertFalse(a.isActive());
+        Assertions.assertFalse(a.isNonCommented());
         Assertions.assertFalse(a.isNegated());
         Assertions.assertEquals("-a", a.getKey().asString().get());
         Assertions.assertEquals("2", a.getStringValue().get());
@@ -42,7 +42,7 @@ public class ArgumentTest {
     public void test03() {
         DefaultNArg a = new DefaultNArg("-!a=2");
         Assertions.assertTrue(a.isOption());
-        Assertions.assertTrue(a.isActive());
+        Assertions.assertTrue(a.isNonCommented());
         Assertions.assertTrue(a.isNegated());
         Assertions.assertEquals("-a", a.getKey().asString().get());
         Assertions.assertEquals("2", a.getStringValue().get());
@@ -55,7 +55,7 @@ public class ArgumentTest {
     public void test04() {
         DefaultNArg a = new DefaultNArg("-!a");
         Assertions.assertTrue(a.isOption());
-        Assertions.assertTrue(a.isActive());
+        Assertions.assertTrue(a.isNonCommented());
         Assertions.assertTrue(a.isNegated());
         Assertions.assertEquals("-a", a.getKey().asString().get());
         Assertions.assertTrue(a.getStringValue().isEmpty());
@@ -68,7 +68,7 @@ public class ArgumentTest {
     public void test05() {
         DefaultNArg a = new DefaultNArg("-!=a");
         Assertions.assertTrue(a.isOption());
-        Assertions.assertTrue(a.isActive());
+        Assertions.assertTrue(a.isNonCommented());
         Assertions.assertTrue(a.isNegated());
         Assertions.assertEquals("-", a.getKey().asString().get());
         Assertions.assertEquals("a",a.getStringValue().get());
@@ -81,7 +81,7 @@ public class ArgumentTest {
     public void test06() {
         DefaultNArg a = new DefaultNArg("-!=");
         Assertions.assertTrue(a.isOption());
-        Assertions.assertTrue(a.isActive());
+        Assertions.assertTrue(a.isNonCommented());
         Assertions.assertTrue(a.isNegated());
         Assertions.assertEquals("-", a.getKey().asString().get());
         Assertions.assertEquals("",a.getStringValue().get());
@@ -94,7 +94,7 @@ public class ArgumentTest {
     public void test07() {
         DefaultNArg a = new DefaultNArg("-!");
         Assertions.assertTrue(a.isOption());
-        Assertions.assertTrue(a.isActive());
+        Assertions.assertTrue(a.isNonCommented());
         Assertions.assertTrue(a.isNegated());
         Assertions.assertEquals("-", a.getKey().asString().get());
         Assertions.assertTrue(a.getStringValue().isEmpty());
@@ -107,7 +107,7 @@ public class ArgumentTest {
     public void test08() {
         DefaultNArg a = new DefaultNArg("-");
         Assertions.assertTrue(a.isOption());
-        Assertions.assertTrue(a.isActive());
+        Assertions.assertTrue(a.isNonCommented());
         Assertions.assertFalse(a.isNegated());
         Assertions.assertEquals("-", a.getKey().asString().get());
         Assertions.assertTrue(a.getStringValue().isEmpty());
@@ -120,7 +120,7 @@ public class ArgumentTest {
     public void test09() {
         DefaultNArg a = new DefaultNArg("");
         Assertions.assertTrue(a.isNonOption());
-        Assertions.assertTrue(a.isActive());
+        Assertions.assertTrue(a.isNonCommented());
         Assertions.assertFalse(a.isNegated());
         Assertions.assertEquals("", a.getKey().asString().get());
         Assertions.assertTrue(a.getStringValue().isEmpty());
@@ -133,7 +133,7 @@ public class ArgumentTest {
     public void test10() {
         DefaultNArg a = new DefaultNArg("c=/a");
         Assertions.assertTrue(a.isNonOption());
-        Assertions.assertTrue(a.isActive());
+        Assertions.assertTrue(a.isNonCommented());
         Assertions.assertFalse(a.isNegated());
         Assertions.assertEquals("c", a.getKey().asString().get());
         Assertions.assertEquals("/a",a.getStringValue().get());
@@ -146,7 +146,7 @@ public class ArgumentTest {
     public void test11() {
         DefaultNArg a = new DefaultNArg("c");
         Assertions.assertTrue(a.isNonOption());
-        Assertions.assertTrue(a.isActive());
+        Assertions.assertTrue(a.isNonCommented());
         Assertions.assertFalse(a.isNegated());
         Assertions.assertEquals("c", a.getKey().asString().get());
         Assertions.assertTrue(a.getStringValue().isEmpty());
@@ -159,7 +159,7 @@ public class ArgumentTest {
     public void test12() {
         DefaultNArg a = new DefaultNArg("!//c=30");
         Assertions.assertTrue(a.isNonOption());
-        Assertions.assertTrue(a.isActive());
+        Assertions.assertTrue(a.isNonCommented());
         Assertions.assertFalse(a.isNegated());
         Assertions.assertEquals("!//c=30", a.getKey().asString().get());
         Assertions.assertTrue(a.getStringValue().isEmpty());
@@ -172,7 +172,7 @@ public class ArgumentTest {
     public void test13() {
         DefaultNArg a = new DefaultNArg("!");
         Assertions.assertTrue(a.isNonOption());
-        Assertions.assertTrue(a.isActive());
+        Assertions.assertTrue(a.isNonCommented());
         Assertions.assertFalse(a.isNegated());
         Assertions.assertEquals("!", a.getKey().asString().get());
         Assertions.assertTrue(a.getStringValue().isEmpty());
@@ -185,7 +185,7 @@ public class ArgumentTest {
     public void test14() {
         DefaultNArg a = new DefaultNArg("");
         Assertions.assertTrue(a.isNonOption());
-        Assertions.assertTrue(a.isActive());
+        Assertions.assertTrue(a.isNonCommented());
         Assertions.assertFalse(a.isNegated());
         Assertions.assertEquals("", a.getKey().asString().get());
         Assertions.assertTrue(a.getStringValue().isEmpty());

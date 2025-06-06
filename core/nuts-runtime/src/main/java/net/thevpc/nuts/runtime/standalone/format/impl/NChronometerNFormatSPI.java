@@ -41,7 +41,7 @@ public class NChronometerNFormatSPI implements NFormatSPI {
         switch (a.key()) {
             case "--mode": {
                 a = cmdLine.nextEntry().get();
-                if (a.isActive()) {
+                if (a.isNonCommented()) {
                     formatMode = NDurationFormatMode.parse(a.getStringValue().get()).get();
                 }
                 return true;

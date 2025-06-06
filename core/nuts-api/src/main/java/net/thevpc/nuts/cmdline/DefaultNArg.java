@@ -221,12 +221,12 @@ public class DefaultNArg implements NArg {
     }
 
     @Override
-    public boolean isActive() {
+    public boolean isNonCommented() {
         return active;
     }
 
     @Override
-    public boolean isInactive() {
+    public boolean isCommented() {
         return !active;
     }
 

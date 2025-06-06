@@ -416,7 +416,7 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
         if (a == null) {
             return false;
         }
-        boolean enabled = a.isActive();
+        boolean enabled = a.isNonCommented();
         switch (a.key()) {
             case "-a":
             case "--all": {
@@ -480,7 +480,7 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
             case "--expire": {
                 a = cmdLine.next().get();
                 if (enabled) {
-                    if (a.getStringValue() != null) {
+                    if (NBlankable.isNonBlank(a.getStringValue().orNull())) {
                         expireTime = Instant.parse(a.getStringValue().get());
                     } else {
                         expireTime = Instant.now();

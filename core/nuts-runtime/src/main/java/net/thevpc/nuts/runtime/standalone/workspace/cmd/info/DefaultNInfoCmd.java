@@ -202,7 +202,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         if (a == null) {
             return false;
         }
-        boolean enabled = a.isActive();
+        boolean enabled = a.isNonCommented();
         switch (a.key()) {
             case "-r":
             case "--repos": {

@@ -11,21 +11,21 @@ public interface NCmdLineNamedAction {
      *
      * @return true if active
      */
-    boolean consumeFlag(NArgProcessor<Boolean> consumer);
+    boolean nextFlag(NArgProcessor<Boolean> consumer);
 
-    boolean consumeOptionalFlag(NArgProcessor<NOptional<Boolean>> consumer);
+    boolean nextOptionalFlag(NArgProcessor<NOptional<Boolean>> consumer);
 
-    boolean consumeTrueFlag(NArgProcessor<Boolean> consumer);
+    boolean nextTrueFlag(NArgProcessor<Boolean> consumer);
 
 
-    boolean consumeOptionalEntry(NArgProcessor<NOptional<String>> consumer);
+    boolean nextOptionalEntry(NArgProcessor<NOptional<String>> consumer);
 
     /**
      * consume next argument with string value and run {@code consumer}
      *
      * @return true if active
      */
-    boolean consumeEntry(NArgProcessor<String> consumer);
+    boolean nextEntry(NArgProcessor<String> consumer);
 
     /**
      * consume next argument and run {@code consumer}

@@ -172,7 +172,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                     NAssert.requireNonBlank(command, "command");
                     String[] ts = command.toArray(new String[0]);
                     List<String> tsl = new ArrayList<>(Arrays.asList(ts));
-                    if (CoreStringUtils.firstIndexOf(ts[0], new char[]{'/', '\\'}) < 0) {
+                    if (NStringUtils.firstIndexOf(ts[0], new char[]{'/', '\\'}) < 0) {
                         Path p = NSysExecUtils.sysWhich(ts[0]);
                         if (p != null) {
                             tsl.set(0, p.toString());

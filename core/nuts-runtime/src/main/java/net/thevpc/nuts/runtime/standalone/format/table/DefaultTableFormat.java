@@ -804,18 +804,18 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
         NArg a;
         if ((a = cmdLine.nextFlag("--no-header").orNull()) != null) {
             boolean val = a.getBooleanValue().get();
-            if (a.isActive()) {
+            if (a.isNonCommented()) {
                 setVisibleHeader(!val);
             }
             return true;
         } else if ((a = cmdLine.nextFlag("--header").orNull()) != null) {
             boolean val = a.getBooleanValue().get();
-            if (a.isActive()) {
+            if (a.isNonCommented()) {
                 setVisibleHeader(val);
             }
             return true;
         } else if ((a = cmdLine.nextEntry("--border").orNull()) != null) {
-            if (a.isActive()) {
+            if (a.isNonCommented()) {
                 setBorder(a.getValue().asString().orElse(""));
             }
             return true;
@@ -832,12 +832,12 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
             NArg a2 = null;
             for (Map.Entry<String, Integer> e : columns.entrySet()) {
                 if ((a2 = cmdLine.next("--" + e.getKey()).orNull()) != null) {
-                    if (a2.isActive()) {
+                    if (a2.isNonCommented()) {
                         setVisibleColumn(e.getValue(), true);
                     }
                     return true;
                 } else if ((a2 = cmdLine.next("--no-" + e.getKey()).orNull()) != null) {
-                    if (a2.isActive()) {
+                    if (a2.isNonCommented()) {
                         setVisibleColumn(e.getValue(), false);
                     }
                     return true;

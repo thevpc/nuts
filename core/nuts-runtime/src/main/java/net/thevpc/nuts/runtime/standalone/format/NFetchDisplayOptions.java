@@ -169,7 +169,7 @@ public class NFetchDisplayOptions {
             case "-l":
             case "--long": {
                 a = cmdLine.nextFlag().get();
-                if(a.isActive()) {
+                if(a.isNonCommented()) {
                     if(a.getBooleanValue().get()){
                         setDisplay(DISPLAY_LONG);
                     }else {
@@ -181,7 +181,7 @@ public class NFetchDisplayOptions {
             case "--ll":
             case "--long-long": {
                 a = cmdLine.nextFlag().get();
-                if(a.isActive()) {
+                if(a.isNonCommented()) {
                     if(a.getBooleanValue().get()){
                         setDisplay(DISPLAY_LONG_LONG);
                     }else {
@@ -192,7 +192,7 @@ public class NFetchDisplayOptions {
             }
             case "--display": {
                 a = cmdLine.nextEntry().get();
-                if(a.isActive()) {
+                if(a.isNonCommented()) {
                     setDisplay(parseNutsDisplayProperty(a.getStringValue().get()));
                 }
                 return true;

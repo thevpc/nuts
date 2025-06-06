@@ -44,7 +44,6 @@ import net.thevpc.nuts.reserved.NScopedWorkspace;
 import net.thevpc.nuts.runtime.standalone.format.elem.builder.DefaultNArrayElementBuilder;
 import net.thevpc.nuts.runtime.standalone.xtra.time.ProgressOptions;
 import net.thevpc.nuts.runtime.standalone.io.terminal.AbstractNTerminal;
-import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NScopeType;
@@ -198,7 +197,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     public boolean configureFirst(NCmdLine cmdLine) {
         NArg a = cmdLine.peek().orNull();
         if (a != null) {
-            boolean active = a.isActive();
+            boolean active = a.isNonCommented();
             switch (a.key()) {
                 case "-T":
                 case "--output-format-option": {
@@ -213,7 +212,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                     a = cmdLine.nextEntry().get();
                     if (active) {
                         String t = a.getStringValue().orElse("");
-                        int i = CoreStringUtils.firstIndexOf(t, new char[]{' ', ';', ':', '='});
+                        int i = NStringUtils.firstIndexOf(t, new char[]{' ', ';', ':', '='});
                         if (i > 0) {
                             this.setOutputFormat(NContentType.valueOf(t.substring(0, i).toUpperCase()));
                             this.addOutputFormatOptions(t.substring(i + 1).toUpperCase());
@@ -226,18 +225,14 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                     a = cmdLine.next().get();
                     if (active) {
                         this.setOutputFormat(NContentType.TSON);
-                        if (a.getStringValue() != null) {
-                            this.addOutputFormatOptions(a.getStringValue().get());
-                        }
+                        this.addOutputFormatOptions(a.getStringValue().orNull());
                     }
                     break;
                 case "--yaml":
                     a = cmdLine.next().get();
                     if (active) {
                         this.setOutputFormat(NContentType.YAML);
-                        if (a.getStringValue() != null) {
-                            this.addOutputFormatOptions(a.getStringValue().get());
-                        }
+                        this.addOutputFormatOptions(a.getStringValue().orNull());
                     }
                     break;
                 case "--json": {
@@ -601,7 +596,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 case "-?":
                 case "-h":
                 case "--help": {
-                    boolean enabled = a.isActive();
+                    boolean enabled = a.isNonCommented();
                     cmdLine.skip();
                     if (enabled) {
                         if (cmdLine.isExecMode()) {
@@ -613,7 +608,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                     return true;
                 }
                 case "--skip-event": {
-                    boolean enabled = a.isActive();
+                    boolean enabled = a.isNonCommented();
                     switch (NApp.of().getMode()) {
                         case INSTALL:
                         case UNINSTALL:
@@ -627,7 +622,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                     return true;
                 }
                 case "--version": {
-                    boolean enabled = a.isActive();
+                    boolean enabled = a.isNonCommented();
                     cmdLine.skip();
                     if (enabled) {
                         if (cmdLine.isExecMode()) {

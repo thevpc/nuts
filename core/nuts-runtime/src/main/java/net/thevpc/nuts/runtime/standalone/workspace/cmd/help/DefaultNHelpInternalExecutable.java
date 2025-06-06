@@ -49,7 +49,7 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
                     case "--colors":
                     case "--ntf": {
                         NArg c = cmdLine.nextFlag().get();
-                        if (c.isActive()) {
+                        if (c.isNonCommented()) {
                             helpColors = c.getBooleanValue().get();
                         }
                         break;

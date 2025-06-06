@@ -261,7 +261,7 @@ public class CmdLineTest {
     ){
         String s = a.asString().orNull();
         Assertions.assertEquals(option,a.isOption(),"Option:"+ s);
-        Assertions.assertEquals(active,a.isActive(),"Enabled:"+ s);
+        Assertions.assertEquals(active,a.isNonCommented(),"Enabled:"+ s);
         Assertions.assertEquals(keyValue,a.isKeyValue(),"KeyValue:"+ s);
         Assertions.assertEquals(negated,a.isNegated(),"Negated:"+ s);
         Assertions.assertEquals(key,a.getKey().asString().orNull(),"StringKey:"+ s);

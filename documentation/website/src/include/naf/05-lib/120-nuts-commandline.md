@@ -5,14 +5,15 @@ sidebar_label: NCmdLine
 ---
 
 
-**nuts** provides a useful commandline parser ```NCmdLine```  it supports command lines in the following forms
+**nuts** provides a useful commandline parser ```NCmdLine```  
+It supports command lines in the following form :
 
 ```sh
 my-app -o=y --name='some name' -ex --extra value arg1 arg2
 ```
 where the command here supports short and long options (short ones are ```-o```, ```-e``` and ```-x```, where ```-e``` and ```-x``` are combined as ```-ex```), 
 and of course non options or regular arguments (here ```arg1``` and ```arg2```).
-Not also that ```value``` could be interpreted as a value for ```--extra``` (or not; depending on how you configure your parser, for  this option).
+Note also that ```value``` could be interpreted as a value for ```--extra``` (or not; depending on how you configure your parser, for  this option).
 
 ## Short vs Long Options
 Options can be long options (starts with double hyphen) or short options (start with a single hyphen). 
@@ -30,8 +31,9 @@ Of course, not all options can support values, an not all options neither suppor
 Particularly, when the value is a boolean, the value do not need to be defined. As a result "--install-companions" and "--install-companions=true" are equivalent. However "--install-companions true" is not (because the option is of type boolean) and "true" will be parsed as a NonOption.
 
 To define a ```false``` value to the boolean option we can either suffix with ```=false``` or prefix with `!` or `~` sign. 
-Hence, ```--install-companions=false```, ```--!install-companions``` and ```--~install-companions``` are all equivalent.
-Note also that `~` if referred to `!` because in bash shells (and some other shells) `!` will be expanded in a special manner.
+Hence, ``` --install-companions=false```, ``` --!install-companions``` and ``` --~install-companions``` are all equivalent.
+
+Note also that `~` is equivalent to `!` because in bash shells (and some other shells) `!` will be interpreted as expansion operator.
 
 ## Combo Simple Options
 Simple options can be grouped in a single word. "-ls" is equivalent to "-l -s". So one should be careful. 
@@ -43,9 +45,9 @@ Options starting with "-//" and "--//" are simply ignored by the command line pa
 
 ## Creating NCmdLine
 
-Command line can either created manually or parsed.
+Command line can either be created manually or parsed.
 
-You can create a command by simply providing  the arguments:
+You can create a command by providing the arguments:
 
 ```java
     NCmdLine c1= NCmdLine.ofArgs("ls","-l");
@@ -82,51 +84,54 @@ This method can change the default behavior of NCmdLine (defaulted to `true`). W
 
 `registerSpecialSimpleOption(argName)`
 This method limits `setExpandSimpleOptions` application so that for some options that start with `-` (simple options), they are not expanded. 
-A useful example is '-version'. You wouldnt whant it ti be interpreted as '-v -e -r -s -i -o -n', would you?
+A useful example is '-version'. You wouldn't want it to be interpreted as '-v -e -r -s -i -o -n', would you?
 
 `setExpandArgumentsFile(true|false)`
-This method can change the default behavior of NCmdLine (defaulted to `true`). When `false`, options in the form `@path/to/arg/file` are not supported.
-When true (which is the default), the parser will load arguments from the given file.
+This method can change the default behavior of NCmdLine (defaulted to `true`). When `false`, options in the form `@path/to/arg/file` are interpreted as non options.
+When true (which is the default), the parser will load arguments from the given file/location.
 
 
 ## Using CommandLine
+NCmdLine has a versatile parsing API.
+One way to use it is as follows :
 
 ```java
 NCmdLine cmdLine = yourCommandLine();
 boolean boolOption = false;
 String stringOption = null;
-List  others = new ArrayList<>();
+List<String> others = new ArrayList<>();
 NArg a;
-while (cmdLine. hasNext()) {
-  a = cmdLine. peek().get();
-  if (a.isOption()) {
-      switch (a.key()) {
-          case "-o":
-          case "--option": {
-              a = cmdLine. nextFlag().get(session);
-              if (a.isEnabled()) {
-                  boolOption = a.getBooleanValue().get(session);
-              }
-              break;
-          }
-          case "-n":
-          case "--name": {
-              a = cmdLine.nextEntry().get(session);
-              if (a.isEnabled()) {
-                  stringOption = a.getStringValue().get(session);
-              }
-              break;
-          }
-          default: {
-              session. configureLast(cmdLine);
-          }
-      }
-  } else {
-      others. add(cmdLine. next().get().toString());
-  }
+while (cmdLine.hasNext()) {
+    a = cmdLine.peek().get();
+    if (a.isOption()) {
+        switch (a.key()) {
+            case "-o":
+            case "--option": {
+                a = cmdLine.nextFlag().get();
+                if (a.isNonCommented()) {
+                    boolOption = a.getBooleanValue().get();
+                }
+                break;
+            }
+            case "-n":
+            case "--name": {
+                a = cmdLine.nextEntry().get();
+                if (a.isNonCommented()) {
+                    stringOption = a.getStringValue().get();
+                }
+                break;
+            }
+            default: {
+                NSession.of().configureLast(cmdLine);
+            }
+        }
+    } else {
+        others. add(cmdLine. next().get().toString());
+    }
 }
 NOut.println(NMsg. ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
 ```
+
 
 ## Using CommandLine, The recommended way...
 

@@ -32,14 +32,14 @@ public class NMemorySizeNFormatSPI implements NFormatSPI {
         switch (a.key()) {
             case "--iec": {
                 a = cmdLine.nextFlag().get();
-                if (a.isActive()) {
+                if (a.isNonCommented()) {
                     iec = a.getBooleanValue().get();
                 }
                 return true;
             }
             case "--fixed": {
                 a = cmdLine.nextFlag().get();
-                if (a.isActive()) {
+                if (a.isNonCommented()) {
                     fixed = a.getBooleanValue().get();
                 }
                 return true;

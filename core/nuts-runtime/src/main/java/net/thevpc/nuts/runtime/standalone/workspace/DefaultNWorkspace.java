@@ -50,7 +50,6 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLines;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElementNotFoundException;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.format.NTableModel;
@@ -537,7 +536,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         for (String customOption : effectiveBootOptions.getCustomOptions().orElseGet(Collections::emptyList)) {
             NArg a = NArg.of(customOption);
             if (a.getKey().asString().get().startsWith("config.")) {
-                if (a.isActive()) {
+                if (a.isNonCommented()) {
                     this.setConfigProperty(
                             a.getKey().asString().orElse("").substring("config.".length()),
                             a.getStringValue().orNull()

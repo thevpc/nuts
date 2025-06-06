@@ -476,7 +476,9 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
 
     @Override
     public void runCmdLine(NCmdLineRunner commandLineRunner) {
-        getCmdLine().forEachPeek(commandLineRunner, new DefaultNCmdLineContext(this));
+        getCmdLine()
+                .setSource(this)
+                .run(commandLineRunner);
     }
 
     @Override

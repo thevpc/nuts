@@ -242,7 +242,7 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
         if (aa == null) {
             return false;
         }
-        boolean enabled = aa.isActive();
+        boolean enabled = aa.isNonCommented();
         switch (aa.key()) {
             case "--border": {
                 cmdLine.withNextEntry((v, a) -> {
