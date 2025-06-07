@@ -67,6 +67,7 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
             if (f == null) {
                 throw new NUnsupportedEnumException(o.type());
             }
+            return f.createObject(o, to, context);
         }
         NElementMapper f = context.getMapper(to, defaultOnly);
         return f.createObject(o, to, context);
@@ -89,7 +90,7 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
         if (expectedType == null) {
             expectedType = o.getClass();
         }
-        if (!context.isSimpleObject(o) && context.isIndestructibleObject(o)) {
+        if (context.isIndestructibleObject(o)) {
             return o;
         }
         return context.getMapper(expectedType, defaultOnly).destruct(o, expectedType, context);
@@ -112,8 +113,7 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
         if (expectedType == null) {
             expectedType = o.getClass();
         }
-        boolean simpleObject = context.isSimpleObject(o);
-        if (!simpleObject && context.isIndestructibleObject(o)) {
+        if (context.isIndestructibleObject(o)) {
             return NElement.ofCustom(o);
         }
         NElementMapper mapper = context.getMapper(expectedType, defaultOnly);

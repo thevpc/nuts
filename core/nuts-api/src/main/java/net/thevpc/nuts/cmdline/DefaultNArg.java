@@ -210,6 +210,10 @@ public class DefaultNArg implements NArg {
                 );
     }
 
+    public String stringValue() {
+            return getStringValue().get();
+    }
+
     @Override
     public boolean isNegated() {
         return !enabled;
@@ -280,6 +284,11 @@ public class DefaultNArg implements NArg {
                 .ifErrorUse(
                         () -> NOptional.ofEmpty(() -> NMsg.ofC("erroneous value for : %s", getKey().asString().orElse("")))
                 );
+    }
+
+    @Override
+    public boolean booleanValue() {
+        return getBooleanValue().get();
     }
 
     @Override

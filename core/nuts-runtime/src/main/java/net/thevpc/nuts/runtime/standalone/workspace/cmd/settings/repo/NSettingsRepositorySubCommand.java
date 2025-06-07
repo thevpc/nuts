@@ -175,7 +175,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                 boolean enabled = aa.isNonCommented();
                 switch (aa.key()) {
                     case "--parent": {
-                        cmdLine.withNextEntry((v, a) -> parent.set(v));
+                        cmdLine.withNextEntry((v) -> parent.set(v.stringValue()));
                         break;
                     }
                     default: {
@@ -210,11 +210,11 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
             boolean enabled = aa.isNonCommented();
             switch (aa.key()) {
                 case "--name": {
-                    cmdLine.withNextEntry((v, a) -> repositoryName.set(v));
+                    cmdLine.withNextEntry((v) -> repositoryName.set(v.stringValue()));
                     break;
                 }
                 case "--parent": {
-                    cmdLine.withNextEntry((v, a) -> parent.set(v));
+                    cmdLine.withNextEntry((v) -> parent.set(v.stringValue()));
                     break;
                 }
                 default: {
@@ -260,20 +260,20 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
             switch (aa.key()) {
                 case "-l":
                 case "--location": {
-                    cmdLine.withNextEntry((v, a) -> d.location = v);
+                    cmdLine.withNextEntry((v) -> d.location = v.stringValue());
                     break;
                 }
                 case "--name": {
-                    cmdLine.withNextEntry((v, a) -> d.repositoryName = v);
+                    cmdLine.withNextEntry((v) -> d.repositoryName = v.stringValue());
                     break;
                 }
                 case "--parent": {
-                    cmdLine.withNextEntry((v, a) -> d.parent = v);
+                    cmdLine.withNextEntry((v) -> d.parent = v.stringValue());
                     break;
                 }
                 case "--env": {
-                    cmdLine.withNextEntry((v, a) -> {
-                        NArg vv = NArg.of(v);
+                    cmdLine.withNextEntry((v) -> {
+                        NArg vv = NArg.of(v.stringValue());
                         d.env.put(vv.getKey() == null ? null : vv.key(),
                                 vv.getValue() == null ? null : vv.getStringValue().get());
                     });
@@ -330,7 +330,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
             boolean enabled = aa.isNonCommented();
             switch (aa.key()) {
                 case "--name": {
-                    cmdLine.withNextEntry((v, a) -> repositoryName.set(v));
+                    cmdLine.withNextEntry((v) -> repositoryName.set(v.stringValue()));
                     break;
                 }
                 default: {

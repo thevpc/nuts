@@ -493,7 +493,7 @@ public class MavenUtils {
 
     public NDescriptor parsePomXmlAndResolveParents(NPath path, NFetchMode fetchMode, NRepository repository) {
         try {
-            NSession session = NSession.get().get();
+            NSession session = NSession.of();
             session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "parse", path.toCompressedForm()));
             try (InputStream is = path.getInputStream()) {
                 NDescriptor nutsDescriptor = parsePomXmlAndResolveParents(is, fetchMode, path.toString(), repository);

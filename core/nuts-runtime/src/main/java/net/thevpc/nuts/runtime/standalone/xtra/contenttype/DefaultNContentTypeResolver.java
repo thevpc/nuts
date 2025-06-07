@@ -272,7 +272,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
                         List<String> splitted = NStringUtils.split(line, " \t", true, true);
                         if(splitted.size()>1){
                             String contentType = splitted.get(0);
-                            for (int i = 0; i < splitted.size(); i++) {
+                            for (int i = 1; i < splitted.size(); i++) {
                                 String ext = splitted.get(i);
                                 contentTypesToExtensions.computeIfAbsent(contentType, x -> new LinkedHashSet<>())
                                         .add(ext);

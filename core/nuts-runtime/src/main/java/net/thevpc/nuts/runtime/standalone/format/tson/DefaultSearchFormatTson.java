@@ -8,7 +8,6 @@ package net.thevpc.nuts.runtime.standalone.format.tson;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElementWriter;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
@@ -57,7 +56,7 @@ public class DefaultSearchFormatTson extends DefaultSearchFormatBase {
         }
         switch(aa.key()) {
             case "--compact": {
-                cmdLine.withNextFlag((v, a) -> this.compact=v);
+                cmdLine.withNextFlag((v) -> this.compact=v.booleanValue());
                 return true;
             }
         }

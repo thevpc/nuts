@@ -43,9 +43,9 @@ public interface NElementMapperStore {
     <T> NElementMapperBuilder<T> builderOf(Class<T> type);
 
 
-    public Predicate<Type> getIndestructibleObjects();
+    public Predicate<Type> getIndestructibleTypesFilter();
 
-    public NElementMapperStore setDefaultIndestructibleFilter();
+    public NElementMapperStore setDefaultIndestructibleTypesFilter();
 
-    public NElementMapperStore setIndestructibleFilter(Predicate<Type> destructTypeFilter);
+    public NElementMapperStore setIndestructibleTypesFilter(Predicate<Type> destructTypeFilter);
 }

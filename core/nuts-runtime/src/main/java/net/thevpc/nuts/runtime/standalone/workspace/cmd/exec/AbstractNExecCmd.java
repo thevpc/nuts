@@ -45,7 +45,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
     private long sleepMillis = 1000;
     private String target;
 
-    public AbstractNExecCmd(NWorkspace workspace) {
+    public AbstractNExecCmd() {
         super("exec");
     }
 
@@ -659,31 +659,31 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
             }
             case "--dry":
             case "-d": {
-                cmdLine.withNextFlag((v, ar) -> setDry(v), "--dry", "-d");
+                cmdLine.withNextFlag((v) -> setDry(v.booleanValue()), "--dry", "-d");
                 return true;
             }
             case "--target": {
-                cmdLine.withNextEntry((v, ar) -> this.setConnexionString(v));
+                cmdLine.withNextEntry((v) -> this.setConnexionString(v.stringValue()));
                 return true;
             }
             case "--rerun": {
-                cmdLine.withNextFlag((v, ar) -> this.multipleRuns = v);
+                cmdLine.withNextFlag((v) -> this.multipleRuns = v.booleanValue());
                 return true;
             }
             case "--rerun-min-time": {
-                cmdLine.withNextEntry((v, ar) -> this.multipleRunsMinTimeMs = NLiteral.of(v).asLong().get());
+                cmdLine.withNextEntry((v) -> this.multipleRunsMinTimeMs = NLiteral.of(v).asLong().get());
                 return true;
             }
             case "--rerun-safe-time": {
-                cmdLine.withNextEntry((v, ar) -> this.multipleRunsSafeTimeMs = NLiteral.of(v).asLong().get());
+                cmdLine.withNextEntry((v) -> this.multipleRunsSafeTimeMs = NLiteral.of(v).asLong().get());
                 return true;
             }
             case "--rerun-max-count": {
-                cmdLine.withNextEntry((v, ar) -> this.multipleRunsMaxCount = NLiteral.of(v).asInt().get());
+                cmdLine.withNextEntry((v) -> this.multipleRunsMaxCount = NLiteral.of(v).asInt().get());
                 return true;
             }
             case "--cron": {
-                cmdLine.withNextEntry((v, ar) -> this.multipleRunsCron = v);
+                cmdLine.withNextEntry((v) -> this.multipleRunsCron = v.stringValue());
                 return true;
             }
             default: {

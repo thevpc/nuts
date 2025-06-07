@@ -19,7 +19,7 @@ public class DefaultNInputStreamProgressFactory implements NProgressFactory {
     }
 
     public boolean acceptMonitoring(Object source, Object sourceOrigin) {
-        NSession session = NSession.get().get();
+        NSession session = NSession.of();
         if (!session.isProgress()) {
             return false;
         }

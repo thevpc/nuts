@@ -26,7 +26,6 @@ package net.thevpc.nuts.runtime.standalone.format.elem;
 
 import net.thevpc.nuts.*;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.Predicate;
@@ -75,17 +74,17 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
 
     @Override
     public Predicate<Type> getIndestructibleTypesFilter() {
-        return userElementMapperStore.getIndestructibleObjects();
+        return userElementMapperStore.getIndestructibleTypesFilter();
     }
 
     @Override
     public boolean isIndestructibleObject(Object any) {
         if (any == null) {
-            return true;
+            return false;
         }
-        Predicate<Type> f = userElementMapperStore.getIndestructibleObjects();
+        Predicate<Type> f = userElementMapperStore.getIndestructibleTypesFilter();
         if (f == null) {
-            return true;
+            return false;
         }
         return f.test(any.getClass());
     }
@@ -95,7 +94,7 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
         if (any == null) {
             return true;
         }
-        Predicate<Type> f = userElementMapperStore.getIndestructibleObjects();
+        Predicate<Type> f = userElementMapperStore.getIndestructibleTypesFilter();
         if (f == null) {
             return true;
         }

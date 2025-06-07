@@ -9,17 +9,11 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.dependency.NDependencyFilterUtils;
-import net.thevpc.nuts.runtime.standalone.dependency.NDependencyScopes;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
-import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NOptional;
 
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.Set;
 
 /**
  * @param <T> Type
@@ -74,15 +68,15 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
     }
 
     public NOptional<Instant> getExpireTime() {
-        return NOptional.ofNamed(expireTime,"expireTime").orElseUse(()-> NSession.get().get().getExpireTime());
+        return NOptional.ofNamed(expireTime,"expireTime").orElseUse(()-> NSession.of().getExpireTime());
     }
 
     public NOptional<NFetchStrategy> getFetchStrategy() {
-        return NOptional.ofNamed(fetchStrategy,"fetchStrategy").orElseUse(()-> NSession.get().get().getFetchStrategy());
+        return NOptional.ofNamed(fetchStrategy,"fetchStrategy").orElseUse(()-> NSession.of().getFetchStrategy());
     }
 
     public NOptional<Boolean> getTransitive() {
-        return NOptional.ofNamed(transitive,"transitive").orElseUse(()-> NSession.get().get().getTransitive());
+        return NOptional.ofNamed(transitive,"transitive").orElseUse(()-> NSession.of().getTransitive());
     }
 
     public T setFetchStrategy(NFetchStrategy fetchStrategy) {
@@ -210,17 +204,17 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
         }
         switch (a.key()) {
             case "--failfast": {
-                cmdLine.withNextFlag((v, r) -> this.setFailFast(v));
+                cmdLine.withNextFlag((v) -> this.setFailFast(v.booleanValue()));
                 return true;
             }
             case "-r":
             case "--repository": {
-                cmdLine.withNextEntry((v, r) -> addRepositoryFilter(NRepositoryFilters.of().bySelector(v)));
+                cmdLine.withNextEntry((v) -> addRepositoryFilter(NRepositoryFilters.of().bySelector(v.stringValue())));
                 return true;
             }
 
             case "--scope": {
-                cmdLine.withNextEntry((v, r) -> NDependencyFilterUtils.addScope(getDependencyFilter(),NDependencyScopePattern.parse(v).orElse(NDependencyScopePattern.API)));
+                cmdLine.withNextEntry((v) -> NDependencyFilterUtils.addScope(getDependencyFilter(),NDependencyScopePattern.parse(v.stringValue()).orElse(NDependencyScopePattern.API)));
                 return true;
             }
 
@@ -232,7 +226,7 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
 //                return true;
 //            }
             case "--optional": {
-                cmdLine.withNextEntryValue((v, r) ->
+                cmdLine.withNextEntry((v) ->
                         this.setDependencyFilter(NDependencyFilters.of().nonnull(this.getDependencyFilter()).and(NDependencyFilters.of().byOptional(NLiteral.of(v.asString().get()).asBoolean()
                                 .orNull()))));
                 return true;

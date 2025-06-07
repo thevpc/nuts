@@ -77,7 +77,7 @@ public class PsManualTest {
         String str = NElementWriter.ofJson().toString(nPsInfos);
         NElement parsed = NElementParser.ofJson().parse(str);
         for (NPsInfo nPsInfo : nPsInfos) {
-            NOut.print(nPsInfo);
+            NOut.println(nPsInfo);
         }
     }
 }

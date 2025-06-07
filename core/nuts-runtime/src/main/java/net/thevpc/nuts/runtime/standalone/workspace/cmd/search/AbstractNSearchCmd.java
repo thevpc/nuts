@@ -644,96 +644,96 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
         boolean enabled = a.isNonCommented();
         switch (a.key()) {
             case "--inline-dependencies": {
-                cmdLine.withNextFlag((v, r) -> this.setInlineDependencies(v));
+                cmdLine.withNextFlag((v) -> this.setInlineDependencies(v.booleanValue()));
                 return true;
             }
             case "--describe": {
-                cmdLine.withNextFlag((v, r) -> this.describe=v);
+                cmdLine.withNextFlag((v) -> this.describe=v.booleanValue());
                 return true;
             }
             case "-L":
             case "--latest":
             case "--latest-versions": {
-                cmdLine.withNextFlag((v, r) -> this.setLatest(v));
+                cmdLine.withNextFlag((v) -> this.setLatest(v.booleanValue()));
                 return true;
             }
             case "--repo": {
-                cmdLine.withNextEntry((v, r) -> this.setRepositoryFilter(NRepositoryFilters.of().bySelector(NStringUtils.split(v, ";,|", true, true).toArray(new String[0]))));
+                cmdLine.withNextEntry((v) -> this.setRepositoryFilter(NRepositoryFilters.of().bySelector(NStringUtils.split(v.stringValue(), ";,|", true, true).toArray(new String[0]))));
                 return true;
             }
             case "--distinct": {
-                cmdLine.withNextFlag((v, r) -> this.setDistinct(v));
+                cmdLine.withNextFlag((v) -> this.setDistinct(v.booleanValue()));
                 return true;
             }
             case "--default":
             case "--default-versions": {
-                cmdLine.withNextOptionalFlag((v, r) -> this.addDefinitionFilter(NDefinitionFilters.of().byDefaultVersion(v.ifError(false).orElse(null))));
+                cmdLine.withNextOptionalFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byDefaultVersion(v.ifError(false).orElse(null))));
                 return true;
             }
             case "--duplicates": {
-                cmdLine.withNextFlag((v, r) -> this.setDistinct(!v));
+                cmdLine.withNextFlag((v) -> this.setDistinct(!v.booleanValue()));
                 return true;
             }
             case "-s":
             case "--sort": {
-                cmdLine.withNextFlag((v, r) -> this.setSorted(v));
+                cmdLine.withNextFlag((v) -> this.setSorted(v.booleanValue()));
                 return true;
             }
             case "--base": {
-                cmdLine.withNextFlag((v, r) -> this.includeBasePackage = v);
+                cmdLine.withNextFlag((v) -> this.includeBasePackage = v.booleanValue());
                 return true;
             }
             case "--lib":
             case "--libs": {
-                cmdLine.withNextFlag((v, r) -> this.setLib(v));
+                cmdLine.withNextFlag((v) -> this.setLib(v.booleanValue()));
                 return true;
             }
             case "--app":
             case "--apps": {
-                cmdLine.withNextFlag((v, r) -> this.setExec(v));
+                cmdLine.withNextFlag((v) -> this.setExec(v.booleanValue()));
                 return true;
             }
             case "--companion":
             case "--companions": {
-                cmdLine.withNextFlag((v, r) -> this.setCompanion(v));
+                cmdLine.withNextFlag((v) -> this.setCompanion(v.booleanValue()));
                 return true;
             }
             case "--extension":
             case "--extensions": {
-                cmdLine.withNextFlag((v, r) -> this.setExtension(v));
+                cmdLine.withNextFlag((v) -> this.setExtension(v.booleanValue()));
                 return true;
             }
             case "--runtime": {
-                cmdLine.withNextFlag((v, r) -> this.setRuntime(v));
+                cmdLine.withNextFlag((v) -> this.setRuntime(v.booleanValue()));
                 return true;
             }
             case "--api-version": {
-                cmdLine.withNextEntry((v, r) -> this.setTargetApiVersion(NVersion.get(v).get()));
+                cmdLine.withNextEntry((v) -> this.setTargetApiVersion(NVersion.get(v.stringValue()).get()));
                 return true;
             }
             case "--nuts-app":
             case "--nuts-apps": {
-                cmdLine.withNextFlag((v, r) -> this.setNutsApplication(v));
+                cmdLine.withNextFlag((v) -> this.setNutsApplication(v.booleanValue()));
                 return true;
             }
             case "--arch": {
-                cmdLine.withNextEntry((v, r) -> this.addDefinitionFilter(
-                        NDefinitionFilters.of().nonnull(this.getDefinitionFilter()).and(NDefinitionFilters.of().byArch(v))
+                cmdLine.withNextEntry((v) -> this.addDefinitionFilter(
+                        NDefinitionFilters.of().nonnull(this.getDefinitionFilter()).and(NDefinitionFilters.of().byArch(v.stringValue()))
                 ));
                 return true;
             }
             case "--packaging": {
-                cmdLine.withNextEntry((v, r) -> this.addDefinitionFilter(
-                        NDefinitionFilters.of().nonnull(this.getDefinitionFilter()).and(NDefinitionFilters.of().byPackaging(v))
+                cmdLine.withNextEntry((v) -> this.addDefinitionFilter(
+                        NDefinitionFilters.of().nonnull(this.getDefinitionFilter()).and(NDefinitionFilters.of().byPackaging(v.stringValue()))
                 ));
                 return true;
             }
             case "--id": {
-                cmdLine.withNextEntry((v, r) -> this.addId(v));
+                cmdLine.withNextEntry((v) -> this.addId(v.stringValue()));
                 return true;
             }
             case "--locked-id": {
-                cmdLine.withNextEntry((v, r) -> setDefinitionFilter(NDefinitionFilterUtils.addLockedIds(getDefinitionFilter(), NId.of(v))));
+                cmdLine.withNextEntry((v) -> setDefinitionFilter(NDefinitionFilterUtils.addLockedIds(getDefinitionFilter(), NId.of(v.stringValue()))));
                 return true;
             }
             case "--deployed": {

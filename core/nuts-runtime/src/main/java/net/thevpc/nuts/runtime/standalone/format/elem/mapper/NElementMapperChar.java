@@ -19,6 +19,10 @@ public class NElementMapperChar implements NElementMapper<Character> {
     @Override
     public Character createObject(NElement o, Type to, NElementFactoryContext context) {
         final String s = o.asStringValue().get();
+        if(to==null){
+            to=Character.class;
+        }
+
         return (s == null || s.isEmpty())
                 ? (((to instanceof Class) && ((Class) to).isPrimitive()) ? '\0' : null)
                 : s.charAt(0);

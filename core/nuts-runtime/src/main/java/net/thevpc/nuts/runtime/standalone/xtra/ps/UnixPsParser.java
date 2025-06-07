@@ -336,8 +336,8 @@ public class UnixPsParser {
     }
 
     public static Instant parseStartDateLong(String lstart) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss yyyy", Locale.ENGLISH);
-        LocalDateTime dateTime = LocalDateTime.parse(lstart, formatter);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss yyyy", Locale.ENGLISH);
+        LocalDateTime dateTime = LocalDateTime.parse(lstart.replace("  "," "), formatter);
         return dateTime.atZone(ZoneId.systemDefault()).toInstant();
     }
 }

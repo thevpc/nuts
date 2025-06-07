@@ -42,30 +42,20 @@ public interface NCmdLineRunner {
     NCmdLineRunner NOP = new NCmdLineRunner() {
     };
 
-    /**
-     * process the given option argument that was peeked from the command line.Implementations <strong>MUST</strong> call one of
-     * the "next" methods to
-     *
-     * @param option  peeked argument
-     * @param cmdLine associated cmdLine
-     * @return true if the argument can be processed, false otherwise.
-     */
-    default boolean nextOption(NArg option, NCmdLine cmdLine) {
-        return false;
-    }
 
     /**
-     * process the given non option argument that was peeked from the command line.
+     * process the given argument that was peeked from the command line.
      * Implementations <strong>MUST</strong> call one of
-     * the "next" methods to
+     * the "next" methods to consume the argument
      *
-     * @param nonOption peeked argument
+     * @param arg peeked argument
      * @param cmdLine   associated cmdLine
      * @return true if the argument can be processed, false otherwise.
      */
-    default boolean nextNonOption(NArg nonOption, NCmdLine cmdLine) {
+    default boolean next(NArg arg, NCmdLine cmdLine) {
         return false;
     }
+
 
     /**
      * initialize the processor.

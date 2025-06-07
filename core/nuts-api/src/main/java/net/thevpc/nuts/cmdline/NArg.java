@@ -81,6 +81,7 @@ public interface NArg extends NBlankable /*extends NLiteral*/ {
 
     NOptional<String> getStringValue();
 
+    String stringValue();
     /**
      * true if option is in one of the following forms :
      * <ul>
@@ -187,6 +188,8 @@ public interface NArg extends NBlankable /*extends NLiteral*/ {
     NLiteral getValue();
 
     NOptional<Boolean> getBooleanValue();
+
+    boolean booleanValue();
 
     /**
      * return key part (never null) of the argument. The key does not include

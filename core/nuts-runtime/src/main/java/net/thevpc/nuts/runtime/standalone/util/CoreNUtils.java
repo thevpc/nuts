@@ -533,7 +533,7 @@ public class CoreNUtils {
                 return NIdType.RUNTIME;
             }
             default: {
-                String rt = NWorkspace.get().get().getRuntimeId().getShortName();
+                String rt = NWorkspace.of().getRuntimeId().getShortName();
                 if (rt.equals(depId.getShortName())) {
                     return NIdType.RUNTIME;
                 } else {

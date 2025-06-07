@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 public class DefaultNDeployCmd extends AbstractNDeployCmd {
 
     public DefaultNDeployCmd(NWorkspace workspace) {
-        super(workspace);
+        super();
     }
 
     private static CharacterizedDeployFile characterizeForDeploy(NInputSource contentFile, List<String> parseOptions) {

@@ -6,7 +6,6 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
 
-import net.thevpc.nuts.elem.NElementType;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.dependency.NDependencyScopes;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
@@ -158,7 +157,7 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
         }
         id = idBuilder.build();
         NTextBuilder sb = NTextBuilder.of();
-        if(NBlankable.isBlank(classifier)) {
+        if (NBlankable.isBlank(classifier)) {
             if (!isOmitGroupId()) {
                 if (!NBlankable.isBlank(id.getGroupId())) {
                     boolean importedGroup2 = NConstants.Ids.NUTS_GROUP_ID.equals(id.getGroupId());
@@ -174,7 +173,7 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
                 }
             }
             sb.append(id.getArtifactId(), NTextStyle.primary1());
-        }else{
+        } else {
             if (!isOmitGroupId()) {
                 if (!NBlankable.isBlank(id.getGroupId())) {
                     boolean importedGroup2 = NConstants.Ids.NUTS_GROUP_ID.equals(id.getGroupId());
@@ -313,29 +312,29 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
         if (aa == null) {
             return false;
         }
-        switch(aa.key()) {
+        switch (aa.key()) {
             case "--omit-env": {
-                cmdLine.withNextFlag((v, a) -> this.setOmitOtherProperties(v));
+                cmdLine.withNextFlag((v) -> this.setOmitOtherProperties(v.booleanValue()));
                 return true;
             }
             case "--omit-face": {
-                cmdLine.withNextFlag((v, a) -> this.setOmitFace(v));
+                cmdLine.withNextFlag((v) -> this.setOmitFace(v.booleanValue()));
                 return true;
             }
             case "--omit-group": {
-                cmdLine.withNextFlag((v, a) -> this.setOmitGroupId(v));
+                cmdLine.withNextFlag((v) -> this.setOmitGroupId(v.booleanValue()));
                 return true;
             }
             case "--omit-imported-group": {
-                cmdLine.withNextFlag((v, a) -> this.setOmitImportedGroupId(v));
+                cmdLine.withNextFlag((v) -> this.setOmitImportedGroupId(v.booleanValue()));
                 return true;
             }
             case "--omit-repo": {
-                cmdLine.withNextFlag((v, a) -> this.setOmitRepository(v));
+                cmdLine.withNextFlag((v) -> this.setOmitRepository(v.booleanValue()));
                 return true;
             }
             case "--highlight-imported-group": {
-                cmdLine.withNextFlag((v, a) -> this.setHighlightImportedGroupId(v));
+                cmdLine.withNextFlag((v) -> this.setHighlightImportedGroupId(v.booleanValue()));
                 return true;
             }
         }

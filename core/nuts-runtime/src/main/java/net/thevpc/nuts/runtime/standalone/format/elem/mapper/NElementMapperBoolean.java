@@ -20,6 +20,9 @@ public class NElementMapperBoolean implements NElementMapper<Boolean> {
 
     @Override
     public Boolean createObject(NElement o, Type to, NElementFactoryContext context) {
+        if(to==null){
+            to=Boolean.class;
+        }
         switch (((Class) to).getName()) {
             case "boolean":
             case "java.lang.Boolean":

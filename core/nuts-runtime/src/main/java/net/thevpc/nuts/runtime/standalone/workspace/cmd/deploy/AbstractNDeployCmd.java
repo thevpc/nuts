@@ -44,7 +44,7 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
         }
     }
 
-    public AbstractNDeployCmd(NWorkspace workspace) {
+    public AbstractNDeployCmd() {
         super("deploy");
     }
     @Override
@@ -317,35 +317,35 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
         switch (a.key()) {
             case "-d":
             case "--desc": {
-                cmdLine.withNextEntry((v, r) -> setDescriptor(v));
+                cmdLine.withNextEntry((v) -> setDescriptor(v.stringValue()));
                 return true;
             }
             case "-s":
             case "--source":
             case "--from": {
-                cmdLine.withNextEntry((v, r) -> from(v));
+                cmdLine.withNextEntry((v) -> from(v.stringValue()));
                 return true;
             }
             case "-r":
             case "--target":
             case "--to": {
-                cmdLine.withNextEntry((v, r) -> to(v));
+                cmdLine.withNextEntry((v) -> to(v.stringValue()));
                 return true;
             }
             case "--desc-sha1": {
-                cmdLine.withNextEntry((v, r) -> setDescSha1(v));
+                cmdLine.withNextEntry((v) -> setDescSha1(v.stringValue()));
                 return true;
             }
             case "--desc-sha1-file": {
-                cmdLine.withNextEntry((v, r) -> this.setDescSha1(NPath.of(v).readString()));
+                cmdLine.withNextEntry((v) -> this.setDescSha1(NPath.of(v.stringValue()).readString()));
                 return true;
             }
             case "--sha1": {
-                cmdLine.withNextEntry((v, r) -> this.setSha1(v));
+                cmdLine.withNextEntry((v) -> this.setSha1(v.stringValue()));
                 return true;
             }
             case "--sha1-file": {
-                cmdLine.withNextEntry((v, r) -> this.setSha1(NPath.of(v).readString()));
+                cmdLine.withNextEntry((v) -> this.setSha1(NPath.of(v.stringValue()).readString()));
                 return true;
             }
             default: {

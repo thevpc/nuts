@@ -8,7 +8,7 @@ import net.thevpc.nuts.util.NMsg;
 public class RemoteNExecCmd extends AbstractNExecCmd {
 
     public RemoteNExecCmd(NWorkspace workspace) {
-        super(workspace);
+        super();
     }
 
     @Override

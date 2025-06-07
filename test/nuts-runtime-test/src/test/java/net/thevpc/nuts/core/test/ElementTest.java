@@ -231,7 +231,7 @@ public class ElementTest {
 
 
         //prevent styled element to be destructed
-        e.mapperStore().setIndestructibleFilter(c->NTextStyled.class.isAssignableFrom((Class<?>) c));
+        e.mapperStore().setIndestructibleTypesFilter(c->NTextStyled.class.isAssignableFrom((Class<?>) c));
         q = e.toElement(h);
         expected= NElement.ofObjectBuilder()
                 .set("a","13")
@@ -241,7 +241,7 @@ public class ElementTest {
         Assertions.assertEquals(expected,q);
 
         //destruct custom elements
-        e.mapperStore().setIndestructibleFilter(null);
+        e.mapperStore().setIndestructibleTypesFilter(null);
         NObjectElement b = NElement.ofObjectBuilder()
                 .set("a", "13")
                 .set("b",

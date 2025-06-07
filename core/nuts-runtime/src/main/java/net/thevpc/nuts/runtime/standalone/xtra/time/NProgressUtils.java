@@ -11,7 +11,7 @@ import java.util.List;
 public class NProgressUtils {
 
     public static NProgressFactory createLogProgressMonitorFactory(MonitorType mt) {
-        NWorkspace workspace = NWorkspace.get().get();
+        NWorkspace workspace = NWorkspace.of();
         switch (mt) {
             case STREAM:
                 return new DefaultNInputStreamProgressFactory();

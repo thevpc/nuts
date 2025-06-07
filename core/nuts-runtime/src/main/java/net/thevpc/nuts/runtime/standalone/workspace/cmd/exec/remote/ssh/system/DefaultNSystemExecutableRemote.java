@@ -56,7 +56,7 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformati
             NArg aa = cmdLine.peek().get();
             switch (aa.key()) {
                 case "--show-command": {
-                    cmdLine.withNextFlag((v, a) -> this.showCommand = (v));
+                    cmdLine.withNextFlag((v) -> this.showCommand = (v.booleanValue()));
                     break;
                 }
                 default: {

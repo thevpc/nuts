@@ -27,7 +27,7 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
     private NWorkspaceListConfig config;
 
     public DefaultNWorkspaceList() {
-        NWorkspace ws = NWorkspace.get().get();
+        NWorkspace ws = NWorkspace.of();
         setName(null);
         NPath file = getConfigFile();
         if (file.exists()) {

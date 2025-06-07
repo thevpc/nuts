@@ -35,6 +35,7 @@ import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -69,14 +70,14 @@ public class DefaultNCmdLine implements NCmdLine {
 
     private Object source;
 
-    boolean safe;
+    private boolean unsafe;
 
     /**
      * configurable or null
      *
      * @return configurable or null
      */
-    NCmdLineConfigurable configurable;
+    private NCmdLineConfigurable configurable;
 
     //Constructors
     public DefaultNCmdLine() {
@@ -88,6 +89,10 @@ public class DefaultNCmdLine implements NCmdLine {
         setArguments(args);
     }
 
+    public DefaultNCmdLine(List<String> args) {
+        setArguments(args);
+    }
+
     public NShellFamily getShellFamily() {
         return shellFamily;
     }
@@ -95,10 +100,6 @@ public class DefaultNCmdLine implements NCmdLine {
     public NCmdLine setShellFamily(NShellFamily shellFamily) {
         this.shellFamily = shellFamily;
         return this;
-    }
-
-    public DefaultNCmdLine(List<String> args) {
-        setArguments(args);
     }
 
 
@@ -114,13 +115,13 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public boolean isSafe() {
-        return safe;
+    public boolean isUnsafe() {
+        return unsafe;
     }
 
     @Override
-    public NCmdLine setSafe(boolean safe) {
-        this.safe = safe;
+    public NCmdLine setUnsafe(boolean safe) {
+        this.unsafe = safe;
         return this;
     }
 
@@ -411,12 +412,12 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public boolean withNextOptionalFlag(NArgProcessor<NOptional<Boolean>> consumer) {
+    public boolean withNextOptionalFlag(Consumer<NOptional<Boolean>> consumer) {
         NOptional<NArg> v = nextFlag();
         if (v.isPresent()) {
             NArg a = v.get();
             if (a.isNonCommented()) {
-                consumer.run(a.getBooleanValue(), a);
+                consumer.accept(a.getBooleanValue());
                 return true;
             }
         }
@@ -424,12 +425,12 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public boolean withNextOptionalFlag(NArgProcessor<NOptional<Boolean>> consumer, String... names) {
+    public boolean withNextOptionalFlag(Consumer<NOptional<Boolean>> consumer, String... names) {
         NOptional<NArg> v = nextFlag(names);
         if (v.isPresent()) {
             NArg a = v.get();
             if (a.isNonCommented()) {
-                consumer.run(a.getBooleanValue(), a);
+                consumer.accept(a.getBooleanValue());
                 return true;
             }
         }
@@ -437,12 +438,12 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public boolean withNextOptionalEntry(NArgProcessor<NOptional<String>> consumer) {
+    public boolean withNextOptionalEntry(Consumer<NOptional<String>> consumer) {
         NOptional<NArg> v = nextEntry();
         if (v.isPresent()) {
             NArg a = v.get();
             if (a.isNonCommented()) {
-                consumer.run(a.getStringValue(), a);
+                consumer.accept(a.getStringValue());
                 return true;
             }
         }
@@ -450,12 +451,12 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public boolean withNextOptionalEntry(NArgProcessor<NOptional<String>> consumer, String... names) {
+    public boolean withNextOptionalEntry(Consumer<NOptional<String>> consumer, String... names) {
         NOptional<NArg> v = nextEntry(names);
         if (v.isPresent()) {
             NArg a = v.get();
             if (a.isNonCommented()) {
-                consumer.run(a.getStringValue(), a);
+                consumer.accept(a.getStringValue());
                 return true;
             }
         }
@@ -463,12 +464,12 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public boolean withNextFlag(NArgProcessor<Boolean> consumer) {
+    public boolean withNextFlag(Consumer<NArg> consumer) {
         NOptional<NArg> v = nextFlag();
         if (v.isPresent()) {
             NArg a = v.get();
             if (a.isNonCommented()) {
-                consumer.run(a.getBooleanValue().get(), a);
+                consumer.accept(a);
                 return true;
             }
         }
@@ -476,30 +477,30 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public boolean withNextTrueFlag(NArgProcessor<Boolean> consumer) {
-        return withNextFlag((value, arg) -> {
-            if (value) {
-                consumer.run(true, arg);
+    public boolean withNextTrueFlag(Consumer<NArg> consumer) {
+        return withNextFlag((value) -> {
+            if (value.isBoolean() && value.booleanValue()) {
+                consumer.accept(value);
             }
         });
     }
 
     @Override
-    public boolean withNextTrueFlag(NArgProcessor<Boolean> consumer, String... names) {
-        return withNextFlag((value, arg) -> {
-            if (value) {
-                consumer.run(true, arg);
+    public boolean withNextTrueFlag(Consumer<NArg> consumer, String... names) {
+        return withNextFlag((value) -> {
+            if (value.isBoolean() && value.booleanValue()) {
+                consumer.accept(value);
             }
         }, names);
     }
 
     @Override
-    public boolean withNextFlag(NArgProcessor<Boolean> consumer, String... names) {
+    public boolean withNextFlag(Consumer<NArg> consumer, String... names) {
         NOptional<NArg> v = nextFlag(names);
         if (v.isPresent()) {
             NArg a = v.get();
             if (a.isNonCommented()) {
-                consumer.run(a.getBooleanValue().get(), a);
+                consumer.accept(a);
                 return true;
             }
         }
@@ -507,12 +508,12 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public boolean withNextEntry(NArgProcessor<String> consumer) {
+    public boolean withNextEntry(Consumer<NArg> consumer) {
         NOptional<NArg> v = nextEntry();
         if (v.isPresent()) {
             NArg a = v.get();
             if (a.isNonCommented()) {
-                consumer.run(a.getStringValue().get(), a);
+                consumer.accept(a);
                 return true;
             }
         }
@@ -520,85 +521,31 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public boolean withNextEntry(NArgProcessor<String> consumer, String... names) {
+    public boolean withNextEntry(Consumer<NArg> consumer, String... names) {
         NOptional<NArg> v = nextEntry(names);
         if (v.isPresent()) {
             NArg a = v.get();
             if (a.isNonCommented()) {
-                consumer.run(a.getStringValue().get(), a);
+                consumer.accept(a);
                 return true;
             }
         }
         return false;
     }
 
+
     @Override
-    public boolean withNextEntryValue(NArgProcessor<NLiteral> consumer) {
-        NOptional<NArg> v = nextEntry();
-        if (v.isPresent()) {
-            NArg a = v.get();
-            if (a.isNonCommented()) {
-                consumer.run(a.getValue(), a);
+    public boolean withFirst(NCmdLineProcessor... processors) {
+        NArg a = peek().orNull();
+        if(a==null) {
+            return false;
+        }
+        for (NCmdLineProcessor consumer : processors) {
+            if (consumer.process(a, this)) {
                 return true;
             }
         }
         return false;
-    }
-
-    @Override
-    public boolean withNextEntryValue(NArgProcessor<NLiteral> consumer, String... names) {
-        NOptional<NArg> v = nextEntry(names);
-        if (v.isPresent()) {
-            NArg a = v.get();
-            if (a.isNonCommented()) {
-                consumer.run(a.getValue(), a);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean withNextValue(NArgProcessor<NLiteral> consumer) {
-        NOptional<NArg> v = next();
-        if (v.isPresent()) {
-            NArg a = v.get();
-            if (a.isNonCommented()) {
-                consumer.run(a.getValue(), a);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean withFirst(NCmdLineProcessor... consumers) {
-        for (NCmdLineProcessor consumer : consumers) {
-            if (consumer.process(this)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public NOptional<NLiteral> nextEntryValue() {
-        return nextEntryValue(new String[0]);
-    }
-
-    @Override
-    public NOptional<NLiteral> nextFlagValue() {
-        return nextFlagValue(new String[0]);
-    }
-
-    @Override
-    public NOptional<NLiteral> nextEntryValue(String... names) {
-        return nextEntry(names).map(NArg::getValue);
-    }
-
-    @Override
-    public NOptional<NLiteral> nextFlagValue(String... names) {
-        return nextFlag(names).map(NArg::getValue);
     }
 
     @Override
@@ -1210,6 +1157,9 @@ public class DefaultNCmdLine implements NCmdLine {
         c.eq = this.eq;
         c.specialSimpleOptions = new HashSet<>(specialSimpleOptions);
         c.commandName = this.commandName;
+        c.configurable = this.configurable;
+        c.source = this.source;
+        c.unsafe = this.unsafe;
         return c;
     }
 
@@ -1427,22 +1377,13 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public void run(NCmdLineRunner processor) {
-        if (context == null) {
-            context = new DefaultNCmdLineContext(null);
-        }
-        NCmdLineConfigurable configurable = context.getConfigurable();
+        NCmdLineConfigurable configurable = getConfigurable();
         NCmdLine cmd = this;
         NArg a;
         processor.init(cmd);
-        if (isSafe()) {
+        if (isUnsafe()) {
             while ((a = peek().orNull()) != null) {
-                boolean consumed;
-                if (a.isOption()) {
-                    consumed = processor.nextOption(a, cmd);
-                } else {
-                    consumed = processor.nextNonOption(a, cmd);
-                }
-                if (consumed) {
+                if (processor.next(a, cmd)) {
                     // safe
                 } else if (configurable != null && configurable.configureFirst(this)) {
                     // safe
@@ -1453,19 +1394,12 @@ public class DefaultNCmdLine implements NCmdLine {
         } else {
             while (cmd.hasNext()) {
                 a = cmd.peek().get();
-                boolean consumed;
-                if (a.isOption()) {
-                    consumed = processor.nextOption(a, cmd);
-                } else {
-                    consumed = processor.nextNonOption(a, cmd);
-                }
-                if (consumed) {
+                if (processor.next(a, cmd)) {
                     NArg next = cmd.peek().orNull();
                     //reference equality!
                     if (next == a) {
                         //was not consumed!
-                        throwError(NMsg.ofC("%s must consume the option: %s",
-                                (a.isOption() ? "nextOption" : "nextNonOption"),
+                        throwError(NMsg.ofC("next must consume the argument: %s",
                                 a));
                     }
                 } else if (configurable != null && configurable.configureFirst(cmd)) {
@@ -1516,64 +1450,44 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public NCmdLine forEachPeek(NCmdLineConsumer action) {
-        return forEachPeek(action, null);
-    }
-
-    @Override
     public NCmdLine forEachPeek(NCmdLineProcessor... actions) {
+        NAssert.requireNonNull(actions, () -> NMsg.ofC("missing processors"));
         NAssert.requireTrue(actions.length > 0, () -> NMsg.ofC("missing processors"));
         while (hasNext()) {
             boolean some = false;
+            NArg a = peek().orNull();
             for (NCmdLineProcessor action : actions) {
-                if (action.process(this)) {
-                    some = true;
-                    break;
+                if(action!=null) {
+                    if (action.process(a, this)) {
+                        some = true;
+                        break;
+                    } else {
+                        if (isUnsafe()) {
+                            NArg b = peek().orNull();
+                            if (b != a) {
+                                throwError(NMsg.ofC("process(...) must not consume the argument if not relevant"));
+                            }
+                        }
+                    }
                 }
             }
             if (!some) {
-                throwUnexpectedArgument();
-            }
-        }
-        return this;
-    }
-
-    @Override
-    public NCmdLine forEachPeek(NCmdLineProcessor consumer) {
-        NAssert.requireNonNull(consumer, "consumer");
-        NCmdLineConfigurable configurable = getConfigurable();
-        if (isSafe()) {
-            NArg a;
-            while ((a = peek().orNull()) != null) {
-                boolean consumed = consumer.process(this);
-                if (consumed) {
-                    // safe
-                } else if (configurable != null && configurable.configureFirst(this)) {
-                    // safe
+                if (configurable != null && configurable.configureFirst(this)) {
+                    if (isUnsafe()) {
+                        NArg b = peek().orNull();
+                        if (b == a) {
+                            throwError(NMsg.ofC("process(...) must consume the argument if relevant"));
+                        }
+                    }
                 } else {
                     this.throwUnexpectedArgument();
                 }
-            }
-        } else {
-            NArg a;
-            while ((a = peek().orNull()) != null) {
-                boolean consumed = consumer.process(this);
-                if (consumed) {
-                    NArg next = this.peek().orNull();
-                    //reference equality!
-                    if (next == a) {
-                        //was not consumed!
-                        throwError(NMsg.ofC("%s must consume the argument: next", a));
+            }else{
+                if (isUnsafe()) {
+                    NArg b = peek().orNull();
+                    if (b == a) {
+                        throwError(NMsg.ofC("process(...) must consume the argument if relevant"));
                     }
-                } else if (configurable != null && configurable.configureFirst(this)) {
-                    NArg next = this.peek().orNull();
-                    //reference equality!
-                    if (next == a) {
-                        //was not consumed!
-                        throwError(NMsg.ofC("%s must consume the argument: %s", ("configurable.configureFirst(...)"), a));
-                    }
-                } else {
-                    this.throwUnexpectedArgument();
                 }
             }
         }
@@ -1581,7 +1495,13 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public NCmdLineNamedAction with(String... names) {
+    public NCmdLine forEachPeek(NCmdLineProcessor processor) {
+        NAssert.requireNonNull(processor, () -> NMsg.ofC("processor"));
+        return forEachPeek(new NCmdLineProcessor[]{processor});
+    }
+
+    @Override
+    public NCmdLineArgProcessor with(String... names) {
         boolean acceptable0 = false;
         for (String name : names) {
             String[] nameSeqArray = NStringUtils.split(name, " ").toArray(new String[0]);
@@ -1598,13 +1518,13 @@ public class DefaultNCmdLine implements NCmdLine {
             }
         }
         boolean finalAcceptable = acceptable0;
-        return new NCmdLineNamedAction() {
+        return new NCmdLineArgProcessor() {
             public boolean isAcceptable() {
                 return finalAcceptable;
             }
 
             @Override
-            public boolean nextFlag(NArgProcessor<Boolean> consumer) {
+            public boolean nextFlag(Consumer<NArg> consumer) {
                 if (!finalAcceptable) {
                     return false;
                 }
@@ -1612,24 +1532,23 @@ public class DefaultNCmdLine implements NCmdLine {
                 if (v.isPresent()) {
                     NArg a = v.get();
                     if (a.isNonCommented()) {
-                        consumer.run(a.getBooleanValue().get(), a);
+                        consumer.accept(a);
                         return true;
                     }
                     return true;
                 }
                 return false;
             }
-
             @Override
-            public boolean nextOptionalFlag(NArgProcessor<NOptional<Boolean>> consumer) {
+            public boolean nextEntry(Consumer<NArg> consumer) {
                 if (!finalAcceptable) {
                     return false;
                 }
-                NOptional<NArg> v = next(NArgType.FLAG, names);
+                NOptional<NArg> v = next(NArgType.ENTRY, names);
                 if (v.isPresent()) {
                     NArg a = v.get();
                     if (a.isNonCommented()) {
-                        consumer.run(a.getBooleanValue(), a);
+                        consumer.accept(a);
                         return true;
                     }
                     return true;
@@ -1637,67 +1556,17 @@ public class DefaultNCmdLine implements NCmdLine {
                 return false;
             }
 
+
             @Override
-            public boolean nextTrueFlag(NArgProcessor<Boolean> consumer) {
+            public boolean nextTrueFlag(Consumer<NArg> consumer) {
                 if (!finalAcceptable) {
                     return false;
                 }
-                return nextFlag((value, arg) -> {
-                    if (value) {
-                        consumer.run(true, arg);
+                return nextFlag((value) -> {
+                    if (value.isBoolean() && value.booleanValue()) {
+                        consumer.accept(value);
                     }
                 });
-            }
-
-            @Override
-            public boolean nextOptionalEntry(NArgProcessor<NOptional<String>> consumer) {
-                if (!finalAcceptable) {
-                    return false;
-                }
-                NOptional<NArg> v = next(NArgType.ENTRY, names);
-                if (v.isPresent()) {
-                    NArg a = v.get();
-                    if (a.isNonCommented()) {
-                        consumer.run(a.getStringValue(), a);
-                        return true;
-                    }
-                    return true;
-                }
-                return false;
-            }
-
-            @Override
-            public boolean nextEntry(NArgProcessor<String> consumer) {
-                if (!finalAcceptable) {
-                    return false;
-                }
-                NOptional<NArg> v = next(NArgType.ENTRY, names);
-                if (v.isPresent()) {
-                    NArg a = v.get();
-                    if (a.isNonCommented()) {
-                        consumer.run(a.getStringValue().get(), a);
-                        return true;
-                    }
-                    return true;
-                }
-                return false;
-            }
-
-            @Override
-            public boolean consumeEntryValue(NArgProcessor<NLiteral> consumer) {
-                if (!finalAcceptable) {
-                    return false;
-                }
-                NOptional<NArg> v = next(NArgType.ENTRY, names);
-                if (v.isPresent()) {
-                    NArg a = v.get();
-                    if (a.isNonCommented()) {
-                        consumer.run(a.getValue(), a);
-                        return true;
-                    }
-                    return true;
-                }
-                return false;
             }
         };
     }
@@ -1705,7 +1574,7 @@ public class DefaultNCmdLine implements NCmdLine {
     /// ///////////////////////////////// LOOKUPS
 
     @Override
-    public boolean lookupNextFlag(NArgProcessor<Boolean> consumer) {
+    public boolean lookupNextFlag(Consumer<NArg> consumer) {
         NCmdLine cmdLine2 = this.copy();
         while (cmdLine2.hasNext()) {
             if (cmdLine2.withNextFlag(consumer)) {
@@ -1717,73 +1586,9 @@ public class DefaultNCmdLine implements NCmdLine {
         return false;
     }
 
-    @Override
-    public boolean lookupNextOptionalFlag(NArgProcessor<NOptional<Boolean>> consumer) {
-        NCmdLine cmdLine2 = this.copy();
-        while (cmdLine2.hasNext()) {
-            if (cmdLine2.withNextOptionalFlag(consumer)) {
-                return true;
-            } else {
-                cmdLine2.skip();
-            }
-        }
-        return false;
-    }
 
     @Override
-    public boolean lookupNextOptionalFlag(NArgProcessor<NOptional<Boolean>> consumer, String... names) {
-        NCmdLine cmdLine2 = this.copy();
-        while (cmdLine2.hasNext()) {
-            if (cmdLine2.withNextOptionalFlag(consumer, names)) {
-                return true;
-            } else {
-                cmdLine2.skip();
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean lookupNextValue(NArgProcessor<NLiteral> consumer) {
-        NCmdLine cmdLine2 = this.copy();
-        while (cmdLine2.hasNext()) {
-            if (cmdLine2.withNextValue(consumer)) {
-                return true;
-            } else {
-                cmdLine2.skip();
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean lookupNextEntryValue(NArgProcessor<NLiteral> consumer, String... names) {
-        NCmdLine cmdLine2 = this.copy();
-        while (cmdLine2.hasNext()) {
-            if (cmdLine2.withNextEntryValue(consumer)) {
-                return true;
-            } else {
-                cmdLine2.skip();
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean lookupNextEntryValue(NArgProcessor<NLiteral> consumer) {
-        NCmdLine cmdLine2 = this.copy();
-        while (cmdLine2.hasNext()) {
-            if (cmdLine2.withNextEntryValue(consumer)) {
-                return true;
-            } else {
-                cmdLine2.skip();
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean lookupNextEntry(NArgProcessor<String> consumer, String... names) {
+    public boolean lookupNextEntry(Consumer<NArg> consumer, String... names) {
         NCmdLine cmdLine2 = this.copy();
         while (cmdLine2.hasNext()) {
             if (cmdLine2.withNextEntry(consumer, names)) {
@@ -1796,7 +1601,7 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public boolean lookupNextEntry(NArgProcessor<String> consumer) {
+    public boolean lookupNextEntry(Consumer<NArg> consumer) {
         NCmdLine cmdLine2 = this.copy();
         while (cmdLine2.hasNext()) {
             if (cmdLine2.withNextEntry(consumer)) {
@@ -1808,34 +1613,9 @@ public class DefaultNCmdLine implements NCmdLine {
         return false;
     }
 
-    @Override
-    public boolean lookupNextOptionalEntry(NArgProcessor<NOptional<String>> consumer, String... names) {
-        NCmdLine cmdLine2 = this.copy();
-        while (cmdLine2.hasNext()) {
-            if (cmdLine2.withNextOptionalEntry(consumer)) {
-                return true;
-            } else {
-                cmdLine2.skip();
-            }
-        }
-        return false;
-    }
 
     @Override
-    public boolean lookupNextOptionalEntry(NArgProcessor<NOptional<String>> consumer) {
-        NCmdLine cmdLine2 = this.copy();
-        while (cmdLine2.hasNext()) {
-            if (cmdLine2.withNextOptionalEntry(consumer)) {
-                return true;
-            } else {
-                cmdLine2.skip();
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean lookupNextTrueFlag(NArgProcessor<Boolean> consumer, String... names) {
+    public boolean lookupNextTrueFlag(Consumer<NArg> consumer, String... names) {
         NCmdLine cmdLine2 = this.copy();
         while (cmdLine2.hasNext()) {
             if (cmdLine2.withNextTrueFlag(consumer)) {
@@ -1848,7 +1628,7 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public boolean lookupNextFlag(NArgProcessor<Boolean> consumer, String... names) {
+    public boolean lookupNextFlag(Consumer<NArg> consumer, String... names) {
         NCmdLine cmdLine2 = this.copy();
         while (cmdLine2.hasNext()) {
             if (cmdLine2.withNextFlag(consumer)) {
@@ -1861,7 +1641,7 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public boolean lookupNextTrueFlag(NArgProcessor<Boolean> consumer) {
+    public boolean lookupNextTrueFlag(Consumer<NArg> consumer) {
         NCmdLine cmdLine2 = this.copy();
         while (cmdLine2.hasNext()) {
             if (cmdLine2.withNextTrueFlag(consumer)) {
@@ -1872,4 +1652,5 @@ public class DefaultNCmdLine implements NCmdLine {
         }
         return false;
     }
+
 }

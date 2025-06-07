@@ -44,7 +44,7 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
         switch (aa.key()) {
             case "-a":
             case "--all": {
-                cmdLine.withNextFlag((v, a) -> this.all = v);
+                cmdLine.withNextFlag((v) -> this.all = v.booleanValue());
                 return true;
             }
             case "--add": {

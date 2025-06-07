@@ -24,9 +24,9 @@
 package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.NShellFamily;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
@@ -100,15 +100,18 @@ import java.util.function.Consumer;
 public interface NCmdLine extends Iterable<NArg>, NBlankable {
 
     static NCmdLine ofArgs(String... args) {
+        if (NWorkspace.get().isNotPresent()) {
+            return new DefaultNCmdLine(args, NShellFamily.getCurrent());
+        }
         return NCmdLines.of().of(args);
     }
 
     static NCmdLine of(String[] args) {
-        return NCmdLines.of().of(args);
+        return ofArgs(args);
     }
 
     static NCmdLine of(List<String> args) {
-        return NCmdLines.of().of(args == null ? null : args.toArray(new String[0]));
+        return ofArgs(args == null ? null : args.toArray(new String[0]));
     }
 
     /**
@@ -118,14 +121,24 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @return new command line instance
      */
     static NOptional<NCmdLine> parseDefault(String line) {
+        if (NWorkspace.get().isNotPresent()) {
+            return DefaultNCmdLine.parseDefaultList(line)
+                    .map(args -> new DefaultNCmdLine(args, NShellFamily.BASH));
+        }
         return NCmdLines.of().setShellFamily(NShellFamily.BASH).parseCmdLine(line);
     }
 
     static NOptional<NCmdLine> parse(String line) {
+        if (NWorkspace.get().isNotPresent()) {
+            return parseDefault(line);
+        }
         return NCmdLines.of().parseCmdLine(line);
     }
 
     static NOptional<NCmdLine> parse(String line, NShellFamily shellFamily) {
+        if (NWorkspace.get().isNotPresent()) {
+            return parseDefault(line);
+        }
         return NCmdLines.of()
                 .setShellFamily(shellFamily)
                 .parseCmdLine(line);
@@ -166,11 +179,13 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
 
     NCmdLine setSource(Object source);
 
-    boolean isSafe();
+    boolean isUnsafe();
 
-    NCmdLine setSafe(boolean safe);
+    NCmdLine setUnsafe(boolean safe);
 
     NCmdLineConfigurable getConfigurable();
+
+    NCmdLine setConfigurable(NCmdLineConfigurable configurable);
 
     boolean isExpandArgumentsFile();
 
@@ -397,20 +412,20 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      */
     NOptional<NArg> nextEntry(String... names);
 
-    boolean withFirst(NCmdLineProcessor... consumers);
+    boolean withFirst(NCmdLineProcessor... processors);
 
     /**
      * consume next argument with boolean value and run {@code consumer}
      *
      * @return true if active
      */
-    boolean withNextFlag(NArgProcessor<Boolean> consumer);
+    boolean withNextFlag(Consumer<NArg> consumer);
 
-    boolean withNextOptionalFlag(NArgProcessor<NOptional<Boolean>> consumer);
+    boolean withNextOptionalFlag(Consumer<NOptional<Boolean>> consumer);
 
-    boolean withNextOptionalFlag(NArgProcessor<NOptional<Boolean>> consumer, String... names);
+    boolean withNextOptionalFlag(Consumer<NOptional<Boolean>> consumer, String... names);
 
-    boolean withNextTrueFlag(NArgProcessor<Boolean> consumer);
+    boolean withNextTrueFlag(Consumer<NArg> consumer);
 
     /**
      * consume next argument with boolean value and run {@code consumer}
@@ -418,20 +433,20 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @param names names
      * @return true if active
      */
-    boolean withNextFlag(NArgProcessor<Boolean> consumer, String... names);
+    boolean withNextFlag(Consumer<NArg> consumer, String... names);
 
-    boolean withNextTrueFlag(NArgProcessor<Boolean> consumer, String... names);
+    boolean withNextTrueFlag(Consumer<NArg> consumer, String... names);
 
-    boolean withNextOptionalEntry(NArgProcessor<NOptional<String>> consumer);
+    boolean withNextOptionalEntry(Consumer<NOptional<String>> consumer);
 
-    boolean withNextOptionalEntry(NArgProcessor<NOptional<String>> consumer, String... names);
+    boolean withNextOptionalEntry(Consumer<NOptional<String>> consumer, String... names);
 
     /**
      * consume next argument with string value and run {@code consumer}
      *
      * @return true if active
      */
-    boolean withNextEntry(NArgProcessor<String> consumer);
+    boolean withNextEntry(Consumer<NArg> consumer);
 
     /**
      * consume next argument with string value and run {@code consumer}
@@ -439,26 +454,9 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @param names names
      * @return true if active
      */
-    boolean withNextEntry(NArgProcessor<String> consumer, String... names);
+    boolean withNextEntry(Consumer<NArg> consumer, String... names);
 
-    /**
-     * consume next argument and run {@code consumer}
-     *
-     * @return true if active
-     */
-    boolean withNextEntryValue(NArgProcessor<NLiteral> consumer);
-
-    /**
-     * consume next argument and run {@code consumer}
-     *
-     * @param names names
-     * @return true if active
-     */
-    boolean withNextEntryValue(NArgProcessor<NLiteral> consumer, String... names);
-
-    boolean withNextValue(NArgProcessor<NLiteral> consumer);
-
-    NCmdLineNamedAction with(String... names);
+    NCmdLineArgProcessor with(String... names);
 
     /**
      * next argument as entry (key=value). equivalent to next(NArgType.ENTRY,{})
@@ -466,14 +464,6 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @return next argument
      */
     NOptional<NArg> nextEntry();
-
-    NOptional<NLiteral> nextEntryValue(String... names);
-
-    NOptional<NLiteral> nextFlagValue(String... names);
-
-    NOptional<NLiteral> nextEntryValue();
-
-    NOptional<NLiteral> nextFlagValue();
 
     /**
      * next argument with any value type (may have not a value). equivalent to
@@ -702,7 +692,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
         Iterable.super.forEach(action);
     }
 
-    NCmdLine forEachPeek(NCmdLineConsumer action);
+    NCmdLine forEachPeek(NCmdLineProcessor action);
 
     NCmdLine forEachPeek(NCmdLineProcessor... actions);
 
@@ -717,7 +707,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @param consumer consumer to call when the argument is found
      * @return true if found and the consumer is invoked
      */
-    boolean lookupNextFlag(NArgProcessor<Boolean> consumer);
+    boolean lookupNextFlag(Consumer<NArg> consumer);
 
     /**
      * search for the given named flag without consuming ar altering the current
@@ -727,7 +717,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @param consumer consumer to call when the argument is found
      * @return true if found and the consumer is invoked
      */
-    boolean lookupNextOptionalFlag(NArgProcessor<NOptional<Boolean>> consumer);
+    boolean lookupNextTrueFlag(Consumer<NArg> consumer);
 
     /**
      * search for the given named flag without consuming ar altering the current
@@ -737,7 +727,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @param consumer consumer to call when the argument is found
      * @return true if found and the consumer is invoked
      */
-    boolean lookupNextOptionalFlag(NArgProcessor<NOptional<Boolean>> consumer, String... names);
+    boolean lookupNextFlag(Consumer<NArg> consumer, String... names);
 
     /**
      * search for the given named flag without consuming ar altering the current
@@ -747,7 +737,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @param consumer consumer to call when the argument is found
      * @return true if found and the consumer is invoked
      */
-    boolean lookupNextTrueFlag(NArgProcessor<Boolean> consumer);
+    boolean lookupNextTrueFlag(Consumer<NArg> consumer, String... names);
 
     /**
      * search for the given named flag without consuming ar altering the current
@@ -757,7 +747,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @param consumer consumer to call when the argument is found
      * @return true if found and the consumer is invoked
      */
-    boolean lookupNextFlag(NArgProcessor<Boolean> consumer, String... names);
+    boolean lookupNextEntry(Consumer<NArg> consumer);
 
     /**
      * search for the given named flag without consuming ar altering the current
@@ -767,77 +757,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @param consumer consumer to call when the argument is found
      * @return true if found and the consumer is invoked
      */
-    boolean lookupNextTrueFlag(NArgProcessor<Boolean> consumer, String... names);
-
-    /**
-     * search for the given named flag without consuming ar altering the current
-     * Commandline. WARNING: this method can be slow as it might work on a copy
-     * of the current NCommandLine instance
-     *
-     * @param consumer consumer to call when the argument is found
-     * @return true if found and the consumer is invoked
-     */
-    boolean lookupNextOptionalEntry(NArgProcessor<NOptional<String>> consumer);
-
-    /**
-     * search for the given named flag without consuming ar altering the current
-     * Commandline. WARNING: this method can be slow as it might work on a copy
-     * of the current NCommandLine instance
-     *
-     * @param consumer consumer to call when the argument is found
-     * @return true if found and the consumer is invoked
-     */
-    boolean lookupNextOptionalEntry(NArgProcessor<NOptional<String>> consumer, String... names);
-
-    /**
-     * search for the given named flag without consuming ar altering the current
-     * Commandline. WARNING: this method can be slow as it might work on a copy
-     * of the current NCommandLine instance
-     *
-     * @param consumer consumer to call when the argument is found
-     * @return true if found and the consumer is invoked
-     */
-    boolean lookupNextEntry(NArgProcessor<String> consumer);
-
-    /**
-     * search for the given named flag without consuming ar altering the current
-     * Commandline. WARNING: this method can be slow as it might work on a copy
-     * of the current NCommandLine instance
-     *
-     * @param consumer consumer to call when the argument is found
-     * @return true if found and the consumer is invoked
-     */
-    boolean lookupNextEntry(NArgProcessor<String> consumer, String... names);
-
-    /**
-     * search for the given named flag without consuming ar altering the current
-     * Commandline. WARNING: this method can be slow as it might work on a copy
-     * of the current NCommandLine instance
-     *
-     * @param consumer consumer to call when the argument is found
-     * @return true if found and the consumer is invoked
-     */
-    boolean lookupNextEntryValue(NArgProcessor<NLiteral> consumer);
-
-    /**
-     * search for the given named flag without consuming ar altering the current
-     * Commandline. WARNING: this method can be slow as it might work on a copy
-     * of the current NCommandLine instance
-     *
-     * @param consumer consumer to call when the argument is found
-     * @return true if found and the consumer is invoked
-     */
-    boolean lookupNextEntryValue(NArgProcessor<NLiteral> consumer, String... names);
-
-    /**
-     * search for the given named flag without consuming ar altering the current
-     * Commandline. WARNING: this method can be slow as it might work on a copy
-     * of the current NCommandLine instance
-     *
-     * @param consumer consumer to call when the argument is found
-     * @return true if found and the consumer is invoked
-     */
-    boolean lookupNextValue(NArgProcessor<NLiteral> consumer);
+    boolean lookupNextEntry(Consumer<NArg> consumer, String... names);
 
     NShellFamily getShellFamily();
 

@@ -28,7 +28,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -259,13 +258,13 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
         switch (a.key()) {
             case "-o":
             case "--offline": {
-                cmdLine.withNextFlag((v, r) -> setOffline(v));
+                cmdLine.withNextFlag((v) -> setOffline(v.booleanValue()));
                 return true;
             }
             case "-x":
             case "--freeze": {
-                cmdLine.withNextEntry((v, r) -> {
-                    for (String id : v.split(",")) {
+                cmdLine.withNextEntry((v) -> {
+                    for (String id : v.stringValue().split(",")) {
                         addLockedId(id);
                     }
                 });
@@ -274,12 +273,12 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
             case "-r":
             case "-repository":
             case "--from": {
-                cmdLine.withNextEntry((v, r) -> setRepository(v));
+                cmdLine.withNextEntry((v) -> setRepository(v.stringValue()));
                 return true;
             }
             case "-g":
             case "--args": {
-                cmdLine.withNextTrueFlag((v, r) -> {
+                cmdLine.withNextTrueFlag((v) -> {
                     this.addArgs(cmdLine.toStringArray());
                     cmdLine.skipAll();
                 });

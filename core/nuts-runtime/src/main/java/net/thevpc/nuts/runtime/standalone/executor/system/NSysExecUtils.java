@@ -99,7 +99,7 @@ public class NSysExecUtils {
                                                           NRunAs runAsMode,
                                                           String[] executionOptions
     ) {
-        NSession session = NSession.get().get();
+        NSession session = NSession.of();
         return NSysExecUtils.buildEffectiveCommand(args, runAsMode,
                 NWorkspace.of().getDesktopEnvironmentFamilies(),
                 n -> {
@@ -162,7 +162,7 @@ public class NSysExecUtils {
         if (runAsMode == null) {
             runAsMode = NRunAs.CURRENT_USER;
         }
-        NSession session = NSession.get().get();
+        NSession session = NSession.of();
         boolean runWithGui = gui != null ? gui : session.isGui() && NWorkspace.of().isGraphicalDesktopEnvironment();
         String rootUserName = rootName != null ? rootName : resolveRootUserName();
         String currentUserName = userName != null ? userName : System.getProperty("user.name");
@@ -286,8 +286,8 @@ public class NSysExecUtils {
             switch (ac.key()) {
                 case "--sudo-prompt": {
                     if (ac.getValue().isNull()) {
-                        cmdLine.withNextFlag((v, a) -> {
-                            if (v) {
+                        cmdLine.withNextFlag((v) -> {
+                            if (v.booleanValue()) {
                                 // --sudo-prompt will reset the prompt to its defaults!
                                 changePrompt.set(false);
                                 newPromptValue.set(null);
@@ -298,9 +298,9 @@ public class NSysExecUtils {
                             }
                         });
                     } else if (ac.getValue().isString()) {
-                        cmdLine.withNextEntry((v, a) -> {
+                        cmdLine.withNextEntry((v) -> {
                             changePrompt.set(true);
-                            newPromptValue.set(v);
+                            newPromptValue.set(v.stringValue());
                         });
                     } else {
                         cmdLine.skip();

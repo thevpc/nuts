@@ -198,11 +198,11 @@ public class NFetchDisplayOptions {
                 return true;
             }
             case "--dependencies": {
-                cmdLine.withNextFlag((v, r) -> this.setDependencies(v));
+                cmdLine.withNextFlag((v) -> this.setDependencies(v.booleanValue()));
                 return true;
             }
             case "--content": {
-                cmdLine.withNextFlag((v, r) -> this.setContent(v));
+                cmdLine.withNextFlag((v) -> this.setContent(v.booleanValue()));
                 return true;
             }
         }

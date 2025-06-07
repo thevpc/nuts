@@ -116,7 +116,7 @@ public class CoreNIdUtils {
 
     public static NId apiId(String apiVersion) {
         NAssert.requireNonBlank(apiVersion, "version");
-        NWorkspace workspace = NWorkspace.get().get();
+        NWorkspace workspace = NWorkspace.of();
         if (apiVersion.equals(workspace.getApiVersion().toString())) {
             return workspace.getApiId();
         }
@@ -125,7 +125,7 @@ public class CoreNIdUtils {
 
     public static NId runtimeId(String runtimeVersion) {
         NAssert.requireNonBlank(runtimeVersion, "runtimeVersion");
-        NWorkspace workspace = NWorkspace.get().get();
+        NWorkspace workspace = NWorkspace.of();
         if (runtimeVersion.equals(workspace.getApiVersion().toString())) {
             return workspace.getApiId();
         }
@@ -134,7 +134,7 @@ public class CoreNIdUtils {
 
     public static NId findRuntimeForApi(String apiVersion) {
         NAssert.requireNonBlank(apiVersion, "apiVersion");
-        NWorkspace workspace = NWorkspace.get().get();
+        NWorkspace workspace = NWorkspace.of();
         if (apiVersion.equals(workspace.getApiVersion().toString())) {
             return workspace.getRuntimeId();
         }

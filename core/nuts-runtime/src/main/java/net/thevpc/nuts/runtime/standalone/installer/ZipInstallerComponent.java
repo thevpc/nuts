@@ -35,8 +35,6 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.UnzipOptions;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NInstallerComponent;
@@ -70,8 +68,8 @@ public class ZipInstallerComponent implements NInstallerComponent {
         NCmdLine cmd = NCmdLine.of(executionContext.getArguments());
         UnzipOptions unzipOptions = new UnzipOptions();
         while (cmd.hasNext()) {
-            if (!cmd.withNextFlag((v, a) -> {
-                unzipOptions.setSkipRoot(v);
+            if (!cmd.withNextFlag((v) -> {
+                unzipOptions.setSkipRoot(v.booleanValue());
             }, "--unzip-skip-root")) {
                 cmd.next();
             }

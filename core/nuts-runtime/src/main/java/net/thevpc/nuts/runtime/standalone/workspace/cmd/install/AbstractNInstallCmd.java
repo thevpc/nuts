@@ -300,12 +300,12 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
         switch (aa.key()) {
             case "-c":
             case "--companions": {
-                cmdLine.withNextFlag((v, a) -> this.setCompanions(v));
+                cmdLine.withNextFlag((v) -> this.setCompanions(v.booleanValue()));
                 return true;
             }
             case "-i":
             case "--installed": {
-                cmdLine.withNextFlag((v, a) -> this.setInstalled(v));
+                cmdLine.withNextFlag((v) -> this.setInstalled(v.booleanValue()));
                 return true;
             }
             case "-s":

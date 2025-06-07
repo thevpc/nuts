@@ -123,7 +123,7 @@ public class JavaClassUtils {
     public static NExecutionEntry parseClassExecutionEntry(InputStream classStream, String sourceName) {
         MainClassType mainClass = null;
         try {
-            mainClass = getMainClassType(classStream, NWorkspace.get().get());
+            mainClass = getMainClassType(classStream, NWorkspace.of());
         } catch (Exception ex) {
             NLogOp.of(CorePlatformUtils.class).level(Level.FINE).error(ex)
                     .log(NMsg.ofC("invalid java class file format %s", sourceName));

@@ -48,7 +48,7 @@ public class WorkspaceTest {
                 "--verbose",
                 "--install-companions=false",
                 "--verbose"
-        );
+        ).share();
         Assertions.assertEquals(
                 NPath.of(new File(wsPath, "cache")),
                 NWorkspace.of().getStoreLocation(NStoreType.CACHE));
@@ -114,7 +114,8 @@ public class WorkspaceTest {
                 "--exploded",
                 "--archetype", "default",
                 "--verbose",
-                "--install-companions=false");
+                "--install-companions=false")
+                .share();
         String base = "";
         switch (NOsFamily.getCurrent()) {
             case WINDOWS: {
@@ -173,7 +174,8 @@ public class WorkspaceTest {
 
     @Test
     public void createUtilTypes() {
-        TestUtils.runNewTestWorkspace("--verbose","-b");
+        TestUtils.runNewTestWorkspace("--verbose","-b")
+                .share();
 
         {
             NPath home = NPath.of(new File(System.getProperty("user.home")));
@@ -396,7 +398,7 @@ public class WorkspaceTest {
                         "--trace",
                         "info"
                 )
-        );
+        ).share();
         for (NStoreType value : NStoreType.values()) {
             NOut.println(NMsg.ofC("%s %s", value, NWorkspace.of().getStoreLocation(value)));
         }
@@ -408,7 +410,7 @@ public class WorkspaceTest {
                         "-!Z",
                         "--trace",
                         "info"
-                ));
+                )).share();
 
         for (NStoreType value : NStoreType.values()) {
             Assertions.assertEquals(
@@ -487,7 +489,7 @@ public class WorkspaceTest {
         File base = TestUtils.getTestBaseFolder();
 
 //        CoreIOUtils.delete(null,base);
-        TestUtils.runNewTestWorkspace(
+        NWorkspace ws1=TestUtils.runNewTestWorkspace(
                 "--system-bin-home", new File(base, "system.bin").getPath(),
                 "--system-conf-home", new File(base, "system.conf").getPath(),
                 "--system-var-home", new File(base, "system.var").getPath(),
@@ -498,15 +500,16 @@ public class WorkspaceTest {
                 "--system-run-home", new File(base, "system.run").getPath(),
                 //            "--verbose",
                 "--install-companions=false",
-                "info");
+                "info").share();
 
-        TestUtils.runExistingTestWorkspace("--system-conf-home", new File(base, "system.conf.ignored").getPath(),
-                "info");
+        NWorkspace ws2=TestUtils.runExistingTestWorkspace("--system-conf-home", new File(base, "system.conf.ignored").getPath(),
+                "info").share();
         TestUtils.println("==========================");
         NInfoCmd.of().println();
         TestUtils.println("==========================");
         TestUtils.println(new File(base, "system.bin").getPath());
         NWorkspace workspace = NWorkspace.of();
+        NWorkspace ws3=workspace;
         TestUtils.println(workspace.getStoreLocation(NStoreType.BIN));
         Assertions.assertEquals(
                 NPath.of(new File(base, "system.bin")),

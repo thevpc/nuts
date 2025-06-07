@@ -315,10 +315,10 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
 
     private Map<String, Supplier<Object>> buildMapSupplier() {
         Map<String, Supplier<Object>> props = new HashMap<>();
-        props.put("name", () ->  stringValue(NWorkspace.get().get().getName()));
-        props.put("nuts-api-version", () ->  NWorkspace.get().get().getApiVersion());
-        props.put("nuts-api-id", () ->  NWorkspace.get().get().getApiId());
-        props.put("nuts-runtime-id", () ->  NWorkspace.get().get().getRuntimeId());
+        props.put("name", () ->  stringValue(NWorkspace.of().getName()));
+        props.put("nuts-api-version", () ->  NWorkspace.of().getApiVersion());
+        props.put("nuts-api-id", () ->  NWorkspace.of().getApiId());
+        props.put("nuts-runtime-id", () ->  NWorkspace.of().getRuntimeId());
         props.put("nuts-app-id", () ->  NApp.of().getId().orNull());
 
         props.put("nuts-runtime-classpath",
@@ -342,7 +342,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
                     return txt.ofBuilder().appendJoined(";", runtimeClassPath);
                 }
         );
-        props.put("nuts-workspace-id", () ->  NText.ofStyledPath(stringValue(NWorkspace.get().get().getUuid())));
+        props.put("nuts-workspace-id", () ->  NText.ofStyledPath(stringValue(NWorkspace.of().getUuid())));
         props.put("nuts-store-layout", () ->  NWorkspace.of().getStoreLayout());
         props.put("nuts-store-strategy", () ->  NWorkspace.of().getStoreStrategy());
         props.put("nuts-repo-store-strategy", () ->  NWorkspace.of().getRepositoryStoreStrategy());
@@ -371,7 +371,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         props.put("nuts-confirm", () ->  NWorkspace.of().getBootOptions().getConfirm().orNull());
         props.put("nuts-dependency-solver", () ->  NWorkspace.of().getBootOptions().getDependencySolver().orNull());
         props.put("nuts-progress-options", () ->  NWorkspace.of().getBootOptions().getProgressOptions().orNull());
-        props.put("nuts-progress", () ->  NSession.get().get().isProgress());
+        props.put("nuts-progress", () ->  NSession.of().isProgress());
         props.put("nuts-terminal-mode", () ->  NWorkspace.of().getBootOptions().getTerminalMode().orNull());
         props.put("nuts-cached", () ->  NWorkspace.of().getBootOptions().getCached().orNull());
         props.put("nuts-install-companions", () ->  NWorkspace.of().getBootOptions().getInstallCompanions().orNull());
@@ -415,7 +415,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         props.put("java-version", () ->  NVersion.get(System.getProperty("java.version")).get());
         props.put("platform", () ->  NWorkspace.of().getPlatform());
         props.put("java-home", () ->  NPath.of(System.getProperty("java.home")));
-        props.put("java-executable", () ->  NPath.of(NJavaSdkUtils.of(NWorkspace.get().get()).resolveJavaCommandByHome(null)));
+        props.put("java-executable", () ->  NPath.of(NJavaSdkUtils.of(NWorkspace.of()).resolveJavaCommandByHome(null)));
         props.put("java-classpath",
                 () ->  NTextBuilder.of().appendJoined(";",
                         Arrays.stream(System.getProperty("java.class.path").split(File.pathSeparator))
@@ -602,7 +602,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         props.put("java-version", NVersion.get(System.getProperty("java.version")).get());
         props.put("platform", workspace.getPlatform());
         props.put("java-home", NPath.of(System.getProperty("java.home")));
-        props.put("java-executable", NPath.of(NJavaSdkUtils.of(NWorkspace.get().get()).resolveJavaCommandByHome(null)));
+        props.put("java-executable", NPath.of(NJavaSdkUtils.of(NWorkspace.of()).resolveJavaCommandByHome(null)));
         props.put("java-classpath",
                 txt.ofBuilder().appendJoined(";",
                         Arrays.stream(System.getProperty("java.class.path").split(File.pathSeparator))

@@ -68,7 +68,7 @@ public final class CoreNUtilGui {
             return new GuiResult(line, rememberMe && false);
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
-            NSession session = NSession.get().get();
+            NSession session = NSession.of();
             session.err().println(NMsg.ofC("[Graphical Environment Unsupported] %s", title));
             String line = session.getTerminal().readLine(NMsg.ofPlain(message.toString()));
             return new GuiResult(line, rememberMe && false);
@@ -101,7 +101,7 @@ public final class CoreNUtilGui {
             return new GuiResult("", rememberMe && false);
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
-            NSession session = NSession.get().get();
+            NSession session = NSession.of();
             session.err().println(NMsg.ofC("[Graphical Environment Unsupported] %s", title));
             return new GuiResult(
                     session.getTerminal().readLine(NMsg.ofPlain(message.toString())),
@@ -121,7 +121,7 @@ public final class CoreNUtilGui {
             javax.swing.JOptionPane.showMessageDialog(null, messageString, titleString, JOptionPane.QUESTION_MESSAGE);
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
-            NSession session = NSession.get().get();
+            NSession session = NSession.of();
             session.err().println(NMsg.ofC("[Graphical Environment Unsupported] %s", title));
         }
     }

@@ -225,7 +225,7 @@ public class DefaultNElementWriter implements NElementWriter {
     @Override
     public void writeln(Object any) {
         NSession session = NSession.of();
-        writeln(session.getTerminal());
+        writeln(any,session.getTerminal());
     }
 
     @Override
@@ -252,7 +252,7 @@ public class DefaultNElementWriter implements NElementWriter {
 
     @Override
     public void write(Object any, Path path) {
-        write(NPath.of(path));
+        write(any,NPath.of(path));
     }
 
     @Override

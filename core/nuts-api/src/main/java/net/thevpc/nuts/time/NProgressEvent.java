@@ -40,14 +40,14 @@ public interface NProgressEvent extends NSessionProvider {
 
     static NProgressEvent ofStart(Object source, NMsg message, long length) {
         return new DefaultNProgressEvent(source, message, 0, 0, null, 0, 0,
-                length, null, NSession.get().get(), null, NProgressEventType.START);
+                length, null, NSession.of(), null, NProgressEventType.START);
     }
 
     static NProgressEvent ofComplete(Object source, NMsg message, long globalCount, long globalDurationNanos,
                                      Double percent,
                                      long partialCount, long partialDurationNanos, long length, Throwable exception) {
         return new DefaultNProgressEvent(source, message, globalCount, globalDurationNanos, percent, partialCount, partialDurationNanos,
-                length, exception, NSession.get().get(), null, NProgressEventType.COMPLETE);
+                length, exception, NSession.of(), null, NProgressEventType.COMPLETE);
     }
 
     static NProgressEvent ofProgress(Object source, NMsg message,
@@ -55,7 +55,7 @@ public interface NProgressEvent extends NSessionProvider {
                                      Double percent,
                                      long partialCount, long partialDurationNanos, long length, Throwable exception) {
         return new DefaultNProgressEvent(source, message, globalCount, globalDurationNanos, percent, partialCount, partialDurationNanos,
-                length, exception, NSession.get().get(), null, NProgressEventType.PROGRESS);
+                length, exception, NSession.of(), null, NProgressEventType.PROGRESS);
     }
 
     /**

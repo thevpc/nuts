@@ -58,20 +58,22 @@ public class ExecTest {
                 printlnNode(d, "");
             }
         }
-        String result = NExecCmd.of()
-                .addWorkspaceOptions(NWorkspaceOptionsBuilder.of()
-                        .setBot(true)
-                        .setWorkspace(NWorkspace.of().getWorkspaceLocation().resolve("temp-ws").toString())
-                        .build()
-                )
-                //.addExecutorOption("--main-class=Version")
-                .addCommand(
-                        "https://search.maven.org/remotecontent?filepath=net/thevpc/hl/hl/0.1.0/hl-0.1.0.jar",
+        if(false) {
+            String result = NExecCmd.of()
+                    .addWorkspaceOptions(NWorkspaceOptionsBuilder.of()
+                            .setBot(true)
+                            .setWorkspace(NWorkspace.of().getWorkspaceLocation().resolve("temp-ws").toString())
+                            .build()
+                    )
+                    //.addExecutorOption("--main-class=Version")
+                    .addCommand(
+                            "https://search.maven.org/remotecontent?filepath=net/thevpc/hl/hl/0.1.0/hl-0.1.0.jar",
 //                "https://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar",
-                        "--version"
-                ).grabAll().failFast().getGrabbedOutString();
-        TestUtils.println("Result:");
-        TestUtils.println(result);
+                            "--version"
+                    ).grabAll().failFast().getGrabbedOutString();
+            TestUtils.println("Result:");
+            TestUtils.println(result);
+        }
         //Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
     }
 

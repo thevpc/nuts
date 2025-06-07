@@ -31,7 +31,7 @@ public class NElementMapperCollection implements NElementMapper {
     public NElement createElement(Object o, Type typeOfSrc, NElementFactoryContext context) {
         Collection<Object> coll = (Collection) o;
         List<NElement> collect = coll.stream().map(x -> context.createElement(x)).collect(Collectors.toList());
-        return new DefaultNArrayElement(null,null,collect, new NElementAnnotation[0],null);
+        return new DefaultNArrayElement(null, null, collect, new NElementAnnotation[0], null);
     }
 
     public Collection fillObject(NElement o, Collection coll, Type elemType, Type to, NElementFactoryContext context) {
@@ -43,15 +43,15 @@ public class NElementMapperCollection implements NElementMapper {
 
     @Override
     public Collection createObject(NElement o, Type to, NElementFactoryContext context) {
+        if(to==null){
+            to=ArrayList.class;
+        }
         Class cls = ReflectUtils.getRawClass(to);
         Type elemType = Object.class;
         if (to instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) to;
             elemType = pt.getActualTypeArguments()[0];
         }
-//            if (cls == null) {
-//                throw new IllegalArgumentException("invalid");
-//            }
         switch (cls.getName()) {
             case "java.util.Collection":
             case "java.util.List":

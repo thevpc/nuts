@@ -437,34 +437,34 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
 //            }
             case "-i":
             case "--installed": {
-                cmdLine.withNextFlag((v, r) -> this.setInstalled(v));
+                cmdLine.withNextFlag((v) -> this.setInstalled(v.booleanValue()));
                 return true;
             }
             case "-r":
             case "--runtime": {
-                cmdLine.withNextFlag((v, r) -> this.setRuntime(v));
+                cmdLine.withNextFlag((v) -> this.setRuntime(v.booleanValue()));
                 return true;
             }
             case "-A":
             case "--api": {
-                cmdLine.withNextFlag((v, r) -> this.setApi(v));
+                cmdLine.withNextFlag((v) -> this.setApi(v.booleanValue()));
                 return true;
             }
 
             case "-e":
             case "--extensions": {
-                cmdLine.withNextFlag((v, r) -> this.setExtensions(v));
+                cmdLine.withNextFlag((v) -> this.setExtensions(v.booleanValue()));
                 return true;
             }
             case "-c":
             case "--companions": {
-                cmdLine.withNextFlag((v, r) -> this.setCompanions(v));
+                cmdLine.withNextFlag((v) -> this.setCompanions(v.booleanValue()));
                 return true;
             }
             case "-v":
             case "--api-version":
             case "--to-version": {
-                cmdLine.withNextEntry((v, r) -> this.setApiVersion(NVersion.get(v).get()));
+                cmdLine.withNextEntry((v) -> this.setApiVersion(NVersion.get(v.stringValue()).get()));
                 return true;
             }
             case "-g":

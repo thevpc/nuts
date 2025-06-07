@@ -1006,7 +1006,7 @@ public class DefaultNWorkspaceConfigModel {
                     @Override
                     public int compare(String o1, String o2) {
                         if (!o1.equals(o2)) {
-                            String n = NDependencySolverUtils.resolveSolverName(NSession.get().get().getDependencySolver());
+                            String n = NDependencySolverUtils.resolveSolverName(NSession.of().getDependencySolver());
                             if (o1.equals(n)) {
                                 return -1;
                             }

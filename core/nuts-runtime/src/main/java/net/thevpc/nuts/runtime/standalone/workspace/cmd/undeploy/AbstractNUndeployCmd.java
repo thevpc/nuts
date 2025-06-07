@@ -131,13 +131,13 @@ public abstract class AbstractNUndeployCmd extends NWorkspaceCmdBase<NUndeployCm
         boolean enabled = aa.isNonCommented();
         switch (aa.key()) {
             case "--offline": {
-                cmdLine.withNextFlag((v, a) -> setOffline(v));
+                cmdLine.withNextFlag((v) -> setOffline(v.booleanValue()));
                 return true;
             }
             case "-r":
             case "-repository":
             case "--from": {
-                cmdLine.withNextEntry((v, a) -> setRepository(v));
+                cmdLine.withNextEntry((v) -> setRepository(v.stringValue()));
                 break;
             }
 

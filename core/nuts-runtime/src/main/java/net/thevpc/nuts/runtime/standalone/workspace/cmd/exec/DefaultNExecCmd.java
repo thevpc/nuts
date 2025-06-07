@@ -32,7 +32,6 @@ import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NExecutableInformationExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NExecutionContextBuilder;
-import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.executor.ArtifactExecutorComponent;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.bundle.DefaultNBundleInternalExecutable;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy.DefaultNDeployInternalExecutable;
@@ -82,7 +81,7 @@ import java.util.logging.Level;
 public class DefaultNExecCmd extends AbstractNExecCmd {
 
     public DefaultNExecCmd(NWorkspace workspace) {
-        super(workspace);
+        super();
     }
 
     private void refactorCommand() {
@@ -392,6 +391,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                     NPath path = null;
                     try {
                         path = NPath.of(cmdName);
+//                        path.getName();
                         c = characterizeForExec(path, executorOptions);
                     } catch (Exception ex) {
                         //

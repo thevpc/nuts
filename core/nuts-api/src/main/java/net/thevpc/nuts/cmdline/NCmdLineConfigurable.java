@@ -30,7 +30,7 @@ import net.thevpc.nuts.util.NMsg;
 import java.util.Arrays;
 
 /**
- * Configurable interface define a extensible way to configure nuts commands and
+ * Configurable interface define an extensible way to configure nuts commands and
  * objects using simple argument line options.
  *
  * @author thevpc

@@ -48,7 +48,7 @@ public interface NExtensions extends NComponent  {
     }
 
     static NExtensions of() {
-        return NWorkspace.get().get().extensions();
+        return NWorkspace.of().extensions();
     }
     static NOptional<NExtensions> get() {
         return NWorkspace.get().map(x->x.extensions());

@@ -25,7 +25,7 @@ public class UserElementMapperStore implements NElementMapperStore {
     private DefaultElementMapperStore defaultElementMapperStore;
     private final NClassMap<NElementMapper> lvl1_customMappersByType = new NClassMap<>(null, NElementMapper.class);
     private final List<NElementKeyResolverEntry> lvl2_customMappersByKey = new ArrayList<>();
-    private Predicate<Type> indestructibleObjects = CoreNElementUtils.DEFAULT_INDESTRUCTIBLE;
+    private Predicate<Type> indestructibleTypesFilter = null;//CoreNElementUtils.DEFAULT_INDESTRUCTIBLE;
     private NReflectRepository reflectRepository;
 
     static class NElementKeyResolverEntry<T> {
@@ -69,7 +69,7 @@ public class UserElementMapperStore implements NElementMapperStore {
                     }
                 }
             }
-            this.indestructibleObjects = other.getIndestructibleObjects();
+            this.indestructibleTypesFilter = other.getIndestructibleTypesFilter();
         }
         return this;
     }
@@ -84,17 +84,17 @@ public class UserElementMapperStore implements NElementMapperStore {
         return new DefaultNElementMapperBuilder<>(reflectRepository, type);
     }
 
-    public Predicate<Type> getIndestructibleObjects() {
-        return indestructibleObjects;
+    public Predicate<Type> getIndestructibleTypesFilter() {
+        return indestructibleTypesFilter;
     }
 
     @Override
-    public UserElementMapperStore setDefaultIndestructibleFilter() {
-        return setIndestructibleFilter(CoreNElementUtils.DEFAULT_INDESTRUCTIBLE);
+    public UserElementMapperStore setDefaultIndestructibleTypesFilter() {
+        return setIndestructibleTypesFilter(CoreNElementUtils.DEFAULT_INDESTRUCTIBLE);
     }
 
-    public UserElementMapperStore setIndestructibleFilter(Predicate<Type> destructTypeFilter) {
-        this.indestructibleObjects = destructTypeFilter;
+    public UserElementMapperStore setIndestructibleTypesFilter(Predicate<Type> destructTypeFilter) {
+        this.indestructibleTypesFilter = destructTypeFilter;
         return this;
     }
 

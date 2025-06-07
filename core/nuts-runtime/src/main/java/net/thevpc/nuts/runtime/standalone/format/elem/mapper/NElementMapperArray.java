@@ -17,6 +17,9 @@ public class NElementMapperArray implements NElementMapper<Object> {
     @Override
     public Object createObject(NElement json, Type typeOfResult, NElementFactoryContext context) {
         NArrayElement e = (NArrayElement) json;
+        if(typeOfResult==null){
+            typeOfResult=Object[].class;
+        }
         Class arrType = (Class) typeOfResult;
         Class componentType = arrType.getComponentType();
         switch (componentType.getName()) {

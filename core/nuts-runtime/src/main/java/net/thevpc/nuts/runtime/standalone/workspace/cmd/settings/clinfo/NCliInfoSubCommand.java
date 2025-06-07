@@ -14,17 +14,17 @@ import net.thevpc.nuts.util.NBlankable;
  * @author thevpc
  */
 public class NCliInfoSubCommand extends AbstractNSettingsSubCommand {
-    public NCliInfoSubCommand(NWorkspace workspace) {
+    public NCliInfoSubCommand() {
         super();
     }
 
     @Override
     public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
-        if(cmdLine.withNextEntry((v,a)->{
+        if(cmdLine.withNextEntry((v)->{
             if(NBlankable.isBlank(v)){
                 doLoadCliId();
             }else{
-                doSaveCliId(v);
+                doSaveCliId(v.stringValue());
             }
         },"cli-id")){
             return true;

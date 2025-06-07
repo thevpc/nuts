@@ -110,8 +110,7 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
                 case NConstants.IdProperties.SCOPE:
                 case NConstants.IdProperties.OPTIONAL:
                 case NConstants.IdProperties.EXCLUSIONS:
-                case NConstants.IdProperties.TYPE:
-                {
+                case NConstants.IdProperties.TYPE: {
                     break;
                 }
                 default: {
@@ -123,7 +122,7 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
         }
         NIdFormat id1 = NIdFormat.of();
         for (String omitQueryProperty : getOmitQueryProperties()) {
-            id1.setOmitProperty(omitQueryProperty,true);
+            id1.setOmitProperty(omitQueryProperty, true);
         }
         return id1
                 .setValue(id.build())
@@ -211,10 +210,10 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
         if (aa == null) {
             return false;
         }
-        boolean enabled=aa.isNonCommented();
-        switch(aa.key()) {
+        boolean enabled = aa.isNonCommented();
+        switch (aa.key()) {
             case "--omit-env": {
-                cmdLine.withNextFlag((v, a) -> setOmitOtherProperties(v));
+                cmdLine.withNextFlag((v) -> setOmitOtherProperties(v.booleanValue()));
                 return true;
             }
 //            case "--omit-face": {
@@ -222,19 +221,19 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
 //                return true;
 //            }
             case "--omit-group": {
-                cmdLine.withNextFlag((v, a) -> setOmitGroupId(v));
+                cmdLine.withNextFlag((v) -> setOmitGroupId(v.booleanValue()));
                 return true;
             }
             case "--omit-imported-group": {
-                cmdLine.withNextFlag((v, a) -> setOmitImportedGroup(v));
+                cmdLine.withNextFlag((v) -> setOmitImportedGroup(v.booleanValue()));
                 return true;
             }
             case "--omit-repo": {
-                cmdLine.withNextFlag((v, a) -> setOmitRepository(v));
+                cmdLine.withNextFlag((v) -> setOmitRepository(v.booleanValue()));
                 return true;
             }
             case "--highlight-imported-group": {
-                cmdLine.withNextFlag((v, a) -> setHighlightImportedGroup(v));
+                cmdLine.withNextFlag((v) -> setHighlightImportedGroup(v.booleanValue()));
                 return true;
             }
         }

@@ -77,19 +77,19 @@ public class NIdFormatHelper {
     public static NIdFormatHelper of(Object object) {
         if (object instanceof NId) {
             NId v = (NId) object;
-            return (new NIdFormatHelper(v, NWorkspace.get().get()));
+            return (new NIdFormatHelper(v, NWorkspace.of()));
         } else if (object instanceof NDescriptor) {
             NDescriptor v = (NDescriptor) object;
-            return (new NIdFormatHelper(v, NWorkspace.get().get()));
+            return (new NIdFormatHelper(v, NWorkspace.of()));
         } else if (object instanceof NDefinition) {
             NDefinition v = (NDefinition) object;
-            return (new NIdFormatHelper(v, NWorkspace.get().get()));
+            return (new NIdFormatHelper(v, NWorkspace.of()));
         } else if (object instanceof NDependency) {
             NDependency v = (NDependency) object;
-            return (new NIdFormatHelper(v, NWorkspace.get().get()));
+            return (new NIdFormatHelper(v, NWorkspace.of()));
         } else if (object instanceof NDependencyTreeNode) {
             NDependencyTreeNode v = (NDependencyTreeNode) object;
-            return (new NIdFormatHelper(v, NWorkspace.get().get()));
+            return (new NIdFormatHelper(v, NWorkspace.of()));
         } else {
             return null;
         }

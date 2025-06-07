@@ -245,8 +245,8 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
         boolean enabled = aa.isNonCommented();
         switch (aa.key()) {
             case "--border": {
-                cmdLine.withNextEntry((v, a) -> {
-                    switch (NStringUtils.trim(v)) {
+                cmdLine.withNextEntry((v) -> {
+                    switch (NStringUtils.trim(v.stringValue())) {
                         case "simple": {
                             setLinkFormat(LINK_ASCII_FORMATTER);
                             break;
@@ -260,11 +260,11 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
                 return true;
             }
             case "--omit-root": {
-                cmdLine.withNextFlag((v, a) -> setOmitRoot(v));
+                cmdLine.withNextFlag((v) -> setOmitRoot(v.booleanValue()));
                 return true;
             }
             case "--infinite": {
-                cmdLine.withNextFlag((v, a) -> infinite = (v));
+                cmdLine.withNextFlag((v) -> infinite = (v.booleanValue()));
                 return true;
             }
             case DefaultNPropertiesFormat.OPTION_MULTILINE_PROPERTY: {
