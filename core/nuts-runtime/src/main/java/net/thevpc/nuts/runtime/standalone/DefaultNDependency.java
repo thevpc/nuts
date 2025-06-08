@@ -33,6 +33,8 @@ import net.thevpc.nuts.util.NStringMapFormat;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by vpc on 1/5/17.
@@ -67,22 +69,59 @@ public class DefaultNDependency implements NDependency {
         this.classifier = NStringUtils.trimToNull(classifier);
         this.scope = NDependencyScope.parse(scope).orElse(NDependencyScope.API).id();
 
-        String o = NStringUtils.trimToNull(optional);
-        if ("false".equalsIgnoreCase(o)) {
-            o = null;
-        } else if ("true".equalsIgnoreCase(o)) {
-            o = "true";//remove case and formatting
+        String validOptional = NStringUtils.trimToNull(optional);
+        if ("false".equalsIgnoreCase(validOptional)) {
+            validOptional = null;
+        } else if ("true".equalsIgnoreCase(validOptional)) {
+            validOptional = "true";//remove case and formatting
         }
         NDependencyScopePattern s = NDependencyScopePattern.parse(scope).orElse(null);
         if(s!=null && s==NDependencyScopePattern.SYSTEM){
             //force to true when system
-            o="true";
+            validOptional="true";
         }
-        this.optional = o;
+        this.optional = validOptional;
         this.exclusions = NReservedLangUtils.unmodifiableList(exclusions);
         this.condition = condition == null ? NEnvCondition.BLANK : condition;
         this.type = NStringUtils.trimToNull(type);
-        this.properties = NStringUtils.trim(NStringMapFormat.DEFAULT.format(NStringMapFormat.DEFAULT.parse(properties).get()));
+        Map<String, String> m = NStringMapFormat.DEFAULT.parse(properties).get();
+        for (String k : new String[]{
+                NConstants.IdProperties.SCOPE,
+                NConstants.IdProperties.OPTIONAL,
+                NConstants.IdProperties.TYPE,
+                NConstants.IdProperties.REPO,
+        }) {
+            String old=m.remove(k);
+            if(old!=null){
+                switch (k){
+                    case NConstants.IdProperties.SCOPE:{
+                        if(!Objects.equals(old,scope) && !Objects.equals(old,this.scope)){
+                            Logger.getLogger(DefaultNDependency.class.getName()).log(Level.WARNING, "unexpected dependency key : {0} {1}<>{2},{3}", new Object[]{k,old,scope,this.scope});
+                        }
+                        break;
+                    }
+                    case NConstants.IdProperties.OPTIONAL:{
+                        if(!Objects.equals(old,optional) && !Objects.equals(old,this.optional)){
+                            Logger.getLogger(DefaultNDependency.class.getName()).log(Level.WARNING, "unexpected dependency key : {0} {1}<>{2},{3}", new Object[]{k,old,optional,this.optional});
+                        }
+                        break;
+                    }
+                    case NConstants.IdProperties.TYPE:{
+                        if(!Objects.equals(old,type) && !Objects.equals(old,this.type)){
+                            Logger.getLogger(DefaultNDependency.class.getName()).log(Level.WARNING, "unexpected dependency key : {0} {1}<>{2},{3}", new Object[]{k,old,type,this.type});
+                        }
+                        break;
+                    }
+                    case NConstants.IdProperties.REPO:{
+                        if(!Objects.equals(old,repository) && !Objects.equals(old,this.repository)){
+                            Logger.getLogger(DefaultNDependency.class.getName()).log(Level.WARNING, "unexpected dependency key : {0} {1}<>{2},{3}", new Object[]{k,old,repository,this.repository});
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        this.properties = NStringUtils.trim(NStringMapFormat.DEFAULT.format(m));
     }
 
     @Override
@@ -199,6 +238,8 @@ public class DefaultNDependency implements NDependency {
     @Override
     public NId toId() {
         Map<String, String> m = new LinkedHashMap<>();
+        Map<String, String> pp = getProperties();
+        m.putAll(pp);
         if (!NReservedUtils.isDependencyDefaultScope(scope)) {
             m.put(NConstants.IdProperties.SCOPE, scope);
         }

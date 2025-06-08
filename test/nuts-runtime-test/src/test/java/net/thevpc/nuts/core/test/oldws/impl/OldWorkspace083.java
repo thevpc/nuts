@@ -5,11 +5,14 @@ import net.thevpc.nuts.NExecutionType;
 import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.core.test.oldws.OldWorkspace;
+import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 
 public class OldWorkspace083 extends OldWorkspace {
     public OldWorkspace083(File ws) {
@@ -21,6 +24,7 @@ public class OldWorkspace083 extends OldWorkspace {
         NOut.println(NMsg.ofC("updating workspace %s in %s", version, ws));
         NExecCmd.of().setExecutionType(NExecutionType.SYSTEM)
                 .addCommand(resolveJavaFile(), "-jar", resolveJarFile().getPath())
+                .addCommand("--workspace=" + workspaceLocation)
                 .addCommand("--yes")
                 .addCommand("--verbose")
                 .addCommand("update")
@@ -35,6 +39,7 @@ public class OldWorkspace083 extends OldWorkspace {
         NExecCmd.of().setExecutionType(NExecutionType.SYSTEM)
                 .addCommand(resolveJavaFile(), "-jar", resolveJarFile().getPath())
                 //disable creating of bashrc, etc...
+                .addCommand("--workspace=" + workspaceLocation)
                 .addCommand("--!switch")
                 //disable progress indicator
 //                    .addCommand("--!progress")

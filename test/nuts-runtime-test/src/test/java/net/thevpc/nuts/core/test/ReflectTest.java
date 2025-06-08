@@ -62,9 +62,9 @@ public class ReflectTest {
             for (NReflectProperty declaredProperty : declaredProperties) {
                 s.println(declaredProperty);
             }
-            Assertions.assertEquals(("net.thevpc.nuts.core.test.Test49_ReflectTest$C<java.lang.String, java.lang.String, java.lang.String>.bij\n" +
-                    "net.thevpc.nuts.core.test.Test49_ReflectTest$C<java.lang.String, java.lang.String, java.lang.String>.bjk\n" +
-                    "net.thevpc.nuts.core.test.Test49_ReflectTest$C<java.lang.String, java.lang.String, java.lang.String>.bik")
+            Assertions.assertEquals(("net.thevpc.nuts.core.test.ReflectTest$C<java.lang.String, java.lang.String, java.lang.String>.bij\n" +
+                    "net.thevpc.nuts.core.test.ReflectTest$C<java.lang.String, java.lang.String, java.lang.String>.bjk\n" +
+                    "net.thevpc.nuts.core.test.ReflectTest$C<java.lang.String, java.lang.String, java.lang.String>.bik")
                     .trim(), s.trim().toString());
             System.out.println(type);
         }
@@ -77,8 +77,8 @@ public class ReflectTest {
                 s.println(declaredProperty);
             }
             Assertions.assertEquals((
-                    "net.thevpc.nuts.core.test.Test49_ReflectTest$D<java.lang.Double, java.lang.Integer>.an\n" +
-                            "net.thevpc.nuts.core.test.Test49_ReflectTest$D<java.lang.Double, java.lang.Integer>.bmn\n")
+                    "net.thevpc.nuts.core.test.ReflectTest$D<java.lang.Double, java.lang.Integer>.an\n" +
+                            "net.thevpc.nuts.core.test.ReflectTest$D<java.lang.Double, java.lang.Integer>.bmn\n")
                     .trim(), s.trim().toString());
             System.out.println(type);
         }

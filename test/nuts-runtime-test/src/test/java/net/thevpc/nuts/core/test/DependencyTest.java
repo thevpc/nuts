@@ -34,8 +34,9 @@ public class DependencyTest {
     @Test
     public void testSearchDescriptor() {
         String t1="net.sourceforge.cobertura:cobertura#${cobertura.version}?a,b=c";
-        String t2="net.sourceforge.cobertura:cobertura#${cobertura.version}?ca%2Cb=c";
+        String t2="net.sourceforge.cobertura:cobertura#${cobertura.version}?a%2Cb=c";
         NDependency s = NDependency.of(t1);
+        String ssss = s.toString();
         TestUtils.println(t2);
         TestUtils.println(s.toString());
         Assertions.assertTrue(
