@@ -589,9 +589,7 @@ public class CoreNUtils {
 
         NDefaultThreadFactory(String namePattern, boolean daemon) {
             this.daemon = daemon;
-            SecurityManager s = System.getSecurityManager();
-            group = (s != null) ? s.getThreadGroup()
-                    : Thread.currentThread().getThreadGroup();
+            group = Thread.currentThread().getThreadGroup();
             namePrefix = namePattern + "-"
                     + CoreStringUtils.indexToString(poolNumber.getAndIncrement())
                     + "-";
