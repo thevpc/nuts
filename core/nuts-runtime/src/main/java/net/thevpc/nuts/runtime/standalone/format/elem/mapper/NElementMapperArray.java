@@ -1,10 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.format.elem.mapper;
 
-import net.thevpc.nuts.elem.NArrayElement;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementMapper;
+import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.format.elem.DefaultNElementFactoryService;
+import net.thevpc.nuts.util.NMsg;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
@@ -16,70 +15,74 @@ public class NElementMapperArray implements NElementMapper<Object> {
 
     @Override
     public Object createObject(NElement json, Type typeOfResult, NElementFactoryContext context) {
-        NArrayElement e = (NArrayElement) json;
-        if(typeOfResult==null){
-            typeOfResult=Object[].class;
-        }
-        Class arrType = (Class) typeOfResult;
-        Class componentType = arrType.getComponentType();
-        switch (componentType.getName()) {
-            case "boolean": {
-                boolean[] x = new boolean[e.size()];
-                for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get().asLiteral().asBoolean().get();
-                }
-                return x;
+        if(json instanceof NListContainerElement) {
+            NListContainerElement e = (NListContainerElement) json;
+            if (typeOfResult == null) {
+                typeOfResult = Object[].class;
             }
-            case "byte": {
-                byte[] x = new byte[e.size()];
-                for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get().asLiteral().asByte().get();
+            Class arrType = (Class) typeOfResult;
+            Class componentType = arrType.getComponentType();
+            switch (componentType.getName()) {
+                case "boolean": {
+                    boolean[] x = new boolean[e.size()];
+                    for (int i = 0; i < e.size(); i++) {
+                        x[i] = e.get(i).get().asLiteral().asBoolean().get();
+                    }
+                    return x;
                 }
-                return x;
-            }
-            case "short": {
-                short[] x = new short[e.size()];
-                for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get().asLiteral().asShort().get();
+                case "byte": {
+                    byte[] x = new byte[e.size()];
+                    for (int i = 0; i < e.size(); i++) {
+                        x[i] = e.get(i).get().asLiteral().asByte().get();
+                    }
+                    return x;
                 }
-                return x;
-            }
-            case "int": {
-                int[] x = new int[e.size()];
-                for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get().asLiteral().asInt().get();
+                case "short": {
+                    short[] x = new short[e.size()];
+                    for (int i = 0; i < e.size(); i++) {
+                        x[i] = e.get(i).get().asLiteral().asShort().get();
+                    }
+                    return x;
                 }
-                return x;
-            }
-            case "long": {
-                long[] x = new long[e.size()];
-                for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get().asLiteral().asLong().get();
+                case "int": {
+                    int[] x = new int[e.size()];
+                    for (int i = 0; i < e.size(); i++) {
+                        x[i] = e.get(i).get().asLiteral().asInt().get();
+                    }
+                    return x;
                 }
-                return x;
-            }
-            case "float": {
-                float[] x = new float[e.size()];
-                for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get().asLiteral().asFloat().get();
+                case "long": {
+                    long[] x = new long[e.size()];
+                    for (int i = 0; i < e.size(); i++) {
+                        x[i] = e.get(i).get().asLiteral().asLong().get();
+                    }
+                    return x;
                 }
-                return x;
-            }
-            case "double": {
-                double[] x = new double[e.size()];
-                for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get().asLiteral().asDouble().get();
+                case "float": {
+                    float[] x = new float[e.size()];
+                    for (int i = 0; i < e.size(); i++) {
+                        x[i] = e.get(i).get().asLiteral().asFloat().get();
+                    }
+                    return x;
                 }
-                return x;
-            }
-            default: {
-                Object[] x = (Object[]) Array.newInstance(componentType, e.size());
-                for (int i = 0; i < e.size(); i++) {
-                    x[i] = context.createObject(e.get(i).get(), componentType);
+                case "double": {
+                    double[] x = new double[e.size()];
+                    for (int i = 0; i < e.size(); i++) {
+                        x[i] = e.get(i).get().asLiteral().asDouble().get();
+                    }
+                    return x;
                 }
-                return x;
-            }
+                default: {
+                    Object[] x = (Object[]) Array.newInstance(componentType, e.size());
+                    for (int i = 0; i < e.size(); i++) {
+                        x[i] = context.createObject(e.get(i).get(), componentType);
+                    }
+                    return x;
+                }
 
+            }
+        }else {
+            throw new NIllegalArgumentException(NMsg.ofC("expected an array of objects", typeOfResult));
         }
     }
 
