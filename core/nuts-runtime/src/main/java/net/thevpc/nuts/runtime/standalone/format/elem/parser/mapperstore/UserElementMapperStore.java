@@ -31,10 +31,14 @@ public class UserElementMapperStore implements NElementMapperStore {
     static class NElementKeyResolverEntry<T> {
         NElementKeyResolver<T> resolver;
         Map<T, NElementMapper> byKey = new HashMap<>();
-        Type type;
 
         public NElementKeyResolverEntry(NElementKeyResolver<T> resolver) {
             this.resolver = resolver;
+        }
+        public NElementKeyResolverEntry<T> copy() {
+            NElementKeyResolverEntry<T> newInstance = new NElementKeyResolverEntry<>(resolver);
+            newInstance.byKey.putAll(byKey);
+            return newInstance;
         }
     }
 
@@ -60,13 +64,7 @@ public class UserElementMapperStore implements NElementMapperStore {
                     setMapper(c, u.lvl1_customMappersByType.get(c));
                 }
                 for (NElementKeyResolverEntry e : u.lvl2_customMappersByKey) {
-                    for (Object eeo : e.byKey.entrySet()) {
-                        Map.Entry ee = (Map.Entry) eeo;
-                        NElementKeyResolver<Object> resolver = e.resolver;
-                        Object key = ee.getKey();
-                        NElementMapper value = (NElementMapper) ee.getValue();
-                        setMapper(resolver, key, (Type) e.type, value);
-                    }
+                    this.lvl2_customMappersByKey.add(e.copy());
                 }
             }
             this.indestructibleTypesFilter = other.getIndestructibleTypesFilter();
@@ -118,7 +116,6 @@ public class UserElementMapperStore implements NElementMapperStore {
         }
         if (ok == null) {
             ok = new NElementKeyResolverEntry<>(resolver);
-            ok.type = type;
             lvl2_customMappersByKey.add(ok);
         }
         if (type instanceof Class) {

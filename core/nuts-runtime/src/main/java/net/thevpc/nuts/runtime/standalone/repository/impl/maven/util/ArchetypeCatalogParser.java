@@ -142,11 +142,11 @@ public class ArchetypeCatalogParser {
             throw new UnsupportedOperationException("unsupported operation: remove");
         }
 
-        @Override
-        protected void finalize() throws Throwable {
-            super.finalize();
-            autoCloseStream();
-        }
+//        @Override
+//        protected void finalize() throws Throwable {
+//            super.finalize();
+//            autoCloseStream();
+//        }
 
         private void autoCloseStream() {
             if (autoCloseStream) {
