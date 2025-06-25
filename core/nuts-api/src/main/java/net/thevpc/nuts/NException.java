@@ -103,7 +103,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
 
     static NText messageToFormattedString(NMsg message) {
         if (NWorkspace.get().isNotPresent()) {
-            throw new IllegalArgumentException("missing workspace");
+            throw new IllegalArgumentException(message==null?"missing workspace":message.toString());
         }
         return NText.of(validateFormattedMessage(message));
     }

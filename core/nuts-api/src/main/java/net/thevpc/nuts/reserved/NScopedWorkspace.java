@@ -37,7 +37,7 @@ public class NScopedWorkspace {
 
     public static NOptional<NWorkspace> currentWorkspace() {
         Stack<NWorkspace> workspaces = workspaceScopes();
-        NMsg emptyMessage = NMsg.ofPlain("missing current context workspace");
+        NMsg emptyMessage = NMsg.ofPlain("missing workspace in the current context. If not sure what does this mean, just call 'Nuts.require()'");
         if (workspaces.isEmpty()) {
             NWorkspace shw = defaultSharedWorkspaceInstance;
             if(shw !=null){
