@@ -25,6 +25,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.*;
+import net.thevpc.nuts.util.NOptional;
 
 import java.time.Instant;
 
@@ -67,6 +68,20 @@ public final class Nuts {
 
     public static NId getApiId() {
         return id;
+    }
+
+    /**
+     * return current context workspace, if none create one
+     *
+     * @return current context workspace, if none create one and share it
+     * @throws NBootUnsatisfiedRequirementsException
+     */
+    public static NWorkspace require() throws NBootUnsatisfiedRequirementsException {
+        NOptional<NWorkspace> w = NWorkspace.get();
+        if (w.isPresent()) {
+            return w.get();
+        }
+        return openWorkspace("--reset-options", "--in-memory").share();
     }
 
     /**
