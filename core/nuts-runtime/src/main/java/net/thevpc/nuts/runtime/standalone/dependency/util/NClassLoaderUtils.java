@@ -76,10 +76,14 @@ public final class NClassLoaderUtils {
         }
         NId id = d.toId();
         try {
-            cc = NFetchCmd.of(id)
+            cc = NSearchCmd.of(id)
                     .setDependencyFilter(NDependencyFilters.of().byRunnable())
                     .setRepositoryFilter(repositoryFilter)
-                    .getResultContent();
+                    .latest()
+                    .getResultDefinitions()
+                    .map(x->x.getContent().orNull())
+                    .filter(x->x!=null)
+                    .findFirst().orNull();
             if(cc==null){
                 //this would happen for pom ids (with no content)
                 return null;

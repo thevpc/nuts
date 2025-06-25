@@ -22,6 +22,9 @@ public class NElementMapperNumber implements NElementMapper<Number> {
 
     @Override
     public Number createObject(NElement o, Type to, NElementFactoryContext context) {
+        if(to==null){
+            to=Number.class;
+        }
         switch (((Class) to).getName()) {
             case "byte":
             case "java.lang.Byte":
@@ -45,6 +48,9 @@ public class NElementMapperNumber implements NElementMapper<Number> {
                 return new BigDecimal(o.asStringValue().get());
             case "java.lang.BigInteger":
                 return new BigInteger(o.asStringValue().get());
+        }
+        if(Number.class.isAssignableFrom((Class) to)){
+            return o.asLiteral().asNumber().get();
         }
         throw new UnsupportedOperationException("Not supported yet.");
     }
