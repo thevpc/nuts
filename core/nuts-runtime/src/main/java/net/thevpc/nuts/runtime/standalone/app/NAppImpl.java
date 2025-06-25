@@ -143,7 +143,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
                     case "auto-complete": {
                         this.mode = NApplicationMode.AUTO_COMPLETE;
                         if (execModeCommand.hasNext()) {
-                            wordIndex = execModeCommand.next().get().asInt().get();
+                            wordIndex = execModeCommand.next().get().intValue();
                         }
                         this.modeArgs = execModeCommand.toStringList();
                         execModeCommand.skipAll();

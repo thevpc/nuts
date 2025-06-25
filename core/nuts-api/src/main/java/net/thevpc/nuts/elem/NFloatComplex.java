@@ -1,5 +1,9 @@
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.reserved.NReservedUtils;
+import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NOptional;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -9,6 +13,24 @@ public class NFloatComplex extends Number implements Serializable {
     public static final NFloatComplex I = new NFloatComplex(0, 1);
     private float real;
     private float imag;
+
+    /**
+     * @param any string
+     * @return optional of complex
+     * @since 0.8.6
+     */
+    public NOptional<NFloatComplex> of(String any) {
+        try {
+            if (NBlankable.isBlank(any)) {
+                return NOptional.ofNamedEmpty("complex");
+            }
+            any = any.trim();
+            String[] c = NReservedUtils.parseComplexStrings(any);
+            return NOptional.of(new NFloatComplex(Float.parseFloat(c[0]), Float.parseFloat(c[1])));
+        } catch (Exception e) {
+            return NOptional.ofNamedError("complex : " + any);
+        }
+    }
 
     public NFloatComplex(float real, float imag) {
         this.real = real;

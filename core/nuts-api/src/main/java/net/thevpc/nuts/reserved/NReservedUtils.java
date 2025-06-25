@@ -46,6 +46,105 @@ import java.util.stream.Collectors;
  */
 public final class NReservedUtils {
 
+
+    public static String[] parseComplexStrings(String complex) {
+        if (complex == null) {
+            complex = "";
+        }
+        final int EXPECT_REAL = 0;
+        final int EXPECT_IMAG = 1;
+        int STATUS = EXPECT_REAL;
+        int i = 0;
+        StringBuilder real = new StringBuilder();
+        StringBuilder imag = new StringBuilder();
+        char[] chars = complex.toCharArray();
+        for (i = 0; i < chars.length; i++) {
+            switch (chars[i]) {
+                case '+':
+                case '-': {
+                    if (STATUS == EXPECT_REAL) {
+                        if (real.length() == 0 || real.toString().toLowerCase().endsWith("e")) {
+                            real.append(chars[i]);
+                        } else {
+                            imag.append(chars[i]);
+                            STATUS = EXPECT_IMAG;
+                        }
+                        break;
+                    } else {
+                        imag.append(chars[i]);
+                    }
+                    break;
+                }
+                case 'i':
+                case 'î': {
+                    if (STATUS == EXPECT_REAL) {
+                        imag.append(real);
+                        real.delete(0, real.length());
+                        if (imag.length() == 0) {
+                            imag.append("1");
+                        } else if (imag.toString().equals("+") || imag.toString().equals("-")) {
+                            imag.append("1");
+                        }
+                        STATUS = EXPECT_IMAG;
+                    } else {
+                        if (imag.length() == 0) {
+                            imag.append("1");
+                        } else if (imag.toString().equals("+") || imag.toString().equals("-")) {
+                            imag.append("1");
+                        }
+                        //
+                    }
+                    break;
+                }
+                case '*': {
+                    if (chars[i + 1] == 'i' || chars[i + 1] == 'î') {
+                        if (STATUS == EXPECT_REAL) {
+                            imag.append(real);
+                            real.delete(0, real.length());
+                            STATUS = EXPECT_IMAG;
+                        } else {
+                            //
+                        }
+                    } else {
+                        //
+                    }
+                    break;
+                }
+                default: {
+                    if ((chars[i] >= '0' && chars[i] <= '9') || chars[i] == '.' || chars[i] == 'E' || chars[i] == 'e') {
+                        if (STATUS == EXPECT_REAL) {
+                            real.append(chars[i]);
+                        } else {
+                            imag.append(chars[i]);
+                        }
+                    } else {
+
+                        if (STATUS == EXPECT_REAL) {
+                            real.append(chars[i]);
+                        } else {
+                            imag.append(chars[i]);
+                        }
+//                        real.delete(0,real.length());
+//                        imag.delete(0,imag.length());
+//                        real.append("NaN");
+//                        imag.append("NaN");
+                    }
+                    break;
+                }
+            }
+        }
+        if (real.length() == 0) {
+            real.append("0");
+        }
+        if (imag.length() == 0) {
+            imag.append("0");
+        }
+        return new String[]{
+                (real.toString()),
+                (imag.toString())
+        };
+    }
+
     public static String resolveJavaCommand(String javaHome) {
         String exe = NOsFamily.getCurrent().equals(NOsFamily.WINDOWS) ? "java.exe" : "java";
         if (javaHome == null || javaHome.isEmpty()) {
@@ -125,7 +224,7 @@ public final class NReservedUtils {
                 sb.append(groupId).append(":");
             }
             sb.append(NStringUtils.trim(artifactId));
-        }else{
+        } else {
             if (!NBlankable.isBlank(groupId)) {
                 sb.append(groupId);
             }
@@ -144,7 +243,7 @@ public final class NReservedUtils {
                 sb.append(groupId).append(":");
             }
             sb.append(NStringUtils.trim(artifactId));
-        }else{
+        } else {
             if (!NBlankable.isBlank(groupId)) {
                 sb.append(groupId);
             }
@@ -265,7 +364,7 @@ public final class NReservedUtils {
      * @return nutsId
      */
     public static NOptional<NId> parseId(String nutsId) {
-        nutsId=NStringUtils.trim(nutsId);
+        nutsId = NStringUtils.trim(nutsId);
         if (NBlankable.isBlank(nutsId)) {
             return NOptional.of(NId.BLANK);
         }

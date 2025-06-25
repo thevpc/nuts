@@ -97,7 +97,7 @@ public class DefaultNArg implements NArg {
      * Constructor
      *
      * @param image image string
-     * @param eq equals
+     * @param eq    equals
      */
     public DefaultNArg(String image, char eq) {
         this.eq = (eq == '\0' ? '=' : eq);
@@ -210,8 +210,108 @@ public class DefaultNArg implements NArg {
                 );
     }
 
+    @Override
+    public NOptional<Integer> getIntValue() {
+        return getValue().asInt();
+    }
+
+    @Override
+    public NOptional<Long> getLongValue() {
+        return getValue().asLong();
+    }
+
+    @Override
+    public NOptional<Double> getDoubleValue() {
+        return getValue().asDouble();
+    }
+
+    @Override
+    public NOptional<Float> getFloatValue() {
+        return getValue().asFloat();
+    }
+
+    @Override
+    public NOptional<LocalDate> getLocalDateValue() {
+        return getValue().asLocalDate();
+    }
+
+    @Override
+    public NOptional<LocalTime> getLocalTimeValue() {
+        return getValue().asLocalTime();
+    }
+
+    @Override
+    public NOptional<LocalDateTime> getLocalDateTimeValue() {
+        return getValue().asLocalDateTime();
+    }
+
+    @Override
+    public NOptional<Instant> getInstantValue() {
+        return getValue().asInstant();
+    }
+
+    @Override
+    public int intValue() {
+        return getIntValue().get();
+    }
+
+    @Override
+    public double doubleValue() {
+        return getDoubleValue().get();
+    }
+
+    @Override
+    public float floatValue() {
+        return getFloatValue().get();
+    }
+
+    @Override
+    public long longValue() {
+        return getLongValue().get();
+    }
+
+    @Override
+    public LocalDate localDateValue() {
+        return getLocalDateValue().get();
+    }
+
+    @Override
+    public LocalDateTime localTimeValue() {
+        return getLocalDateTimeValue().get();
+    }
+
+    @Override
+    public LocalDateTime localDateTimeValue() {
+        return getLocalDateTimeValue().get();
+    }
+
+    @Override
+    public Instant instantValue() {
+        return getInstantValue().get();
+    }
+
+    @Override
+    public NOptional<BigInteger> getBigIntValue() {
+        return getValue().asBigInt();
+    }
+
+    @Override
+    public BigInteger bigIntValue() {
+        return getBigIntValue().get();
+    }
+
+    @Override
+    public NOptional<BigDecimal> getBigDecimalValue() {
+        return getValue().asBigDecimal();
+    }
+
+    @Override
+    public BigDecimal bigDecimalValue() {
+        return getBigDecimalValue().get();
+    }
+
     public String stringValue() {
-            return getStringValue().get();
+        return getStringValue().get();
     }
 
     @Override

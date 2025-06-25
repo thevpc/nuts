@@ -1,5 +1,9 @@
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.reserved.NReservedUtils;
+import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NOptional;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -9,6 +13,25 @@ public class NDoubleComplex extends Number implements Serializable {
     public static final NDoubleComplex I = new NDoubleComplex(0, 1);
     private double real;
     private double imag;
+
+    /**
+     *
+     * @param any string
+     * @return optional of complex
+     * @since 0.8.6
+     */
+    public NOptional<NDoubleComplex> of(String any) {
+        try {
+            if (NBlankable.isBlank(any)) {
+                return NOptional.ofNamedEmpty("complex");
+            }
+            any = any.trim();
+            String[] c = NReservedUtils.parseComplexStrings(any);
+            return NOptional.of(new NDoubleComplex(Double.parseDouble(c[0]), Double.parseDouble(c[1])));
+        } catch (Exception e) {
+            return NOptional.ofNamedError("complex : " + any);
+        }
+    }
 
     public NDoubleComplex(double real, double imag) {
         this.real = real;
@@ -24,7 +47,7 @@ public class NDoubleComplex extends Number implements Serializable {
     }
 
     public double abs() {
-        return Math.sqrt(real*real + imag*imag);
+        return Math.sqrt(real * real + imag * imag);
     }
 
     @Override

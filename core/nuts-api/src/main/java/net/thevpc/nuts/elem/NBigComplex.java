@@ -1,6 +1,9 @@
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.reserved.NReservedUtils;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NOptional;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -13,6 +16,25 @@ public class NBigComplex extends Number implements Serializable {
     public static final NBigComplex I = new NBigComplex(BigDecimal.ZERO, BigDecimal.ONE);
     private BigDecimal real;
     private BigDecimal imag;
+
+    /**
+     *
+     * @param any string
+     * @return optional of complex
+     * @since 0.8.6
+     */
+    public NOptional<NBigComplex> of(String any) {
+        try {
+            if (NBlankable.isBlank(any)) {
+                return NOptional.ofNamedEmpty("complex");
+            }
+            any = any.trim();
+            String[] c = NReservedUtils.parseComplexStrings(any);
+            return NOptional.of(new NBigComplex(new BigDecimal(c[0]), new BigDecimal(c[1])));
+        } catch (Exception e) {
+            return NOptional.ofNamedError("complex : " + any);
+        }
+    }
 
     public NBigComplex(BigDecimal real, BigDecimal imag) {
         this.real = NAssert.requireNonNull(real, "real");

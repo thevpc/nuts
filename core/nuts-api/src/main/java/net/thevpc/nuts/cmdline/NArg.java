@@ -29,6 +29,13 @@ import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NLiteral;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 /**
  * Command Line Argument
  *
@@ -82,6 +89,7 @@ public interface NArg extends NBlankable /*extends NLiteral*/ {
     NOptional<String> getStringValue();
 
     String stringValue();
+
     /**
      * true if option is in one of the following forms :
      * <ul>
@@ -190,6 +198,128 @@ public interface NArg extends NBlankable /*extends NLiteral*/ {
     NOptional<Boolean> getBooleanValue();
 
     boolean booleanValue();
+
+    /**
+     * @return value
+     * @since 0.8.6
+     */
+    NOptional<Integer> getIntValue();
+
+    /**
+     * @return value
+     * @since 0.8.6
+     */
+    int intValue();
+
+    /**
+     * @return value
+     * @since 0.8.6
+     */
+    NOptional<Long> getLongValue();
+
+    /**
+     * @return value
+     * @since 0.8.6
+     */
+    double doubleValue();
+
+    /**
+     * @return value
+     * @since 0.8.6
+     */
+    NOptional<Double> getDoubleValue();
+
+    /**
+     * @return value
+     * @since 0.8.6
+     */
+    float floatValue();
+
+    /**
+     * @return value
+     * @since 0.8.6
+     */
+    NOptional<Float> getFloatValue();
+
+
+    /**
+     * @return value
+     * @since 0.8.6
+     */
+    NOptional<BigInteger> getBigIntValue();
+
+    /**
+     * @return value
+     * @since 0.8.6
+     */
+    BigInteger bigIntValue();
+
+
+    /**
+     * @return value
+     * @since 0.8.6
+     */
+    NOptional<BigDecimal> getBigDecimalValue();
+
+    /**
+     * @return value
+     * @since 0.8.6
+     */
+    BigDecimal bigDecimalValue();
+
+    /**
+     * @return value
+     * @since 0.8.6
+     */
+    long longValue();
+
+    /**
+     * @return value
+     * @since 0.8.6
+     */
+    NOptional<LocalDate> getLocalDateValue();
+
+    /**
+     * @return value
+     * @since 0.8.6
+     */
+    LocalDate localDateValue();
+
+    /**
+     * @return value
+     * @since 0.8.6
+     */
+    NOptional<LocalTime> getLocalTimeValue();
+
+    /**
+     * @return value
+     * @since 0.8.6
+     */
+    LocalDateTime localTimeValue();
+
+    /**
+     * @return value
+     * @since 0.8.6
+     */
+    NOptional<LocalDateTime> getLocalDateTimeValue();
+
+    /**
+     * @return value
+     * @since 0.8.6
+     */
+    LocalDateTime localDateTimeValue();
+
+    /**
+     * @return value
+     * @since 0.8.6
+     */
+    NOptional<Instant> getInstantValue();
+
+    /**
+     * @return value
+     * @since 0.8.6
+     */
+    Instant instantValue();
 
     /**
      * return key part (never null) of the argument. The key does not include
