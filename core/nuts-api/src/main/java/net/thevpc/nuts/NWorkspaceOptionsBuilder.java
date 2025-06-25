@@ -1035,4 +1035,5 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
 
     NCmdLine toCmdLine(NWorkspaceOptionsConfig config);
 
+    NWorkspaceOptionsBuilder resetOptions();
 }

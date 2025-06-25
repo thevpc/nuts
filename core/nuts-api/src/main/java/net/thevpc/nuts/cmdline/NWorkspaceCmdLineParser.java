@@ -1352,6 +1352,18 @@ public final class NWorkspaceCmdLineParser {
                             return NOptional.of(Collections.singletonList(a));
                         }
                     }
+                        // singe 0.8.6
+                    case "--reset-options": {
+                        a = cmdLine.nextFlag().get();
+                        if (active) {
+                            if (options != null) {
+                                options.resetOptions();
+                            }
+                            return NOptional.of(Collections.singletonList(a));
+                        } else {
+                            return NOptional.of(Collections.singletonList(a));
+                        }
+                    }
                     //@since 0.8.5
                     case "--in-memory": {
                         a = cmdLine.nextFlag().get();

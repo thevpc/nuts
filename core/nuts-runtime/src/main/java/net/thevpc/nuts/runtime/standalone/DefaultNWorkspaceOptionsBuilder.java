@@ -225,7 +225,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     private Instant creationTime;
 
     /**
-     * if true no real execution, 
+     * if true no real execution,
      * option-type : runtime (available only for the current workspace instance)
      */
     private Boolean dry;
@@ -429,6 +429,86 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     public DefaultNWorkspaceOptionsBuilder() {
 
+    }
+
+    @Override
+    public NWorkspaceOptionsBuilder resetOptions() {
+        outputFormatOptions = null;
+        customOptions = null;
+        apiVersion = null;
+        runtimeId = null;
+        javaCommand = null;
+        javaOptions = null;
+        workspace = null;
+        outLinePrefix = null;
+        errLinePrefix = null;
+        name = null;
+        installCompanions = null;
+        skipWelcome = null;
+        skipBoot = null;
+        system = null;
+        gui = null;
+        excludedExtensions = null;
+        repositories = null;
+        userName = null;
+        sharedInstance = null;
+        credentials = null;
+        terminalMode = null;
+        readOnly = null;
+        trace = null;
+        progressOptions = null;
+        dependencySolver = null;
+        logConfig = null;
+        confirm = null;
+        outputFormat = null;
+        applicationArguments = null;
+        openMode = null;
+        creationTime = null;
+        dry = null;
+        showStacktrace = null;
+        classLoaderSupplier = null;
+        executorOptions = null;
+        recover = null;
+        reset = null;
+        resetHard = null;
+        commandHelp = null;
+        debug = null;
+        inherited = null;
+        executionType = null;
+        runAs = null;
+        archetype = null;
+        switchWorkspace = null;
+        storeLocations = null;
+        homeLocations = null;
+        storeLayout = null;
+        storeStrategy = null;
+        repositoryStoreStrategy = null;
+        bootRepositories = null;
+        fetchStrategy = null;
+        cached = null;
+        indexed = null;
+        transitive = null;
+        bot = null;
+        previewRepo = null;
+        stdin = null;
+        stdout = null;
+        stderr = null;
+        executorService = null;
+        expireTime = null;
+        //errors are not rest
+        //errors = null;
+        skipErrors = null;
+        locale = null;
+        theme = null;
+        initLaunchers = null;
+        initScripts = null;
+        initPlatforms = null;
+        initJava = null;
+        isolationLevel = null;
+        desktopLauncher = null;
+        menuLauncher = null;
+        userLauncher = null;
+        return this;
     }
 
     @Override

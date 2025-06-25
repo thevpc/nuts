@@ -1,5 +1,6 @@
 package net.thevpc.nuts.core.test;
 
+import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.util.NToken;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NMsgParam;
@@ -100,4 +101,8 @@ public class MsgTest {
         //Assertions.assertEquals(Arrays.asList("0", "1", "2", "3", "4"), Arrays.asList(paramNames));
     }
 
+    @Test
+    public void test07() {
+        NOut.println(NMsg.ofC("##AA##"));
+    }
 }

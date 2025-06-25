@@ -270,6 +270,7 @@ public final class NBootWorkspaceCmdLineParser {
             "--sandbox",
             "--in-memory",
             "--confined",
+            "--reset-options",
             "--isolation-level",
             "--init-launchers",
             "--init-java",
