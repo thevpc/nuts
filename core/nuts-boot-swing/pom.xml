@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-boot-swing</artifactId>
-    <version>0.8.5.0</version>
+    <version>0.8.6.0</version>
     <packaging>jar</packaging>
     <name>Nuts Community Base Library for Swing Support</name>
     <url>https://github.com/thevpc/nuts</url>
@@ -52,7 +52,7 @@
     </licenses>
 
     <dependencies>
-        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts-boot</artifactId><version>0.8.5</version></dependency><dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter-api</artifactId><version>5.8.2</version><scope>test</scope></dependency>
+        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts-boot</artifactId><version>0.8.6</version></dependency><dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter-api</artifactId><version>5.8.2</version><scope>test</scope></dependency>
     </dependencies>
     <distributionManagement>
         <snapshotRepository>

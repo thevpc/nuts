@@ -1,7 +1,7 @@
 #!/bin/bash
-export NUTS_RT_VERSION=0.8.5.0
-export NUTS_APP_VERSION=0.8.5
-export NUTS_API_VERSION=0.8.5
+export NUTS_RT_VERSION=0.8.6.0
+export NUTS_APP_VERSION=0.8.6
+export NUTS_API_VERSION=0.8.6
 export TWS="$HOME/xprojects/nuts-world/nuts/test/nuts-runtime-test/runtime/test/Test23_PerfTest_testPerfLocalNoSystem"
 export NUTS_APP_JAR="${TWS}/lib/id/net/thevpc/nuts/nuts-app/${NUTS_APP_VERSION}/nuts-app-${NUTS_APP_VERSION}.jar"
 export NUTS_FILE="${TWS}/lib/id/net/thevpc/nuts/toolbox/nsh/${NUTS_RT_VERSION}/nsh-${NUTS_RT_VERSION}.jar"

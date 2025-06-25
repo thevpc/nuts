@@ -8,7 +8,7 @@ import java.time.Instant;
 import java.util.Arrays;
 
 public interface NBootWorkspace {
-    String NUTS_BOOT_VERSION = "0.8.5";
+    String NUTS_BOOT_VERSION = "0.8.6";
 
     static NBootWorkspace of(String[] args) {
         return of(NBootArguments.of(args));

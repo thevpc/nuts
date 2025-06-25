@@ -118,14 +118,14 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     public static final NVersion VERSION_REPOSITORY_CONFIG = NVersion.get("0.8.0").get();
     public static final String VERSION_REPOSITORY_REF = "0.8.0";
     public static final String VERSION_WS_CONFIG_API = "0.8.0";
-    public static final NVersion VERSION_WS_CONFIG_BOOT = NVersion.get("0.8.5").get();
+    public static final NVersion VERSION_WS_CONFIG_BOOT = NVersion.get("0.8.6").get();
     public static final String VERSION_WS_CONFIG_MAIN = "0.8.0";
     public static final String VERSION_WS_CONFIG_RUNTIME = "0.8.0";
     public static final String VERSION_WS_CONFIG_SECURITY = "0.8.0";
     public static final String VERSION_COMMAND_ALIAS_CONFIG = "0.8.0";
     public static final String VERSION_COMMAND_ALIAS_CONFIG_FACTORY = "0.8.0";
     public static final String VERSION_USER_CONFIG = "0.8.0";
-    public static final String RUNTIME_VERSION = "0.8.5.0";
+    public static final String RUNTIME_VERSION = "0.8.6.0";
     public static final String RUNTIME_VERSION_STRING = NConstants.Ids.NUTS_RUNTIME + "#" + RUNTIME_VERSION;
     public static final NId RUNTIME_ID = NId.get(RUNTIME_VERSION_STRING).get();
     public NLog LOG;

@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-app-full</artifactId>
-    <version>0.8.5</version>
+    <version>0.8.6</version>
     <packaging>jar</packaging><!-- small changes, do not require version change, didn't updated the version-->
     <name>Nuts Community App Full</name>
     <url>https://github.com/thevpc/nuts</url>
@@ -23,8 +23,8 @@
         <url>https://github.com/thevpc/nuts/tree/master</url>
     </scm>
     <dependencies>
-        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts</artifactId><version>0.8.5</version></dependency>
-        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts-runtime</artifactId><version>0.8.5.0</version></dependency>
+        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts</artifactId><version>0.8.6</version></dependency>
+        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts-runtime</artifactId><version>0.8.6.0</version></dependency>
     </dependencies>
 
     <organization>

@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-tomcat-classloader</artifactId>
-    <version>0.8.5.0.t.8.0.21-rc1</version>
+    <version>0.8.6.0.t.8.0.21-rc1</version>
     <packaging>jar</packaging>
     <name>Nuts Community Library for Tomcat Classloading</name>
     <url>https://github.com/thevpc/nuts</url>
@@ -52,7 +52,7 @@
     </licenses>
 
     <dependencies>
-        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts</artifactId><version>0.8.5</version></dependency>
+        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts</artifactId><version>0.8.6</version></dependency>
         <dependency><groupId>org.apache.tomcat</groupId><artifactId>tomcat-catalina</artifactId><version>8.5.42</version><scope>provided</scope></dependency>
     </dependencies>
     <distributionManagement>

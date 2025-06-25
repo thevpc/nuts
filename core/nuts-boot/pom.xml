@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-boot</artifactId>
-    <version>0.8.5</version>
+    <version>0.8.6</version>
     <packaging>jar</packaging><!-- small changes, do not require version change, didn't updated the version-->
     <name>Nuts Community Core Bootstrap</name>
     <url>https://github.com/thevpc/nuts</url>

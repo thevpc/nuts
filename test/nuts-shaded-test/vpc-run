@@ -1,1 +1,1 @@
-java -jar -Dnuts.args='-ZyS -w=t --verbose' target/nuts-shaded-test-0.8.5.0-shaded-small.jar
+java -jar -Dnuts.args='-ZyS -w=t --verbose' target/nuts-shaded-test-0.8.6.0-shaded-small.jar

@@ -41,7 +41,7 @@ public final class Nuts {
     /**
      * current Nuts version
      */
-    private static final NVersion version = NVersion.of("0.8.5");
+    private static final NVersion version = NVersion.of("0.8.6");
     private static final NVersion bootVersion = NVersion.of(NBootWorkspace.NUTS_BOOT_VERSION);
     private static final NId id = NId.of(NConstants.Ids.NUTS_GROUP_ID, NConstants.Ids.NUTS_API_ARTIFACT_ID, version);
 

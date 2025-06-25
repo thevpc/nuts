@@ -3,7 +3,7 @@
     <groupId>net.thevpc.xprojects.builders</groupId>
     <artifactId>nuts-extensions-builder</artifactId>
     <name>Nuts Community Extensions Build Project</name>
-    <version>0.8.5.0</version>
+    <version>0.8.6.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>nuts-term</module>

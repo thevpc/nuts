@@ -60,7 +60,7 @@ image::images/nuts-components.png[scaledwidth=80%]
 <dependency>
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-lib</artifactId>
-    <version>0.8.5</version>
+    <version>0.8.6</version>
 </dependency>
 ```
 
@@ -73,7 +73,7 @@ image::images/nuts-components.png[scaledwidth=80%]
 <dependency>
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-runtime</artifactId>
-    <version>0.8.5.0</version>
+    <version>0.8.6.0</version>
 </dependency>
 ```
 
@@ -336,7 +336,7 @@ while adding the following maven dependency
 		<dependency>
 			<groupId>net.thevpc.nuts</groupId>
 			<artifactId>nuts-spring-boot</artifactId>
-			<version>0.8.5.0</version>
+			<version>0.8.6.0</version>
 		</dependency>
 ```
 

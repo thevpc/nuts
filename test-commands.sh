@@ -3,8 +3,8 @@ nuts-dev -ZyS --!switch
 
 nuts-dev bundle -y nuts-app --lib=nsh,nuts-ssh,nuts-term,nuts-runtime
 
-rm -Rf nuts-0.8.5/*
-java -jar nuts-0.8.5-bundle.jar
+rm -Rf nuts-0.8.6/*
+java -jar nuts-0.8.6-bundle.jar
 
 
 #nuts-dev bundle -y noapi

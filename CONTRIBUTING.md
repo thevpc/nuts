@@ -41,7 +41,7 @@ and here is how to compile/generate the website and documentation (assuming you 
 
 ```bash
 cd installers/nuts-release-tool
-java -jar target/nuts-release-tool-$0.8.5.0.jar
+java -jar target/nuts-release-tool-$0.8.6.0.jar
 ```
 
 You can now play with your development version of nuts using the generated `nuts-dev` script.
