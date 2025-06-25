@@ -1569,6 +1569,17 @@ public final class NBootWorkspaceCmdLineParser {
                             return (Collections.singletonList(a));
                         }
                     }
+                    case "--reset-options": {
+                        a = cmdLine.nextFlag();
+                        if (active) {
+                            if (options != null) {
+                                options.resetOptions();
+                            }
+                            return (Collections.singletonList(a));
+                        } else {
+                            return (Collections.singletonList(a));
+                        }
+                    }
                     //@since 0.8.5
                     case "--in-memory": {
                         a = cmdLine.nextFlag();

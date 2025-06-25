@@ -1,6 +1,7 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.NOut;
+import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.util.NToken;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NMsgParam;
@@ -103,6 +104,7 @@ public class MsgTest {
 
     @Test
     public void test07() {
-        NOut.println(NMsg.ofC("##AA##"));
+        Nuts.require();
+        NOut.println(NMsg.ofNtf("##AA##"));
     }
 }
