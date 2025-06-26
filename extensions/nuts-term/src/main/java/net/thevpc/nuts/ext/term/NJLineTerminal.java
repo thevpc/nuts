@@ -146,7 +146,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
             case LINK: {
                 NTextLink p = (NTextLink) n;
                 return toAttributedString(
-                        NText.ofPlain(p.getText()),
+                        NText.ofPlain(p.getValue()),
                         styles.append(NTextStyle.underlined())
                 );
             }
@@ -155,7 +155,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
                 return toAttributedString(
                         NText.ofList(
                                 NText.ofPlain("include"),
-                                NText.ofPlain(p.getText())
+                                NText.ofPlain(p.getValue())
                         ),
                         styles.append(NTextStyle.danger())
                 );
