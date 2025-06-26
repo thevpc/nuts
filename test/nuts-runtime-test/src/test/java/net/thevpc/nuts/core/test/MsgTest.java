@@ -2,11 +2,7 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.util.NToken;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NMsgParam;
-import net.thevpc.nuts.util.NMsgTemplate;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -104,7 +100,8 @@ public class MsgTest {
 
     @Test
     public void test07() {
-        Nuts.require();
-        NOut.println(NMsg.ofNtf("##AA##"));
+        Nuts.openWorkspace("--in-memory").share();
+        NOut.println(NMsg.ofC("##:13:%s##",":"));
+        //NOut.println(NMsg.ofNtf("##AA##"));
     }
 }

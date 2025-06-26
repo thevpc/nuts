@@ -180,7 +180,7 @@ public class DefaultNTexts implements NTexts {
         return sb.toString();
     }
 
-    private boolean isSpecialLiteral(Object m) {
+    public static boolean isSpecialLiteral(Object m) {
         if (m == null) {
             return true;
         }
@@ -205,7 +205,7 @@ public class DefaultNTexts implements NTexts {
         return false;
     }
 
-    private NTextStyles getSpecialLiteralType(Object m) {
+    public static NTextStyles getSpecialLiteralType(Object m) {
         if (m == null) {
             return NTextStyles.of(NTextStyle.warn());
         }
@@ -224,7 +224,7 @@ public class DefaultNTexts implements NTexts {
         return NTextStyles.of();
     }
 
-    private NText asLiteralOrText(Object m, String format, NTexts txt) {
+    public static NText asLiteralOrText(Object m, String format, NTexts txt) {
         if (m == null) {
             return txt.ofStyled("null", NTextStyle.danger());
         }
@@ -244,6 +244,7 @@ public class DefaultNTexts implements NTexts {
     }
 
 
+
     private NText _NMsg_toString(NMsg m) {
         NTextFormatType format = m.getFormat();
         if (format == null) {
@@ -255,45 +256,10 @@ public class DefaultNTexts implements NTexts {
         }
         Object msg = m.getMessage();
         NSession session = NSession.of();
-        String sLocale = session.getLocale().orDefault();
-        Locale locale = NBlankable.isBlank(sLocale) ? null : new Locale(sLocale);
-        NTexts txt = NTexts.of();
+
         switch (format) {
             case CFORMAT: {
-                String smsg = (String) msg;
-                NFormattedTextParts r = NFormattedTextParts.parseCFormat(smsg);
-                NTextBuilder sb = NTextBuilder.of();
-                int paramIndex = 0;
-                for (NFormattedTextPart part : r.getParts()) {
-                    if (part.isFormat()) {
-                        if (part.getValue().equals("%%")) {
-                            sb.append("%");
-                        } else if (part.getValue().equals("%n")) {
-                            sb.append("\n");
-                        } else {
-                            if (paramIndex < 0 || paramIndex >= params.length) {
-                                throw new NIllegalArgumentException(NMsg.ofPlain("invalid index in message"));
-                            }
-                            Object a = params[paramIndex];
-                            if (a == null) {
-                                sb.append((String) null);
-                            } else if (isSpecialLiteral(a)) {
-                                StringBuilder sb2 = new StringBuilder();
-                                new Formatter(sb2, locale).format(part.getValue(), a);
-                                sb.append(txt.ofStyled(sb2.toString(), getSpecialLiteralType(a)));
-                            } else {
-//                                StringBuilder sb2 = new StringBuilder();
-//                                new Formatter(sb2, locale).format(part.getValue(), txt.ofText(a));
-//                                sb.append(sb2);
-                                sb.append(txt.of(a));
-                            }
-                            paramIndex++;
-                        }
-                    } else {
-                        sb.append(part.getValue());
-                    }
-                }
-                return sb.build();
+                return new NMsgCFormatHelper(m,this).format();
             }
             case JFORMAT: {
                 String smsg = (String) msg;
@@ -327,16 +293,16 @@ public class DefaultNTexts implements NTexts {
                             sb.append((String) null);
                         } else if (isSpecialLiteral(a)) {
                             String sb2 = MessageFormat.format("{0" + formatExt + "}", a);
-                            sb.append(txt.ofStyled(sb2, getSpecialLiteralType(a)));
+                            sb.append(this.ofStyled(sb2, getSpecialLiteralType(a)));
                         } else {
-                            sb.append(MessageFormat.format("{0" + formatExt + "}", txt.of(a)));
+                            sb.append(MessageFormat.format("{0" + formatExt + "}", this.of(a)));
                         }
                         gParamIndex++;
                     } else {
                         sb.append(part.getValue());
                     }
                 }
-                return txt.of(sb.toString());
+                return this.of(sb.toString());
             }
             case VFORMAT: {
                 Object[] finalParams = params;
@@ -347,27 +313,27 @@ public class DefaultNTexts implements NTexts {
                                             (Map<String, ?>) finalParams[0];
                             Object v = mm.get(s);
                             if (v != null) {
-                                return asLiteralOrText(v, "", txt);
+                                return asLiteralOrText(v, "", this);
                             }
                             return "${" + s + "}";
                         }
                 ).toString();
-                return txt.of(a);
+                return this.of(a);
             }
             case PLAIN: {
-                return txt.ofPlain((String) msg);
+                return this.ofPlain((String) msg);
             }
             case NTF: {
                 if (msg instanceof String) {
-                    return txt.of((String) msg);
+                    return this.of((String) msg);
                 }
-                return txt.of(msg);
+                return this.of(msg);
             }
             case STYLED: {
-                return txt.ofStyled(txt.of(msg), m.getStyles());
+                return this.ofStyled(this.of(msg), m.getStyles());
             }
             case CODE: {
-                return txt.ofCodeOrCommand(m.getCodeLang(), (String) msg);
+                return this.ofCodeOrCommand(m.getCodeLang(), (String) msg);
             }
         }
         throw new NUnsupportedEnumException(format);
@@ -504,7 +470,7 @@ public class DefaultNTexts implements NTexts {
 
     @Override
     public NText ofCodeOrCommand(String lang, String text) {
-        return ofCodeOrCommand(lang, text, ' ');
+        return ofCodeOrCommand(lang, text, " ");
     }
 
     @Override
@@ -572,12 +538,12 @@ public class DefaultNTexts implements NTexts {
                 cmd = null;
                 value = text;
             }
-            return ofCodeOrCommand(cmd, value, sep);
+            return ofCodeOrCommand(cmd, value, String.valueOf(sep));
         }
     }
 
     @Override
-    public NText ofCodeOrCommand(String name, String text, char sep) {
+    public NText ofCodeOrCommand(String name, String text, String sep) {
         checkValidSeparator(sep);
         if (name != null && name.startsWith("!")) {
             switch (name) {
@@ -593,22 +559,24 @@ public class DefaultNTexts implements NTexts {
             }
             return ofCommand(NTerminalCmd.of(name.substring(1), text));
         }
-        return ofCode(name, text, sep);
+        return ofCode(text, name, sep);
     }
 
-    private void checkValidSeparator(char sep) {
-        if (sep != ':' && !Character.isWhitespace(sep)) {
-            throw new NIllegalArgumentException(NMsg.ofC("invalid separator '%s'", sep));
+    private void checkValidSeparator(String sep) {
+        for (char c : sep.toCharArray()) {
+            if (c != ':' && !Character.isWhitespace(c)) {
+                throw new NIllegalArgumentException(NMsg.ofC("invalid separator '%s'", c));
+            }
         }
     }
 
     @Override
     public NTextCode ofCode(String lang, String text) {
-        return ofCode(lang, text, ' ');
+        return ofCode(text, lang, " ");
     }
 
     @Override
-    public NTextCode ofCode(String lang, String text, char sep) {
+    public NTextCode ofCode(String text, String lang, String sep) {
         checkValidSeparator(sep);
         if (text == null) {
             text = "";
@@ -631,11 +599,11 @@ public class DefaultNTexts implements NTexts {
 
     @Override
     public NTextAnchor ofAnchor(String anchorName) {
-        return ofAnchor(anchorName, ' ');
+        return ofAnchor(anchorName, " ");
     }
 
     @Override
-    public NTextAnchor ofAnchor(String anchorName, char sep) {
+    public NTextAnchor ofAnchor(String anchorName, String sep) {
         checkValidSeparator(sep);
         return createAnchor(
                 "```!",
@@ -645,22 +613,22 @@ public class DefaultNTexts implements NTexts {
 
     @Override
     public NTextLink ofLink(String value) {
-        return ofLink(value, ' ');
+        return ofLink(value, " ");
     }
 
     @Override
-    public NTextLink ofLink(String value, char sep) {
+    public NTextLink ofLink(String value, String sep) {
         checkValidSeparator(sep);
         return new DefaultNTextLink("" + sep, value);
     }
 
     @Override
     public NTextInclude ofInclude(String value) {
-        return ofInclude(value, ' ');
+        return ofInclude(value, " ");
     }
 
     @Override
-    public NTextInclude ofInclude(String value, char sep) {
+    public NTextInclude ofInclude(String value, String sep) {
         checkValidSeparator(sep);
         return new DefaultNTextInclude("" + sep, value);
     }
