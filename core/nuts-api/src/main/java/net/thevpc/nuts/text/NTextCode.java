@@ -39,10 +39,12 @@ public interface NTextCode extends NText {
 
     /**
      * text
+     *
      * @return text
      */
-    String getText();
+    String getValue();
 
     String getQualifier();
+
     String getSeparator();
 }
