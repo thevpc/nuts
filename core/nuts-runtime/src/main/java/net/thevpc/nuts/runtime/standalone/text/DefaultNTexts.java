@@ -265,20 +265,7 @@ public class DefaultNTexts implements NTexts {
                 return new NMsgJFormatHelper(m,this).format();
             }
             case VFORMAT: {
-                Object[] finalParams = params;
-                String a = NMsg.ofV((String) msg,
-                        s -> {
-                            Map<String, ?> mm =
-                                    (finalParams == null) ? new LinkedHashMap<>() :
-                                            (Map<String, ?>) finalParams[0];
-                            Object v = mm.get(s);
-                            if (v != null) {
-                                return asLiteralOrText(v, "", this);
-                            }
-                            return "${" + s + "}";
-                        }
-                ).toString();
-                return this.of(a);
+                return new NMsgVFormatHelper(m,this).format();
             }
             case PLAIN: {
                 return this.ofPlain((String) msg);

@@ -111,4 +111,10 @@ public class MsgTest {
         NOut.println(NMsg.ofJ("##:12:{}##", ":"));
         NOut.println(NMsg.ofJ("##:12:{0}##", ":"));
     }
+
+    @Test
+    public void test09() {
+        Nuts.require("--color");
+        NOut.println(NMsg.ofV("##:12:$v##", NMaps.of("v",":")));
+    }
 }
