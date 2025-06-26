@@ -25,9 +25,11 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.*;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NOptional;
 
-import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Nuts Top Class. Nuts is a Package manager for Java Applications and this
@@ -82,6 +84,30 @@ public final class Nuts {
             return w.get();
         }
         return openWorkspace("--reset-options", "--in-memory").share();
+    }
+
+    /**
+     * return current context workspace, if none create one
+     *
+     * @return current context workspace, if none create one and share it
+     * @throws NBootUnsatisfiedRequirementsException
+     */
+    public static NWorkspace require(String... options) throws NBootUnsatisfiedRequirementsException {
+        NOptional<NWorkspace> w = NWorkspace.get();
+        if (w.isPresent()) {
+            return w.get();
+        }
+        List<String> newOptions = new ArrayList<>();
+        newOptions.add("--reset-options");
+        if (options != null && options.length > 0) {
+            for (String o : options) {
+                if (!NBlankable.isBlank(o)) {
+                    newOptions.add(o);
+                }
+            }
+        }
+        newOptions.add("--in-memory");
+        return openWorkspace(newOptions.toArray(new String[0])).share();
     }
 
     /**
