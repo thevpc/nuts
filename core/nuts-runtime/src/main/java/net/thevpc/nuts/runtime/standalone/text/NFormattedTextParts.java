@@ -50,8 +50,8 @@ public class NFormattedTextParts {
                 }
             } else {
                 if (chars[i] == '}') {
+                    al.add(new NFormattedTextPart(true, sb.toString()));
                     if (sb.length() > 0) {
-                        al.add(new NFormattedTextPart(true, sb.toString()));
                         sb.setLength(0);
                     }
                     inText = true;
