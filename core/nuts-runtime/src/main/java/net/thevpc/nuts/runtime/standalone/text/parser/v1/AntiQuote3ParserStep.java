@@ -199,19 +199,19 @@ public class AntiQuote3ParserStep extends ParserStep {
                 case "!anchor": {
                     return txt.ofAnchor(
                             value,
-                            w.length()==0?' ':w.charAt(0)
+                            w.length()==0?" ":w.toString()
                     );
                 }
                 case "!link": {
                     return txt.ofLink(
                             value,
-                            w.length()==0?' ':w.charAt(0)
+                            w.length()==0?" ":w.toString()
                     );
                 }
                 case "!include": {
                     return txt.ofInclude(
                             value,
-                            w.length()==0?' ':w.charAt(0)
+                            w.length()==0?" ":w.toString()
                     );
                 }
             }
