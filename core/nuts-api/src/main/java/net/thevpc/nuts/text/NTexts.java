@@ -78,7 +78,7 @@ public interface NTexts extends NComponent {
 
     NTextCmd ofCommand(NTerminalCmd command);
 
-    NTextCode ofCode(String lang, String text, char sep);
+    NTextCode ofCode(String text, String lang, String sep);
 
     NTextCode ofCode(String lang, String text);
 
@@ -86,7 +86,7 @@ public interface NTexts extends NComponent {
 
     NText ofCodeOrCommand(String text);
 
-    NText ofCodeOrCommand(String lang, String text, char sep);
+    NText ofCodeOrCommand(String lang, String text, String sep);
 
     NTitleSequence ofNumbering();
 
@@ -94,15 +94,15 @@ public interface NTexts extends NComponent {
 
     NTextAnchor ofAnchor(String anchorName);
 
-    NTextLink ofLink(String value, char sep);
+    NTextLink ofLink(String value, String sep);
 
-    NTextAnchor ofAnchor(String anchorName, char sep);
+    NTextAnchor ofAnchor(String anchorName, String sep);
 
     NTextLink ofLink(String value);
 
     NTextInclude ofInclude(String value);
 
-    NTextInclude ofInclude(String value, char sep);
+    NTextInclude ofInclude(String value, String sep);
 
     NOptional<NTextFormatTheme> getTheme(String name);
 
