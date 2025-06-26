@@ -5,6 +5,7 @@ import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOpUtils;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.BaseTransparentFilterOutputStream;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
+import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.util.NMsg;
 
@@ -36,13 +37,13 @@ public class EscapeOutputStream extends BaseTransparentFilterOutputStream implem
     @Override
     public void write(int b) throws IOException {
         out.write(
-                DefaultNTexts.escapeText0(Character.toString((char) b)).getBytes()
+                NTextUtils.escapeText0(Character.toString((char) b)).getBytes()
         );
     }
 
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
-        byte[] bytes = DefaultNTexts.escapeText0(new String(b, off, len)).getBytes();
+        byte[] bytes = NTextUtils.escapeText0(new String(b, off, len)).getBytes();
         out.write(bytes, 0, bytes.length);
     }
 

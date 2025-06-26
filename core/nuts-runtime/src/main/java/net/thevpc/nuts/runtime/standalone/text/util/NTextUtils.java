@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.text.util;
 
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
@@ -222,5 +223,97 @@ public class NTextUtils {
             return text.ofStyled("<EMPTY>", NTextStyle.option());
         }
         return text.of(s);
+    }
+
+    /**
+     * transform plain text to formatted text so that the result is rendered as
+     * is
+     *
+     * @param str str
+     * @return escaped text
+     */
+    public static String escapeText0(String str) {
+        if (str == null) {
+            return str;
+        }
+        StringBuilder sb = new StringBuilder(str.length());
+        for (char c : str.toCharArray()) {
+            switch (c) {
+                case '`':
+                case '#':
+                case NConstants.Ntf.SILENT:
+                case '\\': {
+                    sb.append('\\').append(c);
+                    break;
+                }
+                default: {
+                    sb.append(c);
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    public static boolean isSpecialLiteral(Object m) {
+        if (m == null) {
+            return true;
+        }
+        if (m instanceof Number) {
+            return true;
+        }
+        if (m instanceof Temporal) {
+            return true;
+        }
+        if (m instanceof Date) {
+            return true;
+        }
+        if (m instanceof Boolean) {
+            return true;
+        }
+        if (m instanceof String) {
+            return true;
+        }
+        if (m instanceof StringBuilder) {
+            return true;
+        }
+        return false;
+    }
+
+    public static NTextStyles getSpecialLiteralType(Object m) {
+        if (m == null) {
+            return NTextStyles.of(NTextStyle.warn());
+        }
+        if (m instanceof Number) {
+            return NTextStyles.of(NTextStyle.number());
+        }
+        if (m instanceof Temporal) {
+            return NTextStyles.of(NTextStyle.date());
+        }
+        if (m instanceof Date) {
+            return NTextStyles.of(NTextStyle.date());
+        }
+        if (m instanceof Boolean) {
+            return NTextStyles.of(NTextStyle.bool());
+        }
+        return NTextStyles.of();
+    }
+
+    public static NText asLiteralOrText(Object m, String format, NTexts txt) {
+        if (m == null) {
+            return txt.ofStyled("null", NTextStyle.danger());
+        }
+        if (m instanceof Number) {
+            return txt.ofStyled(String.valueOf(m), NTextStyle.number());
+        }
+        if (m instanceof Temporal) {
+            return txt.ofStyled(String.valueOf(m), NTextStyle.date());
+        }
+        if (m instanceof Date) {
+            return txt.ofStyled(String.valueOf(m), NTextStyle.date());
+        }
+        if (m instanceof Boolean) {
+            return txt.ofStyled(String.valueOf(m), NTextStyle.keyword());
+        }
+        return txt.of(m);
     }
 }

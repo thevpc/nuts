@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.text;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.io.NContentMetadata;
+import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -33,7 +34,6 @@ import java.lang.reflect.Array;
 import java.net.URL;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
-import java.text.MessageFormat;
 import java.time.Duration;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAmount;
@@ -151,112 +151,13 @@ public class DefaultNTexts implements NTexts {
         }
     }
 
-    /**
-     * transform plain text to formatted text so that the result is rendered as
-     * is
-     *
-     * @param str str
-     * @return escaped text
-     */
-    public static String escapeText0(String str) {
-        if (str == null) {
-            return str;
-        }
-        StringBuilder sb = new StringBuilder(str.length());
-        for (char c : str.toCharArray()) {
-            switch (c) {
-                case '`':
-                case '#':
-                case NConstants.Ntf.SILENT:
-                case '\\': {
-                    sb.append('\\').append(c);
-                    break;
-                }
-                default: {
-                    sb.append(c);
-                }
-            }
-        }
-        return sb.toString();
-    }
-
-    public static boolean isSpecialLiteral(Object m) {
-        if (m == null) {
-            return true;
-        }
-        if (m instanceof Number) {
-            return true;
-        }
-        if (m instanceof Temporal) {
-            return true;
-        }
-        if (m instanceof Date) {
-            return true;
-        }
-        if (m instanceof Boolean) {
-            return true;
-        }
-        if (m instanceof String) {
-            return true;
-        }
-        if (m instanceof StringBuilder) {
-            return true;
-        }
-        return false;
-    }
-
-    public static NTextStyles getSpecialLiteralType(Object m) {
-        if (m == null) {
-            return NTextStyles.of(NTextStyle.warn());
-        }
-        if (m instanceof Number) {
-            return NTextStyles.of(NTextStyle.number());
-        }
-        if (m instanceof Temporal) {
-            return NTextStyles.of(NTextStyle.date());
-        }
-        if (m instanceof Date) {
-            return NTextStyles.of(NTextStyle.date());
-        }
-        if (m instanceof Boolean) {
-            return NTextStyles.of(NTextStyle.bool());
-        }
-        return NTextStyles.of();
-    }
-
-    public static NText asLiteralOrText(Object m, String format, NTexts txt) {
-        if (m == null) {
-            return txt.ofStyled("null", NTextStyle.danger());
-        }
-        if (m instanceof Number) {
-            return txt.ofStyled(String.valueOf(m), NTextStyle.number());
-        }
-        if (m instanceof Temporal) {
-            return txt.ofStyled(String.valueOf(m), NTextStyle.date());
-        }
-        if (m instanceof Date) {
-            return txt.ofStyled(String.valueOf(m), NTextStyle.date());
-        }
-        if (m instanceof Boolean) {
-            return txt.ofStyled(String.valueOf(m), NTextStyle.keyword());
-        }
-        return txt.of(m);
-    }
-
-
 
     private NText _NMsg_toString(NMsg m) {
         NTextFormatType format = m.getFormat();
         if (format == null) {
             format = NTextFormatType.JFORMAT;
         }
-        Object[] params = m.getParams();
-        if (params == null) {
-            params = new Object[0];
-        }
         Object msg = m.getMessage();
-        NSession session = NSession.of();
-
         switch (format) {
             case CFORMAT: {
                 return new NMsgCFormatHelper(m,this).format();
@@ -1162,7 +1063,7 @@ public class DefaultNTexts implements NTexts {
 
     @Override
     public String escapeText(String str) {
-        return escapeText0(str);
+        return NTextUtils.escapeText0(str);
     }
 
     private void writeFilteredText(NText t, ByteArrayOutputStream out) {
