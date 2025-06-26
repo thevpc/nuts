@@ -1072,7 +1072,7 @@ public class NTFTest {
         NText r = p.read();
         Assertions.assertNotNull(r);
         Assertions.assertEquals(NTextType.CODE, r.getType());
-        Assertions.assertEquals("public class \\` some thing ``` some thing", ((NTextCode) r).getText());
+        Assertions.assertEquals("public class \\` some thing ``` some thing", ((NTextCode) r).getValue());
         Assertions.assertEquals("```java\npublic class \\` some thing \\``` some thing```", r.toString());
     }
 
@@ -1302,7 +1302,7 @@ public class NTFTest {
         NText parsed = NText.of(str);
         TestUtils.println(parsed);
         Assertions.assertEquals(NTextType.CODE, parsed.getType());
-        String text = ((NTextCode) parsed).getText();
+        String text = ((NTextCode) parsed).getValue();
         Assertions.assertEquals("#) Title 1", text);
         String text2 = parsed.toString();
         //will add leading space
