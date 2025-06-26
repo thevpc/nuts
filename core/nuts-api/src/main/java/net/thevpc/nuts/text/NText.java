@@ -110,8 +110,8 @@ public interface NText extends NBlankable {
         return NTexts.of().ofCommand(command);
     }
 
-    static NTextCode ofCode(String lang, String text, char sep) {
-        return NTexts.of().ofCode(lang, text, sep);
+    static NTextCode ofCode(String lang, String text, String sep) {
+        return NTexts.of().ofCode(text, lang, sep);
     }
 
     static NTextCode ofCode(String lang, String text) {
@@ -126,7 +126,7 @@ public interface NText extends NBlankable {
         return NTexts.of().ofCodeOrCommand(text);
     }
 
-    static NText ofCodeOrCommand(String lang, String text, char sep) {
+    static NText ofCodeOrCommand(String lang, String text, String sep) {
         return NTexts.of().ofCodeOrCommand(lang, text, sep);
     }
 
@@ -142,11 +142,11 @@ public interface NText extends NBlankable {
         return NTexts.of().ofAnchor(anchorName);
     }
 
-    static NTextLink ofLink(String value, char sep) {
+    static NTextLink ofLink(String value, String sep) {
         return NTexts.of().ofLink(value, sep);
     }
 
-    static NTextAnchor ofAnchor(String anchorName, char sep) {
+    static NTextAnchor ofAnchor(String anchorName, String sep) {
         return NTexts.of().ofAnchor(anchorName, sep);
     }
 
@@ -158,12 +158,14 @@ public interface NText extends NBlankable {
         return NTexts.of().ofInclude(value);
     }
 
-    static NTextInclude ofInclude(String value, char sep) {
+    static NTextInclude ofInclude(String value, String sep) {
         return NTexts.of().ofInclude(value, sep);
     }
+
     static NText ofStyledSuccess(String value) {
         return ofStyled(value, NTextStyle.success());
     }
+
     static NText ofStyledWarn(String value) {
         return ofStyled(value, NTextStyle.warn());
     }
@@ -233,5 +235,6 @@ public interface NText extends NBlankable {
     int textLength();
 
     boolean isEmpty();
+
     NText simplify();
 }
