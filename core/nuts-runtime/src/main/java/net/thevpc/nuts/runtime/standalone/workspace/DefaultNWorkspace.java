@@ -567,13 +567,13 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             out.println(n == null ? "no help found" : n);
             NIsolationLevel il = wsModel.bootModel.getBootUserOptions().getIsolationLevel().orElse(NIsolationLevel.USER);
             if (il==NIsolationLevel.MEMORY) {
-                out.println(
-                        data.text.ofBuilder()
-                                .append("location", NTextStyle.underlined())
-                                .append(":")
-                                .append("<in-memory>")
-                                .append(" ")
-                );
+//                out.println(
+//                        data.text.ofBuilder()
+//                                .append("location", NTextStyle.underlined())
+//                                .append(":")
+//                                .append("<in-memory>")
+//                                .append(" ")
+//                );
             }else if (NWorkspaceUtils.isUserDefaultWorkspace()) {
                 out.println(
                         data.text.ofBuilder()
