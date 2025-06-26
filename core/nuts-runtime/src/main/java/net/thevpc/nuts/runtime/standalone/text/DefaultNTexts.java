@@ -262,47 +262,7 @@ public class DefaultNTexts implements NTexts {
                 return new NMsgCFormatHelper(m,this).format();
             }
             case JFORMAT: {
-                String smsg = (String) msg;
-                NFormattedTextParts r = NFormattedTextParts.parseJStyle(smsg);
-                StringBuilder sb = new StringBuilder();
-                int gParamIndex = 0;
-                for (NFormattedTextPart part : r.getParts()) {
-                    if (part.isFormat()) {
-                        String formatExt = "";
-                        String formatPart = part.getValue();
-                        int paramIndex = -1;
-                        int commaPos = formatPart.indexOf(',');
-                        if (commaPos >= 0) {
-                            String paramIndexStr = formatPart.substring(0, commaPos).trim();
-                            if (paramIndexStr.isEmpty()) {
-                                paramIndex = gParamIndex;
-                            } else {
-                                paramIndex = NLiteral.of(paramIndexStr).asInt().get();
-                            }
-                            formatExt = formatPart.substring(commaPos + 1);
-                        } else {
-                            String paramIndexStr = formatPart.trim();
-                            if (paramIndexStr.isEmpty()) {
-                                paramIndex = gParamIndex;
-                            } else {
-                                paramIndex = NLiteral.of(paramIndexStr).asInt().get();
-                            }
-                        }
-                        Object a = params[paramIndex];
-                        if (a == null) {
-                            sb.append((String) null);
-                        } else if (isSpecialLiteral(a)) {
-                            String sb2 = MessageFormat.format("{0" + formatExt + "}", a);
-                            sb.append(this.ofStyled(sb2, getSpecialLiteralType(a)));
-                        } else {
-                            sb.append(MessageFormat.format("{0" + formatExt + "}", this.of(a)));
-                        }
-                        gParamIndex++;
-                    } else {
-                        sb.append(part.getValue());
-                    }
-                }
-                return this.of(sb.toString());
+                return new NMsgJFormatHelper(m,this).format();
             }
             case VFORMAT: {
                 Object[] finalParams = params;

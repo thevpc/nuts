@@ -73,35 +73,42 @@ public class MsgTest {
                     return null;
                 }).toString();
         System.out.println(r);
-        Assertions.assertEquals("A/B",r);
+        Assertions.assertEquals("A/B", r);
         //Assertions.assertEquals(Arrays.asList("0", "1", "2", "3", "4"), Arrays.asList(paramNames));
     }
 
     @Test
     public void test06() {
         List<NToken> textTokens = NStringUtils.parsePlaceHolder("s$${{example1}}$$\n$${{example2}}$$e",
-                Pattern.compile("(?s)(?m)\\$\\$\\{\\{(?<var>[^}]+)}}\\$\\$"),
-                "var")
+                        Pattern.compile("(?s)(?m)\\$\\$\\{\\{(?<var>[^}]+)}}\\$\\$"),
+                        "var")
                 .collect(Collectors.toList());
         for (NToken textToken : textTokens) {
             System.out.println(textToken);
         }
-        Assertions.assertEquals(5,textTokens.size());
+        Assertions.assertEquals(5, textTokens.size());
 
-        Assertions.assertEquals(NToken.TT_VAR,textTokens.get(1).ttype);
-        Assertions.assertEquals(NToken.TT_VAR,textTokens.get(1).ttype);
-        Assertions.assertEquals("example1",textTokens.get(1).sval);
-        Assertions.assertEquals("$${{example1}}$$",textTokens.get(1).image);
+        Assertions.assertEquals(NToken.TT_VAR, textTokens.get(1).ttype);
+        Assertions.assertEquals(NToken.TT_VAR, textTokens.get(1).ttype);
+        Assertions.assertEquals("example1", textTokens.get(1).sval);
+        Assertions.assertEquals("$${{example1}}$$", textTokens.get(1).image);
 
-        Assertions.assertEquals("example2",textTokens.get(3).sval);
-        Assertions.assertEquals("$${{example2}}$$",textTokens.get(3).image);
+        Assertions.assertEquals("example2", textTokens.get(3).sval);
+        Assertions.assertEquals("$${{example2}}$$", textTokens.get(3).image);
         //Assertions.assertEquals(Arrays.asList("0", "1", "2", "3", "4"), Arrays.asList(paramNames));
     }
 
     @Test
     public void test07() {
-        Nuts.openWorkspace("--in-memory").share();
-        NOut.println(NMsg.ofC("##:13:%s##",":"));
+        Nuts.require("--color");
+        NOut.println(NMsg.ofC("##:13:%s##", ":"));
         //NOut.println(NMsg.ofNtf("##AA##"));
+    }
+
+    @Test
+    public void test08() {
+        Nuts.require("--color");
+        NOut.println(NMsg.ofJ("##:12:{}##", ":"));
+        NOut.println(NMsg.ofJ("##:12:{0}##", ":"));
     }
 }
