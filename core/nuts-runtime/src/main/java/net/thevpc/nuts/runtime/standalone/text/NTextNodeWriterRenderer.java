@@ -146,12 +146,12 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
             }
             case LINK: {
                 //ignore!!
-                NTextPlain child = txt.ofPlain(((NTextLink) node).getText());
+                NTextPlain child = txt.ofPlain(((NTextLink) node).getValue());
                 writeNode(formats,
                         txt.ofStyled(child,
                                 NTextStyles.of(NTextStyle.underlined())
                         ), ctx, txt);
-                writeRaw(formats, "see: " + ((NTextLink) node).getText(), ctx.isFiltered());
+                writeRaw(formats, "see: " + ((NTextLink) node).getValue(), ctx.isFiltered());
                 break;
             }
             case INCLUDE: {
@@ -171,7 +171,7 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
             case CODE: {
                 NTextCode node1 = (NTextCode) node;
                 if (ctx.isFiltered()) {
-                    writeRaw(formats, node1.getText(), true);
+                    writeRaw(formats, node1.getValue(), true);
                 } else {
                     NText cn = node1.highlight();
                     writeNode(formats, cn, ctx, txt);

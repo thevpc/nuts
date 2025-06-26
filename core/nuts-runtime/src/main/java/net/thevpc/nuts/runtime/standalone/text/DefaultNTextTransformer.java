@@ -168,7 +168,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
             }
             case LINK: {
                 NTextLink t = (NTextLink) text;
-                String str = transformText(t.getText());
+                String str = transformText(t.getValue());
                 if (config.isFlatten()) {
                     text = mapTxt(flatten(str), x -> {
                         NTextPlain p = (NTextPlain) x;
@@ -183,7 +183,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
                         if (x.getType() == NTextType.PLAIN) {
                             return x;
                         }
-                        String lnk = ((NTextLink) x).getText();
+                        String lnk = ((NTextLink) x).getValue();
                         return txts.ofStyled(lnk, NTextStyle.underlined());
                     });
                 }

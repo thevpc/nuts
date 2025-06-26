@@ -45,7 +45,7 @@ public class DefaultNTextLink extends NTextSpecialBase implements NTextLink {
     }
 
     @Override
-    public String getText() {
+    public String getValue() {
         return value;
     }
 

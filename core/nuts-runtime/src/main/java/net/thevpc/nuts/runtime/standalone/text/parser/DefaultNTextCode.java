@@ -76,7 +76,7 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
         return NTextType.CODE;
     }
 
-    public String getText() {
+    public String getValue() {
         return text;
     }
 

@@ -114,7 +114,7 @@ public class NTextNodeWriterStringer extends AbstractNTextNodeWriter {
                 NTextLink s = (NTextLink) node;
                 writeRaw("```!link");
                 writeRaw(s.getSeparator());
-                writeEscaped(s.getText());
+                writeEscaped(s.getValue());
                 writeRaw("```");
                 break;
             }
@@ -131,7 +131,7 @@ public class NTextNodeWriterStringer extends AbstractNTextNodeWriter {
                 writeRaw("```");
                 writeRaw(s.getQualifier());
                 writeRaw(s.getSeparator());
-                writeEscapedSpecial(s.getText());
+                writeEscapedSpecial(s.getValue());
                 writeRaw("```");
                 break;
             }
