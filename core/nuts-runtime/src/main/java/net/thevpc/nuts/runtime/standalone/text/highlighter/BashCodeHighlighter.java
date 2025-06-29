@@ -163,7 +163,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
         if (ret.isEmpty()) {
             throw new IllegalArgumentException("was not expecting " + ar.peekChar() + " as part of word");
         }
-        if (ret.get(0).getType() == NTextType.PLAIN && isOption(((NTextPlain) ret.get(0)).getText())) {
+        if (ret.get(0).getType() == NTextType.PLAIN && isOption(((NTextPlain) ret.get(0)).getValue())) {
             ret.set(0, txt.ofStyled(ret.get(0), NTextStyle.option()));
         }
         return ret.toArray(new NText[0]);
@@ -274,7 +274,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
 
     private static TokenType resolveTokenType(NText n) {
         if (n instanceof DefaultNTextPlain) {
-            String text = ((DefaultNTextPlain) n).getText();
+            String text = ((DefaultNTextPlain) n).getValue();
             if (text.length() > 0) {
                 char c = text.charAt(0);
                 switch (c) {
@@ -308,7 +308,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
 
     private static boolean isWhites(NText n) {
         if (n instanceof DefaultNTextPlain) {
-            if (Character.isWhitespace(((DefaultNTextPlain) n).getText().charAt(0))) {
+            if (Character.isWhitespace(((DefaultNTextPlain) n).getValue().charAt(0))) {
                 return true;
             }
         }

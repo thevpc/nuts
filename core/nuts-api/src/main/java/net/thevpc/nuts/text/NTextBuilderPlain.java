@@ -394,7 +394,7 @@ public class NTextBuilderPlain implements NTextBuilder {
         }
 
         @Override
-        public String getText() {
+        public String getValue() {
             return nString.toString();
         }
 

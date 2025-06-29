@@ -79,7 +79,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
                 styles = NTexts.of().getTheme().toBasicStyles(styles,false);
                 NTextPlain p = (NTextPlain) n;
                 if (styles.isPlain()) {
-                    return new AttributedString(p.getText());
+                    return new AttributedString(p.getValue());
                 } else {
                     AttributedStyle s = AttributedStyle.DEFAULT;
                     for (int i = 0; i < styles.size(); i++) {
@@ -125,7 +125,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
                             }
                         }
                     }
-                    return new AttributedString(p.getText(), s);
+                    return new AttributedString(p.getValue(), s);
                 }
             }
             case ANCHOR: {

@@ -1070,7 +1070,7 @@ public class DefaultNTexts implements NTexts {
         if (t != null) {
             if (t instanceof NTextPlain) {
                 try {
-                    out.write(((NTextPlain) t).getText().getBytes());
+                    out.write(((NTextPlain) t).getValue().getBytes());
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }

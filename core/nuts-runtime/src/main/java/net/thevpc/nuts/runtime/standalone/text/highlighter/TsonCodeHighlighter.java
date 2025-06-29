@@ -105,7 +105,7 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
                         NText[] d = readIdentifier(txt, ar);
                         if (d != null) {
                             if (d.length == 1 && d[0].getType() == NTextType.PLAIN) {
-                                String txt2 = ((NTextPlain) d[0]).getText();
+                                String txt2 = ((NTextPlain) d[0]).getValue();
                                 NTextStyle t = resolveTokenStyle(txt2);
                                 if (t != null) {
                                     d[0] = txt.ofStyled(d[0], t);

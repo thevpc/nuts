@@ -60,7 +60,7 @@ public class NTextNodeWriterStringer extends AbstractNTextNodeWriter {
         switch (node.getType()) {
             case PLAIN:
                 NTextPlain p = (NTextPlain) node;
-                writeEscaped(p.getText());
+                writeEscaped(p.getValue());
                 break;
             case LIST: {
                 NTextList s = (NTextList) node;

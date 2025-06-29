@@ -578,7 +578,7 @@ public class StyledParserStep extends ParserStep {
             NTextPlain p1=(NTextPlain) children.remove(children.size()-1);
             NTextPlain p2=(NTextPlain) n;
             children.add(new DefaultNTextPlain(
-                    p1.getText()+p2.getText()
+                    p1.getValue()+p2.getValue()
             ));
         }else{
             children.add(n);

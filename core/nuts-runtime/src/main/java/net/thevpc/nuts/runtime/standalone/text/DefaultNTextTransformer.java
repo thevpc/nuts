@@ -95,7 +95,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
             }
             case PLAIN: {
                 NTextPlain t = (NTextPlain) text;
-                String str = transformText(t.getText());
+                String str = transformText(t.getValue());
                 if (config.isFlatten()) {
                     text = flatten(str);
                 } else {
@@ -175,7 +175,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
                         if (isNewline(p)) {
                             return p;
                         }
-                        return txts.ofLink(p.getText());
+                        return txts.ofLink(p.getValue());
                     });
                 }
                 if (config.isNormalize()) {
@@ -315,7 +315,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
     }
 
     private boolean isNewline(NText c) {
-        return c instanceof NTextPlain && isNewline(((NTextPlain) c).getText());
+        return c instanceof NTextPlain && isNewline(((NTextPlain) c).getValue());
     }
 
     private NPath resolveRelativePath(String path, NPath curr) {
@@ -353,7 +353,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
     }
 
     private NText flatten(NTextPlain tt) {
-        return flatten(tt.getText());
+        return flatten(tt.getValue());
     }
 
     private NText flatten(String tt) {

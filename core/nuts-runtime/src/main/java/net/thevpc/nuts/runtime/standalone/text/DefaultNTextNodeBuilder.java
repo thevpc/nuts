@@ -351,7 +351,7 @@ public class DefaultNTextNodeBuilder extends AbstractNText implements NTextBuild
 
     private boolean isNewLine(NText t) {
         if (t.getType() == NTextType.PLAIN) {
-            String txt = ((NTextPlain) t).getText();
+            String txt = ((NTextPlain) t).getValue();
             return (txt.equals("\n") || txt.equals("\r\n"));
         }
         return false;
@@ -406,7 +406,7 @@ public class DefaultNTextNodeBuilder extends AbstractNText implements NTextBuild
                     } else {
                         if (child.getType() == NTextType.PLAIN) {
                             NTextPlain p = (NTextPlain) child;
-                            String tp = p.getText();
+                            String tp = p.getValue();
                             String a = tp.substring(0, at - start);
                             String b = tp.substring(at - start);
                             rv2.add(text.ofPlain(a));
@@ -414,7 +414,7 @@ public class DefaultNTextNodeBuilder extends AbstractNText implements NTextBuild
                             toReturn = index + i + 1;
                         } else if (child.getType() == NTextType.STYLED) {
                             NTextStyled p = (NTextStyled) child;
-                            String tp = ((NTextPlain) p.getChild()).getText();
+                            String tp = ((NTextPlain) p.getChild()).getValue();
                             String a = tp.substring(0, at - start);
                             String b = tp.substring(at - start);
                             rv2.add(text.ofStyled(a, p.getStyles()));

@@ -45,7 +45,7 @@ public abstract class AbstractNMsgFormatHelper {
     private NText convertCurrent(NText t) {
         switch (t.getType()) {
             case PLAIN: {
-                String ss = ((NTextPlain) t).getText();
+                String ss = ((NTextPlain) t).getValue();
                 return formatPlain(ss);
             }
             case CODE: {

@@ -124,7 +124,7 @@ public class CppCodeHighlighter implements NCodeHighlighter {
                         NText[] d = StringReaderExtUtils.readJSIdentifier(ar);
                         if (d != null) {
                             if (d.length == 1 && d[0].getType() == NTextType.PLAIN) {
-                                String txt2 = ((NTextPlain) d[0]).getText();
+                                String txt2 = ((NTextPlain) d[0]).getValue();
                                 if (reservedWords.contains(txt2)) {
                                     d[0] = txt.ofStyled(d[0], NTextStyle.keyword());
                                 }

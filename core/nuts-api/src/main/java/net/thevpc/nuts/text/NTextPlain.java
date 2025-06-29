@@ -30,5 +30,5 @@ package net.thevpc.nuts.text;
  * @app.category Format
  */
 public interface NTextPlain extends NText {
-    String getText();
+    String getValue();
 }

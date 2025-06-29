@@ -55,7 +55,7 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain {
     }
 
     @Override
-    public String getText() {
+    public String getValue() {
         return text;
     }
 

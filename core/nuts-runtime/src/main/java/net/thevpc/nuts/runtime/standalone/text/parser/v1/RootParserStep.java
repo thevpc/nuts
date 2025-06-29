@@ -59,7 +59,7 @@ public class RootParserStep extends ParserStep {
                 NTextPlain p1=(NTextPlain) n;
                 NTextPlain p2=(NTextPlain) all.remove(all.size()-1);
                 all.add(new DefaultNTextPlain(
-                        p1.getText()+p2.getText()
+                        p1.getValue()+p2.getValue()
                 ));
             }else{
                 all.add(n);

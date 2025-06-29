@@ -38,7 +38,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
 
     private static boolean isWord(NText n) {
         if (n instanceof DefaultNTextPlain) {
-            return Character.isAlphabetic(((DefaultNTextPlain) n).getText().charAt(0));
+            return Character.isAlphabetic(((DefaultNTextPlain) n).getValue().charAt(0));
         }
         return false;
     }
@@ -47,7 +47,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
         if (n instanceof DefaultNTextStyled) {
             NText v = ((DefaultNTextStyled) n).getChild();
             if (v instanceof DefaultNTextPlain) {
-                String t = ((DefaultNTextPlain) v).getText();
+                String t = ((DefaultNTextPlain) v).getValue();
                 switch (t.charAt(0)) {
                     case ';':
                     case '&':
@@ -61,7 +61,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
 
     private static boolean isWhites(NText n) {
         if (n instanceof DefaultNTextPlain) {
-            return Character.isWhitespace(((DefaultNTextPlain) n).getText().charAt(0));
+            return Character.isWhitespace(((DefaultNTextPlain) n).getValue().charAt(0));
         }
         return false;
     }
@@ -284,7 +284,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
         if (ret.isEmpty()) {
             throw new IllegalArgumentException("was not expecting " + ar.peekChar() + " as part of word");
         }
-        if (ret.get(0).getType() == NTextType.PLAIN && isOption(((NTextPlain) ret.get(0)).getText())) {
+        if (ret.get(0).getType() == NTextType.PLAIN && isOption(((NTextPlain) ret.get(0)).getValue())) {
             ret.set(0, txt.ofStyled(ret.get(0), NTextStyle.option()));
         }
         return ret.toArray(new NText[0]);

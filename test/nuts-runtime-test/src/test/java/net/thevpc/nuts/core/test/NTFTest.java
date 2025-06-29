@@ -1290,7 +1290,7 @@ public class NTFTest {
         NText parsed = NText.of(str);
         TestUtils.println(parsed);
         Assertions.assertEquals(NTextType.PLAIN, parsed.getType());
-        String text = ((NTextPlain) parsed).getText();
+        String text = ((NTextPlain) parsed).getValue();
         Assertions.assertEquals("```underlined underlined```", text);
         String text2 = parsed.toString();
         Assertions.assertEquals(str, text2);
