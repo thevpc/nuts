@@ -15,6 +15,7 @@ import net.thevpc.nuts.util.*;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.*;
@@ -37,6 +38,20 @@ public class NPathFromSPI extends NPathBase {
 
     public NPathSPI getBase() {
         return base;
+    }
+
+    @Override
+    public NStream<String> reversedLines(Charset cs) {
+        NStream<String> rl=spi().reversedLines(cs);
+        if(rl==null){
+            return super.reversedLines(cs);
+        }
+        return rl;
+    }
+
+    @Override
+    public NStream<String> lines(Charset cs) {
+        return super.lines(cs);
     }
 
     @Override

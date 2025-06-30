@@ -34,6 +34,7 @@ import net.thevpc.nuts.util.*;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.*;
@@ -238,7 +239,7 @@ public interface NPathSPI {
         return null;
     }
 
-    default List<NPathChildDigestInfo> listDigestInfo(NPath basePath,String algo){
+    default List<NPathChildDigestInfo> listDigestInfo(NPath basePath, String algo) {
         return null;
     }
 
@@ -273,6 +274,10 @@ public interface NPathSPI {
     }
 
     default byte[] getDigest(NPath basePath, String algo) {
+        return null;
+    }
+
+    default NStream<String> reversedLines(Charset charset) {
         return null;
     }
 }
