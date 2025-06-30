@@ -435,7 +435,7 @@ public class NWebRequestImpl implements NWebRequest {
 
     private static Map<String, List<String>> _mapFromPropsFile(NPath path) {
         Map<String, List<String>> m = new LinkedHashMap<>();
-        path.getLines().forEach(x -> {
+        path.lines().forEach(x -> {
             x = x.trim();
             if (!x.startsWith("#")) {
                 NArg a = NArg.of(x);
