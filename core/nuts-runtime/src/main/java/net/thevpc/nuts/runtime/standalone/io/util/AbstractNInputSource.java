@@ -1,11 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.util.NHex;
 import net.thevpc.nuts.io.NIOUtils;
+import net.thevpc.nuts.util.NStream;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -13,6 +13,8 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,8 +42,8 @@ public abstract class AbstractNInputSource implements NInputSource {
 
 
     @Override
-    public Stream<String> getLines() {
-        return getLines(null);
+    public NStream<String> lines() {
+        return lines(null);
     }
 
 
@@ -101,7 +103,7 @@ public abstract class AbstractNInputSource implements NInputSource {
 
     @Override
     public List<String> head(int count, Charset cs) {
-        return getLines(cs).limit(count).collect(Collectors.toList());
+        return lines(cs).limit(count).collect(Collectors.toList());
     }
 
     @Override
@@ -109,18 +111,31 @@ public abstract class AbstractNInputSource implements NInputSource {
         return tail(count, null);
     }
 
+    @Override
+    public NStream<String> reversedLines() {
+        return reversedLines(null);
+    }
 
     @Override
-    public Stream<String> getLines(Charset cs) {
+    public NStream<String> reversedLines(Charset cs) {
+        // not effective, butthe best I can do for now
+        NStream<String> s = lines(cs);
+        List<String> list = s.collect(Collectors.toCollection(ArrayList::new));
+        Collections.reverse(list);
+        return NStream.ofStream(list.stream());
+    }
+
+    @Override
+    public NStream<String> lines(Charset cs) {
         BufferedReader br = getBufferedReader(cs);
         try {
-            return br.lines().onClose(() -> {
+            return NStream.ofStream(br.lines().onClose(() -> {
                 try {
                     br.close();
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }
-            });
+            }));
         } catch (Error | RuntimeException e) {
             try {
                 br.close();
