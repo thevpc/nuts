@@ -7,11 +7,11 @@ import net.thevpc.nuts.util.NMsg;
 
 import java.util.Formatter;
 
-public class NMsgCFormatHelper extends AbstractNMsgFormatHelper{
+public class NMsgCFormatHelper extends AbstractNMsgFormatHelper {
     int paramIndex = 0;
 
     public NMsgCFormatHelper(NMsg m, NTexts txt) {
-        super(m,txt);
+        super(m, txt);
     }
 
 
@@ -39,7 +39,17 @@ public class NMsgCFormatHelper extends AbstractNMsgFormatHelper{
 //                                StringBuilder sb2 = new StringBuilder();
 //                                new Formatter(sb2, locale).format(part.getValue(), txt.ofText(a));
 //                                sb.append(sb2);
-                        sb.append(txt.of(a));
+                        NText u = txt.of(a);
+                        if (u.getType() == NTextType.PLAIN) {
+                            sb.append(NText.ofPlain(doFormatPlain(((NTextPlain) u).getValue(), part.getValue())));
+                        } else if (u.getType() == NTextType.STYLED && ((NTextStyled) u).getChild().getType() == NTextType.PLAIN) {
+                            sb.append(NText.ofStyled(doFormatPlain(
+                                    ((NTextPlain) ((NTextStyled) u).getChild()).getValue()
+                                    , part.getValue()), ((NTextStyled) u).getStyles()));
+                        } else {
+                            //TODO : must support more complex NText tre
+                            sb.append(u);
+                        }
                     }
                     paramIndex++;
                 }
@@ -48,5 +58,11 @@ public class NMsgCFormatHelper extends AbstractNMsgFormatHelper{
             }
         }
         return sb.build();
+    }
+
+    private String doFormatPlain(String value, String pattern) {
+        StringBuilder sb2 = new StringBuilder();
+        new Formatter(sb2, locale).format(pattern, value == null ? "null" : value);
+        return sb2.toString();
     }
 }
