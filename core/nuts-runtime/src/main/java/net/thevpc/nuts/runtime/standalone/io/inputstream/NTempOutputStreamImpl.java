@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.inputstream;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NHex;
+import net.thevpc.nuts.util.NStream;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -10,13 +11,12 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class NTempOutputStreamImpl extends NTempOutputStream {
 
@@ -133,8 +133,25 @@ public class NTempOutputStreamImpl extends NTempOutputStream {
     }
 
     @Override
-    public Stream<String> getLines() {
-        return getLines(null);
+    public NStream<String> reversedLines(Charset cs) {
+        if (mem) {
+            NStream<String> s = lines(cs);
+            List<String> list = s.collect(Collectors.toCollection(ArrayList::new));
+            Collections.reverse(list);
+            return NStream.ofStream(list.stream());
+        } else {
+            return file.reversedLines(cs);
+        }
+    }
+
+    @Override
+    public NStream<String> reversedLines() {
+        return reversedLines(null);
+    }
+
+    @Override
+    public NStream<String> lines() {
+        return lines(null);
     }
 
     @Override
@@ -192,7 +209,7 @@ public class NTempOutputStreamImpl extends NTempOutputStream {
 
     @Override
     public List<String> head(int count, Charset cs) {
-        return getLines(cs).limit(count).collect(Collectors.toList());
+        return lines(cs).limit(count).collect(Collectors.toList());
     }
 
     @Override
@@ -201,16 +218,16 @@ public class NTempOutputStreamImpl extends NTempOutputStream {
     }
 
     @Override
-    public Stream<String> getLines(Charset cs) {
+    public NStream<String> lines(Charset cs) {
         BufferedReader br = getBufferedReader(cs);
         try {
-            return br.lines().onClose(() -> {
+            return NStream.ofStream(br.lines().onClose(() -> {
                 try {
                     br.close();
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }
-            });
+            }));
         } catch (Error | RuntimeException e) {
             try {
                 br.close();

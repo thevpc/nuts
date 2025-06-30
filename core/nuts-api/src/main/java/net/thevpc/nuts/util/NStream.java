@@ -242,6 +242,8 @@ public interface NStream<T> extends Iterable<T>, NElementDescribable<NStream<T>>
 
     boolean noneMatch(Predicate<? super T> predicate);
 
+    boolean anyMatch(Predicate<? super T> predicate);
+
     NStream<T> limit(long maxSize);
 
     NIterator<T> iterator();

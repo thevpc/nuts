@@ -26,13 +26,13 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.reserved.rpi.NIORPI;
+import net.thevpc.nuts.util.NStream;
 
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * I/O input stream base.
@@ -123,9 +123,13 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
 
     long contentLength();
 
-    Stream<String> getLines(Charset cs);
+    NStream<String> lines(Charset cs);
 
-    Stream<String> getLines();
+    NStream<String> lines();
+
+    NStream<String> reversedLines(Charset cs);
+
+    NStream<String> reversedLines();
 
     Reader getReader();
 

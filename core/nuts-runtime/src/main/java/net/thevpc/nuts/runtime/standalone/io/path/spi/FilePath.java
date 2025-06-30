@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.format.NTreeVisitResult;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
@@ -13,12 +14,10 @@ import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.nio.file.attribute.*;
 import java.time.Instant;
@@ -85,7 +84,6 @@ public class FilePath implements NPathSPI {
     }
 
 
-
     public NPath resolveSibling(NPath basePath, String path) {
         if (path == null) {
             return getParent(basePath);
@@ -103,7 +101,6 @@ public class FilePath implements NPathSPI {
             return fastPath(p).resolve(path);
         }
     }
-
 
 
     @Override
@@ -769,6 +766,17 @@ public class FilePath implements NPathSPI {
         return count == permissions.length;
     }
 
+    @Override
+    public NStream<String> reversedLines(Charset charset) {
+        File file = value == null ? null : value.toFile();
+        if (file == null || !file.isFile()) {
+            throw new NIOException(new FileNotFoundException(String.valueOf(value)));
+        }
+
+        Charset actualCharset = (charset != null) ? charset : Charset.defaultCharset();
+        return NStream.ofIterator(new ReverseLineReaderIterator(file, actualCharset, 4096*10 /*max line length*/));
+    }
+
     private static class MyPathFormat implements NFormatSPI {
 
         private final FilePath p;
@@ -808,9 +816,9 @@ public class FilePath implements NPathSPI {
                 if (URLPath.MOSTLY_URL_PATTERN.matcher(path).matches()) {
                     return null;
                 }
-                if(NWorkspace.of().getOsFamily()==NOsFamily.WINDOWS && path.matches("^[\\\\/][a-zA-Z]:([\\\\/].*)?")){
+                if (NWorkspace.of().getOsFamily() == NOsFamily.WINDOWS && path.matches("^[\\\\/][a-zA-Z]:([\\\\/].*)?")) {
                     //remove trailing slash
-                    path=path.substring(1);
+                    path = path.substring(1);
                 }
                 Path value = Paths.get(path);
                 return NCallableSupport.of(10, () -> new FilePath(value));
@@ -836,5 +844,108 @@ public class FilePath implements NPathSPI {
         }
 
     }
+
+    private static class ReverseLineReaderIterator implements NIterator<String>, AutoCloseable {
+        private final Charset actualCharset;
+        private long pointer;
+        private byte[] buffer;
+        private String nextLine;
+        private long fileLength;
+        private RandomAccessFile raf;
+        private ByteArrayOutputStream lineBuffer;
+        private int bufferSize;
+
+        public ReverseLineReaderIterator(File file, Charset actualCharset, int bufferSize) {
+            this.actualCharset = actualCharset;
+            this.bufferSize = bufferSize;
+            buffer = new byte[bufferSize];
+            try {
+                raf = new RandomAccessFile(file, "r");
+                fileLength = raf.length();
+            } catch (IOException e) {
+                throw new NIOException(e);
+            }
+            lineBuffer = new ByteArrayOutputStream();
+            pointer = fileLength;
+        }
+
+        private static String decodeReversed(ByteArrayOutputStream reversedBytes, Charset charset) {
+            byte[] raw = reversedBytes.toByteArray();
+            reverse(raw);
+            return new String(raw, charset);
+        }
+
+        private static void reverse(byte[] array) {
+            for (int i = 0, j = array.length - 1; i < j; i++, j--) {
+                byte tmp = array[i];
+                array[i] = array[j];
+                array[j] = tmp;
+            }
+        }
+
+        @Override
+        public void close() {
+            if (raf != null) {
+                try {
+                    raf.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                raf = null;
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (raf == null) {
+                return false;
+            }
+            while (pointer > 0) {
+                try {
+                    int readSize = (int) Math.min(bufferSize, pointer);
+                    pointer -= readSize;
+                    raf.seek(pointer);
+                    raf.readFully(buffer, 0, readSize);
+
+                    for (int i = readSize - 1; i >= 0; i--) {
+                        byte b = buffer[i];
+                        if (b == '\n') {
+                            if (lineBuffer.size() > 0) {
+                                String line = decodeReversed(lineBuffer, actualCharset);
+                                lineBuffer.reset();
+                                nextLine = line;
+                                return true;
+                            }
+                        } else {
+                            lineBuffer.write(b);
+                        }
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            // First line at top of file
+            if (lineBuffer.size() > 0) {
+                String line = decodeReversed(lineBuffer, actualCharset);
+                lineBuffer.reset();
+                nextLine = line;
+                return true;
+            }
+            close();
+            return false;
+        }
+
+        @Override
+        public String next() {
+            return nextLine;
+        }
+
+        @Override
+        public NIterator<String> withDesc(NEDesc description) {
+            return this;
+        }
+    }
+
 
 }

@@ -531,6 +531,11 @@ public abstract class NStreamBase<T> implements NStream<T> {
     }
 
     @Override
+    public boolean anyMatch(Predicate<? super T> predicate) {
+        return stream().anyMatch(predicate);
+    }
+
+    @Override
     public boolean noneMatch(Predicate<? super T> predicate) {
         return stream().noneMatch(predicate);
     }

@@ -337,4 +337,9 @@ public abstract class NStreamDelegate<T> implements NStream<T> {
     public boolean[] toBooleanArray() {
         return baseStream().toBooleanArray();
     }
+
+    @Override
+    public boolean anyMatch(Predicate<? super T> predicate) {
+        return baseStream().anyMatch(predicate);
+    }
 }

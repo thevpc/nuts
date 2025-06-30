@@ -68,4 +68,9 @@ public class NStreamFromJavaStream<T> extends NStreamBase<T> {
         return "StreamBasedResult" + "@" + Integer.toHexString(hashCode());
     }
 
+    @Override
+    public void close() {
+        o.close();
+        super.close();
+    }
 }

@@ -5,8 +5,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.stream;
 
+import net.thevpc.nuts.NUnexpectedException;
 import net.thevpc.nuts.util.NIterable;
 import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.util.NMsg;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -73,4 +75,15 @@ public class NStreamFromNIterable<T> extends NStreamBase<T> {
         return "IterableBasedResult" + "@" + Integer.toHexString(hashCode());
     }
 
+    @Override
+    public void close() {
+        if(o instanceof AutoCloseable){
+            try {
+                ((AutoCloseable)o).close();
+            } catch (Exception e) {
+                throw new NUnexpectedException(NMsg.ofC("unable to close iterator : %s",e));
+            }
+        }
+        super.close();
+    }
 }
