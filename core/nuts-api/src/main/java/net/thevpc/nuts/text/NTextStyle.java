@@ -110,6 +110,7 @@ public class NTextStyle implements NEnum {
     public static NTextStyle title(int variant) {
         return of(NTextStyleType.TITLE, variant);
     }
+
     public static NTextStyle title1() {
         return title(1);
     }
@@ -455,6 +456,34 @@ public class NTextStyle implements NEnum {
         if (t == null) {
             if (NBlankable.isBlank(key)) {
                 return NOptional.ofEmpty(() -> NMsg.ofC("%s is empty", NTextStyle.class.getSimpleName()));
+            }
+            NOptional<NNamedColor> u = NColors.ofName(key);
+            if (u.isPresent()) {
+                return NOptional.of(NTextStyle.of(NTextStyleType.FORE_TRUE_COLOR, NColor.of32(u.get().getColor()).getIntColor()));
+            }
+            if (NBlankable.isBlank(key)) {
+                u = NColors.ofName("fg_" + key.trim());
+                if (u.isPresent()) {
+                    return NOptional.of(NTextStyle.of(NTextStyleType.FORE_TRUE_COLOR, NColor.of32(u.get().getColor()).getIntColor()));
+                }
+            }
+            if (NBlankable.isBlank(key)) {
+                u = NColors.ofName("fore_" + key.trim());
+                if (u.isPresent()) {
+                    return NOptional.of(NTextStyle.of(NTextStyleType.FORE_TRUE_COLOR, NColor.of32(u.get().getColor()).getIntColor()));
+                }
+            }
+            if (NBlankable.isBlank(key)) {
+                u = NColors.ofName("bg_" + key.trim());
+                if (u.isPresent()) {
+                    return NOptional.of(NTextStyle.of(NTextStyleType.BACK_TRUE_COLOR, NColor.of32(u.get().getColor()).getIntColor()));
+                }
+            }
+            if (NBlankable.isBlank(key)) {
+                u = NColors.ofName("back_" + key.trim());
+                if (u.isPresent()) {
+                    return NOptional.of(NTextStyle.of(NTextStyleType.BACK_TRUE_COLOR, NColor.of32(u.get().getColor()).getIntColor()));
+                }
             }
             return NOptional.ofError(() -> NMsg.ofC("%s invalid value : %s", NTextStyle.class.getSimpleName(), finalValue));
         }
