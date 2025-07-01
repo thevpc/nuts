@@ -78,22 +78,11 @@ public abstract class AbstractNInputSource implements NInputSource {
 
     @Override
     public List<String> tail(int count, Charset cs) {
-        LinkedList<String> lines = new LinkedList<>();
-        BufferedReader br = getBufferedReader(cs);
-        String line;
-        try {
-            int count0 = 0;
-            while ((line = br.readLine()) != null) {
-                lines.add(line);
-                count0++;
-                if (count0 > count) {
-                    lines.remove();
-                }
-            }
-        } catch (IOException e) {
-            throw new NIOException(e);
+        try(NStream<String> rl=reversedLines()){
+            List<String> list = rl.limit(count).collect(Collectors.toList());
+            Collections.reverse(list);
+            return list;
         }
-        return lines;
     }
 
     @Override
