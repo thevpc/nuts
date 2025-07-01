@@ -30,8 +30,10 @@ import net.thevpc.nuts.NExceptions;
 import net.thevpc.nuts.format.NMsgFormattable;
 import net.thevpc.nuts.text.*;
 
+import java.awt.*;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -133,15 +135,15 @@ public class NMsg {
     }
 
     public static NMsg ofNtf(String message) {
-        return of(NTextFormatType.NTF, NStringUtils.firstNonNull(message,""), NO_PARAMS, null, null, null);
+        return of(NTextFormatType.NTF, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null);
     }
 
     public static NMsg ofCode(String lang, String text) {
-        return of(NTextFormatType.CODE, NStringUtils.firstNonNull(text,""), NO_PARAMS, null, lang, null);
+        return of(NTextFormatType.CODE, NStringUtils.firstNonNull(text, ""), NO_PARAMS, null, lang, null);
     }
 
     public static NMsg ofCode(String text) {
-        return of(NTextFormatType.CODE, NStringUtils.firstNonNull(text,""), NO_PARAMS, null, null, null);
+        return of(NTextFormatType.CODE, NStringUtils.firstNonNull(text, ""), NO_PARAMS, null, null, null);
     }
 
     public static NMsg ofStringLiteral(String literal) {
@@ -152,11 +154,11 @@ public class NMsg {
     }
 
     public static NMsg ofStyled(String message, NTextStyle style) {
-        return of(NTextFormatType.STYLED, NStringUtils.firstNonNull(message,""), NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null);
+        return of(NTextFormatType.STYLED, NStringUtils.firstNonNull(message, ""), NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null);
     }
 
     public static NMsg ofStyled(String message, NTextStyles styles) {
-        return of(NTextFormatType.STYLED, NStringUtils.firstNonNull(message,""), NO_PARAMS, styles, null, null);
+        return of(NTextFormatType.STYLED, NStringUtils.firstNonNull(message, ""), NO_PARAMS, styles, null, null);
     }
 
     public static NMsg ofStyled(NMsg message, NTextStyle style) {
@@ -180,15 +182,15 @@ public class NMsg {
     }
 
     public static NMsg ofPlain(String message) {
-        return of(NTextFormatType.PLAIN, NStringUtils.firstNonNull(message,""), NO_PARAMS, null, null, null);
+        return of(NTextFormatType.PLAIN, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null);
     }
 
     public static NMsg ofC(String message) {
-        return of(NTextFormatType.CFORMAT, NStringUtils.firstNonNull(message,""), NO_PARAMS, null, null, null);
+        return of(NTextFormatType.CFORMAT, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null);
     }
 
     public static NMsg ofC(String message, Object... params) {
-        return of(NTextFormatType.CFORMAT, NStringUtils.firstNonNull(message,""), params, null, null, null);
+        return of(NTextFormatType.CFORMAT, NStringUtils.firstNonNull(message, ""), params, null, null, null);
     }
 
     public static NMsg ofV(String message, NMsgParam... params) {
@@ -215,11 +217,11 @@ public class NMsg {
     }
 
     public static NMsg ofV(String message, Map<String, ?> vars) {
-        return of(NTextFormatType.VFORMAT, NStringUtils.firstNonNull(message,""), new Object[]{vars}, null, null, null);
+        return of(NTextFormatType.VFORMAT, NStringUtils.firstNonNull(message, ""), new Object[]{vars}, null, null, null);
     }
 
     public static NMsg ofV(String message, Function<String, ?> vars) {
-        return of(NTextFormatType.VFORMAT, NStringUtils.firstNonNull(message,""), new Object[]{vars}, null, null, null);
+        return of(NTextFormatType.VFORMAT, NStringUtils.firstNonNull(message, ""), new Object[]{vars}, null, null, null);
     }
 
     public static NMsg ofJ(String message, NMsgParam... params) {
@@ -240,11 +242,11 @@ public class NMsg {
 
     @Deprecated
     public static NMsg ofJ(String message) {
-        return of(NTextFormatType.JFORMAT, NStringUtils.firstNonNull(message,""), NO_PARAMS, null, null, null);
+        return of(NTextFormatType.JFORMAT, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null);
     }
 
     public static NMsg ofJ(String message, Object... params) {
-        return of(NTextFormatType.JFORMAT, NStringUtils.firstNonNull(message,""), params, null, null, null);
+        return of(NTextFormatType.JFORMAT, NStringUtils.firstNonNull(message, ""), params, null, null, null);
     }
 
     public NTextFormatType getFormat() {
@@ -668,6 +670,70 @@ public class NMsg {
     }
 
     public static NMsg ofStyledBackgroundTrueColor(String message, int color) {
+        return ofStyled(message, NTextStyle.backgroundTrueColor(color));
+    }
+
+    public static NMsg ofStyledForegroundTrueColor(String message, NColor color) {
+        return ofStyled(message, NTextStyle.foregroundTrueColor(color.toColor()));
+    }
+
+    public static NMsg ofStyledForegroundTrueColor(NMsg message, NColor color) {
+        return ofStyled(message, NTextStyle.foregroundTrueColor(color));
+    }
+
+    public static NMsg ofStyledForegroundTrueColor(String message, Color color) {
+        return ofStyled(message, NTextStyle.foregroundTrueColor(color));
+    }
+
+    public static NMsg ofStyledForegroundTrueColor(NMsg message, Color color) {
+        return ofStyled(message, NTextStyle.foregroundTrueColor(color));
+    }
+
+    public static NMsg ofStyledBackgroundTrueColor(String message, NColor color) {
+        return ofStyled(message, NTextStyle.backgroundTrueColor(color.toColor()));
+    }
+
+    public static NMsg ofStyledBackgroundTrueColor(NMsg message, NColor color) {
+        return ofStyled(message, NTextStyle.backgroundTrueColor(color));
+    }
+
+    public static NMsg ofStyledBackgroundTrueColor(String message, Color color) {
+        return ofStyled(message, NTextStyle.backgroundTrueColor(color));
+    }
+
+    public static NMsg ofStyledBackgroundTrueColor(NMsg message, Color color) {
+        return ofStyled(message, NTextStyle.backgroundTrueColor(color));
+    }
+
+    public static NMsg ofStyledBackgroundColor(String message, NColor color) {
+        return ofStyled(message, NTextStyle.backgroundColor(color));
+    }
+
+    public static NMsg ofStyledBackgroundColor(NMsg message, NColor color) {
+        return ofStyled(message, NTextStyle.backgroundColor(color));
+    }
+
+    public static NMsg ofStyledForegroundColor(String message, NColor color) {
+        return ofStyled(message, NTextStyle.foregroundColor(color));
+    }
+
+    public static NMsg ofStyledForegroundColor(NMsg message, NColor color) {
+        return ofStyled(message, NTextStyle.foregroundColor(color));
+    }
+
+    public static NMsg ofStyledBackgroundColor(String message, Color color) {
+        return ofStyled(message, NTextStyle.backgroundTrueColor(color));
+    }
+
+    public static NMsg ofStyledBackgroundColor(NMsg message, Color color) {
+        return ofStyled(message, NTextStyle.backgroundTrueColor(color));
+    }
+
+    public static NMsg ofStyledForegroundColor(String message, Color color) {
+        return ofStyled(message, NTextStyle.backgroundTrueColor(color));
+    }
+
+    public static NMsg ofStyledForegroundColor(NMsg message, Color color) {
         return ofStyled(message, NTextStyle.backgroundTrueColor(color));
     }
 
