@@ -117,4 +117,12 @@ public class MsgTest {
         Nuts.require("--color");
         NOut.println(NMsg.ofV("##:12:$v##", NMaps.of("v",":")));
     }
+
+    @Test
+    public void test10() {
+        Nuts.require("--color");
+        NOut.println(NMsg.ofV("##:red:$v##", NMaps.of("v","this is red")));
+        NOut.println(NMsg.ofV("##:MediumVioletRed:$v##", NMaps.of("v","this is MediumVioletRed")));
+        NOut.println(NMsg.ofV("```SandyBrown $v```", NMaps.of("v","this is SandyBrown")));
+    }
 }
