@@ -236,7 +236,7 @@ public class DefaultNTextManagerModel {
 
         if (lc.length() > 0) {
             try {
-                NTextStyle found = NTextStyle.parse(lc).orNull();
+                NTextStyle found = NTextStyle.parse(NStringUtils.trim(highlighterId)).orNull();
                 if (found != null) {
                     h = new CustomStyleCodeHighlighter(found);
                     _cachedHighlighters.put(lc, h);
