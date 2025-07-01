@@ -29,6 +29,7 @@ package net.thevpc.nuts.text;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.*;
 
+import java.awt.*;
 import java.util.Objects;
 
 /**
@@ -383,6 +384,14 @@ public class NTextStyle implements NEnum {
         return of(NTextStyleType.FORE_TRUE_COLOR, variant);
     }
 
+    public static NTextStyle foregroundTrueColor(Color variant) {
+        return of(NTextStyleType.FORE_TRUE_COLOR, variant == null ? 0 : variant.getRGB());
+    }
+
+    public static NTextStyle foregroundTrueColor(NColor variant) {
+        return of(NTextStyleType.FORE_TRUE_COLOR, variant == null ? 0 : variant.toColor().getRGB());
+    }
+
     public static NTextStyle backgroundColor(int variant) {
         return of(NTextStyleType.BACK_COLOR, variant);
     }
@@ -390,6 +399,55 @@ public class NTextStyle implements NEnum {
     public static NTextStyle backgroundTrueColor(int variant) {
         return of(NTextStyleType.BACK_TRUE_COLOR, variant);
     }
+
+    public static NTextStyle backgroundTrueColor(Color variant) {
+        return of(NTextStyleType.BACK_TRUE_COLOR, variant == null ? 0 : variant.getRGB());
+    }
+
+    public static NTextStyle backgroundTrueColor(NColor variant) {
+        return of(NTextStyleType.BACK_TRUE_COLOR, variant == null ? 0 : variant.toColor().getRGB());
+    }
+
+    public static NTextStyle backgroundColor(NColor variant) {
+        if (variant == null) {
+            return backgroundColor(0);
+        }
+        switch (variant.getType()) {
+            case NColor.TYPE4:
+            case NColor.TYPE8: {
+                return secondary(variant.getIntColor());
+            }
+            case NColor.TYPE24: {
+                return backgroundColor(variant.getIntColor());
+            }
+            case NColor.TYPE32:
+            case NColor.TYPE64: {
+                return backgroundTrueColor(variant.getIntColor());
+            }
+        }
+        return of(NTextStyleType.BACK_TRUE_COLOR, variant.toColor().getRGB());
+    }
+
+    public static NTextStyle foregroundColor(NColor variant) {
+        if (variant == null) {
+            return foregroundColor(0);
+        }
+        switch (variant.getType()) {
+            case NColor.TYPE4:
+            case NColor.TYPE8: {
+                return primary(variant.getIntColor());
+            }
+            case NColor.TYPE24: {
+                return foregroundColor(variant.getIntColor());
+            }
+            case NColor.TYPE32:
+            case NColor.TYPE64: {
+                return foregroundTrueColor(variant.getIntColor());
+            }
+        }
+        return of(NTextStyleType.FORE_TRUE_COLOR, variant.toColor().getRGB());
+    }
+
 
     public static NOptional<NTextStyle> parse(String value) {
         value = value == null ? "" : value.trim();
