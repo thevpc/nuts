@@ -31,11 +31,54 @@ import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyles;
 
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class NAnsiTermHelper {
     private static final int[] FG8 = {30, 31, 32, 33, 34, 35, 36, 37, 90, 91, 92, 93, 94, 95, 96, 97};
     private static final int[] BG8 = {40, 41, 42, 43, 44, 45, 46, 47, 100, 101, 102, 103, 104, 105, 106, 107};
+    public static java.util.List<Color> ANSI_COLORS_16= Collections.unmodifiableList(Arrays.asList(
+            new Color(0, 0, 0),         // 0: Black
+            new Color(128, 0, 0),       // 1: Red
+            new Color(0, 128, 0),       // 2: Green
+            new Color(128, 128, 0),     // 3: Yellow
+            new Color(0, 0, 128),       // 4: Blue
+            new Color(128, 0, 128),     // 5: Magenta
+            new Color(0, 128, 128),     // 6: Cyan
+            new Color(192, 192, 192),   // 7: White (light gray)
+            new Color(128, 128, 128),   // 8: Bright Black (dark gray)
+            new Color(255, 0, 0),       // 9: Bright Red
+            new Color(0, 255, 0),       //10: Bright Green
+            new Color(255, 255, 0),     //11: Bright Yellow
+            new Color(0, 0, 255),       //12: Bright Blue
+            new Color(255, 0, 255),     //13: Bright Magenta
+            new Color(0, 255, 255),     //14: Bright Cyan
+            new Color(255, 255, 255)    //15: Bright White
+    ));
+    public static final List<Color> ANSI_COLORS_256;
+    static {
+        List<Color> ansiColors = new ArrayList<>(256);
+        ansiColors.addAll(ANSI_COLORS_16);
+        // 16–231: 6×6×6 RGB cube
+        int[] levels = {0, 95, 135, 175, 215, 255};
+        int index = 16;
+        for (int r = 0; r < 6; r++) {
+            for (int g = 0; g < 6; g++) {
+                for (int b = 0; b < 6; b++) {
+                    ansiColors.add(new Color(levels[r], levels[g], levels[b]));
+                }
+            }
+        }
+        // 232–255: Grayscale from 8 to 238 in steps of 10
+        for (int i = 0; i < 24; i++) {
+            int gray = 8 + i * 10;
+            ansiColors.add(new Color(gray, gray, gray));
+        }
+        ANSI_COLORS_256=Collections.unmodifiableList(ansiColors);
+    }
 
     public static NAnsiTermHelper of() {
         return new NAnsiTermHelper();
