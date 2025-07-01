@@ -24,6 +24,8 @@
  */
 package net.thevpc.nuts.util;
 
+import java.awt.*;
+
 /**
  * Color Model
  */
@@ -35,7 +37,6 @@ public class NColor {
     public static final byte TYPE64 = 64;
     private final byte type;
     private final long color;
-
     public NColor(byte type, long color) {
         this.type = type;
         this.color = color;
@@ -53,6 +54,18 @@ public class NColor {
         return new NColor(TYPE24, color);
     }
 
+    public static NColor of24(Color color) {
+        return new NColor(TYPE24, color.getRGB() & 0xFFFFFF);
+    }
+
+    public static NColor of32(Color color) {
+        return new NColor(TYPE32, color.getRGB());
+    }
+
+    public static NColor of64(Color color) {
+        return new NColor(TYPE64, color.getRGB());
+    }
+
     public static NColor of32(int color) {
         return new NColor(TYPE32, color);
     }
@@ -63,6 +76,29 @@ public class NColor {
 
     public int getType() {
         return type;
+    }
+
+    public Color toColor() {
+        switch (type) {
+            case TYPE4:{
+                int c=(int)color;
+                if(c>=0 && c<16) {
+                    return NAnsiTermHelper.ANSI_COLORS_16.get(c);
+                }
+                return NAnsiTermHelper.ANSI_COLORS_16.get(0);
+            }
+            case TYPE24:{
+                int c=(int)color;
+                if(c>=0 && c<255) {
+                    return NAnsiTermHelper.ANSI_COLORS_256.get(c);
+                }
+                return NAnsiTermHelper.ANSI_COLORS_256.get(0);
+            }
+            case TYPE32:
+            case TYPE64:
+                return new Color((int)color);
+        }
+        return new Color((int)color);
     }
 
     public int getIntColor() {

@@ -2,7 +2,10 @@ package net.thevpc.nuts.util;
 
 import java.awt.*;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class NColors {
     public static final NNamedColor BLACK = new NNamedColor("Black", new Color(0, 0, 0));
@@ -261,6 +264,7 @@ public class NColors {
     public static final NNamedColor GREY_85 = new NNamedColor("Grey85", new Color(218, 218, 218));
     public static final NNamedColor GREY_89 = new NNamedColor("Grey89", new Color(228, 228, 228));
     public static final NNamedColor GREY_93 = new NNamedColor("Grey93", new Color(238, 238, 238));
+
     public static final List<NNamedColor> ALL = Arrays.asList(new NNamedColor[]{
             BLACK,
             MAROON,
@@ -519,6 +523,14 @@ public class NColors {
             GREY_89,
             GREY_93
     });
+    public static final Map<String, NNamedColor> BY_NAME = Collections.unmodifiableMap(
+            ALL.stream()
+                    .collect(Collectors.toMap(c->c.getName().toLowerCase(), c -> c))
+    );
+
+    public static NOptional<NNamedColor> ofName(String name) {
+        return NOptional.ofNamed(BY_NAME.get(name == null ? null : NNameFormat.CLASS_NAME.format(name.trim()).toLowerCase()), "color " + name);
+    }
 
     public static String toHtmlHex(Color cl) {
         return String.format("#%02X%02X%02X", cl.getRed(), cl.getGreen(), cl.getBlue());
