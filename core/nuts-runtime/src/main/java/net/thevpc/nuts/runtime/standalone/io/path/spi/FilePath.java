@@ -900,40 +900,54 @@ public class FilePath implements NPathSPI {
             if (raf == null) {
                 return false;
             }
-            while (pointer > 0) {
-                try {
+
+            boolean wasNewline = false;
+
+            try {
+                while (pointer > 0) {
                     int readSize = (int) Math.min(bufferSize, pointer);
                     pointer -= readSize;
                     raf.seek(pointer);
                     raf.readFully(buffer, 0, readSize);
-
                     for (int i = readSize - 1; i >= 0; i--) {
                         byte b = buffer[i];
                         if (b == '\n') {
+                            wasNewline = true;
                             if (lineBuffer.size() > 0) {
                                 String line = decodeReversed(lineBuffer, actualCharset);
                                 lineBuffer.reset();
                                 nextLine = line;
                                 return true;
                             }
+                        } else if (b == '\r') {
+                            if (!wasNewline) {
+                                if (lineBuffer.size() > 0) {
+                                    String line = decodeReversed(lineBuffer, actualCharset);
+                                    lineBuffer.reset();
+                                    nextLine = line;
+                                    return true;
+                                }
+                            }
+                            wasNewline = false;
                         } else {
+                            wasNewline = false;
                             lineBuffer.write(b);
                         }
                     }
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
                 }
-            }
 
-            // First line at top of file
-            if (lineBuffer.size() > 0) {
-                String line = decodeReversed(lineBuffer, actualCharset);
-                lineBuffer.reset();
-                nextLine = line;
-                return true;
+                if (lineBuffer.size() > 0) {
+                    String line = decodeReversed(lineBuffer, actualCharset);
+                    lineBuffer.reset();
+                    nextLine = line;
+                    return true;
+                }
+
+                close();
+                return false;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-            close();
-            return false;
         }
 
         @Override
