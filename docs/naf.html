@@ -162,22 +162,22 @@
                             
                         </li>
                         
-                        <li class="nav-item"><a class="nav-link" href="#UBF8A2D47EA72689422E4A7DC930DDB3DD81D3201">2.4 NMsg</a>
+                        <li class="nav-item"><a class="nav-link" href="#U7961F86F7799475AFA756CF28E64D635A429F85C">2.4 NTrace, the output companion</a>
                             
                             
                         </li>
                         
-                        <li class="nav-item"><a class="nav-link" href="#U97A400239CE108DFC5F8EA850E8EB20B355AD748">2.5 NIn</a>
+                        <li class="nav-item"><a class="nav-link" href="#U1053601D9FA3CC1E5735593E760EC5FAD4AD4FC4">2.5 NMsg for Messages and text formatting</a>
                             
                             
                         </li>
                         
-                        <li class="nav-item"><a class="nav-link" href="#U8D3175BFE29B3B886950F37AB8BDCC427184E8A4">2.6 NTrace</a>
+                        <li class="nav-item"><a class="nav-link" href="#UB913B3950DBE52C1F140E5702B1ECEA8A12EAD75">2.6 NIn for simplified Input</a>
                             
                             
                         </li>
                         
-                        <li class="nav-item"><a class="nav-link" href="#UCA0BA63EC417E7903B65AAF43BB8917A8371C02C">2.7 NAsk</a>
+                        <li class="nav-item"><a class="nav-link" href="#U749C2762116EE901ACB70CB186E9C464E5A584A4">2.7 NLog for elegant Logging</a>
                             
                             
                         </li>
@@ -191,7 +191,12 @@
                     
                     <ul class="nav flex-column">
                         
-                        <li class="nav-item"><a class="nav-link" href="#U2277D11C75AA7D91ACA08898E0FF945AB58CE76C">3.1 NSession</a>
+                        <li class="nav-item"><a class="nav-link" href="#U3A38C8000FF7E81F308EF22113996D55ECAD35B8">3.1 NWorkspace</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#UB4CEC631B3B9F4E4991EC571625D6357DB89AB63">3.2 NSession</a>
                             
                             
                         </li>
@@ -579,8 +584,64 @@ NErr.println(NMsg.of("Task %s failed after %d attempts", "SyncJob", 3));
                             <hr class="divider">
                         
                             <!--pageLevel2-->
-                            <section id="UBF8A2D47EA72689422E4A7DC930DDB3DD81D3201" >
-                                <h3 class="main-section2"><a href="#U58F633BB32A62BCA0E6934BAFB4FEC3DE70699DC">2.4 NMsg</a></h3>
+                            <section id="U7961F86F7799475AFA756CF28E64D635A429F85C" >
+                                <h3 class="main-section2"><a href="#U58F633BB32A62BCA0E6934BAFB4FEC3DE70699DC">2.4 NTrace, the output companion</a></h3>
+                                <div class="text-card">
+                                <H4 class="md-title-1"><p class="md-phrase"><mark class="md-code md-code-` ">NTrace</mark> — Conditional Trace Output Utility</p></H4>
+<p class="md-phrase"><mark class="md-code md-code-` ">NTrace</mark> is a structured output utility in <b class="md-bold">Nuts</b> used to emit <b class="md-bold">optional diagnostic or trace information</b> to the standard output stream. It behaves like <mark class="md-code md-code-` ">NOut</mark>, but only prints output when <b class="md-bold">tracing is explicitly enabled</b> in the current session.</p>
+<hr class="divider" class="md-hr"/>
+<H4 class="md-title-2"><p class="md-phrase">🔍 When to Use <mark class="md-code md-code-` ">NTrace</mark></p></H4>
+<p class="md-phrase">Use <mark class="md-code md-code-` ">NTrace</mark> to provide <b class="md-bold">optional messages</b> that :</p>
+<ul class="md-ul"><li class="md-uli">Help during development or debugging,</li><li class="md-uli">Provide insights into internal steps,</li><li class="md-uli">Are not critical and should not mix with standard output (NOut) or error messages (NErr).</li></ul>
+<p class="md-phrase">Unlike <mark class="md-code md-code-` ">NOut</mark>, <mark class="md-code md-code-` ">NTrace</mark> output is optional and controlled by the trace flag, so it won’t clutter output if tracing is turned off.</p>
+
+<H4 class="md-title-2">Output Destination</H4>
+<p class="md-phrase">> <b class="md-bold">Note:</b>   > <mark class="md-code md-code-` ">NTrace</mark> writes to <code class="md-code md-code-` ">NSession.out()</code> — the same output stream used by <mark class="md-code md-code-` ">NOut</mark>.   > In contrast, <mark class="md-code md-code-` ">NErr</mark> writes to <code class="md-code md-code-` ">NSession.err()</code>.</p>
+This means trace messages can be redirected, styled, and formatted consistently with standard output, but only appear when tracing is active.
+<hr class="divider" class="md-hr"/>
+
+<H4 class="md-title-2">Trace Mode Behavior</H4>
+Trace is enabled by default.
+To disable trace output, users can:
+<ul class="md-ul"><li class="md-uli">Pass --trace=false or --!trace on the command line:</li></ul>
+<pre class="md-code md-code-``` bash"><code class="bash">
+nuts --trace=false my-app 
+nuts --!trace my-app 
+</code></pre>
+<ul class="md-ul"><li class="md-uli">Programmatically disable it in the session:</li></ul>
+<pre class="md-code md-code-``` java"><code class="java">
+NSession.of().setTrace(false);
+</code></pre>
+When trace is disabled, all calls to NTrace.println(...) are ignored silently.
+<hr class="divider" class="md-hr"/>
+
+<H4 class="md-title-2">Example Usage</H4>
+<pre class="md-code md-code-``` "><code class="">
+Nuts.require();
+
+// This will print only if trace is enabled (default is true)
+NTrace.println("Loading configuration from default path...");
+</code></pre>
+
+<H4 class="md-title-2">Features (Same as NOut)</H4>
+<p class="md-phrase"><mark class="md-code md-code-` ">NTrace</mark> supports the complete feature set of <mark class="md-code md-code-` ">NOut</mark>, including:</p>
+<ul class="md-ul"><li class="md-uli">NTF formatting for colors and styling,</li><li class="md-uli">Structured rendering (e.g., JSON, YAML, XML, TSON, table, tree),</li><li class="md-uli">Formatted messages using NMsg,</li><li class="md-uli">Integration with the current session’s output configuration.</li></ul>
+
+<H4 class="md-title-2">Best Practices</H4>
+Use NTrace to display less relevant or verbose messages that:
+<ul class="md-ul"><li class="md-uli">Are helpful for end users who want to better understand what the tool is doing,</li><li class="md-uli">Should not appear during normal usage but may provide useful context when verbosity is desired (e.g., progress steps, skipped actions, fallback behavior),</li><li class="md-uli">Can be safely ignored without impacting the understanding of the main output.</li></ul>
+<p class="md-phrase">> <b class="md-bold">Note:</b>   > <mark class="md-code md-code-` ">NTrace</mark> is not a developer logging mechanism. > For internal developer-oriented logging, use NLog.</p>
+
+
+
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
+                            <section id="U1053601D9FA3CC1E5735593E760EC5FAD4AD4FC4" >
+                                <h3 class="main-section2"><a href="#U58F633BB32A62BCA0E6934BAFB4FEC3DE70699DC">2.5 NMsg for Messages and text formatting</a></h3>
                                 <div class="text-card">
                                 <p class="md-phrase">The <mark class="md-code md-code-` ">NMsg</mark> class is a powerful utility for building <b class="md-bold">structured</b>, <b class="md-bold">formatted</b>, and <b class="md-bold">styled</b> messages in <b class="md-bold">Nuts</b>. Messages constructed using <mark class="md-code md-code-` ">NMsg</mark> can be safely rendered in various output formats (e.g., plain text, NTF, JSON, etc.) and support placeholders, syntax coloring, and semantic styling.</p>
 <p class="md-phrase"><mark class="md-code md-code-` ">NMsg</mark> is fully integrated with <mark class="md-code md-code-` ">NOut</mark> and <mark class="md-code md-code-` ">NErr</mark> for displaying rich and meaningful CLI output.</p>
@@ -663,91 +724,52 @@ Additional token types include:
                             <hr class="divider">
                         
                             <!--pageLevel2-->
-                            <section id="U97A400239CE108DFC5F8EA850E8EB20B355AD748" >
-                                <h3 class="main-section2"><a href="#U58F633BB32A62BCA0E6934BAFB4FEC3DE70699DC">2.5 NIn</a></h3>
+                            <section id="UB913B3950DBE52C1F140E5702B1ECEA8A12EAD75" >
+                                <h3 class="main-section2"><a href="#U58F633BB32A62BCA0E6934BAFB4FEC3DE70699DC">2.6 NIn for simplified Input</a></h3>
                                 <div class="text-card">
-                                <p class="md-phrase"><b class="md-bold">nuts</b> Library suppors colorful and structured output</p>
+                                <H4 class="md-title-1"><p class="md-phrase"><mark class="md-code md-code-` ">NIn</mark> — Structured Input Utility</p></H4>
+<p class="md-phrase">The <mark class="md-code md-code-` ">NIn</mark> class is the <b class="md-bold">interactive input</b> utility of the <b class="md-bold">Nuts</b> platform. It provides a simple and consistent interface to read from the <b class="md-bold">standard input stream</b> (<code class="md-code md-code-` ">NSession.in()</code>), with built-in support for prompts, password masking, and type-safe values.</p>
+<H4 class="md-title-2">Basic Input Reading</H4>
+<H4 class="md-title-3">Reading a Line</H4>
 <pre class="md-code md-code-``` java"><code class="java">
-    Nuts.require();
-NSession session=NSession.of();
-    NOut.println("Hello");
-    NOut.println("Hello");
-
-    NOut.println(Arrays.asList("Hello"));
-        NOut.println("Hello");
-
-    session.err()....;
-    session.in()....;
+String line = NIn.readLine();
 </code></pre>
+Reads a full line from the user input.
+You can also provide a prompt using an NMsg:
 <pre class="md-code md-code-``` java"><code class="java">
-    NOut.println("#Hello1# ##Hello2## ##:_:Hello3## ");
-    NOut.println("</code></pre>
-java public static class MyClass {}
-<pre class="md-code md-code-``` "><code class="">");
-    NOut.println("</code></pre>
-js public static class MyClass {}
-<pre class="md-code md-code-``` "><code class="">");
-    NOut.println("</code></pre>
-xml 
+String name = NIn.readLine(NMsg.ofPlain("Enter your ##name##: "));
+</code></pre>
+
+<H4 class="md-title-3">Reading a Password</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+char[] pwd = NIn.readPassword();
+</code></pre>
+Reads a password without echoing characters  (as far as the required extensions are loaded) to the terminal.
+With prompt:
+<pre class="md-code md-code-``` java"><code class="java">
+char[] pwd = NIn.readPassword(NMsg.ofPlain("Password: "));
+</code></pre>
+
+
+<H4 class="md-title-2">Reading a Literal</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+NLiteral lit = NIn.readLiteral();
+</code></pre>
+<p class="md-phrase">Reads a string input and wraps it in an <mark class="md-code md-code-` ">NLiteral</mark>, allowing you to safely extract typed values.</p>
+<pre class="md-code md-code-``` java"><code class="java">
+NLiteral lit = NIn.readLiteral(NMsg.ofPlain("Enter a number: "));
+int value = lit.asInt().get();
+</code></pre>
+<p class="md-phrase">use the <code class="md-code md-code-` ">NLiteral::asXYZ</code> to convert the string input to common types like <mark class="md-code md-code-` ">double</mark>, <mark class="md-code md-code-` ">boolean</mark>, etc...</p>
+<pre class="md-code md-code-``` java"><code class="java">
+NLiteral lit = NIn.readLiteral(NMsg.ofPlain("Enter a number: "));
+double value = lit.asDouble().get();
+</code></pre>
+
+<H4 class="md-title-2">Interactive and Typed Input with NAsk
 null
-<pre class="md-code md-code-``` "><code class="">");
-    NOut.println("</code></pre>
-json {a:'hello'}
-<pre class="md-code md-code-``` "><code class="">");
-</code></pre>
-<pre class="md-code md-code-``` java"><code class="java">
-    NErr.println("#Hello1# ##Hello2## ##:_:Hello3## ");
-    NErr.println("</code></pre>
-java public static class MyClass {}
-<pre class="md-code md-code-``` "><code class="">");
-    NErr.println("</code></pre>
-js public static class MyClass {}
-<pre class="md-code md-code-``` "><code class="">");
-    NErr.println("</code></pre>
-xml 
-null
-<pre class="md-code md-code-``` "><code class="">");
-    NErr.println("</code></pre>
-json {a:'hello'}
-<pre class="md-code md-code-``` "><code class="">");
-</code></pre>
-<pre class="md-code md-code-``` java"><code class="java">
-    NSession session=...;
-    class Customer{String id;String name;}
-    Customer customer1,customer2,customer3; ...
-    //
-    session.setOutputFormat(NContentType.JSON).out().println(Arrays.asList(customer1,customer2,customer3))
-    session.setOutputFormat(NContentType.TREE).out().println(Arrays.asList(customer1,customer2,customer3))
-    session.setOutputFormat(NContentType.PLAIN).out().println(Arrays.asList(customer1,customer2,customer3))
-    session.setOutputFormat(NContentType.XML).out().println(Arrays.asList(customer1,customer2,customer3))
-    session.setOutputFormat(NContentType.PROPS).out().println(Arrays.asList(customer1,customer2,customer3))
-    NOut.println(Arrays.asList(customer1,customer2,customer3))
-</code></pre>
+</H4>
 
-
-
-
-
-
-
-
-<H4 class="md-title-2">Working with Tables</H4>
-<pre class="md-code md-code-``` java"><code class="java">
-    NSession session=...;
-    Object a,b,c,d; ...
-    NMutableTableModel m = NMutableTableModel.of();
-    m.newRow().addCells(a,b,c,d);
-    NOut.println(m);
-</code></pre>
-
-<H4 class="md-title-2">Working with Trees</H4>
-<pre class="md-code md-code-``` java"><code class="java">
-    NSession session=...;
-    Object a,b,c,d; ...
-    NMutableTableModel m = NMutableTableModel.of();
-    m.newRow().addCells(a,b,c,d);
-    NOut.printlnf(m);
-</code></pre>
 
 
                                 </div>
@@ -756,183 +778,97 @@ json {a:'hello'}
                             <hr class="divider">
                         
                             <!--pageLevel2-->
-                            <section id="U8D3175BFE29B3B886950F37AB8BDCC427184E8A4" >
-                                <h3 class="main-section2"><a href="#U58F633BB32A62BCA0E6934BAFB4FEC3DE70699DC">2.6 NTrace</a></h3>
+                            <section id="U749C2762116EE901ACB70CB186E9C464E5A584A4" >
+                                <h3 class="main-section2"><a href="#U58F633BB32A62BCA0E6934BAFB4FEC3DE70699DC">2.7 NLog for elegant Logging</a></h3>
                                 <div class="text-card">
-                                <p class="md-phrase"><b class="md-bold">nuts</b> Library suppors colorful and structured output</p>
+                                <H4 class="md-title-1"><p class="md-phrase"><mark class="md-code md-code-` ">NLog</mark> — Structured Developer Logging in Nuts</p></H4>
+<p class="md-phrase"><mark class="md-code md-code-` ">NLog</mark> is the structured, developer-oriented logging API in <b class="md-bold">Nuts</b>, designed for internal application diagnostics, debugging, and traceability. It complements user-facing output tools like <mark class="md-code md-code-` ">NOut</mark> and <mark class="md-code md-code-` ">NTrace</mark>, offering <b class="md-bold">fine-grained control</b>, <b class="md-bold">customizable log levels</b>, and <b class="md-bold">semantic logging verbs</b>.</p>
+<hr class="divider" class="md-hr"/>
+<H4 class="md-title-2">🔧 Basic Usage</H4>
+You can obtain a logger using:
 <pre class="md-code md-code-``` java"><code class="java">
-    Nuts.require();
-NSession session=NSession.of();
-    NOut.println("Hello");
-    NOut.println("Hello");
+NLog log = NLog.of(MyClass.class);
+</code></pre>
+Then log messages with a semantic level:
+<pre class="md-code md-code-``` java"><code class="java">
+log.error(NMsg.ofC("[%s] not yet supported", featureName));
+log.warn(NMsg.ofC("Slow lock file: waited %s on %s", duration, path));
+</code></pre>
+Log methods include:
+<ul class="md-ul"><li class="md-uli"><code class="md-code md-code-` ">log.info(...)</code></li><li class="md-uli"><code class="md-code md-code-` ">log.warn(...)</code></li><li class="md-uli"><code class="md-code md-code-` ">log.error(...)</code></li><li class="md-uli"><code class="md-code md-code-` ">log.debug(...)</code></li><li class="md-uli"><code class="md-code md-code-` ">log.trace(...)</code></li></ul>
+<p class="md-phrase">All accept an <mark class="md-code md-code-` ">NMsg</mark>, or lazily supplied via <code class="md-code md-code-` ">Supplier&lt;NMsg&gt;</code>.</p>
 
-    NOut.println(Arrays.asList("Hello"));
-        NOut.println("Hello");
+<H4 class="md-title-2">Structured Logging with Verbs and Levels</H4>
+Each log message can include:
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase">A standard log level: <mark class="md-code md-code-` ">SEVERE</mark>, <mark class="md-code md-code-` ">WARNING</mark>, <mark class="md-code md-code-` ">INFO</mark>, <mark class="md-code md-code-` ">CONFIG</mark>, <mark class="md-code md-code-` ">FINE</mark>, <mark class="md-code md-code-` ">FINER</mark>, <mark class="md-code md-code-` ">FINEST</mark>, etc.</p></li><li class="md-uli"><p class="md-phrase">A semantic verb (e.g., <mark class="md-code md-code-` ">READ</mark>, <mark class="md-code md-code-` ">START</mark>, <mark class="md-code md-code-` ">FAIL</mark>, <mark class="md-code md-code-` ">CACHE</mark>, etc.) to describe the nature of the event.</p></li></ul>
 
-    session.err()....;
-    session.in()....;
+<H4 class="md-title-2">Generic Log Example</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+log.log(Level.INFO, NLogVerb.ADD, NMsg.ofPlain("Added new configuration entry"), null);
 </code></pre>
 <pre class="md-code md-code-``` java"><code class="java">
-    NOut.println("#Hello1# ##Hello2## ##:_:Hello3## ");
-    NOut.println("</code></pre>
-java public static class MyClass {}
-<pre class="md-code md-code-``` "><code class="">");
-    NOut.println("</code></pre>
-js public static class MyClass {}
-<pre class="md-code md-code-``` "><code class="">");
-    NOut.println("</code></pre>
-xml 
-null
-<pre class="md-code md-code-``` "><code class="">");
-    NOut.println("</code></pre>
-json {a:'hello'}
-<pre class="md-code md-code-``` "><code class="">");
+log.log(
+    Level.FINE,
+    NLogVerb.UPDATE,
+    () -&gt; NMsg.ofC("Updated setting: %s", key),
+    () -&gt; null
+);
 </code></pre>
+
+<H4 class="md-title-2">Common NLogVerb Values</H4>
+<p class="md-phrase"><mark class="md-code md-code-` ">NLogVerb</mark> adds semantic meaning to logs beyond plain text:</p>
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">INFO</mark>	Informational messages</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">DEBUG</mark>	Debug-level messages</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">START</mark>	Start of an operation</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">SUCCESS</mark>	Successful end of an operation</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">FAIL</mark>	Operation failure</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">WARNING</mark>	Warnings</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">READ</mark>	Read/access events</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">UPDATE</mark>	State or file updates</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">ADD</mark>	Resource addition</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">REMOVE</mark>	Resource removal</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">CACHE</mark>	Cache-related operations</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">PROGRESS</mark>	Ongoing task progress</p></li></ul>
+<p class="md-phrase">You can define custom verbs using <code class="md-code md-code-` ">NLogVerb.of("CUSTOM_VERB")</code>.</p>
+
+<H4 class="md-title-2">Fluent Logging with NLogOp</H4>
+<p class="md-phrase">For advanced logging, use the fluent builder API with <code class="md-code md-code-` ">.with()</code> :</p>
 <pre class="md-code md-code-``` java"><code class="java">
-    NErr.println("#Hello1# ##Hello2## ##:_:Hello3## ");
-    NErr.println("</code></pre>
-java public static class MyClass {}
-<pre class="md-code md-code-``` "><code class="">");
-    NErr.println("</code></pre>
-js public static class MyClass {}
-<pre class="md-code md-code-``` "><code class="">");
-    NErr.println("</code></pre>
-xml 
-null
-<pre class="md-code md-code-``` "><code class="">");
-    NErr.println("</code></pre>
-json {a:'hello'}
-<pre class="md-code md-code-``` "><code class="">");
+log.with()
+    .level(Level.FINER)
+    .verb(NLogVerb.START)
+    .log(NMsg.ofC("[%s] %s", action, NCmdLine.of(context.getCommand())));
 </code></pre>
+Supports:
+<ul class="md-ul"><li class="md-uli">Setting level (level(...))</li><li class="md-uli">Adding a verb (verb(...))</li><li class="md-uli">Attaching exceptions (error(Throwable))</li><li class="md-uli">Final logging (log(...))</li></ul>
+
+<H4 class="md-title-2">Example with Exception</H4>
 <pre class="md-code md-code-``` java"><code class="java">
-    NSession session=...;
-    class Customer{String id;String name;}
-    Customer customer1,customer2,customer3; ...
-    //
-    session.setOutputFormat(NContentType.JSON).out().println(Arrays.asList(customer1,customer2,customer3))
-    session.setOutputFormat(NContentType.TREE).out().println(Arrays.asList(customer1,customer2,customer3))
-    session.setOutputFormat(NContentType.PLAIN).out().println(Arrays.asList(customer1,customer2,customer3))
-    session.setOutputFormat(NContentType.XML).out().println(Arrays.asList(customer1,customer2,customer3))
-    session.setOutputFormat(NContentType.PROPS).out().println(Arrays.asList(customer1,customer2,customer3))
-    NOut.println(Arrays.asList(customer1,customer2,customer3))
+NLog.of(Nsh.class)
+    .with()
+    .level(Level.SEVERE)
+    .error(ex)
+    .log(NMsg.ofC("Error resolving history file: %s", history.getHistoryFile()));
 </code></pre>
 
+<H4 class="md-title-2">Output Destinations</H4>
+By default, NLog messages are rendered to:
+<ul class="md-ul"><li class="md-uli">Standard error (NSession.err()), so they remain separate from user output.</li><li class="md-uli">And/or a workspace log file, depending on the session configuration.</li></ul>
+This ensures that logs:
+<ul class="md-ul"><li class="md-uli">Do not pollute standard output (NOut, NTrace),</li><li class="md-uli">Can be persisted and analyzed later if needed,</li><li class="md-uli">Can be redirected or filtered using Nuts session capabilities.</li></ul>
+> Note:  > You can customize log destinations by configuring the NSession, such as redirecting logs to files, suppressing error output, or adjusting verbosity.
 
-
-
-
-
-
-
-<H4 class="md-title-2">Working with Tables</H4>
+<H4 class="md-title-2">Why NLog + NMsg Is Unique</H4>
+In most Java logging frameworks:
+<ul class="md-ul"><li class="md-uli">Message formatting is tied to string interpolation styles (e.g., SLF4J uses {} placeholders, Java Logging uses {0}, Log4j2 can use %s, etc.).</li><li class="md-uli">You must format messages manually for each logging backend, or risk inconsistent logs.</li><li class="md-uli">Structured output (e.g., JSON logs, table views) requires extra work or third-party wrappers.</li></ul>
+With NLog, this complexity disappears: You write once with NMsg:
 <pre class="md-code md-code-``` java"><code class="java">
-    NSession session=...;
-    Object a,b,c,d; ...
-    NMutableTableModel m = NMutableTableModel.of();
-    m.newRow().addCells(a,b,c,d);
-    NOut.println(m);
+log.warn(NMsg.ofC("File %s could not be read", path));
 </code></pre>
-
-<H4 class="md-title-2">Working with Trees</H4>
+Or:
 <pre class="md-code md-code-``` java"><code class="java">
-    NSession session=...;
-    Object a,b,c,d; ...
-    NMutableTableModel m = NMutableTableModel.of();
-    m.newRow().addCells(a,b,c,d);
-    NOut.println(m);
+log.info(NMsg.ofJ("User {0} logged in at {1}", username, timestamp));
 </code></pre>
-
-
-                                </div>
-                                
-                            </section>
-                            <hr class="divider">
-                        
-                            <!--pageLevel2-->
-                            <section id="UCA0BA63EC417E7903B65AAF43BB8917A8371C02C" >
-                                <h3 class="main-section2"><a href="#U58F633BB32A62BCA0E6934BAFB4FEC3DE70699DC">2.7 NAsk</a></h3>
-                                <div class="text-card">
-                                <p class="md-phrase"><b class="md-bold">nuts</b> Library supports colorful and structured output</p>
+Or with variables:
 <pre class="md-code md-code-``` java"><code class="java">
-    Nuts.require();
-    NSession session=NSession.of();
-    NOut.println("Hello");
-    NOut.println("Hello");
-    NOut.println(Arrays.asList("Hello"));
-    NOut.println("Hello");
+log.debug(NMsg.ofV("Downloading $file to $path", NMaps.of("file", id, "path", target)));</code></pre>
+<code class="md-code md-code-``` "></code>
+Then the rendering adapts to the output:
+<ul class="md-ul"><li class="md-uli">CLI (NTF) → colored and styled</li><li class="md-uli">File → plain text</li><li class="md-uli">JSON → structured representation</li><li class="md-uli">GUI → rich visual log viewers</li><li class="md-uli">Remote API → formatted strings or JSON</li></ul>
 
-    session.err()....;
-    session.in()....;
-</code></pre>
-<pre class="md-code md-code-``` java"><code class="java">
-    NOut.println("#Hello1# ##Hello2## ##:_:Hello3## ");
-    NOut.println("</code></pre>
-java public static class MyClass {}
-<pre class="md-code md-code-``` "><code class="">");
-    NOut.println("</code></pre>
-js public static class MyClass {}
-<pre class="md-code md-code-``` "><code class="">");
-    NOut.println("</code></pre>
-xml 
-null
-<pre class="md-code md-code-``` "><code class="">");
-    NOut.println("</code></pre>
-json {a:'hello'}
-<pre class="md-code md-code-``` "><code class="">");
-</code></pre>
-<pre class="md-code md-code-``` java"><code class="java">
-    NErr.println("#Hello1# ##Hello2## ##:_:Hello3## ");
-    NErr.println("</code></pre>
-java public static class MyClass {}
-<pre class="md-code md-code-``` "><code class="">");
-    NErr.println("</code></pre>
-js public static class MyClass {}
-<pre class="md-code md-code-``` "><code class="">");
-    NErr.println("</code></pre>
-xml 
-null
-<pre class="md-code md-code-``` "><code class="">");
-    NErr.println("</code></pre>
-json {a:'hello'}
-<pre class="md-code md-code-``` "><code class="">");
-</code></pre>
-<pre class="md-code md-code-``` java"><code class="java">
-    NSession session=...;
-    class Customer{String id;String name;}
-    Customer customer1,customer2,customer3; ...
-    //
-    session.setOutputFormat(NContentType.JSON).out().println(Arrays.asList(customer1,customer2,customer3))
-    session.setOutputFormat(NContentType.TREE).out().println(Arrays.asList(customer1,customer2,customer3))
-    session.setOutputFormat(NContentType.PLAIN).out().println(Arrays.asList(customer1,customer2,customer3))
-    session.setOutputFormat(NContentType.XML).out().println(Arrays.asList(customer1,customer2,customer3))
-    session.setOutputFormat(NContentType.PROPS).out().println(Arrays.asList(customer1,customer2,customer3))
-    NOut.println(Arrays.asList(customer1,customer2,customer3))
-</code></pre>
+<H4 class="md-title-2">Summary</H4>
+<ul class="md-ul"><li class="md-uli">Use NLog for developer-focused internal logs.</li><li class="md-uli">Use NOut/NTrace for user-facing messages.</li><li class="md-uli">Attach semantic verbs (NLogVerb) to add context.</li><li class="md-uli">Use NMsg for structured, styled messages.</li><li class="md-uli">Use .with() for flexible, readable, builder-style logging.</li></ul>
+This makes NLog an ideal logging facility for modular, structured, and contextual diagnostics in the Nuts platform.
 
-
-
-
-
-
-
-
-<H4 class="md-title-2">Working with Tables</H4>
-<pre class="md-code md-code-``` java"><code class="java">
-    NSession session=...;
-    Object a,b,c,d; ...
-    NMutableTableModel m = NMutableTableModel.of();
-    m.newRow().addCells(a,b,c,d);
-    NOut.println(m);
-</code></pre>
-
-<H4 class="md-title-2">Working with Trees</H4>
-<pre class="md-code md-code-``` java"><code class="java">
-    NSession session=...;
-    Object a,b,c,d; ...
-    NMutableTableModel m = NMutableTableModel.of();
-    m.newRow().addCells(a,b,c,d);
-    NOut.printlnf(m);
-</code></pre>
 
 
                                 </div>
@@ -947,44 +883,264 @@ json {a:'hello'}
                     <section id="U74E70F7B263067653E53C51BB53109EED74E7934" >
                         <h2 class="main-section1"><a href="#U74E70F7B263067653E53C51BB53109EED74E7934">3 Sessions and Workspaces</a></h2>
                         <div class="text-card">
-                        
+                        <p class="md-phrase"><mark class="md-code md-code-` ">NWorkspace</mark> and <mark class="md-code md-code-` ">NSession</mark> are the <b class="md-bold">foundation of Nuts runtime context</b>. Understanding how they work is essential for correctly using all Nuts components.</p>
+<H4 class="md-title-2"><p class="md-phrase">What is a <mark class="md-code md-code-` ">NWorkspace</mark>?</p></H4>
+<p class="md-phrase">A <mark class="md-code md-code-` ">NWorkspace</mark> represents the <b class="md-bold">application context</b> and <b class="md-bold">component container</b> in Nuts. It is:</p>
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase">Comparable to a Spring <mark class="md-code md-code-` ">ApplicationContext</mark>,</p></li><li class="md-uli"><p class="md-phrase">A container for all globally or locally scoped Nuts services (like <mark class="md-code md-code-` ">NOut</mark>, <mark class="md-code md-code-` ">NLog</mark>, <mark class="md-code md-code-` ">NWorkspaceService</mark>, etc.),</p></li><li class="md-uli"><p class="md-phrase">Required for all operations using Nuts APIs — at any moment, a Nuts component is always used <b class="md-bold">in the context of a workspace</b>.</p></li></ul>
+<hr class="divider" class="md-hr"/>
+
+<H4 class="md-title-2"><p class="md-phrase">What is a <mark class="md-code md-code-` ">NSession</mark>?</p></H4>
+<p class="md-phrase">A <mark class="md-code md-code-` ">NSession</mark> is a <b class="md-bold">lightweight, thread-scoped execution context</b> associated with a <mark class="md-code md-code-` ">NWorkspace</mark>. It:</p>
+<ul class="md-ul"><li class="md-uli">Controls options like verbosity, trace mode, output streams, and more,</li><li class="md-uli"><p class="md-phrase">Is <b class="md-bold">thread-local</b> by default and can be inherited by child threads,</p></li><li class="md-uli">Provides runtime configuration for rendering, formatting, user input, log levels, etc.</li></ul>
+<p class="md-phrase">Any Nuts operation (e.g., <code class="md-code md-code-` ">NOut.println(...)</code>) implicitly uses the current <mark class="md-code md-code-` ">NSession</mark>, and therefore accesses the <mark class="md-code md-code-` ">NWorkspace</mark> bound to it.</p>
+<hr class="divider" class="md-hr"/>
+
+
                         </div>
                         
                             <!--pageLevel2-->
-                            <section id="U2277D11C75AA7D91ACA08898E0FF945AB58CE76C" >
-                                <h3 class="main-section2"><a href="#U74E70F7B263067653E53C51BB53109EED74E7934">3.1 NSession</a></h3>
+                            <section id="U3A38C8000FF7E81F308EF22113996D55ECAD35B8" >
+                                <h3 class="main-section2"><a href="#U74E70F7B263067653E53C51BB53109EED74E7934">3.1 NWorkspace</a></h3>
                                 <div class="text-card">
-                                <p class="md-phrase"><b class="md-bold">nuts</b> session holds current configuration and options</p>
-To get the current session instance :
+                                <H4 class="md-title-2">Opening and Sharing Workspaces</H4>
+<H4 class="md-title-3">Default (global) workspace</H4>
 <pre class="md-code md-code-``` java"><code class="java">
-    NSession session=NSession.of();
+NWorkspace.require();
 </code></pre>
-To run with a different session instance :
+<ul class="md-ul"><li class="md-uli">Returns the currently shared (global) workspace if one exists.</li><li class="md-uli">If no global workspace is present, creates and shares one by delegating to</li></ul>
 <pre class="md-code md-code-``` java"><code class="java">
-    NSession session=NSession.of();
-    session=session.copy().setConfirm(NConfirmationMode.ASK);
-    session.runWith(()-&gt;{
-        // here run with new options
+Nuts.openWorkspace("--reset-options", "--in-memory").share();
+</code></pre>
+This ensures that a workspace is always available, without requiring manual setup.
+> This workspace is in-memory and ignores any inherited CLI options (--reset-options).  > It’s ideal for quick use cases, testing, or tools that need a minimal setup.
+
+
+<H4 class="md-title-2">Scoped (local) workspace</H4>
+If you need isolation or temporary workspace setup:
+<pre class="md-code md-code-``` java"><code class="java">
+Nuts.openWorkspace().runWith(() -&gt; {
+        // This code runs inside a thread-local scoped workspace
+        // Nuts components here use the scoped context
+        });
+</code></pre>
+<ul class="md-ul"><li class="md-uli">Temporarily hides the global workspace inside the block,</li><li class="md-uli">Scoped workspace is available in current and inherited threads,</li><li class="md-uli">Ideal for frameworks, sandboxing, plugins and testing.</li><li class="md-uli">Nuts.openWorkspace() uses persistent location (across processes) unless --in-memory is passed.</li></ul>
+
+<H4 class="md-title-2">Sharing workspace globally</H4>
+To explicitly promote a workspace to global:
+<pre class="md-code md-code-``` java"><code class="java">
+Nuts.openWorkspace().share();
+</code></pre>
+You may also customize it before sharing:
+<pre class="md-code md-code-``` java"><code class="java">
+Nuts.openWorkspace("--in-memory", "--color").share();
+</code></pre>
+
+<H4 class="md-title-2">Environment & System Info</H4>
+Workspaces provide access to environment metadata:
+NWorkspace ws = NWorkspace.current();
+<pre class="md-code md-code-``` java"><code class="java">
+ws.getHostName();               // Host name
+ws.getPid();                    // Process ID
+ws.getOsFamily();               // Linux, Windows, Mac, etc.
+ws.getShellFamily();            // bash, cmd, powershell, etc.
+ws.getPlatform();               // Java, Android, etc.
+ws.getOs();                     // Full OS ID
+ws.getOsDist();                 // OS distribution (e.g. Ubuntu)
+ws.getArch();                   // CPU architecture (e.g. amd64)
+ws.getArchFamily();            // Arch family (e.g. x86_64)
+ws.getDesktopEnvironment();     // Gnome, KDE, etc.
+ws.getDesktopEnvironmentFamily(); // Gnome-like, etc.
+ws.isGraphicalDesktopEnvironment(); // true if graphical session
+</code></pre>
+You can also list all available shell families or desktop environments:
+<pre class="md-code md-code-``` java"><code class="java">
+ws.getShellFamilies(); // e.g. [BASH, ZSH, CMD]
+ws.getDesktopEnvironments(); // List of detected environments
+</code></pre>
+
+<H4 class="md-title-2">Accessing the Current Workspace</H4>
+To retrieve the current NWorkspace (i.e., the one bound to the current thread context), you have two options:
+
+<H4 class="md-title-2">Elegant, fail-fast access</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+NWorkspace ws = NWorkspace.of();
+</code></pre>
+<ul class="md-ul"><li class="md-uli">Returns the current workspace if one is available,</li><li class="md-uli">Throws an exception if no workspace is present,</li><li class="md-uli">Recommended when a workspace is expected to exist.</li><li class="md-uli">Equivalent to NWorkspace.get().get() but more expressive and fails clearly.</li></ul>
+
+<H4 class="md-title-2">Safe, optional access</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+Optional&lt;NWorkspace&gt; wsOpt = NWorkspace.get();
+</code></pre>
+<ul class="md-ul"><li class="md-uli">Returns an NOptional
+null
+</li></ul>
+
+
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
+                            <section id="UB4CEC631B3B9F4E4991EC571625D6357DB89AB63" >
+                                <h3 class="main-section2"><a href="#U74E70F7B263067653E53C51BB53109EED74E7934">3.2 NSession</a></h3>
+                                <div class="text-card">
+                                <p class="md-phrase"><mark class="md-code md-code-` ">NSession</mark> defines the current execution context within a Nuts <mark class="md-code md-code-` ">NWorkspace</mark>. It encapsulates:</p>
+<ul class="md-ul"><li class="md-uli">Command-line options</li><li class="md-uli">User preferences</li><li class="md-uli">Output formatting</li><li class="md-uli">Trace/log verbosity</li><li class="md-uli">Interactive modes</li><li class="md-uli">Runtime state</li></ul>
+<p class="md-phrase">Every operation within <mark class="md-code md-code-` ">Nuts</mark> is executed in the scope of a <mark class="md-code md-code-` ">NSession</mark>.</p>
+<H4 class="md-title-2">Getting the Current Session</H4>
+<H4 class="md-title-3">Elegant (fail-fast)</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+    NSession session = NSession.of();
+</code></pre>
+
+<H4 class="md-title-3">Safe (optional)</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+Optional&lt;NSession&gt; opt = NSession.get();
+</code></pre>
+Returns an Optional session, or empty if not available.
+
+
+<H4 class="md-title-2">What Does a Session Do?</H4>
+<ul class="md-ul"><li class="md-uli">Holds contextual flags like --trace, --yes, --bot, --dry, --confirm</li><li class="md-uli">Controls output formatting: plain, json, xml, tree, table, etc.</li><li class="md-uli">Configures confirmation/interaction modes</li><li class="md-uli">Tracks fetch/cache strategies and expiration</li><li class="md-uli">Controls repository settings</li><li class="md-uli">Defines runtime identity (root(), sudo(), etc.)</li></ul>
+
+<H4 class="md-title-2">Thread-Scoped Context</H4>
+NSession is thread-local and inherited by spawned threads unless explicitly changed. To run with a different session:
+<pre class="md-code md-code-``` java"><code class="java">
+session.runWith(() -&gt; {
+    // Executes within the session context
+});
+</code></pre>
+Or return a result:
+<pre class="md-code md-code-``` java"><code class="java">
+String result = session.callWith(() -&gt; computeSomething());
+</code></pre>
+
+<H4 class="md-title-2">Common Flags and States</H4>
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">--trace</mark>	<code class="md-code md-code-` ">isTrace()</code>	Enables trace-mode output</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">--yes</mark>	<code class="md-code md-code-` ">isYes()</code>	Assume “yes” for confirmations</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">--no</mark>	<code class="md-code md-code-` ">isNo()</code>	Assume “no” for confirmations</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">--ask</mark>	<code class="md-code md-code-` ">isAsk()</code>	Always ask for confirmation</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">--bot</mark>	<code class="md-code md-code-` ">isBot()</code>	Enable non-interactive/script mode</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">--dry</mark>	<code class="md-code md-code-` ">isDry()</code>	Dry-run only, no actual execution</p></li></ul>
+
+<H4 class="md-title-2">Output Format</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+Control the rendering format of structured output:
+session.json();     // JSON
+session.table();    // Tabular
+session.tree();     // Tree
+session.xml();      // XML
+session.props();    // Properties
+session.plain();    // Default/plain text
+</code></pre>
+<p class="md-phrase">Output formats affect rendering of <code class="md-code md-code-` ">NOut.println(...)</code>, logging, tables, etc.</p>
+
+<H4 class="md-title-2">Streams Access</H4>
+Each session controls its I/O streams (also accessible via NOut, NErr and NIn):
+<pre class="md-code md-code-``` java"><code class="java">
+session.out().println("Standard Output");
+session.err().println("Error Output");
+session.in().readLine();
+</code></pre>
+This enables custom I/O redirection (e.g., GUI, files, remote shells).
+
+<H4 class="md-title-2">Trace Modes</H4>
+Trace mode activates auxiliary output useful for end users (not developers):
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">isPlainTrace()</code>: plain-text trace</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">isIterableTrace()</code>: structured trace with iterable format</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">isStructuredTrace()</code>: structured trace without iterable mode</p></li></ul>
+<pre class="md-code md-code-``` java"><code class="java">
+if (session.isTrace()) {
+    NOut.println("Tracing enabled...");
+}
+// same as
+NTrace.println("Tracing enabled...");
+</code></pre>
+
+<H4 class="md-title-2">Dependency Resolution Options And Fetch Strategy</H4>
+Used when resolving artifacts and loading jars from repositories (dynamic classloading)
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">isTransitive()</code>	Use transitive repositories</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">isCached()</code>	Use cached data when possible</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">isIndexed()</code>	Use indexed metadata</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">getExpireTime()</code>	Expire cache before this date</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">setFetchStrategy()</code>	Customize fetch strategy</p></li></ul>
+<pre class="md-code md-code-``` java"><code class="java">
+session.setFetchStrategy(NFetchStrategy.ONLINE);
+</code></pre>
+Available strategies:
+<ul class="md-ul"><li class="md-uli">ONLINE</li><li class="md-uli">OFFLINE</li><li class="md-uli">CACHE_ONLY</li><li class="md-uli">REMOTE_ONLY</li></ul>
+
+<H4 class="md-title-2">Confirmation and Interaction</H4>
+Control how user prompts are handled:
+<pre class="md-code md-code-``` java"><code class="java">
+session.yes();              // Force auto-yes
+session.no();               // Force auto-no
+session.ask();              // Always prompt
+
+session.setConfirm(NConfirmationMode.YES);
+</code></pre>
+
+<H4 class="md-title-2">Interactive Session Features</H4>
+Enable/disable progress output:
+<pre class="md-code md-code-``` java"><code class="java">
+session.setProgressOptions("auto");
+</code></pre>
+
+<H4 class="md-title-2">Control GUI/headless:</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+session.setGui(true);
+</code></pre>
+
+<H4 class="md-title-2">Customize output line prefixes:</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+session.setOutLinePrefix("[out] ");
+session.setErrLinePrefix("[err] ");
+</code></pre>
+
+<H4 class="md-title-2">Sample Use Case</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+NSession session = NSession.of().json().setTrace(true);
+List&lt;MyObject&gt; data = ...;
+NOut.out(session).println(data);  // will output JSON trace if enabled
+
+</code></pre>
+
+<H4 class="md-title-2">Advanced Configuration</H4>
+You can clone and configure sessions:
+<pre class="md-code md-code-``` java"><code class="java">
+NSession childSession = session.copy()
+        .setOutputFormat(NContentType.XML)
+        .setBot(true)
+        .setTrace(false);
+        
+</code></pre>
+
+<H4 class="md-title-2">Redirecting Session Streams (Advanced I/O Control)</H4>
+Nuts allows you to redirect the I/O streams of a session to memory, files, or custom terminals. This is especially useful for scripting, capturing outputs programmatically, or testing. You can run a block of code using a customized session that redirects output to memory.  This is useful for capturing the result of structured rendering (e.g., JSON, XML, table) without printing it to the console. Example:
+<pre class="md-code md-code-``` java"><code class="java">
+String result = NSession.of().copy()
+    .setTerminal(NTerminal.ofMem())     // redirect all I/O to memory
+    .callWith(() -&gt; {
+        NSession.of().json();           // structured output (e.g., JSON)
+        NOut.println(Arrays.asList("a", "b", "c"));
+        return NOut.out().toString();   // retrieve the rendered output as string
     });
 </code></pre>
-Here another example
+Explanation: 
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">setTerminal(NTerminal.ofMem())</code>: uses an in-memory terminal for all I/O</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">NSession.of().json()</code>: sets the output format to JSON</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">NOut.println(...)</code>: renders the list to the output stream</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">NOut.out().toString()</code>: fetches the printed result from memory</p></li></ul>
+> This technique is useful when you want to render structured output for internal use (e.g., passing to another API or storing in a log file),  > rather than displaying it directly.
+
+<H4 class="md-title-2">Log Configuration</H4>
+Control logging levels and filters:
 <pre class="md-code md-code-``` java"><code class="java">
-    // share allows NSession/NWorkspace to be accessible globally as a singleton
-    Nuts.require();
-    // then you can get the current session anywhere in your code
-    NSession session=NSession.of();
-    session.setConfirm(NConfirmationMode.ASK);
-    session.setOutputFormat(NContentType.XML);
-
-    NOut.println("Hello");
-    NOut.println("Hello");
-
-    NOut.println(Arrays.asList("Hello"));
-    NOut.println("Hello %s","world");
-    NOut.println(NMsg.ofC("Hello %s","world"));
-    NOut.println(NMsg.ofJ("Hello {0}","world"));
-    NOut.println(NMsg.ofV("Hello $v",NMaps.of("v","world"));
+session.setLogTermLevel(Level.INFO);
+session.setLogFileLevel(Level.FINE);
+session.setLogFilter(log -&gt; log.getVerb().equals(NLogVerb.FAIL));
 </code></pre>
+
+<H4 class="md-title-2">Listeners</H4>
+Register and listen to session/workspace events:
+<pre class="md-code md-code-``` java"><code class="java">
+session.addListener(new NWorkspaceListener() {
+...
+});
+</code></pre>
+Supported listener types:
+<ul class="md-ul"><li class="md-uli">NWorkspaceListener</li><li class="md-uli">NRepositoryListener</li><li class="md-uli">NInstallListener</li><li class="md-uli">NObservableMapListener</li></ul>
+
+<H4 class="md-title-2">Best Practices</H4>
+<ul class="md-ul"><li class="md-uli">Use NSession.of() only when you're sure a session context exists</li><li class="md-uli">Always configure session flags (--yes, --bot, etc.) when parsing application commandlines</li><li class="md-uli"></li></ul>
+
 
                                 </div>
                                 
@@ -2161,7 +2317,7 @@ Automatic-Module-Name: yourgroupid.yourartifactid.YourClass
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-07-02-105614
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-07-02-193400
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
