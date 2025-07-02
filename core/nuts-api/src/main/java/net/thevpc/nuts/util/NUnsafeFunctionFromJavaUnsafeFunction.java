@@ -1,13 +1,15 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NDescribableElementSupplier;
 import net.thevpc.nuts.elem.NElement;
+
+import java.util.function.Supplier;
 
 public class NUnsafeFunctionFromJavaUnsafeFunction<T, V> implements NUnsafeFunction<T, V>, NImmutable {
     private final UnsafeFunction<T, V> base;
-    private final NEDesc description;
+    private final Supplier<NElement> description;
 
-    public NUnsafeFunctionFromJavaUnsafeFunction(UnsafeFunction<T, V> base, NEDesc description) {
+    public NUnsafeFunctionFromJavaUnsafeFunction(UnsafeFunction<T, V> base, Supplier<NElement> description) {
         this.base = base;
         this.description = description;
     }
@@ -18,7 +20,7 @@ public class NUnsafeFunctionFromJavaUnsafeFunction<T, V> implements NUnsafeFunct
     }
 
     @Override
-    public NUnsafeFunction<T, V> withDesc(NEDesc description) {
+    public NUnsafeFunction<T, V> redescribe(Supplier<NElement> description) {
         return new NUnsafeFunctionFromJavaUnsafeFunction<>(base, description);
     }
 
@@ -29,6 +31,6 @@ public class NUnsafeFunctionFromJavaUnsafeFunction<T, V> implements NUnsafeFunct
 
     @Override
     public NElement describe() {
-        return NEDesc.safeDescribe(description, NEDesc.ofLateToString(this));
+        return NDescribableElementSupplier.safeDescribe(description, NDescribableElementSupplier.ofLateToString(this));
     }
 }

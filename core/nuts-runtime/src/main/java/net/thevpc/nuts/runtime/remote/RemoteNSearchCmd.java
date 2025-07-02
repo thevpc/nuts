@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.remote;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NDescribableElementSupplier;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElementBuilder;
@@ -53,7 +53,7 @@ public class RemoteNSearchCmd extends AbstractNSearchCmd {
                         ),
                         List.class
                 ).iterator()
-        ).withDesc(NEDesc.of("searchRemoteIds"));
+        ).redescribe(NDescribableElementSupplier.of("searchRemoteIds"));
     }
 
 

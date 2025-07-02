@@ -1,6 +1,6 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NDescribableElementSupplier;
 import net.thevpc.nuts.elem.NElement;
 
 import java.util.Iterator;
@@ -10,9 +10,9 @@ public class NSupplierIteratorJ<T> extends NIteratorBase<T> {
 
     private final Supplier<Iterator<T>> from;
     private NIterator<T> iterator;
-    private NEDesc name;
+    private Supplier<NElement> name;
 
-    public NSupplierIteratorJ(Supplier<Iterator<T>> from, NEDesc name) {
+    public NSupplierIteratorJ(Supplier<Iterator<T>> from, Supplier<NElement> name) {
         this.from = from;
         this.name = name;
     }
@@ -22,7 +22,7 @@ public class NSupplierIteratorJ<T> extends NIteratorBase<T> {
         return NElement.ofObjectBuilder()
                 .name("Supplier")
                 .set("template",
-                        NEDesc.describeResolveOr(from, () -> {
+                        NDescribableElementSupplier.describeResolveOr(from, () -> {
                             NElement t = name.get();
                             return NElement.ofObjectBuilder().name("Compiled")
                                     .addAll(t == null ? null : t.asObject().orNull())
@@ -36,7 +36,7 @@ public class NSupplierIteratorJ<T> extends NIteratorBase<T> {
     public boolean hasNext() {
         if (iterator == null) {
             Iterator<T> it = from.get();
-            iterator = it == null ? null : NIterator.of(it).withDesc(name);
+            iterator = it == null ? null : NIterator.of(it).redescribe(name);
             if (iterator == null) {
                 return false;
             }

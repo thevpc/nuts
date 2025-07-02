@@ -2,11 +2,12 @@ package net.thevpc.nuts.runtime.standalone.definition.filter;
 
 import net.thevpc.nuts.NDefinition;
 import net.thevpc.nuts.NDefinitionFilter;
-import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 public abstract class NDefinitionFilterDelegate extends AbstractDefinitionFilter {
     public abstract NDefinitionFilter baseDefinitionFilter();
@@ -21,8 +22,8 @@ public abstract class NDefinitionFilterDelegate extends AbstractDefinitionFilter
     }
 
     @Override
-    public NFilter withDesc(NEDesc description) {
-        return baseDefinitionFilter().withDesc(description);
+    public NFilter redescribe(Supplier<NElement> description) {
+        return baseDefinitionFilter().redescribe(description);
     }
 
     @Override

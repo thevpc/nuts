@@ -28,10 +28,12 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.*;
 
+import java.util.function.Supplier;
+
 /**
  * Describable Runnable
  */
-public interface NUnsafeRunnable extends NElementDescribable<NUnsafeRunnable> {
+public interface NUnsafeRunnable extends NElementRedescribable<NUnsafeRunnable> {
     static NUnsafeRunnable of(NUnsafeRunnable o) {
         if(o==null){
             return null;
@@ -40,7 +42,7 @@ public interface NUnsafeRunnable extends NElementDescribable<NUnsafeRunnable> {
     }
 
     @Override
-    default NUnsafeRunnable withDesc(NEDesc description) {
+    default NUnsafeRunnable redescribe(Supplier<NElement> description) {
         if (description == null) {
             return this;
         }
@@ -49,7 +51,7 @@ public interface NUnsafeRunnable extends NElementDescribable<NUnsafeRunnable> {
 
     @Override
     default NElement describe() {
-        return NEDesc.ofLateToString(this).get();
+        return NDescribableElementSupplier.ofLateToString(this).get();
     }
 
     void run() throws Exception;

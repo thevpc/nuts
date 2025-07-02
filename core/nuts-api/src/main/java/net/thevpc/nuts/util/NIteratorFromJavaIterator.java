@@ -1,6 +1,6 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NDescribableElementSupplier;
 import net.thevpc.nuts.elem.NElement;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ public class NIteratorFromJavaIterator<T> extends NIteratorBase<T> {
         return NElement.ofObjectBuilder()
                 .name("Collector")
                 .addParam(NElement.ofString(name))
-                .set("base", NEDesc.describeResolveOrDestruct(base))
+                .set("base", NDescribableElementSupplier.describeResolveOrDestruct(base))
                 .build();
     }
 

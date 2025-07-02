@@ -1,13 +1,13 @@
 package net.thevpc.nuts.spi.base;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 public abstract class NIdFilterDelegate extends AbstractIdFilter {
     public abstract NIdFilter baseNIdFilter();
@@ -57,8 +57,8 @@ public abstract class NIdFilterDelegate extends AbstractIdFilter {
     }
 
     @Override
-    public NFilter withDesc(NEDesc description) {
-        return baseNIdFilter().withDesc(description);
+    public NFilter redescribe(Supplier<NElement> description) {
+        return baseNIdFilter().redescribe(description);
     }
 
     @Override

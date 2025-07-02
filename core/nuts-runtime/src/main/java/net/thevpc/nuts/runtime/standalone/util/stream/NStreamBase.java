@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone.util.stream;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NDescribableElementSupplier;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.util.NIteratorUtils;
@@ -204,7 +204,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
 
     @Override
     public NStream<T> nonNull() {
-        return filter(Objects::nonNull).withDesc(NEDesc.of("nonNull"));
+        return filter(Objects::nonNull).redescribe(NDescribableElementSupplier.of("nonNull"));
     }
 
     @Override
@@ -223,7 +223,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
                 return !((NBlankable) x).isBlank();
             }
             return true;
-        }).withDesc(NEDesc.of("nonBlank"));
+        }).redescribe(NDescribableElementSupplier.of("nonBlank"));
     }
 
     @Override
@@ -241,12 +241,12 @@ public abstract class NStreamBase<T> implements NStream<T> {
 
     @Override
     public NStream<T> filterNonNull() {
-        return filter(Objects::nonNull).withDesc(NEDesc.of("nonNull"));
+        return filter(Objects::nonNull).redescribe(NDescribableElementSupplier.of("nonNull"));
     }
 
     @Override
     public NStream<T> filterNonBlank() {
-        return filter(x -> !NBlankable.isBlank(x)).withDesc(NEDesc.of("nonBlank"));
+        return filter(x -> !NBlankable.isBlank(x)).redescribe(NDescribableElementSupplier.of("nonBlank"));
     }
 
     @Override
@@ -423,7 +423,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
             public NIterator<R> iterator() {
                 NIteratorBuilder<T> r = NIteratorBuilder.of(NStreamBase.this.iterator());
                 return (NIterator<R>) r.flatMap(
-                        NFunction.of(tt -> mapper.apply((T) tt).iterator()).withDesc(() -> NFunction.of(mapper).describe())
+                        NFunction.of(tt -> mapper.apply((T) tt).iterator()).redescribe(() -> NFunction.of(mapper).describe())
                 ).build()
                         ;
             }
@@ -438,7 +438,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
                 return NIteratorBuilder.of(NStreamBase.this.iterator())
                         .flatMap(
                                 NFunction.of(t -> Arrays.asList(mapper.apply((T) t)).iterator())
-                                        .withDesc(() -> NFunction.of(mapper).describe())
+                                        .redescribe(() -> NFunction.of(mapper).describe())
                         ).build()
                         ;
             }
@@ -452,7 +452,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
             public NIterator<R> iterator() {
                 return (NIterator<R>) NIteratorBuilder.of(NStreamBase.this.iterator()).flatMap(
                         NFunction.of(t -> mapper.apply(t).iterator())
-                ).build().withDesc(() -> NFunction.of(mapper).describe());
+                ).build().redescribe(() -> NFunction.of(mapper).describe());
             }
         };
     }
@@ -465,7 +465,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
                 return (NIterator<R>) NIteratorBuilder.of(NStreamBase.this.iterator())
                         .flatMap(
                                 NFunction.of(t -> mapper.apply(t).iterator())
-                        ).build().withDesc(() -> NFunction.of(mapper).describe())
+                        ).build().redescribe(() -> NFunction.of(mapper).describe())
                         ;
             }
         };
@@ -482,7 +482,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
         Stream<T> it = NStreamBase.this.stream();
         Set<Map.Entry<K, List<T>>> entries = (Set) it.collect(Collectors.groupingBy(classifier)).entrySet();
         return new NStreamFromNIterator<Map.Entry<K, List<T>>>(
-                nutsBase, NIterator.of(entries.iterator()).withDesc(
+                nutsBase, NIterator.of(entries.iterator()).redescribe(
                 () -> NElement.ofObjectBuilder()
                         .name("GroupBy")
                         .set("by", NFunction.of(classifier).describe())
@@ -570,7 +570,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
         return iterator().describe();
     }
 
-    public NStream<T> withDesc(NEDesc description) {
+    public NStream<T> redescribe(Supplier<NElement> description) {
         if (description == null) {
             return this;
         }

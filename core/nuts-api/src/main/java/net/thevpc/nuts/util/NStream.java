@@ -28,6 +28,7 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElementDescribable;
+import net.thevpc.nuts.elem.NElementRedescribable;
 import net.thevpc.nuts.reserved.rpi.NCollectionsRPI;
 
 import java.util.*;
@@ -43,7 +44,7 @@ import java.util.stream.*;
  * @see NSearchCmd#getResultIds()
  * @since 0.5.4
  */
-public interface NStream<T> extends Iterable<T>, NElementDescribable<NStream<T>>, AutoCloseable {
+public interface NStream<T> extends Iterable<T>, NElementRedescribable<NStream<T>>, AutoCloseable {
     static <T> NStream<T> ofArray(T... str) {
         return NCollectionsRPI.of().arrayToStream(str);
     }

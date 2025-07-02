@@ -29,14 +29,16 @@ package net.thevpc.nuts.util;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.reserved.util.NCallableWithDescription;
 
+import java.util.function.Supplier;
+
 /**
  * Describable Runnable
  */
-public interface NCallable<T> extends NElementDescribable<NCallable<T>> {
+public interface NCallable<T> extends NElementRedescribable<NCallable<T>> {
 
     T call();
 
-    default NCallable<T> withDesc(NEDesc description) {
+    default NCallable<T> redescribe(Supplier<NElement> description) {
         if (description == null) {
             return this;
         }

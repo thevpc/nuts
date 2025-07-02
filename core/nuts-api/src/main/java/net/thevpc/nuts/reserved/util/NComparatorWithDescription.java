@@ -1,27 +1,29 @@
 package net.thevpc.nuts.reserved.util;
 
-import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NDescribableElementSupplier;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NComparator;
 
+import java.util.function.Supplier;
+
 public class NComparatorWithDescription<T> implements NComparator<T> {
     private NComparator<T> comparator;
-    private NEDesc description;
+    private Supplier<NElement> description;
 
-    public NComparatorWithDescription(NComparator<T> comparator, NEDesc description) {
+    public NComparatorWithDescription(NComparator<T> comparator, Supplier<NElement> description) {
         this.comparator = comparator;
         this.description = description;
     }
 
     @Override
-    public NComparator<T> withDesc(NEDesc description) {
+    public NComparator<T> redescribe(Supplier<NElement> description) {
         this.description = description;
         return this;
     }
 
     @Override
     public NElement describe() {
-        return NEDesc.safeDescribeOfBase(description, comparator);
+        return NDescribableElementSupplier.safeDescribeOfBase(description, comparator);
     }
 
     @Override

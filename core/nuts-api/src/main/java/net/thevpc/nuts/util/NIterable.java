@@ -30,16 +30,18 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.reserved.rpi.NCollectionsRPI;
 import net.thevpc.nuts.reserved.util.NIterableWithDescription;
 
+import java.util.function.Supplier;
+
 /**
  * Describable Iterable
  * @param <T> Type
  */
-public interface NIterable<T> extends Iterable<T>, NElementDescribable<NIterable<T>> {
+public interface NIterable<T> extends Iterable<T>, NElementRedescribable<NIterable<T>> {
     static <T> NIterable<T> of(Iterable<T> o){
         return NCollectionsRPI.of().toIterable(o);
     }
 
-    default NIterable<T> withDesc(NEDesc description) {
+    default NIterable<T> redescribe(Supplier<NElement> description) {
         if(description==null) {
             return this;
         }

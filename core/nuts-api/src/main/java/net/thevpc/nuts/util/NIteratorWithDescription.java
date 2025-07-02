@@ -1,6 +1,5 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 
 import java.util.function.Supplier;
@@ -23,7 +22,7 @@ public class NIteratorWithDescription<T> extends NIteratorDelegate<T> {
         return base;
     }
 
-    public NIterator<T> withDesc(NEDesc description) {
+    public NIterator<T> redescribe(Supplier<NElement> description) {
         return new NIteratorWithDescription<T>(base, description);
     }
 

@@ -1,15 +1,17 @@
 package net.thevpc.nuts.runtime.standalone.repository.filter;
 
 import net.thevpc.nuts.NRepositoryFilter;
-import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NDescribableElementSupplier;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NFilter;
 
+import java.util.function.Supplier;
+
 public class NRepositoryFilterWithDescription extends NRepositoryFilterDelegate {
     private final NRepositoryFilter base;
-    private NEDesc description;
+    private Supplier<NElement> description;
 
-    public NRepositoryFilterWithDescription(NRepositoryFilter base, NEDesc description) {
+    public NRepositoryFilterWithDescription(NRepositoryFilter base, Supplier<NElement> description) {
         super();
         this.base = base;
         this.description = description;
@@ -21,13 +23,13 @@ public class NRepositoryFilterWithDescription extends NRepositoryFilterDelegate 
     }
 
     @Override
-    public NFilter withDesc(NEDesc description) {
+    public NFilter redescribe(Supplier<NElement> description) {
         this.description = description;
         return this;
     }
 
     @Override
     public NElement describe() {
-        return NEDesc.safeDescribeOfBase(description, base);
+        return NDescribableElementSupplier.safeDescribeOfBase(description, base);
     }
 }

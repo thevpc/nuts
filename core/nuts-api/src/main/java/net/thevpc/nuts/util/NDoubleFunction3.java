@@ -1,15 +1,14 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NEDesc;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementDescribable;
-import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.*;
 
-public interface NDoubleFunction3 extends NElementDescribable<NDoubleFunction3> {
+import java.util.function.Supplier;
+
+public interface NDoubleFunction3 extends NElementRedescribable<NDoubleFunction3> {
     double apply(double x, double y, double z);
 
     @Override
-    default NDoubleFunction3 withDesc(NEDesc description){
+    default NDoubleFunction3 redescribe(Supplier<NElement> description){
         if(description==null){
             return this;
         }

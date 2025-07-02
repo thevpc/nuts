@@ -26,7 +26,7 @@
 */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NDescribableElementSupplier;
 import net.thevpc.nuts.elem.NElement;
 
 import java.util.*;
@@ -47,7 +47,7 @@ public class NQueueIterator<T> extends NIteratorBase<T> {
                 .addAll(
                         children
                                 .stream().map(
-                                        x -> NEDesc.describeResolveOrDestruct(x)
+                                        x -> NDescribableElementSupplier.describeResolveOrDestruct(x)
                                 ).toArray(NElement[]::new)
                 )
                 .build();

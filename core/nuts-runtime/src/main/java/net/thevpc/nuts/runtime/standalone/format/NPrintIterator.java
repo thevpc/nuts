@@ -42,7 +42,7 @@ public class NPrintIterator<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        return NEDesc.describeResolveOrDestructAsObject(curr)
+        return NDescribableElementSupplier.describeResolveOrDestructAsObject(curr)
                 .builder()
                 .set("print", NElement.ofObjectBuilder().set("format",listFormat.getOutputFormat().id()).build())
                 .build();

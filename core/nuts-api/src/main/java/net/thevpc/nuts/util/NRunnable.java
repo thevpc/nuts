@@ -30,10 +30,12 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.reserved.util.NRunnableFromJavaRunnable;
 import net.thevpc.nuts.reserved.util.NRunnableWithDescription;
 
+import java.util.function.Supplier;
+
 /**
  * Describable Runnable
  */
-public interface NRunnable extends NElementDescribable<NRunnable> {
+public interface NRunnable extends NElementRedescribable<NRunnable> {
     static NRunnable of(Runnable o) {
         if (o == null) {
             return null;
@@ -45,7 +47,7 @@ public interface NRunnable extends NElementDescribable<NRunnable> {
     }
 
     @Override
-    default NRunnable withDesc(NEDesc description) {
+    default NRunnable redescribe(Supplier<NElement> description) {
         if (description == null) {
             return this;
         }

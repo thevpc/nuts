@@ -25,13 +25,13 @@
 package net.thevpc.nuts.spi.base;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  *
@@ -50,8 +50,8 @@ public abstract class NVersionFilterDelegate extends AbstractVersionFilter {
     }
 
     @Override
-    public NFilter withDesc(NEDesc description) {
-        return baseVersionFilter().withDesc(description);
+    public NFilter redescribe(Supplier<NElement> description) {
+        return baseVersionFilter().redescribe(description);
     }
 
     @Override

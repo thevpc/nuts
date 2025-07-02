@@ -3,17 +3,18 @@ package net.thevpc.nuts.util;
 import net.thevpc.nuts.elem.*;
 
 import java.util.Iterator;
+import java.util.function.Supplier;
 
 public class NIteratorBaseFromJavaIterator<T> extends NIteratorBase<T> {
     private final Iterator<T> base;
-    private NEDesc description;
+    private Supplier<NElement> description;
 
     public NIteratorBaseFromJavaIterator(Iterator<T> base) {
         this.base = base;
     }
 
     @Override
-    public NIterator<T> withDesc(NEDesc description) {
+    public NIterator<T> redescribe(Supplier<NElement> description) {
         this.description = description;
         return this;
     }
@@ -35,7 +36,7 @@ public class NIteratorBaseFromJavaIterator<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        NObjectElement b = NEDesc.describeResolveOr(base, () -> NElement.ofObjectBuilder().build())
+        NObjectElement b = NDescribableElementSupplier.describeResolveOr(base, () -> NElement.ofObjectBuilder().build())
                 .asObject().get();
         NElement a = description.get();
         if (b.isEmpty()) {

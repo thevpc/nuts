@@ -1,15 +1,14 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NElementDescribable;
-import net.thevpc.nuts.elem.NEDesc;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.*;
 
-public interface NFunction2<A, B, V> extends NElementDescribable<NFunction2<A, B, V>> {
+import java.util.function.Supplier;
+
+public interface NFunction2<A, B, V> extends NElementRedescribable<NFunction2<A, B, V>> {
     V apply(A a, B b);
 
     @Override
-    default NFunction2<A, B, V> withDesc(NEDesc description){
+    default NFunction2<A, B, V> redescribe(Supplier<NElement> description){
         if(description==null){
             return this;
         }

@@ -25,13 +25,12 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.reserved.util.NVersionFilterWithDescription;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * version interval is a version filter that accepts interval ranges of
@@ -88,5 +87,5 @@ public interface NVersionFilter extends NFilter {
         return NFilter.super.describe();
     }
 
-    NFilter withDesc(NEDesc description);
+    NFilter redescribe(Supplier<NElement> description);
 }

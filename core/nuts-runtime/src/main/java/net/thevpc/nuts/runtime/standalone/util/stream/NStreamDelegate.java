@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.util.stream;
 
-import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.*;
 
@@ -243,9 +242,9 @@ public abstract class NStreamDelegate<T> implements NStream<T> {
     }
 
     @Override
-    public NStream<T> withDesc(NEDesc description) {
+    public NStream<T> redescribe(Supplier<NElement> description) {
         NStream<T> ts = baseStream();
-        return ts.withDesc(description);
+        return ts.redescribe(description);
     }
 
     @Override

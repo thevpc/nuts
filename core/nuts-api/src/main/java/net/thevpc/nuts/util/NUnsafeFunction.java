@@ -28,12 +28,14 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.*;
 
+import java.util.function.Supplier;
+
 /**
  * Unsafe function is a function that can throw any arbitrary exception
  * @param <T> In
  * @param <R> Out
  */
-public interface NUnsafeFunction<T, R> extends UnsafeFunction<T, R>, NElementDescribable<NUnsafeFunction<T, R>> {
+public interface NUnsafeFunction<T, R> extends UnsafeFunction<T, R>, NElementRedescribable<NUnsafeFunction<T, R>> {
     static <T, V> NUnsafeFunction<T, V> of(UnsafeFunction<T, V> o) {
         NAssert.requireNonNull(o, "function");
         if (o instanceof NFunction) {
@@ -43,7 +45,7 @@ public interface NUnsafeFunction<T, R> extends UnsafeFunction<T, R>, NElementDes
     }
 
     @Override
-    default NUnsafeFunction<T, R> withDesc(NEDesc description) {
+    default NUnsafeFunction<T, R> redescribe(Supplier<NElement> description) {
         if (description == null) {
             return this;
         }

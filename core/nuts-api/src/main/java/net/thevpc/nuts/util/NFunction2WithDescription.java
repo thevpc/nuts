@@ -1,13 +1,15 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NDescribableElementSupplier;
 import net.thevpc.nuts.elem.NElement;
+
+import java.util.function.Supplier;
 
 public class NFunction2WithDescription<A,B,V> implements NFunction2<A,B,V> {
     private final NFunction2<A,B,V> base;
-    private NEDesc description;
+    private Supplier<NElement> description;
 
-    public NFunction2WithDescription(NFunction2<A,B,V> base, NEDesc description) {
+    public NFunction2WithDescription(NFunction2<A,B,V> base, Supplier<NElement> description) {
         this.base = base;
         this.description = description;
     }
@@ -18,7 +20,7 @@ public class NFunction2WithDescription<A,B,V> implements NFunction2<A,B,V> {
     }
 
     @Override
-    public NFunction2<A,B, V> withDesc(NEDesc description) {
+    public NFunction2<A,B, V> redescribe(Supplier<NElement> description) {
         if(description==null){
             return base;
         }
@@ -32,10 +34,10 @@ public class NFunction2WithDescription<A,B,V> implements NFunction2<A,B,V> {
 
     @Override
     public NElement describe() {
-        return NEDesc.safeDescribe(
+        return NDescribableElementSupplier.safeDescribe(
                 description,
-                NEDesc.ofPossibleDescribable(base),
-                NEDesc.ofLateToString(this)
+                NDescribableElementSupplier.ofPossibleDescribable(base),
+                NDescribableElementSupplier.ofLateToString(this)
         );
     }
 }

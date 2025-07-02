@@ -1,16 +1,18 @@
 package net.thevpc.nuts.reserved.util;
 
 import net.thevpc.nuts.NVersionFilter;
-import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NDescribableElementSupplier;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.spi.base.NVersionFilterDelegate;
 import net.thevpc.nuts.util.NFilter;
 
+import java.util.function.Supplier;
+
 public class NVersionFilterWithDescription extends NVersionFilterDelegate {
     private NVersionFilter baseVersionFilter;
-    private NEDesc description;
+    private Supplier<NElement> description;
 
-    public NVersionFilterWithDescription(NVersionFilter baseVersionFilter, NEDesc description) {
+    public NVersionFilterWithDescription(NVersionFilter baseVersionFilter, Supplier<NElement> description) {
         super();
         this.baseVersionFilter = baseVersionFilter;
         this.description = description;
@@ -22,13 +24,13 @@ public class NVersionFilterWithDescription extends NVersionFilterDelegate {
     }
 
     @Override
-    public NFilter withDesc(NEDesc description) {
+    public NFilter redescribe(Supplier<NElement> description) {
         this.description=description;
         return this;
     }
 
     @Override
     public NElement describe() {
-        return NEDesc.safeDescribeOfBase(description, baseVersionFilter);
+        return NDescribableElementSupplier.safeDescribeOfBase(description, baseVersionFilter);
     }
 }

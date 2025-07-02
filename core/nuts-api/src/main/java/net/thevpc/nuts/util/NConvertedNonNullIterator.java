@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NDescribableElementSupplier;
 import net.thevpc.nuts.elem.NElement;
 
 import java.util.Iterator;
@@ -58,7 +58,7 @@ public class NConvertedNonNullIterator<F, T> extends NIteratorBase<T> {
         return NElement.ofObjectBuilder()
                 .name("Map")
                 .set("accept", "isNotNull")
-                .set("mapper", NEDesc.describeResolveOrDestructAsObject(converter)
+                .set("mapper", NDescribableElementSupplier.describeResolveOrDestructAsObject(converter)
                         .builder()
                         .set("name", convertName)
                         .build()

@@ -26,19 +26,19 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NEDesc;
-import net.thevpc.nuts.elem.NElementDescribable;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementRedescribable;
 import net.thevpc.nuts.reserved.util.NUnsafeCallableBaseFromJavaCallable;
 import net.thevpc.nuts.reserved.util.NUnsafeCallableFromCallable;
 import net.thevpc.nuts.reserved.util.NUnsafeCallableWithDescription;
 
 import java.util.concurrent.Callable;
+import java.util.function.Supplier;
 
 /**
  * Describable Runnable
  */
-public interface NUnsafeCallable<T> extends NElementDescribable<NUnsafeCallable<T>> {
+public interface NUnsafeCallable<T> extends NElementRedescribable<NUnsafeCallable<T>> {
 
     static <T> NUnsafeCallable<T> of(NCallable<T> o) {
         if (o == null) {
@@ -61,7 +61,7 @@ public interface NUnsafeCallable<T> extends NElementDescribable<NUnsafeCallable<
     }
 
     @Override
-    default NUnsafeCallable<T> withDesc(NEDesc description) {
+    default NUnsafeCallable<T> redescribe(Supplier<NElement> description) {
         if (description == null) {
             return this;
         }

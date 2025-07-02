@@ -36,7 +36,7 @@ import java.util.*;
  *
  * @param <T> T
  */
-public interface NIterator<T> extends Iterator<T>, NElementDescribable<NIterator<T>> {
+public interface NIterator<T> extends Iterator<T>, NElementRedescribable<NIterator<T>> {
     static <T> NIterator<T> of(Iterator<T> o) {
         return NCollectionsRPI.of().toIterator(o);
     }

@@ -1,13 +1,15 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NDescribableElementSupplier;
 import net.thevpc.nuts.elem.NElement;
+
+import java.util.function.Supplier;
 
 public class NDoubleFunction2WithDescription implements NDoubleFunction2,NImmutable {
     private final NDoubleFunction2 base;
-    private NEDesc description;
+    private Supplier<NElement> description;
 
-    public NDoubleFunction2WithDescription(NDoubleFunction2 base, NEDesc description) {
+    public NDoubleFunction2WithDescription(NDoubleFunction2 base, Supplier<NElement> description) {
         this.base = base;
         this.description = description;
     }
@@ -18,7 +20,7 @@ public class NDoubleFunction2WithDescription implements NDoubleFunction2,NImmuta
     }
 
     @Override
-    public NDoubleFunction2 withDesc(NEDesc description) {
+    public NDoubleFunction2 redescribe(Supplier<NElement> description) {
         if(description==null){
             return base;
         }
@@ -32,10 +34,10 @@ public class NDoubleFunction2WithDescription implements NDoubleFunction2,NImmuta
 
     @Override
     public NElement describe() {
-        return NEDesc.safeDescribe(
+        return NDescribableElementSupplier.safeDescribe(
                 description,
-                NEDesc.ofPossibleDescribable(base),
-                NEDesc.ofLateToString(this)
+                NDescribableElementSupplier.ofPossibleDescribable(base),
+                NDescribableElementSupplier.ofLateToString(this)
         );
     }
 }

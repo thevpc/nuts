@@ -4,18 +4,20 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NIterable;
 import net.thevpc.nuts.util.NIterator;
 
+import java.util.function.Supplier;
+
 public class NIterableWithDescription<T> implements NIterable<T> {
     private final NIterable<T> base;
-    private final NEDesc nfo;
+    private final Supplier<NElement> nfo;
 
-    public NIterableWithDescription(NIterable<T> base, NEDesc nfo) {
+    public NIterableWithDescription(NIterable<T> base, Supplier<NElement> nfo) {
         this.base = base;
         this.nfo = nfo;
     }
 
     @Override
     public NIterator<T> iterator() {
-        return base.iterator().withDesc(nfo);
+        return base.iterator().redescribe(nfo);
     }
 
     @Override
@@ -25,7 +27,7 @@ public class NIterableWithDescription<T> implements NIterable<T> {
 
     @Override
     public NElement describe() {
-        NObjectElement b = NEDesc.describeResolveOr(base, () -> NElement.ofObjectBuilder().build())
+        NObjectElement b = NDescribableElementSupplier.describeResolveOr(base, () -> NElement.ofObjectBuilder().build())
                 .asObject().get();
         NElement a = nfo.get();
         if (b.isEmpty()) {

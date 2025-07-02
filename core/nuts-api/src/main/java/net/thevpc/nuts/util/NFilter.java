@@ -27,6 +27,7 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NElementDescribable;
+import net.thevpc.nuts.elem.NElementRedescribable;
 
 import java.util.List;
 
@@ -35,7 +36,7 @@ import java.util.List;
  *
  * @app.category Base
  */
-public interface NFilter extends NElementDescribable<NFilter> {
+public interface NFilter extends NElementRedescribable<NFilter> {
 
     NFilterOp getFilterOp();
 

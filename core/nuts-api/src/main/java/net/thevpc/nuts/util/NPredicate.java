@@ -35,7 +35,7 @@ import java.util.function.Predicate;
  * Describable Predicate
  * @param <T> Type
  */
-public interface NPredicate<T> extends Predicate<T>, NElementDescribable<NPredicate<T>> {
+public interface NPredicate<T> extends Predicate<T>, NElementRedescribable<NPredicate<T>> {
     static <T> NPredicate<T> of(Predicate<T> o){
         if(o==null){
             return null;

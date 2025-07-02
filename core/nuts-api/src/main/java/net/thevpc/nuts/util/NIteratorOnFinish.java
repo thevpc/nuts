@@ -1,6 +1,6 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NDescribableElementSupplier;
 import net.thevpc.nuts.elem.NElement;
 
 import java.util.Iterator;
@@ -17,9 +17,9 @@ class NIteratorOnFinish<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        return NEDesc.describeResolveOrDestructAsObject(base)
+        return NDescribableElementSupplier.describeResolveOrDestructAsObject(base)
                 .builder()
-                .set("onFinish", NEDesc.describeResolveOrToString(r))
+                .set("onFinish", NDescribableElementSupplier.describeResolveOrToString(r))
                 .build()
                 ;
     }

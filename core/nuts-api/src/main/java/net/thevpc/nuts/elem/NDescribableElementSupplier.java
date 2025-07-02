@@ -5,16 +5,16 @@ import java.util.function.Supplier;
 /**
  * Nuts Element Description
  */
-public interface NEDesc extends Supplier<NElement> {
-    static NEDesc ofLateString(Supplier<String> name) {
+public interface NDescribableElementSupplier {
+    static Supplier<NElement> ofLateString(Supplier<String> name) {
         return name == null ? null : () -> NElement.ofString(name.get());
     }
 
-    static NEDesc ofLateToString(Object any) {
+    static Supplier<NElement> ofLateToString(Object any) {
         return () -> NElement.ofString(String.valueOf(any));
     }
 
-    static NEDesc ofPossibleDescribable(Object any) {
+    static Supplier<NElement> ofPossibleDescribable(Object any) {
         return () -> {
             if (any instanceof NElementDescribable) {
                 return ((NElementDescribable<?>) any).describe();
@@ -23,28 +23,24 @@ public interface NEDesc extends Supplier<NElement> {
         };
     }
 
-    static NEDesc of(String name) {
+    static Supplier<NElement> of(String name) {
         return name == null ? null : () -> NElement.ofString(name);
     }
 
-    static NEDesc of(NElement element) {
+    static Supplier<NElement> of(NElement element) {
         return element == null ? null : () -> element;
     }
 
-    static NEDesc of(Supplier<NElement> f) {
-        return f == null ? null : (f instanceof NEDesc) ? (NEDesc) f : f::get;
-    }
-
-    static NElement safeDescribeOfBase(NEDesc description, Object base) {
-        return NEDesc.safeDescribe(description
-                , base == null ? null : NEDesc.ofPossibleDescribable(base)
-                , base == null ? null : NEDesc.ofLateToString(base)
+    static NElement safeDescribeOfBase(Supplier<NElement> description, Object base) {
+        return NDescribableElementSupplier.safeDescribe(description
+                , base == null ? null : NDescribableElementSupplier.ofPossibleDescribable(base)
+                , base == null ? null : NDescribableElementSupplier.ofLateToString(base)
         );
     }
 
-    static NElement safeDescribe(NEDesc... descriptions) {
+    static NElement safeDescribe(Supplier<NElement>... descriptions) {
         if (descriptions != null) {
-            for (NEDesc description : descriptions) {
+            for (Supplier<NElement> description : descriptions) {
                 if (description != null) {
                     NElement u = description.get();
                     if (u != null) {

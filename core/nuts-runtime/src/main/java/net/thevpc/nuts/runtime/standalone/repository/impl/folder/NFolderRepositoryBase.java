@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.folder;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NDescribableElementSupplier;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.NSpeedQualifier;
 import net.thevpc.nuts.NStoreStrategy;
@@ -198,7 +198,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                         return NIterator.of(
                                 foldersFileUrl.stream().filter(
                                         NPath::isDirectory
-                                ).withDesc(NEDesc.of("isDirectory")).map(versionFolder -> {
+                                ).redescribe(NDescribableElementSupplier.of("isDirectory")).map(versionFolder -> {
                                     String versionName = versionFolder.getName();
                                     NId expectedId = NIdBuilder.of(groupId, artifactId).setVersion(versionName).build();
                                     if (isValidArtifactVersionFolder(expectedId, versionFolder)) {
@@ -212,7 +212,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                                     }
                                     return null;
                                 }).filterNonNull().iterator()
-                        ).withDesc(NEDesc.of("findNonSingleVersion"));
+                        ).redescribe(NDescribableElementSupplier.of("findNonSingleVersion"));
                     }catch (UncheckedIOException | NIOException ex) {
                         return NIterator.ofEmpty();
                     }
