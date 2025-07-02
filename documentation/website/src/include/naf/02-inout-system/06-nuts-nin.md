@@ -1,5 +1,5 @@
 ---
-title: NIn Simplified Input
+title: NIn for simplified Input
 ---
 
 # `NIn` — Structured Input Utility

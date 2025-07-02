@@ -1,5 +1,5 @@
 ---
-title: NTrace
+title: NTrace, the output companion
 ---
 
 

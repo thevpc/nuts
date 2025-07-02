@@ -1,5 +1,5 @@
 ---
-title: NIn Simplified Input
+title: NLog for elegant Logging
 ---
 
 # `NLog` — Structured Developer Logging in Nuts

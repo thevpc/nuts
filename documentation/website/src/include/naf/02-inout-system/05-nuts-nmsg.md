@@ -1,5 +1,5 @@
 ---
-title: NMsg : Messages and text formatting
+title: NMsg for Messages and text formatting
 ---
 
 
