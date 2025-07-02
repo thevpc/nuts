@@ -85,7 +85,7 @@ public interface NAsk<T> extends NCmdLineConfigurable {
      * @return ask for message of type int
      * @since 0.8.3
      */
-    NAsk<Integer> forInteger(NMsg msg);
+    NAsk<Integer> forInt(NMsg msg);
 
     /**
      * ask for message of type long
