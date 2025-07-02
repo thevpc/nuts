@@ -34,9 +34,8 @@ import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
 import net.thevpc.nuts.runtime.standalone.util.*;
 import net.thevpc.nuts.runtime.standalone.xtra.rnsh.RnshPathFactorySPI;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NDescribableElementSupplier;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
@@ -729,11 +728,11 @@ public class DefaultNWorkspaceConfigModel {
         NPath path = NWorkspace.of().getStoreLocation(apiId, NStoreType.CONF)
                 .getParent();
         List<NId> olderIds = path.stream().filter(NPath::isDirectory)
-                .withDesc(NEDesc.of("isDirectory"))
+                .redescribe(NDescribableElementSupplier.of("isDirectory"))
                 .map(x -> NVersion.get(x.getName()).get())
-                .withDesc(NEDesc.of("toVersion"))
+                .redescribe(NDescribableElementSupplier.of("toVersion"))
                 .filter(x -> x.compareTo(apiId.getVersion()) < 0)
-                .withDesc(NEDesc.of("older"))
+                .redescribe(NDescribableElementSupplier.of("older"))
                 .sorted(new NComparator<NVersion>() {
                     @Override
                     public int compare(NVersion o1, NVersion o2) {
@@ -745,7 +744,7 @@ public class DefaultNWorkspaceConfigModel {
                         return NElement.ofString("reverseOrder");
                     }
                 }).map(x -> apiId.builder().setVersion(x).build())
-                .withDesc(NEDesc.of("toId"))
+                .redescribe(NDescribableElementSupplier.of("toId"))
                 .toList();
         return olderIds;
     }

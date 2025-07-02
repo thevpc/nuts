@@ -41,7 +41,7 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NDescribableElementSupplier;
 
 
 import net.thevpc.nuts.io.NIOException;
@@ -52,7 +52,6 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.DefaultNVersion;
 import net.thevpc.nuts.runtime.standalone.repository.NIdPathIterator;
 import net.thevpc.nuts.runtime.standalone.repository.NIdPathIteratorBase;
-import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLog;
@@ -152,7 +151,7 @@ public class MavenRepositoryFolderHelper {
         NId bestId = null;
         NPath file = getLocalGroupAndArtifactFile(id);
         if (file.exists()) {
-            NPath[] versionFolders = file.stream().filter(NPath::isDirectory).withDesc(NEDesc.of("isDirectory"))
+            NPath[] versionFolders = file.stream().filter(NPath::isDirectory).redescribe(NDescribableElementSupplier.of("isDirectory"))
                     .toArray(NPath[]::new);
             for (NPath versionFolder : versionFolders) {
                 NId id2 = id.builder().setVersion(versionFolder.getName()).build();

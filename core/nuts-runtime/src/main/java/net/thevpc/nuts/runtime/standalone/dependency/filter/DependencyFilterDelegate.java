@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public abstract class DependencyFilterDelegate extends AbstractDependencyFilter{
     public DependencyFilterDelegate() {
@@ -20,8 +20,8 @@ public abstract class DependencyFilterDelegate extends AbstractDependencyFilter{
     }
 
     @Override
-    public NFilter withDesc(NEDesc description) {
-        return dependencyFilter().withDesc(description);
+    public NFilter redescribe(Supplier<NElement> description) {
+        return dependencyFilter().redescribe(description);
     }
 
     @Override

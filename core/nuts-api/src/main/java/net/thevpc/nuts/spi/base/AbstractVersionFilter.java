@@ -25,7 +25,7 @@
 package net.thevpc.nuts.spi.base;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.reserved.util.NVersionFilterWithDescription;
 import net.thevpc.nuts.util.NSimplifiable;
 import net.thevpc.nuts.util.NFilter;
@@ -34,6 +34,7 @@ import net.thevpc.nuts.util.NOptional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  *
@@ -65,7 +66,7 @@ public abstract class AbstractVersionFilter extends AbstractNFilter implements N
         return NOptional.of(Collections.emptyList());
     }
     @Override
-    public NFilter withDesc(NEDesc description) {
+    public NFilter redescribe(Supplier<NElement> description) {
         if(description==null){
             return this;
         }

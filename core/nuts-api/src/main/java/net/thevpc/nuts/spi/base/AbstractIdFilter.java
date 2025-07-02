@@ -24,12 +24,14 @@
  */
 package net.thevpc.nuts.spi.base;
 
-import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.reserved.util.NIdFilterWithDescriptor;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.NIdFilter;
 import net.thevpc.nuts.util.NSimplifiable;
+
+import java.util.function.Supplier;
 
 /**
  *
@@ -57,7 +59,7 @@ public abstract class AbstractIdFilter extends AbstractNFilter implements NIdFil
     }
 
     @Override
-    public NFilter withDesc(NEDesc description) {
+    public NFilter redescribe(Supplier<NElement> description) {
         if (description == null) {
             return this;
         }

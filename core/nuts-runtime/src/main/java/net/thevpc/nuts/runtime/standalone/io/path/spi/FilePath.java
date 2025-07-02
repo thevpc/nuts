@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.format.NTreeVisitResult;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
@@ -22,6 +22,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.*;
 import java.time.Instant;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -956,7 +957,7 @@ public class FilePath implements NPathSPI {
         }
 
         @Override
-        public NIterator<String> withDesc(NEDesc description) {
+        public NIterator<String> redescribe(Supplier<NElement> description) {
             return this;
         }
     }

@@ -1,12 +1,12 @@
 package net.thevpc.nuts.spi.base;
 
-import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.reserved.util.NPredicateWithDescription;
 import net.thevpc.nuts.util.NPredicate;
 import net.thevpc.nuts.util.NPredicates;
 
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public abstract class AbstractNPredicate<T> implements NPredicate<T> {
     @Override
@@ -25,7 +25,7 @@ public abstract class AbstractNPredicate<T> implements NPredicate<T> {
     }
 
     @Override
-    public NPredicate<T> withDesc(NEDesc description) {
+    public NPredicate<T> redescribe(Supplier<NElement> description) {
         if(description==null){
             return this;
         }

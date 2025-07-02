@@ -383,7 +383,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
     }
 
     @Override
-    public NAsk<Integer> forInteger(NMsg msg) {
+    public NAsk<Integer> forInt(NMsg msg) {
         return ((NAsk<Integer>) this).setValueType(Integer.class).setMessage(msg);
     }
 

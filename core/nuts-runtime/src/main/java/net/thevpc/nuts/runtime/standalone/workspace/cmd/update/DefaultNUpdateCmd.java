@@ -10,7 +10,7 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
-import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NDescribableElementSupplier;
 import net.thevpc.nuts.elem.NElement;
 
 import net.thevpc.nuts.ext.NExtensions;
@@ -812,7 +812,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         DefaultNUpdateResult defaultNutsUpdateResult = new DefaultNUpdateResult(id, oldFile, newFile,
                 newFile == null ? null : newFile.getDependencies().get().transitive()
                         .map(NDependency::toId)
-                        .withDesc(NEDesc.of("toId"))
+                        .redescribe(NDescribableElementSupplier.of("toId"))
                         .toList(),
                 false);
         if (cnewId != null && newFile != null && coldId != null && cnewId.getVersion().compareTo(coldId.getVersion()) > 0) {

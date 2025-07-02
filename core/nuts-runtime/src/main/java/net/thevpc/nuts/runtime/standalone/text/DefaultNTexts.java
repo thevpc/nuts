@@ -7,7 +7,7 @@ import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NDescribableElementSupplier;
 import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPrintStream;
@@ -755,7 +755,7 @@ public class DefaultNTexts implements NTexts {
                 refactorNext();
                 return queue.remove();
             }
-        }).withDesc(NEDesc.of("flattened text"));
+        }).redescribe(NDescribableElementSupplier.of("flattened text"));
     }
 
     @Override

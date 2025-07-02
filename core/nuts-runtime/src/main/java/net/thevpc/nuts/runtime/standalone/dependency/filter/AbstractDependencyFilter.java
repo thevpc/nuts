@@ -25,11 +25,13 @@
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import net.thevpc.nuts.NDependencyFilter;
-import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.spi.base.AbstractNFilter;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.util.NSimplifiable;
+
+import java.util.function.Supplier;
 
 /**
  *
@@ -57,7 +59,7 @@ public abstract class AbstractDependencyFilter extends AbstractNFilter implement
     }
 
     @Override
-    public NFilter withDesc(NEDesc description) {
+    public NFilter redescribe(Supplier<NElement> description) {
         if (description == null) {
             return this;
         }

@@ -603,12 +603,6 @@ public abstract class AbstractNElement implements NElement {
 
 
     @Override
-    public NElement withDesc(NEDesc description) {
-        return this;
-    }
-
-
-    @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         AbstractNElement that = (AbstractNElement) o;
