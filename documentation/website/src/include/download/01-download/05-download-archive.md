@@ -5,10 +5,10 @@ title: Nuts Archive
 
 # Old versions
 
-## 0.8.5
+## 0.8.6
 
 ```bash
-curl -sL https://thevpc.net/nuts/nuts-0.8.5.jar -o nuts.jar && java -jar nuts.jar -Zy
+curl -sL https://thevpc.net/nuts/nuts-0.8.6.jar -o nuts.jar && java -jar nuts.jar -Zy
 ```
 
 ## 0.8.4

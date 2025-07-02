@@ -1,7 +1,5 @@
 ---
-id: nutsDescriptorIntegration 
 title: Nuts Descriptor Integration 
-sidebar_label: Nuts Descriptor Integration
 ---
 
 

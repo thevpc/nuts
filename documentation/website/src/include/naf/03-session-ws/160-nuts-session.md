@@ -23,17 +23,17 @@ To run with a different session instance :
 Here another example
 ```java
     // share allows NSession/NWorkspace to be accessible globally as a singleton
-    Nuts.openWorkspace("-Z","-S","y","--json").share();
+    Nuts.require();
     // then you can get the current session anywhere in your code
     NSession session=NSession.of();
     session.setConfirm(NConfirmationMode.ASK);
     session.setOutputFormat(NContentType.XML);
 
     NOut.println("Hello");
-    NOut.printlnf("Hello");
+    NOut.println("Hello");
 
     NOut.println(Arrays.asList("Hello"));
-    NOut.printlnf("Hello %s","world");
+    NOut.println("Hello %s","world");
     NOut.println(NMsg.ofC("Hello %s","world"));
     NOut.println(NMsg.ofJ("Hello {0}","world"));
     NOut.println(NMsg.ofV("Hello $v",NMaps.of("v","world"));

@@ -3,7 +3,7 @@
 :icons: font
 :icon-set: pf
 :doctype: book
-:revnumber: v0.8.5
+:revnumber: v0.8.6
 :revdate: Sun Apr 30 11:14:37 PM +0000 2023
 :toc:
 :toclevels: 4
@@ -661,7 +661,7 @@ Here we pass -Xmx1G option argument to java executor because **netbeans-launcher
 
 me@linux:~> nuts which version ls
 version : internal command 
-ls : nuts alias (owner maven-local://net.thevpc.app.nuts.toolbox:nsh#0.8.5.0 ) : maven-local://net.thevpc.app.nuts.toolbox:nsh#0.8.5.0 -c ls
+ls : nuts alias (owner maven-local://net.thevpc.app.nuts.toolbox:nsh#0.8.6.0 ) : maven-local://net.thevpc.app.nuts.toolbox:nsh#0.8.6.0 -c ls
 
 ----
 
@@ -785,10 +785,10 @@ me@linux:~> nuts fetch net.thevpc.app:netbeans-launcher#1.2.2
 
 me@linux:~> nuts info
 name                     = default-workspace
-nuts-api-version         = 0.8.5
-nuts-api-id              = net.thevpc.app.nuts:nuts#0.8.5
-nuts-runtime-id          = net.thevpc.app.nuts:nuts-core#0.8.5.0
-nuts-runtime-path        = ~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts-core/0.8.5.0/nuts-core-0.8.5.0.jar;~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts/0.8.5/nuts-0.8.5.jar;~/.cache/nuts/default-workspace/boot/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar;~/.cache/nuts/default-workspace/boot/org/fusesource/jansi/jansi/1.17.1/jansi-1.17.1.jar
+nuts-api-version         = 0.8.6
+nuts-api-id              = net.thevpc.app.nuts:nuts#0.8.6
+nuts-runtime-id          = net.thevpc.app.nuts:nuts-core#0.8.6.0
+nuts-runtime-path        = ~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts-core/0.8.6.0/nuts-core-0.8.6.0.jar;~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts/0.8.6/nuts-0.8.6.jar;~/.cache/nuts/default-workspace/boot/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar;~/.cache/nuts/default-workspace/boot/org/fusesource/jansi/jansi/1.17.1/jansi-1.17.1.jar
 nuts-workspace-id        = 99b73002-804d-4e4c-9a13-f57ac1f40b3d
 nuts-store-layout        = linux
 nuts-store-strategy      = exploded
@@ -818,7 +818,7 @@ java-version             = 1.8.0_222
 platform                 = java#1.8.0_222
 java-home                = /usr/lib64/jvm/java-1.8.0-openjdk-1.8.0/jre
 java-executable          = /usr/lib64/jvm/java-1.8.0-openjdk-1.8.0/jre/bin/java
-java-classpath           = ~/.m2/repository/net/vpc/app/nuts/nuts/0.8.5/nuts-0.8.5.jar
+java-classpath           = ~/.m2/repository/net/vpc/app/nuts/nuts/0.8.6/nuts-0.8.6.jar
 java-library-path        = /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
 os-name                  = linux#4.12.14-lp151.28.13-default
 os-family                = linux
@@ -986,7 +986,7 @@ me@linux:~> nuts license
   /  |/ / / / / __/ ___/   The Open Source Package Manager for Java (TM)
  / /|  / /_/ / /_(__  )    and other Things ... by vpc
 /_/ |_/\__,_/\__/____/     https://github.com/thevpc/nuts
-    version 0.8.5.0
+    version 0.8.6.0
 
 
 
@@ -1136,7 +1136,7 @@ You can also change the output layout using --long (or -l) flag
 
 me@linux:~> nuts search -i -l
 I-X 2019-08-26 09:53:53.141 anonymous vpc-public-maven net.thevpc.app:netbeans-launcher#1.2.1
-IcX 2019-08-24 11:05:49.591 admin     maven-local      net.thevpc.app.nuts.toolbox:nsh#0.8.5.0
+IcX 2019-08-24 11:05:49.591 admin     maven-local      net.thevpc.app.nuts.toolbox:nsh#0.8.6.0
 I-x 2019-08-26 09:50:03.423 anonymous vpc-public-maven net.thevpc.app:kifkif#1.3.3
 
 ----
@@ -1182,11 +1182,11 @@ This command will show **nuts** version. It's helpful to note that **nuts** has 
 ----
 
 me@linux:~> nuts version
-0.8.5/0.8.5.0
+0.8.6/0.8.6.0
 
 ----
 
-Here the **version** command show api version (0.8.5) and the impl version (0.8.5.0)
+Here the **version** command show api version (0.8.6) and the impl version (0.8.6.0)
 === Welcome Command
 
 
@@ -1201,7 +1201,7 @@ This command does absolutely nothing but showing this message
   /  |/ / / / / __/ ___/   The Open Source Package Manager for Java (TM)
  / /|  / /_/ / /_(__  )    and other Things ... by vpc
 /_/ |_/\__,_/\__/____/     https://github.com/thevpc/nuts
-    version 0.8.5.0
+    version 0.8.6.0
 
 
 SYNOPSIS:
@@ -1252,7 +1252,7 @@ Aliases, Imports and launchers, are three features in nuts where you can call ar
 [source,bash]
 ----
 
-nuts net.thevpc.nsh:nsh#0.8.5.0
+nuts net.thevpc.nsh:nsh#0.8.6.0
 
 ----
 
@@ -1264,11 +1264,11 @@ Imports help you discard groupId and call/install artifacts using only artifactI
 [source,bash]
 ----
 
-nuts net.thevpc.nsh:nsh#0.8.5.0
+nuts net.thevpc.nsh:nsh#0.8.6.0
 # becomes
 nuts settings add import net.thevpc.toolbox
 # now call it simply with
-nuts nsh#0.8.5.0
+nuts nsh#0.8.6.0
 # or even simpler with
 nuts nsh
 

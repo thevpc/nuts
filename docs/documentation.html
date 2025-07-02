@@ -59,7 +59,7 @@
             <a class="logo ml-md-3" href="index.html" title="Nuts Package Manager"> <img
                     src="assets/images/nuts-icon.png" alt="Nuts Package Manager" width="32px"/> </a>
             <span class="text-4 ml-2" style="font-family: ZeroesTwo;"><strong><a href="index.html">Nuts Package Manager</a></strong></span>
-            <span class="text-2 ml-2" style="font-family: ZeroesTwo;"><span class="badge badge-info">v0.8.5.0</span></span>
+            <span class="text-2 ml-2" style="font-family: ZeroesTwo;"><span class="badge badge-info">v0.8.6.0</span></span>
             <!-- Logo End -->
 
             <!-- Navbar Toggler -->
@@ -123,7 +123,7 @@
         <div class="idocs-navigation bg-light">
             <ul class="nav flex-column ">
                 
-                <li class="nav-item"><a class="nav-link" href="#Introduction">1 Introducing Nuts</a>
+                <li class="nav-item"><a class="nav-link" href="#UD520C0669EBF6E704CD62FF2A9609937D18652D4">1 Introducing Nuts</a>
                     
                     
                     <ul class="nav flex-column">
@@ -162,7 +162,7 @@
                     
                 </li>
                 
-                <li class="nav-item"><a class="nav-link" href="#Installation">2 Installation</a>
+                <li class="nav-item"><a class="nav-link" href="#U6C7010C68E6F93F937479640AA9C96CBA97150B2">2 Installation</a>
                     
                     
                     <ul class="nav flex-column">
@@ -196,7 +196,7 @@
                     
                 </li>
                 
-                <li class="nav-item"><a class="nav-link" href="#NutsConcepts">3 Nuts Concepts</a>
+                <li class="nav-item"><a class="nav-link" href="#U2804711427DF155A39D773A174CDB9FB06CE351D">3 Nuts Concepts</a>
                     
                     
                     <ul class="nav flex-column">
@@ -235,7 +235,7 @@
                     
                 </li>
                 
-                <li class="nav-item"><a class="nav-link" href="#Commands">4 Nuts Commands</a>
+                <li class="nav-item"><a class="nav-link" href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4 Nuts Commands</a>
                     
                     
                     <ul class="nav flex-column">
@@ -404,7 +404,7 @@
                     
                 </li>
                 
-                <li class="nav-item"><a class="nav-link" href="#ChangeLog">5 ChangeLog</a>
+                <li class="nav-item"><a class="nav-link" href="#UCFA9C98437372706FE88595ACB0641C2F9097BB0">5 ChangeLog</a>
                     
                     
                 </li>
@@ -419,8 +419,8 @@
 
                 
                     <!--pageLevel1-->
-                    <section id="Introduction" >
-                        <h2 class="main-section1"><a href="#Introduction">1 Introducing Nuts</a></h2>
+                    <section id="UD520C0669EBF6E704CD62FF2A9609937D18652D4" >
+                        <h2 class="main-section1"><a href="#UD520C0669EBF6E704CD62FF2A9609937D18652D4">1 Introducing Nuts</a></h2>
                         <div class="text-card">
                         <p class="md-phrase"><mark class="md-code md-code-` ">nuts</mark> is a powerful and versatile open-source package manager designed to simplify software dependency management and enhance development workflows across a wide range of projects.  Whether you're working on a small personal project or a large-scale enterprise application, <mark class="md-code md-code-` ">nuts</mark> offers a streamlined and efficient way to manage libraries, tools, and dependencies, enabling you to focus on building and innovating. With its intuitive interface and robust features, <mark class="md-code md-code-` ">nuts</mark> supports seamless integration into existing workflows, providing flexibility and scalability for developers of all levels. Basically, It's what npm is for Javascript and pip for Python. However, <mark class="md-code md-code-` ">nuts</mark> presents several unique features that make it suitable for other technologies as well. This documentation is your gateway to understanding and utilizing the full potential of <mark class="md-code md-code-` ">nuts</mark>, covering everything from installation and basic setup to advanced usage patterns and customization options. For additional resources, detailed guides, and further insights into how Nuts can empower your development process, visit <a href="#other-resources" class="md-link">this link</a>. Let’s dive in and explore what makes <mark class="md-code md-code-` ">nuts</mark> a game-changer for modern development!</p>
 
@@ -428,7 +428,7 @@
                         
                             <!--pageLevel2-->
                             <section id="introduction" >
-                                <h3 class="main-section2"><a href="#Introduction">1.1 Java Package Manager</a></h3>
+                                <h3 class="main-section2"><a href="#UD520C0669EBF6E704CD62FF2A9609937D18652D4">1.1 Java Package Manager</a></h3>
                                 <div class="text-card">
                                 <p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> stands for <b class="md-bold">Network Updatable Things Services</b> tool and is a portable package manager for java (mainly) that handles remote artifacts, installs these artifacts to the current machine and executes such artifacts on need.</p>
 <p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> solves the <b class="md-bold">fatjar</b> problem delegating the dependency resolution to the time when the application is to be executed and simplifies the packaging process while being transparent to the build process. Actually, nuts uses <b class="md-bold">maven</b> <b class="md-bold">pom</b> descriptors to resolve dependencies when the artifact is installed on the target machine, and it can use also other types of descriptors for other types of packages.</p>
@@ -445,7 +445,7 @@
                         
                             <!--pageLevel2-->
                             <section id="nutsAndMaven" >
-                                <h3 class="main-section2"><a href="#Introduction">1.2 Nuts and Maven</a></h3>
+                                <h3 class="main-section2"><a href="#UD520C0669EBF6E704CD62FF2A9609937D18652D4">1.2 Nuts and Maven</a></h3>
                                 <div class="text-card">
                                 <H4 class="md-title-2">You'd still be Maven, yet you gonna be Nuts</H4>
 Is there any package manager for Java(TM) applications? You can google for it and you will find that many have  queried this on blogs and forums. In most cases responses point to maven and gradle, the tremendous build tools. However,  both maven and gradle are build tools, while helping build packages they lack of deployment features. They bundle every  dependency in every package (think of wars, ears and standalone jars). They do not handle installation or upgrading. Apache ivy, as well, while competing with maven build tool does not provide more than transitive dependency management.    The main idea behind a package manager is the automation of installation, update, configuration and removal of programs  or libraries in a coherent manner with the help of a database that manages binaries and metadata. maven, to consider one,  sticks to the build process, an goes no further.
@@ -495,7 +495,7 @@ At some point, you may need to uninstall an artifact and that's to undo the arti
                         
                             <!--pageLevel2-->
                             <section id="start_here" >
-                                <h3 class="main-section2"><a href="#Introduction">1.3 First example</a></h3>
+                                <h3 class="main-section2"><a href="#UD520C0669EBF6E704CD62FF2A9609937D18652D4">1.3 First example</a></h3>
                                 <div class="text-card">
                                 <H4 class="md-title-2">Let's start the journey</H4>
 <p class="md-phrase">Get started by <b class="md-bold">running your first application</b>. Nuts is not a build tool (like <mark class="md-code md-code-` ">maven</mark> and <mark class="md-code md-code-` ">gradle</mark>). Nuts is more likely to be compared with nodejs <mark class="md-code md-code-` ">npm</mark> or python's <mark class="md-code md-code-` ">pip</mark></p>
@@ -542,7 +542,7 @@ nuts jedit
                         
                             <!--pageLevel2-->
                             <section id="license" >
-                                <h3 class="main-section2"><a href="#Introduction">1.4 License</a></h3>
+                                <h3 class="main-section2"><a href="#UD520C0669EBF6E704CD62FF2A9609937D18652D4">1.4 License</a></h3>
                                 <div class="text-card">
                                 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -556,7 +556,7 @@ Copyright (C) 2016-2022 thevpc
                         
                             <!--pageLevel2-->
                             <section id="other-resources" >
-                                <h3 class="main-section2"><a href="#Introduction">1.5 Other Resources</a></h3>
+                                <h3 class="main-section2"><a href="#UD520C0669EBF6E704CD62FF2A9609937D18652D4">1.5 Other Resources</a></h3>
                                 <div class="text-card">
                                 To help you get started and explore its capabilities, we've compiled a selection of resources, including comprehensive documentation, technical presentations, and detailed PDF guides. These materials cover everything from installation and configuration to advanced usage scenarios, ensuring you have all the information needed to make the most of Nuts. Below, you’ll find a curated list of links to these resources for easy access:
 <ul class="md-ul"><li class="md-uli"><a href="files/nuts-documentation.pdf" class="md-link">Offline user documentation</a></li><li class="md-uli"><a href="files/nuts-presentation-001-rationale.pdf" class="md-link">Nuts Rationale</a></li><li class="md-uli"><a href="files/nuts-presentation-002-components.pdf" class="md-link">Nuts Components</a></li><li class="md-uli"><p class="md-phrase"><a href="files/nuts-presentation-003-API.pdf" class="md-link">Nuts API</a>Feel free to explore these resources and dive deeper into what Nuts has to offer!</p></li></ul>
@@ -568,7 +568,7 @@ Copyright (C) 2016-2022 thevpc
                         
                             <!--pageLevel2-->
                             <section id="running" >
-                                <h3 class="main-section2"><a href="#Introduction">1.6 Running Nuts</a></h3>
+                                <h3 class="main-section2"><a href="#UD520C0669EBF6E704CD62FF2A9609937D18652D4">1.6 Running Nuts</a></h3>
                                 <div class="text-card">
                                 <p class="md-phrase">In this section we will consider the simplest usage of <mark class="md-code md-code-` ">nuts</mark> package manager.</p>
 <H4 class="md-title-2">Running a deployed artifact</H4>
@@ -657,8 +657,8 @@ nuts --exec -Xms1G -Xmx2G ./my-app.jar argument-1 argument-2
                     <hr class="divider">
                 
                     <!--pageLevel1-->
-                    <section id="Installation" >
-                        <h2 class="main-section1"><a href="#Installation">2 Installation</a></h2>
+                    <section id="U6C7010C68E6F93F937479640AA9C96CBA97150B2" >
+                        <h2 class="main-section1"><a href="#U6C7010C68E6F93F937479640AA9C96CBA97150B2">2 Installation</a></h2>
                         <div class="text-card">
                         <p class="md-phrase"><mark class="md-code md-code-` ">nuts</mark> is a package manager for the Java Platform. Basically, It's what npm is for Javascript and pip for Python. However, <mark class="md-code md-code-` ">nuts</mark> presents several concepts that make it suitable for other technologies as well. </p>
 
@@ -666,7 +666,7 @@ nuts --exec -Xms1G -Xmx2G ./my-app.jar argument-1 argument-2
                         
                             <!--pageLevel2-->
                             <section id="installation-preview" >
-                                <h3 class="main-section2"><a href="#Installation">2.1 Personal Use (Default)</a></h3>
+                                <h3 class="main-section2"><a href="#U6C7010C68E6F93F937479640AA9C96CBA97150B2">2.1 Personal Use (Default)</a></h3>
                                 <div class="text-card">
                                 <p class="md-phrase">This is mostly the recommanded installation mode if you are not sure what mode suits you the best. Preview mode helps you using the most uptodate/bug free version and with newest features as well. Installation of <mark class="md-code md-code-` ">nuts</mark> for preview/test/evaluation or simply for personal use is based on a rolling <mark class="md-code md-code-` ">nuts</mark> binaries version that is released a faster pace than the production version (generally a semi-monthly schedule). Versions are not rock solid but still they are "very" usable and more importantly they include all latest features. Preview releases are deployed to a development repository and hence are made accessible using a repository swith option.</p>
 <H4 class="md-title-2">System Requirements</H4>
@@ -685,13 +685,13 @@ OpenJDK 64-Bit Server VM (build 24.0.1+9-suse-1.1-x8664, mixed mode, sharing)
 </code></pre>
 
 <H4 class="md-title-2">Installation</H4>
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi10-tab" data-toggle="tab" href="#idi10" role="tab" aria-controls="idi10" aria-selected="false">windows</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link active" id="idi11-tab" data-toggle="tab" href="#idi11" role="tab" aria-controls="idi11" aria-selected="true">linux</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi12-tab" data-toggle="tab" href="#idi12" role="tab" aria-controls="idi12" aria-selected="false">macos</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi13-tab" data-toggle="tab" href="#idi13" role="tab" aria-controls="idi13" aria-selected="false">wget</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi14-tab" data-toggle="tab" href="#idi14" role="tab" aria-controls="idi14" aria-selected="false">curl</a></li>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi50-tab" data-toggle="tab" href="#idi50" role="tab" aria-controls="idi50" aria-selected="false">windows</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="idi51-tab" data-toggle="tab" href="#idi51" role="tab" aria-controls="idi51" aria-selected="true">linux</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="idi52-tab" data-toggle="tab" href="#idi52" role="tab" aria-controls="idi52" aria-selected="false">macos</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="idi53-tab" data-toggle="tab" href="#idi53" role="tab" aria-controls="idi53" aria-selected="false">wget</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="idi54-tab" data-toggle="tab" href="#idi54" role="tab" aria-controls="idi54" aria-selected="false">curl</a></li>
 </ul>
-<div class="tab-content my-3"><div class="tab-pane fade show " id="idi10" role="tabpanel" aria-labelledby="idi10-tab"><p class="md-phrase">download <a href="https://thevpc.net/nuts/nuts-preview.jar" class="md-link">nuts-preview.jar</a></p>
+<div class="tab-content my-3"><div class="tab-pane fade show " id="idi50" role="tabpanel" aria-labelledby="idi50-tab"><p class="md-phrase">download <a href="https://thevpc.net/nuts/nuts-preview.jar" class="md-link">nuts-preview.jar</a></p>
 <pre class="md-code md-code-``` "><code class="">
 java -jar nuts-preview.jar -Zy
 </code></pre>
@@ -700,7 +700,7 @@ On Windows systems, first launch will create a new
  Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.
 -
  
-<b class="md-bold">nuts-cmd-0.8.5</b>
+<b class="md-bold">nuts-cmd-0.8.6</b>
  : this shortcut will open a configured command terminal. 
 <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b>
  command will be available as well as several nuts companion tools installed by 
@@ -711,14 +711,14 @@ On Windows systems, first launch will create a new
 <b class="md-bold">nuts-cmd</b>
        : this shortcut will point to the last installed 
 <b class="md-bold">nuts</b>
- version, here 0.8.5  
+ version, here 0.8.6  
 Any of these shortcuts will launch a nuts-aware terminal.
 Supported Windows systems include Window 7 and later.
 <div class="alert alert-success mb-4">Any of the created shortcuts for windows is a nuts-aware terminal.
 
 </div>
 </div>
-<div class="tab-pane fade show active" id="idi11" role="tabpanel" aria-labelledby="idi11-tab"><b class="md-bold">for testing or development (using curl):</b>
+<div class="tab-pane fade show active" id="idi51" role="tabpanel" aria-labelledby="idi51-tab"><b class="md-bold">for testing or development (using curl):</b>
 This will reset/delete any previous nuts installation before installing the latest version. Removing the 
 <mark class="md-code md-code-` ">Z</mark>
  modifier (replace 
@@ -743,7 +743,7 @@ All Linux versions and distributions should work with or without X Window (or eq
 
 </div>
 </div>
-<div class="tab-pane fade show " id="idi12" role="tabpanel" aria-labelledby="idi12-tab"><pre class="md-code md-code-``` "><code class="">
+<div class="tab-pane fade show " id="idi52" role="tabpanel" aria-labelledby="idi52-tab"><pre class="md-code md-code-``` "><code class="">
 $ curl -sL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
@@ -759,7 +759,7 @@ MacOS Systems installation is based on
 
 </div>
 </div>
-<div class="tab-pane fade show " id="idi13" role="tabpanel" aria-labelledby="idi13-tab"><pre class="md-code md-code-``` "><code class="">
+<div class="tab-pane fade show " id="idi53" role="tabpanel" aria-labelledby="idi53-tab"><pre class="md-code md-code-``` "><code class="">
 $ wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
@@ -768,7 +768,7 @@ $ exit
 
 </div>
 </div>
-<div class="tab-pane fade show " id="idi14" role="tabpanel" aria-labelledby="idi14-tab"><pre class="md-code md-code-``` "><code class="">
+<div class="tab-pane fade show " id="idi54" role="tabpanel" aria-labelledby="idi54-tab"><pre class="md-code md-code-``` "><code class="">
 $ curl -sL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
@@ -793,7 +793,7 @@ nuts --version
 </code></pre>
 It should show a result in the format : nuts-api-version/nuts-impl-version
 <pre class="md-code md-code-``` "><code class="">
-0.8.5/0.8.5.0
+0.8.6/0.8.6.0
 </code></pre>
 
 <H4 class="md-title-2">Run a command</H4>
@@ -811,7 +811,7 @@ Several commands are available, and you can always manually run any java and non
                         
                             <!--pageLevel2-->
                             <section id="installation-prod" >
-                                <h3 class="main-section2"><a href="#Installation">2.2 Production Use</a></h3>
+                                <h3 class="main-section2"><a href="#U6C7010C68E6F93F937479640AA9C96CBA97150B2">2.2 Production Use</a></h3>
                                 <div class="text-card">
                                 <p class="md-phrase">Installation of <mark class="md-code md-code-` ">nuts</mark> in production is based on stable <mark class="md-code md-code-` ">nuts</mark> binaries that are released according to a semi-annual schedule. Stable versions are deployed to maven-central and hence are made accessible very easily to all users. Releases include most of the time updates to the core nuts api (and bootstrap). Update/Fix releases can occur to fix blocking/serious/security issues is faster pace.</p>
 <H4 class="md-title-2">System Requirements</H4>
@@ -830,13 +830,13 @@ OpenJDK 64-Bit Server VM (build 24.0.1+9-suse-1.1-x8664, mixed mode, sharing)
 </code></pre>
 
 <H4 class="md-title-2">Installation</H4>
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi20-tab" data-toggle="tab" href="#idi20" role="tab" aria-controls="idi20" aria-selected="false">windows</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link active" id="idi21-tab" data-toggle="tab" href="#idi21" role="tab" aria-controls="idi21" aria-selected="true">linux</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi22-tab" data-toggle="tab" href="#idi22" role="tab" aria-controls="idi22" aria-selected="false">macos</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi23-tab" data-toggle="tab" href="#idi23" role="tab" aria-controls="idi23" aria-selected="false">wget</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi24-tab" data-toggle="tab" href="#idi24" role="tab" aria-controls="idi24" aria-selected="false">curl</a></li>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi60-tab" data-toggle="tab" href="#idi60" role="tab" aria-controls="idi60" aria-selected="false">windows</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="idi61-tab" data-toggle="tab" href="#idi61" role="tab" aria-controls="idi61" aria-selected="true">linux</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="idi62-tab" data-toggle="tab" href="#idi62" role="tab" aria-controls="idi62" aria-selected="false">macos</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="idi63-tab" data-toggle="tab" href="#idi63" role="tab" aria-controls="idi63" aria-selected="false">wget</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="idi64-tab" data-toggle="tab" href="#idi64" role="tab" aria-controls="idi64" aria-selected="false">curl</a></li>
 </ul>
-<div class="tab-content my-3"><div class="tab-pane fade show " id="idi20" role="tabpanel" aria-labelledby="idi20-tab"><p class="md-phrase">download <a href="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.0.8.5/nuts-0.8.5.jar" class="md-link">nuts-0.8.5.jar</a></p>
+<div class="tab-content my-3"><div class="tab-pane fade show " id="idi60" role="tabpanel" aria-labelledby="idi60-tab"><p class="md-phrase">download <a href="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.0.8.5/nuts-0.8.5.jar" class="md-link">nuts-0.8.5.jar</a></p>
 <pre class="md-code md-code-``` "><code class="">
 java -jar nuts-0.8.5.jar  -Zy
 </code></pre>
@@ -863,7 +863,7 @@ Supported Windows systems include Window 7 and later.
 
 </div>
 </div>
-<div class="tab-pane fade show active" id="idi21" role="tabpanel" aria-labelledby="idi21-tab"><b class="md-bold">for production (using wget):</b>
+<div class="tab-pane fade show active" id="idi61" role="tabpanel" aria-labelledby="idi61-tab"><b class="md-bold">for production (using wget):</b>
 This will reset/delete any previous nuts installation before installing the latest version. Removing the 
 <mark class="md-code md-code-` ">Z</mark>
  modifier (replace 
@@ -907,7 +907,7 @@ All Linux versions and distributions should work with or without X Window (or eq
 
 </div>
 </div>
-<div class="tab-pane fade show " id="idi22" role="tabpanel" aria-labelledby="idi22-tab"><pre class="md-code md-code-``` "><code class="">
+<div class="tab-pane fade show " id="idi62" role="tabpanel" aria-labelledby="idi62-tab"><pre class="md-code md-code-``` "><code class="">
 $ curl -sL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
@@ -923,7 +923,7 @@ MacOS Systems installation is based on
 
 </div>
 </div>
-<div class="tab-pane fade show " id="idi23" role="tabpanel" aria-labelledby="idi23-tab"><pre class="md-code md-code-``` "><code class="">
+<div class="tab-pane fade show " id="idi63" role="tabpanel" aria-labelledby="idi63-tab"><pre class="md-code md-code-``` "><code class="">
   $ wget https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
   $  java -jar nuts.jar -y
 </code></pre>
@@ -931,7 +931,7 @@ MacOS Systems installation is based on
 
 </div>
 </div>
-<div class="tab-pane fade show " id="idi24" role="tabpanel" aria-labelledby="idi24-tab"><pre class="md-code md-code-``` "><code class="">
+<div class="tab-pane fade show " id="idi64" role="tabpanel" aria-labelledby="idi64-tab"><pre class="md-code md-code-``` "><code class="">
 $ curl -sL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
@@ -974,7 +974,7 @@ Several commands are available, and you can always manually run any java and non
                         
                             <!--pageLevel2-->
                             <section id="gui-installation" >
-                                <h3 class="main-section2"><a href="#Installation">2.3 GUI Installation</a></h3>
+                                <h3 class="main-section2"><a href="#U6C7010C68E6F93F937479640AA9C96CBA97150B2">2.3 GUI Installation</a></h3>
                                 <div class="text-card">
                                 <H4 class="md-title-2">GUI Installation</H4>
 <p class="md-phrase">You can install <mark class="md-code md-code-` ">nuts</mark> using a gui installer. Multiple targets are available. You may select a portable installer (a jar that you can double click as far as you have a valid java+ runtime installed and configured in your environment). You may also want to select a native image for the installer; you only need to download and run.</p>
@@ -1020,22 +1020,22 @@ $&gt; nuts search
 
 $&gt; nuts search 'net.thevpc.nuts.toolbox:*' --anywhere
  
-        net.thevpc.nsh:nsh#0.8.5.0
-        net.thevpc.nuts.toolbox:ndoc#0.8.5.0
-        net.thevpc.nuts.toolbox:ndexer#0.8.5.0
-        net.thevpc.nuts.toolbox:njob#0.8.5.0
-        net.thevpc.nuts.toolbox:nmvn#0.8.5.0
-        net.thevpc.nuts.toolbox:nwork#0.8.5.0
-        net.thevpc.nsh:nsh#0.8.5.0
-        net.thevpc.nuts.toolbox:ntomcat#0.8.5.0
-        net.thevpc.nuts.toolbox:ntalk-agent#0.8.5.0
-        net.thevpc.nuts.toolbox:ndiff#0.8.5.0
-        net.thevpc.nuts.toolbox:nserver#0.8.5.0
-        net.thevpc.nuts.toolbox:ndb#0.8.5.0
-        net.thevpc.nuts.toolbox:nversion#0.8.5.0
-        net.thevpc.nuts.toolbox:ncode#0.8.5.0
-        net.thevpc.nuts.toolbox:ndocusaurus#0.8.5.0
-        net.thevpc.nuts.toolbox:noapi#0.8.5.0
+        net.thevpc.nsh:nsh#0.8.6.0
+        net.thevpc.nuts.toolbox:ndoc#0.8.6.0
+        net.thevpc.nuts.toolbox:ndexer#0.8.6.0
+        net.thevpc.nuts.toolbox:njob#0.8.6.0
+        net.thevpc.nuts.toolbox:nmvn#0.8.6.0
+        net.thevpc.nuts.toolbox:nwork#0.8.6.0
+        net.thevpc.nsh:nsh#0.8.6.0
+        net.thevpc.nuts.toolbox:ntomcat#0.8.6.0
+        net.thevpc.nuts.toolbox:ntalk-agent#0.8.6.0
+        net.thevpc.nuts.toolbox:ndiff#0.8.6.0
+        net.thevpc.nuts.toolbox:nserver#0.8.6.0
+        net.thevpc.nuts.toolbox:ndb#0.8.6.0
+        net.thevpc.nuts.toolbox:nversion#0.8.6.0
+        net.thevpc.nuts.toolbox:ncode#0.8.6.0
+        net.thevpc.nuts.toolbox:ndocusaurus#0.8.6.0
+        net.thevpc.nuts.toolbox:noapi#0.8.6.0
 
 $&gt; nuts install org.jedit:jedit
 
@@ -1061,7 +1061,7 @@ $&gt; nuts netbeans-launcher
                         
                             <!--pageLevel2-->
                             <section id="docker-installation" >
-                                <h3 class="main-section2"><a href="#Installation">2.4 Using Docker</a></h3>
+                                <h3 class="main-section2"><a href="#U6C7010C68E6F93F937479640AA9C96CBA97150B2">2.4 Using Docker</a></h3>
                                 <div class="text-card">
                                 <H4 class="md-title-2">Running nuts in a containerized environment</H4>
 <p class="md-phrase">If you want to run <mark class="md-code md-code-` ">nuts</mark> in a containerized docker environment without creating a Dockerfile, you would run the following commands:</p>
@@ -1077,12 +1077,12 @@ curl -sL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar &amp;&amp; java -j
 . ~/.bashrc
 nuts -y &lt;your-app&gt;...
 </code></pre>
-<p class="md-phrase">As an example here where you can run <code class="md-code md-code-` ">net.thevpc.nuts.toolbox:noapi#0.8.5.0</code> on your config file <code class="md-code md-code-` ">myrest-apis.json</code>.</p>
+<p class="md-phrase">As an example here where you can run <code class="md-code md-code-` ">net.thevpc.nuts.toolbox:noapi#0.8.6.0</code> on your config file <code class="md-code md-code-` ">myrest-apis.json</code>.</p>
 <p class="md-phrase"><mark class="md-code md-code-` ">noapi</mark> is actually an OpenAPI documentation tool that generates a pdf file based on a opn api definition in <mark class="md-code md-code-` ">JSON</mark>, <mark class="md-code md-code-` ">YAML</mark> or <mark class="md-code md-code-` ">TSON</mark> formats.</p>
 <pre class="md-code md-code-``` bash"><code class="bash">
 cd /workspace
 wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
-java -jar nuts.jar -P=%s -ZyS net.thevpc.nuts.toolbox:noapi#0.8.5.0 myrest-apis.json
+java -jar nuts.jar -P=%s -ZyS net.thevpc.nuts.toolbox:noapi#0.8.6.0 myrest-apis.json
 </code></pre>
 
 <H4 class="md-title-2">Creating your app Dockerfile</H4>
@@ -1095,7 +1095,7 @@ CMD java -jar nuts.jar -y &lt;your application&gt;
 docker run -it -v $(pwd):/workspace openjdk:8 sh
 cd /workspace
 wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
-java -jar nuts.jar -P=no -ZyS -r=+thevpc net.thevpc.nuts.toolbox:noapi#0.8.5.0 my-connector.json
+java -jar nuts.jar -P=no -ZyS -r=+thevpc net.thevpc.nuts.toolbox:noapi#0.8.6.0 my-connector.json
 #############
 
 </code></pre>
@@ -1115,7 +1115,7 @@ CMD java -jar nuts.jar -y net.thevpc.nuts.toolbox:noapi
                         
                             <!--pageLevel2-->
                             <section id="troubleshooting" >
-                                <h3 class="main-section2"><a href="#Installation">2.5 Troubleshooting</a></h3>
+                                <h3 class="main-section2"><a href="#U6C7010C68E6F93F937479640AA9C96CBA97150B2">2.5 Troubleshooting</a></h3>
                                 <div class="text-card">
                                 Whenever installation fails, It's more likely there is a mis-configuration or invalid libraries bundles used. You may have to options to circumvent this which are two levels or workspace reinitialization.
 <H4 class="md-title-2">recover mode</H4>
@@ -1169,8 +1169,8 @@ java -jar nuts.jar
                     <hr class="divider">
                 
                     <!--pageLevel1-->
-                    <section id="NutsConcepts" >
-                        <h2 class="main-section1"><a href="#NutsConcepts">3 Nuts Concepts</a></h2>
+                    <section id="U2804711427DF155A39D773A174CDB9FB06CE351D" >
+                        <h2 class="main-section1"><a href="#U2804711427DF155A39D773A174CDB9FB06CE351D">3 Nuts Concepts</a></h2>
                         <div class="text-card">
                         <H4 class="md-title-1">Nuts Concepts</H4>
 <p class="md-phrase"><mark class="md-code md-code-``` ">nuts</mark> introduces a set of unique concepts that are important to leverage. These concepts are  mainly introduced for portability and repeatability.</p>
@@ -1180,20 +1180,20 @@ java -jar nuts.jar
                         
                             <!--pageLevel2-->
                             <section id="aliases" >
-                                <h3 class="main-section2"><a href="#NutsConcepts">3.1 Aliases, Imports & Launchers</a></h3>
+                                <h3 class="main-section2"><a href="#U2804711427DF155A39D773A174CDB9FB06CE351D">3.1 Aliases, Imports & Launchers</a></h3>
                                 <div class="text-card">
                                 Aliases, Imports and launchers, are three features in nuts where you can call artifacts with a simple word instead of using the full id. Indeed, usually, artifacts are uniquely identified by groupId, artifactId, version and classifier (whenever applicable). This is kind of cumbersome if most of the cases:
 <pre class="md-code md-code-``` bash"><code class="bash">
-nuts net.thevpc.nsh:nsh#0.8.5.0
+nuts net.thevpc.nsh:nsh#0.8.6.0
 </code></pre>
 <H4 class="md-title-2">Imports</H4>
 Imports help you discard groupId and call/install artifacts using only artifactId. You can as an example import 'com.my-company' and as a result any artifact under 'com.mycompany' is resolved automatically. Actually 'com.my-company:my-app' and 'com.my-company.my-app:my-app' are
 <pre class="md-code md-code-``` bash"><code class="bash">
-nuts net.thevpc.nsh:nsh#0.8.5.0
+nuts net.thevpc.nsh:nsh#0.8.6.0
 # becomes
 nuts settings add import net.thevpc.toolbox
 # now call it simply with
-nuts nsh#0.8.5.0
+nuts nsh#0.8.6.0
 # or even simpler with
 nuts nsh
 </code></pre>
@@ -1202,9 +1202,9 @@ As a matter of fact, there is a default import defined 'net.thevpc'
 <H4 class="md-title-2">Aliases</H4>
 <p class="md-phrase">Aliases help you define your own command by calling existing artifacts and defining some arguments as well. It's very similar to shell aliases where you define <mark class="md-code md-code-` ">ll</mark> as an alias to <code class="md-code md-code-` ">/bin/ls -l</code> for example.</p>
 <pre class="md-code md-code-``` bash"><code class="bash">
-nuts net.thevpc.nsh:nsh#0.8.5.0
+nuts net.thevpc.nsh:nsh#0.8.6.0
 # becomes
-nuts settings add alias ll='net.thevpc.nsh:nsh#0.8.5.0 -c ls -l'
+nuts settings add alias ll='net.thevpc.nsh:nsh#0.8.6.0 -c ls -l'
 # now call it simply with
 nuts ll
 </code></pre>
@@ -1212,9 +1212,9 @@ nuts ll
 <H4 class="md-title-2">Launchers</H4>
 Launchers help you define your own system command by calling nuts with existing artifacts and even creating Desktop Environment Shortcuts and Icons (whenever GUI is applicable). 
 <pre class="md-code md-code-``` bash"><code class="bash">
-nuts net.thevpc.nsh:nsh#0.8.5.0
+nuts net.thevpc.nsh:nsh#0.8.6.0
 # becomes
-nuts settings add launcher --menu --desktop 'net.thevpc.nsh:nsh#0.8.5.0'
+nuts settings add launcher --menu --desktop 'net.thevpc.nsh:nsh#0.8.6.0'
 # now call it simply click on the desktop icon or open via system menu
 </code></pre>
 
@@ -1226,7 +1226,7 @@ nuts settings add launcher --menu --desktop 'net.thevpc.nsh:nsh#0.8.5.0'
                         
                             <!--pageLevel2-->
                             <section id="automation" >
-                                <h3 class="main-section2"><a href="#NutsConcepts">3.2 Automation</a></h3>
+                                <h3 class="main-section2"><a href="#U2804711427DF155A39D773A174CDB9FB06CE351D">3.2 Automation</a></h3>
                                 <div class="text-card">
                                 <p class="md-phrase"><mark class="md-code md-code-``` ">nuts</mark> has been designed and implemented with automation and devops philosophy in mind.</p>
 <p class="md-phrase"><mark class="md-code md-code-``` ">nuts</mark> Application Framework infrastructure provides a seamless support process automation with structured output, including json, xml, yaml, tson and so on. You can for instance call the  POSIX ls command and get the file list as <mark class="md-code md-code-``` ">json</mark>. You can then process this <mark class="md-code md-code-``` ">json</mark></p>
@@ -1259,7 +1259,7 @@ TODO...
                         
                             <!--pageLevel2-->
                             <section id="commandline" >
-                                <h3 class="main-section2"><a href="#NutsConcepts">3.3 Command Line Arguments</a></h3>
+                                <h3 class="main-section2"><a href="#U2804711427DF155A39D773A174CDB9FB06CE351D">3.3 Command Line Arguments</a></h3>
                                 <div class="text-card">
                                 <p class="md-phrase"><b class="md-bold">nuts</b> supports a specific format for command line arguments. This format is the format supported in <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> Application Framework (NAF) and as such all NAF applications support the same command line arguments format. Arguments in <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> can be options or non options. Options always start with hyphen (-). </p>
 <H4 class="md-title-2">Short vs Long Options</H4>
@@ -1303,7 +1303,7 @@ nuts --help
                         
                             <!--pageLevel2-->
                             <section id="filesystem" >
-                                <h3 class="main-section2"><a href="#NutsConcepts">3.4 File system</a></h3>
+                                <h3 class="main-section2"><a href="#U2804711427DF155A39D773A174CDB9FB06CE351D">3.4 File system</a></h3>
                                 <div class="text-card">
                                 <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b>
  manages multiple workspaces. It has a default one located at ~/.config/nuts (~ is the user home directory). Each workspace handles a database and files related to the installed applications. The workspace has a specific layout to store different types of files relatives to your applications. 
@@ -1377,7 +1377,7 @@ nuts help
                         
                             <!--pageLevel2-->
                             <section id="doc1" >
-                                <h3 class="main-section2"><a href="#NutsConcepts">3.5 Nuts Text Format</a></h3>
+                                <h3 class="main-section2"><a href="#U2804711427DF155A39D773A174CDB9FB06CE351D">3.5 Nuts Text Format</a></h3>
                                 <div class="text-card">
                                 <H4 class="md-title-1">Nuts Text Format</H4>
 <p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> comes up with a simple coloring syntax that helps writing better looking portable command line programs. standard output is automatically configured to accept the "Nuts Text Format" (NTF) syntax.  Though it remains possible to disable this ability using the --!color standard option (or programmatically,  see <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> API documentation). NTF will be translated to the underlying terminal implementation using ANSI  escape code on linux/windows terminals if available.</p>
@@ -1415,7 +1415,7 @@ Here after a showcase of available NTF syntax.
                         
                             <!--pageLevel2-->
                             <section id="ntfHelp" >
-                                <h3 class="main-section2"><a href="#NutsConcepts">3.6 Nuts Text Format Help</a></h3>
+                                <h3 class="main-section2"><a href="#U2804711427DF155A39D773A174CDB9FB06CE351D">3.6 Nuts Text Format Help</a></h3>
                                 <div class="text-card">
                                 <code class="md-code md-code-``` ">!include classpath:/net/thevpc/nuts/runtime/includes/standard-header.ntf</code>
 <p class="md-phrase"><code class="md-code md-code-``` sh"> ntf</code> aka ##nuts text format## is a markdown like text format enabling colored text styles.<code class="md-code md-code-``` sh"> ntf</code> is the standard format used in the standard output and standard error. It's as  well the standard format used in help manuals.</p>
@@ -1494,8 +1494,8 @@ null
                     <hr class="divider">
                 
                     <!--pageLevel1-->
-                    <section id="Commands" >
-                        <h2 class="main-section1"><a href="#Commands">4 Nuts Commands</a></h2>
+                    <section id="UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1" >
+                        <h2 class="main-section1"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4 Nuts Commands</a></h2>
                         <div class="text-card">
                         <p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> exposes a set of commands :</p>
 <ul class="md-ul"><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-``` ">exec</mark>               : execute an artifact or a command</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-``` ">which</mark>              : detect the proper artifact or system command to execute</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-``` ">install</mark>, <mark class="md-code md-code-``` ">uninstall</mark> : install/uninstall an artifact (using its fetched/deployed installer)</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-``` ">update</mark>,<mark class="md-code md-code-``` ">check-updates</mark>  : search for updates</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-``` ">deploy</mark>, <mark class="md-code md-code-``` ">undeploy</mark>   : manage artifacts (artifact installers) on the local repositories</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-``` ">fetch</mark>, <mark class="md-code md-code-``` ">push</mark>        : download from, upload to remote repositories</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-``` ">search</mark>             : search for existing/installable artifacts</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-``` ">welcome</mark>            : a command that does nothing but bootstrapping <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> and showing a welcome message.</p></li></ul>
@@ -1504,7 +1504,7 @@ null
                         
                             <!--pageLevel2-->
                             <section id="cmds" >
-                                <h3 class="main-section2"><a href="#Commands">4.1 Nuts Commands</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.1 Nuts Commands</a></h3>
                                 <div class="text-card">
                                 Nuts supports multiple types of commands (internal , external), multiple types of execution (embedded, spawn, and system execution) and multiple modes of execution (effective, dry).
 Internal Commands include:
@@ -1517,7 +1517,7 @@ Internal Commands include:
                         
                             <!--pageLevel2-->
                             <section id="exec-cmd" >
-                                <h3 class="main-section2"><a href="#Commands">4.2 Exec</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.2 Exec</a></h3>
                                 <div class="text-card">
                                 <p class="md-phrase"><b class="md-bold">exec</b> command runs another command and <b class="md-bold">which</b> command does a dry run of it.</p>
 When one types
@@ -1545,7 +1545,7 @@ me@linux:~&gt; nuts exec -Xmx1G netbeans-launcher
 <pre class="md-code md-code-``` "><code class="">
 me@linux:~&gt; nuts which version ls
 version : internal command 
-ls : nuts alias (owner maven-local://net.thevpc.app.nuts.toolbox:nsh#0.8.5.0 ) : maven-local://net.thevpc.app.nuts.toolbox:nsh#0.8.5.0 -c ls
+ls : nuts alias (owner maven-local://net.thevpc.app.nuts.toolbox:nsh#0.8.6.0 ) : maven-local://net.thevpc.app.nuts.toolbox:nsh#0.8.6.0 -c ls
 </code></pre>
 <p class="md-phrase">Here <b class="md-bold">which</b> returns that <b class="md-bold">version</b> is an internal command while <b class="md-bold">ls</b> is an alias to an artifact based command (nsh -c ls) which is called a "nuts alias". As you can see, ls is actually a sub command of nsh artifact.</p>
 
@@ -1607,7 +1607,7 @@ me@linux:~&gt; nuts --dry version
                         
                             <!--pageLevel2-->
                             <section id="exec-help" >
-                                <h3 class="main-section2"><a href="#Commands">4.3 Exec Cmdline</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.3 Exec Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
 execute a command
@@ -1707,7 +1707,7 @@ EXAMPLES
                         
                             <!--pageLevel2-->
                             <section id="which-cmd" >
-                                <h3 class="main-section2"><a href="#Commands">4.4 Which</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.4 Which</a></h3>
                                 <div class="text-card">
                                 <p class="md-phrase"><b class="md-bold">which</b> command does a dry run of a command.</p>
 When one types
@@ -1735,7 +1735,7 @@ me@linux:~&gt; nuts exec -Xmx1G netbeans-launcher
 <pre class="md-code md-code-``` "><code class="">
 me@linux:~&gt; nuts which version ls
 version : internal command 
-ls : nuts alias (owner maven-local://net.thevpc.app.nuts.toolbox:nsh#0.8.5.0 ) : maven-local://net.thevpc.app.nuts.toolbox:nsh#0.8.5.0 -c ls
+ls : nuts alias (owner maven-local://net.thevpc.app.nuts.toolbox:nsh#0.8.6.0 ) : maven-local://net.thevpc.app.nuts.toolbox:nsh#0.8.6.0 -c ls
 </code></pre>
 <p class="md-phrase">Here <b class="md-bold">which</b> returns that <b class="md-bold">version</b> is an internal command while <b class="md-bold">ls</b> is an alias to an artifact based command (nsh -c ls) which is called a "nuts alias". As you can see, ls is actually a sub command of nsh artifact.</p>
 
@@ -1797,7 +1797,7 @@ me@linux:~&gt; nuts --dry version
                         
                             <!--pageLevel2-->
                             <section id="which-help" >
-                                <h3 class="main-section2"><a href="#Commands">4.5 Which Cmdline</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.5 Which Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
 resolves commands type
@@ -1831,7 +1831,7 @@ EXAMPLES:
                         
                             <!--pageLevel2-->
                             <section id="fetch-cmd" >
-                                <h3 class="main-section2"><a href="#Commands">4.6 Fetch</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.6 Fetch</a></h3>
                                 <div class="text-card">
                                 <p class="md-phrase"><b class="md-bold">fetch</b> command is used to download content of an artifact when you exactly know of it's nuts long id (which is required). This will download a cached version of the artifact in the local machine (the artifact passes to 'fetched' status)</p>
 <pre class="md-code md-code-``` "><code class="">
@@ -1845,7 +1845,7 @@ me@linux:~&gt; nuts fetch net.thevpc.app:netbeans-launcher#1.2.2
                         
                             <!--pageLevel2-->
                             <section id="fetch-help" >
-                                <h3 class="main-section2"><a href="#Commands">4.7 Fetch Cmdline</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.7 Fetch Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
 search for artifacts
@@ -2103,7 +2103,7 @@ EXAMPLES
                         
                             <!--pageLevel2-->
                             <section id="install-cmd" >
-                                <h3 class="main-section2"><a href="#Commands">4.8 Install</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.8 Install</a></h3>
                                 <div class="text-card">
                                 <p class="md-phrase">A part from URL and path based executions, an artifact should be installed to be run. Installation can be auto fired when you first execute the artifact (you will be prompted to install the artifact) or manually using the <b class="md-bold">install</b> command. Note that when you run directly a jar file as a path or url, the artifact will not be installed! to install an application just type</p>
 <pre class="md-code md-code-``` "><code class="">
@@ -2248,7 +2248,7 @@ The available strategies are
                         
                             <!--pageLevel2-->
                             <section id="install-help" >
-                                <h3 class="main-section2"><a href="#Commands">4.9 Install Cmdline</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.9 Install Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
 install <span style="color: #000055" class="">nuts</span> package <nuts-artifact>
@@ -2301,7 +2301,7 @@ EXAMPLES:
                         
                             <!--pageLevel2-->
                             <section id="uninstall-cmd" >
-                                <h3 class="main-section2"><a href="#Commands">4.10 Uninstall</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.10 Uninstall</a></h3>
                                 <div class="text-card">
                                 <p class="md-phrase">A part from URL and path based executions, an artifact should be installed to be run. Installation can be auto fired when you first execute the artifact (you will be prompted to install the artifact) or manually using the <b class="md-bold">install</b> command. Note that when you run directly a jar file as a path or url, the artifact will not be installed! to install an application just type</p>
 <pre class="md-code md-code-``` "><code class="">
@@ -2446,7 +2446,7 @@ The available strategies are
                         
                             <!--pageLevel2-->
                             <section id="uninstall-help" >
-                                <h3 class="main-section2"><a href="#Commands">4.11 Uninstall Cmdline</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.11 Uninstall Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
 uninstall <span style="color: #000055" class="">nuts</span> package <nuts-artifact>
@@ -2501,7 +2501,7 @@ EXAMPLES
                         
                             <!--pageLevel2-->
                             <section id="check-updates-cmd" >
-                                <h3 class="main-section2"><a href="#Commands">4.12 Check Updates</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.12 Check Updates</a></h3>
                                 <div class="text-card">
                                 <p class="md-phrase">A part from URL and path based executions, an artifact should be installed to be run. Installation can be auto fired when you first execute the artifact (you will be prompted to install the artifact) or manually using the <b class="md-bold">install</b> command. Note that when you run directly a jar file as a path or url, the artifact will not be installed! to install an application just type</p>
 <pre class="md-code md-code-``` "><code class="">
@@ -2646,7 +2646,7 @@ The available strategies are
                         
                             <!--pageLevel2-->
                             <section id="check-updates-help" >
-                                <h3 class="main-section2"><a href="#Commands">4.13 check-updates Cmdline</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.13 check-updates Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
 check for updates
@@ -2703,7 +2703,7 @@ EXAMPLES
                         
                             <!--pageLevel2-->
                             <section id="update-cmd" >
-                                <h3 class="main-section2"><a href="#Commands">4.14 Update</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.14 Update</a></h3>
                                 <div class="text-card">
                                 <p class="md-phrase">A part from URL and path based executions, an artifact should be installed to be run. Installation can be auto fired when you first execute the artifact (you will be prompted to install the artifact) or manually using the <b class="md-bold">install</b> command. Note that when you run directly a jar file as a path or url, the artifact will not be installed! to install an application just type</p>
 <pre class="md-code md-code-``` "><code class="">
@@ -2848,7 +2848,7 @@ The available strategies are
                         
                             <!--pageLevel2-->
                             <section id="update-help" >
-                                <h3 class="main-section2"><a href="#Commands">4.15 updates Cmdline</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.15 updates Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
 <span style="color: #000055" class="">nuts</span> update 
@@ -2924,7 +2924,7 @@ EXAMPLES
                         
                             <!--pageLevel2-->
                             <section id="search-cmd" >
-                                <h3 class="main-section2"><a href="#Commands">4.16 Search</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.16 Search</a></h3>
                                 <div class="text-card">
                                 Artifact can be in multiple states. they can be
 <ul class="md-ul"><li class="md-uli">'unavailable' if no registered repository can serve that artifact</li><li class="md-uli">'available' if there is at least one repository that can serve that artifact</li><li class="md-uli">'fetched' if there is a repository that can serve the artifact from local machine. This happens either if the repository is a local one (for instance a folder repository) or the repository has already downloaded and cached the artifact</li><li class="md-uli">'installed' if the artifact is fetched and installed in the the machine.</li><li class="md-uli">'installed default' if the artifact is installed and marked as default</li></ul>
@@ -2958,7 +2958,7 @@ You can also change the output layout using --long (or -l) flag
 <pre class="md-code md-code-``` "><code class="">
 me@linux:~&gt; nuts search -i -l
 I-X 2019-08-26 09:53:53.141 anonymous vpc-public-maven net.thevpc.app:netbeans-launcher#1.2.1
-IcX 2019-08-24 11:05:49.591 admin     maven-local      net.thevpc.app.nuts.toolbox:nsh#0.8.5.0
+IcX 2019-08-24 11:05:49.591 admin     maven-local      net.thevpc.app.nuts.toolbox:nsh#0.8.6.0
 I-x 2019-08-26 09:50:03.423 anonymous vpc-public-maven net.thevpc.app:kifkif#1.3.3
 </code></pre>
 you can even change the output format
@@ -2989,7 +2989,7 @@ me@linux:~&gt; nuts search -i -l --json
                         
                             <!--pageLevel2-->
                             <section id="search-help" >
-                                <h3 class="main-section2"><a href="#Commands">4.17 Search Cmdline</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.17 Search Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
 search for artifacts
@@ -3247,7 +3247,7 @@ EXAMPLES
                         
                             <!--pageLevel2-->
                             <section id="deploy-cmd" >
-                                <h3 class="main-section2"><a href="#Commands">4.18 Deploy</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.18 Deploy</a></h3>
                                 <div class="text-card">
                                 This command does absolutely nothing but showing this message
 <pre class="md-code md-code-``` "><code class="">
@@ -3256,7 +3256,7 @@ EXAMPLES
   /  |/ / / / / __/ ___/   The Open Source Package Manager for Java (TM)
  / /|  / /_/ / /_(__  )    and other Things ... by vpc
 /_/ |_/\__,_/\__/____/     https://github.com/thevpc/nuts
-    version 0.8.5.0
+    version 0.8.6.0
 
 
 SYNOPSIS:
@@ -3272,7 +3272,7 @@ For Help, type nuts help
                         
                             <!--pageLevel2-->
                             <section id="deploy-help" >
-                                <h3 class="main-section2"><a href="#Commands">4.19 Deploy Cmdline</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.19 Deploy Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
 configure <span style="color: #000055" class="">nuts</span>
@@ -3508,7 +3508,7 @@ EXAMPLES:
                         
                             <!--pageLevel2-->
                             <section id="push-cmd" >
-                                <h3 class="main-section2"><a href="#Commands">4.20 Push</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.20 Push</a></h3>
                                 <div class="text-card">
                                 This command does absolutely nothing but showing this message
 <pre class="md-code md-code-``` "><code class="">
@@ -3517,7 +3517,7 @@ EXAMPLES:
   /  |/ / / / / __/ ___/   The Open Source Package Manager for Java (TM)
  / /|  / /_/ / /_(__  )    and other Things ... by vpc
 /_/ |_/\__,_/\__/____/     https://github.com/thevpc/nuts
-    version 0.8.5.0
+    version 0.8.6.0
 
 
 SYNOPSIS:
@@ -3533,7 +3533,7 @@ For Help, type nuts help
                         
                             <!--pageLevel2-->
                             <section id="push-help" >
-                                <h3 class="main-section2"><a href="#Commands">4.21 Push Cmdline</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.21 Push Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
 push a <span style="color: #000055" class="">nuts</span> to remote repository
@@ -3564,7 +3564,7 @@ EXAMPLES:
                         
                             <!--pageLevel2-->
                             <section id="settings-cmd" >
-                                <h3 class="main-section2"><a href="#Commands">4.22 Settings</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.22 Settings</a></h3>
                                 <div class="text-card">
                                 This command does absolutely nothing but showing this message
 <pre class="md-code md-code-``` "><code class="">
@@ -3573,7 +3573,7 @@ EXAMPLES:
   /  |/ / / / / __/ ___/   The Open Source Package Manager for Java (TM)
  / /|  / /_/ / /_(__  )    and other Things ... by vpc
 /_/ |_/\__,_/\__/____/     https://github.com/thevpc/nuts
-    version 0.8.5.0
+    version 0.8.6.0
 
 
 SYNOPSIS:
@@ -3589,7 +3589,7 @@ For Help, type nuts help
                         
                             <!--pageLevel2-->
                             <section id="settings-help" >
-                                <h3 class="main-section2"><a href="#Commands">4.23 Settings Cmdline</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.23 Settings Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
 configure <span style="color: #000055" class="">nuts</span>
@@ -3825,7 +3825,7 @@ EXAMPLES:
                         
                             <!--pageLevel2-->
                             <section id="welcome-cmd" >
-                                <h3 class="main-section2"><a href="#Commands">4.24 Welcome</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.24 Welcome</a></h3>
                                 <div class="text-card">
                                 This command does absolutely nothing but showing this message
 <pre class="md-code md-code-``` "><code class="">
@@ -3834,7 +3834,7 @@ EXAMPLES:
   /  |/ / / / / __/ ___/   The Open Source Package Manager for Java (TM)
  / /|  / /_/ / /_(__  )    and other Things ... by vpc
 /_/ |_/\__,_/\__/____/     https://github.com/thevpc/nuts
-    version 0.8.5.0
+    version 0.8.6.0
 
 
 SYNOPSIS:
@@ -3850,7 +3850,7 @@ For Help, type nuts help
                         
                             <!--pageLevel2-->
                             <section id="welcome-help" >
-                                <h3 class="main-section2"><a href="#Commands">4.25 Welcome Cmdline</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.25 Welcome Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
 show minimal welcome message
@@ -3872,7 +3872,7 @@ SYNOPSIS:
                         
                             <!--pageLevel2-->
                             <section id="version-help" >
-                                <h3 class="main-section2"><a href="#Commands">4.26 Info Cmdline</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.26 Info Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
 show workspace information and exit
@@ -3932,16 +3932,16 @@ EXAMPLES
                         
                             <!--pageLevel2-->
                             <section id="info-cmd" >
-                                <h3 class="main-section2"><a href="#Commands">4.27 Info</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.27 Info</a></h3>
                                 <div class="text-card">
                                 <p class="md-phrase"><b class="md-bold">info</b> command is a more verbose command than version. It shows a lot of other <b class="md-bold">nuts</b> properties that describe the booted workspace, such as the workspace name, the store locations (artifacts, caches, ....)</p>
 <pre class="md-code md-code-``` "><code class="">
 me@linux:~&gt; nuts info
 name                     = default-workspace
-nuts-api-version         = 0.8.5
-nuts-api-id              = net.thevpc.app.nuts:nuts#0.8.5
-nuts-runtime-id          = net.thevpc.app.nuts:nuts-core#0.8.5.0
-nuts-runtime-path        = ~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts-core/0.8.5.0/nuts-core-0.8.5.0.jar;~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts/0.8.5/nuts-0.8.5.jar;~/.cache/nuts/default-workspace/boot/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar;~/.cache/nuts/default-workspace/boot/org/fusesource/jansi/jansi/1.17.1/jansi-1.17.1.jar
+nuts-api-version         = 0.8.6
+nuts-api-id              = net.thevpc.app.nuts:nuts#0.8.6
+nuts-runtime-id          = net.thevpc.app.nuts:nuts-core#0.8.6.0
+nuts-runtime-path        = ~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts-core/0.8.6.0/nuts-core-0.8.6.0.jar;~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts/0.8.6/nuts-0.8.6.jar;~/.cache/nuts/default-workspace/boot/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar;~/.cache/nuts/default-workspace/boot/org/fusesource/jansi/jansi/1.17.1/jansi-1.17.1.jar
 nuts-workspace-id        = 99b73002-804d-4e4c-9a13-f57ac1f40b3d
 nuts-store-layout        = linux
 nuts-store-strategy      = exploded
@@ -3971,7 +3971,7 @@ java-version             = 1.8.0_222
 platform                 = java#1.8.0_222
 java-home                = /usr/lib64/jvm/java-1.8.0-openjdk-1.8.0/jre
 java-executable          = /usr/lib64/jvm/java-1.8.0-openjdk-1.8.0/jre/bin/java
-java-classpath           = ~/.m2/repository/net/vpc/app/nuts/nuts/0.8.5/nuts-0.8.5.jar
+java-classpath           = ~/.m2/repository/net/vpc/app/nuts/nuts/0.8.6/nuts-0.8.6.jar
 java-library-path        = /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
 os-name                  = linux#4.12.14-lp151.28.13-default
 os-family                = linux
@@ -3998,7 +3998,7 @@ repositories-count       = 5
                         
                             <!--pageLevel2-->
                             <section id="version-cmd" >
-                                <h3 class="main-section2"><a href="#Commands">4.28 Version</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.28 Version</a></h3>
                                 <div class="text-card">
                                 This command will show 
 <b class="md-bold">nuts</b>
@@ -4010,9 +4010,9 @@ repositories-count       = 5
 <b class="md-bold">.jar, ~500Ko of size) that contains only the minimum code to use nuts and to download the full implementation (3Mo of size) : impl component. Usually, the implementation version starts with the api version but this should be no rule.</b>
 <pre class="md-code md-code-``` "><code class="">
 me@linux:~&gt; nuts version
-0.8.5/0.8.5.0
+0.8.6/0.8.6.0
 </code></pre>
-<p class="md-phrase">Here the <b class="md-bold">version</b> command show api version (0.8.5) and the impl version (0.8.5.0)</p>
+<p class="md-phrase">Here the <b class="md-bold">version</b> command show api version (0.8.6) and the impl version (0.8.6.0)</p>
 
 
                                 </div>
@@ -4022,7 +4022,7 @@ me@linux:~&gt; nuts version
                         
                             <!--pageLevel2-->
                             <section id="version-cmd-help" >
-                                <h3 class="main-section2"><a href="#Commands">4.29 Version Cmdline</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.29 Version Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
 show version
@@ -4073,7 +4073,7 @@ EXAMPLES
                         
                             <!--pageLevel2-->
                             <section id="help-cmd" >
-                                <h3 class="main-section2"><a href="#Commands">4.30 Help Command</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.30 Help Command</a></h3>
                                 <div class="text-card">
                                 This command, as you should have guessed, show. help manual of your favorite command or of nuts it self.
 <pre class="md-code md-code-``` "><code class="">
@@ -4099,7 +4099,7 @@ me@linux:~&gt; nuts version --help
                         
                             <!--pageLevel2-->
                             <section id="license-cmd" >
-                                <h3 class="main-section2"><a href="#Commands">4.31 License</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.31 License</a></h3>
                                 <div class="text-card">
                                 <p class="md-phrase"><b class="md-bold">license</b> command shows license of <b class="md-bold">nuts</b> and exits. <b class="md-bold">nuts</b> adopts GNU General Public License v3 which is quite permissive.</p>
 <pre class="md-code md-code-``` "><code class="">
@@ -4109,7 +4109,7 @@ me@linux:~&gt; nuts license
   /  |/ / / / / __/ ___/   The Open Source Package Manager for Java (TM)
  / /|  / /_/ / /_(__  )    and other Things ... by vpc
 /_/ |_/\__,_/\__/____/     https://github.com/thevpc/nuts
-    version 0.8.5.0
+    version 0.8.6.0
 
 
 
@@ -4135,7 +4135,7 @@ me@linux:~&gt; nuts license
                         
                             <!--pageLevel2-->
                             <section id="license-help" >
-                                <h3 class="main-section2"><a href="#Commands">4.32 License Command Commandline</a></h3>
+                                <h3 class="main-section2"><a href="#UE251C40955AAF41F2389B6CE3AD01A761CAD0ED1">4.32 License Command Commandline</a></h3>
                                 <div class="text-card">
                                 <pre>
 show license info and exit
@@ -4170,8 +4170,8 @@ EXAMPLES
                     <hr class="divider">
                 
                     <!--pageLevel1-->
-                    <section id="ChangeLog" >
-                        <h2 class="main-section1"><a href="#ChangeLog">5 ChangeLog</a></h2>
+                    <section id="UCFA9C98437372706FE88595ACB0641C2F9097BB0" >
+                        <h2 class="main-section1"><a href="#UCFA9C98437372706FE88595ACB0641C2F9097BB0">5 ChangeLog</a></h2>
                         <div class="text-card">
                         <p class="md-phrase">In this section we will consider the simplest usage of <mark class="md-code md-code-` ">nuts</mark> package manager.</p>
 <p class="md-phrase">View Official releases <a href="https://github.com/thevpc/nuts/releases" class="md-link">here</a> : Starred releases are most stable ones.</p>
@@ -4205,7 +4205,7 @@ EXAMPLES
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-05-29-154050
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-07-02-105614
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>

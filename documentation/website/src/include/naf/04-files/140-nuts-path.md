@@ -1,7 +1,5 @@
 ---
-id: NPath
 title: NPath
-sidebar_label: NPath
 ---
 
 

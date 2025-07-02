@@ -1,7 +1,5 @@
 ---
-id: NCmdLine
 title: Command Line Arguments
-sidebar_label: Command Line Arguments
 ---
 
 

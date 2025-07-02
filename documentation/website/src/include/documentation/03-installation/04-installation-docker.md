@@ -22,14 +22,14 @@ curl -sL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar && java -jar nuts.
 nuts -y <your-app>...
 ```
 
-As an example here where you can run `net.thevpc.nuts.toolbox:noapi#0.8.5.0` on your config file `myrest-apis.json`.
+As an example here where you can run `net.thevpc.nuts.toolbox:noapi#0.8.6.0` on your config file `myrest-apis.json`.
 
 `noapi` is actually an OpenAPI documentation tool that generates a pdf file based on a opn api definition in `JSON`, `YAML` or `TSON` formats.
 
 ```bash
 cd /workspace
 wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
-java -jar nuts.jar -P=%s -ZyS net.thevpc.nuts.toolbox:noapi#0.8.5.0 myrest-apis.json
+java -jar nuts.jar -P=%s -ZyS net.thevpc.nuts.toolbox:noapi#0.8.6.0 myrest-apis.json
 ```
 
 
@@ -45,7 +45,7 @@ CMD java -jar nuts.jar -y <your application>
 docker run -it -v $(pwd):/workspace openjdk:8 sh
 cd /workspace
 wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
-java -jar nuts.jar -P=no -ZyS -r=+thevpc net.thevpc.nuts.toolbox:noapi#0.8.5.0 my-connector.json
+java -jar nuts.jar -P=no -ZyS -r=+thevpc net.thevpc.nuts.toolbox:noapi#0.8.6.0 my-connector.json
 #############
 
 ```

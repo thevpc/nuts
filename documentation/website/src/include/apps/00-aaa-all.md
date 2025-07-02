@@ -1,7 +1,5 @@
 ---
-id: app-misc
 title: Apps
-sidebar_label: misc
 ---
 
 

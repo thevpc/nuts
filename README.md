@@ -4,7 +4,7 @@ Network Updatable Things Services
      __        __    
   /\ \ \ _  __/ /______
  /  \/ / / / / __/ ___/
-/ /\  / /_/ / /_(__  )   dev version 0.8.5.0 
+/ /\  / /_/ / /_(__  )   dev version 0.8.6.0 
 \_\ \/\__,_/\__/____/    production version 0.8.5.0 
 </pre>
 
@@ -34,7 +34,7 @@ nuts --version
 It should show a result in the format : nuts-api-version/nuts-runtime-version
 
 ```
-0.8.5/0.8.5.0
+0.8.6/0.8.6.0
 ```
 
 ## Installing Nuts Preview (Development, recommended for testing)
