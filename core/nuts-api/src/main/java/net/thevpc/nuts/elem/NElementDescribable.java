@@ -35,8 +35,7 @@ public interface NElementDescribable<T> {
      * @return Structured NutsElement description
      */
     default NElement describe() {
-        return NEDesc.ofLateToString(this).get();
+        return NDescribableElementSupplier.ofLateToString(this).get();
     }
 
-    T withDesc(NEDesc description);
 }
