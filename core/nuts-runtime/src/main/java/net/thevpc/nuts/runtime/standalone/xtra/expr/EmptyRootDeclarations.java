@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class EmptyRootDeclarations extends NExprDeclarationsBase {
-    public EmptyRootDeclarations(NExprs exprs, NWorkspace workspace) {
+    public EmptyRootDeclarations(NExprs exprs) {
         super(exprs);
     }
 
