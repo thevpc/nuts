@@ -30,7 +30,7 @@ NTF enables you to add rich formatting and colorization:
     NOut.println("##Hello colored## ##:_:Hello underlined## ");
     NOut.println("##:yellow:Hello in yellow##");
     NOut.println("##:warn:this is a warning##");
-    NOut.println("##:fxFF000:this is a red message##");
+    NOut.println("##:fxFF0000:this is a red message##");
 ```
 
 ## Rendering structured output
@@ -71,7 +71,7 @@ To have full control over tabular output, use `NMutableTableModel`:
 ```java
     NSession session=...;
     Object a,b,c,d; ...
-    NMutableTableModel m = NMutableTableModel.of();
+    NMutableTableModel m = NTableModel.of();
     m.newRow().addCells(a,b,c,d);
     NOut.println(m);
 ```

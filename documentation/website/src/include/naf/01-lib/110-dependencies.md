@@ -8,9 +8,9 @@ to make use of **nuts** library  you need add the dependency  ```net.thevpc.nuts
 ## Configure your pom.xml
 
 ```xml
-    <dependencie>
+    <dependencies>
         <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts-lib</artifactId><version>0.8.6.0</version></dependency>
-    </dependencie>
+    </dependencies>
     <repositories>
         <repository><id>thevpc</id><url>https://maven.thevpc.net</url></repository>
     </repositories>

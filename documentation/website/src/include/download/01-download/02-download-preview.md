@@ -18,7 +18,7 @@ values={[
 }>
 <TabItem value="windows">
 
-download manually [https://thevpc.net/nuts/nuts-preview.jar](https://thevpc.net/nuts/nuts-preview.jar)
+download manually [https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar](https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar)
 
 ```
 java -jar nuts.jar  -Zy
@@ -45,7 +45,7 @@ __(using wget):__
 This will reuse any previous nuts installation before installing the latest version.
 
 ```
-$ wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
+$ wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -qO nuts.jar
 $ java -jar nuts.jar -y
 $ exit
 ```
@@ -54,7 +54,7 @@ __(using curl):__
 This will reuse any previous nuts installation before installing the latest version.
 
 ```
-$ curl -sL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar
+$ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 ```
@@ -76,7 +76,7 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="macos">
 
 ```
-$ curl -sL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar
+$ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 ```

@@ -4801,7 +4801,7 @@ docker run -it bellsoft/liberica-runtime-container sh
 docker pull openjdk:8
 docker run -it -v $(pwd):/workspace openjdk:8 sh
 cd /workspace
-wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
+wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -qO nuts.jar
 java -jar nuts.jar -P=no -ZyS -r=+thevpc net.thevpc.nuts.toolbox:noapi#0.8.5.0 buat-insurance-connector.json
 #############
 
@@ -5061,7 +5061,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.211-b12, mixed mode)
 [source]
 ----
 
-$ wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
+$ wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -qO nuts.jar
 $ java -jar nuts.jar -r=+preview -Zy
 $ exit
 
@@ -5085,7 +5085,7 @@ Any bash terminal application is a nuts-aware terminal.
 [source]
 ----
 
-$ curl -sL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar
+$ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 
@@ -5103,13 +5103,13 @@ Any bash terminal application is a nuts-aware terminal.
 ===== Windows
 
 
-download [nuts-preview.jar](https://thevpc.net/nuts/nuts-preview.jar)
+download [nuts-app-0.8.6.jar](https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar)
 
 
 [source]
 ----
 
-java -jar nuts-preview.jar -r=+preview -Zy
+java -jar nuts-app-0.8.6.jar -r=+preview -Zy
 
 ----
 
@@ -5137,7 +5137,7 @@ Any of the created shortcuts for windows is a nuts-aware terminal.
 [source]
 ----
 
-$ wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
+$ wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -qO nuts.jar
 $ java -jar nuts.jar -r=+preview -Zy
 $ exit
 
@@ -5157,7 +5157,7 @@ Any bash terminal application is a nuts-aware terminal.
 [source]
 ----
 
-$ curl -sL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar
+$ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -o nuts.jar
 $ java -jar nuts.jar -r=+preview -Zy
 $ exit
 
