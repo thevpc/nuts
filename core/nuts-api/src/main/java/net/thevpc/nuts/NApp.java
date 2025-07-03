@@ -11,6 +11,10 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.time.NClock;
 import net.thevpc.nuts.util.NOptional;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -20,6 +24,41 @@ import java.util.function.Supplier;
  * properties, and utility functions to support application execution and interaction.
  */
 public interface NApp extends NComponent {
+
+    static NAppBuilder builder() {
+        return new NAppBuilder();
+    }
+
+    static NAppBuilder builder(String[] args) {
+        return new NAppBuilder().args(args);
+    }
+
+    @Target(ElementType.TYPE)
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface Info{
+        String id() default "";
+    }
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface Main{
+
+    }
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface Installer {
+
+    }
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface Uninstaller {
+
+    }
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface Updater {
+
+    }
+
     /**
      * Returns the instance of {@code NApp} that is bound to the current {@code NSession}.
      *
@@ -399,5 +438,7 @@ public interface NApp extends NComponent {
      * @return an NOptional containing the property value if found, or an empty NOptional if the property does not exist
      */
     <T> NOptional<T> getProperty(String name, NScopeType scope);
+
+
 
 }
