@@ -13,7 +13,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
     final Map<NExprOpNameAndType, NExprOpDeclaration> ops = new HashMap<>();
     final Map<String, NExprVarDeclaration> defaultVars = new HashMap<>();
     private NReflectRepository reflectRepository;
-    public DefaultRootDeclarations(NExprs exprs, NWorkspace workspace) {
+    public DefaultRootDeclarations(NExprs exprs) {
         super(exprs);
         reflectRepository=NReflectRepository.of();
         addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.AND, NExprOpPrecedence.AND, NExprOpAssociativity.LEFT), "&");
