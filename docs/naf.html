@@ -376,28 +376,11 @@ public class MyBean {
                     <section id="U58F633BB32A62BCA0E6934BAFB4FEC3DE70699DC" >
                         <h2 class="main-section1"><a href="#U58F633BB32A62BCA0E6934BAFB4FEC3DE70699DC">2 Input Output System</a></h2>
                         <div class="text-card">
-                        <p class="md-phrase"><b class="md-bold">nuts</b> Library supports colorful and structured output and simplified input.</p>
-<pre class="md-code md-code-``` java"><code class="java">
-    Nuts.require();
-    NOut.println("this is standard (stdout) text writted to the console");
-    NErr.println("this is shown on the stderr stream");
-    NTrace.println("this is shown on stdout only if trace mode is enabled");
-    
-    // here we are showing a structured object, the rendering depends on 
-    // the current session's content-type (xml,json,) 
-    NOut.println(Arrays.asList("Hello"));
-</code></pre>
-<p class="md-phrase"><b class="md-bold">nuts</b> support for formatted text is enabled via <mark class="md-code md-code-``` ">NTF</mark> format.</p>
-<pre class="md-code md-code-``` java"><code class="java">
-    Nuts.require();
-    NOut.println("this is standard (stdout) text writted to the console");
-    NErr.println("this is shown on the stderr stream");
-    NTrace.println("this is shown on stdout only if trace mode is enabled");
-    
-    // here we are showing a structured object, the rendering depends on 
-    // the current session's content-type (xml,json,) 
-    NOut.println(Arrays.asList("Hello"));
-</code></pre>
+                        The Nuts library offers a comprehensive and flexible input/output system designed for modern CLI and application needs, including:
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">NIn</mark>: Simplifies and unifies input handling, supporting both interactive and programmatic input sources.</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">NOut</mark>: The standard output stream abstraction supporting colorful, structured, and formatted output that respects the current session context and output format (plain text, JSON, XML, tables, etc).</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">NErr</mark>: Dedicated error output stream, separate from standard output, ensuring proper logging and error visibility.</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">NTrace</mark>: Specialized output stream for trace/debug information that is only displayed when trace mode is enabled, helping users debug without cluttering normal output.</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">NLog</mark>: A logging interface integrating with Nuts' session and workspace model to produce contextual logs with flexible verbosity and output controls.</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">NMsg</mark>: A message abstraction enabling rich, multi-language, and parameterized messages with support for localization and structured formatting.</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">NTF</mark>: Nuts Text Format — a powerful formatting system that extends standard text output with features like color, styles, and structured data rendering, allowing consistent and attractive CLI outputs.</p></li></ul>
+Together, these components create a rich and developer-friendly IO system, enabling:
+<ul class="md-ul"><li class="md-uli">Colorful and readable console output.</li><li class="md-uli">Structured output formats automatically adapting to context.</li><li class="md-uli">Clear separation of standard, error, and debug outputs.</li><li class="md-uli">Localizable and parameterized messages.</li><li class="md-uli">Simplified user input handling.</li></ul>
+This system is integrated tightly with the Nuts session concept, meaning output behavior automatically adapts to user preferences, environment, and command-line options, making CLI tools more usable and professional.
 
                         </div>
                         
@@ -405,13 +388,134 @@ public class MyBean {
                             <section id="doc1" >
                                 <h3 class="main-section2"><a href="#U58F633BB32A62BCA0E6934BAFB4FEC3DE70699DC">2.1 Nuts Text Format</a></h3>
                                 <div class="text-card">
-                                <H4 class="md-title-1">Nuts Text Format</H4>
+                                <H4 class="md-title-1">Nuts Text Format (NTF)</H4>
+<p class="md-phrase">The <b class="md-bold">Nuts Text Format (NTF)</b> is a lightweight, expressive markup language designed specifically to enhance command-line interface (CLI) output with rich, portable, and visually appealing formatting. It provides a powerful yet simple syntax that lets developers create colorful, structured, and semantically meaningful text that works seamlessly across different terminal environments and beyond.</p>
+<H4 class="md-title-2">The Need for NTF</H4>
+Traditional terminal output often relies on plain text or embedded ANSI escape codes to achieve colors and styles. This approach has several drawbacks:
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">Lack of readability:</b> Raw escape sequences are hard to read and maintain within source code.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Poor portability:</b> Different terminals support different levels of ANSI or control codes, leading to inconsistent rendering.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Limited structure:</b> Plain text and raw ANSI codes do not express document structure well (like lists, tables, sections).</p></li></ul>
+On the other hand, existing markup languages each have their own limitations for CLI contexts:
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">HTML</b> is rich and flexible but too verbose and requires an HTML viewer, unsuitable for terminals.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Markdown</b> is easy to write and readable but lacks support for dynamic styling and rich terminal features.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Man pages (troff/groff)</b> provide basic terminal help formatting but are complex to author and limited in styling options.</p></li></ul>
+<hr class="divider" class="md-hr"/>
+
+<H4 class="md-title-2">What Makes NTF Unique?</H4>
+<p class="md-phrase">NTF is crafted to fill this gap by being a <b class="md-bold">terminal-first markup format</b> that is both <b class="md-bold">human-readable and machine-processable</b>, with several key advantages:</p>
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">Readable markup:</b> NTF syntax uses simple inline markers for colors, font styles, lists, tables, and sections, which are easy to write and understand.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Rich formatting:</b> Supports foreground and background colors, bold/italic/underline, code blocks, bullet and numbered lists, tables, links, and other structured elements.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Portability:</b> NTF content is <b class="md-bold">independent of the terminal's escape code specifics</b>. Instead, it is parsed and translated to the appropriate ANSI sequences or other target formats at runtime.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Multi-target rendering:</b> Beyond ANSI terminals, NTF can be converted to <b class="md-bold">Markdown</b> (for documentation or developer notes) and <b class="md-bold">HTML</b> (for web-based manuals), ensuring a unified authoring experience.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Context-awareness:</b> NTF rendering adapts automatically to the capabilities of the target output device or session configuration, allowing graceful degradation when color or style is not supported.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Easy toggling:</b> Users can enable or disable colored output through standard Nuts options or programmatically, without affecting the underlying markup.</p></li></ul>
+<hr class="divider" class="md-hr"/>
+
+<H4 class="md-title-2">NTF in Nuts Ecosystem</H4>
+<p class="md-phrase">Within the <b class="md-bold">Nuts</b> toolbox, NTF plays a central role in delivering a consistent, high-quality user experience:</p>
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">Command-line help system:</b> All command help, options, examples, and warnings in Nuts are authored in NTF. This allows help to be:</p><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">Colorful and well-structured</b> on capable terminals.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Plain-text friendly</b> when color is disabled.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Automatically exportable</b> to Markdown or HTML for documentation portals.</p></li></ul></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Output formatting:</b> When printing messages, lists, objects, or errors, Nuts can utilize NTF to add semantic structure and emphasis, improving clarity and user comprehension.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Unified authoring:</b> Developers write output messages once in NTF and can be confident it will render correctly across all supported environments without manual adjustments.</p></li></ul>
+<hr class="divider" class="md-hr"/>
+
+<H4 class="md-title-2">How NTF compares to other formats:</H4>
+<p class="md-phrase">NTF is specifically designed for <b class="md-bold">developer-friendly, portable, terminal-first output formatting</b>. It bridges the gap between simple text styling (like ANSI escape codes) and more advanced document-oriented formats (like Markdown or AsciiDoctor), making it uniquely suited for CLI applications.</p>
+The table below highlights how NTF compares to other common formats across key capabilities:
+<table class="table table-bordered table-striped"><tr><th>Feature</th>
+<th><p class="md-phrase"> <b class="md-bold">NTF</b>        </p></th>
+<th><p class="md-phrase"> <b class="md-bold">ANSI Escape Codes</b> </p></th>
+<th><p class="md-phrase"> <b class="md-bold">Markdown</b>    </p></th>
+<th><p class="md-phrase"> <b class="md-bold">AsciiDoctor</b> </p></th>
+<th><p class="md-phrase"> <b class="md-bold">HTML</b>       </p></th>
+</tr>
+<tr><td><p class="md-phrase"> <b class="md-bold">Colored output</b>                       </p></td>
+<td>✅ Named colors, indexed and hex support</td>
+<td>✅ Manual, code-based</td>
+<td>❌ (Extensions needed)</td>
+<td>✅ With roles/styles</td>
+<td>✅ CSS/inline styles</td>
+</tr>
+<tr><td><p class="md-phrase"> <b class="md-bold">Styled text</b>                          </p></td>
+<td>✅ Bold, italic, underline, strikethrough</td>
+<td>✅ Limited (manual control)</td>
+<td>✅ Bold, italic</td>
+<td>✅ Bold, italic, underline</td>
+<td>✅ Full style control</td>
+</tr>
+<tr><td><p class="md-phrase"> <b class="md-bold">Semantic color tags</b> (e.g. <mark class="md-code md-code-` ">error</mark>, <mark class="md-code md-code-` ">warning</mark>) </p></td>
+<td><p class="md-phrase"> ✅ Built-in mappings (<code class="md-code md-code-` ">error:red</code>, <code class="md-code md-code-` ">info:blue</code>, etc.) </p></td>
+<td>❌ None</td>
+<td>❌ None</td>
+<td>⚠️ Manual via roles</td>
+<td>✅ Possible via class</td>
+</tr>
+<tr><td><p class="md-phrase"> <b class="md-bold">Nested styles</b>                        </p></td>
+<td><p class="md-phrase"> ✅ Fully supported (e.g. <code class="md-code md-code-` ">error bold</code>, or <code class="md-code md-code-` ">green underline</code>) </p></td>
+<td>❌ Complex / fragile</td>
+<td>❌ Not supported</td>
+<td>✅ Supported</td>
+<td>✅ Fully supported</td>
+</tr>
+<tr><td><p class="md-phrase"> <b class="md-bold">Combined styles</b>                      </p></td>
+<td>✅ Easily combined with simple markup</td>
+<td>❌ Manual code combinations</td>
+<td>❌ Limited</td>
+<td>✅ With roles</td>
+<td>✅ With CSS</td>
+</tr>
+<tr><td><p class="md-phrase"> <b class="md-bold">Structured sections</b> (titles, subtitles) </p></td>
+<td><p class="md-phrase"> ✅ NTF supports semantic headers (<code class="md-code md-code-` "># Title</code>, <code class="md-code md-code-` ">## Subtitle</code>) </p></td>
+<td>❌ None</td>
+<td>✅ Basic headings</td>
+<td>✅ Full document structure</td>
+<td>✅ Rich document structure</td>
+</tr>
+<tr><td><p class="md-phrase"> <b class="md-bold">Lists (bullet, numbered)</b>             </p></td>
+<td><p class="md-phrase"> ✅ Simple syntax (<code class="md-code md-code-` ">- item</code>, <code class="md-code md-code-` ">1. item</code>) </p></td>
+<td>❌ None</td>
+<td>✅ Yes</td>
+<td>✅ Yes</td>
+<td>✅ Yes</td>
+</tr>
+<tr><td><p class="md-phrase"> <b class="md-bold">Tables</b>                               </p></td>
+<td>✅ Lightweight NTF table syntax</td>
+<td>❌ None</td>
+<td>✅ Basic tables</td>
+<td>✅ Rich tables</td>
+<td>✅ Rich tables</td>
+</tr>
+<tr><td><p class="md-phrase"> <b class="md-bold">Syntax highlighting</b> (code snippets)  </p></td>
+<td>✅ With language tag</td>
+<td>❌ None</td>
+<td>✅ (Limited, via extensions)</td>
+<td>✅ With language tag</td>
+<td>✅ Full, with JS/CSS</td>
+</tr>
+<tr><td><p class="md-phrase"> <b class="md-bold">Terminal rendering support</b>           </p></td>
+<td>✅ Auto-adapts (ANSI, plain, HTML, Markdown)</td>
+<td>✅ Terminal only</td>
+<td>❌ Not terminal-targeted</td>
+<td>❌ Not terminal-targeted</td>
+<td>❌ Not terminal-targeted</td>
+</tr>
+<tr><td><p class="md-phrase"> <b class="md-bold">Portability across environments</b>      </p></td>
+<td>✅ Designed for CLI and convertible to HTML/Markdown</td>
+<td>❌ Terminal only</td>
+<td>✅ Editor/docs only</td>
+<td>✅ Editor/docs only</td>
+<td>✅ Web/browser only</td>
+</tr>
+<tr><td><p class="md-phrase"> <b class="md-bold">Ease of authoring for CLI output</b>     </p></td>
+<td>✅ Very high (compact, readable, intuitive)</td>
+<td>❌ Low (escape-heavy)</td>
+<td>⚠️ Limited styling</td>
+<td>⚠️ Verbose</td>
+<td>❌ Too verbose for CLI</td>
+</tr>
+</table>
+<hr class="divider" class="md-hr"/>
+
+<H4 class="md-title-2">Summary</H4>
+<p class="md-phrase">The Nuts Text Format is a <b class="md-bold">modern, terminal-optimized markup language</b> that:</p>
+<ul class="md-ul"><li class="md-uli">Improves readability and maintainability of CLI output markup.</li><li class="md-uli">Enables richly formatted, colorful, and structured terminal output.</li><li class="md-uli">Supports conversion to Markdown and HTML for seamless documentation.</li><li class="md-uli">Enhances the Nuts ecosystem by unifying CLI and documentation presentation.</li></ul>
+NTF represents a thoughtful balance between simplicity, expressiveness, and portability, empowering Nuts users and developers to build sophisticated, professional command-line applications with minimal effort.
+<hr class="divider" class="md-hr"/>
 <p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> comes up with a simple coloring syntax that helps writing better looking portable command line programs. standard output is automatically configured to accept the "Nuts Text Format" (NTF) syntax.  Though it remains possible to disable this ability using the --!color standard option (or programmatically,  see <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> API documentation). NTF will be translated to the underlying terminal implementation using ANSI  escape code on linux/windows terminals if available.</p>
 Here after a showcase of available NTF syntax.
 <p><img src="assets/images/console/text-coloring-format-01.png" class="md-img img-fluid border" alt="text-coloring-format"></img></p>
 <p><img src="assets/images/console/text-coloring-format-02.png" class="md-img img-fluid border" alt="text-coloring-format"></img></p>
 <p><img src="assets/images/console/text-coloring-format-03.png" class="md-img img-fluid border" alt="text-coloring-format"></img></p>
 <p><img src="assets/images/console/text-coloring-format-04.png" class="md-img img-fluid border" alt="text-coloring-format"></img></p>
+
 
 <H4 class="md-title-1">Nuts Text Format Specification</H4>
 <pre class="md-code md-code-``` "><code class="">
@@ -1175,16 +1279,203 @@ Supported listener types:
                     <section id="U4B2F2A9B81C61EF59E3A92C5C5214927DEE8C2ED" >
                         <h2 class="main-section1"><a href="#U4B2F2A9B81C61EF59E3A92C5C5214927DEE8C2ED">4 Files and Paths</a></h2>
                         <div class="text-card">
-                        
+                        The Nuts ecosystem provides a comprehensive set of tools designed to simplify and unify file and resource management across different protocols and formats.
+What Nuts Supports
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">NPath</mark>: A versatile path abstraction that extends beyond traditional file system paths. It supports local files, URLs (HTTP/HTTPS), classpath resources, and Maven-style artifact resources. This unified API enables seamless access and manipulation of diverse resource types.</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">NCp</mark>: An advanced copying utility capable of copying files and directories with support for validation, progress tracking, overwrite policies, and more. It provides robust features to reliably transfer resources locally or remotely.</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">NCompress</mark> / NUncompress: Utilities to compress and decompress files and folders using popular archive formats such as ZIP and TAR. These tools handle format detection, filtering, and extraction/compression workflows transparently.</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">NDigest</mark>: A digest computation tool for calculating checksums and hashes (e.g., SHA-256) of files, streams, and folders. It supports integrity verification and recursive digesting to ensure file content authenticity.</p></li></ul>
+Together, these components offer a flexible and powerful framework to interact with files and resources efficiently, whether for local development or distributed environments.
+    
+
                         </div>
                         
                             <!--pageLevel2-->
                             <section id="UEE481BE8749B57D8AADD31FB9A7D104BF51C4721" >
                                 <h3 class="main-section2"><a href="#U4B2F2A9B81C61EF59E3A92C5C5214927DEE8C2ED">4.1 NPath</a></h3>
                                 <div class="text-card">
-                                <p class="md-phrase"><b class="md-bold">nuts</b> introduces a concept very similar to java's URL but with better extension builtin mechanisms and helper methods : <mark class="md-code md-code-``` ">NPath</mark></p>
-supported formats/protocols are:
-<ul class="md-ul"><li class="md-uli"><p class="md-phrase">file format   <code class="md-code md-code-``` ">/path/to/to/resource</code> or <code class="md-code md-code-``` "> c:\path\to\resource</code></p></li><li class="md-uli"><p class="md-phrase">file URL <code class="md-code md-code-``` "> file:/path/to/to/resource</code> or <code class="md-code md-code-``` "> file:c:/path/to/resource</code></p></li><li class="md-uli"><p class="md-phrase">http/https URLs (or any other Java supported URL) <code class="md-code md-code-``` http:">//some-url</code> or <code class="md-code md-code-``` https:">//some-url</code></p></li><li class="md-uli"><p class="md-phrase">classpath <code class="md-code md-code-``` "> classpath:/path/to/to/resource</code> (you must provide the used classpath upon creation)</p></li><li class="md-uli"><p class="md-phrase">resource Path <code class="md-code md-code-``` "> resource://groupId1:artifactId1#version1;groupId2:artifactId2#version2/path/to/resource</code> or <code class="md-code md-code-``` resource:">//(groupId1:artifactId1#version1;groupId2:artifactId2#version2)/path/to/resource</code> in that case the resource is looked up in any of the artifact classpaths (including dependencies)</p></li></ul>
+                                NPath is a powerful abstraction introduced by nuts to handle paths in a uniform way, similar to Java's URL, but with extended capabilities, built-in protocol support, and a fluent, intuitive API.
+<H4 class="md-title-1">Key Features</H4>
+<ul class="md-ul"><li class="md-uli">Unified path abstraction for local files, URLs, classpath resources, and artifacts.</li><li class="md-uli">Protocol-aware: supports file, http(s), classpath, and resource URLs.</li><li class="md-uli">Stream access, input/output helpers, and file tree navigation.</li><li class="md-uli">Support for creating temporary files/folders and content manipulation.</li></ul>
+<H4 class="md-title-2">Supported Protocols</H4>
+<ul class="md-ul"><li class="md-uli">File paths: "/path/to/resource", "C:\path\to\resource"</li><li class="md-uli">File URLs: "file:/path/to/resource", "file:C:/path/to/resource"</li><li class="md-uli">HTTP/HTTPS URLs: "http://...", "https://..."</li><li class="md-uli">Ssh URLs: "ssh://user@server/path/to/resource"</li><li class="md-uli">Classpath: "classpath:/path/to/resource" (requires classloader)</li><li class="md-uli">Resource paths: "resource://group:artifact#version/path/to/resource"</li></ul>
+
+<H4 class="md-title-2">Creating an NPath</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+NPath localFile = NPath.of("C:/path/to/resource");
+</code></pre>
+
+<H4 class="md-title-2">Other creation methods include:</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+NPath.of(URL url);
+NPath.of(File file);
+NPath.of(Path path);
+NPath.of(String path, ClassLoader cl);
+NPath.of(NConnexionString connection);
+</code></pre>
+
+<H4 class="md-title-2">Special Locations</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+NPath.ofUserHome();         // User home directory
+NPath.ofUserDirectory();    // Current working directory
+NPath.ofUserStore(type);    // User store path
+NPath.ofSystemStore(type);  // System store path
+</code></pre>
+
+<H4 class="md-title-2">NPath.ofUserStore(NStoreType storeType)</H4>
+Returns the path to the user-specific store folder of the given storeType.
+This method is used to access various predefined storage locations that conform to standard OS conventions (such as XDG Base Directory Specification on Linux). These locations are used to store user-specific data in structured, OS-compliant folders.
+Example:
+<pre class="md-code md-code-``` java"><code class="java">
+NPath configFolder = NPath.ofUserStore(NStoreType.CONF);
+System.out.println("User config path: " + configFolder);
+</code></pre>
+<H4 class="md-title-3"><p class="md-phrase">Supported <mark class="md-code md-code-` ">NStoreType</mark>s</p></H4>
+<p class="md-phrase">Each <mark class="md-code md-code-` ">NStoreType</mark> corresponds to a logical category of user data:</p>
+<table class="table table-bordered table-striped"><tr><th>StoreType</th>
+<th>Purpose</th>
+<th>Typical Usage</th>
+<th>Linux Equivalent</th>
+</tr>
+<tr><td><p class="md-phrase"> <mark class="md-code md-code-` ">BIN</mark>     </p></td>
+<td>Stores user-specific executable binaries (non-modifiable).</td>
+<td>Custom installed commands/tools.</td>
+<td><p class="md-phrase"> <code class="md-code md-code-` ">$HOME/.local/bin</code> </p></td>
+</tr>
+<tr><td><p class="md-phrase"> <mark class="md-code md-code-` ">CONF</mark>    </p></td>
+<td>Stores user-specific configuration files.</td>
+<td>App or tool settings, preferences.</td>
+<td><p class="md-phrase"> <code class="md-code md-code-` ">$XDG_CONFIG_HOME</code> or <code class="md-code md-code-` ">$HOME/.config</code> </p></td>
+</tr>
+<tr><td><p class="md-phrase"> <mark class="md-code md-code-` ">VAR</mark>     </p></td>
+<td>Stores user-specific modifiable data.</td>
+<td>Data files, downloaded content.</td>
+<td><p class="md-phrase"> <code class="md-code md-code-` ">$XDG_DATA_HOME</code> or <code class="md-code md-code-` ">$HOME/.local/share</code> </p></td>
+</tr>
+<tr><td><p class="md-phrase"> <mark class="md-code md-code-` ">LOG</mark>     </p></td>
+<td>Stores log files.</td>
+<td>Runtime logs, audit trails.</td>
+<td><p class="md-phrase"> <code class="md-code md-code-` ">$XDG_LOG_HOME</code> or <code class="md-code md-code-` ">$HOME/.local/log</code> </p></td>
+</tr>
+<tr><td><p class="md-phrase"> <mark class="md-code md-code-` ">TEMP</mark>    </p></td>
+<td>Stores temporary files.</td>
+<td>Temp input/output files.</td>
+<td><p class="md-phrase"> <code class="md-code md-code-` ">$TMPDIR</code>, <code class="md-code md-code-` ">/tmp</code>, or equivalent </p></td>
+</tr>
+<tr><td><p class="md-phrase"> <mark class="md-code md-code-` ">CACHE</mark>   </p></td>
+<td>Stores non-essential cache files.</td>
+<td>Cached packages, resources.</td>
+<td><p class="md-phrase"> <code class="md-code md-code-` ">$XDG_CACHE_HOME</code> or <code class="md-code md-code-` ">$HOME/.cache</code> </p></td>
+</tr>
+<tr><td><p class="md-phrase"> <mark class="md-code md-code-` ">LIB</mark>     </p></td>
+<td>Stores user-specific non-executable binaries.</td>
+<td>Local libraries and dependencies.</td>
+<td><p class="md-phrase"> <code class="md-code md-code-` ">$HOME/.local/lib</code> </p></td>
+</tr>
+<tr><td><p class="md-phrase"> <mark class="md-code md-code-` ">RUN</mark>     </p></td>
+<td>Stores runtime file system entries.</td>
+<td>Sockets, pipes, PID files.</td>
+<td><p class="md-phrase"> <code class="md-code md-code-` ">$XDG_RUNTIME_DIR</code> or <code class="md-code md-code-` ">/run/user/&lt;uid&gt;</code> </p></td>
+</tr>
+</table>
+
+<H4 class="md-title-3">Why Use ofUserStore()?</H4>
+This method ensures:
+<ul class="md-ul"><li class="md-uli">Cross-platform compatibility: Automatically maps to platform-appropriate folders.</li><li class="md-uli">Correct file placement: Keeps your workspace clean and organized.</li><li class="md-uli">Portable behavior: Works reliably across Linux, Windows, and macOS.</li></ul>
+
+<H4 class="md-title-3">Advanced Example: Write to User Log Folder</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+NPath logFile = NPath.ofUserStore(NStoreType.LOG).resolve("myapp.log");
+logFile.writeString("This is a log entry.\n", StandardCharsets.UTF_8);
+</code></pre>
+> Notes : You can get the resolved directory path as a string via getLocation() or toString(). 
+> Notes : If you're working in a system context (e.g. root user or shared tools), consider NPath.ofSystemStore(NStoreType).
+
+
+<H4 class="md-title-2">Browsing HTML Folders</H4>
+Supports Apache Tomcat and Apache Httpd directory listings.
+<pre class="md-code md-code-``` java"><code class="java">
+NPath httpFolder = NPath.of("htmlfs:https://archive.apache.org/dist/tomcat/");
+try (NStream s = httpFolder.stream()) {
+    List&lt;NPath&gt; matches = s.filter(x -&gt; x.isDirectory() &amp;&amp; x.getName().matches("tomcat-[0-9.]+"))
+                            .toList();
+}
+</code></pre>
+
+<H4 class="md-title-2">Working with Temp Files and Folders</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+NPath tempFile = NPath.ofTempFile("example.txt");
+NPath tempFolder = NPath.ofTempFolder("project-workspace");
+</code></pre>
+Also supports temp locations for repositories and artifact ids:
+<pre class="md-code md-code-``` java"><code class="java">
+NPath.ofTempRepositoryFile("temp.txt", repository);
+NPath.ofTempIdFolder(id);
+</code></pre>
+
+<H4 class="md-title-2">Content I/O</H4>
+Reading:
+<pre class="md-code md-code-``` java"><code class="java">
+byte[] data = path.readBytes();
+String content = path.readString();
+</code></pre>
+Writing:
+<pre class="md-code md-code-``` java"><code class="java">
+path.writeBytes(data);
+path.writeString("Hello World");
+</code></pre>
+Writing Structured Objects:
+<pre class="md-code md-code-``` java"><code class="java">
+path.writeObject(myObject);     // Any serializable
+path.writeMsg(NMsg.ofText("Hi"));
+</code></pre>
+
+<H4 class="md-title-2">Path Operations</H4>
+<ul class="md-ul"><li class="md-uli">resolve, resolveSibling, normalize, toAbsolute, toRelative</li><li class="md-uli">exists(), isDirectory(), isFile(), delete(), mkdir()</li><li class="md-uli">getName(), getNameCount(), getNames(), getParent()</li></ul>
+
+<H4 class="md-title-2">File Tree</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+path.walk();                    // DFS walk
+path.walkGlob();               // Glob walk
+</code></pre>
+
+<H4 class="md-title-2">Streaming and Navigation</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+try (NStream&lt;NPath&gt; stream = path.stream()) {
+    stream.forEach(x -&gt; ...);
+}
+</code></pre>
+
+<H4 class="md-title-2">Permissions & Metadata</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+Set&lt;NPathPermission&gt; perms = path.getPermissions();
+path.setPermissions(...);
+</code></pre>
+
+<H4 class="md-title-2">Type & Protocol</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+String protocol = path.getProtocol();
+boolean isFile = path.isFile();
+boolean isHttp = path.isHttp();
+NPathType type = path.type();
+</code></pre>
+
+<H4 class="md-title-2">Conversion</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+URL url = path.toURL().orNull();
+File file = path.toFile().orNull();
+Path nioPath = path.toPath().orNull();
+</code></pre>
+
+<H4 class="md-title-2">Example: Directory Listing</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+NPath dir = NPath.of("/my/folder");
+List&lt;NPath&gt; files = dir.stream()
+    .filter(p -&gt; p.getName().endsWith(".txt"))
+    .toList();
+</code></pre>
+
+<H4 class="md-title-2">Summary</H4>
+NPath is a versatile and protocol-aware abstraction that unifies file, URL, and resource path handling. Its rich API and Nuts integration make it ideal for building tools that require flexible resource access, remote artifact inspection, or file system utilities.
+
+
 
                                 </div>
                                 
@@ -2338,7 +2629,7 @@ Automatic-Module-Name: yourgroupid.yourartifactid.YourClass
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-07-03-082926
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-07-03-092256
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
