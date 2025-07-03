@@ -25,20 +25,17 @@
 package net.thevpc.nuts;
 
 
-import net.thevpc.nuts.boot.NBootArguments;
-import net.thevpc.nuts.time.NClock;
-import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.boot.NBootException;
+import net.thevpc.nuts.boot.reserved.util.NBootMsg;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMsg;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.logging.Level;
+import java.util.*;
 
 /**
  * Helper class for Nuts Applications
@@ -84,6 +81,115 @@ public final class NApplications {
     public static <T extends NApplication> T createApplicationInstance(Class<T> appType) {
         String[] args = null;
         return createApplicationInstance(appType, args);
+    }
+
+    public static NApp.Info resolveApplicationAnnotation(Class appClass) {
+        Class<?> validAppClass = unproxyType(appClass);
+        return validAppClass.getAnnotation(NApp.Info.class);
+    }
+
+    public static boolean isAnnotatedApplicationClass(Class appClass) {
+        return resolveApplicationAnnotation(appClass) != null;
+    }
+
+    public static NApplication createApplicationInstanceFromAnnotatedInstance(Object appInstance) {
+        NAssert.requireNonNull(appInstance, "appInstance");
+        if (appInstance instanceof NApplication) {
+            return (NApplication) appInstance;
+        }
+        Class<?> appClass = unproxyType(appInstance.getClass());
+        NApp.Info appAnnotation = appClass.getAnnotation(NApp.Info.class);
+        if (appAnnotation == null) {
+            throw new NBootException(NBootMsg.ofC("class %s is missing annotation @AppInfo", appClass.getName()));
+        }
+        NAssert.requireNonNull(appAnnotation, "@NApp.Info annotation");
+        List<Method> runMethods = new ArrayList<>();
+        List<Method> installMethods = new ArrayList<>();
+        List<Method> uninstallMethods = new ArrayList<>();
+        List<Method> updateMethods = new ArrayList<>();
+        Set<String> visited = new HashSet<>();
+        Class cc = appClass;
+        while (cc != null) {
+            for (Method m : cc.getMethods()) {
+                // only public methods
+                if (m.getParameterCount() == 0) {
+                    if (visited.add(m.getName())) {
+                        if (m.getAnnotation(NApp.Main.class) != null) {
+                            runMethods.add(m);
+                        }
+                        if (m.getAnnotation(NApp.Updater.class) != null) {
+                            updateMethods.add(m);
+                        }
+                        if (m.getAnnotation(NApp.Installer.class) != null) {
+                            installMethods.add(m);
+                        }
+                        if (m.getAnnotation(NApp.Uninstaller.class) != null) {
+                            uninstallMethods.add(m);
+                        }
+                    }
+                }
+            }
+            try {
+                for (Method m : cc.getDeclaredMethods()) {
+                    checkAllowedMethodWithNutsAnnotation(m, NApp.Main.class);
+                    checkAllowedMethodWithNutsAnnotation(m, NApp.Installer.class);
+                    checkAllowedMethodWithNutsAnnotation(m, NApp.Uninstaller.class);
+                    checkAllowedMethodWithNutsAnnotation(m, NApp.Updater.class);
+                }
+            } catch (NBootException e) {
+                throw e;
+            } catch (RuntimeException e) {
+                throw new RuntimeException(e);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            cc = cc.getSuperclass();
+        }
+        if (runMethods.isEmpty()) {
+            throw new NBootException(NBootMsg.ofC("class %s has annotation @AppInfo. it should define a public no arg @NApp.Main method", appClass.getName()));
+        }
+        return new AnnotationClassNApplication(runMethods, installMethods, updateMethods, uninstallMethods, appInstance);
+    }
+
+    private static boolean checkAllowedMethodWithNutsAnnotation(Method m, Class annClass) {
+        Annotation u = m.getAnnotation(annClass);
+        if (u != null) {
+            if (m.getParameterCount() != 0) {
+                throw new NBootException(NBootMsg.ofC("method %s has annotation @%s. it should not have parameters", m, annClass.getName()));
+            }
+            if (!Modifier.isPublic(m.getModifiers())) {
+                throw new NBootException(NBootMsg.ofC("method %s has annotation @%s. it should be public"));
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isProxyType(Class<?> aClass) {
+        if (aClass == null) {
+            return false;
+        }
+        String simpleName = aClass.getSimpleName();
+        if (simpleName.contains("$$EnhancerBySpringCGLIB$$")
+                || simpleName.contains("$$CGLIB$$")
+                || simpleName.contains("$$SpringCGLIB$$")
+        ) {
+            return true;
+        }
+        return false;
+    }
+
+    public static Class<?> unproxyType(Class<?> aClass) {
+        if (aClass == null) {
+            return null;
+        }
+        if (isProxyType(aClass)) {
+            Class<?> u = unproxyType(aClass.getSuperclass());
+            if (u != null) {
+                return u;
+            }
+        }
+        return aClass;
     }
 
     /**
@@ -143,120 +249,75 @@ public final class NApplications {
         throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("missing application constructor for %s from of : \n\t static createApplicationInstance(NSession,String[])\n\t Constructor(NSession,String[])\n\t Constructor()"), appType.getName()));
     }
 
-    /**
-     * run application with given life cycle.
-     *
-     * @param options NApplicationRunOptions
-     */
-    public static void runApplication(NMainArgs options) {
-        NApplicationHandleMode m = options.getHandleMode() == null ? NApplicationHandleMode.HANDLE : options.getHandleMode();
-        try {
-            NClock now = NClock.now();
-            NAssert.requireNonNull(options, "options");
-            String[] args = options.getArgs() == null ? new String[0] : options.getArgs();
-            NApplication applicationInstance = NAssert.requireNonNull(options.getApplicationInstance(), "applicationInstance");
-            NWorkspace ws = NWorkspace.get().orNull();
-            if (ws == null) {
-                ws = Nuts.openWorkspace(NBootArguments.of(options.getNutsArgs()).setAppArgs(args));
-                ws.runWith(() -> {
-                    NApp a = NApp.of();
-                    a.setArguments(args);
-                    a.prepare(new NAppInitInfo(args, applicationInstance.getClass(), now));
-                    runApplication(applicationInstance);
-                });
-            } else {
-                ws.runWith(() -> {
-                    NApp.of().prepare(new NAppInitInfo(args, applicationInstance.getClass(), now));
-                    runApplication(applicationInstance);
-                });
-            }
-            switch (m) {
-                case EXIT: {
-                    System.exit(0);
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            switch (m) {
-                case PROPAGATE: {
-                    NExceptionHandler.of(e).propagate();
-                    break;
-                }
-                case EXIT: {
-                    NExceptionHandler.of(e).handleFatal();
-                    break;
-                }
-                case HANDLE: {
-                    NExceptionHandler.of(e).handle();
-                    break;
-                }
-                default: {
-                    if (e instanceof RuntimeException) {
-                        throw (RuntimeException) e;
-                    }
-                    throw new RuntimeException(e);
-                }
-            }
-        }
+    public static NAppBuilder builder() {
+        return new NAppBuilder();
     }
 
-    private static void runApplication(NApplication applicationInstance) {
-        NWorkspace ws = NWorkspace.get().orNull();
-        if (ws == null) {
-            ws = Nuts.openWorkspace();
-            ws.runWith(() -> {
-                runApplication(applicationInstance);
-            });
-            return;
+    static class AnnotationClassNApplication implements NApplication {
+        private final List<Method> runMethods;
+        private final List<Method> installMethods;
+        private final List<Method> updateMethods;
+        private final List<Method> uninstallMethods;
+        private final Object appInstance;
+
+        public AnnotationClassNApplication(List<Method> runMethods, List<Method> installMethods, List<Method> updateMethods, List<Method> uninstallMethods, Object appInstance) {
+            this.runMethods = runMethods;
+            this.installMethods = installMethods;
+            this.updateMethods = updateMethods;
+            this.uninstallMethods = uninstallMethods;
+            this.appInstance = appInstance;
         }
-        ws.runWith(() -> {
-            boolean inherited = NWorkspace.of().getBootOptions().getInherited().orElse(false);
-            NApp nApp = NApp.of();
-            String appClassName = nApp.getAppClass() == null ? null : nApp.getAppClass().getName();
-            if(appClassName == null){
-                appClassName=applicationInstance.getClass().getName();
+
+        public Object getAppInstance() {
+            return appInstance;
+        }
+
+        @Override
+        public void run() {
+            for (Method runMethod : runMethods) {
+                doRunThis(runMethod);
             }
-            NId appId = nApp.getId().orNull();
-            NLog.of(NApplications.class).with().level(Level.FINE).verb(NLogVerb.START)
-                    .log(
-                            NMsg.ofC(
-                                    NI18n.of("running application %s: %s (%s) %s"),
-                                    inherited ? ("("+NI18n.of("inherited")+")") : "",
-                                    appId==null?("<"+NI18n.of("unresolved-id")+">"):appId,
-                                    appClassName,
-                                    nApp.getCmdLine()
-                            )
-                    );
+        }
+
+        @Override
+        public void onInstallApplication() {
+            for (Method runMethod : installMethods) {
+                doRunThis(runMethod);
+            }
+        }
+
+        @Override
+        public void onUpdateApplication() {
+            for (Method runMethod : updateMethods) {
+                doRunThis(runMethod);
+            }
+        }
+
+        @Override
+        public void onUninstallApplication() {
+            for (Method runMethod : uninstallMethods) {
+                doRunThis(runMethod);
+            }
+        }
+
+        private void doRunThis(Method m) {
             try {
-                switch (nApp.getMode()) {
-                    //both RUN and AUTO_COMPLETE execute the run branch. Later
-                    //session.isExecMode()
-                    case RUN:
-                    case AUTO_COMPLETE: {
-                        applicationInstance.run();
-                        return;
-                    }
-                    case INSTALL: {
-                        applicationInstance.onInstallApplication();
-                        return;
-                    }
-                    case UPDATE: {
-                        applicationInstance.onUpdateApplication();
-                        return;
-                    }
-                    case UNINSTALL: {
-                        applicationInstance.onUninstallApplication();
-                        return;
-                    }
+                if (Modifier.isStatic(m.getModifiers())) {
+                    m.invoke(null);
+                } else {
+                    m.invoke(appInstance);
                 }
-            } catch (NExecutionException e) {
-                if (e.getExitCode() == NExecutionException.SUCCESS) {
-                    return;
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                if (e.getTargetException() instanceof RuntimeException) {
+                    throw (RuntimeException) e.getTargetException();
                 }
-                throw e;
+                if (e.getTargetException() != null) {
+                    throw new RuntimeException(e.getTargetException());
+                }
+                throw new RuntimeException(e);
             }
-            throw new NExecutionException(NMsg.ofC(NI18n.of("unsupported execution mode %s"), nApp.getMode()), NExecutionException.ERROR_255);
-        });
+        }
     }
-
 }
