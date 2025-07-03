@@ -10,7 +10,6 @@ public class NutsSpringBootEnvironmentPostProcessor implements EnvironmentPostPr
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
         NOptional<NApp> app = NApp.get();
-        System.out.println(app);
 //        if(AppPropsHelper.getAppClass()!=null && AppPropsHelper.getDefaultAppName()!=null) {
 //            File file = new File(AppPropsHelper.getCustomExternalConfigFile("application.properties",
 //                    AppPropsHelper.getAppClass(), AppPropsHelper.getDefaultAppName()));
