@@ -48,6 +48,7 @@ import net.thevpc.nuts.runtime.standalone.log.DefaultNLogs;
 import net.thevpc.nuts.runtime.standalone.session.DefaultNSession;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.DefaultNExprs;
 import net.thevpc.nuts.util.NClassClassMap;
 import net.thevpc.nuts.util.NListValueMap;
 import net.thevpc.nuts.runtime.standalone.util.NPropertiesHolder;
@@ -212,6 +213,9 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 }
                 case "net.thevpc.nuts.NWorkspaceOptionsBuilder": {
                     return NOptional.of((T) new DefaultNWorkspaceOptionsBuilder());
+                }
+                case "net.thevpc.nuts.expr.NExprs": {
+                    return NOptional.of((T) new DefaultNExprs());
                 }
                 case "net.thevpc.nuts.format.NFormats": {
                     NFormats p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.WORKSPACE, () -> new NFormatsImpl());

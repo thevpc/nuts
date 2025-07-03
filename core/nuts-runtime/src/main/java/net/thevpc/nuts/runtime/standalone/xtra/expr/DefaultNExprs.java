@@ -3,23 +3,20 @@ package net.thevpc.nuts.runtime.standalone.xtra.expr;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.expr.*;
-import net.thevpc.nuts.util.NPlatformSignature;
+import net.thevpc.nuts.util.NPlatformArgsSignature;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.*;
 
 public class DefaultNExprs implements NExprs {
 
-    private final NWorkspace workspace;
     private final DefaultNExprsCommonOps defaultNExprsCommonOps = new DefaultNExprsCommonOps();
 
-    public DefaultNExprs(NWorkspace workspace) {
-        this.workspace = workspace;
-
+    public DefaultNExprs() {
     }
 
 
     public NExprDeclarations newDeclarations(boolean includeDefaults) {
-        return includeDefaults ? new DefaultRootDeclarations(this, workspace) : new EmptyRootDeclarations(this, workspace);
+        return includeDefaults ? new DefaultRootDeclarations(this) : new EmptyRootDeclarations(this);
     }
 
     @Override
@@ -67,23 +64,19 @@ public class DefaultNExprs implements NExprs {
         return newDeclarations(includeDefaults, evaluator).newMutableDeclarations();
     }
 
-    public NWorkspace getWorkspace() {
-        return workspace;
-    }
-
     @Override
     public <A, B> NOptional<NFunction2<A, B, ?>> findCommonInfixOp(NExprCommonOp op, Class<? extends A> firstArgType, Class<? extends B> secondArgType) {
-        return (NOptional) defaultNExprsCommonOps.findFunction2(op, NExprOpType.INFIX, NPlatformSignature.of(firstArgType, secondArgType));
+        return (NOptional) defaultNExprsCommonOps.findFunction2(op, NExprOpType.INFIX, NPlatformArgsSignature.of(firstArgType, secondArgType));
     }
 
     @Override
     public <A> NOptional<NFunction<A, ?>> findCommonPrefixOp(NExprCommonOp op, Class<? extends A> argType) {
-        return (NOptional) defaultNExprsCommonOps.findFunction1(op, NExprOpType.PREFIX, NPlatformSignature.of(argType));
+        return (NOptional) defaultNExprsCommonOps.findFunction1(op, NExprOpType.PREFIX, NPlatformArgsSignature.of(argType));
     }
 
     @Override
     public <A> NOptional<NFunction<A, ?>> findCommonPostfixOp(NExprCommonOp op, Class<? extends A> argType) {
-        return (NOptional) defaultNExprsCommonOps.findFunction1(op, NExprOpType.POSTFIX, NPlatformSignature.of(argType));
+        return (NOptional) defaultNExprsCommonOps.findFunction1(op, NExprOpType.POSTFIX, NPlatformArgsSignature.of(argType));
     }
 
 
