@@ -2752,17 +2752,17 @@ public class App implements NApplication {
     }
 
     @Override // this method is not required, implement when needed
-    public void onInstallApplication(NSession s) {
+    public void onUninstallApplication() {
         s.out().printf("we are installing My Application : %s%n", s.getAppId());
     }
 
     @Override // this method is not required, implement when needed
-    public void onUninstallApplication(NSession s) {
+    public void onUninstallApplication() {
         s.out().printf("we are uninstalling My Application : %s%n", s.getAppId());
     }
 
     @Override // this method is not required, implement when needed
-    public void onUpdateApplication(NSession s) {
+    public void onUpdateApplication() {
         s.out().printf("we are updating My Application : %s%n", s.getAppId());
     }
 }
@@ -3155,17 +3155,17 @@ public class App implements NApplication {
     }
 
     @Override
-    public void onInstallApplication(NSession s) {
+    public void onUninstallApplication() {
         s.out().printf("we are installing My Application : %s%n", s.getAppId());
     }
 
     @Override
-    public void onUninstallApplication(NSession s) {
+    public void onUninstallApplication() {
         s.out().printf("we are uninstalling My Application : %s%n", s.getAppId());
     }
 
     @Override
-    public void onUpdateApplication(NSession s) {
+    public void onUpdateApplication() {
         s.out().printf("we are updating My Application : %s%n", s.getAppId());
     }
 }

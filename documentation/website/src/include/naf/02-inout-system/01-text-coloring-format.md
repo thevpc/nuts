@@ -61,20 +61,19 @@ NTF is specifically designed for **developer-friendly, portable, terminal-first 
 
 The table below highlights how NTF compares to other common formats across key capabilities:
 
-| Feature                                  | **NTF**        | **ANSI Escape Codes** | **Markdown**    | **AsciiDoctor** | **HTML**       |
-|------------------------------------------|----------------|------------------------|------------------|------------------|----------------|
-| **Colored output**                       | ✅ Named colors, indexed and hex support | ✅ Manual, code-based | ❌ (Extensions needed) | ✅ With roles/styles | ✅ CSS/inline styles |
-| **Styled text**                          | ✅ Bold, italic, underline, strikethrough | ✅ Limited (manual control) | ✅ Bold, italic | ✅ Bold, italic, underline | ✅ Full style control |
-| **Semantic color tags** (e.g. `error`, `warning`) | ✅ Built-in mappings (`error:red`, `info:blue`, etc.) | ❌ None | ❌ None | ⚠️ Manual via roles | ✅ Possible via class |
-| **Nested styles**                        | ✅ Fully supported (e.g. `error bold`, or `green underline`) | ❌ Complex / fragile | ❌ Not supported | ✅ Supported | ✅ Fully supported |
-| **Combined styles**                      | ✅ Easily combined with simple markup | ❌ Manual code combinations | ❌ Limited | ✅ With roles | ✅ With CSS |
-| **Structured sections** (titles, subtitles) | ✅ NTF supports semantic headers (`# Title`, `## Subtitle`) | ❌ None | ✅ Basic headings | ✅ Full document structure | ✅ Rich document structure |
-| **Lists (bullet, numbered)**             | ✅ Simple syntax (`- item`, `1. item`) | ❌ None | ✅ Yes | ✅ Yes | ✅ Yes |
-| **Tables**                               | ✅ Lightweight NTF table syntax | ❌ None | ✅ Basic tables | ✅ Rich tables | ✅ Rich tables |
-| **Syntax highlighting** (code snippets)  | ✅ With language tag | ❌ None | ✅ (Limited, via extensions) | ✅ With language tag | ✅ Full, with JS/CSS |
-| **Terminal rendering support**           | ✅ Auto-adapts (ANSI, plain, HTML, Markdown) | ✅ Terminal only | ❌ Not terminal-targeted | ❌ Not terminal-targeted | ❌ Not terminal-targeted |
-| **Portability across environments**      | ✅ Designed for CLI and convertible to HTML/Markdown | ❌ Terminal only | ✅ Editor/docs only | ✅ Editor/docs only | ✅ Web/browser only |
-| **Ease of authoring for CLI output**     | ✅ Very high (compact, readable, intuitive) | ❌ Low (escape-heavy) | ⚠️ Limited styling | ⚠️ Verbose | ❌ Too verbose for CLI |
+| Feature                                           | **NTF**                                                       | **ANSI Escape Codes** | **Markdown**    | **AsciiDoctor** | **HTML**       |
+|---------------------------------------------------|---------------------------------------------------------------|------------------------|------------------|------------------|----------------|
+| **Colored output**                                | ✅ Named colors, indexed and hex support                       | ✅ Manual, code-based | ❌ (Extensions needed) | ✅ With roles/styles | ✅ CSS/inline styles |
+| **Styled text**                                   | ✅ Bold, italic, underline, strikethrough                      | ✅ Limited (manual control) | ✅ Bold, italic | ✅ Bold, italic, underline | ✅ Full style control |
+| **Semantic color tags** (e.g. `error`, `warning`) | ✅ Built-in mappings (`##:red:word##`, `##:info:word##`, etc.) | ❌ None | ❌ None | ⚠️ Manual via roles | ✅ Possible via class |
+| **Nested/Combined styles**                                | ✅ Fully supported (e.g. `##{:red:##{:bold:word}##}##`         | ❌ Complex / fragile | ❌ Not supported | ✅ Supported | ✅ Fully supported |
+| **Structured sections** (titles, subtitles)       | ✅ NTF supports semantic headers (`# Title`, `## Subtitle`)    | ❌ None | ✅ Basic headings | ✅ Full document structure | ✅ Rich document structure |
+| **Lists (bullet, numbered)**                      | ❌ Not yet                                                     | ❌ None | ✅ Yes | ✅ Yes | ✅ Yes |
+| **Tables**                                        | ❌ Not yet                                                     | ❌ None | ✅ Basic tables | ✅ Rich tables | ✅ Rich tables |
+| **Syntax highlighting** (code snippets)           | ✅ With language tag                                           | ❌ None | ✅ (Limited, via extensions) | ✅ With language tag | ✅ Full, with JS/CSS |
+| **Terminal rendering support**                    | ✅ Auto-adapts (ANSI, plain, HTML, Markdown)                   | ✅ Terminal only | ❌ Not terminal-targeted | ❌ Not terminal-targeted | ❌ Not terminal-targeted |
+| **Portability across environments**               | ✅ Designed for CLI and convertible to HTML/Markdown           | ❌ Terminal only | ✅ Editor/docs only | ✅ Editor/docs only | ✅ Web/browser only |
+| **Ease of authoring for CLI output**              | ✅ Very high (compact, readable, intuitive)                    | ❌ Low (escape-heavy) | ⚠️ Limited styling | ⚠️ Verbose | ❌ Too verbose for CLI |
 
 ---
 

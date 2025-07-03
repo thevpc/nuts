@@ -23,17 +23,11 @@ We will have a fully generated java project
     ├── pom.xml
     └── src
         ├── main
-        │   └── java
-        │       └── com
-        │           └── mycompany
-        │               └── app
-        │                   └── App.java
-        └── test
             └── java
                 └── com
                     └── mycompany
                         └── app
-                            └── AppTest.java
+                            └── App.java
 
 ```
 
@@ -224,12 +218,12 @@ public class App implements NApplication {
     }
 
     @Override // this method is not required, implement when needed
-    public void onUninstallApplication(NSession s) {
+    public void onUninstallApplication() {
         NOut.println(NMsg.ofC("we are uninstalling My Application : %s%n", NApp.of().getId()));
     }
 
     @Override // this method is not required, implement when needed
-    public void onUpdateApplication(NSession s) {
+    public void onUpdateApplication() {
         NOut.println(NMsg.ofC("we are updating My Application : %s%n", NApp.of().getId()));
     }
 }

@@ -411,20 +411,20 @@ On the other hand, existing markup languages each have their own limitations for
 <p class="md-phrase">NTF is specifically designed for <b class="md-bold">developer-friendly, portable, terminal-first output formatting</b>. It bridges the gap between simple text styling (like ANSI escape codes) and more advanced document-oriented formats (like Markdown or AsciiDoctor), making it uniquely suited for CLI applications.</p>
 The table below highlights how NTF compares to other common formats across key capabilities:
 <table class="table table-bordered table-striped"><tr><th>Feature</th>
-<th><p class="md-phrase"> <b class="md-bold">NTF</b>        </p></th>
+<th><p class="md-phrase"> <b class="md-bold">NTF</b>                                                       </p></th>
 <th><p class="md-phrase"> <b class="md-bold">ANSI Escape Codes</b> </p></th>
 <th><p class="md-phrase"> <b class="md-bold">Markdown</b>    </p></th>
 <th><p class="md-phrase"> <b class="md-bold">AsciiDoctor</b> </p></th>
 <th><p class="md-phrase"> <b class="md-bold">HTML</b>       </p></th>
 </tr>
-<tr><td><p class="md-phrase"> <b class="md-bold">Colored output</b>                       </p></td>
+<tr><td><p class="md-phrase"> <b class="md-bold">Colored output</b>                                </p></td>
 <td>✅ Named colors, indexed and hex support</td>
 <td>✅ Manual, code-based</td>
 <td>❌ (Extensions needed)</td>
 <td>✅ With roles/styles</td>
 <td>✅ CSS/inline styles</td>
 </tr>
-<tr><td><p class="md-phrase"> <b class="md-bold">Styled text</b>                          </p></td>
+<tr><td><p class="md-phrase"> <b class="md-bold">Styled text</b>                                   </p></td>
 <td>✅ Bold, italic, underline, strikethrough</td>
 <td>✅ Limited (manual control)</td>
 <td>✅ Bold, italic</td>
@@ -432,69 +432,62 @@ The table below highlights how NTF compares to other common formats across key c
 <td>✅ Full style control</td>
 </tr>
 <tr><td><p class="md-phrase"> <b class="md-bold">Semantic color tags</b> (e.g. <mark class="md-code md-code-` ">error</mark>, <mark class="md-code md-code-` ">warning</mark>) </p></td>
-<td><p class="md-phrase"> ✅ Built-in mappings (<code class="md-code md-code-` ">error:red</code>, <code class="md-code md-code-` ">info:blue</code>, etc.) </p></td>
+<td><p class="md-phrase"> ✅ Built-in mappings (<code class="md-code md-code-` ">##:red:word##</code>, <code class="md-code md-code-` ">##:info:word##</code>, etc.) </p></td>
 <td>❌ None</td>
 <td>❌ None</td>
 <td>⚠️ Manual via roles</td>
 <td>✅ Possible via class</td>
 </tr>
-<tr><td><p class="md-phrase"> <b class="md-bold">Nested styles</b>                        </p></td>
-<td><p class="md-phrase"> ✅ Fully supported (e.g. <code class="md-code md-code-` ">error bold</code>, or <code class="md-code md-code-` ">green underline</code>) </p></td>
+<tr><td><p class="md-phrase"> <b class="md-bold">Nested/Combined styles</b>                                </p></td>
+<td><p class="md-phrase"> ✅ Fully supported (e.g. <code class="md-code md-code-` ">##{:red:##{:bold:word}##}##</code>         </p></td>
 <td>❌ Complex / fragile</td>
 <td>❌ Not supported</td>
 <td>✅ Supported</td>
 <td>✅ Fully supported</td>
 </tr>
-<tr><td><p class="md-phrase"> <b class="md-bold">Combined styles</b>                      </p></td>
-<td>✅ Easily combined with simple markup</td>
-<td>❌ Manual code combinations</td>
-<td>❌ Limited</td>
-<td>✅ With roles</td>
-<td>✅ With CSS</td>
-</tr>
-<tr><td><p class="md-phrase"> <b class="md-bold">Structured sections</b> (titles, subtitles) </p></td>
-<td><p class="md-phrase"> ✅ NTF supports semantic headers (<code class="md-code md-code-` "># Title</code>, <code class="md-code md-code-` ">## Subtitle</code>) </p></td>
+<tr><td><p class="md-phrase"> <b class="md-bold">Structured sections</b> (titles, subtitles)       </p></td>
+<td><p class="md-phrase"> ✅ NTF supports semantic headers (<code class="md-code md-code-` "># Title</code>, <code class="md-code md-code-` ">## Subtitle</code>)    </p></td>
 <td>❌ None</td>
 <td>✅ Basic headings</td>
 <td>✅ Full document structure</td>
 <td>✅ Rich document structure</td>
 </tr>
-<tr><td><p class="md-phrase"> <b class="md-bold">Lists (bullet, numbered)</b>             </p></td>
-<td><p class="md-phrase"> ✅ Simple syntax (<code class="md-code md-code-` ">- item</code>, <code class="md-code md-code-` ">1. item</code>) </p></td>
+<tr><td><p class="md-phrase"> <b class="md-bold">Lists (bullet, numbered)</b>                      </p></td>
+<td>❌ Not yet</td>
 <td>❌ None</td>
 <td>✅ Yes</td>
 <td>✅ Yes</td>
 <td>✅ Yes</td>
 </tr>
-<tr><td><p class="md-phrase"> <b class="md-bold">Tables</b>                               </p></td>
-<td>✅ Lightweight NTF table syntax</td>
+<tr><td><p class="md-phrase"> <b class="md-bold">Tables</b>                                        </p></td>
+<td>❌ Not yet</td>
 <td>❌ None</td>
 <td>✅ Basic tables</td>
 <td>✅ Rich tables</td>
 <td>✅ Rich tables</td>
 </tr>
-<tr><td><p class="md-phrase"> <b class="md-bold">Syntax highlighting</b> (code snippets)  </p></td>
+<tr><td><p class="md-phrase"> <b class="md-bold">Syntax highlighting</b> (code snippets)           </p></td>
 <td>✅ With language tag</td>
 <td>❌ None</td>
 <td>✅ (Limited, via extensions)</td>
 <td>✅ With language tag</td>
 <td>✅ Full, with JS/CSS</td>
 </tr>
-<tr><td><p class="md-phrase"> <b class="md-bold">Terminal rendering support</b>           </p></td>
+<tr><td><p class="md-phrase"> <b class="md-bold">Terminal rendering support</b>                    </p></td>
 <td>✅ Auto-adapts (ANSI, plain, HTML, Markdown)</td>
 <td>✅ Terminal only</td>
 <td>❌ Not terminal-targeted</td>
 <td>❌ Not terminal-targeted</td>
 <td>❌ Not terminal-targeted</td>
 </tr>
-<tr><td><p class="md-phrase"> <b class="md-bold">Portability across environments</b>      </p></td>
+<tr><td><p class="md-phrase"> <b class="md-bold">Portability across environments</b>               </p></td>
 <td>✅ Designed for CLI and convertible to HTML/Markdown</td>
 <td>❌ Terminal only</td>
 <td>✅ Editor/docs only</td>
 <td>✅ Editor/docs only</td>
 <td>✅ Web/browser only</td>
 </tr>
-<tr><td><p class="md-phrase"> <b class="md-bold">Ease of authoring for CLI output</b>     </p></td>
+<tr><td><p class="md-phrase"> <b class="md-bold">Ease of authoring for CLI output</b>              </p></td>
 <td>✅ Very high (compact, readable, intuitive)</td>
 <td>❌ Low (escape-heavy)</td>
 <td>⚠️ Limited styling</td>
@@ -1881,12 +1874,12 @@ public class App implements NApplication {
     }
 
     @Override // this method is not required, implement when needed
-    public void onUninstallApplication(NSession s) {
+    public void onUninstallApplication() {
         NOut.println(NMsg.ofC("we are uninstalling My Application : %s%n", NApp.of().getId()));
     }
 
     @Override // this method is not required, implement when needed
-    public void onUpdateApplication(NSession s) {
+    public void onUpdateApplication() {
         NOut.println(NMsg.ofC("we are updating My Application : %s%n", NApp.of().getId()));
     }
 }
@@ -1996,17 +1989,11 @@ We will have a fully generated java project
     ├── pom.xml
     └── src
         ├── main
-        │   └── java
-        │       └── com
-        │           └── mycompany
-        │               └── app
-        │                   └── App.java
-        └── test
             └── java
                 └── com
                     └── mycompany
                         └── app
-                            └── AppTest.java
+                            └── App.java
 
 </code></pre>
 <p class="md-phrase">Now we will add some dependencies to the project. Let's add <code class="md-code md-code-` ">jexcelapi:jxl#2.4.2</code> and update <code class="md-code md-code-` ">pom.xml</code> consequently.</p>
@@ -2159,12 +2146,12 @@ public class App implements NApplication {
     }
 
     @Override // this method is not required, implement when needed
-    public void onUninstallApplication(NSession s) {
+    public void onUninstallApplication() {
         NOut.println(NMsg.ofC("we are uninstalling My Application : %s%n", NApp.of().getId()));
     }
 
     @Override // this method is not required, implement when needed
-    public void onUpdateApplication(NSession s) {
+    public void onUpdateApplication() {
         NOut.println(NMsg.ofC("we are updating My Application : %s%n", NApp.of().getId()));
     }
 }
@@ -2629,7 +2616,7 @@ Automatic-Module-Name: yourgroupid.yourartifactid.YourClass
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-07-03-092256
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-07-03-100638
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
