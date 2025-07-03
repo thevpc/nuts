@@ -116,11 +116,18 @@ Used when resolving artifacts and loading jars from repositories (dynamic classl
 session.setFetchStrategy(NFetchStrategy.ONLINE);
 ```
 
-Available strategies:
-- ONLINE
-- OFFLINE
-- CACHE_ONLY
-- REMOTE_ONLY
+The fetch strategy determines how and where Nuts searches for artifacts (e.g., dependencies, packages) across local and remote repositories.
+
+This affects resolution against repositories such as Maven Central, Nuts-based repositories, and custom remotes.
+
+#### 🔎 Available Strategies
+
+| Strategy   | Description                                                                 |
+|------------|-----------------------------------------------------------------------------|
+| `ONLINE`   | Default mode. Searches locally first; if not found, falls back to remotes. |
+| `OFFLINE`  | Searches **only local caches**. No remote access is allowed.               |
+| `ANYWHERE` | Searches both **local and remote** repositories concurrently.              |
+| `REMOTE`   | Searches **only remote** repositories, ignoring local cache.               |
 
 
 ## Confirmation and Interaction
@@ -146,6 +153,13 @@ session.setProgressOptions("auto");
 ```java
 session.setGui(true);
 ```
+
+The `gui` flag in a session determines whether user interactions should be performed using **graphical UI dialogs** or **standard console input**.
+
+- When `gui` is **enabled**, interactive methods like `NIn.readLine()` or `NIn.ask()` may display **graphical dialogs** for input instead of using the terminal.
+- When `gui` is **disabled** (default in headless or CLI environments), all interactions fall back to **console-based prompts**.
+
+> In GUI-enabled environments, this may pop up a dialog window rather than prompting in the console.
 
 ## Customize output line prefixes:
 
@@ -234,4 +248,3 @@ Supported listener types:
 
 - Use NSession.of() only when you're sure a session context exists
 - Always configure session flags (--yes, --bot, etc.) when parsing application commandlines
-- 

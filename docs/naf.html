@@ -1057,8 +1057,26 @@ Used when resolving artifacts and loading jars from repositories (dynamic classl
 <pre class="md-code md-code-``` java"><code class="java">
 session.setFetchStrategy(NFetchStrategy.ONLINE);
 </code></pre>
-Available strategies:
-<ul class="md-ul"><li class="md-uli">ONLINE</li><li class="md-uli">OFFLINE</li><li class="md-uli">CACHE_ONLY</li><li class="md-uli">REMOTE_ONLY</li></ul>
+The fetch strategy determines how and where Nuts searches for artifacts (e.g., dependencies, packages) across local and remote repositories.
+This affects resolution against repositories such as Maven Central, Nuts-based repositories, and custom remotes.
+<H4 class="md-title-3">🔎 Available Strategies</H4>
+<table class="table table-bordered table-striped"><tr><th>Strategy</th>
+<th>Description</th>
+</tr>
+<tr><td><p class="md-phrase"> <mark class="md-code md-code-` ">ONLINE</mark>   </p></td>
+<td>Default mode. Searches locally first; if not found, falls back to remotes.</td>
+</tr>
+<tr><td><p class="md-phrase"> <mark class="md-code md-code-` ">OFFLINE</mark>  </p></td>
+<td><p class="md-phrase"> Searches <b class="md-bold">only local caches</b>. No remote access is allowed.               </p></td>
+</tr>
+<tr><td><p class="md-phrase"> <mark class="md-code md-code-` ">ANYWHERE</mark> </p></td>
+<td><p class="md-phrase"> Searches both <b class="md-bold">local and remote</b> repositories concurrently.              </p></td>
+</tr>
+<tr><td><p class="md-phrase"> <mark class="md-code md-code-` ">REMOTE</mark>   </p></td>
+<td><p class="md-phrase"> Searches <b class="md-bold">only remote</b> repositories, ignoring local cache.               </p></td>
+</tr>
+</table>
+
 
 <H4 class="md-title-2">Confirmation and Interaction</H4>
 Control how user prompts are handled:
@@ -1080,6 +1098,9 @@ session.setProgressOptions("auto");
 <pre class="md-code md-code-``` java"><code class="java">
 session.setGui(true);
 </code></pre>
+<p class="md-phrase">The <mark class="md-code md-code-` ">gui</mark> flag in a session determines whether user interactions should be performed using <b class="md-bold">graphical UI dialogs</b> or <b class="md-bold">standard console input</b>.</p>
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase">When <mark class="md-code md-code-` ">gui</mark> is <b class="md-bold">enabled</b>, interactive methods like <code class="md-code md-code-` ">NIn.readLine()</code> or <code class="md-code md-code-` ">NIn.ask()</code> may display <b class="md-bold">graphical dialogs</b> for input instead of using the terminal.</p></li><li class="md-uli"><p class="md-phrase">When <mark class="md-code md-code-` ">gui</mark> is <b class="md-bold">disabled</b> (default in headless or CLI environments), all interactions fall back to <b class="md-bold">console-based prompts</b>.</p></li></ul>
+> In GUI-enabled environments, this may pop up a dialog window rather than prompting in the console.
 
 <H4 class="md-title-2">Customize output line prefixes:</H4>
 <pre class="md-code md-code-``` java"><code class="java">
@@ -1139,7 +1160,7 @@ Supported listener types:
 <ul class="md-ul"><li class="md-uli">NWorkspaceListener</li><li class="md-uli">NRepositoryListener</li><li class="md-uli">NInstallListener</li><li class="md-uli">NObservableMapListener</li></ul>
 
 <H4 class="md-title-2">Best Practices</H4>
-<ul class="md-ul"><li class="md-uli">Use NSession.of() only when you're sure a session context exists</li><li class="md-uli">Always configure session flags (--yes, --bot, etc.) when parsing application commandlines</li><li class="md-uli"></li></ul>
+<ul class="md-ul"><li class="md-uli">Use NSession.of() only when you're sure a session context exists</li><li class="md-uli">Always configure session flags (--yes, --bot, etc.) when parsing application commandlines</li></ul>
 
 
                                 </div>
@@ -2317,7 +2338,7 @@ Automatic-Module-Name: yourgroupid.yourartifactid.YourClass
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-07-02-193400
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-07-03-082926
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
