@@ -229,13 +229,14 @@ package net.thevpc.nuts;
  *
  * import java.util.ArrayList;
  * import java.util.List;
- *
+ * @App.Info
  * public class MyApplication4 implements NApplication {
  *     public static void main(String[] args) {
- *         // just create an instance and call runAndExit in the main method
- *         new MyApplication4().run(NAppRunOptions.ofExit(args));
+ *         // just create a builer and run it
+ *         NApp.builder(args).run();
  *     }
  *
+ *     App.Main
  *     // do the main staff in launch method
  *     public void run() {
  *         NCmdLine cmdLine = session.getCmdLine();
@@ -268,51 +269,6 @@ package net.thevpc.nuts;
  * @since 0.5.5
  */
 public interface NApplication {
-
-    /**
-     * creates an instance of {@code appType} and calls runAndExit.
-     * <p>
-     * This method is intended be called in main methods of NApplication
-     * classes.
-     *
-     * @param <T>     application type
-     * @param appType application type
-     * @param args    main arguments
-     * @since 0.7.1
-     */
-    static <T extends NApplication> void main(Class<T> appType, String[] args) {
-        NApplications.createApplicationInstance(appType, args).main(NMainArgs.of(args));
-    }
-
-    /**
-     * creates an instance of {@code appType} and calls runAndExit.
-     * <p>
-     * This method is intended be called in main methods of NApplication
-     * classes.
-     *
-     * @param <T>     application type
-     * @param appType application type
-     * @param args    main arguments
-     * @since 0.7.1
-     */
-    static <T extends NApplication> void mainWithExit(Class<T> appType, String[] args) {
-        NApplications.createApplicationInstance(appType, args).main(NMainArgs.ofExit(args));
-    }
-
-    /**
-     * run the application with the given arguments. If the first arguments is
-     * in the form of --nuts-exec-mode=... the argument will be removed and the
-     * corresponding mode is activated.
-     *
-     * @param args application arguments. should not be null or contain nulls
-     */
-    default void main(NMainArgs args) {
-        if (args == null) {
-            args = new NMainArgs();
-        }
-        args.setApplicationInstance(this);
-        NApplications.runApplication(args);
-    }
 
     /**
      * this method should be overridden to perform specific business when
