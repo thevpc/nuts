@@ -13,6 +13,10 @@ import net.thevpc.nuts.util.NMsg;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author thevpc
@@ -55,8 +59,6 @@ public class JavaClassByteCode {
         this.stream = stream;
         this.visitor = visitor;
         try {
-
-
             int signature = stream.readInt();
             if (signature != 0xcafebabe) {
                 throw new NIllegalArgumentException(NMsg.ofPlain("invalid Java signature"));
@@ -118,7 +120,16 @@ public class JavaClassByteCode {
                         return;
                     }
                 }
-                if (!visitClassAttribute(thisClass, a)) {
+                if (a.entry.valString.equals("RuntimeVisibleAnnotations") || a.entry.valString.equals("RuntimeInvisibleAnnotations")) {
+
+                    DataInputStream q = new DataInputStream(new ByteArrayInputStream(a.raw));
+                    int numAnnotations = q.readUnsignedShort();
+                    for (int j = 0; j < numAnnotations; j++) {
+                        if (visitClassAnnotation(readAnnotation(q))==NVisitResult.TERMINATE) {
+                            return;
+                        }
+                    }}
+                if (visitClassAttribute(thisClass, a)==NVisitResult.TERMINATE) {
                     return;
                 }
             }
@@ -128,8 +139,69 @@ public class JavaClassByteCode {
 
     }
 
-    private boolean visitClassAttribute(String thisClass, ClassAttribute a) {
-        return true;
+    private AnnotationInfo readAnnotation(DataInputStream q) throws IOException {
+        String type = getConstantUTF(q.readUnsignedShort());
+        int numPairs = q.readUnsignedShort();
+        Map<String, Object> elements = new LinkedHashMap<>();
+        for (int i = 0; i < numPairs; i++) {
+            String elementName = getConstantUTF(q.readUnsignedShort());
+            Object value = readElementValue(q);
+            elements.put(elementName, value);
+        }
+        AnnotationInfo ai = new AnnotationInfo();
+        ai.name=type;
+        ai.args=elements;
+        return ai;
+    }
+
+    private Object readElementValue(DataInputStream q) throws IOException{
+        char tag = (char) q.readUnsignedByte();
+        switch (tag) {
+            case 's': { // String
+                return getConstantUTF(q.readUnsignedShort());
+            }
+            case 'I': // Integer
+            case 'B': // Byte
+            case 'Z': // Boolean
+            case 'S': // Short
+            case 'J': // Long
+            case 'F': // Float
+            case 'D': // Double
+            case 'C': // Char
+                return getConstant(q.readUnsignedShort()); // implement accordingly
+            case 'e': { // Enum
+                String typeName = getConstantUTF(q.readUnsignedShort());
+                String constName = getConstantUTF(q.readUnsignedShort());
+                return typeName + "." + constName;
+            }
+            case 'c': { // Class
+                return getConstantUTF(q.readUnsignedShort());
+            }
+            case '@': { // Nested annotation
+                return readAnnotation(q); // recursion
+            }
+            case '[': { // Array
+                int count = q.readUnsignedShort();
+                List<Object> arr = new ArrayList<>();
+                for (int i = 0; i < count; i++) {
+                    arr.add(readElementValue(q));
+                }
+                return arr;
+            }
+            default:
+                throw new UncheckedIOException(new IOException("Unknown annotation tag: " + tag));
+        }
+    }
+
+    private NVisitResult visitClassAnnotation(AnnotationInfo annotationInfo) {
+        if (visitor != null) {
+            return visitor.visitClassAnnotation(annotationInfo);
+        }
+        return NVisitResult.CONTINUE;
+    }
+
+    private NVisitResult visitClassAttribute(String thisClass, ClassAttribute a) {
+        return NVisitResult.CONTINUE;
     }
 
     private NVisitResult visitClassAttributeModule(ModuleInfo mi) {
@@ -300,6 +372,8 @@ public class JavaClassByteCode {
         }
 
         default NVisitResult visitClassAttributeModule(ModuleInfo mi){return NVisitResult.CONTINUE;}
+
+        default NVisitResult visitClassAnnotation(AnnotationInfo annotationInfo){return NVisitResult.CONTINUE;}
     }
 
     public static class Constant {
@@ -500,6 +574,11 @@ public class JavaClassByteCode {
         public int module_flags;
         public String module_version;
         ModuleInfoRequired[] required;
+    }
+
+    public static class AnnotationInfo {
+        public String name;
+        Map<String, Object> args;
     }
 
     public class MethodAttribute {

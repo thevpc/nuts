@@ -104,6 +104,15 @@ public class JavaClassUtils {
             }
 
             @Override
+            public NVisitResult visitClassAnnotation(JavaClassByteCode.AnnotationInfo annotationInfo) {
+                if(annotationInfo.name.equals("net/thevpc/nuts/NApp$Info")) {
+                    nutsApp.set(true);
+                    nutsAppVer.set("0.8.6");
+                }
+                return NVisitResult.CONTINUE;
+            }
+
+            @Override
             public NVisitResult visitMethod(int access, String name, String desc) {
                 if (name.equals("main") && desc.equals("([Ljava/lang/String;)V")
                         && Modifier.isPublic(access)
