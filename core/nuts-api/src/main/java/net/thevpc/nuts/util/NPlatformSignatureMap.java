@@ -14,7 +14,7 @@ public class NPlatformSignatureMap<V> {
         this.valueType = valueType;
     }
 
-    public void putMulti(NPlatformSignature sig, V value, NPlatformSignature... sigs) {
+    public void putMulti(NPlatformArgsSignature sig, V value, NPlatformArgsSignature... sigs) {
         NAssert.requireNonNull(sig);
         synchronized (map) {
             int usize = sig.size();
@@ -25,7 +25,7 @@ public class NPlatformSignatureMap<V> {
             }
             m.put(sig, value);
             if (sigs != null) {
-                for (NPlatformSignature nSig : sigs) {
+                for (NPlatformArgsSignature nSig : sigs) {
                     if (nSig != null) {
                         m.put(nSig, value);
                     }
@@ -34,7 +34,7 @@ public class NPlatformSignatureMap<V> {
         }
     }
 
-    public void put(NPlatformSignature sig, V value) {
+    public void put(NPlatformArgsSignature sig, V value) {
         NAssert.requireNonNull(sig);
         synchronized (map) {
             int usize = sig.size();
@@ -47,7 +47,7 @@ public class NPlatformSignatureMap<V> {
         }
     }
 
-    public NOptional<V> get(NPlatformSignature sig) {
+    public NOptional<V> get(NPlatformArgsSignature sig) {
         NAssert.requireNonNull(sig);
         synchronized (map) {
             NSigMapBySize<V> m = map.get(sig.size());
@@ -58,7 +58,7 @@ public class NPlatformSignatureMap<V> {
         }
     }
 
-    public void remove(NPlatformSignature sig) {
+    public void remove(NPlatformArgsSignature sig) {
         NAssert.requireNonNull(sig);
         synchronized (map) {
             NSigMapBySize<V> m = map.get(sig.size());
@@ -69,8 +69,8 @@ public class NPlatformSignatureMap<V> {
         }
     }
 
-    public Map<NPlatformSignature, V> toMap() {
-        Map<NPlatformSignature, V> all = new HashMap<>();
+    public Map<NPlatformArgsSignature, V> toMap() {
+        Map<NPlatformArgsSignature, V> all = new HashMap<>();
         for (Map.Entry<Integer, NSigMapBySize<V>> e : map.entrySet()) {
             all.putAll(e.getValue().map.toMap());
         }
@@ -86,17 +86,17 @@ public class NPlatformSignatureMap<V> {
     }
 
     private static class NSigMapBySize<V> {
-        private NOptionalMap<NPlatformSignature, V> map = new NOptionalMap<>();
+        private NOptionalMap<NPlatformArgsSignature, V> map = new NOptionalMap<>();
         private int count;
         private boolean invalidCache;
-        private Map<NPlatformSignature, ValueWithDistance<V>> cache = new HashMap<>();
-        private Set<NPlatformSignature> findInProgress = new HashSet<>();
+        private Map<NPlatformArgsSignature, ValueWithDistance<V>> cache = new HashMap<>();
+        private Set<NPlatformArgsSignature> findInProgress = new HashSet<>();
 
         public NSigMapBySize(int count) {
             this.count = count;
         }
 
-        public NOptional<V> get(NPlatformSignature sig) {
+        public NOptional<V> get(NPlatformArgsSignature sig) {
             if (invalidCache) {
                 NOptional<V> v = map.get(sig);
                 if (v.isPresent()) {
@@ -121,7 +121,7 @@ public class NPlatformSignatureMap<V> {
             return NOptional.ofNullable(vd.getValueNonAmbiguous());
         }
 
-        public ValueWithDistance<V> find(NPlatformSignature sig, int distance) {
+        public ValueWithDistance<V> find(NPlatformArgsSignature sig, int distance) {
             if (findInProgress.contains(sig)) {
                 return null;
             }
@@ -156,7 +156,7 @@ public class NPlatformSignatureMap<V> {
             }
         }
 
-        private void findClassAtPos(NPlatformSignature sig, int i, Class c, ValueWithDistanceBestResolver<V> bestResolver, int distance) {
+        private void findClassAtPos(NPlatformArgsSignature sig, int i, Class c, ValueWithDistanceBestResolver<V> bestResolver, int distance) {
             if (c.isPrimitive()) {
                 NOptional<Class<?>> bt = NReflectUtils.toBoxedType(c);
                 ValueWithDistance<V> vd = find(sig.set(bt.get(), i), distance + 1);
@@ -180,7 +180,7 @@ public class NPlatformSignatureMap<V> {
             }
         }
 
-        public NOptional<V> remove(NPlatformSignature uplet) {
+        public NOptional<V> remove(NPlatformArgsSignature uplet) {
             NOptional<V> r = map.remove(uplet);
             if (r.isPresent()) {
                 invalidCache = true;
@@ -188,7 +188,7 @@ public class NPlatformSignatureMap<V> {
             return r;
         }
 
-        public void put(NPlatformSignature uplet, V value) {
+        public void put(NPlatformArgsSignature uplet, V value) {
             NOptional<V> o = map.put(uplet, value);
             if (!o.isPresent() || !Objects.equals(o.orNull(), value)) {
                 invalidCache = true;
@@ -223,32 +223,32 @@ public class NPlatformSignatureMap<V> {
     }
 
     private static class ValueWithDistance<V> {
-        NPlatformSignature key;
-        NPlatformSignature effKey;
+        NPlatformArgsSignature key;
+        NPlatformArgsSignature effKey;
         V value;
         List<ValueWithDistance<V>> pointers;
         int distance;
         boolean empty;
 
-        public static <V> ValueWithDistance<V> ofSimple(NPlatformSignature key, NPlatformSignature effKey, int distance, V value) {
+        public static <V> ValueWithDistance<V> ofSimple(NPlatformArgsSignature key, NPlatformArgsSignature effKey, int distance, V value) {
             return new ValueWithDistance<V>(
                     key, effKey, value, null, distance, false
             );
         }
 
-        public static <V> ValueWithDistance<V> ofPointers(NPlatformSignature key, int distance, List<ValueWithDistance<V>> values) {
+        public static <V> ValueWithDistance<V> ofPointers(NPlatformArgsSignature key, int distance, List<ValueWithDistance<V>> values) {
             if (values.size() == 0) {
                 return ofEmpty(key);
             }
             V value = null;
-            NPlatformSignature effKey1 = key;
+            NPlatformArgsSignature effKey1 = key;
             if (values.size() == 1) {
                 value = values.get(0).value;
                 effKey1 = values.get(0).effKey;
             }
             //remove duplicates if the very same impl (aka effective key)
             if (values.size() > 1) {
-                LinkedHashMap<NPlatformSignature, ValueWithDistance<V>> valuesMap = new LinkedHashMap<>();
+                LinkedHashMap<NPlatformArgsSignature, ValueWithDistance<V>> valuesMap = new LinkedHashMap<>();
                 for (ValueWithDistance<V> v : values) {
                     if (!valuesMap.containsKey(v.effKey)) {
                         valuesMap.put(v.effKey, v);
@@ -277,13 +277,13 @@ public class NPlatformSignatureMap<V> {
             );
         }
 
-        public static <V> ValueWithDistance<V> ofEmpty(NPlatformSignature key) {
+        public static <V> ValueWithDistance<V> ofEmpty(NPlatformArgsSignature key) {
             return new ValueWithDistance<V>(
                     key, key, null, null, 0, true
             );
         }
 
-        public ValueWithDistance(NPlatformSignature key, NPlatformSignature effKey, V value, List<ValueWithDistance<V>> values, int distance, boolean empty) {
+        public ValueWithDistance(NPlatformArgsSignature key, NPlatformArgsSignature effKey, V value, List<ValueWithDistance<V>> values, int distance, boolean empty) {
             this.key = key;
             this.effKey = effKey;
             this.value = value;

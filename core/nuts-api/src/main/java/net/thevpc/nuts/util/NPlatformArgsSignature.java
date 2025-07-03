@@ -7,17 +7,17 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class NPlatformSignature {
+public class NPlatformArgsSignature {
     private Type[] types;
     private boolean vararg;
 
-    public static NPlatformSignature of(Type... types) {
-        return new NPlatformSignature(types, false);
+    public static NPlatformArgsSignature of(Type... types) {
+        return new NPlatformArgsSignature(types, false);
     }
 
-    public static NPlatformSignature ofVarArgs(Type... types) {
+    public static NPlatformArgsSignature ofVarArgs(Type... types) {
         checkVararg(types);
-        return new NPlatformSignature(types, true);
+        return new NPlatformArgsSignature(types, true);
     }
 
     private static void checkVararg(Type... types) {
@@ -33,7 +33,7 @@ public class NPlatformSignature {
         }
     }
 
-    private NPlatformSignature(Type[] types, boolean vararg) {
+    private NPlatformArgsSignature(Type[] types, boolean vararg) {
         this.types = types;
         this.vararg = vararg;
     }
@@ -42,21 +42,21 @@ public class NPlatformSignature {
         return types[index];
     }
 
-    public NPlatformSignature setVararg(boolean vararg) {
+    public NPlatformArgsSignature setVararg(boolean vararg) {
         if (vararg) {
             checkVararg(types);
         }
         Type[] types2 = Arrays.copyOfRange(types, 0, types.length);
-        return new NPlatformSignature(types2, vararg);
+        return new NPlatformArgsSignature(types2, vararg);
     }
 
-    public NPlatformSignature set(Type any, int pos) {
+    public NPlatformArgsSignature set(Type any, int pos) {
         Type[] types2 = Arrays.copyOfRange(types, 0, types.length);
         types2[pos] = any;
         if (vararg) {
             checkVararg(types2);
         }
-        return new NPlatformSignature(types2, vararg);
+        return new NPlatformArgsSignature(types2, vararg);
     }
 
     public int size() {
@@ -112,7 +112,7 @@ public class NPlatformSignature {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        NPlatformSignature nSig = (NPlatformSignature) o;
+        NPlatformArgsSignature nSig = (NPlatformArgsSignature) o;
         return vararg == nSig.vararg && Objects.deepEquals(types, nSig.types);
     }
 
@@ -121,7 +121,7 @@ public class NPlatformSignature {
         return Objects.hash(Arrays.hashCode(types), vararg);
     }
 
-    public boolean matches(NPlatformSignature other) {
+    public boolean matches(NPlatformArgsSignature other) {
         int mySize = this.size();
         boolean vararg1 = isVararg();
         if (vararg1 && other.size() == mySize - 1) {
