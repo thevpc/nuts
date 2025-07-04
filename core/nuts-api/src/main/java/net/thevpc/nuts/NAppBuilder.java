@@ -133,7 +133,7 @@ public class NAppBuilder {
         return nutsArgs;
     }
 
-    public NAppBuilder setNutsArgs(String[] nutsArgs) {
+    public NAppBuilder setNutsArgs(String... nutsArgs) {
         this.nutsArgs = nutsArgs;
         return this;
     }
