@@ -69,7 +69,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                         })
                         .sorted((x, y) -> x.getName().compareTo(y.getName()))
                         .collect(Collectors.toList());
-                if (session.isPlainOut()) {
+                if (NOut.isPlain()) {
                     NPropertiesFormat.of().setValue(
                             r.stream().collect(
                                     Collectors.toMap(

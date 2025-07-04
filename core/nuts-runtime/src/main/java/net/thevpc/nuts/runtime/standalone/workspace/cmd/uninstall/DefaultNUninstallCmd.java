@@ -81,7 +81,7 @@ public class DefaultNUninstallCmd extends AbstractNUninstallCmd {
     private void printList(NPrintStream out, String skind, String saction, List<NId> all) {
         if (all.size() > 0) {
             NSession session=NSession.of();
-            if (session.isPlainOut()) {
+            if (NOut.isPlain()) {
                 NTexts text = NTexts.of();
                 NText kind = text.ofStyled(skind, NTextStyle.primary2());
                 NText action =

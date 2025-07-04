@@ -278,11 +278,10 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
             }
             case "-g":
             case "--args": {
-                cmdLine.withNextTrueFlag((v) -> {
+                return cmdLine.selector().withNextTrueFlag((v) -> {
                     this.addArgs(cmdLine.toStringArray());
                     cmdLine.skipAll();
-                });
-                return true;
+                }).anyMatch();
             }
             default: {
                 if (super.configureFirst(cmdLine)) {

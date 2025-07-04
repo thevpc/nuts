@@ -68,10 +68,10 @@ public class ZipInstallerComponent implements NInstallerComponent {
         NCmdLine cmd = NCmdLine.of(executionContext.getArguments());
         UnzipOptions unzipOptions = new UnzipOptions();
         while (cmd.hasNext()) {
-            if (!cmd.withNextFlag((v) -> {
+            if (!cmd.selector().with("--unzip-skip-root").nextFlag((v) -> {
                 unzipOptions.setSkipRoot(v.booleanValue());
-            }, "--unzip-skip-root")) {
-                cmd.next();
+            }).anyMatch()) {
+                cmd.skip();
             }
         }
         try {

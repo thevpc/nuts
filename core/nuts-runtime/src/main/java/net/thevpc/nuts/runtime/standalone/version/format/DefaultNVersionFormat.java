@@ -107,7 +107,7 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
         if (!isNtf()) {
             out = out.setTerminalMode(NTerminalMode.FILTERED);
         }
-        if (session.isPlainOut()) {
+        if (NOut.isPlain()) {
             if (isWorkspaceVersion()) {
                 out.print((NMsg.ofC("%s/%s", session.getWorkspace().getApiVersion(), session.getWorkspace().getRuntimeId().getVersion())));
             } else {

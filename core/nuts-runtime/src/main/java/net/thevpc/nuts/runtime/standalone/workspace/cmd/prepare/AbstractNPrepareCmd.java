@@ -54,6 +54,11 @@ public abstract class AbstractNPrepareCmd extends NWorkspaceCmdBase<NPrepareCmd>
         return this;
     }
 
+    public AbstractNPrepareCmd setTargetHome(String targetHome) {
+        this.targetHome = targetHome;
+        return this;
+    }
+
     @Override
     public NPrepareCmd setIds(List<NId> ids) {
         if (this.ids == null) {
@@ -96,25 +101,12 @@ public abstract class AbstractNPrepareCmd extends NWorkspaceCmdBase<NPrepareCmd>
         if (a == null) {
             return false;
         }
-        if (super.configureFirst(cmdLine)) {
-            return true;
-        } else if (cmdLine.withNextEntry((v) -> {
-            setUserName(v.stringValue());
-        }, "--user")) {
-            return true;
-        } else if (cmdLine.withNextEntry((v) -> {
-            setTargetServer(v.stringValue());
-        }, "--target-server")) {
-            return true;
-        } else if (cmdLine.withNextEntry((v) -> {
-            setVersion(v.stringValue());
-        }, "--version")) {
-            return true;
-        } else if (cmdLine.withNextEntry((v) -> {
-            this.targetHome = v.stringValue();
-        }, "--target-home")) {
-            return true;
-        }
-        return false;
+        return cmdLine.selector()
+                .withProcessor((aa,c)->super.configureFirst(cmdLine))
+                .with("--user").nextEntry((v) ->  setUserName(v.stringValue()))
+                .with("--target-server").nextEntry((v) ->  setTargetServer(v.stringValue()))
+                .with("--version").nextEntry((v) ->  setVersion(v.stringValue()))
+                .with("--target-home").nextEntry((v) ->  setTargetHome(v.stringValue()))
+                .anyMatch();
     }
 }

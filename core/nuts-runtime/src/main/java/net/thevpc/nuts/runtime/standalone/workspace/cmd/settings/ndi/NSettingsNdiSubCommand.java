@@ -147,12 +147,12 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 case "-x":
                 case "--external":
                 case "--spawn": {
-                    cmdLine.withNextTrueFlag((v) -> d.options.getLauncher().getNutsOptions().add("--spawn"));
+                    cmdLine.selector().withNextTrueFlag((v) -> d.options.getLauncher().getNutsOptions().add("--spawn")).anyMatch();
                     break;
                 }
                 case "-b":
                 case "--embedded": {
-                    cmdLine.withNextTrueFlag((v) -> d.options.getLauncher().getNutsOptions().add("--embedded"));
+                    cmdLine.selector().withNextTrueFlag((v) -> d.options.getLauncher().getNutsOptions().add("--embedded")).anyMatch();
                     break;
                 }
                 case "--terminal": {
@@ -165,15 +165,15 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     break;
                 }
                 case "--system": {
-                    cmdLine.withNextTrueFlag((v) -> d.options.getLauncher().getNutsOptions().add("--system"));
+                    cmdLine.selector().withNextTrueFlag((v) -> d.options.getLauncher().getNutsOptions().add("--system")).anyMatch();
                     break;
                 }
                 case "--current-user": {
-                    cmdLine.withNextTrueFlag((v) -> d.options.getLauncher().getNutsOptions().add("--current-user"));
+                    cmdLine.selector().withNextTrueFlag((v) -> d.options.getLauncher().getNutsOptions().add("--current-user")).anyMatch();
                     break;
                 }
                 case "--as-root": {
-                    cmdLine.withNextTrueFlag((v) -> d.options.getLauncher().getNutsOptions().add("--as-root"));
+                    cmdLine.selector().withNextTrueFlag((v) -> d.options.getLauncher().getNutsOptions().add("--as-root")).anyMatch();
                     break;
                 }
                 case "--run-as": {
@@ -187,7 +187,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 }
                 case "-i":
                 case "--installed": {
-                    cmdLine.withNextTrueFlag((v) -> {
+                    cmdLine.selector().withNextTrueFlag((v) -> {
                         session.setConfirm(NConfirmationMode.YES);
                         for (NId resultId : NSearchCmd.of()
                                 .setDefinitionFilter(NDefinitionFilters.of().byInstalled(true)
@@ -195,18 +195,18 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                             d.idsToInstall.add(resultId.getLongName());
                             d.missingAnyArgument = false;
                         }
-                    });
+                    }).anyMatch();
                     break;
                 }
                 case "-c":
                 case "--companions": {
-                    cmdLine.withNextTrueFlag((v) -> {
+                    cmdLine.selector().withNextTrueFlag((v) -> {
                         session.setConfirm(NConfirmationMode.YES);
                         for (NId companion : NExtensions.of().getCompanionIds()) {
                             d.idsToInstall.add(NSearchCmd.of().addId(companion).setLatest(true).getResultIds().findFirst().get().getLongName());
                             d.missingAnyArgument = false;
                         }
-                    });
+                    }).anyMatch();
                     break;
                 }
                 case "--switch": {

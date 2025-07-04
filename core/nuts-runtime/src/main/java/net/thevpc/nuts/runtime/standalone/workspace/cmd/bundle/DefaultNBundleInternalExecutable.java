@@ -280,7 +280,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     rootFolder.deleteTree();
                 }
                 if (nSession.isTrace()) {
-                    if (nSession.isPlainOut()) {
+                    if (NOut.isPlain()) {
                         NTrace.out().println(NMsg.ofC("bundle created %s in %s", target, allChrono.stop().getDuration()));
                     } else {
                         NTrace.out().println(NMapBuilder.of().put("bundlePath", target).build());
@@ -303,7 +303,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     rootFolder.deleteTree();
                 }
                 if (nSession.isTrace()) {
-                    if (nSession.isPlainOut()) {
+                    if (NOut.isPlain()) {
                         NTrace.out().println(NMsg.ofC("bundle created %s in %s", target, allChrono.stop().getDuration()));
                     } else {
                         NTrace.out().println(NMapBuilder.of().put("bundlePath", target).build());
@@ -315,7 +315,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
             case EXPLODED: {
                 NPath target = rootFolder.toAbsolute();
                 if (nSession.isTrace()) {
-                    if (nSession.isPlainOut()) {
+                    if (NOut.isPlain()) {
                         NTrace.out().println(NMsg.ofC("bundle created %s in %s", target, allChrono.stop().getDuration()));
                     } else {
                         NTrace.out().println(NMapBuilder.of().put("bundlePath", target).build());

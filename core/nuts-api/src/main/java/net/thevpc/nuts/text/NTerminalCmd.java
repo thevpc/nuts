@@ -64,8 +64,8 @@ public final class NTerminalCmd {
         this.args = NReservedLangUtils.unmodifiableList(args);
     }
 
-    public static NTerminalCmd MOVE_TO(int row, int col) {
-        return new NTerminalCmd(Ids.MOVE_TO, Arrays.asList(String.valueOf(row), String.valueOf(col)));
+    public static NTerminalCmd MOVE_TO(int col, int row) {
+        return new NTerminalCmd(Ids.MOVE_TO, Arrays.asList(String.valueOf(col),String.valueOf(row)));
     }
 
     public static NTerminalCmd MOVE_RIGHT(int count) {

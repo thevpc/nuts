@@ -328,10 +328,10 @@ public class NAnsiTermHelper {
             case NTerminalCmd.Ids.MOVE_TO: {
                 List<String> a = command.getArgs();
                 if (a.size() >= 2) {
-                    Integer count1 = NLiteral.of(a.get(0)).asInt().orNull();
-                    Integer count2 = NLiteral.of(a.get(1)).asInt().orNull();
-                    if (count1 != null && count2 != null) {
-                        return ("\u001b[" + count1 + ";" + count2 + "H");
+                    Integer col = NLiteral.of(a.get(0)).asInt().orNull();
+                    Integer row = NLiteral.of(a.get(1)).asInt().orNull();
+                    if (col != null && row != null) {
+                        return ("\u001b[" + row + ";" + col + "H");
                     }
                 }
                 return null;

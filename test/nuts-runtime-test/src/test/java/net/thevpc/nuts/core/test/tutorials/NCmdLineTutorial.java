@@ -61,12 +61,12 @@ public class NCmdLineTutorial {
                     switch (arg.key()) {
                         case "-o":
                         case "--option": {
-                            cmdLine.withNextFlag((v) -> boolOption.set(v.booleanValue()));
+                            cmdLine.selector().withNextFlag((v) -> boolOption.set(v.booleanValue())).require();
                             return true;
                         }
                         case "-n":
                         case "--name": {
-                            cmdLine.withNextEntry((v) -> stringOption.set(v.stringValue()));
+                            cmdLine.selector().withNextEntry((v) -> stringOption.set(v.stringValue())).require();
                             return true;
                         }
                     }
@@ -102,12 +102,12 @@ public class NCmdLineTutorial {
                 switch (a.key()) {
                     case "-o":
                     case "--option": {
-                        cmdLine1.withNextFlag((v) -> boolOption.set(v.booleanValue()));
+                        cmdLine1.selector().withNextFlag((v) -> boolOption.set(v.booleanValue())).require();
                         return true;
                     }
                     case "-n":
                     case "--name": {
-                        cmdLine1.withNextEntry((v) -> stringOption.set(v.stringValue()));
+                        cmdLine1.selector().withNextEntry((v) -> stringOption.set(v.stringValue())).require();
                         return true;
                     }
                 }
@@ -125,16 +125,12 @@ public class NCmdLineTutorial {
         NRef<String> stringOption = NRef.ofNull();
         List<String> nonOptions = new ArrayList<>();
         while (cmdLine.hasNext()) {
-            if (!cmdLine.withFirst(
-                    (arg, c) -> c.with("-o","--option").nextFlag((v) -> boolOption.set(v.booleanValue()))
-                    , (arg, c) -> c.with("-n","--name").nextEntry((v) -> stringOption.set(v.stringValue()))
-            )) {
-                if (cmdLine.peekNonOption().isPresent()) {
-                    nonOptions.add(cmdLine.next().get().toString());
-                } else {
-                    NSession.of().configureLast(cmdLine);
-                }
-            }
+            cmdLine.selector()
+                    .with("-o", "--option").nextFlag((v) -> boolOption.set(v.booleanValue()))
+                    .with("-n", "--name").nextEntry((v) -> stringOption.set(v.stringValue()))
+                    .withNonOption().next(v -> nonOptions.add(v.getImage()))
+                    .requireWithDefault();
         }
     }
+}
 }

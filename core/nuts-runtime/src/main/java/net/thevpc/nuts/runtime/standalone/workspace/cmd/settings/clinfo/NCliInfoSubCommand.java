@@ -20,24 +20,17 @@ public class NCliInfoSubCommand extends AbstractNSettingsSubCommand {
 
     @Override
     public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
-        if(cmdLine.withNextEntry((v)->{
-            if(NBlankable.isBlank(v)){
-                doLoadCliId();
-            }else{
-                doSaveCliId(v.stringValue());
-            }
-        },"cli-id")){
-            return true;
-        }
-        if (cmdLine.next("get cli-id").isPresent()) {
-            doLoadCliId();
-            return true;
-        }else if (cmdLine.next("set cli-id").isPresent()) {
-            String value = cmdLine.nextNonOption().get().toString();
-            doSaveCliId(value);
-            return true;
-        }
-        return false;
+        return cmdLine
+                .selector().with("cli-id").nextEntry((v) -> {
+                    if (NBlankable.isBlank(v)) {
+                        doLoadCliId();
+                    } else {
+                        doSaveCliId(v.stringValue());
+                    }
+                })
+                .with("get cli-id").next(a -> doLoadCliId())
+                .with("set cli-id").next((a) -> doLoadCliId())
+                .anyMatch();
     }
 
     private void doSaveCliId(String value) {

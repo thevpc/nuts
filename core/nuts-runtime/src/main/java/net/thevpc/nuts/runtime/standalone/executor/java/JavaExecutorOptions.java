@@ -302,12 +302,12 @@ public final class JavaExecutorOptions {
         if (this.jar) {
             NSession session = NSession.of();
             if (this.mainClass != null) {
-                if (session.isPlainOut()) {
+                if (NOut.isPlain()) {
                     session.getTerminal().err().println((NMsg.ofC("ignored main-class=%s. running jar!", getMainClass())));
                 }
             }
             if (!currentCP.isEmpty()) {
-                if (session.isPlainOut()) {
+                if (NOut.isPlain()) {
                     session.getTerminal().err().println(NMsg.ofC("ignored class-path=%s. running jar!", currentCP
                             .stream()
                             .map(x -> x.getURL().toString()).collect(Collectors.joining(","))
@@ -428,7 +428,6 @@ public final class JavaExecutorOptions {
             }
 
             if (this.mainClass.contains(":")) {
-                NSession session = NSession.of();
                 List<String> possibleClasses = StringTokenizerUtils.split(getMainClass(), ":");
                 switch (possibleClasses.size()) {
                     case 0:
@@ -437,8 +436,8 @@ public final class JavaExecutorOptions {
                         //
                         break;
                     default: {
-                        if (!session.isPlainOut()
-                                || session.isBot()
+                        if (!NOut.isPlain()
+                                || NSession.of().isBot()
 //                                    || !session.isAsk()
                         ) {
                             throw new NExecutionException(NMsg.ofC("multiple runnable classes detected : %s", possibleClasses), NExecutionException.ERROR_1);

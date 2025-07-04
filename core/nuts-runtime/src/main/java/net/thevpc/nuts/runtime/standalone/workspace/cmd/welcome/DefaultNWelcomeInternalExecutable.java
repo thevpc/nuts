@@ -56,7 +56,7 @@ public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutabl
             }
         }
 
-        if (session.isPlainOut()) {
+        if (NOut.isPlain()) {
             NOut.resetLine().println(NWorkspaceExt.of().getWelcomeText());
         } else {
             Map<String, Object> welcome = new LinkedHashMap<>();
@@ -72,7 +72,7 @@ public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutabl
             welcome.put("runtime-version", session.getWorkspace().getRuntimeId().getVersion());
             welcome.put("workspace", NWorkspace.of().getWorkspaceLocation());
             welcome.put("hash-name", NPath.of(session.getWorkspace().getDigestName()));
-            if (session.isPlainOut()) {
+            if (NOut.isPlain()) {
                 session = session.copy().setOutputFormat(NContentType.PROPS);
             }
             NOut.resetLine().println(welcome);

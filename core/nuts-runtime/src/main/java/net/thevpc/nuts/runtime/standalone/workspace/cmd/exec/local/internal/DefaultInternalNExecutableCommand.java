@@ -70,13 +70,12 @@ public class DefaultInternalNExecutableCommand extends AbstractNExecutableInform
 
 
     public void dryExecute() {
-        NSession session = NSession.of();
         if (NAppUtils.processHelpOptions(args)) {
             NOut.println("[dry] ==show-help==");
             return;
         }
         NTexts text = NTexts.of();
-        if (session.isPlainOut()) {
+        if (NOut.isPlain()) {
             NOut.println(NMsg.ofC("[dry] %s%n",
                     text.ofBuilder()
                             .append("internal", NTextStyle.pale())

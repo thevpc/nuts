@@ -1,7 +1,6 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NTerminalCmd;
@@ -187,6 +186,58 @@ public class NOut {
         return out().resetLine();
     }
 
+    public static NPrintStream clearScreen() {
+        return out().run(NTerminalCmd.CLEAR_SCREEN);
+    }
+
+    public static NPrintStream clearLine() {
+        return out().run(NTerminalCmd.CLEAR_LINE);
+    }
+
+    public static NPrintStream clearLineToCursor() {
+        return out().run(NTerminalCmd.CLEAR_LINE_TO_CURSOR);
+    }
+
+    public static NPrintStream clearLineFromCursor() {
+        return out().run(NTerminalCmd.CLEAR_LINE_FROM_CURSOR);
+    }
+
+    public static NPrintStream moveCursorUp(int count) {
+        return out().run(NTerminalCmd.MOVE_UP(count));
+    }
+
+    public static NPrintStream moveCursorDown(int count) {
+        return out().run(NTerminalCmd.MOVE_DOWN(count));
+    }
+
+    public static NPrintStream moveCursorLeft(int count) {
+        return out().run(NTerminalCmd.MOVE_LEFT(count));
+    }
+
+    public static NPrintStream moveCursorRight(int count) {
+        return out().run(NTerminalCmd.MOVE_RIGHT(count));
+    }
+
+    public static NPrintStream moveCursorUp() {
+        return out().run(NTerminalCmd.MOVE_UP);
+    }
+
+    public static NPrintStream moveCursorDown() {
+        return out().run(NTerminalCmd.MOVE_DOWN);
+    }
+
+    public static NPrintStream moveCursorLeft() {
+        return out().run(NTerminalCmd.MOVE_LEFT);
+    }
+
+    public static NPrintStream moveCursorRight() {
+        return out().run(NTerminalCmd.MOVE_RIGHT);
+    }
+
+    public static NPrintStream moveCursorTo(int column,int row) {
+        return out().run(NTerminalCmd.MOVE_TO(column, row));
+    }
+
     public static NPrintStream print(CharSequence csq) {
         return out().print(csq);
     }
@@ -254,5 +305,9 @@ public class NOut {
      */
     public static void printProgress(NMsg message) {
         NSession.of().getTerminal().printProgress(message);
+    }
+
+    public static boolean isPlain() {
+        return NSession.of().isPlainOut();
     }
 }

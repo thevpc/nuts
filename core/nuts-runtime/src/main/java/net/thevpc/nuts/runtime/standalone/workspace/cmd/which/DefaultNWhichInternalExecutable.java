@@ -66,7 +66,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                 try (NExecutableInformation p = getExecCommand().copy().clearCommand().configure(false, arg).which()){
                     switch (p.getType()) {
                         case SYSTEM: {
-                            if (session.isPlainOut()) {
+                            if (NOut.isPlain()) {
                                 out.println(NMsg.ofC("%s : %s %s",
                                         factory.ofStyled(arg, NTextStyle.primary4()),
                                         factory.ofStyled("system command", NTextStyle.primary6())
@@ -84,7 +84,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                             break;
                         }
                         case ALIAS: {
-                            if (session.isPlainOut()) {
+                            if (NOut.isPlain()) {
                                 out.println(NMsg.ofC("%s : %s (owner %s ) : %s",
                                         factory.ofStyled(arg, NTextStyle.primary4()),
                                         factory.ofStyled("nuts alias", NTextStyle.primary6()),
@@ -112,7 +112,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                                     throw new NNotFoundException(null, NMsg.ofC("artifact not found: %s%s", (arg == null ? "<null>" : arg)));
                                 }
                             }
-                            if (session.isPlainOut()) {
+                            if (NOut.isPlain()) {
                                 out.println(NMsg.ofC("%s : %s %s",
                                         factory.ofStyled(arg, NTextStyle.primary4()),
                                         factory.ofStyled("artifact", NTextStyle.primary6()),
@@ -131,7 +131,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                             break;
                         }
                         case INTERNAL: {
-                            if (session.isPlainOut()) {
+                            if (NOut.isPlain()) {
                                 out.println(NMsg.ofC("%s : %s",
                                         factory.ofStyled("internal command", NTextStyle.primary6()),
                                         factory.ofStyled(arg, NTextStyle.primary4())
@@ -148,7 +148,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                             break;
                         }
                         case UNKNOWN: {
-                            if (session.isPlainOut()) {
+                            if (NOut.isPlain()) {
                                 out.println(NMsg.ofC("%s : %s",
                                         factory.ofStyled("unknown command", NTextStyle.primary6()),
                                         factory.ofStyled(arg, NTextStyle.primary4())
@@ -170,7 +170,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
 //                    out.printf("\t %s%n", arg/*, p.getDescription()*/);
 //                }
             } catch (NNotFoundException ex) {
-                if (session.isPlainOut()) {
+                if (NOut.isPlain()) {
                     out.println(NMsg.ofC("%s : %s", factory.ofStyled(arg, NTextStyle.primary4()), factory.ofStyled("not found", NTextStyle.error())));
                 } else {
                     session.eout().add(

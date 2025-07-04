@@ -33,6 +33,7 @@ import net.thevpc.nuts.util.NOptional;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * Simple Command line parser implementation. The command line supports
@@ -412,7 +413,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      */
     NOptional<NArg> nextEntry(String... names);
 
-    boolean withFirst(NCmdLineProcessor... processors);
+    Selector selector();
 
     /**
      * consume next argument with boolean value and run {@code consumer}
@@ -421,42 +422,12 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      */
     boolean withNextFlag(Consumer<NArg> consumer);
 
-    boolean withNextOptionalFlag(Consumer<NOptional<Boolean>> consumer);
-
-    boolean withNextOptionalFlag(Consumer<NOptional<Boolean>> consumer, String... names);
-
-    boolean withNextTrueFlag(Consumer<NArg> consumer);
-
-    /**
-     * consume next argument with boolean value and run {@code consumer}
-     *
-     * @param names names
-     * @return true if active
-     */
-    boolean withNextFlag(Consumer<NArg> consumer, String... names);
-
-    boolean withNextTrueFlag(Consumer<NArg> consumer, String... names);
-
-    boolean withNextOptionalEntry(Consumer<NOptional<String>> consumer);
-
-    boolean withNextOptionalEntry(Consumer<NOptional<String>> consumer, String... names);
-
     /**
      * consume next argument with string value and run {@code consumer}
      *
      * @return true if active
      */
     boolean withNextEntry(Consumer<NArg> consumer);
-
-    /**
-     * consume next argument with string value and run {@code consumer}
-     *
-     * @param names names
-     * @return true if active
-     */
-    boolean withNextEntry(Consumer<NArg> consumer, String... names);
-
-    NCmdLineArgProcessor with(String... names);
 
     /**
      * next argument as entry (key=value). equivalent to next(NArgType.ENTRY,{})
@@ -698,68 +669,50 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
 
     NCmdLine copy();
 
-    /// /////////////////////// LOOKUPS
-
-    /**
-     * search for the given named flag without consuming ar altering the current Commandline.
-     * WARNING: this method can be slow as it might work on a copy of the current NCommandLine instance
-     *
-     * @param consumer consumer to call when the argument is found
-     * @return true if found and the consumer is invoked
-     */
-    boolean lookupNextFlag(Consumer<NArg> consumer);
-
-    /**
-     * search for the given named flag without consuming ar altering the current
-     * Commandline. WARNING: this method can be slow as it might work on a copy
-     * of the current NCommandLine instance
-     *
-     * @param consumer consumer to call when the argument is found
-     * @return true if found and the consumer is invoked
-     */
-    boolean lookupNextTrueFlag(Consumer<NArg> consumer);
-
-    /**
-     * search for the given named flag without consuming ar altering the current
-     * Commandline. WARNING: this method can be slow as it might work on a copy
-     * of the current NCommandLine instance
-     *
-     * @param consumer consumer to call when the argument is found
-     * @return true if found and the consumer is invoked
-     */
-    boolean lookupNextFlag(Consumer<NArg> consumer, String... names);
-
-    /**
-     * search for the given named flag without consuming ar altering the current
-     * Commandline. WARNING: this method can be slow as it might work on a copy
-     * of the current NCommandLine instance
-     *
-     * @param consumer consumer to call when the argument is found
-     * @return true if found and the consumer is invoked
-     */
-    boolean lookupNextTrueFlag(Consumer<NArg> consumer, String... names);
-
-    /**
-     * search for the given named flag without consuming ar altering the current
-     * Commandline. WARNING: this method can be slow as it might work on a copy
-     * of the current NCommandLine instance
-     *
-     * @param consumer consumer to call when the argument is found
-     * @return true if found and the consumer is invoked
-     */
-    boolean lookupNextEntry(Consumer<NArg> consumer);
-
-    /**
-     * search for the given named flag without consuming ar altering the current
-     * Commandline. WARNING: this method can be slow as it might work on a copy
-     * of the current NCommandLine instance
-     *
-     * @param consumer consumer to call when the argument is found
-     * @return true if found and the consumer is invoked
-     */
-    boolean lookupNextEntry(Consumer<NArg> consumer, String... names);
-
     NShellFamily getShellFamily();
 
     NCmdLine setShellFamily(NShellFamily shellFamily);
+
+    interface Selector{
+        Selector withProcessor(NCmdLineProcessor processor);
+
+        Selector withNextFlag(Consumer<NArg> consumer);
+
+        Selector withNextEntry(Consumer<NArg> consumer) ;
+
+        Selector withNext(Consumer<NArg> consumer);
+        Selector withNextTrueFlag(Consumer<NArg> consumer);
+        NCmdLineArgProcessorHolder withAny();
+        NCmdLineArgProcessorHolder with(String... names);
+        NCmdLineArgProcessorHolder withCondition(Predicate<NCmdLine> condition);
+        NCmdLineArgProcessorHolder withNonOption();
+        NCmdLineArgProcessorHolder withOption();
+        boolean anyMatch();
+        boolean noMatch();
+        void requireWithDefault();
+        void require();
+        Selector withDefaultLast();
+        Selector withDefaultFirst();
+    }
+
+    public interface NCmdLineArgProcessorHolder {
+        /**
+         * consume next argument with boolean value and run {@code consumer}
+         *
+         * @return true if active
+         */
+        Selector nextFlag(Consumer<NArg> consumer);
+
+        /**
+         * consume next argument with string value and run {@code consumer}
+         *
+         * @return true if active
+         */
+        Selector nextEntry(Consumer<NArg> consumer);
+        Selector next(Consumer<NArg> consumer);
+        Selector runCmdLine(Consumer<NCmdLine> consumer);
+
+        Selector nextTrueFlag(Consumer<NArg> consumer);
+    }
+
 }

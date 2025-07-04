@@ -83,7 +83,7 @@ public class NSettingsLogSubCommand extends AbstractNSettingsSubCommand {
             }
         } else if (cmdLine.next("install log").isPresent()) {
             if (cmdLine.isExecMode()) {
-                if(session.isPlainOut()) {
+                if(NOut.isPlain()) {
                     for (NInstallLogRecord r : NWorkspaceExt.of().getInstalledRepository().findLog()) {
                         NTexts txt = NTexts.of();
                         NOut.print(

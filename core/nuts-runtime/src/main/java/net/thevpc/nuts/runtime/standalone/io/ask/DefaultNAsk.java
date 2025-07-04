@@ -89,7 +89,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
                 }
             }
         }
-        if (!session.isPlainOut()) {
+        if (!NOut.isPlain()) {
             NMemoryPrintStream os = NMemoryPrintStream.of();
             os.print(message);
             os.flush();

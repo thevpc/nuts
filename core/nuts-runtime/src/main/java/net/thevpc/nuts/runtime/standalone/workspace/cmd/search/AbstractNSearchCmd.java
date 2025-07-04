@@ -667,7 +667,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
             }
             case "--default":
             case "--default-versions": {
-                cmdLine.withNextOptionalFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byDefaultVersion(v.ifError(false).orElse(null))));
+                cmdLine.selector().withNextFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byDefaultVersion(v.getBooleanValue().ifError(false).orElse(null))));
                 return true;
             }
             case "--duplicates": {
