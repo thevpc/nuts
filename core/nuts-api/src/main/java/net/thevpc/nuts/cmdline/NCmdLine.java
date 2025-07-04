@@ -225,7 +225,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
 
     /**
      * register {@code options} as simple (with simple '-') option. This method
-     * helps considering '-version' as a single simple options when
+     * helps consider '-version' as a single simple options when
      * {@code isExpandSimpleOptions()==true}
      *
      * @param option option
@@ -235,7 +235,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
 
     /**
      * test if the option is a registered simple option This method helps
-     * considering '-version' as a single simple options when
+     * consider '-version' as a single simple options when
      * {@code isExpandSimpleOptions()==true}
      *
      * @param option option
