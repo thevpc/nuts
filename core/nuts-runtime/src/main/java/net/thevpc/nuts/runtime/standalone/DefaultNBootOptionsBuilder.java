@@ -2925,7 +2925,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     public NOptional<String> getCustomOption(String key) {
         return NOptional.ofNamedOptional(getCustomOptions().orElse(new ArrayList<>()).stream().map(x -> NArg.of(x))
                 .filter(x -> Objects.equals(x.getStringKey().orNull(), key))
-                .map(x->x.getImage())
+                .map(x->x.image())
                 .findFirst(), key);
     }
 

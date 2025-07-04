@@ -413,19 +413,6 @@ public class DefaultNCmdLine implements NCmdLine {
         return nextFlag(new String[0]);
     }
 
-    @Override
-    public boolean withNextEntry(Consumer<NArg> consumer) {
-        NOptional<NArg> v = nextEntry();
-        if (v.isPresent()) {
-            NArg a = v.get();
-            if (a.isNonCommented()) {
-                consumer.accept(a);
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static class MatcherImpl implements Matcher {
         private NCmdLine cmdLine;
         List<NCmdLineProcessor> processors = new ArrayList<>();
@@ -460,7 +447,7 @@ public class DefaultNCmdLine implements NCmdLine {
 
         @Override
         public MatcherCondition withAny() {
-            return new MyMatcherConditionImpl(this, true, new String[0]);
+            return new MyMatcherConditionImpl(this, c->true, new String[0]);
         }
 
         @Override
@@ -485,28 +472,30 @@ public class DefaultNCmdLine implements NCmdLine {
 
         @Override
         public MatcherCondition with(String... names) {
-            boolean acceptable0 = false;
-            for (String name : names) {
-                String[] nameSeqArray = NStringUtils.split(name, " ").toArray(new String[0]);
-                boolean acceptable = true;
-                for (int i = 0; i < nameSeqArray.length; i++) {
-                    NOptional<NArg> c = cmdLine.get(i);
-                    if (!c.isPresent() || !c.get().key().equals(nameSeqArray[i])) {
-                        acceptable = false;
+
+            return new MyMatcherConditionImpl(this, cml->{
+                boolean acceptable0 = false;
+                for (String name : names) {
+                    String[] nameSeqArray = NStringUtils.split(name, " ").toArray(new String[0]);
+                    boolean acceptable = true;
+                    for (int i = 0; i < nameSeqArray.length; i++) {
+                        NOptional<NArg> c = cml.get(i);
+                        if (!c.isPresent() || !c.get().key().equals(nameSeqArray[i])) {
+                            acceptable = false;
+                        }
+                    }
+                    if (acceptable) {
+                        acceptable0 = true;
+                        break;
                     }
                 }
-                if (acceptable) {
-                    acceptable0 = true;
-                    break;
-                }
-            }
-            boolean finalAcceptable = acceptable0;
-            return new MyMatcherConditionImpl(this, finalAcceptable, names);
+                return acceptable0;
+            }, names);
         }
 
         @Override
         public MatcherCondition withCondition(Predicate<NCmdLine> condition) {
-            return new MyMatcherConditionImpl(this, condition.test(cmdLine), new String[0]);
+            return new MyMatcherConditionImpl(this, condition, new String[0]);
         }
 
         @Override
@@ -1031,7 +1020,7 @@ public class DefaultNCmdLine implements NCmdLine {
                 return NOptional.of(createArgument(""));
             }
             if (hasNext() && (!forceNonOption || !isNextOption())) {
-                return emptyOptionalCformat("unexpected option %s", highlightText(String.valueOf(peek().get().getImage())));
+                return emptyOptionalCformat("unexpected option %s", highlightText(String.valueOf(peek().get().image())));
             }
             return emptyOptionalCformat("missing argument %s", highlightText(String.valueOf(name == null ? "value" : name.getName())));
         }
@@ -1597,14 +1586,34 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     private static class MyMatcherConditionImpl implements MatcherCondition {
-        private final boolean finalAcceptable;
+        private final Predicate<NCmdLine> baseCondition;
         private final String[] names;
         private MatcherImpl selector;
+        private List<Predicate<NCmdLine>> otherConditions = new ArrayList<>();
 
-        public MyMatcherConditionImpl(MatcherImpl selector, boolean finalAcceptable, String... names) {
-            this.finalAcceptable = finalAcceptable;
+        public MyMatcherConditionImpl(MatcherImpl selector, Predicate<NCmdLine> baseCondition, String... names) {
+            this.baseCondition = baseCondition;
             this.names = names;
             this.selector = selector;
+        }
+
+        @Override
+        public MatcherCondition and(Predicate<NCmdLine> condition) {
+            if(condition!=null){
+                otherConditions.add(condition);
+            }
+            return this;
+        }
+        private boolean checkCondition(NCmdLine cmdLine){
+            if (!baseCondition.test(cmdLine)) {
+                return false;
+            }
+            for (Predicate<NCmdLine> otherCondition : otherConditions) {
+                if (!otherCondition.test(cmdLine)) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         @Override
@@ -1613,7 +1622,7 @@ public class DefaultNCmdLine implements NCmdLine {
                     new NCmdLineProcessor() {
                         @Override
                         public boolean process(NArg arg, NCmdLine cmdLine) {
-                            if (!finalAcceptable) {
+                            if (!checkCondition(cmdLine)) {
                                 return false;
                             }
                             NOptional<NArg> v = selector.cmdLine.next(NArgType.FLAG, names);
@@ -1637,7 +1646,7 @@ public class DefaultNCmdLine implements NCmdLine {
             selector.matchProcessor(new NCmdLineProcessor() {
                 @Override
                 public boolean process(NArg arg, NCmdLine cmdLine) {
-                    if (!finalAcceptable) {
+                    if (!checkCondition(cmdLine)) {
                         return false;
                     }
                     NOptional<NArg> v = selector.cmdLine.next(NArgType.ENTRY, names);
@@ -1661,7 +1670,7 @@ public class DefaultNCmdLine implements NCmdLine {
             selector.matchProcessor(new NCmdLineProcessor() {
                 @Override
                 public boolean process(NArg arg, NCmdLine cmdLine) {
-                    if (!finalAcceptable) {
+                    if (!checkCondition(cmdLine)) {
                         return false;
                     }
                     NOptional<NArg> v = selector.cmdLine.peek();
@@ -1680,7 +1689,7 @@ public class DefaultNCmdLine implements NCmdLine {
             selector.matchProcessor(new NCmdLineProcessor() {
                 @Override
                 public boolean process(NArg arg, NCmdLine cmdLine) {
-                    if (!finalAcceptable) {
+                    if (!checkCondition(cmdLine)) {
                         return false;
                     }
                     NOptional<NArg> v = selector.cmdLine.next();

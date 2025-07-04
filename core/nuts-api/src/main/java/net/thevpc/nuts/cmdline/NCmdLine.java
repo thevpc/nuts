@@ -707,6 +707,8 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
          */
         Matcher matchFlag(Consumer<NArg> consumer);
 
+        MatcherCondition and(Predicate<NCmdLine> condition);
+
         /**
          * consume next argument with string value and run {@code consumer}
          *

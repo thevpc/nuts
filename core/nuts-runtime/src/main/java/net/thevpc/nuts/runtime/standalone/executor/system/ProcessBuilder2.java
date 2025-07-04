@@ -92,9 +92,9 @@ public class ProcessBuilder2 {
             }
         } else {
             if (a.isOption()) {
-                sb.append(factory.ofStyled(NStringUtils.formatStringLiteral(a.getImage()), NTextStyle.option()));
+                sb.append(factory.ofStyled(NStringUtils.formatStringLiteral(a.image()), NTextStyle.option()));
             } else {
-                sb.append(NStringUtils.formatStringLiteral(a.getImage()));
+                sb.append(NStringUtils.formatStringLiteral(a.image()));
             }
         }
         return sb.toString();

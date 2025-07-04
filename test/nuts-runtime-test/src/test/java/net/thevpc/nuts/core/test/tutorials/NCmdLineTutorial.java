@@ -128,7 +128,7 @@ public class NCmdLineTutorial {
             cmdLine.matcher()
                     .with("-o", "--option").matchFlag((v) -> boolOption.set(v.booleanValue()))
                     .with("-n", "--name").matchEntry((v) -> stringOption.set(v.stringValue()))
-                    .withNonOption().matchAny(v -> nonOptions.add(v.getImage()))
+                    .withNonOption().matchAny(v -> nonOptions.add(v.image()))
                     .requireWithDefault();
         }
     }

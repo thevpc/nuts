@@ -33,7 +33,7 @@ public class BOptionsParser {
                     .with("-y", "--yes").matchFlag((v) -> boptions.yes = v.booleanValue())
                     .with("-z", "--reset").matchFlag((v) -> boptions.reset = v.booleanValue())
                     .with("--clean").matchFlag((v) -> boptions.clean = v.booleanValue())
-                    .withNonOption().matchAny(v->boptions.ids.add(v.getImage()))
+                    .withNonOption().matchAny(v->boptions.ids.add(v.image()))
                     .requireWithDefault();
         }
     }

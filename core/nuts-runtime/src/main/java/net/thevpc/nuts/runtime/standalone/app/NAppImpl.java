@@ -164,7 +164,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
                     case "update": {
                         this.mode = NApplicationMode.UPDATE;
                         if (execModeCommand.hasNext()) {
-                            this.previousVersion = NVersion.get(execModeCommand.next().get().getImage()).get();
+                            this.previousVersion = NVersion.get(execModeCommand.next().get().image()).get();
                         }
                         this.modeArgs = execModeCommand.toStringList();
                         execModeCommand.skipAll();

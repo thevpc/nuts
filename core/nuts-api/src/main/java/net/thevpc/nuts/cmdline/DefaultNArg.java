@@ -416,7 +416,7 @@ public class DefaultNArg implements NArg {
     }
 
     @Override
-    public String getImage() {
+    public String image() {
         return image;
     }
 

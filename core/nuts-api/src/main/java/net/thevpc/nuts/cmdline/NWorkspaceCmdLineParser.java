@@ -1117,7 +1117,7 @@ public final class NWorkspaceCmdLineParser {
                                     if (showError == null) {
                                         showError = new ArrayList<>();
                                     }
-                                    showError.add(NMsg.ofC("invalid argument for workspace: %s", a.getImage()));
+                                    showError.add(NMsg.ofC("invalid argument for workspace: %s", a.image()));
                                     options.setErrors(showError);
                                 }
                                 List<String> applicationArguments = options.getApplicationArguments().orNull();

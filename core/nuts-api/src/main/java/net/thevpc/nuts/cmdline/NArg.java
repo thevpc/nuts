@@ -343,7 +343,7 @@ public interface NArg extends NBlankable /*extends NLiteral*/ {
      */
     NLiteral getKey();
 
-    String getImage();
+    String image();
 
     boolean isFlagOption();
 

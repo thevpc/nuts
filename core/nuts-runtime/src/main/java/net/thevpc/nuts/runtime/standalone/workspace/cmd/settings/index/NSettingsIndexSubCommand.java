@@ -6,7 +6,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.index;
 
 import net.thevpc.nuts.NWorkspace;
-import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.NUpdateStatsCmd;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
@@ -28,7 +27,7 @@ public class NSettingsIndexSubCommand extends AbstractNSettingsSubCommand {
         if (cmdLine.next("update stats").isPresent()) {
             List<String> repos = new ArrayList<>();
             while (cmdLine.hasNext()) {
-                repos.add(cmdLine.next().get().getImage());
+                repos.add(cmdLine.next().get().image());
             }
             updateStatistics(repos.toArray(new String[0]));
             cmdLine.setCommandName(name).throwUnexpectedArgument();
