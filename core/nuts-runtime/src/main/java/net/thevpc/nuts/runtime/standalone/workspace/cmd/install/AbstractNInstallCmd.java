@@ -29,7 +29,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -300,51 +299,28 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
         switch (aa.key()) {
             case "-c":
             case "--companions": {
-                cmdLine.withNextFlag((v) -> this.setCompanions(v.booleanValue()));
-                return true;
+                return cmdLine.matcher().matchFlag((v) -> this.setCompanions(v.booleanValue())).anyMatch();
             }
             case "-i":
             case "--installed": {
-                cmdLine.withNextFlag((v) -> this.setInstalled(v.booleanValue()));
-                return true;
+                return cmdLine.matcher().matchFlag((v) -> this.setInstalled(v.booleanValue())).anyMatch();
             }
             case "-s":
             case "--strategy": {
-                String val = cmdLine.nextEntry().flatMap(NArg::asString).get();
-                if (enabled) {
-                    this.setStrategy(CoreEnumUtils.parseEnumString(val, NInstallStrategy.class, false));
-                }
-                return true;
+                return cmdLine.matcher().matchEntry(a->this.setStrategy(NInstallStrategy.parse(a.stringValue()).get())).anyMatch();
             }
             case "--reinstall": {
-                cmdLine.skip();
-                if (enabled) {
-                    this.setStrategy(NInstallStrategy.REINSTALL);
-                }
-                return true;
+                return cmdLine.matcher().matchTrueFlag(a->this.setStrategy(NInstallStrategy.REINSTALL)).anyMatch();
             }
             case "--require": {
-                cmdLine.skip();
-                if (enabled) {
-                    this.setStrategy(NInstallStrategy.REQUIRE);
-                }
-                return true;
+                return cmdLine.matcher().matchTrueFlag(a->this.setStrategy(NInstallStrategy.REQUIRE)).anyMatch();
             }
             case "--repair": {
-                cmdLine.skip();
-                if (enabled) {
-                    this.setStrategy(NInstallStrategy.REPAIR);
-                }
-                return true;
+                return cmdLine.matcher().matchTrueFlag(a->this.setStrategy(NInstallStrategy.REPAIR)).anyMatch();
             }
             case "-g":
             case "--args": {
-                cmdLine.skip();
-                if (enabled) {
-                    this.addArgs(cmdLine.toStringArray());
-                }
-                cmdLine.skipAll();
-                return true;
+                return cmdLine.matcher().matchAny(a->this.addArgs(cmdLine.nextAllAsStringArray())).anyMatch();
             }
             default: {
                 if (super.configureFirst(cmdLine)) {

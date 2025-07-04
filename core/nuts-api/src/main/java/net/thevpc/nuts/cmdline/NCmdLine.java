@@ -413,21 +413,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      */
     NOptional<NArg> nextEntry(String... names);
 
-    Selector selector();
-
-    /**
-     * consume next argument with boolean value and run {@code consumer}
-     *
-     * @return true if active
-     */
-    boolean withNextFlag(Consumer<NArg> consumer);
-
-    /**
-     * consume next argument with string value and run {@code consumer}
-     *
-     * @return true if active
-     */
-    boolean withNextEntry(Consumer<NArg> consumer);
+    Matcher matcher();
 
     /**
      * next argument as entry (key=value). equivalent to next(NArgType.ENTRY,{})
@@ -576,6 +562,12 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
 
     NArg[] toArgumentArray();
 
+    String[] nextAllAsStringArray();
+
+    List<String> nextAllAsStringList();
+
+    NArg[] nextAllAsArgumentArray();
+
     /**
      * true if the argument and index exists and is option
      *
@@ -673,46 +665,60 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
 
     NCmdLine setShellFamily(NShellFamily shellFamily);
 
-    interface Selector{
-        Selector withProcessor(NCmdLineProcessor processor);
+    interface Matcher {
+        Matcher matchProcessor(NCmdLineProcessor processor);
 
-        Selector withNextFlag(Consumer<NArg> consumer);
+        Matcher matchFlag(Consumer<NArg> consumer);
 
-        Selector withNextEntry(Consumer<NArg> consumer) ;
+        Matcher matchEntry(Consumer<NArg> consumer);
 
-        Selector withNext(Consumer<NArg> consumer);
-        Selector withNextTrueFlag(Consumer<NArg> consumer);
-        SelectorCondition withAny();
-        SelectorCondition with(String... names);
-        SelectorCondition withCondition(Predicate<NCmdLine> condition);
-        SelectorCondition withNonOption();
-        SelectorCondition withOption();
+        Matcher matchAny(Consumer<NArg> consumer);
+
+        Matcher matchTrueFlag(Consumer<NArg> consumer);
+
+        MatcherCondition withAny();
+
+        MatcherCondition with(String... names);
+
+        MatcherCondition withCondition(Predicate<NCmdLine> condition);
+
+        MatcherCondition withNonOption();
+
+        MatcherCondition withOption();
+
         boolean anyMatch();
+
         boolean noMatch();
+
         void requireWithDefault();
+
         void require();
-        Selector withDefaultLast();
-        Selector withDefaultFirst();
+
+        Matcher withDefaultLast();
+
+        Matcher withDefaultFirst();
     }
 
-    public interface SelectorCondition {
+    public interface MatcherCondition {
         /**
          * consume next argument with boolean value and run {@code consumer}
          *
          * @return true if active
          */
-        Selector nextFlag(Consumer<NArg> consumer);
+        Matcher matchFlag(Consumer<NArg> consumer);
 
         /**
          * consume next argument with string value and run {@code consumer}
          *
          * @return true if active
          */
-        Selector nextEntry(Consumer<NArg> consumer);
-        Selector next(Consumer<NArg> consumer);
-        Selector runCmdLine(Consumer<NCmdLine> consumer);
+        Matcher matchEntry(Consumer<NArg> consumer);
 
-        Selector nextTrueFlag(Consumer<NArg> consumer);
+        Matcher matchAny(Consumer<NArg> consumer);
+
+        Matcher matchAnyMultiple(Consumer<NCmdLine> consumer);
+
+        Matcher matchTrueFlag(Consumer<NArg> consumer);
     }
 
 }

@@ -2714,18 +2714,16 @@ import java.io.File;
 import jxl.Workbook;
 import jxl.write.WritableWorkbook;
 
-public class App implements NApplication {
+@App.Info
+public class App {
 
     public static void main(String[] args) {
-        // just create an instance and call runAndExit in the main method
-        // this method ensures that exist code is well propagted
-        // from exceptions to caller processes
-        new App().run(NAppRunOptions.ofExit(args));
+        NApp.builder(args).run();
     }
 
-    @Override
-    public void run(NSession session) {
-        NCmdLine cmd = session.getAppCmdLine();
+    @App.Main
+    public void run() {
+        NCmdLine cmd = NApp.of().getCmdLine();
         File file = new File("file.xls");
         while (cmd.hasNext()) {
             switch (cmd.getKey().getString()) {
@@ -2751,17 +2749,17 @@ public class App implements NApplication {
         }
     }
 
-    @Override // this method is not required, implement when needed
+    @NApp.Installer // this method is not required, implement when needed
     public void onUninstallApplication() {
         s.out().printf("we are installing My Application : %s%n", s.getAppId());
     }
 
-    @Override // this method is not required, implement when needed
+    @NApp.Uninstaller // this method is not required, implement when needed
     public void onUninstallApplication() {
         s.out().printf("we are uninstalling My Application : %s%n", s.getAppId());
     }
 
-    @Override // this method is not required, implement when needed
+    @NApp.Updater // this method is not required, implement when needed
     public void onUpdateApplication() {
         s.out().printf("we are updating My Application : %s%n", s.getAppId());
     }

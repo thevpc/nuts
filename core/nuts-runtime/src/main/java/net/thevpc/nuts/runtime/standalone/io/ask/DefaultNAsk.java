@@ -551,7 +551,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
         }
         switch (aa.key()) {
             case "trace-confirmation": {
-                cmdLine.withNextFlag((v) -> this.traceConfirmation = v.booleanValue());
+                cmdLine.matcher().matchFlag((v) -> this.traceConfirmation = v.booleanValue()).anyMatch();
                 break;
             }
         }

@@ -21,7 +21,6 @@ import net.thevpc.nuts.text.NTexts;
 import org.w3c.dom.Document;
 
 /**
- *
  * @author thevpc
  */
 public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
@@ -102,14 +101,12 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
         if (getDisplayOptions().configureFirst(cmdLine)) {
             return true;
         }
-        switch(a.key()) {
+        switch (a.key()) {
             case "--compact": {
-                cmdLine.withNextFlag((v)->compact=v.booleanValue());
-                return true;
+                return cmdLine.matcher().matchFlag((v) -> compact = v.booleanValue()).anyMatch();
             }
             case "--root-name": {
-                cmdLine.withNextEntry((v)->rootName=v.stringValue());
-                return true;
+                return cmdLine.matcher().matchEntry((v) -> rootName = v.stringValue()).anyMatch();
             }
         }
         return false;

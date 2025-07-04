@@ -245,7 +245,7 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
         boolean enabled = aa.isNonCommented();
         switch (aa.key()) {
             case "--border": {
-                cmdLine.withNextEntry((v) -> {
+                return cmdLine.matcher().matchEntry((v) -> {
                     switch (NStringUtils.trim(v.stringValue())) {
                         case "simple": {
                             setLinkFormat(LINK_ASCII_FORMATTER);
@@ -256,16 +256,13 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
                             break;
                         }
                     }
-                });
-                return true;
+                }).anyMatch();
             }
             case "--omit-root": {
-                cmdLine.withNextFlag((v) -> setOmitRoot(v.booleanValue()));
-                return true;
+                return cmdLine.matcher().matchFlag((v) -> setOmitRoot(v.booleanValue())).anyMatch();
             }
             case "--infinite": {
-                cmdLine.withNextFlag((v) -> infinite = (v.booleanValue()));
-                return true;
+                return cmdLine.matcher().matchFlag((v) -> infinite = (v.booleanValue())).anyMatch();
             }
             case DefaultNPropertiesFormat.OPTION_MULTILINE_PROPERTY: {
                 NArg i = cmdLine.nextEntry().get();

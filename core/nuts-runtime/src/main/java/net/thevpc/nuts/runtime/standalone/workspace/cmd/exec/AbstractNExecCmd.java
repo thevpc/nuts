@@ -659,25 +659,25 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
             }
             case "--dry":
             case "-d": {
-                return cmdLine.selector().withNextFlag((v) -> setDry(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().matchFlag((v) -> setDry(v.booleanValue())).anyMatch();
             }
             case "--target": {
-                return cmdLine.selector().withNextEntry((v) -> this.setConnexionString(v.stringValue())).anyMatch();
+                return cmdLine.matcher().matchEntry((v) -> this.setConnexionString(v.stringValue())).anyMatch();
             }
             case "--rerun": {
-                return cmdLine.selector().withNextFlag((v) -> this.multipleRuns = v.booleanValue()).anyMatch();
+                return cmdLine.matcher().matchFlag((v) -> this.multipleRuns = v.booleanValue()).anyMatch();
             }
             case "--rerun-min-time": {
-                return cmdLine.selector().withNextEntry((v) -> this.multipleRunsMinTimeMs = NLiteral.of(v).asLong().get()).anyMatch();
+                return cmdLine.matcher().matchEntry((v) -> this.multipleRunsMinTimeMs = NLiteral.of(v).asLong().get()).anyMatch();
             }
             case "--rerun-safe-time": {
-                return cmdLine.selector().withNextEntry((v) -> this.multipleRunsSafeTimeMs = NLiteral.of(v).asLong().get()).anyMatch();
+                return cmdLine.matcher().matchEntry((v) -> this.multipleRunsSafeTimeMs = NLiteral.of(v).asLong().get()).anyMatch();
             }
             case "--rerun-max-count": {
-                return cmdLine.selector().withNextEntry((v) -> this.multipleRunsMaxCount = NLiteral.of(v).asInt().get()).anyMatch();
+                return cmdLine.matcher().matchEntry((v) -> this.multipleRunsMaxCount = NLiteral.of(v).asInt().get()).anyMatch();
             }
             case "--cron": {
-                return cmdLine.selector().withNextEntry((v) -> this.multipleRunsCron = v.stringValue()).anyMatch();
+                return cmdLine.matcher().matchEntry((v) -> this.multipleRunsCron = v.stringValue()).anyMatch();
             }
             default: {
                 if (super.configureFirst(cmdLine)) {

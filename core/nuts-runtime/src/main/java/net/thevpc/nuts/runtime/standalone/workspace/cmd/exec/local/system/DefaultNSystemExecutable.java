@@ -42,7 +42,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
             NArg aa = cmdLine.peek().get();
             switch (aa.key()) {
                 case "--show-command": {
-                    cmdLine.withNextFlag((v) -> this.showCommand = (v.booleanValue()));
+                    cmdLine.matcher().matchFlag((v) -> this.showCommand = (v.booleanValue())).anyMatch();
                     break;
                 }
                 default: {

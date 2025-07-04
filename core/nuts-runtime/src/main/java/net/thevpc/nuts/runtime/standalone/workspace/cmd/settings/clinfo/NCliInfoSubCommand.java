@@ -21,15 +21,15 @@ public class NCliInfoSubCommand extends AbstractNSettingsSubCommand {
     @Override
     public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
         return cmdLine
-                .selector().with("cli-id").nextEntry((v) -> {
+                .matcher().with("cli-id").matchEntry((v) -> {
                     if (NBlankable.isBlank(v)) {
                         doLoadCliId();
                     } else {
                         doSaveCliId(v.stringValue());
                     }
                 })
-                .with("get cli-id").next(a -> doLoadCliId())
-                .with("set cli-id").next((a) -> doLoadCliId())
+                .with("get cli-id").matchAny(a -> doLoadCliId())
+                .with("set cli-id").matchAny((a) -> doLoadCliId())
                 .anyMatch();
     }
 

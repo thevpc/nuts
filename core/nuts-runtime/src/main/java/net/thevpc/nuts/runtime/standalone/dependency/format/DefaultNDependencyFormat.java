@@ -213,7 +213,7 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
         boolean enabled = aa.isNonCommented();
         switch (aa.key()) {
             case "--omit-env": {
-                cmdLine.withNextFlag((v) -> setOmitOtherProperties(v.booleanValue()));
+                cmdLine.matcher().matchFlag((v) -> setOmitOtherProperties(v.booleanValue())).anyMatch();
                 return true;
             }
 //            case "--omit-face": {
@@ -221,19 +221,19 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
 //                return true;
 //            }
             case "--omit-group": {
-                cmdLine.withNextFlag((v) -> setOmitGroupId(v.booleanValue()));
+                cmdLine.matcher().matchFlag((v) -> setOmitGroupId(v.booleanValue())).anyMatch();
                 return true;
             }
             case "--omit-imported-group": {
-                cmdLine.withNextFlag((v) -> setOmitImportedGroup(v.booleanValue()));
+                cmdLine.matcher().matchFlag((v) -> setOmitImportedGroup(v.booleanValue())).anyMatch();
                 return true;
             }
             case "--omit-repo": {
-                cmdLine.withNextFlag((v) -> setOmitRepository(v.booleanValue()));
+                cmdLine.matcher().matchFlag((v) -> setOmitRepository(v.booleanValue())).anyMatch();
                 return true;
             }
             case "--highlight-imported-group": {
-                cmdLine.withNextFlag((v) -> setHighlightImportedGroup(v.booleanValue()));
+                cmdLine.matcher().matchFlag((v) -> setHighlightImportedGroup(v.booleanValue())).anyMatch();
                 return true;
             }
         }

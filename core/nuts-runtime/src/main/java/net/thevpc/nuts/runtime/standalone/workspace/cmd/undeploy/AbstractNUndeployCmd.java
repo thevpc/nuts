@@ -128,17 +128,14 @@ public abstract class AbstractNUndeployCmd extends NWorkspaceCmdBase<NUndeployCm
         if (aa == null) {
             return false;
         }
-        boolean enabled = aa.isNonCommented();
         switch (aa.key()) {
             case "--offline": {
-                cmdLine.withNextFlag((v) -> setOffline(v.booleanValue()));
-                return true;
+                return cmdLine.matcher().matchFlag((v) -> setOffline(v.booleanValue())).anyMatch();
             }
             case "-r":
             case "-repository":
             case "--from": {
-                cmdLine.withNextEntry((v) -> setRepository(v.stringValue()));
-                break;
+                return cmdLine.matcher().matchEntry((v) -> setRepository(v.stringValue())).anyMatch();
             }
 
             default: {
@@ -154,7 +151,6 @@ public abstract class AbstractNUndeployCmd extends NWorkspaceCmdBase<NUndeployCm
                 }
             }
         }
-        return false;
     }
 
 }

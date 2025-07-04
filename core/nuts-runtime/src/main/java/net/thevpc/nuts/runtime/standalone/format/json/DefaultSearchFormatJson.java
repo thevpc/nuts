@@ -55,7 +55,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
         }
         switch (aa.key()) {
             case "--compact": {
-                cmdLine.withNextFlag((v) -> this.compact = v.booleanValue());
+                cmdLine.matcher().matchFlag((v) -> this.compact = v.booleanValue()).anyMatch();
                 return true;
             }
         }

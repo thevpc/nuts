@@ -317,35 +317,34 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
         switch (a.key()) {
             case "-d":
             case "--desc": {
-                cmdLine.withNextEntry((v) -> setDescriptor(v.stringValue()));
-                return true;
+                return cmdLine.matcher().matchEntry((v) -> setDescriptor(v.stringValue())).anyMatch();
             }
             case "-s":
             case "--source":
             case "--from": {
-                cmdLine.withNextEntry((v) -> from(v.stringValue()));
+                return cmdLine.matcher().matchEntry((v) -> from(v.stringValue())).anyMatch();
                 return true;
             }
             case "-r":
             case "--target":
             case "--to": {
-                cmdLine.withNextEntry((v) -> to(v.stringValue()));
+                return cmdLine.matcher().matchEntry((v) -> to(v.stringValue())).anyMatch();
                 return true;
             }
             case "--desc-sha1": {
-                cmdLine.withNextEntry((v) -> setDescSha1(v.stringValue()));
+                return cmdLine.matcher().matchEntry((v) -> setDescSha1(v.stringValue())).anyMatch();
                 return true;
             }
             case "--desc-sha1-file": {
-                cmdLine.withNextEntry((v) -> this.setDescSha1(NPath.of(v.stringValue()).readString()));
+                return cmdLine.matcher().matchEntry((v) -> this.setDescSha1(NPath.of(v.stringValue()).readString())).anyMatch();
                 return true;
             }
             case "--sha1": {
-                cmdLine.withNextEntry((v) -> this.setSha1(v.stringValue()));
+                return cmdLine.matcher().matchEntry((v) -> this.setSha1(v.stringValue())).anyMatch();
                 return true;
             }
             case "--sha1-file": {
-                cmdLine.withNextEntry((v) -> this.setSha1(NPath.of(v.stringValue()).readString()));
+                return cmdLine.matcher().matchEntry((v) -> this.setSha1(NPath.of(v.stringValue()).readString())).anyMatch();
                 return true;
             }
             default: {

@@ -314,28 +314,22 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
         }
         switch (aa.key()) {
             case "--omit-env": {
-                cmdLine.withNextFlag((v) -> this.setOmitOtherProperties(v.booleanValue()));
-                return true;
+                return cmdLine.matcher().matchFlag((v) -> this.setOmitOtherProperties(v.booleanValue())).anyMatch();
             }
             case "--omit-face": {
-                cmdLine.withNextFlag((v) -> this.setOmitFace(v.booleanValue()));
-                return true;
+                return cmdLine.matcher().matchFlag((v) -> this.setOmitFace(v.booleanValue())).anyMatch();
             }
             case "--omit-group": {
-                cmdLine.withNextFlag((v) -> this.setOmitGroupId(v.booleanValue()));
-                return true;
+                return cmdLine.matcher().matchFlag((v) -> this.setOmitGroupId(v.booleanValue())).anyMatch();
             }
             case "--omit-imported-group": {
-                cmdLine.withNextFlag((v) -> this.setOmitImportedGroupId(v.booleanValue()));
-                return true;
+                return cmdLine.matcher().matchFlag((v) -> this.setOmitImportedGroupId(v.booleanValue())).anyMatch();
             }
             case "--omit-repo": {
-                cmdLine.withNextFlag((v) -> this.setOmitRepository(v.booleanValue()));
-                return true;
+                return cmdLine.matcher().matchFlag((v) -> this.setOmitRepository(v.booleanValue())).anyMatch();
             }
             case "--highlight-imported-group": {
-                cmdLine.withNextFlag((v) -> this.setHighlightImportedGroupId(v.booleanValue()));
-                return true;
+                return cmdLine.matcher().matchFlag((v) -> this.setHighlightImportedGroupId(v.booleanValue())).anyMatch();
             }
         }
         return false;

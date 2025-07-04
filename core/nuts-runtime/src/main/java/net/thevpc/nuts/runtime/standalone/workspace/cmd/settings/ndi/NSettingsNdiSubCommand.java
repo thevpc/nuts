@@ -77,117 +77,117 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
             switch (cmdLine.peek().get().key()) {
                 case "-t":
                 case "--fetch": {
-                    cmdLine.withNextFlag((v) -> d.options.setFetch(v.booleanValue()));
+                    cmdLine.matcher().matchFlag((v) -> d.options.setFetch(v.booleanValue())).anyMatch();
                     break;
                 }
                 case "-d":
                 case "--workdir": {
-                    cmdLine.withNextEntry((v) -> d.options.getLauncher().setWorkingDirectory(v.stringValue()));
+                    cmdLine.matcher().matchEntry((v) -> d.options.getLauncher().setWorkingDirectory(v.stringValue())).anyMatch();
                     break;
                 }
                 case "--icon": {
-                    cmdLine.withNextEntry((v) -> d.options.getLauncher().setIcon(v.stringValue()));
+                    cmdLine.matcher().matchEntry((v) -> d.options.getLauncher().setIcon(v.stringValue())).anyMatch();
                     break;
                 }
                 case "--menu": {
-                    cmdLine.withNextEntry((v) -> d.options.getLauncher().setCreateMenuLauncher(parseCond(v.stringValue())));
+                    cmdLine.matcher().matchEntry((v) -> d.options.getLauncher().setCreateMenuLauncher(parseCond(v.stringValue()))).anyMatch();
                     break;
                 }
                 case "--menu-category": {
-                    cmdLine.withNextEntry((v) -> {
+                    cmdLine.matcher().matchEntry((v) -> {
                         d.options.getLauncher().setMenuCategory(v.stringValue());
                         if (d.options.getLauncher().getMenuCategory() != null && !d.options.getLauncher().getMenuCategory().isEmpty()) {
                             if (d.options.getLauncher().getCreateMenuLauncher() == NSupportMode.NEVER) {
                                 d.options.getLauncher().setCreateMenuLauncher(NSupportMode.PREFERRED);
                             }
                         }
-                    });
+                    }).anyMatch();
                     break;
                 }
                 case "--desktop": {
-                    cmdLine.withNextEntry((v) -> d.options.getLauncher().setCreateDesktopLauncher(parseCond(v.stringValue())));
+                    cmdLine.matcher().matchEntry((v) -> d.options.getLauncher().setCreateDesktopLauncher(parseCond(v.stringValue()))).anyMatch();
                     break;
                 }
                 case "--desktop-name": {
-                    cmdLine.withNextEntry((v) -> {
+                    cmdLine.matcher().matchEntry((v) -> {
                         d.options.getLauncher().setShortcutName(v.stringValue());
                         if (d.options.getLauncher().getCreateDesktopLauncher() == NSupportMode.NEVER) {
                             d.options.getLauncher().setCreateDesktopLauncher(NSupportMode.PREFERRED);
                         }
-                    });
+                    }).anyMatch();
                     break;
                 }
                 case "--menu-name": {
-                    cmdLine.withNextEntry((v) -> {
+                    cmdLine.matcher().matchEntry((v) -> {
                         d.options.getLauncher().setShortcutName(v.stringValue());
                         if (d.options.getLauncher().getCreateDesktopLauncher() == NSupportMode.NEVER) {
                             d.options.getLauncher().setCreateMenuLauncher(NSupportMode.PREFERRED);
                         }
-                    });
+                    }).anyMatch();
                     break;
                 }
                 case "--shortcut-name": {
-                    cmdLine.withNextEntry((v) -> {
+                    cmdLine.matcher().matchEntry((v) -> {
                         d.options.getLauncher().setShortcutName(v.stringValue());
                         if (d.options.getLauncher().getCreateUserLauncher() == NSupportMode.NEVER) {
                             d.options.getLauncher().setCreateUserLauncher(NSupportMode.PREFERRED);
                         }
-                    });
+                    }).anyMatch();
                     break;
                 }
                 case "--shortcut-path": {
-                    cmdLine.withNextEntry((v) -> {
+                    cmdLine.matcher().matchEntry((v) -> {
                         d.options.getLauncher().setCustomShortcutPath(v.stringValue());
                         if (d.options.getLauncher().getCreateUserLauncher() == NSupportMode.NEVER) {
                             d.options.getLauncher().setCreateUserLauncher(NSupportMode.PREFERRED);
                         }
-                    });
+                    }).anyMatch();
                     break;
                 }
                 case "-x":
                 case "--external":
                 case "--spawn": {
-                    cmdLine.selector().withNextTrueFlag((v) -> d.options.getLauncher().getNutsOptions().add("--spawn")).anyMatch();
+                    cmdLine.matcher().matchTrueFlag((v) -> d.options.getLauncher().getNutsOptions().add("--spawn")).anyMatch();
                     break;
                 }
                 case "-b":
                 case "--embedded": {
-                    cmdLine.selector().withNextTrueFlag((v) -> d.options.getLauncher().getNutsOptions().add("--embedded")).anyMatch();
+                    cmdLine.matcher().matchTrueFlag((v) -> d.options.getLauncher().getNutsOptions().add("--embedded")).anyMatch();
                     break;
                 }
                 case "--terminal": {
-                    cmdLine.withNextFlag((v) -> d.options.getLauncher().setOpenTerminal(v.booleanValue()));
+                    cmdLine.matcher().matchFlag((v) -> d.options.getLauncher().setOpenTerminal(v.booleanValue())).anyMatch();
                     break;
                 }
                 case "-e":
                 case "--env": {
-                    cmdLine.withNextFlag((v) -> d.options.setIncludeEnv(v.booleanValue()));
+                    cmdLine.matcher().matchFlag((v) -> d.options.setIncludeEnv(v.booleanValue())).anyMatch();
                     break;
                 }
                 case "--system": {
-                    cmdLine.selector().withNextTrueFlag((v) -> d.options.getLauncher().getNutsOptions().add("--system")).anyMatch();
+                    cmdLine.matcher().matchTrueFlag((v) -> d.options.getLauncher().getNutsOptions().add("--system")).anyMatch();
                     break;
                 }
                 case "--current-user": {
-                    cmdLine.selector().withNextTrueFlag((v) -> d.options.getLauncher().getNutsOptions().add("--current-user")).anyMatch();
+                    cmdLine.matcher().matchTrueFlag((v) -> d.options.getLauncher().getNutsOptions().add("--current-user")).anyMatch();
                     break;
                 }
                 case "--as-root": {
-                    cmdLine.selector().withNextTrueFlag((v) -> d.options.getLauncher().getNutsOptions().add("--as-root")).anyMatch();
+                    cmdLine.matcher().matchTrueFlag((v) -> d.options.getLauncher().getNutsOptions().add("--as-root")).anyMatch();
                     break;
                 }
                 case "--run-as": {
-                    cmdLine.withNextEntry((v) -> d.options.getLauncher().getNutsOptions().add("--run-as=" + v));
+                    cmdLine.matcher().matchEntry((v) -> d.options.getLauncher().getNutsOptions().add("--run-as=" + v)).anyMatch();
                     break;
                 }
                 case "-X":
                 case "--exec-options": {
-                    cmdLine.withNextEntry((v) -> d.options.getLauncher().getNutsOptions().add("--exec-options=" + v));
+                    cmdLine.matcher().matchEntry((v) -> d.options.getLauncher().getNutsOptions().add("--exec-options=" + v)).anyMatch();
                     break;
                 }
                 case "-i":
                 case "--installed": {
-                    cmdLine.selector().withNextTrueFlag((v) -> {
+                    cmdLine.matcher().matchTrueFlag((v) -> {
                         session.setConfirm(NConfirmationMode.YES);
                         for (NId resultId : NSearchCmd.of()
                                 .setDefinitionFilter(NDefinitionFilters.of().byInstalled(true)
@@ -200,7 +200,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 }
                 case "-c":
                 case "--companions": {
-                    cmdLine.selector().withNextTrueFlag((v) -> {
+                    cmdLine.matcher().matchTrueFlag((v) -> {
                         session.setConfirm(NConfirmationMode.YES);
                         for (NId companion : NExtensions.of().getCompanionIds()) {
                             d.idsToInstall.add(NSearchCmd.of().addId(companion).setLatest(true).getResultIds().findFirst().get().getLongName());
@@ -210,21 +210,21 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     break;
                 }
                 case "--switch": {
-                    cmdLine.withNextFlag((v) -> d.options.getLauncher().setSwitchWorkspace(v.booleanValue()));
+                    cmdLine.matcher().matchFlag((v) -> d.options.getLauncher().setSwitchWorkspace(v.booleanValue())).anyMatch();
                     break;
                 }
                 case "--ignore-unsupported-os": {
-                    cmdLine.withNextFlag((v) -> d.ignoreUnsupportedOs = v.booleanValue());
+                    cmdLine.matcher().matchFlag((v) -> d.ignoreUnsupportedOs = v.booleanValue()).anyMatch();
                     break;
                 }
                 case "-w":
                 case "--workspace": {
-                    cmdLine.withNextEntry((v) -> d.options.getLauncher().setSwitchWorkspaceLocation(v.stringValue()));
+                    cmdLine.matcher().matchEntry((v) -> d.options.getLauncher().setSwitchWorkspaceLocation(v.stringValue())).anyMatch();
                     break;
                 }
                 case "-n":
                 case "--name": {
-                    cmdLine.withNextEntry((v) -> d.options.getLauncher().setCustomScriptPath(v.stringValue()));
+                    cmdLine.matcher().matchEntry((v) -> d.options.getLauncher().setCustomScriptPath(v.stringValue())).anyMatch();
                     break;
                 }
                 default: {
@@ -349,60 +349,60 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
         while (cmdLine.hasNext()) {
             switch (cmdLine.peek().get().key()) {
                 case "--ignore-unsupported-os": {
-                    cmdLine.withNextFlag((v) -> d.ignoreUnsupportedOs = v.booleanValue());
+                    cmdLine.matcher().matchFlag((v) -> d.ignoreUnsupportedOs = v.booleanValue()).anyMatch();
                     break;
                 }
                 case "-w":
                 case "--workspace": {
-                    cmdLine.withNextEntry((v) -> d.switchWorkspaceLocation = v.stringValue());
+                    cmdLine.matcher().matchEntry((v) -> d.switchWorkspaceLocation = v.stringValue()).anyMatch();
                     break;
                 }
                 case "-a":
                 case "--api": {
-                    cmdLine.withNextEntry((v) -> d.switchWorkspaceApi = v.stringValue());
+                    cmdLine.matcher().matchEntry((v) -> d.switchWorkspaceApi = v.stringValue()).anyMatch();
                     break;
                 }
                 case "--menu": {
-                    cmdLine.withNextEntry((v) -> d.createMenu = parseCond(v.stringValue()));
+                    cmdLine.matcher().matchEntry((v) -> d.createMenu = parseCond(v.stringValue())).anyMatch();
                     break;
                 }
                 case "--menu-category": {
-                    cmdLine.withNextEntry((v) -> {
+                    cmdLine.matcher().matchEntry((v) -> {
                         d.menuCategory = v.stringValue();
                         if (d.menuCategory != null && !d.menuCategory.isEmpty()) {
                             if (d.createMenu == NSupportMode.NEVER) {
                                 d.createMenu = NSupportMode.PREFERRED;
                             }
                         }
-                    });
+                    }).anyMatch();
                     break;
                 }
                 case "--menu-name": {
-                    cmdLine.withNextEntry((v) -> {
+                    cmdLine.matcher().matchEntry((v) -> {
                         d.shortcutName = v.stringValue();
                         if (d.shortcutName != null && !d.shortcutName.isEmpty()) {
                             if (d.createMenu == NSupportMode.NEVER) {
                                 d.createMenu = NSupportMode.PREFERRED;
                             }
                         }
-                    });
+                    }).anyMatch();
                     break;
                 }
                 case "--desktop-name": {
-                    cmdLine.withNextEntry((v) -> {
+                    cmdLine.matcher().matchEntry((v) -> {
                         d.shortcutName = v.stringValue();
                         if (d.shortcutName != null && !d.shortcutName.isEmpty()) {
                             if (d.createDesktop == NSupportMode.NEVER) {
                                 d.createDesktop = NSupportMode.PREFERRED;
                             }
                         }
-                    });
+                    }).anyMatch();
                     break;
                 }
                 case "--desktop": {
-                    cmdLine.withNextEntry((v) -> {
+                    cmdLine.matcher().matchEntry((v) -> {
                         d.createDesktop = parseCond(v.stringValue());
-                    });
+                    }).anyMatch();
                     break;
                 }
                 default: {

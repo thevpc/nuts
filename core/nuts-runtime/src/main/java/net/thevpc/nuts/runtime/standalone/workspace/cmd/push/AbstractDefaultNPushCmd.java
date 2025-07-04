@@ -258,27 +258,24 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
         switch (a.key()) {
             case "-o":
             case "--offline": {
-                cmdLine.withNextFlag((v) -> setOffline(v.booleanValue()));
-                return true;
+                return cmdLine.matcher().matchFlag((v) -> setOffline(v.booleanValue())).anyMatch();
             }
             case "-x":
             case "--freeze": {
-                cmdLine.withNextEntry((v) -> {
+                return cmdLine.matcher().matchEntry((v) -> {
                     for (String id : v.stringValue().split(",")) {
                         addLockedId(id);
                     }
-                });
-                return true;
+                }).anyMatch();
             }
             case "-r":
             case "-repository":
             case "--from": {
-                cmdLine.withNextEntry((v) -> setRepository(v.stringValue()));
-                return true;
+                return cmdLine.matcher().matchEntry((v) -> setRepository(v.stringValue())).anyMatch();
             }
             case "-g":
             case "--args": {
-                return cmdLine.selector().withNextTrueFlag((v) -> {
+                return cmdLine.matcher().matchTrueFlag((v) -> {
                     this.addArgs(cmdLine.toStringArray());
                     cmdLine.skipAll();
                 }).anyMatch();

@@ -101,12 +101,12 @@ public abstract class AbstractNPrepareCmd extends NWorkspaceCmdBase<NPrepareCmd>
         if (a == null) {
             return false;
         }
-        return cmdLine.selector()
-                .withProcessor((aa,c)->super.configureFirst(cmdLine))
-                .with("--user").nextEntry((v) ->  setUserName(v.stringValue()))
-                .with("--target-server").nextEntry((v) ->  setTargetServer(v.stringValue()))
-                .with("--version").nextEntry((v) ->  setVersion(v.stringValue()))
-                .with("--target-home").nextEntry((v) ->  setTargetHome(v.stringValue()))
+        return cmdLine.matcher()
+                .matchProcessor((aa, c)->super.configureFirst(cmdLine))
+                .with("--user").matchEntry((v) ->  setUserName(v.stringValue()))
+                .with("--target-server").matchEntry((v) ->  setTargetServer(v.stringValue()))
+                .with("--version").matchEntry((v) ->  setVersion(v.stringValue()))
+                .with("--target-home").matchEntry((v) ->  setTargetHome(v.stringValue()))
                 .anyMatch();
     }
 }
