@@ -682,11 +682,11 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
 
         Selector withNext(Consumer<NArg> consumer);
         Selector withNextTrueFlag(Consumer<NArg> consumer);
-        NCmdLineArgProcessorHolder withAny();
-        NCmdLineArgProcessorHolder with(String... names);
-        NCmdLineArgProcessorHolder withCondition(Predicate<NCmdLine> condition);
-        NCmdLineArgProcessorHolder withNonOption();
-        NCmdLineArgProcessorHolder withOption();
+        SelectorCondition withAny();
+        SelectorCondition with(String... names);
+        SelectorCondition withCondition(Predicate<NCmdLine> condition);
+        SelectorCondition withNonOption();
+        SelectorCondition withOption();
         boolean anyMatch();
         boolean noMatch();
         void requireWithDefault();
@@ -695,7 +695,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
         Selector withDefaultFirst();
     }
 
-    public interface NCmdLineArgProcessorHolder {
+    public interface SelectorCondition {
         /**
          * consume next argument with boolean value and run {@code consumer}
          *

@@ -472,8 +472,8 @@ public class DefaultNCmdLine implements NCmdLine {
         }
 
         @Override
-        public NCmdLineArgProcessorHolder withAny() {
-            return new MyNCmdLineArgProcessorHolderImpl(this, true, new String[0]);
+        public SelectorCondition withAny() {
+            return new MySelectorConditionImpl(this, true, new String[0]);
         }
 
         @Override
@@ -497,7 +497,7 @@ public class DefaultNCmdLine implements NCmdLine {
         }
 
         @Override
-        public NCmdLineArgProcessorHolder with(String... names) {
+        public SelectorCondition with(String... names) {
             boolean acceptable0 = false;
             for (String name : names) {
                 String[] nameSeqArray = NStringUtils.split(name, " ").toArray(new String[0]);
@@ -514,21 +514,21 @@ public class DefaultNCmdLine implements NCmdLine {
                 }
             }
             boolean finalAcceptable = acceptable0;
-            return new MyNCmdLineArgProcessorHolderImpl(this, finalAcceptable, names);
+            return new MySelectorConditionImpl(this, finalAcceptable, names);
         }
 
         @Override
-        public NCmdLineArgProcessorHolder withCondition(Predicate<NCmdLine> condition) {
-            return new MyNCmdLineArgProcessorHolderImpl(this, condition.test(cmdLine), new String[0]);
+        public SelectorCondition withCondition(Predicate<NCmdLine> condition) {
+            return new MySelectorConditionImpl(this, condition.test(cmdLine), new String[0]);
         }
 
         @Override
-        public NCmdLineArgProcessorHolder withNonOption() {
+        public SelectorCondition withNonOption() {
             return withCondition((c)->c.isNextNonOption());
         }
 
         @Override
-        public NCmdLineArgProcessorHolder withOption() {
+        public SelectorCondition withOption() {
             return withCondition((c)->c.isNextOption());
         }
 
@@ -1588,12 +1588,12 @@ public class DefaultNCmdLine implements NCmdLine {
         }
     }
 
-    private static class MyNCmdLineArgProcessorHolderImpl implements NCmdLineArgProcessorHolder {
+    private static class MySelectorConditionImpl implements SelectorCondition {
         private final boolean finalAcceptable;
         private final String[] names;
         private SelectorImpl selector;
 
-        public MyNCmdLineArgProcessorHolderImpl(SelectorImpl selector, boolean finalAcceptable, String... names) {
+        public MySelectorConditionImpl(SelectorImpl selector, boolean finalAcceptable, String... names) {
             this.finalAcceptable = finalAcceptable;
             this.names = names;
             this.selector = selector;
