@@ -83,9 +83,9 @@ public final class NApplications {
         return createApplicationInstance(appType, args);
     }
 
-    public static NApp.Info resolveApplicationAnnotation(Class appClass) {
+    public static NApp.Definition resolveApplicationAnnotation(Class appClass) {
         Class<?> validAppClass = unproxyType(appClass);
-        return validAppClass.getAnnotation(NApp.Info.class);
+        return validAppClass.getAnnotation(NApp.Definition.class);
     }
 
     public static boolean isAnnotatedApplicationClass(Class appClass) {
@@ -98,7 +98,7 @@ public final class NApplications {
             return (NApplication) appInstance;
         }
         Class<?> appClass = unproxyType(appInstance.getClass());
-        NApp.Info appAnnotation = appClass.getAnnotation(NApp.Info.class);
+        NApp.Definition appAnnotation = appClass.getAnnotation(NApp.Definition.class);
         if (appAnnotation == null) {
             throw new NBootException(NBootMsg.ofC("class %s is missing annotation @AppInfo", appClass.getName()));
         }

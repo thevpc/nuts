@@ -35,7 +35,7 @@ public interface NApp extends NComponent {
 
     @Target(ElementType.TYPE)
     @Retention(RetentionPolicy.RUNTIME)
-    @interface Info{
+    @interface Definition{
         String id() default "";
     }
     @Target(ElementType.METHOD)
