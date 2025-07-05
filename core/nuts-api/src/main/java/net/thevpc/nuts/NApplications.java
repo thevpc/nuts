@@ -145,9 +145,9 @@ public final class NApplications {
             }
             cc = cc.getSuperclass();
         }
-        if (runMethods.isEmpty()) {
-            throw new NBootException(NBootMsg.ofC("class %s has annotation @AppInfo. it should define a public no arg @NApp.Main method", appClass.getName()));
-        }
+//        if (runMethods.isEmpty()) {
+//            throw new NBootException(NBootMsg.ofC("class %s has annotation @AppInfo. it should define a public no arg @NApp.Main method", appClass.getName()));
+//        }
         return new AnnotationClassNApplication(runMethods, installMethods, updateMethods, uninstallMethods, appInstance);
     }
 
