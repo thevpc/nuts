@@ -76,6 +76,7 @@ public abstract class OldWorkspace {
         NOut.println(NMsg.ofC("show workspace version %s", version));
         NExecCmd.of().setExecutionType(NExecutionType.SYSTEM)
                 .addCommand(resolveJavaFile(), "-jar", resolveJarFile().getPath())
+                .addCommand("-w="+workspaceLocation)
                 .addCommand("version")
                 .failFast()
                 .run();
