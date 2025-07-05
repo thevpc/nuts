@@ -119,8 +119,9 @@ This ensures that logs:
 - Can be persisted and analyzed later if needed,
 - Can be redirected or filtered using Nuts session capabilities.
 
-> Note: 
-> You can customize log destinations by configuring the NSession, such as redirecting logs to files, suppressing error output, or adjusting verbosity.
+:::tip
+You can customize log destinations by configuring the NSession, such as redirecting logs to files, suppressing error output, or adjusting verbosity.
+:::
 
 ## Why NLog + NMsg Is Unique
 In most Java logging frameworks:

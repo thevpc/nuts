@@ -17,19 +17,19 @@ Now that you are in a container
 
 ```bash
 cd /workspace
-curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -o nuts.jar && java -jar nuts.jar -ZyS
+curl -sL {{latestJarLocation}} -o nuts.jar && java -jar nuts.jar -ZyS
 . ~/.bashrc
 nuts -y <your-app>...
 ```
 
-As an example here where you can run `net.thevpc.nuts.toolbox:noapi#0.8.6.0` on your config file `myrest-apis.json`.
+As an example here where you can run `net.thevpc.nuts.toolbox:noapi#{{latestJarLocation}}` on your config file `myrest-apis.json`.
 
 `noapi` is actually an OpenAPI documentation tool that generates a pdf file based on a opn api definition in `JSON`, `YAML` or `TSON` formats.
 
 ```bash
 cd /workspace
-wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -qO nuts.jar
-java -jar nuts.jar -P=%s -ZyS net.thevpc.nuts.toolbox:noapi#0.8.6.0 myrest-apis.json
+wget {{latestJarLocation}} -qO nuts.jar
+java -jar nuts.jar -P=%s -ZyS net.thevpc.nuts.toolbox:noapi#{{latestJarLocation}} myrest-apis.json
 ```
 
 
@@ -39,13 +39,13 @@ If you are willing to deploy your application in a docker isolated environment y
 
 ```Dockerfile
 FROM openjdk:8
-RUN wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -qO nuts.jar
+RUN wget {{latestJarLocation}} -qO nuts.jar
 RUN java -jar nuts.jar -Zy install <your application>
 CMD java -jar nuts.jar -y <your application>
 docker run -it -v $(pwd):/workspace openjdk:8 sh
 cd /workspace
-wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -qO nuts.jar
-java -jar nuts.jar -P=no -ZyS -r=+thevpc net.thevpc.nuts.toolbox:noapi#0.8.6.0 my-connector.json
+wget {{latestJarLocation}} -qO nuts.jar
+java -jar nuts.jar -P=no -ZyS -r=+thevpc net.thevpc.nuts.toolbox:noapi#{{latestJarLocation}} my-connector.json
 #############
 
 ```
@@ -54,7 +54,7 @@ This is a docker file to run `net.thevpc.nuts.toolbox:noapi` an OpenAPI document
 
 ```Dockerfile
 FROM openjdk:8
-RUN wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -qO nuts.jar
+RUN wget {{latestJarLocation}} -qO nuts.jar
 RUN java -jar nuts.jar -Zy install net.thevpc.nuts.toolbox:noapi
 CMD java -jar nuts.jar -y net.thevpc.nuts.toolbox:noapi
 ```

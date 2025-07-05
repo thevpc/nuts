@@ -14,7 +14,7 @@ Mainly all of the documentation can be found in 2 places:
 or
 
   ```sh 
-  nsh --help
+  nsh help
   ``` 
 
 you will get more details on nuts or on the tool (here nsh)

@@ -1,12 +1,15 @@
 ---
-id: downloadStable
-title: Stable Binaries
+id: downloadPreview
+title: Standard Binaries
 ---
 
-Download Nuts Stable version {{stableRuntimeVersion}}.
-Download stable version, this is production ready version.
+We recommend downloading the Standard version ({{runtimeVersion}}) of Nuts for most use cases, including personal use, development, and framework integration. While it is not considered a production release, it is generally stable and includes the latest features and updates.
 
-Download Nuts jar file to perform installation using your favourite shell. After downloading the installer, follow the documentation to install the package manager. Use 'Portable' version for production and 'Preview' for all other cases. A valid java 1.8+ runtime is required.
+For production environments, we strongly advise using the production version ({{stableRuntimeVersion}}), which is tested and packaged specifically for stability and long-term use.
+
+:::tip
+Note: Nuts requires a Java Runtime Environment (JRE) version 1.8 or higher, and is fully compatible with the latest Java 24 release.
+:::
 
 
 <Tabs
@@ -19,7 +22,7 @@ values={[
 }>
 <TabItem value="windows">
 
-download manually [https://thevpc.net/nuts/nuts-stable.jar](https://thevpc.net/nuts/nuts-stable.jar)
+download manually [{{latestJarLocation}}]({{latestJarLocation}})
 
 ```
 java -jar nuts.jar  -Zy
@@ -42,23 +45,26 @@ Any of the created shortcuts for windows is a nuts-aware terminal.
 </TabItem>
 <TabItem value="linux">
 
-__(using wget):__
-This will reuse any previous nuts installation before installing the latest version.
-
-```
-$ wget https://thevpc.net/nuts/nuts-stable.jar -qO nuts.jar
-$ java -jar nuts.jar -y
-$ exit
-```
-
 __(using curl):__
 This will reuse any previous nuts installation before installing the latest version.
 
 ```
-$ curl -sL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
+$ curl -sL {{latestJarLocation}} -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 ```
+
+
+__(using wget):__
+This will reuse any previous nuts installation before installing the latest version.
+
+```
+$ wget {{latestJarLocation}} -qO nuts.jar
+$ java -jar nuts.jar -y
+$ exit
+```
+
+
 
 Linux Systems installation is based on bash shell. First launch will configure "~/.bashrc" so that **nuts** and other companion tool commands will be available in any future terminal instances. Note that shells are also supported and the relative `rcfiles` are also updated (including `zsh`, `fish` etc)
 Using **```nuts```** on unix-like system should be seamless. A simple bash terminal (Gnome Terminal, KDE Konsole,...) is already a nuts-aware terminal.
@@ -77,12 +83,12 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="macos">
 
 ```
-$ curl -sL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
+$ curl -sL {{latestJarLocation}} -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 ```
 
-MacOS Systems installation is based on **zsh** shell. First launch will configure "~/.zshrc" so that **nuts** and other companion tool commands will be available in any future terminal instances.
+MacOS Systems installation is based on **bash** shell. First launch will configure "~/.bashrc" so that **nuts** and other companion tool commands will be available in any future terminal instances.
 Using **```nuts```** on MacOS system should be seamless. A simple bash terminal (MacOs Terminal App) is already a nuts-aware terminal.
 
 :::tip

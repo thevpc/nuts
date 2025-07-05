@@ -23,7 +23,7 @@ For what concerns **which** command, it does not really execute the command, it 
 ```
 me@linux:~> nuts which version ls
 version : internal command 
-ls : nuts alias (owner maven-local://net.thevpc.app.nuts.toolbox:nsh#0.8.6.0 ) : maven-local://net.thevpc.app.nuts.toolbox:nsh#0.8.6.0 -c ls
+ls : nuts alias (owner maven-local://net.thevpc.app.nuts.toolbox:nsh# ) : maven-local://net.thevpc.app.nuts.toolbox:nsh# -c ls
 ```
 Here **which** returns that **version** is an internal command while **ls** is an alias to an artifact based command (nsh -c ls) which is called a "nuts alias". As you can see, ls is actually a sub command of nsh artifact.
 

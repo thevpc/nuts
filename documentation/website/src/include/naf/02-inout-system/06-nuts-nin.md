@@ -4,7 +4,7 @@ title: NIn for simplified Input
 
 # `NIn` — Structured Input Utility
 
-The `NIn` class is the **interactive input** utility of the **Nuts** platform. It provides a simple and consistent interface to read from the **standard input stream** (`NSession.in()`), with built-in support for prompts, password masking, and type-safe values.
+The `NIn` class is the **interactive input** utility of the **Nuts** platform. It provides a simple and consistent interface to read from the **standard input stream** (`NSession::in()`), with built-in support for prompts, password masking, and type-safe values.
 
 ## Basic Input Reading
 
@@ -19,7 +19,7 @@ Reads a full line from the user input.
 You can also provide a prompt using an NMsg:
 
 ```java
-String name = NIn.readLine(NMsg.ofPlain("Enter your ##name##: "));
+String name = NIn.readLine(NMsg.ofC("Enter your ##name##: "));
 ```
 
 
@@ -49,14 +49,14 @@ Reads a string input and wraps it in an `NLiteral`, allowing you to safely extra
 NLiteral lit = NIn.readLiteral(NMsg.ofPlain("Enter a number: "));
 int value = lit.asInt().get();
 ```
-use the `NLiteral::asXYZ` to convert the string input to common types like `double`, `boolean`, etc...
+use the `NLiteral::asXYZ` series of methods to convert the string input to common types like `double`, `boolean`, etc...
 
 ```java
 NLiteral lit = NIn.readLiteral(NMsg.ofPlain("Enter a number: "));
 double value = lit.asDouble().get();
 ```
 
-## Interactive and Typed Input with NAsk<T>
+## Interactive and Typed Input with NAsk
 For complex or type-safe input, NIn.ask() (or NAsk.of()) provides a fluent API to build interactive prompts with support for:
 
 - Custom messages,

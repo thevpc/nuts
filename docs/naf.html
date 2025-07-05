@@ -299,7 +299,7 @@
 Whether you're developing a CLI utility, a scripting engine, a DevOps automation tool, or a distributed plugin-based system, Nuts provides the scaffolding to manage dependencies, sessions, input/output, configuration, extensions, and workspace isolation — all in a portable and embeddable way.
 <H4 class="md-title-2">Dual Role by Design</H4>
 At its core, Nuts plays two essential roles:
-<ul class="md-ul"><li class="md-uli">As a package manager, Nuts handles runtime dependency resolution, dynamic execution of artifacts, and integration with Maven-compatible repositories.</li><li class="md-uli">As a framework, Nuts offers a rich set of APIs to handle I/O, configuration, text formatting, command execution, file systems, compressed archives, and more — helping developers write cleaner, more powerful, and portable applications.</li><li class="md-uli"></li></ul>
+<ul class="md-ul"><li class="md-uli">As a package manager, Nuts handles runtime dependency resolution, dynamic execution of artifacts, and integration with Maven-compatible repositories.</li><li class="md-uli">As a framework, Nuts offers a rich set of APIs to handle I/O, configuration, text formatting, command execution, file systems, compressed archives, and more — helping developers write cleaner, more powerful, and portable applications.</li></ul>
 
 <H4 class="md-title-2">Build, Embed, Automate</H4>
 Nuts is designed to work in multiple modes of operation:
@@ -340,11 +340,11 @@ Nuts encourages composability: it enables you to define reusable, versioned comp
                             <section id="UABA7754A597D927312509B488EB3B9A8F3237E1B" >
                                 <h3 class="main-section2"><a href="#UE33207DB0B13AA1F136434A84B720BE063CF085B">1.1 Maven Dependency</a></h3>
                                 <div class="text-card">
-                                <p class="md-phrase">to make use of <b class="md-bold">nuts</b> library  you need add the dependency  <code class="md-code md-code-``` net">.thevpc.nuts#nuts-lib:0.8.6.0</code> and provide a hint to maven to point to the right repository <code class="md-code md-code-``` "> https://maven.thevpc.net</code></p>
+                                <p class="md-phrase">to make use of <b class="md-bold">nuts</b> library  you need add the dependency  <code class="md-code md-code-``` net">.thevpc.nuts#nuts-lib:</code> and provide a hint to maven to point to the right repository <code class="md-code md-code-``` "> https://maven.thevpc.net</code></p>
 <H4 class="md-title-2">Configure your pom.xml</H4>
 <pre class="md-code md-code-``` xml"><code class="xml">
     &lt;dependencies&gt;
-        &lt;dependency&gt;&lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;&lt;artifactId&gt;nuts-lib&lt;/artifactId&gt;&lt;version&gt;0.8.6.0&lt;/version&gt;&lt;/dependency&gt;
+        &lt;dependency&gt;&lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;&lt;artifactId&gt;nuts&lt;/artifactId&gt;&lt;version&gt;0.8.6&lt;/version&gt;&lt;/dependency&gt;
     &lt;/dependencies&gt;
     &lt;repositories&gt;
         &lt;repository&gt;&lt;id&gt;thevpc&lt;/id&gt;&lt;url&gt;https://maven.thevpc.net&lt;/url&gt;&lt;/repository&gt;
@@ -863,7 +863,7 @@ Additional token types include:
                                 <h3 class="main-section2"><a href="#U58F633BB32A62BCA0E6934BAFB4FEC3DE70699DC">2.6 NIn for simplified Input</a></h3>
                                 <div class="text-card">
                                 <H4 class="md-title-1"><p class="md-phrase"><mark class="md-code md-code-` ">NIn</mark> — Structured Input Utility</p></H4>
-<p class="md-phrase">The <mark class="md-code md-code-` ">NIn</mark> class is the <b class="md-bold">interactive input</b> utility of the <b class="md-bold">Nuts</b> platform. It provides a simple and consistent interface to read from the <b class="md-bold">standard input stream</b> (<code class="md-code md-code-` ">NSession.in()</code>), with built-in support for prompts, password masking, and type-safe values.</p>
+<p class="md-phrase">The <mark class="md-code md-code-` ">NIn</mark> class is the <b class="md-bold">interactive input</b> utility of the <b class="md-bold">Nuts</b> platform. It provides a simple and consistent interface to read from the <b class="md-bold">standard input stream</b> (<code class="md-code md-code-` ">NSession::in()</code>), with built-in support for prompts, password masking, and type-safe values.</p>
 <H4 class="md-title-2">Basic Input Reading</H4>
 <H4 class="md-title-3">Reading a Line</H4>
 <pre class="md-code md-code-``` java"><code class="java">
@@ -872,7 +872,7 @@ String line = NIn.readLine();
 Reads a full line from the user input.
 You can also provide a prompt using an NMsg:
 <pre class="md-code md-code-``` java"><code class="java">
-String name = NIn.readLine(NMsg.ofPlain("Enter your ##name##: "));
+String name = NIn.readLine(NMsg.ofC("Enter your ##name##: "));
 </code></pre>
 
 <H4 class="md-title-3">Reading a Password</H4>
@@ -895,15 +895,85 @@ NLiteral lit = NIn.readLiteral();
 NLiteral lit = NIn.readLiteral(NMsg.ofPlain("Enter a number: "));
 int value = lit.asInt().get();
 </code></pre>
-<p class="md-phrase">use the <code class="md-code md-code-` ">NLiteral::asXYZ</code> to convert the string input to common types like <mark class="md-code md-code-` ">double</mark>, <mark class="md-code md-code-` ">boolean</mark>, etc...</p>
+<p class="md-phrase">use the <code class="md-code md-code-` ">NLiteral::asXYZ</code> series of methods to convert the string input to common types like <mark class="md-code md-code-` ">double</mark>, <mark class="md-code md-code-` ">boolean</mark>, etc...</p>
 <pre class="md-code md-code-``` java"><code class="java">
 NLiteral lit = NIn.readLiteral(NMsg.ofPlain("Enter a number: "));
 double value = lit.asDouble().get();
 </code></pre>
 
-<H4 class="md-title-2">Interactive and Typed Input with NAsk
-null
-</H4>
+<H4 class="md-title-2">Interactive and Typed Input with NAsk</H4>
+For complex or type-safe input, NIn.ask() (or NAsk.of()) provides a fluent API to build interactive prompts with support for:
+<ul class="md-ul"><li class="md-uli">Custom messages,</li><li class="md-uli">Typed inputs (String, int, boolean, enum, etc.),</li><li class="md-uli">Default values,</li><li class="md-uli">Validators,</li><li class="md-uli">Accepted values,</li><li class="md-uli">Password input,</li><li class="md-uli">"Remember me" options,</li><li class="md-uli">Custom parsing and formatting.</li></ul>
+It will re-prompt indefinitely until a valid input is provided, based on type and validation constraints, or until the user cancels the prompt (e.g., by sending an interrupt like Ctrl+C or entering an empty value when allowed).
+NAsk will re-prompt indefinitely in an interactive loop until:
+<ul class="md-ul"><li class="md-uli">A valid value is provided (based on expected type and validation),</li><li class="md-uli">Or the user explicitly cancels the prompt (e.g., by interrupting input or when input is blank and optional). This ensures reliable and robust user interaction with clear guidance and fallback behavior.</li></ul>
+<H4 class="md-title-3">Password Input Example</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+char[] password = NAsk.of()
+.forPassword(NMsg.ofPlain("Password for user " + user))
+.getValue();
+</code></pre>
+Prompts for a password securely (input not echoed), and returns a char[].
+
+<H4 class="md-title-3">Boolean Confirmation with Context</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+boolean usePcp = NAsk.of()
+.forBoolean(
+NMsg.ofPlain(
+remote
+? "Use PCP users the same as the instances hosts users?"
+: "Use PCP user as the same as the current user?"
+)
+)
+.getValue();
+</code></pre>
+Prompts the user with a yes/no question.
+
+<H4 class="md-title-3">"Remember Me" with Default</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+boolean override = NAsk.of()
+    .setDefaultValue(true)
+    .setRememberMeKey(
+        rememberMeKey == null ? null : ("Override." + rememberMeKey)
+    )
+    .forBoolean(
+        NMsg.ofC("Override %s?",
+            NText.ofStyled(
+                betterPath(out.toString()),
+                NTextStyle.path()
+            )
+        )
+    )
+    .getBooleanValue();
+</code></pre>
+This example:
+<ul class="md-ul"><li class="md-uli">Proposes a default answer (true),</li><li class="md-uli">Persists the answer under the given key (rememberMeKey), so the question may be skipped next time,</li><li class="md-uli">Uses styled output in the question message.</li></ul>
+
+<H4 class="md-title-3">Custom Validation Example</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+String mainClass = NAsk.of()
+    .forString(NMsg.ofNtf("Enter the name or index:"))
+    .setValidator((value, question) -&gt; {
+        Integer index = NLiteral.of(value).asInt().orNull();
+        if (index != null &amp;&amp; index &gt;= 1 &amp;&amp; index &lt;= possibleClasses.size()) {
+            return possibleClasses.get(index - 1);
+        }
+        if (possibleClasses.contains(value)) {
+            return value;
+        }
+        throw new NValidationException(); // Triggers re-prompt
+    })
+    .getValue();
+</code></pre>
+
+<H4 class="md-title-3">NAsk Supported NAsk Features</H4>
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">forString(...)</code>	Prompt for a String</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">forInt(...)</code>	Prompt for an int</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">forDouble(...)</code>	Prompt for a double</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">forBoolean(...)</code>	Prompt for a boolean (yes/no, true/false)</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">forEnum(Class&lt;E&gt; enumType, ...)</code>	Prompt for an enum value</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">forPassword(...)</code>	Prompt for a password (char[])</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">setDefaultValue(T)</code>	Sets a default value used when input is blank</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">setHintMessage(NMsg)</code>	Displays hint under the question</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">setAcceptedValues(List&lt;Object&gt;)</code>	Restricts accepted values and may display suggestions</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">setRememberMeKey(String)</code>	Automatically stores and reuses the answer based on a key</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">setValidator(NAskValidator&lt;T&gt;)</code>	Adds input validation logic</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">setParser(NAskParser&lt;T&gt;)</code>	Custom parsing from String to T</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">setFormat(NAskFormat&lt;T&gt;)</code>	Custom formatting of expected values for user display</p></li></ul>
+
+<H4 class="md-title-3">NAsk Re-prompting Behavior</H4>
+NAsk will loop until a valid answer is provided, according to:
+<ul class="md-ul"><li class="md-uli">Type expectations (e.g., integer, enum),</li><li class="md-uli">Custom validators (if any),</li><li class="md-uli">Accepted values (if defined).</li></ul>
+This ensures robust, user-friendly interaction without premature failure.
+
 
 
 
@@ -980,7 +1050,9 @@ By default, NLog messages are rendered to:
 <ul class="md-ul"><li class="md-uli">Standard error (NSession.err()), so they remain separate from user output.</li><li class="md-uli">And/or a workspace log file, depending on the session configuration.</li></ul>
 This ensures that logs:
 <ul class="md-ul"><li class="md-uli">Do not pollute standard output (NOut, NTrace),</li><li class="md-uli">Can be persisted and analyzed later if needed,</li><li class="md-uli">Can be redirected or filtered using Nuts session capabilities.</li></ul>
-> Note:  > You can customize log destinations by configuring the NSession, such as redirecting logs to files, suppressing error output, or adjusting verbosity.
+<div class="alert alert-success mb-4">You can customize log destinations by configuring the NSession, such as redirecting logs to files, suppressing error output, or adjusting verbosity.
+
+</div>
 
 <H4 class="md-title-2">Why NLog + NMsg Is Unique</H4>
 In most Java logging frameworks:
@@ -1047,7 +1119,9 @@ NWorkspace.require();
 Nuts.openWorkspace("--reset-options", "--in-memory").share();
 </code></pre>
 This ensures that a workspace is always available, without requiring manual setup.
-> This workspace is in-memory and ignores any inherited CLI options (--reset-options).  > It’s ideal for quick use cases, testing, or tools that need a minimal setup.
+<div class="alert alert-success mb-4">This workspace is in-memory and ignores any inherited CLI options (--reset-options).  It’s ideal for quick use cases, testing, or tools that need a minimal setup.
+
+</div>
 
 
 <H4 class="md-title-2">Scoped (local) workspace</H4>
@@ -1235,7 +1309,9 @@ session.setGui(true);
 </code></pre>
 <p class="md-phrase">The <mark class="md-code md-code-` ">gui</mark> flag in a session determines whether user interactions should be performed using <b class="md-bold">graphical UI dialogs</b> or <b class="md-bold">standard console input</b>.</p>
 <ul class="md-ul"><li class="md-uli"><p class="md-phrase">When <mark class="md-code md-code-` ">gui</mark> is <b class="md-bold">enabled</b>, interactive methods like <code class="md-code md-code-` ">NIn.readLine()</code> or <code class="md-code md-code-` ">NIn.ask()</code> may display <b class="md-bold">graphical dialogs</b> for input instead of using the terminal.</p></li><li class="md-uli"><p class="md-phrase">When <mark class="md-code md-code-` ">gui</mark> is <b class="md-bold">disabled</b> (default in headless or CLI environments), all interactions fall back to <b class="md-bold">console-based prompts</b>.</p></li></ul>
-> In GUI-enabled environments, this may pop up a dialog window rather than prompting in the console.
+<div class="alert alert-success mb-4">In GUI-enabled environments, this may pop up a dialog window rather than prompting in the console.
+
+</div>
 
 <H4 class="md-title-2">Customize output line prefixes:</H4>
 <pre class="md-code md-code-``` java"><code class="java">
@@ -1274,7 +1350,9 @@ String result = NSession.of().copy()
 </code></pre>
 Explanation: 
 <ul class="md-ul"><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">setTerminal(NTerminal.ofMem())</code>: uses an in-memory terminal for all I/O</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">NSession.of().json()</code>: sets the output format to JSON</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">NOut.println(...)</code>: renders the list to the output stream</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">NOut.out().toString()</code>: fetches the printed result from memory</p></li></ul>
-> This technique is useful when you want to render structured output for internal use (e.g., passing to another API or storing in a log file),  > rather than displaying it directly.
+<div class="alert alert-success mb-4">This technique is useful when you want to render structured output for internal use (e.g., passing to another API or storing in a log file),  rather than displaying it directly.
+
+</div>
 
 <H4 class="md-title-2">Log Configuration</H4>
 Control logging levels and filters:
@@ -1416,8 +1494,12 @@ This method ensures:
 NPath logFile = NPath.ofUserStore(NStoreType.LOG).resolve("myapp.log");
 logFile.writeString("This is a log entry.\n", StandardCharsets.UTF_8);
 </code></pre>
-> Notes : You can get the resolved directory path as a string via getLocation() or toString(). 
-> Notes : If you're working in a system context (e.g. root user or shared tools), consider NPath.ofSystemStore(NStoreType).
+<div class="alert alert-success mb-4">Notes : You can get the resolved directory path as a string via getLocation() or toString().
+
+</div>
+<div class="alert alert-success mb-4">Notes : If you're working in a system context (e.g. root user or shared tools), consider NPath.ofSystemStore(NStoreType).
+
+</div>
 
 
 <H4 class="md-title-2">Browsing HTML Folders</H4>
@@ -1842,7 +1924,7 @@ Java has a builtin null Check mechanism but it does not enable customized messag
         &lt;dependency&gt;
             &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
             &lt;artifactId&gt;nuts-lib&lt;/artifactId&gt;
-            &lt;version&gt;0.8.6.0&lt;/version&gt;
+            &lt;version&gt;&lt;/version&gt;
         &lt;/dependency&gt;
         &lt;dependency&gt;
             &lt;groupId&gt;jexcelapi&lt;/groupId&gt;
@@ -2114,7 +2196,7 @@ nuts -y com my-app-1.0.0-SNAPSHOT.jar
         &lt;dependency&gt;
             &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
             &lt;artifactId&gt;nuts-lib&lt;/artifactId&gt;
-            &lt;version&gt;0.8.6.0&lt;/version&gt;
+            &lt;version&gt;&lt;/version&gt;
         &lt;/dependency&gt;
         &lt;dependency&gt;
             &lt;groupId&gt;jexcelapi&lt;/groupId&gt;
@@ -2653,7 +2735,7 @@ Automatic-Module-Name: yourgroupid.yourartifactid.YourClass
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-07-05-033933
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-07-05-213726
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>

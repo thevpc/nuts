@@ -19,8 +19,11 @@ Nuts.openWorkspace("--reset-options", "--in-memory").share();
 
 This ensures that a workspace is always available, without requiring manual setup.
 
-> This workspace is in-memory and ignores any inherited CLI options (--reset-options). 
-> It’s ideal for quick use cases, testing, or tools that need a minimal setup.
+:::tip
+This workspace is in-memory and ignores any inherited CLI options (--reset-options). 
+It’s ideal for quick use cases, testing, or tools that need a minimal setup.
+:::
+
 
 ## Scoped (local) workspace
 
@@ -115,5 +118,6 @@ NWorkspace.get().ifPresent(ws -> {
 });
 ```
 
-> This does not create or share a workspace. It only retrieves one if it exists in the current context.
-
+:::tip
+This does not create or share a workspace. It only retrieves one if it exists in the current context.
+:::

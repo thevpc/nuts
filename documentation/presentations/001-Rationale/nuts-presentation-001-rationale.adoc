@@ -380,7 +380,7 @@ Is Not:
 * Install for Preview/Evaluation, most `recent`
 
 ```sh
-$ wget https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar
+$ wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -o nuts.jar
 $ java -jar nuts.jar -Zy -r=+preview
 $ exit
 ```
@@ -388,7 +388,7 @@ $ exit
 * Install for Production, most `stable`
 
 ```sh
-$ wget https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar -O nuts.jar
+$ wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar -O nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 ```

@@ -39,7 +39,7 @@ Assuming you are always under `nuts` repo root folder, issue the following comma
 
 ```bash
 cd installers/nuts-release-tool
-java -jar target/nuts-release-tool-$version.jar
+java -jar target/nuts-release-tool-${{runtimeVersion}}.jar
 ```
 
 You can now play with your development version of nuts using the generated `nuts-dev` script.

@@ -43,10 +43,10 @@ If you want to install ```nuts``` (or update from an existing rolling version) y
 <br />
 Please note that ```nuts``` rolling version (which is the most recent version) is quite stable and you can use it for personal usage, for development or for testing but we recommend you consider official versions for production systems.
 
-First you need to download nuts-preview.jar
+First you need to download nuts preview jar
 
 ```
-curl -sL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar && java -jar nuts.jar -Zy
+curl -sL {{latestJarLocation}} -o nuts.jar && java -jar nuts.jar -Zy
 ```
 
 That’s it, now you must relaunch the terminal window (close the terminal and start it again).
@@ -65,7 +65,7 @@ The very same procedure applies whether you already have an existing version of 
 First you need to download nuts-stable.jar
 
 ```
-curl -sL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar && java -jar nuts.jar -Zy
+curl -sL {{stableJarLocation}} -o nuts.jar && java -jar nuts.jar -Zy
 ```
 
 That’s it, now you must relaunch the terminal window (close the terminal and start it again).

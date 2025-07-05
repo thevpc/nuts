@@ -82,22 +82,21 @@ $> nuts search
 
 $> nuts search 'net.thevpc.nuts.toolbox:*' --anywhere
  
-        net.thevpc.nsh:nsh#0.8.6.0
-        net.thevpc.nuts.toolbox:ndoc#0.8.6.0
-        net.thevpc.nuts.toolbox:ndexer#0.8.6.0
-        net.thevpc.nuts.toolbox:njob#0.8.6.0
-        net.thevpc.nuts.toolbox:nmvn#0.8.6.0
-        net.thevpc.nuts.toolbox:nwork#0.8.6.0
-        net.thevpc.nsh:nsh#0.8.6.0
-        net.thevpc.nuts.toolbox:ntomcat#0.8.6.0
-        net.thevpc.nuts.toolbox:ntalk-agent#0.8.6.0
-        net.thevpc.nuts.toolbox:ndiff#0.8.6.0
-        net.thevpc.nuts.toolbox:nserver#0.8.6.0
-        net.thevpc.nuts.toolbox:ndb#0.8.6.0
-        net.thevpc.nuts.toolbox:nversion#0.8.6.0
-        net.thevpc.nuts.toolbox:ncode#0.8.6.0
-        net.thevpc.nuts.toolbox:ndocusaurus#0.8.6.0
-        net.thevpc.nuts.toolbox:noapi#0.8.6.0
+        net.thevpc.nuts.toolbox:ndoc#{{runtimeVersion}}
+        net.thevpc.nuts.toolbox:ndexer#{{runtimeVersion}}
+        net.thevpc.nuts.toolbox:njob#{{runtimeVersion}}
+        net.thevpc.nuts.toolbox:nmvn#{{runtimeVersion}}
+        net.thevpc.nuts.toolbox:nwork#{{runtimeVersion}}
+        net.thevpc.nsh:nsh#{{runtimeVersion}}
+        net.thevpc.nuts.toolbox:ntomcat#{{runtimeVersion}}
+        net.thevpc.nuts.toolbox:ntalk-agent#{{runtimeVersion}}
+        net.thevpc.nuts.toolbox:ndiff#{{runtimeVersion}}
+        net.thevpc.nuts.toolbox:nserver#{{runtimeVersion}}
+        net.thevpc.nuts.toolbox:ndb#{{runtimeVersion}}
+        net.thevpc.nuts.toolbox:nversion#{{runtimeVersion}}
+        net.thevpc.nuts.toolbox:ncode#{{runtimeVersion}}
+        net.thevpc.nuts.toolbox:ndocusaurus#{{runtimeVersion}}
+        net.thevpc.nuts.toolbox:noapi#{{runtimeVersion}}
 
 $> nuts install org.jedit:jedit
 

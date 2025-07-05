@@ -88,9 +88,14 @@ This method ensures:
 NPath logFile = NPath.ofUserStore(NStoreType.LOG).resolve("myapp.log");
 logFile.writeString("This is a log entry.\n", StandardCharsets.UTF_8);
 ```
-> Notes : You can get the resolved directory path as a string via getLocation() or toString(). 
 
-> Notes : If you're working in a system context (e.g. root user or shared tools), consider NPath.ofSystemStore(NStoreType).
+:::tip
+Notes : You can get the resolved directory path as a string via getLocation() or toString().
+:::
+
+:::tip
+Notes : If you're working in a system context (e.g. root user or shared tools), consider NPath.ofSystemStore(NStoreType).
+:::
 
 
 ## Browsing HTML Folders

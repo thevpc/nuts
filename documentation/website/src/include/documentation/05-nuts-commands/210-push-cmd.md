@@ -11,7 +11,7 @@ This command does absolutely nothing but showing this message
   /  |/ / / / / __/ ___/   The Open Source Package Manager for Java (TM)
  / /|  / /_/ / /_(__  )    and other Things ... by vpc
 /_/ |_/\__,_/\__/____/     https://github.com/thevpc/nuts
-    version 0.8.6.0
+    version 
 
 
 SYNOPSIS:

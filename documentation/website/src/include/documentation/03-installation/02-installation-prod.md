@@ -48,14 +48,14 @@ OpenJDK 64-Bit Server VM (build 24.0.1+9-suse-1.1-x8664, mixed mode, sharing)
 }>
 <TabItem value="windows">
 
-download [nuts-0.8.5.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.0.8.5/nuts-0.8.5.jar)
+download [nuts-app-{{stableApiVersion}}.jar]({{stableJarLocation}})
 ```
-java -jar nuts-0.8.5.jar  -Zy
+java -jar nuts-app-{{stableApiVersion}}.jar  -Zy
 ```
 
 On Windows systems, first launch will create a new **```nuts```** Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.
-- **nuts-cmd-0.8.5** : this shortcut will open a configured command terminal. **```nuts```** command will be available as well as several nuts companion tools installed by **nadmin** by default
-- **nuts-cmd**       : this shortcut will point to the last installed **nuts** version, here 0.8.5  
+- **nuts-cmd-{{stableApiVersion}}** : this shortcut will open a configured command terminal. **```nuts```** command will be available as well as several nuts companion tools installed by **nadmin** by default
+- **nuts-cmd**       : this shortcut will point to the last installed **nuts** version, here {{stableApiVersion}} 
 
 Any of these shortcuts will launch a nuts-aware terminal.
 
@@ -74,7 +74,7 @@ __for production (using wget):__
 This will reset/delete any previous nuts installation before installing the latest version.
 Removing the `Z` modifier (replace `-Zy` by `-y`) flag if you do not want to reset the workspace.
 ```
-$ wget https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
+$ wget {{stableJarLocation}} -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 ```
@@ -83,7 +83,7 @@ __for production (using curl):__
 This will reset/delete any previous nuts installation before installing the latest version.
 Removing the `Z` modifier (replace `-Zy` by `-y`) flag if you do not want to reset the workspace.
 ```
-$ curl -sL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
+$ curl -sL {{stableJarLocation}} -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 ```
@@ -104,7 +104,7 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="macos">
 
 ```
-$ curl -sL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
+$ curl -sL {{stableJarLocation}} -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 ```
@@ -122,7 +122,7 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="wget">
 
 ```
-  $ wget https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
+  $ wget {{stableJarLocation}} -o nuts.jar
   $  java -jar nuts.jar -y
 ```
 
@@ -137,7 +137,7 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="curl">
 
 ```
-$ curl -sL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
+$ curl -sL {{stableJarLocation}} -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 ```

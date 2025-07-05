@@ -8,7 +8,7 @@ Add the following dependency to you spring boot project
     <dependency>
         <groupId>net.thevpc.nuts</groupId>
         <artifactId>nuts-spring-boot</artifactId>
-        <version>0.8.6.0</version>
+        <version>{{runtimeVersion}}</version>
     </dependency>
 ```
 

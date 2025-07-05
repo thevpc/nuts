@@ -128,12 +128,12 @@
                     
                     <ul class="nav flex-column">
                         
-                        <li class="nav-item"><a class="nav-link" href="#downloadStable">1.1 Stable Binaries</a>
+                        <li class="nav-item"><a class="nav-link" href="#downloadPreview">1.1 Standard Binaries</a>
                             
                             
                         </li>
                         
-                        <li class="nav-item"><a class="nav-link" href="#downloadPreview">1.2 Preview Binaries</a>
+                        <li class="nav-item"><a class="nav-link" href="#downloadStable">1.2 Production Binaries</a>
                             
                             
                         </li>
@@ -171,21 +171,24 @@
                         <div class="text-card" style="margin-top: 10px">
                             <H2>1 Download Nuts</H2>
 Nuts provides several download versions depending on your requirements
-<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><a href="#downloadStable" class="md-link">Stable Binaries</a> or Recommended Binaries are used in most of the cases</p></li><li class="md-uli"><p class="md-phrase"><a href="#downloadPreview" class="md-link">Preview Binaries</a> are used if you want to benefit of all new features</p></li><li class="md-uli"><p class="md-phrase"><a href="#downloadInstaller" class="md-link">Installers</a> are used if you are more familiar with GUI Wizard installers</p></li><li class="md-uli"><p class="md-phrase"><a href="#downloadAppFull" class="md-link">Offline Binaries</a> are used critical or isolated systems, such as docker containers. They provide a statically built bersion of nuts that does not require external dependencies.</p></li><li class="md-uli"><p class="md-phrase"><a href="#downloadArchive" class="md-link">Older archived versions</a> are provided for you to browse old version</p></li></ul>
+<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><a href="#downloadPreview" class="md-link">Standard Binaries</a> are used if you want to benefit of all new features</p></li><li class="md-uli"><p class="md-phrase"><a href="#downloadStable" class="md-link">Production Binaries</a> used mostly for production with more stability and slower updates</p></li><li class="md-uli"><p class="md-phrase"><a href="#downloadInstaller" class="md-link">Installers</a> are used if you are more familiar with GUI Wizard installers</p></li><li class="md-uli"><p class="md-phrase"><a href="#downloadAppFull" class="md-link">Offline Binaries</a> are used critical or isolated systems, such as docker containers. They provide a statically built version of nuts that does not require external dependencies.</p></li><li class="md-uli"><p class="md-phrase"><a href="#downloadArchive" class="md-link">Older archived versions</a> are provided for you to browse old version</p></li></ul>
 
                         </div>
                         
                             <!--pageLevel2-->
-                            <section id="downloadStable">
+                            <section id="downloadPreview">
                                 <div class="text-card" style="margin-top: 10px">
-                                <H3>1.1 Stable Binaries</H3>
-Download Nuts Stable version 0.8.5.0. Download stable version, this is production ready version.
-Download Nuts jar file to perform installation using your favourite shell. After downloading the installer, follow the documentation to install the package manager. Use 'Portable' version for production and 'Preview' for all other cases. A valid java 1.8+ runtime is required.
+                                <H3>1.1 Standard Binaries</H3>
+We recommend downloading the Standard version (0.8.6.0) of Nuts for most use cases, including personal use, development, and framework integration. While it is not considered a production release, it is generally stable and includes the latest features and updates.
+For production environments, we strongly advise using the production version (0.8.5.0), which is tested and packaged specifically for stability and long-term use.
+<div class="alert alert-success mb-4">Note: Nuts requires a Java Runtime Environment (JRE) version 1.8 or higher, and is fully compatible with the latest Java 24 release.
+
+</div>
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi70-tab" data-toggle="tab" href="#idi70" role="tab" aria-controls="idi70" aria-selected="false">windows</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link active" id="idi71-tab" data-toggle="tab" href="#idi71" role="tab" aria-controls="idi71" aria-selected="true">linux</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link " id="idi72-tab" data-toggle="tab" href="#idi72" role="tab" aria-controls="idi72" aria-selected="false">macos</a></li>
 </ul>
-<div class="tab-content my-3"><div class="tab-pane fade show " id="idi70" role="tabpanel" aria-labelledby="idi70-tab"><p class="md-phrase">download manually <a href="https://thevpc.net/nuts/nuts-stable.jar" class="md-link">https://thevpc.net/nuts/nuts-stable.jar</a></p>
+<div class="tab-content my-3"><div class="tab-pane fade show " id="idi70" role="tabpanel" aria-labelledby="idi70-tab"><p class="md-phrase">download manually <a href="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar" class="md-link">https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar</a></p>
 <pre class="md-code md-code-``` "><code class="">
 java -jar nuts.jar  -Zy
 </code></pre>
@@ -212,18 +215,18 @@ Supported Windows systems include Window 7 and later.
 
 </div>
 </div>
-<div class="tab-pane fade show active" id="idi71" role="tabpanel" aria-labelledby="idi71-tab"><b class="md-bold">(using wget):</b>
+<div class="tab-pane fade show active" id="idi71" role="tabpanel" aria-labelledby="idi71-tab"><b class="md-bold">(using curl):</b>
 This will reuse any previous nuts installation before installing the latest version.
 <pre class="md-code md-code-``` "><code class="">
-$ wget https://thevpc.net/nuts/nuts-stable.jar -qO nuts.jar
-$ java -jar nuts.jar -y
+$ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -o nuts.jar
+$ java -jar nuts.jar -Zy
 $ exit
 </code></pre>
-<b class="md-bold">(using curl):</b>
+<b class="md-bold">(using wget):</b>
 This will reuse any previous nuts installation before installing the latest version.
 <pre class="md-code md-code-``` "><code class="">
-$ curl -sL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
-$ java -jar nuts.jar -Zy
+$ wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -qO nuts.jar
+$ java -jar nuts.jar -y
 $ exit
 </code></pre>
 Linux Systems installation is based on bash shell. First launch will configure "~/.bashrc" so that 
@@ -245,99 +248,6 @@ All Linux versions and distributions should work with or without X Window (or eq
 </div>
 </div>
 <div class="tab-pane fade show " id="idi72" role="tabpanel" aria-labelledby="idi72-tab"><pre class="md-code md-code-``` "><code class="">
-$ curl -sL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
-$ java -jar nuts.jar -Zy
-$ exit
-</code></pre>
-MacOS Systems installation is based on 
-<b class="md-bold">zsh</b>
- shell. First launch will configure "~/.zshrc" so that 
-<b class="md-bold">nuts</b>
- and other companion tool commands will be available in any future terminal instances. Using 
-<b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b>
- on MacOS system should be seamless. A simple bash terminal (MacOs Terminal App) is already a nuts-aware terminal.
-<div class="alert alert-success mb-4">Any bash terminal application is a nuts-aware terminal.
-
-</div>
-</div>
-</div>
-
-
-                                </div>
-                                
-                            </section>
-                            <hr class="divider">
-                        
-                            <!--pageLevel2-->
-                            <section id="downloadPreview">
-                                <div class="text-card" style="margin-top: 10px">
-                                <H3>1.2 Preview Binaries</H3>
-Download Nuts Preview version 0.8.6.0. Download preview version, this is not production ready version.
-Download Nuts jar file to perform installation using your favourite shell. After downloading the installer, follow the documentation to install the package manager. Use 'Portable' version for production and 'Preview' for all other cases. A valid java 1.8+ runtime is required.
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi80-tab" data-toggle="tab" href="#idi80" role="tab" aria-controls="idi80" aria-selected="false">windows</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link active" id="idi81-tab" data-toggle="tab" href="#idi81" role="tab" aria-controls="idi81" aria-selected="true">linux</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi82-tab" data-toggle="tab" href="#idi82" role="tab" aria-controls="idi82" aria-selected="false">macos</a></li>
-</ul>
-<div class="tab-content my-3"><div class="tab-pane fade show " id="idi80" role="tabpanel" aria-labelledby="idi80-tab"><p class="md-phrase">download manually <a href="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar" class="md-link">https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar</a></p>
-<pre class="md-code md-code-``` "><code class="">
-java -jar nuts.jar  -Zy
-</code></pre>
-On Windows systems, first launch will create a new 
-<b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b>
- Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.
--
- 
-<b class="md-bold">nuts-cmd-0.8.6</b>
- : this shortcut will open a configured command terminal. 
-<b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b>
- command will be available as well as several nuts companion tools installed by 
-<b class="md-bold">nadmin</b>
- by default
--
- 
-<b class="md-bold">nuts-cmd</b>
-       : this shortcut will point to the last installed 
-<b class="md-bold">nuts</b>
- version, here 0.8.6
-Any of these shortcuts will launch a nuts-aware terminal.
-Supported Windows systems include Window 7 and later.
-<div class="alert alert-success mb-4">Any of the created shortcuts for windows is a nuts-aware terminal.
-
-</div>
-</div>
-<div class="tab-pane fade show active" id="idi81" role="tabpanel" aria-labelledby="idi81-tab"><b class="md-bold">(using wget):</b>
-This will reuse any previous nuts installation before installing the latest version.
-<pre class="md-code md-code-``` "><code class="">
-$ wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -qO nuts.jar
-$ java -jar nuts.jar -y
-$ exit
-</code></pre>
-<b class="md-bold">(using curl):</b>
-This will reuse any previous nuts installation before installing the latest version.
-<pre class="md-code md-code-``` "><code class="">
-$ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -o nuts.jar
-$ java -jar nuts.jar -Zy
-$ exit
-</code></pre>
-Linux Systems installation is based on bash shell. First launch will configure "~/.bashrc" so that 
-<b class="md-bold">nuts</b>
- and other companion tool commands will be available in any future terminal instances. Note that shells are also supported and the relative 
-<mark class="md-code md-code-` ">rcfiles</mark>
- are also updated (including 
-<mark class="md-code md-code-` ">zsh</mark>
-, 
-<mark class="md-code md-code-` ">fish</mark>
- etc) Using 
-<b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b>
- on unix-like system should be seamless. A simple bash terminal (Gnome Terminal, KDE Konsole,...) is already a nuts-aware terminal.
-All Linux versions and distributions should work with or without X Window (or equivalent). Graphical system is required only if you plan to run a gui application using 
-<b class="md-bold">nuts</b>
-. All tests where performed on OpenSuse Tumbleweed.
-<div class="alert alert-success mb-4">Any bash terminal application is a nuts-aware terminal.
-
-</div>
-</div>
-<div class="tab-pane fade show " id="idi82" role="tabpanel" aria-labelledby="idi82-tab"><pre class="md-code md-code-``` "><code class="">
 $ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
@@ -362,32 +272,155 @@ MacOS Systems installation is based on
                             <hr class="divider">
                         
                             <!--pageLevel2-->
+                            <section id="downloadStable">
+                                <div class="text-card" style="margin-top: 10px">
+                                <H3>1.2 Production Binaries</H3>
+For production use, we recommend downloading the Stable version (0.8.5.0) of Nuts. This release is production-ready, thoroughly tested, and designed for long-term reliability.
+Use the Production version for mission-critical deployments. For development, personal use, or framework-based integration, the Standard version is generally sufficient and provides access to the latest features.
+<div class="alert alert-success mb-4">Note: Nuts requires a Java Runtime Environment (JRE) version 1.8 or higher, and is fully compatible with the latest Java 24 release.
+
+</div>
+Download Nuts Stable version 0.8.5.0. Download stable version, this is production ready version.
+Download Nuts jar file to perform installation using your favourite shell. After downloading the installer, follow the documentation to install the package manager. Use 'Production' version for production and 'Standard' for all other cases. A valid java 1.8+ runtime is required.
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi80-tab" data-toggle="tab" href="#idi80" role="tab" aria-controls="idi80" aria-selected="false">windows</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="idi81-tab" data-toggle="tab" href="#idi81" role="tab" aria-controls="idi81" aria-selected="true">linux</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="idi82-tab" data-toggle="tab" href="#idi82" role="tab" aria-controls="idi82" aria-selected="false">macos</a></li>
+</ul>
+<div class="tab-content my-3"><div class="tab-pane fade show " id="idi80" role="tabpanel" aria-labelledby="idi80-tab"><p class="md-phrase">download manually <a href="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar" class="md-link">https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar</a></p>
+<pre class="md-code md-code-``` "><code class="">
+java -jar nuts.jar  -Zy
+</code></pre>
+On Windows systems, first launch will create a new 
+<b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b>
+ Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.
+-
+ 
+<b class="md-bold">nuts-cmd-0.8.6</b>
+ : this shortcut will open a configured command terminal. 
+<b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b>
+ command will be available as well as several nuts companion tools installed by 
+<b class="md-bold">nadmin</b>
+ by default
+-
+ 
+<b class="md-bold">nuts-cmd</b>
+       : this shortcut will point to the last installed 
+<b class="md-bold">nuts</b>
+ version, here 0.8.6
+Any of these shortcuts will launch a nuts-aware terminal.
+Supported Windows systems include Window 7 and later.
+<div class="alert alert-success mb-4">Any of the created shortcuts for windows is a nuts-aware terminal.
+
+</div>
+</div>
+<div class="tab-pane fade show active" id="idi81" role="tabpanel" aria-labelledby="idi81-tab"><b class="md-bold">(using curl):</b>
+This will reuse any previous nuts installation before installing the latest version.
+<pre class="md-code md-code-``` "><code class="">
+$ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar -o nuts.jar
+$ java -jar nuts.jar -Zy
+$ exit
+</code></pre>
+<b class="md-bold">(using wget):</b>
+This will reuse any previous nuts installation before installing the latest version.
+<pre class="md-code md-code-``` "><code class="">
+$ wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar -qO nuts.jar
+$ java -jar nuts.jar -y
+$ exit
+</code></pre>
+Linux Systems installation is based on bash shell. First launch will configure "~/.bashrc" so that 
+<b class="md-bold">nuts</b>
+ and other companion tool commands will be available in any future terminal instances. Note that shells are also supported and the relative 
+<mark class="md-code md-code-` ">rcfiles</mark>
+ are also updated (including 
+<mark class="md-code md-code-` ">zsh</mark>
+, 
+<mark class="md-code md-code-` ">fish</mark>
+ etc) Using 
+<b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b>
+ on unix-like system should be seamless. A simple bash terminal (Gnome Terminal, KDE Konsole,...) is already a nuts-aware terminal.
+All Linux versions and distributions should work with or without X Window (or equivalent). Graphical system is required only if you plan to run a gui application using 
+<b class="md-bold">nuts</b>
+. All tests where performed on OpenSuse Tumbleweed.
+<div class="alert alert-success mb-4">Any bash terminal application is a nuts-aware terminal.
+
+</div>
+</div>
+<div class="tab-pane fade show " id="idi82" role="tabpanel" aria-labelledby="idi82-tab"><pre class="md-code md-code-``` "><code class="">
+$ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar -o nuts.jar
+$ java -jar nuts.jar -Zy
+$ exit
+</code></pre>
+MacOS Systems installation is based on 
+<b class="md-bold">zsh</b>
+ shell. First launch will configure "~/.zshrc" so that 
+<b class="md-bold">nuts</b>
+ and other companion tool commands will be available in any future terminal instances. Using 
+<b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b>
+ on MacOS system should be seamless. A simple bash terminal (MacOs Terminal App) is already a nuts-aware terminal.
+<div class="alert alert-success mb-4">Any bash terminal application is a nuts-aware terminal.
+
+</div>
+</div>
+</div>
+
+
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
                             <section id="downloadInstaller">
                                 <div class="text-card" style="margin-top: 10px">
                                 <H3>1.3 Graphical Installers</H3>
 Download Installer for your Operating System.
-Download a graphical installer that will make it simple to install nuts package manager. After downloading the installer, just double click the file and follow the installation wizard instructions. A valid java 1.8+ runtime is required.
-<H4 class="md-title-3">Java Installer</H4>
-Download Portable Installer for any Operating System. This requires you have a valid Java 8+ JRE installed
-<a href="https://thevpc.net/nuts/nuts-installer-0.8.6.0.jar" class="md-link">Portable Installer (173KB)</a>
-<H4 class="md-title-3">Linux Installers</H4>
-
-Download Native Linux x64 Installer. This requires you have a valid Java 8+ JRE installed
-<p class="md-phrase"><a href="https://thevpc.net/nuts/nuts-installer-linux-x64-0.8.6.0.zip" class="md-link">Linux x64 Installer (NOT_FOUND)</a>Download Native Linux x64 Installer along with JRE. You do not need to have an installed JRE.</p>
-<p class="md-phrase"><a href="https://thevpc.net/nuts/nuts-installer-linux64-bin-with-java-0.8.6.0.zip" class="md-link">Linux x64 Installer + JRE (NOT_FOUND)</a>Download Native Linux x64 Installer as RPM. Use this if you are using OpenSuse, Redhat, Fedora or any rpm based Linux distribution.</p>
-<a href="https://thevpc.net/nuts/nuts-installer-linux64-rpm-0.8.6.0.rpm" class="md-link">Redhat/OpenSuSE Linux x64 RPM (NOT_FOUND)</a>
-<H4 class="md-title-3">Windows Installers</H4>
-
-<p class="md-phrase">Download Native Linux Installer. This requires you have a valid Java 8+ JRE installed <a href="https://thevpc.net/nuts/nuts-installer-windows64-0.8.6.0.exe" class="md-link">Win x64 Installer (NOT_FOUND)</a>Download Native Windows x64 Installer along with JRE. You do not need to have an installed JRE.</p>
-<a href="https://thevpc.net/nuts/nuts-installer-windows64-with-java-0.8.6.0.zip" class="md-link">Win x64 Installer + JRE (NOT_FOUND)</a>
-<H4 class="md-title-3">MacOS Installers</H4>
-
-Download Native MacOS x64 Installer. This requires you have a valid Java 8+ JRE installed
-<a href="https://thevpc.net/nuts/nuts-installer-mac64-0.8.6.0.app.zip" class="md-link">MacOS x64 Installer (NOT_FOUND)</a>
-
-
-
-
+<p class="md-phrase">Download the appropriate installer for your operating system. Graphical installers are available for major platforms and provide a simple setup wizard. > <b class="md-bold">Note:</b> A valid Java Runtime Environment (JRE) version <b class="md-bold">1.8 or higher</b> is required, and Nuts is compatible with the latest Java 24 release.</p>
+<table class="table table-bordered table-striped"><tr><th>Platform</th>
+<th>Installer Type</th>
+<th>Description</th>
+<th>Download Link</th>
+</tr>
+<tr><td><p class="md-phrase"> <b class="md-bold">All OS</b>     </p></td>
+<td>Java Installer</td>
+<td>Cross-platform graphical installer. Double-click to run and follow the wizard.</td>
+<td><p class="md-phrase"> <a href="https://thevpc.net/nuts/nuts-installer-0.8.6.0.jar" class="md-link">Portable Installer (173KB)</a> </p></td>
+</tr>
+<tr><td><p class="md-phrase"> <b class="md-bold">All OS</b>     </p></td>
+<td>No Installer</td>
+<td>Lightweight version (173KB). Requires existing Java 8+ installation.</td>
+<td><p class="md-phrase"> <a href="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar" class="md-link">Download Portable</a> </p></td>
+</tr>
+<tr><td><p class="md-phrase"> <b class="md-bold">Linux</b>      </p></td>
+<td>Linux x64 Installer</td>
+<td>Native installer. Requires existing Java 8+ installation.</td>
+<td><p class="md-phrase"> <a href="https://thevpc.net/nuts/nuts-installer-linux-x64-0.8.6.0.zip" class="md-link">Linux x64 Installer (NOT_FOUND)</a>        </p></td>
+</tr>
+<tr><td></td>
+<td>Linux x64 Installer + JRE</td>
+<td>Native installer bundled with JRE. No pre-installed Java required.</td>
+<td><p class="md-phrase"> <a href="https://thevpc.net/nuts/nuts-installer-linux64-bin-with-java-0.8.6.0.zip" class="md-link">Linux x64 Installer + JRE (NOT_FOUND)</a>        </p></td>
+</tr>
+<tr><td></td>
+<td>RedHat / OpenSuSE RPM</td>
+<td>RPM package for RPM-based distros (RedHat, Fedora, OpenSuSE, etc.).</td>
+<td><p class="md-phrase"> <a href="https://thevpc.net/nuts/nuts-installer-linux64-rpm-0.8.6.0.rpm" class="md-link">Redhat/OpenSuSE Linux x64 RPM (NOT_FOUND)</a>    </p></td>
+</tr>
+<tr><td><p class="md-phrase"> <b class="md-bold">Windows</b>    </p></td>
+<td>Windows x64 Installer</td>
+<td>Native installer. Requires existing Java 8+ installation.</td>
+<td><p class="md-phrase"> <a href="https://thevpc.net/nuts/nuts-installer-windows64-0.8.6.0.exe" class="md-link">Win x64 Installer (NOT_FOUND)</a>        </p></td>
+</tr>
+<tr><td></td>
+<td>Windows x64 Installer + JRE</td>
+<td>Installer bundled with JRE. No pre-installed Java required.</td>
+<td><p class="md-phrase"> <a href="https://thevpc.net/nuts/nuts-installer-windows64-with-java-0.8.6.0.zip" class="md-link">Win x64 Installer + JRE (NOT_FOUND)</a>        </p></td>
+</tr>
+<tr><td><p class="md-phrase"> <b class="md-bold">macOS</b>      </p></td>
+<td>macOS x64 Installer</td>
+<td>Native installer for macOS. Requires existing Java 8+ installation.</td>
+<td><p class="md-phrase"> <a href="https://thevpc.net/nuts/nuts-installer-mac64-0.8.6.0.app.zip" class="md-link">MacOS x64 Installer (NOT_FOUND)</a>        </p></td>
+</tr>
+</table>
 
                                 </div>
                                 
@@ -398,29 +431,51 @@ Download Native MacOS x64 Installer. This requires you have a valid Java 8+ JRE 
                             <section id="downloadAppFull">
                                 <div class="text-card" style="margin-top: 10px">
                                 <H3>1.4 Offline Binaries</H3>
-Offline binaries can be used to enhance bootstrap performance and are ideal in dockerized environments. 
-<H4 class="md-title-3">Java Binaries</H4>
-Download Offline binaries for any Operating System. This requires you have a valid Java 8+ JRE installed
-<a href="https://thevpc.net/nuts/nuts-app-full-0.8.6.0.jar" class="md-link">Portable Offline Binaries (NOT_FOUND)</a>
-<H4 class="md-title-3">Linux Binaries</H4>
+<p class="md-phrase">Offline binaries bundle the Nuts bootstrapper together with its runtime, eliminating the need for internet access during the first execution.   These distributions are ideal for <b class="md-bold">offline environments</b>, <b class="md-bold">Docker images</b>, and <b class="md-bold">fast installations</b> in controlled setups.</p>
+<div class="alert alert-success mb-4"><p class="md-phrase"><b class="md-bold">Note:</b> A valid Java Runtime Environment (JRE) version <b class="md-bold">1.8 or higher</b> is required unless otherwise noted. Nuts is fully compatible with the latest <b class="md-bold">Java 24</b> release.</p>
 
-Download Native Linux x64 Offline Binaries. This requires you have a valid Java 8+ JRE installed
-<p class="md-phrase"><a href="https://thevpc.net/nuts/nuts-app-full-linux-x64-0.8.6.0.zip" class="md-link">Linux x64 Offline Binaries (NOT_FOUND)</a>  Download Native Linux x64 Installer along with JRE. You do not need to have an installed JRE.</p>
-<p class="md-phrase"><a href="https://thevpc.net/nuts/nuts-app-full-linux64-bin-with-java-0.8.6.0.zip" class="md-link">Linux x64 Offline Binaries + JRE (NOT_FOUND)</a>  Download Native Linux x64 Installer as RPM. Use this if you are using OpenSuse, Redhat, Fedora or any rpm based Linux distribution.</p>
-<a href="https://thevpc.net/nuts/nuts-app-full-linux64-rpm-0.8.6.0.rpm" class="md-link">Redhat/OpenSuSE Linux x64 Offline RPM (NOT_FOUND)</a>
-<H4 class="md-title-3">Windows Binaries</H4>
-
-Download Native Linux Offline Binaries. This requires you have a valid Java 8+ JRE installed
-<p class="md-phrase"><a href="https://thevpc.net/nuts/nuts-app-full-windows64-0.8.6.0.exe" class="md-link">Win x64 Offline Binaries (NOT_FOUND)</a>Download Native Windows x64 Offline Binaries along with JRE. You do not need to have an installed JRE.</p>
-<a href="https://thevpc.net/nuts/nuts-app-full-windows64-with-java-0.8.6.0.zip" class="md-link">Win x64 Offline Binaries + JRE (NOT_FOUND)</a>
-<H4 class="md-title-3">MacOS Binaries</H4>
-
-Download Native MacOS x64 Offline Binaries. This requires you have a valid Java 8+ JRE installed
-<a href="https://thevpc.net/nuts/nuts-app-full-mac64-0.8.6.0.app.zip" class="md-link">MacOS x64 Offline Binaries (NOT_FOUND)</a>
-
-
-
-
+</div>
+<table class="table table-bordered table-striped"><tr><th>Platform</th>
+<th>Package Type</th>
+<th>Description</th>
+<th>Download Link</th>
+</tr>
+<tr><td><p class="md-phrase"> <b class="md-bold">All OS</b>     </p></td>
+<td>Java Offline Binaries</td>
+<td>Cross-platform archive including bootstrapper and runtime. Requires Java 8+ installed.</td>
+<td><p class="md-phrase"> <a href="https://thevpc.net/nuts/nuts-app-full-0.8.6.0.jar" class="md-link">Portable Offline Binaries (NOT_FOUND)</a> </p></td>
+</tr>
+<tr><td><p class="md-phrase"> <b class="md-bold">Linux</b>      </p></td>
+<td>Linux x64 Offline Binaries</td>
+<td>Native offline package. Requires Java 8+ already installed.</td>
+<td><p class="md-phrase"> <a href="https://thevpc.net/nuts/nuts-app-full-linux-x64-0.8.6.0.zip" class="md-link">Linux x64 Offline Binaries (NOT_FOUND)</a>        </p></td>
+</tr>
+<tr><td></td>
+<td>Linux x64 Offline Binaries + JRE</td>
+<td>Bundled with compatible JRE. Does not require pre-installed Java.</td>
+<td><p class="md-phrase"> <a href="https://thevpc.net/nuts/nuts-app-full-linux64-bin-with-java-0.8.6.0.zip" class="md-link">Linux x64 Offline Binaries + JRE (NOT_FOUND)</a>        </p></td>
+</tr>
+<tr><td></td>
+<td>RedHat/OpenSuSE Offline RPM</td>
+<td>RPM package with all dependencies for RPM-based distros (RedHat, Fedora, OpenSuSE, etc.).</td>
+<td><p class="md-phrase"> <a href="https://thevpc.net/nuts/nuts-app-full-linux64-rpm-0.8.6.0.rpm" class="md-link">Redhat/OpenSuSE Linux x64 Offline RPM (NOT_FOUND)</a>    </p></td>
+</tr>
+<tr><td><p class="md-phrase"> <b class="md-bold">Windows</b>    </p></td>
+<td>Windows x64 Offline Binaries</td>
+<td>Native offline package. Requires Java 8+ already installed.</td>
+<td><p class="md-phrase"> <a href="https://thevpc.net/nuts/nuts-app-full-windows64-0.8.6.0.exe" class="md-link">Win x64 Offline Binaries (NOT_FOUND)</a>        </p></td>
+</tr>
+<tr><td></td>
+<td>Windows x64 Offline Binaries + JRE</td>
+<td>Bundled with JRE. Does not require pre-installed Java.</td>
+<td><p class="md-phrase"><a href="https://thevpc.net/nuts/nuts-app-full-windows64-with-java-0.8.6.0.zip" class="md-link">Win x64 Offline Binaries + JRE (NOT_FOUND)</a>      </p></td>
+</tr>
+<tr><td><p class="md-phrase"> <b class="md-bold">macOS</b>      </p></td>
+<td>macOS x64 Offline Binaries</td>
+<td>Native offline archive for macOS. Requires Java 8+ already installed.</td>
+<td><p class="md-phrase"> <a href="https://thevpc.net/nuts/nuts-app-full-mac64-0.8.6.0.app.zip" class="md-link">MacOS x64 Offline Binaries (NOT_FOUND)</a>       </p></td>
+</tr>
+</table>
 
                                 </div>
                                 
@@ -432,21 +487,27 @@ Download Native MacOS x64 Offline Binaries. This requires you have a valid Java 
                                 <div class="text-card" style="margin-top: 10px">
                                 <H3>1.5 Nuts Archive</H3>
 <H4 class="md-title-1">Old versions</H4>
-<H4 class="md-title-2">0.8.6</H4>
-<pre class="md-code md-code-``` bash"><code class="bash">
-curl -sL https://thevpc.net/nuts/nuts-0.8.6.jar -o nuts.jar &amp;&amp; java -jar nuts.jar -Zy
-</code></pre>
-
-<H4 class="md-title-2">0.8.4</H4>
-<pre class="md-code md-code-``` bash"><code class="bash">
-curl -sL https://thevpc.net/nuts/nuts-0.8.4.jar -o nuts.jar &amp;&amp; java -jar nuts.jar -Zy
-</code></pre>
-
-<H4 class="md-title-2">0.8.3</H4>
-<pre class="md-code md-code-``` bash"><code class="bash">
-curl -sL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar -o nuts.jar &amp;&amp; java -jar nuts.jar -Zy
-</code></pre>
-
+<table class="table table-bordered table-striped"><tr><th>version</th>
+<th>Info</th>
+<th>Download</th>
+</tr>
+<tr><td>0.8.6</td>
+<td></td>
+<td><p class="md-phrase"> <code class="md-code md-code-``` bash"> curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -o nuts.jar &amp;&amp; java -jar nuts.jar -Zy </code>     </p></td>
+</tr>
+<tr><td>0.8.5</td>
+<td></td>
+<td><p class="md-phrase"> <code class="md-code md-code-``` bash"> curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar -o nuts.jar &amp;&amp; java -jar nuts.jar -Zy </code>     </p></td>
+</tr>
+<tr><td>0.8.4</td>
+<td></td>
+<td><p class="md-phrase"> <code class="md-code md-code-``` bash"> curl -sL https://thevpc.net/nuts/nuts-0.8.4.jar -o nuts.jar &amp;&amp; java -jar nuts.jar -Zy</code>                                          </p></td>
+</tr>
+<tr><td>0.8.3</td>
+<td></td>
+<td><p class="md-phrase"> <code class="md-code md-code-``` bash"> curl -sL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar -o nuts.jar &amp;&amp; java -jar nuts.jar -Zy </code> </p></td>
+</tr>
+</table>
 
 
                                 </div>
@@ -481,7 +542,7 @@ curl -sL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.3/nuts-0.
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-07-05-033933
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-07-05-213726
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>

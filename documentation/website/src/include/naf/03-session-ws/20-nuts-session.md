@@ -159,7 +159,10 @@ The `gui` flag in a session determines whether user interactions should be perfo
 - When `gui` is **enabled**, interactive methods like `NIn.readLine()` or `NIn.ask()` may display **graphical dialogs** for input instead of using the terminal.
 - When `gui` is **disabled** (default in headless or CLI environments), all interactions fall back to **console-based prompts**.
 
-> In GUI-enabled environments, this may pop up a dialog window rather than prompting in the console.
+
+:::tip
+In GUI-enabled environments, this may pop up a dialog window rather than prompting in the console.
+:::
 
 ## Customize output line prefixes:
 
@@ -215,8 +218,10 @@ Explanation:
 - `NOut.println(...)`: renders the list to the output stream
 - `NOut.out().toString()`: fetches the printed result from memory
 
-> This technique is useful when you want to render structured output for internal use (e.g., passing to another API or storing in a log file), 
-> rather than displaying it directly.
+:::tip
+This technique is useful when you want to render structured output for internal use (e.g., passing to another API or storing in a log file), 
+rather than displaying it directly.
+:::
 
 
 ## Log Configuration
