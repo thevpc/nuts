@@ -416,7 +416,7 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
         if (a == null) {
             return false;
         }
-        boolean enabled = a.isNonCommented();
+        boolean enabled = a.isUncommented();
         switch (a.key()) {
             case "-a":
             case "--all": {

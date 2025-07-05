@@ -210,7 +210,7 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
         if (aa == null) {
             return false;
         }
-        boolean enabled = aa.isNonCommented();
+        boolean enabled = aa.isUncommented();
         switch (aa.key()) {
             case "--omit-env": {
                 cmdLine.matcher().matchFlag((v) -> setOmitOtherProperties(v.booleanValue())).anyMatch();

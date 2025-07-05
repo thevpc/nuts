@@ -380,7 +380,7 @@ public class DefaultNBootModel implements NBootModel {
                 for (String property : properties) {
                     if (property != null) {
                         DefaultNArg a = new DefaultNArg(property);
-                        if (a.isNonCommented()) {
+                        if (a.isUncommented()) {
                             String key = a.getKey().asString().orElse("");
                             String v = a.getStringValue().orElse(null);
                             if (a.isEnabled()) {

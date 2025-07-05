@@ -295,7 +295,7 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
         if (aa == null) {
             return false;
         }
-        boolean enabled = aa.isNonCommented();
+        boolean enabled = aa.isUncommented();
         switch (aa.key()) {
             case "-c":
             case "--companions": {

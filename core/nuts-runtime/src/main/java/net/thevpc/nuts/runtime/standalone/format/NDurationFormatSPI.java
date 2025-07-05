@@ -32,7 +32,7 @@ public class NDurationFormatSPI implements NFormatSPI {
         switch (a.key()) {
             case "--mode": {
                 a = cmdLine.nextEntry().get();
-                if (a.isNonCommented()) {
+                if (a.isUncommented()) {
                     formatMode = NDurationFormatMode.parse(a.getStringValue().get()).get();
                 }
                 return true;

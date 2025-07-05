@@ -120,7 +120,7 @@ public interface NArg extends NBlankable /*extends NLiteral*/ {
      *
      * @return true if the argument is enable and false if It's commented
      */
-    boolean isNonCommented();
+    boolean isUncommented();
 
     /**
      * true if option is in one of the following forms :

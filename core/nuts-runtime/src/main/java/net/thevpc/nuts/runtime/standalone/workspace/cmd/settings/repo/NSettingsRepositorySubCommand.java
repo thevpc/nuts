@@ -172,7 +172,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
         while (cmdLine.hasNext()) {
             while (cmdLine.hasNext()) {
                 NArg aa = cmdLine.peek().get();
-                boolean enabled = aa.isNonCommented();
+                boolean enabled = aa.isUncommented();
                 switch (aa.key()) {
                     case "--parent": {
                         cmdLine.matcher().matchEntry((v) -> parent.set(v.stringValue())).anyMatch();
@@ -207,7 +207,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
         NSession session = NSession.of();
         while (cmdLine.hasNext()) {
             NArg aa = cmdLine.peek().get();
-            boolean enabled = aa.isNonCommented();
+            boolean enabled = aa.isUncommented();
             switch (aa.key()) {
                 case "--name": {
                     cmdLine.matcher().matchEntry((v) -> repositoryName.set(v.stringValue())).anyMatch();
@@ -256,7 +256,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
         Data d = new Data();
         while (cmdLine.hasNext()) {
             NArg aa = cmdLine.peek().get();
-            boolean enabled = aa.isNonCommented();
+            boolean enabled = aa.isUncommented();
             switch (aa.key()) {
                 case "-l":
                 case "--location": {
@@ -327,7 +327,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
         NRef<String> repositoryName = NRef.ofNull(String.class);
         while (cmdLine.hasNext()) {
             NArg aa = cmdLine.peek().get();
-            boolean enabled = aa.isNonCommented();
+            boolean enabled = aa.isUncommented();
             switch (aa.key()) {
                 case "--name": {
                     cmdLine.matcher().matchEntry((v) -> repositoryName.set(v.stringValue())).anyMatch();

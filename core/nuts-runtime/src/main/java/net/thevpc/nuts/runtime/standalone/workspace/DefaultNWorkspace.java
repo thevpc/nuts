@@ -536,7 +536,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         for (String customOption : effectiveBootOptions.getCustomOptions().orElseGet(Collections::emptyList)) {
             NArg a = NArg.of(customOption);
             if (a.getKey().asString().get().startsWith("config.")) {
-                if (a.isNonCommented()) {
+                if (a.isUncommented()) {
                     this.setConfigProperty(
                             a.getKey().asString().orElse("").substring("config.".length()),
                             a.getStringValue().orNull()

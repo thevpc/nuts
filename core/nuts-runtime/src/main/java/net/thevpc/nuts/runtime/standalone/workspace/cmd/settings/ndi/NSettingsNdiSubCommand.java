@@ -291,7 +291,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
         NSession session=NSession.of();
         while (cmdLine.hasNext()) {
             if ((a = cmdLine.nextEntry("--ignore-unsupported-os").orNull()) != null) {
-                if (a.isNonCommented()) {
+                if (a.isUncommented()) {
                     ignoreUnsupportedOs = a.getBooleanValue().get();
                 }
             } else if (cmdLine.isNextOption()) {

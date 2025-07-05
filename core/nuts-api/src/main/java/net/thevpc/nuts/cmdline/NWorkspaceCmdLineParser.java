@@ -59,7 +59,7 @@ public final class NWorkspaceCmdLineParser {
         while (cmdLine.hasNext()) {
             NArg a = cmdLine.peek().get();
             if (a.isOption()) {
-                boolean active = a.isNonCommented();
+                boolean active = a.isUncommented();
                 String k = a.key();
                 switch (k) {
                     //**********************************
@@ -1142,7 +1142,7 @@ public final class NWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag().get();
                         if (active) {
                             if (options != null) {
-                                options.setCommandVersion(a.isNonCommented());
+                                options.setCommandVersion(a.isUncommented());
                             }
                             return NOptional.of(Collections.singletonList(a));
                         } else {

@@ -640,7 +640,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
         if (a == null) {
             return false;
         }
-        boolean enabled = a.isNonCommented();
+        boolean enabled = a.isUncommented();
         switch (a.key()) {
             case "--inline-dependencies": {
                 return cmdLine.matcher().matchFlag((v) -> this.setInlineDependencies(v.booleanValue())).anyMatch();

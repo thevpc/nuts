@@ -43,22 +43,22 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
         NArg a;
         if ((a = cmdLine.nextEntry(OPTION_MULTILINE_PROPERTY).orNull()) != null) {
             NArg i = NArg.of(a.getStringValue().get());
-            if (i.isNonCommented()) {
+            if (i.isUncommented()) {
                 addMultilineProperty(i.getKey().asString().get(), i.getStringValue().get());
             }
             return true;
         } else if ((a = cmdLine.nextFlag("--compact").orNull()) != null) {
-            if (a.isNonCommented()) {
+            if (a.isUncommented()) {
                 this.compact = a.getBooleanValue().get();
             }
             return true;
         } else if ((a = cmdLine.nextFlag("--props").orNull()) != null) {
-            if (a.isNonCommented()) {
+            if (a.isUncommented()) {
                 this.javaProps = a.getBooleanValue().get();
             }
             return true;
         } else if ((a = cmdLine.nextFlag("--escape-text").orNull()) != null) {
-            if (a.isNonCommented()) {
+            if (a.isUncommented()) {
                 this.escapeText = a.getBooleanValue().get();
             }
             return true;

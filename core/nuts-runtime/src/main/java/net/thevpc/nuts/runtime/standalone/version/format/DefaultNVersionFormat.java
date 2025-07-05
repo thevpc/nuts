@@ -40,7 +40,7 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
         if (aa == null) {
             return false;
         }
-        boolean enabled = aa.isNonCommented();
+        boolean enabled = aa.isUncommented();
         switch (aa.key()) {
             case "-a":
             case "--all": {

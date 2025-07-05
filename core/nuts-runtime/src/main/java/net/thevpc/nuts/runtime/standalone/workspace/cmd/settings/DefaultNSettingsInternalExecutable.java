@@ -53,7 +53,7 @@ public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutab
             if (a == null) {
                 break;
             }
-            boolean enabled = a.isNonCommented();
+            boolean enabled = a.isUncommented();
             if (a.isOption() &&
                     (
                             a.key().equals("-?")

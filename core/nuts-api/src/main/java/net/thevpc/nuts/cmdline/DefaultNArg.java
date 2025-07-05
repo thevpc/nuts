@@ -325,7 +325,7 @@ public class DefaultNArg implements NArg {
     }
 
     @Override
-    public boolean isNonCommented() {
+    public boolean isUncommented() {
         return active;
     }
 

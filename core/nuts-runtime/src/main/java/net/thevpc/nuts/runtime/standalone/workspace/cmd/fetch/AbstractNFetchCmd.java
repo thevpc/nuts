@@ -78,7 +78,7 @@ public abstract class AbstractNFetchCmd extends DefaultNQueryBaseOptions<NFetchC
         if (a == null) {
             return false;
         }
-        boolean enabled = a.isNonCommented();
+        boolean enabled = a.isUncommented();
         switch (a.key()) {
             case "--not-installed": {
                 cmdLine.skip();

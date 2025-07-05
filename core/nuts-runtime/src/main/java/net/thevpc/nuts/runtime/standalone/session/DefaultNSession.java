@@ -197,7 +197,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     public boolean configureFirst(NCmdLine cmdLine) {
         NArg a = cmdLine.peek().orNull();
         if (a != null) {
-            boolean active = a.isNonCommented();
+            boolean active = a.isUncommented();
             switch (a.key()) {
                 case "-T":
                 case "--output-format-option": {
@@ -596,7 +596,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 case "-?":
                 case "-h":
                 case "--help": {
-                    boolean enabled = a.isNonCommented();
+                    boolean enabled = a.isUncommented();
                     cmdLine.skip();
                     if (enabled) {
                         if (cmdLine.isExecMode()) {
@@ -608,7 +608,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                     return true;
                 }
                 case "--skip-event": {
-                    boolean enabled = a.isNonCommented();
+                    boolean enabled = a.isUncommented();
                     switch (NApp.of().getMode()) {
                         case INSTALL:
                         case UNINSTALL:
@@ -622,7 +622,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                     return true;
                 }
                 case "--version": {
-                    boolean enabled = a.isNonCommented();
+                    boolean enabled = a.isUncommented();
                     cmdLine.skip();
                     if (enabled) {
                         if (cmdLine.isExecMode()) {

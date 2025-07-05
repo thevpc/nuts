@@ -25,7 +25,7 @@ public class NCmdLineTutorial {
                     case "-o":
                     case "--option": {
                         a = cmdLine.nextFlag().get();
-                        if (a.isNonCommented()) {
+                        if (a.isUncommented()) {
                             boolOption = a.getBooleanValue().get();
                         }
                         break;
@@ -33,7 +33,7 @@ public class NCmdLineTutorial {
                     case "-n":
                     case "--name": {
                         a = cmdLine.nextEntry().get();
-                        if (a.isNonCommented()) {
+                        if (a.isUncommented()) {
                             stringOption = a.getStringValue().get();
                         }
                         break;
