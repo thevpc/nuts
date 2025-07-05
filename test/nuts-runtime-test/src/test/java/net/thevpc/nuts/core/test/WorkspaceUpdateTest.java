@@ -34,15 +34,15 @@ public class WorkspaceUpdateTest {
         //CoreIOUtils.delete(null,new File(baseFolder));
     }
 
-//    @Test
+//    @Test // no more compatible  config file
 //    public void testV083() throws Exception {
 //        testByVersion("0.8.3");
 //    }
 
-    @Test
-    public void testV084() throws Exception {
-        testByVersion("0.8.4");
-    }
+//    @Test // no more compatible  config file
+//    public void testV084() throws Exception {
+//        testByVersion("0.8.4");
+//    }
 
     @Test
     public void testV085() throws Exception {
