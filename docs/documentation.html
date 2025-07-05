@@ -685,15 +685,15 @@ OpenJDK 64-Bit Server VM (build 24.0.1+9-suse-1.1-x8664, mixed mode, sharing)
 </code></pre>
 
 <H4 class="md-title-2">Installation</H4>
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi50-tab" data-toggle="tab" href="#idi50" role="tab" aria-controls="idi50" aria-selected="false">windows</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link active" id="idi51-tab" data-toggle="tab" href="#idi51" role="tab" aria-controls="idi51" aria-selected="true">linux</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi52-tab" data-toggle="tab" href="#idi52" role="tab" aria-controls="idi52" aria-selected="false">macos</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi53-tab" data-toggle="tab" href="#idi53" role="tab" aria-controls="idi53" aria-selected="false">wget</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi54-tab" data-toggle="tab" href="#idi54" role="tab" aria-controls="idi54" aria-selected="false">curl</a></li>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi10-tab" data-toggle="tab" href="#idi10" role="tab" aria-controls="idi10" aria-selected="false">windows</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="idi11-tab" data-toggle="tab" href="#idi11" role="tab" aria-controls="idi11" aria-selected="true">linux</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="idi12-tab" data-toggle="tab" href="#idi12" role="tab" aria-controls="idi12" aria-selected="false">macos</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="idi13-tab" data-toggle="tab" href="#idi13" role="tab" aria-controls="idi13" aria-selected="false">wget</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="idi14-tab" data-toggle="tab" href="#idi14" role="tab" aria-controls="idi14" aria-selected="false">curl</a></li>
 </ul>
-<div class="tab-content my-3"><div class="tab-pane fade show " id="idi50" role="tabpanel" aria-labelledby="idi50-tab"><p class="md-phrase">download <a href="https://thevpc.net/nuts/nuts-preview.jar" class="md-link">nuts-preview.jar</a></p>
+<div class="tab-content my-3"><div class="tab-pane fade show " id="idi10" role="tabpanel" aria-labelledby="idi10-tab"><p class="md-phrase">download <a href="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar" class="md-link">nuts-app-0.8.6.jar</a></p>
 <pre class="md-code md-code-``` "><code class="">
-java -jar nuts-preview.jar -Zy
+java -jar nuts-app-0.8.6.jar -Zy
 </code></pre>
 On Windows systems, first launch will create a new 
 <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b>
@@ -718,7 +718,7 @@ Supported Windows systems include Window 7 and later.
 
 </div>
 </div>
-<div class="tab-pane fade show active" id="idi51" role="tabpanel" aria-labelledby="idi51-tab"><b class="md-bold">for testing or development (using curl):</b>
+<div class="tab-pane fade show active" id="idi11" role="tabpanel" aria-labelledby="idi11-tab"><b class="md-bold">for testing or development (using curl):</b>
 This will reset/delete any previous nuts installation before installing the latest version. Removing the 
 <mark class="md-code md-code-` ">Z</mark>
  modifier (replace 
@@ -728,7 +728,7 @@ This will reset/delete any previous nuts installation before installing the late
 ) flag if you do not want to reset the workspace.
  
 <pre class="md-code md-code-``` "><code class="">
-$ curl -sL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar &amp;&amp; java -jar nuts.jar -ZyS
+$ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -o nuts.jar &amp;&amp; java -jar nuts.jar -ZyS
 $ exit
 </code></pre>
 Linux Systems installation is based on bash shell. First launch will configure "~/.bashrc" so that 
@@ -743,8 +743,8 @@ All Linux versions and distributions should work with or without X Window (or eq
 
 </div>
 </div>
-<div class="tab-pane fade show " id="idi52" role="tabpanel" aria-labelledby="idi52-tab"><pre class="md-code md-code-``` "><code class="">
-$ curl -sL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar
+<div class="tab-pane fade show " id="idi12" role="tabpanel" aria-labelledby="idi12-tab"><pre class="md-code md-code-``` "><code class="">
+$ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 </code></pre>
@@ -759,8 +759,8 @@ MacOS Systems installation is based on
 
 </div>
 </div>
-<div class="tab-pane fade show " id="idi53" role="tabpanel" aria-labelledby="idi53-tab"><pre class="md-code md-code-``` "><code class="">
-$ wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
+<div class="tab-pane fade show " id="idi13" role="tabpanel" aria-labelledby="idi13-tab"><pre class="md-code md-code-``` "><code class="">
+$ wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -qO nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 </code></pre>
@@ -768,8 +768,8 @@ $ exit
 
 </div>
 </div>
-<div class="tab-pane fade show " id="idi54" role="tabpanel" aria-labelledby="idi54-tab"><pre class="md-code md-code-``` "><code class="">
-$ curl -sL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar
+<div class="tab-pane fade show " id="idi14" role="tabpanel" aria-labelledby="idi14-tab"><pre class="md-code md-code-``` "><code class="">
+$ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 </code></pre>
@@ -830,13 +830,13 @@ OpenJDK 64-Bit Server VM (build 24.0.1+9-suse-1.1-x8664, mixed mode, sharing)
 </code></pre>
 
 <H4 class="md-title-2">Installation</H4>
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi60-tab" data-toggle="tab" href="#idi60" role="tab" aria-controls="idi60" aria-selected="false">windows</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link active" id="idi61-tab" data-toggle="tab" href="#idi61" role="tab" aria-controls="idi61" aria-selected="true">linux</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi62-tab" data-toggle="tab" href="#idi62" role="tab" aria-controls="idi62" aria-selected="false">macos</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi63-tab" data-toggle="tab" href="#idi63" role="tab" aria-controls="idi63" aria-selected="false">wget</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi64-tab" data-toggle="tab" href="#idi64" role="tab" aria-controls="idi64" aria-selected="false">curl</a></li>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi20-tab" data-toggle="tab" href="#idi20" role="tab" aria-controls="idi20" aria-selected="false">windows</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="idi21-tab" data-toggle="tab" href="#idi21" role="tab" aria-controls="idi21" aria-selected="true">linux</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="idi22-tab" data-toggle="tab" href="#idi22" role="tab" aria-controls="idi22" aria-selected="false">macos</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="idi23-tab" data-toggle="tab" href="#idi23" role="tab" aria-controls="idi23" aria-selected="false">wget</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link " id="idi24-tab" data-toggle="tab" href="#idi24" role="tab" aria-controls="idi24" aria-selected="false">curl</a></li>
 </ul>
-<div class="tab-content my-3"><div class="tab-pane fade show " id="idi60" role="tabpanel" aria-labelledby="idi60-tab"><p class="md-phrase">download <a href="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.0.8.5/nuts-0.8.5.jar" class="md-link">nuts-0.8.5.jar</a></p>
+<div class="tab-content my-3"><div class="tab-pane fade show " id="idi20" role="tabpanel" aria-labelledby="idi20-tab"><p class="md-phrase">download <a href="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.0.8.5/nuts-0.8.5.jar" class="md-link">nuts-0.8.5.jar</a></p>
 <pre class="md-code md-code-``` "><code class="">
 java -jar nuts-0.8.5.jar  -Zy
 </code></pre>
@@ -863,7 +863,7 @@ Supported Windows systems include Window 7 and later.
 
 </div>
 </div>
-<div class="tab-pane fade show active" id="idi61" role="tabpanel" aria-labelledby="idi61-tab"><b class="md-bold">for production (using wget):</b>
+<div class="tab-pane fade show active" id="idi21" role="tabpanel" aria-labelledby="idi21-tab"><b class="md-bold">for production (using wget):</b>
 This will reset/delete any previous nuts installation before installing the latest version. Removing the 
 <mark class="md-code md-code-` ">Z</mark>
  modifier (replace 
@@ -907,7 +907,7 @@ All Linux versions and distributions should work with or without X Window (or eq
 
 </div>
 </div>
-<div class="tab-pane fade show " id="idi62" role="tabpanel" aria-labelledby="idi62-tab"><pre class="md-code md-code-``` "><code class="">
+<div class="tab-pane fade show " id="idi22" role="tabpanel" aria-labelledby="idi22-tab"><pre class="md-code md-code-``` "><code class="">
 $ curl -sL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
@@ -923,7 +923,7 @@ MacOS Systems installation is based on
 
 </div>
 </div>
-<div class="tab-pane fade show " id="idi63" role="tabpanel" aria-labelledby="idi63-tab"><pre class="md-code md-code-``` "><code class="">
+<div class="tab-pane fade show " id="idi23" role="tabpanel" aria-labelledby="idi23-tab"><pre class="md-code md-code-``` "><code class="">
   $ wget https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
   $  java -jar nuts.jar -y
 </code></pre>
@@ -931,7 +931,7 @@ MacOS Systems installation is based on
 
 </div>
 </div>
-<div class="tab-pane fade show " id="idi64" role="tabpanel" aria-labelledby="idi64-tab"><pre class="md-code md-code-``` "><code class="">
+<div class="tab-pane fade show " id="idi24" role="tabpanel" aria-labelledby="idi24-tab"><pre class="md-code md-code-``` "><code class="">
 $ curl -sL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
@@ -1073,7 +1073,7 @@ docker run -it -v $(pwd):/workspace openjdk:8 sh
 Now that you are in a container
 <pre class="md-code md-code-``` bash"><code class="bash">
 cd /workspace
-curl -sL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar &amp;&amp; java -jar nuts.jar -ZyS
+curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -o nuts.jar &amp;&amp; java -jar nuts.jar -ZyS
 . ~/.bashrc
 nuts -y &lt;your-app&gt;...
 </code></pre>
@@ -1081,7 +1081,7 @@ nuts -y &lt;your-app&gt;...
 <p class="md-phrase"><mark class="md-code md-code-` ">noapi</mark> is actually an OpenAPI documentation tool that generates a pdf file based on a opn api definition in <mark class="md-code md-code-` ">JSON</mark>, <mark class="md-code md-code-` ">YAML</mark> or <mark class="md-code md-code-` ">TSON</mark> formats.</p>
 <pre class="md-code md-code-``` bash"><code class="bash">
 cd /workspace
-wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
+wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -qO nuts.jar
 java -jar nuts.jar -P=%s -ZyS net.thevpc.nuts.toolbox:noapi#0.8.6.0 myrest-apis.json
 </code></pre>
 
@@ -1089,12 +1089,12 @@ java -jar nuts.jar -P=%s -ZyS net.thevpc.nuts.toolbox:noapi#0.8.6.0 myrest-apis.
 <p class="md-phrase">If you are willing to deploy your application in a docker isolated environment you can use this example of <mark class="md-code md-code-` ">Dockerfile</mark> </p>
 <pre class="md-code md-code-``` Dockerfile"><code class="Dockerfile">
 FROM openjdk:8
-RUN wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
+RUN wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -qO nuts.jar
 RUN java -jar nuts.jar -Zy install &lt;your application&gt;
 CMD java -jar nuts.jar -y &lt;your application&gt;
 docker run -it -v $(pwd):/workspace openjdk:8 sh
 cd /workspace
-wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
+wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -qO nuts.jar
 java -jar nuts.jar -P=no -ZyS -r=+thevpc net.thevpc.nuts.toolbox:noapi#0.8.6.0 my-connector.json
 #############
 
@@ -1102,7 +1102,7 @@ java -jar nuts.jar -P=no -ZyS -r=+thevpc net.thevpc.nuts.toolbox:noapi#0.8.6.0 m
 <p class="md-phrase">This is a docker file to run <code class="md-code md-code-` ">net.thevpc.nuts.toolbox:noapi</code> an OpenAPI documentation tool.</p>
 <pre class="md-code md-code-``` Dockerfile"><code class="Dockerfile">
 FROM openjdk:8
-RUN wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
+RUN wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -qO nuts.jar
 RUN java -jar nuts.jar -Zy install net.thevpc.nuts.toolbox:noapi
 CMD java -jar nuts.jar -y net.thevpc.nuts.toolbox:noapi
 </code></pre>
@@ -4205,7 +4205,7 @@ EXAMPLES
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-07-03-100638
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-07-05-031639
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>

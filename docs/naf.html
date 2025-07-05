@@ -306,9 +306,9 @@
                                 <p class="md-phrase">to make use of <b class="md-bold">nuts</b> library  you need add the dependency  <code class="md-code md-code-``` net">.thevpc.nuts#nuts-lib:0.8.6.0</code> and provide a hint to maven to point to the right repository <code class="md-code md-code-``` "> https://maven.thevpc.net</code></p>
 <H4 class="md-title-2">Configure your pom.xml</H4>
 <pre class="md-code md-code-``` xml"><code class="xml">
-    &lt;dependencie&gt;
+    &lt;dependencies&gt;
         &lt;dependency&gt;&lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;&lt;artifactId&gt;nuts-lib&lt;/artifactId&gt;&lt;version&gt;0.8.6.0&lt;/version&gt;&lt;/dependency&gt;
-    &lt;/dependencie&gt;
+    &lt;/dependencies&gt;
     &lt;repositories&gt;
         &lt;repository&gt;&lt;id&gt;thevpc&lt;/id&gt;&lt;url&gt;https://maven.thevpc.net&lt;/url&gt;&lt;/repository&gt;
     &lt;/repositories&gt;
@@ -591,7 +591,7 @@ Or you can build your own styled arguments :
 <pre class="md-code md-code-``` java"><code class="java">
     NSession session=...;
     Object a,b,c,d; ...
-    NMutableTableModel m = NMutableTableModel.of();
+    NMutableTableModel m = NTableModel.of();
     m.newRow().addCells(a,b,c,d);
     NOut.println(m);
 </code></pre>
@@ -1606,10 +1606,33 @@ When you do not specify the NShellFamily, runtime OS default is considered.
 <code class="md-code md-code-` ">setExpandArgumentsFile(true|false)</code>
 <p class="md-phrase">This method can change the default behavior of NCmdLine (defaulted to <mark class="md-code md-code-` ">true</mark>). When <mark class="md-code md-code-` ">false</mark>, options in the form <code class="md-code md-code-` ">@path/to/arg/file</code> are interpreted as non options. When true (which is the default), the parser will load arguments from the given file/location.</p>
 
-<H4 class="md-title-2">Using CommandLine</H4>
+<H4 class="md-title-2">Using CommandLine, The recommended way...</H4>
 NCmdLine has a versatile parsing API. One way to use it is as follows :
 <pre class="md-code md-code-``` java"><code class="java">
-NCmdLine cmdLine = yourCommandLine();
+    NCmdLine cmdLine = NApp.of().getCmdLine(); // or from somewhere else
+    NRef&lt;Boolean&gt; boolOption = NRef.of(false);
+    NRef&lt;String&gt; stringOption = NRef.ofNull();
+    List&lt;String&gt; others = new ArrayList&lt;&gt;();
+    while (cmdLine.hasNext()) {
+        cmdLine.matcher()
+                .with("-o", "--option").matchFlag((v) -&gt; boolOption.set(v.booleanValue()))
+                .with("-n", "--name").matchEntry((v) -&gt; stringOption.set(v.stringValue()))
+                .withNonOption().matchAny((v) -&gt; stringOption.set(v.image()))
+                .requireWithDefault()
+        ;
+    }
+    // test if application is running in exec mode
+    // (and not in autoComplete mode)
+    if (cmdLine.isExecMode()) {
+        //do the good staff here
+        NOut.println(NMsg.ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
+    }
+
+</code></pre>
+
+<H4 class="md-title-2">Using CommandLine, The simple and legacy way...</H4>
+<pre class="md-code md-code-``` java"><code class="java">
+NCmdLine cmdLine = NApp.of().getCmdLine();
 boolean boolOption = false;
 String stringOption = null;
 List&lt;String&gt; others = new ArrayList&lt;&gt;();
@@ -1621,16 +1644,16 @@ while (cmdLine.hasNext()) {
             case "-o":
             case "--option": {
                 a = cmdLine.nextFlag().get();
-                if (a.isNonCommented()) {
-                    boolOption = a.getBooleanValue().get();
+                if (a.isUncommented()) {
+                    boolOption = a.getValue().asBoolean().get();
                 }
                 break;
             }
             case "-n":
             case "--name": {
                 a = cmdLine.nextEntry().get();
-                if (a.isNonCommented()) {
-                    stringOption = a.getStringValue().get();
+                if (a.isUncommented()) {
+                    stringOption = a.getValue().asString().get();
                 }
                 break;
             }
@@ -1639,39 +1662,15 @@ while (cmdLine.hasNext()) {
             }
         }
     } else {
-        others. add(cmdLine. next().get().toString());
+        others.add(cmdLine.next().get().image());
     }
 }
-NOut.println(NMsg. ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
-</code></pre>
-
-<H4 class="md-title-2">Using CommandLine, The recommended way...</H4>
-<pre class="md-code md-code-``` java"><code class="java">
-NCmdLine cmdLine = NApp.of().getCmdLine();
-NBooleanRef  boolOption = NRef.of(false);
-NRef&lt;String&gt;  stringOption = NRef.ofNull();
-List&lt;String&gt;  others = new ArrayList&lt;&gt;();
-cmdLine.forEachPeek ((a,l,c)-&gt; {
-  if (a.isOption()) {
-      switch (a.key()) {
-          case "-o":
-          case "--option": {
-              cmdLine.withNextFlag((v, e, s)-&gt;boolOption.set(v));
-              return true;
-          }
-          case "-n":
-          case "--name": {
-              cmdLine.withNextEntry((v, e, s)-&gt;stringOption.set(v));
-              return true;
-          }
-      }
-      return false;
-  } else {
-      nonOptions.add(l.next().get().toString());
-      return true;
-  }
-});
-
+// test if application is running in exec mode
+// (and not in autoComplete mode)
+if (cmdLine.isExecMode()) {
+    //do the good staff here
+    NOut.println(NMsg.ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
+}
 </code></pre>
 
 
@@ -1688,16 +1687,16 @@ cmdLine.forEachPeek ((a,l,c)-&gt; {
 <p class="md-phrase"><mark class="md-code md-code-``` ">NOptional</mark> is extensively used in Nuts Package Manager itself.</p>
 <H4 class="md-title-2">Non Null Assertion</H4>
 Java has a builtin null Check mechanism but it does not enable customized messages or exceptions. Optional are described as per Java's (c) Documentation "A container object which may or may not contain a non-null value". NOptional is more of an Object Wrapper than addes several useful null related operators like '??' '?.' and '!' in typescript. 
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi10-tab" data-toggle="tab" href="#idi10" role="tab" aria-controls="idi10" aria-selected="false">java</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link active" id="idi11-tab" data-toggle="tab" href="#idi11" role="tab" aria-controls="idi11" aria-selected="true">NAF</a></li>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi30-tab" data-toggle="tab" href="#idi30" role="tab" aria-controls="idi30" aria-selected="false">java</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="idi31-tab" data-toggle="tab" href="#idi31" role="tab" aria-controls="idi31" aria-selected="true">NAF</a></li>
 </ul>
-<div class="tab-content my-3"><div class="tab-pane fade show " id="idi10" role="tabpanel" aria-labelledby="idi10-tab"><pre class="md-code md-code-``` java"><code class="java">
+<div class="tab-content my-3"><div class="tab-pane fade show " id="idi30" role="tabpanel" aria-labelledby="idi30-tab"><pre class="md-code md-code-``` java"><code class="java">
     if(stringWord==null){
         throw new IllegalArgumentException("missing user name");
     }
     stringWord.toUpperCase()
 </code></pre></div>
-<div class="tab-pane fade show active" id="idi11" role="tabpanel" aria-labelledby="idi11-tab"><pre class="md-code md-code-``` java"><code class="java"> 
+<div class="tab-pane fade show active" id="idi31" role="tabpanel" aria-labelledby="idi31-tab"><pre class="md-code md-code-``` java"><code class="java"> 
    // expected : stringWord!..toUpperCase()
     NOptional.ofNamed(stringWord,"user name").get().toUpperCase();
     // will throw an IllegalArgumentException|NIllegalArgumentException with "missing user name" message;
@@ -1706,13 +1705,13 @@ Java has a builtin null Check mechanism but it does not enable customized messag
 
 
 <H4 class="md-title-2">Nullish Coalescing</H4>
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi20-tab" data-toggle="tab" href="#idi20" role="tab" aria-controls="idi20" aria-selected="false">java</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link active" id="idi21-tab" data-toggle="tab" href="#idi21" role="tab" aria-controls="idi21" aria-selected="true">NAF</a></li>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi40-tab" data-toggle="tab" href="#idi40" role="tab" aria-controls="idi40" aria-selected="false">java</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="idi41-tab" data-toggle="tab" href="#idi41" role="tab" aria-controls="idi41" aria-selected="true">NAF</a></li>
 </ul>
-<div class="tab-content my-3"><div class="tab-pane fade show " id="idi20" role="tabpanel" aria-labelledby="idi20-tab"><pre class="md-code md-code-``` java"><code class="java">
+<div class="tab-content my-3"><div class="tab-pane fade show " id="idi40" role="tabpanel" aria-labelledby="idi40-tab"><pre class="md-code md-code-``` java"><code class="java">
     Number roadNumber=road.number!=null?road.number:10;
 </code></pre></div>
-<div class="tab-pane fade show active" id="idi21" role="tabpanel" aria-labelledby="idi21-tab"><pre class="md-code md-code-``` java"><code class="java"> 
+<div class="tab-pane fade show active" id="idi41" role="tabpanel" aria-labelledby="idi41-tab"><pre class="md-code md-code-``` java"><code class="java"> 
     // expected : var roadNumber=road.number??10;
     Number roadNumber=NOptional.of(road.number).orElse(10);
 </code></pre></div>
@@ -1720,13 +1719,13 @@ Java has a builtin null Check mechanism but it does not enable customized messag
 
 
 <H4 class="md-title-2">Optional Chaining</H4>
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi30-tab" data-toggle="tab" href="#idi30" role="tab" aria-controls="idi30" aria-selected="false">java</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link active" id="idi31-tab" data-toggle="tab" href="#idi31" role="tab" aria-controls="idi31" aria-selected="true">NAF</a></li>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi50-tab" data-toggle="tab" href="#idi50" role="tab" aria-controls="idi50" aria-selected="false">java</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="idi51-tab" data-toggle="tab" href="#idi51" role="tab" aria-controls="idi51" aria-selected="true">NAF</a></li>
 </ul>
-<div class="tab-content my-3"><div class="tab-pane fade show " id="idi30" role="tabpanel" aria-labelledby="idi30-tab"><pre class="md-code md-code-``` java"><code class="java">
+<div class="tab-content my-3"><div class="tab-pane fade show " id="idi50" role="tabpanel" aria-labelledby="idi50-tab"><pre class="md-code md-code-``` java"><code class="java">
     Number roadNumber=(app!=null &amp;&amp; app.person!=null &amp;&amp; app.person.road!=null)? app.person.address.road.number:null;
 </code></pre></div>
-<div class="tab-pane fade show active" id="idi31" role="tabpanel" aria-labelledby="idi31-tab"><pre class="md-code md-code-``` java"><code class="java"> 
+<div class="tab-pane fade show active" id="idi51" role="tabpanel" aria-labelledby="idi51-tab"><pre class="md-code md-code-``` java"><code class="java"> 
     // expected var roadNumber=app?.person?.address?.road?.number;
     Number roadNumber=NOptional.of(app).then(v-&gt;v.person).then(v-&gt;v.road).then(v-&gt;v.number).orNull();
 </code></pre></div>
@@ -1734,10 +1733,10 @@ Java has a builtin null Check mechanism but it does not enable customized messag
 
 
 <H4 class="md-title-2">Combining Optional Chaining</H4>
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi40-tab" data-toggle="tab" href="#idi40" role="tab" aria-controls="idi40" aria-selected="false">java</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link active" id="idi41-tab" data-toggle="tab" href="#idi41" role="tab" aria-controls="idi41" aria-selected="true">NAF</a></li>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi60-tab" data-toggle="tab" href="#idi60" role="tab" aria-controls="idi60" aria-selected="false">java</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="idi61-tab" data-toggle="tab" href="#idi61" role="tab" aria-controls="idi61" aria-selected="true">NAF</a></li>
 </ul>
-<div class="tab-content my-3"><div class="tab-pane fade show " id="idi40" role="tabpanel" aria-labelledby="idi40-tab"><pre class="md-code md-code-``` java"><code class="java">
+<div class="tab-content my-3"><div class="tab-pane fade show " id="idi60" role="tabpanel" aria-labelledby="idi60-tab"><pre class="md-code md-code-``` java"><code class="java">
     Address address=(app!=null &amp;&amp; app.person!=null)?app.person.address:null;
     if(address==null){
        throw new IllegalArgumentException("missing address"); 
@@ -1746,7 +1745,7 @@ Java has a builtin null Check mechanism but it does not enable customized messag
         &amp;&amp; address.road!=null)
         ? address.road.number:0;
 </code></pre></div>
-<div class="tab-pane fade show active" id="idi41" role="tabpanel" aria-labelledby="idi41-tab"><pre class="md-code md-code-``` java"><code class="java"> 
+<div class="tab-pane fade show active" id="idi61" role="tabpanel" aria-labelledby="idi61-tab"><pre class="md-code md-code-``` java"><code class="java"> 
     // expected : var roadNumber=app?.person?.address!.road?.number??0;
     Number roadNumber=NOptional.of(app).then(v-&gt;v.person).then(v-&gt;v.address).get().then(v-&gt;v.road).then(v-&gt;v.number).orElse(0);
 </code></pre></div>
@@ -2616,7 +2615,7 @@ Automatic-Module-Name: yourgroupid.yourartifactid.YourClass
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-07-03-100638
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-07-05-031639
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
