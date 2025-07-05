@@ -1,6 +1,6 @@
 package net.thevpc.nuts.reserved.util;
 
-import net.thevpc.nuts.elem.NDescribableElementSupplier;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.spi.base.NPredicateDelegate;
 import net.thevpc.nuts.util.NPredicate;
@@ -18,10 +18,10 @@ public class NPredicateWithDescription<T> extends NPredicateDelegate<T> {
 
     @Override
     public NElement describe() {
-        return NDescribableElementSupplier.safeDescribe(
+        return NDescribables.safeDescribe(
                 description,
-                NDescribableElementSupplier.ofPossibleDescribable(base),
-                NDescribableElementSupplier.ofLateToString(this)
+                NDescribables.ofDesc(base),
+                NDescribables.ofLateToString(this)
         );
     }
 

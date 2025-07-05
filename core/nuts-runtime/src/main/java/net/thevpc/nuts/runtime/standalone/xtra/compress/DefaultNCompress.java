@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.compress;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.elem.NDescribableElementSupplier;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.xtra.time.SingletonNInputStreamProgressFactory;
@@ -326,7 +326,7 @@ public class DefaultNCompress implements NCompress {
                 return p.stream().map(
                                 NFunction.of(
                                         (NPath x) -> new Item(x, c)
-                                ).redescribe(NDescribableElementSupplier.of("NutsStreamOrPath::of"))
+                                ).redescribe(NDescribables.ofDesc("NutsStreamOrPath::of"))
                         )
                         .toArray(Item[]::new);
             }

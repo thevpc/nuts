@@ -6,7 +6,7 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NDescribableElementSupplier;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
@@ -35,8 +35,8 @@ public class NIndexFirstIterator<T> extends NIteratorBase<T> {
         return NElement
                 .ofObjectBuilder()
                 .name("IndexFirst")
-                .set("index", NDescribableElementSupplier.describeResolveOrDestruct(index))
-                .set("nonIndex", NDescribableElementSupplier.describeResolveOrDestruct(other))
+                .set("index", NDescribables.describeResolveOrDestruct(index))
+                .set("nonIndex", NDescribables.describeResolveOrDestruct(other))
                 .build()
                 ;
     }

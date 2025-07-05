@@ -11,7 +11,7 @@ import java.util.logging.Level;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.elem.NDescribableElementSupplier;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
@@ -64,7 +64,7 @@ public class DefaultNSearchVersionsRepositoryCmd extends AbstractNSearchVersions
                         resultList.add(
                                 NIteratorBuilder.of(d).filter(
                                         x -> filter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(x,repo, "DefaultNSearchVersionsRepositoryCmd")),
-                                        () -> NDescribableElementSupplier.describeResolveOrToString(filter)
+                                        () -> NDescribables.describeResolveOrToString(filter)
                                 ).safeIgnore().iterator()
                         );
                     }

@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 /**
  * Nuts Element Description
  */
-public interface NDescribableElementSupplier {
+public interface NDescribables {
     static Supplier<NElement> ofLateString(Supplier<String> name) {
         return name == null ? null : () -> NElement.ofString(name.get());
     }
@@ -14,27 +14,36 @@ public interface NDescribableElementSupplier {
         return () -> NElement.ofString(String.valueOf(any));
     }
 
-    static Supplier<NElement> ofPossibleDescribable(Object any) {
+    static Supplier<NElement> ofDesc(Object any) {
         return () -> {
+            if(any==null) {
+                return null;
+            }
+            if(any instanceof NElement) {
+                return (NElement) any;
+            }
+            if(any instanceof String) {
+                return NElement.ofString((String) any);
+            }
             if (any instanceof NElementDescribable) {
                 return ((NElementDescribable<?>) any).describe();
             }
-            return null;
+            return NElement.ofString(String.valueOf(any));
         };
     }
 
-    static Supplier<NElement> of(String name) {
+    static Supplier<NElement> ofDesc(String name) {
         return name == null ? null : () -> NElement.ofString(name);
     }
 
-    static Supplier<NElement> of(NElement element) {
+    static Supplier<NElement> ofDesc(NElement element) {
         return element == null ? null : () -> element;
     }
 
     static NElement safeDescribeOfBase(Supplier<NElement> description, Object base) {
-        return NDescribableElementSupplier.safeDescribe(description
-                , base == null ? null : NDescribableElementSupplier.ofPossibleDescribable(base)
-                , base == null ? null : NDescribableElementSupplier.ofLateToString(base)
+        return NDescribables.safeDescribe(description
+                , base == null ? null : NDescribables.ofDesc(base)
+                , base == null ? null : NDescribables.ofLateToString(base)
         );
     }
 
@@ -49,7 +58,7 @@ public interface NDescribableElementSupplier {
                 }
             }
         }
-        return of("invalid").get();
+        return ofDesc("invalid").get();
     }
 
     static NElement describeResolveOrToString(Object o) {

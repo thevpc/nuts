@@ -20,7 +20,7 @@ public class NSupplierIterator<T> extends NIteratorBase<T> {
         return NElement.ofObjectBuilder()
                 .name("Supplier")
                 .set("template",
-                        NDescribableElementSupplier.describeResolveOr(from, ()-> NElement.ofObjectBuilder().name("Compiled").addAll(name).build())
+                        NDescribables.describeResolveOr(from, ()-> NElement.ofObjectBuilder().name("Compiled").addAll(name).build())
                 )
                 .build();
     }

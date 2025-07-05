@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.store;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.concurrent.NLock;
-import net.thevpc.nuts.elem.NDescribableElementSupplier;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.format.NDescriptorFormat;
@@ -315,7 +315,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
                                     }
                                     return null;
                                 }
-                            }).redescribe(NDescribableElementSupplier.of("FileToVersion")))
+                            }).redescribe(NDescribables.ofDesc("FileToVersion")))
                     .notNull().iterator();
         } else {
             //ok.sort((a, b) -> CoreVersionUtils.compareVersions(a, b));

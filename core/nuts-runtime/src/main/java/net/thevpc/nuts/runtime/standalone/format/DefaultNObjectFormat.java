@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone.format;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.elem.NDescribableElementSupplier;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElementFormat;
 
 
@@ -215,7 +215,7 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
                                         return (Object) x.filteredText();
                                     }
 
-                            ).redescribe(NDescribableElementSupplier.of("filteredText"))
+                            ).redescribe(NDescribables.ofDesc("filteredText"))
                     ).toArray(Object[]::new);
                     ee.setValue(r);
                 } else {

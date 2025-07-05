@@ -1,6 +1,6 @@
 package net.thevpc.nuts.reserved.util;
 
-import net.thevpc.nuts.elem.NDescribableElementSupplier;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.spi.base.NUnsafeCallableBase;
 import net.thevpc.nuts.util.NUnsafeCallable;
@@ -13,7 +13,7 @@ public class NUnsafeCallableWithDescription<T> extends NUnsafeCallableBase<T> {
 
     public NUnsafeCallableWithDescription(NUnsafeCallable<T> base, Supplier<NElement> description) {
         this.base = base;
-        this.description = description == null ? NDescribableElementSupplier.of("callable") : description;
+        this.description = description == null ? NDescribables.ofDesc("callable") : description;
     }
 
     @Override

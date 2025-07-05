@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NDescribableElementSupplier;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
 import net.thevpc.nuts.util.NFunction;
@@ -112,12 +112,12 @@ public class DirectoryScanner {
                 if (r == null) {
                     return NStream.ofEmpty();
                 }
-                NStream<NPath> t = r.stream().filter(x -> w.matchesName(x.getName())).redescribe(NDescribableElementSupplier.of("getName"));
+                NStream<NPath> t = r.stream().filter(x -> w.matchesName(x.getName())).redescribe(NDescribables.ofDesc("getName"));
                 if (parts.length - i - 1 == 0) {
                     return t;
                 } else {
                     int i0 = i;
-                    NFunction<NPath, NStream<NPath>> f = NFunction.of((NPath x) -> stream(x, parts, i0 + 1)).redescribe(NDescribableElementSupplier.of("subStream"));
+                    NFunction<NPath, NStream<NPath>> f = NFunction.of((NPath x) -> stream(x, parts, i0 + 1)).redescribe(NDescribables.ofDesc("subStream"));
                     return t.flatMapStream((NFunction) f);
                 }
             } else if (parts[i] instanceof SubPathWildCardPathPart) {
@@ -132,7 +132,7 @@ public class DirectoryScanner {
                 } else {
                     int i0 = i;
 
-                    NFunction<NPath, NStream<NPath>> f = NFunction.of((NPath x) -> stream(x, parts, i0 + 1)).redescribe(NDescribableElementSupplier.of("subStream"));
+                    NFunction<NPath, NStream<NPath>> f = NFunction.of((NPath x) -> stream(x, parts, i0 + 1)).redescribe(NDescribables.ofDesc("subStream"));
                     return t.flatMapStream((NFunction) f).distinct();
                 }
             } else {

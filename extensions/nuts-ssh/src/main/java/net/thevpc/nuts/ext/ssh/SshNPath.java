@@ -2,7 +2,7 @@ package net.thevpc.nuts.ext.ssh;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.elem.NDescribableElementSupplier;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NPathSPIAware;
 import net.thevpc.nuts.util.NConnexionStringBuilder;
@@ -68,7 +68,7 @@ class SshNPath implements NPathSPI {
                                     return NPath.of(path.builder().setPath(cc).build().toString());
                                 }
 
-                        ).redescribe(NDescribableElementSupplier.of("NPath::of"))
+                        ).redescribe(NDescribables.ofDesc("NPath::of"))
                 );
             }
         } catch (Exception e) {
@@ -541,7 +541,7 @@ class SshNPath implements NPathSPI {
                                     return NPath.of(path.builder().setPath(cc).build().toString());
                                 }
 
-                        ).redescribe(NDescribableElementSupplier.of("NPath::of"))
+                        ).redescribe(NDescribables.ofDesc("NPath::of"))
                 );
             }
         } catch (Exception e) {

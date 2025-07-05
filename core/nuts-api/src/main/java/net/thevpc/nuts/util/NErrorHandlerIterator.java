@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NDescribableElementSupplier;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
@@ -30,7 +30,7 @@ public class NErrorHandlerIterator<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        return NDescribableElementSupplier.describeResolveOrDestructAsObject(base)
+        return NDescribables.describeResolveOrDestructAsObject(base)
                 .builder()
                 .set("onError",type.toString().toLowerCase())
                 .build();

@@ -25,7 +25,7 @@
 package net.thevpc.nuts.runtime.standalone.dependency.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NDescribableElementSupplier;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.util.NFunction;
 import net.thevpc.nuts.util.NIterator;
@@ -71,7 +71,7 @@ public class NDependencyUtils {
     }
 
     public static Iterator<NDependency> itIdToDep(NIterator<NId> id) {
-        return NIteratorBuilder.of(id).map(NFunction.of(NId::toDependency).redescribe(NDescribableElementSupplier.of("IdToDependency"))).build();
+        return NIteratorBuilder.of(id).map(NFunction.of(NId::toDependency).redescribe(NDescribables.ofDesc("IdToDependency"))).build();
     }
 
     public static Iterator<NDependency> itIdToDep(NIterator<NId> id, NDependency copyFrom) {
@@ -80,7 +80,7 @@ public class NDependencyUtils {
         return NIteratorBuilder.of(id).map(NFunction.of(
                         (NId x) -> x.toDependency().builder()
                                 .setOptional(_optional).setScope(_scope).build())
-                .redescribe(NDescribableElementSupplier.of("IdToDependency"))
+                .redescribe(NDescribables.ofDesc("IdToDependency"))
         ).build();
     }
 

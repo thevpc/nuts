@@ -35,7 +35,7 @@ import net.thevpc.nuts.runtime.standalone.util.ValueSupplier;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.elem.NDescribableElementSupplier;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.format.NContentType;
@@ -386,7 +386,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     public NStream<NDependencies> getResultDependencies() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
                 .map(NFunction.of((NDefinition x) -> x.getDependencies().get())
-                        .redescribe(NDescribableElementSupplier.of("getDependencies")))
+                        .redescribe(NDescribables.ofDesc("getDependencies")))
         );
     }
 
@@ -395,7 +395,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
         return buildCollectionResult(
                 NIteratorBuilder.of(getResultIdIteratorBase(true)).map(
                                 NFunction.of(NId::toDependency)
-                                        .redescribe(NDescribableElementSupplier.of("Id->Dependency")))
+                                        .redescribe(NDescribables.ofDesc("Id->Dependency")))
                         .build()
         );
     }
@@ -463,7 +463,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
                 .map(
                         NFunction.of((NDefinition x) -> x.getContent().map(Object::toString).orNull())
-                                .redescribe(NDescribableElementSupplier.of("getPath"))
+                                .redescribe(NDescribables.ofDesc("getPath"))
                 )
                 .notBlank()
         );
@@ -473,21 +473,21 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     public NStream<String> getResultPathNames() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
                 .map(NFunction.of((NDefinition x) -> x.getContent().map(NPath::getName).orNull())
-                        .redescribe(NDescribableElementSupplier.of("getName")))
+                        .redescribe(NDescribables.ofDesc("getName")))
                 .notBlank());
     }
 
     @Override
     public NStream<Instant> getResultInstallDates() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .map(NFunction.of((NDefinition x) -> x.getInstallInformation().map(NInstallInformation::getCreatedInstant).orNull()).redescribe(NDescribableElementSupplier.of("getCreatedInstant")))
+                .map(NFunction.of((NDefinition x) -> x.getInstallInformation().map(NInstallInformation::getCreatedInstant).orNull()).redescribe(NDescribables.ofDesc("getCreatedInstant")))
                 .notNull());
     }
 
     @Override
     public NStream<String> getResultInstallUsers() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .map(NFunction.of((NDefinition x) -> x.getInstallInformation().map(NInstallInformation::getInstallUser).orNull()).redescribe(NDescribableElementSupplier.of("getInstallUser")))
+                .map(NFunction.of((NDefinition x) -> x.getInstallInformation().map(NInstallInformation::getInstallUser).orNull()).redescribe(NDescribables.ofDesc("getInstallUser")))
                 .notBlank());
     }
 
@@ -495,7 +495,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     public NStream<NPath> getResultInstallFolders() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
                 .map(NFunction.of((NDefinition x) -> x.getInstallInformation().map(NInstallInformation::getInstallFolder).orNull())
-                        .redescribe(NDescribableElementSupplier.of("getInstallFolder"))
+                        .redescribe(NDescribables.ofDesc("getInstallFolder"))
                 )
                 .notNull());
     }
@@ -504,7 +504,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     public NStream<NPath> getResultStoreLocations(NStoreType location) {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
                 .map(NFunction.of((NDefinition x) -> NWorkspace.of().getStoreLocation(x.getId(), location))
-                        .redescribe(NDescribableElementSupplier.of("getStoreLocation(" + location.id() + ")"))
+                        .redescribe(NDescribables.ofDesc("getStoreLocation(" + location.id() + ")"))
                 )
                 .notNull());
     }
@@ -518,7 +518,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
                 .map(NFunction.of(x
                                 -> NIdFormatHelper.of(x)
                                 .buildLong().getMultiColumnRowStrings(oo)
-                        ).redescribe(NDescribableElementSupplier.of("getColumns"))
+                        ).redescribe(NDescribables.ofDesc("getColumns"))
                 ));
     }
 
@@ -526,7 +526,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     public NStream<String> getResultNames() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
                 .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getName()))
-                        .redescribe(NDescribableElementSupplier.of("getDescriptorName"))
+                        .redescribe(NDescribables.ofDesc("getDescriptorName"))
                 )
                 .notBlank());
     }
@@ -535,7 +535,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     public NStream<String> getResultOs() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
                 .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getOs()))
-                        .redescribe(NDescribableElementSupplier.of("getOs")))
+                        .redescribe(NDescribables.ofDesc("getOs")))
                 .notBlank()
                 .distinct()
         );
@@ -548,7 +548,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
                 .mapMulti(
                         NFunction.of(
                                 (NDefinition x) -> x.getContent().map(NExecutionEntry::parse).orElse(Collections.emptyList())
-                        ).redescribe(NDescribableElementSupplier.of("getFile"))
+                        ).redescribe(NDescribables.ofDesc("getFile"))
                 ));
     }
 
@@ -556,7 +556,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     public NStream<String> getResultOsDist() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
                 .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getOsDist()))
-                        .redescribe(NDescribableElementSupplier.of("getOsDist"))
+                        .redescribe(NDescribables.ofDesc("getOsDist"))
                 )
                 .notBlank()
                 .distinct()
@@ -567,7 +567,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     public NStream<String> getResultPackaging() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
                 .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getPackaging()))
-                        .redescribe(NDescribableElementSupplier.of("getPackaging"))
+                        .redescribe(NDescribables.ofDesc("getPackaging"))
                 )
                 .notBlank()
                 .distinct()
@@ -578,7 +578,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     public NStream<String> getResultPlatform() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
                 .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getPlatform()))
-                        .redescribe(NDescribableElementSupplier.of("getPlatform"))
+                        .redescribe(NDescribables.ofDesc("getPlatform"))
                 )
                 .notBlank()
                 .distinct()
@@ -589,7 +589,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     public NStream<String> getResultProfile() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
                 .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getProfiles()))
-                        .redescribe(NDescribableElementSupplier.of("getProfile"))
+                        .redescribe(NDescribables.ofDesc("getProfile"))
                 )
                 .notBlank()
                 .distinct()
@@ -600,7 +600,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     public NStream<String> getResultDesktopEnvironment() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
                 .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getDesktopEnvironment()))
-                        .redescribe(NDescribableElementSupplier.of("getDesktopEnvironment"))
+                        .redescribe(NDescribables.ofDesc("getDesktopEnvironment"))
                 )
                 .notBlank()
                 .distinct()
@@ -611,7 +611,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     public NStream<String> getResultArch() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
                 .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getArch()))
-                        .redescribe(NDescribableElementSupplier.of("getArch"))
+                        .redescribe(NDescribables.ofDesc("getArch"))
                 )
                 .notBlank());
     }
@@ -798,10 +798,10 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
                 case TREE: {
                     return (NIterator) NIteratorBuilder.of(getResultDefinitionIteratorBase())
                             .flatMap(NFunction.of((NDefinition x) -> x.getDependencies().get().transitiveNodes().iterator())
-                                    .redescribe(NDescribableElementSupplier.of("getDependencies"))
+                                    .redescribe(NDescribables.ofDesc("getDependencies"))
                             )
                             .map(NFunction.of((NDependencyTreeNode x) -> dependenciesToElement(x))
-                                    .redescribe(NDescribableElementSupplier.of("dependenciesToElement"))
+                                    .redescribe(NDescribables.ofDesc("dependenciesToElement"))
                             )
                             .build();
                 }
@@ -1029,7 +1029,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
         return
                 NElement.ofObjectBuilder()
                         .set("SearchQueryPlan",
-                                NDescribableElementSupplier.describeResolveOrDestruct(it))
+                                NDescribables.describeResolveOrDestruct(it))
                         .build();
     }
 
@@ -1095,7 +1095,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     public NIterator<NDefinition> getResultDefinitionIteratorBase() {
         return NIteratorBuilder.of(getResultIdIteratorBase(null))
-                .map(NFunction.of((NId next) -> loadedIdToDefinition(next)).redescribe(NDescribableElementSupplier.of("Id->Definition")))
+                .map(NFunction.of((NId next) -> loadedIdToDefinition(next)).redescribe(NDescribables.ofDesc("Id->Definition")))
                 .notNull().build();
     }
 
@@ -1112,7 +1112,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
                 .map(NFunction.of(
                                 x -> NIdFormatHelper.of(x)
                                         .buildLong().getStatusString())
-                        .redescribe(NDescribableElementSupplier.of("getStatusString"))
+                        .redescribe(NDescribables.ofDesc("getStatusString"))
                 )
                 .notBlank());
     }

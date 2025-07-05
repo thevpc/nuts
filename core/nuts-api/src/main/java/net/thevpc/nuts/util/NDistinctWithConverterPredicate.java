@@ -1,6 +1,6 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NDescribableElementSupplier;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.spi.base.AbstractNPredicate;
 
@@ -34,7 +34,7 @@ class NDistinctWithConverterPredicate<F, T> extends AbstractNPredicate<F> {
     @Override
     public NElement describe() {
         return NElement.ofObjectBuilder()
-                .set("distinctBy", NDescribableElementSupplier.describeResolveOrDestruct(converter))
+                .set("distinctBy", NDescribables.describeResolveOrDestruct(converter))
                 .build()
                 ;
     }

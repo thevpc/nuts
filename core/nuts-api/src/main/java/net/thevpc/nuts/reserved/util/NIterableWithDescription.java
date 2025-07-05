@@ -27,7 +27,7 @@ public class NIterableWithDescription<T> implements NIterable<T> {
 
     @Override
     public NElement describe() {
-        NObjectElement b = NDescribableElementSupplier.describeResolveOr(base, () -> NElement.ofObjectBuilder().build())
+        NObjectElement b = NDescribables.describeResolveOr(base, () -> NElement.ofObjectBuilder().build())
                 .asObject().get();
         NElement a = nfo.get();
         if (b.isEmpty()) {

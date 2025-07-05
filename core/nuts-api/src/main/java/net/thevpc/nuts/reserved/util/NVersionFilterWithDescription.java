@@ -1,7 +1,7 @@
 package net.thevpc.nuts.reserved.util;
 
 import net.thevpc.nuts.NVersionFilter;
-import net.thevpc.nuts.elem.NDescribableElementSupplier;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.spi.base.NVersionFilterDelegate;
 import net.thevpc.nuts.util.NFilter;
@@ -31,6 +31,6 @@ public class NVersionFilterWithDescription extends NVersionFilterDelegate {
 
     @Override
     public NElement describe() {
-        return NDescribableElementSupplier.safeDescribeOfBase(description, baseVersionFilter);
+        return NDescribables.safeDescribeOfBase(description, baseVersionFilter);
     }
 }

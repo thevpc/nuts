@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.elem.NDescribableElementSupplier;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementParser;
 
@@ -114,7 +114,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
                 ()-> NElement
                         .ofObjectBuilder().name("SearchIndexPackages")
                         .set("source", getIndexURL().resolve(NConstants.Folders.ID).toString())
-                        .set("filter", NDescribableElementSupplier.describeResolveOrToString(filter))
+                        .set("filter", NDescribables.describeResolveOrToString(filter))
                         .build()
         ).build();
     }

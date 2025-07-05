@@ -35,7 +35,7 @@ public interface NElementDescribable<T> {
      * @return Structured NutsElement description
      */
     default NElement describe() {
-        return NDescribableElementSupplier.ofLateToString(this).get();
+        return NDescribables.ofLateToString(this).get();
     }
 
 }

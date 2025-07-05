@@ -1,6 +1,6 @@
 package net.thevpc.nuts.spi.base;
 
-import net.thevpc.nuts.elem.NDescribableElementSupplier;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.util.NComparator;
@@ -29,7 +29,7 @@ class NComparatorBase<T> implements NComparator<T> {
 
     @Override
     public NElement describe() {
-        NObjectElement b = NDescribableElementSupplier.describeResolveOrDestructAsObject(base);
+        NObjectElement b = NDescribables.describeResolveOrDestructAsObject(base);
         NElement a = nfo.get();
         if (b.isEmpty()) {
             return a;

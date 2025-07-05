@@ -26,7 +26,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.install;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.elem.NDescribableElementSupplier;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NIO;
@@ -158,7 +158,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
         return new NStreamFromList<NDefinition>(
                 ids.isEmpty() ? null : ids.keySet().toArray()[0].toString(),
                 Arrays.asList(result)
-        ).redescribe(NDescribableElementSupplier.of("InstallResult"));
+        ).redescribe(NDescribables.ofDesc("InstallResult"));
     }
 
     @Override
