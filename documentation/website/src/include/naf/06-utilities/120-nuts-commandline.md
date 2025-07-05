@@ -91,12 +91,38 @@ This method can change the default behavior of NCmdLine (defaulted to `true`). W
 When true (which is the default), the parser will load arguments from the given file/location.
 
 
-## Using CommandLine
+## Using CommandLine, The recommended way...
 NCmdLine has a versatile parsing API.
 One way to use it is as follows :
 
 ```java
-NCmdLine cmdLine = yourCommandLine();
+    NCmdLine cmdLine = NApp.of().getCmdLine(); // or from somewhere else
+    NRef<Boolean> boolOption = NRef.of(false);
+    NRef<String> stringOption = NRef.ofNull();
+    List<String> others = new ArrayList<>();
+    while (cmdLine.hasNext()) {
+        cmdLine.matcher()
+                .with("-o", "--option").matchFlag((v) -> boolOption.set(v.booleanValue()))
+                .with("-n", "--name").matchEntry((v) -> stringOption.set(v.stringValue()))
+                .withNonOption().matchAny((v) -> stringOption.set(v.image()))
+                .requireWithDefault()
+        ;
+    }
+    // test if application is running in exec mode
+    // (and not in autoComplete mode)
+    if (cmdLine.isExecMode()) {
+        //do the good staff here
+        NOut.println(NMsg.ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
+    }
+
+```
+
+
+## Using CommandLine, The simple and legacy way...
+
+
+```java
+NCmdLine cmdLine = NApp.of().getCmdLine();
 boolean boolOption = false;
 String stringOption = null;
 List<String> others = new ArrayList<>();
@@ -108,16 +134,16 @@ while (cmdLine.hasNext()) {
             case "-o":
             case "--option": {
                 a = cmdLine.nextFlag().get();
-                if (a.isNonCommented()) {
-                    boolOption = a.getBooleanValue().get();
+                if (a.isUncommented()) {
+                    boolOption = a.getValue().asBoolean().get();
                 }
                 break;
             }
             case "-n":
             case "--name": {
                 a = cmdLine.nextEntry().get();
-                if (a.isNonCommented()) {
-                    stringOption = a.getStringValue().get();
+                if (a.isUncommented()) {
+                    stringOption = a.getValue().asString().get();
                 }
                 break;
             }
@@ -126,41 +152,14 @@ while (cmdLine.hasNext()) {
             }
         }
     } else {
-        others. add(cmdLine. next().get().toString());
+        others.add(cmdLine.next().get().image());
     }
 }
-NOut.println(NMsg. ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
-```
-
-
-## Using CommandLine, The recommended way...
-
-
-```java
-NCmdLine cmdLine = NApp.of().getCmdLine();
-NBooleanRef  boolOption = NRef.of(false);
-NRef<String>  stringOption = NRef.ofNull();
-List<String>  others = new ArrayList<>();
-cmdLine.forEachPeek ((a,l,c)-> {
-  if (a.isOption()) {
-      switch (a.key()) {
-          case "-o":
-          case "--option": {
-              cmdLine.withNextFlag((v, e, s)->boolOption.set(v));
-              return true;
-          }
-          case "-n":
-          case "--name": {
-              cmdLine.withNextEntry((v, e, s)->stringOption.set(v));
-              return true;
-          }
-      }
-      return false;
-  } else {
-      nonOptions.add(l.next().get().toString());
-      return true;
-  }
-});
-
+// test if application is running in exec mode
+// (and not in autoComplete mode)
+if (cmdLine.isExecMode()) {
+    //do the good staff here
+    NOut.println(NMsg.ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
+}
 ```
 
