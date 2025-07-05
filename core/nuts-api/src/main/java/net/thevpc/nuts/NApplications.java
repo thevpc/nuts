@@ -146,7 +146,7 @@ public final class NApplications {
             cc = cc.getSuperclass();
         }
 //        if (runMethods.isEmpty()) {
-//            throw new NBootException(NBootMsg.ofC("class %s has annotation @AppInfo. it should define a public no arg @NApp.Runner method", appClass.getName()));
+//            throw new NBootException(NBootMsg.ofC("class %s has annotation @AppInfo. it should define a public no arg @NAppRunner method", appClass.getName()));
 //        }
         return new AnnotationClassNApplication(runMethods, installMethods, updateMethods, uninstallMethods, appInstance);
     }
