@@ -362,7 +362,7 @@ Nuts encourages composability: it enables you to define reusable, versioned comp
                             <section id="UB5E914AE7EE60B904138372AD7CEF06DF4B6FA0B" >
                                 <h3 class="main-section2"><a href="#UE33207DB0B13AA1F136434A84B720BE063CF085B">1.2 Spring Boot Integration</a></h3>
                                 <div class="text-card">
-                                nuts can work flawlessly with spring boot applications. You just need one dependency and implement a NApplication interface.
+                                nuts can work flawlessly with spring boot applications. You just need one annotation @NApp.Definition to mark your SpringBootApplication.
 Add the following dependency to you spring boot project
 <pre class="md-code md-code-``` xml"><code class="xml">
     &lt;dependency&gt;
@@ -371,16 +371,17 @@ Add the following dependency to you spring boot project
         &lt;version&gt;0.8.6.0&lt;/version&gt;
     &lt;/dependency&gt;
 </code></pre>
-<p class="md-phrase">Implement interface <mark class="md-code md-code-` ">NApplication</mark> in your <mark class="md-code md-code-` ">SpringBootApplication</mark> top class.</p>
+<p class="md-phrase">Add @NApp.Definition in your <mark class="md-code md-code-` ">SpringBootApplication</mark> top class.</p>
 <pre class="md-code md-code-``` java"><code class="java">
+@NApp.Definition
 @SpringBootApplication
 @Import(NutsSpringBootConfig.class)
-public class AppExample implements NApplication {
+public class AppExample {
     public static void main(String[] args) {
         SpringApplication.run(AppExample.class, args);
     }
 
-    @Override
+    @NApp.Runner // not mandatory
     public void run() {
         NOut.println("Hello ##World##");
     }
@@ -2652,7 +2653,7 @@ Automatic-Module-Name: yourgroupid.yourartifactid.YourClass
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-07-05-032827
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-07-05-033933
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
