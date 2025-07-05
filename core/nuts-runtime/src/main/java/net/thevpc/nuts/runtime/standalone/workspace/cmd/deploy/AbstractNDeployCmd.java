@@ -323,29 +323,23 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
             case "--source":
             case "--from": {
                 return cmdLine.matcher().matchEntry((v) -> from(v.stringValue())).anyMatch();
-                return true;
             }
             case "-r":
             case "--target":
             case "--to": {
                 return cmdLine.matcher().matchEntry((v) -> to(v.stringValue())).anyMatch();
-                return true;
             }
             case "--desc-sha1": {
                 return cmdLine.matcher().matchEntry((v) -> setDescSha1(v.stringValue())).anyMatch();
-                return true;
             }
             case "--desc-sha1-file": {
                 return cmdLine.matcher().matchEntry((v) -> this.setDescSha1(NPath.of(v.stringValue()).readString())).anyMatch();
-                return true;
             }
             case "--sha1": {
                 return cmdLine.matcher().matchEntry((v) -> this.setSha1(v.stringValue())).anyMatch();
-                return true;
             }
             case "--sha1-file": {
                 return cmdLine.matcher().matchEntry((v) -> this.setSha1(NPath.of(v.stringValue()).readString())).anyMatch();
-                return true;
             }
             default: {
                 if (super.configureFirst(cmdLine)) {
