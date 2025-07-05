@@ -423,6 +423,9 @@ public class DefaultNCmdLine implements NCmdLine {
 
         @Override
         public Matcher matchProcessor(NCmdLineProcessor processor) {
+            if(processor!=null) {
+                processors.add(processor);
+            }
             return this;
         }
 
@@ -472,7 +475,6 @@ public class DefaultNCmdLine implements NCmdLine {
 
         @Override
         public MatcherCondition with(String... names) {
-
             return new MyMatcherConditionImpl(this, cml->{
                 boolean acceptable0 = false;
                 for (String name : names) {
@@ -1545,7 +1547,7 @@ public class DefaultNCmdLine implements NCmdLine {
             NOptional<NArg> v = next(NArgType.FLAG, names);
             if (v.isPresent()) {
                 NArg a = v.get();
-                if (a.isNonCommented()) {
+                if (a.isUncommented()) {
                     consumer.accept(a);
                     return true;
                 }
@@ -1562,7 +1564,7 @@ public class DefaultNCmdLine implements NCmdLine {
             NOptional<NArg> v = next(NArgType.ENTRY, names);
             if (v.isPresent()) {
                 NArg a = v.get();
-                if (a.isNonCommented()) {
+                if (a.isUncommented()) {
                     consumer.accept(a);
                     return true;
                 }
@@ -1628,7 +1630,7 @@ public class DefaultNCmdLine implements NCmdLine {
                             NOptional<NArg> v = selector.cmdLine.next(NArgType.FLAG, names);
                             if (v.isPresent()) {
                                 NArg a = v.get();
-                                if (a.isNonCommented()) {
+                                if (a.isUncommented()) {
                                     consumer.accept(a);
                                     return true;
                                 }
@@ -1652,7 +1654,7 @@ public class DefaultNCmdLine implements NCmdLine {
                     NOptional<NArg> v = selector.cmdLine.next(NArgType.ENTRY, names);
                     if (v.isPresent()) {
                         NArg a = v.get();
-                        if (a.isNonCommented()) {
+                        if (a.isUncommented()) {
                             consumer.accept(a);
                             return true;
                         }
