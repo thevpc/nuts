@@ -40,7 +40,7 @@ public interface NApp extends NComponent {
     }
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.RUNTIME)
-    @interface Main{
+    @interface Runner{
 
     }
     @Target(ElementType.METHOD)

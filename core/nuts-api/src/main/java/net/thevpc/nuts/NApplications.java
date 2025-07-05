@@ -114,7 +114,7 @@ public final class NApplications {
                 // only public methods
                 if (m.getParameterCount() == 0) {
                     if (visited.add(m.getName())) {
-                        if (m.getAnnotation(NApp.Main.class) != null) {
+                        if (m.getAnnotation(NApp.Runner.class) != null) {
                             runMethods.add(m);
                         }
                         if (m.getAnnotation(NApp.Updater.class) != null) {
@@ -131,7 +131,7 @@ public final class NApplications {
             }
             try {
                 for (Method m : cc.getDeclaredMethods()) {
-                    checkAllowedMethodWithNutsAnnotation(m, NApp.Main.class);
+                    checkAllowedMethodWithNutsAnnotation(m, NApp.Runner.class);
                     checkAllowedMethodWithNutsAnnotation(m, NApp.Installer.class);
                     checkAllowedMethodWithNutsAnnotation(m, NApp.Uninstaller.class);
                     checkAllowedMethodWithNutsAnnotation(m, NApp.Updater.class);

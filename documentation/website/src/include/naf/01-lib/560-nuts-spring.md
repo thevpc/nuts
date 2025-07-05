@@ -12,17 +12,18 @@ Add the following dependency to you spring boot project
     </dependency>
 ```
 
-Implement interface `NApplication` in your `SpringBootApplication` top class.
+Add @NApp.Info `NApplication` in your `SpringBootApplication` top class.
 
 ```java
+@NApp.Info
 @SpringBootApplication
 @Import(NutsSpringBootConfig.class)
-public class AppExample implements NApplication {
+public class AppExample {
     public static void main(String[] args) {
         SpringApplication.run(AppExample.class, args);
     }
 
-    @Override
+    @NApp.Main
     public void run() {
         NOut.println("Hello ##World##");
     }
