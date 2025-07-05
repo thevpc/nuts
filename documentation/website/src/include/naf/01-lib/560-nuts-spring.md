@@ -23,7 +23,7 @@ public class AppExample {
         SpringApplication.run(AppExample.class, args);
     }
 
-    @NApp.Runner // not mandatory
+    @NAppRunner // not mandatory
     public void run() {
         NOut.println("Hello ##World##");
     }
