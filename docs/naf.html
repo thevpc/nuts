@@ -295,7 +295,44 @@
                     <section id="UE33207DB0B13AA1F136434A84B720BE063CF085B" >
                         <h2 class="main-section1"><a href="#UE33207DB0B13AA1F136434A84B720BE063CF085B">1 Nuts Library</a></h2>
                         <div class="text-card">
-                        <p class="md-phrase"><mark class="md-code md-code-` ">nuts</mark> is a package manager that can be embedded in your application as a general purpose library. This library can affords lots of functionalities </p>
+                        Nuts is much more than a package manager — it is a powerful and extensible runtime framework for Java applications. While it provides robust support for dependency resolution and artifact management compatible with Maven repositories, Nuts also delivers a comprehensive suite of libraries and services that turn it into a foundation for building modular, interactive, and automated tools.
+Whether you're developing a CLI utility, a scripting engine, a DevOps automation tool, or a distributed plugin-based system, Nuts provides the scaffolding to manage dependencies, sessions, input/output, configuration, extensions, and workspace isolation — all in a portable and embeddable way.
+<H4 class="md-title-2">Dual Role by Design</H4>
+At its core, Nuts plays two essential roles:
+<ul class="md-ul"><li class="md-uli">As a package manager, Nuts handles runtime dependency resolution, dynamic execution of artifacts, and integration with Maven-compatible repositories.</li><li class="md-uli">As a framework, Nuts offers a rich set of APIs to handle I/O, configuration, text formatting, command execution, file systems, compressed archives, and more — helping developers write cleaner, more powerful, and portable applications.</li><li class="md-uli"></li></ul>
+
+<H4 class="md-title-2">Build, Embed, Automate</H4>
+Nuts is designed to work in multiple modes of operation:
+<ul class="md-ul"><li class="md-uli">Run Java programs and tools directly from repositories without downloading or installing them manually.</li><li class="md-uli">Integrate it as a library to give your own application full access to the Nuts runtime capabilities.</li><li class="md-uli">Use it as a DevOps engine to build repeatable scripts, installers, or deployment workflows.</li><li class="md-uli">Use Nuts as a command-line tool to install, run, or deploy applications.</li><li class="md-uli">Build your own ecosystem of versioned components, launchers, and tools powered by Nuts' modular runtime.</li></ul>
+In short, Nuts is a full-stack developer toolbox — part package manager, part framework, part scripting engine — designed to make modern Java development more dynamic, composable, and automation-friendly.
+
+<H4 class="md-title-2">Whether you are:</H4>
+<ul class="md-ul"><li class="md-uli">Building CLI tools that need versioned plugins and extensible command handling,</li><li class="md-uli">Developing DevOps utilities with integrated workspace/session management,</li><li class="md-uli">Creating modular applications that dynamically load artifacts at runtime,</li><li class="md-uli">Writing cross-environment installers, launchers, or monitoring tools,</li><li class="md-uli">Or designing educational platforms, scripting DSLs, or JVM-based OS abstractions,</li></ul>
+Nuts delivers the foundational infrastructure so you can focus on features, not plumbing. Key Capabilities
+The Nuts framework offers a wide set of features: ✅ Package & Dependency Management
+<ul class="md-ul"><li class="md-uli">Compatible with Maven repositories and standards</li><li class="md-uli">Supports local, remote, and custom repositories</li><li class="md-uli">Enables runtime dependency resolution and dynamic artifact loading</li></ul>
+✅ Configurable Workspaces & Sessions
+<ul class="md-ul"><li class="md-uli">Isolated and shared workspace models with full lifecycle control</li><li class="md-uli">Sessions encapsulate runtime configuration, user preferences, I/O handling, logging, and output styles</li><li class="md-uli">Built-in support for dry-run, trace, confirmation, GUI/headless modes</li></ul>
+✅ Structured I/O & Logging
+<ul class="md-ul"><li class="md-uli">Supports semantic console output (NTF format) with colors, styles, and structured messages</li><li class="md-uli">Unified API for stdout/stderr, input, logging, formatting, and piping</li><li class="md-uli">Handles both human-friendly and machine-readable outputs (e.g., JSON, XML, Props, Tree)</li></ul>
+✅ Filesystem & Networking Utilities
+<ul class="md-ul"><li class="md-uli">Provides advanced file abstraction via NPath</li><li class="md-uli">Built-in support for streaming, compressing, uncompressing, digesting, and manipulating file trees</li><li class="md-uli">Unified access to HTTP, classpath, resources, and virtual filesystems</li></ul>
+✅ Extensibility & Integration
+<ul class="md-ul"><li class="md-uli">Supports modular extension points: listeners, commands, install hooks, and repositories</li><li class="md-uli">Embedded scripting with support for Java source snippets and other languages</li><li class="md-uli">Can be integrated into Spring, JavaFX, Swing, or any plain Java project</li></ul>
+✅ Developer & DevOps Friendly
+<ul class="md-ul"><li class="md-uli">Features like NRun, NExec, NShell, and NOps make it ideal for automation</li><li class="md-uli">Cross-platform support: Linux, macOS, Windows</li><li class="md-uli">Zero external runtime dependencies — deploy as a bare JAR, with automatic resolution on first use</li></ul>
+
+<H4 class="md-title-2">Why Use Nuts?</H4>
+Unlike traditional libraries or shell utilities, Nuts brings together the flexibility of a modern scripting environment, the structure of a dependency-aware runtime, and the developer convenience of a polished CLI framework — all in one embeddable package. You can think of it as your:
+<ul class="md-ul"><li class="md-uli">Maven-like package manager, but runtime aware</li><li class="md-uli">Command-line framework, but fully pluggable</li><li class="md-uli">Launcher platform, but without installation or configuration hurdles</li><li class="md-uli">Shell scripting toolkit, but type-safe and Java-native</li></ul>
+<p class="md-phrase">With <mark class="md-code md-code-` ">Nuts</mark>, the boundary between development and runtime fades away, letting you write, deploy, and evolve tools without sacrificing portability, maintainability, or developer experience.</p>
+
+<H4 class="md-title-2">Lightweight, Modular, and Composable</H4>
+<ul class="md-ul"><li class="md-uli">Modular architecture built around workspaces, sessions, and execution contexts.</li><li class="md-uli">Supports multi-repository, multi-version, and multi-runtime setups.</li><li class="md-uli">Helps maintain separation between application logic and environment/runtime logic — a key feature for scripting, testing, and dynamic execution.</li></ul>
+
+<H4 class="md-title-2">Not Just Tools — Ecosystems</H4>
+Nuts encourages composability: it enables you to define reusable, versioned components that can evolve independently and work across environments. It brings a new level of reusability to the Java ecosystem, bridging the gap between packaged applications, scripts, and shared libraries. Whether you're building a command-line tool, a plugin system, a runtime launcher, or a portable enterprise toolkit — Nuts gives you a structured, scalable, and developer-friendly platform to do it all.
+
 
                         </div>
                         
@@ -2615,7 +2652,7 @@ Automatic-Module-Name: yourgroupid.yourartifactid.YourClass
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-07-05-031639
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-07-05-032827
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
