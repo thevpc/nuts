@@ -102,7 +102,7 @@ public final class NApplications {
         if (appAnnotation == null) {
             throw new NBootException(NBootMsg.ofC("class %s is missing annotation @AppInfo", appClass.getName()));
         }
-        NAssert.requireNonNull(appAnnotation, "@NApp.Info annotation");
+        NAssert.requireNonNull(appAnnotation, "@NApp.Definition annotation");
         List<Method> runMethods = new ArrayList<>();
         List<Method> installMethods = new ArrayList<>();
         List<Method> uninstallMethods = new ArrayList<>();
