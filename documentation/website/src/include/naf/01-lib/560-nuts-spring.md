@@ -23,7 +23,7 @@ public class AppExample {
         SpringApplication.run(AppExample.class, args);
     }
 
-    @NApp.Main
+    @NApp.Runner
     public void run() {
         NOut.println("Hello ##World##");
     }
