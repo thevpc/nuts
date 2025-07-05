@@ -33,32 +33,6 @@ public interface NApp extends NComponent {
         return new NAppBuilder().args(args);
     }
 
-    @Target(ElementType.TYPE)
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface Definition{
-        String id() default "";
-    }
-    @Target(ElementType.METHOD)
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface Runner{
-
-    }
-    @Target(ElementType.METHOD)
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface Installer {
-
-    }
-    @Target(ElementType.METHOD)
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface Uninstaller {
-
-    }
-    @Target(ElementType.METHOD)
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface Updater {
-
-    }
-
     /**
      * Returns the instance of {@code NApp} that is bound to the current {@code NSession}.
      *

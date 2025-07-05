@@ -2749,17 +2749,17 @@ public class App {
         }
     }
 
-    @NApp.Installer // this method is not required, implement when needed
+    @NAppInstaller // this method is not required, implement when needed
     public void onUninstallApplication() {
         s.out().printf("we are installing My Application : %s%n", s.getAppId());
     }
 
-    @NApp.Uninstaller // this method is not required, implement when needed
+    @NAppUninstaller // this method is not required, implement when needed
     public void onUninstallApplication() {
         s.out().printf("we are uninstalling My Application : %s%n", s.getAppId());
     }
 
-    @NApp.Updater // this method is not required, implement when needed
+    @NAppUpdater // this method is not required, implement when needed
     public void onUpdateApplication() {
         s.out().printf("we are updating My Application : %s%n", s.getAppId());
     }

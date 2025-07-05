@@ -23,6 +23,14 @@ public class NAppBuilder {
     private String[] nutsArgs;
     private String[] args;
 
+    public static NAppBuilder of() {
+        return new NAppBuilder();
+    }
+
+    public static NAppBuilder of(String[] args) {
+        return new NAppBuilder().args(args);
+    }
+
     public NAppBuilder handleErrors() {
         this.handleMode = NApplicationHandleMode.HANDLE;
         return this;

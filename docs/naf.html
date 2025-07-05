@@ -362,7 +362,7 @@ Nuts encourages composability: it enables you to define reusable, versioned comp
                             <section id="UB5E914AE7EE60B904138372AD7CEF06DF4B6FA0B" >
                                 <h3 class="main-section2"><a href="#UE33207DB0B13AA1F136434A84B720BE063CF085B">1.2 Spring Boot Integration</a></h3>
                                 <div class="text-card">
-                                nuts can work flawlessly with spring boot applications. You just need one annotation @NApp.Definition to mark your SpringBootApplication.
+                                nuts can work flawlessly with spring boot applications. You just need one annotation @NAppDefinition to mark your SpringBootApplication.
 Add the following dependency to you spring boot project
 <pre class="md-code md-code-``` xml"><code class="xml">
     &lt;dependency&gt;
@@ -371,9 +371,9 @@ Add the following dependency to you spring boot project
         &lt;version&gt;0.8.6.0&lt;/version&gt;
     &lt;/dependency&gt;
 </code></pre>
-<p class="md-phrase">Add @NApp.Definition in your <mark class="md-code md-code-` ">SpringBootApplication</mark> top class.</p>
+<p class="md-phrase">Add @NAppDefinition in your <mark class="md-code md-code-` ">SpringBootApplication</mark> top class.</p>
 <pre class="md-code md-code-``` java"><code class="java">
-@NApp.Definition
+@NAppDefinition
 @SpringBootApplication
 @Import(NutsSpringBootConfig.class)
 public class AppExample {

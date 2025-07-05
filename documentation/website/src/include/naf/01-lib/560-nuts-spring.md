@@ -1,7 +1,7 @@
 ---
 title: Spring Boot Integration
 ---
-nuts can work flawlessly with spring boot applications. You just need one annotation @NApp.Definition to mark your SpringBootApplication.
+nuts can work flawlessly with spring boot applications. You just need one annotation @NAppDefinition to mark your SpringBootApplication.
 
 Add the following dependency to you spring boot project
 ```xml
@@ -12,10 +12,10 @@ Add the following dependency to you spring boot project
     </dependency>
 ```
 
-Add @NApp.Definition in your `SpringBootApplication` top class.
+Add @NAppDefinition in your `SpringBootApplication` top class.
 
 ```java
-@NApp.Definition
+@NAppDefinition
 @SpringBootApplication
 @Import(NutsSpringBootConfig.class)
 public class AppExample {

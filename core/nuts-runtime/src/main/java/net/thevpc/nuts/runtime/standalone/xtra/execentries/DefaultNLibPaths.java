@@ -136,7 +136,7 @@ public class DefaultNLibPaths implements NLibPaths {
     @Override
     public List<NId> resolveIds(Class<?> clazz) {
         LinkedHashSet<NId> all = new LinkedHashSet<>();
-        NApp.Definition annotation = (NApp.Definition) clazz.getAnnotation(NApp.Definition.class);
+        NAppDefinition annotation = (NAppDefinition) clazz.getAnnotation(NAppDefinition.class);
         if (annotation != null) {
             if (!NBlankable.isBlank(annotation.id())) {
                 all.add(NId.get(annotation.id()).get());

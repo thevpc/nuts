@@ -83,9 +83,9 @@ public final class NApplications {
         return createApplicationInstance(appType, args);
     }
 
-    public static NApp.Definition resolveApplicationAnnotation(Class appClass) {
+    public static NAppDefinition resolveApplicationAnnotation(Class appClass) {
         Class<?> validAppClass = unproxyType(appClass);
-        return validAppClass.getAnnotation(NApp.Definition.class);
+        return validAppClass.getAnnotation(NAppDefinition.class);
     }
 
     public static boolean isAnnotatedApplicationClass(Class appClass) {
@@ -98,11 +98,11 @@ public final class NApplications {
             return (NApplication) appInstance;
         }
         Class<?> appClass = unproxyType(appInstance.getClass());
-        NApp.Definition appAnnotation = appClass.getAnnotation(NApp.Definition.class);
+        NAppDefinition appAnnotation = appClass.getAnnotation(NAppDefinition.class);
         if (appAnnotation == null) {
             throw new NBootException(NBootMsg.ofC("class %s is missing annotation @AppInfo", appClass.getName()));
         }
-        NAssert.requireNonNull(appAnnotation, "@NApp.Definition annotation");
+        NAssert.requireNonNull(appAnnotation, "@NAppDefinition annotation");
         List<Method> runMethods = new ArrayList<>();
         List<Method> installMethods = new ArrayList<>();
         List<Method> uninstallMethods = new ArrayList<>();
@@ -114,16 +114,16 @@ public final class NApplications {
                 // only public methods
                 if (m.getParameterCount() == 0) {
                     if (visited.add(m.getName())) {
-                        if (m.getAnnotation(NApp.Runner.class) != null) {
+                        if (m.getAnnotation(NAppRunner.class) != null) {
                             runMethods.add(m);
                         }
-                        if (m.getAnnotation(NApp.Updater.class) != null) {
+                        if (m.getAnnotation(NAppUpdater.class) != null) {
                             updateMethods.add(m);
                         }
-                        if (m.getAnnotation(NApp.Installer.class) != null) {
+                        if (m.getAnnotation(NAppInstaller.class) != null) {
                             installMethods.add(m);
                         }
-                        if (m.getAnnotation(NApp.Uninstaller.class) != null) {
+                        if (m.getAnnotation(NAppUninstaller.class) != null) {
                             uninstallMethods.add(m);
                         }
                     }
@@ -131,10 +131,10 @@ public final class NApplications {
             }
             try {
                 for (Method m : cc.getDeclaredMethods()) {
-                    checkAllowedMethodWithNutsAnnotation(m, NApp.Runner.class);
-                    checkAllowedMethodWithNutsAnnotation(m, NApp.Installer.class);
-                    checkAllowedMethodWithNutsAnnotation(m, NApp.Uninstaller.class);
-                    checkAllowedMethodWithNutsAnnotation(m, NApp.Updater.class);
+                    checkAllowedMethodWithNutsAnnotation(m, NAppRunner.class);
+                    checkAllowedMethodWithNutsAnnotation(m, NAppInstaller.class);
+                    checkAllowedMethodWithNutsAnnotation(m, NAppUninstaller.class);
+                    checkAllowedMethodWithNutsAnnotation(m, NAppUpdater.class);
                 }
             } catch (NBootException e) {
                 throw e;
