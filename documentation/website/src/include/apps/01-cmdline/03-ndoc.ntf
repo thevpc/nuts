@@ -1,12 +1,12 @@
 ---
 id: app-ndoc
 title: ndoc
-subTitle: Templating and Static Site Generator
-category: Productivity / Static Site Generator
-hmi: Commandline
+subTitle: Latex Like Documentation Tool
+category: Productivity / Presentation
+hmi: Desktop
 website: https://thevpc.github.com/nuts
-installCommand: nuts install ndoc
-exampleCommand: nuts ndiff my-app-v1.jar my-app-v2.jar
+installCommand: nuts install ndoc-viewer
+exampleCommand: nuts ndoc-viewer
 ---
 
 
