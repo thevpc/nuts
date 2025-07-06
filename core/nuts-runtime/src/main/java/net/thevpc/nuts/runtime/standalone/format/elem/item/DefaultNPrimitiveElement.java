@@ -197,7 +197,7 @@ public class DefaultNPrimitiveElement extends AbstractNElement implements NPrimi
             case BYTE:
             case LONG:
             case BIG_DECIMAL:
-            case BIG_INTEGER:
+            case BIG_INT:
             case SHORT:
             case INTEGER:
             case FLOAT:

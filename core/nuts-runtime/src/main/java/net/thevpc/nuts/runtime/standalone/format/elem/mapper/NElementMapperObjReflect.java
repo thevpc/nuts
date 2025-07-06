@@ -99,7 +99,7 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
                 }
                 break;
             }
-            case BIG_INTEGER: {
+            case BIG_INT: {
                 if (c.isAssignableFrom(BigInteger.class)) {
                     return o.asLiteral().asNumber();
                 }

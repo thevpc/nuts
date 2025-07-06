@@ -276,7 +276,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
             case FLOAT:
             case BOOLEAN:
             case BIG_DECIMAL:
-            case BIG_INTEGER: {
+            case BIG_INT: {
                 List<NElementAnnotation> a = e.annotations();
                 if (a.isEmpty()) {
                     return e;

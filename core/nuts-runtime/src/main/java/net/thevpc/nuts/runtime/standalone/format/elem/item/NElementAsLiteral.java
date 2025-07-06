@@ -185,7 +185,7 @@ public class NElementAsLiteral implements NLiteral {
 
     @Override
     public boolean isBigInt() {
-        return elem.type() == NElementType.BIG_INTEGER;
+        return elem.type() == NElementType.BIG_INT;
     }
 
 

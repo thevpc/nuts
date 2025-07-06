@@ -238,7 +238,7 @@ public class DefaultElementMapperStore {
             case BIG_DECIMAL: {
                 return store.getMapper(BigDecimal.class);
             }
-            case BIG_INTEGER: {
+            case BIG_INT: {
                 return store.getMapper(BigInteger.class);
             }
             case LONG: {

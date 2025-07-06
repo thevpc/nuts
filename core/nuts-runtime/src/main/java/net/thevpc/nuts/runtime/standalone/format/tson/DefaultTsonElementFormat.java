@@ -156,7 +156,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
             case REGEX: {
                 return decorateTsonElement(factory.ofRegex(elem.asStringValue().get()), elem);
             }
-            case BIG_INTEGER: {
+            case BIG_INT: {
                 return decorateTsonElement(factory.ofBigInt(elem.asBigIntValue().get()), elem);
             }
             case BIG_DECIMAL: {
@@ -414,7 +414,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 return decorateNElement(NElement.ofDouble(tsonElem.doubleValue(),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
             }
             case BIG_INTEGER: {
-                return decorateNElement(NElement.ofBigInteger(tsonElem.bigIntegerValue(), toTsonNumberLayout(((TsonNumber) tsonElem).numberLayout()),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
+                return decorateNElement(NElement.ofBigInt(tsonElem.bigIntegerValue(), toTsonNumberLayout(((TsonNumber) tsonElem).numberLayout()),((TsonNumber)tsonElem).numberSuffix()), tsonElem);
             }
             case BIG_DECIMAL: {
                 return decorateNElement(NElement.ofBigDecimal(tsonElem.bigDecimalValue(),((TsonNumber)tsonElem).numberSuffix()), tsonElem);

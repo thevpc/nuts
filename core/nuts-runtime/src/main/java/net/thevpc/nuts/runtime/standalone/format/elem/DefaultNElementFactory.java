@@ -699,26 +699,26 @@ public class DefaultNElementFactory implements NElementFactory {
     }
 
     @Override
-    public NPrimitiveElement ofBigInteger(BigInteger value) {
+    public NPrimitiveElement ofBigInt(BigInteger value) {
         if (value == null) {
             return ofNull();
         }
-        return new DefaultNNumberElement(NElementType.BIG_INTEGER, value);
+        return new DefaultNNumberElement(NElementType.BIG_INT, value);
     }
 
     @Override
-    public NPrimitiveElement ofBigInteger(BigInteger value, NNumberLayout layout, String suffix) {
-        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.BIG_INTEGER, value, layout, suffix);
+    public NPrimitiveElement ofBigInt(BigInteger value, NNumberLayout layout, String suffix) {
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.BIG_INT, value, layout, suffix);
     }
 
     @Override
-    public NPrimitiveElement ofBigInteger(BigInteger value, NNumberLayout layout) {
-        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.BIG_INTEGER, value, layout, null);
+    public NPrimitiveElement ofBigInt(BigInteger value, NNumberLayout layout) {
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.BIG_INT, value, layout, null);
     }
 
     @Override
-    public NPrimitiveElement ofBigInteger(BigInteger value, String suffix) {
-        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.BIG_INTEGER, value, null, suffix);
+    public NPrimitiveElement ofBigInt(BigInteger value, String suffix) {
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.BIG_INT, value, null, suffix);
     }
 
     @Override
@@ -799,7 +799,7 @@ public class DefaultNElementFactory implements NElementFactory {
             case "java.lang.Long":
                 return new DefaultNNumberElement(NElementType.LONG, value);
             case "java.math.BigInteger":
-                return new DefaultNNumberElement(NElementType.BIG_INTEGER, value);
+                return new DefaultNNumberElement(NElementType.BIG_INT, value);
             case "java.lang.float":
                 return new DefaultNNumberElement(NElementType.FLOAT, value);
             case "java.lang.Double":

@@ -81,7 +81,7 @@ public class DefaultNLiteral implements NLiteral {
                 case "java.lang.Long":
                     return NElementType.LONG;
                 case "java.math.BigInteger":
-                    return NElementType.BIG_INTEGER;
+                    return NElementType.BIG_INT;
                 case "java.lang.Float":
                     return NElementType.FLOAT;
                 case "java.lang.Double":
@@ -796,7 +796,7 @@ public class DefaultNLiteral implements NLiteral {
             case BYTE:
             case LONG:
             case BIG_DECIMAL:
-            case BIG_INTEGER:
+            case BIG_INT:
             case SHORT:
             case INTEGER:
             case FLOAT:
@@ -1005,7 +1005,7 @@ public class DefaultNLiteral implements NLiteral {
             case FLOAT:
             case DOUBLE:
             case BIG_COMPLEX:
-            case BIG_INTEGER:
+            case BIG_INT:
             case BIG_DECIMAL:
             case DOUBLE_COMPLEX:
             case FLOAT_COMPLEX:

@@ -248,13 +248,13 @@ public interface NElementFactory extends NComponent {
 
     NPrimitiveElement ofBigDecimal(BigDecimal value, String suffix);
 
-    NPrimitiveElement ofBigInteger(BigInteger value);
+    NPrimitiveElement ofBigInt(BigInteger value);
 
-    NPrimitiveElement ofBigInteger(BigInteger value, NNumberLayout layout, String suffix);
+    NPrimitiveElement ofBigInt(BigInteger value, NNumberLayout layout, String suffix);
 
-    NPrimitiveElement ofBigInteger(BigInteger value, NNumberLayout layout);
+    NPrimitiveElement ofBigInt(BigInteger value, NNumberLayout layout);
 
-    NPrimitiveElement ofBigInteger(BigInteger value, String suffix);
+    NPrimitiveElement ofBigInt(BigInteger value, String suffix);
 
     NUpletElementBuilder ofUpletBuilder();
 

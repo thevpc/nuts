@@ -188,7 +188,7 @@ public class SimpleYaml implements NElementStreamFormat {
             case LONG:
             case CHAR:
             case BYTE:
-            case BIG_INTEGER:
+            case BIG_INT:
             case BIG_DECIMAL:
             case ALIAS:
             case NULL:
@@ -214,7 +214,7 @@ public class SimpleYaml implements NElementStreamFormat {
             case INTEGER:
             case BYTE:
             case LONG:
-            case BIG_INTEGER:
+            case BIG_INT:
             case BIG_DECIMAL:
             {
                 out.print(value.toString());

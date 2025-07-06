@@ -63,7 +63,7 @@ public enum NElementType implements NEnum {
     /**
      * float/double (number) element
      */
-    BIG_INTEGER,
+    BIG_INT,
     /**
      * float/double (number) element
      */
@@ -172,7 +172,7 @@ public enum NElementType implements NEnum {
             case SHORT:
             case INTEGER:
             case LONG:
-            case BIG_INTEGER:
+            case BIG_INT:
                 return true;
         }
         return false;
@@ -188,7 +188,7 @@ public enum NElementType implements NEnum {
             case DOUBLE:
             case DOUBLE_COMPLEX:
             case FLOAT_COMPLEX:
-            case BIG_INTEGER:
+            case BIG_INT:
             case BIG_COMPLEX:
             case BIG_DECIMAL:
                 return true;
@@ -221,7 +221,7 @@ public enum NElementType implements NEnum {
             case DOUBLE:
             case DOUBLE_COMPLEX:
             case FLOAT_COMPLEX:
-            case BIG_INTEGER:
+            case BIG_INT:
             case BIG_COMPLEX:
             case BIG_DECIMAL:
             case NULL:
@@ -330,7 +330,7 @@ public enum NElementType implements NEnum {
     public boolean isBigNumber() {
         switch (this) {
             case BIG_DECIMAL:
-            case BIG_INTEGER:
+            case BIG_INT:
             case BIG_COMPLEX: {
                 return true;
             }

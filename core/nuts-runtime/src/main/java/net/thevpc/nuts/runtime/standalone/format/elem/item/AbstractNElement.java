@@ -93,7 +93,7 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public boolean isBigInt() {
-        return type() == NElementType.BIG_INTEGER;
+        return type() == NElementType.BIG_INT;
     }
 
     @Override

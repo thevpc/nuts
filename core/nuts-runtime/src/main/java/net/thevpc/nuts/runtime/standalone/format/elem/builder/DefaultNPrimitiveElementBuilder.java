@@ -151,7 +151,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
                     break;
                 }
                 case "java.math.BigInteger": {
-                    setBigInteger(((BigInteger) value));
+                    setBigInt(((BigInteger) value));
                     break;
                 }
                 case "java.math.BigDecimal": {
@@ -433,11 +433,11 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     }
 
     @Override
-    public NPrimitiveElementBuilder setBigInteger(BigInteger value) {
+    public NPrimitiveElementBuilder setBigInt(BigInteger value) {
         if (value == null) {
             return setNull();
         }
-        this.type = NElementType.BIG_INTEGER;
+        this.type = NElementType.BIG_INT;
         this.value = value;
         return this;
     }

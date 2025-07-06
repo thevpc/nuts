@@ -425,20 +425,20 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
         return NElementFactory.of().ofBigDecimal(value, suffix);
     }
 
-    static NPrimitiveElement ofBigInteger(BigInteger value) {
-        return NElementFactory.of().ofBigInteger(value);
+    static NPrimitiveElement ofBigInt(BigInteger value) {
+        return NElementFactory.of().ofBigInt(value);
     }
 
-    static NPrimitiveElement ofBigInteger(BigInteger value, NNumberLayout layout, String suffix) {
-        return NElementFactory.of().ofBigInteger(value, layout, suffix);
+    static NPrimitiveElement ofBigInt(BigInteger value, NNumberLayout layout, String suffix) {
+        return NElementFactory.of().ofBigInt(value, layout, suffix);
     }
 
-    static NPrimitiveElement ofBigInteger(BigInteger value, NNumberLayout layout) {
-        return NElementFactory.of().ofBigInteger(value, layout);
+    static NPrimitiveElement ofBigInt(BigInteger value, NNumberLayout layout) {
+        return NElementFactory.of().ofBigInt(value, layout);
     }
 
-    static NPrimitiveElement ofBigInteger(BigInteger value, String suffix) {
-        return NElementFactory.of().ofBigInteger(value, suffix);
+    static NPrimitiveElement ofBigInt(BigInteger value, String suffix) {
+        return NElementFactory.of().ofBigInt(value, suffix);
     }
 
     static NUpletElementBuilder ofUpletBuilder() {
