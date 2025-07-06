@@ -250,6 +250,11 @@ public class NStringBuilder implements CharSequence, NBlankable {
         return println(String.valueOf(str));
     }
 
+    public NStringBuilder println() {
+        newLine();
+        return this;
+    }
+
     public NStringBuilder println(String str) {
         append(str);
         newLine();
