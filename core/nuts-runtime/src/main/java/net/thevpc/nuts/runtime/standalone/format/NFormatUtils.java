@@ -62,7 +62,7 @@ public class NFormatUtils {
             case NAME:
             case DOUBLE:
             case LONG:
-            case BIG_INTEGER:
+            case BIG_INT:
             case BIG_DECIMAL:
             {
                 dest.put(prefix, stringValue(value.asPrimitive().get().asLiteral().asObject().orNull()));

@@ -125,7 +125,7 @@ public interface NPrimitiveElementBuilder extends NElementBuilder {
 
     NPrimitiveElementBuilder setDouble(Double value);
 
-    NPrimitiveElementBuilder setBigInteger(BigInteger value);
+    NPrimitiveElementBuilder setBigInt(BigInteger value);
 
     NPrimitiveElementBuilder setBigDecimal(BigDecimal value);
 
