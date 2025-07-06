@@ -102,7 +102,7 @@ public abstract class AbstractNPrepareCmd extends NWorkspaceCmdBase<NPrepareCmd>
             return false;
         }
         return cmdLine.matcher()
-                .matchProcessor((aa, c)->super.configureFirst(cmdLine))
+                .matchAll((c)->super.configureFirst(cmdLine))
                 .with("--user").matchEntry((v) ->  setUserName(v.stringValue()))
                 .with("--target-server").matchEntry((v) ->  setTargetServer(v.stringValue()))
                 .with("--version").matchEntry((v) ->  setVersion(v.stringValue()))

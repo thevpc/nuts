@@ -96,7 +96,7 @@ public class NCmdLineTutorial {
         NBooleanRef boolOption = NRef.ofBoolean(false);
         NRef<String> stringOption = NRef.ofNull();
         List<String> nonOptions = new ArrayList<>();
-        cmdLine.forEachPeek((arg, cmdLine1) -> {
+        cmdLine.forEachPeek((cmdLine1) -> {
             NArg a = cmdLine1.peek().get();
             if (a.isOption()) {
                 switch (a.key()) {

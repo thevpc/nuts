@@ -1,5 +1,6 @@
 package net.thevpc.nuts.core.test;
 
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.cmdline.DefaultNArg;
 import org.junit.jupiter.api.Assertions;
@@ -14,7 +15,7 @@ public class ArgumentTest {
 
     @Test
     public void test01() {
-        DefaultNArg a = new DefaultNArg("-a=2");
+        NArg a = NArg.of("-a=2");
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isUncommented());
         Assertions.assertFalse(a.isNegated());
@@ -27,7 +28,7 @@ public class ArgumentTest {
 
     @Test
     public void test02() {
-        DefaultNArg a = new DefaultNArg("-//a=2");
+        NArg a = NArg.of("-//a=2");
         Assertions.assertTrue(a.isOption());
         Assertions.assertFalse(a.isUncommented());
         Assertions.assertFalse(a.isNegated());
@@ -40,7 +41,7 @@ public class ArgumentTest {
 
     @Test
     public void test03() {
-        DefaultNArg a = new DefaultNArg("-!a=2");
+        NArg a = NArg.of("-!a=2");
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isUncommented());
         Assertions.assertTrue(a.isNegated());
@@ -53,7 +54,7 @@ public class ArgumentTest {
 
     @Test
     public void test04() {
-        DefaultNArg a = new DefaultNArg("-!a");
+        NArg a = NArg.of("-!a");
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isUncommented());
         Assertions.assertTrue(a.isNegated());
@@ -66,7 +67,7 @@ public class ArgumentTest {
 
     @Test
     public void test05() {
-        DefaultNArg a = new DefaultNArg("-!=a");
+        NArg a = NArg.of("-!=a");
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isUncommented());
         Assertions.assertTrue(a.isNegated());
@@ -79,7 +80,7 @@ public class ArgumentTest {
 
     @Test
     public void test06() {
-        DefaultNArg a = new DefaultNArg("-!=");
+        NArg a = NArg.of("-!=");
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isUncommented());
         Assertions.assertTrue(a.isNegated());
@@ -92,7 +93,7 @@ public class ArgumentTest {
 
     @Test
     public void test07() {
-        DefaultNArg a = new DefaultNArg("-!");
+        NArg a = NArg.of("-!");
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isUncommented());
         Assertions.assertTrue(a.isNegated());
@@ -105,7 +106,7 @@ public class ArgumentTest {
 
     @Test
     public void test08() {
-        DefaultNArg a = new DefaultNArg("-");
+        NArg a = NArg.of("-");
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isUncommented());
         Assertions.assertFalse(a.isNegated());
@@ -118,7 +119,7 @@ public class ArgumentTest {
 
     @Test
     public void test09() {
-        DefaultNArg a = new DefaultNArg("");
+        NArg a = NArg.of("");
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isUncommented());
         Assertions.assertFalse(a.isNegated());
@@ -131,7 +132,7 @@ public class ArgumentTest {
 
     @Test
     public void test10() {
-        DefaultNArg a = new DefaultNArg("c=/a");
+        NArg a = NArg.of("c=/a");
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isUncommented());
         Assertions.assertFalse(a.isNegated());
@@ -144,7 +145,7 @@ public class ArgumentTest {
 
     @Test
     public void test11() {
-        DefaultNArg a = new DefaultNArg("c");
+        NArg a = NArg.of("c");
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isUncommented());
         Assertions.assertFalse(a.isNegated());
@@ -157,7 +158,7 @@ public class ArgumentTest {
 
     @Test
     public void test12() {
-        DefaultNArg a = new DefaultNArg("!//c=30");
+        NArg a = NArg.of("!//c=30");
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isUncommented());
         Assertions.assertFalse(a.isNegated());
@@ -170,7 +171,7 @@ public class ArgumentTest {
 
     @Test
     public void test13() {
-        DefaultNArg a = new DefaultNArg("!");
+        NArg a = NArg.of("!");
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isUncommented());
         Assertions.assertFalse(a.isNegated());
@@ -183,7 +184,7 @@ public class ArgumentTest {
 
     @Test
     public void test14() {
-        DefaultNArg a = new DefaultNArg("");
+        NArg a = NArg.of("");
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isUncommented());
         Assertions.assertFalse(a.isNegated());

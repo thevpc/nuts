@@ -51,7 +51,7 @@ public class CmdLineTest {
     public void testArgument01() {
         NElements elems = NElements.of();
         checkDefaultNArgument(
-                new DefaultNArg(null),
+                new DefaultNArg(null,null),
                 true,
                 false,
                 false,
@@ -68,7 +68,7 @@ public class CmdLineTest {
     public void testArgument02() {
         NElements elems = NElements.of();
         checkDefaultNArgument(
-                new DefaultNArg(""),
+                new DefaultNArg("",null),
                 true,
                 false,
                 false,
