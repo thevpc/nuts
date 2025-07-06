@@ -8,5 +8,5 @@ title: nserver
 ```
 nuts install nserver
 # Example of usage
-nuts nserver --http
+nuts nserver start --http
 ```
