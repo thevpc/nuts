@@ -666,7 +666,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     NCmdLine setShellFamily(NShellFamily shellFamily);
 
     interface Matcher {
-        Matcher matchProcessor(NCmdLineProcessor processor);
+        Matcher matchAll(NCmdLineProcessor processor);
 
         Matcher matchFlag(Consumer<NArg> consumer);
 
