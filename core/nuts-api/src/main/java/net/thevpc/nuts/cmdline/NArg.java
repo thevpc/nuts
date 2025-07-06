@@ -52,7 +52,7 @@ public interface NArg extends NBlankable /*extends NLiteral*/ {
      * @return new instance
      */
     static NArg of(String value) {
-        return new DefaultNArg(value);
+        return new DefaultNArg(value,null);
     }
 
     /**
@@ -360,4 +360,10 @@ public interface NArg extends NBlankable /*extends NLiteral*/ {
     boolean isLong();
 
     NOptional<Long> asLong();
+
+    /**
+     * returns the owner commandline
+     * @return the owner commandline
+     */
+    NCmdLine getCommandLine();
 }

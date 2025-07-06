@@ -191,7 +191,7 @@ public class DefaultNCmdLine implements NCmdLine {
         if (option == null) {
             return false;
         }
-        DefaultNArg a = new DefaultNArg(option);
+        DefaultNArg a = new DefaultNArg(option, this);
         String p = a.getOptionPrefix().asString().orNull();
         if (p == null || p.length() != 1) {
             return false;
@@ -347,7 +347,7 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public NOptional<NArg> nextOption(String option) {
-        if (!new DefaultNArg(option).isOption()) {
+        if (!new DefaultNArg(option, this).isOption()) {
             return errorOptionalCformat("%s is not an option", option);
         }
         return next(new DefaultNArgName(option), true);
@@ -422,8 +422,8 @@ public class DefaultNCmdLine implements NCmdLine {
         }
 
         @Override
-        public Matcher matchProcessor(NCmdLineProcessor processor) {
-            if(processor!=null) {
+        public Matcher matchAll(NCmdLineProcessor processor) {
+            if (processor != null) {
                 processors.add(processor);
             }
             return this;
@@ -441,7 +441,7 @@ public class DefaultNCmdLine implements NCmdLine {
                 return false;
             }
             for (NCmdLineProcessor consumer : processors) {
-                if (consumer.process(a, cmdLine)) {
+                if (consumer.process(cmdLine)) {
                     return true;
                 }
             }
@@ -450,7 +450,7 @@ public class DefaultNCmdLine implements NCmdLine {
 
         @Override
         public MatcherCondition withAny() {
-            return new MyMatcherConditionImpl(this, c->true, new String[0]);
+            return new MyMatcherConditionImpl(this, c -> true, new String[0]);
         }
 
         @Override
@@ -475,7 +475,7 @@ public class DefaultNCmdLine implements NCmdLine {
 
         @Override
         public MatcherCondition with(String... names) {
-            return new MyMatcherConditionImpl(this, cml->{
+            return new MyMatcherConditionImpl(this, cml -> {
                 boolean acceptable0 = false;
                 for (String name : names) {
                     String[] nameSeqArray = NStringUtils.split(name, " ").toArray(new String[0]);
@@ -502,30 +502,31 @@ public class DefaultNCmdLine implements NCmdLine {
 
         @Override
         public MatcherCondition withNonOption() {
-            return withCondition((c)->c.isNextNonOption());
+            return withCondition((c) -> c.isNextNonOption());
         }
 
         @Override
         public MatcherCondition withOption() {
-            return withCondition((c)->c.isNextOption());
+            return withCondition((c) -> c.isNextOption());
         }
 
         @Override
         public Matcher withDefaultLast() {
-            matchProcessor(new NCmdLineProcessor() {
+            matchAll(new NCmdLineProcessor() {
                 @Override
-                public boolean process(NArg arg, NCmdLine cmdLine) {
+                public boolean process(NCmdLine cmdLine) {
                     NSession.of().configureLast(cmdLine);
                     return true;
                 }
             });
             return this;
         }
+
         @Override
         public Matcher withDefaultFirst() {
-            matchProcessor(new NCmdLineProcessor() {
+            matchAll(new NCmdLineProcessor() {
                 @Override
-                public boolean process(NArg arg, NCmdLine cmdLine) {
+                public boolean process(NCmdLine cmdLine) {
                     return NSession.of().configureFirst(cmdLine);
                 }
             });
@@ -540,8 +541,8 @@ public class DefaultNCmdLine implements NCmdLine {
 
         @Override
         public void require() {
-            if(noMatch()){
-                if(cmdLine.isEmpty()){
+            if (noMatch()) {
+                if (cmdLine.isEmpty()) {
                     cmdLine.throwMissingArgument();
                 }
                 cmdLine.throwUnexpectedArgument();
@@ -1166,7 +1167,7 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     private NArg createArgument(String v) {
-        return new DefaultNArg(v, eq);
+        return new DefaultNArg(v, eq, this);
     }
 
     private boolean isAutoComplete() {
@@ -1463,7 +1464,7 @@ public class DefaultNCmdLine implements NCmdLine {
 
     public NCmdLine pushBack(String... args) {
         if (args != null) {
-            this.lookahead.addAll(0, Arrays.stream(args).map(x -> new DefaultNArg(x == null ? "" : x)).collect(Collectors.toList()));
+            this.lookahead.addAll(0, Arrays.stream(args).map(x -> new DefaultNArg(x == null ? "" : x, this)).collect(Collectors.toList()));
         }
         return this;
     }
@@ -1484,7 +1485,7 @@ public class DefaultNCmdLine implements NCmdLine {
             NArg a = peek().orNull();
             for (NCmdLineProcessor action : actions) {
                 if (action != null) {
-                    if (action.process(a, this)) {
+                    if (action.process(this)) {
                         some = true;
                         break;
                     } else {
@@ -1601,12 +1602,13 @@ public class DefaultNCmdLine implements NCmdLine {
 
         @Override
         public MatcherCondition and(Predicate<NCmdLine> condition) {
-            if(condition!=null){
+            if (condition != null) {
                 otherConditions.add(condition);
             }
             return this;
         }
-        private boolean checkCondition(NCmdLine cmdLine){
+
+        private boolean checkCondition(NCmdLine cmdLine) {
             if (!baseCondition.test(cmdLine)) {
                 return false;
             }
@@ -1620,10 +1622,10 @@ public class DefaultNCmdLine implements NCmdLine {
 
         @Override
         public Matcher matchFlag(Consumer<NArg> consumer) {
-            selector.matchProcessor(
+            selector.matchAll(
                     new NCmdLineProcessor() {
                         @Override
-                        public boolean process(NArg arg, NCmdLine cmdLine) {
+                        public boolean process(NCmdLine cmdLine) {
                             if (!checkCondition(cmdLine)) {
                                 return false;
                             }
@@ -1645,9 +1647,9 @@ public class DefaultNCmdLine implements NCmdLine {
 
         @Override
         public Matcher matchEntry(Consumer<NArg> consumer) {
-            selector.matchProcessor(new NCmdLineProcessor() {
+            selector.matchAll(new NCmdLineProcessor() {
                 @Override
-                public boolean process(NArg arg, NCmdLine cmdLine) {
+                public boolean process(NCmdLine cmdLine) {
                     if (!checkCondition(cmdLine)) {
                         return false;
                     }
@@ -1669,9 +1671,9 @@ public class DefaultNCmdLine implements NCmdLine {
 
         @Override
         public Matcher matchAnyMultiple(Consumer<NCmdLine> consumer) {
-            selector.matchProcessor(new NCmdLineProcessor() {
+            selector.matchAll(new NCmdLineProcessor() {
                 @Override
-                public boolean process(NArg arg, NCmdLine cmdLine) {
+                public boolean process(NCmdLine cmdLine) {
                     if (!checkCondition(cmdLine)) {
                         return false;
                     }
@@ -1684,13 +1686,14 @@ public class DefaultNCmdLine implements NCmdLine {
 
                 }
             });
-            return selector;        }
+            return selector;
+        }
 
         @Override
         public Matcher matchAny(Consumer<NArg> consumer) {
-            selector.matchProcessor(new NCmdLineProcessor() {
+            selector.matchAll(new NCmdLineProcessor() {
                 @Override
-                public boolean process(NArg arg, NCmdLine cmdLine) {
+                public boolean process(NCmdLine cmdLine) {
                     if (!checkCondition(cmdLine)) {
                         return false;
                     }
@@ -1698,8 +1701,8 @@ public class DefaultNCmdLine implements NCmdLine {
                     if (v.isPresent()) {
                         NArg a = v.get();
                         //if (a.isNonCommented()) {
-                            consumer.accept(a);
-                            return true;
+                        consumer.accept(a);
+                        return true;
                         //}
                         //return true;
                     }

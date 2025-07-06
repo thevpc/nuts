@@ -88,9 +88,18 @@ public class DefaultNArg implements NArg {
     private final boolean active;
     private final boolean option;
     private final String image;
+    private final NCmdLine cmdLine;
 
     public DefaultNArg(String expression) {
-        this(expression, '=');
+        this(expression, (NCmdLine) null);
+    }
+
+    public DefaultNArg(String expression, NCmdLine cmdLine) {
+        this(expression, '=', cmdLine);
+    }
+
+    public DefaultNArg(String image, char eq) {
+        this(image, eq, null);
     }
 
     /**
@@ -99,7 +108,8 @@ public class DefaultNArg implements NArg {
      * @param image image string
      * @param eq    equals
      */
-    public DefaultNArg(String image, char eq) {
+    public DefaultNArg(String image, char eq, NCmdLine cmdLine) {
+        this.cmdLine = cmdLine;
         this.eq = (eq == '\0' ? '=' : eq);
         this.image = image;
         Pattern currOptionsPattern;
@@ -682,5 +692,10 @@ public class DefaultNArg implements NArg {
 
     public boolean isFloatingNumber() {
         return toLiteral().isFloatingNumber();
+    }
+
+    @Override
+    public NCmdLine getCommandLine() {
+        return cmdLine;
     }
 }
