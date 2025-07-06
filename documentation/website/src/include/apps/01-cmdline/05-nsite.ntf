@@ -1,0 +1,13 @@
+---
+id: app-nsite
+title: nsite
+subTitle: Static Site Generator
+category: Productivity / Static Site Generator
+hmi: Commandline
+website: https://thevpc.github.com/nuts
+installCommand: nuts install nsite
+exampleCommand: nuts nsite --src <sources-folder> --resources <resources-folder> --to <target-folder>
+---
+
+
+{{include($"$root/../ndoc/ndoc/src/main/resources/net/thevpc/nuts/toolbox/ndoc.ntf"}}
