@@ -277,7 +277,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
             case LINE_STRING:
                 return TsonElementType.LINE_STRING;
         }
-        throw new IllegalArgumentException("not implemented Tson Type " + layout);
+        throw new IllegalArgumentException("not implemented Tson toTsonStringLayout " + layout);
     }
 
     private TsonElement decorateTsonElement(TsonElement t, NElement fromElem) {
@@ -512,8 +512,13 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
                 NPairElementBuilder b = NElement.ofPairBuilder(toNElem(pair.key()), toNElem(pair.value()));
                 return decorateNElement(b.build(), tsonElem);
             }
+            case OP: {
+//                TsonOp pair = tsonElem.toOp();
+//                NOperatorElementBuilder b = NElement.ofO(toNElem(pair.key()), toNElem(pair.value()));
+//                return decorateNElement(b.build(), tsonElem);
+            }
         }
-        throw new IllegalArgumentException("not implemented Tson Type " + tsonElem.type());
+        throw new IllegalArgumentException("not implemented Tson Type " + tsonElem.type()+" in "+tsonElem);
     }
 
     private static NNumberLayout toTsonNumberLayout(TsonNumberLayout tsonElem) {
