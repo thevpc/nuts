@@ -157,14 +157,10 @@ public abstract class AbstractNElement implements NElement {
         return type().isListContainer();
     }
 
-    @Override
-    public NOptional<NStringElement> asString() {
-        return NOptional.of((NStringElement) NElement.ofString(toString()));
-    }
 
     @Override
     public NOptional<NNumberElement> asNumber() {
-        return NOptional.ofEmpty(NMsg.ofC("%s is not a number", type().id()));
+        return NOptional.ofEmpty(_expected("number"));
     }
 
     @Override
@@ -172,7 +168,7 @@ public abstract class AbstractNElement implements NElement {
         if (isListContainer()) {
             return NOptional.of((NListContainerElement) this);
         }
-        return NOptional.ofEmpty(NMsg.ofC("%s is not a list container", type().id()));
+        return NOptional.ofEmpty(_expected("list container"));
     }
 
     @Override
@@ -180,7 +176,7 @@ public abstract class AbstractNElement implements NElement {
         if (isListContainer()) {
             return NOptional.of((NParametrizedContainerElement) this);
         }
-        return NOptional.ofEmpty(NMsg.ofC("%s is not a list container", type().id()));
+        return NOptional.ofEmpty(_expected("parametrized container"));
     }
 
     @Override
@@ -188,7 +184,29 @@ public abstract class AbstractNElement implements NElement {
         if (isParametrizedObject()) {
             return NOptional.of((NObjectElement) this);
         }
-        return NOptional.ofEmpty(NMsg.ofC("expected a parametrized object, got %s", type().id()));
+        return NOptional.ofEmpty(_expected("parametrized object"));
+    }
+
+    protected NMsg _expected(String any) {
+        return NMsg.ofC("expected a %s, got %s : %s", any, type().id(), snippet());
+    }
+
+    private String snippet() {
+        String s = toString(true);
+        int u = s.indexOf("\n");
+        boolean truncated = false;
+        if (u >= 0) {
+            s = s.substring(0, u);
+            truncated = true;
+        }
+        if (s.length() > 100) {
+            s = s.substring(0, 100);
+            truncated = true;
+        }
+        if (truncated) {
+            return s + "...";
+        }
+        return s;
     }
 
     @Override
@@ -196,7 +214,7 @@ public abstract class AbstractNElement implements NElement {
         if (isNamedParametrizedObject(name)) {
             return NOptional.of((NObjectElement) this);
         }
-        return NOptional.ofEmpty(NMsg.ofC("expected a parametrized object, got %s", type().id()));
+        return NOptional.ofEmpty(_expected("parametrized object " + name));
     }
 
     @Override
@@ -204,7 +222,7 @@ public abstract class AbstractNElement implements NElement {
         if (isNamed()) {
             return NOptional.of((NNamedElement) this);
         }
-        return NOptional.ofEmpty(NMsg.ofC("%s is not a named", type().id()));
+        return NOptional.ofEmpty(_expected("named element"));
     }
 
     @Override
@@ -384,7 +402,7 @@ public abstract class AbstractNElement implements NElement {
         if (this instanceof NUpletElement) {
             return NOptional.of((NUpletElement) this);
         }
-        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to uplet: %s", type().id(), this));
+        return NOptional.ofError(() -> _expected("uplet"));
     }
 
     @Override
@@ -392,7 +410,7 @@ public abstract class AbstractNElement implements NElement {
         if (isInt()) {
             return NOptional.of((NNumberElement) this);
         }
-        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to int: %s", type().id(), this));
+        return NOptional.ofError(() -> _expected("int"));
     }
 
     @Override
@@ -400,22 +418,22 @@ public abstract class AbstractNElement implements NElement {
         if (this instanceof NPairElement) {
             return NOptional.of((NPairElement) this);
         }
-        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to pair: %s", type().id(), this));
+        return NOptional.ofError(() -> _expected("pair"));
     }
 
     @Override
-    public NOptional<NStringElement> asStr() {
+    public NOptional<NStringElement> asString() {
         if (this instanceof NStringElement) {
             return NOptional.of((NStringElement) this);
         }
-        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to string: %s", type().id(), this));
+        return NOptional.of((NStringElement) NElement.ofString(toString()));
     }
 
     public NOptional<NCustomElement> asCustom() {
         if (this instanceof NCustomElement) {
             return NOptional.of((NCustomElement) this);
         }
-        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to custom: %s", type().id(), this));
+        return NOptional.ofError(() -> _expected("custom"));
     }
 
     @Override
@@ -423,7 +441,7 @@ public abstract class AbstractNElement implements NElement {
         if (this instanceof NArrayElement) {
             return NOptional.of((NArrayElement) this);
         }
-        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to array: %s", type().id(), this));
+        return NOptional.ofError(() -> _expected("array"));
     }
 
     @Override
@@ -505,7 +523,7 @@ public abstract class AbstractNElement implements NElement {
         if (this instanceof NOperatorElement) {
             return NOptional.of((NOperatorElement) this);
         }
-        return NOptional.ofNamedEmpty("operator");
+        return NOptional.ofEmpty(_expected("operator"));
     }
 
     @Override
@@ -563,8 +581,7 @@ public abstract class AbstractNElement implements NElement {
         if (this instanceof NNamedElement) {
             return NOptional.of((NNamedElement) this);
         }
-        ;
-        return NOptional.ofNamedEmpty("named element");
+        return NOptional.ofEmpty(_expected("named element"));
     }
 
     @Override
@@ -728,7 +745,7 @@ public abstract class AbstractNElement implements NElement {
                 break;
             }
         }
-        return NOptional.ofNamedEmpty("named-pair");
+        return NOptional.ofEmpty(_expected("named pair"));
     }
 
     @Override
@@ -760,7 +777,7 @@ public abstract class AbstractNElement implements NElement {
                 break;
             }
         }
-        return NOptional.ofNamedEmpty("named-uplet");
+        return NOptional.ofEmpty(_expected("named uplet"));
     }
 
     @Override
@@ -788,7 +805,7 @@ public abstract class AbstractNElement implements NElement {
                         .addAll(u.children().toArray(new NElement[0])).build());
             }
         }
-        return NOptional.ofNamedEmpty("named-object");
+        return NOptional.ofEmpty(_expected("named object"));
     }
 
     @Override
@@ -816,7 +833,7 @@ public abstract class AbstractNElement implements NElement {
                 return NOptional.of((NArrayElement) this);
             }
         }
-        return NOptional.ofNamedEmpty("named-array");
+        return NOptional.ofEmpty(_expected("named array"));
     }
 
     @Override
@@ -1046,6 +1063,6 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public NOptional<Temporal> asTemporalValue() {
-        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to temporal: %s", type().id(), this));
+        return NOptional.ofError(() -> _expected("temporal"));
     }
 }

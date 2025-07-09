@@ -783,8 +783,6 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
 
     NOptional<NNumberElement> asInt();
 
-    NOptional<NStringElement> asStr();
-
     /**
      * cast this element to {@link NObjectElement} or throw
      * ClassCastException
