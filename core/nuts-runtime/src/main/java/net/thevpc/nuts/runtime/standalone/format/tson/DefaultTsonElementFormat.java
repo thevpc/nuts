@@ -249,8 +249,8 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
             case TRIPLE_ANTI_QUOTED_STRING:
             case LINE_STRING: {
                 return decorateTsonElement(factory.ofString(
-                        toTsonStringLayout(elem.asStr().get().type()),
-                        elem.asStr().get().stringValue()
+                        toTsonStringLayout(elem.asString().get().type()),
+                        elem.asString().get().stringValue()
                 ), elem);
             }
         }
