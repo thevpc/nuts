@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.format.elem.mapper.builder;
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.reflect.NReflectProperty;
 import net.thevpc.nuts.reflect.NReflectRepository;
 import net.thevpc.nuts.reflect.NReflectType;
 import net.thevpc.nuts.reflect.NReflectUtils;
@@ -14,9 +13,8 @@ import java.util.function.Predicate;
 public class DefaultNElementMapperBuilder<T> implements NElementMapperBuilder<T> {
     NReflectType type;
     Function<String, String> renamer;
-    List<NElementMapperBuilderFieldImpl<T>> allTFields = new ArrayList<>();
-    Map<String, NElementMapperBuilderFieldImpl<T>> argFields = new HashMap<>();
-    Map<String, NElementMapperBuilderFieldImpl<T>> bodyFields = new HashMap<>();
+    Predicate<String> paramFieldFieldFilter;
+    Predicate<String> bodyFieldNameFilter;
     boolean built = false;
     boolean wrapCollections = true;
     boolean containerIsCollection = false;
@@ -30,10 +28,29 @@ public class DefaultNElementMapperBuilder<T> implements NElementMapperBuilder<T>
         this.type = javaWord.getType(type);
     }
 
+    public Predicate<String> getParamFieldFieldFilter() {
+        return paramFieldFieldFilter;
+    }
+
+    public NElementMapperBuilder<T> setParamFieldFieldFilter(Predicate<String> paramFieldFieldFilter) {
+        this.paramFieldFieldFilter = paramFieldFieldFilter;
+        return this;
+    }
+
+    public Predicate<String> getBodyFieldNameFilter() {
+        return bodyFieldNameFilter;
+    }
+
+    public NElementMapperBuilder<T> setBodyFieldNameFilter(Predicate<String> bodyFieldNameFilter) {
+        this.bodyFieldNameFilter = bodyFieldNameFilter;
+        return this;
+    }
+
     @Override
     public NElementMapperBuilder<T> configureLenient() {
         this
-                .addAllFields()
+                .setParamFieldFieldFilter(null)
+                .setBodyFieldNameFilter(null)
                 .setWrapCollections(true)
         ;
         return this;
@@ -88,32 +105,6 @@ public class DefaultNElementMapperBuilder<T> implements NElementMapperBuilder<T>
     }
 
     @Override
-    public NElementMapperBuilder<T> addAllFields() {
-        for (NReflectProperty allField : type.getProperties()) {
-            addField(allField.getName());
-        }
-        return this;
-    }
-
-    @Override
-    public NElementMapperBuilder<T> addFields(Predicate<String> fieldFilter) {
-        for (NReflectProperty allField : type.getProperties()) {
-            if (fieldFilter == null || fieldFilter.test(allField.getName())) {
-                addField(allField.getName());
-            }
-        }
-        return this;
-    }
-
-    @Override
-    public NElementMapperBuilder<T> addFields(String... names) {
-        for (String name : names) {
-            addField(name);
-        }
-        return this;
-    }
-
-    @Override
     public NElementMapperBuilder<T> onUnsupportedChild(NElementMapperBuilderFieldConfigurer<T> a) {
         if (a != null) {
             onUnsupportedBody.add(a);
@@ -137,42 +128,6 @@ public class DefaultNElementMapperBuilder<T> implements NElementMapperBuilder<T>
         return this;
     }
 
-    @Override
-    public NElementMapperBuilderFieldImpl<T> addField(String name) {
-        NElementMapperBuilderFieldImpl<T> f = allTFields.stream().filter(x -> x.name.equals(name)).findFirst().orElse(null);
-        if (f == null) {
-            f = new NElementMapperBuilderFieldImpl<>(name, this);
-            allTFields.add(f);
-        }
-        invalidateBuild();
-        return f;
-    }
-
-    @Override
-    public boolean removeField(String name) {
-        NElementMapperBuilderFieldImpl<T> f = allTFields.stream().filter(x -> x.name.equals(name)).findFirst().orElse(null);
-        if (f != null) {
-            allTFields.remove(f);
-            invalidateBuild();
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public NElementMapperBuilder<T> removeFields(String... names) {
-        if (names != null) {
-            for (String name : names) {
-                NElementMapperBuilderFieldImpl<T> f = allTFields.stream().filter(x -> x.name.equals(name)).findFirst().orElse(null);
-                if (f != null) {
-                    allTFields.remove(f);
-                    invalidateBuild();
-                }
-            }
-        }
-        return this;
-    }
-
     private void invalidateBuild() {
         this.built = false;
     }
@@ -185,33 +140,6 @@ public class DefaultNElementMapperBuilder<T> implements NElementMapperBuilder<T>
         return renamer.apply(s);
     }
 
-    private void prepareBuilder() {
-        if (!built) {
-            argFields.clear();
-            bodyFields.clear();
-            for (NElementMapperBuilderFieldImpl<T> f : allTFields) {
-                f.uniformName = uniformName(f.name);
-                f.field = null;
-                for (NReflectProperty field : type.getProperties()) {
-                    String u = uniformName(field.getName());
-                    if (u.equals(f.uniformName)) {
-                        f.field = field;
-                        break;
-                    }
-                }
-
-                boolean body = f.body || (!f.arg && !f.body);
-                boolean arg = f.arg || (!f.arg && !f.body);
-                if (body) {
-                    bodyFields.put(f.uniformName, f);
-                }
-                if (arg) {
-                    argFields.put(f.uniformName, f);
-                }
-            }
-            built = true;
-        }
-    }
 
 
     public boolean isCollectionType0(Type raw) {
@@ -229,7 +157,6 @@ public class DefaultNElementMapperBuilder<T> implements NElementMapperBuilder<T>
 
     @Override
     public NElementMapper<T> build() {
-        prepareBuilder();
         return new NElementMapperFromBuilder<>(this);
     }
 
