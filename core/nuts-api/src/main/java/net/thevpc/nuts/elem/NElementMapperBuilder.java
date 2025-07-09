@@ -7,27 +7,22 @@ import java.util.function.Predicate;
 public interface NElementMapperBuilder<T> {
     NElementMapper<T> build();
 
-    NElementMapperBuilder<T> addAllFields();
+    public Predicate<String> getParamFieldFieldFilter() ;
 
-    NElementMapperBuilder<T> addFields(Predicate<String> fieldFilter);
+    public NElementMapperBuilder<T> setParamFieldFieldFilter(Predicate<String> paramFieldFieldFilter) ;
 
+    public Predicate<String> getBodyFieldNameFilter() ;
+
+    public NElementMapperBuilder<T> setBodyFieldNameFilter(Predicate<String> bodyFieldNameFilter) ;
     NElementMapperBuilder<T> setWrapCollections(boolean wrapCollections);
 
     NElementMapperBuilder<T> setContainerIsCollection(boolean value);
-
-    NElementMapperBuilder<T> addFields(String... names);
 
     NElementMapperBuilder<T> onUnsupportedParam(NElementMapperBuilderFieldConfigurer<T> a);
 
     NElementMapperBuilder<T> onUnsupportedChild(NElementMapperBuilderFieldConfigurer<T> a);
 
     NElementMapperBuilder<T> onInitializeInstance(NElementMapperBuilderInitializer<T> a);
-
-    NElementMapperBuilder.FieldConfig<T> addField(String name);
-
-    NElementMapperBuilder<T> removeFields(String... names);
-
-    boolean removeField(String name);
 
     NElementMapperBuilder<T> setTypeDefaultValue(Type type, Object defaultValue);
 

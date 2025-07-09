@@ -1,11 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.format.elem.mapper.builder;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.reflect.NReflectProperty;
 import net.thevpc.nuts.reflect.NReflectType;
 
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 class NElementMapperFromBuilder<T> implements NElementMapper<T> {
     private DefaultNElementMapperBuilder<T> builder;
@@ -15,9 +17,9 @@ class NElementMapperFromBuilder<T> implements NElementMapper<T> {
 
 
     Function<String, String> renamer;
+    Predicate<String> paramFieldFieldFilter;
+    Predicate<String> bodyFieldNameFilter;
     //        List<TFieldImpl<T>> allTFields = new ArrayList<>();
-    Map<String, NElementMapperBuilderFieldImpl<T>> argFields = new HashMap<>();
-    Map<String, NElementMapperBuilderFieldImpl<T>> bodyFields = new HashMap<>();
     //        boolean built = false;
 //        boolean wrapCollections = true;
 //        boolean containerIsCollection = false;
@@ -27,10 +29,11 @@ class NElementMapperFromBuilder<T> implements NElementMapper<T> {
 
     public NElementMapperFromBuilder(DefaultNElementMapperBuilder<T> builder) {
         this.onNewInstance = builder.onNewInstance;
+        this.builder = builder;
         this.type = builder.type;
+        this.paramFieldFieldFilter = builder.paramFieldFieldFilter;
+        this.bodyFieldNameFilter = builder.bodyFieldNameFilter;
         this.postProcess.addAll(builder.postProcess);
-        this.argFields.putAll(builder.argFields);
-        this.bodyFields.putAll(builder.bodyFields);
         this.onUnsupportedBody.addAll(builder.onUnsupportedBody);
         this.onUnsupportedArg.addAll(builder.onUnsupportedArg);
         this.renamer = builder.renamer;
@@ -70,15 +73,49 @@ class NElementMapperFromBuilder<T> implements NElementMapper<T> {
                 instance = (T) type.newInstance();
             }
         }
+        NReflectType effectiveType=type.getRepository().getType(instance.getClass());
+        //now that we have the instance lets compute
+        Map<String, NElementMapperBuilderFieldImpl<T>> allFields = new HashMap<>();
+        Map<String, NElementMapperBuilderFieldImpl<T>> argFields = new HashMap<>();
+        Map<String, NElementMapperBuilderFieldImpl<T>> bodyFields = new HashMap<>();
+
+        for (NReflectProperty property : effectiveType.getProperties()) {
+            if (!allFields.containsKey(property.getName())) {
+                NElementMapperBuilderFieldImpl<T> f = new NElementMapperBuilderFieldImpl<>(property.getName(), builder);
+                f.uniformName = uniformName(f.name);
+                f.field = null;
+                for (NReflectProperty field : effectiveType.getProperties()) {
+                    String u = uniformName(field.getName());
+                    if (u.equals(f.uniformName)) {
+                        f.field = field;
+                        break;
+                    }
+                }
+                f.wrapCollections=builder.wrapCollections;
+                f.containerIsCollection=builder.containerIsCollection;
+                f.arg= paramFieldFieldFilter == null || paramFieldFieldFilter.test(property.getName());
+                f.body= bodyFieldNameFilter == null || bodyFieldNameFilter.test(property.getName());
+                boolean body = f.body || (!f.arg && !f.body);
+                boolean arg = f.arg || (!f.arg && !f.body);
+                if (body) {
+                    bodyFields.put(f.uniformName, f);
+                }
+                if (arg) {
+                    argFields.put(f.uniformName, f);
+                }
+                allFields.put(property.getName(), f);
+            }
+        }
+
         if (args != null) {
             for (NElement arg : args) {
-                processField(arg, true, instance, element, (Class) to, context);
+                processField(arg, true, instance, element, (Class) to, context, argFields, bodyFields);
             }
         }
         List<NElement> body = container.children();
         if (body != null) {
             for (NElement arg : body) {
-                processField(arg, false, instance, element, (Class) to, context);
+                processField(arg, false, instance, element, (Class) to, context, argFields, bodyFields);
             }
         }
         T finalInstance = instance;
@@ -89,13 +126,16 @@ class NElementMapperFromBuilder<T> implements NElementMapper<T> {
         return (T) instance;
     }
 
-    private void processField(NElement arg, boolean isArg, T instance, NElement element, Class<T> to, NElementFactoryContext context) {
-        Map<String, NElementMapperBuilderFieldImpl<T>> argFields = isArg ? this.argFields : this.bodyFields;
+    private void processField(NElement arg, boolean isArg, T instance, NElement element, Class<T> to, NElementFactoryContext context,
+                              Map<String, NElementMapperBuilderFieldImpl<T>> argFields,
+                              Map<String, NElementMapperBuilderFieldImpl<T>> bodyFields
+    ) {
+        Map<String, NElementMapperBuilderFieldImpl<T>> argFields2 = isArg ? argFields : bodyFields;
         if (arg.isSimplePair()) {
             NPairElement pair = arg.asPair().get();
             NElement key = pair.key();
             String expectedName = uniformName(key.asStringValue().get());
-            NElementMapperBuilderFieldImpl<T> tField = argFields.get(expectedName);
+            NElementMapperBuilderFieldImpl<T> tField = argFields2.get(expectedName);
             if (tField != null) {
                 NElement value = pair.value();
                 if (tField.isCollectionType() && tField.isWrapCollections()) {
@@ -118,13 +158,18 @@ class NElementMapperFromBuilder<T> implements NElementMapper<T> {
                         }
                     }
                 }
-                tField.field.write(instance, context.createObject(value, (Class<?>) tField.field.getPropertyType().getJavaType()));
+                Class<?> jt = (Class<?>) tField.field.getPropertyType().getJavaType();
+                if((jt.isArray() || Collection.class.isAssignableFrom(jt)) && !value.isAnyArray()) {
+                    tField.field.write(instance, context.createObject(value.wrapIntoArray(), jt));
+                }else {
+                    tField.field.write(instance, context.createObject(value, jt));
+                }
             } else {
                 onBodyNotSupported(instance, arg, isArg, element, to, context);
             }
         } else if (arg.isAnyString()) {
             String expectedName = uniformName(arg.asStringValue().get());
-            NElementMapperBuilderFieldImpl<T> tField = argFields.get(expectedName);
+            NElementMapperBuilderFieldImpl<T> tField = argFields2.get(expectedName);
             boolean found = false;
             if (tField != null) {
                 if (tField.isUseDefaultWhenMissingValue()) {
