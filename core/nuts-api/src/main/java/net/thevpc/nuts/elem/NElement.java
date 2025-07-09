@@ -39,6 +39,7 @@ import java.time.LocalTime;
 import java.time.temporal.Temporal;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Nuts Element types are generic JSON like parsable objects. elements are a superset of JSON actually
@@ -679,18 +680,21 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
     boolean isLocalTemporal();
 
     boolean isNamed();
+    boolean isNamed(Predicate<String> nameCondition);
 
     boolean isParametrized();
 
     boolean isUplet();
 
     boolean isNamedUplet();
+    boolean isNamedUplet(Predicate<String> nameCondition);
 
     boolean isNamedUplet(String name);
 
     boolean isNamedObject();
 
     boolean isNamedObject(String name);
+    boolean isNamedObject(Predicate<String> nameCondition);
 
     boolean isAnyNamedObject();
 
@@ -699,8 +703,11 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
     boolean isParametrizedObject();
 
     boolean isNamedParametrizedObject();
+    boolean isNamedParametrizedObject(Predicate<String> nameCondition);
 
     boolean isNamedParametrizedMatrix();
+    boolean isNamedParametrizedMatrix(Predicate<String> nameCondition);
+    boolean isNamedParametrizedMatrix(String name);
 
     boolean isNamedParametrizedObject(String name);
 
@@ -737,6 +744,10 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
     boolean isParametrizedMatrix();
 
     boolean isAnyParametrizedMatrix();
+
+    boolean isName(String name);
+
+    boolean isName(Predicate<String> nameCondition);
 
     boolean isNamed(String name);
 
@@ -783,6 +794,9 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
     NOptional<NListContainerElement> asListContainer();
 
     NOptional<NParametrizedContainerElement> asParametrizedContainer();
+
+    NOptional<NObjectElement> asParametrizedObject();
+    NOptional<NObjectElement> asNamedParametrizedObject(String name);
 
     NOptional<NNamedElement> asNamed();
 
@@ -878,6 +892,9 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
      * @return true if pair with string like key
      */
     boolean isNamedPair();
+
+    boolean isNamedPair(String name);
+    boolean isNamedPair(Predicate<String> nameCondition);
 
     /**
      * best effort to convert to NListContainerElement

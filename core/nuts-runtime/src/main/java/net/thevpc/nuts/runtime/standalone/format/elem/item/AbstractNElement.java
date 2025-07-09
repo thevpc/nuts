@@ -40,6 +40,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 /**
  * @author thevpc
@@ -58,9 +59,9 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public boolean isCustomTree() {
-        if(annotations!=null){
+        if (annotations != null) {
             for (NElementAnnotation annotation : annotations) {
-                if(annotation.isCustomTree()){
+                if (annotation.isCustomTree()) {
                     return true;
                 }
             }
@@ -183,6 +184,22 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public NOptional<NObjectElement> asParametrizedObject() {
+        if (isParametrizedObject()) {
+            return NOptional.of((NObjectElement) this);
+        }
+        return NOptional.ofEmpty(NMsg.ofC("expected a parametrized object, got %s", type().id()));
+    }
+
+    @Override
+    public NOptional<NObjectElement> asNamedParametrizedObject(String name) {
+        if (isNamedParametrizedObject(name)) {
+            return NOptional.of((NObjectElement) this);
+        }
+        return NOptional.ofEmpty(NMsg.ofC("expected a parametrized object, got %s", type().id()));
+    }
+
+    @Override
     public NOptional<NNamedElement> asNamed() {
         if (isNamed()) {
             return NOptional.of((NNamedElement) this);
@@ -267,7 +284,46 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public boolean isNamed(String name) {
-        return false;
+        return isNamed() && Objects.equals(asNamed().get(), name);
+    }
+
+    public boolean isNamed(Predicate<String> name) {
+        return isNamed() && (name == null || name.test(asNamed().get().name().get()));
+    }
+
+    @Override
+    public boolean isName(String name) {
+        return isName() && Objects.equals(asStringValue().get(), name);
+    }
+
+    @Override
+    public boolean isName(Predicate<String> nameCondition) {
+        return isName() && (nameCondition == null || nameCondition.test(asStringValue().get()));
+    }
+
+    @Override
+    public boolean isNamedUplet(Predicate<String> nameCondition) {
+        return isNamedUplet() && isNamed(nameCondition);
+    }
+
+    @Override
+    public boolean isNamedObject(Predicate<String> nameCondition) {
+        return isNamedObject() && isNamed(nameCondition);
+    }
+
+    @Override
+    public boolean isNamedParametrizedObject(Predicate<String> nameCondition) {
+        return isNamedParametrizedObject() && isNamed(nameCondition);
+    }
+
+    @Override
+    public boolean isNamedParametrizedMatrix(Predicate<String> nameCondition) {
+        return isNamedParametrizedMatrix() && isNamed(nameCondition);
+    }
+
+    @Override
+    public boolean isNamedParametrizedMatrix(String name) {
+        return isNamedParametrizedMatrix() && isNamed(name);
     }
 
     @Override
@@ -554,6 +610,32 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public boolean isNamedPair(String name) {
+        if (!isPair()) {
+            return false;
+        }
+        NElement key = asPair().get().key();
+        boolean anyString = key.isAnyString();
+        if (anyString) {
+            return Objects.equals(name, key.asStringValue().get());
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isNamedPair(Predicate<String> nameCondition) {
+        if (!isPair()) {
+            return false;
+        }
+        NElement key = asPair().get().key();
+        boolean anyString = key.isAnyString();
+        if (anyString) {
+            return nameCondition == null || nameCondition.test(key.asStringValue().get());
+        }
+        return false;
+    }
+
+    @Override
     public boolean isParametrizedContainer() {
         return this instanceof NParametrizedContainerElement && ((NParametrizedContainerElement) this).isParametrized();
     }
@@ -776,7 +858,7 @@ public abstract class AbstractNElement implements NElement {
                         .addParams(u.params().orNull())
                         .addAll(u.children().toArray(new NElement[0])).build());
             }
-            default:{
+            default: {
                 return NOptional.of(NElement.ofObjectBuilder().add(this).build());
             }
         }
@@ -820,7 +902,7 @@ public abstract class AbstractNElement implements NElement {
                 return NOptional.of(NElement.ofArrayBuilder()
                         .addAll(u.children().toArray(new NElement[0])).build());
             }
-            default:{
+            default: {
                 return NOptional.of(NElement.ofArrayBuilder().add(this).build());
             }
         }
@@ -858,7 +940,7 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public NPairElement wrapIntoNamedPair(String name) {
-        return NElement.ofPair(name,this);
+        return NElement.ofPair(name, this);
     }
 
     @Override
@@ -961,6 +1043,7 @@ public abstract class AbstractNElement implements NElement {
     public NOptional<Number> asNumberValue() {
         return asLiteral().asNumber();
     }
+
     @Override
     public NOptional<Temporal> asTemporalValue() {
         return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to temporal: %s", type().id(), this));
