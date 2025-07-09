@@ -48,7 +48,7 @@ public final class NutsApp {
     @SuppressWarnings("UseSpecificCatch")
     public static void main(String[] args) {
         try {
-            new URL("https://google.com").openConnection();
+//            new URL("https://google.com").openConnection();
             NBootWorkspace bws = NBootWorkspace.of(args);
             bws.runWorkspace();
         } catch (Exception ex) {
