@@ -82,7 +82,7 @@ public class NElementMapperArray implements NElementMapper<Object> {
 
             }
         }else {
-            throw new NIllegalArgumentException(NMsg.ofC("expected an array of objects", typeOfResult));
+            throw new NIllegalArgumentException(NMsg.ofC("expected an array of objects %s", typeOfResult));
         }
     }
 
