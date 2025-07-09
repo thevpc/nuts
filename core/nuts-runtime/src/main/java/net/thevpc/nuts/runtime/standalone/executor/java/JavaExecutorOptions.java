@@ -276,6 +276,14 @@ public final class JavaExecutorOptions {
                 }
             }
             if (nutsPlatformLocation == null) {
+                    if (NAsk.of().forBoolean(
+                                    NMsg.ofC("Still JRE %s is configured in nuts. Would you like to use default one : %s ?", javaVersion, System.getProperty("java.version"))
+                            ).setDefaultValue(true)
+                            .getBooleanValue()) {
+                        nutsPlatformLocation = nJavaSdkUtils.resolveJdkLocation(NPath.of(System.getProperty("java.home")),System.getProperty("java.version"));
+                    }
+            }
+            if (nutsPlatformLocation == null) {
                 throw new NExecutionException(NMsg.ofC("no java version %s was found", NStringUtils.trim(getJavaVersion())), NExecutionException.ERROR_1);
             }
         }
