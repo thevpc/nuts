@@ -579,4 +579,13 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         }
     }
 
+    @Override
+    public NPath resolveSiblingWithExtension(String extension) {
+        return resolveSibling(getNameParts().toNameWithExtension(extension));
+    }
+
+    @Override
+    public NPath resolveSiblingWithExtension(String extension,NPathExtensionType type) {
+        return resolveSibling(getNameParts(type).toNameWithExtension(extension));
+    }
 }

@@ -265,6 +265,9 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
     NPath resolve(NPath other);
 
     NPath resolveSibling(String other);
+    NPath resolveSiblingWithExtension(String extension);
+
+    NPath resolveSiblingWithExtension(String extension,NPathExtensionType type);
 
     NPath resolveSibling(NPath other);
 
