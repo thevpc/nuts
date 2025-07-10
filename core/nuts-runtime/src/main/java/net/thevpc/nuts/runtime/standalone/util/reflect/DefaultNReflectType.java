@@ -350,6 +350,7 @@ public class DefaultNReflectType implements NReflectType {
             //TODO
             return NOptional.ofNamedEmpty(signature.toString());
         }else {
+            build();
             NReflectMethod value = methodsAllMap.get(normalizeSig(name,signature));
             if (value != null) {
                 return NOptional.of(value);
