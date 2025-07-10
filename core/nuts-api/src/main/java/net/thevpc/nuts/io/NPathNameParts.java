@@ -1,5 +1,6 @@
 package net.thevpc.nuts.io;
 
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -59,7 +60,7 @@ public class NPathNameParts {
     }
 
     public String toName() {
-        return baseName + extension;
+        return baseName + fullExtension;
     }
 
     /**
@@ -71,8 +72,9 @@ public class NPathNameParts {
      *     <li>name</li>
      *     <li>basename</li>
      *     <li>extension</li>
-     *     <li>fullExt</li>
+     *     <li>fullextension</li>
      * </ul>
+     *
      * @param pattern vars pattern
      * @return file name based on variables
      */
@@ -98,6 +100,17 @@ public class NPathNameParts {
                     return null;
                 }
         ).toString();
+    }
+
+    public String toNameWithExtension(String extension) {
+        if (NBlankable.isBlank(extension)) {
+            return baseName;
+        }
+        extension = extension.trim();
+        if (!extension.startsWith(".")) {
+            extension = "." + extension;
+        }
+        return baseName + extension;
     }
 
     @Override
