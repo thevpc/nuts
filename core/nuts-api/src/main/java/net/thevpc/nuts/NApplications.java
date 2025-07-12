@@ -100,7 +100,7 @@ public final class NApplications {
         Class<?> appClass = unproxyType(appInstance.getClass());
         NAppDefinition appAnnotation = appClass.getAnnotation(NAppDefinition.class);
         if (appAnnotation == null) {
-            throw new NBootException(NBootMsg.ofC("class %s is missing annotation @AppInfo", appClass.getName()));
+            throw new NBootException(NBootMsg.ofC("class %s is missing annotation @"+NAppDefinition.class.getSimpleName(), appClass.getName()));
         }
         NAssert.requireNonNull(appAnnotation, "@NAppDefinition annotation");
         List<Method> runMethods = new ArrayList<>();
@@ -146,7 +146,7 @@ public final class NApplications {
             cc = cc.getSuperclass();
         }
 //        if (runMethods.isEmpty()) {
-//            throw new NBootException(NBootMsg.ofC("class %s has annotation @AppInfo. it should define a public no arg @NAppRunner method", appClass.getName()));
+//            throw new NBootException(NBootMsg.ofC("class %s has annotation @NAppDefinition. it should define a public no arg @NAppRunner method", appClass.getName()));
 //        }
         return new AnnotationClassNApplication(runMethods, installMethods, updateMethods, uninstallMethods, appInstance);
     }
