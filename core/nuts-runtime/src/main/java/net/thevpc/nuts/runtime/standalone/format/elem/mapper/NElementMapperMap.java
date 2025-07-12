@@ -49,14 +49,14 @@ public class NElementMapperMap implements NElementMapper<Map> {
     }
 
     public Map fillObject(NElement o, Map all, Type elemType1, Type elemType2, Type to, NElementFactoryContext context) {
-        if (o.type() == NElementType.OBJECT) {
+        if (o.isAnyObject()) {
             for (NElement ee : o.asObject().get().children()) {
                 NPairElement kv = (NPairElement) ee;
                 NElement k = kv.key();
                 NElement v = kv.value();
                 all.put(context.createObject(k, elemType1), context.createObject(v, elemType2));
             }
-        } else if (o.type() == NElementType.ARRAY) {
+        } else if (o.isAnyArray()) {
             for (NElement ee : o.asArray().get().children()) {
                 NPairElement kv = (NPairElement) ee;
                 NElement k = kv.key();

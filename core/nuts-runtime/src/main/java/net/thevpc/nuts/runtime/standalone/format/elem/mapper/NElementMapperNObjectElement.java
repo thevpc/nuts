@@ -12,7 +12,7 @@ public class NElementMapperNObjectElement extends NElementMapperNElement {
     @Override
     public NObjectElement createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
         o = super.createObject(o, typeOfResult, context);
-        if (o.type() == NElementType.OBJECT) {
+        if (o.isAnyObject()) {
             return o.asObject().get();
         }
         return NElement.ofObjectBuilder().set("value", o).build();

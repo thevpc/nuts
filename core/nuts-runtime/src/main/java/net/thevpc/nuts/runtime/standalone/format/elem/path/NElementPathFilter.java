@@ -206,7 +206,7 @@ public class NElementPathFilter {
 
         @Override
         public List<NElement> filter(NElement element) {
-            if (element.type() == NElementType.ARRAY) {
+            if (element.isAnyArray()) {
                 List<NElement> arr = new ArrayList<>(element.asArray().get().children());
                 List<NElement> result = new ArrayList<>();
                 int len = arr.size();
@@ -221,7 +221,7 @@ public class NElementPathFilter {
                     }
                 }
                 return result;
-            } else if (element.type() == NElementType.OBJECT) {
+            } else if (element.isAnyObject()) {
                 List<NElement> result = new ArrayList<>();
                 Collection<NElement> aa0 = element.asObject().get().children();
                 int len = aa0.size();
