@@ -643,7 +643,16 @@ void annotationParam() :
 |    < CHARSTREAM_START : "^" (["a"-"z","A","Z","_","0"-"9"])* "[" > : IN_CHARSTREAM
 
 |    < ALIAS : "&" <NAME> >
-|    < NAME : (("."|"_"|"@")?(<LETTER>) (<LETTER>| <DIGIT>) *) (("."|"-"|"_"|"@") ((<LETTER>) (<LETTER>| <DIGIT>) *))* >
+|    < NAME : ( [".", "_"] )?
+                           <LETTER> (<LETTER>|<DIGIT>)*
+                           (
+                                 "."  <LETTER> (<LETTER>|<DIGIT>)*
+                               | "-"  (<LETTER>|<DIGIT>)+
+                               | "_"  (<LETTER>|<DIGIT>)+
+                               | "@"  (<LETTER>|<DIGIT>)+
+                           )*
+                           ("@")?
+                            >
 |    < #LETTER:
         ["a"-"z","A"-"Z","$"
         //,"\u1F00"-"\u1FFF"
