@@ -214,7 +214,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
 
     private static String resolveAppNameFromClass(Class clazz, String defaultName) {
         String n = null;
-        String baseFilePath = clazz.getProtectionDomain().getCodeSource().getLocation().getPath();
+        String baseFilePath = NOptional.of(clazz.getProtectionDomain()).then(x->x.getCodeSource()).then(x->x.getLocation()).then(x->x.getPath()).orNull();
         NLog nLog = NLog.of(NAppImpl.class);
         nLog.debug(NMsg.ofC("resolveAppNameFromClass " + clazz + " (" + defaultName + ") " + baseFilePath));
         if (baseFilePath != null) {
