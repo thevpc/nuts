@@ -61,6 +61,22 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     NObjectElementBuilder set(String name, String value);
 
+    /**
+     * set value for property {@code name}
+     *
+     * @param value property value. should not be null
+     * @return this {@code this} instance
+     */
+    NObjectElementBuilder setParamAt(int index,NElement value);
+
+    NObjectElementBuilder setParamAt(int index,boolean value);
+
+    NObjectElementBuilder setParamAt(int index,int value);
+
+    NObjectElementBuilder setParamAt(int index,double value);
+
+    NObjectElementBuilder setParamAt(int index,String value);
+
     NObjectElementBuilder add(NElement name, NElement value);
 
     NObjectElementBuilder add(String name, NElement value);

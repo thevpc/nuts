@@ -241,6 +241,40 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
+    public NObjectElementBuilder setParamAt(int index,NElement param) {
+        if (param != null) {
+            if (this.params == null) {
+                this.params = new ArrayList<>();
+            }
+            while(this.params.size()<index+1) {
+                this.params.add(NElement.ofNull());
+            }
+            this.params.set(index,param);
+        }
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder setParamAt(int index, boolean value) {
+        return setParamAt(index, NElement.ofBoolean(value));
+    }
+
+    @Override
+    public NObjectElementBuilder setParamAt(int index, int value) {
+        return setParamAt(index, NElement.ofInt(value));
+    }
+
+    @Override
+    public NObjectElementBuilder setParamAt(int index, double value) {
+        return setParamAt(index, NElement.ofDouble(value));
+    }
+
+    @Override
+    public NObjectElementBuilder setParamAt(int index, String value) {
+        return setParamAt(index, NElement.ofString(value));
+    }
+
+    @Override
     public NObjectElementBuilder addParamAt(int index, NElement param) {
         if (param != null) {
             if (this.params == null) {
