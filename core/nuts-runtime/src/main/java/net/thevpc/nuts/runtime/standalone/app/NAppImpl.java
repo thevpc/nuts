@@ -205,7 +205,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
         } else {
             this.autoComplete = null;
         }
-        bundleName=resolveAppNameFromClass(this.appClass,_appId.getArtifactId());
+        bundleName = resolveAppNameFromClass(this.appClass, _appId.getArtifactId());
     }
 
     public String getBundleName() {
@@ -214,9 +214,9 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
 
     private static String resolveAppNameFromClass(Class clazz, String defaultName) {
         String n = null;
-        String baseFilePath = NOptional.of(clazz.getProtectionDomain()).then(x->x.getCodeSource()).then(x->x.getLocation()).then(x->x.getPath()).orNull();
+        String baseFilePath = NOptional.of(clazz.getProtectionDomain()).then(x -> x.getCodeSource()).then(x -> x.getLocation()).then(x -> x.getPath()).orNull();
         NLog nLog = NLog.of(NAppImpl.class);
-        nLog.debug(NMsg.ofC("resolveAppNameFromClass " + clazz + " (" + defaultName + ") " + baseFilePath));
+        nLog.debug(NMsg.ofC("resolveAppNameFromClass %s (%s) , baseFilePath=%s", clazz, defaultName, baseFilePath));
         if (baseFilePath != null) {
             try {
                 String jar = extractVar(baseFilePath, "x", "(?<x>.*)[.]jar[!]/BOOT-INF/classes[!]/?");
@@ -585,7 +585,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
             }
             case WORKSPACE: {
                 NWorkspaceModel m = ((NWorkspaceExt.of())).getModel();
-                return (T) m.properties.setProperty(name, value,NScopeType.WORKSPACE);
+                return (T) m.properties.setProperty(name, value, NScopeType.WORKSPACE);
             }
             case PROTOTYPE:
             default: {
@@ -605,8 +605,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
             }
             case SHARED_SESSION:
             case SESSION:
-            case TRANSITIVE_SESSION:
-            {
+            case TRANSITIVE_SESSION: {
                 return ((DefaultNSession) NSession.of()).getPropertiesHolder().<T>getOptional(name)
                         .withDefault(() -> this.<T>getProperty(name, NScopeType.WORKSPACE).orDefault())
                         ;
