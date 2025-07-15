@@ -5,8 +5,49 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class NArrays {
+
+    public static <A> int indexOfByMatcher(A[] a1, Predicate<A> b1) {
+        for (int i = 0; i < a1.length; i++) {
+            if (b1.test(a1[i])) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static <A> int lastIndexOfByMatcher(A[] a1, Predicate<A> b1) {
+        for (int i = a1.length-1; i >=0 ; i--) {
+            if (b1.test(a1[i])) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static <A> int lastIndexOfByMatcher(A[] a1, int from,Predicate<A> b1) {
+        if(from<0){
+            from=a1.length-from;
+        }
+        for (int i = from; i >=0 ; i--) {
+            if (b1.test(a1[i])) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static <A> int indexOfByMatcher(A[] a1, int from,Predicate<A> b1) {
+        for (int i = Math.max(0,from); i < a1.length; i++) {
+            if (b1.test(a1[i])) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public static <A> A[] concat(A[] a1, A b1) {
         return append(a1, b1);
     }
