@@ -6,8 +6,8 @@ import net.thevpc.nuts.util.NNameFormat;
 import net.thevpc.nuts.util.NOptional;
 
 public enum NOperatorType implements NEnum {
-    BINARY,
-    UNARY;
+    BINARY_INFIX,
+    UNARY_PREFIX;
 
     /**
      * lower-cased identifier for the enum entry
@@ -23,10 +23,10 @@ public enum NOperatorType implements NEnum {
             switch (ev.getNormalizedValue()) {
                 case "BINARY":
                 case "BIN":
-                    return NOptional.of(NOperatorType.BINARY);
+                    return NOptional.of(NOperatorType.BINARY_INFIX);
                 case "UNARY":
                 case "UN":
-                    return NOptional.of(NOperatorType.UNARY);
+                    return NOptional.of(NOperatorType.UNARY_PREFIX);
             }
             return null;
         });
