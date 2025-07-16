@@ -154,7 +154,7 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public boolean isListContainer() {
-        return type().isListContainer();
+        return type().isAnyListContainer();
     }
 
 
@@ -387,7 +387,7 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public NOptional<NElement> asElementAt(int index) {
-        if (type().isListContainer()) {
+        if (type().isAnyListContainer()) {
             return asListContainer().map(x ->
                     index >= 0 && index < x.size() ?
                             x.children().get(index)
@@ -451,32 +451,32 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public boolean isPrimitive() {
-        return type().isPrimitive();
+        return type().isAnyPrimitive();
     }
 
     @Override
     public boolean isAnyString() {
-        return type().isAnyString();
+        return type().isAnyStringOrName();
     }
 
     @Override
     public boolean isStream() {
-        return type().isStream();
+        return type().isAnyStream();
     }
 
     @Override
     public boolean isNumber() {
-        return type().isNumber();
+        return type().isAnyNumber();
     }
 
     @Override
     public boolean isFloatingNumber() {
-        return type().isFloatingNumber();
+        return type().isAnyFloatingNumber();
     }
 
     @Override
     public boolean isOrdinalNumber() {
-        return type().isOrdinalNumber();
+        return type().isAnyOrdinalNumber();
     }
 
     //    @Override
@@ -494,7 +494,7 @@ public abstract class AbstractNElement implements NElement {
     @Override
     public boolean isString() {
         NElementType t = type();
-        return t.isString();
+        return t.isAnyString();
     }
 
     @Override
@@ -548,32 +548,32 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public boolean isDecimalNumber() {
-        return type().isDecimalNumber();
+        return type().isAnyDecimalNumber();
     }
 
     @Override
     public boolean isBigNumber() {
-        return type().isBigNumber();
+        return type().isAnyBigNumber();
     }
 
     @Override
     public boolean isComplexNumber() {
-        return type().isComplexNumber();
+        return type().isAnyComplexNumber();
     }
 
     @Override
     public boolean isTemporal() {
-        return type().isTemporal();
+        return type().isAnyTemporal();
     }
 
     @Override
     public boolean isLocalTemporal() {
-        return type().isLocalTemporal();
+        return type().isAnyLocalTemporal();
     }
 
     @Override
     public boolean isNamed() {
-        return type().isNamed();
+        return type().isAnyNamed();
     }
 
     @Override
@@ -586,7 +586,7 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public boolean isParametrized() {
-        return type().isParametrized();
+        return type().isAnyParametrized();
     }
 
 
