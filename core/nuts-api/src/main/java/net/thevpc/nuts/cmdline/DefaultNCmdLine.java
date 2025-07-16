@@ -1716,7 +1716,7 @@ public class DefaultNCmdLine implements NCmdLine {
         @Override
         public Matcher matchTrueFlag(Consumer<NArg> consumer) {
             return matchFlag((value) -> {
-                if (value.isBoolean() && value.booleanValue()) {
+                if (value.booleanValue()) {
                     consumer.accept(value);
                 }
             });
