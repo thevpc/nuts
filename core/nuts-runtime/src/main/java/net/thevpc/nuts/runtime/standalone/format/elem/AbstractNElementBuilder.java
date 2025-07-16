@@ -194,4 +194,5 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
         this.annotations.addAll(other.annotations());
         return this;
     }
+
 }
