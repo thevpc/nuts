@@ -1299,12 +1299,12 @@ public class DefaultNLiteral implements NLiteral {
 
     @Override
     public boolean isOrdinalNumber() {
-        return type().isOrdinalNumber();
+        return type().isAnyOrdinalNumber();
     }
 
     @Override
     public boolean isFloatingNumber() {
-        return type().isFloatingNumber();
+        return type().isAnyFloatingNumber();
     }
 }
 
