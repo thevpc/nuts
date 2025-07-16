@@ -229,7 +229,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
                         NPairElement ne = (NPairElement) nn;
                         final NElementType kt = ne.key().type();
                         boolean complexKey = kt == NElementType.ARRAY || kt == NElementType.OBJECT
-                                || (kt.isString() && isComplexString(ne.key().asStringValue().get()));
+                                || (kt.isAnyString() && isComplexString(ne.key().asStringValue().get()));
                         if (complexKey) {
                             Element entry = doc.createElement(TAG_ENTRY);
                             Element ek = (Element) createObject(ne.key(), NElement.class, context);
