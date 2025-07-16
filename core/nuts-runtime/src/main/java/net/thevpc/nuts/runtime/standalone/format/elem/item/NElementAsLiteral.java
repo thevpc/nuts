@@ -198,7 +198,7 @@ public class NElementAsLiteral implements NLiteral {
     @Override
     public boolean isString() {
         NElementType t = elem.type();
-        return t.isString();
+        return t.isAnyString();
     }
 
     @Override
@@ -239,47 +239,47 @@ public class NElementAsLiteral implements NLiteral {
 
     @Override
     public boolean isDecimalNumber() {
-        return elem.type().isDecimalNumber();
+        return elem.type().isAnyDecimalNumber();
     }
 
     @Override
     public boolean isBigNumber() {
-        return elem.type().isBigNumber();
+        return elem.type().isAnyBigNumber();
     }
 
     @Override
     public boolean isComplexNumber() {
-        return elem.type().isComplexNumber();
+        return elem.type().isAnyComplexNumber();
     }
 
     @Override
     public boolean isTemporal() {
-        return elem.type().isTemporal();
+        return elem.type().isAnyTemporal();
     }
 
     @Override
     public boolean isLocalTemporal() {
-        return elem.type().isLocalTemporal();
+        return elem.type().isAnyLocalTemporal();
     }
 
     @Override
     public boolean isStream() {
-        return elem.type().isStream();
+        return elem.type().isAnyStream();
     }
 
     @Override
     public boolean isNumber() {
-        return elem.type().isNumber();
+        return elem.type().isAnyNumber();
     }
 
     @Override
     public boolean isFloatingNumber() {
-        return elem.type().isFloatingNumber();
+        return elem.type().isAnyFloatingNumber();
     }
 
     @Override
     public boolean isOrdinalNumber() {
-        return elem.type().isOrdinalNumber();
+        return elem.type().isAnyOrdinalNumber();
     }
 
     @Override
