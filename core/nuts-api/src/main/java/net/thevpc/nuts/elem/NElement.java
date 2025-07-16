@@ -116,6 +116,40 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
         return NElementFactory.of().ofPairBuilder();
     }
 
+
+    static NOperatorElementBuilder ofOpBuilder() {
+        return NElementFactory.of().ofOpBuilder();
+    }
+
+    static NOperatorElementBuilder ofOpBuilder(NElementType op) {
+        return NElementFactory.of().ofOpBuilder().operator(op);
+    }
+
+    static NOperatorElement ofOp(NElementType op, NOperatorType operatorType, NElement first, NElement second) {
+        return NElementFactory.of().ofOp(op, operatorType, first, second);
+    }
+
+    static NOperatorElement ofOp(NElementType op, NElement first, NElement second) {
+        return NElementFactory.of().ofOp(op, first, second);
+    }
+
+    static NOperatorElement ofOp(NElementType op, NElement first) {
+        return NElementFactory.of().ofOp(op, first);
+    }
+
+    static NOperatorElementBuilder ofOpBuilder(NElementType op, NOperatorType operatorType, NElement first, NElement second) {
+        return ofOpBuilder().operator(op).operatorType(operatorType).first(first).second(second);
+    }
+
+    static NOperatorElementBuilder ofOpBuilder(NElementType op, NElement first, NElement second) {
+        return ofOpBuilder(op, null,first, second);
+    }
+
+    static NOperatorElementBuilder ofOpBuilder(NElementType op, NElement first) {
+        return ofOpBuilder(op, null,first, null);
+    }
+
+
     /**
      * create object element builder (mutable)
      *
@@ -680,6 +714,7 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
     boolean isLocalTemporal();
 
     boolean isNamed();
+
     boolean isNamed(Predicate<String> nameCondition);
 
     boolean isParametrized();
@@ -687,6 +722,7 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
     boolean isUplet();
 
     boolean isNamedUplet();
+
     boolean isNamedUplet(Predicate<String> nameCondition);
 
     boolean isNamedUplet(String name);
@@ -694,6 +730,7 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
     boolean isNamedObject();
 
     boolean isNamedObject(String name);
+
     boolean isNamedObject(Predicate<String> nameCondition);
 
     boolean isAnyNamedObject();
@@ -703,10 +740,13 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
     boolean isParametrizedObject();
 
     boolean isNamedParametrizedObject();
+
     boolean isNamedParametrizedObject(Predicate<String> nameCondition);
 
     boolean isNamedParametrizedMatrix();
+
     boolean isNamedParametrizedMatrix(Predicate<String> nameCondition);
+
     boolean isNamedParametrizedMatrix(String name);
 
     boolean isNamedParametrizedObject(String name);
@@ -794,6 +834,7 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
     NOptional<NParametrizedContainerElement> asParametrizedContainer();
 
     NOptional<NObjectElement> asParametrizedObject();
+
     NOptional<NObjectElement> asNamedParametrizedObject(String name);
 
     NOptional<NNamedElement> asNamed();
@@ -892,6 +933,7 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
     boolean isNamedPair();
 
     boolean isNamedPair(String name);
+
     boolean isNamedPair(Predicate<String> nameCondition);
 
     /**
