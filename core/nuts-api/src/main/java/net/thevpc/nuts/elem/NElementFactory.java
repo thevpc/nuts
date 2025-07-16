@@ -80,6 +80,11 @@ public interface NElementFactory extends NComponent {
 
     NPairElementBuilder ofPairBuilder(NElement key, NElement value);
 
+    NOperatorElementBuilder ofOpBuilder();
+    NOperatorElement ofOp(NElementType op, NOperatorType operatorType,NElement first, NElement second);
+    NOperatorElement ofOp(NElementType op,NElement first, NElement second);
+    NOperatorElement ofOp(NElementType op,NElement first);
+
     NPairElementBuilder ofPairBuilder();
 
     /**
