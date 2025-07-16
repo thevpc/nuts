@@ -105,6 +105,27 @@ public class DefaultNElementFactory implements NElementFactory {
     }
 
     @Override
+    public NOperatorElementBuilder ofOpBuilder() {
+        return new DefaultNOperatorElementBuilder();
+    }
+
+
+    @Override
+    public NOperatorElement ofOp(NElementType op, NOperatorType type, NElement first, NElement second) {
+        return ofOpBuilder().operator(op).operatorType(type).first(first).second(second).build();
+    }
+
+    @Override
+    public NOperatorElement ofOp(NElementType op, NElement first, NElement second) {
+        return ofOp(op,null, first, second);
+    }
+
+    @Override
+    public NOperatorElement ofOp(NElementType op, NElement operand) {
+        return ofOp(op,null, operand, null);
+    }
+
+    @Override
     public NPairElementBuilder ofPairBuilder() {
         return new DefaultNPairElementBuilder();
     }
@@ -334,7 +355,7 @@ public class DefaultNElementFactory implements NElementFactory {
         if (stringLayout == null) {
             stringLayout = NElementType.DOUBLE_QUOTED_STRING;
         }
-        if (stringLayout.isAnyString()) {
+        if (stringLayout.isAnyStringOrName()) {
             return new DefaultNStringElement(stringLayout, str, null, null);
         }
         throw new NUnsupportedEnumException(stringLayout);
