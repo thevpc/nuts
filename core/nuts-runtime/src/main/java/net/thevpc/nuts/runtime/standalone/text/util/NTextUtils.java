@@ -81,7 +81,7 @@ public class NTextUtils {
             NTextBuilder sb = NTextBuilder.of();
             sb.append(stringValueFormatted(ne.key(), escapeString));
             sb.append("=");
-            if (ne.value().type().isString()) {
+            if (ne.value().type().isAnyString()) {
                 sb.append(
                         txt.of(
                                 NStringUtils.formatStringLiteral(stringValueFormatted(ne.value(), escapeString).toString(), ne.value().type())
