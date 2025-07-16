@@ -255,7 +255,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         if (stringLayout == null) {
             stringLayout = NElementType.DOUBLE_QUOTED_STRING;
         }
-        NAssert.requireTrue(stringLayout.isString(), "string : " + stringLayout.id());
+        NAssert.requireTrue(stringLayout.isAnyString(), "string : " + stringLayout.id());
         if (value == null) {
             setNull();
         } else {
@@ -500,10 +500,10 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
 
     @Override
     public NPrimitiveElement build() {
-        if (type().isNumber()) {
+        if (type().isAnyNumber()) {
             return new DefaultNNumberElement(type, (Number) value, numberLayout(), numberSuffix(), annotations().toArray(new NElementAnnotation[0]), comments());
         }
-        if (type().isAnyString()) {
+        if (type().isAnyStringOrName()) {
             return new DefaultNStringElement(type, (String) value, annotations().toArray(new NElementAnnotation[0]), comments());
         }
         return new DefaultNPrimitiveElement(type, value, annotations().toArray(new NElementAnnotation[0]), comments());
