@@ -266,6 +266,23 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
     }
 
     private NElement ensureJson(NElement e) {
+        switch (e.type().typeGroup()){
+            case OPERATOR:{
+                NOperatorElement ope = (NOperatorElement) e;
+                NObjectElementBuilder value1 = NElement.ofObjectBuilder().copyFrom(e);
+                value1.clearChildren();
+                value1.set("op", ope.type().opSymbol());
+                value1.set("mode", ope.operatorType().id());
+                value1.name(null);
+                if (ope.first().isPresent()) {
+                    value1.set("$first", ope.first().get());
+                }
+                if (ope.second().isPresent()) {
+                    value1.set("$second", ope.second().get());
+                }
+                return value1.build();
+            }
+        }
         switch (e.type()) {
             case NULL:
             case INTEGER:
@@ -424,7 +441,6 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
             case MATRIX:
             case NAMED_MATRIX:
             case NAMED_PARAMETRIZED_MATRIX:
-            case OP:
             default: {
                 throw new NUnsupportedOperationException(NMsg.ofC("unsupported ensureJson for %s", e.type()));
             }
