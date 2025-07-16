@@ -80,7 +80,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
 
     @Override
     public NElement createElement(NElement src, Type typeOfSrc, NElementFactoryContext context) {
-        if (src.type().isPrimitive()) {
+        if (src.type().isAnyPrimitive()) {
             return src;
         }
         switch (src.type()) {
