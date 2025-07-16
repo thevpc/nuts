@@ -63,6 +63,23 @@ public class SimpleYaml implements NElementStreamFormat {
     }
 
     private NElement ensureYaml(NElement value) {
+        switch (value.type().typeGroup()){
+            case OPERATOR:{
+                NOperatorElement ope = (NOperatorElement) value;
+                NObjectElementBuilder value1 = NElement.ofObjectBuilder().copyFrom(value);
+                value1.clearChildren();
+                value1.set("op", ope.type().opSymbol());
+                value1.set("mode", ope.operatorType().id());
+                value1.name(null);
+                if (ope.first().isPresent()) {
+                    value1.set("$first", ope.first().get());
+                }
+                if (ope.second().isPresent()) {
+                    value1.set("$second", ope.second().get());
+                }
+                return value1.build();
+            }
+        }
         switch (value.type()) {
             case BIG_COMPLEX:
             case FLOAT_COMPLEX:
@@ -160,22 +177,6 @@ public class SimpleYaml implements NElementStreamFormat {
             }
             case PAIR: {
                 NObjectElementBuilder value1 = NElement.ofObjectBuilder().copyFrom(value);
-                return value1.build();
-            }
-            case OP: {
-                NOperatorElement ope = (NOperatorElement) value;
-                NObjectElementBuilder value1 = NElement.ofObjectBuilder().copyFrom(value);
-                value1.clearChildren();
-                if (ope.operatorName()!=null) {
-                    value1.set("op", ope.operatorName());
-                    value1.name(null);
-                }
-                if (ope.first().isPresent()) {
-                    value1.set("$first", ope.first().get());
-                }
-                if (ope.second().isPresent()) {
-                    value1.set("$second", ope.second().get());
-                }
                 return value1.build();
             }
             case OBJECT:
