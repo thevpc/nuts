@@ -59,7 +59,7 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
 
     @Override
     public NElement createElement(NElementBuilder src, Type typeOfSrc, NElementFactoryContext context) {
-        if(src.type().isPrimitive()){
+        if(src.type().isAnyPrimitive()){
             return src.build();
         }
         switch (src.type()){
