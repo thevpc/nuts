@@ -34,6 +34,25 @@ import java.util.function.Consumer;
  * @author thevpc
  */
 public interface NOperatorElementBuilder extends NElementBuilder {
+
+    NOptional<NElement> first();
+
+    NOperatorElementBuilder second(NElement value);
+
+    NOptional<NElement> second();
+
+    NOperatorElementBuilder operator(NElementType value);
+
+    NOperatorElementBuilder operatorType(NOperatorType operatorType);
+
+    NOperatorType operatorType();
+
+    NElementType operator();
+
+    NOperatorElement build();
+
+    /// /////////////
+
     NOperatorElementBuilder doWith(Consumer<NOperatorElementBuilder> con);
 
     NOperatorElementBuilder addAnnotations(List<NElementAnnotation> annotations);
@@ -50,10 +69,7 @@ public interface NOperatorElementBuilder extends NElementBuilder {
 
     List<NElementAnnotation> annotations();
 
-    NOperatorElementBuilder copyFrom(NCustomElement element);
-
     NOperatorElementBuilder copyFrom(NOperatorElementBuilder element);
-
 
     NOperatorElementBuilder addLeadingComment(NElementCommentType type, String text);
 
@@ -81,25 +97,11 @@ public interface NOperatorElementBuilder extends NElementBuilder {
 
     NOperatorElementBuilder first(NElement value);
 
-    NOptional<NElement> first();
-
-    NOperatorElementBuilder second(NElement value);
-
-    NOptional<NElement> second();
-
-    NOperatorElementBuilder operatorName(String value);
-
-    String operatorName();
-
-    NOperatorElementBuilder operatorType(NOperatorType value);
-
-    NOperatorType operatorType();
-
-    NOperatorElement build();
 
     NOperatorElementBuilder copyFrom(NElementBuilder other);
 
     NOperatorElementBuilder copyFrom(NElement other);
+
     NOperatorElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy);
 
     NOperatorElementBuilder copyFrom(NElement other, NMapStrategy strategy);
