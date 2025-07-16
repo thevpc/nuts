@@ -35,8 +35,6 @@ import net.thevpc.nuts.util.NOptional;
  * @since 0.5.6
  */
 public interface NOperatorElement extends NElement {
-    String operatorName();
-
     NOperatorType operatorType();
 
     NOptional<NElement> first();
