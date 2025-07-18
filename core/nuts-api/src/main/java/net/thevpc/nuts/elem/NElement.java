@@ -142,11 +142,11 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
     }
 
     static NOperatorElementBuilder ofOpBuilder(NElementType op, NElement first, NElement second) {
-        return ofOpBuilder(op, null,first, second);
+        return ofOpBuilder(op, null, first, second);
     }
 
     static NOperatorElementBuilder ofOpBuilder(NElementType op, NElement first) {
-        return ofOpBuilder(op, null,first, null);
+        return ofOpBuilder(op, null, first, null);
     }
 
 
@@ -794,6 +794,10 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
     boolean isAnyParametrizedMatrix(String name);
 
     List<NElementAnnotation> annotations();
+
+    List<NElementAnnotation> findAnnotations(String name);
+
+    boolean isAnnotated(String name);
 
     /**
      * convert this element to {@link NPrimitiveElement} or throw

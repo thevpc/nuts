@@ -41,6 +41,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * @author thevpc
@@ -357,6 +358,16 @@ public abstract class AbstractNElement implements NElement {
     @Override
     public List<NElementAnnotation> annotations() {
         return annotations == null ? Collections.emptyList() : Arrays.asList(annotations);
+    }
+
+    @Override
+    public List<NElementAnnotation> findAnnotations(String name) {
+        return annotations().stream().filter(x->Objects.equals(x.name(),name)).collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isAnnotated(String name) {
+        return !findAnnotations(name).isEmpty();
     }
 
     @Override
