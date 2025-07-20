@@ -42,6 +42,7 @@ public interface NCustomElementBuilder extends NElementBuilder {
     NCustomElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
 
     NCustomElementBuilder removeAnnotationAt(int index);
+    NCustomElementBuilder removeAnnotation(NElementAnnotation annotation);
 
     NCustomElementBuilder clearAnnotations();
 
