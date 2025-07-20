@@ -94,6 +94,7 @@ public interface NMatrixElementBuilder extends NElementBuilder {
     NMatrixElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
 
     NMatrixElementBuilder removeAnnotationAt(int index);
+    NMatrixElementBuilder removeAnnotation(NElementAnnotation annotation);
 
     NMatrixElementBuilder clearAnnotations();
 
