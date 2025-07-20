@@ -29,6 +29,8 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.spi.NComponent;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -110,4 +112,7 @@ public interface NElements extends NComponent {
     NElements doWithMapperStore(Consumer<NElementMapperStore> doWith);
 
     NElementMapperStore mapperStore();
+
+    NElementType commonNumberType(NElementType aa, NElementType bb) ;
+
 }
