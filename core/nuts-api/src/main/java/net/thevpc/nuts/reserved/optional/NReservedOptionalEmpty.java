@@ -8,6 +8,7 @@ import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -40,6 +41,13 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
     public NOptional<T> withName(String name) {
         return new NReservedOptionalEmpty<>(name == null ? (() -> NMsg.ofMissingValue()) : () -> NMsg.ofMissingValue(name));
     }
+
+    @Override
+    public Optional<T> asOptional() {
+        return Optional.empty();
+    }
+
+
 
     @Override
     public T get() {
