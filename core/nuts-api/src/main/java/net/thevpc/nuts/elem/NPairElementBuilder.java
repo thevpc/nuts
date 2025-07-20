@@ -11,12 +11,15 @@ public interface NPairElementBuilder extends NElementBuilder {
 
     NPairElementBuilder addAnnotations(List<NElementAnnotation> annotations);
 
-    NPairElementBuilder addAnnotation(String name,NElement ...args);
+    NPairElementBuilder addAnnotation(String name, NElement... args);
+
     NPairElementBuilder addAnnotation(NElementAnnotation annotation);
 
     NPairElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
 
     NPairElementBuilder removeAnnotationAt(int index);
+
+    NPairElementBuilder removeAnnotation(NElementAnnotation annotation);
 
     NPairElementBuilder clearAnnotations();
 
@@ -61,6 +64,7 @@ public interface NPairElementBuilder extends NElementBuilder {
     NPairElementBuilder copyFrom(NElementBuilder other);
 
     NPairElementBuilder copyFrom(NElement other);
+
     NPairElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy);
 
     NPairElementBuilder copyFrom(NElement other, NMapStrategy strategy);
