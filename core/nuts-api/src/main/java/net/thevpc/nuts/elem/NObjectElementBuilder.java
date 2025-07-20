@@ -67,15 +67,15 @@ public interface NObjectElementBuilder extends NElementBuilder {
      * @param value property value. should not be null
      * @return this {@code this} instance
      */
-    NObjectElementBuilder setParamAt(int index,NElement value);
+    NObjectElementBuilder setParamAt(int index, NElement value);
 
-    NObjectElementBuilder setParamAt(int index,boolean value);
+    NObjectElementBuilder setParamAt(int index, boolean value);
 
-    NObjectElementBuilder setParamAt(int index,int value);
+    NObjectElementBuilder setParamAt(int index, int value);
 
-    NObjectElementBuilder setParamAt(int index,double value);
+    NObjectElementBuilder setParamAt(int index, double value);
 
-    NObjectElementBuilder setParamAt(int index,String value);
+    NObjectElementBuilder setParamAt(int index, String value);
 
     NObjectElementBuilder add(NElement name, NElement value);
 
@@ -214,6 +214,8 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     NObjectElementBuilder removeAnnotationAt(int index);
 
+    NObjectElementBuilder removeAnnotation(NElementAnnotation annotation);
+
     NObjectElementBuilder clearAnnotations();
 
 
@@ -280,4 +282,8 @@ public interface NObjectElementBuilder extends NElementBuilder {
     NObjectElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy);
 
     NObjectElementBuilder copyFrom(NElement other, NMapStrategy strategy);
+
+    NObjectElementBuilder setParams(List<NElement> params);
+
+    NObjectElementBuilder setChildren(List<NElement> params);
 }
