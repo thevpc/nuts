@@ -1,4 +1,4 @@
-package net.thevpc.nuts.elem;
+package net.thevpc.nuts;
 
 import net.thevpc.nuts.reserved.NReservedUtils;
 import net.thevpc.nuts.util.NBlankable;
@@ -7,7 +7,7 @@ import net.thevpc.nuts.util.NOptional;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class NDoubleComplex extends Number implements Serializable {
+public class NDoubleComplex extends Number implements Serializable, Comparable<NDoubleComplex> {
     public static final NDoubleComplex ZERO = new NDoubleComplex(0, 0);
     public static final NDoubleComplex ONE = new NDoubleComplex(1, 0);
     public static final NDoubleComplex I = new NDoubleComplex(0, 1);
@@ -111,5 +111,28 @@ public class NDoubleComplex extends Number implements Serializable {
             return "-î";
         }
         return d + "î";
+    }
+
+    @Override
+    public int compareTo(NDoubleComplex other) {
+        boolean thisNaN = Double.isNaN(this.real) || Double.isNaN(this.imag);
+        boolean otherNaN = Double.isNaN(other.real) || Double.isNaN(other.imag);
+        if (thisNaN && otherNaN) return 0;
+        if (thisNaN) return 1;
+        if (otherNaN) return -1;
+
+        double mag1 = this.real * this.real + this.imag * this.imag;
+        double mag2 = other.real * other.real + other.imag * other.imag;
+        if (mag1 < mag2) return -1;
+        if (mag1 > mag2) return 1;
+
+        int cmpReal = Double.compare(this.real, other.real);
+        if (cmpReal != 0) return cmpReal;
+
+        return Double.compare(this.imag, other.imag);
+    }
+
+    public NDoubleComplex add(NDoubleComplex other) {
+        return new NDoubleComplex(real + other.real, imag + other.imag);
     }
 }
