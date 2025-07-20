@@ -24,6 +24,9 @@
  */
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.NBigComplex;
+import net.thevpc.nuts.NDoubleComplex;
+import net.thevpc.nuts.NFloatComplex;
 import net.thevpc.nuts.io.NInputStreamProvider;
 import net.thevpc.nuts.io.NReaderProvider;
 import net.thevpc.nuts.util.NBlankable;
@@ -1038,4 +1041,14 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
     boolean isAnyDate();
 
     NOptional<NOperatorElement> asOperator();
+
+    boolean isBinaryOperator();
+
+    boolean isBinaryInfixOperator();
+
+    boolean isUnaryOperator();
+
+    boolean isUnaryPrefixOperator();
+
+    NOptional<NElement> asNumberType(NElementType elemType);
 }
