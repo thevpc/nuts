@@ -17,7 +17,11 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
         key = NElement.ofNull();
         value = NElement.ofNull();
     }
-
+    @Override
+    public NPairElementBuilder removeAnnotation(NElementAnnotation annotation) {
+        super.removeAnnotation(annotation);
+        return this;
+    }
     @Override
     public NPairElementBuilder copyFrom(NElementBuilder other) {
         copyFrom(other,NMapStrategy.ANY);
