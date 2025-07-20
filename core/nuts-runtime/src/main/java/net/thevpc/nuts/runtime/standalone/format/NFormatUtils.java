@@ -45,7 +45,7 @@ public class NFormatUtils {
         switch (value.type()) {
             case BOOLEAN:
             case INSTANT:
-            case INTEGER:
+            case INT:
             case FLOAT:
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:
