@@ -88,7 +88,7 @@ public class SShConnection implements AutoCloseable {
                     jsch.addIdentity(keyFilePath);
                 }
             }
-            if (user == null || user.length() == 0) {
+            if (user == null || user.isEmpty()) {
                 user = System.getProperty("user.name");
             }
             Properties config = new Properties();
@@ -97,7 +97,7 @@ public class SShConnection implements AutoCloseable {
                 port = 22;
             }
             this.sshSession = jsch.getSession(user, host, port);
-            if (keyPassword != null && keyPassword.length() > 0) {
+            if (keyPassword != null && !keyPassword.isEmpty()) {
                 this.sshSession.setConfig("PreferredAuthentications", "password");
                 this.sshSession.setPassword(keyPassword);
             }
@@ -557,7 +557,7 @@ public class SShConnection implements AutoCloseable {
                     mkdir(to, true);
                 } else if (to.contains("/")) {
                     String p = to.substring(0, to.lastIndexOf('/'));
-                    if (p.length() > 0) {
+                    if (!p.isEmpty()) {
                         mkdir(p, true);
                     }
                 }
@@ -683,7 +683,7 @@ public class SShConnection implements AutoCloseable {
 
         public String getStringBuffer() {
             flush();
-            return new String(out.toByteArray());
+            return out.toString();
         }
     }
 

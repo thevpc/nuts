@@ -74,7 +74,7 @@ public class SshFileOutputStream extends OutputStream {
                 connection.mkdir(to, true);
             } else if (to.contains("/")) {
                 String p = to.substring(0, to.lastIndexOf('/'));
-                if (p.length() > 0) {
+                if (!p.isEmpty()) {
                     connection.mkdir(p, true);
                 }
             }

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public abstract class DynamicInputStream extends InputStream {
-    private byte[] buffer;
+    private final byte[] buffer;
     private int index;
     private int max;
     private boolean nomore;

@@ -51,9 +51,9 @@ public class RemoteConnexionStringInfo {
         NAssert.requireNonBlank(target, "target");
         Map<String, RemoteConnexionStringInfo> m = NApp.of().getOrComputeProperty(RemoteConnexionStringInfo.class.getName() + "Map",
                 NScopeType.WORKSPACE,
-                () -> new HashMap<>()
+                HashMap::new
         );
-        RemoteConnexionStringInfo k = m.computeIfAbsent(target, v -> new RemoteConnexionStringInfo(v));
+        RemoteConnexionStringInfo k = m.computeIfAbsent(target, RemoteConnexionStringInfo::new);
         return k;
     }
 

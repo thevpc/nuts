@@ -685,10 +685,10 @@ class SshNPath implements NPathSPI {
                 //ignore
             } else if ("..".equals(s)) {
                 //ignore
-                if (b.size() > 0) {
+                if (!b.isEmpty()) {
                     b.remove(b.size() - 1);
                 }
-            } else if (s.length() > 0) {
+            } else if (!s.isEmpty()) {
                 b.add(s);
             }
         }
