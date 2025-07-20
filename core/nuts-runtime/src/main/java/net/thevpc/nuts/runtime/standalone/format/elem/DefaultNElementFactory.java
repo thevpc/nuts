@@ -438,42 +438,42 @@ public class DefaultNElementFactory implements NElementFactory {
 
     @Override
     public NPrimitiveElement ofInt(Integer value) {
-        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.INTEGER, value);
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.INT, value);
     }
 
     @Override
     public NPrimitiveElement ofInt(int value) {
-        return new DefaultNNumberElement(NElementType.INTEGER, value, null, null);
+        return new DefaultNNumberElement(NElementType.INT, value, null, null);
     }
 
     @Override
     public NPrimitiveElement ofInt(Integer value, String suffix) {
-        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.INTEGER, value, null, suffix);
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.INT, value, null, suffix);
     }
 
     @Override
     public NPrimitiveElement ofInt(int value, String suffix) {
-        return new DefaultNNumberElement(NElementType.INTEGER, value, null, suffix);
+        return new DefaultNNumberElement(NElementType.INT, value, null, suffix);
     }
 
     @Override
     public NPrimitiveElement ofInt(Integer value, NNumberLayout layout, String suffix) {
-        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.INTEGER, value, layout, suffix);
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.INT, value, layout, suffix);
     }
 
     @Override
     public NPrimitiveElement ofInt(int value, NNumberLayout layout, String suffix) {
-        return new DefaultNNumberElement(NElementType.INTEGER, value, layout, suffix);
+        return new DefaultNNumberElement(NElementType.INT, value, layout, suffix);
     }
 
     @Override
     public NPrimitiveElement ofInt(Integer value, NNumberLayout layout) {
-        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.INTEGER, value, layout, null);
+        return value == null ? ofNull() : new DefaultNNumberElement(NElementType.INT, value, layout, null);
     }
 
     @Override
     public NPrimitiveElement ofInt(int value, NNumberLayout layout) {
-        return new DefaultNNumberElement(NElementType.INTEGER, value, layout, null);
+        return new DefaultNNumberElement(NElementType.INT, value, layout, null);
     }
 
     @Override
@@ -816,7 +816,7 @@ public class DefaultNElementFactory implements NElementFactory {
             case "java.lang.Short":
                 return new DefaultNNumberElement(NElementType.SHORT, value);
             case "java.lang.Integer":
-                return new DefaultNNumberElement(NElementType.INTEGER, value);
+                return new DefaultNNumberElement(NElementType.INT, value);
             case "java.lang.Long":
                 return new DefaultNNumberElement(NElementType.LONG, value);
             case "java.math.BigInteger":
