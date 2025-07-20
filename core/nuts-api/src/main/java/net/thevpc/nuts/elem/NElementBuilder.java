@@ -46,6 +46,8 @@ public interface NElementBuilder {
 
     NElementBuilder removeAnnotationAt(int index);
 
+    NElementBuilder removeAnnotation(NElementAnnotation annotation);
+
     NElementBuilder clearAnnotations();
 
     NElementBuilder addLeadingComment(NElementCommentType type, String text);
