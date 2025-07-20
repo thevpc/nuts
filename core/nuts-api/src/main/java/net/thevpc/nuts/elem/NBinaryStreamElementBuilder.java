@@ -43,6 +43,7 @@ public interface NBinaryStreamElementBuilder extends NElementBuilder {
     NBinaryStreamElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
 
     NBinaryStreamElementBuilder removeAnnotationAt(int index);
+    NBinaryStreamElementBuilder removeAnnotation(NElementAnnotation annotation);
 
     NBinaryStreamElementBuilder clearAnnotations();
 
