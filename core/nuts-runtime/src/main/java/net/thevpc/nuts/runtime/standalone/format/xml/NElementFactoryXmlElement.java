@@ -185,7 +185,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
                 e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asShortValue().get()));
                 return e;
             }
-            case INTEGER: {
+            case INT: {
                 Element e = doc.createElement(TAG_INT);
                 e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asIntValue().get()));
                 return e;
