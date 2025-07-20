@@ -9,6 +9,7 @@ import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -46,7 +47,7 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
     @Override
     public <V> NOptional<V> then(Function<T, V> mapper) {
         Objects.requireNonNull(mapper);
-        return (NOptional<V>)this;
+        return (NOptional<V>) this;
     }
 
     @Override
@@ -146,6 +147,11 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
             }
         }
         throw exception;
+    }
+
+    @Override
+    public Optional<T> asOptional() {
+        return Optional.empty();
     }
 
 
