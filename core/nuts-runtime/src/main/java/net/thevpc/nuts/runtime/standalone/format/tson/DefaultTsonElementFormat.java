@@ -24,6 +24,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.format.tson;
 
+import net.thevpc.nuts.NBigComplex;
+import net.thevpc.nuts.NDoubleComplex;
+import net.thevpc.nuts.NFloatComplex;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NPrintStream;
@@ -129,7 +132,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
             case NULL: {
                 return decorateTsonElement(factory.ofNull(), elem);
             }
-            case INTEGER: {
+            case INT: {
                 return decorateTsonElement(factory.ofInt(elem.asIntValue().get()), elem);
             }
             case LONG: {
