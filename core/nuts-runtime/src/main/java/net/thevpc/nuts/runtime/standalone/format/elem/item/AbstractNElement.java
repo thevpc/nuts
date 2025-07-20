@@ -24,6 +24,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.format.elem.item;
 
+import net.thevpc.nuts.NBigComplex;
+import net.thevpc.nuts.NDoubleComplex;
+import net.thevpc.nuts.NFloatComplex;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
@@ -516,7 +519,7 @@ public abstract class AbstractNElement implements NElement {
     @Override
     public boolean isInt() {
         NElementType t = type();
-        return t == NElementType.INTEGER;
+        return t == NElementType.INT;
     }
 
     @Override
@@ -535,6 +538,46 @@ public abstract class AbstractNElement implements NElement {
             return NOptional.of((NOperatorElement) this);
         }
         return NOptional.ofEmpty(_expected("operator"));
+    }
+
+    @Override
+    public boolean isBinaryInfixOperator() {
+        NOptional<NOperatorElement> o = asOperator();
+        if(o.isPresent()) {
+            NOperatorElement oo = o.get();
+            return oo.operatorType()==NOperatorType.BINARY_INFIX;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isUnaryPrefixOperator() {
+        NOptional<NOperatorElement> o = asOperator();
+        if(o.isPresent()) {
+            NOperatorElement oo = o.get();
+            return oo.operatorType()==NOperatorType.UNARY_PREFIX;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isBinaryOperator() {
+        NOptional<NOperatorElement> o = asOperator();
+        if(o.isPresent()) {
+            NOperatorElement oo = o.get();
+            return oo.operatorType()==NOperatorType.BINARY_INFIX;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isUnaryOperator() {
+        NOptional<NOperatorElement> o = asOperator();
+        if(o.isPresent()) {
+            NOperatorElement oo = o.get();
+            return oo.operatorType()==NOperatorType.UNARY_PREFIX;
+        }
+        return false;
     }
 
     @Override
@@ -1075,5 +1118,10 @@ public abstract class AbstractNElement implements NElement {
     @Override
     public NOptional<Temporal> asTemporalValue() {
         return NOptional.ofError(() -> _expected("temporal"));
+    }
+
+    @Override
+    public NOptional<NElement> asNumberType(NElementType elemType) {
+        return NOptional.ofEmpty(NMsg.ofC("not a number %s",this));
     }
 }
