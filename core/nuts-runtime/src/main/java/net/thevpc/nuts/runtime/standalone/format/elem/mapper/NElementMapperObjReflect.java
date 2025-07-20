@@ -117,7 +117,7 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
                 }
                 break;
             }
-            case INTEGER: {
+            case INT: {
                 if (c.isAssignableFrom(Integer.class)) {
                     return o.asLiteral().asInt();
                 }
