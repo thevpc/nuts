@@ -637,7 +637,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
             case TRIPLE_ANTI_QUOTED_STRING:
             case LINE_STRING:
 //            case NUTS_STRING:
-            case INTEGER:
+            case INT:
             case FLOAT:
             case NULL: {
                 List<NElement> a = new ArrayList<>();
