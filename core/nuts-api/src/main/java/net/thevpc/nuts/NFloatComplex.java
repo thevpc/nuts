@@ -1,4 +1,4 @@
-package net.thevpc.nuts.elem;
+package net.thevpc.nuts;
 
 import net.thevpc.nuts.reserved.NReservedUtils;
 import net.thevpc.nuts.util.NBlankable;
@@ -7,7 +7,7 @@ import net.thevpc.nuts.util.NOptional;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class NFloatComplex extends Number implements Serializable {
+public class NFloatComplex extends Number implements Serializable, Comparable<NFloatComplex> {
     public static final NFloatComplex ZERO = new NFloatComplex(0, 0);
     public static final NFloatComplex ONE = new NFloatComplex(1, 0);
     public static final NFloatComplex I = new NFloatComplex(0, 1);
@@ -110,5 +110,28 @@ public class NFloatComplex extends Number implements Serializable {
             return "-î";
         }
         return d + "î";
+    }
+
+    @Override
+    public int compareTo(NFloatComplex other) {
+        boolean thisNaN = Float.isNaN(this.real) || Float.isNaN(this.imag);
+        boolean otherNaN = Float.isNaN(other.real) || Float.isNaN(other.imag);
+        if (thisNaN && otherNaN) return 0;
+        if (thisNaN) return 1;
+        if (otherNaN) return -1;
+
+        float mag1 = this.real * this.real + this.imag * this.imag;
+        float mag2 = other.real * other.real + other.imag * other.imag;
+        if (mag1 < mag2) return -1;
+        if (mag1 > mag2) return 1;
+
+        int cmpReal = Float.compare(this.real, other.real);
+        if (cmpReal != 0) return cmpReal;
+
+        return Float.compare(this.imag, other.imag);
+    }
+
+    public NFloatComplex add(NFloatComplex other) {
+        return new NFloatComplex(real + other.real, imag + other.imag);
     }
 }
