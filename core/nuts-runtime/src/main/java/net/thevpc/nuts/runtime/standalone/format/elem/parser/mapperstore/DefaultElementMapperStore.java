@@ -211,7 +211,7 @@ public class DefaultElementMapperStore {
             case NAME: {
                 return store.getMapper(String.class);
             }
-            case INTEGER: {
+            case INT: {
                 return store.getMapper(Integer.class);
             }
             case FLOAT: {
