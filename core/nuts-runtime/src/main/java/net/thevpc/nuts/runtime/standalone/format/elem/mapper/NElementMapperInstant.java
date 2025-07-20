@@ -26,7 +26,7 @@ public class NElementMapperInstant implements NElementMapper<Instant> {
             case INSTANT: {
                 return o.asLiteral().asInstant().get();
             }
-            case INTEGER: {
+            case INT: {
                 return Instant.ofEpochMilli(o.asLiteral().asInt().get());
             }
             case LONG: {
