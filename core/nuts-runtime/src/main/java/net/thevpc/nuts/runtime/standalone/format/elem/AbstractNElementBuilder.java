@@ -141,6 +141,12 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
     }
 
     @Override
+    public NElementBuilder removeAnnotation(NElementAnnotation annotation) {
+        annotations.remove(annotation);
+        return this;
+    }
+
+    @Override
     public NElementBuilder removeAnnotationAt(int index) {
         annotations.remove(index);
         return this;
