@@ -1,5 +1,8 @@
 package net.thevpc.nuts.reflect;
 
+import net.thevpc.nuts.NBigComplex;
+import net.thevpc.nuts.NDoubleComplex;
+import net.thevpc.nuts.NFloatComplex;
 import net.thevpc.nuts.util.*;
 
 import java.math.BigDecimal;
@@ -179,6 +182,24 @@ public class NReflectUtils {
         if (bb == null) {
             return aa;
         }
+        if (NBigComplex.class.equals(aa) || NBigComplex.class.equals(bb)) {
+            return NBigComplex.class;
+        }
+        if (NDoubleComplex.class.equals(aa) || NDoubleComplex.class.equals(bb)) {
+            if (BigInteger.class.equals(aa) || BigInteger.class.equals(bb)) {
+                return NBigComplex.class;
+            }
+            return NDoubleComplex.class;
+        }
+        if (NFloatComplex.class.equals(aa) || NFloatComplex.class.equals(bb)) {
+            if (BigInteger.class.equals(aa) || BigInteger.class.equals(bb)) {
+                return NBigComplex.class;
+            }
+            if (Long.class.equals(aa) || Long.class.equals(bb)) {
+                return NDoubleComplex.class;
+            }
+            return NFloatComplex.class;
+        }
         if (BigDecimal.class.equals(aa) || BigDecimal.class.equals(bb)) {
             return BigDecimal.class;
         }
@@ -210,5 +231,95 @@ public class NReflectUtils {
             return Byte.class;
         }
         return Number.class;
+    }
+
+    public static int compareNumbers(Number a, Number b) {
+        if (a == null && b == null) {
+            return 0;
+        }
+        if (a == null) {
+            return -1;
+        }
+        if (b == null) {
+            return 1;
+        }
+        Class<? extends Number> ct = commonNumberType(a.getClass(), b.getClass());
+        switch (ct.getName()) {
+            case "java.lang.Byte":
+            case "java.lang.Short":
+            case "java.lang.Integer":
+            case "java.lang.Long": {
+                return Long.compare(a.longValue(), b.longValue());
+            }
+            case "java.lang.Float":
+            case "java.lang.Double": {
+                return Double.compare(a.doubleValue(), b.doubleValue());
+            }
+            case "java.math.BigInteger": {
+                return NLiteral.of(a).asBigInt().get().compareTo(NLiteral.of(b).asBigInt().get());
+            }
+            case "java.math.BigDecimal": {
+                return NLiteral.of(a).asBigDecimal().get().compareTo(NLiteral.of(b).asBigDecimal().get());
+            }
+            case "net.thevpc.nuts.NFloatComplex": {
+                return NLiteral.of(a).asFloatComplex().get().compareTo(NLiteral.of(b).asFloatComplex().get());
+            }
+            case "net.thevpc.nuts.NDoubleComplex": {
+                return NLiteral.of(a).asDoubleComplex().get().compareTo(NLiteral.of(b).asDoubleComplex().get());
+            }
+            case "net.thevpc.nuts.NBigComplex": {
+                return NLiteral.of(a).asBigComplex().get().compareTo(NLiteral.of(b).asBigComplex().get());
+            }
+        }
+        return String.valueOf(a).compareTo(String.valueOf(b));
+    }
+
+    public static Number addNumbers(Number a, Number b) {
+        if (a == null && b == null) {
+            return null;
+        }
+        if (a == null) {
+            return b;
+        }
+        if (b == null) {
+            return a;
+        }
+        Class<? extends Number> ct = commonNumberType(a.getClass(), b.getClass());
+        switch (ct.getName()) {
+            case "java.lang.Byte":{
+                return NLiteral.of(a).asByte().get()+NLiteral.of(b).asByte().get();
+            }
+            case "java.lang.Short":{
+                return NLiteral.of(a).asShort().get()+NLiteral.of(b).asShort().get();
+            }
+            case "java.lang.Integer":{
+                return NLiteral.of(a).asInt().get()+NLiteral.of(b).asInt().get();
+            }
+            case "java.lang.Long": {
+                return NLiteral.of(a).asLong().get()+NLiteral.of(b).asLong().get();
+            }
+            case "java.lang.Float":{
+                return NLiteral.of(a).asFloat().get()+NLiteral.of(b).asFloat().get();
+            }
+            case "java.lang.Double": {
+                return NLiteral.of(a).asDouble().get()+NLiteral.of(b).asDouble().get();
+            }
+            case "java.math.BigInteger": {
+                return NLiteral.of(a).asBigInt().get().add(NLiteral.of(b).asBigInt().get());
+            }
+            case "java.math.BigDecimal": {
+                return NLiteral.of(a).asBigDecimal().get().add(NLiteral.of(b).asBigDecimal().get());
+            }
+            case "net.thevpc.nuts.NFloatComplex": {
+                return NLiteral.of(a).asFloatComplex().get().add(NLiteral.of(b).asFloatComplex().get());
+            }
+            case "net.thevpc.nuts.NDoubleComplex": {
+                return NLiteral.of(a).asDoubleComplex().get().add(NLiteral.of(b).asDoubleComplex().get());
+            }
+            case "net.thevpc.nuts.NBigComplex": {
+                return NLiteral.of(a).asBigComplex().get().add(NLiteral.of(b).asBigComplex().get());
+            }
+        }
+        return String.valueOf(a).compareTo(String.valueOf(b));
     }
 }
