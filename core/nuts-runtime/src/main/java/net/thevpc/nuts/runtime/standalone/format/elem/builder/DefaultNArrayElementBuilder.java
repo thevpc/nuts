@@ -624,6 +624,12 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
+    public NArrayElementBuilder removeAnnotation(NElementAnnotation annotation) {
+        super.removeAnnotation(annotation);
+        return this;
+    }
+
+    @Override
     public NArrayElementBuilder clearAnnotations() {
         super.clearAnnotations();
         return this;
@@ -664,4 +670,24 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     public NArrayElementBuilder addParam(String name, Boolean value) {
         return addParam(NElement.ofPair(name,value));
     }
+
+    @Override
+    public NArrayElementBuilder setParams(List<NElement> params) {
+        if(params==null){
+            this.params = null;
+        }else{
+            this.params=params.stream().filter(x->x!=null).collect(Collectors.toList());
+        }
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder setChildren(List<NElement> params) {
+        this.values.clear();
+        if(params!=null){
+            this.values.addAll(params.stream().filter(x -> x != null).collect(Collectors.toList()));
+        }
+        return this;
+    }
+
 }
