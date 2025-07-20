@@ -42,21 +42,25 @@ import java.util.stream.Collectors;
  */
 public class DefaultNUpletElementBuilder extends AbstractNElementBuilder implements NUpletElementBuilder {
 
-    private List<NElement> params=new ArrayList<>();
+    private List<NElement> params = new ArrayList<>();
     private String name;
 
     public DefaultNUpletElementBuilder() {
     }
-
+    @Override
+    public NUpletElementBuilder removeAnnotation(NElementAnnotation annotation) {
+        super.removeAnnotation(annotation);
+        return this;
+    }
     @Override
     public NUpletElementBuilder copyFrom(NElementBuilder other) {
-        copyFrom(other,NMapStrategy.ANY);
+        copyFrom(other, NMapStrategy.ANY);
         return this;
     }
 
     @Override
     public NUpletElementBuilder copyFrom(NElement other) {
-        copyFrom(other,NMapStrategy.ANY);
+        copyFrom(other, NMapStrategy.ANY);
         return this;
     }
 
@@ -65,7 +69,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
         if (other == null) {
             return this;
         }
-        super.copyFrom(other,strategy);
+        super.copyFrom(other, strategy);
         if (other instanceof NPairElementBuilder) {
             NPairElementBuilder from = (NPairElementBuilder) other;
             add(from.key());
@@ -111,7 +115,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
         if (other == null) {
             return this;
         }
-        super.copyFrom(other,strategy);
+        super.copyFrom(other, strategy);
         if (other instanceof NPairElementBuilder) {
             NPairElementBuilder from = (NPairElementBuilder) other;
             add(from.key());
@@ -154,12 +158,12 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public boolean isCustomTree() {
-        if(super.isCustomTree()){
+        if (super.isCustomTree()) {
             return true;
         }
-        if(params!=null){
+        if (params != null) {
             for (NElement value : params) {
-                if(value.isCustomTree()){
+                if (value.isCustomTree()) {
                     return true;
                 }
             }
@@ -177,7 +181,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     public NOptional<String> name() {
-        return NOptional.ofNamed(name,name);
+        return NOptional.ofNamed(name, name);
     }
 
     public NUpletElementBuilder name(String name) {
@@ -223,6 +227,15 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     @Override
     public List<NElement> params() {
         return Collections.unmodifiableList(params);
+    }
+
+    @Override
+    public NUpletElementBuilder setParams(List<NElement> params) {
+        this.params.clear();
+        if (params != null) {
+            this.params.addAll(params.stream().filter(x -> x != null).collect(Collectors.toList()));
+        }
+        return this;
     }
 
     @Override
