@@ -27,6 +27,11 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
         this.operator = operator;
         return this;
     }
+    @Override
+    public NOperatorElementBuilder removeAnnotation(NElementAnnotation annotation) {
+        super.removeAnnotation(annotation);
+        return this;
+    }
 
     @Override
     public NOperatorType operatorType() {
