@@ -71,7 +71,7 @@ public class DefaultPropsElementFormat implements NElementStreamFormat {
             }
             case BYTE:
             case SHORT:
-            case INTEGER:
+            case INT:
             case LONG: {
                 out.print(data.asNumberValue().orElse(0));
                 break;
