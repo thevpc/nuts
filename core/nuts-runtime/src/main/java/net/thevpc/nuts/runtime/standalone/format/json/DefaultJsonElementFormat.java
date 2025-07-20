@@ -73,7 +73,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
             }
             case BYTE:
             case SHORT:
-            case INTEGER:
+            case INT:
             case LONG: {
                 out.print(data.asNumberValue().orElse(0));
                 break;
@@ -285,7 +285,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
         }
         switch (e.type()) {
             case NULL:
-            case INTEGER:
+            case INT:
             case LONG:
             case SHORT:
             case BYTE:
