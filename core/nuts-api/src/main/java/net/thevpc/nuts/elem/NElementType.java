@@ -46,7 +46,7 @@ public enum NElementType implements NEnum {
     /**
      * integer/long (number) element
      */
-    INTEGER,
+    INT,
     /**
      * integer/long (number) element
      */
@@ -200,7 +200,7 @@ public enum NElementType implements NEnum {
         return NEnumUtils.parseEnum(value, NElementType.class, new Function<NEnumUtils.EnumValue, NOptional<NElementType>>() {
             @Override
             public NOptional<NElementType> apply(NEnumUtils.EnumValue enumValue) {
-                switch (enumValue.getNormalizedValue()) {
+                switch (enumValue.getValue().trim()) {
                     case "+":
                         return NOptional.of(OP_PLUS);
                     case "++":
@@ -311,6 +311,8 @@ public enum NElementType implements NEnum {
                         return NOptional.of(OP_HASH10);
                     case "@@":
                         return NOptional.of(OP_AT2);
+                }
+                switch (enumValue.getNormalizedValue()) {
                     case "PLUS":
                         return NOptional.of(OP_PLUS);
                     case "PLUS2":
@@ -444,7 +446,7 @@ public enum NElementType implements NEnum {
         switch (this) {
             case BYTE:
             case SHORT:
-            case INTEGER:
+            case INT:
             case LONG:
             case BIG_INT:
                 return true;
@@ -456,7 +458,7 @@ public enum NElementType implements NEnum {
         switch (this) {
             case BYTE:
             case SHORT:
-            case INTEGER:
+            case INT:
             case LONG:
             case FLOAT:
             case DOUBLE:
@@ -551,7 +553,7 @@ public enum NElementType implements NEnum {
         switch (this) {
             case BYTE:
             case SHORT:
-            case INTEGER:
+            case INT:
             case LONG:
             case FLOAT:
             case DOUBLE:
@@ -839,7 +841,7 @@ public enum NElementType implements NEnum {
             case BOOLEAN:
                 return NElementTypeGroup.BOOLEAN;
             case LONG:
-            case INTEGER:
+            case INT:
             case SHORT:
             case BYTE:
             case FLOAT:
