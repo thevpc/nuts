@@ -1,12 +1,10 @@
 package net.thevpc.nuts.reserved.optional;
 
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.*;
 
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import net.thevpc.nuts.util.NOptionalType;
 
 public abstract class NReservedOptionalValid<T> extends NReservedOptionalImpl<T> implements Cloneable {
 
@@ -23,6 +21,11 @@ public abstract class NReservedOptionalValid<T> extends NReservedOptionalImpl<T>
         } else {
             return NOptional.ofEmpty(getMessage());
         }
+    }
+
+    @Override
+    public Optional<T> asOptional() {
+        return Optional.of(get());
     }
 
     @Override
