@@ -16,7 +16,11 @@ public class DefaultNCharStreamElementBuilder extends AbstractNElementBuilder im
     public DefaultNCharStreamElementBuilder() {
     }
 
-
+    @Override
+    public NCharStreamElementBuilder removeAnnotation(NElementAnnotation annotation) {
+        super.removeAnnotation(annotation);
+        return this;
+    }
     @Override
     public NCharStreamElementBuilder copyFrom(NElementBuilder other) {
         copyFrom(other,NMapStrategy.ANY);
