@@ -48,7 +48,11 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
 
     public DefaultNObjectElementBuilder() {
     }
-
+    @Override
+    public NObjectElementBuilder removeAnnotation(NElementAnnotation annotation) {
+        super.removeAnnotation(annotation);
+        return this;
+    }
     @Override
     public NObjectElementBuilder copyFrom(NElementBuilder other) {
         copyFrom(other, NMapStrategy.ANY);
@@ -190,7 +194,7 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     }
 
     public NOptional<String> name() {
-        return NOptional.ofNamed(name,name);
+        return NOptional.ofNamed(name, name);
     }
 
     public NObjectElementBuilder name(String name) {
@@ -241,15 +245,15 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
-    public NObjectElementBuilder setParamAt(int index,NElement param) {
+    public NObjectElementBuilder setParamAt(int index, NElement param) {
         if (param != null) {
             if (this.params == null) {
                 this.params = new ArrayList<>();
             }
-            while(this.params.size()<index+1) {
+            while (this.params.size() < index + 1) {
                 this.params.add(NElement.ofNull());
             }
-            this.params.set(index,param);
+            this.params.set(index, param);
         }
         return this;
     }
@@ -272,6 +276,25 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     @Override
     public NObjectElementBuilder setParamAt(int index, String value) {
         return setParamAt(index, NElement.ofString(value));
+    }
+
+    @Override
+    public NObjectElementBuilder setParams(List<NElement> params) {
+        if (params == null) {
+            this.params = null;
+        } else {
+            this.params = params.stream().filter(x -> x != null).collect(Collectors.toList());
+        }
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder setChildren(List<NElement> params) {
+        this.values.clear();
+        if(params!=null){
+            this.values.addAll(params.stream().filter(x -> x != null).collect(Collectors.toList()));
+        }
+        return this;
     }
 
     @Override
@@ -752,31 +775,31 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
 
     @Override
     public NObjectElementBuilder addParam(String name, NElement value) {
-        return addParam(NElement.ofPair(name,value));
+        return addParam(NElement.ofPair(name, value));
     }
 
     @Override
     public NObjectElementBuilder addParam(String name, String value) {
-        return addParam(NElement.ofPair(name,value));
+        return addParam(NElement.ofPair(name, value));
     }
 
     @Override
     public NObjectElementBuilder addParam(String name, Integer value) {
-        return addParam(NElement.ofPair(name,value));
+        return addParam(NElement.ofPair(name, value));
     }
 
     @Override
     public NObjectElementBuilder addParam(String name, Long value) {
-        return addParam(NElement.ofPair(name,value));
+        return addParam(NElement.ofPair(name, value));
     }
 
     @Override
     public NObjectElementBuilder addParam(String name, Double value) {
-        return addParam(NElement.ofPair(name,value));
+        return addParam(NElement.ofPair(name, value));
     }
 
     @Override
     public NObjectElementBuilder addParam(String name, Boolean value) {
-        return addParam(NElement.ofPair(name,value));
+        return addParam(NElement.ofPair(name, value));
     }
 }
