@@ -31,7 +31,7 @@ public class NElementMapperEnum implements NElementMapper<Enum> {
         switch (o.type()) {
             case BYTE:
             case SHORT:
-            case INTEGER:
+            case INT:
             case LONG: {
                 return (Enum) ((Class) to).getEnumConstants()[o.asLiteral().asInt().get()];
             }
