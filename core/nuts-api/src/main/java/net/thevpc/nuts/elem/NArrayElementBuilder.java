@@ -309,6 +309,7 @@ public interface NArrayElementBuilder extends NElementBuilder {
     NArrayElementBuilder addAnnotation(String name,NElement ...args);
     NArrayElementBuilder addAnnotationAt(int index,NElementAnnotation annotation);
     NArrayElementBuilder removeAnnotationAt(int index);
+    NArrayElementBuilder removeAnnotation(NElementAnnotation annotation);
     NArrayElementBuilder clearAnnotations();
 
     NArrayElementBuilder addLeadingComment(NElementCommentType type, String text);
@@ -347,4 +348,6 @@ public interface NArrayElementBuilder extends NElementBuilder {
     NArrayElementBuilder addParam(String name, Double value);
 
     NArrayElementBuilder addParam(String name, Boolean value);
+    NArrayElementBuilder setParams(List<NElement> params);
+    NArrayElementBuilder setChildren(List<NElement> params);
 }
