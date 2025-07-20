@@ -1,8 +1,8 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NBigComplex;
-import net.thevpc.nuts.elem.NDoubleComplex;
-import net.thevpc.nuts.elem.NFloatComplex;
+import net.thevpc.nuts.NBigComplex;
+import net.thevpc.nuts.NDoubleComplex;
+import net.thevpc.nuts.NFloatComplex;
 import net.thevpc.nuts.elem.NPrimitiveElement;
 
 import java.lang.reflect.Type;
