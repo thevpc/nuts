@@ -64,6 +64,7 @@ public interface NOperatorElementBuilder extends NElementBuilder {
     NOperatorElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
 
     NOperatorElementBuilder removeAnnotationAt(int index);
+    NOperatorElementBuilder removeAnnotation(NElementAnnotation annotation);
 
     NOperatorElementBuilder clearAnnotations();
 
