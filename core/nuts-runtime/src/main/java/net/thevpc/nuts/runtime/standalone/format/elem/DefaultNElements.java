@@ -1,7 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.format.elem;
 
-import net.thevpc.nuts.*;
-
 import java.lang.reflect.Type;
 import java.util.function.Consumer;
 
@@ -73,13 +71,15 @@ public class DefaultNElements implements NElements {
     public NElementMapperStore mapperStore() {
         return userElementMapperStore;
     }
+
     @Override
     public NElements doWithMapperStore(Consumer<NElementMapperStore> doWith) {
-        if(doWith != null) {
+        if (doWith != null) {
             doWith.accept(mapperStore());
         }
         return this;
     }
+
     @Override
     public NElement normalizeJson(NElement e) {
         return normalize(e, NContentType.JSON);
@@ -101,9 +101,8 @@ public class DefaultNElements implements NElements {
     }
 
     public NElement normalize(NElement e, NContentType contentType) {
-        return model.getStreamFormat(contentType==null?NContentType.JSON : contentType).normalize(e == null ? NElement.ofNull() : e);
+        return model.getStreamFormat(contentType == null ? NContentType.JSON : contentType).normalize(e == null ? NElement.ofNull() : e);
     }
-
 
 
     private DefaultNElementFactoryContext createFactoryContext() {
@@ -122,4 +121,83 @@ public class DefaultNElements implements NElements {
         return NConstants.Support.DEFAULT_SUPPORT;
     }
 
+    public NElementType commonNumberType(NElementType aa, NElementType bb) {
+        if (aa != null) {
+            NAssert.requireEquals(NElementTypeGroup.NUMBER, aa.typeGroup(), "aa typeGroup");
+        }
+        if (bb != null) {
+            NAssert.requireEquals(NElementTypeGroup.NUMBER, bb.typeGroup(), "bb typeGroup");
+        }
+
+        if (aa == null && bb == null) {
+            return null;
+        }
+        if (aa == null) {
+            return bb;
+        }
+        if (bb == null) {
+            return aa;
+        }
+        if (NElementType.BIG_COMPLEX == aa || NElementType.BIG_COMPLEX.equals(bb)) {
+            return NElementType.BIG_COMPLEX;
+        }
+
+        if (NElementType.DOUBLE_COMPLEX == aa || NElementType.DOUBLE_COMPLEX.equals(bb)) {
+            if (
+                    NElementType.BIG_DECIMAL == aa || NElementType.BIG_DECIMAL.equals(bb)
+                            || NElementType.BIG_INT == aa || NElementType.BIG_INT.equals(bb)
+            ) {
+                return NElementType.BIG_COMPLEX;
+            }
+            return NElementType.DOUBLE_COMPLEX;
+        }
+
+        if (NElementType.FLOAT_COMPLEX == aa || NElementType.FLOAT_COMPLEX.equals(bb)) {
+            if (
+                    NElementType.BIG_DECIMAL == aa || NElementType.BIG_DECIMAL.equals(bb)
+                            || NElementType.BIG_INT == aa || NElementType.BIG_INT.equals(bb)
+            ) {
+                return NElementType.BIG_COMPLEX;
+            }
+            if (
+                    NElementType.DOUBLE == aa || NElementType.DOUBLE == bb
+            ) {
+                return NElementType.DOUBLE_COMPLEX;
+            }
+            return NElementType.FLOAT_COMPLEX;
+        }
+
+
+        if (NElementType.BIG_DECIMAL == aa || NElementType.BIG_DECIMAL.equals(bb)) {
+            return NElementType.BIG_DECIMAL;
+        }
+        if (NElementType.BIG_INT.equals(aa) || NElementType.BIG_INT.equals(bb)) {
+            if (NElementType.DOUBLE.equals(aa) || NElementType.DOUBLE.equals(bb) || NElementType.FLOAT.equals(aa) || NElementType.FLOAT.equals(bb)) {
+                return NElementType.BIG_DECIMAL;
+            }
+            return NElementType.BIG_INT;
+        }
+        if (NElementType.DOUBLE.equals(aa) || NElementType.DOUBLE.equals(bb)) {
+            return NElementType.DOUBLE;
+        }
+        if (NElementType.FLOAT.equals(aa) || NElementType.FLOAT.equals(bb)) {
+            if (NElementType.LONG.equals(aa) || NElementType.LONG.equals(bb)) {
+                return NElementType.DOUBLE;
+            }
+            return NElementType.FLOAT;
+        }
+        if (NElementType.LONG.equals(aa) || NElementType.LONG.equals(bb)) {
+            return NElementType.LONG;
+        }
+        if (NElementType.INT.equals(aa) || NElementType.INT.equals(bb)) {
+            return NElementType.INT;
+        }
+        if (NElementType.SHORT.equals(aa) || NElementType.SHORT.equals(bb)) {
+            return NElementType.SHORT;
+        }
+        if (NElementType.BYTE.equals(aa) || NElementType.BYTE.equals(bb)) {
+            return NElementType.BYTE;
+        }
+        return aa;
+    }
 }
