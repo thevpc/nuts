@@ -24,6 +24,9 @@
  */
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.NBigComplex;
+import net.thevpc.nuts.NDoubleComplex;
+import net.thevpc.nuts.NFloatComplex;
 import net.thevpc.nuts.util.NMapStrategy;
 
 import java.math.BigDecimal;
@@ -58,6 +61,8 @@ public interface NPrimitiveElementBuilder extends NElementBuilder {
     NPrimitiveElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
 
     NPrimitiveElementBuilder removeAnnotationAt(int index);
+
+    NPrimitiveElementBuilder removeAnnotation(NElementAnnotation annotation);
 
     NPrimitiveElementBuilder clearAnnotations();
 
@@ -166,6 +171,7 @@ public interface NPrimitiveElementBuilder extends NElementBuilder {
     NPrimitiveElementBuilder copyFrom(NElementBuilder other);
 
     NPrimitiveElementBuilder copyFrom(NElement other);
+
     NPrimitiveElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy);
 
     NPrimitiveElementBuilder copyFrom(NElement other, NMapStrategy strategy);
