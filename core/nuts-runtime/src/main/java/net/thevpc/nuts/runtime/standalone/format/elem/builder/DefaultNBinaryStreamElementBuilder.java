@@ -15,7 +15,11 @@ public class DefaultNBinaryStreamElementBuilder extends AbstractNElementBuilder 
 
     public DefaultNBinaryStreamElementBuilder() {
     }
-
+    @Override
+    public NBinaryStreamElementBuilder removeAnnotation(NElementAnnotation annotation) {
+        super.removeAnnotation(annotation);
+        return this;
+    }
     @Override
     public NBinaryStreamElementBuilder copyFrom(NElementBuilder other) {
         copyFrom(other,NMapStrategy.ANY);
