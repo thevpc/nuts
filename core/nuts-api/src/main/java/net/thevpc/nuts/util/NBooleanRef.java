@@ -5,6 +5,18 @@ package net.thevpc.nuts.util;
  */
 public class NBooleanRef extends NObjectRef<Boolean> {
 
+    public static NBooleanRef of(Boolean value) {
+        return new NBooleanRef(value);
+    }
+
+    public static NBooleanRef of(boolean value) {
+        return new NBooleanRef(value);
+    }
+
+    public static NBooleanRef of() {
+        return new NBooleanRef(null);
+    }
+
     public NBooleanRef(Boolean value) {
         super(value);
     }
