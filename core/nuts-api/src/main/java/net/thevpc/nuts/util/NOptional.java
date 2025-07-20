@@ -142,8 +142,8 @@ public interface NOptional<T> extends NBlankable {
         return ofOptional(optional, () -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value")));
     }
 
-    static <T> NOptional<T> ofOptional(Optional<T> optional, NMsg name) {
-        return ofOptional(optional, () -> name);
+    static <T> NOptional<T> ofOptional(Optional<T> optional, NMsg errorMessage) {
+        return ofOptional(optional, () -> errorMessage);
     }
 
     static <T> NOptional<T> ofOptional(Optional<T> optional, Supplier<NMsg> errorMessage) {
@@ -377,6 +377,10 @@ public interface NOptional<T> extends NBlankable {
     NOptional<T> withName(String name);
 
     NOptional<T> withExceptionFactory(ExceptionFactory exceptionFactory);
+
+    Optional<T> asOptional();
+
+    NStream<T> stream();
 
     interface ExceptionFactory {
         RuntimeException createOptionalEmptyException(NMsg message);
