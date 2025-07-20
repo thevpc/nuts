@@ -43,6 +43,7 @@ public interface NCharStreamElementBuilder extends NElementBuilder {
     NCharStreamElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
 
     NCharStreamElementBuilder removeAnnotationAt(int index);
+    NCharStreamElementBuilder removeAnnotation(NElementAnnotation annotation);
 
     NCharStreamElementBuilder clearAnnotations();
 
