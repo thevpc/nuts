@@ -1,4 +1,4 @@
-package net.thevpc.nuts.elem;
+package net.thevpc.nuts;
 
 import net.thevpc.nuts.reserved.NReservedUtils;
 import net.thevpc.nuts.util.NAssert;
@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public class NBigComplex extends Number implements Serializable {
+public class NBigComplex extends Number implements Serializable, Comparable<NBigComplex> {
     private static final BigDecimal BIG_DECIMAL_MINUS_ONE = new BigDecimal("-1");
     public static final NBigComplex ZERO = new NBigComplex(BigDecimal.ZERO, BigDecimal.ZERO);
     public static final NBigComplex ONE = new NBigComplex(BigDecimal.ONE, BigDecimal.ZERO);
@@ -18,7 +18,6 @@ public class NBigComplex extends Number implements Serializable {
     private BigDecimal imag;
 
     /**
-     *
      * @param any string
      * @return optional of complex
      * @since 0.8.6
@@ -107,5 +106,22 @@ public class NBigComplex extends Number implements Serializable {
             return "-î";
         }
         return d + "î";
+    }
+
+    @Override
+    public int compareTo(NBigComplex other) {
+        BigDecimal mag1 = real.multiply(real).add(imag.multiply(imag));
+        BigDecimal mag2 = other.real.multiply(other.real).add(other.imag.multiply(other.imag));
+        int cmp = mag1.compareTo(mag2);
+        if (cmp != 0) return cmp;
+
+        cmp = real.compareTo(other.real);
+        if (cmp != 0) return cmp;
+
+        return imag.compareTo(other.imag);
+    }
+
+    public NBigComplex add(NBigComplex other) {
+        return new NBigComplex(real.add(other.real), imag.add(other.imag));
     }
 }
