@@ -41,14 +41,14 @@ import java.util.Objects;
  * @author thevpc
  */
 public class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveElement {
-    private final NLiteral value;
+    private final Object value;
 
     public DefaultNPrimitiveElement(NElementType type, Object value, NElementAnnotation[] annotations, NElementComments comments) {
         super(type, annotations, comments);
         if (type == NElementType.NAME) {
             NAssert.requireTrue(NElementUtils.isValidElementName((String) value), "valid name : " + (String) value);
         }
-        this.value = NLiteral.of(value);
+        this.value = value;
     }
 
     @Override
@@ -62,112 +62,112 @@ public class DefaultNPrimitiveElement extends AbstractNElement implements NPrimi
 
     @Override
     public Object value() {
-        return value.asObject().orNull();
+        return NLiteral.of(value).asObject().orNull();
     }
 
     @Override
     public boolean isBoolean() {
-        return value.isBoolean();
+        return NLiteral.of(value).isBoolean();
     }
 
     @Override
     public boolean isNull() {
-        return value.isNull();
+        return NLiteral.of(value).isNull();
     }
 
     @Override
     public boolean isByte() {
-        return value.isByte();
+        return NLiteral.of(value).isByte();
     }
 
     @Override
     public boolean isInt() {
-        return value.isInt();
+        return NLiteral.of(value).isInt();
     }
 
     @Override
     public boolean isDecimalNumber() {
-        return value.isDecimalNumber();
+        return NLiteral.of(value).isDecimalNumber();
     }
 
     @Override
     public boolean isBigNumber() {
-        return value.isBigNumber();
+        return NLiteral.of(value).isBigNumber();
     }
 
     @Override
     public boolean isBigDecimal() {
-        return value.isBigDecimal();
+        return NLiteral.of(value).isBigDecimal();
     }
 
     @Override
     public boolean isBigInt() {
-        return value.isBigInt();
+        return NLiteral.of(value).isBigInt();
     }
 
     @Override
     public boolean isString() {
-        return value.isString();
+        return NLiteral.of(value).isString();
     }
 
     @Override
     public boolean isLong() {
-        return value.isLong();
+        return NLiteral.of(value).isLong();
     }
 
     @Override
     public boolean isShort() {
-        return value.isShort();
+        return NLiteral.of(value).isShort();
     }
 
     @Override
     public boolean isFloat() {
-        return value.isFloat();
+        return NLiteral.of(value).isFloat();
     }
 
     @Override
     public boolean isDouble() {
-        return value.isDouble();
+        return NLiteral.of(value).isDouble();
     }
 
     @Override
     public boolean isInstant() {
-        return value.isInstant();
+        return NLiteral.of(value).isInstant();
     }
 
     @Override
     public boolean isEmpty() {
-        return value.isEmpty();
+        return NLiteral.of(value).isEmpty();
     }
 
     @Override
     public boolean isBlank() {
-        return value.isBlank();
+        return NLiteral.of(value).isBlank();
     }
 
     @Override
     public NOptional<BigInteger> asBigIntValue() {
-        return value.asBigInt();
+        return NLiteral.of(value).asBigInt();
     }
 
     @Override
     public NOptional<BigDecimal> asBigDecimalValue() {
-        return value.asBigDecimal();
+        return NLiteral.of(value).asBigDecimal();
     }
 
     @Override
     public boolean isNumber() {
-        return value.isNumber();
+        return NLiteral.of(value).isNumber();
     }
 
     @Override
     public boolean isFloatingNumber() {
-        return value.isFloatingNumber();
+        return NLiteral.of(value).isFloatingNumber();
     }
 
     @Override
     public boolean isOrdinalNumber() {
-        return value.isOrdinalNumber();
+        return NLiteral.of(value).isOrdinalNumber();
     }
 
     @Override
@@ -199,7 +199,7 @@ public class DefaultNPrimitiveElement extends AbstractNElement implements NPrimi
             case BIG_DECIMAL:
             case BIG_INT:
             case SHORT:
-            case INTEGER:
+            case INT:
             case FLOAT:
             case DOUBLE:
                 NNumberElement r = asNumber().get();
@@ -273,7 +273,7 @@ public class DefaultNPrimitiveElement extends AbstractNElement implements NPrimi
 
     @Override
     public NLiteral asLiteral() {
-        return value;
+        return NLiteral.of(value);
     }
 
     @Override
