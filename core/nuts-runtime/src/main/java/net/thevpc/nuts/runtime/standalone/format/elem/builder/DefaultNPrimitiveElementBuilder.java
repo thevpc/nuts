@@ -1,5 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.format.elem.builder;
 
+import net.thevpc.nuts.NBigComplex;
+import net.thevpc.nuts.NDoubleComplex;
+import net.thevpc.nuts.NFloatComplex;
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.format.elem.AbstractNElementBuilder;
@@ -29,7 +32,11 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     public DefaultNPrimitiveElementBuilder() {
         this.type = NElementType.NULL;
     }
-
+    @Override
+    public NPrimitiveElementBuilder removeAnnotation(NElementAnnotation annotation) {
+        super.removeAnnotation(annotation);
+        return this;
+    }
     @Override
     public NPrimitiveElementBuilder copyFrom(NElementBuilder other) {
         copyFrom(other,NMapStrategy.ANY);
@@ -243,8 +250,14 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         if (value == null) {
             return setNull();
         }
+        NElementType newType=this.type;
+        if(newType!=null && newType.isAnyString()){
+            //okkay
+        }else{
+            newType=NElementType.DOUBLE_QUOTED_STRING;
+        }
         this.value = value;
-        this.type = NElementType.DOUBLE_QUOTED_STRING;
+        this.type = newType;
         this.numberLayout = null;
         this.numberSuffix = null;
         return this;
@@ -253,7 +266,13 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     @Override
     public NPrimitiveElementBuilder setString(String value, NElementType stringLayout) {
         if (stringLayout == null) {
-            stringLayout = NElementType.DOUBLE_QUOTED_STRING;
+            NElementType newType=this.type;
+            if(newType!=null && newType.isAnyString()){
+                //okkay
+            }else{
+                newType=NElementType.DOUBLE_QUOTED_STRING;
+            }
+            stringLayout = newType;
         }
         NAssert.requireTrue(stringLayout.isAnyString(), "string : " + stringLayout.id());
         if (value == null) {
@@ -329,7 +348,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         if (value == null) {
             return setNull();
         }
-        this.type = NElementType.INTEGER;
+        this.type = NElementType.INT;
         this.value = value;
         return this;
     }
@@ -454,7 +473,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     }
 
     public NPrimitiveElementBuilder setInt(int value) {
-        this.type = NElementType.INTEGER;
+        this.type = NElementType.INT;
         this.value = value;
         return this;
     }
@@ -636,7 +655,8 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         if (element != null) {
             addAnnotations(element.annotations());
             addComments(element.comments());
-            value(element.value());
+            this.value=element.value();
+            this.type=element.type();
             if (element instanceof NNumberElement) {
                 NNumberElement ne = (NNumberElement) element;
                 numberLayout(ne.numberLayout());
