@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NStream;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -19,14 +20,19 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
 
     @Override
     public <V> NOptional<V> thenOptional(Function<T, NOptional<V>> mapper) {
-        if(isPresent()){
+        if (isPresent()) {
             NOptional<V> u = mapper.apply(get());
-            if(u==null){
+            if (u == null) {
                 return NOptional.ofEmpty(getMessage());
             }
             return u;
         }
         return NOptional.ofEmpty(getMessage());
+    }
+
+    @Override
+    public NStream<T> stream() {
+        return NStream.ofOptional(this);
     }
 
     public T get() {
@@ -406,8 +412,6 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     public ExceptionFactory getExceptionFactory() {
         return exceptionFactory;
     }
-
-
 
 
 }
