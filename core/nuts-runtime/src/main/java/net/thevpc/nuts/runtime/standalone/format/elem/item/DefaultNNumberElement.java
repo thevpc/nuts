@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.format.elem.item;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.util.NLiteral;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -70,5 +72,70 @@ public class DefaultNNumberElement extends DefaultNPrimitiveElement implements N
             return (BigInteger) d;
         }
         return BigInteger.valueOf(d.longValue());
+    }
+
+    @Override
+    public NOptional<NElement> asNumberType(NElementType elemType) {
+        if (elemType == null || elemType == type()) {
+            return NOptional.of(this);
+        }
+        NOptional<Number> newValue;
+        switch (elemType){
+            case BYTE:{
+                newValue= (NOptional) NLiteral.of(value()).asByte();
+                break;
+            }
+            case SHORT:{
+                newValue= (NOptional) NLiteral.of(value()).asShort();
+                break;
+            }
+            case INT:{
+                newValue= (NOptional) NLiteral.of(value()).asInt();
+                break;
+            }
+            case LONG:{
+                newValue= (NOptional) NLiteral.of(value()).asLong();
+                break;
+            }
+            case FLOAT:{
+                newValue= (NOptional) NLiteral.of(value()).asFloat();
+                break;
+            }
+            case DOUBLE:{
+                newValue= (NOptional) NLiteral.of(value()).asDouble();
+                break;
+            }
+            case BIG_INT:{
+                newValue= (NOptional) NLiteral.of(value()).asBigInt();
+                break;
+            }
+            case BIG_DECIMAL:{
+                newValue= (NOptional) NLiteral.of(value()).asBigDecimal();
+                break;
+            }
+            case FLOAT_COMPLEX:{
+                newValue= (NOptional) NLiteral.of(value()).asFloatComplex();
+                break;
+            }
+            case DOUBLE_COMPLEX:{
+                newValue= (NOptional) NLiteral.of(value()).asDoubleComplex();
+                break;
+            }
+            case BIG_COMPLEX:{
+                newValue= (NOptional) NLiteral.of(value()).asBigComplex();
+                break;
+            }
+            default:{
+                newValue=NOptional.ofEmpty();
+            }
+        }
+        if(!newValue.isPresent()){
+            return NOptional.ofNamedEmpty(NMsg.ofC("unable to convert %s to %s : %s",type(),elemType));
+        }
+        return NOptional.of(new DefaultNNumberElement(
+                type(), newValue.get(),
+                layout,
+                suffix,
+                annotations().toArray(new NElementAnnotation[0]), comments()));
     }
 }
