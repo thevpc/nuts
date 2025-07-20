@@ -9,6 +9,7 @@ import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class NElementAnnotationImpl implements NElementAnnotation {
     private final String name;
@@ -75,4 +76,15 @@ public class NElementAnnotationImpl implements NElementAnnotation {
         return sb.toString();
     }
 
+    @Override
+    public boolean equals(Object object) {
+        if (object == null || getClass() != object.getClass()) return false;
+        NElementAnnotationImpl that = (NElementAnnotationImpl) object;
+        return Objects.equals(name, that.name) && Objects.deepEquals(params, that.params);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, Arrays.hashCode(params));
+    }
 }
