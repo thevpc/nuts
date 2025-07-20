@@ -1,5 +1,8 @@
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.NBigComplex;
+import net.thevpc.nuts.NDoubleComplex;
+import net.thevpc.nuts.NFloatComplex;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NInputStreamProvider;
 import net.thevpc.nuts.io.NReaderProvider;
@@ -77,7 +80,7 @@ public class DefaultNLiteral implements NLiteral {
                 case "java.lang.Short":
                     return NElementType.SHORT;
                 case "java.lang.Integer":
-                    return NElementType.INTEGER;
+                    return NElementType.INT;
                 case "java.lang.Long":
                     return NElementType.LONG;
                 case "java.math.BigInteger":
@@ -103,11 +106,11 @@ public class DefaultNLiteral implements NLiteral {
                     return NElementType.LOCAL_TIME;
                 case "java.lang.Boolean":
                     return NElementType.BOOLEAN;
-                case "net.thevpc.nuts.elem.NDoubleComplex":
+                case "net.thevpc.nuts.NDoubleComplex":
                     return NElementType.DOUBLE_COMPLEX;
-                case "net.thevpc.nuts.elem.NFloatComplex":
+                case "net.thevpc.nuts.NFloatComplex":
                     return NElementType.FLOAT_COMPLEX;
-                case "net.thevpc.nuts.elem.NBigComplex":
+                case "net.thevpc.nuts.NBigComplex":
                     return NElementType.BIG_COMPLEX;
                 case "net.thevpc.nuts.elem.NName":
                     return NElementType.NAME;
@@ -798,7 +801,7 @@ public class DefaultNLiteral implements NLiteral {
             case BIG_DECIMAL:
             case BIG_INT:
             case SHORT:
-            case INTEGER:
+            case INT:
             case FLOAT:
             case DOUBLE:
                 return String.valueOf(asNumber().get());
@@ -1000,7 +1003,7 @@ public class DefaultNLiteral implements NLiteral {
         switch (t) {
             case BYTE:
             case SHORT:
-            case INTEGER:
+            case INT:
             case LONG:
             case FLOAT:
             case DOUBLE:
