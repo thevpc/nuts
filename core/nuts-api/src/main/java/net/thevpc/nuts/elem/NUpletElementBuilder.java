@@ -306,6 +306,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
     NUpletElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
 
     NUpletElementBuilder removeAnnotationAt(int index);
+    NUpletElementBuilder removeAnnotation(NElementAnnotation annotation);
 
     NUpletElementBuilder clearAnnotations();
 
@@ -378,4 +379,5 @@ public interface NUpletElementBuilder extends NElementBuilder {
 
     NUpletElementBuilder copyFrom(NElement other, NMapStrategy strategy);
 
+    NUpletElementBuilder setParams(List<NElement> params);
 }
