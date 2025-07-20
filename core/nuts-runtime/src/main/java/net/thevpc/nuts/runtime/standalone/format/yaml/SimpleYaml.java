@@ -182,7 +182,7 @@ public class SimpleYaml implements NElementStreamFormat {
             case OBJECT:
             case ARRAY:
             case BOOLEAN:
-            case INTEGER:
+            case INT:
             case FLOAT:
             case SHORT:
             case DOUBLE:
@@ -212,7 +212,7 @@ public class SimpleYaml implements NElementStreamFormat {
             case BOOLEAN:
             case FLOAT:
             case DOUBLE:
-            case INTEGER:
+            case INT:
             case BYTE:
             case LONG:
             case BIG_INT:
