@@ -20,7 +20,11 @@ public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implem
         copyFrom(other,NMapStrategy.ANY);
         return this;
     }
-
+    @Override
+    public NCustomElementBuilder removeAnnotation(NElementAnnotation annotation) {
+        super.removeAnnotation(annotation);
+        return this;
+    }
     @Override
     public NCustomElementBuilder copyFrom(NElement other) {
         copyFrom(other,NMapStrategy.ANY);
