@@ -4,6 +4,7 @@ import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.NoSuchElementException;
 
 public class NExceptions {
@@ -32,7 +33,7 @@ public class NExceptions {
     }
 
     public static RuntimeException ofSafeAssertException(NMsg msg) {
-        return ofSafeAssertException(msg,null);
+        return ofSafeAssertException(msg, null);
     }
 
     public static RuntimeException ofSafeAssertException(NMsg msg, Throwable ex) {
@@ -49,7 +50,7 @@ public class NExceptions {
     }
 
     public static RuntimeException ofSafeCmdLineException(NMsg msg) {
-        return ofSafeAssertException(msg,null);
+        return ofSafeAssertException(msg, null);
     }
 
     public static RuntimeException ofSafeCmdLineException(NMsg msg, Throwable ex) {
@@ -99,6 +100,18 @@ public class NExceptions {
     }
 
     public static String getErrorMessage(Throwable ex) {
+        return getErrorMessage(ex,128);
+    }
+
+    private static String getErrorMessage(Throwable ex,int maxDepth) {
+        if (ex instanceof InvocationTargetException) {
+            if(maxDepth>0) {
+                String e = getErrorMessage(((InvocationTargetException) ex).getTargetException(), maxDepth - 1);
+                if (e != null) {
+                    return e;
+                }
+            }
+        }
         String m = ex.getMessage();
         if (m == null || m.length() < 5) {
             m = ex.toString();
