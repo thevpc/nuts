@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . It's based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
@@ -24,8 +24,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
+import net.thevpc.nuts.NExceptions;
 import net.thevpc.nuts.reflect.NReflectPropertyDefaultValueStrategy;
 import net.thevpc.nuts.reflect.NReflectType;
+import net.thevpc.nuts.util.NMsg;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -55,12 +57,12 @@ public class MethodReflectProperty1 extends AbstractReflectProperty {
             this.write = write;
             try {
                 this.write.setAccessible(true);
-                writeAccessible=true;
-            }catch (Exception e){
+                writeAccessible = true;
+            } catch (Exception e) {
                 //
             }
         }
-        init(name,type, cleanInstance, read.getGenericReturnType(),defaultValueStrategy);
+        init(name, type, cleanInstance, read.getGenericReturnType(), defaultValueStrategy);
     }
 
     @Override
@@ -75,21 +77,21 @@ public class MethodReflectProperty1 extends AbstractReflectProperty {
 
     @Override
     public Object read(Object instance) {
-        if(!readAccessible){
-            throw new IllegalArgumentException("illegal-access in read mode");
+        if (!readAccessible) {
+            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("illegal-access in read-mode (%s)", toString()));
         }
         try {
             return read.invoke(instance);
         } catch (IllegalAccessException ex) {
             throw new IllegalArgumentException("illegal-access", ex);
         } catch (InvocationTargetException ex) {
-            throw new IllegalArgumentException("illegal-invocation", ex);
+            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("illegal-invocation (%s) %s", toString(), NExceptions.getErrorMessage(ex)), ex);
         }
     }
 
     @Override
     public void write(Object instance, Object value) {
-        if(!writeAccessible){
+        if (!writeAccessible) {
             throw new IllegalArgumentException("illegal-access in write mode");
         }
         try {
@@ -97,7 +99,7 @@ public class MethodReflectProperty1 extends AbstractReflectProperty {
         } catch (IllegalAccessException ex) {
             throw new IllegalArgumentException("illegal-access", ex);
         } catch (InvocationTargetException ex) {
-            throw new IllegalArgumentException("illegal-invocation", ex);
+            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("illegal-invocation (%s) %s", toString(), NExceptions.getErrorMessage(ex)), ex);
         } catch (java.lang.IllegalArgumentException ex) {
             throw ex;
         }
