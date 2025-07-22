@@ -24,8 +24,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
+import net.thevpc.nuts.NExceptions;
 import net.thevpc.nuts.reflect.NReflectPropertyDefaultValueStrategy;
 import net.thevpc.nuts.reflect.NReflectType;
+import net.thevpc.nuts.util.NMsg;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -78,26 +80,26 @@ public class MethodReflectProperty3 extends AbstractReflectProperty {
     @Override
     public Object read(Object instance) {
         if(!readAccessible){
-            throw new IllegalArgumentException("illegal-access in read mode");
+            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("illegal-access in read mode (%s)",toString()));
         }
         try {
             return read.get(instance);
         } catch (IllegalAccessException ex) {
-            throw new IllegalArgumentException("illegal-access", ex);
+            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("illegal-access in read mode (%s) %s",toString(),NExceptions.getErrorMessage(ex)), ex);
         }
     }
 
     @Override
     public void write(Object instance, Object value) {
         if(!writeAccessible){
-            throw new IllegalArgumentException("illegal-access in write mode");
+            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("illegal-access in write mode (%s)",toString()));
         }
         try {
             write.invoke(instance, value);
         } catch (IllegalAccessException ex) {
-            throw new IllegalArgumentException("illegal-access", ex);
+            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("illegal-access in write mode (%s) %s",toString(),NExceptions.getErrorMessage(ex)), ex);
         } catch (InvocationTargetException ex) {
-            throw new IllegalArgumentException("illegal-invocation", ex);
+            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("illegal-invocation in write mode (%s) %s",toString(),NExceptions.getErrorMessage(ex)), ex);
         }
     }
 
