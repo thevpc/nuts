@@ -1051,4 +1051,6 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
     boolean isUnaryPrefixOperator();
 
     NOptional<NElement> asNumberType(NElementType elemType);
+
+    NElement[] transform(NElementTransform transform);
 }
