@@ -1055,4 +1055,8 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
     NOptional<NElement> asNumberType(NElementType elemType);
 
     NElement[] transform(NElementTransform transform);
+
+    String snippet();
+
+    String snippet(int size);
 }

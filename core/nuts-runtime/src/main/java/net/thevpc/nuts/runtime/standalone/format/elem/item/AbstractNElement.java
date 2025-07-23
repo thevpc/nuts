@@ -193,7 +193,14 @@ public abstract class AbstractNElement implements NElement {
         return NMsg.ofC("expected a %s, got %s : %s", any, type().id(), snippet());
     }
 
-    private String snippet() {
+    public String snippet() {
+        return snippet(-1);
+    }
+
+    public String snippet(int size) {
+        if (size <= 0) {
+            size = 100;
+        }
         String s = toString(true);
         int u = s.indexOf("\n");
         boolean truncated = false;
@@ -201,8 +208,8 @@ public abstract class AbstractNElement implements NElement {
             s = s.substring(0, u);
             truncated = true;
         }
-        if (s.length() > 100) {
-            s = s.substring(0, 100);
+        if (s.length() > size) {
+            s = s.substring(0, size);
             truncated = true;
         }
         if (truncated) {
