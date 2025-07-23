@@ -141,6 +141,14 @@ public interface NCallableSupport<T> {
                 ;
     }
 
+    static <T> NCallableSupport<T> valid( T value) {
+        return of(10, value, null);
+    }
+
+    static <T> NCallableSupport<T> valid(Supplier<T> supplier) {
+        return of(10, supplier, null);
+    }
+
     @SuppressWarnings("unchecked")
     static <T> NCallableSupport<T> invalid(Supplier<NMsg> emptyMessage) {
         return new DefaultNCallableSupport<>(null, NConstants.Support.NO_SUPPORT, emptyMessage);
