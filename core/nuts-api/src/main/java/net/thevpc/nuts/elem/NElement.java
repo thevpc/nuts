@@ -1044,6 +1044,8 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
 
     boolean isBinaryOperator();
 
+    boolean isAnyOperator();
+
     boolean isBinaryInfixOperator();
 
     boolean isUnaryOperator();
