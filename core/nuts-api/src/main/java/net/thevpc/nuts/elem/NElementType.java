@@ -859,10 +859,12 @@ public enum NElementType implements NEnum {
             case TRIPLE_SINGLE_QUOTED_STRING:
             case TRIPLE_ANTI_QUOTED_STRING:
             case LINE_STRING:
-            case REGEX:
-            case NAME:
             case CHAR:
-                return NElementTypeGroup.CHAR_SEQUENCE;
+                return NElementTypeGroup.STRING;
+            case REGEX:
+                return NElementTypeGroup.REGEX;
+            case NAME:
+                return NElementTypeGroup.NAME;
             case INSTANT:
             case LOCAL_DATETIME:
             case LOCAL_DATE:
