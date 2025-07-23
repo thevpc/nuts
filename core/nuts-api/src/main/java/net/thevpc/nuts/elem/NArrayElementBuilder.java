@@ -350,4 +350,6 @@ public interface NArrayElementBuilder extends NElementBuilder {
     NArrayElementBuilder addParam(String name, Boolean value);
     NArrayElementBuilder setParams(List<NElement> params);
     NArrayElementBuilder setChildren(List<NElement> params);
+
+    List<NElement> children();
 }
