@@ -103,3 +103,18 @@ Several commands are available, and you can always manually run any java and non
 
 ## Call for Contribution
 ```nuts``` has lots of ways to be improved. Please feel free to join the journey.
+
+## Try this
+
+After installing nuts try this commands to install and run some interesting apps out there
+
+| Command                                   | Short Description                        |
+|-------------------------------------------|------------------------------------------|
+| nuts io.github.jiashunx:masker-flappybird | run game flappybird                      |
+| nuts netbeans-launcher                    | run a multi instance runner for netbeans |
+| nuts kifkif                               | run a file duplicates tool               |
+| nuts pnote                                | run a pnote taking tool                  |
+| nuts org.jmeld:jmeld#2.1                  | run a folder diff tool (broken in 0.8.6) |
+| nuts org.jd:jd-gui#1.6.6                  | run a java decompiler tool               |
+| --repo=+thevpc-goodies org.jedit:jedit    | jedit text tool  (broken in 0.8.6)       |
+|                                           |                                          |
