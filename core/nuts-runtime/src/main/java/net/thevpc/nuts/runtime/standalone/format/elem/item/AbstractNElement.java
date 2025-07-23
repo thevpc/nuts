@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.format.elem.item;
 import net.thevpc.nuts.NBigComplex;
 import net.thevpc.nuts.NDoubleComplex;
 import net.thevpc.nuts.NFloatComplex;
+import net.thevpc.nuts.NUnsupportedOperationException;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
@@ -39,10 +40,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.Temporal;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -365,7 +363,7 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public List<NElementAnnotation> findAnnotations(String name) {
-        return annotations().stream().filter(x->Objects.equals(x.name(),name)).collect(Collectors.toList());
+        return annotations().stream().filter(x -> Objects.equals(x.name(), name)).collect(Collectors.toList());
     }
 
     @Override
@@ -543,9 +541,9 @@ public abstract class AbstractNElement implements NElement {
     @Override
     public boolean isBinaryInfixOperator() {
         NOptional<NOperatorElement> o = asOperator();
-        if(o.isPresent()) {
+        if (o.isPresent()) {
             NOperatorElement oo = o.get();
-            return oo.operatorType()==NOperatorType.BINARY_INFIX;
+            return oo.operatorType() == NOperatorType.BINARY_INFIX;
         }
         return false;
     }
@@ -553,9 +551,9 @@ public abstract class AbstractNElement implements NElement {
     @Override
     public boolean isUnaryPrefixOperator() {
         NOptional<NOperatorElement> o = asOperator();
-        if(o.isPresent()) {
+        if (o.isPresent()) {
             NOperatorElement oo = o.get();
-            return oo.operatorType()==NOperatorType.UNARY_PREFIX;
+            return oo.operatorType() == NOperatorType.UNARY_PREFIX;
         }
         return false;
     }
@@ -563,19 +561,24 @@ public abstract class AbstractNElement implements NElement {
     @Override
     public boolean isBinaryOperator() {
         NOptional<NOperatorElement> o = asOperator();
-        if(o.isPresent()) {
+        if (o.isPresent()) {
             NOperatorElement oo = o.get();
-            return oo.operatorType()==NOperatorType.BINARY_INFIX;
+            return oo.operatorType() == NOperatorType.BINARY_INFIX;
         }
         return false;
     }
 
     @Override
+    public boolean isAnyOperator() {
+        return type().typeGroup() == NElementTypeGroup.OPERATOR;
+    }
+
+    @Override
     public boolean isUnaryOperator() {
         NOptional<NOperatorElement> o = asOperator();
-        if(o.isPresent()) {
+        if (o.isPresent()) {
             NOperatorElement oo = o.get();
-            return oo.operatorType()==NOperatorType.UNARY_PREFIX;
+            return oo.operatorType() == NOperatorType.UNARY_PREFIX;
         }
         return false;
     }
@@ -1122,6 +1125,11 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public NOptional<NElement> asNumberType(NElementType elemType) {
-        return NOptional.ofEmpty(NMsg.ofC("not a number %s",this));
+        return NOptional.ofEmpty(NMsg.ofC("not a number %s", this));
+    }
+
+    @Override
+    public NElement[] transform(NElementTransform transform) {
+        return NElementTransformHelper.transform(this, transform);
     }
 }
