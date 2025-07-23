@@ -690,4 +690,8 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
         return this;
     }
 
+    @Override
+    public List<NElement> children() {
+        return new ArrayList<>(this.values);
+    }
 }
