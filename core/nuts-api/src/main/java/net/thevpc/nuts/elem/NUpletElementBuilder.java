@@ -271,6 +271,8 @@ public interface NUpletElementBuilder extends NElementBuilder {
      */
     NUpletElementBuilder clear();
 
+    NUpletElementBuilder clearParams();
+
     /**
      * add new element to the end of the array.
      *
@@ -306,6 +308,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
     NUpletElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
 
     NUpletElementBuilder removeAnnotationAt(int index);
+
     NUpletElementBuilder removeAnnotation(NElementAnnotation annotation);
 
     NUpletElementBuilder clearAnnotations();
