@@ -296,6 +296,12 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
+    public NArrayElementBuilder clearChildren() {
+        this.values.clear();
+        return this;
+    }
+
+    @Override
     public NOptional<NElement> get(int index) {
         if (index >= 0 && index < values.size()) {
             return NOptional.of(values.get(index));
