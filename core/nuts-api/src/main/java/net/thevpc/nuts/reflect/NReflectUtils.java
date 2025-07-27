@@ -3,10 +3,13 @@ package net.thevpc.nuts.reflect;
 import net.thevpc.nuts.NBigComplex;
 import net.thevpc.nuts.NDoubleComplex;
 import net.thevpc.nuts.NFloatComplex;
+import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.util.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.*;
 
 public class NReflectUtils {
@@ -286,23 +289,23 @@ public class NReflectUtils {
         }
         Class<? extends Number> ct = commonNumberType(a.getClass(), b.getClass());
         switch (ct.getName()) {
-            case "java.lang.Byte":{
-                return NLiteral.of(a).asByte().get()+NLiteral.of(b).asByte().get();
+            case "java.lang.Byte": {
+                return (byte) (NLiteral.of(a).asByte().get() + NLiteral.of(b).asByte().get());
             }
-            case "java.lang.Short":{
-                return NLiteral.of(a).asShort().get()+NLiteral.of(b).asShort().get();
+            case "java.lang.Short": {
+                return (short) (NLiteral.of(a).asShort().get() + NLiteral.of(b).asShort().get());
             }
-            case "java.lang.Integer":{
-                return NLiteral.of(a).asInt().get()+NLiteral.of(b).asInt().get();
+            case "java.lang.Integer": {
+                return NLiteral.of(a).asInt().get() + NLiteral.of(b).asInt().get();
             }
             case "java.lang.Long": {
-                return NLiteral.of(a).asLong().get()+NLiteral.of(b).asLong().get();
+                return NLiteral.of(a).asLong().get() + NLiteral.of(b).asLong().get();
             }
-            case "java.lang.Float":{
-                return NLiteral.of(a).asFloat().get()+NLiteral.of(b).asFloat().get();
+            case "java.lang.Float": {
+                return NLiteral.of(a).asFloat().get() + NLiteral.of(b).asFloat().get();
             }
             case "java.lang.Double": {
-                return NLiteral.of(a).asDouble().get()+NLiteral.of(b).asDouble().get();
+                return NLiteral.of(a).asDouble().get() + NLiteral.of(b).asDouble().get();
             }
             case "java.math.BigInteger": {
                 return NLiteral.of(a).asBigInt().get().add(NLiteral.of(b).asBigInt().get());
@@ -320,6 +323,335 @@ public class NReflectUtils {
                 return NLiteral.of(a).asBigComplex().get().add(NLiteral.of(b).asBigComplex().get());
             }
         }
-        return String.valueOf(a).compareTo(String.valueOf(b));
+        throw new NIllegalArgumentException(NMsg.ofC("unsupported number type", ct));
+    }
+
+    public static Number substructNumbers(Number a, Number b) {
+        if (a == null && b == null) {
+            return null;
+        }
+        if (a == null) {
+            return negateNumber(b);
+        }
+        if (b == null) {
+            return a;
+        }
+        Class<? extends Number> ct = commonNumberType(a.getClass(), b.getClass());
+        switch (ct.getName()) {
+            case "java.lang.Byte": {
+                return (byte) (NLiteral.of(a).asByte().get() - NLiteral.of(b).asByte().get());
+            }
+            case "java.lang.Short": {
+                return (short) (NLiteral.of(a).asShort().get() - NLiteral.of(b).asShort().get());
+            }
+            case "java.lang.Integer": {
+                return NLiteral.of(a).asInt().get() - NLiteral.of(b).asInt().get();
+            }
+            case "java.lang.Long": {
+                return NLiteral.of(a).asLong().get() - NLiteral.of(b).asLong().get();
+            }
+            case "java.lang.Float": {
+                return NLiteral.of(a).asFloat().get() - NLiteral.of(b).asFloat().get();
+            }
+            case "java.lang.Double": {
+                return NLiteral.of(a).asDouble().get() - NLiteral.of(b).asDouble().get();
+            }
+            case "java.math.BigInteger": {
+                return NLiteral.of(a).asBigInt().get().subtract(NLiteral.of(b).asBigInt().get());
+            }
+            case "java.math.BigDecimal": {
+                return NLiteral.of(a).asBigDecimal().get().subtract(NLiteral.of(b).asBigDecimal().get());
+            }
+            case "net.thevpc.nuts.NFloatComplex": {
+                return NLiteral.of(a).asFloatComplex().get().subtract(NLiteral.of(b).asFloatComplex().get());
+            }
+            case "net.thevpc.nuts.NDoubleComplex": {
+                return NLiteral.of(a).asDoubleComplex().get().subtract(NLiteral.of(b).asDoubleComplex().get());
+            }
+            case "net.thevpc.nuts.NBigComplex": {
+                return NLiteral.of(a).asBigComplex().get().subtract(NLiteral.of(b).asBigComplex().get());
+            }
+        }
+        throw new NIllegalArgumentException(NMsg.ofC("unsupported number type", ct));
+    }
+
+    public static Number multiplyNumbers(Number a, Number b, MathContext mc) {
+        if (a == null && b == null) {
+            return null;
+        }
+        if (a == null) {
+            return b;
+        }
+        if (b == null) {
+            return a;
+        }
+        Class<? extends Number> ct = commonNumberType(a.getClass(), b.getClass());
+        switch (ct.getName()) {
+            case "java.lang.Byte": {
+                return (byte) (NLiteral.of(a).asByte().get() * NLiteral.of(b).asByte().get());
+            }
+            case "java.lang.Short": {
+                return (short) (NLiteral.of(a).asShort().get() * NLiteral.of(b).asShort().get());
+            }
+            case "java.lang.Integer": {
+                return NLiteral.of(a).asInt().get() * NLiteral.of(b).asInt().get();
+            }
+            case "java.lang.Long": {
+                return NLiteral.of(a).asLong().get() * NLiteral.of(b).asLong().get();
+            }
+            case "java.lang.Float": {
+                return NLiteral.of(a).asFloat().get() * NLiteral.of(b).asFloat().get();
+            }
+            case "java.lang.Double": {
+                return NLiteral.of(a).asDouble().get() * NLiteral.of(b).asDouble().get();
+            }
+            case "java.math.BigInteger": {
+                return NLiteral.of(a).asBigInt().get().multiply(NLiteral.of(b).asBigInt().get());
+            }
+            case "java.math.BigDecimal": {
+                return NLiteral.of(a).asBigDecimal().get().multiply(NLiteral.of(b).asBigDecimal().get());
+            }
+            case "net.thevpc.nuts.NFloatComplex": {
+                return NLiteral.of(a).asFloatComplex().get().multiply(NLiteral.of(b).asFloatComplex().get());
+            }
+            case "net.thevpc.nuts.NDoubleComplex": {
+                return NLiteral.of(a).asDoubleComplex().get().multiply(NLiteral.of(b).asDoubleComplex().get());
+            }
+            case "net.thevpc.nuts.NBigComplex": {
+                return NLiteral.of(a).asBigComplex().get().multiply(NLiteral.of(b).asBigComplex().get(), mc);
+            }
+        }
+        throw new NIllegalArgumentException(NMsg.ofC("unsupported number type", ct));
+    }
+
+    public static Number divideNumbers(Number a, Number b, MathContext mc) {
+        if (a == null && b == null) {
+            return null;
+        }
+        if (a == null) {
+            return b;
+        }
+        if (b == null) {
+            return a;
+        }
+        Class<? extends Number> ct = commonNumberType(a.getClass(), b.getClass());
+        switch (ct.getName()) {
+            case "java.lang.Byte": {
+                return (byte) (NLiteral.of(a).asByte().get() / NLiteral.of(b).asByte().get());
+            }
+            case "java.lang.Short": {
+                return (short) (NLiteral.of(a).asShort().get() / NLiteral.of(b).asShort().get());
+            }
+            case "java.lang.Integer": {
+                return NLiteral.of(a).asInt().get() / NLiteral.of(b).asInt().get();
+            }
+            case "java.lang.Long": {
+                return NLiteral.of(a).asLong().get() / NLiteral.of(b).asLong().get();
+            }
+            case "java.lang.Float": {
+                return NLiteral.of(a).asFloat().get() / NLiteral.of(b).asFloat().get();
+            }
+            case "java.lang.Double": {
+                return NLiteral.of(a).asDouble().get() / NLiteral.of(b).asDouble().get();
+            }
+            case "java.math.BigInteger": {
+                return NLiteral.of(a).asBigInt().get().divide(NLiteral.of(b).asBigInt().get());
+            }
+            case "java.math.BigDecimal": {
+                return NLiteral.of(a).asBigDecimal().get().divide(NLiteral.of(b).asBigDecimal().get(), RoundingMode.HALF_EVEN);
+            }
+            case "net.thevpc.nuts.NFloatComplex": {
+                return NLiteral.of(a).asFloatComplex().get().divide(NLiteral.of(b).asFloatComplex().get());
+            }
+            case "net.thevpc.nuts.NDoubleComplex": {
+                return NLiteral.of(a).asDoubleComplex().get().divide(NLiteral.of(b).asDoubleComplex().get());
+            }
+            case "net.thevpc.nuts.NBigComplex": {
+                return NLiteral.of(a).asBigComplex().get().divide(NLiteral.of(b).asBigComplex().get(), mc);
+            }
+        }
+        throw new NIllegalArgumentException(NMsg.ofC("unsupported number type", ct));
+    }
+
+    public static Number reminderNumbers(Number a, Number b) {
+        if (a == null && b == null) {
+            return null;
+        }
+        if (a == null) {
+            return b;
+        }
+        if (b == null) {
+            return a;
+        }
+        Class<? extends Number> ct = commonNumberType(a.getClass(), b.getClass());
+        switch (ct.getName()) {
+            case "java.lang.Byte": {
+                return (byte) (NLiteral.of(a).asByte().get() % NLiteral.of(b).asByte().get());
+            }
+            case "java.lang.Short": {
+                return (short) (NLiteral.of(a).asShort().get() % NLiteral.of(b).asShort().get());
+            }
+            case "java.lang.Integer": {
+                return NLiteral.of(a).asInt().get() % NLiteral.of(b).asInt().get();
+            }
+            case "java.lang.Long": {
+                return NLiteral.of(a).asLong().get() % NLiteral.of(b).asLong().get();
+            }
+            case "java.lang.Float": {
+                return NLiteral.of(a).asFloat().get() % NLiteral.of(b).asFloat().get();
+            }
+            case "java.lang.Double": {
+                return NLiteral.of(a).asDouble().get() % NLiteral.of(b).asDouble().get();
+            }
+            case "java.math.BigInteger": {
+                return NLiteral.of(a).asBigInt().get().remainder(NLiteral.of(b).asBigInt().get());
+            }
+            case "java.math.BigDecimal": {
+                return NLiteral.of(a).asBigDecimal().get().remainder(NLiteral.of(b).asBigDecimal().get());
+            }
+//            case "net.thevpc.nuts.NFloatComplex": {
+//                return NLiteral.of(a).asFloatComplex().get().remainder(NLiteral.of(b).asFloatComplex().get());
+//            }
+//            case "net.thevpc.nuts.NDoubleComplex": {
+//                return NLiteral.of(a).asDoubleComplex().get().remainder(NLiteral.of(b).asDoubleComplex().get());
+//            }
+//            case "net.thevpc.nuts.NBigComplex": {
+//                return NLiteral.of(a).asBigComplex().get().remainder(NLiteral.of(b).asBigComplex().get());
+//            }
+        }
+        throw new NIllegalArgumentException(NMsg.ofC("unsupported number type", ct));
+    }
+
+    public static Number powerNumbers(Number a, Number b, MathContext mc) {
+        if (a == null && b == null) {
+            return null;
+        }
+        if (a == null) {
+            a = (byte) 0;
+        }
+        if (b == null) {
+            return a;
+        }
+        Class<? extends Number> ct = commonNumberType(a.getClass(), b.getClass());
+        switch (ct.getName()) {
+            case "java.lang.Byte": {
+                return (byte) Math.pow(NLiteral.of(a).asByte().get(), NLiteral.of(b).asByte().get());
+            }
+            case "java.lang.Short": {
+                return (short) Math.pow(NLiteral.of(a).asShort().get(), NLiteral.of(b).asShort().get());
+            }
+            case "java.lang.Integer": {
+                return (int) Math.pow(NLiteral.of(a).asInt().get(), NLiteral.of(b).asInt().get());
+            }
+            case "java.lang.Long": {
+                return (long) Math.pow(NLiteral.of(a).asLong().get(), NLiteral.of(b).asLong().get());
+            }
+            case "java.lang.Float": {
+                return (float) Math.pow(NLiteral.of(a).asFloat().get(), NLiteral.of(b).asFloat().get());
+            }
+            case "java.lang.Double": {
+                return Math.pow(NLiteral.of(a).asDouble().get(), NLiteral.of(b).asDouble().get());
+            }
+            case "java.math.BigInteger": {
+                return NLiteral.of(a).asBigInt().get().pow(NLiteral.of(b).asInt().get());
+            }
+            case "java.math.BigDecimal": {
+                return BigDecimal.valueOf(Math.pow(NLiteral.of(a).asDouble().get(), NLiteral.of(b).asDouble().get()));
+            }
+//            case "net.thevpc.nuts.NFloatComplex": {
+//                return NLiteral.of(a).asFloatComplex().get().pow(NLiteral.of(b).asFloatComplex().get());
+//            }
+//            case "net.thevpc.nuts.NDoubleComplex": {
+//                return NLiteral.of(a).asDoubleComplex().get().pow(NLiteral.of(b).asDoubleComplex().get());
+//            }
+//            case "net.thevpc.nuts.NBigComplex": {
+//                return NLiteral.of(a).asBigComplex().get().pow(NLiteral.of(b).asBigComplex().get());
+//            }
+        }
+        throw new NIllegalArgumentException(NMsg.ofC("unsupported number type", ct));
+    }
+
+    public static Number negateNumber(Number a) {
+        if (a == null) {
+            return null;
+        }
+        switch (a.getClass().getName()) {
+            case "java.lang.Byte": {
+                return (byte) (-NLiteral.of(a).asByte().get());
+            }
+            case "java.lang.Short": {
+                return (short) (-NLiteral.of(a).asShort().get());
+            }
+            case "java.lang.Integer": {
+                return -NLiteral.of(a).asInt().get();
+            }
+            case "java.lang.Long": {
+                return -NLiteral.of(a).asLong().get();
+            }
+            case "java.lang.Float": {
+                return -NLiteral.of(a).asFloat().get();
+            }
+            case "java.lang.Double": {
+                return -NLiteral.of(a).asDouble().get();
+            }
+            case "java.math.BigInteger": {
+                return NLiteral.of(a).asBigInt().get().negate();
+            }
+            case "java.math.BigDecimal": {
+                return NLiteral.of(a).asBigDecimal().get().negate();
+            }
+            case "net.thevpc.nuts.NFloatComplex": {
+                return NLiteral.of(a).asFloatComplex().get().negate();
+            }
+            case "net.thevpc.nuts.NDoubleComplex": {
+                return NLiteral.of(a).asDoubleComplex().get().negate();
+            }
+            case "net.thevpc.nuts.NBigComplex": {
+                return NLiteral.of(a).asBigComplex().get().negate();
+            }
+        }
+        throw new NIllegalArgumentException(NMsg.ofC("unsupported number type", a.getClass()));
+    }
+
+    public static Number invNumber(Number a, MathContext mc) {
+        if (a == null) {
+            return null;
+        }
+        switch (a.getClass().getName()) {
+            case "java.lang.Byte": {
+                return 1.0 / (NLiteral.of(a).asDouble().get());
+            }
+            case "java.lang.Short": {
+                return 1.0 / (NLiteral.of(a).asDouble().get());
+            }
+            case "java.lang.Integer": {
+                return 1.0 / (NLiteral.of(a).asDouble().get());
+            }
+            case "java.lang.Long": {
+                return 1.0 / (NLiteral.of(a).asDouble().get());
+            }
+            case "java.lang.Float": {
+                return 1.0f / NLiteral.of(a).asFloat().get();
+            }
+            case "java.lang.Double": {
+                return 1.0 / NLiteral.of(a).asDouble().get();
+            }
+            case "java.math.BigInteger": {
+                return BigDecimal.ONE.divide(NLiteral.of(a).asBigDecimal().get(), mc);
+            }
+            case "java.math.BigDecimal": {
+                return BigDecimal.ONE.divide(NLiteral.of(a).asBigDecimal().get(), mc);
+            }
+            case "net.thevpc.nuts.NFloatComplex": {
+                return NLiteral.of(a).asFloatComplex().get().inv();
+            }
+            case "net.thevpc.nuts.NDoubleComplex": {
+                return NLiteral.of(a).asDoubleComplex().get().inv();
+            }
+            case "net.thevpc.nuts.NBigComplex": {
+                return NLiteral.of(a).asBigComplex().get().inv(mc);
+            }
+        }
+        throw new NIllegalArgumentException(NMsg.ofC("unsupported number type", a.getClass()));
     }
 }
