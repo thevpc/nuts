@@ -351,5 +351,7 @@ public interface NElementFactory extends NComponent {
 
     NElementAnnotation ofAnnotation(String name, NElement... values);
 
+    NElementAnnotation ofAnnotation(String name);
+
     NPrimitiveElementBuilder ofPrimitiveBuilder();
 }
