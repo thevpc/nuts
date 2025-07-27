@@ -109,8 +109,8 @@ public class DefaultNPairElement extends AbstractNElement implements NPairElemen
     public String toString(boolean compact) {
         NStringBuilder sb = new NStringBuilder();
         sb.append(NElementToStringHelper.leadingCommentsAndAnnotations(this, compact));
-        String skey = key.toString();
-        String svalue = value.toString();
+        String skey = key.toString(compact);
+        String svalue = value.toString(compact);
         if (compact) {
             sb.append(skey);
             sb.append(" : ");
