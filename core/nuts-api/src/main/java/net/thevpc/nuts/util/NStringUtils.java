@@ -773,6 +773,12 @@ public class NStringUtils {
         });
     }
 
+    /**
+     * text replacing all $abc and ${abc} vars
+     * @param text text to parse
+     * @param mapper mapper function. when returns null, no replacement is performed
+     * @return text replacing all $abc and ${abc} vars
+     */
     public static String replaceDollarPlaceHolder(String text, Function<String, String> mapper) {
         if (mapper == null) {
             return "";
@@ -784,7 +790,7 @@ public class NStringUtils {
                         case NToken.TT_DOLLAR_BRACE: {
                             String x = mapper.apply(t.sval);
                             if (x == null) {
-                                throw new IllegalArgumentException("var not found " + t.sval);
+                                return t.image;
                             }
                             return x;
                         }
