@@ -7,6 +7,7 @@ import net.thevpc.nuts.elem.NPairElement;
 import net.thevpc.nuts.util.NStringBuilder;
 import net.thevpc.nuts.util.NStringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,8 +40,16 @@ public class NElementToStringHelper {
         StringBuilder sb = new StringBuilder();
         switch (c.type()) {
             case SINGLE_LINE: {
-                for (String s : NStringUtils.split(c.text(), "\n", false, false)) {
-                    sb.append("// ").append(NStringUtils.trimRight(s)).append("\n");
+                if(compact){
+                    sb.append("/* //");
+                    for (String s : NStringUtils.split(c.text(), "\n", false, false)) {
+                        sb.append(" ").append(NStringUtils.trim(s));
+                    }
+                    sb.append(" */");
+                }else {
+                    for (String s : NStringUtils.split(c.text(), "\n", false, false)) {
+                        sb.append("// ").append(NStringUtils.trimRight(s)).append("\n");
+                    }
                 }
                 break;
             }
@@ -73,7 +82,7 @@ public class NElementToStringHelper {
                 if (semiCompactInfo == null) {
                     semiCompactInfo = new SemiCompactInfo();
                 }
-                if (isShortList(children,semiCompactInfo.maxLineSize,semiCompactInfo.maxChildren)) {
+                if (isShortList(children,semiCompactInfo.maxChildren,semiCompactInfo.maxLineSize)) {
                     boolean first = true;
                     for (NElement child : children) {
                         if (first) {
@@ -145,7 +154,7 @@ public class NElementToStringHelper {
         }
         if (params != null) {
             sb.append("(");
-            appendChildren(params, compact, new SemiCompactInfo().setMaxChildren(10), sb);
+            appendChildren(params, compact, new SemiCompactInfo().setMaxChildren(10).setMaxLineSize(120), sb);
             sb.append(")");
         }
     }
