@@ -134,4 +134,32 @@ public class NFloatComplex extends Number implements Serializable, Comparable<NF
     public NFloatComplex add(NFloatComplex other) {
         return new NFloatComplex(real + other.real, imag + other.imag);
     }
+
+    public NFloatComplex negate() {
+        return new NFloatComplex(-real, -imag);
+    }
+
+    public NFloatComplex subtract(NFloatComplex other) {
+        return new NFloatComplex(real - other.real, imag - other.imag);
+    }
+
+    public NFloatComplex multiply(NFloatComplex z2) {
+        float real = this.real * z2.real - this.imag * z2.imag;
+        float imag = this.real * z2.imag + this.imag * z2.real;
+        return new NFloatComplex(real, imag);
+    }
+
+    public NFloatComplex divide(NFloatComplex other) {
+        float c = other.real;
+        float d = other.imag;
+        float denominator = c * c + d * d;
+        return new NFloatComplex(
+                (this.real * c + this.imag * d) / denominator,
+                (this.imag * c - this.real * d) / denominator
+        );
+    }
+    public NFloatComplex inv() {
+        float denominator = this.real * this.real + this.imag * this.imag;
+        return new NFloatComplex(this.real / denominator, -this.imag / denominator);
+    }
 }
