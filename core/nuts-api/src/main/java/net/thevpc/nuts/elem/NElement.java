@@ -659,6 +659,10 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
         return NElementFactory.of().ofAnnotation(name, values);
     }
 
+    static NElementAnnotation ofAnnotation(String name) {
+        return NElementFactory.of().ofAnnotation(name);
+    }
+
     static NPrimitiveElementBuilder ofPrimitiveBuilder() {
         return NElementFactory.of().ofPrimitiveBuilder();
     }
