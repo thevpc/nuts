@@ -166,8 +166,8 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
             sb.append("(");
             NElementToStringHelper.appendChildren(Arrays.asList(params), compact,
                     new NElementToStringHelper.SemiCompactInfo()
-                            .setMaxLineSize(3)
-                            .setMaxLineSize(80)
+                            .setMaxChildren(3)
+                            .setMaxLineSize(120)
                     , sb);
             sb.append(")");
         }
