@@ -502,6 +502,11 @@ public class DefaultNElementFactory implements NElementFactory {
     }
 
     @Override
+    public NElementAnnotation ofAnnotation(String name) {
+        return new NElementAnnotationImpl(name, null);
+    }
+
+    @Override
     public NPrimitiveElement ofLong(Long value) {
         return value == null ? ofNull() : new DefaultNNumberElement(NElementType.LONG, value);
     }
