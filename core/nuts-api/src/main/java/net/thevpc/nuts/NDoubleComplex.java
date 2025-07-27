@@ -15,7 +15,6 @@ public class NDoubleComplex extends Number implements Serializable, Comparable<N
     private double imag;
 
     /**
-     *
      * @param any string
      * @return optional of complex
      * @since 0.8.6
@@ -134,5 +133,34 @@ public class NDoubleComplex extends Number implements Serializable, Comparable<N
 
     public NDoubleComplex add(NDoubleComplex other) {
         return new NDoubleComplex(real + other.real, imag + other.imag);
+    }
+
+    public NDoubleComplex negate() {
+        return new NDoubleComplex(-real, -imag);
+    }
+
+    public NDoubleComplex subtract(NDoubleComplex other) {
+        return new NDoubleComplex(real - other.real, imag - other.imag);
+    }
+
+    public NDoubleComplex multiply(NDoubleComplex z2) {
+        double real = this.real * z2.real - this.imag * z2.imag;
+        double imag = this.real * z2.imag + this.imag * z2.real;
+        return new NDoubleComplex(real, imag);
+    }
+
+    public NDoubleComplex divide(NDoubleComplex other) {
+        double c = other.real;
+        double d = other.imag;
+        double denominator = c * c + d * d;
+        return new NDoubleComplex(
+                (this.real * c + this.imag * d) / denominator,
+                (this.imag * c - this.real * d) / denominator
+        );
+    }
+
+    public NDoubleComplex inv() {
+        double denominator = this.real * this.real + this.imag * this.imag;
+        return new NDoubleComplex(this.real / denominator, -this.imag / denominator);
     }
 }
