@@ -11,10 +11,10 @@ import java.util.List;
 public class NElementTransformHelper {
 
     public static NElement[] transform(NElement c, NElementTransform transform) {
-        if(c==null){
+        if (c == null) {
             return new NElement[0];
         }
-        if(transform==null){
+        if (transform == null) {
             return new NElement[]{c};
         }
         NElement[] allThis = transform.preTransform(c);
@@ -30,16 +30,20 @@ public class NElementTransformHelper {
 
     private static NElement[] transformAfter(NElement item, NElementTransform transform) {
         List<NElementAnnotation> annotations = item.builder().annotations();
-        List<NElementAnnotation> annotations2 = item.builder().annotations();
+        List<NElementAnnotation> annotations2 = new ArrayList<>();
         for (NElementAnnotation a : annotations) {
             List<NElement> u = a.params();
-            List<NElement> u2 = new ArrayList<>(u.size());
-            for (NElement nElement : u) {
-                u2.addAll(Arrays.asList(nElement.transform(transform)));
+            if (u == null) {
+                annotations2.add(NElement.ofAnnotation(a.name()));
+            }else {
+                List<NElement> u2 = new ArrayList<>(u.size());
+                for (NElement nElement : u) {
+                    u2.addAll(Arrays.asList(nElement.transform(transform)));
+                }
+                annotations2.add(NElement.ofAnnotation(a.name(), u2.toArray(new NElement[0])));
             }
-            annotations2.add(NElement.ofAnnotation(a.name(),u2.toArray(new NElement[0])));
         }
-        item=item.builder().clearAnnotations().addAnnotations(annotations2).build();
+        item = item.builder().clearAnnotations().addAnnotations(annotations2).build();
         switch (item.type().typeGroup()) {
             case CONTAINER: {
                 if (item.isAnyObject()) {
@@ -61,7 +65,7 @@ public class NElementTransformHelper {
                         if (b == null) {
                             b = o.builder();
                         }
-                        b.clearParams();
+                        b.clearChildren();
                         for (NElement e : o.children()) {
                             NElement[] u = e.transform(transform);
                             if (u != null) {
@@ -73,8 +77,7 @@ public class NElementTransformHelper {
                         o = b.build();
                     }
                     return transform.postTransform(o);
-                }
-                if (item.isAnyArray()) {
+                }else if (item.isAnyArray()) {
                     NArrayElement o = item.asArray().get();
                     NArrayElementBuilder b = null;
                     if (o.params().isPresent()) {
@@ -93,7 +96,7 @@ public class NElementTransformHelper {
                         if (b == null) {
                             b = o.builder();
                         }
-                        b.clearParams();
+                        b.clearChildren();
                         for (NElement e : o.children()) {
                             NElement[] u = e.transform(transform);
                             if (u != null) {
@@ -105,15 +108,14 @@ public class NElementTransformHelper {
                         o = b.build();
                     }
                     return transform.postTransform(o);
-                }
-                if (item.isAnyUplet()) {
+                }else if (item.isAnyUplet()) {
                     NUpletElement o = item.asUplet().get();
                     NUpletElementBuilder b = null;
                     if (!o.params().isEmpty()) {
                         if (b == null) {
                             b = o.builder();
                         }
-                        b.clear();
+                        b.clearParams();
                         for (NElement e : o.params()) {
                             NElement[] u = e.transform(transform);
                             if (u != null) {
@@ -125,8 +127,7 @@ public class NElementTransformHelper {
                         o = b.build();
                     }
                     return transform.postTransform(o);
-                }
-                if (item.isPair()) {
+                }else if (item.isPair()) {
                     NPairElement o = item.asPair().get();
                     NElement[] k = o.key().transform(transform);
                     NElement[] v = o.value().transform(transform);
@@ -135,9 +136,7 @@ public class NElementTransformHelper {
                     b.value(compressElement(v));
                     o = b.build();
                     return transform.postTransform(o);
-                }
-
-                if (item.isAnyMatrix()) {
+                }else if (item.isAnyMatrix()) {
                     //TODO
                     throw new NUnsupportedOperationException(NMsg.ofC("matrices are not yet fully supported. cannot transform matrix"));
                 }
@@ -174,8 +173,7 @@ public class NElementTransformHelper {
             case NULL:
             case CUSTOM:
             case OTHER:
-            default:
-            {
+            default: {
                 return transform.postTransform(item);
             }
         }
