@@ -72,7 +72,12 @@ public class NElementAnnotationImpl implements NElementAnnotation {
     @Override
     public String toString(boolean compact) {
         NStringBuilder sb = new NStringBuilder();
-        NElementToStringHelper.appendUplet("@" + (NStringUtils.trim(name)), params == null ? null : Arrays.asList(params), compact, sb);
+        NElementToStringHelper.appendUplet("@" + (NStringUtils.trim(name)), null, compact, sb);
+        if(params!=null){
+            sb.append("(");
+            NElementToStringHelper.appendChildren(params(), compact, new NElementToStringHelper.SemiCompactInfo().setMaxChildren(10).setMaxLineSize(120), sb);
+            sb.append(")");
+        }
         return sb.toString();
     }
 
