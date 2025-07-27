@@ -322,6 +322,13 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public NUpletElementBuilder clear() {
+        // should it not clean everything?
+        params.clear();
+        return this;
+    }
+
+    @Override
+    public NUpletElementBuilder clearParams() {
         params.clear();
         return this;
     }
