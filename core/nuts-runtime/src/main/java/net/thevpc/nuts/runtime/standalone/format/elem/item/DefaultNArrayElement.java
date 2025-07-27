@@ -151,7 +151,7 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
         sb.append(NElementToStringHelper.leadingCommentsAndAnnotations(this, compact));
         NElementToStringHelper.appendUplet(name, params, compact, sb);
         sb.append("[");
-        NElementToStringHelper.appendChildren(children(), compact, new NElementToStringHelper.SemiCompactInfo(), sb);
+        NElementToStringHelper.appendChildren(children(), compact, new NElementToStringHelper.SemiCompactInfo().setMaxChildren(10).setMaxLineSize(120), sb);
         sb.append("]");
         sb.append(NElementToStringHelper.trailingComments(this, compact));
         return sb.toString();
