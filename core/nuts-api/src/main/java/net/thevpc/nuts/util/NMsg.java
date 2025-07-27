@@ -390,7 +390,7 @@ public class NMsg {
                     if (v != null) {
                         return String.valueOf(v);
                     }
-                    return "${" + s + "}";
+                    return null;// return default
                 }
         );
     }
