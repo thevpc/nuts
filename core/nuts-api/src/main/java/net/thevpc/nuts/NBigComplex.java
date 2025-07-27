@@ -7,6 +7,7 @@ import net.thevpc.nuts.util.NOptional;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Objects;
 
 public class NBigComplex extends Number implements Serializable, Comparable<NBigComplex> {
@@ -123,5 +124,58 @@ public class NBigComplex extends Number implements Serializable, Comparable<NBig
 
     public NBigComplex add(NBigComplex other) {
         return new NBigComplex(real.add(other.real), imag.add(other.imag));
+    }
+
+
+    public NBigComplex negate() {
+        return new NBigComplex(real.negate(), imag.negate());
+    }
+
+    public NBigComplex subtract(NBigComplex other) {
+        return new NBigComplex(real.subtract(other.real), imag.subtract(other.imag));
+    }
+
+
+    public NBigComplex multiply(NBigComplex z2, MathContext mc) {
+        BigDecimal a = this.real;
+        BigDecimal b = this.imag;
+        BigDecimal c = z2.real;
+        BigDecimal d = z2.imag;
+
+        BigDecimal p1 = a.multiply(c, mc);
+        BigDecimal p2 = b.multiply(d, mc);
+        BigDecimal p3 = (a.add(b, mc)).multiply(c.add(d, mc), mc);
+
+        BigDecimal real = p1.subtract(p2, mc);
+        BigDecimal imag = p3.subtract(p1, mc).subtract(p2, mc);
+
+        return new NBigComplex(real, imag);
+    }
+
+    public NBigComplex divide(NBigComplex other, MathContext mc) {
+        BigDecimal c = other.real;
+        BigDecimal d = other.imag;
+        BigDecimal denominator = c.multiply(c, mc).add(d.multiply(d, mc), mc);
+
+        if (denominator.compareTo(BigDecimal.ZERO) == 0) {
+            throw new ArithmeticException("Division by zero complex number.");
+        }
+
+        BigDecimal real = this.real.multiply(c, mc).add(this.imag.multiply(d, mc), mc)
+                .divide(denominator, mc);
+        BigDecimal imag = this.imag.multiply(c, mc).subtract(this.real.multiply(d, mc), mc)
+                .divide(denominator, mc);
+        return new NBigComplex(real, imag);
+    }
+
+    public NBigComplex inv(MathContext mc) {
+        BigDecimal denominator = this.real.multiply(this.real, mc).add(this.imag.multiply(this.imag, mc), mc);
+        if (denominator.compareTo(BigDecimal.ZERO) == 0) {
+            throw new ArithmeticException("Inverse of zero complex number is undefined.");
+        }
+        return new NBigComplex(
+                this.real.divide(denominator, mc),
+                this.imag.negate().divide(denominator, mc)
+        );
     }
 }
