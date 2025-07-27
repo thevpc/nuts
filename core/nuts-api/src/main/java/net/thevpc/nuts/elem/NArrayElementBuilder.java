@@ -60,6 +60,7 @@ public interface NArrayElementBuilder extends NElementBuilder {
      */
     int size();
 
+    NArrayElementBuilder clearChildren();
 
     /**
      * element at index
