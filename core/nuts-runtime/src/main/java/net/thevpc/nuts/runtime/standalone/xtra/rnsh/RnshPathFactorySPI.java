@@ -27,7 +27,7 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
                 case "rnshs":
                     break;
                 default:
-                    return NCallableSupport.invalid(NMsg.ofC("Invalid path: %s", path));
+                    return NCallableSupport.ofInvalid(NMsg.ofC("Invalid path: %s", path));
             }
         }
         if (
@@ -41,7 +41,7 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
                 return NCallableSupport.of(3, () -> new NServerPathSPI(cnx));
             }
         }
-        return NCallableSupport.invalid(NMsg.ofC("Invalid path: %s", path));
+        return NCallableSupport.ofInvalid(NMsg.ofC("Invalid path: %s", path));
     }
 
     @Override
