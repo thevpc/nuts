@@ -14,7 +14,7 @@ public abstract class AbstractHtmlfsParser implements HtmlfsParser{
     protected NCallableSupport<List<String>> toSupported(int level, List<String> li) {
         Supplier<NMsg> msg = () -> NMsg.ofInvalidValue("htmlfs list");
         if (li == null || li.isEmpty()) {
-            return NCallableSupport.invalid(msg);
+            return NCallableSupport.ofInvalid(msg);
         }
         return NCallableSupport.of(level, () -> li,msg);
     }
