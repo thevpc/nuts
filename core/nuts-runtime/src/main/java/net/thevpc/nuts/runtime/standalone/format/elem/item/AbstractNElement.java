@@ -1036,6 +1036,14 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public NOptional<String> asNameValue() {
+        if(isName()){
+            return asStringValue();
+        }
+        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to name: %s", type().id(), this));
+    }
+
+    @Override
     public NOptional<LocalTime> asLocalTimeValue() {
         return asLiteral().asLocalTime();
     }
