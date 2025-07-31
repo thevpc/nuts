@@ -1002,6 +1002,8 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
 
     NOptional<String> asStringValue();
 
+    NOptional<String> asNameValue();
+
     NOptional<LocalTime> asLocalTimeValue();
 
     NOptional<BigInteger> asBigIntValue();
