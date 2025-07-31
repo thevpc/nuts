@@ -105,7 +105,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
             }
         }
 
-        return NCallableSupport.invalid(() -> NMsg.ofInvalidValue("content-type"));
+        return NCallableSupport.ofInvalid(() -> NMsg.ofInvalidValue("content-type"));
     }
 
     private String probeFile(Path file) {
@@ -230,7 +230,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
         if (contentType != null) {
             return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, contentType);
         }
-        return NCallableSupport.invalid(() -> NMsg.ofInvalidValue("content-type"));
+        return NCallableSupport.ofInvalid(() -> NMsg.ofInvalidValue("content-type"));
     }
 
     @Override
