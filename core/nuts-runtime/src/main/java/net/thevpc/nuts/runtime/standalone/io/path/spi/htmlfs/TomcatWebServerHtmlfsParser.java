@@ -46,7 +46,7 @@ public class TomcatWebServerHtmlfsParser extends AbstractHtmlfsParser {
         }
         if (!expectTomcat || !expectDirListing) {
             Supplier<NMsg> msg = () -> NMsg.ofInvalidValue("tomcat repo");
-            return NCallableSupport.invalid(msg);
+            return NCallableSupport.ofInvalid(msg);
         }
         //<a href="/maven/net/"><tt>net/</tt></a></td>
         Pattern pattern = Pattern.compile("<a href=\"(?<href>[^\"]+)\"><tt>(?<title>[^<]+)</tt></a></td>");
