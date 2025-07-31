@@ -36,7 +36,7 @@ public class ApacheReposHtmlfsParser extends AbstractHtmlfsParser {
         }
         if (expected < 2) {
             Supplier<NMsg> msg = () -> NMsg.ofInvalidValue("apache repo");
-            return NCallableSupport.invalid(msg);
+            return NCallableSupport.ofInvalid(msg);
         }
         List<String> found = new ArrayList<>();
         Pattern pattern = Pattern.compile("<img src=\"/icons/[a-z.]+\" alt=\"\\[[a-zA-Z ]+]\"> +<a href=\"(?<href>[^\"]+)\">(?<hname>[^>]+)</a> +(?<d>[^ ]+) (?<h>[^ ]+) +(?<s>[^ ]+)");
