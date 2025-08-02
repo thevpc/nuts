@@ -69,6 +69,16 @@ public class NCompressedPathBase extends NPathBase {
         return new NCompressedPathBase(base, compressedForm, formattedCompressedForm).copyExtraFrom(this);
     }
 
+    @Override
+    public NPath resolveChild(String other) {
+        return base.resolveChild(other).toCompressedForm();
+    }
+
+    @Override
+    public NPath resolveChild(NPath other) {
+        return base.resolveChild(other).toCompressedForm();
+    }
+
     public static String compressUrl(String path) {
         NPathParts p = new NPathParts(path);
         switch (p.getType()) {
