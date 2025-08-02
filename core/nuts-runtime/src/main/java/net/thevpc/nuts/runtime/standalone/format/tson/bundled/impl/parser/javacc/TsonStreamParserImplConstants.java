@@ -121,9 +121,9 @@ public interface TsonStreamParserImplConstants {
   /** RegularExpression Id. */
   int OP_GTE = 55;
   /** RegularExpression Id. */
-  int OP_ASSIGN = 56;
+  int OP_COLON_EQ = 56;
   /** RegularExpression Id. */
-  int OP_ASSIGN_EQ = 57;
+  int OP_COLON_EQ2 = 57;
   /** RegularExpression Id. */
   int OP_MINUS_GT = 58;
   /** RegularExpression Id. */
