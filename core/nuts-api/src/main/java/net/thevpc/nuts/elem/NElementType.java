@@ -148,8 +148,8 @@ public enum NElementType implements NEnum {
     OP_GT3,
     OP_LTE,
     OP_GTE,
-    OP_ASSIGN,
-    OP_ASSIGN_EQ,
+    OP_COLON_EQ,
+    OP_COLON_EQ2,
     OP_MINUS_GT,
     OP_MINUS2_GT,
     OP_EQ_GT,
@@ -262,9 +262,9 @@ public enum NElementType implements NEnum {
                     case ">=":
                         return NOptional.of(OP_GTE);
                     case ":=":
-                        return NOptional.of(OP_ASSIGN);
+                        return NOptional.of(OP_COLON_EQ);
                     case ":==":
-                        return NOptional.of(OP_ASSIGN_EQ);
+                        return NOptional.of(OP_COLON_EQ2);
                     case "->":
                         return NOptional.of(OP_MINUS_GT);
                     case "-->":
@@ -374,9 +374,9 @@ public enum NElementType implements NEnum {
                     case "GTE":
                         return NOptional.of(OP_GTE);
                     case "ASSIGN":
-                        return NOptional.of(OP_ASSIGN);
+                        return NOptional.of(OP_COLON_EQ);
                     case "ASSIGN_EQ":
-                        return NOptional.of(OP_ASSIGN_EQ);
+                        return NOptional.of(OP_COLON_EQ2);
                     case "MINUS_GT":
                         return NOptional.of(OP_MINUS_GT);
                     case "MINUS2_GT":
@@ -519,8 +519,8 @@ public enum NElementType implements NEnum {
             case OP_GT3:
             case OP_LTE:
             case OP_GTE:
-            case OP_ASSIGN:
-            case OP_ASSIGN_EQ:
+            case OP_COLON_EQ:
+            case OP_COLON_EQ2:
             case OP_MINUS_GT:
             case OP_MINUS2_GT:
             case OP_EQ_GT:
@@ -919,8 +919,8 @@ public enum NElementType implements NEnum {
             case OP_GT3:
             case OP_LTE:
             case OP_GTE:
-            case OP_ASSIGN:
-            case OP_ASSIGN_EQ:
+            case OP_COLON_EQ:
+            case OP_COLON_EQ2:
             case OP_MINUS_GT:
             case OP_MINUS2_GT:
             case OP_EQ_GT:
@@ -1016,9 +1016,9 @@ public enum NElementType implements NEnum {
                 return "<=";
             case OP_GTE:
                 return ">=";
-            case OP_ASSIGN:
+            case OP_COLON_EQ:
                 return ":=";
-            case OP_ASSIGN_EQ:
+            case OP_COLON_EQ2:
                 return ":==";
             case OP_MINUS_GT:
                 return "->";
