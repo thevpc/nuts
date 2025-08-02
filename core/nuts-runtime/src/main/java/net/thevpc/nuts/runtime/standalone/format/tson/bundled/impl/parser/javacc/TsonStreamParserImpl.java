@@ -100,8 +100,8 @@ Token t ;
     case OP_GT3:
     case OP_LTE:
     case OP_GTE:
-    case OP_ASSIGN:
-    case OP_ASSIGN_EQ:
+    case OP_COLON_EQ:
+    case OP_COLON_EQ2:
     case OP_MINUS_GT:
     case OP_MINUS2_GT:
     case OP_EQ_GT:
@@ -237,11 +237,11 @@ Token t ;
     case OP_GTE:
       t = jj_consume_token(OP_GTE);
       break;
-    case OP_ASSIGN:
-      t = jj_consume_token(OP_ASSIGN);
+    case OP_COLON_EQ:
+      t = jj_consume_token(OP_COLON_EQ);
       break;
-    case OP_ASSIGN_EQ:
-      t = jj_consume_token(OP_ASSIGN_EQ);
+    case OP_COLON_EQ2:
+      t = jj_consume_token(OP_COLON_EQ2);
       break;
     case OP_MINUS_GT:
       t = jj_consume_token(OP_MINUS_GT);
