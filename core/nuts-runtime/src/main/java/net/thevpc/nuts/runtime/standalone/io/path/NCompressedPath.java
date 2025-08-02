@@ -111,6 +111,16 @@ public class NCompressedPath extends NPathBase {
     }
 
     @Override
+    public NPath resolveChild(String other) {
+        return base.resolveChild(other).toCompressedForm();
+    }
+
+    @Override
+    public NPath resolveChild(NPath other) {
+        return base.resolveChild(other).toCompressedForm();
+    }
+
+    @Override
     public NPath resolve(String other) {
         return base.resolve(other).toCompressedForm();
     }
