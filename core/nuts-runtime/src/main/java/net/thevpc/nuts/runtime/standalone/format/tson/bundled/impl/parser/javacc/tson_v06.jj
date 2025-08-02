@@ -106,8 +106,8 @@ Token op() :
 |    t=< OP_GT3 >
 |    t=< OP_LTE >
 |    t=< OP_GTE >
-|    t=< OP_ASSIGN >
-|    t=< OP_ASSIGN_EQ >
+|    t=< OP_COLON_EQ >
+|    t=< OP_COLON_EQ2 >
 |    t=< OP_MINUS_GT >
 |    t=< OP_MINUS2_GT >
 |    t=< OP_EQ_GT >
@@ -611,8 +611,8 @@ void annotationParam() :
 |    < OP_GT3 : ">>>" >
 |    < OP_LTE : "<=" >
 |    < OP_GTE : ">=" >
-|    < OP_ASSIGN : ":=" >
-|    < OP_ASSIGN_EQ : ":==" >
+|    < OP_COLON_EQ : ":=" >
+|    < OP_COLON_EQ2 : ":==" >
 |    < OP_MINUS_GT : "->" >
 |    < OP_MINUS2_GT : "-->" >
 |    < OP_EQ_GT : "=>" >
