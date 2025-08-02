@@ -262,6 +262,20 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
     NPath resolve(String other);
 
+    /**
+     * same as resolve but will ignore any leading '/' or '\' in the given child
+     * @param other other location
+     * @return NPath for the child given other location
+     */
+    NPath resolveChild(String other);
+
+    /**
+     * same as resolve but will ignore any leading '/' or '\' in the given child
+     * @param other other location
+     * @return NPath for the child given other location
+     */
+    NPath resolveChild(NPath other);
+
     NPath resolve(NPath other);
 
     NPath resolveSibling(String other);
