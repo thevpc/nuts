@@ -42,8 +42,8 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public NStream<String> reversedLines(Charset cs) {
-        NStream<String> rl=spi().reversedLines(cs);
-        if(rl==null){
+        NStream<String> rl = spi().reversedLines(cs);
+        if (rl == null) {
             return super.reversedLines(cs);
         }
         return rl;
@@ -116,6 +116,34 @@ public class NPathFromSPI extends NPathBase {
         }
         String old = toString();
         return NPath.of(NStringUtils.pjoin("/", old, other));
+    }
+
+    @Override
+    public NPath resolveChild(String other) {
+        if (NBlankable.isBlank(other)) {
+            return this;
+        }
+        while (other.startsWith("/") || other.startsWith("\\")) {
+            other = other.substring(1);
+        }
+        if (NBlankable.isBlank(other)) {
+            return this;
+        }
+        return resolve(other);
+    }
+
+    @Override
+    public NPath resolveChild(NPath other) {
+        String loc = other.getLocation();
+        while (loc.startsWith("/") || loc.startsWith("\\")) {
+            loc = loc.substring(1);
+        }
+        NPath p = base.resolve(this, loc);
+        if (p != null) {
+            return p;
+        }
+        String old = toString();
+        return NPath.of(NStringUtils.pjoin("/", old, loc));
     }
 
     @Override
