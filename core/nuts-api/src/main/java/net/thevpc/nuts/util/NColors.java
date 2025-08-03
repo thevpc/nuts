@@ -525,7 +525,7 @@ public class NColors {
     });
     public static final Map<String, NNamedColor> BY_NAME = Collections.unmodifiableMap(
             ALL.stream()
-                    .collect(Collectors.toMap(c->c.getName().toLowerCase(), c -> c))
+                    .collect(Collectors.toMap(c->NNameFormat.CLASS_NAME.format(c.getName().trim()).toLowerCase(), c -> c))
     );
 
     public static NOptional<NNamedColor> ofName(String name) {
