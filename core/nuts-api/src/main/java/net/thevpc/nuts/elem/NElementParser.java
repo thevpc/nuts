@@ -108,6 +108,8 @@ public interface NElementParser extends NComponent {
      */
     <T> T parse(InputStream inputStream, Class<T> clazz);
 
+    <T> T parseWithSource(InputStream inputStream, Class<T> clazz, Object source);
+
     /**
      * parse inputStream as a valid object of the given type
      *
@@ -117,6 +119,8 @@ public interface NElementParser extends NComponent {
      * @return new instance of the given class
      */
     <T> T parse(String string, Class<T> clazz);
+
+    <T> T parseWithSource(String string, Class<T> clazz, Object source);
 
     /**
      * parse bytes as a valid object of the given type
@@ -128,6 +132,8 @@ public interface NElementParser extends NComponent {
      */
     <T> T parse(byte[] bytes, Class<T> clazz);
 
+    <T> T parseWithSource(byte[] bytes, Class<T> clazz, Object source);
+
     /**
      * parse reader as a valid object of the given type
      *
@@ -137,6 +143,8 @@ public interface NElementParser extends NComponent {
      * @return new instance of the given class
      */
     <T> T parse(Reader reader, Class<T> clazz);
+
+    <T> T parseWithSource(Reader reader, Class<T> clazz, Object source);
 
     /**
      * parse file as a valid object of the given type
@@ -173,6 +181,8 @@ public interface NElementParser extends NComponent {
      * @return element
      */
     NElement parse(InputStream inputStream);
+
+    NElement parseWithSource(InputStream inputStream, Object source);
 
     /**
      * parse string as a valid NutsElement.
@@ -222,6 +232,13 @@ public interface NElementParser extends NComponent {
      * @return element
      */
     NElement parse(NPath file);
+
+
+    NElement parseWithSource(String string, Object source);
+
+    NElement parseWithSource(byte[] bytes, Object source);
+
+    NElement parseWithSource(Reader reader, Object source);
 
     NProgressFactory getProgressFactory();
 
