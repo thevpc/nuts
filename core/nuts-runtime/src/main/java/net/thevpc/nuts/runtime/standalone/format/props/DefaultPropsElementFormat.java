@@ -42,11 +42,11 @@ public class DefaultPropsElementFormat implements NElementStreamFormat {
     public DefaultPropsElementFormat() {
     }
 
-    public NElement parseElement(String string, NElementFactoryContext context) {
+    public NElement parseElement(String string, NElementFactoryContext context, Object readerSource) {
         if (string == null) {
             string="";
         }
-        return parseElement(new StringReader(string), context);
+        return parseElement(new StringReader(string), context, readerSource);
     }
 
     @Override
@@ -236,7 +236,7 @@ public class DefaultPropsElementFormat implements NElementStreamFormat {
     }
 
     @Override
-    public NElement parseElement(Reader reader, NElementFactoryContext context) {
+    public NElement parseElement(Reader reader, NElementFactoryContext context, Object readerSource) {
         throw new NUnsupportedOperationException(NMsg.ofC("unable to parse Props for the moment"));
     }
 
