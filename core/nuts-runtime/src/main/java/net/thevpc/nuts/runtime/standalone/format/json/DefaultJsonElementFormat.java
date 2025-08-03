@@ -45,11 +45,11 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
     public DefaultJsonElementFormat() {
     }
 
-    public NElement parseElement(String string, NElementFactoryContext context) {
+    public NElement parseElement(String string, NElementFactoryContext context, Object readerSource) {
         if (string == null) {
             string="";
         }
-        return parseElement(new StringReader(string), context);
+        return parseElement(new StringReader(string), context, readerSource);
     }
 
     public void write(NPrintStream out, NElement data, boolean compact) {
@@ -448,7 +448,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
     }
 
     @Override
-    public NElement parseElement(Reader reader, NElementFactoryContext context) {
+    public NElement parseElement(Reader reader, NElementFactoryContext context, Object readerSource) {
         return new JsonElementParser(context).parseElement(reader);
     }
 
