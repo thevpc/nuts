@@ -38,7 +38,7 @@ public interface NElementStreamFormat {
 
     NElement normalize(NElement e);
 
-    public NElement parseElement(Reader reader, NElementFactoryContext context);
+    public NElement parseElement(Reader reader, NElementFactoryContext context, Object readerSource);
 
     public void printElement(NElement value, NPrintStream out, boolean compact, NElementFactoryContext context);
 }
