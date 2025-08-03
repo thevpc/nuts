@@ -19,7 +19,6 @@ import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 public class DefaultNElementParser implements NElementParser {
 
@@ -158,16 +157,16 @@ public class DefaultNElementParser implements NElementParser {
             case TSON: {
                 try {
                     try (InputStream is = prepareInputStream(path)) {
-                        return parse(new InputStreamReader(is), clazz);
+                        return parseWithSource(new InputStreamReader(is), clazz, path);
                     } catch (NException ex) {
-                        throw ex;
+                        throw new NParseException(NMsg.ofC("unexpected error loading path %s : %s", path, ex), ex);
                     } catch (UncheckedIOException ex) {
-                        throw new NIOException(ex);
+                        throw new NParseException(NMsg.ofC("unable to load path %s : %s", path, ex), ex);
                     } catch (RuntimeException ex) {
-                        throw new NParseException(NMsg.ofC("unable to parse path %s", path), ex);
+                        throw new NParseException(NMsg.ofC("unable to parse path %s : %s", path, ex), ex);
                     }
                 } catch (IOException ex) {
-                    throw new NParseException(NMsg.ofC("unable to parse path %s", path), ex);
+                    throw new NParseException(NMsg.ofC("unable to load path %s : %s", path, ex), ex);
                 }
             }
         }
@@ -176,12 +175,17 @@ public class DefaultNElementParser implements NElementParser {
 
     @Override
     public <T> T parse(InputStream inputStream, Class<T> clazz) {
+        return parseWithSource(inputStream, clazz, null);
+    }
+
+    @Override
+    public <T> T parseWithSource(InputStream inputStream, Class<T> clazz, Object source) {
         switch (contentType) {
             case JSON:
             case YAML:
             case XML:
             case TSON: {
-                return parse(new InputStreamReader(prepareInputStream(inputStream, null)), clazz);
+                return parseWithSource(new InputStreamReader(prepareInputStream(inputStream, null)), clazz, source);
             }
         }
         throw new NIllegalArgumentException(NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
@@ -189,12 +193,17 @@ public class DefaultNElementParser implements NElementParser {
 
     @Override
     public <T> T parse(String string, Class<T> clazz) {
+        return parseWithSource(string, clazz, null);
+    }
+
+    @Override
+    public <T> T parseWithSource(String string, Class<T> clazz, Object source) {
         switch (contentType) {
             case JSON:
             case YAML:
             case XML:
             case TSON: {
-                return parse(new StringReader(string), clazz);
+                return parseWithSource(new StringReader(string), clazz, source);
             }
         }
         throw new NIllegalArgumentException(NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
@@ -202,12 +211,17 @@ public class DefaultNElementParser implements NElementParser {
 
     @Override
     public <T> T parse(byte[] bytes, Class<T> clazz) {
+        return parseWithSource(bytes, clazz, null);
+    }
+
+    @Override
+    public <T> T parseWithSource(byte[] bytes, Class<T> clazz, Object source) {
         switch (contentType) {
             case JSON:
             case YAML:
             case XML:
             case TSON: {
-                return parse(new InputStreamReader(prepareInputStream(new ByteArrayInputStream(bytes), null)), clazz);
+                return parseWithSource(new InputStreamReader(prepareInputStream(new ByteArrayInputStream(bytes), source)), clazz, source);
             }
         }
         throw new NIllegalArgumentException(NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
@@ -216,7 +230,12 @@ public class DefaultNElementParser implements NElementParser {
 
     @Override
     public <T> T parse(Reader reader, Class<T> clazz) {
-        return (T) createFactoryContext().createObject(model.getStreamFormat(contentType == null ? NContentType.JSON : contentType).parseElement(reader, createFactoryContext()), clazz);
+        return parseWithSource(reader, clazz, null);
+    }
+
+    @Override
+    public <T> T parseWithSource(Reader reader, Class<T> clazz, Object source) {
+        return (T) createFactoryContext().createObject(model.getStreamFormat(contentType == null ? NContentType.JSON : contentType).parseElement(reader, createFactoryContext(), source), clazz);
     }
 
     @Override
@@ -240,6 +259,11 @@ public class DefaultNElementParser implements NElementParser {
     }
 
     @Override
+    public NElement parseWithSource(InputStream inputStream, Object source) {
+        return parseWithSource(inputStream, NElement.class, source);
+    }
+
+    @Override
     public NElement parse(String string) {
         if (string == null || string.isEmpty()) {
             return NElement.ofNull();
@@ -255,6 +279,24 @@ public class DefaultNElementParser implements NElementParser {
     @Override
     public NElement parse(Reader reader) {
         return parse(reader, NElement.class);
+    }
+
+    @Override
+    public NElement parseWithSource(String string, Object source) {
+        if (string == null || string.isEmpty()) {
+            return NElement.ofNull();
+        }
+        return parseWithSource(string, NElement.class, source);
+    }
+
+    @Override
+    public NElement parseWithSource(byte[] bytes, Object source) {
+        return parseWithSource(bytes, NElement.class, source);
+    }
+
+    @Override
+    public NElement parseWithSource(Reader reader, Object source) {
+        return parseWithSource(reader, NElement.class, source);
     }
 
     @Override
@@ -291,13 +333,15 @@ public class DefaultNElementParser implements NElementParser {
         }
         return c;
     }
+
     @Override
     public NElementParser doWithMapperStore(Consumer<NElementMapperStore> doWith) {
-        if(doWith != null) {
+        if (doWith != null) {
             doWith.accept(mapperStore());
         }
         return this;
     }
+
     public Object elementToObject(NElement o, Type type) {
         return createFactoryContext().createObject(o, type);
     }
