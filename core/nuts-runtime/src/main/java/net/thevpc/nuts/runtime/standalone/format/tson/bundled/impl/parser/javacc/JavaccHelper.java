@@ -18,5 +18,11 @@ public class JavaccHelper {
                 source
         );
     }
+    public static TsonParseException createTsonParseException(TokenMgrError ex, Object source) {
+        return new TsonParseException(
+                ex.getMessage(),
+                source
+        );
+    }
 
 }
