@@ -106,7 +106,7 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public boolean isNamedUplet(String name) {
-        return false;
+        return type() == NElementType.NAMED_UPLET && Objects.equals(asUplet().get().name().orNull(), name);
     }
 
     @Override
@@ -1037,7 +1037,7 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public NOptional<String> asNameValue() {
-        if(isName()){
+        if (isName()) {
             return asStringValue();
         }
         return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to name: %s", type().id(), this));
