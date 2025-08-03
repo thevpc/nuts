@@ -49,7 +49,7 @@ public class DefaultXmlNElementStreamFormat implements NElementStreamFormat {
     }
 
     @Override
-    public NElement parseElement(Reader reader, NElementFactoryContext context) {
+    public NElement parseElement(Reader reader, NElementFactoryContext context, Object readerSource) {
         Document doc = null;
         try {
             doc = XmlUtils.createDocumentBuilder(false).parse(new InputSource(reader));
