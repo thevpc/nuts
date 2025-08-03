@@ -43,9 +43,11 @@ import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.format.TsonFo
 import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.parser.ElementBuilderTsonParserVisitor;
 import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.parser.javacc.JavaccHelper;
 import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.parser.javacc.ParseException;
+import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.parser.javacc.TokenMgrError;
 import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.parser.javacc.TsonStreamParserImpl;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NElementUtils;
+import net.thevpc.nuts.util.NUtils;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -62,11 +64,11 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
     public DefaultTsonElementFormat() {
     }
 
-    public NElement parseElement(String string, NElementFactoryContext context) {
+    public NElement parseElement(String string, NElementFactoryContext context, Object readerSource) {
         if (string == null) {
             string = "";
         }
-        return parseElement(new StringReader(string), context);
+        return parseElement(new StringReader(string), context, readerSource);
     }
 
     public void write(NPrintStream out, NElement data, boolean compact) {
@@ -101,16 +103,16 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
     }
 
     @Override
-    public NElement parseElement(Reader reader, NElementFactoryContext context) {
+    public NElement parseElement(Reader reader, NElementFactoryContext context, Object readerSource) {
         TsonStreamParserConfig config = new TsonStreamParserConfig();
         ElementBuilderTsonParserVisitor r = new ElementBuilderTsonParserVisitor();
-        TsonStreamParser source = fromReader(reader, null);
+        TsonStreamParser source = fromReader(reader, readerSource);
         config.setVisitor(r);
         source.setConfig(config);
         try {
             source.parseDocument();
         } catch (Exception e) {
-            throw new TsonParseException(e, source.source());
+            throw new TsonParseException(e, NUtils.firstNonNull(source.source(),readerSource));
         }
         TsonDocument document = r.getDocument();
         TsonElement e = document == null ? null : document.getContent();
@@ -599,6 +601,8 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
             public void parseElement() {
                 try {
                     p.parseElement();
+                } catch (TokenMgrError e) {
+                    throw JavaccHelper.createTsonParseException(e, source);
                 } catch (ParseException e) {
                     throw JavaccHelper.createTsonParseException(e, source);
                 }
@@ -608,6 +612,8 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
             public void parseDocument() {
                 try {
                     p.parseDocument();
+                } catch (TokenMgrError e) {
+                    throw JavaccHelper.createTsonParseException(e, source);
                 } catch (ParseException e) {
                     throw JavaccHelper.createTsonParseException(e, source);
                 }
