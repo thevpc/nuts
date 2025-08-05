@@ -1142,4 +1142,26 @@ public class NStringUtils {
             return suffix.substring(0, maxLength);
         }
     }
+
+    public static String replaceTail(String s, String oldTail, String newTail) {
+        NAssert.requireNonNull(s,"string");
+        NAssert.requireNonNull(s,"oldTail");
+        NAssert.requireTrue(!oldTail.isEmpty(),"oldTail not empty");
+        if (s.endsWith(oldTail)) {
+            return s.substring(0, s.length() - oldTail.length()) + (newTail==null?"":newTail);
+        }else{
+            return s;
+        }
+    }
+
+    public static String replaceHead(String s, String oldHead, String newHead) {
+        NAssert.requireNonNull(s,"string");
+        NAssert.requireNonNull(s,"oldTail");
+        NAssert.requireTrue(!oldHead.isEmpty(),"oldHead not empty");
+        if (s.startsWith(oldHead)) {
+            return newHead + s.substring(oldHead.length());
+        }else{
+            return s;
+        }
+    }
 }
