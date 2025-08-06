@@ -251,8 +251,20 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
         return new NText[0];
     }
 
-    protected NTextStyles resolveTokenStyle(String txt2, String next, NText last) {
-        switch (txt2) {
+    protected NTextStyles resolveTokenStyle(String token, String next, NText last) {
+        if ("(".equals(next) || "{".equals(next)) {
+            return NTextStyles.of(NTextStyle.primary1());
+        }
+        if (":".equals(next)) {
+            return NTextStyles.of(NTextStyle.primary3());
+        }
+        if (last != null) {
+            String s = last.filteredText();
+            if (s.equals(":")) {
+                return NTextStyles.of(NTextStyle.primary4());
+            }
+        }
+        switch (token) {
             case "true":
             case "false": {
                 return NTextStyles.of(NTextStyle.bool());
