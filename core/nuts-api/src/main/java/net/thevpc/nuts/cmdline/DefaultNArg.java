@@ -25,9 +25,9 @@
 package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.NExceptions;
-import net.thevpc.nuts.NBigComplex;
-import net.thevpc.nuts.NDoubleComplex;
-import net.thevpc.nuts.NFloatComplex;
+import net.thevpc.nuts.math.NBigComplex;
+import net.thevpc.nuts.math.NDoubleComplex;
+import net.thevpc.nuts.math.NFloatComplex;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NLiteral;
