@@ -45,9 +45,9 @@ public class CoreNElementUtils {
                     case "java.math.BigInteger":
                     case "java.util.Date":
                     case "java.sql.Time":
-                    case "net.thevpc.nuts.NDoubleComplex":
-                    case "net.thevpc.nuts.NFloatComplex":
-                    case "net.thevpc.nuts.NBigComplex":
+                    case "net.thevpc.nuts.math.NDoubleComplex":
+                    case "net.thevpc.nuts.math.NFloatComplex":
+                    case "net.thevpc.nuts.math.NBigComplex":
                         return true;
                 }
                 if (Temporal.class.isAssignableFrom(cls)) {
@@ -122,9 +122,9 @@ public class CoreNElementUtils {
                     case "java.math.BigInteger":
                     case "java.util.Date":
                     case "java.sql.Time":
-                    case "net.thevpc.nuts.NDoubleComplex":
-                    case "net.thevpc.nuts.NFloatComplex":
-                    case "net.thevpc.nuts.NBigComplex":
+                    case "net.thevpc.nuts.math.NDoubleComplex":
+                    case "net.thevpc.nuts.math.NFloatComplex":
+                    case "net.thevpc.nuts.math.NBigComplex":
                         return true;
                 }
                 if (Temporal.class.isAssignableFrom(cls)) {
