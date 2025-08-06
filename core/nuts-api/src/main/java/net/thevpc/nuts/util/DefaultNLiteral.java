@@ -1,8 +1,8 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NBigComplex;
-import net.thevpc.nuts.NDoubleComplex;
-import net.thevpc.nuts.NFloatComplex;
+import net.thevpc.nuts.math.NBigComplex;
+import net.thevpc.nuts.math.NDoubleComplex;
+import net.thevpc.nuts.math.NFloatComplex;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NInputStreamProvider;
 import net.thevpc.nuts.io.NReaderProvider;
@@ -106,11 +106,11 @@ public class DefaultNLiteral implements NLiteral {
                     return NElementType.LOCAL_TIME;
                 case "java.lang.Boolean":
                     return NElementType.BOOLEAN;
-                case "net.thevpc.nuts.NDoubleComplex":
+                case "net.thevpc.nuts.math.NDoubleComplex":
                     return NElementType.DOUBLE_COMPLEX;
-                case "net.thevpc.nuts.NFloatComplex":
+                case "net.thevpc.nuts.math.NFloatComplex":
                     return NElementType.FLOAT_COMPLEX;
-                case "net.thevpc.nuts.NBigComplex":
+                case "net.thevpc.nuts.math.NBigComplex":
                     return NElementType.BIG_COMPLEX;
                 case "net.thevpc.nuts.elem.NName":
                     return NElementType.NAME;
