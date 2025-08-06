@@ -1,8 +1,8 @@
 package net.thevpc.nuts.reflect;
 
-import net.thevpc.nuts.NBigComplex;
-import net.thevpc.nuts.NDoubleComplex;
-import net.thevpc.nuts.NFloatComplex;
+import net.thevpc.nuts.math.NBigComplex;
+import net.thevpc.nuts.math.NDoubleComplex;
+import net.thevpc.nuts.math.NFloatComplex;
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.util.*;
 
@@ -264,13 +264,13 @@ public class NReflectUtils {
             case "java.math.BigDecimal": {
                 return NLiteral.of(a).asBigDecimal().get().compareTo(NLiteral.of(b).asBigDecimal().get());
             }
-            case "net.thevpc.nuts.NFloatComplex": {
+            case "net.thevpc.nuts.math.NFloatComplex": {
                 return NLiteral.of(a).asFloatComplex().get().compareTo(NLiteral.of(b).asFloatComplex().get());
             }
-            case "net.thevpc.nuts.NDoubleComplex": {
+            case "net.thevpc.nuts.math.NDoubleComplex": {
                 return NLiteral.of(a).asDoubleComplex().get().compareTo(NLiteral.of(b).asDoubleComplex().get());
             }
-            case "net.thevpc.nuts.NBigComplex": {
+            case "net.thevpc.nuts.math.NBigComplex": {
                 return NLiteral.of(a).asBigComplex().get().compareTo(NLiteral.of(b).asBigComplex().get());
             }
         }
@@ -313,13 +313,13 @@ public class NReflectUtils {
             case "java.math.BigDecimal": {
                 return NLiteral.of(a).asBigDecimal().get().add(NLiteral.of(b).asBigDecimal().get());
             }
-            case "net.thevpc.nuts.NFloatComplex": {
+            case "net.thevpc.nuts.math.NFloatComplex": {
                 return NLiteral.of(a).asFloatComplex().get().add(NLiteral.of(b).asFloatComplex().get());
             }
-            case "net.thevpc.nuts.NDoubleComplex": {
+            case "net.thevpc.nuts.math.NDoubleComplex": {
                 return NLiteral.of(a).asDoubleComplex().get().add(NLiteral.of(b).asDoubleComplex().get());
             }
-            case "net.thevpc.nuts.NBigComplex": {
+            case "net.thevpc.nuts.math.NBigComplex": {
                 return NLiteral.of(a).asBigComplex().get().add(NLiteral.of(b).asBigComplex().get());
             }
         }
@@ -362,13 +362,13 @@ public class NReflectUtils {
             case "java.math.BigDecimal": {
                 return NLiteral.of(a).asBigDecimal().get().subtract(NLiteral.of(b).asBigDecimal().get());
             }
-            case "net.thevpc.nuts.NFloatComplex": {
+            case "net.thevpc.nuts.math.NFloatComplex": {
                 return NLiteral.of(a).asFloatComplex().get().subtract(NLiteral.of(b).asFloatComplex().get());
             }
-            case "net.thevpc.nuts.NDoubleComplex": {
+            case "net.thevpc.nuts.math.NDoubleComplex": {
                 return NLiteral.of(a).asDoubleComplex().get().subtract(NLiteral.of(b).asDoubleComplex().get());
             }
-            case "net.thevpc.nuts.NBigComplex": {
+            case "net.thevpc.nuts.math.NBigComplex": {
                 return NLiteral.of(a).asBigComplex().get().subtract(NLiteral.of(b).asBigComplex().get());
             }
         }
@@ -411,13 +411,13 @@ public class NReflectUtils {
             case "java.math.BigDecimal": {
                 return NLiteral.of(a).asBigDecimal().get().multiply(NLiteral.of(b).asBigDecimal().get());
             }
-            case "net.thevpc.nuts.NFloatComplex": {
+            case "net.thevpc.nuts.math.NFloatComplex": {
                 return NLiteral.of(a).asFloatComplex().get().multiply(NLiteral.of(b).asFloatComplex().get());
             }
-            case "net.thevpc.nuts.NDoubleComplex": {
+            case "net.thevpc.nuts.math.NDoubleComplex": {
                 return NLiteral.of(a).asDoubleComplex().get().multiply(NLiteral.of(b).asDoubleComplex().get());
             }
-            case "net.thevpc.nuts.NBigComplex": {
+            case "net.thevpc.nuts.math.NBigComplex": {
                 return NLiteral.of(a).asBigComplex().get().multiply(NLiteral.of(b).asBigComplex().get(), mc);
             }
         }
@@ -460,13 +460,13 @@ public class NReflectUtils {
             case "java.math.BigDecimal": {
                 return NLiteral.of(a).asBigDecimal().get().divide(NLiteral.of(b).asBigDecimal().get(), RoundingMode.HALF_EVEN);
             }
-            case "net.thevpc.nuts.NFloatComplex": {
+            case "net.thevpc.nuts.math.NFloatComplex": {
                 return NLiteral.of(a).asFloatComplex().get().divide(NLiteral.of(b).asFloatComplex().get());
             }
-            case "net.thevpc.nuts.NDoubleComplex": {
+            case "net.thevpc.nuts.math.NDoubleComplex": {
                 return NLiteral.of(a).asDoubleComplex().get().divide(NLiteral.of(b).asDoubleComplex().get());
             }
-            case "net.thevpc.nuts.NBigComplex": {
+            case "net.thevpc.nuts.math.NBigComplex": {
                 return NLiteral.of(a).asBigComplex().get().divide(NLiteral.of(b).asBigComplex().get(), mc);
             }
         }
@@ -509,13 +509,13 @@ public class NReflectUtils {
             case "java.math.BigDecimal": {
                 return NLiteral.of(a).asBigDecimal().get().remainder(NLiteral.of(b).asBigDecimal().get());
             }
-//            case "net.thevpc.nuts.NFloatComplex": {
+//            case "net.thevpc.nuts.math.NFloatComplex": {
 //                return NLiteral.of(a).asFloatComplex().get().remainder(NLiteral.of(b).asFloatComplex().get());
 //            }
-//            case "net.thevpc.nuts.NDoubleComplex": {
+//            case "net.thevpc.nuts.math.NDoubleComplex": {
 //                return NLiteral.of(a).asDoubleComplex().get().remainder(NLiteral.of(b).asDoubleComplex().get());
 //            }
-//            case "net.thevpc.nuts.NBigComplex": {
+//            case "net.thevpc.nuts.math.NBigComplex": {
 //                return NLiteral.of(a).asBigComplex().get().remainder(NLiteral.of(b).asBigComplex().get());
 //            }
         }
@@ -558,13 +558,13 @@ public class NReflectUtils {
             case "java.math.BigDecimal": {
                 return BigDecimal.valueOf(Math.pow(NLiteral.of(a).asDouble().get(), NLiteral.of(b).asDouble().get()));
             }
-//            case "net.thevpc.nuts.NFloatComplex": {
+//            case "net.thevpc.nuts.math.NFloatComplex": {
 //                return NLiteral.of(a).asFloatComplex().get().pow(NLiteral.of(b).asFloatComplex().get());
 //            }
-//            case "net.thevpc.nuts.NDoubleComplex": {
+//            case "net.thevpc.nuts.math.NDoubleComplex": {
 //                return NLiteral.of(a).asDoubleComplex().get().pow(NLiteral.of(b).asDoubleComplex().get());
 //            }
-//            case "net.thevpc.nuts.NBigComplex": {
+//            case "net.thevpc.nuts.math.NBigComplex": {
 //                return NLiteral.of(a).asBigComplex().get().pow(NLiteral.of(b).asBigComplex().get());
 //            }
         }
@@ -600,13 +600,13 @@ public class NReflectUtils {
             case "java.math.BigDecimal": {
                 return NLiteral.of(a).asBigDecimal().get().negate();
             }
-            case "net.thevpc.nuts.NFloatComplex": {
+            case "net.thevpc.nuts.math.NFloatComplex": {
                 return NLiteral.of(a).asFloatComplex().get().negate();
             }
-            case "net.thevpc.nuts.NDoubleComplex": {
+            case "net.thevpc.nuts.math.NDoubleComplex": {
                 return NLiteral.of(a).asDoubleComplex().get().negate();
             }
-            case "net.thevpc.nuts.NBigComplex": {
+            case "net.thevpc.nuts.math.NBigComplex": {
                 return NLiteral.of(a).asBigComplex().get().negate();
             }
         }
@@ -642,13 +642,13 @@ public class NReflectUtils {
             case "java.math.BigDecimal": {
                 return BigDecimal.ONE.divide(NLiteral.of(a).asBigDecimal().get(), mc);
             }
-            case "net.thevpc.nuts.NFloatComplex": {
+            case "net.thevpc.nuts.math.NFloatComplex": {
                 return NLiteral.of(a).asFloatComplex().get().inv();
             }
-            case "net.thevpc.nuts.NDoubleComplex": {
+            case "net.thevpc.nuts.math.NDoubleComplex": {
                 return NLiteral.of(a).asDoubleComplex().get().inv();
             }
-            case "net.thevpc.nuts.NBigComplex": {
+            case "net.thevpc.nuts.math.NBigComplex": {
                 return NLiteral.of(a).asBigComplex().get().inv(mc);
             }
         }
