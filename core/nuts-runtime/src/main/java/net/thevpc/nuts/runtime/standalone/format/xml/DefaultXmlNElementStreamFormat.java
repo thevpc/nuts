@@ -33,7 +33,7 @@ import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NMemoryPrintStream;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.runtime.standalone.format.elem.NElementStreamFormat;
+import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
 import net.thevpc.nuts.text.NText;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
