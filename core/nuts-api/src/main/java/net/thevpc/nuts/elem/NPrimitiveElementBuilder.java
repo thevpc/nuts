@@ -24,9 +24,9 @@
  */
 package net.thevpc.nuts.elem;
 
-import net.thevpc.nuts.NBigComplex;
-import net.thevpc.nuts.NDoubleComplex;
-import net.thevpc.nuts.NFloatComplex;
+import net.thevpc.nuts.math.NBigComplex;
+import net.thevpc.nuts.math.NDoubleComplex;
+import net.thevpc.nuts.math.NFloatComplex;
 import net.thevpc.nuts.util.NMapStrategy;
 
 import java.math.BigDecimal;
