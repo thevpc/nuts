@@ -64,6 +64,10 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
                     all.addAll(Arrays.asList(parseRawString(txt, ar)));
                     break;
                 }
+                case '¶': {
+                    all.addAll(Arrays.asList(parseOneLineString(txt, ar)));
+                    break;
+                }
                 case '0':
                 case '1':
                 case '2':
@@ -106,7 +110,19 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
                         if (d != null) {
                             if (d.length == 1 && d[0].getType() == NTextType.PLAIN) {
                                 String txt2 = ((NTextPlain) d[0]).getValue();
-                                NTextStyle t = resolveTokenStyle(txt2);
+                                String s = ar.peekChars(10).replace("\n", " ");
+                                String next = "";
+                                if (s.matches(" *[(].*")) {
+                                    next = "(";
+                                } else if (s.matches(" *[{].*")) {
+                                    next = "{";
+                                } else if (s.matches(" *[\\[].*")) {
+                                    next = "[";
+                                } else if (s.matches(" *[:].*")) {
+                                    next = ":";
+                                }
+                                NText last = all.isEmpty() ? null : all.get(all.size() - 1);
+                                NTextStyles t = resolveTokenStyle(txt2, next, last);
                                 if (t != null) {
                                     d[0] = txt.ofStyled(d[0], t);
                                 }
@@ -204,11 +220,11 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
 
         if (ar.readString("LL")) {
             sb.append("LL");
-        }else if (ar.readString("L")) {
+        } else if (ar.readString("L")) {
             sb.append("L");
-        }else if(ar.readString("f")){
+        } else if (ar.readString("f")) {
             sb.append("f");
-        }else if(ar.readString("F")){
+        } else if (ar.readString("F")) {
             sb.append("F");
         }
         if (ar.readString("%")) {
@@ -217,8 +233,8 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
         } else if (ar.readString("_")) {
             sb.append("_");
             sb.append(ar.readWhile((cc, p) -> Character.isLetter(cc)));
-        }else{
-            if(sb.toString().matches(".*_[a-zA-Z]+")){
+        } else {
+            if (sb.toString().matches(".*_[a-zA-Z]+")) {
                 sb.append(ar.readWhile((cc, p) -> Character.isLetter(cc)));
             }
         }
@@ -235,11 +251,11 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
         return new NText[0];
     }
 
-    protected NTextStyle resolveTokenStyle(String txt2) {
+    protected NTextStyles resolveTokenStyle(String txt2, String next, NText last) {
         switch (txt2) {
             case "true":
             case "false": {
-                return NTextStyle.bool();
+                return NTextStyles.of(NTextStyle.bool());
             }
         }
         return null;
@@ -261,7 +277,7 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
                 return true;
             }
         }
-        return Character.isJavaIdentifierStart(c);
+        return Character.isJavaIdentifierPart(c);
     }
 
     private NText[] readIdentifier(NTexts txt, StringReaderExt ar) {
@@ -288,6 +304,45 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
             }
         }
         all.add(txt.ofPlain(sb.toString()));
+        return all.toArray(new NText[0]);
+    }
+
+    public NText[] parseOneLineString(NTexts txt, StringReaderExt chars) {
+        List<NText> all = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        all.add(txt.ofStyled(String.valueOf(chars.readChar()), NTextStyle.string()));
+        while (chars.hasNext()) {
+            char c = chars.readChar();
+            if (c == '\n') {
+                if (sb.length() > 0) {
+                    all.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
+                    sb.setLength(0);
+                }
+                all.add(txt.ofPlain("\n"));
+                return all.toArray(new NText[0]);
+            } else if (c == '\r') {
+                if (sb.length() > 0) {
+                    all.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
+                    sb.setLength(0);
+                }
+                if (chars.hasNext()) {
+                    char c2 = chars.peekChar();
+                    if (c2 == '\n') {
+                        chars.readChar();
+                        all.add(txt.ofPlain("\r\n"));
+                    } else {
+                        all.add(txt.ofPlain("\r"));
+                    }
+                }
+                return all.toArray(new NText[0]);
+            } else {
+                sb.append(c);
+            }
+        }
+        if (sb.length() > 0) {
+            all.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
+            sb.setLength(0);
+        }
         return all.toArray(new NText[0]);
     }
 
