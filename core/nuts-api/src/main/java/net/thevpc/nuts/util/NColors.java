@@ -240,30 +240,33 @@ public class NColors {
     public static final NNamedColor WHEAT_2 = new NNamedColor("Wheat2", new Color(255, 255, 175));
     public static final NNamedColor CORNSILK = new NNamedColor("Cornsilk", new Color(255, 255, 215));
     public static final NNamedColor GREY_100 = new NNamedColor("Grey100", new Color(255, 255, 255));
-    public static final NNamedColor GREY_3 = new NNamedColor("Grey3", new Color(8, 8, 8));
-    public static final NNamedColor GREY_7 = new NNamedColor("Grey7", new Color(18, 18, 18));
-    public static final NNamedColor GREY_11 = new NNamedColor("Grey11", new Color(28, 28, 28));
-    public static final NNamedColor GREY_15 = new NNamedColor("Grey15", new Color(38, 38, 38));
-    public static final NNamedColor GREY_19 = new NNamedColor("Grey19", new Color(48, 48, 48));
-    public static final NNamedColor GREY_23 = new NNamedColor("Grey23", new Color(58, 58, 58));
-    public static final NNamedColor GREY_27 = new NNamedColor("Grey27", new Color(68, 68, 68));
-    public static final NNamedColor GREY_30 = new NNamedColor("Grey30", new Color(78, 78, 78));
-    public static final NNamedColor GREY_35 = new NNamedColor("Grey35", new Color(88, 88, 88));
-    public static final NNamedColor GREY_39 = new NNamedColor("Grey39", new Color(98, 98, 98));
-    public static final NNamedColor GREY_42 = new NNamedColor("Grey42", new Color(108, 108, 108));
-    public static final NNamedColor GREY_46 = new NNamedColor("Grey46", new Color(118, 118, 118));
-    public static final NNamedColor GREY_50 = new NNamedColor("Grey50", new Color(128, 128, 128));
-    public static final NNamedColor GREY_54 = new NNamedColor("Grey54", new Color(138, 138, 138));
-    public static final NNamedColor GREY_58 = new NNamedColor("Grey58", new Color(148, 148, 148));
-    public static final NNamedColor GREY_62 = new NNamedColor("Grey62", new Color(158, 158, 158));
-    public static final NNamedColor GREY_66 = new NNamedColor("Grey66", new Color(168, 168, 168));
-    public static final NNamedColor GREY_70 = new NNamedColor("Grey70", new Color(178, 178, 178));
-    public static final NNamedColor GREY_74 = new NNamedColor("Grey74", new Color(188, 188, 188));
-    public static final NNamedColor GREY_78 = new NNamedColor("Grey78", new Color(198, 198, 198));
-    public static final NNamedColor GREY_82 = new NNamedColor("Grey82", new Color(208, 208, 208));
-    public static final NNamedColor GREY_85 = new NNamedColor("Grey85", new Color(218, 218, 218));
-    public static final NNamedColor GREY_89 = new NNamedColor("Grey89", new Color(228, 228, 228));
-    public static final NNamedColor GREY_93 = new NNamedColor("Grey93", new Color(238, 238, 238));
+    public static final NNamedColor GRAY_3 = new NNamedColor("Gray3", new Color(8, 8, 8));
+    public static final NNamedColor GRAY_7 = new NNamedColor("Gray7", new Color(18, 18, 18));
+    public static final NNamedColor GRAY_11 = new NNamedColor("Gray11", new Color(28, 28, 28));
+    public static final NNamedColor GRAY_15 = new NNamedColor("Gray15", new Color(38, 38, 38));
+    public static final NNamedColor GRAY_19 = new NNamedColor("Gray19", new Color(48, 48, 48));
+    public static final NNamedColor GRAY_23 = new NNamedColor("Gray23", new Color(58, 58, 58));
+    public static final NNamedColor GRAY_27 = new NNamedColor("Gray27", new Color(68, 68, 68));
+    public static final NNamedColor GRAY_30 = new NNamedColor("Gray30", new Color(78, 78, 78));
+    public static final NNamedColor GRAY_35 = new NNamedColor("Gray35", new Color(88, 88, 88));
+    public static final NNamedColor GRAY_39 = new NNamedColor("Gray39", new Color(98, 98, 98));
+    public static final NNamedColor GRAY_42 = new NNamedColor("Gray42", new Color(108, 108, 108));
+    public static final NNamedColor GRAY_46 = new NNamedColor("Gray46", new Color(118, 118, 118));
+    public static final NNamedColor GRAY_50 = new NNamedColor("Gray50", new Color(128, 128, 128));
+    public static final NNamedColor GRAY_54 = new NNamedColor("Gray54", new Color(138, 138, 138));
+    public static final NNamedColor GRAY_58 = new NNamedColor("Gray58", new Color(148, 148, 148));
+    public static final NNamedColor GRAY_62 = new NNamedColor("Gray62", new Color(158, 158, 158));
+    public static final NNamedColor GRAY_66 = new NNamedColor("Gray66", new Color(168, 168, 168));
+    public static final NNamedColor GRAY_70 = new NNamedColor("Gray70", new Color(178, 178, 178));
+    public static final NNamedColor GRAY_74 = new NNamedColor("Gray74", new Color(188, 188, 188));
+    public static final NNamedColor GRAY_78 = new NNamedColor("Gray78", new Color(198, 198, 198));
+    public static final NNamedColor GRAY_82 = new NNamedColor("Gray82", new Color(208, 208, 208));
+    public static final NNamedColor GRAY_85 = new NNamedColor("Gray85", new Color(218, 218, 218));
+    public static final NNamedColor GRAY_89 = new NNamedColor("Gray89", new Color(228, 228, 228));
+    public static final NNamedColor GRAY_93 = new NNamedColor("Gray93", new Color(238, 238, 238));
+    public static final NNamedColor GRAY = new NNamedColor("Gray", Color.GRAY);
+    public static final NNamedColor LIGHT_GRAY = new NNamedColor("LightGray", Color.LIGHT_GRAY);
+    public static final NNamedColor DARK_GRAY = new NNamedColor("DarkGray", Color.DARK_GRAY);
 
     public static final List<NNamedColor> ALL = Arrays.asList(new NNamedColor[]{
             BLACK,
@@ -498,34 +501,37 @@ public class NColors {
             WHEAT_2,
             CORNSILK,
             GREY_100,
-            GREY_3,
-            GREY_7,
-            GREY_11,
-            GREY_15,
-            GREY_19,
-            GREY_23,
-            GREY_27,
-            GREY_30,
-            GREY_35,
-            GREY_39,
-            GREY_42,
-            GREY_46,
-            GREY_50,
-            GREY_54,
-            GREY_58,
-            GREY_62,
-            GREY_66,
-            GREY_70,
-            GREY_74,
-            GREY_78,
-            GREY_82,
-            GREY_85,
-            GREY_89,
-            GREY_93
+            GRAY_3,
+            GRAY_7,
+            GRAY_11,
+            GRAY_15,
+            GRAY_19,
+            GRAY_23,
+            GRAY_27,
+            GRAY_30,
+            GRAY_35,
+            GRAY_39,
+            GRAY_42,
+            GRAY_46,
+            GRAY_50,
+            GRAY_54,
+            GRAY_58,
+            GRAY_62,
+            GRAY_66,
+            GRAY_70,
+            GRAY_74,
+            GRAY_78,
+            GRAY_82,
+            GRAY_85,
+            GRAY_89,
+            GRAY_93,
+            GRAY,
+            LIGHT_GRAY,
+            DARK_GRAY,
     });
     public static final Map<String, NNamedColor> BY_NAME = Collections.unmodifiableMap(
             ALL.stream()
-                    .collect(Collectors.toMap(c->NNameFormat.CLASS_NAME.format(c.getName().trim()).toLowerCase(), c -> c))
+                    .collect(Collectors.toMap(c -> NNameFormat.CLASS_NAME.format(c.getName().trim()).toLowerCase(), c -> c))
     );
 
     public static NOptional<NNamedColor> ofName(String name) {
