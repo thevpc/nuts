@@ -31,6 +31,7 @@ import net.thevpc.nuts.util.*;
 
 import java.io.*;
 import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
@@ -74,6 +75,27 @@ public class DefaultNTexts implements NTexts {
         register(Path.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
         register(File.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
         register(URL.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
+        register(Class.class, (o, t) -> {
+            Class cc=(Class) o;
+            Class dc = cc.getDeclaringClass();
+            if(dc!=null){
+                NText p = t.of(dc);
+                NTextBuilder tb=new DefaultNTextNodeBuilder();
+                tb.append(p);
+                tb.append(t.ofStyled(".",NTextStyle.comments()));
+                tb.append(t.ofStyled(cc.getSimpleName(),NTextStyle.option()));
+                return tb.build();
+            }else{
+                NTextBuilder tb=new DefaultNTextNodeBuilder();
+                Package p = cc.getPackage();
+                if(p!=null){
+                    tb.append(t.ofStyled(p.getName(),NTextStyle.comments()));
+                    tb.append(t.ofStyled(".",NTextStyle.comments()));
+                }
+                tb.append(t.ofStyled(cc.getSimpleName(),NTextStyle.info()));
+                return tb.build();
+            }
+        });
         register(Level.class, (o, t) -> {
             switch (((Level) o).getName()) {
                 case "OFF":
