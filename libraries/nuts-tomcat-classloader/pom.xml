@@ -53,7 +53,7 @@
 
     <dependencies>
         <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts</artifactId><version>0.8.6</version></dependency>
-        <dependency><groupId>org.apache.tomcat</groupId><artifactId>tomcat-catalina</artifactId><version>8.5.42</version><scope>provided</scope></dependency>
+        <dependency><groupId>org.apache.tomcat</groupId><artifactId>tomcat-catalina</artifactId><version>9.0.107</version><scope>provided</scope></dependency>
     </dependencies>
     <distributionManagement>
         <snapshotRepository>
