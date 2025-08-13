@@ -34,7 +34,7 @@ import java.util.function.Supplier;
 /**
  * Describable Runnable
  */
-public interface NCallable<T> extends NElementRedescribable<NCallable<T>> {
+public interface NCallable<T> extends NElementRedescribable<NCallable<T>>{
 
     T call();
 
