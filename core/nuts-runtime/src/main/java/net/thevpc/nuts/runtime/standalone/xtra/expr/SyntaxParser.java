@@ -283,7 +283,7 @@ public class SyntaxParser {
                 return q;
             }
             return NOptional.of(
-                    new DefaultOpNode(t.sval, opName(t), NExprOpType.PREFIX, op.getPrecedence(), Arrays.asList(q.get()))
+                    new DefaultOpNode(t.image, opName(t), NExprOpType.PREFIX, op.getPrecedence(), Arrays.asList(q.get()))
             );
         }
         return nextTerminalOrStmt();
