@@ -39,6 +39,28 @@ public enum NElementType implements NEnum {
      * null element
      */
     NULL,
+
+    BIG_COMPLEX,
+    DOUBLE_COMPLEX,
+    /**
+     * float/double (number) element
+     */
+    FLOAT_COMPLEX,
+    BIG_DECIMAL,
+
+    /**
+     * float/double (number) element
+     */
+    BIG_INT,
+
+    /**
+     * float/double (number) element
+     */
+    DOUBLE,
+    /**
+     * float/double (number) element
+     */
+    FLOAT,
     /**
      * integer/long (number) element
      */
@@ -55,22 +77,6 @@ public enum NElementType implements NEnum {
      * integer/long (number) element
      */
     BYTE,
-    /**
-     * float/double (number) element
-     */
-    FLOAT,
-    /**
-     * float/double (number) element
-     */
-    BIG_INT,
-    /**
-     * float/double (number) element
-     */
-    BIG_DECIMAL,
-    /**
-     * float/double (number) element
-     */
-    DOUBLE,
 
     DOUBLE_QUOTED_STRING,
     SINGLE_QUOTED_STRING,
@@ -110,9 +116,6 @@ public enum NElementType implements NEnum {
     LOCAL_TIME,
     BINARY_STREAM,
     CHAR_STREAM,
-    DOUBLE_COMPLEX,
-    FLOAT_COMPLEX,
-    BIG_COMPLEX,
     UPLET,
     MATRIX,
     ALIAS,
