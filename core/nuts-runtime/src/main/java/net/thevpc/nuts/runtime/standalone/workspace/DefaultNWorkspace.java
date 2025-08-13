@@ -265,8 +265,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         this.wsModel.extensionModel = new DefaultNWorkspaceExtensionModel(this, bootFactory,
                 data.effectiveBootOptions.getExcludedExtensions().orElse(Collections.emptyList()));
         this.wsModel.filtersModel = new DefaultNFilterModel(this);
-        this.wsModel.installedRepository = new DefaultNInstalledRepository(data.effectiveBootOptions);
         this.wsModel.envModel = new DefaultNWorkspaceEnvManagerModel(this);
+        this.wsModel.installedRepository = new DefaultNInstalledRepository(data.effectiveBootOptions);
         this.wsModel.sdkModel = new DefaultNPlatformModel(this.wsModel.envModel);
         this.wsModel.location = data.effectiveBootOptions.getWorkspace().orNull();
         this.wsModel.locationsModel = new DefaultNWorkspaceLocationModel(this,
