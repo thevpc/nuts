@@ -66,6 +66,7 @@ public interface NExprDeclarations {
     NExprLiteralNode ofLiteral(Object a);
 
     NExprVar ofConst(String name, Object a);
+
     NExprVar ofVar(String name, Object a);
 
     NExprVar getOrDeclareVar(String name, Object a);
