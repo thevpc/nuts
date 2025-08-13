@@ -239,7 +239,6 @@ public class NColors {
     public static final NNamedColor KHAKI_2 = new NNamedColor("Khaki2", new Color(255, 255, 135));
     public static final NNamedColor WHEAT_2 = new NNamedColor("Wheat2", new Color(255, 255, 175));
     public static final NNamedColor CORNSILK = new NNamedColor("Cornsilk", new Color(255, 255, 215));
-    public static final NNamedColor GREY_100 = new NNamedColor("Grey100", new Color(255, 255, 255));
     public static final NNamedColor GRAY_3 = new NNamedColor("Gray3", new Color(8, 8, 8));
     public static final NNamedColor GRAY_7 = new NNamedColor("Gray7", new Color(18, 18, 18));
     public static final NNamedColor GRAY_11 = new NNamedColor("Gray11", new Color(28, 28, 28));
@@ -264,6 +263,7 @@ public class NColors {
     public static final NNamedColor GRAY_85 = new NNamedColor("Gray85", new Color(218, 218, 218));
     public static final NNamedColor GRAY_89 = new NNamedColor("Gray89", new Color(228, 228, 228));
     public static final NNamedColor GRAY_93 = new NNamedColor("Gray93", new Color(238, 238, 238));
+    public static final NNamedColor GRAY_100 = new NNamedColor("Grey100", new Color(255, 255, 255));
     public static final NNamedColor GRAY = new NNamedColor("Gray", Color.GRAY);
     public static final NNamedColor LIGHT_GRAY = new NNamedColor("LightGray", Color.LIGHT_GRAY);
     public static final NNamedColor DARK_GRAY = new NNamedColor("DarkGray", Color.DARK_GRAY);
@@ -500,7 +500,7 @@ public class NColors {
             KHAKI_2,
             WHEAT_2,
             CORNSILK,
-            GREY_100,
+            GRAY_100,
             GRAY_3,
             GRAY_7,
             GRAY_11,
