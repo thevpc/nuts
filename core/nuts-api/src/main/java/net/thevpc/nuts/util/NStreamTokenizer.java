@@ -952,6 +952,7 @@ public class NStreamTokenizer {
                 if (c != '.' && (c < '0' || c > '9')) {
                     peekc = c;
                     ttype = '-';
+                    this.image = "-";
                     return true;
                 }
                 neg = true;
