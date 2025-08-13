@@ -3,6 +3,7 @@ package net.thevpc.nuts.math;
 import net.thevpc.nuts.reserved.NReservedUtils;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NNumberUtils;
 import net.thevpc.nuts.util.NOptional;
 
 import java.io.Serializable;
@@ -141,7 +142,7 @@ public class NBigComplex extends Number implements Serializable, Comparable<NBig
         BigDecimal b = this.imag;
         BigDecimal c = z2.real;
         BigDecimal d = z2.imag;
-
+        mc= NNumberUtils.getContextMathContext(mc);
         BigDecimal p1 = a.multiply(c, mc);
         BigDecimal p2 = b.multiply(d, mc);
         BigDecimal p3 = (a.add(b, mc)).multiply(c.add(d, mc), mc);
@@ -153,6 +154,7 @@ public class NBigComplex extends Number implements Serializable, Comparable<NBig
     }
 
     public NBigComplex divide(NBigComplex other, MathContext mc) {
+        mc= NNumberUtils.getContextMathContext(mc);
         BigDecimal c = other.real;
         BigDecimal d = other.imag;
         BigDecimal denominator = c.multiply(c, mc).add(d.multiply(d, mc), mc);
@@ -169,6 +171,7 @@ public class NBigComplex extends Number implements Serializable, Comparable<NBig
     }
 
     public NBigComplex inv(MathContext mc) {
+        mc= NNumberUtils.getContextMathContext(mc);
         BigDecimal denominator = this.real.multiply(this.real, mc).add(this.imag.multiply(this.imag, mc), mc);
         if (denominator.compareTo(BigDecimal.ZERO) == 0) {
             throw new ArithmeticException("Inverse of zero complex number is undefined.");
