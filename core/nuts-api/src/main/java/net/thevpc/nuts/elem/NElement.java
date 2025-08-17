@@ -830,6 +830,8 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
 
     NOptional<NUpletElement> asUplet();
 
+    NOptional<NMatrixElement> asMatrix();
+
     NOptional<NPairElement> asPair();
 
     NOptional<NNumberElement> asInt();
