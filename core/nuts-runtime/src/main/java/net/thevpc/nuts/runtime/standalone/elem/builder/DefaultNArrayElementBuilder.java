@@ -163,7 +163,7 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
             for (NArrayElement row : from.rows()) {
                 add(row);
             }
-            name(from.name());
+            name(from.name().orNull());
             return this;
         }
         return this;
