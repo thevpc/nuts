@@ -65,75 +65,75 @@ public class DefaultNPrimitiveElement extends AbstractNElement implements NPrimi
         return NLiteral.of(value).asObject().orNull();
     }
 
-    @Override
-    public boolean isBoolean() {
-        return NLiteral.of(value).isBoolean();
-    }
+//    @Override
+//    public boolean isBoolean() {
+//        return NLiteral.of(value).isBoolean();
+//    }
 
-    @Override
-    public boolean isNull() {
-        return NLiteral.of(value).isNull();
-    }
+//    @Override
+//    public boolean isNull() {
+//        return NLiteral.of(value).isNull();
+//    }
 
-    @Override
-    public boolean isByte() {
-        return NLiteral.of(value).isByte();
-    }
+//    @Override
+//    public boolean isByte() {
+//        return NLiteral.of(value).isByte();
+//    }
+//
+//    @Override
+//    public boolean isInt() {
+//        return NLiteral.of(value).isInt();
+//    }
+//
+//    @Override
+//    public boolean isDecimalNumber() {
+//        return NLiteral.of(value).isDecimalNumber();
+//    }
+//
+//    @Override
+//    public boolean isBigNumber() {
+//        return NLiteral.of(value).isBigNumber();
+//    }
+//
+//    @Override
+//    public boolean isBigDecimal() {
+//        return NLiteral.of(value).isBigDecimal();
+//    }
+//
+//    @Override
+//    public boolean isBigInt() {
+//        return NLiteral.of(value).isBigInt();
+//    }
 
-    @Override
-    public boolean isInt() {
-        return NLiteral.of(value).isInt();
-    }
+//    @Override
+//    public boolean isString() {
+//        return NLiteral.of(value).isString();
+//    }
 
-    @Override
-    public boolean isDecimalNumber() {
-        return NLiteral.of(value).isDecimalNumber();
-    }
+//    @Override
+//    public boolean isLong() {
+//        return NLiteral.of(value).isLong();
+//    }
 
-    @Override
-    public boolean isBigNumber() {
-        return NLiteral.of(value).isBigNumber();
-    }
-
-    @Override
-    public boolean isBigDecimal() {
-        return NLiteral.of(value).isBigDecimal();
-    }
-
-    @Override
-    public boolean isBigInt() {
-        return NLiteral.of(value).isBigInt();
-    }
-
-    @Override
-    public boolean isString() {
-        return NLiteral.of(value).isString();
-    }
-
-    @Override
-    public boolean isLong() {
-        return NLiteral.of(value).isLong();
-    }
-
-    @Override
-    public boolean isShort() {
-        return NLiteral.of(value).isShort();
-    }
-
-    @Override
-    public boolean isFloat() {
-        return NLiteral.of(value).isFloat();
-    }
-
-    @Override
-    public boolean isDouble() {
-        return NLiteral.of(value).isDouble();
-    }
-
-    @Override
-    public boolean isInstant() {
-        return NLiteral.of(value).isInstant();
-    }
+//    @Override
+//    public boolean isShort() {
+//        return NLiteral.of(value).isShort();
+//    }
+//
+//    @Override
+//    public boolean isFloat() {
+//        return NLiteral.of(value).isFloat();
+//    }
+//
+//    @Override
+//    public boolean isDouble() {
+//        return NLiteral.of(value).isDouble();
+//    }
+//
+//    @Override
+//    public boolean isInstant() {
+//        return NLiteral.of(value).isInstant();
+//    }
 
     @Override
     public boolean isEmpty() {
@@ -155,20 +155,20 @@ public class DefaultNPrimitiveElement extends AbstractNElement implements NPrimi
         return NLiteral.of(value).asBigDecimal();
     }
 
-    @Override
-    public boolean isNumber() {
-        return NLiteral.of(value).isNumber();
-    }
+//    @Override
+//    public boolean isNumber() {
+//        return NLiteral.of(value).isNumber();
+//    }
 
-    @Override
-    public boolean isFloatingNumber() {
-        return NLiteral.of(value).isFloatingNumber();
-    }
-
-    @Override
-    public boolean isOrdinalNumber() {
-        return NLiteral.of(value).isOrdinalNumber();
-    }
+//    @Override
+//    public boolean isFloatingNumber() {
+//        return NLiteral.of(value).isFloatingNumber();
+//    }
+//
+//    @Override
+//    public boolean isOrdinalNumber() {
+//        return NLiteral.of(value).isOrdinalNumber();
+//    }
 
     @Override
     public String toString() {
