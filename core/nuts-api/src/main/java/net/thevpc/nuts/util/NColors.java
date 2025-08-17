@@ -20,6 +20,7 @@ public class NColors {
     public static final NNamedColor RED = new NNamedColor("Red", new Color(255, 0, 0));
     public static final NNamedColor LIME = new NNamedColor("Lime", new Color(0, 255, 0));
     public static final NNamedColor YELLOW = new NNamedColor("Yellow", new Color(255, 255, 0));
+    public static final NNamedColor DARK_YELLOW = new NNamedColor("DarkYellow", new Color(186,142,35));
     public static final NNamedColor BLUE = new NNamedColor("Blue", new Color(0, 0, 255));
     public static final NNamedColor FUCHSIA = new NNamedColor("Fuchsia", new Color(255, 0, 255));
     public static final NNamedColor AQUA = new NNamedColor("Aqua", new Color(0, 255, 255));
@@ -281,6 +282,7 @@ public class NColors {
             RED,
             LIME,
             YELLOW,
+            DARK_YELLOW,
             BLUE,
             FUCHSIA,
             AQUA,
