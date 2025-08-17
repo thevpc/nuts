@@ -424,6 +424,14 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public NOptional<NMatrixElement> asMatrix() {
+        if (this instanceof NMatrixElement) {
+            return NOptional.of((NMatrixElement) this);
+        }
+        return NOptional.ofError(() -> _expected("matrix"));
+    }
+
+    @Override
     public NOptional<NNumberElement> asInt() {
         if (isInt()) {
             return NOptional.of((NNumberElement) this);
