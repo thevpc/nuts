@@ -42,14 +42,8 @@ import java.util.stream.Stream;
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NMatrixElement {
+public interface NMatrixElement extends NNamedElement, NParametrizedContainerElement {
 
-    /**
-     * array items
-     *
-     * @return array items
-     */
-    String name();
     List<NArrayElement> rows();
 
     List<NArrayElement> columns();
