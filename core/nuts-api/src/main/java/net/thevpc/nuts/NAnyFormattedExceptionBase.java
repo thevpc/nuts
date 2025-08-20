@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.core.NAnyExceptionBase;
 import net.thevpc.nuts.util.NMsg;
 
 /**
@@ -35,7 +36,7 @@ import net.thevpc.nuts.util.NMsg;
  * @app.category Exceptions
  * @since 0.5.4
  */
-public interface NAnyFormattedExceptionBase extends NAnyExceptionBase{
+public interface NAnyFormattedExceptionBase extends NAnyExceptionBase {
 
 
     NMsg getFormattedMessage();
