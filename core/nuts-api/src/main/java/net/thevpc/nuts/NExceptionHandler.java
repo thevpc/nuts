@@ -5,6 +5,8 @@ import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.reserved.cmdline.NBootWorkspaceCmdLineParser;
 import net.thevpc.nuts.boot.reserved.util.NBootMsg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.core.NExceptionWithExitCodeBase;
+import net.thevpc.nuts.core.NI18n;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.format.NContentType;
