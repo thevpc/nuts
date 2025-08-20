@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts.boot.reserved.util;
 
-import net.thevpc.nuts.NAnyBootAwareExceptionBase;
+import net.thevpc.nuts.core.NAnyBootAwareExceptionBase;
 import net.thevpc.nuts.boot.*;
 import net.thevpc.nuts.boot.reserved.cmdline.NBootArg;
 import net.thevpc.nuts.boot.reserved.cmdline.NBootWorkspaceCmdLineParser;
