@@ -1,6 +1,6 @@
 package net.thevpc.nuts.time;
 
-import net.thevpc.nuts.NI18n;
+import net.thevpc.nuts.core.NI18n;
 import net.thevpc.nuts.elem.NMapBy;
 
 import java.io.Serializable;
