@@ -85,28 +85,43 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.11.0</version>
+
+                <configuration>
+                    <!-- default compilation settings -->
+                    <release>8</release>
+                </configuration>
+
                 <executions>
+                    <!-- Compile module-info.java only on Java 9+ -->
                     <execution>
-                        <id>compile</id>
+                        <id>compile-module-info</id>
                         <phase>compile</phase>
                         <goals>
                             <goal>compile</goal>
                         </goals>
-                    </execution>
-                    <execution>
-                        <id>testCompile</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
+                        <configuration>
+                            <release>9</release>
+                            <compileSourceRoots>
+                                <compileSourceRoot>${project.basedir}/src/main/java9</compileSourceRoot>
+                            </compileSourceRoots>
+                            <includes>
+                                <include>module-info.java</include>
+                            </includes>
+                        </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.2</version>
                 <configuration>
-                    <showDeprecation>true</showDeprecation>
-                    <debug>true</debug>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
+                    <archive>
+                        <manifestEntries>
+                            <Multi-Release>true</Multi-Release>
+                        </manifestEntries>
+                    </archive>
                 </configuration>
             </plugin>
         </plugins>
@@ -159,10 +174,15 @@
                                     <head>Category:</head>
                                 </tag>
                             </tags>
+                            <debug>true</debug>
+                            <jdkToolchain>
+                                <version>1.8</version>
+                            </jdkToolchain>
                         </configuration>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
+                                <phase>compile</phase>
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>
@@ -176,7 +196,6 @@
                         <configuration>
                             <archive>
                                 <manifestEntries>
-                                    <Automatic-Module-Name>net.thevpc.nuts.runtime</Automatic-Module-Name>
                                 </manifestEntries>
                             </archive>
                         </configuration>
@@ -250,10 +269,15 @@
                                     <head>Category:</head>
                                 </tag>
                             </tags>
+                            <debug>true</debug>
+                            <jdkToolchain>
+                                <version>1.8</version>
+                            </jdkToolchain>
                         </configuration>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
+                                <phase>compile</phase>
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>
@@ -281,7 +305,6 @@
                         <configuration>
                             <archive>
                                 <manifestEntries>
-                                    <Automatic-Module-Name>net.thevpc.nuts.runtime</Automatic-Module-Name>
                                 </manifestEntries>
                             </archive>
                         </configuration>
@@ -321,6 +344,6 @@
         </profile>
     </profiles>
     <repositories>
-        <repository><id>thevpc</id><url>https://maven.thevpce.tn</url></repository>
+        <repository><id>thevpc</id><url>https://maven.thevpce.net</url></repository>
     </repositories>
 </project>
