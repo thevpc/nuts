@@ -1,7 +1,7 @@
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.NI18n;
-import net.thevpc.nuts.NWorkspaceBase;
+import net.thevpc.nuts.core.NI18n;
+import net.thevpc.nuts.core.NWorkspaceBase;
 import net.thevpc.nuts.boot.reserved.cmdline.NBootArg;
 import net.thevpc.nuts.boot.reserved.cmdline.NBootCmdLine;
 import net.thevpc.nuts.boot.reserved.cmdline.NBootWorkspaceCmdLineParser;
