@@ -27,6 +27,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NBootException;
 import net.thevpc.nuts.boot.reserved.util.NBootMsg;
+import net.thevpc.nuts.core.NI18n;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMsg;
 
