@@ -1,9 +1,8 @@
 package net.thevpc.nuts.time;
 
-import net.thevpc.nuts.NI18n;
+import net.thevpc.nuts.core.NI18n;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.io.NMemoryPrintStream;
-import net.thevpc.nuts.io.NPlainPrintStream;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.text.NTextStyle;
