@@ -32,6 +32,7 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.boot.NBootWorkspaceAlreadyExistsException;
 import net.thevpc.nuts.boot.NBootWorkspaceNotFoundException;
 import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
+import net.thevpc.nuts.core.NI18n;
 import net.thevpc.nuts.elem.NElementFactory;
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.format.NVersionFormat;
