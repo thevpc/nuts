@@ -1,6 +1,6 @@
 package net.thevpc.nuts.text;
 
-import net.thevpc.nuts.NI18n;
+import net.thevpc.nuts.core.NI18n;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStream;
