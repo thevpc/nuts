@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.core.NI18n;
 import net.thevpc.nuts.util.NMsg;
 
 /**
