@@ -26,8 +26,8 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.NDetachedExceptionBase;
-import net.thevpc.nuts.NExceptionWithExitCodeBase;
+import net.thevpc.nuts.core.NDetachedExceptionBase;
+import net.thevpc.nuts.core.NExceptionWithExitCodeBase;
 import net.thevpc.nuts.boot.reserved.util.NBootMsg;
 
 /**
