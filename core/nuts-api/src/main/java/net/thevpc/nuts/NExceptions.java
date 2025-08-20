@@ -1,5 +1,7 @@
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.core.NExceptionWithExitCodeBase;
+import net.thevpc.nuts.core.NI18n;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
