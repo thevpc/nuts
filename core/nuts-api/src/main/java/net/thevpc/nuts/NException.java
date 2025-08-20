@@ -27,6 +27,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.reserved.util.NBootUtils;
+import net.thevpc.nuts.core.NAnyBootAwareExceptionBase;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NMsg;
 
