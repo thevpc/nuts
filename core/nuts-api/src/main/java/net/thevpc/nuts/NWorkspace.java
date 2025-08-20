@@ -26,6 +26,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
+import net.thevpc.nuts.core.NWorkspaceBase;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.reserved.NScopedWorkspace;
