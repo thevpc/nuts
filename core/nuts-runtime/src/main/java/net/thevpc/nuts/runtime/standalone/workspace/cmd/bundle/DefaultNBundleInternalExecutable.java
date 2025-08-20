@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.bundle;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.core.NI18n;
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.shell.NShellWriter;
