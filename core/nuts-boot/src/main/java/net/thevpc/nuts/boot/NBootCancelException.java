@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.NAnyCancelExceptionBase;
+import net.thevpc.nuts.core.NAnyCancelExceptionBase;
 import net.thevpc.nuts.boot.reserved.util.NBootMsg;
 
 /**
