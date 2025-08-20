@@ -24,10 +24,10 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.NAnyBootAwareExceptionBase;
-import net.thevpc.nuts.NExceptionWithExitCodeBase;
-import net.thevpc.nuts.NI18n;
-import net.thevpc.nuts.NWorkspaceBase;
+import net.thevpc.nuts.core.NAnyBootAwareExceptionBase;
+import net.thevpc.nuts.core.NExceptionWithExitCodeBase;
+import net.thevpc.nuts.core.NI18n;
+import net.thevpc.nuts.core.NWorkspaceBase;
 import net.thevpc.nuts.boot.reserved.cmdline.*;
 import net.thevpc.nuts.boot.reserved.util.*;
 import net.thevpc.nuts.boot.reserved.util.NReservedErrorInfo;
