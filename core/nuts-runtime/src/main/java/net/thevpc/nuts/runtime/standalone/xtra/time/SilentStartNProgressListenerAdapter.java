@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.time;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.core.NI18n;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
