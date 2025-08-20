@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.NWorkspaceBase;
+import net.thevpc.nuts.core.NWorkspaceBase;
 
 /**
  * Class responsible of creating and initializing Workspace
