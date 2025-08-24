@@ -8,6 +8,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 public abstract class NStreamDelegate<T> implements NStream<T> {
+
     public abstract NStream<T> baseStream();
 
     @Override
@@ -54,7 +55,6 @@ public abstract class NStreamDelegate<T> implements NStream<T> {
     public <R> NStream<R> map(Function<? super T, ? extends R> mapper) {
         return baseStream().map(mapper);
     }
-
 
     @Override
     public NStream<T> skip(long n) {
@@ -341,4 +341,10 @@ public abstract class NStreamDelegate<T> implements NStream<T> {
     public boolean anyMatch(Predicate<? super T> predicate) {
         return baseStream().anyMatch(predicate);
     }
+
+    @Override
+    public <V> NStream<V> instanceOf(Class<V> type) {
+        return baseStream().instanceOf(type);
+    }
+
 }
