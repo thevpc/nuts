@@ -1,5 +1,6 @@
 package net.thevpc.nuts.text;
 
+import java.util.Arrays;
 import net.thevpc.nuts.core.NI18n;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
@@ -12,15 +13,18 @@ import java.util.Iterator;
 import java.util.List;
 
 public class NTextBuilderPlain implements NTextBuilder {
-    private StringBuilder sb=new StringBuilder();
+
+    private StringBuilder sb = new StringBuilder();
 
     public NTextBuilderPlain() {
     }
+
     public NTextBuilderPlain(String data) {
-        if(data!=null){
+        if (data != null) {
             sb.append(data);
         }
     }
+
     @Override
     public Iterator<NText> iterator() {
         return Collections.unmodifiableList(getChildren()).iterator();
@@ -44,7 +48,8 @@ public class NTextBuilderPlain implements NTextBuilder {
     @Override
     public NTextStyleGenerator getStyleGenerator() {
         return new NTextStyleGenerator() {
-            private boolean includePlain=false;
+            private boolean includePlain = false;
+
             @Override
             public NTextStyles hash(Object i) {
                 return NTextStyles.of();
@@ -67,7 +72,7 @@ public class NTextBuilderPlain implements NTextBuilder {
 
             @Override
             public NTextStyleGenerator setIncludePlain(boolean includePlain) {
-                this.includePlain=includePlain;
+                this.includePlain = includePlain;
                 return this;
             }
 
@@ -195,60 +200,60 @@ public class NTextBuilderPlain implements NTextBuilder {
 
     @Override
     public NTextBuilder appendCode(String lang, String text) {
-        sb.append(text==null?"":text);
+        sb.append(text == null ? "" : text);
         return this;
     }
 
     @Override
     public NTextBuilder appendHashStyle(Object text) {
-        sb.append(text==null?"":text);
+        sb.append(text == null ? "" : text);
         return this;
     }
 
     @Override
     public NTextBuilder appendRandomStyle(Object text) {
-        sb.append(text==null?"":text);
+        sb.append(text == null ? "" : text);
         return this;
     }
 
     @Override
     public NTextBuilder appendHashStyle(Object text, Object hash) {
-        sb.append(text==null?"":text);
+        sb.append(text == null ? "" : text);
         return this;
     }
 
     @Override
     public NTextBuilder append(Object text, NTextStyle style) {
-        sb.append(text==null?"":text);
+        sb.append(text == null ? "" : text);
         return this;
     }
 
     @Override
     public NTextBuilder append(Object text, NTextStyles styles) {
-        sb.append(text==null?"":text);
+        sb.append(text == null ? "" : text);
         return this;
     }
 
     @Override
     public NTextBuilder append(Object node) {
-        sb.append(node==null?"":node);
+        sb.append(node == null ? "" : node);
         return this;
     }
 
     @Override
     public NTextBuilder append(NText node) {
-        sb.append(node==null?"":node);
+        sb.append(node == null ? "" : node);
         return this;
     }
 
     @Override
     public NTextBuilder appendJoined(Object separator, Collection<?> others) {
-        if(others!=null){
-            boolean first=true;
+        if (others != null) {
+            boolean first = true;
             for (Object other : others) {
-                if(first){
-                    first=false;
-                }else{
+                if (first) {
+                    first = false;
+                } else {
                     append(separator);
                 }
                 append(other);
@@ -259,11 +264,17 @@ public class NTextBuilderPlain implements NTextBuilder {
 
     @Override
     public NTextBuilder appendAll(Collection<?> others) {
-        if(others!=null){
+        if (others != null) {
             for (Object other : others) {
                 append(other);
             }
         }
+        return this;
+    }
+
+    @Override
+    public NTextBuilder delete(int start, int end) {
+        sb.delete(start, end);
         return this;
     }
 
@@ -274,12 +285,12 @@ public class NTextBuilderPlain implements NTextBuilder {
 
     @Override
     public List<NText> getChildren() {
-        return Collections.emptyList();
+        return Arrays.asList(build());
     }
 
     @Override
     public NText subChildren(int from, int to) {
-        if(from==0 && to==1){
+        if (from == 0 && to == 1) {
             return new ImmutableNTextPlain(sb.toString());
         }
         return new ImmutableNTextPlain("");
@@ -287,26 +298,26 @@ public class NTextBuilderPlain implements NTextBuilder {
 
     @Override
     public NText substring(int from, int to) {
-        return new ImmutableNTextPlain(sb.substring(from,to));
+        return new ImmutableNTextPlain(sb.substring(from, to));
     }
 
     @Override
     public NTextBuilder insert(int at, NText... newTexts) {
-        StringBuilder sb2=new StringBuilder();
+        StringBuilder sb2 = new StringBuilder();
         for (NText newText : newTexts) {
             sb2.append(newText);
         }
-        sb.insert(at,sb2);
+        sb.insert(at, sb2);
         return this;
     }
 
     @Override
     public NTextBuilder replace(int from, int to, NText... newTexts) {
-        StringBuilder sb2=new StringBuilder();
+        StringBuilder sb2 = new StringBuilder();
         for (NText newText : newTexts) {
             sb2.append(newText);
         }
-        sb.replace(from,to,sb2.toString());
+        sb.replace(from, to, sb2.toString());
         return this;
     }
 
@@ -317,17 +328,15 @@ public class NTextBuilderPlain implements NTextBuilder {
 
     @Override
     public int size() {
-        return 0;
+        return 1;
     }
 
     @Override
     public NText get(int index) {
+        if(index==0){
+            return build();
+        }
         throw new ArrayIndexOutOfBoundsException(index);
-    }
-
-    @Override
-    public Iterable<NText> items() {
-        return Collections.emptyList();
     }
 
     @Override
@@ -344,13 +353,13 @@ public class NTextBuilderPlain implements NTextBuilder {
 
     @Override
     public NStream<NTextBuilder> lines() {
-        throw new IllegalArgumentException(NMsg.ofC(NI18n.of("not supported method %s"),"lines()").toString());
+        throw new IllegalArgumentException(NMsg.ofC(NI18n.of("not supported method %s"), "lines()").toString());
     }
 
     @Override
     public NTextBuilder readLine() {
         String line = NStringUtils.readLine(sb);
-        if(line==null){
+        if (line == null) {
             return null;
         }
         return new NTextBuilderPlain(line);
@@ -373,7 +382,7 @@ public class NTextBuilderPlain implements NTextBuilder {
 
     @Override
     public boolean isEmpty() {
-        return sb.length()==0;
+        return sb.length() == 0;
     }
 
     @Override
@@ -387,6 +396,7 @@ public class NTextBuilderPlain implements NTextBuilder {
     }
 
     private static class ImmutableNTextPlain implements NTextPlain {
+
         private final String nString;
 
         public ImmutableNTextPlain(String nString) {
