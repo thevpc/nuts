@@ -13,11 +13,12 @@ import java.util.function.Supplier;
 public interface NOptional<T> extends NBlankable {
 
     /**
-     * return the default ExceptionFactory used for generating exceptions
-     * thrown when NOptional::get fails.
-     * When null default implementation falls back to one of
-     * NEmptyOptionalException, NErrorOptionalException (when in NWorkspace context)
-     * NDetachedEmptyOptionalException, NDetachedErrorOptionalException (when no NWorkspace context can be resolved)
+     * return the default ExceptionFactory used for generating exceptions thrown
+     * when NOptional::get fails. When null default implementation falls back to
+     * one of NEmptyOptionalException, NErrorOptionalException (when in
+     * NWorkspace context) NDetachedEmptyOptionalException,
+     * NDetachedErrorOptionalException (when no NWorkspace context can be
+     * resolved)
      *
      * @return default ExceptionFactory
      */
@@ -26,11 +27,12 @@ public interface NOptional<T> extends NBlankable {
     }
 
     /**
-     * set the default ExceptionFactory used for generating exceptions
-     * thrown when NOptional::get fails.
-     * When null default implementation falls back to one of
-     * NEmptyOptionalException, NErrorOptionalException (when in NWorkspace context)
-     * NDetachedEmptyOptionalException, NDetachedErrorOptionalException (when no NWorkspace context can be resolved)
+     * set the default ExceptionFactory used for generating exceptions thrown
+     * when NOptional::get fails. When null default implementation falls back to
+     * one of NEmptyOptionalException, NErrorOptionalException (when in
+     * NWorkspace context) NDetachedEmptyOptionalException,
+     * NDetachedErrorOptionalException (when no NWorkspace context can be
+     * resolved)
      *
      * @return default ExceptionFactory
      */
@@ -245,17 +247,20 @@ public interface NOptional<T> extends NBlankable {
 
     <V> NOptional<V> map(Function<T, V> mapper);
 
+    <V> NOptional<V> instanceOf(Class<V> mapper);
+
     /**
-     * handy method to 'denull' expressions and handle things like <code>a?.b()?.c</code>
-     * That is not possible in the Java Programming Language.
-     * the equivalent code would be :
+     * handy method to 'denull' expressions and handle things like
+     * <code>a?.b()?.c</code> That is not possible in the Java Programming
+     * Language. the equivalent code would be :
      * <pre>
      * NOptional.of(a).then(x->x.b()).then(x->x.c).get()
      * </pre>
      *
-     * @param <V>    final result
+     * @param <V> final result
      * @param mapper function to apply
-     * @return null if this optional is null or empty otherwise, maps using mapper
+     * @return null if this optional is null or empty otherwise, maps using
+     * mapper
      */
     <V> NOptional<V> then(Function<T, V> mapper);
 
@@ -292,7 +297,6 @@ public interface NOptional<T> extends NBlankable {
     NOptional<T> ifEmptyUse(Supplier<NOptional<T>> other);
 
     T get();
-
 
     T get(Supplier<NMsg> message);
 
@@ -383,6 +387,7 @@ public interface NOptional<T> extends NBlankable {
     NStream<T> stream();
 
     interface ExceptionFactory {
+
         RuntimeException createOptionalEmptyException(NMsg message);
 
         RuntimeException createOptionalErrorException(NMsg message, Throwable e);
