@@ -9,7 +9,6 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.reflect.NReflectRepository;
-import net.thevpc.nuts.runtime.standalone.elem.CoreNElementUtils;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryContext;
 import net.thevpc.nuts.runtime.standalone.elem.NElementFactoryService;
 import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
