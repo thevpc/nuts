@@ -434,18 +434,8 @@ public class PixelNTextArtImageRenderer implements NTextArtImageRenderer {
 
     private NText render(BufferedImage img, Function<Dimension, Dimension> dim) {
         Dimension d2 = dim.apply(new Dimension(img.getWidth(), img.getHeight()));
-        try {
-            ImageIO.write(img, "png", new File("/home/vpc/rendered-image-1.png"));
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
         if (d2.width != img.getWidth() || d2.height != img.getHeight()) {
             img = resize(img, d2.width, d2.height);
-        }
-        try {
-            ImageIO.write(img, "png", new File("/home/vpc/rendered-image-2.png"));
-        } catch (IOException ex) {
-            ex.printStackTrace();
         }
         int width = img.getWidth();
         int height = img.getHeight();
