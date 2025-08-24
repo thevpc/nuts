@@ -12,6 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.*;
 
 public class DefaultNTextNodeBuilder extends AbstractNText implements NTextBuilder {
+
     private final List<NText> children = new ArrayList<>();
     private final NTexts txt;
     private NTextStyleGenerator styleGenerator;
@@ -44,6 +45,7 @@ public class DefaultNTextNodeBuilder extends AbstractNText implements NTextBuild
     public String toString() {
         return super.toString();
     }
+
     @Override
     public DefaultNTextNodeBuilder setStyleGenerator(NTextStyleGenerator styleGenerator) {
         this.styleGenerator = styleGenerator;
@@ -122,6 +124,131 @@ public class DefaultNTextNodeBuilder extends AbstractNText implements NTextBuild
             children.add(node);
             flattened = false;
         }
+        return this;
+    }
+
+    @Override
+    public NText substring(int start, int end) {
+        return substringChild(this, start, end);
+    }
+
+    private NText substringChild(NText any, int start, int end) {
+        switch (any.getType()) {
+            case BUILDER: {
+                NTextBuilder curr = (NTextBuilder) any;
+                if (start < 0 || end < start || end > curr.filteredText().length()) {
+                    throw new IndexOutOfBoundsException("Invalid start or end");
+                }
+                DefaultNTextNodeBuilder result = new DefaultNTextNodeBuilder();
+                int pos = 0;
+                for (NText child : curr.getChildren()) {
+                    int childLen = child.filteredText().length();
+                    int childStart = pos;
+                    int childEnd = pos + childLen;
+                    if (childEnd <= start) {
+                        // before range
+                    } else if (childStart >= end) {
+                        // after range
+                        break;
+                    } else {
+                        int subStart = Math.max(start - childStart, 0);
+                        int subEnd = Math.min(end - childStart, childLen);
+                        result.append(substringChild(child, subStart, subEnd)); // delegate to child
+                    }
+                    pos += childLen;
+                }
+                return result.build();
+            }
+            case ANCHOR:
+            case COMMAND:
+            case INCLUDE: {
+                return NText.of("");
+            }
+            case LINK: {
+                NTextLink li = (NTextLink) any;
+                return NText.ofLink(li.getValue().substring(start, end), li.getSeparator());
+            }
+            case TITLE: {
+                NTextTitle li = (NTextTitle) any;
+                return NText.ofTitle(substringChild(li.getChild(), start, end), li.getLevel());
+            }
+            case PLAIN: {
+                NTextPlain li = (NTextPlain) any;
+                return NText.ofPlain(li.getValue().substring(start, end));
+            }
+            case CODE: {
+                NTextCode li = (NTextCode) any;
+                return NText.ofCode(li.getQualifier(), li.getSeparator(), li.getValue().substring(start, end));
+            }
+            case STYLED: {
+                NTextStyled li = (NTextStyled) any;
+                return NText.ofStyled(substringChild(li.getChild(), start, end), li.getStyles());
+            }
+            case LIST: {
+                NTextList curr = (NTextList) any;
+                if (start < 0 || end < start || end > curr.filteredText().length()) {
+                    throw new IndexOutOfBoundsException("Invalid start or end");
+                }
+                List<NText> result = new ArrayList<>();
+                int pos = 0;
+                for (NText child : curr.getChildren()) {
+                    int childLen = child.filteredText().length();
+                    int childStart = pos;
+                    int childEnd = pos + childLen;
+                    if (childEnd <= start) {
+                        // before range
+                    } else if (childStart >= end) {
+                        // after range
+                        break;
+                    } else {
+                        int subStart = Math.max(start - childStart, 0);
+                        int subEnd = Math.min(end - childStart, childLen);
+                        result.add(substringChild(child, subStart, subEnd)); // delegate to child
+                    }
+                    pos += childLen;
+                }
+                return new DefaultNTextList(children.toArray(new NText[0]));
+            }
+            default: {
+                throw new IllegalArgumentException("unsupported");
+            }
+        }
+    }
+
+    @Override
+    public NTextBuilder delete(int start, int end) {
+        if (start < 0 || end < start || end > filteredText().length()) {
+            throw new IndexOutOfBoundsException("Invalid start or end");
+        }
+        int pos = 0;
+        List<NText> newChildren = new ArrayList<>();
+        for (NText child : children) {
+            int childLen = child.filteredText().length();
+            int childStart = pos;
+            int childEnd = pos + childLen;
+
+            if (childEnd <= start) {
+                // Entirely before range → keep as is
+                newChildren.add(child);
+            } else if (childStart >= end) {
+                // Entirely after range → keep as is
+                newChildren.add(child);
+            } else {
+                // Overlap: compute remaining parts
+                int leftEnd = Math.max(start - childStart, 0);
+                int rightStart = Math.min(end - childStart, childLen);
+
+                if (leftEnd > 0) {
+                    newChildren.add(substringChild(child, 0, leftEnd));
+                }
+                if (rightStart < childLen) {
+                    newChildren.add(substringChild(child, rightStart, childLen));
+                }
+            }
+            pos += childLen;
+        }
+        children.clear();
+        children.addAll(newChildren);
         return this;
     }
 
@@ -205,21 +332,21 @@ public class DefaultNTextNodeBuilder extends AbstractNText implements NTextBuild
         return NTextBuilder.of().appendAll(children.subList(from, to)).build();
     }
 
-    public NText substring(int from, int to) {
-        if (to <= from) {
-            return NText.ofPlain("");
-        }
-        int firstIndex = ensureCut(from);
-        if (firstIndex < 0) {
-            return NText.ofPlain("");
-        }
-        int secondIndex = ensureCut(to);
-        if (secondIndex < 0) {
-            //the cut is till the end
-            return NTextBuilder.of().appendAll(children.subList(firstIndex, children.size())).build();
-        }
-        return NTextBuilder.of().appendAll(children.subList(firstIndex, secondIndex)).build();
-    }
+//    public NText substring(int from, int to) {
+//        if (to <= from) {
+//            return NText.ofPlain("");
+//        }
+//        int firstIndex = ensureCut(from);
+//        if (firstIndex < 0) {
+//            return NText.ofPlain("");
+//        }
+//        int secondIndex = ensureCut(to);
+//        if (secondIndex < 0) {
+//            //the cut is till the end
+//            return NTextBuilder.of().appendAll(children.subList(firstIndex, children.size())).build();
+//        }
+//        return NTextBuilder.of().appendAll(children.subList(firstIndex, secondIndex)).build();
+//    }
 
     @Override
     public NTextBuilder insert(int at, NText... newTexts) {
@@ -269,10 +396,6 @@ public class DefaultNTextNodeBuilder extends AbstractNText implements NTextBuild
         return children.get(index);
     }
 
-    @Override
-    public Iterable<NText> items() {
-        return children;
-    }
 
     @Override
     public NTextBuilder flatten() {
@@ -295,7 +418,7 @@ public class DefaultNTextNodeBuilder extends AbstractNText implements NTextBuild
             } else if (z instanceof NTextPlain) {
                 this.children.add(z);
             } else if (z instanceof NTextStyled) {
-                if(((NTextStyled) z).getChild() instanceof NTextList){
+                if (((NTextStyled) z).getChild() instanceof NTextList) {
                     NText z2 = txt.transform(z, new NTextTransformConfig().setFlatten(true));
                 }
                 this.children.add(z);
@@ -316,19 +439,19 @@ public class DefaultNTextNodeBuilder extends AbstractNText implements NTextBuild
         DefaultNTextNodeBuilder z = (DefaultNTextNodeBuilder) copy().flatten();
         return NStream.ofIterator(
                 new Iterator<NTextBuilder>() {
-                    NTextBuilder n;
+            NTextBuilder n;
 
-                    @Override
-                    public boolean hasNext() {
-                        n = z.readLine();
-                        return n != null;
-                    }
+            @Override
+            public boolean hasNext() {
+                n = z.readLine();
+                return n != null;
+            }
 
-                    @Override
-                    public NTextBuilder next() {
-                        return n;
-                    }
-                }
+            @Override
+            public NTextBuilder next() {
+                return n;
+            }
+        }
         );
     }
 
@@ -356,7 +479,6 @@ public class DefaultNTextNodeBuilder extends AbstractNText implements NTextBuild
         }
         return false;
     }
-
 
     public NTextBuilder copy() {
         DefaultNTextNodeBuilder c = new DefaultNTextNodeBuilder();
@@ -479,6 +601,5 @@ public class DefaultNTextNodeBuilder extends AbstractNText implements NTextBuild
     public boolean isBlank() {
         return NBlankable.isBlank(filteredText());
     }
-
 
 }
