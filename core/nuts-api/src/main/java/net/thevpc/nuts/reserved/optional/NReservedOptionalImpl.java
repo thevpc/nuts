@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import net.thevpc.nuts.util.NAssert;
 
 public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneable {
     private ExceptionFactory exceptionFactory;
@@ -28,6 +29,17 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
             return u;
         }
         return NOptional.ofEmpty(getMessage());
+    }
+
+    @Override
+    public <V> NOptional<V> instanceOf(Class<V> type) {
+        NAssert.requireNonNull(type,"type");
+        return map(a->{
+            if(type.isInstance(a)){
+                return (V)a;
+            }
+            return null;
+        });
     }
 
     @Override
@@ -146,7 +158,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
         }
         return map(mapper);
     }
-
+    
     @Override
     public <V> NOptional<V> map(Function<T, V> mapper) {
         Objects.requireNonNull(mapper);
