@@ -22,7 +22,7 @@ import java.util.logging.Level;
 
 public class NIOUtils {
 
-    public static final int DEFAULT_BUFFER_SIZE = 10*4*1024;
+    public static final int DEFAULT_BUFFER_SIZE = 10 * 4 * 1024;
 
     public static String normalizePath(String names) {
         String string = String.join("/", normalizePathNames(NStringUtils.split(names, "/\\", false, true)));
@@ -100,7 +100,8 @@ public class NIOUtils {
     }
 
     /**
-     * return normalized file name by replacing any special character with a space and trimming the result
+     * return normalized file name by replacing any special character with a
+     * space and trimming the result
      *
      * @param name fine name to normalize
      * @return normalized string without accents
@@ -148,7 +149,7 @@ public class NIOUtils {
     /**
      * copy input to output
      *
-     * @param in  entree
+     * @param in entree
      * @param out sortie
      */
     public static long copy(Reader in, Writer out) {
@@ -158,7 +159,7 @@ public class NIOUtils {
     /**
      * copy input to output
      *
-     * @param in  entree
+     * @param in entree
      * @param out sortie
      * @return size copied
      */
@@ -169,8 +170,8 @@ public class NIOUtils {
     /**
      * copy input stream to output stream using the buffer size in bytes
      *
-     * @param in         entree
-     * @param out        sortie
+     * @param in entree
+     * @param out sortie
      * @param bufferSize bufferSize
      * @return size copied
      */
@@ -195,8 +196,8 @@ public class NIOUtils {
     /**
      * copy input stream to output stream using the buffer size in bytes
      *
-     * @param in         entree
-     * @param out        sortie
+     * @param in entree
+     * @param out sortie
      * @param bufferSize bufferSize
      */
     public static long copy(Reader in, Writer out, int bufferSize) {
@@ -594,7 +595,7 @@ public class NIOUtils {
     }
 
     private static boolean Arrays_equals(byte[] a, int aFromIndex, int aToIndex,
-                                         byte[] b, int bFromIndex, int bToIndex) {
+            byte[] b, int bFromIndex, int bToIndex) {
         //method added in JDK 9
         int aLength = aToIndex - aFromIndex;
         int bLength = bToIndex - bFromIndex;
@@ -671,6 +672,10 @@ public class NIOUtils {
         }
     }
 
+    public static String readString(InputStream from) {
+        return new String(readBytes(from));
+    }
+
     public static byte[] readBytes(InputStream from) {
         return readBytes(from, -1);
     }
@@ -730,6 +735,5 @@ public class NIOUtils {
             throw new UncheckedIOException(ex);
         }
     }
-
 
 }
