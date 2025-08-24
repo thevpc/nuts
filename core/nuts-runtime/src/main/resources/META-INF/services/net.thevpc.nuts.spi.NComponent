@@ -81,11 +81,11 @@ net.thevpc.nuts.runtime.standalone.descriptor.format.DefaultNDescriptorFormat
 net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionFormat
 net.thevpc.nuts.runtime.standalone.dependency.format.DefaultNDependencyFormat
 
-net.thevpc.nuts.runtime.standalone.format.elem.DefaultNElements
-net.thevpc.nuts.runtime.standalone.format.elem.DefaultNElementFactory
-net.thevpc.nuts.runtime.standalone.format.elem.DefaultNElementFormat
-net.thevpc.nuts.runtime.standalone.format.elem.writer.DefaultNElementWriter
-net.thevpc.nuts.runtime.standalone.format.elem.parser.DefaultNElementParser
+net.thevpc.nuts.runtime.standalone.elem.DefaultNElements
+net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactory
+net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFormat
+net.thevpc.nuts.runtime.standalone.elem.writer.DefaultNElementWriter
+net.thevpc.nuts.runtime.standalone.elem.parser.DefaultNElementParser
 
 net.thevpc.nuts.runtime.standalone.text.DefaultNTexts
 net.thevpc.nuts.runtime.standalone.text.highlighter.JavaCodeHighlighter
@@ -163,3 +163,4 @@ net.thevpc.nuts.runtime.standalone.xtra.rnsh.RnshExecCmdExtension
 net.thevpc.nuts.runtime.standalone.util.DefaultNConnexionStringBuilderFactory
 
 net.thevpc.nuts.runtime.standalone.definition.NDefinitionFactoryImpl
+net.thevpc.nuts.runtime.standalone.text.art.NTextArtImpl
