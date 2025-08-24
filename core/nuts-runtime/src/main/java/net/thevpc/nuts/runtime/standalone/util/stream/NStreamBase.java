@@ -3,26 +3,24 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  *
  * <br>
  * <p>
- * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
- * you may  not use this file except in compliance with the License. You may obtain
- * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the GNU LESSER GENERAL PUBLIC
+ * LICENSE Version 3 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * https://www.gnu.org/licenses/lgpl-3.0.en.html Unless required by applicable
+ * law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
+ * <br> ====================================================================
  */
 package net.thevpc.nuts.runtime.standalone.util.stream;
 
@@ -49,7 +47,6 @@ public abstract class NStreamBase<T> implements NStream<T> {
     public NStreamBase(String nutsBase) {
         this.nutsBase = nutsBase;
     }
-
 
     private static <T> BinaryOperator<T> throwingMerger() {
         return (u, v) -> {
@@ -81,7 +78,6 @@ public abstract class NStreamBase<T> implements NStream<T> {
         return stream().collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-
     @Override
     public NOptional<T> findLast() {
         T t = null;
@@ -89,10 +85,10 @@ public abstract class NStreamBase<T> implements NStream<T> {
         while (it.hasNext()) {
             t = it.next();
         }
-        return NOptional.ofEmpty(() ->
-                nutsBase == null ?
-                        NMsg.ofPlain("missing last") :
-                        NMsg.ofC("missing last %s", nutsBase)
+        return NOptional.ofEmpty(()
+                -> nutsBase == null
+                        ? NMsg.ofPlain("missing last")
+                        : NMsg.ofC("missing last %s", nutsBase)
         );
     }
 
@@ -109,10 +105,10 @@ public abstract class NStreamBase<T> implements NStream<T> {
             }
             return NOptional.of(t);
         } else {
-            return NOptional.ofEmpty(() ->
-                    nutsBase == null ?
-                            NMsg.ofPlain("missing") :
-                            NMsg.ofC("missing %s", nutsBase)
+            return NOptional.ofEmpty(()
+                    -> nutsBase == null
+                            ? NMsg.ofPlain("missing")
+                            : NMsg.ofC("missing %s", nutsBase)
             );
         }
     }
@@ -160,8 +156,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
             @Override
             public NIterator<T> iterator() {
                 NIterator<T> it = NStreamBase.this.iterator();
-                return NIteratorUtils.sort(it, null, false)
-                        ;
+                return NIteratorUtils.sort(it, null, false);
             }
         };
     }
@@ -172,8 +167,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
             @Override
             public NIterator<T> iterator() {
                 NIterator<T> it = NStreamBase.this.iterator();
-                return NIteratorUtils.sort(it, comp, false)
-                        ;
+                return NIteratorUtils.sort(it, comp, false);
             }
         };
     }
@@ -184,8 +178,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
             @Override
             public NIterator<T> iterator() {
                 NIterator<T> it = NStreamBase.this.iterator();
-                return NIteratorUtils.distinct(it)
-                        ;
+                return NIteratorUtils.distinct(it);
             }
         };
     }
@@ -196,8 +189,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
             @Override
             public NIterator<T> iterator() {
                 NIterator<T> it = NStreamBase.this.iterator();
-                return NIteratorUtils.distinct(it, condition)
-                        ;
+                return NIteratorUtils.distinct(it, condition);
             }
         };
     }
@@ -233,8 +225,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
             @Override
             public NIterator<T> iterator() {
                 NIterator<T> it = NStreamBase.this.iterator();
-                return NIteratorBuilder.of(it).filter(NPredicate.of(predicate)).build()
-                        ;//,"mapped("+it+")"
+                return NIteratorBuilder.of(it).filter(NPredicate.of(predicate)).build();//,"mapped("+it+")"
             }
         };
     }
@@ -256,8 +247,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
             public NIterator<T> iterator() {
                 NIterator<T> it = NStreamBase.this.iterator();
                 List<NIterator<? extends T>> iterators = Arrays.asList(it, other);
-                return NIteratorUtils.coalesce(iterators)
-                        ;//,"mapped("+it+")"
+                return NIteratorUtils.coalesce(iterators);//,"mapped("+it+")"
             }
         };
     }
@@ -269,8 +259,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
             public NIterator<T> iterator() {
                 NIterator<T> it = NStreamBase.this.iterator();
                 List<NIterator<? extends T>> iterators = Arrays.asList(it, other);
-                return NIteratorUtils.concat(iterators)
-                        ;//,"mapped("+it+")"
+                return NIteratorUtils.concat(iterators);//,"mapped("+it+")"
             }
         };
     }
@@ -282,8 +271,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
             public NIterator<T> iterator() {
                 NIterator<T> it = NStreamBase.this.iterator();
                 List<NIterator<? extends T>> iterators = Arrays.asList(it, other.iterator());
-                return NIteratorUtils.coalesce(iterators)
-                        ;//,"mapped("+it+")"
+                return NIteratorUtils.coalesce(iterators);//,"mapped("+it+")"
             }
         };
     }
@@ -295,8 +283,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
             public NIterator<T> iterator() {
                 NIterator<T> it = NStreamBase.this.iterator();
                 List<NIterator<? extends T>> iterators = Arrays.asList(it, other.iterator());
-                return NIteratorUtils.concat(iterators)
-                        ;//,"mapped("+it+")"
+                return NIteratorUtils.concat(iterators);//,"mapped("+it+")"
             }
         };
     }
@@ -353,35 +340,33 @@ public abstract class NStreamBase<T> implements NStream<T> {
 
     @Override
     public int[] toIntArray() {
-        return mapToInt(x->((Number)x).intValue()).toArray();
+        return mapToInt(x -> ((Number) x).intValue()).toArray();
     }
 
     @Override
     public long[] toLongArray() {
-        return mapToLong(x->((Number)x).longValue()).toArray();
+        return mapToLong(x -> ((Number) x).longValue()).toArray();
     }
 
     @Override
     public double[] toDoubleArray() {
-        return mapToDouble(x->((Number)x).doubleValue()).toArray();
+        return mapToDouble(x -> ((Number) x).doubleValue()).toArray();
     }
 
-
     @Override
-    public IntStream mapToInt(ToIntFunction<? super T> mapper){
+    public IntStream mapToInt(ToIntFunction<? super T> mapper) {
         return stream().mapToInt(mapper);
     }
 
     @Override
-    public LongStream mapToLong(ToLongFunction<? super T> mapper){
+    public LongStream mapToLong(ToLongFunction<? super T> mapper) {
         return stream().mapToLong(mapper);
     }
 
     @Override
-    public DoubleStream mapToDouble(ToDoubleFunction<? super T> mapper){
+    public DoubleStream mapToDouble(ToDoubleFunction<? super T> mapper) {
         return stream().mapToDouble(mapper);
     }
-
 
     @Override
     public <A> A[] toArray(IntFunction<A[]> generator) {
@@ -390,19 +375,19 @@ public abstract class NStreamBase<T> implements NStream<T> {
 
     @Override
     public <K, U> Map<K, U> toMap(Function<? super T, ? extends K> keyMapper,
-                                  Function<? super T, ? extends U> valueMapper) {
+            Function<? super T, ? extends U> valueMapper) {
         return stream().collect(Collectors.toMap(keyMapper, valueMapper));
     }
 
     @Override
     public <K, U> Map<K, U> toOrderedMap(Function<? super T, ? extends K> keyMapper,
-                                         Function<? super T, ? extends U> valueMapper) {
+            Function<? super T, ? extends U> valueMapper) {
         return stream().collect(Collectors.toMap(keyMapper, valueMapper, throwingMerger(), LinkedHashMap::new));
     }
 
     @Override
     public <K, U> Map<K, U> toSortedMap(Function<? super T, ? extends K> keyMapper,
-                                        Function<? super T, ? extends U> valueMapper) {
+            Function<? super T, ? extends U> valueMapper) {
         return stream().collect(Collectors.toMap(keyMapper, valueMapper, throwingMerger(), TreeMap::new));
     }
 
@@ -424,8 +409,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
                 NIteratorBuilder<T> r = NIteratorBuilder.of(NStreamBase.this.iterator());
                 return (NIterator<R>) r.flatMap(
                         NFunction.of(tt -> mapper.apply((T) tt).iterator()).redescribe(() -> NFunction.of(mapper).describe())
-                ).build()
-                        ;
+                ).build();
             }
         };
     }
@@ -439,8 +423,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
                         .flatMap(
                                 NFunction.of(t -> Arrays.asList(mapper.apply((T) t)).iterator())
                                         .redescribe(() -> NFunction.of(mapper).describe())
-                        ).build()
-                        ;
+                        ).build();
             }
         };
     }
@@ -465,8 +448,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
                 return (NIterator<R>) NIteratorBuilder.of(NStreamBase.this.iterator())
                         .flatMap(
                                 NFunction.of(t -> mapper.apply(t).iterator())
-                        ).build().redescribe(() -> NFunction.of(mapper).describe())
-                        ;
+                        ).build().redescribe(() -> NFunction.of(mapper).describe());
             }
         };
     }
@@ -483,12 +465,12 @@ public abstract class NStreamBase<T> implements NStream<T> {
         Set<Map.Entry<K, List<T>>> entries = (Set) it.collect(Collectors.groupingBy(classifier)).entrySet();
         return new NStreamFromNIterator<Map.Entry<K, List<T>>>(
                 nutsBase, NIterator.of(entries.iterator()).redescribe(
-                () -> NElement.ofObjectBuilder()
-                        .name("GroupBy")
-                        .set("by", NFunction.of(classifier).describe())
-                        .set("base", iterator().describe())
-                        .build()
-        )
+                        () -> NElement.ofObjectBuilder()
+                                .name("GroupBy")
+                                .set("by", NFunction.of(classifier).describe())
+                                .set("base", iterator().describe())
+                                .build()
+                )
         );
     }
 
@@ -503,10 +485,10 @@ public abstract class NStreamBase<T> implements NStream<T> {
         if (it.hasNext()) {
             return NOptional.of(it.next());
         }
-        return NOptional.ofEmpty(() ->
-                nutsBase == null ?
-                        NMsg.ofPlain("missing first") :
-                        NMsg.ofC("missing first %s", nutsBase)
+        return NOptional.ofEmpty(()
+                -> nutsBase == null
+                        ? NMsg.ofPlain("missing first")
+                        : NMsg.ofC("missing first %s", nutsBase)
         );
     }
 
@@ -583,11 +565,11 @@ public abstract class NStreamBase<T> implements NStream<T> {
             @Override
             public NIterator<T> iterator() {
                 NIterator<T> iterator = NStreamBase.this.iterator();
-                int count=0;
-                while(count<n){
-                    if(iterator.hasNext()){
+                int count = 0;
+                while (count < n) {
+                    if (iterator.hasNext()) {
                         iterator.next();
-                    }else{
+                    } else {
                         return iterator;
                     }
                     count++;
@@ -595,6 +577,17 @@ public abstract class NStreamBase<T> implements NStream<T> {
                 return iterator;
             }
         };
+    }
+
+    @Override
+    public <V> NStream<V> instanceOf(Class<V> type) {
+        NAssert.requireNonNull(type, "type");
+        return map(a -> {
+            if (type.isInstance(a)) {
+                return (V) a;
+            }
+            return null;
+        }).nonNull();
     }
 
     @Override
