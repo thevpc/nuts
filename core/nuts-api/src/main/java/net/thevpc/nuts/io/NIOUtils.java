@@ -3,7 +3,7 @@ package net.thevpc.nuts.io;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NUnexpectedException;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -149,7 +149,7 @@ public class NIOUtils {
     /**
      * copy input to output
      *
-     * @param in entree
+     * @param in  entree
      * @param out sortie
      */
     public static long copy(Reader in, Writer out) {
@@ -159,7 +159,7 @@ public class NIOUtils {
     /**
      * copy input to output
      *
-     * @param in entree
+     * @param in  entree
      * @param out sortie
      * @return size copied
      */
@@ -170,8 +170,8 @@ public class NIOUtils {
     /**
      * copy input stream to output stream using the buffer size in bytes
      *
-     * @param in entree
-     * @param out sortie
+     * @param in         entree
+     * @param out        sortie
      * @param bufferSize bufferSize
      * @return size copied
      */
@@ -196,8 +196,8 @@ public class NIOUtils {
     /**
      * copy input stream to output stream using the buffer size in bytes
      *
-     * @param in entree
-     * @param out sortie
+     * @param in         entree
+     * @param out        sortie
      * @param bufferSize bufferSize
      */
     public static long copy(Reader in, Writer out, int bufferSize) {
@@ -400,14 +400,15 @@ public class NIOUtils {
                     try {
                         Files.delete(file);
                         if (LOG != null) {
-                            LOG.with().level(Level.FINEST).verb(NLogVerb.WARNING).log(
-                                    NMsg.ofC("delete file %s", file));
+                            LOG.log(
+                                    NMsg.ofC("delete file %s", file).asFineAlert());
                         }
                         deleted[0]++;
                     } catch (IOException e) {
                         if (LOG != null) {
-                            LOG.with().level(Level.FINEST).verb(NLogVerb.WARNING)
+                            LOG
                                     .log(NMsg.ofC("failed deleting file : %s", file)
+                                            .asFineAlert()
                                     );
                         }
                         deleted[2]++;
@@ -425,14 +426,14 @@ public class NIOUtils {
                     try {
                         Files.delete(dir);
                         if (LOG != null) {
-                            LOG.with().level(Level.FINEST).verb(NLogVerb.WARNING)
-                                    .log(NMsg.ofC("delete folder %s", dir));
+                            LOG.log(NMsg.ofC("delete folder %s", dir)
+                                    .asFineAlert());
                         }
                         deleted[1]++;
                     } catch (IOException e) {
                         if (LOG != null) {
-                            LOG.with().level(Level.FINEST).verb(NLogVerb.WARNING)
-                                    .log(NMsg.ofC("failed deleting folder: %s", dir)
+                            LOG.log(NMsg.ofC("failed deleting folder: %s", dir)
+                                            .asFineAlert()
                                     );
                         }
                         deleted[2]++;
@@ -595,7 +596,7 @@ public class NIOUtils {
     }
 
     private static boolean Arrays_equals(byte[] a, int aFromIndex, int aToIndex,
-            byte[] b, int bFromIndex, int bToIndex) {
+                                         byte[] b, int bFromIndex, int bToIndex) {
         //method added in JDK 9
         int aLength = aToIndex - aFromIndex;
         int bLength = bToIndex - bFromIndex;
