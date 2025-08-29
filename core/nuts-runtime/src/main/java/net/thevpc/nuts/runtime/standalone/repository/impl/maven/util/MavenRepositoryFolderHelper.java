@@ -53,7 +53,7 @@ import net.thevpc.nuts.DefaultNVersion;
 import net.thevpc.nuts.runtime.standalone.repository.NIdPathIterator;
 import net.thevpc.nuts.runtime.standalone.repository.NIdPathIteratorBase;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
-import net.thevpc.nuts.log.NLogOp;
+
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.NMsg;
 
@@ -69,10 +69,6 @@ public class MavenRepositoryFolderHelper {
     public MavenRepositoryFolderHelper(NRepository repo, NPath rootPath) {
         this.repo = repo;
         this.rootPath = rootPath;
-    }
-
-    protected NLogOp _LOGOP() {
-        return _LOG().with();
     }
 
     protected NLog _LOG() {
@@ -220,8 +216,7 @@ public class MavenRepositoryFolderHelper {
                                     old = new MavenMetadataParser().parseMavenMetaData(metadataxml);
                                 }
                             } catch (Exception ex) {
-                                _LOGOP().level(Level.SEVERE).error(ex)
-                                        .log(NMsg.ofJ("failed to parse metadata xml for {0} : {1}", metadataxml, ex));
+                                _LOG().log(NMsg.ofJ("failed to parse metadata xml for {0} : {1}", metadataxml, ex).asFinestFail(ex));
                                 //ignore any error!
                             }
                             MavenMetadata m = new MavenMetadata();
