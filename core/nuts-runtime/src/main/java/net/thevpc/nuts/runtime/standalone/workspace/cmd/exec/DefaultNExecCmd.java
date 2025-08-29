@@ -5,7 +5,7 @@ import net.thevpc.nuts.NConstants;
 
 import net.thevpc.nuts.NIdLocation;
 
-import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
@@ -403,9 +403,11 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                                 descriptor = NWorkspace.of().resolveEffectiveDescriptor(descriptor, new NDescriptorEffectiveConfig().setIgnoreCurrentEnvironment(true));
                             } catch (NNotFoundException ex) {
                                 //ignore
-                                _LOGOP().level(Level.WARNING).verb(NLogVerb.WARNING)
+                                _LOG()
                                         .log(NMsg.ofC("executable artifact descriptor found, but one of its parents or dependencies is not: %s : missing %s", descriptor.getId(),
-                                                ex.getId()));
+                                                ex.getId())
+                                                .asWarningAlert()
+                                        );
                                 throw ex;
                             }
                             NId _id = descriptor.getId();
