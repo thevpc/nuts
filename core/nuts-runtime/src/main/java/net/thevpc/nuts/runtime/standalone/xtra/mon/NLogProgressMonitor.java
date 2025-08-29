@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.mon;
 import net.thevpc.nuts.util.NMemorySizeFormat;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
+
 import net.thevpc.nuts.time.NProgressHandler;
 import net.thevpc.nuts.time.NProgressHandlerEvent;
 
@@ -25,8 +25,7 @@ public class NLogProgressMonitor implements NProgressHandler {
     @Override
     public void onEvent(NProgressHandlerEvent event) {
         NMsg message = event.getModel().getMessage();
-        NLogOp w = logger.with().level(message.getLevel() == null ? Level.INFO : message.getLevel());
-        w.log(message);
+        logger.log(message.withLevel(message.getLevel() == null ? Level.INFO : message.getLevel()));
     }
 
 }
