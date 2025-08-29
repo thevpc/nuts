@@ -21,11 +21,17 @@
     <link rel="stylesheet" type="text/css" href="assets/vendor/highlight.js/styles/github.css"/>
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-landing.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/caroussel.css"/>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Smooch+Sans:wght@100..900&display=swap" rel="stylesheet">
-
+    <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-java.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/normalize-whitespace/prism-normalize-whitespace.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="assets/css/code.css"/>
 </head>
 
 <body data-spy="scroll" data-target=".idocs-navigation" data-offset="125">
@@ -43,10 +49,10 @@
 
 <!-- Document Wrapper   
 =============================== -->
-<div id="main-wrapper"  class="index-main-wrapper">
+<div id="main-wrapper" class="index-main-wrapper">
 
     {{:: pageId='landing'}}
-    {{:include $'$projectRoot/src/include/template/v1/11-header.html'}}
+    {{:include $'$projectRoot/src/include/template/v1/11-header-nuts.html'}}
 
     <!-- Content
     ============================ -->
@@ -71,27 +77,149 @@
                     <!------------------- -->
                     <div class="container">
                         <div class="row">
-                            <div class="col col--4">
-                                <div class="text--center"><img class="feature-anim-down" src="assets/images/slim-jar.png"><div class="glow-wrap"><i class="glow"></i></div></div>
+                            <div class="col col-4">
+                                <div class="text--center"><img class="feature-anim-down img-icon"
+                                                               src="assets/images/slim-jar.png">
+                                    <div class="glow-wrap"><i class="glow"></i></div>
+                                </div>
                                 <h3 class="feature-title">No Fat Jar</h3>
-                                <p>Developers, forget about <i>big jars</i>, <i>uber jars</i> and <i>fat jars</i> hassle. <strong>You do not need</strong> <i> to
-                                    bother about packaging your dependencies</i> along with your application. Dependencies will be downloaded automatically on install time.</p>
-                                Your <code>pom.xml</code> would never be lighter.
+                                <p>Developers, say goodbye to the hassle of <i>big jars</i>! Forget packaging
+                                    dependencies with your application—they'll be downloaded automatically when you
+                                    install.
+                                    This means your <code>pom.xml</code> file will be much smaller.
                             </div>
                             <div class="col col--4">
-                                <div class="text--center"><img class="feature-anim-down" src="assets/images/package.png"><div class="glow-wrap"><i class="glow"></i></div></div>
+                                <div class="text--center"><img class="feature-anim-down img-icon"
+                                                               src="assets/images/package.png">
+                                    <div class="glow-wrap"><i class="glow"></i></div>
+                                </div>
                                 <h3 class="feature-title">Any application</h3>
-                                <p>Install any java application with a command as simple as : <span style="font-family: 'Courier New'; font-weight: bolder; color: #3a3a3a">nuts install <span style="font-family: 'Courier New'; font-weight: bolder; color: #5e1700">&lt;your-package&gt;</span></span>. Dependencies
-                                    are
-                                    shared across all installed applications and you still can install and run <strong>multiple versions</strong>
-                                    of the
-                                    same application.</p>
-                                <p>All <code>maven</code> built applications are already <code>nuts</code> aware.</p>
+                                <p>Installing a Java application is as easy as running the command <span
+                                        style="font-family: 'Courier New'; font-weight: bolder; color: #3a3a3a">nuts install <span
+                                        style="font-family: 'Courier New'; font-weight: bolder; color: #5e1700">&lt;your-package&gt;</span></span>.
+                                    Nuts manages dependencies and allows you to install and run <strong>multiple
+                                        versions</strong> of the same application. Plus, any application built with
+                                    Maven is already <code>nuts</code>-aware!
                             </div>
                             <div class="col col--4">
-                                <div class="text--center"><img class="feature-anim-down" src="assets/images/gear.png"><div class="glow-wrap"><i class="glow"></i></div></div>
+                                <div class="text--center"><img class="feature-anim-down img-icon"
+                                                               src="assets/images/gear.png">
+                                    <div class="glow-wrap"><i class="glow"></i></div>
+                                </div>
                                 <h3 class="feature-title">Automate</h3>
-                                <p>Take advantage of <strong>nuts toolbox</strong> which offers a <strong>java based and portable GNU binutils</strong> implementation (<code>bash</code>, <code>ls</code>, <code>cp</code>, etc.), and extend them to support <strong>JSON</strong> and <strong>XML</strong> (and more) output formats to help automation using portable, idempotent, predictable, scriptable and debuggable commands.</p>
+                                <p>Use the nuts toolbox, which provides a portable, Java-based version of common GNU
+                                    commands like <code>bash</code>, <code>ls</code>, and <code>cp</code>. These
+                                    commands are enhanced to support output formats like JSON and XML, making your
+                                    automation scripts more predictable, debuggable, and easy to use.</p>
+                            </div>
+                            <div class="col col-12">
+                                <div class="carousel-container">
+                                    <div class="carousel-slides">
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-subtitle">Why Nuts?</h3>
+                                                <p>Traditional package managers solve build-time dependencies but fail at runtime execution, multi-version management, and polyglot distribution. Nuts fills that gap as a universal runtime package manager. When combined with NAF, it forms a complete ecosystem: build rich portable apps with NAF, distribute and execute them anywhere with Nuts.</p>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-subtitle">Install & Manage Versions</h3>
+                                                <p>Nuts makes installing applications effortless. You can install specific versions (even multiple side by side), grab the latest release, or uninstall when done — all with a single command.</p>
+                                                <pre>
+                                                    <code class="language-bash">
+nuts install net.thevpc.app:netbeans-launcher#1.2.2   # Install a specific version
+nuts install net.thevpc.app:netbeans-launcher         # Install latest version if none exists
+nuts uninstall net.thevpc.app:netbeans-launcher#1.2.2 # Uninstall a specific version
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-subtitle">Run Anywhere, Any Version</h3>
+                                                <p>Run applications directly, whether installed or not. Nuts installs missing versions on-the-fly, lets you pin exact releases, and updates seamlessly.</p>
+                                                <pre>
+                                                    <code class="bash">
+nuts netbeans-launcher           # Run the active version (installs if missing)
+nuts netbeans-launcher#1.2.2     # Run a specific version (installs if missing)
+nuts update netbeans-launcher    # Check for and apply updates
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-subtitle">Search Made Easy</h3>
+                                                <p>Find what you need quickly with Nuts’ powerful search. Look locally, remotely, or everywhere at once. Filter by platform, packaging, or latest versions, and even preview execution plans.</p>
+                                                <pre>
+                                                    <code class="language-bash">
+nuts search -l --offline netbeans*                      # Search locally (installed & cached)
+nuts search -online -l --latest --distinct --sorted \   # Search remote repos for latest jars
+   --os=windows --packaging=jar netbeans*
+nuts search -online -l --describe netbeans*             # Show search plan (TSON format)
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-subtitle">Built-in Help Anywhere</h3>
+                                                <p>Never get lost. Nuts provides detailed help for the CLI itself, or for any installed application, right when you need it.</p>
+                                                <pre>
+                                                    <code class="language-bash">
+nuts help                        # Show help on Nuts CLI
+nuts help netbeans-launcher       # Show help for an app
+nuts netbeans-launcher --help     # Same as above, directly from the app
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-subtitle">Customize with Aliases & Settings</h3>
+                                                <p>Tailor Nuts to your workflow by creating command aliases, managing repositories, or resolving commands to see where they come from.</p>
+                                                <pre>
+                                                    <code class="language-bash">
+nuts settings add alias ls='nsh -c ls'  # Create alias 'ls' → run 'nsh -c ls'
+nuts settings list repos                # List configured repositories
+nuts which ls                           # Resolve if 'ls' is internal, alias, or system cmd
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-subtitle">Run as Different Users or Modes</h3>
+                                                <p>Switch execution contexts with ease. Run as root, sudo, or another user. Use embedded mode to avoid starting a new JVM, or exec mode for controlled execution.</p>
+                                                <pre>
+                                                    <code class="language-bash">
+nuts --as-root netbeans-launcher     # Run as root
+nuts --as-user:vpc netbeans-launcher # Run as user 'vpc'
+nuts --sudo netbeans-launcher        # Run with sudo privileges
+nuts --embedded netbeans-launcher    # Run in current JVM (embedded)
+nuts --exec netbeans-launcher        # Run in exec mode (like default run)
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-subtitle">Automate & Distribute Execution</h3>
+                                                <p>Nuts isn’t just about local runs — it’s built for automation and remote execution. Schedule tasks with cron, or run commands seamlessly on remote machines.</p>
+                                                <pre>
+                                                    <code class="language-bash">
+nuts --exec --cron "* * * * *" ls                 # Run 'ls' every minute (cron)
+nuts --exec --target="ssh://myuser@myserver" ls   # Run 'ls' remotely over SSH
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="carousel-controls">
+                                        <button id="prevBtn">&lt;</button>
+                                        <button id="nextBtn">&gt;</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -148,5 +276,7 @@
 <script src="assets/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
 <!-- Custom Script -->
 <script src="assets/js/theme.js"></script>
+<script src="assets/js/caroussel.js"></script>
+<script src="assets/js/code.js"></script>
 </body>
 </html>
