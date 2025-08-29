@@ -1,5 +1,8 @@
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.spi.NSupportLevelContext;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -381,5 +384,10 @@ public class DefaultNConnexionStringBuilder implements Cloneable, NConnexionStri
             return copy().setPath(NStringUtils.pjoin("/", path, child));
         }
         return this;
+    }
+
+    @Override
+    public int getSupportLevel(NSupportLevelContext context) {
+        return NConstants.Support.DEFAULT_SUPPORT;
     }
 }
