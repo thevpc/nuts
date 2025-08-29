@@ -10,8 +10,8 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathPermission;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.NLocationKey;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
@@ -146,9 +146,9 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
             }
             return NVersionCompat.of(version).parseConfig(bytes);
         } catch (Exception ex) {
-            _LOG().with().level(Level.SEVERE).verb(NLogVerb.FAIL)
+            _LOG()
                     .log(NMsg.ofC("erroneous workspace config file. Unable to load file %s : %s",
-                            file, ex));
+                            file, ex).asError(ex));
             throw new NIOException(NMsg.ofC("unable to load config file %s", file), ex);
         }
     }
@@ -252,10 +252,9 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
         if (workspace.isReadOnly()) {
             throw new NIOException(NMsg.ofC("error loading repository %s", file), ex);
         }
-        NLogOp _LOG = _LOG().with();
         String fileName = "nuts-repository" + (name == null ? "" : ("-") + name) + (uuid == null ? "" : ("-") + uuid) + "-" + Instant.now().toString();
-        _LOG.level(Level.SEVERE).verb(NLogVerb.FAIL).log(
-                NMsg.ofC("erroneous repository config file. Unable to load file %s : %s", file, ex));
+        _LOG().log(
+                NMsg.ofC("erroneous repository config file. Unable to load file %s : %s", file, ex).asError());
         NPath logError = workspace.getStoreLocation(workspace.getApiId(), NStoreType.LOG)
                 .resolve("invalid-config");
         try {
@@ -264,8 +263,8 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
             throw new NIOException(NMsg.ofC("unable to log repository error while loading config file %s : %s", file, ex1), ex);
         }
         NPath newfile = logError.resolve(fileName + ".json");
-        _LOG.level(Level.SEVERE).verb(NLogVerb.FAIL)
-                .log(NMsg.ofC("erroneous repository config file will be replaced by a fresh one. Old config is copied to %s", newfile));
+        _LOG()
+                .log(NMsg.ofC("erroneous repository config file will be replaced by a fresh one. Old config is copied to %s", newfile).asError());
         try {
             Files.move(file.toPath().get(), newfile.toPath().get());
         } catch (IOException e) {
@@ -343,8 +342,8 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
                         return loadInstallInfoConfig(u.getId());
                     }
                 } catch (Exception ex) {
-                    _LOG().with().error(ex)
-                            .log(NMsg.ofC("unable to parse %s", path));
+                    _LOG()
+                            .log(NMsg.ofC("unable to parse %s", path).asError(ex));
                 }
                 return null;
             }
@@ -404,8 +403,8 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
                 }
                 if (changeStatus && !workspace.isReadOnly()) {
                     NLock.ofPath(path).callWith(() -> {
-                                _LOG().with().level(Level.CONFIG)
-                                        .log(NMsg.ofC("install-info upgraded %s", path));
+                                _LOG()
+                                        .log(NMsg.ofC("install-info upgraded %s", path).asConfig());
                                 c.setConfigVersion(workspace.getApiVersion());
                                 NElementWriter.ofJson().write(c, path);
                                 return null;
@@ -482,8 +481,8 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
             try {
                 NDescriptorFormat.of((NDescriptor) value).setNtf(false).print(path);
             } catch (Exception ex) {
-                _LOG().with().level(Level.FINE).error(ex)
-                        .log(NMsg.ofC("failed to print %s", path));
+                _LOG()
+                        .log(NMsg.ofC("failed to print %s", path).asFineFail(ex));
                 //
             }
         } else {
