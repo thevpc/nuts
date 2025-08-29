@@ -4,8 +4,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.NPomXmlParser;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomId;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
@@ -90,13 +91,12 @@ public class DefaultNLibPaths implements NLibPaths {
             return NOptional.ofNamedEmpty("Id fo "+clazz);
         }
         if (pomIds.size() > 1) {
-            NLogOp.of(NPomXmlParser.class)
-                    .verb(NLogVerb.WARNING)
-                    .level(Level.FINEST)
+            NLog.of(NPomXmlParser.class)
                     .log(NMsg.ofC(
                             "multiple ids found : %s for class %s and id %s",
                             Arrays.asList(pomIds), clazz, defaultValue
-                    ));
+                    ).withIntent(NMsgIntent.ALERT)
+                            .withLevel(Level.FINEST));
         }
         return NOptional.of(pomIds.get(0));
     }
@@ -109,13 +109,13 @@ public class DefaultNLibPaths implements NLibPaths {
             return NOptional.ofNamedEmpty("Id fo "+path);
         }
         if (pomIds.size() > 1) {
-            NLogOp.of(NPomXmlParser.class)
-                    .verb(NLogVerb.WARNING)
-                    .level(Level.FINEST)
+            NLog.of(NPomXmlParser.class)
+
                     .log(NMsg.ofC(
                             "multiple ids found : %s for path %s and id %s",
                             Arrays.asList(pomIds), path, defaultValue
-                    ));
+                    ).withIntent(NMsgIntent.ALERT)
+                            .withLevel(Level.FINEST));
         }
         return NOptional.of(pomIds.get(0));
     }
