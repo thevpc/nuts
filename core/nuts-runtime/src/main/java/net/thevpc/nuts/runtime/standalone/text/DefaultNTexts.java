@@ -3,6 +3,8 @@ package net.thevpc.nuts.runtime.standalone.text;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.io.NContentMetadata;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.NBlankable;
@@ -12,8 +14,7 @@ import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.util.NRef;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
 import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.io.path.NFormatFromSPI;
@@ -31,7 +32,6 @@ import net.thevpc.nuts.util.*;
 
 import java.io.*;
 import java.lang.reflect.Array;
-import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
@@ -1115,10 +1115,11 @@ public class DefaultNTexts implements NTexts {
             writeFilteredText(parsed, out);
             return out.toString();
         } catch (Exception ex) {
-            NLogOp.of(AbstractNTextNodeParser.class)
-                    .verb(NLogVerb.WARNING)
-                    .level(Level.FINEST)
-                    .log(NMsg.ofC("error parsing : %s", text));
+            NLog.of(AbstractNTextNodeParser.class)
+                    .log(NMsg.ofC("error parsing : %s", text)
+                            .withIntent(NMsgIntent.ALERT)
+                            .withLevel(Level.FINEST)
+                    );
             return text;
         }
     }
@@ -1141,6 +1142,11 @@ public class DefaultNTexts implements NTexts {
             public boolean configureFirst(NCmdLine cmdLine) {
                 return false;
             }
+            @Override
+            public int getSupportLevel(NSupportLevelContext context) {
+                return NConstants.Support.DEFAULT_SUPPORT;
+            }
+
         };
     }
 
