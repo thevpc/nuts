@@ -4,14 +4,14 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
 import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.NIOUtils;
@@ -23,7 +23,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
 
 public class DotfilefsPath extends AbstractPathSPIAdapter {
 
@@ -241,9 +240,11 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
                     }
                 }
             } catch (UncheckedIOException | NIOException ex) {
-                NLogOp.of(DotfilefsPath.class).level(Level.FINE).verb(NLogVerb.FAIL)
-                        .time(c.stop().getDurationMs())
-                        .log(NMsg.ofC("unable to navigate : %s", dotFilesUrl));
+                NLog.of(DotfilefsPath.class)
+
+                        .log(NMsg.ofC("unable to navigate : %s", dotFilesUrl).asFineFail()
+                                .withDurationMillis(c.stop().getDurationMs())
+                        );
             }
         }
 
@@ -257,9 +258,8 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
                     dotFoldersContent = StringTokenizerUtils.splitNewLine(NIOUtils.loadString(stream, true))
                             .stream().map(x -> x.trim()).filter(x -> !x.isEmpty()).toArray(String[]::new);
                 } catch (IOException | UncheckedIOException | NIOException ex) {
-                    NLogOp.of(DotfilefsPath.class).level(Level.FINE).verb(NLogVerb.FAIL)
-                            .time(c.stop().getDurationMs())
-                            .log(NMsg.ofC("unable to navigate : file not found %s", dotFolderUrl));
+                    NLog.of(DotfilefsPath.class)
+                            .log(NMsg.ofC("unable to navigate : file not found %s", dotFolderUrl).asFineFail().withDurationMillis(c.stop().getDurationMs()));
                 }
                 if (dotFoldersContent != null) {
                     for (String folder : dotFoldersContent) {
