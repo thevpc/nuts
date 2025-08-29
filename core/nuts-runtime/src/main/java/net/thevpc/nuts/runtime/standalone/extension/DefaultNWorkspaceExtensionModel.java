@@ -12,17 +12,15 @@ import net.thevpc.nuts.NConstants;
 
 
 import net.thevpc.nuts.elem.NElementParser;
-import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.ext.NExtensionAlreadyRegisteredException;
 import net.thevpc.nuts.ext.NExtensionInformation;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NServiceLoader;
 import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
 import net.thevpc.nuts.runtime.standalone.dependency.util.NClassLoaderUtils;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NFormattedPrintStream;
@@ -101,10 +99,6 @@ public class DefaultNWorkspaceExtensionModel {
         setExcludedExtensions(excludedExtensions);
     }
 
-    protected NLogOp _LOGOP() {
-        return _LOG().with();
-    }
-
     protected NLog _LOG() {
         return NLog.of(DefaultNWorkspaceExtensionModel.class);
     }
@@ -160,8 +154,8 @@ public class DefaultNWorkspaceExtensionModel {
                 try (Reader rr = new InputStreamReader(NPath.of(u).getInputStream())) {
                     s = NElementParser.ofJson().parse(rr, DefaultNExtensionInformation[].class);
                 } catch (IOException ex) {
-                    _LOGOP().level(Level.SEVERE).error(ex)
-                            .log(NMsg.ofC("failed to parse NutsExtensionInformation from %s : %s", u, ex));
+                    _LOG()
+                            .log(NMsg.ofC("failed to parse NutsExtensionInformation from %s : %s", u, ex).asError(ex));
                 }
                 if (s != null) {
                     for (NExtensionInformation nutsExtensionInfo : s) {
@@ -237,8 +231,9 @@ public class DefaultNWorkspaceExtensionModel {
                 }
                 return null;
             }).filter(Objects::nonNull).toArray(PathAndUrl[]::new);
-            _LOG().with().verb(NLogVerb.INFO).level(Level.FINE)
-                    .log(NMsg.ofC("initialize workspace extensions from %s/%s urls : %s", valid.length, urls.length, Arrays.asList(urls)));
+            _LOG()
+                    .log(NMsg.ofC("initialize workspace extensions from %s/%s urls : %s", valid.length, urls.length, Arrays.asList(urls))
+                            .asFine().withIntent(NMsgIntent.INFO));
             for (PathAndUrl v : valid) {
                 objectFactory.discoverTypes(
                         CoreNIdUtils.resolveOrGenerateIdFromFileName(v.path),
@@ -392,8 +387,8 @@ public class DefaultNWorkspaceExtensionModel {
             objectFactory.registerInstance(extensionPointType, extensionImpl);
             return true;
         }
-        _LOGOP().level(Level.FINE).verb(NLogVerb.WARNING)
-                .log(NMsg.ofC("Bootstrap Extension Point %s => %s ignored. Already registered", extensionPointType.getName(), extensionImpl.getClass().getName()));
+        _LOG()
+                .log(NMsg.ofC("Bootstrap Extension Point %s => %s ignored. Already registered", extensionPointType.getName(), extensionImpl.getClass().getName()).asFineAlert());
         return false;
     }
 
@@ -403,8 +398,10 @@ public class DefaultNWorkspaceExtensionModel {
             objectFactory.registerType(extensionPointType, extensionType, source);
             return true;
         }
-        _LOGOP().level(Level.FINE).verb(NLogVerb.WARNING)
-                .log(NMsg.ofC("Bootstrap Extension Point %s => %s ignored. Already registered", extensionPointType.getName(), extensionType.getName()));
+        _LOG()
+                .log(NMsg.ofC("Bootstrap Extension Point %s => %s ignored. Already registered", extensionPointType.getName(), extensionType.getName())
+                        .withLevel(Level.FINE).withIntent(NMsgIntent.ALERT)
+                );
         return false;
     }
 
@@ -472,9 +469,11 @@ public class DefaultNWorkspaceExtensionModel {
                     //should check current classpath
                     //and the add to classpath
                     loadedExtensionIds.add(extension);
-                    _LOGOP().verb(NLogVerb.SUCCESS)
+                    _LOG()
                             .log(NMsg.ofC("extension %s loaded", def.getId()
-                            ));
+                            )
+                                    .withIntent(NMsgIntent.SUCCESS)
+                            );
                     someUpdates = true;
                 }
             }
@@ -529,7 +528,9 @@ public class DefaultNWorkspaceExtensionModel {
             throw new NExtensionAlreadyRegisteredException(id, wired.toString());
         }
 
-        _LOGOP().level(Level.FINE).verb(NLogVerb.ADD).log(NMsg.ofC("installing extension %s", id));
+        _LOG().log(NMsg.ofC("installing extension %s", id)
+                .withLevel(Level.FINE).withIntent(NMsgIntent.ADD)
+        );
         NDefinition nDefinitions = NSearchCmd.of()
                 .copyFrom(options)
                 .addId(id)
@@ -551,15 +552,19 @@ public class DefaultNWorkspaceExtensionModel {
 //            }
 //        }
         extensions.put(id, workspaceExtension);
-        _LOGOP().level(Level.FINE).verb(NLogVerb.ADD).log(NMsg.ofC("extension %s installed successfully", id));
+        _LOG().log(NMsg.ofC("extension %s installed successfully", id)
+                .withLevel(Level.FINE).withIntent(NMsgIntent.ADD)
+        );
         NTerminalSpec spec = new NDefaultTerminalSpec();
         if (session.getTerminal() != null) {
             spec.setProperty("ignoreClass", session.getTerminal().getClass());
         }
         NTerminal newTerminal = createTerminal(spec);
         if (newTerminal != null) {
-            _LOGOP().level(Level.FINE).verb(NLogVerb.UPDATE)
-                    .log(NMsg.ofC("extension %s changed Terminal configuration. Reloading Session Terminal", id));
+            _LOG()
+                    .log(NMsg.ofC("extension %s changed Terminal configuration. Reloading Session Terminal", id)
+                            .withLevel(Level.FINE).withIntent(NMsgIntent.UPDATE)
+                    );
             session.setTerminal(newTerminal);
         }
         for (Class<? extends NComponent> discoveredType : discoveredTypes) {
@@ -605,9 +610,8 @@ public class DefaultNWorkspaceExtensionModel {
                         try {
                             zipFile.close();
                         } catch (IOException ex) {
-                            _LOGOP().level(Level.SEVERE)
-                                    .error(ex).log(NMsg.ofC("failed to close zip file %s : %s",
-                                            file.getContent().orNull(), ex));
+                            _LOG().log(NMsg.ofC("failed to close zip file %s : %s",
+                                            file.getContent().orNull(), ex).asError(ex));
                             //ignore return false;
                         }
                     }
