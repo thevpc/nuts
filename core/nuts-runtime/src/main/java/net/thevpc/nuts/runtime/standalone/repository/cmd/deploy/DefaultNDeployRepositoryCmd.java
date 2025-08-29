@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -11,7 +11,7 @@
  * large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
@@ -31,8 +31,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.spi.NDeployRepositoryCmd;
 import net.thevpc.nuts.util.NMsg;
@@ -47,10 +47,6 @@ public class DefaultNDeployRepositoryCmd extends AbstractNDeployRepositoryCmd {
 
     public DefaultNDeployRepositoryCmd(NRepository repo) {
         super(repo);
-    }
-
-    protected NLogOp _LOGOP() {
-        return _LOG().with();
     }
 
     protected NLog _LOG() {
@@ -71,15 +67,16 @@ public class DefaultNDeployRepositoryCmd extends AbstractNDeployRepositoryCmd {
                 try {
                     xrepo.getIndexStore().revalidate(this.getId());
                 } catch (NException ex) {
-                    _LOGOP().level(Level.FINEST).verb(NLogVerb.FAIL)
-                            .log(NMsg.ofJ("error revalidating Indexer for {0} : {1}", getRepo().getName(), ex));
+                    _LOG()
+                            .log(NMsg.ofJ("error revalidating Indexer for {0} : {1}", getRepo().getName(), ex).withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL));
                 }
             }
-            _LOGOP().level(Level.FINEST).verb(NLogVerb.SUCCESS)
-                    .log(NMsg.ofJ("{0} deploy {1}", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), this.getId()));
+            _LOG()
+                    .log(NMsg.ofJ("{0} deploy {1}", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), this.getId()).withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS));
         } catch (RuntimeException ex) {
-            _LOGOP().level(Level.FINEST).verb(NLogVerb.FAIL)
-                    .log(NMsg.ofJ("{0} deploy {1}", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), this.getId()));
+            _LOG()
+                    .log(NMsg.ofJ("{0} deploy {1}", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), this.getId())
+                            .withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL));
             throw ex;
         }
         return this;
