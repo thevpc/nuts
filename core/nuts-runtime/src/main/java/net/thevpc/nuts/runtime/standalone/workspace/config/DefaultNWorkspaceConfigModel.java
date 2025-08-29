@@ -41,8 +41,8 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
 import net.thevpc.nuts.runtime.standalone.dependency.solver.NDependencySolverUtils;
@@ -250,10 +250,6 @@ public class DefaultNWorkspaceConfigModel {
                     (NPathFactorySPI) aa.newInstance(componentType, NPathFactorySPI.class)
             );
         }
-    }
-
-    protected NLogOp _LOGOP() {
-        return _LOG().with();
     }
 
     protected NLog _LOG() {
@@ -548,7 +544,9 @@ public class DefaultNWorkspaceConfigModel {
         try {
             nBootNutsApi = wsModel.configModel.prepareBootClassPathJar(workspace.getApiId(), null, iruntimeId, false);
         } catch (Exception ex) {
-            _LOGOP().level(Level.SEVERE).log(NMsg.ofC("unable to install boot id (api) %s", workspace.getApiId()));
+            _LOG().log(NMsg.ofC("unable to install boot id (api) %s", workspace.getApiId())
+                    .withLevel(Level.SEVERE)
+            );
         }
         if (nBootNutsApi == null) {
             //no need to install runtime if api is not there
@@ -560,7 +558,7 @@ public class DefaultNWorkspaceConfigModel {
             wsModel.configModel.prepareBootClassPathConf(NIdType.RUNTIME, iruntimeId, workspace.getApiId(), null, false, true);
             nBootNutsRuntime = wsModel.configModel.prepareBootClassPathJar(iruntimeId, workspace.getApiId(), null, true);
         } catch (Exception ex) {
-            _LOG().with().level(Level.SEVERE).log(NMsg.ofC("unable to install boot id (runtime) %s", iruntimeId));
+            _LOG().log(NMsg.ofC("unable to install boot id (runtime) %s", iruntimeId).withLevel(Level.SEVERE));
         }
         if (nBootNutsRuntime == null) {
             //no need to install extensions if runtime is not there
@@ -584,7 +582,7 @@ public class DefaultNWorkspaceConfigModel {
                                 true
                         );
                     } catch (Exception ex) {
-                        _LOG().with().level(Level.SEVERE).log(NMsg.ofC("unable to install boot id (extension) %s", extension.getId()));
+                        _LOG().log(NMsg.ofC("unable to install boot id (extension) %s", extension.getId()).asError());
                     }
                 }
             }
@@ -1343,8 +1341,10 @@ public class DefaultNWorkspaceConfigModel {
         String fileName = "nuts-workspace-" + fileSuffix;
         NPath logError = NWorkspace.of().getStoreLocation(workspace.getApiId(), NStoreType.LOG).resolve("invalid-config");
         NPath logFile = logError.resolve(fileName + ".error");
-        _LOGOP().level(Level.SEVERE).verb(NLogVerb.FAIL)
-                .log(NMsg.ofC("erroneous workspace config file. Unable to load file %s : %s", file, ex));
+        _LOG()
+                .log(NMsg.ofC("erroneous workspace config file. Unable to load file %s : %s", file, ex)
+                        .withLevel(Level.SEVERE).withIntent(NMsgIntent.FAIL)
+                );
 
         try {
             logFile.mkParentDirs();
@@ -1352,8 +1352,10 @@ public class DefaultNWorkspaceConfigModel {
             throw new NIOException(NMsg.ofC("unable to log workspace error while loading config file %s : %s", file, ex1), ex);
         }
         NPath newfile = logError.resolve(fileName + ".json");
-        _LOGOP().level(Level.SEVERE).verb(NLogVerb.FAIL)
-                .log(NMsg.ofC("erroneous workspace config file will be replaced by a fresh one. Old config is copied to %s\n error logged to  %s", newfile.toString(), logFile));
+        _LOG()
+                .log(NMsg.ofC("erroneous workspace config file will be replaced by a fresh one. Old config is copied to %s\n error logged to  %s", newfile.toString(), logFile)
+                        .withLevel(Level.SEVERE).withIntent(NMsgIntent.FAIL)
+                );
         try {
             Files.move(file, newfile.toPath().get());
         } catch (IOException e) {
