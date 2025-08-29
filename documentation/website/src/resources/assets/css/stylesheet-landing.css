@@ -79,6 +79,11 @@ header {
   font-size: 2rem;
   color: white;
 }
+.hero_subsubtitle {
+  font-family: ZeroesTwo;
+  font-size: 1.5rem;
+  color: white;
+}
 /*body {*/
 /*  background: #dddddd;*/
 /*  color: #4c4d4d;*/
@@ -3023,6 +3028,11 @@ input:-internal-autofill-selected {
 
 
 
+.img-icon {
+  width: 120px;
+  height: 120px;
+}
+
 .feature-anim-down:hover {
   cursor: pointer;
   transform: rotate(0deg) scale(1) translateY(10px);
@@ -3046,6 +3056,17 @@ input:-internal-autofill-selected {
   font-optical-sizing: auto;
   font-style: normal;
   font-weight: bolder;
+}
+
+.feature-subtitle{
+  color: #e75734;
+  text-align: center;
+  font-family: ZeroesTwo;
+  font-size: 15px;
+  /*font-family: "Smooch Sans", serif;*/
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-weight: bold;
 }
 
 /*------------ */
