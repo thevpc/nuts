@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.util.NAsk;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.util.NMsg;
 
 import java.util.function.Supplier;
@@ -80,13 +80,13 @@ public class DefaultWriteTypeProcessor {
                 break;
             }
             case NO: {
-                getValidLog().with().level(Level.FINE).verb(NLogVerb.WARNING)
-                        .log(getValidLogMessage());
+                getValidLog()
+                        .log(getValidLogMessage().asFineAlert());
                 return false;
             }
         }
-        getValidLog().with().level(Level.FINE).verb(NLogVerb.WARNING)
-                .log(getValidLogMessage());
+        getValidLog()
+                .log(getValidLogMessage().asFineAlert());
         return true;
     }
 }
