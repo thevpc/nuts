@@ -31,6 +31,7 @@ import net.thevpc.nuts.ext.NFactoryException;
 import net.thevpc.nuts.format.NFormats;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.format.NVersionFormat;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.reserved.rpi.NCollectionsRPI;
 import net.thevpc.nuts.reserved.rpi.NIORPI;
 import net.thevpc.nuts.runtime.standalone.*;
@@ -63,7 +64,6 @@ import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNLibPaths;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
@@ -288,8 +288,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             try {
                 obj = (T) resolveInstance(c, type);
             } catch (Exception e) {
-                LOG.with().level(Level.FINEST).verb(NLogVerb.FAIL).error(e)
-                        .log(NMsg.ofJ("error while instantiating {0} for {1} : {2}", c, type, e));
+                LOG.log(NMsg.ofJ("error while instantiating {0} for {1} : {2}", c, type, e).asError(e));
             }
             if (obj != null) {
                 all.add(obj);
@@ -355,9 +354,11 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             throw new NIllegalArgumentException(NMsg.ofC("already registered Extension %s for %s", implementation, extensionPoint.getName()));
         }
         if (LOG.isLoggable(Level.CONFIG)) {
-            LOG.with().level(Level.FINEST).verb(NLogVerb.ADD)
+            LOG
                     .log(NMsg.ofJ("bind    {0} for impl instance {1}", NStringUtils.formatAlign(extensionPoint.getSimpleName(), 40, NPositionType.FIRST),
-                            implementation.getClass().getName()));
+                                    implementation.getClass().getName())
+                            .withLevel(Level.FINEST).withIntent(NMsgIntent.ADD)
+                    );
         }
         instances.add(extensionPoint, implementation);
     }
@@ -368,9 +369,11 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             throw new NIllegalArgumentException(NMsg.ofC("already registered Extension %s for %s", implementationType.getName(), extensionPoint.getName()));
         }
         if (LOG.isLoggable(Level.CONFIG)) {
-            LOG.with().level(Level.FINEST).verb(NLogVerb.ADD)
+            LOG
                     .log(NMsg.ofJ("bind    {0} for impl type {1}", NStringUtils.formatAlign(extensionPoint.getSimpleName(), 40, NPositionType.FIRST),
-                            implementationType.getName()));
+                                    implementationType.getName())
+                            .withLevel(Level.FINEST).withIntent(NMsgIntent.ADD)
+                    );
         }
         IdCache t = discoveredCacheById.get(source);
         if (t == null) {
@@ -407,7 +410,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     protected <T extends NComponent> T newInstanceAndLog(Class<? extends T> implementation, Class<?>[] argTypes, Object[] args, Class<T> apiType, NScopeType scope) {
         T o = newInstance(implementation, apiType);
 //        if (LOG.isLoggable(Level.CONFIG)) {
-//            LOG.with().level(Level.FINEST).verb(NLogVerb.READ)
+//            LOG.level(Level.FINEST).verb(NMsgIntent.READ)
 //                    .log(NMsg.ofJ("resolve {0} to  ```underlined {1}``` {2}",
 //                            NStringUtils.formatAlign(apiType.getSimpleName(), 40, NPositionType.FIRST),
 //                            scope,
@@ -421,12 +424,14 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             String old = _alreadyLogger.get(apiType.getName());
             if (old == null || !old.equals(implementation.getName())) {
                 _alreadyLogger.put(apiType.getName(), implementation.getName());
-                LOG.with().level(Level.FINEST).verb(NLogVerb.READ)
+                LOG
                         .log(NMsg.ofC("resolve %s to  %s %s",
-                                NStringUtils.formatAlign(apiType.getSimpleName(), 40, NPositionType.FIRST),
-                                scope,
-                                implementation.getName()
-                        ));
+                                                NStringUtils.formatAlign(apiType.getSimpleName(), 40, NPositionType.FIRST),
+                                                scope,
+                                                implementation.getName()
+                                        )
+                                        .withLevel(Level.FINEST).withIntent(NMsgIntent.READ)
+                        );
             }
         }
 
@@ -443,8 +448,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 safeLog(NMsg.ofC("error when instantiating %s as %s : no constructor found", apiType, t), null);
             } else {
                 if (LOG.isLoggable(Level.FINEST)) {
-                    LOG.with().level(Level.FINEST).verb(NLogVerb.FAIL).error(null)
-                            .log(NMsg.ofC("error when instantiating %s as %s : no constructor found", apiType, t));
+                    LOG.log(NMsg.ofC("error when instantiating %s as %s : no constructor found", apiType, t).asFinest().withIntent(NMsgIntent.FAIL));
                 }
             }
             NBeanCache cache2 = new NBeanCache(LOG, CoreNUtils.isDevVerbose() ? System.err : null);
@@ -467,8 +471,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             } else {
 
                 if (LOG.isLoggable(Level.FINEST)) {
-                    LOG.with().level(Level.FINEST).verb(NLogVerb.FAIL).error(e)
-                            .log(NMsg.ofC("error when instantiating %s as %s : %s", apiType, t, e));
+                    LOG.log(NMsg.ofC("error when instantiating %s as %s : %s", apiType, t, e).asFinestFail(e));
                 }
             }
             Throwable cause = e.getCause();
@@ -510,12 +513,14 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                                 break;
                             }
                             default: {
-                                LOG.with().level(Level.FINEST).verb(NLogVerb.FAIL)
+                                LOG
                                         .log(NMsg.ofJ("invalid scope {0} ; expected {1} for  {2}",
-                                                implScope.value(),
-                                                apiScope.value(),
-                                                implType.getName()
-                                        ));
+                                                                implScope.value(),
+                                                                apiScope.value(),
+                                                                implType.getName()
+                                                        )
+                                                        .withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL)
+                                        );
                             }
                         }
                     }
@@ -541,8 +546,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             case "net.thevpc.nuts.io.NPaths":
             case "net.thevpc.nuts.text.NTexts":
             case "net.thevpc.nuts.log.NLogs":
-            case "net.thevpc.nuts.log.NLog":
-            case "net.thevpc.nuts.log.NLogOp": {
+            case "net.thevpc.nuts.log.NLog": {
                 return true;
             }
         }
@@ -580,8 +584,9 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         if (one != null) {
             //if static instance found, always return it!
             if (LOG.isLoggable(Level.CONFIG)) {
-                LOG.with().level(Level.FINEST).verb(NLogVerb.READ)
-                        .log(NMsg.ofJ("resolve {0} to singleton {1}", NStringUtils.formatAlign(type.getSimpleName(), 40, NPositionType.FIRST), one.getClass().getName()));
+                LOG.log(NMsg.ofJ("resolve {0} to singleton {1}", NStringUtils.formatAlign(type.getSimpleName(), 40, NPositionType.FIRST), one.getClass().getName())
+                        .withLevel(Level.FINEST).withIntent(NMsgIntent.READ)
+                );
             }
             return (T) one;
         }
@@ -602,8 +607,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             try {
                 obj = (T) resolveInstance(c, type, argTypes, args);
             } catch (Exception e) {
-                LOG.with().level(Level.WARNING).verb(NLogVerb.FAIL).error(e)
-                        .log(NMsg.ofC("error when instantiating %s : %s", type, e));
+                LOG.log(NMsg.ofC("error when instantiating %s : %s", type, e).asWarningFail(e));
             }
             if (obj != null) {
                 all.add(obj);
