@@ -64,6 +64,9 @@ public interface NExtensions extends NComponent  {
 
     <T extends NComponent, B> NServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader);
 
+
+    NMutableClassLoader createMutableClassLoader(ClassLoader parentClassLoader);
+
     /**
      * create supported extension implementation or return null.
      *
