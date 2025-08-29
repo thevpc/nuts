@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.time;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
@@ -15,7 +16,6 @@ import java.util.logging.Level;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 
@@ -586,9 +586,7 @@ public class CProgressBar {
             if (p == null || p.isEmpty()) {
                 return;
             }
-            logger.with().verb(NLogVerb.PROGRESS)
-                    .level(armedLogLevel)
-                    .log(NMsg.ofNtf(p));
+            logger.log(NMsg.ofNtf(p).withLevel(armedLogLevel).withIntent(NMsgIntent.PROGRESS));
         } else {
             NTerminalMode m = out.getTerminalMode();
             NText p = progress(percent, msg, m == NTerminalMode.FILTERED);
@@ -611,9 +609,7 @@ public class CProgressBar {
         if (options.isArmedNewline() || forceNewline) {
             out.print("\n");
         } else if (armedLogLevel != null) {
-            logger.with().verb(NLogVerb.PROGRESS)
-                    .level(armedLogLevel)
-                    .log(NMsg.ofNtf(p));
+            logger.log(NMsg.ofNtf(p).withLevel(armedLogLevel).withIntent(NMsgIntent.PROGRESS));
         } else {
             synchronized (CProgressBar.class) {
                 out.resetLine();
