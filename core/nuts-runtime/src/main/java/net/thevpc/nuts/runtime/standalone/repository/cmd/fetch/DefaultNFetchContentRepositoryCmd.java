@@ -27,17 +27,16 @@ package net.thevpc.nuts.runtime.standalone.repository.cmd.fetch;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NFetchContentRepositoryCmd;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
 
 import java.util.logging.Level;
 
@@ -50,10 +49,6 @@ public class DefaultNFetchContentRepositoryCmd extends AbstractNFetchContentRepo
 
     public DefaultNFetchContentRepositoryCmd(NRepository repo) {
         super(repo);
-    }
-
-    protected NLogOp _LOGOP() {
-        return _LOG().with();
     }
 
     protected NLog _LOG() {
@@ -80,11 +75,11 @@ public class DefaultNFetchContentRepositoryCmd extends AbstractNFetchContentRepo
             if (f == null) {
                 throw new NNotFoundException(id);
             }
-            NLogUtils.traceMessage(_LOG(), Level.FINER, repo.getName(), getFetchMode(), id.getLongId(), NLogVerb.SUCCESS, "fetch content", startTime, null);
+            NLogUtils.traceMessage(_LOG(), Level.FINER, repo.getName(), getFetchMode(), id.getLongId(), NMsgIntent.SUCCESS, "fetch content", startTime, null);
             result = f;
         } catch (RuntimeException ex) {
             if (!CoreNUtils.isUnsupportedFetchModeException(ex)) {
-                NLogUtils.traceMessage(_LOG(), Level.FINEST, repo.getName(), getFetchMode(), id.getLongId(), NLogVerb.FAIL, "fetch content", startTime, CoreStringUtils.exceptionToMessage(ex));
+                NLogUtils.traceMessage(_LOG(), Level.FINEST, repo.getName(), getFetchMode(), id.getLongId(), NMsgIntent.FAIL, "fetch content", startTime, CoreStringUtils.exceptionToMessage(ex));
             }
             throw ex;
         }
