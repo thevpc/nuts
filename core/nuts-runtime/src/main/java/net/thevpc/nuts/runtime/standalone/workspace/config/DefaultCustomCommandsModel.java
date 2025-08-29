@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.NInternalCommand;
@@ -13,8 +14,6 @@ import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NAsk;
@@ -34,10 +33,6 @@ public class DefaultCustomCommandsModel {
     public DefaultCustomCommandsModel(NWorkspace ws) {
         this.workspace = ws;
         defaultCommandFactory = new ConfigNWorkspaceCommandFactory();
-    }
-
-    protected NLogOp _LOGOP() {
-        return _LOG().with();
     }
 
     protected NLog _LOG() {
@@ -310,8 +305,10 @@ public class DefaultCustomCommandsModel {
     private NCustomCmd toDefaultNWorkspaceCommand(NCommandConfig c) {
         if (c.getCommand() == null || c.getCommand().isEmpty()) {
 
-            _LOGOP().level(Level.WARNING).verb(NLogVerb.FAIL)
-                    .log(NMsg.ofC("invalid command definition '%s'. Missing command . Ignored", c.getName()));
+            _LOG()
+                    .log(NMsg.ofC("invalid command definition '%s'. Missing command . Ignored", c.getName())
+                            .withLevel(Level.WARNING).withIntent(NMsgIntent.FAIL)
+                    );
             return null;
         }
 //        if (c.getOwner() == null) {
