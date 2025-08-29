@@ -28,6 +28,7 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.NExceptions;
 import net.thevpc.nuts.format.NMsgFormattable;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.text.*;
 
 import java.awt.*;
@@ -45,8 +46,11 @@ public class NMsg {
     private final Object message;
     private final Level level;
     private final NTextFormatType format;
+    private final NMsgIntent intent;
     private final Object[] params;
     private final NTextStyles styles;
+    private final Throwable throwable;
+    private final long durationNano;
 
     public static NMsg ofMissingValue() {
         return ofMissingValue((String) null);
@@ -104,16 +108,17 @@ public class NMsg {
         return ofC("invalid %s : %s", valueName, NExceptions.getErrorMessage(throwable));
     }
 
-    private static NMsg of(NTextFormatType format, Object message, Object[] params, NTextStyles styles, String codeLang, Level level) {
-        return new NMsg(format, message, params, styles, codeLang, level);
+    private static NMsg of(NTextFormatType format, Object message, Object[] params, NTextStyles styles, String codeLang, Level level, Throwable throwable, NMsgIntent intent, long time) {
+        return new NMsg(format, message, params, styles, codeLang, level, throwable, intent, time);
     }
 
-    private NMsg(NTextFormatType format, Object message, Object[] params, NTextStyles styles, String codeLang, Level level) {
+    private NMsg(NTextFormatType format, Object message, Object[] params, NTextStyles styles, String codeLang, Level level, Throwable throwable, NMsgIntent intent, long durationNano) {
         NAssert.requireNonNull(message, "message");
         NAssert.requireNonNull(format, "format");
         NAssert.requireNonNull(params, "params");
-        this.level = level;
+        this.level = level == null ? Level.FINEST : level;
         this.format = format;
+        this.throwable = throwable;
         this.styles = styles;
         if (format == NTextFormatType.PLAIN
                 || format == NTextFormatType.NTF
@@ -132,18 +137,20 @@ public class NMsg {
         this.codeLang = NStringUtils.trimToNull(codeLang);
         this.message = message;
         this.params = params;
+        this.intent = intent;
+        this.durationNano = durationNano < 0 ? -1 : durationNano;
     }
 
     public static NMsg ofNtf(String message) {
-        return of(NTextFormatType.NTF, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null);
+        return of(NTextFormatType.NTF, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, -1);
     }
 
     public static NMsg ofCode(String lang, String text) {
-        return of(NTextFormatType.CODE, NStringUtils.firstNonNull(text, ""), NO_PARAMS, null, lang, null);
+        return of(NTextFormatType.CODE, NStringUtils.firstNonNull(text, ""), NO_PARAMS, null, lang, null, null, null, -1);
     }
 
     public static NMsg ofCode(String text) {
-        return of(NTextFormatType.CODE, NStringUtils.firstNonNull(text, ""), NO_PARAMS, null, null, null);
+        return of(NTextFormatType.CODE, NStringUtils.firstNonNull(text, ""), NO_PARAMS, null, null, null, null, null, -1);
     }
 
     public static NMsg ofStringLiteral(String literal) {
@@ -154,43 +161,43 @@ public class NMsg {
     }
 
     public static NMsg ofStyled(String message, NTextStyle style) {
-        return of(NTextFormatType.STYLED, NStringUtils.firstNonNull(message, ""), NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null);
+        return of(NTextFormatType.STYLED, NStringUtils.firstNonNull(message, ""), NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null, null, null, -1);
     }
 
     public static NMsg ofStyled(String message, NTextStyles styles) {
-        return of(NTextFormatType.STYLED, NStringUtils.firstNonNull(message, ""), NO_PARAMS, styles, null, null);
+        return of(NTextFormatType.STYLED, NStringUtils.firstNonNull(message, ""), NO_PARAMS, styles, null, null, null, null, -1);
     }
 
     public static NMsg ofStyled(NMsg message, NTextStyle style) {
-        return of(NTextFormatType.STYLED, message, NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null);
+        return of(NTextFormatType.STYLED, message, NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null, null, null, -1);
     }
 
     public static NMsg ofStyled(NMsg message, NTextStyles styles) {
-        return of(NTextFormatType.STYLED, message, NO_PARAMS, styles, null, null);
+        return of(NTextFormatType.STYLED, message, NO_PARAMS, styles, null, null, null, null, -1);
     }
 
     public static NMsg ofStyled(NText message, NTextStyle style) {
-        return of(NTextFormatType.STYLED, message, NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null);
+        return of(NTextFormatType.STYLED, message, NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null, null, null, -1);
     }
 
     public static NMsg ofStyled(NText message, NTextStyles styles) {
-        return of(NTextFormatType.STYLED, message, NO_PARAMS, styles, null, null);
+        return of(NTextFormatType.STYLED, message, NO_PARAMS, styles, null, null, null, null, -1);
     }
 
     public static NMsg ofNtf(NText message) {
-        return of(NTextFormatType.NTF, message, NO_PARAMS, null, null, null);
+        return of(NTextFormatType.NTF, message, NO_PARAMS, null, null, null, null, null, -1);
     }
 
     public static NMsg ofPlain(String message) {
-        return of(NTextFormatType.PLAIN, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null);
+        return of(NTextFormatType.PLAIN, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, -1);
     }
 
     public static NMsg ofC(String message) {
-        return of(NTextFormatType.CFORMAT, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null);
+        return of(NTextFormatType.CFORMAT, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, -1);
     }
 
     public static NMsg ofC(String message, Object... params) {
-        return of(NTextFormatType.CFORMAT, NStringUtils.firstNonNull(message, ""), params, null, null, null);
+        return of(NTextFormatType.CFORMAT, NStringUtils.firstNonNull(message, ""), params, null, null, null, null, null, -1);
     }
 
     public static NMsg ofV(String message, NMsgParam... params) {
@@ -217,11 +224,11 @@ public class NMsg {
     }
 
     public static NMsg ofV(String message, Map<String, ?> vars) {
-        return of(NTextFormatType.VFORMAT, NStringUtils.firstNonNull(message, ""), new Object[]{vars}, null, null, null);
+        return of(NTextFormatType.VFORMAT, NStringUtils.firstNonNull(message, ""), new Object[]{vars}, null, null, null, null, null, -1);
     }
 
     public static NMsg ofV(String message, Function<String, ?> vars) {
-        return of(NTextFormatType.VFORMAT, NStringUtils.firstNonNull(message, ""), new Object[]{vars}, null, null, null);
+        return of(NTextFormatType.VFORMAT, NStringUtils.firstNonNull(message, ""), new Object[]{vars}, null, null, null, null, null, -1);
     }
 
     public static NMsg ofJ(String message, NMsgParam... params) {
@@ -242,11 +249,11 @@ public class NMsg {
 
     @Deprecated
     public static NMsg ofJ(String message) {
-        return of(NTextFormatType.JFORMAT, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null);
+        return of(NTextFormatType.JFORMAT, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, -1);
     }
 
     public static NMsg ofJ(String message, Object... params) {
-        return of(NTextFormatType.JFORMAT, NStringUtils.firstNonNull(message, ""), params, null, null, null);
+        return of(NTextFormatType.JFORMAT, NStringUtils.firstNonNull(message, ""), params, null, null, null, null, null, -1);
     }
 
     public NTextFormatType getFormat() {
@@ -295,6 +302,15 @@ public class NMsg {
             r[i] = _preFormatOne(o[i]);
         }
         return r;
+    }
+
+    public String toFullString() {
+        if (throwable == null) {
+            return toString();
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(this).append("\n").append(NStringUtils.stacktrace(throwable));
+        return sb.toString();
     }
 
     @Override
@@ -396,39 +412,244 @@ public class NMsg {
     }
 
     public NMsg asSevere() {
-        return withLevel(Level.SEVERE);
+        return withLevelAndDefaultIntent(Level.SEVERE, NMsgIntent.FAIL);
     }
 
     public NMsg asError() {
-        return withLevel(Level.SEVERE);
+        return withLevelAndDefaultIntent(Level.SEVERE, NMsgIntent.FAIL);
     }
 
+    public NMsg asError(Throwable throwable) {
+        return withLevelAndDefaultIntent(Level.SEVERE, NMsgIntent.FAIL, throwable);
+    }
+
+    public NMsg asErrorAlert() {
+        return withLevelAndIntent(Level.SEVERE, NMsgIntent.ALERT);
+    }
+
+    public NMsg asErrorAlert(Throwable throwable) {
+        return withLevelAndIntent(Level.SEVERE, NMsgIntent.ALERT, throwable);
+    }
+
+    public NMsg asSevere(Throwable throwable) {
+        return withLevelAndDefaultIntent(Level.SEVERE, NMsgIntent.FAIL, throwable);
+    }
+
+    public NMsg asWarning(Throwable throwable) {
+        return withLevelAndDefaultIntent(Level.WARNING, NMsgIntent.ALERT, throwable);
+    }
+
+    public NMsg asFine(Throwable throwable) {
+        return withLevelAndDefaultIntent(Level.FINE, NMsgIntent.DEBUG, throwable);
+    }
+
+    public NMsg asFinest(Throwable throwable) {
+        return withLevelAndDefaultIntent(Level.FINEST, NMsgIntent.DEBUG, throwable);
+    }
+
+    private NMsg asLevelWithThrowable(Level level, Throwable throwable) {
+        if (level == null) {
+            level = Level.FINEST;
+        }
+        if (level == this.level && throwable == this.throwable) {
+            return this;
+        }
+        return of(format, message, params, styles, codeLang, level, throwable, intent, durationNano);
+    }
+
+
     public NMsg asInfo() {
-        return withLevel(Level.FINE);
+        return withLevelAndDefaultIntent(Level.FINE, NMsgIntent.INFO);
     }
 
     public NMsg asConfig() {
-        return withLevel(Level.CONFIG);
+        return withLevelAndDefaultIntent(Level.CONFIG, NMsgIntent.CONFIG);
     }
 
     public NMsg asWarning() {
-        return withLevel(Level.WARNING);
+        return withLevelAndDefaultIntent(Level.WARNING, NMsgIntent.ALERT);
     }
 
     public NMsg asFinest() {
-        return withLevel(Level.FINEST);
+        return withLevelAndDefaultIntent(Level.FINEST, NMsgIntent.DEBUG);
     }
 
+    public NMsg asFinestFail() {
+        return withLevelAndDefaultIntent(Level.FINEST, NMsgIntent.FAIL);
+    }
+
+    public NMsg asFineFail() {
+        return withLevelAndIntent(Level.FINE, NMsgIntent.FAIL);
+    }
+
+    public NMsg asFinestFail(Throwable throwable) {
+        return withLevelAndIntent(Level.FINEST, NMsgIntent.FAIL, throwable);
+    }
+
+    public NMsg asFineFail(Throwable throwable) {
+        return withLevelAndIntent(Level.FINE, NMsgIntent.FAIL, throwable);
+    }
+
+    public NMsg asInfoFail(Throwable throwable) {
+        return withLevelAndIntent(Level.INFO, NMsgIntent.FAIL, throwable);
+    }
+
+    public NMsg asInfoFail() {
+        return withLevelAndIntent(Level.INFO, NMsgIntent.FAIL);
+    }
+
+    public NMsg asFinerFail(Throwable throwable) {
+        return withLevelAndIntent(Level.FINER, NMsgIntent.FAIL, throwable);
+    }
+
+    public NMsg asFinerFail() {
+        return withLevelAndIntent(Level.FINER, NMsgIntent.FAIL);
+    }
+
+
+    public NMsg asWarningFail(Throwable throwable) {
+        return withLevelAndIntent(Level.WARNING, NMsgIntent.FAIL, throwable);
+    }
+
+    public NMsg asWarningFail() {
+        return withLevelAndIntent(Level.WARNING, NMsgIntent.FAIL);
+    }
+
+
+    public NMsg asFinestAlert() {
+        return withLevelAndDefaultIntent(Level.FINEST, NMsgIntent.ALERT);
+    }
+
+    public NMsg asFineAlert() {
+        return withLevelAndIntent(Level.FINE, NMsgIntent.ALERT);
+    }
+
+    public NMsg asFinestAlert(Throwable throwable) {
+        return withLevelAndIntent(Level.FINEST, NMsgIntent.ALERT, throwable);
+    }
+
+    public NMsg asFineAlert(Throwable throwable) {
+        return withLevelAndIntent(Level.FINE, NMsgIntent.ALERT, throwable);
+    }
+
+    public NMsg asInfoAlert(Throwable throwable) {
+        return withLevelAndIntent(Level.INFO, NMsgIntent.ALERT, throwable);
+    }
+
+    public NMsg asInfoAlert() {
+        return withLevelAndIntent(Level.INFO, NMsgIntent.ALERT);
+    }
+
+    public NMsg asFinerAlert(Throwable throwable) {
+        return withLevelAndIntent(Level.FINER, NMsgIntent.ALERT, throwable);
+    }
+
+    public NMsg asFinerAlert() {
+        return withLevelAndIntent(Level.FINER, NMsgIntent.ALERT);
+    }
+
+
+    public NMsg asWarningAlert(Throwable throwable) {
+        return withLevelAndIntent(Level.WARNING, NMsgIntent.ALERT, throwable);
+    }
+
+    public NMsg asWarningAlert() {
+        return withLevelAndIntent(Level.WARNING, NMsgIntent.ALERT);
+    }
+
+
     public NMsg asFine() {
-        return withLevel(Level.FINE);
+        return withLevelAndDefaultIntent(Level.FINE, NMsgIntent.DEBUG);
     }
 
     public NMsg asFiner() {
-        return withLevel(Level.FINER);
+        return withLevelAndDefaultIntent(Level.FINER, NMsgIntent.DEBUG);
+    }
+
+    public NMsg asDebug() {
+        return withLevelAndDefaultIntent(Level.FINEST, NMsgIntent.DEBUG);
     }
 
     public NMsg withLevel(Level level) {
-        return of(format, message, params, styles, codeLang, level);
+        if (level == this.level) {
+            return this;
+        }
+        return of(format, message, params, styles, codeLang, level, null, intent, durationNano);
+    }
+
+    private NMsg withLevelAndDefaultIntent(Level level, NMsgIntent intent) {
+        if (this.intent != null) {
+            intent = this.intent;
+        }
+        if (level == this.level && Objects.equals(intent, this.intent)) {
+            return this;
+        }
+        return of(format, message, params, styles, codeLang, level, null, intent, durationNano);
+    }
+
+    private NMsg withLevelAndIntent(Level level, NMsgIntent intent) {
+        if (level == this.level && Objects.equals(intent, this.intent)) {
+            return this;
+        }
+        return of(format, message, params, styles, codeLang, level, null, intent, durationNano);
+    }
+
+    private NMsg withLevelAndDefaultIntent(Level level, NMsgIntent intent, Throwable throwable) {
+        if (this.intent != null) {
+            intent = this.intent;
+        }
+        if (level == this.level && Objects.equals(intent, this.intent) && this.throwable == throwable) {
+            return this;
+        }
+        return of(format, message, params, styles, codeLang, level, throwable, intent, durationNano);
+    }
+
+    private NMsg withLevelAndIntent(Level level, NMsgIntent intent, Throwable throwable) {
+        if (level == this.level && Objects.equals(intent, this.intent) && this.throwable == throwable) {
+            return this;
+        }
+        return of(format, message, params, styles, codeLang, level, throwable, intent, durationNano);
+    }
+
+    public NMsg withIntent(NMsgIntent intent) {
+        if (Objects.equals(intent, this.intent)) {
+            return this;
+        }
+        return of(format, message, params, styles, codeLang, level, null, intent, durationNano);
+    }
+
+    public NMsg withDefaultIntent(NMsgIntent intent) {
+        if (this.intent != intent) {
+            return this;
+        }
+        if (Objects.equals(intent, this.intent)) {
+            return this;
+        }
+        return of(format, message, params, styles, codeLang, level, null, intent, durationNano);
+    }
+
+    public NMsg withThrowable(Throwable throwable) {
+        if (throwable == this.throwable) {
+            return this;
+        }
+        return of(format, message, params, styles, codeLang, level, throwable, intent, durationNano);
+    }
+
+    public NMsg withDurationMillis(long elapsedTimeMillis) {
+        if (elapsedTimeMillis < 0) {
+            elapsedTimeMillis = -1;
+        }
+        return withDurationNanos(elapsedTimeMillis * 1000000L);
+    }
+
+    public NMsg withDurationNanos(long elapsedTimeNanos) {
+        if (elapsedTimeNanos < 0) {
+            elapsedTimeNanos = -1;
+        }
+        if (elapsedTimeNanos == this.durationNano) {
+            return this;
+        }
+        return of(format, message, params, styles, codeLang, level, throwable, intent, elapsedTimeNanos);
     }
 
     @Override
@@ -442,14 +663,37 @@ public class NMsg {
                 && Arrays.deepEquals(params, that.params)
                 && Objects.equals(styles, that.styles)
                 && Objects.equals(level, that.level)
+                && Objects.equals(throwable, that.throwable)
                 ;
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(codeLang, message, format, styles, level);
+        int result = Objects.hash(codeLang, message, format, styles, level, throwable);
         result = 31 * result + Arrays.hashCode(params);
         return result;
+    }
+
+    /**
+     * @return -1 if not specified
+     */
+    public long getDurationNanos() {
+        return durationNano;
+    }
+
+    /**
+     * @return -1 if not specified
+     */
+    public long getDurationMillis() {
+        return durationNano < 0 ? -1 : durationNano / 1000000L;
+    }
+
+    public Throwable getThrowable() {
+        return throwable;
+    }
+
+    public NMsgIntent getIntent() {
+        return intent;
     }
 
     /// //////////////////////////////////////////////////////////////////
