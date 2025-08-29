@@ -3,12 +3,12 @@ package net.thevpc.nuts.runtime.standalone.xtra.compress;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.spi.NCompressPackaging;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
@@ -35,7 +35,7 @@ public class NCompressZip implements NCompressPackaging {
         NOutputTarget target = compress.getTarget();
         NAssert.requireNonBlank(target, "target");
         NChronometer chronometer = NChronometer.startNow();
-        _LOG().with().level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofC("compress %s to %s", sources, target));
+        _LOG().log(NMsg.ofC("compress %s to %s", sources, target).asFinest().withIntent(NMsgIntent.START).withLevel(Level.FINEST).withIntent(NMsgIntent.START));
         try {
             OutputStream fW = null;
             ZipOutputStream zip = null;
@@ -101,20 +101,17 @@ public class NCompressZip implements NCompressPackaging {
             } else {
                 throw new NIllegalArgumentException(NMsg.ofC("unsupported target %s", target));
             }
-            _LOG().with().level(Level.FINEST).verb(NLogVerb.SUCCESS)
-                    .time(chronometer.getDurationMs())
-                    .log(NMsg.ofC("compressed %s to %s", sources, target));
+            _LOG()
+                    .log(NMsg.ofC("compressed %s to %s", sources, target).asFinest().withIntent(NMsgIntent.SUCCESS).withDurationMillis(chronometer.getDurationMs()));
         } catch (IOException ex) {
-            _LOG().with().level(Level.CONFIG).verb(NLogVerb.FAIL)
-                    .time(chronometer.getDurationMs())
+            _LOG()
                     .log(NMsg.ofC("error compressing %s to %s : %s",
-                            sources, target, ex));
+                            sources, target, ex).asConfig().withIntent(NMsgIntent.FAIL).withDurationMillis(chronometer.getDurationMs()));
             throw new NIOException(ex);
         } catch (RuntimeException ex) {
-            _LOG().with().level(Level.CONFIG).verb(NLogVerb.FAIL)
-                    .time(chronometer.getDurationMs())
+            _LOG()
                     .log(NMsg.ofC("error compressing %s to %s : %s",
-                            sources, target, ex));
+                            sources, target, ex).asConfig().withIntent(NMsgIntent.FAIL).withDurationMillis(chronometer.getDurationMs()));
             throw ex;
         }
     }
