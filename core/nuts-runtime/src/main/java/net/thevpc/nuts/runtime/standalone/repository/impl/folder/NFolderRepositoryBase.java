@@ -9,6 +9,7 @@ import net.thevpc.nuts.NStoreStrategy;
 import net.thevpc.nuts.format.NTreeVisitResult;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.repository.NIdPathIterator;
 import net.thevpc.nuts.runtime.standalone.repository.NIdPathIteratorBase;
@@ -16,7 +17,6 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.NCachedRepository;
 import net.thevpc.nuts.runtime.standalone.repository.util.NIdLocationUtils;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
-import net.thevpc.nuts.log.NLogVerb;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,14 +51,18 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
             try {
                 return loc.exists();
             } finally {
-                _LOG().with().level(Level.FINEST).verb(NLogVerb.SUCCESS)
-                        .time(System.currentTimeMillis() - now)
-                        .log(NMsg.ofC("check available %s : success", getName()));
+                _LOG()
+                        .log(NMsg.ofC("check available %s : success", getName())
+                                .withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS)
+                                .withDurationMillis(System.currentTimeMillis() - now)
+                        );
             }
         } catch (Exception e) {
-            _LOG().with().level(Level.FINEST).verb(NLogVerb.FAIL)
-                    .time(System.currentTimeMillis() - now)
-                    .log(NMsg.ofC("check available %s : failed", getName()));
+            _LOG()
+                    .log(NMsg.ofC("check available %s : failed", getName())
+                            .withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL)
+                            .withDurationMillis(System.currentTimeMillis() - now)
+                    );
             return false;
         }
     }
@@ -205,7 +209,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                                         final NId nutsId = id.builder().setVersion(versionFolder.getName()).build();
                                         if (idFilter == null || idFilter.acceptDefinition(NDefinitionHelper.ofIdAndLazyDescriptor(
                                                 nutsId,
-                                                ()-> fetchDescriptor().setId(nutsId).getResult(),
+                                                () -> fetchDescriptor().setId(nutsId).getResult(),
                                                 "NFolderRepositoryBase::findNonSingleVersionImpl"))) {
                                             return expectedId;
                                         }
@@ -213,7 +217,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                                     return null;
                                 }).filterNonNull().iterator()
                         ).redescribe(NDescribables.ofDesc("findNonSingleVersion"));
-                    }catch (UncheckedIOException | NIOException ex) {
+                    } catch (UncheckedIOException | NIOException ex) {
                         return NIterator.ofEmpty();
                     }
                 }
@@ -243,17 +247,17 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                     () -> {
                         List<NId> ret = new ArrayList<>();
                         if (metadataURL.isRegularFile()) {
-                            session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s %s", getName(), "found",id.getLongId(), metadataURL.toCompressedForm()));
+                            session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s %s", getName(), "found", id.getLongId(), metadataURL.toCompressedForm()));
                             // ok found!!
                             ret.add(id);
-                        }else{
-                            session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s %s", getName(), "missing",id.getLongId(), metadataURL.toCompressedForm()));
+                        } else {
+                            session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s %s", getName(), "missing", id.getLongId(), metadataURL.toCompressedForm()));
                         }
                         return ret.iterator();
                     }
                     , () -> NElement.ofObjectBuilder()
                             .name("SingleVersionAt")
-                            .add("path",metadataURL.toString())
+                            .add("path", metadataURL.toString())
                             .build()
             ).build();
         } else {
@@ -267,7 +271,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
 
     public InputStream getStream(NId id, String typeName, String action) {
         NPath url = getIdRemotePath(id);
-        return openStream(id, url, id, typeName, action==null?NMsg.ofC("retrieve %s",id.getLongId()):NMsg.ofC("%s %s",action,id.getLongId()));
+        return openStream(id, url, id, typeName, action == null ? NMsg.ofC("retrieve %s", id.getLongId()) : NMsg.ofC("%s %s", action, id.getLongId()));
     }
 
     public String getStreamAsString(NId id, String typeName, String action) {
@@ -275,7 +279,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                 .addOptions(NPathOption.LOG, NPathOption.TRACE, NPathOption.SAFE)
                 .from(getIdRemotePath(id))
                 .setSourceOrigin(id)
-                .setActionMessage(action == null ? NMsg.ofC("copy %s",id.getLongId()) : NMsg.ofC("%s %s",action,id.getLongId()))
+                .setActionMessage(action == null ? NMsg.ofC("copy %s", id.getLongId()) : NMsg.ofC("%s %s", action, id.getLongId()))
                 .setSourceTypeName(action)
                 .getByteArrayResult();
         return new String(barr);
@@ -294,8 +298,9 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                 break;
             }
             default: {
-                _LOGOP().level(Level.SEVERE).error(new NIllegalArgumentException(NMsg.ofC("unsupported Hash Type %s", id.getFace())))
-                        .log(NMsg.ofC("[BUG] unsupported Hash Type %s", id.getFace()));
+                _LOG().log(NMsg.ofC("[BUG] unsupported Hash Type %s", id.getFace())
+                        .asError(new NIllegalArgumentException(NMsg.ofC("unsupported Hash Type %s", id.getFace())))
+                );
                 throw new IOException("unsupported hash type " + id.getFace());
             }
         }
