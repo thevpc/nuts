@@ -31,13 +31,13 @@ import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.concurrent.NLock;
 import net.thevpc.nuts.core.NI18n;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
 import net.thevpc.nuts.runtime.standalone.repository.impl.util.CommonRootsByPathHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.util.CommonRootsByIdHelper;
 import net.thevpc.nuts.util.NIteratorBuilder;
@@ -92,10 +92,6 @@ public class NCachedRepository extends AbstractNRepositoryBase {
 
     public NRepositoryFolderHelper getCache() {
         return cache;
-    }
-
-    protected NLogOp _LOGOP() {
-        return _LOG().with();
     }
 
     protected NLog _LOG() {
@@ -238,8 +234,8 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         } catch (NNotFoundException ex) {
             //ignore error
         } catch (Exception ex) {
-            _LOGOP().level(Level.FINEST).verb(NLogVerb.FAIL).error(ex)
-                    .log(NMsg.ofC(NI18n.of("search versions error : %s"), ex));
+            _LOG()
+                    .log(NMsg.ofC(NI18n.of("search versions error : %s"), ex).asFinestFail(ex));
             //ignore....
         }
         NIterator<NId> namedNutIdIterator = NIteratorBuilder.ofConcat(all).distinct(
@@ -378,8 +374,8 @@ public class NCachedRepository extends AbstractNRepositoryBase {
             //ignore....
         } catch (Exception ex) {
             //ignore....
-            _LOGOP().level(Level.SEVERE).error(ex)
-                    .log(NMsg.ofJ("search latest versions error : {0}", ex));
+            _LOG()
+                    .log(NMsg.ofJ("search latest versions error : {0}", ex).asError(ex));
         }
         if (p != null) {
             li.add(p);
@@ -452,8 +448,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
             } catch (NNotFoundException | NFetchModeNotSupportedException ex) {
                 //ignore
             } catch (Exception ex) {
-                _LOGOP().level(Level.SEVERE).error(ex)
-                        .log(NMsg.ofJ("search latest versions error : {0}", ex));
+                _LOG().log(NMsg.ofJ("search latest versions error : {0}", ex).asFinestFail(ex));
                 //ignore....
             }
             return mirroring.searchLatestVersion(bestId, id, filter, fetchMode);
