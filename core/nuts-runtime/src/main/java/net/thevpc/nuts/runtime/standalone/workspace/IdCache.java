@@ -1,11 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.extension.CoreServiceUtils;
 import net.thevpc.nuts.util.NClassClassMap;
 import net.thevpc.nuts.spi.NComponent;
@@ -33,34 +32,35 @@ class IdCache {
 
     public IdCache(NId id, URL url, ClassLoader bootClassLoader, NLog LOG, Class<?>[] extensionPoints, NWorkspace workspace) {
         NAssert.requireNonBlank(extensionPoints, "extensionPoints");
-        if((id==null)!=(url==null)){
-            NAssert.requireNonNull(id,"id");
-            NAssert.requireNonNull(url,"url");
+        if ((id == null) != (url == null)) {
+            NAssert.requireNonNull(id, "id");
+            NAssert.requireNonNull(url, "url");
         }
         Set<String> extensionPointStrings = Arrays.stream(extensionPoints).map(x -> x.getName()).collect(Collectors.toSet());
         this.id = id;
         this.url = url;
         this.workspace = workspace;
-        NLogOp lop = LOG.with();
         Class<NComponent> serviceClass = NComponent.class;
         NRef<Boolean> logStart = NRef.of(false);
         int count = 0;
         if (url != null) {
             for (String n : CoreServiceUtils.loadZipServiceClassNames(url, serviceClass)) {
-                count += _addOne(n, bootClassLoader, extensionPoints, lop, logStart, serviceClass);
+                count += _addOne(n, bootClassLoader, extensionPoints, LOG, logStart, serviceClass);
             }
-            lop.verb(NLogVerb.INFO).level(Level.FINE)
-                    .log(NMsg.ofC("found %s extensions from %s (id=%s) (classloader %s). looking for %s", count, url, id, bootClassLoader, extensionPointStrings));
+            LOG.log(NMsg.ofC("found %s extensions from %s (id=%s) (classloader %s). looking for %s", count, url, id, bootClassLoader, extensionPointStrings)
+                    .withIntent(NMsgIntent.INFO).withLevel(Level.FINE)
+            );
         } else {
             for (String n : CoreServiceUtils.loadZipServiceClassNamesFromClassLoader(bootClassLoader, serviceClass)) {
-                count += _addOne(n, bootClassLoader, extensionPoints, lop, logStart, serviceClass);
+                count += _addOne(n, bootClassLoader, extensionPoints, LOG, logStart, serviceClass);
             }
-            lop.verb(NLogVerb.INFO).level(Level.FINE)
-                    .log(NMsg.ofC("found %s extensions from classloader %s (id=%s) . looking for %s", count, bootClassLoader, id, extensionPointStrings));
+            LOG.log(NMsg.ofC("found %s extensions from classloader %s (id=%s) . looking for %s", count, bootClassLoader, id, extensionPointStrings)
+                    .withIntent(NMsgIntent.INFO).withLevel(Level.FINE)
+            );
         }
     }
 
-    private int _addOne(String className, ClassLoader bootClassLoader, Class<?>[] extensionPoints, NLogOp lop,
+    private int _addOne(String className, ClassLoader bootClassLoader, Class<?>[] extensionPoints, NLog LOG,
                         NRef<Boolean> logStart,
                         Class<?> serviceClass
     ) {
@@ -70,29 +70,36 @@ class IdCache {
             try {
                 c = Class.forName(className, false, bootClassLoader);
             } catch (ClassNotFoundException x) {
-                lop.verb(NLogVerb.WARNING).level(Level.FINE).error(x)
-                        .log(NMsg.ofC("not a valid type %s", c));
+                LOG.log(NMsg.ofC("not a valid type %s", c).asFineAlert(x));
             }
             if (c != null) {
                 if (!logStart.get()) {
                     Set<String> extensionPointStrings = Arrays.stream(extensionPoints).map(x -> x.getName()).collect(Collectors.toSet());
-                    if(id==null){
-                        lop.verb(NLogVerb.INFO).level(Level.FINE)
-                                .log(NMsg.ofC("discover extensions from current classloader %s. looking for %s",bootClassLoader, extensionPointStrings));
-                    }else {
-                        lop.verb(NLogVerb.INFO).level(Level.FINE)
-                                .log(NMsg.ofC("discover extensions from %s (id=%s) (classloader %s). looking for %s", url, id, bootClassLoader, extensionPointStrings));
+                    if (id == null) {
+                        LOG
+                                .log(NMsg.ofC("discover extensions from current classloader %s. looking for %s", bootClassLoader, extensionPointStrings)
+                                        .withIntent(NMsgIntent.INFO).withLevel(Level.FINE)
+                                );
+                    } else {
+                        LOG
+                                .log(NMsg.ofC("discover extensions from %s (id=%s) (classloader %s). looking for %s", url, id, bootClassLoader, extensionPointStrings)
+                                        .withIntent(NMsgIntent.INFO).withLevel(Level.FINE)
+                                );
                     }
                     logStart.set(true);
                 }
                 if (!serviceClass.isAssignableFrom(c)) {
-                    lop.verb(NLogVerb.WARNING).level(Level.FINE)
-                            .log(NMsg.ofC("not a valid type %s <> %s, ignore...", c, serviceClass));
+                    LOG
+                            .log(NMsg.ofC("not a valid type %s <> %s, ignore...", c, serviceClass)
+                                    .withIntent(NMsgIntent.ALERT).withLevel(Level.FINE)
+                            );
                 } else {
                     NClassClassMap cc = classes.computeIfAbsent(extensionPoint, r -> new NClassClassMap());
                     cc.add(c);
-                    lop.verb(NLogVerb.INFO).level(Level.FINE)
-                            .log(NMsg.ofC("discovered %s as %s in %s", c, extensionPoint, url==null?"default classloader":url));
+                    LOG
+                            .log(NMsg.ofC("discovered %s as %s in %s", c, extensionPoint, url == null ? "default classloader" : url)
+                                    .withIntent(NMsgIntent.INFO).withLevel(Level.FINE)
+                            );
                     count++;
                 }
             }
