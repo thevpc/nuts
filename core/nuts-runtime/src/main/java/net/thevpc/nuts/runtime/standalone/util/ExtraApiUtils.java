@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
@@ -157,12 +157,12 @@ public class ExtraApiUtils {
                             URL incp = contextClassLoader.getResource(zname);
                             String clz = zname.substring(0, zname.length() - 6).replace('/', '.');
                             if (incp != null) {
-                                bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log(NMsg.ofC("url %s is already in classpath. checked class %s successfully",
-                                        url, clz));
+                                bLog.log(NMsg.ofC("url %s is already in classpath. checked class %s successfully",
+                                        url, clz).asFinest().withIntent(NMsgIntent.SUCCESS));
                                 return true;
                             } else {
-                                bLog.with().level(Level.FINEST).verb(NLogVerb.INFO).log(NMsg.ofC("url %s is not in classpath. failed to check class %s",
-                                        url, clz));
+                                bLog.log(NMsg.ofC("url %s is not in classpath. failed to check class %s",
+                                        url, clz).asFinest().withIntent(NMsgIntent.INFO));
                                 return false;
                             }
                         }
@@ -181,7 +181,7 @@ public class ExtraApiUtils {
         } catch (IOException e) {
             //
         }
-        bLog.with().level(Level.FINEST).verb(NLogVerb.FAIL).log(NMsg.ofC("url %s is not in classpath. no class found to check", url));
+        bLog.log(NMsg.ofC("url %s is not in classpath. no class found to check", url).asFinestFail());
         return false;
     }
 
@@ -191,7 +191,7 @@ public class ExtraApiUtils {
             if (!node.isIncludedInClasspath()) {
                 urls.add(node.getURL());
             } else {
-                bLog.with().level(Level.WARNING).verb(NLogVerb.CACHE).log(NMsg.ofC("url will not be loaded (already in classloader) : %s", node.getURL()));
+                bLog.log(NMsg.ofC("url will not be loaded (already in classloader) : %s", node.getURL()).asWarning().withIntent(NMsgIntent.CACHE));
             }
             for (NClassLoaderNode dependency : node.getDependencies()) {
                 fillBootDependencyNodes(dependency, urls, visitedIds, bLog);
@@ -204,7 +204,7 @@ public class ExtraApiUtils {
                 if (!node.isIncludedInClasspath()) {
                     urls.add(node.getURL());
                 } else {
-                    bLog.with().level(Level.WARNING).verb(NLogVerb.CACHE).log(NMsg.ofC("url will not be loaded (already in classloader) : %s", node.getURL()));
+                    bLog.log(NMsg.ofC("url will not be loaded (already in classloader) : %s", node.getURL()).asWarning().withIntent(NMsgIntent.CACHE));
                 }
                 for (NClassLoaderNode dependency : node.getDependencies()) {
                     fillBootDependencyNodes(dependency, urls, visitedIds, bLog);
