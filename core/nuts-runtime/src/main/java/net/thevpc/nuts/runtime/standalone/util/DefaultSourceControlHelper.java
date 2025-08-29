@@ -15,7 +15,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.UnzipOptions;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
+
 import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NUnused;
@@ -33,10 +33,6 @@ import java.util.logging.Level;
 public class DefaultSourceControlHelper {
 
     public DefaultSourceControlHelper(NWorkspace workspace) {
-    }
-
-    protected NLogOp _LOGOP() {
-        return _LOG().with();
     }
 
     protected NLog _LOG() {
@@ -62,8 +58,8 @@ public class DefaultSourceControlHelper {
                         .setDependencyFilter(NDependencyFilters.of().byRunnable())
                         .getResultDefinition();
             } catch (NNotFoundException ex) {
-                _LOGOP().level(Level.FINE).error(ex)
-                        .log(NMsg.ofC("failed to fetch %s", d.getId().builder().setVersion(newVersion).build()));
+                _LOG()
+                        .log(NMsg.ofC("failed to fetch %s", d.getId().builder().setVersion(newVersion).build()).asFine(ex));
                 //ignore
             }
             if (newVersionFound == null) {
