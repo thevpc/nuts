@@ -13,14 +13,14 @@ import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NMsgBuilder;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -184,8 +184,8 @@ public class NExceptionHandler {
                         messageFormatted = NMsg.ofStyledError(messageString);
                     }
                 } catch (Exception ex2) {
-                    NLogOp.of(NApplications.class).level(Level.FINE).error(ex2).log(
-                            NMsg.ofPlain("unable to get system terminal")
+                    NLog.of(NApplications.class).log(
+                            NMsg.ofPlain("unable to get system terminal").asFine(ex2)
                     );
                     //
                 }
@@ -288,17 +288,17 @@ public class NExceptionHandler {
                 });
             } else {
                 if (out != null) {
-                    NLogOp logOp = out.with().level(Level.OFF).verb(NLogVerb.FAIL);
+                    NMsgBuilder msgBuilder = NMsgBuilder.of().withLevel(Level.OFF).withIntent(NMsgIntent.FAIL);
                     if (messageFormatted != null) {
-                        logOp.log(messageFormatted);
+                        out.log(msgBuilder.withMsg(messageFormatted));
                     } else {
-                        logOp.log(NMsg.ofPlain(messageString));
+                        out.log(msgBuilder.withMsg(NMsg.ofPlain(messageString)));
                     }
                     if (stacktrace) {
-                        logOp.log(NMsg.ofPlain("---------------"));
-                        logOp.log(NMsg.ofPlain(">  STACKTRACE :"));
-                        logOp.log(NMsg.ofPlain("---------------"));
-                        logOp.log(NMsg.ofPlain(
+                        out.log(msgBuilder.withMsgPlain("---------------"));
+                        out.log(msgBuilder.withMsgPlain(">  STACKTRACE :"));
+                        out.log(msgBuilder.withMsgPlain("---------------"));
+                        out.log(msgBuilder.withMsgPlain(
                                 NStringUtils.stacktrace(ex)
                         ));
                     }
