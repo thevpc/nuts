@@ -511,7 +511,7 @@ public class DefaultNCmdLine implements NCmdLine {
         }
 
         @Override
-        public Matcher withDefaultLast() {
+        public Matcher withDefaults() {
             matchAll(new NCmdLineProcessor() {
                 @Override
                 public boolean process(NCmdLine cmdLine) {
@@ -534,8 +534,8 @@ public class DefaultNCmdLine implements NCmdLine {
         }
 
         @Override
-        public void requireWithDefault() {
-            withDefaultLast();
+        public void requireDefaults() {
+            withDefaults();
             require();
         }
 
