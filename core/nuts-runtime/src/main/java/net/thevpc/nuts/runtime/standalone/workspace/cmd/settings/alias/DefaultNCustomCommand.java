@@ -5,7 +5,7 @@ import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
+
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 
@@ -25,10 +25,6 @@ public class DefaultNCustomCommand implements NCustomCmd {
     private List<String> executorOptions;
 
     public DefaultNCustomCommand() {
-    }
-
-    protected NLogOp _LOGOP() {
-        return _LOG().with();
     }
 
     protected NLog _LOG() {
@@ -115,7 +111,7 @@ public class DefaultNCustomCommand implements NCustomCmd {
                                 .getGrabbedAllString()
                 );
             } catch (Exception ex) {
-                _LOGOP().level(Level.FINE).error(ex).log(NMsg.ofC("failed to retrieve help for %s", getName()));
+                _LOG().log(NMsg.ofC("failed to retrieve help for %s", getName()).asFine(ex));
                 return NText.ofStyled("failed to retrieve help for " + getName(), NTextStyle.error());
             }
         }
