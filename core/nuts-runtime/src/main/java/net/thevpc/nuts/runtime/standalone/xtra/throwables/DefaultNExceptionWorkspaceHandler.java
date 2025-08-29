@@ -9,12 +9,13 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
-import net.thevpc.nuts.log.NLogOp;
+
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -59,8 +60,8 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
                 fm = NMsg.ofStyledError(m);
             }
         } catch (Exception ex2) {
-            NLogOp.of(NApplications.class).level(Level.FINE).error(ex2).log(
-                    NMsg.ofPlain("unable to get system terminal")
+            NLog.of(NApplications.class).log(
+                    NMsg.ofPlain("unable to get system terminal").asFine(ex2)
             );
         }
         if (fout != null) {
