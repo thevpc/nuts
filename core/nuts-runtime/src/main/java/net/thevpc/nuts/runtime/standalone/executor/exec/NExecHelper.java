@@ -8,6 +8,7 @@ import net.thevpc.nuts.concurrent.NScheduler;
 
 import net.thevpc.nuts.format.NExecCmdFormat;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineUtils;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
@@ -16,7 +17,6 @@ import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
@@ -59,10 +59,10 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
         NLog _LL = NLog.of(NWorkspaceUtils.class);
         NCmdLine commandOut = NCmdLine.of(pb.getCommand());
         if (_LL.isLoggable(Level.FINEST)) {
-            _LL.with().level(Level.FINE).verb(NLogVerb.START).log(
+            _LL.log(
                     NMsg.ofC("[exec] %s",
                             commandOut
-                    ));
+                    ).asFinest().withIntent(NMsgIntent.START));
         }
         NSession session = NSession.of();
         if (showCommand || NWorkspace.of().getCustomBootOption("---show-command")
