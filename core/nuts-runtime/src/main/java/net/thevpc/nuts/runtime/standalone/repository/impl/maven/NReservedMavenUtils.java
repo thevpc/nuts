@@ -34,7 +34,7 @@ import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.boot.reserved.util.NBootPath;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.util.*;
@@ -187,7 +187,7 @@ public final class NReservedMavenUtils {
 //            }
 //        }
 //        for (NRepositoryLocation r : repositories) {
-//            bLog.with().level(Level.FINE).verb(NLogVerb.CACHE).log(NMsg.ofC("checking %s from %s", nutsId, r));
+//            bLog.with().level(Level.FINE).verb(NMsgIntent.CACHE).log(NMsg.ofC("checking %s from %s", nutsId, r));
 ////                File file = toFile(r);
 //            if (includeDesc) {
 //                String path = resolveMavenFullPath(r, nutsId, "pom");
@@ -196,19 +196,19 @@ public final class NReservedMavenUtils {
 //                    NReservedIOUtils.copy(new URL(path), cachedPomFile, bLog);
 //                } catch (Exception ex) {
 //                    errors.add(new NReservedErrorInfo(nutsId, r.toString(), path, "unable to load descriptor", ex));
-//                    bLog.with().level(Level.SEVERE).verb(NLogVerb.FAIL).log(NMsg.ofC("unable to load descriptor %s from %s.", nutsId, r));
+//                    bLog.with().level(Level.SEVERE).verb(NMsgIntent.FAIL).log(NMsg.ofC("unable to load descriptor %s from %s.", nutsId, r));
 //                    continue;
 //                }
 //            }
 //            String path = resolveMavenFullPath(r, nutsId, "jar");
 //            try {
 //                NReservedIOUtils.copy(new URL(path), cachedJarFile, bLog);
-//                bLog.with().level(Level.CONFIG).verb(NLogVerb.CACHE).log(NMsg.ofC("cache jar file %s", cachedJarFile.getPath()));
+//                bLog.with().level(Level.CONFIG).verb(NMsgIntent.CACHE).log(NMsg.ofC("cache jar file %s", cachedJarFile.getPath()));
 //                errors.removeErrorsFor(nutsId);
 //                return cachedJarFile;
 //            } catch (Exception ex) {
 //                errors.add(new NReservedErrorInfo(nutsId, r.toString(), path, "unable to load binaries", ex));
-//                bLog.with().level(Level.SEVERE).verb(NLogVerb.FAIL).log(NMsg.ofC("unable to load binaries %s from %s.", nutsId, r));
+//                bLog.with().level(Level.SEVERE).verb(NMsgIntent.FAIL).log(NMsg.ofC("unable to load binaries %s from %s.", nutsId, r));
 //            }
 //        }
 //        return null;
@@ -431,7 +431,7 @@ public final class NReservedMavenUtils {
 //                depsSet.addAll(ok);
 //
 //            } catch (Exception ex) {
-//                bLog.with().level(Level.FINE).verb(NLogVerb.FAIL).error(ex).log(NMsg.ofC("unable to loadDependenciesAndRepositoriesFromPomUrl %s", url));
+//                bLog.with().level(Level.FINE).verb(NMsgIntent.FAIL).error(ex).log(NMsg.ofC("unable to loadDependenciesAndRepositoriesFromPomUrl %s", url));
 //            } finally {
 //                try {
 //                    xml.close();
@@ -458,7 +458,7 @@ public final class NReservedMavenUtils {
                 //ignore
             }
             if (is != null) {
-                bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log(NMsg.ofC("parsing %s", mavenMetadata));
+                bLog.log(NMsg.ofC("parsing %s", mavenMetadata).withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS));
                 Document doc = builder.parse(is);
                 Element c = doc.getDocumentElement();
                 for (int i = 0; i < c.getChildNodes().getLength(); i++) {
@@ -484,7 +484,7 @@ public final class NReservedMavenUtils {
                 }
             }
         } catch (Exception ex) {
-            bLog.with().level(Level.FINE).verb(NLogVerb.FAIL).error(ex).log(NMsg.ofC("unable to parse %s", mavenMetadata));
+            bLog.log(NMsg.ofC("unable to parse %s", mavenMetadata).asFinestFail(ex));
             // ignore any error
         }
         return all;
@@ -528,7 +528,7 @@ public final class NReservedMavenUtils {
                                                 bestVersion = p;
                                                 bestPath = "local location : " + jarPath;
                                                 if (bLog != null) {
-                                                    bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log(NMsg.ofC("%s#%s found in %s as %s", zId, bestVersion, repoUrl2, bestPath));
+                                                    bLog.log(NMsg.ofC("%s#%s found in %s as %s", zId, bestVersion, repoUrl2, bestPath).withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS));
                                                 }
                                                 if (stopFirst) {
                                                     break;
@@ -566,7 +566,7 @@ public final class NReservedMavenUtils {
                                 bestVersion = p;
                                 bestPath = "remote file " + basePath;
                                 if (bLog != null) {
-                                    bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log(NMsg.ofC("%s#%s found in %s as %s", zId, bestVersion, repoUrl2, bestPath));
+                                    bLog.log(NMsg.ofC("%s#%s found in %s as %s", zId, bestVersion, repoUrl2, bestPath).withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS));
                                 }
                                 if (stopFirst) {
                                     break;
@@ -583,7 +583,7 @@ public final class NReservedMavenUtils {
                                 bestVersion = p;
                                 bestPath = "remote file " + mavenMetadata;
                                 if (bLog != null) {
-                                    bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log(NMsg.ofC("%s#%s found in %s as %s", zId, bestVersion, repoUrl2, bestPath));
+                                    bLog.log(NMsg.ofC("%s#%s found in %s as %s", zId, bestVersion, repoUrl2, bestPath).withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS));
                                 }
                                 if (stopFirst) {
                                     break;
@@ -609,17 +609,17 @@ public final class NReservedMavenUtils {
 //        if (bLog.isLoggable(Level.FINEST)) {
 //            switch (bootRepositories.size()) {
 //                case 0: {
-//                    bLog.with().level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofC("search for %s nuts there are no repositories to look into.", zId));
+//                    bLog.with().level(Level.FINEST).verb(NMsgIntent.START).log(NMsg.ofC("search for %s nuts there are no repositories to look into.", zId));
 //                    break;
 //                }
 //                case 1: {
-//                    bLog.with().level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofC("search for %s in: %s", zId, bootRepositories.toArray()[0]));
+//                    bLog.with().level(Level.FINEST).verb(NMsgIntent.START).log(NMsg.ofC("search for %s in: %s", zId, bootRepositories.toArray()[0]));
 //                    break;
 //                }
 //                default: {
-//                    bLog.with().level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofC("search for %s in: ", zId));
+//                    bLog.with().level(Level.FINEST).verb(NMsgIntent.START).log(NMsg.ofC("search for %s in: ", zId));
 //                    for (NRepositoryLocation repoUrl : bootRepositories) {
-//                        bLog.with().level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofC("    %s", repoUrl));
+//                        bLog.with().level(Level.FINEST).verb(NMsgIntent.START).log(NMsg.ofC("    %s", repoUrl));
 //                    }
 //                }
 //            }
@@ -644,7 +644,7 @@ public final class NReservedMavenUtils {
 //            return null;
 //        }
 //        NId iid = NId.of(zId.getGroupId(), zId.getArtifactId(), bestVersion).get();
-//        bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log(NMsg.ofC("resolve %s from %s", iid, bestPath));
+//        bLog.with().level(Level.FINEST).verb(NMsgIntent.SUCCESS).log(NMsg.ofC("resolve %s from %s", iid, bestPath));
 //        return iid;
 //    }
 
@@ -738,7 +738,7 @@ public final class NReservedMavenUtils {
 //                try {
 //                    repositoryFolder = NReservedIOUtils.toFile(new URL(repository));
 //                } catch (Exception ex) {
-//                    bLog.with().level(Level.FINE).verb(NLogVerb.FAIL).error(ex).log(NMsg.ofC("unable to convert url to file : %s", repository));
+//                    bLog.with().level(Level.FINE).verb(NMsgIntent.FAIL).error(ex).log(NMsg.ofC("unable to convert url to file : %s", repository));
 //                    //ignore
 //                }
 //            } else {
@@ -775,11 +775,11 @@ public final class NReservedMavenUtils {
 //                if (file.isFile()) {
 //                    ff = file;
 //                } else {
-//                    bLog.with().level(Level.CONFIG).verb(NLogVerb.FAIL).log(NMsg.ofC("locate %s", file));
+//                    bLog.with().level(Level.CONFIG).verb(NMsgIntent.FAIL).log(NMsg.ofC("locate %s", file));
 //                }
 //            } else {
 //                File file = new File(repoFolder, path.replace('/', File.separatorChar));
-//                bLog.with().level(Level.CONFIG).verb(NLogVerb.FAIL).log(NMsg.ofC("locate %s ; repository is not a valid folder : %s", file, repoFolder));
+//                bLog.with().level(Level.CONFIG).verb(NMsgIntent.FAIL).log(NMsg.ofC("locate %s ; repository is not a valid folder : %s", file, repoFolder));
 //            }
 //
 //            if (ff != null) {
@@ -800,15 +800,15 @@ public final class NReservedMavenUtils {
 //                        }
 //                        if (to.isFile()) {
 //                            NReservedIOUtils.copy(ff, to, bLog);
-//                            bLog.with().level(Level.CONFIG).verb(NLogVerb.CACHE).log(NMsg.ofC("recover cached %s file %s to %s", ext, ff, to));
+//                            bLog.with().level(Level.CONFIG).verb(NMsgIntent.CACHE).log(NMsg.ofC("recover cached %s file %s to %s", ext, ff, to));
 //                        } else {
 //                            NReservedIOUtils.copy(ff, to, bLog);
-//                            bLog.with().level(Level.CONFIG).verb(NLogVerb.CACHE).log(NMsg.ofC("cache %s file %s to %s", ext, ff, to));
+//                            bLog.with().level(Level.CONFIG).verb(NMsgIntent.CACHE).log(NMsg.ofC("cache %s file %s to %s", ext, ff, to));
 //                        }
 //                        return to;
 //                    } catch (IOException ex) {
 //                        errorList.add(new NReservedErrorInfo(nutsId, repository, ff.getPath(), "unable to cache", ex));
-//                        bLog.with().level(Level.CONFIG).verb(NLogVerb.FAIL).log(NMsg.ofC("error caching file %s to %s : %s", ff, to, ex.toString()));
+//                        bLog.with().level(Level.CONFIG).verb(NMsgIntent.FAIL).log(NMsg.ofC("error caching file %s to %s : %s", ff, to, ex.toString()));
 //                        //not found
 //                    }
 //                    return ff;
