@@ -7,11 +7,9 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.log.NLog;
 
 import java.util.Iterator;
-import java.util.logging.Level;
 
 /**
  *
@@ -44,10 +42,8 @@ public class NErrorHandlerIterator<T> extends NIteratorBase<T> {
             ex = null;
             return v;
         } catch (RuntimeException ex) {
-            NLogOp.of(NIndexFirstIterator.class)
-                    .verb(NLogVerb.WARNING)
-                    .level(Level.FINEST)
-                    .log(NMsg.ofC("error evaluating Iterator 'hasNext()' : %s", ex));
+            NLog.of(NIndexFirstIterator.class)
+                    .log(NMsg.ofC("error evaluating Iterator 'hasNext()' : %s", ex).asFineAlert());
             switch (type) {
                 case IGNORE: {
                     // do nothing
