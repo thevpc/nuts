@@ -31,6 +31,7 @@ import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.text.art.figlet.FigletNTextArtImageRenderer;
@@ -46,7 +47,6 @@ import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.text.NTextArtRenderer;
 
 /**
- *
  * @author vpc
  */
 @NComponentScope(NScopeType.WORKSPACE)
@@ -69,6 +69,22 @@ public class NTextArtImpl implements NTextArt {
         } catch (IOException ex) {
             // just ignore
         }
+        try {
+            Enumeration<URL> resources = NTextArtImpl.class.getClassLoader().getResources("META-INF/textart/" + rendererType + ".lst");
+            for (URL url : NCollections.list(resources)) {
+                for (String line : NPath.of(url).lines()) {
+                    line = line.trim();
+                    if (!line.isEmpty() && !line.startsWith("#")) {
+                        String id = rendererType + ":" + line;
+                        getRenderer(id).ifPresent(x -> {
+                            all.put(id, x);
+                        });
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            // just ignore
+        }
     }
 
     @Override
@@ -76,12 +92,12 @@ public class NTextArtImpl implements NTextArt {
 
         Map<String, NTextArtRenderer> all = new LinkedHashMap<>();
         for (String id : new String[]{
-            "pixel:cipher",
-            "pixel:hash",
-            "pixel:dot",
-            "pixel:star",
-            "pixel:dollar",
-            "pixel:standard"}) {
+                "pixel:cipher",
+                "pixel:hash",
+                "pixel:dot",
+                "pixel:star",
+                "pixel:dollar",
+                "pixel:standard"}) {
             all.put(id, getRenderer(id).get());
         }
         loadResourceList("pixel", all);
@@ -119,6 +135,10 @@ public class NTextArtImpl implements NTextArt {
         }
     }
 
+    public NOptional<NTextArtRenderer> getDefaultRenderer() {
+        return getRenderer("figlet:banner");
+    }
+
     @Override
     public NOptional<NTextArtRenderer> getRenderer(String fontName) {
         if (fontName != null) {
@@ -153,6 +173,11 @@ public class NTextArtImpl implements NTextArt {
     @Override
     public NOptional<NTextArtImageRenderer> getImageRenderer(String rendererName) {
         return getRenderer(rendererName).instanceOf(NTextArtImageRenderer.class);
+    }
+
+    @Override
+    public NOptional<NTextArtImageRenderer> getDefaultImageRenderer() {
+        return getRenderer("pixel:standard").instanceOf(NTextArtImageRenderer.class);
     }
 
     @Override
