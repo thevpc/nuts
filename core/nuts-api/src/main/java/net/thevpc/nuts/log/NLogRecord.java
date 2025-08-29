@@ -1,8 +1,6 @@
 package net.thevpc.nuts.log;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
 
 import java.util.logging.Level;
@@ -11,13 +9,13 @@ import java.util.logging.LogRecord;
 public class NLogRecord extends LogRecord implements NSessionProvider{
     private NSession session;
     private NMsg nmsg;
-    private NLogVerb verb;
+    private NMsgIntent verb;
     /**
      * duration
      */
     private long time;
 
-    public NLogRecord(NSession session, Level level, NLogVerb verb, NMsg msg, String filteredText,long time, Throwable thrown) {
+    public NLogRecord(NSession session, Level level, NMsgIntent verb, NMsg msg, String filteredText, long time, Throwable thrown) {
         super(level, filteredText);
         this.nmsg = msg;
         this.verb = verb;
@@ -35,7 +33,7 @@ public class NLogRecord extends LogRecord implements NSessionProvider{
         return time;
     }
 
-    public NLogVerb getVerb() {
+    public NMsgIntent getVerb() {
         return verb;
     }
 
