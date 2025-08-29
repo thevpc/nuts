@@ -26,15 +26,14 @@ package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.*;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
@@ -533,7 +532,7 @@ public final class NReservedUtils {
             }
             return updatedFile;
         } catch (IOException ex) {
-            bLog.with().level(Level.WARNING).verb(NLogVerb.WARNING).error(ex).log(NMsg.ofPlain("unable to update update " + filePath));
+            bLog.log(NMsg.ofPlain("unable to update update " + filePath).asWarningAlert(ex));
             return false;
         }
     }
