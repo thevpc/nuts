@@ -3,12 +3,13 @@ package net.thevpc.nuts.runtime.standalone.descriptor.util;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NEnvCondition;
 import net.thevpc.nuts.NEnvConditionBuilder;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorProperty;
 import net.thevpc.nuts.runtime.standalone.DefaultNEnvConditionBuilder;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
@@ -109,9 +110,8 @@ public class NDescriptorUtils {
                             effectiveDescriptor.getId(),
                             dependency
                     );
-                    NLogOp.of(NDescriptorUtils.class)
-                            .verb(NLogVerb.WARNING).level(Level.FINE)
-                            .log(errMsg);
+                    NLog.of(NDescriptorUtils.class)
+                            .log(errMsg.withIntent(NMsgIntent.ALERT).withLevel(Level.FINE));
                     if (!dependency.isOptional()) {
                         topException = true;
                         throw new NNotFoundException(effectiveDescriptor.getId(), errMsg);
@@ -123,12 +123,14 @@ public class NDescriptorUtils {
                 if (!CoreNIdUtils.isValidEffectiveId(dependency.toId())) {
                     // sometimes the variable is defined later in the pom that uses this POM standard Dependencies
                     // so just log a warning, this is not an error but a very bad practice from the dependency maintainer!
-                    NLogOp.of(NDescriptorUtils.class)
-                            .verb(NLogVerb.WARNING).level(Level.FINE)
+                    NLog.of(NDescriptorUtils.class)
+
                             .log(NMsg.ofC("%s is using standard-dependency %s which defines an unresolved variable. This is a potential bug.",
-                                    effectiveDescriptor.getId(),
-                                    dependency
-                            ));
+                                                    effectiveDescriptor.getId(),
+                                                    dependency
+                                            )
+                                            .withIntent(NMsgIntent.ALERT).withLevel(Level.FINE)
+                            );
                 }
             }
         } catch (NIllegalArgumentException ex) {
@@ -606,15 +608,19 @@ public class NDescriptorUtils {
             } else {
                 NDependency a = m.get(e);
                 if (a.equals(d)) {
-                    NLogOp.of(DefaultNDescriptorBuilder.class)
-                            .level(Level.FINER)
-                            .verb(NLogVerb.WARNING)
-                            .log(NMsg.ofC("dependency %s is duplicated", d));
+                    NLog.of(DefaultNDescriptorBuilder.class)
+
+                            .log(NMsg.ofC("dependency %s is duplicated", d)
+                                    .withLevel(Level.FINER)
+                                    .withIntent(NMsgIntent.ALERT)
+                            );
                 } else {
-                    NLogOp.of(DefaultNDescriptorBuilder.class)
-                            .level(Level.FINER)
-                            .verb(NLogVerb.WARNING)
-                            .log(NMsg.ofC("dependency %s is overridden by %s", a, d));
+                    NLog.of(DefaultNDescriptorBuilder.class)
+
+                            .log(NMsg.ofC("dependency %s is overridden by %s", a, d)
+                                    .withLevel(Level.FINER)
+                                    .withIntent(NMsgIntent.ALERT)
+                            );
                 }
             }
         }
@@ -638,7 +644,7 @@ public class NDescriptorUtils {
             NDescriptorProperty p = finalProperties.get(s);
             if (p != null) {
                 NEnvCondition cc = p.getCondition();
-                if(isAcceptProfiles(cc.getProfiles())) {
+                if (isAcceptProfiles(cc.getProfiles())) {
                     if (NBlankable.isBlank(cc)) {
                         return p.getValue().asString().orNull();
                     } else {
