@@ -27,10 +27,9 @@
 package net.thevpc.nuts.log;
 
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NMsgBuilder;
 
-import java.util.List;
 import java.util.function.Supplier;
-import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
@@ -40,7 +39,9 @@ import java.util.logging.LogRecord;
  * @app.category Logging
  */
 public interface NLog {
-    NLog NULL =NullNLog.NULL;
+    NLog NULL = NullNLog.NULL;
+
+    String getName();
     /**
      * create an instance of {@link NLog}
      *
@@ -62,89 +63,6 @@ public interface NLog {
     }
 
     /**
-     * Log handler
-     *
-     * @return Log handler
-     */
-    static List<Handler> getHandlers() {
-        return NLogs.of().getHandlers();
-    }
-
-    /**
-     * remove the given handler
-     *
-     * @param handler handler to remove
-     */
-    static void removeHandler(Handler handler) {
-        NLogs.of().removeHandler(handler);
-    }
-
-    /**
-     * add the given handler
-     *
-     * @param handler handler to add
-     */
-    static void addHandler(Handler handler) {
-        NLogs.of().addHandler(handler);
-    }
-
-    /**
-     * terminal handler
-     *
-     * @return terminal handler
-     */
-    static Handler getTermHandler() {
-        return NLogs.of().getTermHandler();
-    }
-
-    /**
-     * file handler
-     *
-     * @return file handler
-     */
-    static Handler getFileHandler() {
-        return NLogs.of().getFileHandler();
-    }
-
-
-    /**
-     * return terminal logger level
-     *
-     * @return terminal logger level
-     */
-    static Level getTermLevel() {
-        return NLogs.of().getTermLevel();
-    }
-
-    /**
-     * set terminal logger level
-     *
-     * @param level new level
-     */
-    static void setTermLevel(Level level) {
-        NLogs.of().setTermLevel(level);
-    }
-
-    /**
-     * return file logger level
-     *
-     * @return file logger level
-     */
-    static Level getFileLevel() {
-        return NLogs.of().getFileLevel();
-    }
-
-    /**
-     * set file logger level
-     *
-     * @param level new level
-     */
-    static void setFileLevel(Level level) {
-        NLogs.of().setFileLevel(level);
-    }
-
-
-    /**
      * Check if a message of the given level would actually be logged
      * by this logger.  This check is based on the Loggers effective level,
      * which may be inherited from its parent.
@@ -154,71 +72,28 @@ public interface NLog {
      */
     boolean isLoggable(Level level);
 
-    /**
-     * log message using the given verb and level
-     *
-     * @param level  message level
-     * @param verb   message verb / category
-     * @param msg    message
-     * @param thrown thrown exception
-     */
-    void log(Level level, NLogVerb verb, NMsg msg, Throwable thrown);
 
-    default void log(Level level, NLogVerb verb, NMsg msg){
-        log(level,verb,msg,null);
+    default void info(NMsg msg) {
+        log(msg.asInfo());
     }
 
-    default void warn(NMsg msg, Throwable thrown){
-        log(Level.WARNING, NLogVerb.WARNING, msg, thrown);
+    default void debug(NMsg msg) {
+        log(msg.asDebug());
     }
 
-    default void info(NMsg msg){
-        log(Level.INFO, NLogVerb.INFO, msg);
+    default void warn(NMsg msg) {
+        log(msg.asWarningAlert());
     }
 
-    default void debug(NMsg msg){
-        log(Level.FINEST, NLogVerb.DEBUG, msg);
+
+    default void error(NMsg msg) {
+        log(msg.asError());
     }
 
-    default void warn(NMsg msg){
-        log(Level.WARNING, NLogVerb.WARNING, msg,null);
-    }
+    void log(Level level,Supplier<NMsg> msgSupplier);
 
-    default void error(NMsg msg, Throwable thrown){
-        log(Level.SEVERE, NLogVerb.FAIL, msg, thrown);
-    }
+    void log(NMsg msg);
 
-    default void error(NMsg msg){
-        log(Level.SEVERE, NLogVerb.FAIL, msg,null);
-    }
+    void log(NMsgBuilder msg);
 
-    /**
-     * log message using the given verb and level
-     *
-     * @param level         message level
-     * @param verb          message verb / category
-     * @param msgSupplier   message supplier
-     * @param errorSupplier message error
-     */
-    void log(Level level, NLogVerb verb, Supplier<NMsg> msgSupplier, Supplier<Throwable> errorSupplier);
-
-    /**
-     * create a logger op.
-     * A Logger Op handles all information to log in a custom manner.
-     *
-     * @return new instance of {@link NLogOp}
-     */
-    NLogOp with();
-
-
-    /**
-     * Log a LogRecord.
-     * <br>
-     * All the other logging methods in this class call through
-     * this method to actually perform any logging.  Subclasses can
-     * override this single method to capture all log activity.
-     *
-     * @param record the LogRecord to be published
-     */
-    void log(LogRecord record);
 }
