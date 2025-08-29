@@ -1,0 +1,15 @@
+
+
+pre[class*="language-"], code[class*="language-"] {
+  background: none !important; /* transparent background */
+  color: #000; /* dark text for light background */
+  font-size: 12px;      /* smaller size */
+  line-height: 1.4;     /* optional: tighter spacing */
+}
+pre code {
+  display: block;
+  white-space: pre;
+  tab-size: 4;
+  font-size: 12px;      /* match pre */
+}
+
