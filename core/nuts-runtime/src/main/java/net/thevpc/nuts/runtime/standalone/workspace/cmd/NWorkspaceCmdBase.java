@@ -12,7 +12,6 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
 
 /**
  * @param <T> Type
@@ -31,10 +30,6 @@ public abstract class NWorkspaceCmdBase<T extends NWorkspaceCmd> implements NWor
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
         return NConstants.Support.DEFAULT_SUPPORT;
-    }
-
-    protected NLogOp _LOGOP() {
-        return _LOG().with();
     }
 
     protected NLog _LOG() {
