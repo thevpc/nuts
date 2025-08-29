@@ -690,11 +690,11 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
 
         boolean noMatch();
 
-        void requireWithDefault();
+        void requireDefaults();
 
         void require();
 
-        Matcher withDefaultLast();
+        Matcher withDefaults();
 
         Matcher withDefaultFirst();
     }
