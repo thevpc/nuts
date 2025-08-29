@@ -164,3 +164,4 @@ net.thevpc.nuts.runtime.standalone.util.DefaultNConnexionStringBuilderFactory
 
 net.thevpc.nuts.runtime.standalone.definition.NDefinitionFactoryImpl
 net.thevpc.nuts.runtime.standalone.text.art.NTextArtImpl
+net.thevpc.nuts.runtime.standalone.log.NLogFactorySPIJUL
