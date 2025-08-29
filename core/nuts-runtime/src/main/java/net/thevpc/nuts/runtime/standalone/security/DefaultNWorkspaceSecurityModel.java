@@ -30,7 +30,7 @@ import net.thevpc.nuts.NConstants;
 
 import net.thevpc.nuts.NUser;
 import net.thevpc.nuts.NUserConfig;
-import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.*;
 import net.thevpc.nuts.security.*;
@@ -39,14 +39,12 @@ import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
-import java.util.concurrent.Callable;
 import java.util.logging.Level;
 
 /**
@@ -64,10 +62,6 @@ public class DefaultNWorkspaceSecurityModel {
         this.workspace = ws;
         this.agent = new WrapperNAuthenticationAgent(ws, () -> NWorkspace.of().getConfigMap(), (x) -> getAuthenticationAgent(x));
         workspace.addWorkspaceListener(new ClearAuthOnWorkspaceChange());
-    }
-
-    protected NLogOp _LOGOP() {
-        return _LOG().with();
     }
 
     protected NLog _LOG() {
@@ -110,8 +104,8 @@ public class DefaultNWorkspaceSecurityModel {
         NUser adminSecurity = findUser(NConstants.Users.ADMIN);
         if (adminSecurity == null || !adminSecurity.hasCredentials()) {
             if (_LOG().isLoggable(Level.CONFIG)) {
-                _LOGOP().level(Level.CONFIG).verb(NLogVerb.WARNING)
-                        .log(NMsg.ofC("%s user has no credentials. reset to default", NConstants.Users.ADMIN));
+                _LOG()
+                        .log(NMsg.ofC("%s user has no credentials. reset to default", NConstants.Users.ADMIN).asConfig().withIntent(NMsgIntent.ALERT));
             }
             NUserConfig u = NWorkspaceExt.of(workspace).getConfigModel().getUser(NConstants.Users.ADMIN);
             u.setCredentials(CoreStringUtils.chrToStr(createCredentials("admin".toCharArray(), false, null)));
