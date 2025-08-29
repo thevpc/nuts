@@ -1,7 +1,0 @@
----
-id: uninstall-help
-title: Uninstall Cmdline
----
-
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/uninstall.ntf"}}
-
