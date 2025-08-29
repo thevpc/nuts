@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.id.filter;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionDelegate;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenRepositoryFolderHelper;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
@@ -112,10 +112,10 @@ public class NDefinitionIdFilter extends AbstractIdFilter implements NIdFilter, 
                 } catch (Exception ex) {
                     //suppose we cannot retrieve descriptor
                     if (LOG.isLoggable(Level.FINER)) {
-                        LOG.with().level(Level.FINER).verb(NLogVerb.FAIL)
+                        LOG
                                 .log(
                                         NMsg.ofC("unable to fetch descriptor for %s : %s",
-                                                id, ex)
+                                                id, ex).asFinestFail()
                                 );
                     }
                     if (!(ex instanceof RuntimeException)) {
