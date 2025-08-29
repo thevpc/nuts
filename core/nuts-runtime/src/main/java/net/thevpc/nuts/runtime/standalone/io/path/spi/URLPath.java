@@ -6,7 +6,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.NPathParts;
 import net.thevpc.nuts.util.NCachedSupplier;
@@ -645,17 +645,17 @@ public class URLPath implements NPathSPI {
             if (z > 0) {
                 cc.lastModified = Instant.ofEpochMilli(z);
             }
-            success=cc.responseCode>=200 && cc.responseCode<300;
+            success = cc.responseCode >= 200 && cc.responseCode < 300;
             return cc;
         } catch (Exception ex) {
             success = false;
             //
         } finally {
-            NLog.of(URLPath.class).with()
-                    .level(Level.FINEST)
-                    .verb(success ? NLogVerb.SUCCESS : NLogVerb.FAIL)
-                    .time(chrono.stop().getDurationMs())
-                    .log(NMsg.ofC("load url info %s", url));
+            NLog.of(URLPath.class)
+                    .log(NMsg.ofC("load url info %s", url).withLevel(Level.FINEST)
+                            .withIntent(success ? NMsgIntent.SUCCESS : NMsgIntent.FAIL)
+                            .withDurationMillis(chrono.stop().getDurationMs())
+                    );
         }
         return null;
     }
