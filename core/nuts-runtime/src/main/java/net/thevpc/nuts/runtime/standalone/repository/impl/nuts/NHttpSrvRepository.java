@@ -30,6 +30,7 @@ import net.thevpc.nuts.NSpeedQualifier;
 import net.thevpc.nuts.NUser;
 import net.thevpc.nuts.NUserConfig;
 import net.thevpc.nuts.format.NDescriptorFormat;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElement;
@@ -40,7 +41,6 @@ import net.thevpc.nuts.runtime.standalone.id.filter.NExprIdFilter;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NCachedRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreSecurityUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 
@@ -65,8 +65,8 @@ public class NHttpSrvRepository extends NCachedRepository {
         try {
             remoteId = getRemoteId();
         } catch (Exception ex) {
-            LOG().with().level(Level.WARNING).verb(NLogVerb.FAIL)
-                    .log(NMsg.ofJ("unable to initialize Repository NutsId for repository {0}", options.getLocation()));
+            LOG()
+                    .log(NMsg.ofJ("unable to initialize Repository NutsId for repository {0}", options.getLocation()).withLevel(Level.WARNING).withIntent(NMsgIntent.FAIL));
         }
     }
 
@@ -83,8 +83,10 @@ public class NHttpSrvRepository extends NCachedRepository {
             try {
                 remoteId = NId.get(httpGetString(getUrl("/version"))).get();
             } catch (Exception ex) {
-                LOG().with().level(Level.WARNING).verb(NLogVerb.FAIL)
-                        .log(NMsg.ofJ("unable to resolve Repository NutsId for remote repository {0}", config().getLocation()));
+                LOG()
+                        .log(NMsg.ofJ("unable to resolve Repository NutsId for remote repository {0}", config().getLocation())
+                                .withLevel(Level.WARNING).withIntent(NMsgIntent.FAIL)
+                        );
             }
         }
         return remoteId;
@@ -233,8 +235,8 @@ public class NHttpSrvRepository extends NCachedRepository {
     }
 
     private String httpGetString(String url) {
-        LOG().with().level(Level.FINEST).verb(NLogVerb.START)
-                .log(NMsg.ofJ("get URL{0}", url));
+        LOG().log(NMsg.ofJ("get URL{0}", url)
+                        .withLevel(Level.FINEST).withIntent(NMsgIntent.START));
         return NIOUtils.loadString(NPath.of(url).getInputStream(), true);
     }
 
