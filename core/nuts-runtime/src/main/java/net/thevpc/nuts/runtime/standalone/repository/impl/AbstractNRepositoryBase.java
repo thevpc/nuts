@@ -31,6 +31,7 @@ import net.thevpc.nuts.NIndexStore;
 import net.thevpc.nuts.NSpeedQualifier;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.deploy.DefaultNDeployRepositoryCmd;
@@ -48,7 +49,6 @@ import java.util.*;
 import java.util.logging.Level;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
-import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 
@@ -137,7 +137,7 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
         return a;
     }
 
-    protected void traceMessage(NFetchMode fetchMode, Level lvl, NId id, NLogVerb tracePhase, String title, long startTime, NMsg extraMessage) {
+    protected void traceMessage(NFetchMode fetchMode, Level lvl, NId id, NMsgIntent tracePhase, String title, long startTime, NMsg extraMessage) {
         NLogUtils.traceMessage(NLog.of(AbstractNRepositoryBase.class), lvl, getName(), fetchMode, id, tracePhase, title, startTime, extraMessage);
     }
 
