@@ -98,7 +98,7 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
                     try {
                         w = NExecCmd.of().addCommand(arg).which();
                     } catch (Exception ex) {
-                        LOG().with().level(Level.FINE).error(ex).log(NMsg.ofC("failed to execute : %s", arg));
+                        LOG().log(NMsg.ofC("failed to execute : %s", arg).asFine(ex));
                         //ignore
                     }
                     if (w != null) {
