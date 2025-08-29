@@ -11,8 +11,8 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.reflect.NReflectConfigurationBuilder;
 import net.thevpc.nuts.reflect.NReflectPropertyAccessStrategy;
 import net.thevpc.nuts.reflect.NReflectPropertyDefaultValueStrategy;
@@ -64,10 +64,6 @@ public class NWorkspaceUtils {
         String defaultWorkspaceLocation = NPlatformHome.USER.getWorkspaceLocation(null);
         NPath location = NWorkspace.of().getLocation();
         return location!=null&& defaultWorkspaceLocation.equals(location.toString());
-    }
-
-    protected NLogOp _LOGOP() {
-        return _LOG().with();
     }
 
     protected NLog _LOG() {
@@ -172,16 +168,14 @@ public class NWorkspaceUtils {
                     try {
                         d = NRepositoryHelper.getSupportDeployLevel(repository, fmode, id, mode, session.isTransitive());
                     } catch (Exception ex) {
-                        _LOGOP().level(Level.FINE).error(ex)
-                                .log(NMsg.ofJ("unable to resolve support deploy level for : {0}", repository.getName()));
+                        _LOG().log(NMsg.ofJ("unable to resolve support deploy level for : {0}", repository.getName()).asFinestFail(ex));
                     }
                 }
                 NSpeedQualifier t = NSpeedQualifier.NORMAL;
                 try {
                     t = NRepositoryHelper.getSupportSpeedLevel(repository, fmode, id, mode, session.isTransitive());
                 } catch (Exception ex) {
-                    _LOGOP().level(Level.FINE).error(ex)
-                            .log(NMsg.ofJ("unable to resolve support speed level for : {0}", repository.getName()));
+                    _LOG().log(NMsg.ofJ("unable to resolve support speed level for : {0}", repository.getName()).asFineFail(ex));
                 }
                 if (t != NSpeedQualifier.UNAVAILABLE) {
                     repos2.add(new RepoAndLevel(repository, d, t, postComp));
@@ -249,8 +243,8 @@ public class NWorkspaceUtils {
                 workspace.saveConfig();
             }
         } catch (Exception ex) {
-            _LOG().with().level(Level.FINEST).verb(NLogVerb.WARNING).error(ex)
-                    .log(NMsg.ofJ("unable to resolve default JRE/JDK locations : {0}", ex));
+            _LOG()
+                    .log(NMsg.ofJ("unable to resolve default JRE/JDK locations : {0}", ex).asFinestAlert(ex));
             if (session.isPlainTrace()) {
                 NPrintStream out = session.out();
                 out.resetLine();
@@ -284,8 +278,8 @@ public class NWorkspaceUtils {
                 workspace.saveConfig();
             }
         } catch (Exception ex) {
-            _LOG().with().level(Level.FINEST).verb(NLogVerb.WARNING).error(ex)
-                    .log(NMsg.ofJ("unable to resolve default JRE/JDK locations : {0}", ex));
+            _LOG()
+                    .log(NMsg.ofJ("unable to resolve default JRE/JDK locations : {0}", ex).asFineAlert(ex));
             if (session.isPlainTrace()) {
                 NPrintStream out = session.out();
                 out.resetLine().println(NMsg.ofC("Ms :  %s", NMsg.ofStyledError("unable to resolve default JRE/JDK locations"), ex));
@@ -307,8 +301,8 @@ public class NWorkspaceUtils {
                             .setCreateMenuLauncher(includeGraphicalLaunchers ? NSupportMode.SUPPORTED : NSupportMode.NEVER)
             );
         } catch (Exception ex) {
-            _LOG().with().level(Level.FINEST).verb(NLogVerb.WARNING).error(ex)
-                    .log(NMsg.ofJ("unable to install desktop launchers : {0}", ex));
+            _LOG()
+                    .log(NMsg.ofJ("unable to install desktop launchers : {0}", ex).asFineAlert(ex));
             if (session.isPlainTrace()) {
                 NPrintStream out = session.out();
                 out.resetLine().println(NMsg.ofC("%s :  %s",
@@ -337,8 +331,8 @@ public class NWorkspaceUtils {
             NInstallCmd.of().companions()
                     .run();
         } catch (Exception ex) {
-            _LOG().with().level(Level.FINEST).verb(NLogVerb.WARNING).error(ex)
-                    .log(NMsg.ofJ("unable to install companions : {0}", ex));
+            _LOG()
+                    .log(NMsg.ofJ("unable to install companions : {0}", ex).asFineAlert(ex));
             if (session.isPlainTrace()) {
                 NPrintStream out = session.out();
                 out.resetLine().println(NMsg.ofC("%s :  %s "
@@ -396,8 +390,10 @@ public class NWorkspaceUtils {
         }
 
         public void fireOnInstall(NInstallEvent event) {
-            u._LOGOP().level(Level.FINEST).verb(NLogVerb.ADD)
-                    .log(NMsg.ofJ("installed {0}", event.getDefinition().getId()));
+            u._LOG()
+                    .log(NMsg.ofJ("installed {0}", event.getDefinition().getId())
+                            .withLevel(Level.FINEST).withIntent(NMsgIntent.ADD)
+                    );
             for (NInstallListener listener : event.getWorkspace().getInstallListeners()) {
                 listener.onInstall(event);
             }
@@ -407,8 +403,10 @@ public class NWorkspaceUtils {
         }
 
         public void fireOnRequire(NInstallEvent event) {
-            u._LOGOP().level(Level.FINEST).verb(NLogVerb.ADD)
-                    .log(NMsg.ofJ("required {0}", event.getDefinition().getId()));
+            u._LOG()
+                    .log(NMsg.ofJ("required {0}", event.getDefinition().getId())
+                            .withLevel(Level.FINEST).withIntent(NMsgIntent.ADD)
+                    );
             for (NInstallListener listener : event.getWorkspace().getInstallListeners()) {
                 listener.onRequire(event);
             }
@@ -420,13 +418,17 @@ public class NWorkspaceUtils {
         public void fireOnUpdate(NUpdateEvent event) {
             if (u._LOG().isLoggable(Level.FINEST)) {
                 if (event.getOldValue() == null) {
-                    u._LOGOP().level(Level.FINEST).verb(NLogVerb.UPDATE)
-                            .log(NMsg.ofJ("updated {0}", event.getNewValue().getId()));
+                    u._LOG()
+                            .log(NMsg.ofJ("updated {0}", event.getNewValue().getId())
+                                    .withLevel(Level.FINEST).withIntent(NMsgIntent.UPDATE)
+                            );
                 } else {
-                    u._LOGOP().level(Level.FINEST).verb(NLogVerb.UPDATE)
+                    u._LOG()
                             .log(NMsg.ofJ("updated {0} (old is {1})",
                                     event.getOldValue().getId().getLongId(),
-                                    event.getNewValue().getId().getLongId()));
+                                    event.getNewValue().getId().getLongId())
+                                    .withLevel(Level.FINEST).withIntent(NMsgIntent.UPDATE)
+                            );
                 }
             }
             for (NInstallListener listener : event.getWorkspace().getInstallListeners()) {
@@ -439,8 +441,10 @@ public class NWorkspaceUtils {
 
         public void fireOnUninstall(NInstallEvent event) {
             if (u._LOG().isLoggable(Level.FINEST)) {
-                u._LOGOP().level(Level.FINEST).verb(NLogVerb.REMOVE)
-                        .log(NMsg.ofJ("uninstalled {0}", event.getDefinition().getId()));
+                u._LOG()
+                        .log(NMsg.ofJ("uninstalled {0}", event.getDefinition().getId())
+                                .withLevel(Level.FINEST).withIntent(NMsgIntent.REMOVE)
+                        );
             }
             for (NInstallListener listener : event.getWorkspace().getInstallListeners()) {
                 listener.onUninstall(event);
@@ -452,8 +456,10 @@ public class NWorkspaceUtils {
 
         public void fireOnAddRepository(NWorkspaceEvent event) {
             if (u._LOG().isLoggable(Level.CONFIG)) {
-                u._LOGOP().level(Level.CONFIG).verb(NLogVerb.ADD)
-                        .log(NMsg.ofJ("loaded repo ##{0}##", event.getRepository().getName()));
+                u._LOG()
+                        .log(NMsg.ofJ("loaded repo ##{0}##", event.getRepository().getName())
+                                .withLevel(Level.CONFIG).withIntent(NMsgIntent.ADD)
+                        );
             }
 
             for (NWorkspaceListener listener : event.getWorkspace().getWorkspaceListeners()) {
@@ -466,8 +472,10 @@ public class NWorkspaceUtils {
 
         public void fireOnRemoveRepository(NWorkspaceEvent event) {
             if (u._LOG().isLoggable(Level.FINEST)) {
-                u._LOGOP().level(Level.FINEST).verb(NLogVerb.REMOVE)
-                        .log(NMsg.ofJ("unloaded repo ##{0}##", event.getRepository().getName()));
+                u._LOG()
+                        .log(NMsg.ofJ("unloaded repo ##{0}##", event.getRepository().getName())
+                                .withLevel(Level.FINEST).withIntent(NMsgIntent.REMOVE)
+                        );
             }
             for (NWorkspaceListener listener : event.getWorkspace().getWorkspaceListeners()) {
                 listener.onRemoveRepository(event);
