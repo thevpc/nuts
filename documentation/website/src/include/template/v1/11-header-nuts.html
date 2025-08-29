@@ -1,0 +1,67 @@
+<!-- Header
+    ============================ -->
+<header id="header" class="sticky-top">
+    <!-- Navbar -->
+    <nav class="primary-menu navbar navbar-expand-lg navbar-dropdown-dark">
+        <div class="container-fluid">
+            <!-- Sidebar Toggler -->
+            <button id="sidebarCollapse" class="navbar-toggler d-block d-md-none" type="button"><span></span><span
+                    class="w-75"></span><span class="w-50"></span></button>
+
+            <!-- Logo -->
+            <a class="logo ml-md-3" href="index.html" title="Nuts Package Manager"> <img
+                    src="assets/images/nuts-icon.png" alt="Nuts Package Manager" width="32px"/> </a>
+            <span class="text-4 ml-2" style="font-family: ZeroesTwo;"><strong><a href="index.html">Nuts Package Manager</a></strong></span>
+            <span class="text-2 ml-2" style="font-family: ZeroesTwo;"><span class="badge badge-info">v0.8.6.0</span></span>
+            <!-- Logo End -->
+
+            <!-- Navbar Toggler -->
+            <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#header-nav">
+                <span></span><span></span><span></span></button>
+
+            <div id="header-nav" class="collapse navbar-collapse justify-content-end">
+                <ul class="navbar-nav">
+                    <li><a href="naf.html" class="{{ if(pageId=='naf') 'not-active' else '' }}">Nuts Application Framework</a></li>
+                    <li class="dropdown"> <a class="dropdown-toggle" href="#">Documentation</a>
+                      <ul class="dropdown-menu">
+                          <li><a class="dropdown-item {{ if(pageId=='doc-nuts') 'not-active' else '' }}" href="doc-nuts.html">User Documentation</a>
+                          <li><a class="dropdown-item {{ if(pageId=='contrib') 'not-active' else '' }}" href="contrib.html">Contributing</a></li>
+                          <li><a class="dropdown-item {{ if(pageId=='faq') 'not-active' else '' }}" href="faq.html">FAQ</a></li>
+                          <!--
+                        <li><a class="dropdown-item" href="#">Action</a></li>
+                        <li class="dropdown"><a class="dropdown-item dropdown-toggle" href="#">More</a>
+                          <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="index.html">Apps</a></li>
+                            <li><a class="dropdown-item" href="feature-header-dark.html">Change Log</a></li>
+                            <li><a class="dropdown-item" href="feature-header-primary.html">FAQ</a></li>
+                            <li><a class="dropdown-item" href="index-2.html">Another Link</a></li>
+                          </ul>
+                        </li>
+                        -->
+                      </ul>
+                    </li>
+                    <li><a href="blog.html" class="{{ if(pageId=='blog') 'not-active' else '' }}">Blog</a></li>
+                    <li><a href="apps.html" class="{{ if(pageId=='apps') 'not-active' else '' }}">Apps</a></li>
+                    <li><a href="download.html" class="{{ if(pageId=='download') 'not-active' else '' }}">Download</a></li>
+                    <li><a target="_blank" href="https://github.com/thevpc/nuts">GitHub</a></li>
+                </ul>
+            </div>
+            <ul class="social-icons social-icons-sm ml-lg-2 mr-2">
+                <li class="social-icons-twitter"><a data-toggle="tooltip"
+                                                    href="http://www.twitter.com/tbensalah/" target="_blank"
+                                                    title="" data-original-title="Twitter"><i
+                        class="fab fa-twitter"></i></a></li>
+                <li class="social-icons-facebook"><a data-toggle="tooltip"
+                                                     href="http://www.facebook.com/tbensalah/" target="_blank"
+                                                     title="" data-original-title="Facebook"><i
+                        class="fab fa-facebook-f"></i></a></li>
+                <li class="social-icons-dribbble"><a data-toggle="tooltip"
+                                                     href="http://www.dribbble.com/tbensalah/" target="_blank"
+                                                     title="" data-original-title="Dribbble"><i
+                        class="fab fa-dribbble"></i></a></li>
+            </ul>
+        </div>
+    </nav>
+    <!-- Navbar End -->
+</header>
+<!-- Header End -->
