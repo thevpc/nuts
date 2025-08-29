@@ -1,92 +1,575 @@
 <!DOCTYPE html>
 <html lang="en">
-{{:include $'$projectRoot/src/include/template/v1/01-preamble.html'}}
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
+    <link href="assets/images/favicon.ico" rel="icon"/>
+    <title>Nuts Java Package Manager</title>
+    <meta name="description" content="Your ThemeForest item Name and description">
+    <meta name="author" content="thevpc">
+
+    <!-- Stylesheet
+    ============================== -->
+    <!-- Bootstrap -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/bootstrap/css/bootstrap.min.css"/>
+    <!-- Font Awesome Icon -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/font-awesome/css/all.min.css"/>
+    <!-- Magnific Popup -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/magnific-popup/magnific-popup.min.css"/>
+    <!-- Highlight Syntax -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/highlight.js/styles/github.css"/>
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-landing.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/caroussel.css"/>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Smooch+Sans:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-java.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/normalize-whitespace/prism-normalize-whitespace.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-xml.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="assets/css/code.css"/>
+</head>
+
+<body data-spy="scroll" data-target=".idocs-navigation" data-offset="125">
+
+<!-- Preloader -->
+<div class="preloader">
+    <div class="lds-ellipsis">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>
+<!-- Preloader End -->
 
 <!-- Document Wrapper   
 =============================== -->
-<div id="main-wrapper" class="documentation-main-wrapper">
-    {{:: pageId='naf'}}
-    {{:include $'$projectRoot/src/include/template/v1/11-header.html'}}
+<div id="main-wrapper" class="index-main-wrapper">
+
+    {{:: pageId='landing'}}
+    {{:include $'$projectRoot/src/include/template/v1/12-header-naf.html'}}
 
     <!-- Content
     ============================ -->
     <div id="content" role="main">
 
-        <!-- Sidebar Navigation
-        ============================ -->
-        <div class="idocs-navigation bg-light">
-            <ul class="nav flex-column ">
-                {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/$pageId')}}
-                <li class="nav-item"><a class="nav-link" href="#{{pageLevel1.id}}">{{pageLevel1Index+1}} {{pageLevel1.title}}</a>
-                    {{:: allPagesLevel2=loadPages(pageLevel1)}}
-                    {{:if (allPagesLevel2.size)>0}}
-                    <ul class="nav flex-column">
-                        {{:for pageLevel2,pageLevel2Index:allPagesLevel2}}
-                        <li class="nav-item"><a class="nav-link" href="#{{pageLevel2.id}}">{{pageLevel1Index+1}}.{{pageLevel2Index+1}} {{pageLevel2.title}}</a>
-                            {{:: allPagesLevel3=loadPages(pageLevel2)}}
-                            {{:if (allPagesLevel3.size)>0}}
-                            <ul class="nav flex-column">
-                                {{:for pageLevel3,pageLevel3Index:allPagesLevel3}}
-                                <li class="nav-item"><a class="nav-link" href="#{{pageLevel3.id}}">{{pageLevel1Index+1}}.{{pageLevel2Index+1}}.{{pageLevel3Index+1}} {{pageLevel3.title}}</a>
-
-                                </li>
-                                {{:end}}
-                            </ul>
-                            {{:end}}
-                        </li>
-                        {{:end}}
-                    </ul>
-                    {{:end}}
-                </li>
-                {{:end}}
-            </ul>
-        </div>
-
         <!-- Docs Content
         ============================ -->
         <div class="idocs-content">
-            <div class="container">
+            <div class="container-landing">
 
-                {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/$pageId')}}
-                    <!--pageLevel1-->
-                    <section id="{{pageLevel1.id}}" >
-                        <h2 class="main-section1"><a href="#{{pageLevel1.id}}">{{(pageLevel1Index+1)+" "+pageLevel1.title}}</a></h2>
-                        <div class="text-card">
-                        {{pageContentToHtml(pageLevel1,(pageLevel1Index+1))}}
-                        </div>
-                        {{:for pageLevel2,pageLevel2Index:loadPages(pageLevel1)}}
-                            <!--pageLevel2-->
-                            <section id="{{pageLevel2.id}}" >
-                                <h3 class="main-section2"><a href="#{{pageLevel1.id}}">{{(pageLevel1Index+1)+"."+(pageLevel2Index+1)+" "+pageLevel2.title}}</a></h3>
-                                <div class="text-card">
-                                {{pageContentToHtml(pageLevel2,(pageLevel1Index+1)+"."+(pageLevel2Index+1))}}
-                                </div>
-                                {{:for pageLevel3,pageLevel3Index:loadPages(pageLevel2)}}
-                                    <!--pageLevel3-->
-                                    <section id="{{pageLevel3.id}}" >
-                                        <h4 class="main-section3"><a href="#{{pageLevel1.id}}">{{(pageLevel1Index+1)+"."+(pageLevel2Index+1)+"."+(pageLevel3Index+1)+" "+pageLevel3.title}}</a></h4>
-                                        <div class="text-card">
-                                        {{pageContentToHtml(pageLevel3,(pageLevel1Index+1)+"."+(pageLevel2Index+1)+"."+(pageLevel3Index+1))}}
-                                        </div>
-                                    </section>
-                                    <hr class="divider">
-                                {{:end}}
-                            </section>
-                            <hr class="divider">
-                        {{:end}}
-                    </section>
-                    <hr class="divider">
-                {{:end}}
+                <header class="hero hero-primary">
+                    <div class="container feature-anim-right"><h1 class="hero_title">
+                        <img src="assets/images/nuts-icon.png" alt="" width="128">NAF</h1>
+                        <p class="hero_subtitle">Nuts Application Framework</p>
+                        <p class="hero_subsubtitle">The core API foundation for modular and dynamic Java applications</p>
+                        <img src="https://thevpc.net/nuts/images/pixel.gif?q=nuts-gsite" alt="">
+                    </div>
+                </header>
 
             </div>
+            <main>
+                <section>
+                    <!------------------- -->
+                    <div class="container">
+                        <div class="row">
+<!--                            <div class="col col-4">-->
+<!--                                <div class="text&#45;&#45;center"><img class="feature-anim-down img-icon"-->
+<!--                                                               src="assets/images/slim-jar.png">-->
+<!--                                    <div class="glow-wrap"><i class="glow"></i></div>-->
+<!--                                </div>-->
+<!--                                <h3 class="feature-title">No Fat Jar</h3>-->
+<!--                                <p>Developers, say goodbye to the hassle of <i>big jars</i>! Forget packaging-->
+<!--                                    dependencies with your application—they'll be downloaded automatically when you-->
+<!--                                    install.-->
+<!--                                    This means your <code>pom.xml</code> file will be much smaller.-->
+<!--                            </div>-->
+<!--                            <div class="col col&#45;&#45;4">-->
+<!--                                <div class="text&#45;&#45;center"><img class="feature-anim-down img-icon"-->
+<!--                                                               src="assets/images/package.png">-->
+<!--                                    <div class="glow-wrap"><i class="glow"></i></div>-->
+<!--                                </div>-->
+<!--                                <h3 class="feature-title">Any application</h3>-->
+<!--                                <p>Installing a Java application is as easy as running the command <span-->
+<!--                                        style="font-family: 'Courier New'; font-weight: bolder; color: #3a3a3a">nuts install <span-->
+<!--                                        style="font-family: 'Courier New'; font-weight: bolder; color: #5e1700">&lt;your-package&gt;</span></span>.-->
+<!--                                    Nuts manages dependencies and allows you to install and run <strong>multiple-->
+<!--                                        versions</strong> of the same application. Plus, any application built with-->
+<!--                                    Maven is already <code>nuts</code>-aware!-->
+<!--                            </div>-->
+<!--                            <div class="col col&#45;&#45;4">-->
+<!--                                <div class="text&#45;&#45;center"><img class="feature-anim-down img-icon"-->
+<!--                                                               src="assets/images/gear.png">-->
+<!--                                    <div class="glow-wrap"><i class="glow"></i></div>-->
+<!--                                </div>-->
+<!--                                <h3 class="feature-title">Automate</h3>-->
+<!--                                <p>Use the nuts toolbox, which provides a portable, Java-based version of common GNU-->
+<!--                                    commands like <code>bash</code>, <code>ls</code>, and <code>cp</code>. These-->
+<!--                                    commands are enhanced to support output formats like JSON and XML, making your-->
+<!--                                    automation scripts more predictable, debuggable, and easy to use.</p>-->
+<!--                            </div>-->
+                            <div class="col col-12">
+                                <div class="carousel-container">
+                                    <div class="carousel-slides">
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-title">Maven Integration</h3>
+                                                <p>Nuts can be added to your project with <code>one</code> single JAR dependency, fully compatible with Maven repositories. Once included, it brings runtime dependency resolution, artifact management, and dynamic execution to your application without additional setup. Just add the dependency, and Nuts takes care of the rest — from fetching artifacts to managing versions, all seamlessly integrated with your existing Maven workflow.</p>
+                                                <pre>
+                                                    <code class="language-xml">
+                                                        &lt;dependencies>
+                                                            &lt;dependency>&lt;groupId>net.thevpc.nuts&lt;/groupId>
+                                                            &lt;artifactId>nuts&lt;/artifactId>
+                                                            &lt;version>{{apiVersion}}&lt;/version>
+                                                        &lt;/dependency>
+                                                        &lt;/dependencies>
+                                                        &lt;repositories>
+                                                            &lt;repository>&lt;id>thevpc&lt;/id>&lt;url>https://maven.thevpc.net&lt;/url>&lt;/repository>
+                                                        &lt;/repositories>
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-title">Easy Onboarding</h3>
+                                                <p>One line to start. Full runtime at your fingertips.
+                                                    Get started instantly with Nuts — no setup, no configuration, just run. Behind that single line lies a powerful, fully-featured runtime: dependency management, sessions, workspaces, and automation tools ready for anything your application needs. Nuts makes modern Java development simple, composable, and ready to scale.</p>
+                                                <pre>
+                                                    <code class="language-java">
+                                                        Nuts.require();
+                                                        NOut.println("Hello Nuts!");
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-title">Power Beast</h3>
+                                                <p>With Nuts, what starts as a simple one-line setup can grow into a fully controlled runtime environment. Create multiple workspaces, configure sessions with custom flags, manage output formats, and orchestrate complex automation — all while keeping your code clean and portable. Nuts gives you both simplicity for quick experiments and full power for advanced applications.</p>
+                                                <pre>
+                                                    <code class="language-java">
+                                                        NWorkspace ws = Nuts.openWorkspace("--workspace="/path/to/ws");
+                                                        ws.runWith(() -> {
+                                                            NSession.of()
+                                                                    .copy()
+                                                                    .setDry(true)
+                                                                    .setOutputFormat(NContentType.JSON)
+                                                                    .runWith(() -> {
+                                                                        NOut.println(Map.of("status", "ok"));
+                                                                    });
+                                                        });
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-title">Commandline</h3>
+                                                <p>NCmdLine lets you parse and handle command-line arguments with full flexibility, while keeping your code clean and readable. Define flags, options, and non-option arguments, all with automatic type handling and default values. With Nuts, building sophisticated CLI tools becomes straightforward, letting you focus on functionality instead of parsing logic.</p>
+                                                <pre>
+                                                    <code class="language-java">
+                                                        NCmdLine cmdLine = NApp.of().getCmdLine(); // or from somewhere else
+                                                        NRef&lt;Boolean> boolOption = NRef.of(false);
+                                                        NRef&lt;String> stringOption = NRef.ofNull();
+                                                        List&lt;String> others = new ArrayList&lt;>();
+                                                        while (cmdLine.hasNext()) {
+                                                            cmdLine.matcher()
+                                                                    .with("-o", "--option").matchFlag((v) -> boolOption.set(v.booleanValue()))
+                                                                    .with("-n", "--name").matchEntry((v) -> stringOption.set(v.stringValue()))
+                                                                    .withNonOption().matchAny((v) -> stringOption.set(v.image()))
+                                                                    .requireDefaults()
+                                                            ;
+                                                        }
+                                                        NOut.println(NMsg.ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-title">Universal Path</h3>
+                                                <p>NPath gives you a unified way to work with both local and remote paths, letting you read, write, and manipulate files from HTTP, SSH, or the local filesystem with the same simple API. It also provides convenient access to standard system and user directories, including home, working, configuration, and application paths, making cross-platform file handling seamless and consistent across environments.</p>
+                                                <pre>
+                                                    <code class="language-java">
+                                                        // manipulate local and remote paths
+                                                        String content=NPath.of("http://myserver/myfile.txt").readString();
+                                                        String[] lines=NPath.of("ssh://myserver/myfile.txt").lines().toArray(String[]::new);
+
+                                                        // access local standard folders
+                                                        NPath.ofUserHome();         // User home directory
+                                                        NPath.ofUserDirectory();    // Current working directory
+                                                        // User store path (~/.config on linux, C:\Users\{user}\AppData\Local on windows)
+                                                        NPath.ofUserStore(NStoreType.CONFIG);
+                                                        // User store path (/user/bin on linux, C:\Program Files on windows)
+                                                        NPath.ofSystemStore(NStoreType.APP);  // System store path
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-title">Structured Console Output with NTF</h3>
+                                                <p>Nuts supports NTF (Nuts Text Format), enabling rich, structured, and styled console output. You can embed variables, apply colors or styles, and produce messages that are both human-readable and machine-friendly. This makes your CLI output more expressive, interactive, and easier to interpret.</p>
+                                                <pre>
+                                                    <code class="language-java">
+                                                        NOut.println(
+                                                            NMsg.ofV("Hello ${user}, your task status is ${status}",
+                                                                     NMaps.of(
+                                                                        "user", "Alice",
+                                                                        "status", NText.ofStyled("OK", NTextStyle.primary1())
+                                                            )
+                                                        );
+                                                        NOut.println(
+                                                            NMsg.ofC("Hello %s, your task status is %s",
+                                                                    "Bob"
+                                                                    NText.ofStyled("KO", NTextStyle.danger())
+                                                            )
+                                                        );
+                                                        NOut.println(
+                                                            NMsg.ofC("Hello %s, your task status is ##:danger KO##",
+                                                                    "Meriam"
+                                                                    "KO"
+                                                            )
+                                                        );
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-title">Unified Logging with NLog</h3>
+                                                <p>Workspace- and session-aware, NLog combines structured messages (NMsg/NMsgBuilder), styled output with colors, intents, and NTF formatting, and seamless integration with JUL or SLF4J. Whether you’re building CLI tools, scripts, or full applications, NLog ensures logs are expressive, context-sensitive, and runtime-aware.</p>
+                                                <pre>
+                                                    <code class="language-java">
+                                                        NLog.of("myapp")
+                                                            .info(
+                                                                NMsg.ofV("Hello %s, task %s failed du to error %s",
+                                                                    "user","Alice","status",
+                                                                    NText.ofStyled("OK",NTextStyle.primary1()),exception
+                                                                    )
+                                                                    .withInteger(NMsgIntent.CONFIG)
+                                                                    .withThrowable(exception)
+                                                            );
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-title">NElement — Structured Data, Any Format</h3>
+                                                <p>With NElement, Nuts lets you build, parse, and format structured data effortlessly. From plain objects to JSON, XML, or TSON, you can read and write files, parse into Java objects, or print with optional NTF color formatting — all in a workspace-aware, runtime-friendly way.</p>
+                                                <pre>
+                                                    <code class="language-java">
+                                                        // Build an element
+                                                        NElement document = NElement.ofObjectBuilder()
+                                                            .set("app-id", NApp.of().getId().get())
+                                                            .set("error", messageString)
+                                                            .build();
+
+                                                        // Parse JSON into Java object
+                                                        Person person = NElementParser.ofJson().parse(NPath.of("person.json"), Person.class);
+
+                                                        // Format and write XML to file
+                                                        NElementFormat.ofPlainXml(document).println(NPath.of("person.xml"));
+
+                                                        // Print TSON to terminal with colors
+                                                        NElementFormat.ofNtfTson(document).println();
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-title">NTextArt — Turn Text into Art</h3>
+                                                <p>Bring your CLI, logs, or console output to life with NTextArt. Render text as classic ASCII banners, pixel-style visuals, or even image-like representations, with multiple renderers at your fingertips — all workspace-aware and fully embeddable.</p>
+                                                <pre>
+                                                    <code class="language-java">
+                                                        NTextArt art = NTextArt.of();
+                                                        NText text = NText.of("hello world");
+                                                        NOut.println(art.getRenderer("figlet:standard").get().render(text));
+                                                        NOut.println(art.getRenderer("figlet:big").get().render(text));
+                                                        NOut.println(art.getRenderer("pixel:standard").get().render(text));
+                                                        NOut.println(art.getImageRenderer("pixel:standard").get()
+                                                                              .setFontSize(20)
+                                                                              .setOutputColumns(60)
+                                                                              .render(text));
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-title">NExec & NPs — Unified Process Execution</h3>
+                                                <p>NAF offers a complete abstraction for process execution and monitoring. With NExec, you can run system commands, remote jobs, or even Maven artifacts seamlessly. With NPs, you can introspect and control running processes across platforms. Together, they form a portable, workspace-aware execution toolkit that abstracts OS differences, integrates with Nuts’ runtime, and makes both starting and supervising processes trivial — whether locally or remotely.</p>
+                                                <pre>
+                                                    <code class="language-java">
+                                                        // Run a system command and capture output
+                                                        String out = NExec.of("ls").system().grabAll().run().getGrabbedOutString();
+
+                                                        // Run a Maven artifact (auto-resolves if missing)
+                                                        NExec.of("netbeans-launcher").run();
+
+                                                        // List all Java processes on the local machine
+                                                        NPs.of().setPlatformFamily(NPlatformFamily.JAVA)
+                                                               .getResultList()
+                                                               .forEach(System.out::println);
+
+                                                        // Kill a process by ID (if supported on the platform)
+                                                        NPs.of().killProcess("12345");
+
+                                                        // Inspect processes on a remote host
+                                                        NPs.of().at("ssh://myuser@myserver").getResultList();
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-title">NCp — Copy with Options & Validation</h3>
+                                                <p>NCp provides a unified, flexible API to copy resources of various types — files, streams, URLs, or paths — while supporting advanced features like logging, progress monitoring, and validation. You can start with a simple copy, then gradually enable tracing, progress feedback, or integrity checks, all with the same intuitive API.</p>
+                                                <pre>
+                                                    <code class="language-java">
+                                                    // --- Basic copy: simple source to target ---
+                                                    NCp.of()
+                                                        .from(source)                     // set source (File, Path, InputStream, etc.)
+                                                        .to(download_path.resolve(source.getName())) // set target path
+                                                        .addOptions(NPathOption.LOG, NPathOption.TRACE) // enable logging and tracing
+                                                        .run();                            // execute copy
+
+                                                    // --- Copy with progress monitoring ---
+                                                    NCp.of()
+                                                        .from(from)
+                                                        .to(to)
+                                                        .addOptions(NPathOption.LOG, NPathOption.TRACE)
+                                                        // --- add validation validation (e.g., SHA-1 integrity check) ---
+                                                        .setValidator(new NCpValidator() {
+                                                            @Override
+                                                            public void validate(InputStream in) throws IOException {
+                                                                checkSHA1Hash(id.builder().setFace(NConstants.QueryFaces.CONTENT_HASH).build(),
+                                                                              in, "artifact binaries");
+                                                            }
+                                                        })
+                                                        .setProgressMonitor(event -> {
+                                                            NOut.println(event.getProgress()); // display progress
+                                                            return true;                            // continue copy
+                                                        })
+                                                        .run();
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-title">NCompress / NUncompress — Flexible Compression & Extraction</h3>
+                                                <p>Nuts provides unified APIs for compressing and uncompressing files, directories, or streams, supporting multiple formats (e.g., ZIP). You can monitor progress, skip root directories, or apply custom options for logging and safety. NCompress and NUncompress make it easy to handle resource packaging in a consistent, OS-aligned manner, while fully integrating with Nuts’ filesystem abstractions.</p>
+                                                <pre>
+                                                    <code class="language-java">
+                                                    // --- Compress a file or directory into a ZIP ---
+                                                    NCompress.of()
+                                                        .addSource(example)                          // source to compress
+                                                        .setTarget(example.resolveSibling(
+                                                            example.getNameParts(NPathExtensionType.SHORT).getBaseName() + ".zip")) // target zip path
+                                                        .setPackaging("zip")                          // compression format
+                                                        .run();                                       // execute compression
+
+                                                    // --- Uncompress a ZIP file to a folder ---
+                                                    NUncompress.of()
+                                                        .from(zipTo)                                 // source zip file
+                                                        .to(folderTo)                                // target directory
+                                                        .setSkipRoot(true)                           // optionally skip the root folder in zip
+                                                        .progressMonitor(new OpNInputStreamProgressMonitor(
+                                                            module.rt().addOperation("Unzipping " + i))) // progress monitoring
+                                                        .run();                                      // execute uncompression
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-title">NDigest – Hashing Made Simple</h3>
+                                                <p>NDigest is a fluent I/O command to compute hash digests of one or multiple sources. It supports files, streams, URLs, byte arrays, or Nuts descriptors, and allows combining multiple sources into a single digest. Built on top of Java's MessageDigest, it simplifies hashing in Nuts workflows, integrates seamlessly with download validation, and supports MD5, SHA1, SHA256, or any algorithm provided by MessageDigest.</p>
+                                                <pre>
+                                                    <code class="language-java">
+                                                    // Simple SHA256 digest of a file
+                                                    String hash = NDigest.of()
+                                                            .sha256()
+                                                            .addSource(path)
+                                                            .computeString();
+
+                                                    // Digest multiple sources
+                                                    String combined = NDigest.of()
+                                                            .sha1()
+                                                            .addSource(file1)
+                                                            .addSource(file2)
+                                                            .addSource(url)
+                                                            .computeString();
+
+                                                    // Digest and get raw bytes
+                                                    byte[] bytes = NDigest.of()
+                                                            .md5()
+                                                            .addSource(stream)
+                                                            .computeBytes();
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-title">NInputSource & NInputSourceBuilder – Flexible Input Abstraction</h3>
+                                                <p>NInputSource represents a flexible, metadata-aware source of content in Nuts. It can wrap files, paths, URLs, byte arrays, streams, readers, or other providers, offering a unified API for reading, digesting, or streaming content. NInputSourceBuilder allows fine-grained configuration of sources, such as expected length, progress monitoring, interruptibility, multi-read capability, or non-blocking streams. Together, they decouple I/O handling from concrete types and simplify building robust I/O pipelines.</p>
+                                                <pre>
+                                                    <code class="language-java">
+                                                    NInputSource src = NInputSource.of(file)
+                                                            .readBytes(); // get content
+
+                                                    NInputSource multi = NInputSource.ofMultiRead(src); // reusable input
+
+                                                    NInputSourceBuilder b = NInputSourceBuilder.of(stream)
+                                                            .setMetadata(metadata)
+                                                            .setInterruptible(true)
+                                                            .setCloseBase(true);
+
+                                                    InputStream in = b.createInputStream();
+                                                    NInputSource source = b.createInputSource();
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-title">Progress Monitoring with NProgressMonitor</h3>
+                                                <p>NProgressMonitor provides a flexible and context-aware way to track progress in tasks. You can create incremental, split, and nested monitors, log events to any output, and automatically propagate the current progress context using NProgressMonitor.of(). This allows embedded or nested operations to report progress seamlessly without explicit parameter passing.</p>
+                                                <pre>
+                                                    <code class="language-java">
+                                                    // 1. Simple incremental progress
+                                                    NProgressMonitor mon = NProgressMonitors.of().ofSysOut();
+                                                    mon.start();
+                                                    for (int i = 0; i < 10; i++) {
+                                                        mon.setProgress(i * 1.0 / 10, NMsg.ofC("Step %.1f", i * 1.0 / 10));
+                                                    }
+                                                    mon.complete();
+
+                                                    // 2. Split progress for subtasks
+                                                    NProgressMonitor[] split = mon.split(2);
+                                                    split[0].incremental(5).complete();
+                                                    split[1].incremental(5).complete();
+
+                                                    // 3. Context-aware progress
+                                                    NProgressHandler handler = event -> System.out.println(event);
+                                                    NProgressMonitors.of().of(handler).runWith(() -> {
+                                                        NProgressMonitor inner = NProgressMonitor.of();
+                                                        inner.start();
+                                                        inner.setProgress(0.5, NMsg.ofC("Halfway done"));
+                                                        inner.complete();
+                                                    });
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-title">Expression Parsing & Evaluation with NExpr</h3>
+                                                <p>NExpr is a powerful expression parser and evaluator designed to handle dynamic, runtime expressions within the Nuts ecosystem. It allows declaration of constants, variables, and functions, supports custom operators, and can evaluate expressions in a context-aware way. This makes it ideal for dynamic queries, runtime computation, scripting, and configuration-driven logic in Java applications — all while remaining type-safe, extensible, and embeddable.</p>
+                                                <pre>
+                                                    <code class="language-java">
+                                                    NExprMutableDeclarations d = NExprs.of().newMutableDeclarations();
+                                                    d.declareConstant("pi", Math.PI);
+                                                    d.declareFunction("sin", (name, args, ctx) -> {
+                                                        NExprNodeValue a = args.get(0);
+                                                        return Math.sin(asDouble(a.eval(ctx), rendererContext));
+                                                    });
+
+                                                    NOptional&lt;NExprNode> ne = d.parse("sin(x*pi)");
+                                                    if (ne.isPresent()) {
+                                                        NExprNode node = ne.get();
+                                                        NDoubleFunction fct = x -> {
+                                                            NOptional&lt;Object> r = node.eval(new NExprEvaluator() {
+                                                                @Override
+                                                                public NOptional&lt;NExprVar> getVar(String varName, NExprDeclarations ctx) {
+                                                                    return "x".equals(varName)
+                                                                            ? Optional.of(x)
+                                                                            : NOptional.ofNamedEmpty("var " + varName);
+                                                                }
+                                                            });
+                                                            return NTxExprHelper.asDouble(r, rendererContext);
+                                                        };
+
+                                                        double result = fct.apply(0.5); // evaluates sin(0.5*pi)
+                                                    }
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="carousel-controls">
+                                        <button id="prevBtn">&lt;</button>
+                                        <button id="nextBtn">&gt;</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
         </div>
+
 
     </div>
     <!-- Content end -->
 
-    {{:include $'$projectRoot/src/include/template/v1/12-footer.html'}}
+
+    <!-- Footer
+    ============================ -->
+    <footer id="footer" class="section bg-dark footer-text-light">
+        <div class="container">
+            <ul class="social-icons social-icons-lg social-icons-muted justify-content-center mb-3">
+                <li><a data-toggle="tooltip" href="https://twitter.com/harnishdesign/" target="_blank" title=""
+                       data-original-title="Twitter"><i class="fab fa-twitter"></i></a></li>
+                <li><a data-toggle="tooltip" href="http://www.facebook.com/harnishdesign/" target="_blank" title=""
+                       data-original-title="Facebook"><i class="fab fa-facebook-f"></i></a></li>
+                <li><a data-toggle="tooltip" href="http://www.dribbble.com/harnishdesign/" target="_blank" title=""
+                       data-original-title="Dribbble"><i class="fab fa-dribbble"></i></a></li>
+                <li><a data-toggle="tooltip" href="https://github.com/thevpc/nuts" target="_blank" title=""
+                       data-original-title="GitHub"><i class="fab fa-github"></i></a></li>
+            </ul>
+            <p class="text-2 text-center mb-0">
+                Copyright © 2018-{{currentYear()}} Nuts Package Manager Team.
+                <br>
+                Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on {{buildTime}}
+                <br>
+                <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
+                                                            href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
+            </p>
+        </div>
+    </footer>
+    <!-- Footer end -->
+
 </div>
 <!-- Document Wrapper end -->
 
-{{:include $'$projectRoot/src/include/template/v1/99-epilog.html'}}
+<!-- Back To Top -->
+<a id="back-to-top" data-toggle="tooltip" title="Back to Top" href="javascript:void(0)"><i class="fa fa-chevron-up"></i></a>
+
+<!-- JavaScript
+============================ -->
+<script src="assets/vendor/jquery/jquery.min.js"></script>
+<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- Highlight JS -->
+<script src="assets/vendor/highlight.js/highlight.min.js"></script>
+<!-- Easing -->
+<script src="assets/vendor/jquery.easing/jquery.easing.min.js"></script>
+<!-- Magnific Popup -->
+<script src="assets/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+<!-- Custom Script -->
+<script src="assets/js/theme.js"></script>
+<script src="assets/js/caroussel.js"></script>
+<script src="assets/js/code.js"></script>
+</body>
 </html>
