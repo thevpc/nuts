@@ -30,8 +30,8 @@ import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.NBootWorkspaceImpl;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.reserved.NScopedWorkspace;
 import net.thevpc.nuts.runtime.standalone.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
@@ -178,8 +178,10 @@ public abstract class AbstractNWorkspace implements NWorkspace {
         runWith(() -> {
             NBootOptions info2=new DefaultNBootOptionsBuilder(callerBootOptionsInfo).build();
             NApp.of().setId(getApiId());
-            NLogOp logOp = NLog.of(NBootWorkspaceImpl.class).with().level(Level.CONFIG);
-            logOp.verb(NLogVerb.SUCCESS).log(NMsg.ofC("running workspace in %s mode", getRunModeString(info2)));
+            NLog LOG = NLog.of(NBootWorkspaceImpl.class);
+            LOG.log(NMsg.ofC("running workspace in %s mode", getRunModeString(info2))
+                    .withLevel(Level.CONFIG).withIntent(NMsgIntent.SUCCESS)
+            );
             NExecCmd execCmd = NExecCmd.of()
                     .setExecutionType(info2.getExecutionType().orNull())
                     .setRunAs(info2.getRunAs().orNull())
