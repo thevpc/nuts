@@ -88,6 +88,14 @@ public class FigletNTextArtImageRenderer implements NTextArtRenderer, Cloneable 
         } catch (Exception ex) {
             return NOptional.ofNamedEmpty(NMsg.ofC("font %s not found", name));
         }
+        try {
+            URL u = FigletNTextArtImageRenderer.class.getClassLoader().getResource("META-INF/textart/" + name + ".flf");
+            if (u != null) {
+                return NOptional.of(new FigletNTextArtImageRenderer(NPath.of(u)));
+            }
+        } catch (Exception ex) {
+            return NOptional.ofNamedEmpty(NMsg.ofC("font %s not found", name));
+        }
         return NOptional.ofNamedEmpty(NMsg.ofC("font %s not found", name));
     }
 
