@@ -2,10 +2,11 @@ package net.thevpc.nuts.runtime.standalone.util.jclass;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NVisitResult;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNExecutionEntry;
-import net.thevpc.nuts.log.NLogOp;
+
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NRef;
 
@@ -134,8 +135,8 @@ public class JavaClassUtils {
         try {
             mainClass = getMainClassType(classStream, NWorkspace.of());
         } catch (Exception ex) {
-            NLogOp.of(CorePlatformUtils.class).level(Level.FINE).error(ex)
-                    .log(NMsg.ofC("invalid java class file format %s", sourceName));
+            NLog.of(CorePlatformUtils.class)
+                    .log(NMsg.ofC("invalid java class file format %s", sourceName).asFineFail(ex));
         }
         if (mainClass != null) {
             return new DefaultNExecutionEntry(
