@@ -13,6 +13,18 @@ public class NBooleanRef extends NObjectRef<Boolean> {
         return new NBooleanRef(value);
     }
 
+    public static NBooleanRef ofFalse() {
+        return of(false);
+    }
+
+    public static NBooleanRef ofTrue() {
+        return of(true);
+    }
+
+    public static NBooleanRef ofNull() {
+        return of();
+    }
+
     public static NBooleanRef of() {
         return new NBooleanRef(null);
     }
