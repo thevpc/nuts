@@ -28,9 +28,10 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NIteratorBase;
-import net.thevpc.nuts.log.NLogOp;
+
 import net.thevpc.nuts.util.NMsg;
 
 import java.util.LinkedList;
@@ -107,12 +108,12 @@ public class NIdPathIterator extends NIteratorBase<NId> {
                 } catch (NIOException ex) {
                     //just log without stack trace!
                     session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s (for %s) in %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), filter, NText.ofStyledError("failed!")));
-                    NLogOp.of(NIdPathIterator.class).level(Level.FINE)//.error(ex)
-                            .log(NMsg.ofJ("error listing : {0} : {1} : {2}", file.path, toString(), ex.toString()));
+                    NLog.of(NIdPathIterator.class)//.error(ex)
+                            .log(NMsg.ofJ("error listing : {0} : {1} : {2}", file.path, toString(), ex.toString()).asFine());
                 } catch (Exception ex) {
                     session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s (for %s) in %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), filter, NText.ofStyledError("failed!")));
-                    NLogOp.of(NIdPathIterator.class).level(Level.FINE).error(ex)
-                            .log(NMsg.ofJ("error listing : {0} : {1}", file.path, toString()));
+                    NLog.of(NIdPathIterator.class)
+                            .log(NMsg.ofJ("error listing : {0} : {1}", file.path, toString()).asFineFail(ex));
                 }
                 boolean deep = file.depth < maxDepth;
                 for (NPath child : children) {
@@ -133,8 +134,8 @@ public class NIdPathIterator extends NIteratorBase<NId> {
                 try {
                     t = model.parseId(file.path, rootFolder, filter, repository);
                 } catch (Exception ex) {
-                    NLogOp.of(NIdPathIterator.class).level(Level.FINE).error(ex)
-                            .log(NMsg.ofJ("error parsing : {0} : {1}", file.path, toString()));
+                    NLog.of(NIdPathIterator.class)
+                            .log(NMsg.ofJ("error parsing : {0} : {1}", file.path, toString()).asFineFail(ex));
                 }
                 if (t != null) {
                     last = t;
