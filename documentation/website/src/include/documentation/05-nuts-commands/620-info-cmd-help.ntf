@@ -1,7 +1,0 @@
----
-id: version-help
-title: Info Cmdline
----
-
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/info.ntf"}}
-
