@@ -1,12 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogRecord;
-import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.log.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NMsgBuilder;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -15,30 +14,35 @@ import java.util.function.Supplier;
 import java.util.logging.*;
 
 public class DefaultNLog implements NLog {
-    private long defaultTime;
-    private Logger log;
+    private NLogSPI logSPI;
     private static final int offValue = Level.OFF.intValue();
-    private LinkedList<LogRecord> suspendedTerminalRecords = new LinkedList<>();
+    private LinkedList<NMsg> suspendedTerminalRecords = new LinkedList<>();
     private int suspendedMax = 100;
     private boolean suspendTerminalMode = false;
+    private String name;
 
-    public DefaultNLog(Class<?> log, boolean suspended) {
-        this(log.getName());
-        if(suspended){
+    public DefaultNLog(String name, NLogSPI logSPI, boolean suspended) {
+        this.name = name;
+        this.logSPI = logSPI;
+        if (suspended) {
             suspendTerminal();
         }
     }
 
-    public DefaultNLog(Class<?> log) {
-        this(log.getName());
+    @Override
+    public String getName() {
+        return name;
     }
 
-    public DefaultNLog(String log) {
-        this(Logger.getLogger(log));
+    public void updateSPI(NLogSPI logSPI) {
+        this.logSPI = logSPI;
     }
 
-    public DefaultNLog(Logger log) {
-        this.log = log;
+    @Override
+    public void log(NMsgBuilder msg) {
+        if (msg != null) {
+            log(msg.build());
+        }
     }
 
     public Filter getFilter() {
@@ -56,9 +60,9 @@ public class DefaultNLog implements NLog {
 
     public boolean isLoggable(Level level) {
         DefaultNLogModel logModel = NWorkspaceExt.of().getModel().logModel;
-        Level tlvl= logModel.getTermLevel();
-        Level flvl= logModel.getFileLevel();
-        List<Handler> handlers= logModel.getHandlers();
+        Level tlvl = logModel.getTermLevel();
+        Level flvl = logModel.getFileLevel();
+        List<Handler> handlers = logModel.getHandlers();
         if (isLoggable(level, tlvl)) {
             return true;
         }
@@ -71,45 +75,69 @@ public class DefaultNLog implements NLog {
             }
         }
 
-        if (log.isLoggable(level)) {
+        if (logSPI.isLoggable(level)) {
             return true;
         }
         return false;
     }
 
-    public void log(Level level, NLogVerb verb, NMsg msg, Throwable thrown) {
-        if (!isLoggable(level)) {
+    public void log(NMsg msg) {
+        if (msg == null) {
             return;
         }
-        NSession session=NSession.of();
-        doLog(new NLogRecord(session, level, verb, msg,NLogUtils.filterLogText(msg), defaultTime,thrown));
-    }
-
-    public void log(Level level, NLogVerb verb, Supplier<NMsg> msgSupplier, Supplier<Throwable> errorSupplier) {
-        if (!isLoggable(level)) {
+        if (!isLoggable(msg.getLevel())) {
             return;
         }
-        NSession session=NSession.of();
-        NMsg msg = msgSupplier == null ? null : msgSupplier.get();
-        String msgString=NLogUtils.filterLogText(msg);
-        doLog(new NLogRecord(session, level, verb, msg, msgString,defaultTime,
-                errorSupplier==null?null:errorSupplier.get()
-        ));
-    }
-
-    // private support method for logging.
-    private void doLog(LogRecord record) {
-        record.setLoggerName(log.getName());
-        //ignore resource bundling...
-        if (!isLoggable(record)) {
-            return;
-        }
-        log0(record);
+        logSPI.log(msg);
     }
 
     @Override
-    public NLogOp with() {
-        return new DefaultNLogOp(this);
+    public void log(Level level, Supplier<NMsg> msgSupplier) {
+        NAssert.requireNonNull(level, "level");
+        if (!isLoggable(level)) {
+            return;
+        }
+        NMsg msg = msgSupplier.get();
+        if (msg == null) {
+            msg = NMsg.ofC("").withLevel(level);
+        } else {
+            msg = msg.withLevel(level);
+        }
+
+        DefaultNLogModel logManager = NWorkspaceExt.of().getModel().logModel;
+        //logManager.updateHandlers(record);
+        if (suspendTerminalMode) {
+            suspendedTerminalRecords.add(msg);
+            if (suspendedTerminalRecords.size() > suspendedMax) {
+                NMsg r = suspendedTerminalRecords.removeFirst();
+                logSPI.log(r);
+            }
+        }
+//        Handler ch = logManager.getTermHandler();
+//        if (ch != null) {
+//            if (ch.isLoggable(record)) {
+//
+//            }
+//        }
+//        Handler fh = logManager.getFileHandler();
+//        if (fh != null) {
+//            if (fh.isLoggable(record)) {
+//                fh.publish(record);
+//            }
+//        }
+//        for (Handler handler : logManager.getHandlers()) {
+//            if (handler.isLoggable(record)) {
+//                handler.publish(record);
+//            }
+//        }
+//        if (record instanceof NLogRecord) {
+//            NLogRecord ll = (NLogRecord) record;
+//            NMsg ms = ll.getFormattedMessage();
+//            this.logSPI.log(ms);
+//        } else {
+//            this.logSPI.log(NMsg.ofC("%s", record.getMessage()).withThrowable(record.getThrown()));
+//        }
+        logSPI.log(msg);
     }
 
     private boolean isLoggable(LogRecord record) {
@@ -120,81 +148,18 @@ public class DefaultNLog implements NLog {
         return true;
     }
 
-    public void log(LogRecord record) {
-        if (!isLoggable(record.getLevel())) {
-            return;
-        }
-        if (!isLoggable(record)) {
-            return;
-        }
-        //compile for once the parameter based text!
-        //record=NutsLogRichFormatter.compile(record);
-        log0(record);
-    }
 
     public void suspendTerminal() {
         suspendTerminalMode = true;
     }
 
 
-    /**
-     * Log a LogRecord.
-     * <br>
-     * All the other logging methods in this class call through
-     * this method to actually perform any logging.  Subclasses can
-     * override this single method to capture all log activity.
-     *
-     * @param record the LogRecord to be published
-     */
-    private void log0(LogRecord record) {
-        DefaultNLogModel logManager = NWorkspaceExt.of().getModel().logModel;
-        logManager.updateHandlers(record);
-        Handler ch = logManager.getTermHandler();
-        if (ch != null) {
-            if (ch.isLoggable(record)) {
-                if (suspendTerminalMode) {
-                    suspendedTerminalRecords.add(record);
-                    if (suspendedTerminalRecords.size() > suspendedMax) {
-                        LogRecord r = suspendedTerminalRecords.removeFirst();
-                        logManager.updateTermHandler(r);
-                        ch.publish(r);
-                        ch.flush();
-                    }
-                } else {
-                    ch.publish(record);
-                    ch.flush();
-                }
-            }
-        }
-        Handler fh = logManager.getFileHandler();
-        if (fh != null) {
-            if (fh.isLoggable(record)) {
-                fh.publish(record);
-            }
-        }
-        for (Handler handler : logManager.getHandlers()) {
-            if (handler.isLoggable(record)) {
-                handler.publish(record);
-            }
-        }
-        this.log.log(record);
-    }
-
     public void resumeTerminal() {
         suspendTerminalMode = false;
-        Handler ch = NLog.getTermHandler();
-        DefaultNLogModel logManager = NWorkspaceExt.of().getModel().logModel;
-        for (Iterator<LogRecord> iterator = suspendedTerminalRecords.iterator(); iterator.hasNext(); ) {
-            LogRecord r = iterator.next();
+        for (Iterator<NMsg> iterator = suspendedTerminalRecords.iterator(); iterator.hasNext(); ) {
+            NMsg r = iterator.next();
             iterator.remove();
-            logManager.updateHandlers(r);
-            if (ch != null) {
-                ch.publish(r);
-                ch.flush();
-            }
-        }
-        if (ch != null) {
-            ch.flush();
+            logSPI.log(r);
         }
     }
 }
