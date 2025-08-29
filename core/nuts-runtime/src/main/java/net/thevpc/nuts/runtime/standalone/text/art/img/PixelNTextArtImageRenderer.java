@@ -190,6 +190,14 @@ public class PixelNTextArtImageRenderer implements NTextArtImageRenderer {
                 } catch (Exception ex) {
                     return NOptional.ofNamedEmpty(NMsg.ofC("unable to load pixel renderer %s : %s", name, ex));
                 }
+                try {
+                    URL u = PixelNTextArtImageRenderer.class.getClassLoader().getResource("META-INF/textart/" + name + ".pxl");
+                    if (u != null) {
+                        return NOptional.of(new PixelNTextArtImageRenderer(NPath.of(u).readString()));
+                    }
+                } catch (Exception ex) {
+                    return NOptional.ofNamedEmpty(NMsg.ofC("unable to load pixel renderer %s : %s", name, ex));
+                }
             }
         }
         return NOptional.ofNamedEmpty(NMsg.ofC("pixel renderer %s not found", name));
