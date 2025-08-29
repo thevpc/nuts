@@ -4,20 +4,18 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.AbstractPathSPIAdapter;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStream;
 
 import java.io.*;
 import java.util.*;
-import java.util.logging.Level;
 
 public class HtmlfsPath extends AbstractPathSPIAdapter {
 
@@ -183,11 +181,8 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
                     try {
                         return p.parseHtmlTomcat(bytes);
                     } catch (Exception ex) {
-                        NLogOp.of(HtmlfsPath.class)
-                                .verb(NLogVerb.FAIL)
-                                .level(Level.FINEST)
-                                .error(ex)
-                                .log(NMsg.ofC("failed to parse using %s", p.getClass().getSimpleName()));
+                        NLog.of(HtmlfsPath.class)
+                                .log(NMsg.ofC("failed to parse using %s", p.getClass().getSimpleName()).asFinestFail(ex));
                     }
                     return null;
                 }).filter(p -> NCallableSupport.isValid(p)).max(Comparator.comparing(NCallableSupport::getSupportLevel))
