@@ -6,8 +6,8 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.spi.NUncompressPackaging;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -25,10 +25,10 @@ public class NUncompressZip implements NUncompressPackaging {
     public NUncompressZip() {
     }
 
-    private String extractRoot(String fileName){
+    private String extractRoot(String fileName) {
         int si = fileName.indexOf("/");
-        if(si>=0){
-            return fileName.substring(0,si+1);
+        if (si >= 0) {
+            return fileName.substring(0, si + 1);
         }
         return "";
     }
@@ -42,7 +42,7 @@ public class NUncompressZip implements NUncompressPackaging {
             }
             Path folder = _target.toPath().get();
             NPath.of(folder).mkdirs();
-            byte[] buffer = new byte[10*4*1024];
+            byte[] buffer = new byte[10 * 4 * 1024];
             InputStream _in = source.getInputStream();
             try {
                 try (ZipInputStream zis = new ZipInputStream(_in)) {
@@ -52,11 +52,11 @@ public class NUncompressZip implements NUncompressPackaging {
                     while (ze != null) {
                         String fileName = ze.getName();
                         if (uncompress.isSkipRoot()) {
-                            String root2=extractRoot(fileName);
+                            String root2 = extractRoot(fileName);
                             if (root == null) {
-                                root=root2;
-                            }else if(!Objects.equals(root2,root)){
-                                throw new IOException("not a single root zip : '"+root2+"' <> '"+root+"'");
+                                root = root2;
+                            } else if (!Objects.equals(root2, root)) {
+                                throw new IOException("not a single root zip : '" + root2 + "' <> '" + root + "'");
                             }
                             fileName = fileName.substring(root.length());
                         }
@@ -65,8 +65,9 @@ public class NUncompressZip implements NUncompressPackaging {
                             NPath.of(newFile).mkdirs();
                         } else {
                             Path newFile = folder.resolve(fileName);
-                            _LOGOP().level(Level.FINEST).verb(NLogVerb.WARNING)
-                                    .log(NMsg.ofJ("file unzip : {0}", newFile));
+                            _LOG()
+                                    .log(NMsg.ofJ("file unzip : {0}", newFile)
+                                            .asFinestAlert());
                             //create all non exists folders
                             //else you will hit FileNotFoundException for compressed folder
                             if (newFile.getParent() != null) {
@@ -87,9 +88,10 @@ public class NUncompressZip implements NUncompressPackaging {
                 _in.close();
             }
         } catch (IOException ex) {
-            _LOGOP().level(Level.CONFIG).verb(NLogVerb.FAIL).log(
-                    NMsg.ofJ("error uncompressing {0} to {1} : {2}",
-                            source, target, ex));
+            _LOG()
+                    .log(NMsg.ofJ("error uncompressing {0} to {1} : {2}",
+                            source, target, ex)
+                            .withLevel(Level.CONFIG).withIntent(NMsgIntent.FAIL));
             throw new NIOException(ex);
         }
     }
@@ -154,15 +156,11 @@ public class NUncompressZip implements NUncompressPackaging {
                 _in.close();
             }
         } catch (IOException ex) {
-            _LOGOP().level(Level.CONFIG).verb(NLogVerb.FAIL)
+            _LOG()
                     .log(NMsg.ofJ("error visiting {0} : {2}",
-                            source, ex));
+                            source, ex).asConfig().withIntent(NMsgIntent.FAIL));
             throw new NIOException(ex);
         }
-    }
-
-    protected NLogOp _LOGOP() {
-        return _LOG().with();
     }
 
     protected NLog _LOG() {
