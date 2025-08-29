@@ -41,8 +41,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.log.NLog;
+
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.util.NMsg;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -248,23 +249,21 @@ public class XmlUtils {
         b.setErrorHandler(new ErrorHandler() {
             @Override
             public void warning(SAXParseException exception) throws SAXException {
-                NLogOp.of(XmlUtils.class)
-                        .level(Level.FINEST).verb(NLogVerb.WARNING)
-                        .log(NMsg.ofC("%s",exception));
+                NLog.of(XmlUtils.class)
+                        .log(NMsg.ofC("%s",exception).asFinestAlert());
             }
 
             @Override
             public void error(SAXParseException exception) throws SAXException {
-                NLogOp.of(XmlUtils.class)
-                        .level(Level.FINEST).verb(NLogVerb.WARNING)
-                        .log(NMsg.ofC("%s",exception));
+                NLog.of(XmlUtils.class)
+                        .log(NMsg.ofC("%s",exception).asFinestAlert());
             }
 
             @Override
             public void fatalError(SAXParseException exception) throws SAXException {
-                NLogOp.of(XmlUtils.class)
-                        .level(Level.FINEST).verb(NLogVerb.WARNING)
-                        .log(NMsg.ofC("%s",exception));
+                NLog.of(XmlUtils.class)
+                        .log(NMsg.ofC("%s",exception)
+                                .asFinestAlert());
             }
         });
         return b;
