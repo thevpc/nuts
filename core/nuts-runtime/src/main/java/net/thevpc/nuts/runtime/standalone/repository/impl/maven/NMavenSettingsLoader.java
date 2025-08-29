@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.util.NBlankable;
@@ -160,7 +160,7 @@ public class NMavenSettingsLoader {
                     }
                 }
             } catch (Exception ex) {
-                log.with().level(Level.FINE).verb(NLogVerb.FAIL).error(ex).log(NMsg.ofC("unable to load maven settings.xml %s", settingsFilePath));
+                log.log(NMsg.ofC("unable to load maven settings.xml %s", settingsFilePath).asFineFail(ex));
             }
         }
         if (NBlankable.isBlank(settings.getLocalRepository())) {
