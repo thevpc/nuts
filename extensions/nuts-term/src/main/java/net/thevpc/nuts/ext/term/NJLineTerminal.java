@@ -31,10 +31,10 @@ import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NAnsiTermHelper;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
@@ -264,8 +264,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
             prepare();
         } catch (Exception ex) {
             NLog.of(NJLineTerminal.class)
-                    .with().level(Level.FINEST).verb(NLogVerb.FAIL).error(ex)
-                    .log(NMsg.ofPlain("unable to create NutsJLineTerminal. ignored."));
+                    .log(NMsg.ofPlain("unable to create NutsJLineTerminal. ignored.").asFinestFail(ex));
             return NConstants.Support.NO_SUPPORT;
         }
         return NConstants.Support.DEFAULT_SUPPORT + 1;
