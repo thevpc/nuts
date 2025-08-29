@@ -18,7 +18,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.ConfigEventType;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
+
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -36,10 +36,6 @@ public class DefaultNRepositoryModel {
     public DefaultNRepositoryModel(NWorkspace workspace) {
         this.workspace = workspace;
         repositoryRegistryHelper = new NRepositoryRegistryHelper();
-    }
-
-    protected NLogOp _LOGOP() {
-        return _LOG().with();
     }
 
     protected NLog _LOG() {
