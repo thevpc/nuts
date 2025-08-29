@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NIOUtils;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.*;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
@@ -44,7 +45,6 @@ import net.thevpc.nuts.DefaultNVersion;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.*;
 import org.w3c.dom.Element;
 
@@ -186,8 +186,10 @@ public class MavenUtils {
             default: {
                 dependencyScope = NDependencyScope.parse(s).orElse(NDependencyScope.API);
                 if (dependencyScope == null) {
-                    LOG().with().level(Level.FINER).verb(NLogVerb.FAIL)
-                            .log(NMsg.ofJ("unable to parse maven scope {0} for {1}", s, d));
+                    LOG()
+                            .log(NMsg.ofJ("unable to parse maven scope {0} for {1}", s, d)
+                                    .asFinestFail()
+                            );
                     dependencyScope = NDependencyScope.API;
                 }
             }
@@ -262,11 +264,11 @@ public class MavenUtils {
                 fetchMode = NFetchMode.REMOTE;
             }
             String fetchString = "[" + NStringUtils.formatAlign(fetchMode.id(), 7, NPositionType.FIRST) + "] ";
-            LOG().with().level(Level.FINEST).verb(NLogVerb.SUCCESS).time(time)
+            LOG()
                     .log(NMsg.ofJ("{0}{1} parse pom    {2}", fetchString,
                             NStringUtils.formatAlign(repository == null ? "<no-repo>" : repository.getName(), 20, NPositionType.FIRST),
                             NText.ofStyledPath(urlDesc)
-                    ));
+                    ).withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS).withDurationMillis(time));
 
             String icons = pom.getProperties().get("nuts.icons");
             if (icons == null) {
@@ -459,8 +461,10 @@ public class MavenUtils {
                     .build();
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
-            LOG().with().level(Level.FINEST).verb(NLogVerb.FAIL).time(time)
-                    .log(NMsg.ofJ("caching pom file {0}", urlDesc));
+            LOG()
+                    .log(NMsg.ofJ("caching pom file {0}", urlDesc)
+                            .withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL).withDurationMillis(time)
+                    );
             throw new NParseException(NMsg.ofC("error parsing %s", urlDesc), e);
         }
     }
@@ -500,8 +504,8 @@ public class MavenUtils {
                 if (nutsDescriptor.getId().getArtifactId() == null) {
                     //why name is null ? should check out!
                     if (LOG().isLoggable(Level.FINE)) {
-                        LOG().with().level(Level.FINE).verb(NLogVerb.FAIL)
-                                .log(NMsg.ofJ("unable to fetch valid descriptor artifactId from {0} : resolved id was {1}", path, nutsDescriptor.getId()));
+                        LOG()
+                                .log(NMsg.ofJ("unable to fetch valid descriptor artifactId from {0} : resolved id was {1}", path, nutsDescriptor.getId()).asFineFail());
                     }
                     return null;
                 }
