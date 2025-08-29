@@ -19,7 +19,7 @@ import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
@@ -71,11 +71,11 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         pb.setErr(CoreIOUtils.validateErr(err));
         NLog _LL = NLog.of(NWorkspaceUtils.class);
         if (_LL.isLoggable(Level.FINEST)) {
-            _LL.with().level(Level.FINE).verb(NLogVerb.START).log(
+            _LL.log(
                     NMsg.ofC("[exec] %s",
                             NText.ofCode("system",
                                     pb.getCommandString()
-                            )));
+                            )).asFinest().withIntent(NMsgIntent.START));
         }
         if (showCommand || CoreNUtils.isShowCommand()) {
             if (NOut.getTerminalMode() == NTerminalMode.FORMATTED) {
