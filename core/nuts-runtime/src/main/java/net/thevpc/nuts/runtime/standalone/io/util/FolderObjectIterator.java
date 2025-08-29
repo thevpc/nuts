@@ -33,7 +33,7 @@ import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NIteratorBase;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalledRepository;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
+
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.IOException;
@@ -99,8 +99,8 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
                                             try {
                                                 return (deep && pathname.isDirectory()) || model.isObjectFile(pathname);
                                             } catch (Exception ex) {
-                                                NLogOp.of(FolderObjectIterator.class).level(Level.FINE).error(ex)
-                                                        .log(NMsg.ofC("unable to test desk file %s", pathname));
+                                                NLog.of(FolderObjectIterator.class)
+                                                        .log(NMsg.ofC("unable to test desk file %s", pathname).asFineFail(ex));
                                                 return false;
                                             }
                                         }
@@ -115,8 +115,8 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
                                     }
                                 });
                     } catch (Exception ex) {
-                        LOG().with().error(ex).log(
-                                NMsg.ofC("unable to parse %s", file.path));
+                        LOG().log(
+                                NMsg.ofC("unable to parse %s", file.path).asError(ex));
                     }
                 }
             } else {
