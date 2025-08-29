@@ -39,7 +39,7 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
+
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.deploy.AbstractNDeployRepositoryCmd;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.AbstractNFetchContentRepositoryCmd;
@@ -83,10 +83,6 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                 "lib", NElement.ofObjectBuilder().set("repoKind", "lib").build()
         );
         configModel = new InstalledRepositoryConfigModel(workspace, this);
-    }
-
-    protected NLogOp _LOGOP() {
-        return _LOG().with();
     }
 
     protected NLog _LOG() {
@@ -134,8 +130,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                             return getInstallInformation(x);
                         }
                     } catch (Exception ex) {
-                        _LOGOP().error(ex)
-                                .log(NMsg.ofJ("unable to parse {0}", x));
+                        _LOG().log(NMsg.ofJ("unable to parse {0}", x).asError(ex));
                     }
                     return null;
                 })
