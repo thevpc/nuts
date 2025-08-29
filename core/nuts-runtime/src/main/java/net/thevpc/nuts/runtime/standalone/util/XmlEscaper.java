@@ -1,7 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.NPomXmlParser;
 
@@ -53,10 +54,10 @@ public class XmlEscaper {
             if (z != null) {
                 m.appendReplacement(sb, z);
             } else {
-                NLogOp.of(NPomXmlParser.class)
-                        .verb(NLogVerb.WARNING)
-                        .level(Level.FINEST)
-                        .log(NMsg.ofC("unsupported  xml entity declaration : %s", g));
+                NLog.of(NPomXmlParser.class)
+                        .log(NMsg.ofC("unsupported  xml entity declaration : %s", g)
+                                .withIntent(NMsgIntent.ALERT)
+                                .withLevel(Level.FINEST));
                 m.appendReplacement(sb, g);
             }
         }
@@ -73,10 +74,11 @@ public class XmlEscaper {
             if (z != null) {
                 m.appendReplacement(sb, z);
             } else {
-                NLogOp.of(NPomXmlParser.class)
-                        .verb(NLogVerb.WARNING)
-                        .level(Level.FINEST)
-                        .log(NMsg.ofC("unsupported  xml entity declaration : %s", g));
+                NLog.of(NPomXmlParser.class)
+                        .log(NMsg.ofC("unsupported  xml entity declaration : %s", g)
+                                .withIntent(NMsgIntent.ALERT)
+                                .withLevel(Level.FINEST)
+                        );
                 m.appendReplacement(sb, g);
             }
         }
