@@ -33,6 +33,7 @@ import net.thevpc.nuts.cmdline.DefaultNArg;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSystemTerminal;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
 import net.thevpc.nuts.io.NullNPrintStream;
 import net.thevpc.nuts.runtime.standalone.io.terminal.*;
@@ -46,8 +47,7 @@ import net.thevpc.nuts.spi.NDefaultTerminalSpec;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.spi.NTerminalSpec;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
@@ -242,10 +242,6 @@ public class DefaultNBootModel implements NBootModel {
         return NutsSystemTerminal_of_NutsSystemTerminalBase(termb);
     }
 
-    protected NLogOp _LOGOP() {
-        return _LOG().with();
-    }
-
     protected NLog _LOG() {
         return NLog.of(DefaultNBootModel.class);
     }
@@ -265,15 +261,15 @@ public class DefaultNBootModel implements NBootModel {
                 );
                 setSystemTerminal(systemTerminal);
                 if (getSystemTerminal().isAutoCompleteSupported()) {
-                    _LOGOP().level(Level.FINE).verb(NLogVerb.SUCCESS)
-                            .log(NMsg.ofPlain("enable rich terminal"));
+                    _LOG()
+                            .log(NMsg.ofPlain("enable rich terminal").asFine().withIntent(NMsgIntent.SUCCESS));
                 } else {
-                    _LOGOP().level(Level.FINE).verb(NLogVerb.FAIL)
-                            .log(NMsg.ofPlain("unable to enable rich terminal"));
+                    _LOG()
+                            .log(NMsg.ofPlain("unable to enable rich terminal").asFineFail());
                 }
             } else {
-                _LOGOP().level(Level.FINE).verb(NLogVerb.WARNING)
-                        .log(NMsg.ofPlain("enableRichTerm discarded; nuts-term is excluded."));
+                _LOG()
+                        .log(NMsg.ofPlain("enableRichTerm discarded; nuts-term is excluded.").asFineAlert());
             }
         }
     }
@@ -290,8 +286,8 @@ public class DefaultNBootModel implements NBootModel {
                 syst = new DefaultSystemTerminal(terminal);
                 //NSessionUtils.setSession(syst, session);
             } catch (Exception ex) {
-                _LOGOP().level(Level.FINEST).verb(NLogVerb.WARNING)
-                        .log(NMsg.ofC("unable to create system terminal : %s", ex));
+                _LOG()
+                        .log(NMsg.ofC("unable to create system terminal : %s", ex).asFinestAlert());
                 DefaultNSystemTerminalBase b = new DefaultNSystemTerminalBase(workspace);
                 syst = new DefaultSystemTerminal(b);
                 //NSessionUtils.setSession(syst, session);
