@@ -2,12 +2,13 @@ package net.thevpc.nuts.runtime.standalone.xtra.idresolver;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.io.urlpart.URLPart;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomId;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.NPomXmlParser;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 
@@ -46,17 +47,17 @@ public class NMetaInfIdResolver {
         URLPart[] children = p.getChildren(false, true, new NJsonURLFilter());
         for (URLPart url : children) {
             if (url != null) {
-                try (InputStream is=url.getInputStream()){
+                try (InputStream is = url.getInputStream()) {
                     NDescriptor d = NDescriptorParser.of().parse(is).get();
                     NId id = d.getId();
                     if (id != null && id.getVersion() != null && !id.getVersion().isBlank()) {
                         all.add(id);
                     }
                 } catch (Exception ex) {
-                    NLogOp.of(NPomXmlParser.class)
-                            .verb(NLogVerb.WARNING)
-                            .level(Level.FINEST)
-                            .log(NMsg.ofC("failed to parse pom file %s : %s", url, ex));
+                    NLog.of(NPomXmlParser.class)
+                            .log(NMsg.ofC("failed to parse pom file %s : %s", url, ex)
+                                    .withIntent(NMsgIntent.ALERT)
+                                    .withLevel(Level.FINEST));
                 }
             }
         }
@@ -67,7 +68,7 @@ public class NMetaInfIdResolver {
                 try {
 
                     Properties prop = new Properties();
-                    try (InputStream is=url.getInputStream()){
+                    try (InputStream is = url.getInputStream()) {
                         prop.load(is);
                     } catch (IOException e) {
                         //
@@ -80,10 +81,10 @@ public class NMetaInfIdResolver {
                         }
                     }
                 } catch (Exception ex) {
-                    NLogOp.of(NPomXmlParser.class)
-                            .verb(NLogVerb.WARNING)
-                            .level(Level.FINEST)
-                            .log(NMsg.ofC("failed to parse pom file %s : %s", url, ex));
+                    NLog.of(NPomXmlParser.class)
+                            .log(NMsg.ofC("failed to parse pom file %s : %s", url, ex)
+                                    .asFineAlert()
+                            );
                 }
             }
         }
@@ -116,10 +117,10 @@ public class NMetaInfIdResolver {
                         NPath.of(url), n)));
             }
         } catch (IOException ex) {
-            NLogOp.of(NPomXmlParser.class)
-                    .verb(NLogVerb.WARNING)
-                    .level(Level.FINEST)
-                    .log(NMsg.ofC("failed to parse class %s : %s", clazz.getName(), ex));
+            NLog.of(NPomXmlParser.class)
+                    .log(NMsg.ofC("failed to parse class %s : %s", clazz.getName(), ex)
+                            .asFinestAlert()
+                    );
         }
         if (all.isEmpty() && JavaClassUtils.isCGLib(clazz)) {
             Class s = JavaClassUtils.unwrapCGLib(clazz);
