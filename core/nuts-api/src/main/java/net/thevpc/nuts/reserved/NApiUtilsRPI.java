@@ -29,11 +29,7 @@ import net.thevpc.nuts.*;
 
 import net.thevpc.nuts.boot.NBootLogConfig;
 import net.thevpc.nuts.boot.NBootOptionsInfo;
-import net.thevpc.nuts.boot.reserved.cmdline.NBootWorkspaceCmdLineParser;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.*;
@@ -45,16 +41,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.elem.NArrayElementBuilder;
-import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.format.NContentType;
-import net.thevpc.nuts.io.NIO;
-import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
-import net.thevpc.nuts.text.NTextStyle;
 
 /**
  * this class implements several utility methods to be used by Nuts API
