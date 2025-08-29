@@ -604,9 +604,9 @@ public class NIdFormatHelper {
                     this.fetched = true;
                 }
             } catch (Exception ex) {
-                NLog.of(NIdFormatHelper.class).with().level(Level.FINE).error(ex)
+                NLog.of(NIdFormatHelper.class)
                         .log(
-                                NMsg.ofC("failed to build id format for %s", id));
+                                NMsg.ofC("failed to build id format for %s", id).asFine(ex));
             }
 
             if (def != null) {
