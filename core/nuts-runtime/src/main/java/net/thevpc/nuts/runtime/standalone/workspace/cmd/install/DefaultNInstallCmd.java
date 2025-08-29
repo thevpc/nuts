@@ -32,6 +32,7 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NMemoryPrintStream;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.util.stream.NStreamFromList;
@@ -41,7 +42,6 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStream;
 
@@ -112,8 +112,10 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
             }
             return currInstallInfo.definition;
         } catch (RuntimeException ex) {
-            _LOGOP().verb(NLogVerb.WARNING).level(Level.FINE)
-                    .log(NMsg.ofC("failed to retrieve %s", id));
+            _LOG()
+                    .log(NMsg.ofC("failed to retrieve %s", id)
+                            .withIntent(NMsgIntent.ALERT).withLevel(Level.FINE)
+                    );
             if (mandatory) {
                 throw ex;
             }
@@ -429,8 +431,10 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
                             resultList.add(info.definition);
                         }
                     } catch (RuntimeException ex) {
-                        _LOGOP().error(ex).verb(NLogVerb.WARNING).level(Level.FINE)
-                                .log(NMsg.ofC("failed to install %s", info.id));
+                        _LOG()
+                                .log(NMsg.ofC("failed to install %s", info.id).asFine(ex)
+                                        .withIntent(NMsgIntent.ALERT)
+                                );
                         failedList.add(info.id);
                         if (session.isPlainTrace()) {
                             if (!NIO.of().getDefaultTerminal().ask()
