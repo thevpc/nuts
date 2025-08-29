@@ -17,6 +17,7 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.text.NText;
@@ -28,7 +29,6 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConf
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NComparator;
-import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NAsk;
 import net.thevpc.nuts.util.NStringUtils;
@@ -620,8 +620,10 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
 
         if (NWorkspace.of().saveConfig(requireSave)) {
             if (_LOG().isLoggable(Level.INFO)) {
-                _LOGOP().level(Level.INFO).verb(NLogVerb.WARNING)
-                        .log(NMsg.ofPlain("workspace is updated. Nuts should be restarted for changes to take effect."));
+                _LOG()
+                        .log(NMsg.ofPlain("workspace is updated. Nuts should be restarted for changes to take effect.")
+                                .withLevel(Level.INFO).withIntent(NMsgIntent.ALERT)
+                        );
             }
             if (apiUpdate != null && apiUpdate.isUpdatable() && !apiUpdate.isUpdateApplied()) {
                 if (validWorkspaceSession.isPlainTrace()) {
@@ -719,7 +721,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                                                     .setId(finalNewId1).getResultDefinition()
                                     );
                 } catch (NNotFoundException ex) {
-                    _LOGOP().level(Level.SEVERE).error(ex).log(NMsg.ofC("error : %s", ex));
+                    _LOG().log(NMsg.ofC("error : %s", ex).asError(ex));
                     //ignore
                 }
                 break;
@@ -738,7 +740,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                                         .setDependencyFilter(NDependencyFilters.of().byRunnable())
                                         .getResultDefinition());
                     } catch (NNotFoundException ex) {
-                        _LOGOP().level(Level.SEVERE).error(ex).log(NMsg.ofC("error : %s", ex));
+                        _LOG().log(NMsg.ofC("error : %s", ex).asError(ex));
                         //ignore
                     }
                 }
@@ -762,7 +764,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                                             .getResultDefinition()
                                     );
                 } catch (NNotFoundException ex) {
-                    _LOGOP().level(Level.SEVERE).error(ex).log(NMsg.ofC("error : %s", ex));
+                    _LOG().log(NMsg.ofC("error : %s", ex).asError(ex));
                     //ignore
                 }
                 break;
@@ -777,7 +779,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
 //                        oldFile = fetch0().setId(oldId).setSession(session).getResultDefinition();
 //                    }
 //                } catch (Exception ex) {
-//                    _LOGOP().level(Level.SEVERE).error(ex).log("error : {0}", ex);
+//                    _LOG().level(Level.SEVERE).error(ex).log("error : {0}", ex);
 //                    //ignore
 //                }
 //                try {
@@ -800,7 +802,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
 //                            .setSession(session.copy().setFetchStrategy(NutsFetchStrategy.ONLINE))
 //                            .getResultDefinition();
 //                } catch (Exception ex) {
-//                    _LOGOP().level(Level.SEVERE).error(ex).log("error : {0}", ex);
+//                    _LOG().level(Level.SEVERE).error(ex).log("error : {0}", ex);
 //                    //ignore
 //                }
 //                break;
