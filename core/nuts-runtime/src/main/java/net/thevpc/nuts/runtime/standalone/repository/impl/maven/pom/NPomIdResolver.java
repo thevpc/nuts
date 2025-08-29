@@ -1,11 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom;
 
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.io.urlpart.URLPart;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomId;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.util.NMsg;
 
@@ -41,10 +42,11 @@ public class NPomIdResolver {
             try {
                 all.add(new NPomXmlParser().parse(NPath.of(s2).toURL().get()).getPomId());
             } catch (Exception ex) {
-                NLogOp.of(NPomXmlParser.class)
-                        .verb(NLogVerb.WARNING)
-                        .level(Level.FINEST)
-                        .log(NMsg.ofC("failed to parse pom file %s : %s", s2, ex));
+                NLog.of(NPomXmlParser.class)
+                        .log(NMsg.ofC("failed to parse pom file %s : %s", s2, ex)
+                                .withIntent(NMsgIntent.ALERT)
+                                .withLevel(Level.FINEST)
+                        );
             }
         }
         return all.toArray(new NPomId[0]);
@@ -129,10 +131,10 @@ public class NPomIdResolver {
                 all.addAll(Arrays.asList(resolvePomIds(NPath.of(url), n)));
             }
         } catch (IOException ex) {
-            NLogOp.of(NPomXmlParser.class)
-                    .verb(NLogVerb.WARNING)
-                    .level(Level.FINEST)
-                    .log(NMsg.ofC("failed to parse class %s : %s", clazz.getName(), ex));
+            NLog.of(NPomXmlParser.class)
+                    .log(NMsg.ofC("failed to parse class %s : %s", clazz.getName(), ex)
+                            .withIntent(NMsgIntent.ALERT)
+                            .withLevel(Level.FINEST));
         }
         if (all.isEmpty() && JavaClassUtils.isCGLib(clazz)) {
             Class s = JavaClassUtils.unwrapCGLib(clazz);
@@ -150,13 +152,14 @@ public class NPomIdResolver {
     public NPomId resolvePomId(Class clazz, NPomId defaultValue) {
         NPomId[] pomIds = resolvePomIds(clazz);
         if (pomIds.length > 1) {
-            NLogOp.of(NPomXmlParser.class)
-                    .verb(NLogVerb.WARNING)
-                    .level(Level.FINEST)
+            NLog.of(NPomXmlParser.class)
+
                     .log(NMsg.ofC(
                             "multiple ids found : %s for class %s and id %s",
                             Arrays.asList(pomIds), clazz, defaultValue
-                    ));
+                    ).withIntent(NMsgIntent.ALERT)
+                            .withLevel(Level.FINEST)
+                    );
         }
         for (NPomId v : pomIds) {
             return v;
