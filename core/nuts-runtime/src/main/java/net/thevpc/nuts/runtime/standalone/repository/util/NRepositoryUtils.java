@@ -3,12 +3,11 @@ package net.thevpc.nuts.runtime.standalone.repository.util;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NElementParser;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 
@@ -47,7 +46,7 @@ public class NRepositoryUtils {
                 try {
                     if(!r2.exists()){
                         if (nLog != null) {
-                            nLog.with().level(Level.CONFIG).verb(NLogVerb.WARNING).log(NMsg.ofC("unable to load %s", r2));
+                            nLog.log(NMsg.ofC("unable to load %s", r2).withLevel(Level.CONFIG).withIntent(NMsgIntent.ALERT));
                         }
                     }else {
                         byte[] bytes = r2.readBytes();
@@ -73,7 +72,7 @@ public class NRepositoryUtils {
                     }
                 } catch (Exception e) {
                     if (nLog != null) {
-                        nLog.with().level(Level.CONFIG).verb(NLogVerb.WARNING).log(NMsg.ofC("unable to load %s", r2));
+                        nLog.log(NMsg.ofC("unable to load %s", r2).withLevel(Level.CONFIG).withIntent(NMsgIntent.ALERT));
                     }
                 }
                 if (fileExists) {
