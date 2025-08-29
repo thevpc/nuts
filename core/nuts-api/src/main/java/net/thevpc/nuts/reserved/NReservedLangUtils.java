@@ -1,9 +1,9 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.Nuts;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.*;
 
 import java.lang.reflect.InvocationTargetException;
@@ -258,7 +258,7 @@ public final class NReservedLangUtils {
             return line;
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
-            bLog.with().level(Level.OFF).verb(NLogVerb.WARNING).log( NMsg.ofC("[Graphical Environment Unsupported] %s", title));
+            bLog.log( NMsg.ofC("[Graphical Environment Unsupported] %s", title).withLevel(Level.OFF).withIntent(NMsgIntent.ALERT));
             if (in == null) {
                 return new Scanner(System.in).nextLine();
             }
@@ -274,7 +274,7 @@ public final class NReservedLangUtils {
             javax.swing.JOptionPane.showMessageDialog(null, message);
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
-            bLog.with().level(Level.OFF).verb(NLogVerb.WARNING).log( NMsg.ofC("[Graphical Environment Unsupported] %s", title));
+            bLog.log( NMsg.ofC("[Graphical Environment Unsupported] %s", title).withLevel(Level.OFF).withIntent(NMsgIntent.ALERT));
         }
     }
 
