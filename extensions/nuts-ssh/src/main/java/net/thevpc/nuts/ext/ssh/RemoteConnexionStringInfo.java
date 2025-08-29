@@ -6,10 +6,10 @@ import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.util.NConnexionStringBuilder;
 import net.thevpc.nuts.util.NRef;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.*;
 
@@ -82,7 +82,7 @@ public class RemoteConnexionStringInfo {
 
     public boolean copy(NPath local, NPath remote) {
         NLog log = LOG();
-        log.with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("try copy %s %s", local, remote));
+        log.log(NMsg.ofC("try copy %s %s", local, remote).asFiner().withIntent(NMsgIntent.START));
         long localContentLength = local.contentLength();
         long remoteContentLength = remote.contentLength();
         if (remoteContentLength >= 0) {
@@ -90,12 +90,12 @@ public class RemoteConnexionStringInfo {
                 String ld = local.getDigestString();
                 String rd = remote.getDigestString();
                 if (ld.equals(rd)) {
-                    log.with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("do not copy %s %s", local, remote));
+                    log.log(NMsg.ofC("do not copy %s %s", local, remote).asFiner().withIntent(NMsgIntent.START));
                     return false;
                 }
             }
         }
-        log.with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("copy %s %s", local, remote));
+        log.log(NMsg.ofC("copy %s %s", local, remote).asFiner().withIntent(NMsgIntent.START));
         local.copyTo(remote.mkParentDirs());
         return true;
     }
@@ -137,7 +137,7 @@ public class RemoteConnexionStringInfo {
     public String getNutsJar(NExecCmdExtension commExec) {
         if (isUpdatable(loadedNutsJar)) {
             loadedNutsJar = System.currentTimeMillis();
-            LOG().with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("[%s] resolve remote jar", target));
+            LOG().log(NMsg.ofC("[%s] resolve remote jar", target).asFiner().withIntent(NMsgIntent.START));
             NRef<NPath> remoteApiJar = NRef.ofNull();
             NWorkspace workspace = NWorkspace.of();
             copyId(workspace.getApiId(), getStoreLocationLibRepo(commExec), remoteApiJar);
@@ -168,7 +168,7 @@ public class RemoteConnexionStringInfo {
         if (isUpdatable(loadedUserHome)) {
             loadedUserHome = System.currentTimeMillis();
             // echo -e "$USER\\n$HOME\n$OSTYPE\n$PATH"
-            LOG().with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("[%s] resolve remote env", target));
+            LOG().log(NMsg.ofC("[%s] resolve remote env", target).asFiner().withIntent(NMsgIntent.START));
             String[] echoes = NStringUtils.trim(runOnceSystemGrab(
                     commExec, target,
                     "echo", "-e", "$USER\\\\n$HOME\\\\n$OSTYPE\\\\n$PATH")).split("\n");
