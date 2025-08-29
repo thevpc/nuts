@@ -30,8 +30,8 @@ import net.thevpc.nuts.boot.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NBootOptions;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.boot.NBootWorkspaceFactory;
@@ -81,8 +81,7 @@ public class DefaultNBootWorkspaceFactory implements NBootWorkspaceFactory {
         workspace.runWith(() -> {
             NBootOptions info2=new DefaultNBootOptionsBuilder(options).build();
             NApp.of().setId(workspace.getApiId());
-            NLogOp logOp = NLog.of(NBootWorkspaceImpl.class).with().level(Level.CONFIG);
-            logOp.verb(NLogVerb.SUCCESS).log(NMsg.ofC("running workspace in %s mode", getRunModeString(info2)));
+            NLog.of(NBootWorkspaceImpl.class).log(NMsg.ofC("running workspace in %s mode", getRunModeString(info2)).asConfig().withIntent(NMsgIntent.SUCCESS));
             NExecCmd execCmd = NExecCmd.of()
                     .setExecutionType(info2.getExecutionType().orNull())
                     .setRunAs(info2.getRunAs().orNull())
