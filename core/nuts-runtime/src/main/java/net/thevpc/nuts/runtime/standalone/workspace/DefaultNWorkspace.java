@@ -36,9 +36,12 @@ import net.thevpc.nuts.core.NI18n;
 import net.thevpc.nuts.elem.NElementFactory;
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.format.NVersionFormat;
+import net.thevpc.nuts.log.NLogFactorySPI;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
+import net.thevpc.nuts.runtime.standalone.log.NLogSPIJUL;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepositoryModel;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
 import net.thevpc.nuts.runtime.standalone.util.*;
@@ -57,8 +60,6 @@ import net.thevpc.nuts.format.NTableModel;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.reserved.NScopedWorkspace;
 import net.thevpc.nuts.NLocationKey;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNLog;
@@ -219,7 +220,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
     private void initWorkspace(NBootOptions initialBootOptions0) {
         Objects.requireNonNull(initialBootOptions0, () -> "boot options could not be null");
-        this.LOG = new DefaultNLog(DefaultNWorkspace.class, true);
+        this.LOG = new DefaultNLog(DefaultNWorkspace.class.getName(), new NLogSPIJUL(DefaultNWorkspace.class.getName()), true);
         InitWorkspaceData data = new InitWorkspaceData();
         data.initialBootOptions = initialBootOptions0.readOnly();
         try {
@@ -271,9 +272,12 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         this.wsModel.sdkModel = new DefaultNPlatformModel(this.wsModel.envModel);
         this.wsModel.location = data.effectiveBootOptions.getWorkspace().orNull();
         this.wsModel.locationsModel = new DefaultNWorkspaceLocationModel(this,
-                this.wsModel.location==null?null:Paths.get(this.wsModel.location).toString());
+                this.wsModel.location == null ? null : Paths.get(this.wsModel.location).toString());
 
         this.wsModel.extensionModel.onInitializeWorkspace(data.effectiveBootOptions, bootClassLoader);
+        this.wsModel.logModel.setFactorySPI(
+                NExtensions.of().createComponent(NLogFactorySPI.class, null).orElse(this.wsModel.logModel.getFactorySPI())
+        );
         this.wsModel.textModel.loadExtensions();
         data.cfg = new NBootConfig();
         data.cfg.setWorkspace(workspaceLocation);
@@ -303,8 +307,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         try {
             data.text.getTheme();
         } catch (Exception ex) {
-            LOG.with().level(Level.CONFIG).verb(NLogVerb.FAIL)
-                    .log(NMsg.ofJ("unable to load theme {0}. Reset to default!", data.effectiveBootOptions.getTheme()));
+            LOG
+                    .log(NMsg.ofJ("unable to load theme {0}. Reset to default!", data.effectiveBootOptions.getTheme())
+                            .withLevel(Level.CONFIG).withIntent(NMsgIntent.FAIL)
+                    );
             data.text.setTheme("");//set default!
         }
 
@@ -378,29 +384,29 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             NWorkspaceSecurityManager.of().login(data.effectiveBootOptions.getUserName().get(), password);
         }
         wsModel.configModel.setEndCreateTime(Instant.now());
-        LOG.with().level(Level.FINE).verb(NLogVerb.SUCCESS)
+        LOG
                 .log(
                         NMsg.ofC("%s workspace loaded in %s",
                                 NMsg.ofCode("nuts"),
                                 NDuration.ofDuration(getCreationDuration())
-                        )
+                        ).asFine().withIntent(NMsgIntent.SUCCESS)
                 );
         if (data.effectiveBootOptions.getSharedInstance().orElse(false)) {
 
             NWorkspace o = NScopedWorkspace.setSharedWorkspaceInstance(this);
             if (o != null) {
-                LOG.with().level(Level.WARNING).verb(NLogVerb.SUCCESS)
+                LOG
                         .log(
                                 NMsg.ofC("%s workspace set as main instance overriding existing workspace",
                                         NMsg.ofCode("nuts")
-                                )
+                                ).withLevel(Level.WARNING).withIntent(NMsgIntent.SUCCESS)
                         );
             } else {
-                LOG.with().level(Level.FINE).verb(NLogVerb.SUCCESS)
+                LOG
                         .log(
                                 NMsg.ofC("%s workspace set as main instance",
                                         NMsg.ofCode("nuts")
-                                )
+                                ).asFine().withIntent(NMsgIntent.SUCCESS)
                         );
             }
         }
@@ -447,14 +453,15 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             try {
                 NInstallCmd.of().setInstalled(true).getResult();
             } catch (Exception ex) {
-                LOG.with().level(Level.SEVERE).verb(NLogVerb.FAIL)
-                        .error(ex)
-                        .log(NMsg.ofJ("reinstall artifacts failed : {0}", ex));
+                LOG
+                        .log(NMsg.ofJ("reinstall artifacts failed : {0}", ex).asError(ex));
             }
         }
         if (getRepositories().isEmpty()) {
-            LOG.with().level(Level.CONFIG).verb(NLogVerb.FAIL)
-                    .log(NMsg.ofPlain("workspace has no repositories. Will re-create defaults"));
+            LOG
+                    .log(NMsg.ofPlain("workspace has no repositories. Will re-create defaults")
+                            .withLevel(Level.CONFIG).withIntent(NMsgIntent.FAIL)
+                    );
             data.justInstalledArchetype = initializeWorkspace(effectiveBootOptions.getArchetype().orNull());
         }
         List<String> transientRepositoriesSet =
@@ -486,11 +493,12 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         //workspace wasn't loaded. Create new configuration...
         data.justInstalled = true;
         NWorkspaceUtils.of(this).checkReadOnly();
-        LOG.with().level(Level.CONFIG).verb(NLogVerb.SUCCESS)
+        LOG
                 .log(NMsg.ofC("creating %s workspace at %s",
-                        data.text.ofStyled("new", NTextStyle.info()),
-                        this.getWorkspaceLocation()
-                ));
+                                data.text.ofStyled("new", NTextStyle.info()),
+                                this.getWorkspaceLocation()
+                        ).withLevel(Level.CONFIG).withIntent(NMsgIntent.SUCCESS)
+                );
         NWorkspaceConfigBoot bconfig = new NWorkspaceConfigBoot();
         //load from config with resolution applied
         bconfig.setUuid(wsModel.uuid);
@@ -548,8 +556,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         data.justInstalledArchetype = initializeWorkspace(effectiveBootOptions.getArchetype().orNull());
         NVersion nutsVersion = getRuntimeId().getVersion();
         if (LOG.isLoggable(Level.CONFIG)) {
-            LOG.with().level(Level.CONFIG).verb(NLogVerb.SUCCESS)
-                    .log(NMsg.ofJ("nuts workspace v{0} created.", nutsVersion));
+            LOG
+                    .log(NMsg.ofJ("nuts workspace v{0} created.", nutsVersion)
+                            .withLevel(Level.CONFIG).withIntent(NMsgIntent.SUCCESS)
+                    );
         }
         //should install default
         NSession session = currentSession();
@@ -567,7 +577,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             );
             out.println(n == null ? "no help found" : n);
             NIsolationLevel il = wsModel.bootModel.getBootUserOptions().getIsolationLevel().orElse(NIsolationLevel.USER);
-            if (il==NIsolationLevel.MEMORY) {
+            if (il == NIsolationLevel.MEMORY) {
 //                out.println(
 //                        data.text.ofBuilder()
 //                                .append("location", NTextStyle.underlined())
@@ -575,7 +585,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 //                                .append("<in-memory>")
 //                                .append(" ")
 //                );
-            }else if (NWorkspaceUtils.isUserDefaultWorkspace()) {
+            } else if (NWorkspaceUtils.isUserDefaultWorkspace()) {
                 out.println(
                         data.text.ofBuilder()
                                 .append("location", NTextStyle.underlined())
@@ -664,8 +674,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     }
 
     private void _initLog(InitWorkspaceData data) {
-        NLogOp LOGCRF = LOG.with().level(Level.CONFIG).verb(NLogVerb.READ);
-        NLogOp LOGCSF = LOG.with().level(Level.CONFIG).verb(NLogVerb.START);
+        NMsgBuilder mread = NMsgBuilder.of().withLevel(Level.CONFIG).withIntent(NMsgIntent.READ);
+        NMsgBuilder mstart = NMsgBuilder.of().withLevel(Level.CONFIG).withIntent(NMsgIntent.START);
         if (LOG.isLoggable(Level.CONFIG)) {
             NTexts text = data.text;
             NBootOptions effectiveBootOptions = data.effectiveBootOptions;
@@ -676,35 +686,35 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             NVersionFormat.of();
             NIdFormat.of();
 
-            LOGCSF.log(NMsg.ofPlain(" ==============================================================================="));
+            LOG.log(mstart.withMsgPlain(" ==============================================================================="));
             String s = NIOUtils.loadString(getClass().getResourceAsStream("/net/thevpc/nuts/runtime/includes/standard-header.ntf"), true);
             s = s.replace("${nuts.workspace-runtime.version}", Nuts.getVersion().toString());
             for (String s1 : s.split("\n")) {
-                LOGCSF.log(NMsg.ofNtf(s1));
+                LOG.log(mstart.withMsgNtf(s1));
             }
-            LOGCSF.log(NMsg.ofPlain(" "));
-            LOGCSF.log(NMsg.ofPlain(" = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ="));
-            LOGCSF.log(NMsg.ofPlain(" "));
-            LOGCSF.log(NMsg.ofC("start ```sh nuts``` %s at %s", Nuts.getVersion(), CoreNUtils.DEFAULT_DATE_TIME_FORMATTER.format(data.initialBootOptions.getCreationTime().get())));
-            LOGCRF.log(NMsg.ofC("open Nuts Workspace               : %s",
+            LOG.log(mstart.withMsgPlain(" "));
+            LOG.log(mstart.withMsgPlain(" = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ="));
+            LOG.log(mstart.withMsgPlain(" "));
+            LOG.log(mstart.withMsgC("start ```sh nuts``` %s at %s", Nuts.getVersion(), CoreNUtils.DEFAULT_DATE_TIME_FORMATTER.format(data.initialBootOptions.getCreationTime().get())));
+            LOG.log(mread.withMsgC("open Nuts Workspace               : %s",
                     effectiveBootOptions.toCmdLine()
             ));
-            LOGCRF.log(NMsg.ofC("open Nuts Workspace (compact)     : %s",
+            LOG.log(mread.withMsgC("open Nuts Workspace (compact)     : %s",
                     effectiveBootOptions.toCmdLine(new NWorkspaceOptionsConfig().setCompact(true))));
 
-            LOGCRF.log(NMsg.ofPlain("open Workspace with config        : "));
-            LOGCRF.log(NMsg.ofC("   nuts-workspace-uuid            : %s", NTextUtils.desc(effectiveBootOptions.getUuid().orNull(), text)));
-            LOGCRF.log(NMsg.ofC("   nuts-workspace-name            : %s", NTextUtils.desc(effectiveBootOptions.getName().orNull(), text)));
-            LOGCRF.log(NMsg.ofC("   nuts-api-version               : %s", Nuts.getVersion()));
-            LOGCRF.log(NMsg.ofC("   nuts-api-url                   : %s", NPath.of(getApiURL())));
-            LOGCRF.log(NMsg.ofC("   nuts-api-digest                : %s", text.ofStyled(getApiDigest(), NTextStyle.version())));
-            LOGCRF.log(NMsg.ofC("   nuts-boot-repositories         : %s", NTextUtils.desc(effectiveBootOptions.getBootRepositories().orNull(), text)));
-            LOGCRF.log(NMsg.ofC("   nuts-runtime                   : %s", getRuntimeId()));
-            LOGCRF.log(NMsg.ofC("   nuts-runtime-digest            : %s",
+            LOG.log(mread.withMsgPlain("open Workspace with config        : "));
+            LOG.log(mread.withMsgC("   nuts-workspace-uuid            : %s", NTextUtils.desc(effectiveBootOptions.getUuid().orNull(), text)));
+            LOG.log(mread.withMsgC("   nuts-workspace-name            : %s", NTextUtils.desc(effectiveBootOptions.getName().orNull(), text)));
+            LOG.log(mread.withMsgC("   nuts-api-version               : %s", Nuts.getVersion()));
+            LOG.log(mread.withMsgC("   nuts-api-url                   : %s", NPath.of(getApiURL())));
+            LOG.log(mread.withMsgC("   nuts-api-digest                : %s", text.ofStyled(getApiDigest(), NTextStyle.version())));
+            LOG.log(mread.withMsgC("   nuts-boot-repositories         : %s", NTextUtils.desc(effectiveBootOptions.getBootRepositories().orNull(), text)));
+            LOG.log(mread.withMsgC("   nuts-runtime                   : %s", getRuntimeId()));
+            LOG.log(mread.withMsgC("   nuts-runtime-digest            : %s",
                     text.ofStyled(new CoreDigestHelper().append(effectiveBootOptions.getClassWorldURLs().orNull()).getDigest(), NTextStyle.version())
             ));
             if (effectiveBootOptions.getRuntimeBootDescriptor().isPresent()) {
-                LOGCRF.log(NMsg.ofC("   nuts-runtime-dependencies      : %s",
+                LOG.log(mread.withMsgC("   nuts-runtime-dependencies      : %s",
                         text.ofBuilder().appendJoined(text.ofStyled(";", NTextStyle.separator()),
                                 effectiveBootOptions.getRuntimeBootDescriptor().get().getDependencies().stream()
                                         .map(x -> NId.get(x.toString()).get())
@@ -712,14 +722,14 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                         )
                 ));
             }
-            LOGCRF.log(NMsg.ofC("   nuts-runtime-urls              : %s",
+            LOG.log(mread.withMsgC("   nuts-runtime-urls              : %s",
                     text.ofBuilder().appendJoined(text.ofStyled(";", NTextStyle.separator()),
                             effectiveBootOptions.getClassWorldURLs().get().stream()
                                     .map(x -> NPath.of(x.toString()))
                                     .collect(Collectors.toList())
                     )
             ));
-            LOGCRF.log(NMsg.ofC("   nuts-extension-dependencies    : %s",
+            LOG.log(mread.withMsgC("   nuts-extension-dependencies    : %s",
                     text.ofBuilder().appendJoined(text.ofStyled(";", NTextStyle.separator()),
                             toIds(
                                     NBootHelper.toDescriptorList(effectiveBootOptions.getExtensionBootDescriptors().orElseGet(Collections::emptyList))
@@ -730,78 +740,78 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                                     .collect(Collectors.toList())
                     )
             ));
-            LOGCRF.log(NMsg.ofC("   nuts-workspace                 : %s", NTextUtils.formatLogValue(text, userBootOptions.getWorkspace().orNull(), effectiveBootOptions.getWorkspace().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-hash-name                 : %s", getDigestName()));
-            LOGCRF.log(NMsg.ofC("   nuts-store-bin                 : %s", NTextUtils.formatLogValue(text, userBootOptions.getStoreType(NStoreType.BIN).orNull(), effectiveBootOptions.getStoreType(NStoreType.BIN).orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-store-conf                : %s", NTextUtils.formatLogValue(text, userBootOptions.getStoreType(NStoreType.CONF).orNull(), effectiveBootOptions.getStoreType(NStoreType.CONF).orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-store-var                 : %s", NTextUtils.formatLogValue(text, userBootOptions.getStoreType(NStoreType.VAR).orNull(), effectiveBootOptions.getStoreType(NStoreType.VAR).orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-store-log                 : %s", NTextUtils.formatLogValue(text, userBootOptions.getStoreType(NStoreType.LOG).orNull(), effectiveBootOptions.getStoreType(NStoreType.LOG).orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-store-temp                : %s", NTextUtils.formatLogValue(text, userBootOptions.getStoreType(NStoreType.TEMP).orNull(), effectiveBootOptions.getStoreType(NStoreType.TEMP).orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-store-cache               : %s", NTextUtils.formatLogValue(text, userBootOptions.getStoreType(NStoreType.CACHE).orNull(), effectiveBootOptions.getStoreType(NStoreType.CACHE).orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-store-run                 : %s", NTextUtils.formatLogValue(text, userBootOptions.getStoreType(NStoreType.RUN).orNull(), effectiveBootOptions.getStoreType(NStoreType.RUN).orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-store-lib                 : %s", NTextUtils.formatLogValue(text, userBootOptions.getStoreType(NStoreType.LIB).orNull(), effectiveBootOptions.getStoreType(NStoreType.LIB).orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-store-strategy            : %s", NTextUtils.formatLogValue(text, userBootOptions.getStoreStrategy().orNull(), effectiveBootOptions.getStoreStrategy().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-repos-store-strategy      : %s", NTextUtils.formatLogValue(text, userBootOptions.getRepositoryStoreStrategy().orNull(), effectiveBootOptions.getRepositoryStoreStrategy().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-store-layout              : %s", NTextUtils.formatLogValue(text, userBootOptions.getStoreLayout().orNull(), effectiveBootOptions.getStoreLayout().isNotPresent() ? "system" : effectiveBootOptions.getStoreLayout().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-username                  : %s", NTextUtils.formatLogValue(text, userBootOptions.getUserName().orNull(), effectiveBootOptions.getUserName().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-read-only                 : %s", NTextUtils.formatLogValue(text, userBootOptions.getReadOnly().orNull(), effectiveBootOptions.getReadOnly().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-trace                     : %s", NTextUtils.formatLogValue(text, userBootOptions.getTrace().orNull(), effectiveBootOptions.getTrace().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-progress                  : %s", NTextUtils.formatLogValue(text, userBootOptions.getProgressOptions().orNull(), effectiveBootOptions.getProgressOptions().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-bot                       : %s", NTextUtils.formatLogValue(text, userBootOptions.getBot().orNull(), effectiveBootOptions.getBot().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-cached                    : %s", NTextUtils.formatLogValue(text, userBootOptions.getCached().orNull(), effectiveBootOptions.getCached().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-transitive                : %s", NTextUtils.formatLogValue(text, userBootOptions.getTransitive().orNull(), effectiveBootOptions.getTransitive().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-confirm                   : %s", NTextUtils.formatLogValue(text, userBootOptions.getConfirm().orNull(), effectiveBootOptions.getConfirm().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-debug                     : %s", NTextUtils.formatLogValue(text, userBootOptions.getDebug().orNull(), effectiveBootOptions.getDebug().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-dry                       : %s", NTextUtils.formatLogValue(text, userBootOptions.getDry().orNull(), effectiveBootOptions.getDry().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-execution-type            : %s", NTextUtils.formatLogValue(text, userBootOptions.getExecutionType().orNull(), effectiveBootOptions.getExecutionType().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-out-line-prefix           : %s", NTextUtils.formatLogValue(text, userBootOptions.getOutLinePrefix().orNull(), effectiveBootOptions.getOutLinePrefix().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-err-line-prefix           : %s", NTextUtils.formatLogValue(text, userBootOptions.getErrLinePrefix().orNull(), effectiveBootOptions.getErrLinePrefix().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-init-platforms            : %s", NTextUtils.formatLogValue(text, userBootOptions.getInitPlatforms().orNull(), effectiveBootOptions.getInitPlatforms().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-init-java                 : %s", NTextUtils.formatLogValue(text, userBootOptions.getInitJava().orNull(), effectiveBootOptions.getInitJava().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-init-launchers            : %s", NTextUtils.formatLogValue(text, userBootOptions.getInitLaunchers().orNull(), effectiveBootOptions.getInitLaunchers().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-init-scripts              : %s", NTextUtils.formatLogValue(text, userBootOptions.getInitScripts().orNull(), effectiveBootOptions.getInitScripts().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-init-scripts              : %s", NTextUtils.formatLogValue(text, userBootOptions.getInitScripts().orNull(), effectiveBootOptions.getInitScripts().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-desktop-launcher          : %s", NTextUtils.formatLogValue(text, userBootOptions.getDesktopLauncher().orNull(), effectiveBootOptions.getDesktopLauncher().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-menu-launcher             : %s", NTextUtils.formatLogValue(text, userBootOptions.getMenuLauncher().orNull(), effectiveBootOptions.getMenuLauncher().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-user-launcher             : %s", NTextUtils.formatLogValue(text, userBootOptions.getUserLauncher().orNull(), effectiveBootOptions.getUserLauncher().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-isolation-level           : %s", NTextUtils.formatLogValue(text, userBootOptions.getIsolationLevel().orNull(), effectiveBootOptions.getIsolationLevel().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-open-mode                 : %s", NTextUtils.formatLogValue(text, userBootOptions.getOpenMode().orNull(), effectiveBootOptions.getOpenMode().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-inherited                 : %s", NTextUtils.formatLogValue(text, userBootOptions.getInherited().orNull(), effectiveBootOptions.getInherited().orNull())));
-            LOGCRF.log(NMsg.ofC("   nuts-inherited-nuts-boot-args  : %s", System.getProperty("nuts.boot.args") == null ? NTextUtils.desc(null, text)
+            LOG.log(mread.withMsgC("   nuts-workspace                 : %s", NTextUtils.formatLogValue(text, userBootOptions.getWorkspace().orNull(), effectiveBootOptions.getWorkspace().orNull())));
+            LOG.log(mread.withMsgC("   nuts-hash-name                 : %s", getDigestName()));
+            LOG.log(mread.withMsgC("   nuts-store-bin                 : %s", NTextUtils.formatLogValue(text, userBootOptions.getStoreType(NStoreType.BIN).orNull(), effectiveBootOptions.getStoreType(NStoreType.BIN).orNull())));
+            LOG.log(mread.withMsgC("   nuts-store-conf                : %s", NTextUtils.formatLogValue(text, userBootOptions.getStoreType(NStoreType.CONF).orNull(), effectiveBootOptions.getStoreType(NStoreType.CONF).orNull())));
+            LOG.log(mread.withMsgC("   nuts-store-var                 : %s", NTextUtils.formatLogValue(text, userBootOptions.getStoreType(NStoreType.VAR).orNull(), effectiveBootOptions.getStoreType(NStoreType.VAR).orNull())));
+            LOG.log(mread.withMsgC("   nuts-store-log                 : %s", NTextUtils.formatLogValue(text, userBootOptions.getStoreType(NStoreType.LOG).orNull(), effectiveBootOptions.getStoreType(NStoreType.LOG).orNull())));
+            LOG.log(mread.withMsgC("   nuts-store-temp                : %s", NTextUtils.formatLogValue(text, userBootOptions.getStoreType(NStoreType.TEMP).orNull(), effectiveBootOptions.getStoreType(NStoreType.TEMP).orNull())));
+            LOG.log(mread.withMsgC("   nuts-store-cache               : %s", NTextUtils.formatLogValue(text, userBootOptions.getStoreType(NStoreType.CACHE).orNull(), effectiveBootOptions.getStoreType(NStoreType.CACHE).orNull())));
+            LOG.log(mread.withMsgC("   nuts-store-run                 : %s", NTextUtils.formatLogValue(text, userBootOptions.getStoreType(NStoreType.RUN).orNull(), effectiveBootOptions.getStoreType(NStoreType.RUN).orNull())));
+            LOG.log(mread.withMsgC("   nuts-store-lib                 : %s", NTextUtils.formatLogValue(text, userBootOptions.getStoreType(NStoreType.LIB).orNull(), effectiveBootOptions.getStoreType(NStoreType.LIB).orNull())));
+            LOG.log(mread.withMsgC("   nuts-store-strategy            : %s", NTextUtils.formatLogValue(text, userBootOptions.getStoreStrategy().orNull(), effectiveBootOptions.getStoreStrategy().orNull())));
+            LOG.log(mread.withMsgC("   nuts-repos-store-strategy      : %s", NTextUtils.formatLogValue(text, userBootOptions.getRepositoryStoreStrategy().orNull(), effectiveBootOptions.getRepositoryStoreStrategy().orNull())));
+            LOG.log(mread.withMsgC("   nuts-store-layout              : %s", NTextUtils.formatLogValue(text, userBootOptions.getStoreLayout().orNull(), effectiveBootOptions.getStoreLayout().isNotPresent() ? "system" : effectiveBootOptions.getStoreLayout().orNull())));
+            LOG.log(mread.withMsgC("   nuts-username                  : %s", NTextUtils.formatLogValue(text, userBootOptions.getUserName().orNull(), effectiveBootOptions.getUserName().orNull())));
+            LOG.log(mread.withMsgC("   nuts-read-only                 : %s", NTextUtils.formatLogValue(text, userBootOptions.getReadOnly().orNull(), effectiveBootOptions.getReadOnly().orNull())));
+            LOG.log(mread.withMsgC("   nuts-trace                     : %s", NTextUtils.formatLogValue(text, userBootOptions.getTrace().orNull(), effectiveBootOptions.getTrace().orNull())));
+            LOG.log(mread.withMsgC("   nuts-progress                  : %s", NTextUtils.formatLogValue(text, userBootOptions.getProgressOptions().orNull(), effectiveBootOptions.getProgressOptions().orNull())));
+            LOG.log(mread.withMsgC("   nuts-bot                       : %s", NTextUtils.formatLogValue(text, userBootOptions.getBot().orNull(), effectiveBootOptions.getBot().orNull())));
+            LOG.log(mread.withMsgC("   nuts-cached                    : %s", NTextUtils.formatLogValue(text, userBootOptions.getCached().orNull(), effectiveBootOptions.getCached().orNull())));
+            LOG.log(mread.withMsgC("   nuts-transitive                : %s", NTextUtils.formatLogValue(text, userBootOptions.getTransitive().orNull(), effectiveBootOptions.getTransitive().orNull())));
+            LOG.log(mread.withMsgC("   nuts-confirm                   : %s", NTextUtils.formatLogValue(text, userBootOptions.getConfirm().orNull(), effectiveBootOptions.getConfirm().orNull())));
+            LOG.log(mread.withMsgC("   nuts-debug                     : %s", NTextUtils.formatLogValue(text, userBootOptions.getDebug().orNull(), effectiveBootOptions.getDebug().orNull())));
+            LOG.log(mread.withMsgC("   nuts-dry                       : %s", NTextUtils.formatLogValue(text, userBootOptions.getDry().orNull(), effectiveBootOptions.getDry().orNull())));
+            LOG.log(mread.withMsgC("   nuts-execution-type            : %s", NTextUtils.formatLogValue(text, userBootOptions.getExecutionType().orNull(), effectiveBootOptions.getExecutionType().orNull())));
+            LOG.log(mread.withMsgC("   nuts-out-line-prefix           : %s", NTextUtils.formatLogValue(text, userBootOptions.getOutLinePrefix().orNull(), effectiveBootOptions.getOutLinePrefix().orNull())));
+            LOG.log(mread.withMsgC("   nuts-err-line-prefix           : %s", NTextUtils.formatLogValue(text, userBootOptions.getErrLinePrefix().orNull(), effectiveBootOptions.getErrLinePrefix().orNull())));
+            LOG.log(mread.withMsgC("   nuts-init-platforms            : %s", NTextUtils.formatLogValue(text, userBootOptions.getInitPlatforms().orNull(), effectiveBootOptions.getInitPlatforms().orNull())));
+            LOG.log(mread.withMsgC("   nuts-init-java                 : %s", NTextUtils.formatLogValue(text, userBootOptions.getInitJava().orNull(), effectiveBootOptions.getInitJava().orNull())));
+            LOG.log(mread.withMsgC("   nuts-init-launchers            : %s", NTextUtils.formatLogValue(text, userBootOptions.getInitLaunchers().orNull(), effectiveBootOptions.getInitLaunchers().orNull())));
+            LOG.log(mread.withMsgC("   nuts-init-scripts              : %s", NTextUtils.formatLogValue(text, userBootOptions.getInitScripts().orNull(), effectiveBootOptions.getInitScripts().orNull())));
+            LOG.log(mread.withMsgC("   nuts-init-scripts              : %s", NTextUtils.formatLogValue(text, userBootOptions.getInitScripts().orNull(), effectiveBootOptions.getInitScripts().orNull())));
+            LOG.log(mread.withMsgC("   nuts-desktop-launcher          : %s", NTextUtils.formatLogValue(text, userBootOptions.getDesktopLauncher().orNull(), effectiveBootOptions.getDesktopLauncher().orNull())));
+            LOG.log(mread.withMsgC("   nuts-menu-launcher             : %s", NTextUtils.formatLogValue(text, userBootOptions.getMenuLauncher().orNull(), effectiveBootOptions.getMenuLauncher().orNull())));
+            LOG.log(mread.withMsgC("   nuts-user-launcher             : %s", NTextUtils.formatLogValue(text, userBootOptions.getUserLauncher().orNull(), effectiveBootOptions.getUserLauncher().orNull())));
+            LOG.log(mread.withMsgC("   nuts-isolation-level           : %s", NTextUtils.formatLogValue(text, userBootOptions.getIsolationLevel().orNull(), effectiveBootOptions.getIsolationLevel().orNull())));
+            LOG.log(mread.withMsgC("   nuts-open-mode                 : %s", NTextUtils.formatLogValue(text, userBootOptions.getOpenMode().orNull(), effectiveBootOptions.getOpenMode().orNull())));
+            LOG.log(mread.withMsgC("   nuts-inherited                 : %s", NTextUtils.formatLogValue(text, userBootOptions.getInherited().orNull(), effectiveBootOptions.getInherited().orNull())));
+            LOG.log(mread.withMsgC("   nuts-inherited-nuts-boot-args  : %s", System.getProperty("nuts.boot.args") == null ? NTextUtils.desc(null, text)
                     : NTextUtils.desc(NCmdLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH), text)
             ));
-            LOGCRF.log(NMsg.ofC("   nuts-inherited-nuts-args       : %s", System.getProperty("nuts.args") == null ? NTextUtils.desc(null, text)
+            LOG.log(mread.withMsgC("   nuts-inherited-nuts-args       : %s", System.getProperty("nuts.args") == null ? NTextUtils.desc(null, text)
                     : NTextUtils.desc(text.of(NCmdLine.of(System.getProperty("nuts.args"), NShellFamily.SH)), text)
             ));
-            LOGCRF.log(NMsg.ofC("   nuts-open-mode                 : %s", NTextUtils.formatLogValue(text, effectiveBootOptions.getOpenMode().orNull(), effectiveBootOptions.getOpenMode().orElse(NOpenMode.OPEN_OR_CREATE))));
+            LOG.log(mread.withMsgC("   nuts-open-mode                 : %s", NTextUtils.formatLogValue(text, effectiveBootOptions.getOpenMode().orNull(), effectiveBootOptions.getOpenMode().orElse(NOpenMode.OPEN_OR_CREATE))));
             NWorkspace senvs = this;
-            LOGCRF.log(NMsg.ofC("   java-home                      : %s", System.getProperty("java.home")));
-            LOGCRF.log(NMsg.ofC("   java-classpath                 : %s", System.getProperty("java.class.path")));
-            LOGCRF.log(NMsg.ofC("   java-library-path              : %s", System.getProperty("java.library.path")));
-            LOGCRF.log(NMsg.ofC("   os-name                        : %s", System.getProperty("os.name")));
-            LOGCRF.log(NMsg.ofC("   os-family                      : %s", senvs.getOsFamily()));
-            LOGCRF.log(NMsg.ofC("   os-dist                        : %s", senvs.getOsDist().getArtifactId()));
-            LOGCRF.log(NMsg.ofC("   os-arch                        : %s", System.getProperty("os.arch")));
-            LOGCRF.log(NMsg.ofC("   os-shell                       : %s", senvs.getShellFamily()));
-            LOGCRF.log(NMsg.ofC("   os-shells                      : %s", text.ofBuilder().appendJoined(",", senvs.getShellFamilies())));
+            LOG.log(mread.withMsgC("   java-home                      : %s", System.getProperty("java.home")));
+            LOG.log(mread.withMsgC("   java-classpath                 : %s", System.getProperty("java.class.path")));
+            LOG.log(mread.withMsgC("   java-library-path              : %s", System.getProperty("java.library.path")));
+            LOG.log(mread.withMsgC("   os-name                        : %s", System.getProperty("os.name")));
+            LOG.log(mread.withMsgC("   os-family                      : %s", senvs.getOsFamily()));
+            LOG.log(mread.withMsgC("   os-dist                        : %s", senvs.getOsDist().getArtifactId()));
+            LOG.log(mread.withMsgC("   os-arch                        : %s", System.getProperty("os.arch")));
+            LOG.log(mread.withMsgC("   os-shell                       : %s", senvs.getShellFamily()));
+            LOG.log(mread.withMsgC("   os-shells                      : %s", text.ofBuilder().appendJoined(",", senvs.getShellFamilies())));
             NWorkspaceTerminalOptions b = getModel().bootModel.getBootTerminal();
-            LOGCRF.log(NMsg.ofC("   os-terminal-flags              : %s", String.join(", ", b.getFlags())));
+            LOG.log(mread.withMsgC("   os-terminal-flags              : %s", String.join(", ", b.getFlags())));
             NTerminalMode terminalMode = wsModel.bootModel.getBootUserOptions().getTerminalMode().orElse(NTerminalMode.DEFAULT);
-            LOGCRF.log(NMsg.ofC("   os-terminal-mode               : %s", terminalMode));
-            LOGCRF.log(NMsg.ofC("   os-desktop                     : %s", senvs.getDesktopEnvironment()));
-            LOGCRF.log(NMsg.ofC("   os-desktop-family              : %s", senvs.getDesktopEnvironmentFamily()));
-            LOGCRF.log(NMsg.ofC("   os-desktops                    : %s", text.ofBuilder().appendJoined(",", (senvs.getDesktopEnvironments()))));
-            LOGCRF.log(NMsg.ofC("   os-desktop-families            : %s", text.ofBuilder().appendJoined(",", (senvs.getDesktopEnvironmentFamilies()))));
-            LOGCRF.log(NMsg.ofC("   os-desktop-path                : %s", senvs.getDesktopPath()));
-            LOGCRF.log(NMsg.ofC("   os-desktop-integration         : %s", senvs.getDesktopIntegrationSupport(NDesktopIntegrationItem.DESKTOP)));
-            LOGCRF.log(NMsg.ofC("   os-menu-integration            : %s", senvs.getDesktopIntegrationSupport(NDesktopIntegrationItem.MENU)));
-            LOGCRF.log(NMsg.ofC("   os-shortcut-integration        : %s", senvs.getDesktopIntegrationSupport(NDesktopIntegrationItem.USER)));
-            LOGCRF.log(NMsg.ofC("   os-version                     : %s", senvs.getOsDist().getVersion()));
-            LOGCRF.log(NMsg.ofC("   os-username                    : %s", System.getProperty("user.name")));
-            LOGCRF.log(NMsg.ofC("   os-user-dir                    : %s", NPath.of(System.getProperty("user.dir"))));
-            LOGCRF.log(NMsg.ofC("   os-user-home                   : %s", NPath.of(System.getProperty("user.home"))));
-            LOGCRF.log(NMsg.ofC("   os-user-locale                 : %s", Locale.getDefault()));
-            LOGCRF.log(NMsg.ofC("   os-user-time-zone              : %s", TimeZone.getDefault()));
+            LOG.log(mread.withMsgC("   os-terminal-mode               : %s", terminalMode));
+            LOG.log(mread.withMsgC("   os-desktop                     : %s", senvs.getDesktopEnvironment()));
+            LOG.log(mread.withMsgC("   os-desktop-family              : %s", senvs.getDesktopEnvironmentFamily()));
+            LOG.log(mread.withMsgC("   os-desktops                    : %s", text.ofBuilder().appendJoined(",", (senvs.getDesktopEnvironments()))));
+            LOG.log(mread.withMsgC("   os-desktop-families            : %s", text.ofBuilder().appendJoined(",", (senvs.getDesktopEnvironmentFamilies()))));
+            LOG.log(mread.withMsgC("   os-desktop-path                : %s", senvs.getDesktopPath()));
+            LOG.log(mread.withMsgC("   os-desktop-integration         : %s", senvs.getDesktopIntegrationSupport(NDesktopIntegrationItem.DESKTOP)));
+            LOG.log(mread.withMsgC("   os-menu-integration            : %s", senvs.getDesktopIntegrationSupport(NDesktopIntegrationItem.MENU)));
+            LOG.log(mread.withMsgC("   os-shortcut-integration        : %s", senvs.getDesktopIntegrationSupport(NDesktopIntegrationItem.USER)));
+            LOG.log(mread.withMsgC("   os-version                     : %s", senvs.getOsDist().getVersion()));
+            LOG.log(mread.withMsgC("   os-username                    : %s", System.getProperty("user.name")));
+            LOG.log(mread.withMsgC("   os-user-dir                    : %s", NPath.of(System.getProperty("user.dir"))));
+            LOG.log(mread.withMsgC("   os-user-home                   : %s", NPath.of(System.getProperty("user.home"))));
+            LOG.log(mread.withMsgC("   os-user-locale                 : %s", Locale.getDefault()));
+            LOG.log(mread.withMsgC("   os-user-time-zone              : %s", TimeZone.getDefault()));
         }
 
     }
@@ -845,8 +855,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     }
 
     protected NDescriptor _resolveEffectiveDescriptor(NDescriptor descriptor, NDescriptorEffectiveConfig effectiveNDescriptorConfig) {
-        LOG.with().level(Level.FINEST).verb(NLogVerb.START)
-                .log(NMsg.ofC("resolve effective %s using %s", descriptor.getId(), effectiveNDescriptorConfig));
+        LOG
+                .log(NMsg.ofC("resolve effective %s using %s", descriptor.getId(), effectiveNDescriptorConfig)
+                        .withLevel(Level.FINEST).withIntent(NMsgIntent.START)
+                );
         NDescriptorBuilder descrWithParents = _applyParentDescriptors(descriptor).builder();
         //now apply conditions!
         List<NDescriptorProperty> properties = descrWithParents.getProperties().stream()
@@ -952,8 +964,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     }
                 }
                 if (d.getVersion().isBlank()) {
-                    LOG.with().level(Level.FINE).verb(NLogVerb.FAIL)
-                            .log(NMsg.ofC("failed to resolve effective version for %s", d));
+                    LOG
+                            .log(NMsg.ofC("failed to resolve effective version for %s", d).asFineFail());
                 }
             }
 
@@ -1326,8 +1338,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                             try {
                                 installedRepository.uninstall(executionContext.getDefinition());
                             } catch (Exception ex2) {
-                                LOG.with().level(Level.FINE).error(ex)
-                                        .log(NMsg.ofC("failed to uninstall  %s", executionContext.getDefinition().getId()));
+                                LOG
+                                        .log(NMsg.ofC("failed to uninstall  %s", executionContext.getDefinition().getId()).asFine(ex));
                                 //ignore if we could not uninstall
                                 try {
                                     Map rec = null;
@@ -1579,8 +1591,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     .getUser(NConstants.Users.ADMIN);
             if (adminSecurity == null || NBlankable.isBlank(adminSecurity.getCredentials())) {
                 if (LOG.isLoggable(Level.CONFIG)) {
-                    LOG.with().level(Level.CONFIG).verb(NLogVerb.FAIL)
-                            .log(NMsg.ofC("%s user has no credentials. reset to default", NConstants.Users.ADMIN));
+                    LOG
+                            .log(NMsg.ofC("%s user has no credentials. reset to default", NConstants.Users.ADMIN)
+                                    .withLevel(Level.CONFIG).withIntent(NMsgIntent.FAIL)
+                            );
                 }
                 NWorkspaceSecurityManager.of()
                         .updateUser(NConstants.Users.ADMIN).credentials("admin".toCharArray())
@@ -1590,8 +1604,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 try {
                     this.addCommandFactory(commandFactory);
                 } catch (Exception e) {
-                    LOG.with().level(Level.SEVERE).verb(NLogVerb.FAIL)
-                            .log(NMsg.ofJ("unable to instantiate Command Factory {0}", commandFactory));
+                    LOG
+                            .log(NMsg.ofJ("unable to instantiate Command Factory {0} : {1}", commandFactory, e).asError(e));
                 }
             }
             DefaultNWorkspaceEvent workspaceReloadedEvent = new DefaultNWorkspaceEvent(currentSession(), null, null, null, null);
@@ -1909,8 +1923,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                         return d;
                     }
                 } catch (Exception ex) {
-                    LOG.with().level(Level.FINE).error(ex)
-                            .log(NMsg.ofC("failed to load eff-nuts.cache for %s", descriptor.getId()));
+                    LOG.log(NMsg.ofC("failed to load eff-nuts.cache for %s", descriptor.getId()).asError(ex));
                     //
                 }
             }
@@ -1923,8 +1936,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             try {
                 store().saveLocationKey(NLocationKey.ofCacheFaced(effectiveDescriptor.getId(), null, cacheId), effectiveDescriptor);
             } catch (Exception ex) {
-                LOG.with().level(Level.FINE).error(ex)
-                        .log(NMsg.ofC("failed to save eff-nuts.cache for %s", effectiveDescriptor.getId()));
+                LOG
+                        .log(NMsg.ofC("failed to save eff-nuts.cache for %s", effectiveDescriptor.getId()).asError(ex));
                 //
             }
         }
@@ -1952,8 +1965,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         } catch (NNotFoundException e) {
             return NInstallStatus.NONE;
         } catch (Exception ex) {
-            LOG.with().level(Level.SEVERE).error(ex)
-                    .log(NMsg.ofJ("error: %s", ex));
+            LOG.log(NMsg.ofJ("error: %s", ex).asError(ex));
             return NInstallStatus.NONE;
         }
         return getInstalledRepository().getInstallStatus(nutToInstall.getId());
