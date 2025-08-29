@@ -30,6 +30,7 @@ import java.util.logging.Level;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
@@ -37,8 +38,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.spi.NFetchDescriptorRepositoryCmd;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
 
 /**
  * @author thevpc
@@ -48,10 +48,6 @@ public class DefaultNFetchDescriptorRepositoryCmd extends AbstractNFetchDescript
 
     public DefaultNFetchDescriptorRepositoryCmd(NRepository repo) {
         super(repo);
-    }
-
-    protected NLogOp _LOGOP() {
-        return _LOG().with();
     }
 
     protected NLog _LOG() {
@@ -108,11 +104,11 @@ public class DefaultNFetchDescriptorRepositoryCmd extends AbstractNFetchDescript
             if (d == null) {
                 throw new NNotFoundException(id.getLongId());
             }
-            NLogUtils.traceMessage(_LOG(), Level.FINER, getRepo().getName(), getFetchMode(), id.getLongId(), NLogVerb.SUCCESS, "fetch descriptor", startTime, null);
+            NLogUtils.traceMessage(_LOG(), Level.FINER, getRepo().getName(), getFetchMode(), id.getLongId(), NMsgIntent.SUCCESS, "fetch descriptor", startTime, null);
             result = d;
         } catch (Exception ex) {
             if (!CoreNUtils.isUnsupportedFetchModeException(ex)) {
-                NLogUtils.traceMessage(_LOG(), Level.FINEST, getRepo().getName(), getFetchMode(), id.getLongId(), NLogVerb.FAIL, "fetch descriptor", startTime, CoreStringUtils.exceptionToMessage(ex));
+                NLogUtils.traceMessage(_LOG(), Level.FINEST, getRepo().getName(), getFetchMode(), id.getLongId(), NMsgIntent.FAIL, "fetch descriptor", startTime, CoreStringUtils.exceptionToMessage(ex));
             }
             throw ex;
         }
