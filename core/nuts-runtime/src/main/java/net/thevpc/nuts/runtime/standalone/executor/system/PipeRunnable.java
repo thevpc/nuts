@@ -24,15 +24,14 @@
  */
 package net.thevpc.nuts.runtime.standalone.executor.system;
 
-import net.thevpc.nuts.NWorkspace;
-import net.thevpc.nuts.log.NLogVerb;
-import net.thevpc.nuts.log.NLogOp;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NMsgIntent;
+
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.io.NNonBlockingInputStream;
 import net.thevpc.nuts.runtime.standalone.io.util.StopMonitor;
 
 import java.io.OutputStream;
-import java.util.logging.Level;
 
 public class PipeRunnable implements Runnable, StopMonitor {
 
@@ -99,11 +98,10 @@ public class PipeRunnable implements Runnable, StopMonitor {
                     return true;
                 }
             } catch (Exception ex) {
-                NLogOp.of(PipeRunnable.class)
-                        .error(ex)
-                        .level(Level.FINEST)
-                        .verb(NLogVerb.WARNING)
-                        .log(NMsg.ofC("pipe-thread exits with error: %s", ex));
+                NLog.of(PipeRunnable.class)
+                        .log(NMsg.ofC("pipe-thread exits with error: %s", ex).asFinest(ex)
+                                .withIntent(NMsgIntent.ALERT)
+                );
                 markAsEffectivelyStopped();
             }
         } else {
