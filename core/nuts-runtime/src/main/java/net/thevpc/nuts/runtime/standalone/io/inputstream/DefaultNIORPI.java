@@ -17,6 +17,7 @@ import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaJarUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
+import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
@@ -532,4 +533,10 @@ public class DefaultNIORPI implements NIORPI {
             return inputStreamProvider.getReader();
         }
     }
+
+    @Override
+    public int getSupportLevel(NSupportLevelContext context) {
+        return NConstants.Support.DEFAULT_SUPPORT;
+    }
+
 }
