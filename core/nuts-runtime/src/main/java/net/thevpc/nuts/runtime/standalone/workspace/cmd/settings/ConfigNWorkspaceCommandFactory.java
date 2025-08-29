@@ -4,7 +4,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElementWriter;
-import net.thevpc.nuts.elem.NElements;
 
 
 import net.thevpc.nuts.NStoreType;
@@ -13,21 +12,15 @@ import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.ConfigEventType;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.util.NMsg;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.logging.Level;
 
 public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
 
     public ConfigNWorkspaceCommandFactory() {
-    }
-
-    protected NLogOp _LOGOP() {
-        return _LOG().with();
     }
 
     protected NLog _LOG() {
@@ -99,7 +92,7 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
         List<NCommandConfig> all = new ArrayList<>();
         NPath storeLocation = getCommandsFolder();
         if (!storeLocation.isDirectory()) {
-            //_LOGOP().level(Level.SEVERE).log(NMsg.jstyle("unable to locate commands. Invalid store locate {0}", storeLocation));
+            //_LOG().level(Level.SEVERE).log(NMsg.jstyle("unable to locate commands. Invalid store locate {0}", storeLocation));
             return all;
         }
         storeLocation.stream().forEach(file -> {
@@ -109,7 +102,7 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
                 try {
                     c = NElementParser.ofJson().parse(file, NCommandConfig.class);
                 } catch (Exception ex) {
-                    _LOGOP().level(Level.FINE).error(ex).log(NMsg.ofC("unable to parse %s", file));
+                    _LOG().log(NMsg.ofC("unable to parse %s", file).asFine(ex));
                     //
                 }
                 if (c != null) {
