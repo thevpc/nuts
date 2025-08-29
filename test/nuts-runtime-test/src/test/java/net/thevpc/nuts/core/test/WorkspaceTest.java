@@ -18,7 +18,7 @@ import net.thevpc.nuts.expr.NExprs;
 import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
+
 import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.text.NText;
@@ -256,12 +256,6 @@ public class WorkspaceTest {
         {
             NUncompress c = NUncompress.of();
             Assertions.assertNotNull(c);
-        }
-        {
-            NLog log = NLog.of(WorkspaceTest.class);
-            Assertions.assertNotNull(log);
-            NLogOp logop = NLogOp.of(WorkspaceTest.class);
-            Assertions.assertNotNull(logop);
         }
         {
             NIdFormat r = NIdFormat.of();
