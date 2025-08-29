@@ -7,11 +7,9 @@ import net.thevpc.nuts.NBootOptionsBuilder;
 import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
-import net.thevpc.nuts.runtime.standalone.definition.filter.NDefinitionFilterAnd;
-import net.thevpc.nuts.runtime.standalone.definition.filter.NInstallStatusDefinitionFilter2;
 import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
 import net.thevpc.nuts.util.*;
 
@@ -46,9 +44,9 @@ public class NDeleteFileHelper {
                             + "You need to provide default response (-y|-n) for resetting/recovering workspace. "
                             + "You was asked to confirm deleting folders as part as recover/reset option."), NExecutionException.ERROR_255);
         }
-        bLog.with().level(Level.FINEST).verb(NLogVerb.WARNING).log(NMsg.ofC("delete workspace location(s) at : %s",
+        bLog.log(NMsg.ofC("delete workspace location(s) at : %s",
                 lastBootOptions.getWorkspace().orNull()
-        ));
+        ).asFinestAlert());
         boolean force = false;
         switch (confirm) {
             case ASK: {
@@ -60,7 +58,7 @@ public class NDeleteFileHelper {
             }
             case NO:
             case ERROR: {
-                bLog.with().level(Level.WARNING).verb(NLogVerb.WARNING).log(NMsg.ofPlain("reset cancelled (applied '--no' argument)"));
+                bLog.log(NMsg.ofPlain("reset cancelled (applied '--no' argument)").asWarningAlert());
                 throw new NNoSessionCancelException(NMsg.ofPlain("cancel delete folder"));
             }
         }
@@ -113,7 +111,7 @@ public class NDeleteFileHelper {
                                     if (session != null) {
                                         session.err().println(header);
                                     } else {
-                                        bLog.with().level(Level.WARNING).verb(NLogVerb.WARNING).log(NMsg.ofC("%s", header));
+                                        bLog.log(NMsg.ofC("%s", header).asWarningAlert());
                                     }
                                 }
                             }
@@ -167,7 +165,7 @@ public class NDeleteFileHelper {
                                 }
                                 case ASK: {
                                     // Level.OFF is to force logging in all cases
-                                    bLog.with().level(Level.OFF).verb(NLogVerb.WARNING).log(NMsg.ofC("do you confirm deleting %s [y/n/c/a] (default 'n') ? : ", directory));
+                                    bLog.log(NMsg.ofC("do you confirm deleting %s [y/n/c/a] (default 'n') ? : ", directory).withLevel(Level.OFF).withIntent(NMsgIntent.ALERT));
                                     line = readline.get();
                                 }
                             }
@@ -218,7 +216,7 @@ public class NDeleteFileHelper {
                     }
                 });
                 count[0]++;
-                bLog.with().level(Level.FINEST).verb(NLogVerb.WARNING).log(NMsg.ofC("delete folder : %s (%s files/folders deleted)", directory, count[0]));
+                bLog.log(NMsg.ofC("delete folder : %s (%s files/folders deleted)", directory, count[0]).asFinestAlert());
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
