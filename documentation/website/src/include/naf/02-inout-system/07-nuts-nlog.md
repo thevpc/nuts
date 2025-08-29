@@ -78,33 +78,42 @@ log.log(
 You can define custom verbs using `NLogVerb.of("CUSTOM_VERB")`.
 
 
-## Fluent Logging with NLogOp
+## Fluent Logging with NMsg
 
-For advanced logging, use the fluent builder API with `.with()` :
+For advanced logging, use the fluent builder API with `.withXYZ()` :
 
 ```java
-log.with()
-    .level(Level.FINER)
-    .verb(NLogVerb.START)
-    .log(NMsg.ofC("[%s] %s", action, NCmdLine.of(context.getCommand())));
+log
+    .log(
+            NMsg.ofC("[%s] %s", action, NCmdLine.of(context.getCommand()))
+            .withLlevel(Level.FINER)
+            .withIntent(NMsgIntent.START)
+        );
 ```
 
 
 Supports:
 
-- Setting level (level(...))
-- Adding a verb (verb(...))
-- Attaching exceptions (error(Throwable))
+- Setting level (withLevel(...))
+- Adding a verb (withIntent(...))
+- Attaching exceptions (withThrowable(Throwable))
+- Attaching per uration (withDurationMs(Throwable))
 - Final logging (log(...))
 
 ## Example with Exception
 
 ```java
 NLog.of(Nsh.class)
-    .with()
-    .level(Level.SEVERE)
-    .error(ex)
-    .log(NMsg.ofC("Error resolving history file: %s", history.getHistoryFile()));
+    .log(NMsg.ofC("Error resolving history file: %s", history.getHistoryFile())
+        .withError(ex)
+    );
+// equivalent
+NLog.of(Nsh.class)
+    .log(NMsg.ofC("Error resolving history file: %s", history.getHistoryFile())
+        .withLevel(Level.SEVERE)
+        .withIntent(NMsgIntent.FAIL)
+        .withThrowable(ex)
+    );
 ```
 
 ## Output Destinations
