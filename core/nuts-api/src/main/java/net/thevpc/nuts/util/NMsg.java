@@ -116,7 +116,7 @@ public class NMsg {
         NAssert.requireNonNull(message, "message");
         NAssert.requireNonNull(format, "format");
         NAssert.requireNonNull(params, "params");
-        this.level = level == null ? Level.FINEST : level;
+        this.level = level == null ? Level.INFO : level;
         this.format = format;
         this.throwable = throwable;
         this.styles = styles;
