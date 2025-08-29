@@ -29,6 +29,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineFormatStrategy;
 import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineShellOptions;
 import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
@@ -38,7 +39,6 @@ import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -262,8 +262,8 @@ public class ProcessBuilder2 {
         if (proc != null) {
             throw new NIllegalStateException(NMsg.ofPlain("already started"));
         }
-        NLog.of(ProcessBuilder2.class).with().verb(NLogVerb.START).level(Level.FINEST).log(
-                NMsg.ofNtf(NText.ofCode("system", getCommandString()))
+        NLog.of(ProcessBuilder2.class).log(
+                NMsg.ofNtf(NText.ofCode("system", getCommandString())).asFinest().withIntent(NMsgIntent.START)
         );
         switch (in.base.getType()) {
             case PIPE:
