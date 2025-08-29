@@ -11,14 +11,14 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
@@ -30,6 +30,7 @@ import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogConfig;
+import net.thevpc.nuts.log.NLogFactorySPI;
 import net.thevpc.nuts.spi.NScopeType;
 
 import java.nio.file.Path;
@@ -46,12 +47,14 @@ import java.util.logging.Logger;
 public class DefaultNLogModel {
     private static Handler[] EMPTY = new Handler[0];
     private NWorkspace workspace;
-//    private NPrintStream out;
+    //    private NPrintStream out;
     private Handler consoleHandler;
     private Handler fileHandler;
     private NLogConfig logConfig = new NLogConfig();
     private List<Handler> extraHandlers = new ArrayList<>();
     private Path logFolder;
+    private NLogFactorySPI defaultFactorySPI = new NLogFactorySPIJUL();
+    private NLogFactorySPI factorySPI;
 
     public DefaultNLogModel(NWorkspace ws, NBootOptions effOptions, NBootOptions userOptions) {
         this.workspace = ws;
@@ -70,6 +73,26 @@ public class DefaultNLogModel {
             logConfig.setLogFileSize(lc.getLogFileSize());
         }
 //        out = ((NWorkspaceExt) ws).getModel().bootModel.getSystemTerminal().err();
+    }
+
+    public NLogFactorySPI getFactorySPI() {
+        return factorySPI == null ? defaultFactorySPI : factorySPI;
+    }
+
+
+    public DefaultNLogModel setFactorySPI(NLogFactorySPI factorySPI) {
+        if (factorySPI == null) {
+            factorySPI = defaultFactorySPI;
+        }
+        NLogFactorySPI oldFactorySPI = factorySPI;
+        if (oldFactorySPI != this.factorySPI && !Objects.equals(this.factorySPI, oldFactorySPI)) {
+            this.factorySPI = factorySPI;
+            NLogFactorySPI f2 = getFactorySPI();
+            for (NLog l : loaded().values()) {
+                ((DefaultNLog) l).updateSPI(f2.getLogSPI(l.getName()));
+            }
+        }
+        return this;
     }
 
     public List<Handler> getHandlers() {
@@ -109,7 +132,7 @@ public class DefaultNLogModel {
         Map<String, NLog> loaded = loaded();
         NLog y = loaded.get(name);
         if (y == null) {
-            y = new DefaultNLog(name);
+            y = new DefaultNLog(name, getFactorySPI().getLogSPI(name), false);
             loaded.put(name, y);
         }
         return y;
@@ -117,13 +140,7 @@ public class DefaultNLogModel {
 
 
     public NLog createLogger(Class clazz) {
-        Map<String, NLog> loaded = loaded();
-        NLog y = loaded.get(clazz.getName());
-        if (y == null) {
-            y = new DefaultNLog(clazz);
-            loaded.put(clazz.getName(), y);
-        }
-        return y;
+        return createLogger(clazz.getName());
     }
 
 
