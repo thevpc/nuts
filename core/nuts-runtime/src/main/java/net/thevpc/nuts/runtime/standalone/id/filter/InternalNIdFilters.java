@@ -155,4 +155,5 @@ public class InternalNIdFilters extends InternalNTypedFilters<NIdFilter> impleme
     public int getSupportLevel(NSupportLevelContext context) {
         return NConstants.Support.DEFAULT_SUPPORT;
     }
+
 }
