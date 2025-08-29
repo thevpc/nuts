@@ -11,8 +11,7 @@ import net.thevpc.nuts.core.NI18n;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.xtra.time.NProgressUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.time.SingletonNInputStreamProgressFactory;
 import net.thevpc.nuts.runtime.standalone.io.util.*;
@@ -79,10 +78,6 @@ public class DefaultNCp implements NCp {
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
         return NConstants.Support.DEFAULT_SUPPORT;
-    }
-
-    protected NLogOp _LOGOP() {
-        return _LOG().with();
     }
 
     protected NLog _LOG() {
@@ -697,11 +692,10 @@ public class DefaultNCp implements NCp {
         }
         for (int i = repeatCount; i <= maxRepeatCount; i++) {
             try {
-                NLogOp lop = _LOGOP();
-                if (i > 1 && lop.isLoggable(Level.FINEST)) {
-                    lop.level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofC("repeat download #%s %s",
+                if (i > 1 && _LOG().isLoggable(Level.FINEST)) {
+                    _LOG().log(NMsg.ofC("repeat download #%s %s",
                             i,
-                            source));
+                            source).asFinest().withIntent(NMsgIntent.START));
                 }
                 copyStreamOnce(source, target);
                 return;
@@ -779,13 +773,12 @@ public class DefaultNCp implements NCp {
                             .setLogProgress(options.contains(NPathOption.LOG))
                             .create());
         }
-        NLogOp lop = _LOGOP();
         NChronometer chrono = NChronometer.startNow();
-        if (lop.isLoggable(Level.FINEST)) {
-            lop.level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofC("%s %s to %s",
+        if (_LOG().isLoggable(Level.FINEST)) {
+            _LOG().log(NMsg.ofC("%s %s to %s",
                     m,
                     loggedSrc,
-                    loggedTarget));
+                    loggedTarget).asFinest().withIntent(NMsgIntent.START));
         }
         try {
             if (safe) {
@@ -871,13 +864,19 @@ public class DefaultNCp implements NCp {
                     }
                 }
             }
-            lop.level(Level.CONFIG).verb(NLogVerb.SUCCESS)
-                    .time(chrono.getDurationMs())
-                    .log(NMsg.ofC(NI18n.of("%s %s to %s"), m,_source2.source, loggedTarget));
+            _LOG()
+
+                    .log(NMsg.ofC(NI18n.of("%s %s to %s"), m,_source2.source, loggedTarget)
+                            .withLevel(Level.CONFIG).withIntent(NMsgIntent.SUCCESS)
+                            .withDurationMillis(chrono.getDurationMs())
+                    );
         } catch (IOException ex) {
-            lop.level(Level.CONFIG).verb(NLogVerb.FAIL)
-                    .time(chrono.getDurationMs())
-                    .log(NMsg.ofC("error % %s to %s : %s", m,_source2.source, loggedTarget, ex));
+            _LOG()
+
+                    .log(NMsg.ofC("error % %s to %s : %s", m,_source2.source, loggedTarget, ex)
+                            .withLevel(Level.CONFIG).withIntent(NMsgIntent.FAIL)
+                            .withDurationMillis(chrono.getDurationMs())
+                    );
             throw new NIOException(ex);
         }
     }
