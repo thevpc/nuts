@@ -9,6 +9,7 @@
         <module>nuts-tomcat-classloader</module>
         <module>nuts-spring-boot</module>
         <module>nuts-swing</module>
+        <module>nuts-slf4j</module>
     </modules>
     <properties>
     </properties>
