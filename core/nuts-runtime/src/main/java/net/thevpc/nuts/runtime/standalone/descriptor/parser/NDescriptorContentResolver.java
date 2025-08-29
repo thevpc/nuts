@@ -2,20 +2,20 @@ package net.thevpc.nuts.runtime.standalone.descriptor.parser;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNDescriptorContentParserContext;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NDescriptorContentParserComponent;
 import net.thevpc.nuts.spi.NDescriptorContentParserContext;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.util.NMsg;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 public class NDescriptorContentResolver {
     /**
@@ -40,11 +40,11 @@ public class NDescriptorContentResolver {
                     try {
                         desc = parser.parse(ctx);
                     } catch (Exception e) {
-                        NLogOp.of(CoreIOUtils.class)
-                                .level(Level.FINE)
-                                .verb(NLogVerb.WARNING)
-                                .error(e)
-                                .log(NMsg.ofC("error parsing %s with %s", localPath, parser.getClass().getSimpleName() + ". Error ignored"));
+                        NLog.of(CoreIOUtils.class)
+
+                                .log(NMsg.ofC("error parsing %s with %s", localPath, parser.getClass().getSimpleName() + ". Error ignored").asFine(e)
+                                        .withIntent(NMsgIntent.ALERT)
+                                );
                         //e.printStackTrace();
                     }
                     if (desc != null) {
