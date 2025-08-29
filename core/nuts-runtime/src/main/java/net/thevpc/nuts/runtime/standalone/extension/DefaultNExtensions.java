@@ -73,6 +73,11 @@ public class DefaultNExtensions implements NExtensions {
     }
 
     @Override
+    public NMutableClassLoader createMutableClassLoader(ClassLoader parentClassLoader) {
+        return new NMutableClassLoaderImpl(parentClassLoader);
+    }
+
+    @Override
     public <T extends NComponent> NOptional<T> createComponent(Class<T> type) {
         return createComponent(type, null);
     }
