@@ -7,8 +7,8 @@ import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositoryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositoryRegistryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositoryTagsListHelper;
@@ -81,10 +81,6 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         this.supportedMirroring = supportedMirroring;
         this.repositoryType = repositoryType;
         setConfig(config, false);
-    }
-
-    protected NLogOp _LOGOP() {
-        return _LOG().with();
     }
 
     protected NLog _LOG() {
@@ -412,18 +408,18 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
             configurationChanged = false;
             if (_LOG().isLoggable(Level.CONFIG)) {
                 if (created) {
-                    _LOGOP().level(Level.CONFIG).verb(NLogVerb.SUCCESS)
+                    _LOG()
                             .log(NMsg.ofC(
                                     "%s created repository %s at %s",
                                     NStringUtils.formatAlign(repository.getName(), 20, NPositionType.FIRST), repository.getName(),
                                     getStoreLocation()
-                            ));
+                            ).withLevel(Level.CONFIG).withIntent(NMsgIntent.SUCCESS));
                 } else {
-                    _LOGOP().level(Level.CONFIG).verb(NLogVerb.SUCCESS).log(NMsg.ofC(
+                    _LOG().log(NMsg.ofC(
                             "%s updated repository %s at %s",
                             NStringUtils.formatAlign(repository.getName(), 20, NPositionType.FIRST), repository.getName(),
                             getStoreLocation()
-                    ));
+                    ).withLevel(Level.CONFIG).withIntent(NMsgIntent.SUCCESS));
                 }
             }
             ok = true;
