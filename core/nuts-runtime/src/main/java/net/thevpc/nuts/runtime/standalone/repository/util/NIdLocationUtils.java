@@ -5,9 +5,10 @@ import net.thevpc.nuts.NIdLocation;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.repository.impl.AbstractNRepository;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
-import net.thevpc.nuts.log.NLogOp;
+
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.File;
@@ -28,9 +29,8 @@ public class NIdLocationUtils {
                         return localPath;
                     }
                 } catch (Exception ex) {
-                    NLogOp.of(NIdLocationUtils.class)
-                            .level(Level.SEVERE).error(ex)
-                            .log(NMsg.ofC("unable to download location for id %s in location %s : %s", id, location.getUrl(), ex));
+                    NLog.of(NIdLocationUtils.class)
+                            .log(NMsg.ofC("unable to download location for id %s in location %s : %s", id, location.getUrl(), ex).asError(ex));
                 }
             }
         }
