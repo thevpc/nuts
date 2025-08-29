@@ -24,13 +24,13 @@
 package net.thevpc.nuts.text;
 
 import java.util.List;
+
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NOptional;
 
 /**
- *
  * @author vpc
  */
 public interface NTextArt extends NComponent {
@@ -45,6 +45,8 @@ public interface NTextArt extends NComponent {
 
     NOptional<NTextArtRenderer> parseRenderer(String rendererDefinition);
 
+    NOptional<NTextArtRenderer> getDefaultRenderer();
+
     NOptional<NTextArtRenderer> getRenderer(String rendererName);
 
     NOptional<NTextArtImageRenderer> loadImageRenderer(NPath path);
@@ -53,5 +55,6 @@ public interface NTextArt extends NComponent {
 
     NOptional<NTextArtImageRenderer> getImageRenderer(String rendererName);
 
+    NOptional<NTextArtImageRenderer> getDefaultImageRenderer();
+
 }
-    
