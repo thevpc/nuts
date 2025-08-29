@@ -3,11 +3,11 @@ package net.thevpc.nuts.runtime.standalone.xtra.compress;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.spi.NUncompressPackaging;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -60,15 +60,11 @@ public class NUncompressGzip implements NUncompressPackaging {
                 _in.close();
             }
         } catch (IOException ex) {
-            _LOGOP().level(Level.CONFIG).verb(NLogVerb.FAIL)
+            _LOG()
                     .log(NMsg.ofJ("error uncompressing {0} to {1} : {2}", source,
-                            uncompress.getTarget(), ex));
+                            uncompress.getTarget(), ex).asConfig().withIntent(NMsgIntent.FAIL));
             throw new NIOException(ex);
         }
-    }
-
-    protected NLogOp _LOGOP() {
-        return _LOG().with();
     }
 
     protected NLog _LOG() {
@@ -102,8 +98,8 @@ public class NUncompressGzip implements NUncompressPackaging {
                     }
                     //get the zipped file list entry
                     Path newFile = folder.resolve(n);
-                    _LOGOP().level(Level.FINEST).verb(NLogVerb.WARNING)
-                            .log(NMsg.ofJ("file unzip : {0}", newFile));
+                    _LOG()
+                            .log(NMsg.ofJ("file unzip : {0}", newFile).asFinestAlert());
                     //create all non exists folders
                     //else you will hit FileNotFoundException for compressed folder
                     if (newFile.getParent() != null) {
@@ -120,9 +116,9 @@ public class NUncompressGzip implements NUncompressPackaging {
                 _in.close();
             }
         } catch (IOException ex) {
-            _LOGOP().level(Level.CONFIG).verb(NLogVerb.FAIL)
+            _LOG()
                     .log(NMsg.ofJ("error uncompressing {0} to {1} : {2}", source,
-                            target, ex));
+                            target, ex).asConfig().withIntent(NMsgIntent.FAIL));
             throw new NIOException(ex);
         }
     }
