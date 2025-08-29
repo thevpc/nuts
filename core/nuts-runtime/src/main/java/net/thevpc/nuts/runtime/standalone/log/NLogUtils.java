@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogRecord;
-import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
@@ -78,11 +78,11 @@ public class NLogUtils {
                 record.getParameters());
         NLogRecord h = new NLogRecord(
                 NSession.of(), lvl,
-                lvl.intValue() <= Level.SEVERE.intValue() ? NLogVerb.FAIL :
-                        lvl.intValue() <= Level.WARNING.intValue() ? NLogVerb.WARNING :
-                                lvl.intValue() <= Level.INFO.intValue() ? NLogVerb.INFO :
-                                        lvl.intValue() <= Level.FINE.intValue() ? NLogVerb.DEBUG :
-                                                NLogVerb.DEBUG,
+                lvl.intValue() <= Level.SEVERE.intValue() ? NMsgIntent.FAIL :
+                        lvl.intValue() <= Level.WARNING.intValue() ? NMsgIntent.ALERT :
+                                lvl.intValue() <= Level.INFO.intValue() ? NMsgIntent.INFO :
+                                        lvl.intValue() <= Level.FINE.intValue() ? NMsgIntent.DEBUG :
+                                                NMsgIntent.DEBUG,
                 jMsg,
                 filterLogText(jMsg),
                 record.getMillis(),
@@ -181,32 +181,31 @@ public class NLogUtils {
         return session;
     }
 
-    public static void traceMessage(NLog log, Level lvl, String name, NFetchMode fetchMode, NId id, NLogVerb tracePhase, String title, long startTime, NMsg extraMsg) {
+    public static void traceMessage(NLog log, Level lvl, String name, NFetchMode fetchMode, NId id, NMsgIntent tracePhase, String title, long startTime, NMsg extraMsg) {
         if (!log.isLoggable(lvl)) {
             return;
         }
         long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
         String modeString = NStringUtils.formatAlign(fetchMode.id(), 7, NPositionType.FIRST);
-        log.with().level(lvl).verb(tracePhase).time(time)
+        log
                 .log(NMsg.ofC("[%s] %s %s %s %s",
                         modeString,
                         NStringUtils.formatAlign(name, 20, NPositionType.FIRST),
                         NStringUtils.formatAlign(title, 18, NPositionType.FIRST),
                         (id == null ? "" : id),
-                        extraMsg));
+                        extraMsg).withLevel(lvl).withIntent(tracePhase).withDurationMillis(time));
     }
 
-    public static void traceMessage(NLog log, NFetchStrategy fetchMode, NId id, NLogVerb tracePhase, String message, long startTime) {
+    public static void traceMessage(NLog log, NFetchStrategy fetchMode, NId id, NMsgIntent tracePhase, String message, long startTime) {
         if (log.isLoggable(Level.FINEST)) {
             long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
             String fetchString = "[" + NStringUtils.formatAlign(fetchMode.id(), 7, NPositionType.FIRST) + "] ";
-            log.with().level(Level.FINEST)
-                    .verb(tracePhase).time(time)
+            log
                     .log(NMsg.ofC("%s%s %s",
                             fetchString,
                             id,
                             NStringUtils.formatAlign(message, 18, NPositionType.FIRST)
-                    ));
+                    ).asFinest().withIntent(tracePhase).withDurationMillis(time));
         }
     }
 }
