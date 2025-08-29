@@ -8,11 +8,9 @@ package net.thevpc.nuts.util;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.log.NLog;
 
 import java.util.Iterator;
-import java.util.logging.Level;
 
 /**
  * @author thevpc
@@ -63,10 +61,8 @@ public class NIndexFirstIterator<T> extends NIteratorBase<T> {
                     }
                     index = null;
                 } catch (NIndexerNotAccessibleException ex) {
-                    NLogOp.of(NIndexFirstIterator.class)
-                            .verb(NLogVerb.WARNING)
-                            .level(Level.FINEST)
-                            .log(NMsg.ofC("error evaluating Iterator 'hasNext()' : %s", ex));
+                    NLog.of(NIndexFirstIterator.class)
+                            .log(NMsg.ofC("error evaluating Iterator 'hasNext()' : %s", ex).asFineAlert());
                     other = null;
                     return false;
                 }
