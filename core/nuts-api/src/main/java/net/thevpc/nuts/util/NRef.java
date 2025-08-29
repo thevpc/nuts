@@ -71,6 +71,14 @@ public interface NRef<T> extends Supplier<T> {
         return new NIntRef(null);
     }
 
+    static NBooleanRef ofFalse() {
+        return new NBooleanRef(false);
+    }
+
+    static NBooleanRef ofTrue() {
+        return new NBooleanRef(true);
+    }
+
     static NBooleanRef ofBoolean(Boolean value) {
         return new NBooleanRef(value);
     }
