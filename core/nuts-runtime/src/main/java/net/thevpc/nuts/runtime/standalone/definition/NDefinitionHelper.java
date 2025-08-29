@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.definition;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.util.NCallOnceSupplier;
 import net.thevpc.nuts.spi.NRepositorySPI;
@@ -153,10 +153,11 @@ public class NDefinitionHelper {
                 } catch (Exception ex) {
                     //suppose we cannot retrieve descriptor
                     if (LOG.isLoggable(Level.FINER)) {
-                        LOG.with().level(Level.FINER).verb(NLogVerb.FAIL)
+                        LOG
                                 .log(
                                         NMsg.ofC("unable to fetch descriptor for %s : %s",
-                                                id, ex)
+                                                id, ex).asFinestFail()
+
                                 );
                     }
                     if (!(ex instanceof RuntimeException)) {
