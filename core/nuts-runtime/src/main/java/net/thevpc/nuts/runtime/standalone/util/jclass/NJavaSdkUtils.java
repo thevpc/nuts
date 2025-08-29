@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.util.jclass;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.concurrent.NScheduler;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NSdkLocationComparator;
@@ -80,26 +80,22 @@ public class NJavaSdkUtils {
     }
 
     public static boolean isJava(NId id) {
-        if(id!=null){
-            return NPlatformFamily.JAVA==NPlatformFamily.parse(id.getArtifactId()).orNull();
+        if (id != null) {
+            return NPlatformFamily.JAVA == NPlatformFamily.parse(id.getArtifactId()).orNull();
         }
         return false;
-    }
-
-    protected NLogOp _LOGOP() {
-        return _LOG().with();
     }
 
     protected NLog _LOG() {
         return NLog.of(NJavaSdkUtils.class);
     }
 
-    public Predicate<String> createVersionFilterPredicate(String requestedJavaVersion){
+    public Predicate<String> createVersionFilterPredicate(String requestedJavaVersion) {
         NVersionFilter versionFilter = createVersionFilter(requestedJavaVersion);
         return createVersionFilterPredicate(versionFilter);
     }
 
-    public Predicate<String> createVersionFilterPredicate(NVersionFilter versionFilter){
+    public Predicate<String> createVersionFilterPredicate(NVersionFilter versionFilter) {
         return new Predicate<String>() {
             @Override
             public boolean test(String sVersion) {
@@ -124,7 +120,7 @@ public class NJavaSdkUtils {
         };
     }
 
-    public NVersionFilter createVersionFilter(String requestedJavaVersion){
+    public NVersionFilter createVersionFilter(String requestedJavaVersion) {
         requestedJavaVersion = NStringUtils.trim(requestedJavaVersion);
         NVersion vv = NVersion.get(requestedJavaVersion).get();
         String singleVersion = vv.asSingleValue().orNull();
@@ -133,6 +129,7 @@ public class NJavaSdkUtils {
         }
         return NVersionFilters.of().byValue(requestedJavaVersion).get();
     }
+
     public NPlatformLocation resolveJdkLocation(String requestedJavaVersion) {
         NVersionFilter requestedVersionFilter = createVersionFilter(requestedJavaVersion);
         NPlatformLocation bestJava = workspace
@@ -160,21 +157,26 @@ public class NJavaSdkUtils {
             }
             if (bestJava == null) {
                 if (!NBlankable.isBlank(requestedJavaVersion)) {
-                    _LOGOP().level(Level.FINE).verb(NLogVerb.WARNING)
-                            .log(NMsg.ofJ("no valid JRE found. recommended {0} . Using default java.home at {1}", requestedJavaVersion, System.getProperty("java.home")));
+                    _LOG()
+                            .log(NMsg.ofJ("no valid JRE found. recommended {0} . Using default java.home at {1}", requestedJavaVersion, System.getProperty("java.home"))
+                                    .asFineAlert());
                 } else {
-                    _LOGOP().level(Level.FINE).verb(NLogVerb.WARNING)
-                            .log(NMsg.ofJ("no valid JRE found. Using default java.home at {0}", System.getProperty("java.home")));
+                    _LOG()
+                            .log(NMsg.ofJ("no valid JRE found. Using default java.home at {0}", System.getProperty("java.home"))
+                                    .asFineAlert()
+                            );
                 }
                 bestJava = current;
             }
         }
         String sVersion = bestJava.getVersion();
-        if(createVersionFilterPredicate(requestedVersionFilter).test(sVersion)){
+        if (createVersionFilterPredicate(requestedVersionFilter).test(sVersion)) {
             return bestJava;
         }
-        _LOGOP().level(Level.FINE).verb(NLogVerb.WARNING)
-                .log(NMsg.ofJ("no valid JRE found for version {0}", requestedJavaVersion));
+        _LOG()
+                .log(NMsg.ofJ("no valid JRE found for version {0}", requestedJavaVersion)
+                        .asFineAlert()
+                );
         return null;
     }
 
@@ -292,7 +294,7 @@ public class NJavaSdkUtils {
                                     }
                                 }
                             } catch (Exception ex) {
-                                _LOG().with().error(ex).log(NMsg.ofC("error: %s", ex));
+                                _LOG().log(NMsg.ofC("error: %s", ex).asError(ex));
                             }
                             return r;
                         })
@@ -365,8 +367,10 @@ public class NJavaSdkUtils {
                 if (!cmdOutputString.isEmpty()) {
                     break;
                 } else {
-                    _LOGOP().level(i == (MAX_ITER - 1) ? Level.WARNING : Level.FINER).verb(NLogVerb.WARNING)
-                            .log(NMsg.ofJ("unable to execute {0}. returned empty string ({1}/{2})", javaExePath, i + 1, MAX_ITER));
+                    _LOG()
+                            .log(NMsg.ofJ("unable to execute {0}. returned empty string ({1}/{2})", javaExePath, i + 1, MAX_ITER)
+                                    .withLevel(i == (MAX_ITER - 1) ? Level.WARNING : Level.FINER).withIntent(NMsgIntent.ALERT)
+                            );
                 }
             }
             if (!cmdOutputString.isEmpty()) {
@@ -399,13 +403,14 @@ public class NJavaSdkUtils {
             }
         } catch (Exception ex) {
             loggedError = true;
-            _LOGOP().error(ex).level(Level.SEVERE).verb(NLogVerb.WARNING)
-                    .log(NMsg.ofJ("unable to execute {0}. JDK Home ignored", javaExePath));
+            _LOG()
+                    .log(NMsg.ofJ("unable to execute {0}. JDK Home ignored", javaExePath).asErrorAlert(ex));
         }
         if (jdkVersion == null) {
             if (!loggedError) {
-                _LOGOP().level(Level.SEVERE).verb(NLogVerb.WARNING)
-                        .log(NMsg.ofJ("execute {0} failed with result code {1} and result string \"{2}\". JDK Home ignored", javaExePath.toString(), cmdRresult, cmdOutputString));
+                _LOG()
+                        .log(NMsg.ofJ("execute {0} failed with result code {1} and result string \"{2}\". JDK Home ignored", javaExePath.toString(), cmdRresult, cmdOutputString)
+                                .withLevel(Level.SEVERE).withIntent(NMsgIntent.ALERT));
             }
             return null;
         }
@@ -480,23 +485,23 @@ public class NJavaSdkUtils {
     }
 
     public static int normalizeJavaVersionAsInt(NVersion version) {
-        if(version==null){
+        if (version == null) {
             return -1;
         }
-        int min=-1;
+        int min = -1;
         for (NVersionInterval nVersionInterval : version.filter().intervals().orElse(new ArrayList<>())) {
             String lowerBound = nVersionInterval.getLowerBound();
             String upperBound = nVersionInterval.getLowerBound();
             int m = normalizeJavaVersionAsInt0(lowerBound);
-            if(m>0){
-                if(min<m){
-                    min=m;
+            if (m > 0) {
+                if (min < m) {
+                    min = m;
                 }
             }
             m = normalizeJavaVersionAsInt0(upperBound);
-            if(m>0){
-                if(min<m){
-                    min=m;
+            if (m > 0) {
+                if (min < m) {
+                    min = m;
                 }
             }
         }
@@ -504,23 +509,24 @@ public class NJavaSdkUtils {
     }
 
     private static int normalizeJavaVersionAsInt0(String sVersion) {
-        if(sVersion==null){
+        if (sVersion == null) {
             return -1;
         }
         NVersion v = NVersion.of(sVersion);
         int i1 = v.getIntegerAt(0).orElse(0);
         int i2 = v.getIntegerAt(1).orElse(0);
-        if(i1<=0){
+        if (i1 <= 0) {
             return -1;
         }
-        if(i1==1){
-            if(i2 <=1){
+        if (i1 == 1) {
+            if (i2 <= 1) {
                 return i1;
             }
             return i2;
         }
         return -1;
     }
+
     public String resolveJavaCommandByHome(String javaHome) {
         String appSuffix = NWorkspace.of().getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
         String exe = "java" + appSuffix;
