@@ -3,11 +3,11 @@ package net.thevpc.nuts.runtime.standalone.repository;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NSpeedQualifier;
 import net.thevpc.nuts.format.NPositionType;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,10 +89,6 @@ public class NRepositoryHelper {
         return result;
     }
 
-    protected NLogOp _LOGOP() {
-        return _LOG().with();
-    }
-
     protected NLog _LOG() {
         return NLog.of(NRepositoryHelper.class);
     }
@@ -141,9 +137,10 @@ public class NRepositoryHelper {
 
         public void fireOnAddRepository(NRepositoryEvent event) {
             if (u._LOG().isLoggable(Level.FINEST)) {
-                u._LOGOP().level(Level.FINEST).verb(NLogVerb.ADD)
+                u._LOG()
                         .log(NMsg.ofJ("{0} add    repo {1}", NStringUtils.formatAlign(u.repo.getName(), 20, NPositionType.FIRST), event
                                 .getRepository().getName())
+                                .withLevel(Level.FINEST).withIntent(NMsgIntent.ADD)
                         );
             }
             for (NRepositoryListener listener : u.repo.getRepositoryListeners()) {
@@ -159,9 +156,11 @@ public class NRepositoryHelper {
 
         public void fireOnRemoveRepository(NRepositoryEvent event) {
             if (u._LOG().isLoggable(Level.FINEST)) {
-                u._LOGOP().level(Level.FINEST).verb(NLogVerb.REMOVE).log(
+                u._LOG().log(
                         NMsg.ofJ("{0} remove repo {1}", NStringUtils.formatAlign(u.repo.getName(), 20, NPositionType.FIRST), event
-                                .getRepository().getName()));
+                                .getRepository().getName())
+                                .withLevel(Level.FINEST).withIntent(NMsgIntent.REMOVE)
+                );
             }
             for (NRepositoryListener listener : u.repo.getRepositoryListeners()) {
 //            if (event == null) {
