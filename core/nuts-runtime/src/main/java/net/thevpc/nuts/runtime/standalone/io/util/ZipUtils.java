@@ -27,8 +27,9 @@ package net.thevpc.nuts.runtime.standalone.io.util;
 import net.thevpc.nuts.format.NVisitResult;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.log.NLog;
+
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.*;
@@ -220,8 +221,9 @@ public class ZipUtils {
                     newFile.mkdirs();
                 } else {
                     File newFile = new File(outputFolder + File.separator + fileName);
-                    NLogOp.of(ZipUtils.class).level(Level.FINEST).verb(NLogVerb.WARNING)
-                            .log(NMsg.ofC("file unzip : %s", newFile.getAbsoluteFile()));
+                    NLog.of(ZipUtils.class)
+                            .log(NMsg.ofC("file unzip : %s", newFile.getAbsoluteFile())
+                                    .asFinestAlert());
                     //create all non exists folders
                     //else you will hit FileNotFoundException for compressed folder
                     newFile.getParentFile().mkdirs();
