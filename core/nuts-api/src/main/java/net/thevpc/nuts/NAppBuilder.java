@@ -4,7 +4,7 @@ import net.thevpc.nuts.boot.NBootArguments;
 import net.thevpc.nuts.boot.reserved.cmdline.NBootCmdLine;
 import net.thevpc.nuts.core.NI18n;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.time.NClock;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMsg;
@@ -60,7 +60,7 @@ public class NAppBuilder {
             appClassName = applicationInstance.getClass().getName();
         }
         NId appId = nApp.getId().orNull();
-        NLog.of(NApplications.class).with().level(Level.FINE).verb(NLogVerb.START)
+        NLog.of(NApplications.class)
                 .log(
                         NMsg.ofC(
                                 NI18n.of("running application %s: %s (%s) %s"),
@@ -68,7 +68,7 @@ public class NAppBuilder {
                                 appId == null ? ("<" + NI18n.of("unresolved-id") + ">") : appId,
                                 appClassName,
                                 nApp.getCmdLine()
-                        )
+                        ).asFine().withIntent(NMsgIntent.START)
                 );
         try {
             switch (nApp.getMode()) {
