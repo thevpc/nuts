@@ -11,8 +11,8 @@ import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.xtra.time.SingletonNInputStreamProgressFactory;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.spi.NUncompressPackaging;
@@ -51,10 +51,6 @@ public class DefaultNUncompress implements NUncompress {
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
         return NConstants.Support.DEFAULT_SUPPORT;
-    }
-
-    protected NLogOp _LOGOP() {
-        return _LOG().with();
     }
 
     protected NLog _LOG() {
@@ -227,8 +223,10 @@ public class DefaultNUncompress implements NUncompress {
             return runVisitor(_source, compressType);
         }
 
-        _LOGOP().level(Level.FINEST).verb(NLogVerb.START)
-                .log(NMsg.ofC("uncompress %s to %s", _source, target));
+        _LOG()
+                .log(NMsg.ofC("uncompress %s to %s", _source, target).asFine().withIntent(NMsgIntent.START)
+                        .withLevel(Level.FINEST).withIntent(NMsgIntent.START)
+                );
 
         if (packagingImpl == null) {
             this.packagingImpl = NExtensions.of().createComponent(NUncompressPackaging.class, this).get();
