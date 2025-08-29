@@ -3,9 +3,10 @@ package net.thevpc.nuts.runtime.standalone.repository;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NInputStreamMonitor;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
-import net.thevpc.nuts.log.NLogOp;
+
 import net.thevpc.nuts.util.NMsg;
 
 import java.util.logging.Level;
@@ -24,10 +25,12 @@ public abstract class NIdPathIteratorBase implements NIdPathIteratorModel {
                 try {
                     effectiveDescriptor = NWorkspace.of().resolveEffectiveDescriptor(descriptor);
                 } catch (Exception ex) {
-                    NLogOp.of(NIdPathIteratorBase.class).level(Level.FINE).error(ex).log(
+                    NLog.of(NIdPathIteratorBase.class).log(
                             NMsg.ofC("error resolving effective descriptor for %s in url %s : %s", descriptor.getId(),
                                     pathname,
-                                    ex));//e.printStackTrace();
+                                    ex)
+                                    .asFineFail(ex)
+                    );//e.printStackTrace();
                 }
                 if (effectiveDescriptor != null) {
                     descriptor = effectiveDescriptor;
@@ -54,8 +57,8 @@ public abstract class NIdPathIteratorBase implements NIdPathIteratorModel {
             t = parseDescriptor(pathname, NInputStreamMonitor.of().setSource(pathname).create(),
                     NFetchMode.LOCAL, repository, rootPath);
         } catch (Exception ex) {
-            NLogOp.of(NIdPathIteratorBase.class).level(Level.FINE).error(ex)
-                    .log(NMsg.ofJ("error parsing url : {0} : {1}", pathname, toString()));//e.printStackTrace();
+            NLog.of(NIdPathIteratorBase.class)
+                    .log(NMsg.ofJ("error parsing url : {0} : {1}", pathname, toString()).asFineFail(ex));//e.printStackTrace();
         }
         if (t != null) {
             return validate(null, t, pathname, rootPath, filter, repository);
