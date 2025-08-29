@@ -28,6 +28,7 @@ import net.thevpc.nuts.math.NBigComplex;
 import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -578,6 +579,46 @@ public abstract class AbstractNElement implements NElement {
         if (o.isPresent()) {
             NOperatorElement oo = o.get();
             return oo.operatorType() == NOperatorType.BINARY_INFIX;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isBinaryOperator(NElementType type) {
+        NAssert.requireTrue(type != null && type.typeGroup() == NElementTypeGroup.OPERATOR, () -> NMsg.ofC("required operator type, got %s", type));
+        NOptional<NOperatorElement> o = asOperator();
+        if (o.isPresent()) {
+            NOperatorElement oo = o.get();
+            return oo.operatorType() == NOperatorType.BINARY_INFIX && oo.type() == type;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isLeftNamedBinaryOperator(NElementType type) {
+        NAssert.requireTrue(type != null && type.typeGroup() == NElementTypeGroup.OPERATOR, () -> NMsg.ofC("required operator type, got %s", type));
+        NOptional<NOperatorElement> o = asOperator();
+        if (o.isPresent()) {
+            NOperatorElement oo = o.get();
+            if (oo.operatorType() == NOperatorType.BINARY_INFIX && oo.type() == type && oo.first().isPresent()) {
+                NElement f = oo.first().get();
+                return (f.isName() || f.isString());
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isLeftNamedBinaryOperator(NElementType type, String name) {
+        NAssert.requireNonNull(name, "name");
+        NAssert.requireTrue(type != null && type.typeGroup() == NElementTypeGroup.OPERATOR, () -> NMsg.ofC("required operator type, got %s", type));
+        NOptional<NOperatorElement> o = asOperator();
+        if (o.isPresent()) {
+            NOperatorElement oo = o.get();
+            if (oo.operatorType() == NOperatorType.BINARY_INFIX && oo.type() == type && oo.first().isPresent()) {
+                NElement f = oo.first().get();
+                return (f.isName() || f.isString()) && Objects.equals(f.asStringValue().orNull(), name);
+            }
         }
         return false;
     }
