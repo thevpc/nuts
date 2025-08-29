@@ -12,8 +12,8 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.log.NLogVerb;
+
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.spi.NRepositoryUndeployCmd;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
@@ -33,10 +33,6 @@ public class DefaultNRepositoryUndeployCmd extends AbstractNRepositoryUndeployCm
         super(null);
     }
 
-    protected NLogOp _LOGOP() {
-        return _LOG().with();
-    }
-
     protected NLog _LOG() {
         return NLog.of(DefaultNRepositoryUndeployCmd.class);
     }
@@ -52,15 +48,21 @@ public class DefaultNRepositoryUndeployCmd extends AbstractNRepositoryUndeployCm
                 try {
                     xrepo.getIndexStore().invalidate(this.getId());
                 } catch (NException ex) {
-                    _LOGOP().level(Level.FINEST).verb(NLogVerb.FAIL).log(
-                            NMsg.ofC("error invalidating Indexer for %s : %s", getRepo().getName(), ex));
+                    _LOG().log(
+                            NMsg.ofC("error invalidating Indexer for %s : %s", getRepo().getName(), ex)
+                                    .withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL)
+                    );
                 }
             }
-            _LOGOP().level(Level.FINEST).verb(NLogVerb.SUCCESS)
-                    .log(NMsg.ofC("%s undeploy %s", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), this.getId()));
+            _LOG()
+                    .log(NMsg.ofC("%s undeploy %s", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), this.getId())
+                            .withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS)
+                    );
         } catch (RuntimeException ex) {
-            _LOGOP().level(Level.FINEST).verb(NLogVerb.FAIL)
-                    .log(NMsg.ofC("%s undeploy %s", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), this.getId()));
+            _LOG()
+                    .log(NMsg.ofC("%s undeploy %s", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), this.getId())
+                            .withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL)
+                    );
         }
         return this;
     }
