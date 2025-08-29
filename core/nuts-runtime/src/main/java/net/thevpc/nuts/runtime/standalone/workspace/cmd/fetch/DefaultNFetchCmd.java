@@ -7,6 +7,7 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.NLocationKey;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder2;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
@@ -25,7 +26,6 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.NRepositoryAndFetchMode;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NRepositoryAndFetchModeTracker;
 import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.spi.NRepositorySPI;
-import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
@@ -224,10 +224,10 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                     descTracker.addFailure(location);
                 } catch (Exception ex) {
                     //ignore
-                    _LOGOP().error(ex).level(Level.SEVERE)
-                            .log(NMsg.ofC("unexpected error while fetching descriptor for %s", id));
+                    _LOG()
+                            .log(NMsg.ofC("unexpected error while fetching descriptor for %s", id).asError(ex));
                     if (_LOG().isLoggable(Level.FINEST)) {
-                        NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NLogVerb.FAIL, "fetch def", startTime);
+                        NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NMsgIntent.FAIL, "fetch def", startTime);
                     }
                     descTracker.addFailure(location);
                 }
@@ -242,10 +242,10 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
             }
         } catch (NNotFoundException ex) {
             reasons.add(ex);
-            NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NLogVerb.FAIL, "fetch definition", startTime);
+            NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NMsgIntent.FAIL, "fetch definition", startTime);
             throw ex;
         } catch (RuntimeException ex) {
-            NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NLogVerb.FAIL, "[unexpected] fetch definition", startTime);
+            NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NMsgIntent.FAIL, "[unexpected] fetch definition", startTime);
             throw ex;
         }
         if (foundDefinitionBuilder != null) {
@@ -272,13 +272,13 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
 //                        //this is invalid cache!
 //                        wstore.deleteLocationKey(NLocationKey.ofCacheFaced(id, repo.getUuid(), "def.cache"));
 //                    } else {
-//                        NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NLogVerb.CACHE, "fetch definition", 0);
+//                        NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NMsgIntent.CACHE, "fetch definition", 0);
 //                        return new DefaultNDefinitionBuilder2(d);
 //                    }
 //                }
 //            } catch (Exception ex) {
 //                _LOG().with().level(Level.SEVERE)
-//                        .verb(NLogVerb.CACHE)
+//                        .verb(NMsgIntent.CACHE)
 //                        .error(ex)
 //                        .log(NMsg.ofC("error loading cache %s",ex));
 //            }
@@ -414,9 +414,11 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                         new NDescriptorEffectiveConfig().setIgnoreCurrentEnvironment(DefaultNFetchCmd.this.isIgnoreCurrentEnvironment())));
             } catch (NNotFoundException ex) {
                 //ignore
-                DefaultNFetchCmd.this._LOGOP().level(Level.WARNING).verb(NLogVerb.WARNING)
+                DefaultNFetchCmd.this._LOG()
                         .log(NMsg.ofC("artifact descriptor found, but one of its parents or dependencies is not: %s : missing %s", id,
-                                ex.getId()));
+                                ex.getId())
+                                .withLevel(Level.WARNING).withIntent(NMsgIntent.ALERT)
+                        );
             }
             return null;
         }
@@ -535,7 +537,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                     }
                 }
                 if (!contentSuccessful /*&& includedRemote*/) {
-                    NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NLogVerb.FAIL,
+                    NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NMsgIntent.FAIL,
                             "fetched descriptor but failed to fetch artifact binaries", startTime);
                 }
             }
