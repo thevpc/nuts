@@ -4,10 +4,10 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NWorkspaceCmdLineParser;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogVerb;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -140,7 +140,7 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
         NConnexionStringBuilder z = DefaultNConnexionStringBuilder.of(target).orNull();
         NAssert.requireNonBlank(z, "target");
         NLog log = NLog.of(SshNExecCmdExtension.class);
-        log.with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("[%s] %s", z, NCmdLine.of(context.getCommand())));
+        log.log(NMsg.ofC("[%s] %s", z, NCmdLine.of(context.getCommand())).asFiner().withIntent(NMsgIntent.START));
         String[] command = resolveNutsExecutableCommand(context);
         try (SShConnection c = new SShConnection(
                 target,
@@ -158,7 +158,7 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
         NConnexionStringBuilder z = DefaultNConnexionStringBuilder.of(target).orNull();
         NAssert.requireNonBlank(z, "target");
         NLog log = NLog.of(SshNExecCmdExtension.class);
-        log.with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("[%s] %s", z, NCmdLine.of(context.getCommand())));
+        log.log(NMsg.ofC("[%s] %s", z, NCmdLine.of(context.getCommand())).asFiner().withIntent(NMsgIntent.START));
         try (SShConnection c = new SShConnection(
                 target,
                 context.in(),
