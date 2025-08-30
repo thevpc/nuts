@@ -89,7 +89,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
 
     public DefaultNWorkspaceFactory(NWorkspace ws) {
         this.workspace = ws;
-        LOG = ((DefaultNWorkspace) ws).LOG;
+        LOG = ((DefaultNWorkspace) ws).getModel().LOG;
         cache = new NBeanCache(LOG, CoreNUtils.isDevVerbose() ? System.err : null);
     }
 
