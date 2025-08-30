@@ -51,12 +51,13 @@
             <div class="container">
                 <h1>Recent Blog</h1>
                 {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/$pageId')}}
+                {{:for pageLevel2,pageLevel2Index:loadPages(pageLevel1)}}
                     <!--pageLevel1-->
                     <section id="{{pageLevel1.id}}">
                         <h2 style="margin-bottom: 0;"><a href="#{{pageLevel1.id}}">{{pageLevel1.title}}</a></h2>
                         <header style="margin-left: 50px">
                             <div class="container_mt6G margin-vert--md" style="font-size: medium">
-                                <time>{{formatDate(pageLevel1.publishDate)}}</time>
+                                <time>{{formatDate(pageLevel2.publishDate)}}</time>
                                 · One min read
                             </div>
                             <div class="margin-top--md margin-bottom--sm row">
@@ -65,24 +66,25 @@
                                         <a href="https://github.com/thevpc" target="_blank"
                                            rel="noopener noreferrer" class="avatar__photo-link">
                                             <img class="avatar__photo"
-                                                 src="{{pageLevel1.authorImageUrl}}"
-                                                 alt="{{pageLevel1.author}}" width="32"></a>
+                                                 src="{{either(pageLevel2.authorImageUrl,'https://gravatar.com/avatar/977025550163b4a91397007f6ea9ee17')}}"
+                                                 alt="{{pageLevel2.author}}" width="32"></a>
                                         <div class="avatar__intro">
                                             <div class="avatar__name"><a href="https://github.com/thevpc"
                                                                          target="_blank"
                                                                          rel="noopener noreferrer"><span>{{pageLevel1.author}}</span></a>
                                             </div>
-                                            <small class="avatar__subtitle">{{pageLevel1.authorTitle}}</small></div>
+                                            <small class="avatar__subtitle">{{pageLevel2.authorTitle}}</small></div>
                                     </div>
                                 </div>
                             </div>
                         </header>
                         <p class="lead">{{pageLevel1.subTitle}}</p>
                         <div class="text-card">
-                        {{pageContentToHtml(pageLevel1,formatDate(pageLevel1.publishDate))}}
+                        {{pageContentToHtml(pageLevel2,formatDate(pageLevel2.publishDate))}}
                         </div>
                     </section>
                     <hr class="divider">
+                {{:end}}
                 {{:end}}
 
             </div>
