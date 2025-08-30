@@ -1,0 +1,13 @@
+---
+id: app-ndoc
+title: ndoc
+subTitle: Latex Like Documentation Tool
+category: Productivity / Presentation
+hmi: Desktop
+website: https://thevpc.github.com/nuts
+installCommand: nuts install ntexup
+exampleCommand: nuts ntexup
+---
+
+
+{{include($"$root/../nuts-productivity/ntexup/app/ntexup/src/main/resources/net/thevpc/ntexup.ntf"}}
