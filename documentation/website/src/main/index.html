@@ -127,9 +127,9 @@
                                                 <p>Nuts makes installing applications effortless. You can install specific versions (even multiple side by side), grab the latest release, or uninstall when done — all with a single command.</p>
                                                 <pre>
                                                     <code class="language-bash">
-nuts install net.thevpc.app:netbeans-launcher#1.2.2   # Install a specific version
-nuts install net.thevpc.app:netbeans-launcher         # Install latest version if none exists
-nuts uninstall net.thevpc.app:netbeans-launcher#1.2.2 # Uninstall a specific version
+                                                    nuts install net.thevpc.app:netbeans-launcher#1.2.2   # Install a specific version
+                                                    nuts install net.thevpc.app:netbeans-launcher         # Install latest version if none exists
+                                                    nuts uninstall net.thevpc.app:netbeans-launcher#1.2.2 # Uninstall a specific version
                                                     </code>
                                                 </pre>
                                             </div>
@@ -139,10 +139,10 @@ nuts uninstall net.thevpc.app:netbeans-launcher#1.2.2 # Uninstall a specific ver
                                                 <h3 class="feature-subtitle">Run Anywhere, Any Version</h3>
                                                 <p>Run applications directly, whether installed or not. Nuts installs missing versions on-the-fly, lets you pin exact releases, and updates seamlessly.</p>
                                                 <pre>
-                                                    <code class="bash">
-nuts netbeans-launcher           # Run the active version (installs if missing)
-nuts netbeans-launcher#1.2.2     # Run a specific version (installs if missing)
-nuts update netbeans-launcher    # Check for and apply updates
+                                                    <code class="language-bash">
+                                                        nuts netbeans-launcher           # Run the active version (installs if missing)
+                                                        nuts netbeans-launcher#1.2.2     # Run a specific version (installs if missing)
+                                                        nuts update netbeans-launcher    # Check for and apply updates
                                                     </code>
                                                 </pre>
                                             </div>
@@ -153,10 +153,10 @@ nuts update netbeans-launcher    # Check for and apply updates
                                                 <p>Find what you need quickly with Nuts’ powerful search. Look locally, remotely, or everywhere at once. Filter by platform, packaging, or latest versions, and even preview execution plans.</p>
                                                 <pre>
                                                     <code class="language-bash">
-nuts search -l --offline netbeans*                      # Search locally (installed & cached)
-nuts search -online -l --latest --distinct --sorted \   # Search remote repos for latest jars
-   --os=windows --packaging=jar netbeans*
-nuts search -online -l --describe netbeans*             # Show search plan (TSON format)
+                                                    nuts search -l --offline netbeans*                      # Search locally (installed & cached)
+                                                    nuts search -online -l --latest --distinct --sorted \   # Search remote repos for latest jars
+                                                       --os=windows --packaging=jar netbeans*
+                                                    nuts search -online -l --describe netbeans*             # Show search plan (TSON format)
                                                     </code>
                                                 </pre>
                                             </div>
@@ -167,9 +167,9 @@ nuts search -online -l --describe netbeans*             # Show search plan (TSON
                                                 <p>Never get lost. Nuts provides detailed help for the CLI itself, or for any installed application, right when you need it.</p>
                                                 <pre>
                                                     <code class="language-bash">
-nuts help                        # Show help on Nuts CLI
-nuts help netbeans-launcher       # Show help for an app
-nuts netbeans-launcher --help     # Same as above, directly from the app
+                                                    nuts help                        # Show help on Nuts CLI
+                                                    nuts help netbeans-launcher       # Show help for an app
+                                                    nuts netbeans-launcher --help     # Same as above, directly from the app
                                                     </code>
                                                 </pre>
                                             </div>
@@ -180,9 +180,9 @@ nuts netbeans-launcher --help     # Same as above, directly from the app
                                                 <p>Tailor Nuts to your workflow by creating command aliases, managing repositories, or resolving commands to see where they come from.</p>
                                                 <pre>
                                                     <code class="language-bash">
-nuts settings add alias ls='nsh -c ls'  # Create alias 'ls' → run 'nsh -c ls'
-nuts settings list repos                # List configured repositories
-nuts which ls                           # Resolve if 'ls' is internal, alias, or system cmd
+                                                    nuts settings add alias ls='nsh -c ls'  # Create alias 'ls' → run 'nsh -c ls'
+                                                    nuts settings list repos                # List configured repositories
+                                                    nuts which ls                           # Resolve if 'ls' is internal, alias, or system cmd
                                                     </code>
                                                 </pre>
                                             </div>
@@ -193,11 +193,11 @@ nuts which ls                           # Resolve if 'ls' is internal, alias, or
                                                 <p>Switch execution contexts with ease. Run as root, sudo, or another user. Use embedded mode to avoid starting a new JVM, or exec mode for controlled execution.</p>
                                                 <pre>
                                                     <code class="language-bash">
-nuts --as-root netbeans-launcher     # Run as root
-nuts --as-user:vpc netbeans-launcher # Run as user 'vpc'
-nuts --sudo netbeans-launcher        # Run with sudo privileges
-nuts --embedded netbeans-launcher    # Run in current JVM (embedded)
-nuts --exec netbeans-launcher        # Run in exec mode (like default run)
+                                                    nuts --as-root netbeans-launcher     # Run as root
+                                                    nuts --as-user:vpc netbeans-launcher # Run as user 'vpc'
+                                                    nuts --sudo netbeans-launcher        # Run with sudo privileges
+                                                    nuts --embedded netbeans-launcher    # Run in current JVM (embedded)
+                                                    nuts --exec netbeans-launcher        # Run in exec mode (like default run)
                                                     </code>
                                                 </pre>
                                             </div>
@@ -208,8 +208,8 @@ nuts --exec netbeans-launcher        # Run in exec mode (like default run)
                                                 <p>Nuts isn’t just about local runs — it’s built for automation and remote execution. Schedule tasks with cron, or run commands seamlessly on remote machines.</p>
                                                 <pre>
                                                     <code class="language-bash">
-nuts --exec --cron "* * * * *" ls                 # Run 'ls' every minute (cron)
-nuts --exec --target="ssh://myuser@myserver" ls   # Run 'ls' remotely over SSH
+                                                    nuts --exec --cron "* * * * *" ls                 # Run 'ls' every minute (cron)
+                                                    nuts --exec --target="ssh://myuser@myserver" ls   # Run 'ls' remotely over SSH
                                                     </code>
                                                 </pre>
                                             </div>
