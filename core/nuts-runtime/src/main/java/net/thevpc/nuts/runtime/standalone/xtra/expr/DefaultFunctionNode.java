@@ -58,7 +58,7 @@ public class DefaultFunctionNode implements NExprFunctionNode {
                     Arrays.stream(args).map(context::nodeAsValue).toArray(NExprNodeValue[]::new)
             );
         }catch (Exception ex){
-            return NOptional.ofError(() -> NMsg.ofC("error %s ", ex));
+            return NOptional.ofError(() -> NMsg.ofC("error %s ", ex).asError(ex));
         }
     }
 }
