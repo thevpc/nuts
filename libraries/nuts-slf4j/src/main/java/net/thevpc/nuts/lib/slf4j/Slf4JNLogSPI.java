@@ -37,13 +37,7 @@ public class Slf4JNLogSPI implements NLogSPI {
         return logger.isEnabledForLevel(slf4jLevel);
     }
 
-    public String getName(){
-        return logger.getName();
-    }
 
-
-
-//    @Override
     public void log(Level level, Supplier<NMsg> msg) {
         if (level == null) {
             level = Level.INFO;
