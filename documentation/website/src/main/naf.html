@@ -157,20 +157,57 @@
                                         </div>
                                         <div class="carousel-slide">
                                             <div class="col col--3">
-                                                <h3 class="feature-title">Power Beast</h3>
-                                                <p>With Nuts, what starts as a simple one-line setup can grow into a fully controlled runtime environment. Create multiple workspaces, configure sessions with custom flags, manage output formats, and orchestrate complex automation — all while keeping your code clean and portable. Nuts gives you both simplicity for quick experiments and full power for advanced applications.</p>
+                                                <h3 class="feature-title">NMsg in a nutshell</h3>
+                                                <p><code>NMsg</code> is NAF’s structured message builder. It supports multiple formats—C-style (%s), Java-style ({}), variable substitution ($name), plus plain, styled, code, and NTF text. When rendered by Nuts/NAF (e.g., via your logger/terminal), common types like numbers, booleans, and dates are auto-colored for readability. You can also attach intent/level/throwable later (e.g., .asError(), .withIntent(...)), making NMsg perfect for logs and CLI output.</p>
                                                 <pre>
                                                     <code class="language-java">
-                                                        NWorkspace ws = Nuts.openWorkspace("--workspace="/path/to/ws");
-                                                        ws.runWith(() -> {
-                                                            NSession.of()
-                                                                    .copy()
-                                                                    .setDry(true)
-                                                                    .setOutputFormat(NContentType.JSON)
-                                                                    .runWith(() -> {
-                                                                        NOut.println(Map.of("status", "ok"));
-                                                                    });
+                                                        // 1) C-FORMAT: printf-style placeholders
+                                                        NMsg cfmt = NMsg.ofC("Hello %s, you have %d new notifications", "Alice", 5);
+                                                        // (numbers auto-colored when rendered)
+
+                                                        // 2) J-FORMAT: {} placeholders (optionally numbered like {0})
+                                                        NMsg jfmt = NMsg.ofJ("Downloading {} from {}", "report.pdf", "server-01");
+
+                                                        // 3) V-FORMAT: $name placeholders (three correct ways)
+
+                                                        // 3.a) Using NMsgParam.of(name, value)
+                                                        NMsg vfmtParams = NMsg.ofV("Feature enabled? $enabled",
+                                                            NMsgParam.of("enabled", true));
+
+                                                        // 3.b) Using a Map
+                                                        NMsg vfmtMap = NMsg.ofV("User $user on $app",
+                                                            Map.of("user", "Alice", "app", "NAF"));
+
+                                                        // 3.c) Using a name->value function
+                                                        NMsg vfmtFn = NMsg.ofV("Threshold=$th, Date=$date", name -> switch (name) {
+                                                            case "th"   -> 0.85;
+                                                            case "date" -> LocalDate.now();
+                                                            default     -> null;
                                                         });
+
+                                                        // 4) PLAIN: no formatting, printed as-is
+                                                        NMsg plain = NMsg.ofPlain("This is a plain message");
+
+                                                        // 5) STYLED: emphasize/severity styling
+                                                        NMsg styled = NMsg.ofStyled("Error: file not found", NTextStyle.error());
+
+                                                        // 6) CODE: mono/code blocks (optionally with language)
+                                                        NMsg code = NMsg.ofCode("java", "System.out.println(\"Hello NAF\");");
+
+                                                        // 7) NTF: Nuts Text Format (lightweight markup)
+                                                        NMsg ntf = NMsg.ofNtf("##bold## ##:/:italic## ```java public class{}```");
+
+                                                        // Render them (levels/intents can be applied as needed)
+                                                        NOut.println(cfmt);
+                                                        NOut.println(jfmt);
+                                                        NOut.println(vfmtParams);
+                                                        NOut.println(vfmtMap);
+                                                        NOut.println(vfmtFn);
+                                                        NOut.println(plain);
+                                                        NOut.println(styled);     // or styled.asWarning()
+                                                        NOut.println(code);
+                                                        NOut.println(ntf);
+
                                                     </code>
                                                 </pre>
                                             </div>
@@ -509,6 +546,26 @@
 
                                                         double result = fct.apply(0.5); // evaluates sin(0.5*pi)
                                                     }
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-title">Working with Workspaces and Session</h3>
+                                                <p>With Nuts, what starts as a simple one-line setup can grow into a fully controlled runtime environment. Create multiple workspaces, configure sessions with custom flags, manage output formats, and orchestrate complex automation — all while keeping your code clean and portable. Nuts gives you both simplicity for quick experiments and full power for advanced applications.</p>
+                                                <pre>
+                                                    <code class="language-java">
+                                                        NWorkspace ws = Nuts.openWorkspace("--workspace="/path/to/ws");
+                                                        ws.runWith(() -> {
+                                                            NSession.of()
+                                                                    .copy()
+                                                                    .setDry(true)
+                                                                    .setOutputFormat(NContentType.JSON)
+                                                                    .runWith(() -> {
+                                                                        NOut.println(Map.of("status", "ok"));
+                                                                    });
+                                                        });
                                                     </code>
                                                 </pre>
                                             </div>
