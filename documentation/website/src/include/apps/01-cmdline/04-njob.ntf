@@ -10,4 +10,4 @@ exampleCommand: nuts njob tasks add 'I will buy milk' --on afternoon
 ---
 
 
-{{include($"$root/../njob/njob/src/main/resources/net/thevpc/nuts/toolbox/njob.ntf"}}
+{{include($"$root/../nuts-productivity/njob/njob/src/main/resources/net/thevpc/nuts/toolbox/njob.ntf"}}
