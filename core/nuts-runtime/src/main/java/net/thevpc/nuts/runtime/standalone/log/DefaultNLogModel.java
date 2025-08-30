@@ -31,7 +31,10 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.log.NLogFactorySPI;
+import net.thevpc.nuts.log.NLogSPI;
 import net.thevpc.nuts.spi.NScopeType;
+import net.thevpc.nuts.util.NCallable;
+import net.thevpc.nuts.util.NMsg;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -55,9 +58,14 @@ public class DefaultNLogModel {
     private Path logFolder;
     private NLogFactorySPI defaultFactorySPI = new NLogFactorySPIJUL();
     private NLogFactorySPI factorySPI;
+    private NLog nullLogger;
+    final InheritableThreadLocal<NLog> scopedLoggerThreadLocal = new InheritableThreadLocal<>();
 
-    public DefaultNLogModel(NWorkspace ws, NBootOptions effOptions, NBootOptions userOptions) {
+    public DefaultNLogModel(NWorkspace ws) {
         this.workspace = ws;
+    }
+
+    public void init(NBootOptions effOptions, NBootOptions userOptions) {
         this.logFolder = Paths.get(effOptions.getStoreType(NStoreType.LOG).get());
         NLogConfig lc = userOptions.getLogConfig().orNull();
         if (lc != null) {
@@ -128,21 +136,59 @@ public class DefaultNLogModel {
         return NApp.of().getOrComputeProperty(NLog.class.getName() + "#Map", NScopeType.WORKSPACE, () -> new HashMap<String, NLog>());
     }
 
-    public NLog createLogger(String name) {
+    public NLog getNullLogger() {
+        if(nullLogger==null){
+            nullLogger=new DefaultNLog("", new NLogSPI() {
+                @Override
+                public void log(NMsg message) {
+
+                }
+            },false,this, false);
+        }
+        return nullLogger;
+    }
+
+    public NLog getLogger(String name) {
         Map<String, NLog> loaded = loaded();
         NLog y = loaded.get(name);
         if (y == null) {
-            y = new DefaultNLog(name, getFactorySPI().getLogSPI(name), false);
+            y = new DefaultNLog(name, getFactorySPI().getLogSPI(name), false,this,false);
             loaded.put(name, y);
         }
         return y;
     }
 
-
-    public NLog createLogger(Class clazz) {
-        return createLogger(clazz.getName());
+    public NLog createCustomLogger(String name,NLogSPI spi) {
+        return new DefaultNLog(name, spi, false,this,true);
     }
 
+    public void runWith(NLog log, Runnable r) {
+        NLog old = scopedLoggerThreadLocal.get();
+        scopedLoggerThreadLocal.set(log);
+        try {
+            r.run();
+        } finally {
+            if (old == null) {
+                scopedLoggerThreadLocal.remove();
+            } else {
+                scopedLoggerThreadLocal.set(old);
+            }
+        }
+    }
+
+    public <T> T callWith(NLog log, NCallable<T> r) {
+        NLog old = scopedLoggerThreadLocal.get();
+        scopedLoggerThreadLocal.set(log);
+        try {
+            return r.call();
+        } finally {
+            if (old == null) {
+                scopedLoggerThreadLocal.remove();
+            } else {
+                scopedLoggerThreadLocal.set(old);
+            }
+        }
+    }
 
     public Level getTermLevel() {
         return this.logConfig.getLogTermLevel();
