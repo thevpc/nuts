@@ -5,9 +5,9 @@ import net.thevpc.nuts.util.NMsg;
 import java.util.logging.Level;
 
 public interface NLogSPI {
-    String getName();
-
-    boolean isLoggable(Level level);
+    default boolean isLoggable(Level level){
+        return true;
+    }
 
     void log(NMsg message);
 }
