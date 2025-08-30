@@ -26,12 +26,13 @@
  */
 package net.thevpc.nuts.log;
 
+import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NCallable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NMsgBuilder;
 
 import java.util.function.Supplier;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 
 /**
  * Workspace aware Logger
@@ -39,9 +40,10 @@ import java.util.logging.LogRecord;
  * @app.category Logging
  */
 public interface NLog {
-    NLog NULL = NullNLog.NULL;
+//    NLog NULL = NullNLog.NULL;
 
     String getName();
+
     /**
      * create an instance of {@link NLog}
      *
@@ -49,7 +51,15 @@ public interface NLog {
      * @return new instance of {@link NLog}
      */
     static NLog of(Class<?> clazz) {
-        return NLogs.of().createLogger(clazz);
+        return of(NAssert.requireNonBlank(clazz, "class").getName());
+    }
+
+    static NLog ofNull() {
+        return NLogs.of().getNullLogger();
+    }
+
+    static NLog ofScoped(Class<?> clazz) {
+        return ofScoped(NAssert.requireNonBlank(clazz, "class").getName());
     }
 
     /**
@@ -59,7 +69,15 @@ public interface NLog {
      * @return new instance of {@link NLog}
      */
     static NLog of(String name) {
-        return NLogs.of().createLogger(name);
+        return NLogs.of().getLogger(name);
+    }
+
+    static NLog of(String name, NLogSPI spi) {
+        return NLogs.of().createCustomLogger(name, spi);
+    }
+
+    static NLog ofScoped(String name) {
+        return of(name).scoped();
     }
 
     /**
@@ -71,6 +89,12 @@ public interface NLog {
      * @return true if the given message level is currently being logged.
      */
     boolean isLoggable(Level level);
+
+    NLog scoped();
+
+    void runWith(Runnable r);
+
+    <T> T callWith(NCallable<T> r);
 
 
     default void info(NMsg msg) {
@@ -90,7 +114,7 @@ public interface NLog {
         log(msg.asError());
     }
 
-    void log(Level level,Supplier<NMsg> msgSupplier);
+    void log(Level level, Supplier<NMsg> msgSupplier);
 
     void log(NMsg msg);
 
