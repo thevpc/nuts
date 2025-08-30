@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.log.NLogSPI;
 import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -49,13 +50,18 @@ public class DefaultNLogs implements NLogs {
     }
 
     @Override
-    public NLog createLogger(String name) {
-        return model.createLogger(name);
+    public NLog getLogger(String name) {
+        return model.getLogger(name);
     }
 
     @Override
-    public NLog createLogger(Class<?> clazz) {
-        return model.createLogger(clazz);
+    public NLog getNullLogger() {
+        return model.getNullLogger();
+    }
+
+    @Override
+    public NLog createCustomLogger(String name, NLogSPI spi) {
+        return model.createCustomLogger(name, spi);
     }
 
     @Override
@@ -88,4 +94,5 @@ public class DefaultNLogs implements NLogs {
     public int getSupportLevel(NSupportLevelContext context) {
         return NConstants.Support.DEFAULT_SUPPORT;
     }
+
 }
