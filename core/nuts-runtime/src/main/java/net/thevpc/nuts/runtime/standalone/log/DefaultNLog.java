@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.log.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NCallable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NMsgBuilder;
 
@@ -20,13 +21,22 @@ public class DefaultNLog implements NLog {
     private int suspendedMax = 100;
     private boolean suspendTerminalMode = false;
     private String name;
+    private NLog scoped;
+    private DefaultNLogModel model;
+    private boolean custom;
 
-    public DefaultNLog(String name, NLogSPI logSPI, boolean suspended) {
+    public DefaultNLog(String name, NLogSPI logSPI, boolean suspended, DefaultNLogModel model,boolean custom) {
         this.name = name;
         this.logSPI = logSPI;
+        this.model = model;
+        this.custom = custom;
         if (suspended) {
             suspendTerminal();
         }
+    }
+
+    public boolean isCustom() {
+        return custom;
     }
 
     @Override
@@ -113,46 +123,30 @@ public class DefaultNLog implements NLog {
                 logSPI.log(r);
             }
         }
-//        Handler ch = logManager.getTermHandler();
-//        if (ch != null) {
-//            if (ch.isLoggable(record)) {
-//
-//            }
-//        }
-//        Handler fh = logManager.getFileHandler();
-//        if (fh != null) {
-//            if (fh.isLoggable(record)) {
-//                fh.publish(record);
-//            }
-//        }
-//        for (Handler handler : logManager.getHandlers()) {
-//            if (handler.isLoggable(record)) {
-//                handler.publish(record);
-//            }
-//        }
-//        if (record instanceof NLogRecord) {
-//            NLogRecord ll = (NLogRecord) record;
-//            NMsg ms = ll.getFormattedMessage();
-//            this.logSPI.log(ms);
-//        } else {
-//            this.logSPI.log(NMsg.ofC("%s", record.getMessage()).withThrowable(record.getThrown()));
-//        }
         logSPI.log(msg);
     }
 
-    private boolean isLoggable(LogRecord record) {
-        Filter theFilter = getFilter();
-        if (theFilter != null && !theFilter.isLoggable(record)) {
-            return false;
+    @Override
+    public NLog scoped() {
+        if (scoped == null) {
+            scoped = new ScopedNLog(model, this);
         }
-        return true;
+        return scoped;
     }
 
+    @Override
+    public void runWith(Runnable r) {
+        model.runWith(this, r);
+    }
+
+    @Override
+    public <T> T callWith(NCallable<T> r) {
+        return model.callWith(this, r);
+    }
 
     public void suspendTerminal() {
         suspendTerminalMode = true;
     }
-
 
     public void resumeTerminal() {
         suspendTerminalMode = false;
