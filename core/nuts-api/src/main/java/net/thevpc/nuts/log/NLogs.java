@@ -40,7 +40,7 @@ import java.util.logging.Level;
  */
 public interface NLogs extends NComponent {
     static NLogs of() {
-       return NExtensions.of(NLogs.class);
+        return NExtensions.of(NLogs.class);
     }
 
     /**
@@ -86,15 +86,10 @@ public interface NLogs extends NComponent {
      * @param name logger name
      * @return new instance of {@link NLog}
      */
-    NLog createLogger(String name);
+    NLog getLogger(String name);
+    NLog getNullLogger();
 
-    /**
-     * create an instance of {@link NLog}
-     *
-     * @param clazz logger clazz
-     * @return new instance of {@link NLog}
-     */
-    NLog createLogger(Class<?> clazz);
+    NLog createCustomLogger(String name,NLogSPI spi);
 
     /**
      * return terminal logger level
