@@ -225,7 +225,7 @@
                                         <div class="carousel-slide">
                                             <div class="col col--3">
                                                 <h3 class="feature-title">NMsg in a nutshell</h3>
-                                                <p><code>NMsg</code> is NAF’s structured message builder. It supports multiple formats—C-style (%s), Java-style ({}), variable substitution ($name), plus plain, styled, code, and NTF text. When rendered by Nuts/NAF (e.g., via your logger/terminal), common types like numbers, booleans, and dates are auto-colored for readability. You can also attach intent/level/throwable later (e.g., .asError(), .withIntent(...)), making NMsg perfect for logs and CLI output.</p>
+                                                <p><code>NMsg</code> is a structured message builder in Nuts/NAF. It supports multiple placeholder formats—C-style (%s), Java-style ({}), and variable substitution ($name)—as well as plain, styled, code, and <code>NTF</code> text. When rendered through NOut or other Nuts-aware outputs, common types like numbers, booleans, and dates are automatically colorized for better readability. You can also apply styles or semantic intents directly to messages, making them versatile for interactive CLI output.</p>
                                                 <pre>
                                                     <code class="language-java">
                                                         // 1) C-FORMAT: printf-style placeholders
@@ -271,7 +271,7 @@
                                                         NOut.println(vfmtMap);
                                                         NOut.println(vfmtFn);
                                                         NOut.println(plain);
-                                                        NOut.println(styled);     // or styled.asWarning()
+                                                        NOut.println(styled);
                                                         NOut.println(code);
                                                         NOut.println(ntf);
 
@@ -672,7 +672,7 @@
             <p class="text-2 text-center mb-0">
                 Copyright © 2018-2025 Nuts Package Manager Team.
                 <br>
-                Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2025-08-30-221553
+                Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2025-08-30-222056
                 <br>
                 <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                             href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
