@@ -1532,14 +1532,92 @@ nuts ndiff my-app-v1.jar my-app-v2.jar
                                 </div>
                                 <div class="mb-4">
                                     <span class="badge badge-info">INSTALLATION COMMAND</span>
-                                    <pre><code>nuts install ndoc-viewer</code></pre>
+                                    <pre><code>nuts install ntexup</code></pre>
                                     <span class="badge badge-info">EXAMPLE COMMAND</span>
-                                    <pre><code>nuts ndoc-viewer</code></pre>
+                                    <pre><code>nuts ntexup</code></pre>
                                 </div>
                             </div>
                             <div class="text-card">
                                 <pre>
 
+<span style="color: #000055" class="">ntexup</span> Declarative Document & Presentation Generator
+
+<span style="color: #000055" class="">ntexup</span> is an open-source, text-based document and presentation generator designed to make the creation of professional, math-heavy, and reusable teaching materials effortless.
+
+<span style="color: #0000A3" class=""> INSTALL</span>
+
+<span style="color: #0000A3" class="">nuts install ntexup</span>
+
+
+<span style="color: #0000A3" class="">##) EXAMPLE OF USAGE</span>
+
+<span style="color: #0000A3" class="">nuts ntexup --view  file.ntexup</span>
+
+
+) SYNOPSYS (CMD MODE)
+
+nuts ntexup <option> file.ntexup
+
+
+Options are :
+
+--reopen
+reopen last file/folder
+
+--build-repo --dump
+build repository
+
+--list-templates
+list available templates
+
+--documentation
+build documentation
+
+--open=<path>
+generate file ntexup file/folder
+
+--output=<path>
+generated file output file/folder path
+
+
+--pdf
+generate pf
+
+--dump
+show dump
+
+
+<span style="color: #005078" class="">###)  
+SYNOPSYS (UI MODE)
+
+
+</span>
+nuts ntexup --view <option>
+
+
+
+Options are :
+
+--new
+open new project
+
+--view-log
+show log panel
+
+
+--documentation
+show documentation
+
+--open <path>
+
+
+<span style="color: #0000A3" class="">##)  
+EXAMPLES:
+
+
+</span>
+# ntexup: generate pdf
+nuts -Zy -w test ntexup myfolder
 </pre>
                             </div>
                         </div>
@@ -1574,6 +1652,42 @@ nuts ndiff my-app-v1.jar my-app-v2.jar
                             </div>
                             <div class="text-card">
                                 <pre>
+
+<span style="color: #0000A3" class="">##)  
+njob:
+
+
+</span>is a productivity tool to follow you tasks
+
+<span style="color: #005078" class="">###)  
+INSTALL
+
+
+</span>nuts install njob
+
+
+<span style="color: #005078" class="">###)  
+EXAMPLE OF USAGE
+
+
+</span>
+nuts njob tasks add 'I will buy milk' --on afternoon
+
+
+<span style="color: #005078" class="">###)  
+SYNOPSIS:
+
+
+</span><span style="color: #000055" class="">njob</span> tasks | jobs | projects | summary...
+    manage tasks, jobs, projects
+    a project aggregates multiple jobs
+    a job aggregates multiple tasks
+    a task has a status and priority
+
+
+
+
+
 
 </pre>
                             </div>
@@ -1610,6 +1724,54 @@ nuts ndiff my-app-v1.jar my-app-v2.jar
                             <div class="text-card">
                                 <pre>
 
+<span style="color: #000055" class="">nsite</span> is a documentation tool
+
+`nsite` is a simple templating tool. It's used to generate statically Nuts website from
+markdown documents.
+`nsite` can also be embedded as a library (as `net.thevpc.nuts.lib:nsite-lib#0.8.5.0`)
+
+<span style="color: #0000A3" class=""> INSTALL</span>
+
+<span style="color: #0000A3" class="">nuts install nsite</span>
+
+
+<span style="color: #0000A3" class="">##) EXAMPLE OF USAGE</span>
+
+<span style="color: #0000A3" class="">nuts nsite --source your-folder  --target the-generated-folder</span>
+
+
+) SYNOPSYS
+
+nuts nsite (--source=<path>)+ (--resource=<path>)* --target=<path> (<other-options>)*
+
+
+Options are :
+
+- `-s=<...>` ou `--source=<...>` :  source file or folder to process.
+- `--resource=<...>` :         source file or folder that are copied as is and are not processed by the template engine.
+- `-t=<...>` ou `--target=<...>` : target folder where the generated files will be located
+
+<span style="color: #0000A3" class=""> Templating format ()</span>
+<span style="color: #0000A3" class="">    {{: statement}}</span>
+<span style="color: #0000A3" class="">    {{expression}}</span>
+<span style="color: #0000A3" class="">    {{:for varName(,index):<expression}} ... {{:end}}</span>
+<span style="color: #0000A3" class="">    {{:if expression}} ... {{:else if expression}} ... {{:else if expression}} {{:end}}</span>
+
+
+
+
+<span style="color: #0000A3" class="">##) SYNOPSIS:</span>
+
+
+<span style="color: #0000A3" class="">-Zy -w test nsite --progress=none --skip-errors -bZKy nsite --backend=docusaurus --source /data/git/nuts/core/nuts --target /data/git/nuts/documentation/website/docs/javadocs</span>
+<span style="color: #0000A3" class="">    generate javadoc</span>
+
+<span style="color: #0000A3" class="">==ntemplate== generate files and forlder from template file/folder</span>
+
+<span style="color: #0000A3" class="">##) EXAMPLES:</span>
+
+<span style="color: #0000A3" class=""># nsite: generate folder</span>
+<span style="color: #0000A3" class="">nuts -Zy -w test ntemplate --progress=none --skip-errors -bZy ntemplate -p $ProjectFileDir$/dir-template</span>
 </pre>
                             </div>
                         </div>
@@ -1882,9 +2044,9 @@ nuts ndiff my-app-v1.jar my-app-v2.jar
                                 </div>
                                 <div class="mb-4">
                                     <span class="badge badge-info">INSTALLATION COMMAND</span>
-                                    <pre><code>nuts install org.springframework.boot</code></pre>
+                                    <pre><code>nuts install org.springframework.boot:spring-boot-cli &  nuts settings add alias spring="--main-class=1 spring-boot-cli"</code></pre>
                                     <span class="badge badge-info">EXAMPLE COMMAND</span>
-                                    <pre><code>nuts spring init --dependencies=web,data-jpa my-project</code></pre>
+                                    <pre><code>nuts spring init --dependencies=web</code></pre>
                                 </div>
                             </div>
                             <div class="text-card">
@@ -1917,7 +2079,7 @@ nuts ndiff my-app-v1.jar my-app-v2.jar
                                 </div>
                                 <div class="mb-4">
                                     <span class="badge badge-info">INSTALLATION COMMAND</span>
-                                    <pre><code>nuts com.google.tsunami</code></pre>
+                                    <pre><code>nuts com.google.tsunami:tsunami-main & nuts settings add alias tsunami='--cp=${NUTS_ID_APPS</code></pre>
                                     <span class="badge badge-info">EXAMPLE COMMAND</span>
                                     <pre><code>nuts tsunami --ip-v4-target=127.0.0.1</code></pre>
                                 </div>
@@ -2771,7 +2933,7 @@ nuts ntomcat --start
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-08-29-210937
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-08-30-202455
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
