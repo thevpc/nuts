@@ -7,9 +7,12 @@ import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions;
 import net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore.DefaultElementMapperStore;
 import net.thevpc.nuts.runtime.standalone.io.cache.CachedSupplier;
+import net.thevpc.nuts.runtime.standalone.log.DefaultNLog;
+import net.thevpc.nuts.runtime.standalone.log.NLogSPIJUL;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStoreInMemory;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStoreOnDisk;
+import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.time.NProgressMonitor;
 import net.thevpc.nuts.util.NLRUMap;
 import net.thevpc.nuts.runtime.standalone.util.NPropertiesHolder;
@@ -65,12 +68,13 @@ public class NWorkspaceModel {
     public NLRUMap<NId, CachedSupplier<NDefinition>> cachedDefs = new NLRUMap<>(100);
     public DefaultNExtensions extensions;
     public NWorkspaceStore store;
-    public DefaultElementMapperStore defaultElementMapperStore=new DefaultElementMapperStore();
+    public DefaultElementMapperStore defaultElementMapperStore = new DefaultElementMapperStore();
     public InheritableThreadLocal<Stack<NProgressMonitor>> currentProgressMonitors = new InheritableThreadLocal<>();
 
-    public NWorkspaceModel(NWorkspace workspace, NBootOptions initialBootOptions,NLog LOG) {
+    public NWorkspaceModel(NWorkspace workspace, NBootOptions initialBootOptions) {
         this.workspace = workspace;
-        this.LOG = LOG;
+        this.logModel = new DefaultNLogModel(workspace);
+        this.LOG = new DefaultNLog(DefaultNWorkspace.class.getName(), new NLogSPIJUL(DefaultNWorkspace.class.getName()), true, logModel,false);
         if (initialBootOptions.getIsolationLevel().orNull() == NIsolationLevel.MEMORY) {
             this.store = new NWorkspaceStoreInMemory();
         } else {
@@ -100,7 +104,7 @@ public class NWorkspaceModel {
                 askedRuntimeId.getGroupId(),
                 askedRuntimeId.getArtifactId(),
                 NVersion.get(askedRuntimeId.getVersion().toString()).get()).get();
-        this.logModel = new DefaultNLogModel(workspace, this.bootModel.getBootEffectiveOptions(), initialBootOptions);
+        this.logModel.init(this.bootModel.getBootEffectiveOptions(), initialBootOptions);
         this.bootModel.init();
     }
 }
