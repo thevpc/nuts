@@ -20,11 +20,6 @@ public class NLogSPIJUL implements NLogSPI {
     }
 
     @Override
-    public String getName() {
-        return log.getName();
-    }
-
-    @Override
     public boolean isLoggable(Level level) {
         return log.isLoggable(level);
     }
