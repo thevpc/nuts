@@ -25,9 +25,7 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NRepository;
-import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.reserved.util.NBootPlatformHome;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.*;
@@ -88,6 +86,22 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      */
     static NPath ofUserHome() {
         return NPath.of(Paths.get(System.getProperty("user.home")));
+    }
+
+    static NPath ofIdStore(NId id, NStoreType storeType) {
+        NAssert.requireNonBlank(id, "id");
+        NAssert.requireNonBlank(storeType, "storeType");
+        return NWorkspace.of().getStoreLocation(id, storeType);
+    }
+
+    static NPath ofWorkspaceStore(NStoreType storeType) {
+        NAssert.requireNonBlank(storeType, "storeType");
+        return NWorkspace.of().getStoreLocation(storeType);
+    }
+
+    static NPath ofStore(NLocationKey locationKey) {
+        NAssert.requireNonBlank(locationKey, "locationKey");
+        return NWorkspace.of().getStoreLocation(locationKey);
     }
 
     static NPath ofUserStore(NStoreType storeType) {
@@ -250,11 +264,11 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
     NPath setUserTemporary(boolean temporary);
 
-    NPathNameParts getNameParts();
+    public NPath resolveSibling(NPathRenameOptions renameOptions);
 
-    NPathNameParts getNameParts(NPathExtensionType type);
+    NPathNameParts nameParts();
 
-    NPathNameParts getSmartFileNameParts();
+    NPathNameParts nameParts(NPathExtensionType type);
 
     String getName();
 
@@ -264,6 +278,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
     /**
      * same as resolve but will ignore any leading '/' or '\' in the given child
+     *
      * @param other other location
      * @return NPath for the child given other location
      */
@@ -271,6 +286,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
     /**
      * same as resolve but will ignore any leading '/' or '\' in the given child
+     *
      * @param other other location
      * @return NPath for the child given other location
      */
@@ -279,10 +295,6 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
     NPath resolve(NPath other);
 
     NPath resolveSibling(String other);
-
-    NPath resolveSiblingWithExtension(String extension);
-
-    NPath resolveSiblingWithExtension(String extension, NPathExtensionType type);
 
     NPath resolveSibling(NPath other);
 
