@@ -176,9 +176,5 @@
 {
   "name":"sun.java2d.xr.XRSurfaceData",
   "fields":[{"name":"picture"}, {"name":"xid"}]
-},
-{
-  "name":"sun.management.VMManagementImpl",
-  "fields":[{"name":"compTimeMonitoringSupport"}, {"name":"currentThreadCpuTimeSupport"}, {"name":"objectMonitorUsageSupport"}, {"name":"otherThreadCpuTimeSupport"}, {"name":"remoteDiagnosticCommandsSupport"}, {"name":"synchronizerUsageSupport"}, {"name":"threadAllocatedMemorySupport"}, {"name":"threadContentionMonitoringSupport"}]
 }
 ]
