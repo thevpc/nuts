@@ -6,6 +6,7 @@ import net.thevpc.nuts.NConstants;
 
 
 import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NText;
 
@@ -56,21 +57,21 @@ public class NWorkspaceVarExpansionFunction implements Function<String, String> 
             case "user.home":
                 return System.getProperty("user.home");
             case "workspace.config":
-                return str(NWorkspace.of().getStoreLocation(NStoreType.CONF));
+                return str(NPath.ofWorkspaceStore(NStoreType.CONF));
             case "workspace.lib":
-                return str(NWorkspace.of().getStoreLocation(NStoreType.LIB));
+                return str(NPath.ofWorkspaceStore(NStoreType.LIB));
             case "workspace.apps":
-                return str(NWorkspace.of().getStoreLocation(NStoreType.BIN));
+                return str(NPath.ofWorkspaceStore(NStoreType.BIN));
             case "workspace.cache":
-                return str(NWorkspace.of().getStoreLocation(NStoreType.CACHE));
+                return str(NPath.ofWorkspaceStore(NStoreType.CACHE));
             case "workspace.run":
-                return str(NWorkspace.of().getStoreLocation(NStoreType.RUN));
+                return str(NPath.ofWorkspaceStore(NStoreType.RUN));
             case "workspace.temp":
-                return str(NWorkspace.of().getStoreLocation(NStoreType.TEMP));
+                return str(NPath.ofWorkspaceStore(NStoreType.TEMP));
             case "workspace.log":
-                return str(NWorkspace.of().getStoreLocation(NStoreType.LOG));
+                return str(NPath.ofWorkspaceStore(NStoreType.LOG));
             case "workspace.var":
-                return str(NWorkspace.of().getStoreLocation(NStoreType.VAR));
+                return str(NPath.ofWorkspaceStore(NStoreType.VAR));
             case "nuts.boot.version":
                 return str(workspace.getApiVersion());
             case "nuts.boot.id":
