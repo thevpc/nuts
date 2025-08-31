@@ -355,7 +355,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     public NId pathToId(NPath path) {
-        NPath rootFolder = NWorkspace.of().getStoreLocation(NStoreType.CONF).resolve(NConstants.Folders.ID);
+        NPath rootFolder = NPath.ofWorkspaceStore(NStoreType.CONF).resolve(NConstants.Folders.ID);
         String p = path.toString().substring(rootFolder.toString().length());
         List<String> split = StringTokenizerUtils.split(p, "/\\");
         if (split.size() >= 4) {
@@ -421,7 +421,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         NInstallStatus s = NInstallStatus.of(ii.isInstalled(), ii.isRequired(), obsolete, defaultVersion);
         return new DefaultNInstallInfo(ii.getId(),
                 s,
-                NWorkspace.of().getStoreLocation(ii.getId(), NStoreType.BIN),
+                NPath.ofIdStore(ii.getId(), NStoreType.BIN),
                 ii.getCreationDate(),
                 ii.getLastModificationDate(),
                 ii.getCreationUser(),
@@ -565,7 +565,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     public NPath getPath(NId id, String name) {
-        return NWorkspace.of().getStoreLocation(id, NStoreType.CONF).resolve(name);
+        return NPath.ofIdStore(id, NStoreType.CONF).resolve(name);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////
