@@ -112,10 +112,6 @@
   "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
 },
 {
-  "name":"com.formdev.flatlaf.ui.FlatToolTipUI",
-  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
-},
-{
   "name":"com.formdev.flatlaf.ui.FlatViewportUI",
   "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
 },
@@ -156,15 +152,7 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"com.sun.crypto.provider.TlsKeyMaterialGenerator",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
   "name":"com.sun.crypto.provider.TlsMasterSecretGenerator",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"com.sun.crypto.provider.TlsPrfGenerator$V12",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -234,10 +222,6 @@
   "methods":[{"name":"<init>","parameterTypes":["sun.security.x509.X500Name"] }]
 },
 {
-  "name":"javax.swing.PopupFactory",
-  "methods":[{"name":"getPopup","parameterTypes":["java.awt.Component","java.awt.Component","int","int","boolean"] }]
-},
-{
   "name":"javax.swing.plaf.basic.BasicGraphicsUtils",
   "methods":[{"name":"drawStringUnderlineCharAt","parameterTypes":["javax.swing.JComponent","java.awt.Graphics2D","java.lang.String","int","float","float"] }]
 },
@@ -260,10 +244,6 @@
   "name":"net.thevpc.nuts.installer.connector.RequestQuery",
   "allDeclaredFields":true,
   "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"net.thevpc.nuts.installer.panels.AbstractInstallPanel",
-  "methods":[{"name":"coalesceEvents","parameterTypes":["java.awt.AWTEvent","java.awt.AWTEvent"] }]
 },
 {
   "name":"net.thevpc.nuts.installer.panels.ConfigurePanel",
@@ -306,7 +286,11 @@
   "methods":[{"name":"coalesceEvents","parameterTypes":["java.awt.AWTEvent","java.awt.AWTEvent"] }]
 },
 {
-  "name":"net.thevpc.nuts.installer.util.AnsiTermPane",
+  "name":"net.thevpc.nuts.nswing.AnsiTermPane",
+  "methods":[{"name":"coalesceEvents","parameterTypes":["java.awt.AWTEvent","java.awt.AWTEvent"] }]
+},
+{
+  "name":"net.thevpc.nuts.nswing.WizardPageBase",
   "methods":[{"name":"coalesceEvents","parameterTypes":["java.awt.AWTEvent","java.awt.AWTEvent"] }]
 },
 {
