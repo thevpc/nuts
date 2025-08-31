@@ -59,7 +59,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                         .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME).toString()
                 );
                 for (NStoreType value : NStoreType.values()) {
-                    NPath r = NWorkspace.of().getStoreLocation(value);
+                    NPath r = NPath.ofWorkspaceStore(value);
                     if (r.isDirectory()) {
                         all.add(r.toString());
                     }
