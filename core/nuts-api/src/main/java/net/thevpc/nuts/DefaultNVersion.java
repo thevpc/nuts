@@ -222,6 +222,31 @@ public class DefaultNVersion implements NVersion {
         return compareTo(other == null ? null : other.getValue());
     }
 
+    public NVersion baseVersion(){
+        VersionParts parts = getParts();
+        StringBuilder sb=new StringBuilder();
+        for (VersionPart p : parts.all) {
+            switch (p.type){
+                case INT:{
+                    sb.append(p.string);
+                    break;
+                }
+                case SEPARATOR:{
+                    if(p.string.equals(".")) {
+                        sb.append(p.string);
+                    }else{
+                        return NVersion.of(sb.toString());
+                    }
+                    break;
+                }
+                case QAL:{
+                    return NVersion.of(sb.toString());
+                }
+            }
+        }
+        return NVersion.of(sb.toString());
+    }
+
     @Override
     public NVersionFilter filter() {
         return NVersionFilters.of().byValue(expression).get();
