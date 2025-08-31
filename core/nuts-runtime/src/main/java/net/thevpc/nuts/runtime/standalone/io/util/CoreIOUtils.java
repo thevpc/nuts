@@ -345,7 +345,7 @@ public class CoreIOUtils {
 
     public static InputStream getCachedUrlWithSHA1(String path, String sourceTypeName, boolean ignoreSha1NotFound) {
         NWorkspace workspace=NWorkspace.of();
-        final NPath cacheBasePath = NWorkspace.of().getStoreLocation(workspace.getRuntimeId(), NStoreType.CACHE);
+        final NPath cacheBasePath = NPath.ofIdStore(workspace.getRuntimeId(), NStoreType.CACHE);
         final NPath urlContent = cacheBasePath.resolve("urls-content");
         String sha1 = null;
         try {
@@ -460,7 +460,7 @@ public class CoreIOUtils {
 
         if (enforceExtension) {
             NPath pp = NPath.of(temp);
-            String ext = pp.getNameParts(NPathExtensionType.SHORT).getExtension();
+            String ext = pp.nameParts(NPathExtensionType.SHORT).getExtension();
             if (ext.isEmpty()) {
                 String ct = NIO.of().probeContentType(temp);
                 if (ct != null) {
