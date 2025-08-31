@@ -50,10 +50,10 @@ public class JavaPanel extends WizardPageBase {
                 .fillHorizontal()
                 .weight(1,0)
                 .insets(5);
-        gbox.add(new JLabel("Java Executable Location"), gc.at(0, 0));
-        gbox.add(jPanel(), gc.nextLine());
+        gbox.add(new JLabel("Java Executable Location"), gc.at(0, 0).build());
+        gbox.add(jPanel(), gc.nextLine().build());
         javaResultLabel.setEditable(false);
-        gbox.add(javaResultLabelScroll=new JScrollPane(javaResultLabel), gc.nextLine().weight(1,2).fillBoth());
+        gbox.add(javaResultLabelScroll=new JScrollPane(javaResultLabel), gc.nextLine().weight(1,2).fillBoth().build());
         add(UIHelper.margins(gbox, 10));
         resetDefaults();
         javaPathField.addFocusListener(new FocusAdapter() {
