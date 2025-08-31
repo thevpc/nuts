@@ -62,8 +62,7 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
     }
 
     private NPath getConfigFile() {
-        return NWorkspace.of()
-                .getStoreLocation(NId.getForClass(DefaultNWorkspaceList.class).get(),
+        return NPath.ofIdStore(NId.getForClass(DefaultNWorkspaceList.class).get(),
                         NStoreType.CONF)
                 .resolve(name + "-nuts-workspace-list.json");
     }
