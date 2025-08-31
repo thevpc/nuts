@@ -171,7 +171,7 @@ public class NdiScriptOptions implements Cloneable {
                     bootConfig.getStoreLocation(apiId, NStoreType.BIN)
             );
         } else {
-            return NWorkspace.of().getStoreLocation(apiId, NStoreType.BIN);
+            return NPath.ofIdStore(apiId, NStoreType.BIN);
         }
     }
 
@@ -186,7 +186,7 @@ public class NdiScriptOptions implements Cloneable {
             bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
             return NPath.of(bootConfig.getStoreLocation(apiId, NStoreType.BIN));
         } else {
-            return NWorkspace.of().getStoreLocation(apiId, NStoreType.BIN);
+            return NPath.ofIdStore(apiId, NStoreType.BIN);
         }
     }
 
