@@ -26,6 +26,7 @@
 package net.thevpc.nuts.format;
 
 import net.thevpc.nuts.NDescriptor;
+import net.thevpc.nuts.NDescriptorStyle;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
@@ -53,6 +54,34 @@ public interface NDescriptorFormat extends NFormat, NComponent {
     static NDescriptorFormat of() {
         return NExtensions.of(NDescriptorFormat.class);
     }
+
+    static NDescriptorFormat ofNtfMaven(NDescriptor value) {
+        return of().setNtf(true).setDescriptorStyle(NDescriptorStyle.MAVEN).setValue(value);
+    }
+
+    static NDescriptorFormat ofMaven(NDescriptor value) {
+        return of().setNtf(false).setDescriptorStyle(NDescriptorStyle.MAVEN).setValue(value);
+    }
+
+    static NDescriptorFormat ofNtfNuts(NDescriptor value) {
+        return of().setNtf(true).setDescriptorStyle(NDescriptorStyle.NUTS).setValue(value);
+    }
+
+    static NDescriptorFormat ofNuts(NDescriptor value) {
+        return of().setNtf(false).setDescriptorStyle(NDescriptorStyle.NUTS).setValue(value);
+    }
+
+    static NDescriptorFormat ofNtfManifest(NDescriptor value) {
+        return of().setNtf(true).setDescriptorStyle(NDescriptorStyle.MANIFEST).setValue(value);
+    }
+
+    static NDescriptorFormat ofManifest(NDescriptor value) {
+        return of().setNtf(false).setDescriptorStyle(NDescriptorStyle.MANIFEST).setValue(value);
+    }
+
+    NDescriptorStyle getDescriptorStyle();
+
+    NDescriptorFormat setDescriptorStyle(NDescriptorStyle descriptorStyle);
 
     /**
      * true if compact flag is armed.
