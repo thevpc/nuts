@@ -88,13 +88,13 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
                     //ignore
                 }
                 if (contentType == null || "text/plain".equals(contentType)) {
-                    String e = NPath.of(Paths.get(name)).getNameParts(NPathExtensionType.SHORT).getExtension();
+                    String e = NPath.of(Paths.get(name)).nameParts(NPathExtensionType.SHORT).getExtension();
                     if (e != null && e.equalsIgnoreCase("ntf")) {
                         return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT + 10, "text/x-nuts-text-format");
                     }
                 }
                 if (contentType == null || "text/plain".equals(contentType)) {
-                    String e = NPath.of(Paths.get(name)).getNameParts(NPathExtensionType.SHORT).getExtension();
+                    String e = NPath.of(Paths.get(name)).nameParts(NPathExtensionType.SHORT).getExtension();
                     if (e != null && e.equalsIgnoreCase("nuts")) {
                         return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT + 10, "application/json");
                     }
@@ -117,9 +117,9 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
         }
         NPath nPath = NPath.of(file);
         Set<String> extensions=new HashSet<>();
-        extensions.add(nPath.getNameParts(NPathExtensionType.LONG).getExtension());
-        extensions.add(nPath.getNameParts(NPathExtensionType.SHORT).getExtension());
-        extensions.add(nPath.getNameParts(NPathExtensionType.SMART).getExtension());
+        extensions.add(nPath.nameParts(NPathExtensionType.LONG).getExtension());
+        extensions.add(nPath.nameParts(NPathExtensionType.SHORT).getExtension());
+        extensions.add(nPath.nameParts(NPathExtensionType.SMART).getExtension());
         extensions=extensions.stream().filter(NBlankable::isNonBlank).filter(x->!x.isEmpty()).collect(Collectors.toSet());
         if (contentType == null) {
             for (String extension : extensions) {
