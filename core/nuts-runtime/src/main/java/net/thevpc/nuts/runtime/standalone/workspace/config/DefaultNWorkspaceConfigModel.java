@@ -164,81 +164,59 @@ public class DefaultNWorkspaceConfigModel {
         Stack<Map<String, String>> s = currentEnv.get();
         if (s == null) {
             s = new Stack<>();
+            currentEnv.set(s);
         }
         Map<String, String> p = null;
         if (!s.isEmpty()) {
             p = s.peek();
         }
-        Map<String, String> finalP = p;
-        Map<String, String> p2 = new AbstractMap<String, String>() {
-            private Map<String, String> build() {
-                Map<String, String> aa = new HashMap<>();
-                if (finalP == null) {
-                    aa.putAll(System.getenv());
-                } else {
-                    aa.putAll(finalP);
-                }
-                aa.putAll(env);
-                return aa;
-            }
-
-            @Override
-            public String get(Object key) {
-                String b = env.get(key);
-                if (b == null && !env.containsKey(key)) {
-                    if (finalP == null) {
-                        return System.getenv((String) key);
+        Map<String, String> newEnv = newSysEnvEmptyMap();
+        if (p == null) {
+            newEnv.putAll(System.getenv());
+        } else {
+            for (Map.Entry<String, String> e : p.entrySet()) {
+                String k = e.getKey();
+                String v = e.getValue();
+                if (k != null) {
+                    if (v != null) {
+                        newEnv.put(k, v);
                     }
-                    return finalP.get(key);
                 }
-                return b;
             }
-
-            @Override
-            public boolean containsKey(Object key) {
-                String b = env.get(key);
-                if (b == null && !env.containsKey(key)) {
-                    if (finalP == null) {
-                        return System.getenv((String) key) != null;
+        }
+        if (env != null) {
+            for (Map.Entry<String, String> e : env.entrySet()) {
+                String k = e.getKey();
+                String v = e.getValue();
+                if (k != null) {
+                    if (v == null) {
+                        newEnv.remove(k);
+                    } else {
+                        newEnv.put(k, v);
                     }
-                    return finalP.containsKey(key);
                 }
-                return true;
             }
+        }
 
-            @Override
-            public boolean isEmpty() {
-                return build().isEmpty();
-            }
+        s.push(newEnv);
+        return newEnv;
+    }
 
-            @Override
-            public int size() {
-                return build().size();
+    public Map<String, String> newSysEnvEmptyMap() {
+        switch (workspace.getEnvModel().getOsFamily()) {
+            case WINDOWS: {
+                return new NCaseInsensitiveStringMap();
             }
-
-            @Override
-            public Set<String> keySet() {
-                return build().keySet();
-            }
-
-            @Override
-            public Set<Entry<String, String>> entrySet() {
-                return build().entrySet();
-            }
-        };
-        s.push(p2);
-        return p2;
+        }
+        return new  HashMap<>();
     }
 
     public Map<String, String> sysEnv() {
         Stack<Map<String, String>> s = currentEnv.get();
         if (s == null || s.isEmpty()) {
-            switch (workspace.getEnvModel().getOsFamily()) {
-                case WINDOWS: {
-                    return new NCaseInsensitiveStringMap(System.getenv());
-                }
-            }
-            return System.getenv();
+            Map<String, String> m = newSysEnvEmptyMap();
+            m.putAll(System.getenv());
+            return m;
         }
         return s.peek();
     }
@@ -452,7 +430,7 @@ public class DefaultNWorkspaceConfigModel {
         NPath root = this.getRepositoriesRoot();
         return repositoryLocation
                 .toAbsolute(root != null ? root :
-                        NWorkspace.of().getStoreLocation(NStoreType.CONF)
+                        NPath.ofWorkspaceStore(NStoreType.CONF)
                                 .resolve(NConstants.Folders.REPOSITORIES))
                 ;
     }
@@ -723,7 +701,7 @@ public class DefaultNWorkspaceConfigModel {
 
     private List<NId> findOlderNutsApiIds() {
         NId apiId = workspace.getApiId();
-        NPath path = NWorkspace.of().getStoreLocation(apiId, NStoreType.CONF)
+        NPath path = NPath.ofIdStore(apiId, NStoreType.CONF)
                 .getParent();
         List<NId> olderIds = path.stream().filter(NPath::isDirectory)
                 .redescribe(NDescribables.ofDesc("isDirectory"))
@@ -779,7 +757,7 @@ public class DefaultNWorkspaceConfigModel {
                 NWorkspaceExt.of().deployBoot(extensionId, true);
             }
         }
-        NPath runtimeVersionSpecificLocation = NWorkspace.of().getStoreLocation(NStoreType.CONF)
+        NPath runtimeVersionSpecificLocation = NPath.ofWorkspaceStore(NStoreType.CONF)
                 .resolve(NConstants.Folders.ID).resolve(NWorkspace.of().getDefaultIdBasedir(extensionId));
         NPath afile = runtimeVersionSpecificLocation.resolve(NConstants.Files.EXTENSION_BOOT_CONFIG_FILE_NAME);
         cc.setConfigVersion(current().getApiVersion());
@@ -809,7 +787,7 @@ public class DefaultNWorkspaceConfigModel {
         estoreModelApi.setApiVersion(apiId.getVersion());
         estoreModelApi.setRuntimeId(runtimeId);
         estoreModelApi.setConfigVersion(current().getApiVersion());
-        NPath apiVersionSpecificLocation = NWorkspace.of().getStoreLocation(apiId, NStoreType.CONF);
+        NPath apiVersionSpecificLocation = NPath.ofIdStore(apiId, NStoreType.CONF);
         NPath afile = apiVersionSpecificLocation.resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
         NElementWriter.ofJson().write(estoreModelApi, afile);
 
@@ -819,7 +797,7 @@ public class DefaultNWorkspaceConfigModel {
                 newDeps
         );
 
-        NPath runtimeVersionSpecificLocation = NWorkspace.of().getStoreLocation(NStoreType.CONF)
+        NPath runtimeVersionSpecificLocation = NPath.ofWorkspaceStore(NStoreType.CONF)
                 .resolve(NConstants.Folders.ID).resolve(NWorkspace.of().getDefaultIdBasedir(runtimeId));
         afile = runtimeVersionSpecificLocation.resolve(NConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
         storeModelRuntime.setConfigVersion(current().getApiVersion());
@@ -1018,11 +996,11 @@ public class DefaultNWorkspaceConfigModel {
     }
 
     public NPath getRepositoriesRoot() {
-        return NWorkspace.of().getStoreLocation(NStoreType.CONF).resolve(NConstants.Folders.REPOSITORIES);
+        return NPath.ofWorkspaceStore(NStoreType.CONF).resolve(NConstants.Folders.REPOSITORIES);
     }
 
     public NPath getTempRepositoriesRoot() {
-        return NWorkspace.of().getStoreLocation(NStoreType.TEMP).resolve(NConstants.Folders.REPOSITORIES);
+        return NPath.ofWorkspaceStore(NStoreType.TEMP).resolve(NConstants.Folders.REPOSITORIES);
     }
 
     public NAuthenticationAgent createAuthenticationAgent(String authenticationAgent) {
@@ -1339,7 +1317,7 @@ public class DefaultNWorkspaceConfigModel {
         String fileSuffix = Instant.now().toString();
         fileSuffix = fileSuffix.replace(':', '-');
         String fileName = "nuts-workspace-" + fileSuffix;
-        NPath logError = NWorkspace.of().getStoreLocation(workspace.getApiId(), NStoreType.LOG).resolve("invalid-config");
+        NPath logError = NPath.ofIdStore(workspace.getApiId(), NStoreType.LOG).resolve("invalid-config");
         NPath logFile = logError.resolve(fileName + ".error");
         _LOG()
                 .log(NMsg.ofC("erroneous workspace config file. Unable to load file %s : %s", file, ex)
@@ -1372,9 +1350,9 @@ public class DefaultNWorkspaceConfigModel {
                                     .setCompact(false)
                     )
             );
-            for (NStoreType location : NStoreType.values()) {
-                o.println("location." + location.id() + ":");
-                o.println(NWorkspace.of().getStoreLocation(location));
+            for (NStoreType storeType : NStoreType.values()) {
+                o.println("location." + storeType.id() + ":");
+                o.println(NPath.ofWorkspaceStore(storeType));
             }
             o.println("java.class.path:");
             o.println(System.getProperty("java.class.path"));
