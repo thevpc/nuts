@@ -19,7 +19,7 @@ import org.junit.jupiter.api.*;
 public class FindTest {
     @BeforeAll
     public static void init() {
-        TestUtils.openNewMinTestWorkspace();
+        TestUtils.openNewMinTestWorkspace("--stacktrace");
     }
 
     @Test
