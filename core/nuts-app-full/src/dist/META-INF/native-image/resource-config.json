@@ -9,15 +9,13 @@
   }, {
     "pattern":"\\QMETA-INF/services/java.net.spi.URLStreamHandlerProvider\\E"
   }, {
-    "pattern":"\\QMETA-INF/services/java.nio.file.spi.FileTypeDetector\\E"
-  }, {
     "pattern":"\\QMETA-INF/services/java.time.zone.ZoneRulesProvider\\E"
-  }, {
-    "pattern":"\\QMETA-INF/services/javax.xml.parsers.DocumentBuilderFactory\\E"
   }, {
     "pattern":"\\QMETA-INF/services/net.thevpc.nuts.boot.NBootWorkspaceFactory\\E"
   }, {
     "pattern":"\\QMETA-INF/services/net.thevpc.nuts.spi.NComponent\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/net.thevpc.nuts.spi.NPathFactorySPI\\E"
   }, {
     "pattern":"\\QMETA-INF/services/org/jline/terminal/provider/jansi\\E"
   }, {
@@ -39,22 +37,6 @@
   }, {
     "pattern":"\\Qnet/thevpc/nuts/runtime/nuts-welcome.ntf\\E"
   }, {
-    "pattern":"\\Qnet/thevpc/nuts/runtime/settings/template-nuts-env.fish\\E"
-  }, {
-    "pattern":"\\Qnet/thevpc/nuts/runtime/settings/template-nuts-env.sh\\E"
-  }, {
-    "pattern":"\\Qnet/thevpc/nuts/runtime/settings/template-nuts-init.fish\\E"
-  }, {
-    "pattern":"\\Qnet/thevpc/nuts/runtime/settings/template-nuts-init.sh\\E"
-  }, {
-    "pattern":"\\Qnet/thevpc/nuts/runtime/settings/template-nuts-term-init.fish\\E"
-  }, {
-    "pattern":"\\Qnet/thevpc/nuts/runtime/settings/template-nuts-term-init.sh\\E"
-  }, {
-    "pattern":"\\Qnet/thevpc/nuts/runtime/settings/template-nuts-term.sh\\E"
-  }, {
-    "pattern":"\\Qnet/thevpc/nuts/runtime/settings/template-nuts.sh\\E"
-  }, {
     "pattern":"java.base:\\Qjdk/internal/icu/impl/data/icudt74b/nfkc.nrm\\E"
   }, {
     "pattern":"java.base:\\Qjdk/internal/icu/impl/data/icudt74b/uprops.icu\\E"
@@ -67,22 +49,11 @@
   }, {
     "pattern":"java.desktop:\\Qsun/awt/resources/awt_en_US.properties\\E"
   }, {
-    "pattern":"java.xml:\\Qcom/sun/org/apache/xerces/internal/impl/msg/SAXMessages.properties\\E"
-  }, {
-    "pattern":"java.xml:\\Qcom/sun/org/apache/xerces/internal/impl/msg/SAXMessages_en.properties\\E"
-  }, {
-    "pattern":"java.xml:\\Qcom/sun/org/apache/xerces/internal/impl/msg/SAXMessages_en_US.properties\\E"
-  }, {
-    "pattern":"java.xml:\\Qjdk/xml/internal/jdkcatalog/JDKCatalog.xml\\E"
-  }, {
     "pattern":"jdk.internal.le:\\Qjdk/internal/org/jline/utils/capabilities.txt\\E"
   }, {
     "pattern":"jdk.internal.le:\\Qjdk/internal/org/jline/utils/dumb.caps\\E"
   }]},
   "bundles":[{
-    "name":"com.sun.org.apache.xerces.internal.impl.msg.SAXMessages",
-    "locales":["en-US"]
-  }, {
     "name":"sun.awt.resources.awt",
     "locales":["en-US"]
   }, {
