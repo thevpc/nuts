@@ -49,15 +49,15 @@ public class ConfigurePanel extends WizardPageBase {
         GBC gc = GBC.of().anchorNorthWest()
                 .fillHorizontal()
                 .insets(5);
-        gbox.add(optionZReset, gc.at(0, 0));
-        gbox.add(optionSStandalone, gc.nextLine());
-        gbox.add(optionSwitch, gc.nextLine());
-        gbox.add(optionVerbose, gc.nextLine());
-        gbox.add(optionLogFileVerbose, gc.nextLine());
-        gbox.add(customWorkspaceLabel, gc.nextLine());
-        gbox.add(optionWorkspace, gc.nextLine());
-        gbox.add(otherOptionsLabel, gc.nextLine());
-        gbox.add(new JScrollPane(otherOptions), gc.nextLine().fillBoth().weight(1, 1));
+        gbox.add(optionZReset, gc.at(0, 0).build());
+        gbox.add(optionSStandalone, gc.nextLine().build());
+        gbox.add(optionSwitch, gc.nextLine().build());
+        gbox.add(optionVerbose, gc.nextLine().build());
+        gbox.add(optionLogFileVerbose, gc.nextLine().build());
+        gbox.add(customWorkspaceLabel, gc.nextLine().build());
+        gbox.add(optionWorkspace, gc.nextLine().build());
+        gbox.add(otherOptionsLabel, gc.nextLine().build());
+        gbox.add(new JScrollPane(otherOptions), gc.nextLine().fillBoth().weight(1, 1).build());
         add(UIHelper.margins(gbox, 10));
     }
 
