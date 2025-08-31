@@ -44,14 +44,14 @@ public abstract class WizardBase implements Wizard {
 
     public void setFrameIconImage(Image frameIconImage) {
         this.frameIconImage = frameIconImage;
-        if (frameTitle != null) {
+        if (frameTitle != null && frame!=null) {
             frame.setIconImage(frameIconImage);
         }
     }
 
     public void setFrameTitle(String frameTitle) {
         this.frameTitle = frameTitle;
-        if (frameTitle != null) {
+        if (frameTitle != null && frame!=null) {
             frame.setTitle(frameTitle);
         }
     }
@@ -301,7 +301,7 @@ public abstract class WizardBase implements Wizard {
     public void setLefComponent(JComponent c) {
         leftComponent.removeAll();
         if (c != null) {
-            leftComponent.add(c, GBC.of(0, 0).weight(10).insets(5, 10, 5, 10).fillBoth());
+            leftComponent.add(c, GBC.of(0, 0).weight(10).insets(5, 10, 5, 10).fillBoth().build());
         }
     }
 
@@ -309,8 +309,8 @@ public abstract class WizardBase implements Wizard {
         JPanel p = new JPanel(new GridBagLayout());
         p.setOpaque(true);
         p.setBorder(BorderFactory.createEtchedBorder());
-        setLefComponent(createLeftImpl());
         this.leftComponent = p;
+        setLefComponent(createLeftImpl());
         return p;
     }
 
