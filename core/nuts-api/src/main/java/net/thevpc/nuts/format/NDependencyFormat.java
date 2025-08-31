@@ -28,6 +28,8 @@ package net.thevpc.nuts.format;
 
 import net.thevpc.nuts.NDependency;
 import net.thevpc.nuts.NDescriptor;
+import net.thevpc.nuts.NDescriptorParser;
+import net.thevpc.nuts.NDescriptorStyle;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
@@ -130,8 +132,6 @@ public interface NDependencyFormat extends NFormat, NComponent {
      * @return {@code this} instance
      */
     NDependencyFormat setOmitScope(boolean value);
-
-
 
     /**
      * return true if omit exclusions
