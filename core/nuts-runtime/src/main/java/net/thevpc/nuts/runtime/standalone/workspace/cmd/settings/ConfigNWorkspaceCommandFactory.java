@@ -61,7 +61,7 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
     }
 
     public NPath getStoreLocation() {
-        return NWorkspace.of().getStoreLocation(NWorkspace.of().getApiId(), NStoreType.BIN);
+        return NPath.ofIdStore(NWorkspace.of().getApiId(), NStoreType.BIN);
     }
 
     private NPath getCommandsFolder() {
