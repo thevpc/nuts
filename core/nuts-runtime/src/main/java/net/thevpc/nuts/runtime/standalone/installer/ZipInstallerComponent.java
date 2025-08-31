@@ -64,7 +64,7 @@ public class ZipInstallerComponent implements NInstallerComponent {
     @Override
     public void install(NExecutionContext executionContext) {
         NDefinition nutsDefinition = executionContext.getDefinition();
-        NPath installFolder = NWorkspace.of().getStoreLocation(nutsDefinition.getId(), NStoreType.BIN);
+        NPath installFolder = NPath.ofIdStore(nutsDefinition.getId(), NStoreType.BIN);
         NCmdLine cmd = NCmdLine.of(executionContext.getArguments());
         UnzipOptions unzipOptions = new UnzipOptions();
         while (cmd.hasNext()) {
