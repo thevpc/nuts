@@ -673,8 +673,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     protected int compareIconPaths(String a, String b) {
-        String n1 = NPath.of(a).getNameParts(NPathExtensionType.SHORT).getExtension();
-        String n2 = NPath.of(b).getNameParts(NPathExtensionType.SHORT).getExtension();
+        String n1 = NPath.of(a).nameParts(NPathExtensionType.SHORT).getExtension();
+        String n2 = NPath.of(b).nameParts(NPathExtensionType.SHORT).getExtension();
         return compareIconExtensions(n1, n2);
     }
 
@@ -684,7 +684,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             List<String> all = iconPaths.stream().map(x -> (x == null) ? "" : x.trim())
                     .filter(x -> !x.isEmpty())
                     .filter(x ->
-                            resolveIconExtensionPriority(NPath.of(x).getNameParts(NPathExtensionType.SHORT).getExtension()) >= 0
+                            resolveIconExtensionPriority(NPath.of(x).nameParts(NPathExtensionType.SHORT).getExtension()) >= 0
                     )
                     .sorted(this::compareIconPaths).collect(Collectors.toList());
             if (all.size() > 0) {
@@ -766,8 +766,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             String descAppIconDigest = NDigest.of().md5().setSource(new ByteArrayInputStream(descAppIcon0.getBytes())).computeString();
             NPath p0 = NPath.of(descAppIcon);
             descAppIcon=toAbsoluteIconPath(appId, descAppIcon);
-            String bestName = descAppIconDigest + "." + p0.getNameParts(NPathExtensionType.SHORT).getExtension();
-            NPath localIconPath = NWorkspace.of().getStoreLocation(appDef.getId(), NStoreType.CACHE)
+            String bestName = descAppIconDigest + "." + p0.nameParts(NPathExtensionType.SHORT).getExtension();
+            NPath localIconPath = NPath.ofIdStore(appDef.getId(), NStoreType.CACHE)
                     .resolve("icons")
                     .resolve(bestName);
             if (localIconPath.isRegularFile()) {
