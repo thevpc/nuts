@@ -48,6 +48,18 @@ public interface NDescriptorParser extends NComponent {
         return NExtensions.of(NDescriptorParser.class);
     }
 
+    static NDescriptorParser ofMaven() {
+        return NExtensions.of(NDescriptorParser.class).setDescriptorStyle(NDescriptorStyle.MAVEN);
+    }
+
+    static NDescriptorParser ofManifest() {
+        return NExtensions.of(NDescriptorParser.class).setDescriptorStyle(NDescriptorStyle.MANIFEST);
+    }
+
+    static NDescriptorParser ofNuts() {
+        return NExtensions.of(NDescriptorParser.class).setDescriptorStyle(NDescriptorStyle.NUTS);
+    }
+
     /**
      * parse descriptor.
      *
