@@ -1,0 +1,113 @@
+Log file created on Sun Aug 31 15:59:36 CET 2025
+IMPORTANT:
+Because updating this file after every log message would kill
+performance, it will be *incomplete* unless you invoke the
+Utilities->Troubleshooting->Update Activity Log on Disk command!
+3:59:36 PM [main] [message] Log: When reporting bugs, please include the following information:
+3:59:36 PM [main] [message] Log: java.version=17.0.16
+3:59:36 PM [main] [message] Log: java.vm.version=17.0.16+8-suse-1699-x8664
+3:59:36 PM [main] [message] Log: java.vm.name=OpenJDK 64-Bit Server VM
+3:59:36 PM [main] [message] Log: java.runtime.version=17.0.16+8-suse-1699-x8664
+3:59:36 PM [main] [message] Log: java.runtime.name=OpenJDK Runtime Environment
+3:59:36 PM [main] [message] Log: java.vendor=N/A
+3:59:36 PM [main] [message] Log: java.compiler=null
+3:59:36 PM [main] [message] Log: os.name=Linux
+3:59:36 PM [main] [message] Log: os.version=6.16.1-1-default
+3:59:36 PM [main] [message] Log: os.arch=amd64
+3:59:36 PM [main] [message] Log: user.home=/home/vpc
+3:59:36 PM [main] [message] Log: java.home=/usr/lib64/jvm/java-17-openjdk-17
+3:59:36 PM [main] [message] Log: java.class.path=/home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/runtime/test/FindTest_init/lib/id/org/jedit/jedit/5.7.0/jedit-5.7.0.jar
+3:59:36 PM [main] [message] jEdit: starting with command line arguments: -settings=${NUTS_ID_CONFIG}
+3:59:36 PM [main] [debug] jEdit: before splash screen activation:30 ms
+3:59:36 PM [main] [debug] jEdit: after splash screen activation:110 ms
+3:59:36 PM [main] [debug] MiscUtilities: Saving backup of file "/home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_CONFIG}/activity.log" to "/home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_CONFIG}/settings-backup/activity.log~1~"
+3:59:36 PM [main] [notice] jEdit: jEdit version 5.7.0
+3:59:36 PM [main] [message] jEdit: Settings directory is /home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_CONFIG}
+3:59:36 PM [main] [message] jEdit: jEdit home directory is /home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_APPS}
+3:59:36 PM [main] [debug] SplashScreen: init:18/79ms
+3:59:36 PM [main] [debug] SplashScreen: init system properties:5/84ms
+3:59:36 PM [main] [message] BeanShell: Beanshell Init
+3:59:36 PM [main] [debug] SplashScreen: init beanshell:9/93ms
+3:59:36 PM [main] [debug] SplashScreen: loading site properties:1/94ms
+3:59:36 PM [main] [debug] SplashScreen: loading user properties:1/95ms
+3:59:36 PM [main] [debug] GUIUtilities: Icon theme set to: tango
+3:59:36 PM [main] [debug] GUIUtilities: Loading icon theme from: jeditresource:/org/gjt/sp/jedit/icons/themes/tango/
+3:59:36 PM [main] [debug] SplashScreen: init GUI:1/96ms
+3:59:36 PM [main] [debug] EditServer: jEdit server started on port 33175
+3:59:36 PM [main] [debug] EditServer: Authorization key is 850560381
+3:59:36 PM [main] [debug] SplashScreen: init server:9/105ms
+3:59:36 PM [main] [debug] jEdit: initPLAF non-edt old=javax.swing.plaf.metal.MetalLookAndFeel requested=null new=javax.swing.plaf.metal.MetalLookAndFeel
+3:59:36 PM [main] [debug] SplashScreen: init look and feel:4/109ms
+3:59:36 PM [main] [debug] SplashScreen: init VFS Manager:1/110ms
+3:59:36 PM [main] [debug] ActionSet: Loading actions from jar:file:/home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/runtime/test/FindTest_init/lib/id/org/jedit/jedit/5.7.0/jedit-5.7.0.jar!/org/gjt/sp/jedit/actions.xml
+3:59:36 PM [main] [debug] DockableWindowManager: Loading dockables from jar:file:/home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/runtime/test/FindTest_init/lib/id/org/jedit/jedit/5.7.0/jedit-5.7.0.jar!/org/gjt/sp/jedit/dockables.xml
+3:59:36 PM [main] [debug] SplashScreen: init resources:22/132ms
+3:59:36 PM [AWT-EventQueue-0] [debug] EditBus: SearchSettingsChanged[source=null]
+3:59:36 PM [main] [debug] SplashScreen: Migrate keymaps:8/140ms
+3:59:36 PM [main] [notice] jEdit: Loading plugins from /home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_APPS}/jars
+3:59:36 PM [main] [debug] PluginJAR: Opening /home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_APPS}/jars/QuickNotepad.jar
+3:59:37 PM [main] [debug] ActionSet: Loading actions from jeditresource:/QuickNotepad.jar!/actions.xml
+3:59:37 PM [main] [debug] DockableWindowManager: Loading dockables from jeditresource:/QuickNotepad.jar!/dockables.xml
+3:59:37 PM [main] [debug] PluginJAR: Writing /home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_CONFIG}/jars-cache/QuickNotepad.jar.summary
+3:59:37 PM [AWT-EventQueue-0] [debug] EditBus: PluginUpdate[what=LOADED,exit=false,version=5.0,source=/home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_APPS}/jars/QuickNotepad.jar,class=QuickNotepadPlugin]
+3:59:37 PM [main] [notice] jEdit: Loading plugins from /home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_CONFIG}/jars
+3:59:37 PM [main] [debug] SplashScreen: init plugins:7/147ms
+3:59:37 PM [main] [debug] SplashScreen: init history model:1/148ms
+3:59:37 PM [main] [message] BufferHistory: Loading /home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_CONFIG}/recent.xml
+3:59:37 PM [main] [debug] SplashScreen: init buffer history:1/149ms
+3:59:37 PM [main] [message] KillRing: Loading /home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_CONFIG}/killring.xml
+3:59:37 PM [main] [debug] SplashScreen: init killring:2/151ms
+3:59:37 PM [main] [debug] jEdit: initPLAF non-edt old=javax.swing.plaf.metal.MetalLookAndFeel requested=null new=javax.swing.plaf.metal.MetalLookAndFeel
+3:59:37 PM [main] [debug] jEdit: SOCKS proxy disabled
+3:59:37 PM [main] [debug] jEdit: HTTP proxy disabled
+3:59:37 PM [AWT-EventQueue-0] [debug] EditBus: PropertiesChanged[source=null]
+3:59:37 PM [main] [debug] SplashScreen: init various properties:515/666ms
+3:59:37 PM [main] [message] jEdit: Loading mode catalog file /home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_APPS}/modes/catalog
+3:59:37 PM [main] [debug] jEdit: Loading user mode catalog
+3:59:37 PM [main] [message] jEdit: Loading mode catalog file /home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_CONFIG}/modes/catalog
+3:59:37 PM [main] [debug] SplashScreen: init modes:12/678ms
+3:59:37 PM [main] [debug] SplashScreen: activate plugins:2/680ms
+3:59:37 PM [main] [debug] Macros: Registered beanshell macro handler
+3:59:37 PM [AWT-EventQueue-0] [debug] EditBus: DynamicMenuChanged[menu=macros,source=null]
+3:59:37 PM [main] [debug] SplashScreen: init macros:3/683ms
+3:59:37 PM [main] [message] BeanShell: Running script /home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_APPS}/startup/startup.bsh
+3:59:37 PM [main] [notice] jEdit$2: Loading edit mode /home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_APPS}/modes/text.xml
+3:59:37 PM [main] [debug] String: BeanShell interpreter version 2.0b4-jedit
+3:59:37 PM [main] [debug] SplashScreen: run startup scripts:25/708ms
+3:59:37 PM [main] [debug] SplashScreen: run startup scripts:1/709ms
+3:59:37 PM [main] [debug] SplashScreen: run startup scripts:1/709ms
+3:59:37 PM [main] [debug] jEdit: main done:768 ms
+3:59:37 PM [AWT-EventQueue-0] [message] PerspectiveManager: Loading /home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_CONFIG}/perspective.xml
+3:59:37 PM [AWT-EventQueue-0] [debug] EditBus: BufferUpdate[what=PROPERTIES_CHANGED,view=null,source=Untitled-1 (~/xprojects/nuts-world/nuts/test/nuts-runtime-test/)]
+3:59:37 PM [AWT-EventQueue-0] [debug] EditBus: BufferUpdate[what=CREATED,view=null,source=Untitled-1 (~/xprojects/nuts-world/nuts/test/nuts-runtime-test/)]
+3:59:37 PM [AWT-EventQueue-0] [debug] EditBus: BufferUpdate[what=LOAD_STARTED,view=null,source=Untitled-1 (~/xprojects/nuts-world/nuts/test/nuts-runtime-test/)]
+3:59:37 PM [AWT-EventQueue-0] [debug] EditBus: BufferUpdate[what=LOADED,view=null,source=Untitled-1 (~/xprojects/nuts-world/nuts/test/nuts-runtime-test/)]
+3:59:37 PM [AWT-EventQueue-0] [debug] BufferSet: 1860336150: addBufferSetListener org.gjt.sp.jedit.EditPane[inactive]
+3:59:37 PM [AWT-EventQueue-0] [debug] EditBus: BufferChanging[what=BUFFER_CHANGING,source=org.gjt.sp.jedit.EditPane[inactive]]
+3:59:37 PM [AWT-EventQueue-0] [debug] BufferSet: 1860336150 addBufferAt(Untitled-1 (~/xprojects/nuts-world/nuts/test/nuts-runtime-test/),-1)
+3:59:37 PM [AWT-EventQueue-0] [debug] BufferSet: 1860336150: Buffer added Untitled-1 (~/xprojects/nuts-world/nuts/test/nuts-runtime-test/) at 0
+3:59:37 PM [AWT-EventQueue-0] [debug] EditBus: EditPaneUpdate[what=CREATED,source=org.gjt.sp.jedit.EditPane[inactive]]
+3:59:37 PM [AWT-EventQueue-0] [debug] BufferSet: 1860336150 addBufferAt(Untitled-1 (~/xprojects/nuts-world/nuts/test/nuts-runtime-test/),0)
+3:59:37 PM [AWT-EventQueue-0] [debug] BufferSet: 1860336150 addBufferAt(Untitled-1 (~/xprojects/nuts-world/nuts/test/nuts-runtime-test/),1)
+3:59:37 PM [AWT-EventQueue-0] [debug] EditBus: ViewUpdate[what=CREATED,source=org.gjt.sp.jedit.View[active]]
+3:59:37 PM [AWT-EventQueue-0] [debug] EditBus: EditorStarted[source=null]
+3:59:37 PM [AWT-EventQueue-0] [message] jEdit: Startup complete: 959 ms
+3:59:37 PM [AWT-EventQueue-0] [debug] EditBus: ViewUpdate[what=VIEW_ACTIVATED,source=org.gjt.sp.jedit.View[active]]
+3:59:37 PM [AWT-EventQueue-0] [debug] jEdit: checkBufferStatus for all buffers
+3:59:39 PM [AWT-EventQueue-0] [debug] EditBus: ViewUpdate[what=VIEW_ACTIVATED,source=org.gjt.sp.jedit.View[active]]
+3:59:39 PM [AWT-EventQueue-0] [debug] jEdit: checkBufferStatus for all buffers
+3:59:39 PM [AWT-EventQueue-0] [debug] JEditTextArea: InputMethodSupport is activated
+3:59:39 PM [AWT-EventQueue-0] [debug] EditBus: EditorExitRequested[source=org.gjt.sp.jedit.View[active]]
+3:59:39 PM [AWT-EventQueue-0] [message] PerspectiveManager: Saving /home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_CONFIG}/perspective.xml
+3:59:39 PM [AWT-EventQueue-0] [debug] MiscUtilities: Saving backup of file "/home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_CONFIG}/perspective.xml" to "/home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_CONFIG}/settings-backup/perspective.xml~1~"
+3:59:39 PM [AWT-EventQueue-0] [debug] EditBus: EditorExiting[source=null]
+3:59:39 PM [AWT-EventQueue-0] [debug] EditBus: ViewUpdate[what=CLOSED,source=org.gjt.sp.jedit.View[active]]
+3:59:39 PM [AWT-EventQueue-0] [debug] EditBus: EditPaneUpdate[what=DESTROYED,source=org.gjt.sp.jedit.EditPane[active]]
+3:59:39 PM [AWT-EventQueue-0] [debug] BufferSet: 1860336150: Buffer removed Untitled-1 (~/xprojects/nuts-world/nuts/test/nuts-runtime-test/)
+3:59:39 PM [AWT-EventQueue-0] [debug] BufferSetManager: Buffer:Untitled-1 (~/xprojects/nuts-world/nuts/test/nuts-runtime-test/) is in no bufferSet anymore, closing it
+3:59:39 PM [AWT-EventQueue-0] [debug] EditBus: PluginUpdate[what=UNLOADED,exit=true,version=5.0,source=/home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_APPS}/jars/QuickNotepad.jar,class=QuickNotepadPlugin]
+3:59:39 PM [AWT-EventQueue-0] [message] BufferHistory: Saving /home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_CONFIG}/recent.xml
+3:59:39 PM [AWT-EventQueue-0] [debug] MiscUtilities: Saving backup of file "/home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_CONFIG}/recent.xml" to "/home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_CONFIG}/settings-backup/recent.xml~1~"
+3:59:39 PM [AWT-EventQueue-0] [message] KillRing: Saving /home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_CONFIG}/killring.xml
+3:59:39 PM [AWT-EventQueue-0] [debug] MiscUtilities: Saving backup of file "/home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_CONFIG}/killring.xml" to "/home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_CONFIG}/settings-backup/killring.xml~1~"
+3:59:39 PM [AWT-EventQueue-0] [debug] MiscUtilities: Saving backup of file "/home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_CONFIG}/properties" to "/home/vpc/xprojects/nuts-world/nuts/test/nuts-runtime-test/${NUTS_ID_CONFIG}/settings-backup/properties~1~"
