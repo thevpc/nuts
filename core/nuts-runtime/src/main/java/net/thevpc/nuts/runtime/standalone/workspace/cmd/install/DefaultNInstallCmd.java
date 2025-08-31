@@ -79,10 +79,12 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
             doAddForInstall = true;
         }
         try {
-            NDefinition ndef = NFetchCmd.of(id)
+            NDefinition ndef = NSearchCmd.of(id)
                     .failFast()
                     .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                    .getResultDefinition();
+                    .latest()
+                    .getResultDefinitions()
+                    .findFirst().get();
             if (!ndef.getDescriptor().isNoContent()) {
                 ndef.getContent().get();
             }
