@@ -25,16 +25,16 @@ public class VersionsPanel extends WizardPageBase {
     ButtonGroup bg;
     JPanel panel;
     JEditorPane jep;
-    JToggleButton stableButton;
-    JToggleButton previewButton;
+    JToggleButton ltsButton;
+    JToggleButton standardButton;
     Color greenFg = Color.GREEN;
     Color orangeFg = Color.ORANGE;
     Color redFg = new Color(255, 100, 101);
     Color greenBg = new Color(161, 205, 161);
     Color orangeBg = new Color(255, 224, 101);
     Color redBg = new Color(255, 100, 101);
-    ButtonInfo stableButtonInfo = new ButtonInfo("Stable", "Stable", greenBg, greenFg, UiHelper2.getCheckedImageIcon(false), UiHelper2.getCheckedImageIcon(true));
-    ButtonInfo previewButtonInfo = new ButtonInfo("Preview", "Preview", orangeBg, orangeFg, UiHelper2.getCheckedImageIcon(false), UiHelper2.getCheckedImageIcon(true));
+    ButtonInfo ltsButtonInfo = new ButtonInfo("LTS", "LTS", greenBg, greenFg, UiHelper2.getCheckedImageIcon(false), UiHelper2.getCheckedImageIcon(true));
+    ButtonInfo standardButtonInfo = new ButtonInfo("Standard", "Standard", orangeBg, orangeFg, UiHelper2.getCheckedImageIcon(false), UiHelper2.getCheckedImageIcon(true));
     ButtonInfo errorButtonInfo = new ButtonInfo("Not Available", "<html><body>Unable to resolve stable version. Please Check your internet connexion</body></html>", redBg, redFg, UiHelper2.getStopImageIcon(false), UiHelper2.getStopImageIcon(true));
 
     public VersionsPanel() {
@@ -53,8 +53,8 @@ public class VersionsPanel extends WizardPageBase {
         panel.setPreferredSize(new Dimension(2 * w, w));
         panel.setMaximumSize(new Dimension(2 * w, w));
         bg = new ButtonGroup();
-        stableButton = add2(stableButtonInfo);
-        previewButton = add2(previewButtonInfo);
+        standardButton = add2(standardButtonInfo);
+        ltsButton = add2(ltsButtonInfo);
 
         JPanel jp = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -95,11 +95,11 @@ public class VersionsPanel extends WizardPageBase {
     @Override
     public void onNext() {
         InstallData id = InstallData.of(getInstallerContext());
-        if (stableButton.isSelected() || !previewButton.isEnabled()) {
-            ButtonInfo jj = ButtonInfo.of(stableButton);
+        if (ltsButton.isSelected() || !standardButton.isEnabled()) {
+            ButtonInfo jj = ButtonInfo.of(ltsButton);
             id.setInstallVersion(jj.verInfo);
         } else {
-            ButtonInfo jj = ButtonInfo.of(previewButton);
+            ButtonInfo jj = ButtonInfo.of(standardButton);
             id.setInstallVersion(jj.verInfo);
         }
         super.onNext();
@@ -119,35 +119,36 @@ public class VersionsPanel extends WizardPageBase {
         Info info = loadInfo();
         SwingUtilities.invokeLater(() -> {
             getInstallerContext().stopLoading(getPageIndex());
-            ButtonInfo ii = ButtonInfo.of(stableButton);
+            ButtonInfo ii = ButtonInfo.of(ltsButton);
             ii.verInfo = info.stable;
-            stableButton.setSelected(true);
             if (ii.verInfo.valid) {
-                stableButton.setEnabled(true);
-                ii.html = ("<html><body>Select the <strong>stable</strong> version <strong>" + info.stable.runtime + "</strong> for production</body></html>");
-                stableButtonInfo.applyButtonInfo(stableButton);
-                updateObservations(stableButtonInfo);
+                ltsButton.setEnabled(true);
+                ii.html = ("<html><body>Select the <strong>LTS</strong> version <strong>" + info.stable.runtime + "</strong> for maximum stability and long-term support. It receives critical security patches only</body></html>");
+                ltsButtonInfo.applyButtonInfo(ltsButton);
+                updateObservations(ltsButtonInfo);
             } else {
-                stableButton.setEnabled(false);
-                errorButtonInfo.applyButtonInfo(stableButton);
+                ltsButton.setEnabled(false);
+                errorButtonInfo.applyButtonInfo(ltsButton);
                 updateObservations(errorButtonInfo);
             }
-            ButtonInfo jj = ButtonInfo.of(previewButton);
-            jj.html = ("<html><body>Select the <strong>preview</strong> version <strong>" + info.preview.runtime + "</strong> to test new features and get latest updates and bug fixes</body></html>");
+            ButtonInfo jj = ButtonInfo.of(standardButton);
+            jj.html = ("<html><body>Select the <strong>Standard</strong> version <strong>" + info.preview.runtime + "</strong> to get the latest features, updates, and bug fixes. If you are not sure what to choose, choose Standard</body></html>");
             jj.verInfo = info.preview;
             if (Objects.equals(info.stable.runtime, info.preview.runtime)) {
-                previewButton.setEnabled(false);
-                previewButton.setText("Preview");
+                standardButton.setEnabled(false);
+                standardButton.setText("Standard");
             } else {
-//                previewButton.setText("<html><body><center>Preview<br>version<br><strong>" + info.preview.runtime+"</strong></center></body></html>");
-                previewButton.setText("Preview");
-                previewButton.setEnabled(true);
+//                previewButton.setText("<html><body><center>Standard<br>version<br><strong>" + info.preview.runtime+"</strong></center></body></html>");
+                standardButton.setText("Standard");
+                standardButton.setEnabled(true);
             }
             if (ii.verInfo.valid) {
-                previewButton.setVisible(true);
+                standardButton.setVisible(true);
             }else{
-                previewButton.setVisible(false);
+                standardButton.setVisible(false);
             }
+            standardButton.setSelected(true);
+
             getInstallerContext().getNextButton().setEnabled(ii.verInfo.valid);
             getInstallerContext().getPreviousButton().setEnabled(true);
             panel.invalidate();
