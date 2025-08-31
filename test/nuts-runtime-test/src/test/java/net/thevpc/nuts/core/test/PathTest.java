@@ -372,7 +372,7 @@ public class PathTest {
         if (p == null) {
             return new String[]{"", "", ""};
         }
-        NPathNameParts nameParts = p.getNameParts(NPathExtensionType.SMART);
+        NPathNameParts nameParts = p.nameParts(NPathExtensionType.SMART);
         String[] strings = {nameParts.getBaseName(), nameParts.getExtension(), nameParts.getFullExtension()};
         return strings;
     }
