@@ -285,7 +285,7 @@ public class DefaultNIO implements NIO {
 
     private NPath resolveRootPath(NRepository repositoryId) {
         if (repositoryId == null) {
-            return NWorkspace.of().getStoreLocation(NStoreType.TEMP);
+            return NPath.ofWorkspaceStore(NStoreType.TEMP);
         } else {
             return repositoryId.config().getStoreLocation(NStoreType.TEMP);
         }
@@ -293,15 +293,15 @@ public class DefaultNIO implements NIO {
 
     private NPath resolveRootPath(NId nId) {
         if (nId == null) {
-            return NWorkspace.of().getStoreLocation(NStoreType.TEMP);
+            return NPath.ofWorkspaceStore(NStoreType.TEMP);
         } else {
-            return NWorkspace.of().getStoreLocation(nId, NStoreType.TEMP);
+            return NPath.ofIdStore(nId, NStoreType.TEMP);
         }
     }
 
     public NPath createAnyTempFile(String name, boolean folder, NPath rootFolder) {
         if (rootFolder == null) {
-            rootFolder = NWorkspace.of().getStoreLocation(NStoreType.TEMP);
+            rootFolder = NPath.ofWorkspaceStore(NStoreType.TEMP);
         }
         NId appId = NApp.of().getId().orElseGet(() -> NWorkspace.of().getRuntimeId());
         if (appId != null) {
