@@ -191,8 +191,8 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
         this.appClass = appClass == null ? null : JavaClassUtils.unwrapCGLib(appClass);
         NWorkspace workspace = NWorkspace.of();
         for (NStoreType folder : NStoreType.values()) {
-            this.setFolder(folder, workspace.getStoreLocation(this.id, folder));
-            this.setSharedFolder(folder, workspace.getStoreLocation(this.id.builder().setVersion("SHARED").build(), folder));
+            this.setFolder(folder, NPath.ofIdStore(this.id, folder));
+            this.setSharedFolder(folder, NPath.ofIdStore(this.id.builder().setVersion("SHARED").build(), folder));
         }
         if (this.mode == NApplicationMode.AUTO_COMPLETE) {
             //TODO fix me
@@ -395,7 +395,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
                 return r;
             }
         }
-        return NWorkspace.of().getStoreLocation(newId, storeType);
+        return NPath.ofIdStore(newId, storeType);
     }
 
     @Override
