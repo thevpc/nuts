@@ -503,7 +503,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     @Override
     public NStream<NPath> getResultStoreLocations(NStoreType location) {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .map(NFunction.of((NDefinition x) -> NWorkspace.of().getStoreLocation(x.getId(), location))
+                .map(NFunction.of((NDefinition x) -> NPath.ofIdStore(x.getId(), location))
                         .redescribe(NDescribables.ofDesc("getStoreLocation(" + location.id() + ")"))
                 )
                 .notNull());
