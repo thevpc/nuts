@@ -71,13 +71,13 @@ public interface NLock extends Lock {
     }
 
     static NLock ofIdPath(NId id) {
-        return NLockBuilder.of().setSource(id.getLongId()).setResource(NWorkspace.of().getStoreLocation(id, NStoreType.RUN)
+        return NLockBuilder.of().setSource(id.getLongId()).setResource(NPath.ofIdStore(id, NStoreType.RUN)
                 .resolve("nuts-" + NStringUtils.firstNonBlank(id.getFace(), "content"))
                 .toPath().get()
         ).build();
     }
     static NLock ofIdPath(NId id,String path) {
-        return NLockBuilder.of().setSource(id.getLongId()).setResource(NWorkspace.of().getStoreLocation(id, NStoreType.RUN)
+        return NLockBuilder.of().setSource(id.getLongId()).setResource(NPath.ofIdStore(id, NStoreType.RUN)
                 .resolve(path)
                 .toPath().get()
         ).build();
