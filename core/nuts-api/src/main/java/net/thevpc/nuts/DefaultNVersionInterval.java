@@ -53,14 +53,21 @@ public class DefaultNVersionInterval implements NVersionInterval, Serializable {
 
     @Override
     public boolean acceptVersion(NVersion version) {
+        NVersion baseVersion = null;
         if (!NBlankable.isBlank(lowerBound) && !lowerBound.equals(NConstants.Versions.LATEST) && !lowerBound.equals(NConstants.Versions.RELEASE)) {
-            int t = version.compareTo(lowerBound);
+            if(baseVersion==null){
+                baseVersion = version.baseVersion();
+            }
+            int t = baseVersion.compareTo(lowerBound);
             if ((includeLowerBound && t < 0) || (!includeLowerBound && t <= 0)) {
                 return false;
             }
         }
         if (!NBlankable.isBlank(upperBound) && !upperBound.equals(NConstants.Versions.LATEST) && !upperBound.equals(NConstants.Versions.RELEASE)) {
-            int t = version.compareTo(upperBound);
+            if(baseVersion==null){
+                baseVersion = version.baseVersion();
+            }
+            int t = baseVersion.compareTo(upperBound);
             return (!includeUpperBound || t <= 0) && (includeUpperBound || t < 0);
         }
         return true;
