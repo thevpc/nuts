@@ -1,0 +1,152 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Tabbing and Indentation</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit 5.7 User's Guide"><link rel="up" href="source-edit.html" title="Chapter&nbsp;6.&nbsp;Editing Source Code"><link rel="prev" href="modes.html" title="Edit Modes"><link rel="next" href="commenting.html" title="Commenting Out Code"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Tabbing and Indentation</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="modes.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;6.&nbsp;Editing Source Code</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="commenting.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="indent"></a>Tabbing and Indentation</h2></div></div></div><p>jEdit makes a distinction between the <em class="firstterm">tab
+        width</em>, which is is used when displaying hard tab characters,
+        and the <em class="firstterm">indent width</em>, which is used when a level
+        of indent is to be added or removed, for example by mode-specific auto
+        indent routines. Both can be changed in one of several ways:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>On a global or mode-specific basis in the
+                <span class="guibutton"><strong>Editing</strong></span> pane of the the
+                <span class="guimenu"><strong>Utilities</strong></span>&gt;
+                <span class="guimenuitem"><strong>Options</strong></span> dialog box.
+                See <a class="xref" href="global-opts.html#editing-pane" title="The Editing Pane">the section called &#8220;The Editing Pane&#8221;</a>.</p></li><li class="listitem"><p>In the current buffer for the duration of the editing
+                session in the
+                <span class="guimenu"><strong>Utilities</strong></span>&gt;<span class="guimenuitem"><strong>Buffer
+                Options</strong></span> dialog box. See <a class="xref" href="buffer-opts.html" title="The Buffer Options Dialog Box">the section called &#8220;The Buffer Options Dialog Box&#8221;</a>.</p></li><li class="listitem"><p>In the current buffer for future editing sessions by
+                placing the following in one of the first or last 10 lines of
+                the buffer, where <em class="replaceable"><code>n</code></em> is the desired
+                tab width, and <em class="replaceable"><code>m</code></em> is the desired
+                indent width:</p><pre class="screen">:tabSize=<em class="replaceable"><code>n</code></em>:indentSize=<em class="replaceable"><code>m</code></em>:</pre></li></ul></div><p><span class="guimenu"><strong>Edit</strong></span>&gt;<span class="guisubmenu"><strong>Indent</strong></span>&gt;<span class="guisubmenu"><strong>Shift
+        Indent Left</strong></span> (shortcut: <code class="keycap">S+TAB</code> or
+        <code class="keycap">A+LEFT</code>) removes one level of indent from each selected
+        line, or the current line if there is no selection.</p><p><span class="guimenu"><strong>Edit</strong></span>&gt;<span class="guisubmenu"><strong>Indent</strong></span>&gt;<span class="guisubmenu"><strong>Shift
+        Indent Right</strong></span> (shortcut: <code class="keycap">A+RIGHT</code>) adds one
+        level of indent to each selected line, or the current line if there is
+        no selection. Pressing <code class="keycap">Tab</code> while a multi-line selection
+        is active has the same effect.</p><p><span class="guimenu"><strong>Edit</strong></span>&gt;<span class="guisubmenu"><strong>Indent</strong></span>&gt;<span class="guimenuitem"><strong>Remove
+        Trailing Whitespace</strong></span> (shortcut: <code class="keycap">C+e r</code>)
+        removes all whitespace from the end of each selected line, or the
+        current line if there is no selection.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="soft-tabs"></a>Soft Tabs</h3></div></div></div><p>Files containing hard tab characters may look less than ideal
+            if the default tab size is changed, so some people prefer using
+            multiple space characters instead of hard tabs to indent
+            code.</p><p>This feature is known as <em class="firstterm">soft tabs</em>.
+            Soft tabs can be enabled or disabled in one of several ways:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>On a global or mode-specific basis in the
+                    <span class="guibutton"><strong>Editing</strong></span> pane of the
+                    <span class="guimenu"><strong>Utilities</strong></span>&gt;
+                    <span class="guimenuitem"><strong>Options</strong></span>
+                    dialog box. See <a class="xref" href="global-opts.html#editing-pane" title="The Editing Pane">the section called &#8220;The Editing Pane&#8221;</a>.</p></li><li class="listitem"><p>In the current buffer for the duration of the editing
+                    session in the
+                    <span class="guimenu"><strong>Utilities</strong></span>&gt;<span class="guimenuitem"><strong>Buffer
+                    Options</strong></span> dialog box. See <a class="xref" href="buffer-opts.html" title="The Buffer Options Dialog Box">the section called &#8220;The Buffer Options Dialog Box&#8221;</a>.</p></li><li class="listitem"><p>In the current buffer for future editing sessions by
+                    placing the following in one of the first or last 10 lines
+                    of the buffer, where <em class="replaceable"><code>flag</code></em> is
+                    either <span class="quote">&#8220;<span class="quote">true</span>&#8221;</span> or <span class="quote">&#8220;<span class="quote">false</span>&#8221;</span>:</p><pre class="screen">:noTabs=<em class="replaceable"><code>flag</code></em>:</pre></li></ul></div><p>Changing the soft tabs setting has no effect on existing tab
+            characters; it only affects subsequently-inserted tabs.</p><p><span class="guimenu"><strong>Edit</strong></span>&gt;<span class="guisubmenu"><strong>Indent</strong></span>&gt;<span class="guimenuitem"><strong>Spaces
+            to Tabs</strong></span> converts soft tabs to hard tabs in the current
+            selection, or the entire buffer if nothing is selected.</p><p><span class="guimenu"><strong>Edit</strong></span>&gt;<span class="guisubmenu"><strong>Indent</strong></span>&gt;<span class="guimenuitem"><strong>Tabs
+            to Spaces</strong></span> converts hard tabs to soft tabs in the
+            current selection, or the entire buffer if nothing is
+            selected.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="elastic-tabstops"></a>Elastic Tabstops</h3></div></div></div><p>Elastic tabstops are an alternative way to handle tabstops.
+            Elastic tabstops differ from traditional fixed tabstops because
+	     columns in lines above and below the "cell" that is being
+            changed are always kept aligned. As the width of text before a tab
+            character changes, the tabstops on adjacent lines are also
+            changed to fit the widest piece of text in that column. It provides
+            certain explicit benefits like it saves time
+	     spent on arranging the code and works seemlessly with variable width
+            fonts.But at the same time it can make the code look unorganized
+            on editors that do not support elastic tabstops.</p><p>This feature is known as <em class="firstterm">elastic tabstops</em>.
+            Elastic tabstops can be enabled or disabled in one of several ways:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>On a global or mode-specific basis in the
+                    <span class="guibutton"><strong>Editing</strong></span> pane of the
+                    <span class="guimenu"><strong>Utilities</strong></span>&gt;<span class="guimenuitem"><strong>Options</strong></span>
+                    dialog box. See <a class="xref" href="global-opts.html#editing-pane" title="The Editing Pane">the section called &#8220;The Editing Pane&#8221;</a>.</p></li><li class="listitem"><p>In the current buffer for the duration of the editing
+                    session in the
+                    <span class="guimenu"><strong>Utilities</strong></span>&gt;<span class="guimenuitem"><strong>Buffer
+                    Options</strong></span> dialog box. See <a class="xref" href="buffer-opts.html" title="The Buffer Options Dialog Box">the section called &#8220;The Buffer Options Dialog Box&#8221;</a>.</p></li><li class="listitem"><p>In the current buffer for future editing sessions by
+                    placing the following in one of the first or last 10 lines
+                    of the buffer, where <em class="replaceable"><code>flag</code></em> is
+                    either <span class="quote">&#8220;<span class="quote">true</span>&#8221;</span> or <span class="quote">&#8220;<span class="quote">false</span>&#8221;</span>:</p><pre class="screen">:elasticTabstops=<em class="replaceable"><code>flag</code></em>:</pre></li></ul></div><p>Note that this feature does not work with <em class="firstterm">soft tabs</em>.
+            where tabs are emulated as spaces</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="autoindent"></a>Automatic Indent</h3></div></div></div><p>The auto indent feature inserts the appropriate number of tabs
+            or spaces at the beginning of a line. There are three different
+            indentation schemes to choose from: <span class="quote">&#8220;<span class="quote">full</span>&#8221;</span>,
+            <span class="quote">&#8220;<span class="quote">simple</span>&#8221;</span>, and <span class="quote">&#8220;<span class="quote">none</span>&#8221;</span>. The scheme can be
+            chosen on a global or per-edit mode basis using the
+            <span class="guibutton"><strong>Editing</strong></span> pane of the
+            <span class="guimenu"><strong>Utilities</strong></span>&gt;<span class="guimenuitem"><strong>Options</strong></span>
+            dialog. It can also be changed for a specific
+            buffer using the <span class="guimenuitem"><strong>Buffer Options</strong></span> dialog,
+            or with a buffer-local property. (see <a class="xref" href="buffer-local.html" title="Buffer-Local Properties">the section called &#8220;Buffer-Local Properties&#8221;</a>)
+            </p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="autoindent-full"></a>Automatic Indent Scheme: full</h4></div></div></div><p>
+                In this default scheme, the amount of indentation inserted is
+                mode-specific. In most edit modes, the indent of the previous
+                line is simply copied over. However, in C-like languages (C,
+                C++, Java, JavaScript), curly brackets and language statements
+                are taken into account and indent is added and removed as
+                necessary.
+                </p><p>
+                The automatic indentation can be triggered by: pressing
+                <code class="keycap">ENTER</code> (this will by default only affect the
+                indentation of the new line), pressing <code class="keycap">TAB</code> at
+                the beginning of, or inside the leading whitespace of a line,
+                entering one the bracket characters defined in the edit mode,
+                pressing one of the <code class="varname">electricKeys</code> for the
+                current edit mode (more details in
+                <a class="xref" href="mode-tag-props.html" title="The PROPS Tag">the section called &#8220;The PROPS Tag&#8221;</a>), or when causing a hard wrap
+                (see <a class="xref" href="word-wrap.html" title="Wrapping Long Lines">the section called &#8220;Wrapping Long Lines&#8221;</a>).
+                </p><p>No matter what automatic indentation scheme is currently
+                active, <span class="guimenu"><strong>Edit</strong></span> &gt;
+                <span class="guisubmenu"><strong>Indent</strong></span> &gt; <span class="guisubmenu"><strong>Indent Selected
+                Lines</strong></span> (shortcut: <code class="keycap">C+i</code>) indents all
+                selected lines, or the current line if there is no selection, as
+                if in the <span class="quote">&#8220;<span class="quote">full</span>&#8221;</span> scheme.</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a name="electric-keys"></a>Electric keys</h5></div></div></div><p>
+                Electric keys cause reapplying of the indentation rules to
+                the current line. Thanks to the electric keys the following
+                code fragments are indented properly on-line:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+                Java, C: brackets. If indenting brackets are defined for
+                the language, they are implicitly considered electric keys.
+                Thus a closing bracket is placed in its correct position
+                immediately after being typed.
+                </p></li><li class="listitem"><p>
+                Java, C: labels. Labels end with a colon and the colon is
+                included in electric keys for these languages. With
+                pressing the colon, the line is reindented and the labels
+                are indented a level to the left.
+                </p></li><li class="listitem"><p>
+                Basic: <code class="literal">endif</code>. Here <code class="keycap">f</code>
+                letter is an electric key, that makes the line indented
+                to the left.
+                </p></li></ul></div><p>In jEdit 4 electric keys worked unconditionally.
+                As of jEdit 5 they trigger reindentation only if
+                the indentation of the line, before pressing a key,
+                is the same as jEdit would indent it using its rules.
+                This allows for specifying more electric keys in mode
+                files, because they don't cause unwanted indentation
+                like they did before. Electric keys including all letters
+                seem to be good solution for basic-like languages.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="autoindent-simple"></a>Automatic Indent Scheme: simple</h4></div></div></div><p>
+                In this simplified automatic-indentation scheme, only two
+                actions trigger an indentation: pressing <code class="keycap">ENTER</code>,
+                or causing a hard wrap. Only the new line will be indented, and
+                the amount of indentation will be the same as the previously
+                line.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="autoindent-none"></a>Automatic Indent Scheme: none</h4></div></div></div><p>
+                In this automatic indentation scheme, no actions in the text
+                area will trigger a reindentation, and all lines start
+                completely unindented. </p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="autoindent-customizing"></a>Further customization of automatic indentation</h4></div></div></div><p>The behavior of the <code class="keycap">ENTER</code> and
+                <code class="keycap">TAB</code> keys can be configured in the
+                <span class="guibutton"><strong>Shortcuts</strong></span> pane of the
+                <span class="guimenu"><strong>Utilities</strong></span>&gt;<span class="guimenuitem"><strong>Options</strong></span>
+                dialog. box, just as with any other key.
+                The <code class="keycap">ENTER</code> key can be bound to one of the
+                following, or indeed any other command or macro:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><span class="guimenuitem"><strong>Insert Newline</strong></span>.</p></li><li class="listitem"><p><span class="guimenuitem"><strong>Insert Newline and
+                        Indent</strong></span>, which is the default. This is
+                        equivalent to <span class="guimenuitem"><strong>Insert Newline</strong></span>
+                        when using the indentation scheme <span class="quote">&#8220;<span class="quote">none</span>&#8221;</span>.
+                        </p></li></ul></div><p>The <code class="keycap">TAB</code> can be bound to one of the
+                following, or again, any other command or macro:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><span class="guimenuitem"><strong>Insert Tab</strong></span>.</p></li><li class="listitem"><p><span class="guimenuitem"><strong>Insert Tab or Indent</strong></span>,
+                        which is the default. This is equivalent to
+                        <span class="guimenuitem"><strong>Insert Tab</strong></span> when not using the
+                        <span class="quote">&#8220;<span class="quote">full</span>&#8221;</span> automatic indentation scheme.</p></li><li class="listitem"><p><span class="guimenuitem"><strong>Indent Selected Lines</strong></span>.
+                        This binding will not respect the selected auto
+                        indentation scheme.
+                        </p></li></ul></div><p>See <a class="xref" href="global-opts.html#shortcuts-pane" title="The Shortcuts Pane">the section called &#8220;The Shortcuts Pane&#8221;</a> for details.</p><p>To insert a literal tab or newline without performing
+                indentation, prefix the tab or newline with <code class="keycap">C+e
+                v</code>. For example, to create a new line without any
+                indentation, type <code class="keycap">C+e v ENTER</code>.</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="modes.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="source-edit.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="commenting.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Edit Modes&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Commenting Out Code</td></tr></table></div></body></html>

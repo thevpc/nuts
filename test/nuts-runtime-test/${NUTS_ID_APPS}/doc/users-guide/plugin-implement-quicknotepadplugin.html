@@ -1,0 +1,121 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>The QuickNotepadPlugin Class</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit 5.7 User's Guide"><link rel="up" href="plugin-implement.html" title="Chapter&nbsp;18.&nbsp;Implementing a Simple Plugin"><link rel="prev" href="plugin-load.html" title="How Plugins are Loaded"><link rel="next" href="plugin-implement-properties.html" title="The Property Files"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">The QuickNotepadPlugin Class</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="plugin-load.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;18.&nbsp;Implementing a Simple Plugin</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="plugin-implement-properties.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="plugin-implement-quicknotepadplugin"></a>The QuickNotepadPlugin Class</h2></div></div></div><p>The major issues encountered when writing a plugin core class
+        arise from the developer's decisions on what features the plugin will
+        make available. These issues have implications for other plugin elements
+        as well.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Will the plugin provide for actions that the user can
+                trigger using jEdit's menu items, toolbar buttons and keyboard
+                shortcuts?</p></li><li class="listitem"><p>Will the plugin have its own visible interface?</p></li><li class="listitem"><p>Will the plugin have settings that the user can
+                configure?</p></li><li class="listitem"><p>Will the plugin respond to any messages reflecting changes
+                in the host application's state?</p></li><li class="listitem"><p>Should the plugin do something special when it gets
+                focus?</p></li></ul></div><p>Recall that the plugin core class must extend <a class="ulink" href="../api/org/gjt/sp/jedit/EditPlugin.html" target="_top">
+        <code class="classname">EditPlugin</code></a>. In QuickNotepad's plugin core
+        class, there are no special initialization or shutdown chores to
+        perform, so we will not need a <code class="function">start()</code> or
+        <code class="function">stop()</code> method.</p><p>The resulting plugin core class is lightweight and straightforward
+        to implement:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><div class="informalexample"><pre class="programlisting">public class QuickNotepadPlugin extends EditPlugin {
+  public static final String NAME = "quicknotepad";
+  public static final String OPTION_PREFIX = "options.quicknotepad.";
+}
+</pre></div><p>The class has been simplified since 4.1, and all we
+                defined here were a couple of <code class="classname">String</code> data
+                members to enforce consistent syntax for the name of properties
+                we will use throughout the plugin.</p></li><li class="listitem"><p>These names are used in <code class="filename">actions.xml</code>
+                for each of the menu choices. This file is discussed in more
+                detail in <a class="xref" href="plugin-implement-actions.html" title="The Actions.xml Catalog">the section called &#8220;The Actions.xml Catalog&#8221;</a>. Each
+                action is a beanshell script.</p><div class="informalexample"><pre class="programlisting">
+&lt;!DOCTYPE ACTIONS SYSTEM "actions.dtd"&gt;
+&lt;ACTIONS&gt;
+  &lt;ACTION NAME="quicknotepad.choose-file"&gt;
+    &lt;CODE&gt;
+      wm.addDockableWindow(QuickNotepadPlugin.NAME);
+      wm.getDockableWindow(QuickNotepadPlugin.NAME).chooseFile();
+    &lt;/CODE&gt;
+  &lt;/ACTION&gt;
+
+  &lt;ACTION NAME="quicknotepad.save-file"&gt;
+    &lt;CODE&gt;
+      wm.addDockableWindow(QuickNotepadPlugin.NAME);
+      wm.getDockableWindow(QuickNotepadPlugin.NAME).saveFile();
+    &lt;/CODE&gt;
+  &lt;/ACTION&gt;
+
+  &lt;ACTION NAME="quicknotepad.copy-to-buffer"&gt;
+    &lt;CODE&gt;
+      wm.addDockableWindow(QuickNotepadPlugin.NAME);
+      wm.getDockableWindow(QuickNotepadPlugin.NAME).copyToBuffer();
+    &lt;/CODE&gt;
+  &lt;/ACTION&gt;
+&lt;/ACTIONS&gt;
+</pre></div></li><li class="listitem"><p>The names also come up in the properties file,
+                <code class="filename">QuickNotePad.props</code> file. The properties
+                define option panes and strings used by the plugin. It is
+                explained in more detail in <a class="xref" href="plugin-implement-properties.html" title="The Property Files">the section called &#8220;The Property Files&#8221;</a> and the <a class="ulink" href="../api/org/gjt/sp/jedit/EditPlugin.html" target="_top">
+                <code class="classname">EditPlugin</code></a> API docs.</p><div class="informalexample"><pre class="programlisting">
+# jEdit only needs to load the plugin the first time the user accesses it
+# the presence of this property also tells jEdit the plugin is using the new API
+plugin.QuickNotepadPlugin.activate=defer
+
+# Even if you don't store additional files, this is a good idea to set:
+plugin.QuickNotepadPlugin.usePluginHome=true
+
+# Required for all plugins:
+plugin.QuickNotepadPlugin.name=QuickNotepad
+plugin.QuickNotepadPlugin.author=John Gellene
+
+# version number == jEdit version number
+plugin.QuickNotepadPlugin.version=4.5
+
+# online help
+plugin.QuickNotepadPlugin.docs=index.html
+
+# we only have one dependency, jEdit 4.5
+# See jEdit.getBuild() to understand version numbering scheme.
+plugin.QuickNotepadPlugin.depend.0=jedit 4.05.99.00
+
+# quicknotepad's plugin menu - a list of actions or separators
+plugin.QuickNotepadPlugin.menu=quicknotepad \
+  - \
+  quicknotepad.choose-file \
+  quicknotepad.save-file \
+  quicknotepad.copy-to-buffer
+
+# action labels for actions supplied by dockables.xml
+quicknotepad.label=QuickNotepad
+
+# action labels for actions supplied by actions.xml
+quicknotepad.choose-file.label=Choose notepad file
+quicknotepad.save-file.label=Save notepad file
+quicknotepad.copy-to-buffer.label=Copy notepad to buffer
+
+# plugin option pane
+plugin.QuickNotepadPlugin.option-pane=quicknotepad
+
+# Option pane activation BeanShell snippet
+options.quicknotepad.code=new QuickNotepadOptionPane();
+
+# Option pane labels
+options.quicknotepad.label=QuickNotepad
+options.quicknotepad.file=File:
+options.quicknotepad.choose-file=Choose
+options.quicknotepad.choose-file.title=Choose a notepad file
+options.quicknotepad.choose-font=Font:
+options.quicknotepad.show-filepath.title=Display notepad file path
+
+# window title
+quicknotepad.title=QuickNotepad
+
+# window toolbar buttons
+quicknotepad.choose-file.icon=Open.png
+quicknotepad.save-file.icon=Save.png
+quicknotepad.copy-to-buffer.icon=CopyToBuffer.png
+
+# default settings
+options.quicknotepad.show-filepath=true
+options.quicknotepad.font=Monospaced
+options.quicknotepad.fontstyle=0
+options.quicknotepad.fontsize=14
+
+# Setting not defined but supplied for completeness
+options.quicknotepad.filepath=
+</pre></div></li></ul></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="plugin-load.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="plugin-implement.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="plugin-implement-properties.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> How Plugins are Loaded&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;The Property Files</td></tr></table></div></body></html>

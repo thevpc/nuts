@@ -1,0 +1,27 @@
+/**
+ * Emulate GNU Emacs's "kill-region" capability (normally bound to Ctrl-W),
+ * which kills the text between the caret and the mark, copying it to the kill
+ * ring. This version is slightly different: If there's any selected text, it
+ * kills and copies that text. Otherwise, it selects the text between the
+ * caret and the mark, and kills and copies that.
+ *
+ * Does NOT use jEdit markers.
+ */
+source (MiscUtilities.constructPath(dirname(scriptPath), "EmacsUtil.bsh"));
+
+void emacsKillRegion()
+{
+    selection = getKillRegion();
+    if (selection == null)
+        beep();
+
+    else
+    {
+        addToClipboardAndHistory (selection);
+        textArea.replaceSelection ("");
+        textArea.removeFromSelection (selection);
+    }
+}
+
+emacsKillRegion();
+

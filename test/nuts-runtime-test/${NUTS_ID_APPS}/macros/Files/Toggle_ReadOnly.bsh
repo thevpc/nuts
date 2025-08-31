@@ -1,0 +1,89 @@
+/*
+ * Toggle_ReadOnly.bsh - a BeanShell macro for jEdit that toggles 
+ * a local file's read-only flag.
+ *
+ * Copyright (C) 2002,2003 Ollie Rutherfurd, oliver@rutherfurd.net
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the jEdit program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Id: Toggle_ReadOnly.bsh 21353 2012-03-14 09:46:51Z jojaba_67 $
+ */
+
+// Localization
+final static String OnlyLocalFilesError = jEdit.getProperty("macro.rs.ToggleReadOnly.OnlyLocalFiles.error", "This macro only works on local files.");
+final static String OnlyWindowsUnixMacosError = jEdit.getProperty("macro.rs.ToggleReadOnly.OnlyWindowsUnixMacos.error", "This macro only works on Windows, Unix, & MacOS X.");
+	
+//Process
+CmdThread(cmd, view)
+{
+	run()
+	{
+		process = Runtime.getRuntime().exec(cmd);
+		process.waitFor();
+		view.getBuffer().checkFileStatus(view);
+	}
+	return this;
+}
+
+
+void ToggleReadOnly(view)
+{
+    buffer = view.getBuffer();
+
+	// must be using file vfs
+	if(!buffer.getVFS().getName().equals("file"))
+	{
+		Macros.error(view, OnlyLocalFilesError);
+		return;
+	}
+
+	// is read-only be turned on or off
+	readonly = buffer.isReadOnly();
+
+	if (OperatingSystem.isUnix() || OperatingSystem.isMacOS())
+	{
+		cmd = "chmod " + (readonly ? "+" : "-") + "w " 
+			+ buffer.getPath();
+	}
+	else if(OperatingSystem.isWindows())
+	{
+		cmd = "ATTRIB.EXE " + (readonly ? "-" : "+") + "R \"" 
+			+ buffer.getPath() + "\"";
+	}
+	else
+	{
+		Macros.error(view, OnlyWindowsUnixMacosError);
+		return;
+	}
+
+	toggle = CmdThread(cmd, view);
+	SwingUtilities.invokeLater(toggle);
+}
+
+ToggleReadOnly(view);
+
+/*
+	Macro index data (in DocBook format)
+
+<listitem>
+	<para><filename>Toggle_ReadOnly.bsh</filename></para>
+	<abstract><para>
+	Toggles a local file's read-only flag. Uses platform-specific commands, so it only works on Windows, Unix and MacOS X.
+	</para></abstract>
+</listitem>
+
+*/
+
+// :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=1:

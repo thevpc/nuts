@@ -1,0 +1,82 @@
+/*
+ * Display_Actions.bsh - Displays a list of all the actions known to jEdit
+ * categorised by ActionSet.
+ *
+ * Copyright (C) 2002 Lee Turner (lee@leeturner.org)
+ * Version 1.0
+ *
+ * :tabSize=4:indentSize=4:noTabs=false:folding=explicit:collapseFolds=1:
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+// Localization
+final static String jEditActionBar1Label = jEdit.getProperty("macro.rs.DisplayActions.jEditActionBar1.label", "The jEdit action bar can be opened via the Utilities menu and is usually");
+final static String jEditActionBar2Label = jEdit.getProperty("macro.rs.DisplayActions.jEditActionBar2.label", "assigned to the C+ENTER keyboard shortcut.");
+final static String NoLabelLabel = jEdit.getProperty("macro.rs.DisplayActions.NoLabel.label", "<no label>");
+
+//Process
+StringBuffer buf = new StringBuffer();
+buf.append(jEditActionBar1Label + "\n");
+buf.append(jEditActionBar2Label + "\n\n");
+
+actionSets = jEdit.getActionSets();
+Arrays.sort(actionSets,new StandardUtilities.StringCompare(true));
+
+for(i = 0; i < actionSets.length; i++)
+{
+	ActionSet actionSet = actionSets[i];
+	if(actionSet.getActionCount() != 0)
+	{
+		buf.append("{{{ " + actionSet.getLabel() + "\n");
+
+		actions = actionSet.getActionNames();
+		Arrays.sort(actions,new StandardUtilities.StringCompare());
+
+		for(j = 0; j < actions.length; j++)
+		{
+			String name = actions[j];
+			String label = jEdit.getProperty(actions[j] + ".label");
+			if(label == null)
+				label = NoLabelLabel;
+			else
+				label = GUIUtilities.prettifyMenuLabel(label);
+			buf.append(name + " : " + label + "\n");
+		}
+		buf.append("}}}\n\n");
+	}
+}
+buffer = jEdit.newFile(view);
+buffer.insert(0,buf.toString());
+textArea.setCaretPosition(0);
+
+buffer.setStringProperty("folding","explicit");
+buffer.setIntegerProperty("collapseFolds",1);
+buffer.propertiesChanged();
+
+/*
+Macro index data (in DocBook format)
+
+<listitem>
+	<para><filename>Display_Actions.bsh</filename></para>
+	<abstract><para>
+		Displays a list of all the actions known to jEdit categorised by
+		their action set.
+	</para></abstract>
+	<para>
+		This macro can be a useful reference if you want to use the jEdit 4.2 action bar.
+	</para>
+</listitem>
+*/

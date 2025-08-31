@@ -1,0 +1,92 @@
+/*
+ * Insert_Tag.bsh - a BeanShell macro script for the
+ * jEdit text editor - inserts opening and closing tags
+ * around selected text
+ * Copyright (C) 2001-2010 
+ * John Gellene <jgellene@nyc.rr.com>, Vadim Voituk <vadim@voituk.com> 
+ * http://community.jedit.org
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the jEdit program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Id: Insert_Tag.bsh 23971 2015-08-08 19:37:35Z daleanson $
+ */
+// Localization
+final static String EnterNameTagLabel = jEdit.getProperty("macro.rs.InsertTag.EnterNameTag.label", "Enter name of tag:");
+final static String NotEditableMessage = jEdit.getProperty("macro.rs.general.ErrorNotEditableDialog.message", "Buffer is not editable"); 
+
+// Process
+Map tagsTemplate = new TreeMap() {{
+ 	 put("br", 		"<br/>");
+ 	 put("hr", 		"<hr/>");
+ 	 put("input", 	"<input type=\"\" />");
+ 	 put("img",		"<img src=\"\" alt=\"\" />");
+ 	 put("meta", 	"<meta http-equiv=\"\" content=\"\" />");
+}};
+
+void insertTag()
+{
+	
+	String tag = Macros.input(view, EnterNameTagLabel);
+	if( tag == null || tag.length() == 0) return;
+	String text = textArea.getSelectedText();
+	if(text == null) text = "";
+	
+	int i;
+	String[] tags = tag.split("\\s+");
+	
+	int caret = textArea.getCaretPosition();
+	StringBuilder buff = new StringBuilder();
+	
+	for (i=0; i<tags.length; i++) {
+		String tpl = tagsTemplate.get(tags[i]);
+		if (tpl == null) {
+			buff.append('<').append(tags[i]).append('>');
+			caret += tags[i].length() + 2;
+		} 
+		else {
+			buff.append(tpl);
+			caret += tpl.length();
+		}
+	}
+	
+	buff.append(text);
+	
+	for (i=tags.length-1; i>=0; i--) {
+		if (!tagsTemplate.containsKey(tags[i]))
+			buff.append("</").append(tags[i]).append('>');
+	}
+	
+	textArea.setSelectedText(buff.toString());
+	
+	//if no selected text, put the caret between the tags
+	if(text.length() == 0)
+		textArea.setCaretPosition(caret);
+} 
+
+	insertTag();
+
+/*
+	Macro index data (in DocBook format)
+
+<listitem>
+    <para><filename>Insert_Tag.bsh</filename></para>
+    <abstract><para>
+        Inserts a balanced pair of markup tags as supplied in a input dialog.
+    </para></abstract>
+</listitem>
+
+*/
+
+// end Insert_Tag.bsh

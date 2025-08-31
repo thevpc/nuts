@@ -1,0 +1,46 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Recording Macros</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit 5.7 User's Guide"><link rel="up" href="using-macros.html" title="Chapter&nbsp;8.&nbsp;Using Macros"><link rel="prev" href="using-macros.html" title="Chapter&nbsp;8.&nbsp;Using Macros"><link rel="next" href="running-macros.html" title="Running Macros"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Recording Macros</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="using-macros.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;8.&nbsp;Using Macros</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="running-macros.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="recording-macros"></a>Recording Macros</h2></div></div></div><p>The simplest use of macros is to record a series of key strokes
+        and menu commands as a BeanShell script, and play them back later. While
+        this doesn't let you take advantage of the full power of BeanShell, it
+        is still a great time saver and can even be used to
+        <span class="quote">&#8220;<span class="quote">prototype</span>&#8221;</span> more complicated macros.</p><p><span class="guimenu"><strong>Macros</strong></span>&gt;<span class="guimenuitem"><strong>Record
+        Macro</strong></span> (shortcut: <code class="keycap">C+m C+r</code>) prompts for a
+        macro name and begins recording.</p><p>While recording is in progress, the string <span class="quote">&#8220;<span class="quote">Macro
+        recording</span>&#8221;</span> is displayed in the status bar. jEdit records the
+        following:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Key strokes</p></li><li class="listitem"><p>Menu item commands</p></li><li class="listitem"><p>Tool bar clicks</p></li><li class="listitem"><p>All search and replace operations, except incremental
+                search</p></li></ul></div><p>Mouse clicks in the text area are <span class="emphasis"><em>not</em></span>
+        recorded; use text selection commands or arrow keys instead.</p><p><span class="guimenu"><strong>Macros</strong></span>&gt;<span class="guimenuitem"><strong>Stop
+        Recording</strong></span> (shortcut: <code class="keycap">C+m C+s</code>) stops
+        recording. It also switches to the buffer containing the recorded macro,
+        giving you a chance to check over the recorded commands and make any
+        necessary changes. When you are happy with the macro, save the buffer
+        and it will appear in the <span class="guimenu"><strong>Macros</strong></span> menu. To discard the
+        macro, close the buffer without saving it.</p><p>The file name extension <code class="filename">.bsh</code> is automatically
+        appended to the macro name, and all spaces are converted to underscore
+        characters, in order to make the macro name a valid file name. These two
+        operations are reversed when macros are displayed in the
+        <span class="guimenu"><strong>Macros</strong></span> menu; see <a class="xref" href="organizing-macros.html" title="How jEdit Organizes Macros">the section called &#8220;How jEdit Organizes Macros&#8221;</a>
+        for details.</p><p>If a complicated operation only needs to be repeated a few times,
+        using the temporary macro feature is quicker than saving a new macro
+        file.</p><p><span class="guimenu"><strong>Macros</strong></span>&gt;<span class="guimenuitem"><strong>Record Temporary
+        Macro</strong></span> (shortcut: <code class="keycap">C+m C+m</code>) begins
+        recording to a buffer named <code class="filename">Temporary_Macro.bsh</code>.
+        Once recording of a temporary macro is complete, jEdit does not display
+        the buffer containing the recorded commands, but the name
+        <code class="filename">Temporary_Macro.bsh</code> will be visible on any list of
+        open buffers. By switching to that buffer, you can view the commands,
+        edit them, and save them if you wish to a permanent macro file. Whether
+        or not you look at or save the temporary macro contents, it is
+        immediately available for playback.</p><p><span class="guimenu"><strong>Macros</strong></span>&gt;<span class="guimenuitem"><strong>Run Temporary
+        Macro</strong></span> (shortcut: <code class="keycap">C+m C+p</code>) plays the macro
+        recorded to the <code class="filename">Temporary_Macro.bsh</code> buffer.</p><p>Only one temporary macro is available at a time. If you begin
+        recording a second temporary macro, the first is erased and cannot be
+        recovered unless you have saved the contents to a file with a name other
+        than <code class="filename">Temporary_Macro.bsh</code>. If you do not save the
+        temporary macro, you must keep the buffer containing the macro script
+        open during your jEdit session. To have the macro available for your
+        next jEdit session, save the buffer
+        <code class="filename">Temporary_Macro.bsh</code> as an ordinary macro with a
+        descriptive name of your choice. The new name will then be displayed in
+        the <span class="guimenu"><strong>Macros</strong></span> menu.</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="using-macros.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="using-macros.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="running-macros.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter&nbsp;8.&nbsp;Using Macros&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Running Macros</td></tr></table></div></body></html>

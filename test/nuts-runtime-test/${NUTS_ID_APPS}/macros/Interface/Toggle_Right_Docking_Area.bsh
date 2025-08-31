@@ -1,0 +1,36 @@
+/*
+ * Toggle_Right_Docking_Area.bsh - a BeanShell macro for the 
+ * jEdit text editor - Expands or collapses the tight docking
+ * area, depending on it's current state.
+ *
+ * Copyright (C) 2003 Ollie Rutherfurd <oliver@rutherfurd.net>
+ *
+ * $Id: Toggle_Right_Docking_Area.bsh 4937 2003-12-22 04:14:55Z spestov $
+ */
+
+toggleRightDockingArea()
+{
+	dockarea = view.getDockableWindowManager().getRightDockingArea();
+	if(dockarea.getCurrent() == null)
+		dockarea.showMostRecent();
+	else
+		dockarea.show(null);
+	view.getTextArea().requestFocus();
+}
+
+toggleRightDockingArea();
+
+/*
+
+	Macro index data (in DocBook format)
+
+<listitem>
+	<para><filename>Toggle_Right_Docking_Area.bsh</filename></para>
+	<abstract><para>
+		Expands or collapses the right docking area, 
+		depending on it's current state.
+	</para></abstract>
+</listitem>
+
+*/
+

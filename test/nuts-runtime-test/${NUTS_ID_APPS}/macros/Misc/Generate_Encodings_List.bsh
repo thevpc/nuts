@@ -1,0 +1,32 @@
+import org.gjt.sp.jedit.io.EncodingServer;
+
+/** Generates 'encodingsList.html' page for jedit.org containing the encodings list. */ 
+
+nameSet = EncodingServer.getAvailableNames();
+sbuffer = new StringBuffer();
+
+htmlBuffer = jEdit.openFile(editPane, "encodingsList.html");
+
+itr = nameSet.iterator();
+int i=0;
+sbuffer.append("<html><head><title> Supported jEdit Encodings </title></head>\n");
+sbuffer.append("<!--    :elasticTabstops=true: -->\n");
+sbuffer.append("<body><h2> Supported jEdit Encodings: " + nameSet.size() + "</h2>\n ");
+sbuffer.append("<table><tbody><tr>\n");
+while (itr.hasNext()) {
+    i++;
+    enc = itr.next();
+    sbuffer.append("\t<td>" + enc + "</td>");
+    if (i%5==0) sbuffer.append("  </tr><tr>\n");
+}
+sbuffer.append("</tr></tbody></table>\n");
+sbuffer.append("<p>Using jEdit " + jEdit.getVersion() + " on " + new Date() + " with ");
+sbuffer.append(System.getProperty("java.vendor") + " Java " + System.getProperty("java.version") + " on " + System.getProperty("os.name") + " " + System.getProperty("os.version") + "\n");
+sbuffer.append(" Generated from macro <tt>" + scriptPath + "</tt> </p>");
+
+sbuffer.append("</body></html>\n");
+
+htmlBuffer.insert(0, sbuffer.toString());
+// set elastic tabstops for this one. (causes bug# 3614248) 
+htmlBuffer.setBooleanProperty("elasticTabstops", true);
+

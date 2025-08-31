@@ -1,0 +1,35 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>The IMPORT Tag</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit 5.7 User's Guide"><link rel="up" href="writing-modes.html" title="Chapter&nbsp;10.&nbsp;Mode Definition Syntax"><link rel="prev" href="mode-rule-seq-regexp.html" title="The SEQ_REGEXP Tag"><link rel="next" href="mode-rule-keywords.html" title="The KEYWORDS Tag"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">The IMPORT Tag</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mode-rule-seq-regexp.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;10.&nbsp;Mode Definition Syntax</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="mode-rule-keywords.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="mode-rule-import"></a>The IMPORT Tag</h2></div></div></div><p>The <code class="literal">IMPORT</code> tag, which must be placed inside a
+        <code class="literal">RULES</code> tag, loads all rules defined in a given ruleset
+        into the current ruleset; in other words, it has the same effect as
+        copying and pasting the imported ruleset.</p><p>The only required attribute <code class="literal">DELEGATE</code> must be
+        set to the name of a ruleset. To import a ruleset defined in the current
+        mode, just specify its name. To import a ruleset defined in another
+        mode, specify a name of the form
+        <code class="literal"><em class="replaceable"><code>mode</code></em>::<em class="replaceable"><code>ruleset</code></em></code>.
+        Note that the first (unnamed) ruleset in a mode is called
+        <span class="quote">&#8220;<span class="quote">MAIN</span>&#8221;</span>.</p><p>One quirk is that the definition of the imported ruleset is not
+        copied to the location of the <code class="literal">IMPORT</code> tag, but rather
+        to the end of the containing ruleset. This has implications with
+        rule-ordering; see <a class="xref" href="mode-tag-rules.html#rule-ordering" title="Rule Ordering Requirements">the section called &#8220;Rule Ordering Requirements&#8221;</a>.</p><p>Here is an example from the PHP mode, which extends the inline
+        JavaScript highlighting to support embedded PHP:</p><pre class="programlisting">
+   &lt;RULES SET="JAVASCRIPT+PHP"&gt;
+
+   &lt;SPAN TYPE="MARKUP" DELEGATE="php::PHP"&gt;
+       &lt;BEGIN&gt;&amp;lt;?php&lt;/BEGIN&gt;
+       &lt;END&gt;?&amp;gt;&lt;/END&gt;
+   &lt;/SPAN&gt;
+
+   &lt;SPAN TYPE="MARKUP" DELEGATE="php::PHP"&gt;
+       &lt;BEGIN&gt;&amp;lt;?&lt;/BEGIN&gt;
+       &lt;END&gt;?&amp;gt;&lt;/END&gt;
+   &lt;/SPAN&gt;
+
+   &lt;SPAN TYPE="MARKUP" DELEGATE="php::PHP"&gt;
+       &lt;BEGIN&gt;&amp;lt;%=&lt;/BEGIN&gt;
+       &lt;END&gt;%&amp;gt;&lt;/END&gt;
+   &lt;/SPAN&gt;
+
+   &lt;IMPORT DELEGATE="javascript::MAIN"/&gt;
+&lt;/RULES&gt;</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mode-rule-seq-regexp.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="writing-modes.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="mode-rule-keywords.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">The SEQ_REGEXP Tag&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;The KEYWORDS Tag</td></tr></table></div></body></html>

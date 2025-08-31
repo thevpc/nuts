@@ -1,0 +1,47 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Buffer-Local Properties</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit 5.7 User's Guide"><link rel="up" href="customizing.html" title="Chapter&nbsp;7.&nbsp;Customizing jEdit"><link rel="prev" href="buffer-opts.html" title="The Buffer Options Dialog Box"><link rel="next" href="global-opts.html" title="The Global Options Dialog Box"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Buffer-Local Properties</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="buffer-opts.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;7.&nbsp;Customizing jEdit</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="global-opts.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="buffer-local"></a>Buffer-Local Properties</h2></div></div></div><p>Buffer-local properties provide an alternate way to change editor
+        settings on a per-buffer basis. While changes made in the
+        <span class="guimenuitem"><strong>Buffer Options</strong></span> dialog box are lost after the
+        buffer is closed, buffer-local properties take effect each time the file
+        is opened, because they are embedded in the file itself.</p><p>When jEdit loads a file, it checks the first and last 10 lines for
+        colon-enclosed name/value pairs. For example, placing the following in a
+        buffer changes the indent width to 4 characters, enables soft tabs, and
+        activates the Perl edit mode:</p><pre class="screen">:indentSize=4:noTabs=true:mode=perl:</pre><p>Adding buffer-local properties to a buffer takes effect after the
+        the buffer is saved and loaded again.</p><p>The following table describes each buffer-local property in
+        detail.</p><div class="informaltable"><table class="informaltable" border="1"><colgroup><col width="25%"><col width="75%"></colgroup><thead><tr><th>Property name</th><th>Description</th></tr></thead><tbody><tr><td><code class="varname">collapseFolds</code></td><td>Folds with a level of this or higher will be
+                        collapsed when the buffer is opened. If set to zero, all
+                        folds will be expanded initially. See <a class="xref" href="folding.html" title="Folding">the section called &#8220;Folding&#8221;</a>.</td></tr><tr><td><code class="varname">deepIndent</code></td><td>When set to <span class="quote">&#8220;<span class="quote">true</span>&#8221;</span>, multiple-line
+                        expressions delimited by parentheses are aligned like
+                        so: <pre class="programlisting">retVal.x = (int)(horizontalOffset
+    + Chunk.offsetToX(info.chunks,
+                      offset));
+</pre> With this setting disabled, the
+                        text would look like so: <pre class="programlisting">retVal.x = (int)(horizontalOffset
+    + Chunk.offsetToX(info.chunks,
+    offset));
+</pre></td></tr><tr><td><code class="varname">folding</code></td><td>The fold mode; one of <span class="quote">&#8220;<span class="quote">none</span>&#8221;</span>,
+                        <span class="quote">&#8220;<span class="quote">indent</span>&#8221;</span>, <span class="quote">&#8220;<span class="quote">explicit</span>&#8221;</span>, or the
+                        name of a plugin folding mode. See <a class="xref" href="folding.html" title="Folding">the section called &#8220;Folding&#8221;</a>.</td></tr><tr><td><code class="varname">indentSize</code></td><td>The width, in characters, of one indent. Must be
+                        an integer greater than 0. See <a class="xref" href="indent.html" title="Tabbing and Indentation">the section called &#8220;Tabbing and Indentation&#8221;</a>.</td></tr><tr><td><code class="varname">maxLineLen</code></td><td>The maximum line length and wrap column position.
+                        Inserting text beyond this column will automatically
+                        insert a line break at the appropriate position. See
+                        <a class="xref" href="entering-text.html" title="Inserting and Deleting Text">the section called &#8220;Inserting and Deleting Text&#8221;</a>.</td></tr><tr><td><code class="varname">mode</code></td><td>The default edit mode for the buffer. See <a class="xref" href="modes.html" title="Edit Modes">the section called &#8220;Edit Modes&#8221;</a>.</td></tr><tr><td><code class="varname">noTabs</code></td><td>If set to <span class="quote">&#8220;<span class="quote">true</span>&#8221;</span>, soft tabs
+                        (multiple space characters) will be used instead of
+                        <span class="quote">&#8220;<span class="quote">real</span>&#8221;</span> tabs. See <a class="xref" href="indent.html" title="Tabbing and Indentation">the section called &#8220;Tabbing and Indentation&#8221;</a>.</td></tr><tr><td><code class="varname">noWordSep</code></td><td>A list of non-alphanumeric characters that are
+                        <span class="emphasis"><em>not</em></span> to be treated as word
+                        separators. Global default is <span class="quote">&#8220;<span class="quote">_</span>&#8221;</span>.</td></tr><tr><td><code class="varname">tabSize</code></td><td>The tab width. Must be an integer greater than 0.
+                        See <a class="xref" href="indent.html" title="Tabbing and Indentation">the section called &#8220;Tabbing and Indentation&#8221;</a>.</td></tr><tr><td><code class="varname">wordBreakChars</code></td><td>Characters, in addition to spaces and tabs, at
+                        which lines may be split when the word wrap mode is set
+                        to <span class="quote">&#8220;<span class="quote">hard</span>&#8221;</span>. See <a class="xref" href="word-wrap.html" title="Wrapping Long Lines">the section called &#8220;Wrapping Long Lines&#8221;</a>.</td></tr><tr><td><code class="varname">wrap</code></td><td>The word wrap mode; one of <span class="quote">&#8220;<span class="quote">none</span>&#8221;</span>,
+                        <span class="quote">&#8220;<span class="quote">soft</span>&#8221;</span>, or <span class="quote">&#8220;<span class="quote">hard</span>&#8221;</span>. See <a class="xref" href="word-wrap.html" title="Wrapping Long Lines">the section called &#8220;Wrapping Long Lines&#8221;</a>.</td></tr><tr><td><code class="varname">autoIndent</code></td><td>The automatic indentation scheme; one of
+                        <span class="quote">&#8220;<span class="quote">none</span>&#8221;</span>, <span class="quote">&#8220;<span class="quote">full</span>&#8221;</span>, or
+                        <span class="quote">&#8220;<span class="quote">simple</span>&#8221;</span>. See <a class="xref" href="indent.html#autoindent" title="Automatic Indent">the section called &#8220;Automatic Indent&#8221;</a>.
+                        </td></tr></tbody></table></div><p> You may see <code class="literal">:encoding=XXX:</code> in a file
+        as it is a buffer-local property and specifying the character encoding
+        for the file. But it is not really a buffer-local property, and behaves
+        differently.
+        It is detected by <code class="literal">buffer-local-property</code> detector
+        only if the detector is selected in encoding options. Thus, it works
+        only at loading, and it must appear near the top of the file.
+        See <a class="xref" href="encodings.html" title="Character Encodings">the section called &#8220;Character Encodings&#8221;</a>. </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="buffer-opts.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="customizing.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="global-opts.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">The Buffer Options Dialog Box&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;The Global Options Dialog Box</td></tr></table></div></body></html>

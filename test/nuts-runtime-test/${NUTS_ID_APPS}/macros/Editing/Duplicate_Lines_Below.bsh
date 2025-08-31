@@ -1,0 +1,65 @@
+/*
+ * Duplicate_Lines_Below.bsh - a BeanShell macro script for the
+ * jEdit text editor - duplicates the cursor line.
+ * Copyright (C) 2001 Francesc Roses
+ * froses@menta.net
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the jEdit program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *
+ * based on: Duplicate_Line.bsh 3866 2001-11-06 15:04:21Z jgellene
+ *
+ * Checked for jEdit 4.3 API
+ *
+ */
+
+//Localization
+final static String NotEditableMessage = jEdit.getProperty("macro.rs.general.ErrorNotEditableDialog.message", "Buffer is not editable");
+
+// Process
+void duplicateLinesBelow()
+{
+	selections = textArea.getSelectedLines();
+	if(selections.length == 0){
+		selections = new int [] {textArea.getCaretLine()};
+	}
+	start = textArea.getLineStartOffset(selections[0]);
+	stop = textArea.getLineEndOffset(selections[selections.length-1]);
+	if(stop-1 == textArea.getBufferLength()){
+		--stop;
+		text = '\n'+textArea.getText(start,stop-start);
+	}else{
+		text = textArea.getText(start,stop-start);
+	}
+	buffer.insert(stop, text);
+}
+
+duplicateLinesBelow();
+
+/*
+
+Macro index data (in DocBook format)
+
+  <listitem>
+    <para><filename>Duplicate_Lines_Below.bsh</filename></para>
+	<abstract><para>
+	  Duplicates the line on which the caret lies immediately
+	  beneath it. If multiple lines are selected, they are duplicated.
+	</para></abstract>
+  </listitem>
+
+*/
+
+// end Duplicate_Line.bsh

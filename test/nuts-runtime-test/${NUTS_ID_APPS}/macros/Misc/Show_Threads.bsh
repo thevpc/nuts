@@ -1,0 +1,159 @@
+/* Show_Threads.bsh
+ *
+ * A BeanShell macro script for jEdit - displays all threads in a tree.
+ *
+ * Copyright (c) 2001 Dirk Moebius (dmoebius@gmx.net)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *
+ * Version 1.0
+ * requires JDK 1.1, jEdit3.1
+ *
+ * $Id: Show_Threads.bsh 23923 2015-05-22 14:10:47Z ezust $
+ */
+
+
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.tree.*;
+
+// Localization
+final static String DaemonLabel = jEdit.getProperty("macro.rs.ShowThreads.Daemon.label", "daemon");
+final static String PriorityLabel = jEdit.getProperty("macro.rs.ShowThreads.Priority.label", "prio");
+final static String NotStartedLabel = jEdit.getProperty("macro.rs.ShowThreads.NotStarted.label", "not started");
+final static String InterruptedLabel = jEdit.getProperty("macro.rs.ShowThreads.Interrupted.label", "interrupted");
+final static String CloseUpdateLabel = jEdit.getProperty("macro.rs.ShowThreads.CloseUpdate.label", "[Esc] Close      [U] Update");
+final static String CurrentThreadsLabel = jEdit.getProperty("macro.rs.ShowThreads.CurrentThreads.label", "Current Threads");
+
+// Process
+JFrame createThreadsFrame() {
+
+	void windowClosing(WindowEvent e) {
+		GUIUtilities.saveGeometry(frame, "macros-show-threads");
+	}
+
+
+	void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+			GUIUtilities.saveGeometry(frame, "macros-show-threads");
+			frame.setVisible(false);
+			frame.dispose();
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_U) {
+			tree.setModel(new DefaultTreeModel(createModel()));
+			tree.revalidate();
+		}
+	}
+
+
+	// Having these members of KeyListener and WindowListener implemented as
+	// no-ops will speedup execution.  Otherwise BeanShell throws an
+	// exception each time one of these events occur.
+	void keyReleased(KeyEvent e) { }
+	void keyTyped(KeyEvent e) { }
+	void windowActivated(WindowEvent e) { }
+	void windowClosed(WindowEvent e) { }
+	void windowDeactivated(WindowEvent e) { }
+	void windowDeiconified(WindowEvent e) { }
+	void windowIconified(WindowEvent e) { }
+	void windowOpened(WindowEvent e) { }
+
+
+	ThreadGroup getMainThreadGroup() {
+		t = Thread.currentThread();
+		g = t.getThreadGroup();
+		while (g.getParent() != null)
+			g = g.getParent();
+		return g;
+	}
+
+
+	DefaultMutableTreeNode createModel() {
+		g = getMainThreadGroup();
+		return createGroupNode(g);
+	}
+
+
+	DefaultMutableTreeNode createGroupNode(ThreadGroup g) {
+		node = new DefaultMutableTreeNode(g.getName() + (g.isDaemon() ? " (" + DaemonLabel + ")" : ""), true);
+
+		groups = new ThreadGroup[g.activeGroupCount()];
+		count = g.enumerate(groups, false);
+		for (int i = 0; i < count; ++i)
+			node.add(createGroupNode(groups[i]));
+
+		threads = new Thread[g.activeCount()];
+		count = g.enumerate(threads, false);
+		for (int i = 0; i < count; ++i)
+			node.add(new DefaultMutableTreeNode(getDescription(threads[i]), false));
+
+		return node;
+	}
+
+
+	String getDescription(Thread t) {
+		StringBuffer buf = new StringBuffer(t.getName());
+		buf.append(" (" + PriorityLabel + " ");
+		buf.append(t.getPriority());
+		if (!t.isAlive())
+			buf.append(", " + NotStartedLabel);
+		if (t.isDaemon())
+			buf.append(", " + DaemonLabel);
+		if (t.isInterrupted())
+			buf.append(", " + InterruptedLabel);
+		buf.append(")");
+		return buf.toString();
+	}
+
+
+	tree = new JTree(createModel());
+	tree.setRowHeight(0);
+	tree.putClientProperty("JTree.lineStyle", "Angled");
+	tree.addKeyListener(this);
+
+	stage = new JScrollPane(tree);
+	stage.setColumnHeaderView(new JLabel(CloseUpdateLabel));
+
+	frame = new JFrame(CurrentThreadsLabel);
+	frame.setContentPane(stage);
+	frame.addWindowListener(this);
+	// set default size and position:
+	frame.setSize(new Dimension(400, 400)); // faster than pack()
+	// overwrite default size and position loading user properties:
+	GUIUtilities.loadGeometry(frame, "macros-show-threads");
+	frame.setVisible(true);
+
+	return frame;
+}
+
+
+createThreadsFrame();
+
+/*
+
+Macro index data (in DocBook format)
+
+  <listitem>
+    <para><filename>Show_Threads.bsh</filename></para>
+    <abstract><para>
+      Displays all running Java threads in a tree.
+    </para></abstract>
+  </listitem>
+
+*/
+
+// end Show_Threads.bsh
+

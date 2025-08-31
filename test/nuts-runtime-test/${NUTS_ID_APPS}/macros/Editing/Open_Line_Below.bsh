@@ -1,0 +1,7 @@
+/* Open_Line_Below.bsh: mimics the Shift-Enter combination in Eclipse,
+   opening a new blank line below the current cursor position.
+   Author: Scott LeBaron
+   License: GPL v 2.0
+*/
+textArea.goToEndOfWhiteSpace(false);
+textArea.insertEnterAndIndent();

@@ -1,0 +1,36 @@
+/*
+ * Toggle_Left_Docking_Area.bsh - a BeanShell macro for the 
+ * jEdit text editor - Expands or collapses the left docking
+ * area, depending on it's current state.
+ *
+ * Copyright (C) 2003 Ollie Rutherfurd <oliver@rutherfurd.net>
+ *
+ * $Id: Toggle_Left_Docking_Area.bsh 4906 2003-10-26 20:57:28Z spestov $
+ */
+
+toggleLeftDockingArea()
+{
+	dockarea = view.getDockableWindowManager().getLeftDockingArea();
+	if(dockarea.getCurrent() == null)
+		dockarea.showMostRecent();
+	else
+		dockarea.show(null);
+	view.getTextArea().requestFocus();
+}
+
+toggleLeftDockingArea();
+
+/*
+
+	Macro index data (in DocBook format)
+
+<listitem>
+	<para><filename>Toggle_Left_Docking_Area.bsh</filename></para>
+	<abstract><para>
+		Expands or collapses the left docking area, 
+		depending on it's current state.
+	</para></abstract>
+</listitem>
+
+*/
+

@@ -1,0 +1,18 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>The KEYWORDS Tag</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit 5.7 User's Guide"><link rel="up" href="writing-modes.html" title="Chapter&nbsp;10.&nbsp;Mode Definition Syntax"><link rel="prev" href="mode-rule-import.html" title="The IMPORT Tag"><link rel="next" href="mode-syntax-tokens.html" title="Token Types"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">The KEYWORDS Tag</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mode-rule-import.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;10.&nbsp;Mode Definition Syntax</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="mode-syntax-tokens.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="mode-rule-keywords"></a>The KEYWORDS Tag</h2></div></div></div><p>The <code class="literal">KEYWORDS</code> tag, which must be placed inside a
+        <code class="literal">RULES</code> tag and can only appear once, specifies a list
+        of keywords to highlight. Keywords are similar to
+        <code class="literal">SEQ</code>s, except that <code class="literal">SEQ</code>s match
+        anywhere in the text, whereas keywords only match whole words. Words are
+        considered to be runs of text separated by non-alphanumeric
+        characters.</p><p>The <code class="literal">KEYWORDS</code> tag does not define any
+        attributes.</p><p>Each child element of the <code class="literal">KEYWORDS</code> tag is an
+        element whose name is a token type, and whose content is the keyword to
+        highlight. For example, the following rule highlights the most common
+        Java keywords:</p><pre class="programlisting">&lt;KEYWORDS&gt;
+  &lt;KEYWORD1&gt;if&lt;/KEYWORD1&gt;
+  &lt;KEYWORD1&gt;else&lt;/KEYWORD1&gt;
+  &lt;KEYWORD3&gt;int&lt;/KEYWORD3&gt;
+  &lt;KEYWORD3&gt;void&lt;/KEYWORD3&gt;
+&lt;/KEYWORDS&gt;</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mode-rule-import.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="writing-modes.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="mode-syntax-tokens.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">The IMPORT Tag&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Token Types</td></tr></table></div></body></html>

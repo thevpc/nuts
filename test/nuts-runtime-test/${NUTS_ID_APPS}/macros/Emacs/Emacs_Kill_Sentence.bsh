@@ -1,0 +1,20 @@
+/**
+ * Kill to the end of the current sentence. Emulates the Emacs "kill-sentence"
+ * command.
+ */
+
+source (MiscUtilities.constructPath(dirname(scriptPath), "EmacsUtil.bsh"));
+
+void emacsKillSentence()
+{
+    caret = textArea.getCaretPosition();
+    eos = findEndOfSentence();
+
+    selection = new Selection.Range (caret, eos);
+    textArea.setSelection (selection);
+    addToClipboardAndHistory (selection);
+    textArea.replaceSelection ("");
+    textArea.removeFromSelection (selection);
+}
+
+emacsKillSentence();

@@ -1,0 +1,162 @@
+/*
+ * Buffer_to_HyperSearch_Results.bsh - a Beanshell macro
+ * for jEdit text that reads HyperSearch results from a buffer that was
+ * previously created by the HyperSearch_Results_to_Buffer macro and possibly
+ * filtered manually, and imports them into the HyperSearch Results dockable.
+ *
+ * Copyright (C) 2008 Shlomy Reinstein
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Id: Buffer_to_HyperSearch_Results.bsh 5228 2005-07-13 03:24:43Z copy_paste $
+ */
+
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import java.util.regex.*;
+
+//Localization
+final static String WindowNotOpenError = jEdit.getProperty("macro.rs.HyperSearchResults.WindowNotOpen.error", "The 'HyperSearch Results' window is not open.");
+
+String escape(String s){
+	sb = new StringBuffer();
+	for (int i = 0; i < s.length(); i++)
+	{
+		char ch = s.charAt(i);
+		sb.append(ch);
+		if (ch == '\\')
+			sb.append(ch);
+	}
+	return sb.toString();
+}
+
+HyperSearchFileNode hyperSearchFileNode;
+DefaultMutableTreeNode bufferNode, rootSearchNode;
+int count = 0;
+
+addLastResultIfExists(){
+	if (hyperSearchFileNode != null)
+		hyperSearchFileNode.setCount(count);
+	if (rootSearchNode != null && bufferNode != null)
+		rootSearchNode.add(bufferNode);
+}
+
+writeHypersearchResultsToBuffer(View view){
+        hs = view.getDockableWindowManager().getDockableWindow("hypersearch-results");
+	if (hs == null)
+	{
+		Macros.error(view, WindowNotOpenError);
+		return;
+	}
+
+	model = hs.getTreeModel();
+	root = model.getRoot();
+	root.removeAllChildren();
+
+	text = view.getTextArea().getText();
+	lines = text.split("\n");
+	if (lines.length == 0)
+		return;
+
+	hyperSearchFileNode = null;
+	i = 0;
+	count = 0;
+	String prevPath = null;
+	String searchString = null;
+	Pattern searchNodePattern = Pattern.compile(
+		"^\\*\\s+(\\w+)\\[(.+),(true|false)\\]\\s*$");
+	SearchMatcher searchMatcher = null;
+	for (i=0; i < lines.length; i++)
+	{
+		String line = lines[i];
+		Matcher m = searchNodePattern.matcher(line);
+		if (m.matches())
+		{
+			addLastResultIfExists();
+			
+			String searchMatcherName = m.group(1);
+			String searchPattern = m.group(2);
+			String searchString = searchPattern;
+			String ignoreCase = m.group(3);
+			if (searchMatcherName.indexOf("Pattern") >= 0)
+				searchPattern = escape(searchPattern);
+			String statement = "new " + searchMatcherName + "(\"" +
+			searchPattern + "\", " + ignoreCase + ");";
+			searchMatcher = BeanShell.bsh.eval(view, statement);
+			rootSearchNode = new DefaultMutableTreeNode(
+				new HyperSearchOperationNode(searchString, searchMatcher));
+			root.add(rootSearchNode);
+			hyperSearchFileNode = null;
+			prevPath = null;
+		}
+		else
+		{
+			if (rootSearchNode == null)
+				continue;
+			sep = line.indexOf(" :");
+			if (sep < 1)
+				continue;
+			path = line.substring(0, sep);
+			if (prevPath == null || !path.equals(prevPath))
+			{
+				addLastResultIfExists();
+				hyperSearchFileNode = new HyperSearchFileNode(path);
+				bufferNode = new DefaultMutableTreeNode(hyperSearchFileNode);
+				prevPath = path;
+				count = 0;
+				buffer = jEdit.openTemporary(null,null,path,false);
+				if (buffer == null)
+					continue;
+			}
+			s = line.substring(sep + 2);
+			sep = s.indexOf(":");
+			if (sep < 1)
+				continue;
+			int lineNum = Integer.valueOf(s.substring(0, sep)) - 1;
+			int lineStart, lineEnd;
+			try {
+				lineStart = buffer.getLineStartOffset(lineNum);
+				lineEnd = buffer.getLineEndOffset(lineNum);
+			} catch (Exception e) {
+				continue;
+			}
+			SearchMatcher.Match match = searchMatcher.nextMatch(
+				buffer.getSegment(lineStart,lineEnd-lineStart),
+				true,true,true,false);
+			if (match == null)
+				continue;
+			hyperSearchNode = new HyperSearchResult(buffer, lineNum);
+			int offset = lineStart;
+			while (match != null)
+			{
+				hyperSearchNode.addOccur(offset+match.start,offset+match.end);
+				offset += match.end;
+				match = searchMatcher.nextMatch(
+					buffer.getSegment(offset,lineEnd-offset),
+					false,true,false,false);
+			}
+			bufferNode.add(new DefaultMutableTreeNode(hyperSearchNode, false));
+			count++;
+		}
+	}
+	addLastResultIfExists();
+	model.reload();
+}
+
+setAccessibility(true);
+writeHypersearchResultsToBuffer(view);
+setAccessibility(false);
+
+// :wrap=none:collapseFolds=0:noTabs=false:lineSeparator=\n:maxLineLen=120:indentSize=4:deepIndent=false:folding=none:

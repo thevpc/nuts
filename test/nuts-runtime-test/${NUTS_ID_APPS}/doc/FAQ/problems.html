@@ -1,0 +1,304 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Problems</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit Frequently Asked Questions"><link rel="up" href="index.html" title="jEdit Frequently Asked Questions"><link rel="prev" href="plugins.html" title="Plugin Questions"><link rel="next" href="appendix.html" title="A.&nbsp;Contributors"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Problems</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="plugins.html">Prev</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="appendix.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="problems"></a>Problems</h2></div></div></div><p>This section deals with problems you may experience while using or
+    installing jEdit. Problems that aren't OS specific are listed under <a class="link" href="problems.html#general-problems" title="General Problems"><span class="quote">&#8220;<span class="quote">General Problems</span>&#8221;</span></a>.</p><div class="qandaset"><a name="d0e1632"></a><dl><dt>1.  <a href="problems.html#general-problems">General Problems</a></dt><dd><dl><dt>Q: <a href="problems.html#d0e1636">jEdit won't start. What should I do?</a></dt><dt>Q: <a href="problems.html#d0e1719">After jEdit starts, I can't see all of the plugins I
+                    have downloaded. How can I make them appear?</a></dt><dt>Q: <a href="problems.html#d0e1742">During an editing session I get an error message about
+                    an &#8220;OutOfMemoryError&#8221; while working with a
+                    large file or performing a lengthy operation. The message
+                    reappears every time I retry the operation. How can I
+                    prevent this?</a></dt><dt>Q: <a href="problems.html#d0e1790">My textarea gets confused about the end of the buffer or in some other way corrupted (the characters are in the wrong place on the screen, or I get an exception when I scroll to the bottom). What should I do?</a></dt><dt>Q: <a href="problems.html#d0e1802">Why is jEdit's window movement and resizing so
+                    buggy?</a></dt><dt>Q: <a href="problems.html#d0e1818">What should I do when the installer displays the
+                    message, No such file or directory?</a></dt><dt>Q: <a href="problems.html#d0e1834">After downloading
+                    jeditXXXinstall.jar (the
+                    XXX represents the version number), I
+                    tried to run java
+                    jeditXXXinstall.jar, but got the error message,
+                    Exception in main(), NoClassDefFoundError: jeditXXXinstall/jar.
+                    What am I doing wrong?</a></dt><dt>Q: <a href="problems.html#d0e1859">jEdit crashed the JVM, what gives?</a></dt><dt>Q: <a href="problems.html#d0e1866">jEdit locks up or hangs while I'm doing lots of things!  </a></dt><dt>Q: <a href="problems.html#d0e1889">I can't remember all these multiple-key shortcuts! </a></dt><dt>Q: <a href="problems.html#d0e1896">Why is jEdit so slow to start up?</a></dt><dt>Q: <a href="problems.html#d0e1921">Why is jEdit so slow?</a></dt><dt>Q: <a href="problems.html#d0e1930">Go to left/top/bottom/right docking area does not work
+                    for some plugins?</a></dt></dl></dd><dt>2.  <a href="problems.html#unix-problems">Unix/Linux Problems</a></dt><dd><dl><dt>Q: <a href="problems.html#d0e1943">I'm trying to install jEdit on Linux, but I keep getting strange error messages.
+				  </a></dt><dt>Q: <a href="problems.html#d0e1955">After installing jEdit on Linux, running the
+                    jedit command causes the error
+                    message: Warning: JAVA_HOME environment variable not set
+                    How can I fix this?</a></dt></dl></dd><dt>3.  <a href="problems.html#windows-problems">Windows Problems</a></dt><dd><dl><dt>Q: <a href="problems.html#d0e1978">When I try to run jedit.exe I get
+                    the message The JEditLauncher component does not appear to be installed.</a></dt><dt>Q: <a href="problems.html#d0e1999">When I try to run the jEdit installation package in
+                    Windows, I get an error message, Error opening registration key
+				"software\javasoft\java runtime	environment". How can I fix
+                    this?</a></dt><dt>Q: <a href="problems.html#d0e2015">When trying to install jEdit on Windows Me with an
+                    MS-DOS prompt, after entering java -jar
+                    jeditXXXinstall.jar I get the message
+                    bad command or file name. I have
+                    tried various alternatives but still cannot install.</a></dt><dt>Q: <a href="problems.html#d0e2043">When I run jEdit on Windows, it flashes, blinks, and
+                    doesn't display correctly! Why is your program so
+                    buggy?</a></dt></dl></dd></dl><table border="0" style="width: 100%;"><colgroup><col align="left" width="1%"><col></colgroup><tbody><tr class="qandadiv"><td align="left" valign="top" colspan="2"><h4 class="title"><a name="general-problems"></a>1. General Problems</h4></td></tr><tr class="toc"><td align="left" valign="top" colspan="2"><dl><dt>Q: <a href="problems.html#d0e1636">jEdit won't start. What should I do?</a></dt><dt>Q: <a href="problems.html#d0e1719">After jEdit starts, I can't see all of the plugins I
+                    have downloaded. How can I make them appear?</a></dt><dt>Q: <a href="problems.html#d0e1742">During an editing session I get an error message about
+                    an &#8220;OutOfMemoryError&#8221; while working with a
+                    large file or performing a lengthy operation. The message
+                    reappears every time I retry the operation. How can I
+                    prevent this?</a></dt><dt>Q: <a href="problems.html#d0e1790">My textarea gets confused about the end of the buffer or in some other way corrupted (the characters are in the wrong place on the screen, or I get an exception when I scroll to the bottom). What should I do?</a></dt><dt>Q: <a href="problems.html#d0e1802">Why is jEdit's window movement and resizing so
+                    buggy?</a></dt><dt>Q: <a href="problems.html#d0e1818">What should I do when the installer displays the
+                    message, No such file or directory?</a></dt><dt>Q: <a href="problems.html#d0e1834">After downloading
+                    jeditXXXinstall.jar (the
+                    XXX represents the version number), I
+                    tried to run java
+                    jeditXXXinstall.jar, but got the error message,
+                    Exception in main(), NoClassDefFoundError: jeditXXXinstall/jar.
+                    What am I doing wrong?</a></dt><dt>Q: <a href="problems.html#d0e1859">jEdit crashed the JVM, what gives?</a></dt><dt>Q: <a href="problems.html#d0e1866">jEdit locks up or hangs while I'm doing lots of things!  </a></dt><dt>Q: <a href="problems.html#d0e1889">I can't remember all these multiple-key shortcuts! </a></dt><dt>Q: <a href="problems.html#d0e1896">Why is jEdit so slow to start up?</a></dt><dt>Q: <a href="problems.html#d0e1921">Why is jEdit so slow?</a></dt><dt>Q: <a href="problems.html#d0e1930">Go to left/top/bottom/right docking area does not work
+                    for some plugins?</a></dt></dl></td></tr><tr class="question"><td align="left" valign="top"><a name="d0e1636"></a><a name="wont-start"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>jEdit won't start. What should I do?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>If you don't have a clue as to why you cannot run
+                    jEdit, it's best to perform a step-by-step diagnosis. If it
+                    never worked before, begin by finding the Java application
+                    loader you are using: <code class="filename">java.exe</code>,
+                    <code class="filename">javaw.exe</code> or <code class="filename">java</code>.
+                    Make sure it is running by entering its full path with the
+                    <strong class="userinput"><code>-h</code></strong> parameter in a terminal or console
+                    window. If you can't find the Java application loader, your
+                    Java runtime environment package may be missing or
+                    incomplete.</p><p>Next, find where you have installed jEdit. You should
+                    look for the file <code class="filename">jedit.jar</code> which
+                    contains all of the application's Java class files in a
+                    compressed archive.</p><p>Once you have both files, run the Java loader with the
+                    <strong class="userinput"><code>-jar</code></strong> option and with
+                    <code class="filename">jedit.jar</code> as the target. Make sure that
+                    you either specify full paths for both files or that the
+                    directories for the files are part of your
+                    <code class="filename">PATH</code> environment variable. If jEdit
+                    does not load at this point, the likely problem is a corrupt
+                    <code class="filename">jedit.jar</code> file. Try downloading the
+                    application again.</p><p>If jEdit does load using this procedure, you need to
+                    examine the <span class="quote">&#8220;<span class="quote">shortcut</span>&#8221;</span> loading mechanism you
+                    wish to use.</p><p>On Linux and MacOS X, you need to find and examine the
+                    <code class="filename">jedit</code> shell script provided by the
+                    installation routine to confirm that the script's commands
+                    target the correct files and locations, and that variables
+                    like <code class="filename">JAVA_HOME</code> are either defined in
+                    the script or elsewhere in your shell's environment. Don't
+                    forget to make sure that the script's file permissions allow
+                    you to execute it as a shell script.</p><p>On Windows, if you are using a batch script to run
+                    jEdit, the same points (other than file permissions) apply
+                    to examining <code class="filename">jedit.bat</code>. If you are
+                    using jEditLauncher, run <strong class="userinput"><code>jedit /p</code></strong> in
+                    jEdit's installation directory from a command line to get
+                    the custom loader's setup dialog. Here you can check the
+                    paths for both the Java application loader and jEdit as well
+                    as any command line parameters for both programs. Make sure
+                    that you have placed Java and jEdit options in the correct
+                    input fields. If the parameters seems correct but jEdit will
+                    not load with the Windows launcher, try uninstalling and
+                    reinstalling the launcher by running <strong class="userinput"><code>jedit
+                    /u</code></strong> followed by <strong class="userinput"><code>jedit
+                    /i</code></strong>.</p><h3><a name="d0e1701"></a>But it worked before! It just stopped working
+                    after an upgrade. What should I do?</h3><p>If it used to work for an older version and no longer
+                    works, it could be that you have some old crud (bad
+                    settings, unsupported plugins) in your jEdit
+                    settings directory (<code class="literal">~/.jedit</code> on Linux,
+                    <code class="literal">%APPDATA%\jEdit</code> on Windows, or
+                    <code class="literal">~/Library/jEdit</code> on MacOS).
+                    You may want to try renaming the offending directory
+                    to something else, and restarting jEdit with fresh settings.
+                    You can later copy things from your old settings back
+                    if you find you are missing things. </p><p>If at this point you're still stuck, ask for help on
+                    the jedit-users mailing list, the jEdit Community
+                    <span class="quote">&#8220;<span class="quote">Installation</span>&#8221;</span> message board or on IRC. You're
+                    bound to find someone quickly.</p></td></tr><tr class="question"><td align="left" valign="top"><a name="d0e1719"></a><a name="start-missing-plugins"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>After jEdit starts, I can't see all of the plugins I
+                    have downloaded. How can I make them appear?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>If you use jEdit's Plugin Manager to download and
+                    install plugins, your plugins will be found in the
+                    <code class="filename">jars</code> subdirectory of one of two
+                    directories: either the directory in which jEdit is
+                    installed, or the current user's settings directory. These
+                    are the only location jEdit examines when it loads plugins
+                    at startup.</p><p>The default location of the settings directory depends
+                    on your operating system. You can find out its location
+                    during a jEdit session by evaluating
+                    <strong class="userinput"><code>jedit.getSettingsDirectory()</code></strong> in
+                    BeanShell.</p><p>The settings directory can be changed by using the
+                    <strong class="userinput"><code>-settings</code></strong> command line parameter. If
+                    you change the location of the settings directory with this
+                    parameter, jEdit will not be able to find plugin archive
+                    files in the old location. If you use or change the
+                    <strong class="userinput"><code>-settings</code></strong> parameter, make sure your
+                    plugins don't get left behind.</p></td></tr><tr class="question"><td align="left" valign="top"><a name="d0e1742"></a><a name="problems-out-of-memory"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>During an editing session I get an error message about
+                    an <span class="quote">&#8220;<span class="quote">OutOfMemoryError</span>&#8221;</span> while working with a
+                    large file or performing a lengthy operation. The message
+                    reappears every time I retry the operation. How can I
+                    prevent this?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>The memory requirements of jEdit vary greatly
+                	depending on how many files are in use, and what plugins
+                	you are using. You can see how much it is using in the
+                	status bar. </p><p>One solution that often works is to set or increase
+                    the allocation of memory to the heap for Java objects
+                    created by the Java Virtual Machine in which jEdit is
+                    running. Add a command line option
+                    <strong class="userinput"><code>-mx640m</code></strong> to the options passed to the
+                    version of the Java application loader you are using (such
+                    as <code class="filename">java</code>, <code class="filename">java.exe</code>
+                    or <code class="filename">javaw.exe</code>). In place of the
+                    <strong class="userinput"><code>640</code></strong> in the option, use a number
+                    of megabytes you think is appropriate for the maximum heap
+                    size. If you already are using the option, try doubling it.
+                    </p><p> For more information about JVM options, see the <a class="ulink" href="../users-guide/jvm-options.html" target="_top">page on JVM options</a> in the users guide. </p><p> On Windows, if you are using the <code class="literal">jedit.exe</code> launcher, you can add
+                    or change the JVM arguments by editing a file called <code class="literal">jEdit.l4j.ini</code> in the same directory
+                    as the <code class="literal">jedit.exe</code>. Place one
+                    JVM argument (e.g. <code class="literal">-mx640m</code>) on each
+                    line by itself. </p><p>If out of memory errors occur while running a build or
+                    compilation operation from within jEdit, you can also have
+                    the operation run in an external process rather than inside
+                    the same Java Virtual Machine running jEdit. The AntFarm
+                    plugin, for example, lets you select this approach as a
+                    configuration option. In other cases, you can run an
+                    external program using the command line interface of the
+                    Console plugin, which will capture and display the output of
+                    the external process and in many cases parse the output for
+                    error information.</p></td></tr><tr class="question"><td align="left" valign="top"><a name="d0e1790"></a><a name="textarea-corruption"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>My textarea gets confused about the end of the buffer or in some other way corrupted (the characters are in the wrong place on the screen, or I get an exception when I scroll to the bottom). What should I do?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>Before jEdit 5.0, it happened to me quite a bit too.
+                    I use this macro to help avoid the need to restart jEdit.
+</p><pre class="programlisting">
+/** Reset_TextArea.bsh */
+view.splitVertically();
+view.unsplitCurrent();
+</pre><p>
+					Run this, and jEdit creates
+                    a new TextArea for you, one that is in a valid state. </p><p>If you can reproduce the steps you took to cause this,
+                    please submit a bug report that details what
+                    plugins/versions you were using, and how to reproduce it. It
+                    may be specific to a file you are editing, or a particular
+                    combination of settings you are using, or sequence of
+                    actions you performed. </p></td></tr><tr class="question"><td align="left" valign="top"><a name="d0e1802"></a><a name="general-borders"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>Why is jEdit's window movement and resizing so
+                    buggy?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>Perhaps the option to let Java draw window borders is
+                    enabled. This option can lead to strange behavior on some
+                    Java versions and operating systems. Disable it in the
+                    <span class="guilabel"><strong>Appearance</strong></span> tab of the
+                    <span class="guimenu"><strong>Utilities</strong></span>&gt;<span class="guimenuitem"><strong>Global
+                    Options</strong></span> dialog box.</p></td></tr><tr class="question"><td align="left" valign="top"><a name="d0e1818"></a><a name="install-no-such-file"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>What should I do when the installer displays the
+                    message, </p><pre class="screen">No such file or directory</pre><p>?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>The full message that you may receive from the Java
+                    application launcher begins as follows: </p><pre class="screen">Exception in thread "main" java.util.zip.ZipException: No such file or directory
+...</pre><p> This means that the Java application launcher cannot read the jar
+                    archive file that you specified on the command line. If your
+                    Java runtime environment otherwise runs properly, then
+                    either you have named the incorrect file name or the
+                    installation file is corrupt or incomplete. Check the file
+                    name, download the installer again if necessary, and be sure
+                    to follow any specific instructions for your operating
+                    system posted on the <a class="ulink" href="http://www.jedit.org" target="_top">jEdit
+                    web site</a>.</p></td></tr><tr class="question"><td align="left" valign="top"><a name="d0e1834"></a><a name="install-noclassdef"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>After downloading
+                    <code class="filename">jeditXXXinstall.jar</code> (the
+                    <code class="filename">XXX</code> represents the version number), I
+                    tried to run <strong class="userinput"><code>java
+                    jeditXXXinstall.jar</code></strong>, but got the error message,
+                    </p><pre class="screen">Exception in main(), NoClassDefFoundError: jeditXXXinstall/jar.</pre><p>
+                    What am I doing wrong?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>You need to specify the <strong class="userinput"><code>-jar</code></strong>
+                    option for the Java application loader so that the loader
+                    will search the installation archive for the starting class
+                    file. Without the option, it treats the archive as a single
+                    class file (which it is not!), thus producing the error. The
+                    correct command line would be <strong class="userinput"><code>java -jar
+                    jeditXXXinstall.jar</code></strong>.</p></td></tr><tr class="question"><td align="left" valign="top"><a name="d0e1859"></a><a name="jedit-crashed"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>jEdit crashed the JVM, what gives?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>It's important to realise that java applications
+                    should never do this. The problem is almost certainly a bug
+                    in the JVM. Problems of this nature are often tricky to
+                    solve. Depending on your platform, there should be
+                    information logged about what caused the crash to occur. For
+                    Unix type systems you will likely get an error in the
+                    console (and for Mac OS X you may also get a report in
+                    ~/Library/Logs/CrashReporter/JavaApplicationStub.crash.log).
+					</p></td></tr><tr class="question"><td align="left" valign="top"><a name="d0e1866"></a><a name="locks-up-or-hangs"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>jEdit locks up or hangs while I'm doing lots of things!  </p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p> Sometimes, it can be due to a deadlock, or an
+                      infinite loop, or something else. You need to obtain a
+                      <span class="bold"><strong>thread dump</strong></span> from the time
+                      of hang, and attach that as a textfile to your bug report,
+                      explaining what you were doing at the time.
+                      </p><p> One way to obtain a thread dump, is to run jEdit
+                      with <code class="literal">java -jar jedit.jar</code> from a command
+                      line shell <span class="bold"><strong>in the foreground</strong></span>,
+                      wait for the hang or lockup, and type Ctrl+\
+                      (or Ctrl+Break on Windows) into the shell window.
+                      You should see a thread dump printed immediately that will
+                      help diagnose the problem.
+                      </p><p>
+                      Another way to get a thread dump is to run jEdit as you
+                      normally would, then run
+                      <a class="ulink" href="http://visualvm.java.net/" target="_top">visualvm</a>.
+                      You can right click on the jEdit process from within
+                      visualvm and choose "thread dump".
+                      </p></td></tr><tr class="question"><td align="left" valign="top"><a name="d0e1889"></a><a name="too-many-shortcuts"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>I can't remember all these multiple-key shortcuts! </p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p> Install ShortcutDisplay plugin for help. </p></td></tr><tr class="question"><td align="left" valign="top"><a name="d0e1896"></a><a name="general-slowstart"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>Why is jEdit so slow to start up?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>Some plugins require a lot of setup - chances are if
+                    you disable one, you will be able to determine the culprit.
+                    jEdit normally starts up quite quickly without
+                    plugins.</p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>To go the <span class="guimenu"><strong>Utilities</strong></span> menu and
+                            select <span class="guimenuitem"><strong>Activity
+                            Log</strong></span>.</p></li><li class="step"><p>Scroll to the area where you see lines like
+                            <span class="quote">&#8220;<span class="quote">[notice] JARClassLoader: Starting plugin
+                            XXX</span>&#8221;</span>.</p></li></ol></div><p>You should be able to see which (if any) plugins are
+                    causing an excesively long delay.</p></td></tr><tr class="question"><td align="left" valign="top"><a name="d0e1921"></a><a name="general-slow"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>Why is jEdit so slow?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>There may be many causes for this. Java by nature is
+                    more demanding on hardware than native applications. Modern
+                    computers should not have much problem with this.</p><p>The most likely cause is plugins that parse buffers or
+                    do other computationally expensive operations. These include
+                    XML, JavaSideKick, and CodeAid. If performance is important
+                    to you, installing a whole batch of plugins in one go is
+                    probably not a very good idea. Install them one at a time,
+                    so you can evaluate the effects of each. </p></td></tr><tr class="question"><td align="left" valign="top"><a name="d0e1930"></a><a name="general-docking"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>Go to left/top/bottom/right docking area does not work
+                    for some plugins?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>The plugin is missing a
+                    <code class="methodname">requestDefaultFocus()</code> method.
+                    Check the jedit plugin bugs tracker to see if the ticket
+                    is already opened and you can open a ticket if it's not there. </p></td></tr><tr class="qandadiv"><td align="left" valign="top" colspan="2"><h4 class="title"><a name="unix-problems"></a>2. Unix/Linux Problems</h4></td></tr><tr class="toc"><td align="left" valign="top" colspan="2"><dl><dt>Q: <a href="problems.html#d0e1943">I'm trying to install jEdit on Linux, but I keep getting strange error messages.
+				  </a></dt><dt>Q: <a href="problems.html#d0e1955">After installing jEdit on Linux, running the
+                    jedit command causes the error
+                    message: Warning: JAVA_HOME environment variable not set
+                    How can I fix this?</a></dt></dl></td></tr><tr class="question"><td align="left" valign="top"><a name="d0e1943"></a><a name="using-older-jre"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>I'm trying to install jEdit on Linux, but I keep getting strange error messages.
+				  </p><pre class="programlisting">
+Exception in thread "main" java.lang.UnsupportedClassVersionError:
+installer/Install (Unsupported major.minor version 49.0)
+Exception in thread "main" java.awt.AWTError: Cannot load AWT toolkit: gnu.java.awt.peer.gtk.GtkToolkit
+</pre></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p> Make sure the version of Java you are running is OpenJDK Java 11 or higher.
+				 In debian/ubuntu,
+				 <code class="literal"> apt-get install openjdk-11-jdk </code>
+				 </p></td></tr><tr class="question"><td align="left" valign="top"><a name="d0e1955"></a><a name="install-jedit-home"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>After installing jEdit on Linux, running the
+                    <strong class="userinput"><code>jedit</code></strong> command causes the error
+                    message: </p><pre class="screen">Warning: JAVA_HOME environment variable not set</pre><p>
+                    How can I fix this?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>Your <code class="filename">jedit</code> shell script should be
+                    modified to set the <strong class="userinput"><code>JAVA_HOME</code></strong>
+                    variable to the directory containing the executables of your
+                    desired Java runtime environment (JRE).</p></td></tr><tr class="qandadiv"><td align="left" valign="top" colspan="2"><h4 class="title"><a name="windows-problems"></a>3. Windows Problems</h4></td></tr><tr class="toc"><td align="left" valign="top" colspan="2"><dl><dt>Q: <a href="problems.html#d0e1978">When I try to run jedit.exe I get
+                    the message The JEditLauncher component does not appear to be installed.</a></dt><dt>Q: <a href="problems.html#d0e1999">When I try to run the jEdit installation package in
+                    Windows, I get an error message, Error opening registration key
+				"software\javasoft\java runtime	environment". How can I fix
+                    this?</a></dt><dt>Q: <a href="problems.html#d0e2015">When trying to install jEdit on Windows Me with an
+                    MS-DOS prompt, after entering java -jar
+                    jeditXXXinstall.jar I get the message
+                    bad command or file name. I have
+                    tried various alternatives but still cannot install.</a></dt><dt>Q: <a href="problems.html#d0e2043">When I run jEdit on Windows, it flashes, blinks, and
+                    doesn't display correctly! Why is your program so
+                    buggy?</a></dt></dl></td></tr><tr class="question"><td align="left" valign="top"><a name="d0e1978"></a><a name="install-windows-errmessage"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>When I try to run <code class="filename">jedit.exe</code> I get
+                    the message </p><pre class="screen">The JEditLauncher component does not appear to be installed.</pre></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>The dialog presenting this message asks if you would
+                    like to install the launcher. Select
+                    <strong class="userinput"><code>Yes</code></strong> and supply further information as
+                    prompted. A file named <code class="filename">install.log</code> is
+                    generated in the same directory as
+                    <code class="filename">jedit.exe</code> that contains information on
+                    the launcher's installation. You can send this file along
+                    with jEdit's Activity Log if you continue to have problems
+                    running jEdit with the launcher package.</p></td></tr><tr class="question"><td align="left" valign="top"><a name="d0e1999"></a><a name="install-error-regkey"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>When I try to run the jEdit installation package in
+                    Windows, I get an error message, </p><pre class="screen">Error opening registration key
+				"software\javasoft\java runtime	environment".</pre><p> How can I fix
+                    this?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>The problem is not with jEdit but may be caused by
+                    your installation of the Java runtime environment. Under
+                    Windows, Sun's Java application loader relies on entries in
+                    the Windows registry to find the files that create the
+                    runtime environment and a Java virtual machine. The loader
+                    (<code class="filename">java.exe</code>e or
+                    <code class="filename">javaw.exe</code>) is unable to find the
+                    necessary registration entry and therefore sends the error
+                    message. The best approach to fixing this is to uninstall
+                    and reinstall the JDK.</p></td></tr><tr class="question"><td align="left" valign="top"><a name="d0e2015"></a><a name="install-windows-badcommand"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>When trying to install jEdit on Windows Me with an
+                    MS-DOS prompt, after entering <strong class="userinput"><code>java -jar
+                    jeditXXXinstall.jar</code></strong> I get the message
+                    <strong class="userinput"><code>bad command or file name</code></strong>. I have
+                    tried various alternatives but still cannot install.</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>You should confirm that you have a Java runtime
+                    environment installed, which will include
+                    <code class="filename">java.exe</code> and the version that omits a
+                    separate terminal window, <code class="filename">javaw.exe</code>.
+                    Make sure that the directory containing
+                    <code class="filename">java.exe</code> or
+                    <code class="filename">javaw.exe</code>is found in the value of your
+                    <code class="filename">PATH</code> environment variable. Otherwise
+                    you should give the full path to the chosen loader on your
+                    command line.</p></td></tr><tr class="question"><td align="left" valign="top"><a name="d0e2043"></a><a name="general-windows-ddraw"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>When I run jEdit on Windows, it flashes, blinks, and
+                    doesn't display correctly! Why is your program so
+                    buggy?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>A frequent cause of this problem is buggy video
+                    drivers and/or a buggy DirectDraw implementation. A
+                    workaround is to disable Java's use of DirectDraw by adding
+                    the following option to the Java virtual machine command
+                    line:</p><pre class="programlisting">-Dsun.java2d.noddraw=true</pre></td></tr></tbody></table></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="plugins.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="appendix.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Plugin Questions&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;A.&nbsp;Contributors</td></tr></table></div></body></html>

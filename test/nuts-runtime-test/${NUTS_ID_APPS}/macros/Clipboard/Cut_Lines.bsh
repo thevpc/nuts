@@ -1,0 +1,43 @@
+/*
+* Cut_Lines.bsh - a BeanShell macro for jEdit
+* which cuts either the selected text, or the current line 
+* if no text is selected, to the clipboard.
+*
+* Copyright (C) 2003 Ollie Rutherfurd <oliver@jedit.org>
+* Copyright (c) 2008 encorejane@users.sourceforge.net
+*
+* $Id: Cut_Lines.bsh 24764 2017-10-15 12:20:28Z ezust $
+*/
+
+cutLines(){
+	if (buffer.getLength() == 0)
+		return;
+	selections = textArea.getSelectedLines();
+	
+	if(selections.length == 0){
+		selections = new int [] {textArea.getCaretLine()};
+	}
+	start = textArea.getLineStartOffset(selections[0]);
+	stop = textArea.getLineEndOffset(selections[selections.length-1]);
+
+	if (stop > textArea.getBufferLength()) stop = textArea.getBufferLength();
+
+	textArea.setSelection(new Selection.Range(start,stop));
+	Registers.cut(textArea,'$');
+}
+
+	cutLines();
+
+/*
+	Macro index data (in DocBook format)
+
+<listitem>
+	<para><filename>Cut_Selection_or_Line.bsh</filename>
+	<abstract><para>
+		If no text is selected, the current line is cut to the clipboard,
+		otherwise, all lines that contain the selection are cut to the clipboard.
+	</para></abstract>
+</listitem>
+
+*/
+

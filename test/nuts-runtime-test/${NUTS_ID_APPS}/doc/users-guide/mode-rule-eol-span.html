@@ -1,0 +1,24 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>The EOL_SPAN Tag</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit 5.7 User's Guide"><link rel="up" href="writing-modes.html" title="Chapter&nbsp;10.&nbsp;Mode Definition Syntax"><link rel="prev" href="mode-rule-span-regexp.html" title="The SPAN_REGEXP Tag"><link rel="next" href="mode-rule-eol-span-regexp.html" title="The EOL_SPAN_REGEXP Tag"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">The EOL_SPAN Tag</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mode-rule-span-regexp.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;10.&nbsp;Mode Definition Syntax</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="mode-rule-eol-span-regexp.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="mode-rule-eol-span"></a>The EOL_SPAN Tag</h2></div></div></div><p>An <code class="literal">EOL_SPAN</code> is similar to a
+        <code class="literal">SPAN</code> except that highlighting stops at the end of the
+        line, and no end sequence needs to be specified. The text to match is
+        specified between the opening and closing <code class="literal">EOL_SPAN</code>
+        tags. The following attributes are supported:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">TYPE</code> - The token type to highlight the
+                span with. See <a class="xref" href="mode-syntax-tokens.html" title="Token Types">the section called &#8220;Token Types&#8221;</a> for a list
+                of token types.</p></li><li class="listitem"><p><code class="literal">AT_LINE_START</code> - If set to
+                <code class="literal">TRUE</code>, the span will only be highlighted if
+                the start sequence occurs at the beginning of a line.</p></li><li class="listitem"><p><code class="literal">AT_WHITESPACE_END</code> - If set to
+                <code class="literal">TRUE</code>, the span will only be highlighted if
+                the sequence is the first non-whitespace text in the
+                line.</p></li><li class="listitem"><p><code class="literal">AT_WORD_START</code> - If set to
+                <code class="literal">TRUE</code>, the span will only be highlighted if
+                the start sequence occurs at the beginning of a word.</p></li><li class="listitem"><p><code class="literal">DELEGATE</code> - text inside the span will be
+                highlighted with the specified ruleset. To delegate to a ruleset
+                defined in the current mode, just specify its name. To delegate
+                to a ruleset defined in another mode, specify a name of the form
+                <code class="literal"><em class="replaceable"><code>mode</code></em>::<em class="replaceable"><code>ruleset</code></em></code>.
+                Note that the first (unnamed) ruleset in a mode is called
+                <span class="quote">&#8220;<span class="quote">MAIN</span>&#8221;</span>.</p></li><li class="listitem"><p><code class="literal">MATCH_TYPE</code> - Controls how the start of
+                the sequence will be highlighted. See <a class="xref" href="mode-match-type.html" title="The MATCH_TYPE Attribute">the section called &#8220;The MATCH_TYPE Attribute&#8221;</a> for more information.</p></li></ul></div><p>Here is an <code class="literal">EOL_SPAN</code> that highlights C++
+        comments:</p><pre class="programlisting">&lt;EOL_SPAN TYPE="COMMENT1"&gt;//&lt;/EOL_SPAN&gt;</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mode-rule-span-regexp.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="writing-modes.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="mode-rule-eol-span-regexp.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">The SPAN_REGEXP Tag&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;The EOL_SPAN_REGEXP Tag</td></tr></table></div></body></html>

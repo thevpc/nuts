@@ -1,0 +1,232 @@
+/* :encoding=UTF-8:
+ * Insert_Buffer_Properties.bsh - a Beanshell macro
+ * for the jEdit text editor that provides a gui for
+ * inserting Buffer Local properties for the current buffer
+ * into the current buffer.  If the buffer's mode as a line
+ * comment defined, or comment start and end properties then
+ * the inserted properties will be commented out.
+ *
+ * Copyright (C) 2002, 2003 Ollie Rutherfurd <oliver@rutherfurd.net>
+ *
+ * BugFixed by Björn "Vampire" Kautler <Vampire0@gmx.net>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Id: Insert_Buffer_Properties.bsh 24739 2017-09-17 11:23:42Z kerik-sf $
+ */
+
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.util.TreeMap;
+import java.util.StringTokenizer;
+import java.util.Vector;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.border.EmptyBorder;
+import org.gjt.sp.jedit.gui.JCheckBoxList;
+
+// Localization
+final static String InsertLocalPropertiesLabel = jEdit.getProperty("macro.rs.InsertBufferProperties.InsertLocalProperties.label", "Insert Buffer Local Properties");
+final static String PropertiesLabel = jEdit.getProperty("macro.rs.InsertBufferProperties.Properties.label", "Properties:");
+final static String InsertLabel = jEdit.getProperty("macro.rs.InsertBufferProperties.Insert.label", "Insert");
+final static String PROPERTY_COMMON_CANCEL = jEdit.getProperty("common.cancel");
+final static String MustBeIn10LinesMessage = jEdit.getProperty("macro.rs.InsertBufferProperties.MustBeIn10Lines.message", "Note: Buffer Local properties must in the first or last 10 lines of a buffer to be recognized by jEdit.");
+final static String NotEditableMessage = jEdit.getProperty("macro.rs.general.ErrorNotEditableDialog.message", "Buffer is not editable");
+
+BufferLocalPropertiesDialog(View view){
+
+	this.view = view;
+	buffer = view.getTextArea().getBuffer();
+	mode = buffer.getMode().name;
+
+// removed non-valid BLPs and added missing ones
+	props = new TreeMap();
+	props.put("mode","");
+	props.put("indentSize","int");
+	props.put("tabSize","int");
+	props.put("noTabs","bool");
+	props.put("wrap","str");
+	props.put("indentSize", "int");
+	props.put("autoIndent", "str");
+	props.put("maxLineLen","int");
+	props.put("folding","str");
+	props.put("collapseFolds","int");
+	props.put("deepIndent","bool");
+	props.put("noWordSep","str");
+	props.put("wordBreakChars","str");
+
+	_checked = jEdit.getProperty("macro.insert-buffer-properties." + mode,"");
+	tokens = new StringTokenizer(_checked,",");
+	checkedProps = new Hashtable();
+	while(tokens.hasMoreTokens())
+	{
+		property = tokens.nextToken();
+		checkedProps.put(property,"checked");
+	}
+
+	dialog = new JDialog(view,InsertLocalPropertiesLabel,true);
+	content = new JPanel(new BorderLayout());
+	content.setBorder(new EmptyBorder(10,10,10,10));
+	dialog.setContentPane(content);
+	content.add(new JLabel(PropertiesLabel), BorderLayout.NORTH);
+
+	_entries = new Vector();
+	for(name: props.keySet()){
+		checked = checkedProps.get(name);
+		entry = new JCheckBoxList.Entry(checked != null,name);
+		_entries.addElement(entry);
+	}
+	entries = new JCheckBoxList.Entry[_entries.size()];
+	_entries.copyInto(entries);
+
+	checkBox = new JCheckBoxList(entries);
+	checkBox.setRowHeight(GUIUtilities.defaultRowHeight());
+	checkBox.addKeyListener(this);
+	content.add(new JScrollPane(checkBox),
+		BorderLayout.CENTER);
+
+	buttons = new JPanel();
+	buttons.setBorder(new EmptyBorder(12,50,0,50));
+	buttons.setLayout(new BoxLayout(buttons,BoxLayout.X_AXIS));
+	buttons.add(Box.createGlue());
+	insert = new JButton(InsertLabel);
+	cancel = new JButton(PROPERTY_COMMON_CANCEL);
+	insert.addActionListener(this);
+	cancel.addActionListener(this);
+	dialog.getRootPane().setDefaultButton(insert);
+	buttons.add(insert);
+	buttons.add(Box.createHorizontalStrut(6));
+	buttons.add(cancel);
+	buttons.add(Box.createGlue());
+	content.add(buttons,BorderLayout.SOUTH);
+
+	void actionPerformed(ActionEvent evt){
+		if(evt.getSource() == cancel)
+			dialog.dispose();
+		else
+			this.insertProperties();
+	}
+
+	keyPressed(KeyEvent evt){
+		if(evt.getKeyCode() == KeyEvent.VK_ESCAPE)
+			dialog.dispose();
+		else if(evt.getKeyCode() == KeyEvent.VK_ENTER)
+			this.insertProperties();
+	}
+	keyReleased(KeyEvent evt){;}
+	keyTyped(KeyEvent evt){;}
+
+	insertProperties(){
+// removed isReadOnly-Check because already done in the beginning of the script
+		checkNextTime = new StringBuffer();
+		buff = new StringBuffer();
+		names = checkBox.getCheckedValues();
+		for(i=0; i < names.length; i++)
+		{
+// moved the assignation in front of the checkNextTime-build,
+// because "name" is used and will have a wrong value otherwise
+			name = names[i];
+			type = props.get(name);
+
+			if(i > 0)
+				checkNextTime.append(',');
+			checkNextTime.append(name);
+
+// changed the value reading/building/escaping
+			if(name.equals("mode"))
+				value = mode;
+			else if(type.equals("bool"))
+				value = buffer.getBooleanProperty(name);
+			else if(type.equals("str"))
+			{
+				value = buffer.getStringProperty(name);
+				if(value == null)
+					value = "";
+				value = value.replaceAll("=","\\\\=").replaceAll(":","\\\\:").replaceAll("\n","\\\\n").replaceAll("\t","\\\\t");
+			}
+			else if(type.equals("int"))
+			{
+				value = buffer.getIntegerProperty(name,-1);
+				if(value == -1)
+					value = "";
+			}
+			else
+				value = "";
+			buff.append(':').append(name).append('=').append(value);
+		}
+
+		jEdit.setProperty("macro.insert-buffer-properties." + mode,
+			checkNextTime.toString());
+
+		if(buff.length() > 0)
+			buff.append(':');
+		properties = buff.toString();
+
+		// try to comment out the properties first using a lineComment
+		// and if that's not defined, look for comment start and end
+		// properties -- use context senstive properties
+		caret = view.getTextArea().getCaretPosition();
+		comment = buffer.getContextSensitiveProperty(caret,"lineComment");
+		if(comment != null && comment.length() > 0)
+			properties = comment + " " + properties;
+		else
+		{
+			commentStart = buffer.getContextSensitiveProperty(caret,"commentStart");
+			commentEnd = buffer.getContextSensitiveProperty(caret,"commentEnd");
+			if(commentStart != null && commentEnd != null)
+					properties = commentStart + " " + properties + " " + commentEnd;
+		}
+		buffer.insert(caret,properties);
+
+		line = view.getTextArea().getCaretLine();
+		if(line >= 10 && line < (buffer.getLineCount()-10))
+			Macros.message(view, MustBeIn10LinesMessage);
+
+		dialog.dispose();
+	}
+
+	dialog.pack();
+// cosmetic size-correction
+	dialog.setSize(250,350);
+	dialog.setLocationRelativeTo(view);
+	dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+	dialog.setVisible(true);
+}
+
+	BufferLocalPropertiesDialog(view);
+
+/*
+	Macro index data (in DocBook format)
+
+<listitem>
+	<para><filename>Insert_Buffer_Properties.bsh</filename></para>
+	<abstract><para>
+	Inserts buffer-local properties into the current buffer.
+	</para></abstract>
+	<para>
+	If the buffer's 
+	mode has a line comment defined, or comment start and end
+	defined, the inserted properties will be commented out.
+	</para>
+</listitem>
+
+*/
+
+// :wrap=none:noTabs=false:collapseFolds=0:maxLineLen=80:mode=beanshell:indentSize=8:deepIndent=false:folding=none:

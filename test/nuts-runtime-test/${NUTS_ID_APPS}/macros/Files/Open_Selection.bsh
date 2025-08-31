@@ -1,0 +1,159 @@
+/*
+ * Open_Selection.bsh - a BeanShell macro script for the
+ * jEdit text editor - opens file named by selected text
+ * Copyright (C) 2001 Slava Pestov
+ * Copyright (C) 2012 Jarek Czekalski
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the jEdit program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Id: Open_Selection.bsh 22299 2012-10-04 11:43:29Z jarekczek $
+ *
+ * Checked for jEdit 4.0 API
+ *
+ */
+
+String getBrowserPath() //{{{
+{
+	// copied from VFSBrowser constructor
+	// in 5.1 there will be VFSBrowser.getLastVisitedPath() api for that
+	HistoryModel pathModel = HistoryModel.getModel("vfs.browser.path");
+	if(pathModel.getSize() == 0)
+		return null;
+	else
+		return pathModel.getItem(0);
+} //}}}
+
+// tryPath function {{{
+/** tryPath
+ * Tries to open a file built as concatenation of <code>sParent</code>
+ * and <code>sPath</code> paths. If file does not exist, no action is done.
+ * @return <code>true</code> if file exists, <code>false</code> otherwise.
+ */
+boolean tryPath(String sParent, String sPath)
+{
+	File f = new File(sParent, sPath);
+	if (f.exists())
+	{
+		jEdit.openFile(view, f.getPath());
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+} //}}}
+
+// getNoWordSep function {{{
+/**
+ * Inverts the list of word break chars to get the list of word
+ * separators. Ascii only space is assumed.
+ */
+String getNoWordSep(String sWordBreakChars)
+{
+    StringBuilder sb = new StringBuilder();
+    for (char c = 33; c <= 126; c++)
+    {
+        if (!Character.isLetterOrDigit(c)
+            && sWordBreakChars.indexOf(c) < 0)
+        {
+            sb.append(c);
+        }
+    }
+    return sb.toString();
+} //}}}
+
+// getSelectedWords function {{{
+/**
+ * Returns an array of selected words, assuming that user selected
+ * words (not whitespaces). If nothing is selected, returns
+ * the word under the caret, using custom word break chars.
+ */
+String[] getSelectedWords()
+{
+    String sWordBreakChars = "\"\'";
+    ArrayList words = new ArrayList();
+    Selection[] sels = textArea.getSelection();
+    for (Selection sel: sels)
+        words.add(textArea.getSelectedText(sel));
+    if (words.size() == 0)
+    {
+        // we need to get the word under caret, as nothing is selected
+        // we use the same rules as in TextArea.selectWord
+        int nLine = textArea.getCaretLine();
+        CharSequence line = buffer.getLineSegment(nLine);
+        int nStartPos = textArea.getCaretPosition()
+                        - buffer.getLineStartOffset(nLine);
+
+        // cannot read any char if at line end, so:
+        if (nStartPos == line.length())
+            nStartPos--;
+
+        // findWordStart/End utilities expect noWordSep, but we have
+        /// a list of word separators - so invert it
+        String sNoWordSep = getNoWordSep(sWordBreakChars);
+
+        int nLeft = TextUtilities.findWordStart(
+            line, nStartPos, sNoWordSep);
+        int nRight = TextUtilities.findWordEnd(
+            line, nStartPos+1, sNoWordSep);
+        if (nRight - nLeft < 1)
+        {
+            // javax.swing.JOptionPane.showMessageDialog(null,
+                // "start: " + nLeft + ", end: " + nRight);
+            view.getToolkit().beep();
+        }
+        else
+            words.add(String.valueOf(line.subSequence(nLeft, nRight)));
+    }
+    return words.toArray(new String[0]);
+} //}}}
+
+// openSelection function {{{
+/**
+ * Tries to find an existing file using current java directory and
+ * last browser directory as parents of the filename contained
+ * in selection. If this succeeds, the file is opened.
+ * Otherwise direct <code>jEdit.openFile</code> call is done on selection.
+ */
+void openSelection()
+{
+	for (String sPath: getSelectedWords())
+	{
+		if (!tryPath("", sPath) &&
+			!tryPath(getBrowserPath(), sPath))
+		{
+			jEdit.openFile(view, sPath);
+		}
+	}
+} //}}}
+
+openSelection();
+
+/* Macro index data (in DocBook format) {{{
+
+            <listitem>
+                <para><filename>Open_Selection.bsh</filename></para>
+
+                <para>Opens the file named by the current buffer's selected
+                text. Current VFS browser directory is also tried as
+                a parent of the filename, but only as a local path.</para>
+            </listitem>
+
+}}} */
+
+
+// end Open_Selection.bsh
+
+// :noTabs=false:tabSize=4:indentSize=4:folding=explicit:

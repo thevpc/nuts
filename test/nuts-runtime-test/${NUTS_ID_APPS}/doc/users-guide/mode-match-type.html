@@ -1,0 +1,22 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>The MATCH_TYPE Attribute</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit 5.7 User's Guide"><link rel="up" href="writing-modes.html" title="Chapter&nbsp;10.&nbsp;Mode Definition Syntax"><link rel="prev" href="mode-syntax-tokens.html" title="Token Types"><link rel="next" href="installing-modes.html" title="Chapter&nbsp;11.&nbsp;Installing Edit Modes"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">The MATCH_TYPE Attribute</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mode-syntax-tokens.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;10.&nbsp;Mode Definition Syntax</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="installing-modes.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="mode-match-type"></a>The MATCH_TYPE Attribute</h2></div></div></div><p>The <code class="literal">MATCH_TYPE</code> attribute is used by some of the
+        rules to control how the region matched by the rule will be
+        highlighted.</p><p>For example, when using a <code class="literal">MARK_PREVIOUS</code> rule to
+        highlight a function call of the form <code class="literal">fcall()</code>, the
+        following rule could be used:</p><pre class="programlisting">
+   &lt;MARK_PREVIOUS TYPE="FUNCTION" MATCH_TYPE="OPERATOR"&gt;(&lt;/MARK_PREVIOUS&gt;</pre><p>This would cause <code class="literal">fcall</code> to be highlighted as
+        <code class="literal">FUNCTION</code>, and <code class="literal">(</code> to be highlighted
+        as <code class="literal">OPERATOR</code>. In this case, to maintain bracket
+        matching working, a <code class="literal">SEQ</code> rule would have to be added
+        to match <code class="literal">)</code> and mark it as
+        <code class="literal">OPERATOR</code>.</p><p>The <code class="literal">MATCH_TYPE</code> attribute value can be any of
+        the valid token types, or the following special values:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">RULE</code>: this is the default value. It
+                tells the syntax system to use the same token type as the TYPE
+                attribute of the rule. This is equivalent to
+                <code class="literal">EXCLUDE_MATCH="FALSE"</code> in 4.2 and earlier mode
+                files.</p></li><li class="listitem"><p><code class="literal">CONTEXT</code>: using this value tells the
+                syntax system to mark the matched region using the default token
+                type for the current rule set. In 4.2 and earlier mode files,
+                this was specified by
+                <code class="literal">EXCLUDE_MATCH="TRUE"</code>.</p></li></ul></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mode-syntax-tokens.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="writing-modes.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="installing-modes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Token Types&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Chapter&nbsp;11.&nbsp;Installing Edit Modes</td></tr></table></div></body></html>

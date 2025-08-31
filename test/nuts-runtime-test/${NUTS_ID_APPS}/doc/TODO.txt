@@ -1,0 +1,194 @@
+TO DO
+
+Note that this is not a current to do list. It mostly only lists bugs
+and quirks that Slava wanted to fix before he stopped development. All
+of these items should eventually be removed or converted into tracker
+items if they are not out of date.
+
+splitting messes up last physical line in the newly created text area
+
++ text area:
+  - click&drag breaks fast scroll
+  - format: doesn't wrap right if selection starts in the middle of the
+    line
+  - ruleset importing trick
+  - expand fold: try to expand even if already expanded
+  - backspace with virtual caret: needs tweaks
+  - independent text area component
+    - gutter: has a depenency on View to do focus highlight, and Marker
+    - text area: depends on view for input handling,
+      smart home/end macro record, showing dialog boxes, abbrevs
+    - mouse handler: registers
+    - text area transfer handler: opening files dependency
+  - new file: explicit folding: type {{{: fold marker doesn't appear
+  - finish code to hide caret on user input; enter/backspace is a problem
+    maybe listen for KeyTyped instead
+  - indent folding: fold marker not always updated
+  - format: preserve comment chars at start
+  - tabs to spaces with rect select
+  - input methods
+  - remove-marker, select-next/prev-marker/bracket
+  - format -- instead of \n\n, what if it has \n   \n?
+  - DnD still dosn't work as expected when draging from the same buffer,
+  but differen text area (for example droping at the position where drag
+  was started erases text)- no support for vertical pasting
+  - anoying cursor blinking (responsible for this is scrolling option :
+  textArea.moveCaretPosition(pos,JEditTextArea.ELECTRIC_SCROLL) in
+  dragOver() method)
+
+Ideas: a lot of the code in the jedit text area can be simplified
+   for example, i'm not sure we really need the ChunkCache anymore
+   just keep the chunks for the currently
+   painting line around, to speed up the multiple offsetToX()
+   calls that happen during painting
+   also, you might want to rip out the text area's
+   scrolling code, and put in a JScrollPane
+
+
++ auto indent:
+
+  - ? : do not unindent
+  - deep indent
+  - Common Lisp &body forms
+  - pressing enter: carry over * from prev line in javadoc
+  - javadoc indent: if prev line was /* or *, unindent if prev line is
+  */
+  if(foo)
+    while(bar)
+    {
+      //
+    }
+  <--- cursor here
+  - option to disable electric keys
+  - unindentThisAndFollowing
+  - indent & syntax tokens
+
++ vfs browser:
+
+  - test keyboard completion with expanded/collapsed tree
+  - test keyboard completion with high latency VFS
+  - fsb default size
+  - file system browser column widths are not saved
+
++ misc:
+
+  - kill ring still being reversed
+  - jEdit.checkBufferStatus() fucks with split panes
+
+  - there is a comment in browser.actions.xml:
+  /* NOTE: I do NOT want plugins creating check box menu items
+   * in jEdit 4.2! The API is not stable, note the _comp hack...
+   * in 4.3 I will finish the full action API refactoring and
+   * IS_SELECTED blocks in browser actions will have access to
+   * the browser variable just like the CODE block above.
+   *
+   * Love, Slava */
+
+  - option to disable buffer local properties
+  - CA+PLUS +: bad
+  - goToBuffer() -- if any parent has zero height or zero width...
+  - deferred loading API for macro handlers
+  - S+INS, etc in swing controls
+  - vfs: a way of running awt requests not all at end
+  - wrapped dock buttons broken
+
++ beanshell:
+
+  ; after else if()
+  longs not read correctly if prefixed with 0x
+
++ docs:
+
+- vfs browser changes
+- auto indent
+- save help index
+- document optional dependencies
+- deferred loading mention.
+- addCommandPath()
+- API thread safety
+- add note to documentation about exponential-time regexps
+- document deep indent
+- note about dependencies
+- plugin tutorial:
+  - link to jEdit devel page
+  - quicknotepad class -- links to API docs
+  - functions - links to API docs
+  - quicknotepad docs
+- plugin tips and techniques:
+  - common. properties, using properties for UI strings
+  - cutting down on startup time
+  - canned dialog boxes in GUIUtilities
+  - tools.jar
+  - string comparison in MiscUtilities
+  - writing a macro handler
+  - writing a fold handler
+  - OperatingSystem class
+  - option groups
+  - listening for buffer changes
+  - canned controls:
+    animated icon, color well button, enhanced dialog,
+    font selector, history text field,
+    jcheckboxlist, rolloverbutton,
+    variablegridlayout
+  - displaying a help viewer
+  - canned icons
+  - vfs implementation
+  - running stuff in i/o threads
+  - multi-threaded i/o
+  - jeditresource: protocol
+  - getting line syntax info, textutilities.getTokenAtOffset()
+  - text area extensions
+  - text area caret & scroll listeners
+  - status bar messages & readNextChar()
+- vfs javadoc: invokeAndWait() example for createVFSSession()
+
+check tips of the day
+- help:
+  - titles in search are fucked
+- sidebars: need a border or some sort
+
+- C+d & killring
+- plugin mgr inspection of not-loaded plugins
+- history text field tweak
+
++ obscure:
+
+- no need to wait for requests after newFile()
+- class loading problems
+- motif l&f: shortcuts in menu items
+- some JLists do not auto-scroll on keystroke
+- how to handle S+0-9?
+- invoking action bar command twice
+- backup time distance setting
+- if A depends on B but A is loaded before B and B breaks, A ends up
+  being loaded. Solution: load plugins in order of dependencies?
+
++ performance:
+
+- 7000 line lisp file: window resize is slow
+- closing lots of files is slow -- esp. with close all dialog box!
+- menu drag: slow
+- bracket matching: no delay for current line match??
+- final optimization for OffsetManager: scan to zero or scan to end
+- do buffer load AWT half immediately after work thread half
+- replace all in a directory could be faster
+- buffer.setMode() slow
+- eliminate redundant scans and events when loading buffer
+- don't repaint whole selection when resizing
+- could make non-soft wrap chunk merge even faster!
+- syntax SPAN::END substitution: String --> char[] --> String
+- is getScreenLineOfOffset() called often?
+- if caret is at the end of a buffer when doing a replace all, a lot of
+  repaint() and getLineOfOffset() calls are made
+- optimize for no folding & no soft wrap case:
+  - reset() and changed() don't need to scan
+  - scroll/physUp/Down() simpler
+- inserting lines repaints whole text area
+- see if getLineOfOffset() can be optimized
+- optimize 1 long line case
+- two repaints in line insert
+- redundant calls to recalculateLastPhysicalLines()/updateScrollBars()
+- redundant updateChunksUpTo() calls
+
+jEdit buffer local properties:
+:wrap=hard:maxLineLen=72:indentSize=2:

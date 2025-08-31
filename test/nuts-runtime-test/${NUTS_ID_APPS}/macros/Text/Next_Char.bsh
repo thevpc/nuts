@@ -1,0 +1,77 @@
+/*
+ * Next_char.bsh - a BeanShell macro script for the
+ * jEdit text editor - finds next occurence of character on
+ * current line
+ * Copyright (C) 2001 John Gellene
+ * jgellene@nyc.rr.com
+ * http://community.jedit.org
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the jEdit program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Id: Next_Char.bsh 24553 2016-09-20 20:24:34Z daleanson $
+ *
+ * Checked for jEdit 4.0 API
+ *
+ */
+
+ // Localization
+final static String EnterCharacterLabel = jEdit.getProperty("macro.rs.InsertTag.EnterCharacter.label", "Enter a character");
+
+// Process
+void nextChar()
+{
+	script = new StringBuffer(512);
+	script.append( "start = textArea.getCaretPosition();"        );
+	script.append( "line = textArea.getCaretLine();"             );
+	script.append( "end = textArea.getLineEndOffset(line) + 1;"  );
+	script.append( "text = buffer.getText(start, end - start);"  );
+	script.append( "match = text.indexOf(__char__, 1);"          );
+	script.append( "if(match != -1) {"                           );
+	script.append( "if(__char__ != '\\n') ++match;"              );
+	script.append( "textArea.setCaretPosition(start + match - 1);}" );
+
+	view.getInputHandler().readNextChar(EnterCharacterLabel,script.toString());
+}
+
+nextChar();
+
+/*
+	Macro index data (in DocBook format)
+
+<listitem>
+    <para><filename>Next_Char.bsh</filename></para>
+    <abstract><para>
+        Finds next occurence of character on current line.
+    </para></abstract>
+    <para>
+        The macro takes the next character typed after macro execution
+        as the character being searched.  That character is not
+        displayed.  If the character does not appear in the balance of
+        the current line, no action occurs.
+    </para>
+    <para>
+        This macro illustrates the use of
+        <function>InputHandler.readNextChar()</function> as a means of
+        obtaining user input. <!-- See <xref
+		linkend="macro-tips-single-char" -->
+        />.
+    </para>
+ </listitem>
+
+*/
+
+
+// end Next_char.bsh
+

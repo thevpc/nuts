@@ -1,0 +1,13 @@
+/**
+ * Go to the beginning of the current sentence. Emulates the Emacs
+ * "backward-sentence" command.
+ */
+
+source (MiscUtilities.constructPath(dirname(scriptPath), "EmacsUtil.bsh"));
+
+void emacsBackwardSentence()
+{
+    textArea.setCaretPosition (findBeginningOfSentence());
+}
+
+emacsBackwardSentence();

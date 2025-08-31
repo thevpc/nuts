@@ -1,0 +1,137 @@
+/*
+ * Get_Package_Name.bsh - a BeanShell macro script for the
+ * jEdit text editor - insert package name based upon path
+ * of current buffer
+ * Copyright (C) 2001 John Gellene
+ * jgellene@nyc.rr.com
+ * http://community.jedit.org
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * Based on code contributed by Richard Wan
+ *
+ * $Id: Get_Package_Name.bsh 23971 2015-08-08 19:37:35Z daleanson $
+ *
+ * Checked for jEdit 4.0 API
+ *
+ */
+
+
+//Localization
+final static String NotWorking1Error = jEdit.getProperty("macro.rs.GetPackageName.NotWorking1.error", "This macro will not work when the Java interpreter");
+final static String NotWorking2Error = jEdit.getProperty("macro.rs.GetPackageName.NotWorking2.error", "loads jEdit with the '-jar' command line option.");
+final static String NotFindError = jEdit.getProperty("macro.rs.GetPackageName.NotFind.error", "Could not find a package name."); 
+final static String NotEditableMessage = jEdit.getProperty("macro.rs.general.ErrorNotEditableDialog.message", "Buffer is not editable");
+
+boolean testClassPath()
+{
+	classpath = System.getProperty("java.class.path");
+	classSeparator = (File.separatorChar == '/' ? ':' : ';');
+	return (classpath.indexOf(classSeparator) != -1)
+		|| (!classpath.endsWith("jedit.jar"));
+}
+
+
+File getCanonicalFile(File file)
+{
+    try
+    {
+        return new File(file.getCanonicalPath());
+    }
+    catch(IOException e)
+    {
+        return new File(file.getAbsolutePath());
+    }
+}
+
+File getRoot(File file)
+{
+    tokens = new StringTokenizer(System.getProperty("java.class.path"),
+        File.pathSeparator);
+    fileSet = new Hashtable();
+    while(tokens.hasMoreTokens())
+	{
+		String tok = tokens.nextToken();
+        fileSet.put(getCanonicalFile(new File(tok)), tok);
+	}
+
+    while(file != null)
+    {
+        if(fileSet.get(getCanonicalFile(file)) != null)
+            break;
+        parent = file.getParent();
+        file = (parent != null) ? new File(parent) : null;
+    }
+    return file;
+}
+
+
+String determinePackageName(String path)
+{
+    pathFile = new File(buffer.getPath());
+    File root = getRoot(pathFile);
+    if(root == null)
+        return null;
+    parent = pathFile.getParent();
+    packagePath = parent.substring(root.getPath().length(), parent.length());
+    packagePath = packagePath.replace(File.separatorChar, '.');
+    if (packagePath.endsWith("."))
+    {
+        packagePath = packagePath.substring(0, packagePath.length() - 1);
+    }
+    if (packagePath.startsWith("."))
+    {
+        packagePath = packagePath.substring(1, packagePath.length());
+    }
+    return packagePath;
+}
+
+	// main routine
+	if(!testClassPath())
+	{
+		Macros.error(view, NotWorking1Error + "\n" + NotWorking2Error);
+	}
+	else
+	{
+		result = determinePackageName(buffer.getPath());
+		if(result == null)
+		{
+			Macros.error(view, NotFindError);
+		}
+		else textArea.setSelectedText(result);
+	}
+
+/*
+	Macro index data (in DocBook format)
+
+<listitem>
+    <para><filename>Get_Package_Name.bsh</filename></para>
+    <abstract><para>
+        Inserts a plausible Java package name for the current buffer.
+    </para></abstract>
+    <para>
+        The macro compares the buffer's path name with the elements of the
+        classpath being used by the jEdit session.  An error message will be
+        displayed if no suitable package name is found. This macro will not
+        work if jEdit is being run as a JAR file without specifying a
+        classpath.  In that case the classpath seen by the macro consists
+        solely of the JAR file.
+    </para>
+</listitem>
+
+*/
+
+// end Get_Package_Name.bsh
+

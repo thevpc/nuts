@@ -1,0 +1,14 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Utility Classes</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit 5.7 User's Guide"><link rel="up" href="plugin-tips.html" title="Chapter&nbsp;19.&nbsp;Plugin Tips and Techniques"><link rel="prev" href="plugin-tips.html" title="Chapter&nbsp;19.&nbsp;Plugin Tips and Techniques"><link rel="next" href="plugin-tips-libraries.html" title="Bundling Additional Class Libraries"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center"> Utility Classes </th></tr><tr><td width="20%" align="left"><a accesskey="p" href="plugin-tips.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;19.&nbsp;Plugin Tips and Techniques</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="plugin-tips-libraries.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="utility-classes"></a> Utility Classes </h2></div></div></div><p> If you need to check what the current running platform is, 
+      see <code class="classname">org.gjt.sp.jedit.OperatingSystem</code>. </p><p> If you need to compare file names and don't want to
+    worry about whether you are on a case-sensitive file system or not, 
+    use <code class="function">MiscUtilities.pathsEqual()</code>. See that
+    class for other useful path manipulation routines. </p><p> There are other helpful classes in <span class="package">org.gjt.sp.util</span>,
+      such as <code class="classname">HtmlUtilities</code>, <code class="classname">StandardUtilities</code>,
+      <code class="classname">IOUtilities</code>, and <code class="classname">Log</code>. 
+      In particular, the <code class="classname">Log</code> class is recommended 
+      for reporting errors and also logging debug information. 
+    </p><p> If your plugin needs to "find a word" (using word boundaries) somewhere 
+    in the  buffer, you might want to reuse the <code class="classname">org.gjt.sp.jedit.TextUtilities</code>
+    class. </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="plugin-tips.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="plugin-tips.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="plugin-tips-libraries.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter&nbsp;19.&nbsp;Plugin Tips and Techniques&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Bundling Additional Class Libraries</td></tr></table></div></body></html>

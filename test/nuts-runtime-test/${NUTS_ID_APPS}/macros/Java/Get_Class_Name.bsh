@@ -1,0 +1,122 @@
+/**
+Get_Class_Name.bsh - a BeanShell macro for the jEdit text editor replaces the 
+selected text with the current class name.
+
+This macro walks though several steps in an attempt to guess the correct class
+name.
+
+First, it searches backwards for the nearest occurance of the keyword 'class,' 
+and check which class the target belongs to, so it works for inner class definitions.
+If you run this macro at any point after an inner class definition but belongs to a
+parent class, it will return the name of the parent class.
+
+If that fails(out of any class boundary), it attempts to guess the class name from 
+the file name; i.e. it would return "FooBar" if the buffer was named "FooBar.cc."  
+If this fails (if, for example, the buffer is untitled), it returns an empty string.
+
+Copyright (C)  2004 Thomas Galvin - software@thomas-galvin.com
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+*/
+
+void setCaret(int selectionStart, int selectionEnd)
+{
+  textArea.setCaretPosition(selectionStart);
+  textArea.moveCaretPosition(selectionEnd);
+}
+
+String getClassName()
+{
+  int selectionStart;
+  int selectionEnd;
+  if(textArea.getSelection().length != 0){  // if there are selections exists
+      selectionStart = textArea.getSelection(0).getStart();
+      selectionEnd = textArea.getSelection(0).getEnd();
+  }
+  else{		// if no selection
+      selectionStart = textArea.getCaretPosition();
+      selectionEnd = textArea.getCaretPosition();
+  }
+
+  String text = textArea.getText();
+  int index = text.lastIndexOf("class", selectionStart);
+
+  boolean flag = false;
+  // check which class the targetposition belongs to
+  if(index != -1)
+  {
+    flag = true;
+    index = selectionStart;
+    int tag = 0;
+    while(flag){
+	char check = text.charAt(index);
+	if(check == '}'){
+	    tag++;
+	}
+	if(check == '{'){
+	    tag--;
+	    if(tag == -1){
+		index = text.lastIndexOf("class", index);
+		break;
+	    }
+	}
+	index--;
+	// out of any classes' boundary
+	if(index == -1)
+	    flag = false;
+    }
+  }
+
+  if(flag)
+  {
+    textArea.setCaretPosition(index);
+    int lineNumber = textArea.getCaretLine();
+    int lineEnd = textArea.getLineEndOffset(lineNumber);
+    String lineText = text.substring(index, lineEnd);   
+    
+    StringTokenizer tokenizer = new StringTokenizer(lineText);
+    tokenizer.nextToken(); //eat "class"
+    if(tokenizer.hasMoreTokens())
+    {
+      setCaret(selectionStart, selectionEnd);
+      return tokenizer.nextToken();
+    }
+  }
+  
+  
+  String fileClassName = buffer.getName();
+  int index = fileClassName.lastIndexOf('.');
+  if(index != -1)
+  {
+    fileClassName = fileClassName.substring(0, index);
+    if(fileClassName.toLowerCase().indexOf("untitled") == -1)
+    {
+      return fileClassName;
+    }
+  }
+  setCaret(selectionStart, selectionEnd);
+  
+  String className = buffer.getName();
+  int index = className.lastIndexOf('.');
+  if(index != -1)
+  {
+    className = className.substring(0, index);
+    if(className.toLowerCase().indexOf("untitled") == -1)
+    {
+      return className;
+    }
+  }
+  
+  return "";
+}
+
+String className = getClassName();
+  textArea.setSelectedText(className);

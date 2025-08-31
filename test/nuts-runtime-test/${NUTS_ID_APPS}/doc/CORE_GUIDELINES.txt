@@ -1,0 +1,62 @@
+Guide to jEdit's core development
+
+
+{{{Independant textarea
+
+First the dependencies with jEdit must be removed.
+It will contains packages
+
+- org.gjt.sp.jedit.buffer
+- org.gjt.sp.jedit.ident
+- org.gjt.sp.jedit.textarea
+- org.gjt.sp.jedit.syntax
+
+
+}}}
+
+{{{Package dependencies requirement
+This part contains the packages and the allowed dependencies for them,
+and their status.
+
+{{{Default dependencies (always allowed)
+- org.gjt.sp.util.*
+- org.gjt.sp.util.jedit.Debug
+- org.gjt.sp.util.jedit.Log
+}}} 
+
+
+-org.gjt.sp.jedit.TextUtilities (org.gjt.sp.jedit.buffer,
+                                 org.gjt.sp.jedit.syntax)
+
+- org.gjt.sp.util : No dependency (OK)
+
+- org.gjt.sp.jedit.indent : (OK)
+        {{{ imports
+        -org.gjt.sp.jedit.buffer.*
+        -org.gjt.sp.jedit.TextUtilities }}}
+
+
+- org.gjt.sp.jedit.syntax : No dependency (OK)
+
+- org.gjt.sp.jedit.buffer : (NOK)
+        {{{ imports 
+        -org.gjt.sp.jedit.textarea.*
+        -org.gjt.sp.jedit.syntax.* }}}
+        {{{ misc informations
+        -BufferChangeAdapter will not be part of the independent TextArea
+        -BufferChangeListener will not be part of the independent TextArea
+        JEditBuffer has a dependency on jEdit that must be removed }}}
+
+        
+- org.gjt.sp.jedit.textarea : (NOK)
+        {{{ imports
+        -org.gjt.sp.jedit.buffer.*
+        -org.gjt.sp.jedit.syntax.* }}}
+
+
+        
+}}}
+
+jEdit buffer local properties:
+:wrap=hard:maxLineLen=72:indentSize=2:
+:folding=explicit:collapseFolds=2:

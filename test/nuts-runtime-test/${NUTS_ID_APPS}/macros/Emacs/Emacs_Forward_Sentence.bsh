@@ -1,0 +1,13 @@
+/**
+ * Go to the end of the current sentence. Emulates the Emacs "forward-sentence"
+ * command.
+ */
+
+source (MiscUtilities.constructPath(dirname(scriptPath), "EmacsUtil.bsh"));
+
+void emacsForwardSentence()
+{
+    textArea.setCaretPosition (findEndOfSentence());
+}
+
+emacsForwardSentence();

@@ -1,0 +1,102 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Folding</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit 5.7 User's Guide"><link rel="up" href="source-edit.html" title="Chapter&nbsp;6.&nbsp;Editing Source Code"><link rel="prev" href="abbrevs.html" title="Abbreviations"><link rel="next" href="customizing.html" title="Chapter&nbsp;7.&nbsp;Customizing jEdit"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Folding</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="abbrevs.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;6.&nbsp;Editing Source Code</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="customizing.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="folding"></a>Folding</h2></div></div></div><p>Program source code and other structured text files can be thought
+        of as containing a hierarchy of sections, which themselves might contain
+        sub-sections. The folding feature lets you selectively hide and show
+        these sections, replacing hidden ones with a single line that serves as
+        an <span class="quote">&#8220;<span class="quote">overview</span>&#8221;</span> of that section. Folding is disabled by
+        default. To enable it, you must choose one of the available folding
+        modes.</p><p><span class="quote">&#8220;<span class="quote">Indent</span>&#8221;</span> mode creates folds based on a line's leading
+        whitespace; the more leading whitespace a block of text has, the further
+        down it is in the hierarchy. For example:</p><pre class="screen">This is a section
+  This is a sub-section
+  This is another sub-section
+    This is a sub-sub-section
+Another top-level section</pre><p><span class="quote">&#8220;<span class="quote">Explicit</span>&#8221;</span> mode folds away blocks of text surrounded
+        with <span class="quote">&#8220;<span class="quote">{{{</span>&#8221;</span> and <span class="quote">&#8220;<span class="quote">}}}</span>&#8221;</span>. For example:</p><pre class="screen">{{{ The first line of a fold.
+When this fold is collapsed, only the above line will be visible.
+
+{{{ A sub-section.
+With text inside it.
+}}}
+
+{{{ Another sub-section.
+}}}
+
+}}}</pre><p>Both modes have distinct advantages and disadvantages; indent
+        folding requires no changes to be made to a buffer's text and does a
+        decent job with most program source. Explicit folding requires
+        <span class="quote">&#8220;<span class="quote">fold markers</span>&#8221;</span> to be inserted into the text, but is more
+        flexible in exactly what to fold away.</p><p>Some plugins might add additional folding modes; see <a class="xref" href="using-plugins.html" title="Chapter&nbsp;9.&nbsp;Installing and Using Plugins">Chapter&nbsp;9, <i>Installing and Using Plugins</i></a> for information about plugins.</p><p>Folding can be enabled in one of several ways:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>On a global or mode-specific basis in the
+                <span class="guibutton"><strong>Editing</strong></span> pane of the
+                <span class="guimenu"><strong>Utilities</strong></span>&gt;
+                <span class="guimenuitem"><strong>Options</strong></span>
+                dialog box. See <a class="xref" href="global-opts.html#editing-pane" title="The Editing Pane">the section called &#8220;The Editing Pane&#8221;</a>.</p></li><li class="listitem"><p>In the current buffer for the duration of the editing
+                session in the
+                <span class="guimenu"><strong>Utilities</strong></span>&gt;<span class="guimenuitem"><strong>Buffer
+                Options</strong></span> dialog box. See <a class="xref" href="buffer-opts.html" title="The Buffer Options Dialog Box">the section called &#8220;The Buffer Options Dialog Box&#8221;</a>.</p></li><li class="listitem"><p>In the current buffer for future editing sessions by
+                placing the following in the first or last 10 lines of a buffer,
+                where <em class="replaceable"><code>mode</code></em> is either
+                <span class="quote">&#8220;<span class="quote">indent</span>&#8221;</span>, <span class="quote">&#8220;<span class="quote">explicit</span>&#8221;</span>, or the name of a
+                plugin folding mode:</p><pre class="screen">:folding=<em class="replaceable"><code>mode</code></em>:</pre></li></ul></div><div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Warning</h3><p>When using indent folding, portions of the buffer may become
+            inaccessible if you change the leading indent of the first line of a
+            collapsed fold. If you experience this, you can use the
+            <span class="guimenuitem"><strong>Expand All Folds</strong></span> command to make the text
+            visible again.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="d0e5097"></a>Collapsing and Expanding Folds</h3></div></div></div><p>The first line of each fold has a triangle drawn next to it in
+            the gutter (see <a class="xref" href="overview.html" title="Interface Overview">the section called &#8220;Interface Overview&#8221;</a> for more information
+            about the gutter). The triangle points toward the line when the fold
+            is collapsed, and downward when the fold is expanded. Clicking the
+            triangle collapses and expands the fold. To expand all sub-folds as
+            well, hold down the <code class="keycap">Shift</code> while clicking.</p><p>The first line of a collapsed fold is drawn with a background
+            color that depends on the fold level, and the number of lines in the
+            fold is shown to the right of the line's text.</p><p>Folds can also be collapsed and expanded using menu item
+            commands and keyboard shortcuts.</p><p><span class="guisubmenu"><strong>Folding</strong></span>&gt;<span class="guimenuitem"><strong>Collapse
+            Fold</strong></span> (shortcut: <code class="keycap">A+BACK_SPACE</code>)
+            collapses the fold containing the caret.</p><p><span class="guisubmenu"><strong>Folding</strong></span>&gt;<span class="guimenuitem"><strong>Expand Fold
+            One Level</strong></span> (shortcut: <code class="keycap">A+ENTER</code>) expands
+            the fold containing the caret. Nested folds will remain collapsed,
+            and the caret will be positioned on the first nested fold (if
+            any).</p><p><span class="guisubmenu"><strong>Folding</strong></span>&gt;<span class="guimenuitem"><strong>Expand Fold
+            Fully</strong></span> (shortcut: <code class="keycap">AS+ENTER</code>) expands
+            the fold containing the caret, also expanding any nested
+            folds.</p><p><span class="guisubmenu"><strong>Folding</strong></span>&gt;<span class="guimenuitem"><strong>Collapse All
+            Folds</strong></span> (shortcut: <code class="keycap">C+e c</code>) collapses all
+            folds in the buffer.</p><p><span class="guisubmenu"><strong>Folding</strong></span>&gt;<span class="guimenuitem"><strong>Expand All
+            Folds</strong></span> (shortcut: <code class="keycap">C+e x</code>) expands all
+            folds in the buffer.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="d0e5161"></a>Navigating Around With Folds</h3></div></div></div><p><span class="guisubmenu"><strong>Folding</strong></span>&gt;<span class="guimenuitem"><strong>Go to Parent
+            Fold</strong></span> (shortcut: <code class="keycap">C+e u</code>) moves the
+            caret to the fold containing the one at the caret position.</p><p><span class="guisubmenu"><strong>Folding</strong></span>&gt;<span class="guimenuitem"><strong>Go to
+            Previous Fold</strong></span> (shortcut: <code class="keycap">A+UP</code>) moves
+            the caret to the fold immediately before the caret position.</p><p><span class="guisubmenu"><strong>Folding</strong></span>&gt;<span class="guimenuitem"><strong>Go to Next
+            Fold</strong></span> (shortcut: <code class="keycap">A+DOWN</code>) moves the
+            caret to the fold immediately after the caret position.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="d0e5194"></a>Miscellaneous Folding Commands</h3></div></div></div><p><span class="guisubmenu"><strong>Folding</strong></span>&gt;<span class="guimenuitem"><strong>Add Explicit
+            Fold</strong></span> (shortcut: <code class="keycap">C+e a</code>) surrounds the
+            selection with <span class="quote">&#8220;<span class="quote">{{{</span>&#8221;</span> and <span class="quote">&#8220;<span class="quote">}}}</span>&#8221;</span>. If the
+            current buffer's edit mode defines comment strings (see <a class="xref" href="commenting.html" title="Commenting Out Code">the section called &#8220;Commenting Out Code&#8221;</a>) the explicit fold markers will
+            automatically be commented out as well.</p><p><span class="guisubmenu"><strong>Folding</strong></span>&gt;<span class="guimenuitem"><strong>Select
+            Fold</strong></span> (shortcut: <code class="keycap">C+e s</code>) selects all
+            lines within the fold containing the caret.
+            <code class="keycap">Control</code>-clicking a fold expansion triangle in the
+            gutter has the same effect.</p><p><span class="guisubmenu"><strong>Folding</strong></span>&gt;<span class="guimenuitem"><strong>Expand Folds
+            With Level</strong></span> (shortcut: <code class="keycap">C+e ENTER
+            <em class="replaceable"><code>key</code></em></code>) reads the next character
+            entered at the keyboard, and expands folds in the buffer with a fold
+            level less than that specified, while collapsing all others.</p><p>Sometimes it is desirable to have files open with folds
+            initially collapsed. This can be configured as follows:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>On a global or mode-specific basis in the
+                    <span class="guibutton"><strong>Editing</strong></span> pane of the
+                    <span class="guimenu"><strong>Utilities</strong></span>&gt;
+                    <span class="guimenuitem"><strong>Options</strong></span> dialog box.
+                    See <a class="xref" href="global-opts.html#editing-pane" title="The Editing Pane">the section called &#8220;The Editing Pane&#8221;</a>.</p></li><li class="listitem"><p>In the current buffer for future editing sessions by
+                    placing the following in the first or last 10 lines of a
+                    buffer, where <em class="replaceable"><code>level</code></em> is the
+                    desired fold level:</p><pre class="screen">:collapseFolds=<em class="replaceable"><code>level</code></em>:</pre></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="narrowing"></a>Narrowing</h3></div></div></div><p>The narrowing feature temporarily <span class="quote">&#8220;<span class="quote">narrows</span>&#8221;</span> the
+            display of a buffer to a specified region. Text outside the region
+            is not shown, but is still present in the buffer. </p><p>Holding down <code class="keycap">Alt</code> while clicking a fold
+            expansion triangle in the gutter will hide all lines the buffer
+            except those contained in the clicked fold.</p><p><span class="guisubmenu"><strong>Folding</strong></span>&gt;<span class="guimenuitem"><strong>Narrow Buffer
+            to Fold</strong></span> (shortcut: <code class="keycap">C+e n n</code>) hides all
+            lines the buffer except those in the fold containing the caret. </p><p><span class="guisubmenu"><strong>Folding</strong></span>&gt;<span class="guimenuitem"><strong>Narrow Buffer
+            to Selection</strong></span> (shortcut: <code class="keycap">C+e n s</code>)
+            hides all lines the buffer except those in the selection.</p><p><span class="guisubmenu"><strong>Folding</strong></span>&gt;<span class="guimenuitem"><strong>Expand All
+            Folds</strong></span> (shortcut: <code class="keycap">C+e x</code>) shows lines
+            that were hidden as a result of narrowing.</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="abbrevs.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="source-edit.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="customizing.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Abbreviations&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Chapter&nbsp;7.&nbsp;Customizing jEdit</td></tr></table></div></body></html>

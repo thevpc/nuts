@@ -1,0 +1,53 @@
+/*
+ * Go_to_Offset.bsh - a BeanShell macro for the jEdit text
+ * editor - Prompts the user for a offset position on the
+ * current buffer, then moves the caret there.
+ *
+ * Copyright (C) 2013 Thomas Meyer
+ *
+ */
+ 
+
+
+
+//Process
+goToOffset()
+{
+	len = textArea.getBufferLength();
+	while(true)
+	{
+		offset = Macros.input(view, jEdit.getProperty("macro.rs.GoToOffset.label", new Integer[] {len}));
+		if(offset == null)
+			return;
+		else
+		{
+			try
+			{
+				offset = Integer.parseInt(offset);
+				if(offset >= 0 && offset <= len)
+				{
+					textArea.setCaretPosition(offset);
+					textArea.requestFocus();
+					return;
+				}
+			} catch(NumberFormatException e) {
+			}
+		}
+	}
+}
+
+goToOffset();
+
+/*
+	Macro index data (in DocBook format)
+
+<listitem>
+    <para><filename>Go_to_Offset.bsh</filename></para>
+    <abstract><para>
+		Prompts the user for a offset position on the 
+		current buffer, then moves the caret there.
+    </para></abstract>
+</listitem>
+
+*/
+

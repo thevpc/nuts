@@ -1,0 +1,59 @@
+/*
+ * jEdit_Properties.bsh - a BeanShell macro for the
+ * jEdit text editor application -- provides a list of current
+ * properties used by jEdit
+ * Copyright (C) 2001 John Gellene
+ * jgellene@nyc.rr.com
+ * http://community.jedit.org
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the jEdit application; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Id: jEdit_Properties.bsh 22846 2013-03-16 18:37:31Z ezust $
+ *
+ * Checked for jEdit 4.0 API
+ *
+ */
+
+void writeJEditProperties()
+{
+    // save any changes written since the session started
+    jEdit.saveSettings();
+
+    props = jEdit.getProperties();
+
+    sw = new StringWriter();
+    pw = new PrintWriter(sw);
+    props.store(pw,"jedit properties");
+    newbuf = jEdit.newFile(view);
+    newbuf.setMode("properties");
+    newbuf.insert(0, sw.toString());
+}
+
+writeJEditProperties();
+
+/*
+	Macro index data (in DocBook format)
+
+<listitem>
+    <para><filename>jEdit_Properties.bsh</filename></para>
+    <abstract><para>
+       Writes an unsorted list of jEdit properties in a new buffer.
+    </para></abstract>
+</listitem>
+
+*/
+
+// end jEdit_Properties.bsh
+

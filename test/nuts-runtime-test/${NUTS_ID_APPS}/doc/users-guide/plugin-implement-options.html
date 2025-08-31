@@ -1,0 +1,92 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>The QuickNotepadOptionPane Class</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit 5.7 User's Guide"><link rel="up" href="plugin-implement.html" title="Chapter&nbsp;18.&nbsp;Implementing a Simple Plugin"><link rel="prev" href="plugin-implement-quicknotepadtoolbar.html" title="The QuickNotepadToolBar Class"><link rel="next" href="plugin-implement-docs.html" title="Plugin Documentation"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">The QuickNotepadOptionPane Class</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="plugin-implement-quicknotepadtoolbar.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;18.&nbsp;Implementing a Simple Plugin</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="plugin-implement-docs.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="plugin-implement-options"></a>The QuickNotepadOptionPane Class</h2></div></div></div><p>Using the default implementation provided by
+        <code class="classname">AbstractOptionPane</code> reduces the preparation of an
+        option pane to two principal tasks: writing a
+        <code class="function">_init()</code> method to layout and initialize the pane,
+        and writing a <code class="function">_save()</code> method to commit any settings
+        changed by user input. If a button on the option pane should trigger
+        another dialog, such as a <code class="classname">JFileChooser</code> or jEdit's
+        own enhanced <code class="classname">VFSFileChooserDialog</code>, the option
+        pane will also have to implement the
+        <code class="classname">ActionListener</code> interface to display additional
+        components.</p><p>The QuickNotepad plugin has only three options to set: the path
+        name of the file that will store the notepad text, the visibility of the
+        path name on the tool bar, and the notepad's display font. Using the
+        shortcut methods of the plugin API, the implementation of
+        <code class="function">_init()</code> looks like this:</p><div class="informalexample"><pre class="programlisting">public class QuickNotepadOptionPane extends AbstractOptionPane
+      implements ActionListener
+{
+    private JTextField pathName;
+    private JButton pickPath;
+    private FontSelector font;
+
+    ...
+
+    public void _init()
+    {
+        showPath = new JCheckBox(jEdit.getProperty(
+            QuickNotepadPlugin.OPTION_PREFIX
+            + "show-filepath.title"),
+        jEdit.getProperty(
+            QuickNotepadPlugin.OPTION_PREFIX +  "show-filepath")
+            .equals("true"));
+        addComponent(showPath);
+
+        pathName = new JTextField(jEdit.getProperty(
+            QuickNotepadPlugin.OPTION_PREFIX
+            + "filepath"));
+        JButton pickPath = new JButton(jEdit.getProperty(
+            QuickNotepadPlugin.OPTION_PREFIX
+            + "choose-file"));
+        pickPath.addActionListener(this);
+
+        JPanel pathPanel = new JPanel(new BorderLayout(0, 0));
+        pathPanel.add(pathName, BorderLayout.CENTER);
+        pathPanel.add(pickPath, BorderLayout.EAST);
+
+        addComponent(jEdit.getProperty(
+            QuickNotepadPlugin.OPTION_PREFIX + "file"),
+            pathPanel);
+
+        font = new FontSelector(makeFont());
+        addComponent(jEdit.getProperty(
+            QuickNotepadPlugin.OPTION_PREFIX + "choose-font"),
+            font);
+    }
+
+    ...
+
+}</pre></div><p>Here we adopt the vertical arrangement offered by use of the
+        <code class="function">addComponent()</code> method with one embellishment. We
+        want the first <span class="quote">&#8220;<span class="quote">row</span>&#8221;</span> of the option pane to contain a text
+        field with the current notepad file path and a button that will trigger
+        a file chooser dialog when pressed. To place both of them on the same
+        line (along with an identifying label for the file option), we create a
+        <code class="classname">JPanel</code> to contain both components and pass the
+        configured panel to <code class="function">addComponent()</code>.</p><p>The <code class="function">_init()</code> method uses properties from the
+        plugin's property file to provide the names of label for the components
+        placed in the option pane. It also uses a property whose name begins
+        with <code class="function">PROPERTY_PREFIX</code> as a persistent data item -
+        the path of the current notepad file. The elements of the notepad's font
+        are also extracted from properties using a static method of the option
+        pane class.</p><p>The <code class="function">_save()</code> method extracts data from the
+        user input components and assigns them to the plugin's properties. The
+        implementation is straightforward:</p><div class="informalexample"><pre class="programlisting">public void _save()
+{
+    jEdit.setProperty(QuickNotepadPlugin.OPTION_PREFIX
+        + "filepath", pathName.getText());
+    Font _font = font.getFont();
+
+    jEdit.setProperty(QuickNotepadPlugin.OPTION_PREFIX
+        + "font", _font.getFamily());
+    jEdit.setProperty(QuickNotepadPlugin.OPTION_PREFIX
+        + "fontsize", String.valueOf(_font.getSize()));
+    jEdit.setProperty(QuickNotepadPlugin.OPTION_PREFIX
+        + "fontstyle", String.valueOf(_font.getStyle()));
+    jEdit.setProperty(QuickNotepadPlugin.OPTION_PREFIX
+        + "show-filepath", String.valueOf(showPath.isSelected()));
+}</pre></div><p>The class has only two other methods, one to display a file
+        chooser dialog in response to user action, and the other to construct a
+        <code class="classname">Font</code> object from the plugin's font properties.
+        They do not require discussion here.</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="plugin-implement-quicknotepadtoolbar.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="plugin-implement.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="plugin-implement-docs.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">The QuickNotepadToolBar Class&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Plugin Documentation</td></tr></table></div></body></html>

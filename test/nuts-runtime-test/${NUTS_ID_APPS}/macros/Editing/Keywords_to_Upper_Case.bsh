@@ -1,0 +1,52 @@
+/**
+ * Converts keyword token types to upper case.
+ */
+ 
+//Localization
+final static String ConvertedKeywordsMessage   = jEdit.getProperty("macro.rs.KeywordsToUpperCase.ConvertedKeywords.message", "Converted Keywords to Upper Case"); 
+ 
+void keywords2upper(View view)
+{
+	// declarations run faster than doing Token.KEYWORDx comparison
+	byte KEYWORD1 = Token.KEYWORD1;
+	byte KEYWORD4 = Token.KEYWORD4;
+	JEditBuffer buffer = view.getBuffer();
+	JEditTextArea textArea = view.getTextArea();
+	Token token = null;
+
+	//long t1 = System.currentTimeMillis();
+
+	Selection[] selection = textArea.getSelection();
+	DefaultTokenHandler tokenHandler;
+	int pos = 0;
+	int lineStart = 0;
+
+	for(int line = 0; line < textArea.getLineCount(); ++line)
+	{
+		DefaultTokenHandler tokenHandler = new DefaultTokenHandler();
+		buffer.markTokens(line, tokenHandler);
+		token = tokenHandler.getTokens();
+		lineStart = buffer.getLineStartOffset(line);
+		pos = lineStart;
+		while(token != null)
+		{
+			if(KEYWORD1 <= token.id && token.id <= KEYWORD4)
+			{
+				String word = buffer.getText(pos,token.length);
+				buffer.remove(pos,token.length);
+				buffer.insert(pos,word.toUpperCase());
+			}
+			pos += token.length;
+			token = token.next;
+		}
+	}
+	view.getTextArea().setSelection(selection);
+
+	//long t2 = System.currentTimeMillis();
+	//print("elapsed: " + (t2-t1));
+
+	view.getStatus().setMessageAndClear(ConvertedKeywordsMessage);
+}
+
+keywords2upper(view);
+

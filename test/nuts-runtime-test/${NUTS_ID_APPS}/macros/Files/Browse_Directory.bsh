@@ -1,0 +1,55 @@
+/*
+ * Browse_Directory.bsh - a BeanShell macro script for the
+ * jEdit text editor - Prompts for a path name and opens it
+ * in the file system browser
+ * Copyright (C) 2001 Slava Pestov
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the jEdit program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Id: Browse_Directory.bsh 21353 2012-03-14 09:46:51Z jojaba_67 $
+ *
+ * Checked for jEdit 4.0 API
+ *
+ */
+
+//Localization
+final static String DirectoryBrowseLabel = jEdit.getProperty("macro.rs.BrowseDirectory.DirectoryBrowse.label",  "Directory to browse:");
+
+// Process
+void browseDirectory()
+{
+	path = Macros.input(view, DirectoryBrowseLabel);
+	if(path != null)
+		VFSBrowser.browseDirectory(view,path);
+}
+
+browseDirectory();
+
+/*
+	Macro index data (in DocBook format)
+
+<listitem>
+    <para><filename>Browse_Directory.bsh</filename></para>
+    <abstract><para>
+        Opens a directory supplied by the user in the file system
+        browser.
+    </para></abstract>
+</listitem>
+
+*/
+
+
+// end Browse_Directory.bsh
+

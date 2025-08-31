@@ -1,0 +1,15 @@
+/**
+ * Emulate GNU Emacs's "set-mark-command" capability.
+ * Does NOT use jEdit markers.
+ */
+source (dirname (scriptPath) +
+        System.getProperty ("file.separator") +
+        "EmacsUtil.bsh");
+
+void emacsSetMark()
+{
+    setMark (buffer, textArea.getCaretPosition());
+}
+
+emacsSetMark();
+

@@ -1,0 +1,106 @@
+/*
+ * jEdit text editor: a macro that opens in desktop the selected text
+ * or the word under caret
+ *
+ * Copyright (C) 2012 Jarek Czekalski <jarekczek@poczta.onet.pl>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the jEdit program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+// getNoWordSep function {{{
+/**
+ * Inverts the list of word break chars to get the list of word
+ * separators. Ascii only space is assumed.
+ */
+String getNoWordSep(String sWordBreakChars)
+{
+    StringBuilder sb = new StringBuilder();
+    for (char c = 33; c <= 126; c++)
+    {
+        if (!Character.isLetterOrDigit(c)
+            && sWordBreakChars.indexOf(c) < 0)
+        {
+            sb.append(c);
+        }
+    }
+    return sb.toString();
+} ///}}}
+
+// getSelectedWords function {{{
+/**
+ * Returns an array of selected words, assuming that user selected
+ * words (not whitespaces). If nothing is selected, returns
+ * the word under the caret, using custom word break chars.
+ */
+String[] getSelectedWords()
+{
+    String sWordBreakChars = "\"\'";
+    ArrayList words = new ArrayList();
+    Selection[] sels = textArea.getSelection();
+    for (Selection sel: sels)
+        words.add(textArea.getSelectedText(sel));
+    if (words.size() == 0)
+    {
+        // we need to get the word under caret, as nothing is selected
+        // we use the same rules as in TextArea.selectWord
+        int nLine = textArea.getCaretLine();
+        CharSequence line = buffer.getLineSegment(nLine);
+        int nStartPos = textArea.getCaretPosition()
+                        - buffer.getLineStartOffset(nLine);
+
+        // cannot read any char if at line end, so:
+        if (nStartPos == line.length())
+            nStartPos--;
+
+        // findWordStart/End utilities expect noWordSep, but we have
+        /// a list of word separators - so invert it
+        String sNoWordSep = getNoWordSep(sWordBreakChars);
+
+        int nLeft = TextUtilities.findWordStart(
+            line, nStartPos, sNoWordSep);
+        int nRight = TextUtilities.findWordEnd(
+            line, nStartPos+1, sNoWordSep);
+        if (nRight - nLeft < 1)
+        {
+            // javax.swing.JOptionPane.showMessageDialog(null,
+                // "start: " + nLeft + ", end: " + nRight);
+            view.getToolkit().beep();
+        }
+        else
+            words.add(String.valueOf(line.subSequence(nLeft, nRight)));
+    }
+    return words.toArray(new String[0]);
+} //}}}
+
+for (String sPath: getSelectedWords())
+{
+    URI uri;
+    String sScheme = null;
+    try {
+        uri = new URI(sPath);
+        sScheme = uri.getScheme();
+    }
+    catch (URISyntaxException se) {}
+
+    // javax.swing.JOptionPane.showMessageDialog(null, "_" + sPath + "_");
+    // continue;
+
+    if (sScheme != null && sScheme.length() > 0)
+        java.awt.Desktop.getDesktop().browse(uri);
+    else
+        MiscUtilities.openInDesktop(sPath);
+}
+
+// :tabSize=4:indentSize=4:noTabs=true:folding=explicit:collapseFolds=1:

@@ -1,0 +1,66 @@
+/*
+ * Look_and_Feel_Properties.bsh - a BeanShell macro script for the
+ * jEdit text editor - writes current look and feel
+ * properties to new text buffer
+ * Copyright (C) 2001 John Gellene
+ * jgellene@nyc.rr.com
+ * http://community.jedit.org
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the jEdit program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Id: Look_and_Feel_Properties.bsh 22847 2013-03-16 18:40:28Z ezust $
+ *
+ * Checked for jEdit 4.0 API
+ *
+ */
+// Localization
+final static String ListingLabel = jEdit.getProperty("macro.rs.LookAndFeelProperties.Listing.label", "--listing look and feel property names--");
+
+// Process
+void lookAndFeelProperties()
+{
+	defaults = javax.swing.UIManager.getLookAndFeelDefaults();
+	sb = new StringWriter();
+	Properties p = new Properties();
+	for(Iterator it=defaults.entrySet().iterator();it.hasNext();){
+		Map.Entry e = it.next();
+		
+		Object s = e.getKey();
+		Object o = e.getValue();
+		p.put(s.toString(),o.toString());
+	}
+	p.store(sb,ListingLabel);
+	newbuf = jEdit.newFile(view);
+	newbuf.setMode("properties");
+	newbuf.insert(0, sb.toString());
+}
+
+lookAndFeelProperties();
+
+/*
+	Macro index data (in DocBook format)
+
+<listitem>
+    <para><filename>Look_and_Feel_Properties.bsh</filename></para>
+    <abstract><para>
+        Writes an unsorted list of the names of Java Look and Feel
+        properties in a new buffer.
+    </para></abstract>
+</listitem>
+
+*/
+
+// end Look_and_Feel_Properties.bsh
+

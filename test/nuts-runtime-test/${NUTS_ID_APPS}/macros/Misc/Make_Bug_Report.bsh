@@ -1,0 +1,125 @@
+/*
+ * Make_Bug_Report.bsh - a BeanShell macro script for the
+ * jEdit text editor -  creates a new buffer with installation and
+ * error information extracted from jEdit's Activity Log.
+ * Copyright (C) 2001 John Gellene
+ * jgellene@nyc.rr.com
+ * http://community.jedit.org
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Id: Make_Bug_Report.bsh 24845 2018-03-27 16:17:05Z vampire0 $
+ *
+ * Checked for jEdit 4.0 API
+ *
+ */
+
+// Localization
+final static String OpeningActivityLogError = jEdit.getProperty("macro.rs.MakeBugReport.OpeningActivityLog.error", "Error opening Activity Log.");
+final static String UsefulEntriesForReportLabel = jEdit.getProperty("macro.rs.MakeBugReport.UsefulEntriesForReport.label", "Activity log entries that might be useful in a bug report:\n\n.");
+final static String ReadingActivityLogError = jEdit.getProperty("macro.rs.MakeBugReport.ReadingActivityLog.error", "Error reading Activity Log.");
+
+// Process
+makeBugReport()
+{
+	Log.flushStream();
+	path = jEdit.getSettingsDirectory() + File.separator
+		+ "activity.log";
+	try
+	{
+		file = new FileInputStream(path);
+		reader = new BufferedReader(new InputStreamReader(file));
+	}
+	catch(IOException e)
+	{
+		Macros.error(view, OpeningActivityLogError);
+		return;
+	}
+	report = new StringBuffer();
+
+	report.append(UsefulEntriesForReportLabel);
+
+	lastError = new StringBuffer();
+	insideError = false;
+	startupDone = false;
+	activityLogHeaderLines = 250;
+	try
+	{
+		for(i = 0; i < activityLogHeaderLines; ++i)
+		{
+			report.append(reader.readLine()).append('\n');
+		}
+		while((line = reader.readLine()) != null)
+		{
+			if(!startupDone &&
+				(line.startsWith("[message] jEdit:")
+					|| line.startsWith("[notice] jEdit:")
+					|| line.startsWith("[notice] JARClassLoader:")))
+			{
+				report.append(line).append('\n');
+				if(line.equals("[message] jEdit: Startup complete"))
+				{
+					startupDone = true;
+				}
+			}
+			else if(line.startsWith("[error]"))
+			{
+				if(!insideError)
+				{
+					lastError.setLength(0);
+					insideError = true;
+				}
+				lastError.append(line).append('\n');
+			}
+			else
+				insideError = false;
+		}
+		reader.close();
+	}
+	catch(IOException e)
+	{
+		Macros.error(view, ReadingActivityLogError);
+	}
+
+	report.append(lastError.toString());
+	newBuffer = jEdit.newFile(view);
+	newBuffer.insert(0, report.toString());
+	newBuffer.setMode(jEdit.getMode("logs"));
+}
+
+makeBugReport();
+
+/*
+jEdit macro index data (DocBook format)
+
+  <listitem>
+    <para><filename>Make_Bug_Report.bsh</filename></para>
+    <abstract><para>
+      Creates a new buffer with installation and error information
+	  extracted from the Activity Log.
+    </para></abstract>
+	<para>
+	  The macro extracts initial messages written to the Activity Log
+	  describing the user's operating system, JDK, jEdit version and
+	  installed plugins. It then appends the last set of error messages
+	  written to the Activity Log.  The new text buffer can be saved and
+	  attached to an email message or a bug report made on SourceForge.
+	</para>
+  </listitem>
+
+*/
+
+// end Make_Bug_Report.bsh
+

@@ -1,0 +1,36 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Edit Modes</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit 5.7 User's Guide"><link rel="up" href="source-edit.html" title="Chapter&nbsp;6.&nbsp;Editing Source Code"><link rel="prev" href="source-edit.html" title="Chapter&nbsp;6.&nbsp;Editing Source Code"><link rel="next" href="indent.html" title="Tabbing and Indentation"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Edit Modes</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="source-edit.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;6.&nbsp;Editing Source Code</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="indent.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="modes"></a>Edit Modes</h2></div></div></div><p>An <em class="firstterm">edit mode</em> specifies syntax highlighting
+        rules, auto indent behavior, and various other customizations for
+        editing a certain file type. This section only covers using existing
+        edit modes; information about writing your own can be found in <a class="xref" href="writing-modes-part.html" title="Part&nbsp;II.&nbsp;Writing Edit Modes">Part&nbsp;II, &#8220;Writing Edit Modes&#8221;</a>.</p><p>When a file is opened, jEdit first checks the file name against a
+        list of known patterns. For example, files whose names end with
+        <code class="filename">.c</code> are opened with C mode, and files named
+        <code class="filename">Makefile</code> are opened with Makefile mode. If a
+        suitable match based on file name cannot be found, jEdit checks the
+        first line of the file. For example, files whose first line is
+        <code class="filename">#!/bin/sh</code> are opened with shell script mode.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mode-selection"></a>Mode Selection</h3></div></div></div><p>File name and first line matching is done using glob patterns
+            similar to those used in Unix shells. Glob patterns associated with
+            edit modes can be changed in the <span class="guibutton"><strong>Editing</strong></span>
+            pane of the <span class="guimenu"><strong>Utilities</strong></span>&gt;
+            <span class="guimenuitem"><strong>Options</strong></span>
+            dialog box. Note that the glob patterns must
+            match the file name or first line exactly; so to match files whose
+            first line contains <code class="literal">begin</code>, you must use a first
+            line glob of <code class="literal">*begin*</code>. See <a class="xref" href="globs.html" title="Appendix&nbsp;D.&nbsp;Glob Patterns">Appendix&nbsp;D, <i>Glob Patterns</i></a> for a description of glob pattern syntax.</p><p>The default edit mode for files which do not match any pattern
+            can be set in the <span class="guibutton"><strong>Editing</strong></span> pane as
+            well.</p><p>The edit mode can be specified manually as well. The current
+            buffer's edit mode can be set on a one-time basis in the
+            <span class="guimenu"><strong>Utilities</strong></span>&gt;<span class="guimenuitem"><strong>Buffer
+            Options</strong></span> dialog box; see <a class="xref" href="buffer-opts.html" title="The Buffer Options Dialog Box">the section called &#8220;The Buffer Options Dialog Box&#8221;</a>. To set a buffer's edit mode for future
+            editing sessions, place the following in one of the first or last 10
+            lines of the buffer, where <em class="replaceable"><code>edit mode</code></em> is
+            the name of the desired edit mode:</p><pre class="screen">:mode=<em class="replaceable"><code>edit mode</code></em>:</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="syntax-hilite"></a>Syntax Highlighting</h3></div></div></div><p>Syntax highlighting is the display of programming language
+            tokens using different fonts and colors. This makes code easier to
+            follow and errors such as misplaced quotes easier to spot. All edit
+            modes except for the plain text mode perform some kind of syntax
+            highlighting.</p><p>The colors and styles used to highlight syntax tokens can be
+            changed in the <span class="guibutton"><strong>Syntax Highlighting</strong></span>
+            pane of the <span class="guimenu"><strong>Utilities</strong></span>&gt;
+            <span class="guimenuitem"><strong>Options</strong></span>
+            dialog box; see <a class="xref" href="global-opts.html#syntax-hilite-pane" title="The Syntax Highlighting Pane">the section called &#8220;The Syntax Highlighting Pane&#8221;</a>.</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="source-edit.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="source-edit.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="indent.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter&nbsp;6.&nbsp;Editing Source Code&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Tabbing and Indentation</td></tr></table></div></body></html>

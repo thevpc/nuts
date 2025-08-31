@@ -1,0 +1,33 @@
+/*
+ * Duplicate_Buffer.bsh - a BeanShell macro script for the
+ * jEdit text editor - duplicate the current buffer into a new one.
+ * Copyright (C) 2007 Matthieu Casanova
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the jEdit program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Id$
+ */
+
+if (buffer.getLength() == 0)
+    return;
+Buffer oldBuffer = buffer;
+int caret = textArea.getCaretPosition();
+String text = buffer.getText(0, buffer.getLength());
+Buffer newBuffer = jEdit.newFile(view);
+
+newBuffer.insert(0,text);
+
+newBuffer.setMode(oldBuffer.getMode());
+textArea.setCaretPosition(caret);

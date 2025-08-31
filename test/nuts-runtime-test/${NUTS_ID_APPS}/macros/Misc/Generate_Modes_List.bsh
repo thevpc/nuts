@@ -1,0 +1,27 @@
+import org.gjt.sp.jedit.io.EncodingServer;
+
+/** Generates editModeList.html page for jedit.org website listing the encodings supported by jEdit. */
+
+modeList = jEdit.getModes();
+sbuffer = new StringBuffer();
+htmlBuffer = jEdit.openFile(editPane, "editModeList.html");
+
+sbuffer.append("<html><head><title> Supported jEdit Edit Modes </title></head>\n");
+sbuffer.append("<!--    :elasticTabstops=true: -->\n");
+sbuffer.append("<body>\n<h3> Supported Languages/File Types in jEdit" + jEdit.getVersion() + ": " + modeList.length + "</h3>\n ");
+sbuffer.append("<table><tbody><tr>\n");
+for (int i=0; i<modeList.length; ++i) {
+    mode = modeList[i];
+    sbuffer.append("\t<td>" + mode.toString() + "</td>");
+    if ((i+1)%6==0) sbuffer.append("  </tr><tr>\n");
+}
+sbuffer.append("</tr></tbody></table>\n <p>");
+sbuffer.append(" Generated from macro <tt>" + scriptPath + "</tt> </p>");
+
+sbuffer.append("\n</body></html>\n");
+
+htmlBuffer.insert(0, sbuffer.toString());
+
+// set elastic tabstops (causes bug# 3614248)
+htmlBuffer.setBooleanProperty("elasticTabstops", true);
+

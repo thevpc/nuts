@@ -1,0 +1,9 @@
+/** Open_Line_Above.bsh: 
+    mimics the Ctrl-Shift-Enter combination in Eclipse,
+    opening a new blank line above the current cursor position.
+    Author: Scott LeBaron
+    License: GPL v 2.0
+*/
+textArea.goToStartOfWhiteSpace(false);
+textArea.insertEnterAndIndent();
+textArea.goToPrevLine(false);

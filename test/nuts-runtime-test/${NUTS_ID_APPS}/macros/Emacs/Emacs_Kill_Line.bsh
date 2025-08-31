@@ -1,0 +1,9 @@
+/**
+ * Emulate GNU Emacs's (kill-line) function (typically bound to Ctrl-K)
+ */
+
+import org.jedit.keymap.EmacsUtil;
+
+emacsUtil = new EmacsUtil();
+emacsUtil.emacsKillLine();
+

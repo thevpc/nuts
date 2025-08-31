@@ -1,0 +1,61 @@
+/*
+ * Evaluate_Buffer_in_BeanShell.bsh - a BeanShell macro script for the
+ * jEdit text editor -  evaluates contents of buffer as
+ * BeanShell script
+ * Copyright (C) 2001 John Gellene
+ * jgellene@nyc.rr.com
+ * http://community.jedit.org
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the jEdit program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Id: Evaluate_Buffer_in_BeanShell.bsh 10596 2007-09-19 00:02:50Z Vampire0 $
+ *
+ * Checked for jEdit 4.0 API
+ *
+ */
+
+script = buffer.getText(0,buffer.getLength());
+buffer = jEdit.newFile(view);
+result = BeanShell.eval(view,BeanShell.getNameSpace(),script);
+if (null != result) {
+    buffer.insert(buffer.getLength(),"\n" + result);
+}
+
+/*
+	Macro index data (in DocBook format)
+
+<listitem>
+    <para><filename>Evaluate_Buffer_in_BeanShell.bsh</filename></para>
+    <abstract><para>
+        Evaluates contents of current buffer as a BeanShell script,
+        and opens a new
+        buffer to receive any text output.
+    </para></abstract>
+    <para>
+        This is a quick way to test a macro script even before its text
+        is saved to a file.  Opening a new buffer for output is a precaution
+        to prevent the macro from inadvertently erasing or overwriting
+        itself. BeanShell scripts that operate on the contents of the
+        current buffer will not work meaningfully when tested using this
+        macro. If the script returns any value, the result of its toString()
+        method is appended in a new line to the newly created buffer.
+    </para>
+</listitem>
+
+*/
+
+
+// end of Evaluate_Buffer_in_BeanShell.bsh
+

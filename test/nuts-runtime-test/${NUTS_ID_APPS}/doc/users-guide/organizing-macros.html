@@ -1,0 +1,38 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>How jEdit Organizes Macros</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit 5.7 User's Guide"><link rel="up" href="using-macros.html" title="Chapter&nbsp;8.&nbsp;Using Macros"><link rel="prev" href="running-macros.html" title="Running Macros"><link rel="next" href="using-plugins.html" title="Chapter&nbsp;9.&nbsp;Installing and Using Plugins"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">How jEdit Organizes Macros</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="running-macros.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;8.&nbsp;Using Macros</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="using-plugins.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="organizing-macros"></a>How jEdit Organizes Macros</h2></div></div></div><p>Every macro, whether or not you originally recorded it, is stored
+        on disk and can be edited as a text file. The file name of a macro must
+        have a <code class="filename">.bsh</code> extension in order for jEdit to be
+        aware of it. By default, jEdit associates a <code class="filename">.bsh</code>
+        file with the BeanShell edit mode for purposes of syntax highlighting,
+        indentation and other formatting. However, BeanShell syntax does not
+        impose any indentation or line break requirements.</p><p>The <span class="guimenu"><strong>Macros</strong></span> menu lists all macros stored in two
+        places: the <code class="filename">macros</code> subdirectory of the jEdit home
+        directory, and the <code class="filename">macros</code> subdirectory of the
+        user-specific settings directory (see <a class="xref" href="settings-directory.html" title="The jEdit Settings Directory">the section called &#8220;The jEdit Settings Directory&#8221;</a> for information about the settings
+        directory). Any macros you record will be stored in the user-specific
+        directory.</p><p>Macros stored elsewhere can be run using the
+        <span class="guimenu"><strong>Macros</strong></span>&gt;<span class="guimenuitem"><strong>Run Other Macro</strong></span>
+        command, which displays a file chooser dialog box, and runs the
+        specified file.</p><p>The listing of individual macros in the <span class="guimenu"><strong>Macros</strong></span>
+        menu can be organized in a hierarchy using subdirectories in the general
+        or user-specific macro directories; each subdirectory appears as a
+        submenu. You will find such a hierarchy in the default macro set
+        included with jEdit.</p><p>When jEdit first loads, it scans the designated macro directories
+        and assembles a listing of individual macros in the
+        <span class="guimenu"><strong>Macros</strong></span> menu. When scanning the names, jEdit will
+        delete underscore characters and the <code class="filename">.bsh</code> extension
+        for menu labels, so that
+        <code class="filename">List_Useful_Information.bsh</code>, for example, will be
+        displayed in the <span class="guimenu"><strong>Macros</strong></span> menu as <span class="guimenuitem"><strong>List
+        Useful Information</strong></span>.</p><p>You can browse the user and system macro directories by opening
+        the <code class="filename">macros</code> directory from the
+        <span class="guimenu"><strong>Utilities</strong></span>&gt;<span class="guimenuitem"><strong>jEdit Home
+        Directory</strong></span> and
+        <span class="guimenu"><strong>Utilities</strong></span>&gt;<span class="guimenuitem"><strong>Settings
+        Directory</strong></span> menus.</p><p>Macros can be opened and edited much like ordinary files from the
+        file system browser. Editing macros from within jEdit will automatically
+        update the macros menu; however, if you modify macros from another
+        program or add macro files to the macro directories, you should run the
+        <span class="guimenu"><strong>Macros</strong></span>&gt;<span class="guimenuitem"><strong>Rescan Macros</strong></span>
+        command to update the macro list.</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="running-macros.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="using-macros.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="using-plugins.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Running Macros&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Chapter&nbsp;9.&nbsp;Installing and Using Plugins</td></tr></table></div></body></html>

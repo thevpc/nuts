@@ -1,0 +1,201 @@
+/*
+ * ModeSwitcher.bsh - a BeanShell macro script for changing the current
+ * buffer's edit mode.
+ *
+ * Copyright (C) 2004-6 Nicholas O'Leary nick.oleary@gmail.com
+ * 
+ * :mode=beanshell:tabSize=3:indentSize=3:maxLineLen=0:noTabs=false:
+ * :indentOnTab=true:indentOnEnter=true:folding=explicit:collapseFolds=1:
+ *
+ * {{{ License
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the jEdit program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * }}}
+ *
+ * Notes:
+ *  There are two other ways to change the buffers mode:
+ *    - enter 'buffer.mode=[mode]' in the action bar
+ *    - change it in the Buffer Options dialog
+ *  Whilst both of these do the job, I wanted a way to achieve it with minimum
+ *  effort, and keypresses.
+ *  It also has the benefit of auto-completion of mode names.
+ * 
+ * $Id: Mode_Switcher.bsh 21353 2012-03-14 09:46:51Z jojaba_67 $
+ */
+
+import javax.swing.border.EmptyBorder;
+
+//Localization
+final static String MainDialogTitle = jEdit.getProperty("macro.rs.BufferModeSwitcher.MainDialog.title", "Buffer Mode Switcher");
+final static String EnterBufferModeLabel = jEdit.getProperty("macro.rs.BufferModeSwitcher.EnterBufferMode.label", "Enter buffer mode:");
+final static String ChangingBufferModeLabel = jEdit.getProperty("macro.rs.BufferModeSwitcher.ChangingBufferMode.label", "Changing mode of buffer");
+final static String ToLabel = jEdit.getProperty("macro.rs.BufferModeSwitcher.To.label", "to");
+final static String ModeLabel = jEdit.getProperty("macro.rs.BufferModeSwitcher.Mode.label", "Mode");
+final static String NotFoundLabel = jEdit.getProperty("macro.rs.BufferModeSwitcher.NotFound.label", "Not found");
+
+//class ModeSwitcherTextField extends JTextField
+void modeSwitcher() {
+	JDialog dialog = new JDialog(view, MainDialogTitle, true);
+	dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+	JPanel content = new JPanel(new BorderLayout());
+	content.setBorder(new EmptyBorder(12,12,12,12));
+	Mode[] modes = jEdit.getModes();
+	String[] names = new String[modes.length];
+	for(int i=0;i<modes.length;i++) {
+		names[i] = modes[i].getName();
+	}
+	Arrays.sort(names);
+	JTextField textfield = new JTextField() {
+		protected String[] names;
+		protected boolean shifted = false;
+		//{{{ setNames
+		public void setNames(String[] a){
+			names = a;
+		} //}}}
+		public boolean getFocusTraversalKeysEnabled(){return false;}
+		//{{{ processKeyEvent
+		protected void processKeyEvent(KeyEvent evt)
+		{
+			if (evt.getID() == KeyEvent.KEY_RELEASED) {
+				if (evt.getKeyCode() == KeyEvent.VK_SHIFT) {
+					shifted = false;
+				}
+			} else if(evt.getID() == KeyEvent.KEY_PRESSED) {
+				if (evt.getKeyCode() == KeyEvent.VK_SHIFT) {
+					shifted = true;
+				} else if(evt.getKeyCode() == KeyEvent.VK_TAB) {
+					// Get the current text
+					String txt = getText();
+					String original = txt;
+					// See if some text is selected
+					if (getSelectedText() != null)
+						txt = txt.substring(0,txt.length()-getSelectedText().length());
+					// txt represents the unhighlighted text in the box. This is used
+					// to find further matches.
+					
+					// See if the current text is a known mode
+					int index = Arrays.binarySearch(names,original);
+					if (index < 0) index = 0;
+					int indexStep = 1;
+					if (shifted) indexStep = -1;
+					index+=indexStep;
+					if (index == names.length) index = 0;
+					if (index < 0) index = names.length-1;
+					int match = -1;
+					boolean foundExact = false;
+					boolean keepLooping = true;
+					// Loop through modes, starting at current+1
+					int i = index;
+					while(keepLooping) {
+						// Skip if the mode name is shorter than the current text
+						if (names[i].length()>=txt.length())
+						{
+							// If the mode matches, escape
+							if (names[i].substring(0,txt.length()).equals(txt)) {
+								match = i;
+								break;
+							}
+						}
+						// Loop the loop
+						i+=indexStep;
+						if (i == names.length) i = 0;
+						if (i < 0) i = names.length-1;
+						if (i==index) break;
+					}
+					// If a match has been found...
+					if (match >= 0) {
+						setText(names[match]);
+						setSelectionStart(txt.length());
+						setSelectionEnd(names[match].length());
+					}
+					return;
+				}
+			}
+			super.processKeyEvent(evt);
+		} //}}}
+	};
+	
+	textfield.setColumns(20);
+	textfield.setNames(names);
+	Mode m = buffer.getMode();
+	// Set the inital text to the current mode, and highlight it, so a key
+	// press will clear the entry.
+	if (m != null) {
+		textfield.setText(m.getName());
+		textfield.setSelectionStart(0);
+		textfield.setSelectionEnd(m.getName().length());
+	}
+	content.add(new JLabel(EnterBufferModeLabel), BorderLayout.NORTH);
+	content.add(textfield, BorderLayout.CENTER);
+	Vector v = new Vector();
+	
+	// KeyListener Interface
+	//{{{ keyPressed
+	void keyPressed(evt)
+	{
+		if(evt.getKeyCode() == KeyEvent.VK_ESCAPE)
+			dialog.dispose();
+		else if(evt.getKeyCode() == KeyEvent.VK_ENTER)
+		{
+			Mode m = jEdit.getMode(textfield.getText());
+			if (m!=null)
+			{
+				buffer.setMode(m);
+				Log.log(Log.NOTICE,
+						  BeanShell.class,
+						  ChangingBufferModeLabel+" ["+
+							  buffer.getName()+"] "+ToLabel+" ["+
+							  m.getName()+"]");
+			} else {
+				Log.log(Log.WARNING,
+						  BeanShell.class,
+						  ModeLabel+" ["+textfield.getText()+"] "+NotFoundLabel);
+			}
+			evt.consume();
+			dialog.dispose();
+		}
+	}//}}}
+	void keyReleased(evt) {}
+	void keyTyped(evt) {}
+	
+	dialog.addKeyListener(this);
+	textfield.addKeyListener(this);
+	dialog.setContentPane(content);
+	dialog.pack();
+	dialog.setLocationRelativeTo(view);
+	textfield.grabFocus();
+	dialog.setVisible(true);
+}
+
+modeSwitcher();
+
+/*
+
+Macro index data (in DocBook format)
+
+   <listitem>
+      <para><filename>Mode_Switcher.bsh</filename></para>
+      Displays a modal dialog with the current buffer's mode in a text field,
+      allowing one to change the mode by typing in its name.
+      <keycap>ENTER</keycap> selects the current mode; if the text is not a 
+      valid mode, the dialog still dismisses, but a warning is logged to the
+      activity log.
+      <keycap>ESACPE</keycap> closes the dialog with no further action.
+      <keycap>TAB</keycap> attempts to auto-complete the mode name. Pressing
+      <keycap>TAB</keycap> repeatedly cycles through the possible completions. 
+		<keycap>SHIFT-TAB</keycap> cycles through the completions in reverse.
+      </para></abstract>
+   </listitem>
+
+*/

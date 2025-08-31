@@ -1,0 +1,23 @@
+/**
+ * Convert the portion of the current word to lower case, starting at the
+ * caret and moving to the end of the word. Emulates the Emacs "downcase-word"
+ * function.
+ */
+
+source (MiscUtilities.constructPath(dirname(scriptPath), "EmacsUtil.bsh"));
+
+void emacsDowncaseWord()
+{
+    caret = eatNonAlphanums();
+
+    textArea.goToNextWord (false);
+    endOfWord = textArea.getCaretPosition();
+
+    textArea.setCaretPosition (caret);
+    selection = new Selection.Range (caret, endOfWord);
+    textArea.setSelection (selection);
+    textArea.toLowerCase();
+}
+
+emacsDowncaseWord();
+

@@ -1,0 +1,30 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>BeanShell Dynamic Typing</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit 5.7 User's Guide"><link rel="up" href="macro-basics.html" title="Chapter&nbsp;13.&nbsp;Macro Basics"><link rel="prev" href="helpful-methods.html" title="Helpful Methods in the Macros Class"><link rel="next" href="something-useful.html" title="Now For Something Useful"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">BeanShell Dynamic Typing</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="helpful-methods.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;13.&nbsp;Macro Basics</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="something-useful.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="dynamic-typing"></a>BeanShell Dynamic Typing</h2></div></div></div><p>Without an explicit <em class="glossterm">type declaration</em> like
+        <code class="classname">String</code> <code class="varname">result</code>, BeanShell
+        variables can change their type at runtime depending on the object or
+        data assigned to it. This dynamic typing allows you to write code like
+        this (if you really wanted to):</p><div class="informalexample"><pre class="programlisting">// note: no type declaration
+result = Macros.input(view, <span class="quote">&#8220;<span class="quote">Type something here.</span>&#8221;</span>);
+
+// this is our predefined, current View
+result = view;
+
+// this is an <span class="quote">&#8220;<span class="quote">int</span>&#8221;</span> (for integer);
+// in Java and BeanShell, int is one of a small number
+// of <span class="quote">&#8220;<span class="quote">primitive</span>&#8221;</span> data types which are not classes
+result = 14;</pre></div><p>However, if you first declared <code class="varname">result</code> to be
+        type <code class="classname">String</code> and and then tried these
+        reassignments, BeanShell would complain. While avoiding explicit type
+        declaration makes writing macro code simpler, using them can act as a
+        check to make sure you are not using the wrong variable type of object
+        at a later point in your script. It also makes it easier (if you are so
+        inclined) to take a BeanShell <span class="quote">&#8220;<span class="quote">prototype</span>&#8221;</span> and incorporate
+        it in a Java program.</p><p>One last thing before we bury our first macro. The double slashes
+        in the examples just above signify that everything following them on
+        that line should be ignored by BeanShell as a comment. As in Java and
+        C/C++, you can also embed comments in your BeanShell code by setting
+        them off with pairs of <strong class="userinput"><code>/* */</code></strong>, as in the following
+        example:</p><div class="informalexample"><pre class="programlisting">/* This is a long comment that covers several lines
+and will be totally ignored by BeanShell regardless of how
+many lines it covers */</pre></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="helpful-methods.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="macro-basics.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="something-useful.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Helpful Methods in the Macros Class&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Now For Something Useful</td></tr></table></div></body></html>

@@ -1,0 +1,15 @@
+<html><body>
+
+You can change numbers from decimal to hexadecimal (or any other base for that matter) using the search and replace feature.<p>
+
+First select the number(s) to convert, and make sure <b>Search in selection</b> is selected in the search dialog box. Then
+search for the following regular expression:<p>
+
+<code>.*</code><p>
+
+And replace it with the following BeanShell snippet:<p>
+
+<code>Integer.toString(Integer.parseInt(_0),16)</code>
+
+</body>
+</html>

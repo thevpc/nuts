@@ -1,0 +1,38 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>BeanShell Object Management Commands</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit 5.7 User's Guide"><link rel="up" href="bsh-commands.html" title="Chapter&nbsp;16.&nbsp;BeanShell Commands"><link rel="prev" href="bsh-commands-script.html" title="Script Execution Commands"><link rel="next" href="bsh-commands-other.html" title="Other Commands"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">BeanShell Object Management Commands</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bsh-commands-script.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;16.&nbsp;BeanShell Commands</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bsh-commands-other.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="bsh-commands-object"></a>BeanShell Object Management Commands</h2></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><div class="funcsynopsis"><table border="0" class="funcprototype-table" summary="Function synopsis" style="cellspacing: 0; cellpadding: 0;"><tr><td><code class="funcdef"><b class="fsfunc">bind</b>(</code></td><td>org.gjt.sp.jedit.bsh.This
+                            <var class="pdparam">ths</var>, </td></tr><tr><td>&nbsp;</td><td>org.gjt.sp.jedit.bsh.Namespace
+                        <var class="pdparam">namespace</var><code>)</code>;</td></tr></table><div class="funcprototype-spacer">&nbsp;</div></div><p>Binds the scripted object <em class="parameter"><code>ths</code></em> to
+                <em class="parameter"><code>namespace</code></em>.</p></li><li class="listitem"><div class="funcsynopsis"><table border="0" class="funcprototype-table" summary="Function synopsis" style="cellspacing: 0; cellpadding: 0;"><tr><td><code class="funcdef">void <b class="fsfunc">clear</b>(</code></td><td><code>void)</code>;</td><td>&nbsp;</td></tr></table><div class="funcprototype-spacer">&nbsp;</div></div><p>Clear all variables, methods, and imports from this
+                namespace. If this namespace is the root, it will be reset to
+                the default imports.</p></li><li class="listitem"><div class="funcsynopsis"><table border="0" class="funcprototype-table" summary="Function synopsis" style="cellspacing: 0; cellpadding: 0;"><tr><td><code class="funcdef">org.gjt.sp.jedit.bsh.This
+                            <b class="fsfunc">extend</b>(</code></td><td>org.gjt.sp.jedit.bsh.This
+                        <var class="pdparam">object</var><code>)</code>;</td></tr></table><div class="funcprototype-spacer">&nbsp;</div></div><p>Creates a new BeanShell <code class="classname">This</code>
+                scripted object that is a child of the parameter
+                <em class="parameter"><code>object</code></em>.</p></li><li class="listitem"><div class="funcsynopsis"><table border="0" class="funcprototype-table" summary="Function synopsis" style="cellspacing: 0; cellpadding: 0;"><tr><td><code class="funcdef">void
+                        <b class="fsfunc">importObject</b>(</code></td><td>Object
+                        <var class="pdparam">object</var><code>)</code>;</td></tr></table><div class="funcprototype-spacer">&nbsp;</div></div><p>Import an object into this namespace. This is somewhat
+                similar to Java 1.5 static class imports, except you can import
+                the methods and fields of a Java object instance into a
+                BeanShell namespace, for example:</p><div class="informalexample"><pre class="programlisting">Map map = new HashMap();
+    importObject( map );
+    put("foo", "bar");
+    print( get("foo") ); // "bar"</pre></div></li><li class="listitem"><div class="funcsynopsis"><table border="0" class="funcprototype-table" summary="Function synopsis" style="cellspacing: 0; cellpadding: 0;"><tr><td><code class="funcdef">org.gjt.sp.jedit.bsh.This
+                            <b class="fsfunc">object</b>(</code></td><td><code>void)</code>;</td><td>&nbsp;</td></tr></table><div class="funcprototype-spacer">&nbsp;</div></div><p>Creates a new BeanShell <code class="classname">This</code>
+                scripted object which can hold data members. You can use this to
+                create an object for storing miscellaneous crufties, like
+                so:</p><div class="informalexample"><pre class="programlisting">crufties = object();
+crufties.foo = "hello world";
+crufties.counter = 5;
+...</pre></div></li><li class="listitem"><div class="funcsynopsis"><table border="0" class="funcprototype-table" summary="Function synopsis" style="cellspacing: 0; cellpadding: 0;"><tr><td><code class="funcdef"><b class="fsfunc">setNameSpace</b>(</code></td><td>org.gjt.sp.jedit.bsh.Namespace
+                        <var class="pdparam">namespace</var><code>)</code>;</td></tr></table><div class="funcprototype-spacer">&nbsp;</div></div><p>Set the namespace of the current scope to
+                <em class="parameter"><code>namespace</code></em>.</p></li><li class="listitem"><div class="funcsynopsis"><table border="0" class="funcprototype-table" summary="Function synopsis" style="cellspacing: 0; cellpadding: 0;"><tr><td><code class="funcdef">org.gjt.sp.jedit.bsh.This
+                            <b class="fsfunc">super</b>(</code></td><td>String
+                        <var class="pdparam">scopename</var><code>)</code>;</td></tr></table><div class="funcprototype-spacer">&nbsp;</div></div><p>Returns a reference to the BeanShell
+                <code class="classname">This</code> object representing the enclosing
+                method scope specified by <em class="parameter"><code>scopename</code></em>. This
+                method work similar to the <code class="function">super</code> keyword
+                but can refer to enclosing scope at higher levels in a hierarchy
+                of scopes.</p></li><li class="listitem"><div class="funcsynopsis"><table border="0" class="funcprototype-table" summary="Function synopsis" style="cellspacing: 0; cellpadding: 0;"><tr><td><code class="funcdef">void <b class="fsfunc">unset</b>(</code></td><td>String <var class="pdparam">name</var><code>)</code>;</td></tr></table><div class="funcprototype-spacer">&nbsp;</div></div><p>Removes the variable named by <em class="parameter"><code>name</code></em>
+                from the current interpreter namespace. This has the effect of
+                <span class="quote">&#8220;<span class="quote">undefining</span>&#8221;</span> the variable.</p></li></ul></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bsh-commands-script.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bsh-commands.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bsh-commands-other.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Script Execution Commands&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Other Commands</td></tr></table></div></body></html>

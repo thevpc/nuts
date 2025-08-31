@@ -1,0 +1,111 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Listing of the Macro</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit 5.7 User's Guide"><link rel="up" href="dialog-macro.html" title="Chapter&nbsp;14.&nbsp;A Dialog-Based Macro"><link rel="prev" href="dialog-macro-intro.html" title="Use of the Macro"><link rel="next" href="macro-analysis.html" title="Analysis of the Macro"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Listing of the Macro</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="dialog-macro-intro.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;14.&nbsp;A Dialog-Based Macro</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="macro-analysis.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="add-prefix-and-suffix"></a>Listing of the Macro</h2></div></div></div><p>The macro script follows. You can find it in the jEdit
+        distribution in the <code class="filename">Text</code> subdirectory of the
+        <code class="filename">macros</code> directory. You can also try it out by
+        invoking
+        <span class="guimenu"><strong>Macros</strong></span>&gt;<span class="guisubmenu"><strong>Text</strong></span>&gt;<span class="guimenuitem"><strong>Add
+        Prefix and Suffix</strong></span>.</p><div class="informalexample"><pre class="programlisting">// beginning of Add_Prefix_and_Suffix.bsh
+
+<a name="imports"></a>// import statement (see <a class="xref" href="macro-analysis.html#explain-imports" title="Import Statements">the section called &#8220;Import Statements&#8221;</a>)
+import javax.swing.border.*;
+
+<a name="main-routine"></a>// main routine
+void prefixSuffixDialog()
+{
+<a name="create-dialog"></a>    // create dialog object (see <a class="xref" href="macro-analysis.html#explain-create-dialog" title="Create the Dialog">the section called &#8220;Create the Dialog&#8221;</a>)
+    title = <span class="quote">&#8220;<span class="quote">Add prefix and suffix to selected lines</span>&#8221;</span>;
+    dialog = new JDialog(view, title, false);
+    content = new JPanel(new BorderLayout());
+    content.setBorder(new EmptyBorder(12, 12, 12, 12));
+    content.setPreferredSize(new Dimension(320, 160));
+    dialog.setContentPane(content);
+
+<a name="fields-panel"></a>    // add the text fields (see <a class="xref" href="macro-analysis.html#explain-fields-panel" title="Create the Text Fields">the section called &#8220;Create the Text Fields&#8221;</a>)
+    fieldPanel = new JPanel(new GridLayout(4, 1, 0, 6));
+    prefixField = new HistoryTextField(<span class="quote">&#8220;<span class="quote">macro.add-prefix</span>&#8221;</span>);
+    prefixLabel = new JLabel(<span class="quote">&#8220;<span class="quote">Prefix to add:</span>&#8221;</span>);
+    suffixField = new HistoryTextField(<span class="quote">&#8220;<span class="quote">macro.add-suffix</span>&#8221;</span>);
+    suffixLabel = new JLabel(<span class="quote">&#8220;<span class="quote">Suffix to add:</span>&#8221;</span>);
+    fieldPanel.add(prefixLabel);
+    fieldPanel.add(prefixField);
+    fieldPanel.add(suffixLabel);
+    fieldPanel.add(suffixField);
+    content.add(fieldPanel, <span class="quote">&#8220;<span class="quote">Center</span>&#8221;</span>);
+
+<a name="button-panel"></a>    // add a panel containing the buttons (see <a class="xref" href="macro-analysis.html#explain-button-panel" title="Create the Buttons">the section called &#8220;Create the Buttons&#8221;</a>)
+    buttonPanel = new JPanel();
+    buttonPanel.setLayout(new BoxLayout(buttonPanel,
+        BoxLayout.X_AXIS));
+    buttonPanel.setBorder(new EmptyBorder(12, 50, 0, 50));
+    buttonPanel.add(Box.createGlue());
+    ok = new JButton(<span class="quote">&#8220;<span class="quote">OK</span>&#8221;</span>);
+    cancel = new JButton(<span class="quote">&#8220;<span class="quote">Cancel</span>&#8221;</span>);
+    ok.setPreferredSize(cancel.getPreferredSize());
+    dialog.getRootPane().setDefaultButton(ok);
+    buttonPanel.add(ok);
+    buttonPanel.add(Box.createHorizontalStrut(6));
+    buttonPanel.add(cancel);
+    buttonPanel.add(Box.createGlue());
+    content.add(buttonPanel, <span class="quote">&#8220;<span class="quote">South</span>&#8221;</span>);
+
+<a name="add-listeners"></a>    // register this method as an ActionListener for
+    // the buttons and text fields (see <a class="xref" href="macro-analysis.html#explain-add-listeners" title="Register the Action Listeners">the section called &#8220;Register the Action Listeners&#8221;</a>)
+    ok.addActionListener(this);
+    cancel.addActionListener(this);
+    prefixField.addActionListener(this);
+    suffixField.addActionListener(this);
+
+<a name="set-visible"></a>    // locate the dialog in the center of the
+    // editing pane and make it visible (see <a class="xref" href="macro-analysis.html#explain-set-visible" title="Make the Dialog Visible">the section called &#8220;Make the Dialog Visible&#8221;</a>)
+    dialog.pack();
+    dialog.setLocationRelativeTo(view);
+    dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    dialog.setVisible(true);
+
+<a name="action-listener"></a>    // this method will be called when a button is clicked
+    // or when ENTER is pressed (see <a class="xref" href="macro-analysis.html#explain-action-listener" title="The Action Listener">the section called &#8220;The Action Listener&#8221;</a>)
+    void actionPerformed(e)
+    {
+        if(e.getSource() != cancel)
+        {
+            processText();
+        }
+        dialog.dispose();
+    }
+
+<a name="process-text"></a>    // this is where the work gets done to insert
+    // the prefix and suffix (see <a class="xref" href="macro-analysis.html#explain-process-text" title="Get the User's Input">the section called &#8220;Get the User's Input&#8221;</a>)
+    void processText()
+    {
+        prefix = prefixField.getText();
+        suffix = suffixField.getText();
+        if(prefix.length() == 0 &amp;&amp; suffix.length() == 0)
+            return;
+        prefixField.addCurrentToHistory();
+        suffixField.addCurrentToHistory();
+
+<a name="jEdit-calls"></a>        // text manipulation begins here using calls
+        // to jEdit methods  (see <a class="xref" href="macro-analysis.html#explain-jedit-calls" title="Call jEdit Methods to Manipulate Text">the section called &#8220;Call jEdit Methods to Manipulate Text&#8221;</a>)
+        buffer.beginCompoundEdit();
+        selectedLines = textArea.getSelectedLines();
+        for(i = 0; i &lt; selectedLines.length; ++i)
+        {
+            offsetBOL = textArea.getLineStartOffset(
+                selectedLines[i]);
+            textArea.setCaretPosition(offsetBOL);
+            textArea.goToStartOfWhiteSpace(false);
+            textArea.goToEndOfWhiteSpace(true);
+            text = textArea.getSelectedText();
+            if(text == null) text = "";
+            textArea.setSelectedText(prefix + text + suffix);
+        }
+        buffer.endCompoundEdit();
+    }
+}
+
+<a name="main"></a>// this single line of code is the script's main routine
+// (see <a class="xref" href="macro-analysis.html#explain-main" title="The Main Routine">the section called &#8220;The Main Routine&#8221;</a>)
+prefixSuffixDialog();
+
+// end of Add_Prefix_and_Suffix.bsh</pre></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="dialog-macro-intro.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="dialog-macro.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="macro-analysis.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Use of the Macro&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Analysis of the Macro</td></tr></table></div></body></html>

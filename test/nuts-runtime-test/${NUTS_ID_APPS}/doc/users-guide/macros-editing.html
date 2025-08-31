@@ -1,0 +1,34 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Editing Macros</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit 5.7 User's Guide"><link rel="up" href="macro-index.html" title="Appendix&nbsp;F.&nbsp;Macros Included With jEdit"><link rel="prev" href="macros-clipboard.html" title="Clipboard Macros"><link rel="next" href="macros-files.html" title="File Management Macros"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Editing Macros</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="macros-clipboard.html">Prev</a>&nbsp;</td><th width="60%" align="center">Appendix&nbsp;F.&nbsp;Macros Included With jEdit</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="macros-files.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="macros-editing"></a>Editing Macros</h2></div></div></div><p>These macros automate various text editing tasks.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="filename">Duplicate_Lines_Above.bsh</code></p><p>Duplicates current/selected line(s) upward.</p></li><li class="listitem"><p><code class="filename">Duplicate_Lines_Below.bsh</code></p><p>Duplicates current/selected line(s) downward.</p></li><li class="listitem"><p><code class="filename">Emacs_Ctrl-K.bsh</code></p><p>Cuts and appends text, from the cursor to the end of the
+                line, into the copy buffer.</p></li><li class="listitem"><p><code class="filename">Emacs_Next_Line.bsh</code></p><p>Moves the cursor to the next line, centering the current
+                line in the middle of the text area if the cursor is at the
+                bottom of the text area.</p></li><li class="listitem"><p><code class="filename">Emacs_Previous_Line.bsh</code></p><p>Moves the cursor to the previous line, centering the
+                current line in the middle of the text area if the cursor is at
+                the top of the text area.</p></li><li class="listitem"><p><code class="filename">Go_to_Column.bsh</code></p><p>Prompts the user for a column position on the current
+                line, then moves the caret there.</p></li><li class="listitem"><p><code class="filename">Greedy_Backspace.bsh</code></p><p>If buffer is using soft tabs, this macro will backspace to
+                the previous tab stop, if all characters between the caret and
+                the tab stop are spaces. In all other cases a single character
+                is removed.</p></li><li class="listitem"><p><code class="filename">Greedy_Delete.bsh</code></p><p>If a buffer is using soft tabs, this macro will delete
+                tabSize number of spaces, if all the characters between the
+                caret and the next tab stop are spaces. In all other cases a
+                single character is deleted.</p></li><li class="listitem"><p><code class="filename">Greedy_Left.bsh</code></p><p>If a buffer is using soft tabs, this macro will move the
+                caret tabSize spaces to the left, if all the characters between
+                the caret and the previous tab stop are all spaces. In all other
+                cases, the caret is moved a single character to the left.</p></li><li class="listitem"><p><code class="filename">Greedy_Right.bsh</code></p><p>If a buffer is using soft tabs, this macro will move the
+                caret tabSize spaces to the right, if all the characters between
+                the caret and the next tab stop are all spaces. In all other
+                cases, the caret is moved a single character to the
+                right.</p></li><li class="listitem"><p><code class="filename">Keywords_to_Upper_Case.bsh</code></p><p>Converts all keywords in the current buffer to upper
+                case.</p></li><li class="listitem"><p><code class="filename">Mode_Switcher.bsh</code></p><p>Displays a modal dialog with the current buffer's mode in
+                a text field, allowing one to change the mode by typing in its
+                name.</p><p><code class="keycap">ENTER</code> selects the current mode; if the
+                text is not a valid mode, the dialog still dismisses, but a
+                warning is logged to the activity log. <code class="keycap">ESACPE</code>
+                closes the dialog with no further action. <code class="keycap">TAB</code>
+                attempts to auto-complete the mode name. Pressing
+                <code class="keycap">TAB</code> repeatedly cycles through the possible
+                completions. <code class="keycap">SHIFT-TAB</code> cycles through the
+                completions in reverse.</p></li><li class="listitem"><p><code class="filename">Move_Line_Down.bsh</code></p><p>Moves the current line down one, with automatic
+                indentation.</p></li><li class="listitem"><p><code class="filename">Move_Line_Up.bsh</code></p><p>Moves the current line up one, with automatic
+                indentation.</p></li><li class="listitem"><p><code class="filename">Open_Line_Above.bsh</code></p><p>Adds a new blank line before the current/selected line(s).</p></li><li class="listitem"><p><code class="filename">Open_Line_Below.bsh</code></p><p>Adds a new blank line after the current/selected line(s).</p></li><li class="listitem"><p><code class="filename">Toggle_Fold.bsh</code></p><p>Toggles visibility of current fold.</p><p>This is especially useful for fold toggling via keyboard.</p></li></ul></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="macros-clipboard.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="macro-index.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="macros-files.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Clipboard Macros&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;File Management Macros</td></tr></table></div></body></html>

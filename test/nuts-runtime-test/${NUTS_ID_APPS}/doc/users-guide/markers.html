@@ -1,0 +1,53 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Markers</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit 5.7 User's Guide"><link rel="up" href="editing.html" title="Chapter&nbsp;5.&nbsp;Editing Text"><link rel="prev" href="text-transfer.html" title="Transferring Text"><link rel="next" href="search-replace.html" title="Search and Replace"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Markers</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="text-transfer.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;5.&nbsp;Editing Text</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="search-replace.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="markers"></a>Markers</h2></div></div></div><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title"> MarkerSets </h3><p> The MarkerSets plugin is a replacement for the
+        built-in Markers feature of jEdit. Markers saved with
+        MarkerSets properly update when lines are added or
+        removed from a buffer. Furthermore, you can see
+        markers from multiple files in the Marker Sets
+        dockable. We recommend you use that instead
+        of the built-in Markers.
+        </p></div><p>A <em class="firstterm">marker</em> is a pointer to a specific
+        location within a buffer, which may or may not have a single-character
+        <em class="firstterm">shortcut</em> associated with it. Markers are
+        persistent; they are saved to
+        <code class="filename">.<em class="replaceable"><code>filename</code></em>.marks</code>, where
+        <code class="filename"><em class="replaceable"><code>filename</code></em></code> is the name of
+        the buffer. (The dot prefix makes the markers file hidden on Unix
+        systems.) Marker saving can be disabled in the
+        <span class="guibutton"><strong>General</strong></span> pane of the
+        <span class="guimenu"><strong>Utilities</strong></span>&gt;<span class="guimenuitem"><strong>Options</strong></span>
+        dialog box; see <a class="xref" href="global-opts.html#general-pane" title="The General Pane">the section called &#8220;The General Pane&#8221;</a>.</p><p><span class="guimenu"><strong>Markers</strong></span>&gt;<span class="guimenuitem"><strong>Add/Remove
+        Marker</strong></span> (shortcut: <code class="keycap">C+e C+m</code>) adds a marker
+        without a shortcut pointing to the current line. If a marker is already
+        set on the current line, the marker is removed instead. If text is
+        selected, markers are added to the first and last line of each
+        selection.</p><p>Markers are listed in the <span class="guimenu"><strong>Markers</strong></span> menu;
+        selecting a marker from this menu will move the caret to its
+        location.</p><p><span class="guimenu"><strong>Markers</strong></span>&gt;<span class="guimenuitem"><strong>Go to Previous
+        Marker</strong></span> (shortcut: <code class="keycap">C+e C+COMMA</code>) goes to
+        the marker immediately before the caret position.</p><p><span class="guimenu"><strong>Markers</strong></span>&gt;<span class="guimenuitem"><strong>Go to Next
+        Marker</strong></span> (shortcut: <code class="keycap">C+e C+PERIOD</code>) goes to
+        the marker immediately after the caret position.</p><p><span class="guimenu"><strong>Markers</strong></span>&gt;<span class="guimenuitem"><strong>Remove All
+        Markers</strong></span> removes all markers set in the current
+        buffer.</p><p>Markers with shortcuts allow for quicker keyboard-based
+        navigation. The following commands all prompt for a single-character
+        shortcut when invoked. Pressing <code class="keycap">ESCAPE</code> instead of
+        specifying a shortcut will cancel the operation.</p><p><span class="guimenu"><strong>Markers</strong></span>&gt;<span class="guimenuitem"><strong>Add Marker With
+        Shortcut</strong></span> (shortcut: <code class="keycap">C+t
+        <em class="replaceable"><code>key</code></em></code>) adds a marker with the
+        specified shortcut. If marker with that shortcut already exists, it will
+        remain in the buffer but lose its shortcut.</p><p><span class="guimenu"><strong>Markers</strong></span>&gt;<span class="guimenuitem"><strong>Go to
+        Marker</strong></span> (shortcut: <code class="keycap">C+y
+        <em class="replaceable"><code>key</code></em></code>) moves the caret to the location
+        of the marker with the specified shortcut.</p><p><span class="guimenu"><strong>Markers</strong></span>&gt;<span class="guimenuitem"><strong>Select to
+        Marker</strong></span> (shortcut: <code class="keycap">C+u
+        <em class="replaceable"><code>key</code></em></code>) creates a selection from the
+        caret location to the marker with the specified shortcut.</p><p><span class="guimenu"><strong>Markers</strong></span>&gt;<span class="guimenuitem"><strong>Swap Caret and
+        Marker</strong></span> (shortcut: <code class="keycap">C+k
+        <em class="replaceable"><code>key</code></em></code>) moves the caret to the location
+        of the marker with the specified shortcut, and moves the marker to the
+        former caret position. Invoke this command multiple times to flip
+        between two locations in the buffer.</p><p>Lines which contain markers are indicated in the gutter with a
+        highlight. Moving the mouse over the highlight displays a tool tip
+        showing the marker's shortcut, if it has one. See <a class="xref" href="overview.html" title="Interface Overview">the section called &#8220;Interface Overview&#8221;</a> for information about the gutter.</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="text-transfer.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="editing.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="search-replace.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Transferring Text&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Search and Replace</td></tr></table></div></body></html>

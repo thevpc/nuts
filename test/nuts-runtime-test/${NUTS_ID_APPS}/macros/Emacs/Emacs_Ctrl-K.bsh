@@ -1,0 +1,67 @@
+/*
+* Emacs_Ctrl-k.bsh - a BeanShell macro for jEdit
+* which cuts either the selected text, or the current line 
+* if no text is selected, to the clipboard.
+*
+* Repeated calls to Emacs-Ctrl-K from the same position
+* should append cut lines to the cut buffer.
+*
+* By Alan Ezust <ezust at users dot sourceforge dot net>
+* with help from Ollie Rutherford
+* Version 0.1  21 December 2003
+*
+*/
+
+// an arbitrary letter for a register.
+myReg = 'p';    
+
+emacsCtrlK() 
+{
+    int currentLine = textArea.getCaretPosition();
+    try
+    {
+        int lastLine = Integer.parseInt("" + jEdit.getProperty("lastpos"));
+        if(lastLine != currentLine)
+        {
+            Registers.clearRegister('$');
+        }
+    }
+    catch ( NumberFormatException nfe )
+    {
+        Registers.clearRegister('$');
+    }
+
+    selections = textArea.getSelection();
+    if(selections.length == 0)
+    {
+        textArea.goToEndOfWhiteSpace(true);
+    }
+    selections = textArea.getSelection();
+    if (selections.length==0) 
+    {
+        textArea.goToNextCharacter(true);
+    }
+    selections = textArea.getSelection();
+    Registers.append(textArea, '$', "");
+
+    // since there is no cut-append, I"ll just cut it into another register
+    Registers.cut(textArea, 'e');
+
+    // remember the caretPosition for next time around
+    // Registers.setRegister('p', "" + textArea.getCaretPosition());
+    jEdit.setProperty("lastpos", "" + textArea.getCaretPosition());
+}
+
+emacsCtrlK();
+
+/**
+<listitem>
+	<para>
+        If no text is selected, the current line is cut to the clipboard,
+        otherwise the selected text is cut to the clipboard.
+
+        Subsequent calls to Emacs_Ctrl-k will alternate between cut-append
+        the following newline character, or the following line of text.
+	</para>
+</listitem>
+*/

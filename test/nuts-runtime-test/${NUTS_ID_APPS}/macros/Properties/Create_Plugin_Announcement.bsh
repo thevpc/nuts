@@ -1,0 +1,431 @@
+/*
+ * Create_plugin_release_text.bsh - a BeanShell macro script for the
+ * jEdit text editor - Parses a plugin's properties file to create the
+ * text for a plugin submission
+ * Copyright ( C ) 2006 Jeffrey Hoyt
+ * jchoyt@jedit.org
+ * Eric Berry <elberry@users.sourceforge.net> (version checking 2010)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ */
+
+
+// import statements
+import javax.swing.border.*;
+import org.gjt.sp.util.Log;
+import java.util.Comparator;
+
+dependency(n, cn, v) 
+{
+    name = n;
+    className = cn;
+    version = v;
+    
+    toString() 
+    {
+        return name + " " + version;      
+    }
+    return this;
+}
+
+// main routine
+void pluginTextDialog( View view, Buffer buffer )
+{
+    File propsFile = new File( buffer.getPath() );
+    Properties props = new Properties();
+    InputStream in = new FileInputStream( propsFile );
+    try
+    {
+        props.load( in );
+    }
+    finally
+    {
+        in.close();
+    }
+
+    // setup the strings we are interested in and can get from the props file
+    String pluginName = null;
+    String version = null;
+    String jEditDependency = null;
+    String javaDependency = null;
+    String activate = null;
+    ArrayList pluginDeps = new ArrayList();
+    ArrayList optionalDeps = new ArrayList();
+    String announcement, shortDescription, source;
+    String longDescription="";
+    String classname=null;
+    String longDescriptionFileName=null;
+
+    //extract the properties we care about
+    String start = "plugin.";
+    for ( Enumeration e = props.keys(); e.hasMoreElements() ; )
+    {
+        String key = ( String ) e.nextElement();
+        if( key.startsWith( start ) )
+        {
+            if( key.endsWith( ".activate" ) )
+            {
+                activate = props.getProperty( key );
+            }
+            else if( key.endsWith( ".version" ) )
+            {
+                version = props.getProperty( key );
+            }
+            else if( key.indexOf( ".depend." ) != -1 )
+            {
+                String value = props.getProperty( key ).trim();
+                String[] parts = value.split( " " );
+                if( parts.length < 2 )
+                {
+                    Macros.error( view, "Badly constructed dependency ( " + value + " ).  All dependencies must have at least 2 parts" );
+                }
+                if( parts[0].equals( "jedit" ) )
+                {
+                    jEditDependency = parts[1];
+                }
+                else if( parts[0].equals( "jdk" ) )
+                {
+                    javaDependency = parts[1];
+                }
+                else if( parts[0].equals( "plugin" ) )
+                {
+                    Log.log(Log.DEBUG, this, "required plugin name - class: " + parts[1] + " | name: " + jEdit.getProperty("plugin." + parts[1] + ".name"));
+                    n = jEdit.getProperty("plugin." + parts[1] + ".name");
+                    cn = parts[1];
+                    v = parts[2];
+                    pluginDeps.add( dependency(n, cn, v) );
+                }
+                else if( parts[0].equals( "optional" ) && parts[1].equals( "plugin" ) )
+                {
+                    Log.log(Log.DEBUG, this, "optional plugin name - class: " + parts[2] + " | name: " + jEdit.getProperty("plugin." + parts[2] + ".name"));
+                    n = jEdit.getProperty("plugin." + parts[2] + ".name");
+                    cn = parts[2];
+                    v = parts[3];
+                    optionalDeps.add( dependency(n, cn, v) );
+                }
+                else
+                {
+                    Macros.error( view, "Unexpected dependency ( " + value + " ).  See the javadoc of org.gjt.sp.jedit.EditPlugin" );
+                }
+            }
+            else if(key.endsWith(".longdescription") )
+            {
+                longDescriptionFileName = props.getProperty( key );
+            }
+            else if(key.endsWith(".description") )
+            {
+                shortDescription = props.getProperty( key );
+            }
+            else if(key.endsWith(".name") )
+            {
+                pluginName = props.getProperty(key);
+                classname = key.substring( start.length(), key.length() - 5 );
+            }
+        }
+    }
+    // Macros.error( view, "Parsing complete" );
+
+    if( javaDependency == null )
+    {
+        Macros.error( view, "You must supply a JDK dependency.  Please add it and rerun the macro." );
+        return;
+    }
+    if( jEditDependency == null )
+    {
+        Macros.error( view, "You must supply a jEdit dependency.  Please add it and rerun the macro." );
+        return;
+    }
+    if( shortDescription == null )
+    {
+        Macros.error( view, "You must supply a short description in the plugin." + classname + ".description property.  Please add it and rerun the macro." );
+        return;
+    }
+    if( longDescriptionFileName == null )
+    {
+        longDescriptionFileName = "description.html";
+        // Macros.error(view, "setting default long description file");
+    }
+
+    //load the long description
+    File descriptionFile = new File( new File(buffer.getPath()).getParent(), longDescriptionFileName );
+    if(!descriptionFile.exists())
+    {
+        Macros.error( view, "You must supply a long description in a file located at " + descriptionFile.getPath() + ".  Please create it and rerun the macro." );
+        return;
+    }
+    BufferedReader reader = new BufferedReader( new FileReader( descriptionFile ) );
+    try
+    {
+        String line;
+        while( (line = reader.readLine())!=null )
+        {
+            longDescription = longDescription + line + "\n";
+        }
+    }
+    finally
+    {
+        reader.close();
+    }
+
+    // create dialog object and set its features
+    title = "Create Plugin Announcement";
+    dialog = new JDialog( view, title, false );
+    content = new JPanel( );
+    content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS) );
+    content.setBorder( new EmptyBorder( 12, 12, 11, 11 ) );
+    content.add(Box.createHorizontalStrut(500));
+    dialog.setContentPane( content );
+
+    // add to the dialog a panel containing the text fields for
+    // entry of the prefix and suffix text
+    propsPanel = new JPanel( new GridLayout( 5 + pluginDeps.size() + optionalDeps.size(), 2, 2, 6 ) );
+    propsPanel.add( new JLabel( "Plugin name:" ) );
+    propsPanel.add( new JLabel( pluginName ) );
+    propsPanel.add( new JLabel( "Plugin version:" ) );
+    propsPanel.add( new JLabel( version ) );
+    propsPanel.add( new JLabel( "Activates:" ) );
+    propsPanel.add( new JLabel( activate ) );
+    propsPanel.add( new JLabel( "jEdit Dependency:" ) );
+    propsPanel.add( new JLabel( jEditDependency ) );
+    propsPanel.add( new JLabel( "JDK Dependency:" ) );
+    propsPanel.add( new JLabel( javaDependency ) );
+    
+    Comparator depSorter = new Comparator()
+    {
+        int compare(a, b) 
+        {
+            return a.toString().compareToIgnoreCase(b.toString());   
+        }
+    };
+    Collections.sort(pluginDeps, depSorter);
+    Collections.sort(optionalDeps, depSorter);
+    
+    if (pluginDeps.size() > 0) 
+    {
+        for( dep : pluginDeps )
+        {
+            propsPanel.add( new JLabel( "Depends on:" ) );
+            propsPanel.add( new JLabel( dep.name + " " + dep.version ) );
+        }
+    }
+    if (optionalDeps.size() > 0) 
+    {
+        for( dep : optionalDeps )
+        {
+            propsPanel.add( new JLabel( "Optional:" ) );
+            propsPanel.add( new JLabel( dep.name + " " + dep.version ) );
+        }
+    }
+    content.add( propsPanel );
+
+    //add areas for source location, Announcement, Short Description, and Long Description
+    descriptionPanel = new JPanel();
+    descriptionPanel.setLayout( new BoxLayout( descriptionPanel, BoxLayout.Y_AXIS ) );
+    descriptionPanel.setBorder(new EmptyBorder(12, 0, 0, 0));
+
+    locationPanel = new JPanel();
+    locationPanel.setLayout(new BorderLayout());
+    locationPanel.add( new JLabel( "Source Code Location (SVN and tag, or URL): " ), BorderLayout.NORTH );
+    sourceArea = new JEditorPane();
+    sourceArea.setText("Source code is in SVN with the tag XXXX (no SVN release numbers, please)");
+    sourceArea.setPreferredSize( new Dimension( 300, 36 ) );
+    locationPanel.add( new JScrollPane( sourceArea ) );
+    descriptionPanel.add(locationPanel);
+    descriptionPanel.add(Box.createVerticalStrut(11));
+    
+    announcementPanel = new JPanel();
+    announcementPanel.setLayout(new BorderLayout());
+    announcementPanel.add( new JLabel( "Announcement: " ), BorderLayout.NORTH );
+    announcementArea = new JEditorPane();
+    announcementArea.setPreferredSize( new Dimension( 250, 90 ) );
+    announcementPanel.add( new JScrollPane( announcementArea ) );
+    descriptionPanel.add(announcementPanel);
+    descriptionPanel.add(Box.createVerticalStrut(11));
+
+    shortDescriptionPanel = new JPanel();
+    shortDescriptionPanel.setLayout(new BorderLayout());
+    shortDescriptionPanel.add( new JLabel( "Short Description ( for new plugins or updated descriptions only ): " ), BorderLayout.NORTH );
+    shortDescriptionArea = new JEditorPane("text/plain", shortDescription);
+    shortDescriptionArea.disable();
+    shortDescriptionArea.setPreferredSize( new Dimension( 250, 72 ) );
+    shortDescriptionPanel.add( new JScrollPane( shortDescriptionArea ) );
+    descriptionPanel.add(shortDescriptionPanel);
+    descriptionPanel.add(Box.createVerticalStrut(11));
+
+    longDescriptionPanel = new JPanel();
+    longDescriptionPanel.setLayout(new BorderLayout());
+    longDescriptionPanel.add( new JLabel( "Long Description ( for new plugins or updated descriptions only ): " ), BorderLayout.NORTH );
+    longDescriptionArea = new JEditorPane("text/plain", longDescription);
+    longDescriptionArea.disable();
+    longDescriptionArea.setPreferredSize( new Dimension( 250, 90 ) );
+    longDescriptionPanel.add( new JScrollPane( longDescriptionArea ) );
+    descriptionPanel.add(longDescriptionPanel);
+    descriptionPanel.add(Box.createVerticalStrut(17));
+
+    //add buttons to description panel
+    buttonPanel = new JPanel();
+    buttonPanel.setLayout( new BoxLayout( buttonPanel, BoxLayout.X_AXIS ) );
+    buttonPanel.add(Box.createHorizontalGlue());
+    ok = new JButton( "Create Announcement" );
+    buttonPanel.add( ok );
+    buttonPanel.add(Box.createHorizontalStrut(5));
+    cancel = new JButton( "Cancel" );
+    buttonPanel.add( cancel );
+    descriptionPanel.add( buttonPanel );
+    content.add( descriptionPanel );
+
+    // register this method as an ActionListener for
+    // the buttons and text fields
+    ok.addActionListener( this );
+    cancel.addActionListener( this );
+
+    // locate the dialog in the center of the
+    // editing pane and make it visible
+    dialog.pack();
+    dialog.setLocationRelativeTo( view );
+    dialog.setDefaultCloseOperation( JDialog.DISPOSE_ON_CLOSE );
+    dialog.setVisible( true );
+
+    // this method will be called when a button is clicked
+    // or when ENTER is pressed
+    void actionPerformed( e )
+    {
+        if( e.getSource() != cancel )
+        {
+            valid = validateVersions();
+        	  if(valid) 
+        	  {
+        	  	  createAnnouncement();
+        	  }
+        }
+        dialog.dispose();
+    }
+
+    void createAnnouncement()
+    {
+        announcement = announcementArea.getText();
+        shortDescription = shortDescriptionArea.getText();
+        longDescription = longDescriptionArea.getText();
+        source = sourceArea.getText();
+        StringBuffer ret = new StringBuffer();
+        ret.append( "Paste the text below into the Plugin Central Submission Tracker at https://sourceforge.net/tracker/?group_id=588&atid=625093\n" );
+        ret.append( "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" );
+        ret.append( "\n{{{ " );
+        ret.append( pluginName );
+        ret.append( " " );
+        ret.append( version );
+        ret.append( "\n    Source: " );
+        ret.append( source );
+        ret.append( "\n    Announcement: " + announcement.replaceAll("\n", "\n        " ) );
+        ret.append( "\n    Requires Java " );
+        ret.append( javaDependency );
+        ret.append( "\n    Requires jEdit " );
+        ret.append( jEditDependency );
+        if( pluginDeps.size() > 0 )
+        {
+            ret.append( "\n    Required plugins: \n" );
+            for (dep : pluginDeps)
+                ret.append("\t\t").append(dep.className).append(' ').append(dep.version).append('\n');
+        }
+        if( optionalDeps.size() > 0 )
+        {
+            ret.append( "\n    Optional plugins: \n" );
+            for (dep : optionalDeps)
+                ret.append(dep.className).append(' ').append(dep.version);
+        }
+        if( shortDescription!=null && !shortDescription.equals( "" ) )
+        {
+            ret.append( "\n    \n    Short Description: " + shortDescription );
+        }
+        if( longDescription!=null && !longDescription.equals( "" ) )
+        {
+            ret.append( "\n    \n    Long Description: " + longDescription );
+        }
+        ret.append( " }}}" );
+        newbuf = jEdit.newFile( view );
+        newbuf.insert( 0, ret.toString() );
+    }
+    
+    boolean validateVersions()
+    {
+    	 boolean valid = true;
+    	 StringBuilder builder = new StringBuilder();
+    	 builder.append(
+    	 	 "There are some inconsistencies in your plugin's requirements. The\n" +
+    	 	 "version numbers below don't match what you are working with in\n" +
+    	 	 "your installation of jEdit.\n\n");
+    	 
+    	 // check jEdit dependency against running build.
+    	 String build = jEdit.getBuild();
+    	 if(!build.equals(jEditDependency))
+    	 {
+    	 	 valid = false;
+    	 	 builder.append("      jEdit - Required: " + jEditDependency + " - Running: " + build + "\n");
+    	 }
+    	 
+    	 // check required plugin dependencies.
+    	 for( dep : pluginDeps )
+		 {
+		     String installedVersion = jEdit.getProperty("plugin." + dep.className + ".version");
+		     if (!dep.version.equals(installedVersion)) {
+		         valid = false;
+		         builder.append("      " + dep.name + " - Required: " + dep.version + " - Running: " + installedVersion + "\n");
+		     }
+		 }
+		 
+		 // check optional plugin dependencies.
+    	 for( dep : optionalDeps )
+		 {
+		     String installedVersion = jEdit.getProperty("plugin." + dep.className + ".version");
+		     if(!dep.version.equals(installedVersion)) 
+		     {
+		         valid = false;
+		         builder.append("      " + dep.name + " - Optional: " + dep.version + " - Running: " + installedVersion + "\n");
+		     }
+		 }
+    	 
+    	 if(!valid)
+    	 {
+    	 	 builder.append("\n\n" +
+    	 	 	 "Note that your plugin will be tested against the latest released\n" +
+    	 	 	 "versions of jEdit and your plugin's dependencies before it is\n" +
+    	 	 	 "released.\n\n" +
+    	 	 	 "Do you want to continue creating this announcement, or would you\n" +
+    	 	 	 "like to cancel it, and update the version numbers?\n\n" +
+    	 	 	 "       \"Yes\" to create announcement as is.\n" +
+    	 	 	 "       \"No\" to cancel and update props.");
+    	 	 int choice = JOptionPane.showConfirmDialog(
+    	 	 	 					view,
+    	 	 	 					builder.toString(),
+    	 	 	 					"Versions don't match",
+    	 	 	 					JOptionPane.YES_NO_OPTION,
+    	 	 	 					JOptionPane.WARNING_MESSAGE);
+    	 	 
+    	 	 // if user's chosen yes, then announcement is created.
+    	 	 valid = (choice == JOptionPane.YES_OPTION);
+    	 }
+    	 return valid;
+    }
+}
+
+// this single line of code is the script's main routine
+// it calls the methods and exits
+if( buffer.getMode().toString().equals( "properties" ) )
+	pluginTextDialog( view, buffer );
+else
+	Macros.error( view, "This must be run on a jEdit plugin's properties file.  \nOpen your Plugin's props file and rerun this macro." );
+
+// ::mode=beanshell:noTabs=true:tabSize=4:indentSize=4::

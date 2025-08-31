@@ -1,0 +1,12 @@
+line = textArea.getCaretLine();
+if (line < textArea.getLineCount() - 1)
+{
+        expanded = textArea.displayManager.isLineVisible(line+1);
+        if (expanded)
+                textArea.collapseFold();
+        else {
+                pos = textArea.getCaretPosition();
+                textArea.expandFold(false);
+                textArea.setCaretPosition(pos);
+        }
+}

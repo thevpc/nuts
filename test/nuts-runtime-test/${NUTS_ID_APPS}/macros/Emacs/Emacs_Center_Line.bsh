@@ -1,0 +1,66 @@
+/**
+ * Emulates the Emacs "center-line" command, documented as follows (in
+ * GNU Emacs):
+ *
+ *      center-line is an interactive compiled Lisp function in 
+ *      `textmodes/text-mode'.
+ *
+ *      (center-line &optional NLINES)
+ *
+ *     Center the line point is on, within the width specified by `fill-column'.
+ *     This means adjusting the indentation so that it equals
+ *     the distance between the end of the text and `fill-column'.
+ *     The argument NLINES says how many lines to center.
+ */
+
+source (MiscUtilities.constructPath(dirname(scriptPath), "EmacsUtil.bsh"));
+
+void emacsCenterLine()
+{
+    caret = textArea.getCaretPosition();
+    caretLine = textArea.getCaretLine();
+    lineStart = textArea.getLineStartOffset (caretLine);
+    lineEnd = textArea.getLineEndOffset (caretLine);
+    lineIndex = textArea.getLineOfOffset (caretLine);
+    defaultFillColumn = getCardinalProperty ("buffer.maxLineLen", 79);
+
+    // Convert the buffer name into a property name.
+
+    propName = makeBufferPropertyName ("emacs.fillColumn.");
+    
+    // Get the buffer-specific fill column.
+    
+    fillColumn = getCardinalProperty (propName, defaultFillColumn);
+
+    if ((! atEndOfBuffer()) && (lineStart < lineEnd))
+    {
+        // Be sure to ignore trailing newline.
+
+        int           len = lineEnd - lineStart - 1;
+        String        line = textArea.getText (lineStart, len).trim();
+        StringBuffer  paddedString = new StringBuffer (fillColumn);
+        int           paddingNeeded;
+        int           frontPadding;
+        int           tailPadding;
+        int           i;
+
+        len = line.length();
+        paddingNeeded = (fillColumn < len) ? 0 : (fillColumn - len);
+        i = paddingNeeded / 2;
+        frontPadding = i;
+        tailPadding  = i + (paddingNeeded % 2);
+
+        for (i = 0; i < frontPadding; i++)
+            paddedString.append (' ');
+
+        paddedString.append (line);
+
+        selection = new Selection.Range (lineStart, lineEnd - 1);
+        textArea.setSelection (selection);
+        textArea.setSelectedText (paddedString.toString());
+    }
+}
+
+emacsCenterLine();
+
+

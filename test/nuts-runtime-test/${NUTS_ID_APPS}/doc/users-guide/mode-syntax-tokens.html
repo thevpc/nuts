@@ -1,0 +1,46 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Token Types</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit 5.7 User's Guide"><link rel="up" href="writing-modes.html" title="Chapter&nbsp;10.&nbsp;Mode Definition Syntax"><link rel="prev" href="mode-rule-keywords.html" title="The KEYWORDS Tag"><link rel="next" href="mode-match-type.html" title="The MATCH_TYPE Attribute"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Token Types</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mode-rule-keywords.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;10.&nbsp;Mode Definition Syntax</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="mode-match-type.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="mode-syntax-tokens"></a>Token Types</h2></div></div></div><p>The various token types are used to syntax highlight particular
+        words in a language. This makes code easier to read. There is a wide
+        latitude in the usage of the token types, and really it depends on the
+        specifics of the language as to which token represents which type. Some
+        examples are given below, but these are just guidelines, not hard and
+        fast rules.</p><p>Many languages include constructs from other languages. One common
+        example is html files can include javascript and css blocks. Several of
+        the mode tags support a DELEGATE attribute, which will allow a section
+        of text to be passed to a different mode for highlighting. The html mode
+        delegates to the javascript mode for javascript blocks and to the css
+        mode for style blocks. Use of the DELEGATE attribute is highly encouraged
+        when appropriate since it makes writing modes easier, reduces duplication,
+        and promotes visual consistency across languages.</p><p>Parser rules can highlight tokens using any of the following token
+        types:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">NULL</code> - no special highlighting is
+                performed on tokens of type <code class="literal">NULL</code></p></li><li class="listitem"><p><code class="literal">COMMENT1</code></p></li><li class="listitem"><p><code class="literal">COMMENT2</code></p></li><li class="listitem"><p><code class="literal">COMMENT3</code></p></li><li class="listitem"><p><code class="literal">COMMENT4</code></p><p>jEdit supports four different types of comment tokens.
+                Generally, comments are programmer-readable constructs that are
+                ignored by compilers and interpreters. As an example, the lisp
+                mode defines four comment types:
+                </p><p>&lt;EOL_SPAN TYPE="COMMENT4"&gt;;;;;&lt;/EOL_SPAN&gt;</p><p>&lt;EOL_SPAN TYPE="COMMENT3"&gt;;;;&lt;/EOL_SPAN&gt;</p><p>&lt;EOL_SPAN TYPE="COMMENT2"&gt;;;&lt;/EOL_SPAN&gt;</p><p>&lt;EOL_SPAN TYPE="COMMENT1"&gt;;&lt;/EOL_SPAN&gt;</p></li><li class="listitem"><p><code class="literal">FUNCTION</code></p><p>The function token is intended to identify functions, methods,
+                procedures, routines, or named subprograms.</p></li><li class="listitem"><p><code class="literal">DIGIT</code></p><p>The digit token is to identify numbers.</p></li><li class="listitem"><p><code class="literal">INVALID</code></p><p>The invalid type is to indicate that particular words are
+                not to be used, for example, the java mode defined both "goto"
+                and "const" as invalid words. These are words that are defined
+                by the language, but are not to be used.</p></li><li class="listitem"><p><code class="literal">KEYWORD1</code></p></li><li class="listitem"><p><code class="literal">KEYWORD2</code></p></li><li class="listitem"><p><code class="literal">KEYWORD3</code></p></li><li class="listitem"><p><code class="literal">KEYWORD4</code></p><p>
+                    Keywords are used to identify well-defined words within a
+                    language. Some languages naturally divide keywords into
+                    groups, for example, the pascal mode identifies "for" as a
+                    KEYWORD1, "private" as a KEYWORD2, and "int" as a KEYWORD3.
+                </p></li><li class="listitem"><p><code class="literal">LABEL</code></p><p>A label is generally a named position within a source, for
+                example, the ada mode defined a label as &lt;&lt;foo&gt;&gt;.
+                </p></li><li class="listitem"><p><code class="literal">LITERAL1</code></p></li><li class="listitem"><p><code class="literal">LITERAL2</code></p></li><li class="listitem"><p><code class="literal">LITERAL3</code></p></li><li class="listitem"><p><code class="literal">LITERAL4</code></p><p>
+                    Literals are usually, but not always, uninterpreted strings,
+                    for example, "foo" or 'bar'. There are a wide variety of
+                    usages of literals in the mode files.
+                </p></li><li class="listitem"><p><code class="literal">MARKUP</code></p><p>
+                    The markup token is generally used in the various "markup"
+                    languages, such as xml and html. Markup is used for those
+                    elements that are not specified as words belonging to the
+                    language. For example, in html, &lt;body&gt; would be
+                    considered a keyword, where &lt;foo&gt; would be considered
+                    markup.
+                </p></li><li class="listitem"><p><code class="literal">OPERATOR</code></p><p>
+                    Common examples of operators are the math symbols, such as
+                    '+', '-', and so on.
+                </p></li></ul></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mode-rule-keywords.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="writing-modes.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="mode-match-type.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">The KEYWORDS Tag&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;The MATCH_TYPE Attribute</td></tr></table></div></body></html>

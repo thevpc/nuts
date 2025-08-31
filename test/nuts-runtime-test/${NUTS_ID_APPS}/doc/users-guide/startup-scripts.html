@@ -1,0 +1,44 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Startup Scripts</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit 5.7 User's Guide"><link rel="up" href="macro-tips.html" title="Chapter&nbsp;15.&nbsp;Macro Tips and Techniques"><link rel="prev" href="macro-tips-input.html" title="Getting Input for a Macro"><link rel="next" href="scripts-command-line.html" title="Running Scripts from the Command Line"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Startup Scripts</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="macro-tips-input.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;15.&nbsp;Macro Tips and Techniques</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="scripts-command-line.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="startup-scripts"></a>Startup Scripts</h2></div></div></div><p>On startup, jEdit runs any BeanShell scripts located in the
+        <code class="filename">startup</code> subdirectory of the jEdit installation and
+        user settings directories (see <a class="xref" href="settings-directory.html" title="The jEdit Settings Directory">the section called &#8220;The jEdit Settings Directory&#8221;</a>).
+        As with macros, the scripts must have a <code class="filename">.bsh</code> file
+        name extension. Startup scripts are run near the end of the startup
+        sequence, after plugins, properties and such have been initialized, but
+        before the first view is opened.</p><p>Startup scripts can perform initialization tasks that cannot be
+        handled by command line options or ordinary configuration options, such
+        as customizing jEdit's user interface by changing entries in the Java
+        platform's <code class="classname">UIManager</code> class.</p><p>Startup scripts have an additional feature lacking in ordinary
+        macros that can help you further customize jEdit. Variables and methods
+        defined in a startup script are available in all instances of the
+        BeanShell interpreter created in jEdit. This allows you to create a
+        personal library of methods and objects that can be accessed at any time
+        during the editing session in another macro, the BeanShell shell of the
+        Console plugin, or menu items such as
+        <span class="guimenu"><strong>Utilities</strong></span>&gt;<span class="guisubmenu"><strong>BeanShell</strong></span>&gt;<span class="guimenuitem"><strong>Evaluate
+        BeanShell Expression</strong></span>.</p><p>The startup script routine will run script files in the
+        installation directory first, followed by scripts in the user settings
+        directory. In each case, scripts will be executed in alphabetical order,
+        applied without regard to whether the file name contains upper or lower
+        case characters.</p><p>If a startup script throws an exception (because, for example, it
+        attempts to call a method on a <code class="constant">null</code> object). jEdit
+        will show an error dialog box and move on to the next startup script. If
+        script bugs are causing jEdit to crash or hang on startup, you can use
+        the <strong class="userinput"><code>-nostartupscripts</code></strong> command line option to
+        disable them for that editing session.</p><p>Another important difference between startup scripts and ordinary
+        macros is that startup scripts cannot use the pre-defined variables
+        <code class="varname">view</code>, <code class="varname">textArea</code>,
+        <code class="varname">editPane</code> and <code class="varname">buffer</code>. This is
+        because they are executed before the initial view is created.</p><p>If you are writing a method in a startup script and wish to use
+        one of the above variables, pass parameters of the appropriate type to
+        the method, so that a macro calling them after startup can supply the
+        appropriate values. For example, a startup script could include a
+        method</p><div class="informalexample"><pre class="programlisting">void doSomethingWithView(View v, String s)  {
+    ...
+}</pre></div><p>so that during the editing session another macro can call the
+        method using</p><div class="informalexample"><pre class="programlisting">doSomethingWithView(view, "something");</pre></div><div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>Reloading startup scripts without restarting</b></p></div></div></div><p>It is actually possible to reload startup scripts or load
+            other scripts without restarting jEdit, using a BeanShell statement
+            like the following:</p><pre class="programlisting">BeanShell.runScript(view,<em class="replaceable"><code>path</code></em>,null,false);</pre><p>For <em class="replaceable"><code>path</code></em>, you can substitute any
+            string, or a method call such as
+            <code class="function">buffer.getPath()</code>.</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="macro-tips-input.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="macro-tips.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="scripts-command-line.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Getting Input for a Macro&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Running Scripts from the Command Line</td></tr></table></div></body></html>

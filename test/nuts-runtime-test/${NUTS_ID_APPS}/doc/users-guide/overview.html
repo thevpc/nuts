@@ -1,0 +1,45 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Interface Overview</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit 5.7 User's Guide"><link rel="up" href="basics.html" title="Chapter&nbsp;3.&nbsp;jEdit Basics"><link rel="prev" href="basics.html" title="Chapter&nbsp;3.&nbsp;jEdit Basics"><link rel="next" href="views.html" title="Multiple Views"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Interface Overview</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="basics.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;3.&nbsp;jEdit Basics</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="views.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="overview"></a>Interface Overview</h2></div></div></div><p>A <em class="firstterm">View</em> is the jEdit term for an editor main
+        window. It is possible to have multiple views open at once, and each
+        View can be split into multiple panes. jEdit remembers the state of open
+        views between editing sessions.</p><p>An open file is referred to as a <em class="firstterm">Buffer</em>.
+        Unlike some editors where each buffer gets its own View, jEdit
+        completely separates the two concepts. A buffer might be visible in
+        several views, or none at all.</p><p>A <em class="firstterm">TextArea</em> is an editor for a buffer. An
+        <em class="firstterm">EditPane</em> contains a TextArea plus optional buffer switcher.
+        A View contains one EditPane by default, and additional panes are created whenever
+        the View is split. </p><p>The drop-down buffer switcher list at the top of each EditPane shows
+        a BufferSet, or a set of open buffers (see <a class="xref" href="buffersets.html" title="Buffer Sets and closing buffers">the section called &#8220;Buffer Sets and closing buffers&#8221;</a>).
+        Selecting a buffer on this list will make it visible in the TextArea. Different
+        emblems are displayed next to buffer names in the list, depending the
+        buffer's state; a red disk is shown for buffers with unsaved changes, a
+        lock is shown for read-only buffers, and a spark is shown for new
+        buffers which don't yet exist on disk.</p><p>With the new Tango icon theme, these symbols are slightly different,
+        a red square is shown for buffers with unsaved changes, a lock is shown for
+        read-only buffers, and a yellow square is shown for new buffers which don't
+        yet exist on disk.</p><p>As with most other graphical applications, there is a tool bar at
+        the top of the View which provides quick access to frequently-used
+        commands. Also, clicking the TextArea with the right mouse button
+        displays a popup menu which also facilitates quick access to various
+        commands. Both the tool bar and the right-click menu can be completely
+        customized to suit your tastes in the
+        <span class="guimenu"><strong>Utilities</strong></span>&gt;<span class="guimenuitem"><strong>Options</strong></span>
+        dialog box; see <a class="xref" href="global-opts.html#context-pane" title="The Context Menu Pane">the section called &#8220;The Context Menu Pane&#8221;</a>
+        and <a class="xref" href="global-opts.html#toolbar-pane" title="The Tool Bar Pane">the section called &#8220;The Tool Bar Pane&#8221;</a>.</p><p>Most of the View is taken up by the TextArea. If you've ever used
+        a graphical user interface before, the TextArea will be instantly
+        familiar. Text can be inserted simply by typing. More details on text
+        insertion and deletion can be found in <a class="xref" href="entering-text.html" title="Inserting and Deleting Text">the section called &#8220;Inserting and Deleting Text&#8221;</a>.</p><p>The strip on the left of the TextArea is called a
+        <em class="firstterm">gutter</em>. The gutter displays marker and register
+        locations, as well as folding arrows; it will also display line numbers
+        if the <span class="guimenu"><strong>View</strong></span>&gt;<span class="guimenuitem"><strong>Line
+        Numbers</strong></span> (shortcut: <code class="keycap">C+e C+t</code>) command is
+        invoked. Note this menu toggle action has the side-effect of changing the
+        persistent jEdit properties for the Gutter, which can also
+        be set from the <span class="guilabel"><strong>Gutter</strong></span> pane of the
+        <span class="guimenu"><strong>Utilities</strong></span>&gt;<span class="guimenuitem"><strong>Options</strong></span>
+        dialog box.</p><p> The gutter is divided into two sections. Right-clicking on the left side
+        gives you a context menu, while right-clicking on the right side (where line
+        numbers might be) toggles a marker at that position. Text can be selected by
+        left-clicking and dragging on right side of the gutter, over the range of lines
+        you wish to select. </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="basics.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="basics.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="views.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter&nbsp;3.&nbsp;jEdit Basics&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Multiple Views</td></tr></table></div></body></html>

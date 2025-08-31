@@ -1,0 +1,57 @@
+/**
+ * Emulates the Emacs "set-fill-column" command, except that it prompts
+ * for the new fill column instead of using an Emacs-style "prefix argument."
+ */
+
+source (MiscUtilities.constructPath(dirname(scriptPath), "EmacsUtil.bsh"));
+
+void emacsSetWrap()
+{
+    // Convert the buffer name into a property name.
+
+    propName = makeBufferPropertyName ("emacs.fillColumn.");
+    
+    // Get a value from the user.
+    
+    String err = "";
+    int defaultWrap = getCardinalProperty (propName, getDefaultWrap());
+    for (;;)
+    {
+        String s = Macros.input (editPane,
+                                 err +
+                                 "Enter new fill column or 0 to " +
+                                 "reset to default",
+                                 String.valueOf (defaultWrap));
+        if (s == null)
+            break;
+
+        // Try to parse it.
+
+        try
+        {
+            int i = Integer.parseInt (s);
+
+            if ((i == 0) || (i == defaultWrap))
+            {
+                jEdit.unsetProperty (propName);
+                break;
+            }
+
+            if (i > 0)
+            {
+                jEdit.setIntegerProperty (propName, i);
+                break;
+            }
+
+            err = "Bad fill column value. ";
+       }
+
+       catch (NumberFormatException ex)
+       {
+           err = "Bad fill column value. ";
+       }
+    }
+}
+
+emacsSetWrap();
+

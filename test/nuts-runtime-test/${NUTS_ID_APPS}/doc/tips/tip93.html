@@ -1,0 +1,20 @@
+<html><body>
+
+You can replace all occurrences of a specific string or regular
+expression with the return value of a BeanShell script if the
+<b>Return value of a BeanShell
+snippet</b> radio button is selected in the search dialog box.<p>
+
+You can use
+this, for example, to replace each occurrence of <quote>Windows</quote> with
+<quote>Linux</quote>, and each occurrence of <quote>Linux</quote> with
+<quote>Windows</quote>, by searching for the following regular expression:<p>
+
+<code>(Windows|Linux)</code><p>
+
+And replacing it with the following BeanShell snippet:<p>
+
+<code>_1.equals("Windows") ? "Linux" : "Windows"</code>
+
+</body>
+</html>

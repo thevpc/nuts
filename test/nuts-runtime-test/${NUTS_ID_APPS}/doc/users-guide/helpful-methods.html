@@ -1,0 +1,94 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Helpful Methods in the Macros Class</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit 5.7 User's Guide"><link rel="up" href="macro-basics.html" title="Chapter&nbsp;13.&nbsp;Macro Basics"><link rel="prev" href="predefined-variables.html" title="Predefined Variables in BeanShell"><link rel="next" href="dynamic-typing.html" title="BeanShell Dynamic Typing"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Helpful Methods in the Macros Class</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="predefined-variables.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;13.&nbsp;Macro Basics</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="dynamic-typing.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="helpful-methods"></a>Helpful Methods in the Macros Class</h2></div></div></div><p>Including <code class="function">message()</code>, there are five static
+        methods in the <a class="ulink" href="../api/org/gjt/sp/jedit/Macros.html" target="_top">Macros</a> class that
+        allow you to converse easily with your macros. They all encapsulate
+        calls to methods of the Java platform's
+        <code class="classname">JOptionPane</code> class.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><div class="funcsynopsis"><table border="0" class="funcprototype-table" summary="Function synopsis" style="cellspacing: 0; cellpadding: 0;"><tr><td><code class="funcdef">public static void
+                        <b class="fsfunc">message</b>(</code></td><td>Component
+                        <var class="pdparam">comp</var>, </td></tr><tr><td>&nbsp;</td><td>String
+                        <var class="pdparam">message</var><code>)</code>;</td></tr></table><div class="funcprototype-spacer">&nbsp;</div></div></li><li class="listitem"><div class="funcsynopsis"><table border="0" class="funcprototype-table" summary="Function synopsis" style="cellspacing: 0; cellpadding: 0;"><tr><td><code class="funcdef">public static void
+                        <b class="fsfunc">error</b>(</code></td><td>Component
+                        <var class="pdparam">comp</var>, </td></tr><tr><td>&nbsp;</td><td>String
+                        <var class="pdparam">message</var><code>)</code>;</td></tr></table><div class="funcprototype-spacer">&nbsp;</div></div></li><li class="listitem"><div class="funcsynopsis"><table border="0" class="funcprototype-table" summary="Function synopsis" style="cellspacing: 0; cellpadding: 0;"><tr><td><code class="funcdef">public static String
+                        <b class="fsfunc">input</b>(</code></td><td>Component
+                        <var class="pdparam">comp</var>, </td></tr><tr><td>&nbsp;</td><td>String
+                        <var class="pdparam">prompt</var><code>)</code>;</td></tr></table><div class="funcprototype-spacer">&nbsp;</div></div></li><li class="listitem"><div class="funcsynopsis"><table border="0" class="funcprototype-table" summary="Function synopsis" style="cellspacing: 0; cellpadding: 0;"><tr><td><code class="funcdef">public static String
+                        <b class="fsfunc">input</b>(</code></td><td>Component
+                        <var class="pdparam">comp</var>, </td></tr><tr><td>&nbsp;</td><td>String
+                        <var class="pdparam">prompt</var>, </td></tr><tr><td>&nbsp;</td><td>String
+                        <var class="pdparam">defaultValue</var><code>)</code>;</td></tr></table><div class="funcprototype-spacer">&nbsp;</div></div></li><li class="listitem"><div class="funcsynopsis"><table border="0" class="funcprototype-table" summary="Function synopsis" style="cellspacing: 0; cellpadding: 0;"><tr><td><code class="funcdef">public static int
+                        <b class="fsfunc">confirm</b>(</code></td><td>Component
+                        <var class="pdparam">comp</var>, </td></tr><tr><td>&nbsp;</td><td>String
+                        <var class="pdparam">prompt</var>, </td></tr><tr><td>&nbsp;</td><td>int <var class="pdparam">buttons</var><code>)</code>;</td></tr></table><div class="funcprototype-spacer">&nbsp;</div></div></li></ul></div><p>The format of these four <em class="glossterm">declarations</em>
+        provides a concise reference to the way in which the methods may be
+        used. The keyword <code class="function">public</code> means that the method can
+        be used outside the <a class="ulink" href="../api/org/gjt/sp/jedit/Macros.html" target="_top">Macros</a> class. The
+        alternatives are <code class="function">private</code> and
+        <code class="function">protected</code>. For purposes of BeanShell, you just have
+        to know that BeanShell can only use public methods of other Java
+        classes. The keyword <code class="function">static</code> we have already
+        discussed. It means that the method does not operate on a particular
+        object. You call a static function using the name of the class (like
+        <a class="ulink" href="../api/org/gjt/sp/jedit/Macros.html" target="_top">Macros</a>) rather
+        than the name of a particular object (like <code class="varname">view</code>). The
+        third word is the type of the value returned by the method. The keyword
+        <code class="function">void</code> is Java's way of saying the the method does
+        not have a return value.</p><p>The <code class="function">error()</code> method works just like
+        <code class="function">message()</code> but displays an error icon in the message
+        box. The <code class="function">input()</code> method furnishes a text field for
+        input, an <span class="guilabel"><strong>OK</strong></span> button and a
+        <span class="guilabel"><strong>Cancel</strong></span> button. If <span class="guilabel"><strong>Cancel</strong></span> is
+        pressed, the method returns <code class="constant">null</code>. If
+        <span class="guilabel"><strong>OK</strong></span> is pressed, a <code class="classname">String</code>
+        containing the contents of the text field is returned. Note that there
+        are two forms of the <code class="function">input()</code> method; the first form
+        with two parameters displays an empty input field, the other forms lets
+        you specify an initial, default input value.</p><p>For those without Java experience, it is important to know that
+        <code class="constant">null</code> is <span class="emphasis"><em>not</em></span> the same as an
+        empty, <span class="quote">&#8220;<span class="quote">zero-length</span>&#8221;</span> <code class="classname">String</code>. It is
+        Java's way of saying that there is no object associated with this
+        variable. Whenever you seek to use a return value from
+        <code class="function">input()</code> in your macro, you should test it to see if
+        it is <code class="constant">null</code>. In most cases, you will want to exit
+        gracefully from the script with a <code class="function">return</code> statement,
+        because the presence of a null value for an input variable usually means
+        that the user intended to cancel macro execution. BeanShell will
+        complain if you call any methods on a <code class="constant">null</code>
+        object.</p><p>The <code class="function">confirm()</code> method in the <a class="ulink" href="../api/org/gjt/sp/jedit/Macros.html" target="_top">Macros</a> class is a
+        little more complex. The <code class="varname">buttons</code> parameter has an
+        <code class="classname">int</code> type, and the usual way to supply a value is
+        to use one of the predefined values taken from Java's
+        <code class="classname">JOptionPane</code> class. You can choose among
+        <code class="constant">JOptionPane.YES_NO_OPTION</code>,
+        <code class="constant">JOptionPane.YES_NO_CANCEL_OPTION</code>, or
+        <code class="constant">JOptionPane.OK_CANCEL_OPTION</code>. The return value of
+        the method is also an <code class="classname">int</code>, and should be tested
+        against the value of other predefined constants:
+        <code class="constant">JOptionPane.YES_OPTION</code>,
+        <code class="constant">JOptionPane.NO_OPTION</code>,
+        <code class="constant">JOptionPane.OK_OPTION</code> or
+        <code class="constant">JOptionPane.CANCEL_OPTION</code>.</p><p>We've looked at using <code class="function">Macros.message()</code>. To
+        use the other methods, you would write something like the
+        following:</p><div class="informalexample"><pre class="programlisting">Macros.error(view, "Goodbye, cruel world!");
+
+String result = Macros.input(view, "Type something here.");
+
+String result = Macros.input(view, "When were you born?",
+    "I don't remember, I was very young at the time");
+
+int result = Macros.confirm(view, "Do you really want to learn"
+    + " about BeanShell?",JOptionPane.YES_NO_OPTION);
+    </pre></div><p>In the last three examples, placing the word
+        <code class="classname">String</code> or <code class="classname">int</code> before the
+        variable name <code class="varname">result</code> tells BeanShell that the
+        variable refers to an integer or a <code class="classname">String</code> object,
+        even before a particular value is assigned to the variable. In
+        BeanShell, this <em class="glossterm">declaration</em> of the
+        <em class="glossterm">type</em> of <code class="varname">result</code> is not
+        necessary; BeanShell can figure it out when the macro runs. This can be
+        helpful if you are not comfortable with specifying types and classes;
+        just use your variables and let BeanShell worry about it.</p><p>Note that macros are not limited to using these methods for
+        presenting a user interface. In fact, full-blown user interfaces using
+        the Java Swing APIs are also possible, and will be covered later on in
+        <a class="xref" href="dialog-macro.html" title="Chapter&nbsp;14.&nbsp;A Dialog-Based Macro">Chapter&nbsp;14, <i>A Dialog-Based Macro</i></a>.</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="predefined-variables.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="macro-basics.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="dynamic-typing.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Predefined Variables in BeanShell&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;BeanShell Dynamic Typing</td></tr></table></div></body></html>

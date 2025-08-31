@@ -1,0 +1,155 @@
+// jEdit default startup.bsh script.
+//  Used mostly for experimental keyboard workarounds.
+// :folding=explicit:expandFolds=1:
+
+//Most of the file is commented out. Note that the hacks here are
+//not guaranteed to work, might break various features in odd ways,
+//etc.
+
+// Print something useful...
+Log.log(Log.DEBUG,scriptPath,"BeanShell interpreter version "
+	+ this.interpreter.VERSION);
+
+/*{{{ Some useful scripting aids */
+/* If you are a plugin developer you will like this. After calling
+ * ac(), you can access private variables and methods in BeanShell.
+ */
+ac()
+{
+	setAccessibility(true);
+}
+
+
+/* For the mathematicians among us. */
+e = Math.E;
+pi = Math.PI;
+
+/* I use this for scripting various search and replace operations. */
+s(search,replace,flags)
+{
+	SearchAndReplace.setSearchString(search);
+	SearchAndReplace.setReplaceString(replace);
+	SearchAndReplace.setBeanShellReplace(flags.indexOf('b') != -1);
+	SearchAndReplace.setIgnoreCase(flags.indexOf('i') != -1);
+	SearchAndReplace.setRegexp(flags.indexOf('r') != -1);
+	SearchAndReplace.setSearchFileSet(new CurrentBufferSet());
+	SearchAndReplace.replaceAll(view);
+} /*}}}*/
+
+/*{{{ Setting environment variables on Console plugin */
+
+/* If you use the Console plugin, and want to set some environment
+ * variables for programs you run in the Console, without having to
+ * change operating system specific-scripts (as if the below method is
+ * any easier...)
+ */
+/* if(jEdit.getPlugin("console.ConsolePlugin") != null)
+{
+	setenv("CVS_RSH","ssh");
+	// setenv("PATH",getenv("PATH") + ":" + getenv("HOME") + "/bin");
+} */
+
+/*}}}*/
+
+/*{{{ Hang on copy/paste workaround */
+
+/* If your Java version has shitty clipboard support you can have jEdit
+ * use an internal storage area for the clipboard.
+ *
+ * A rare bug in Sun's Java virtual machine on Linux, for example, can
+ * make the JVM (or the AWT thread at least) hang while trying to copy
+ * or paste.
+ */
+//Registers.setRegister('$',new Registers.StringRegister());
+//Registers.setRegister('%',new Registers.StringRegister());
+
+/*}}}*/
+
+/*{{{ Remapping modifier keys  */
+
+/* The below is the default, swap the items around to
+ * change meaning of C+, A+, M+, S+.
+ */
+//KeyEventTranslator.setModifierMapping(InputEvent.CTRL_MASK,
+//	InputEvent.ALT_MASK, InputEvent.META_MASK,
+//	InputEvent.SHIFT_MASK);
+
+/* ... and this the MacOS default: */
+//KeyEventTranslator.setModifierMapping(InputEvent.META_MASK,  /* == C+ */
+//	InputEvent.CTRL_MASK,  /* == A+ */
+//	InputEvent.ALT_MASK,   /* == M+ */
+//	InputEvent.SHIFT_MASK  /* == S+ */);
+
+/* ... if you want MacOS keyboard to behave like a Linux or Windows keyboard
+   (This is also a MacOSX plugin option): */
+
+// KeyEventTranslator.setModifierMapping(InputEvent.CTRL_MASK,
+//	InputEvent.META_MASK, InputEvent.ALT_MASK,
+//	InputEvent.SHIFT_MASK);
+
+
+/*}}}*/
+
+/*{{{ Keypad arrowkeys vs regular arrowkeys 
+    Linux distinguishes between keypad arrowkeys and regular arrows, unlike Windows.
+    The translations below force keypad arrowkeys to behave the same way as regular arrowkeys
+    on all platforms.
+*/
+
+String[] modifierList = new String[] {"A", "C", "S", "CA", "AS", "CS", null};
+
+for (String mod: modifierList) {
+    linp = new KeyEventTranslator.Key(mod, KeyEvent.VK_KP_LEFT, (char)0);
+    crossp = new KeyEventTranslator.Key(mod, KeyEvent.VK_LEFT, (char)0); 
+    KeyEventTranslator.addTranslation(linp, crossp);
+    linp = new KeyEventTranslator.Key(mod, KeyEvent.VK_KP_RIGHT, (char)0);
+    crossp = new KeyEventTranslator.Key(mod, KeyEvent.VK_RIGHT, (char)0); 
+    KeyEventTranslator.addTranslation(linp, crossp);
+    linp = new KeyEventTranslator.Key(mod, KeyEvent.VK_KP_UP, (char)0);
+    crossp = new KeyEventTranslator.Key(mod, KeyEvent.VK_UP, (char)0); 
+    KeyEventTranslator.addTranslation(linp, crossp);
+    linp = new KeyEventTranslator.Key(mod, KeyEvent.VK_KP_DOWN, (char)0);
+    crossp = new KeyEventTranslator.Key(mod, KeyEvent.VK_DOWN, (char)0); 
+    KeyEventTranslator.addTranslation(linp, crossp);
+}
+
+/* }}}*/
+
+
+
+/*{{{ Workaround for buggy international key handling */
+
+/* If international keys do not work in the text area, sometimes it is possible
+ * to workaround the problem by adding translation mappings: */
+
+// KeyEventTranslator.addTranslation(
+//	new KeyEventTranslator.Key("CS",KeyEvent.VK_COMMA,'\0'),
+//	new KeyEventTranslator.Key("C",KeyEvent.VK_SEMICOLON,'\0')
+// );
+
+// KeyEventTranslator.addTranslation(
+//	new KeyEventTranslator.Key(null,KeyEvent.VK_CLOSE_BRACKET,'\0'),
+//	new KeyEventTranslator.Key(null,0,'"')
+// );
+
+// KeyEventTranslator.addTranslation(
+//	new KeyEventTranslator.Key("S",KeyEvent.VK_CLOSE_BRACKET,'\0'),
+//	new KeyEventTranslator.Key(null,0,(char)0x5e)
+// );
+
+// KeyEventTranslator.addTranslation(
+//	new KeyEventTranslator.Key("C",KeyEvent.VK_CLOSE_BRACKET,'\0'),
+//	new KeyEventTranslator.Key(null,0,'~')
+// );
+
+// KeyEventTranslator.addTranslation(
+//	new KeyEventTranslator.Key(null,KeyEvent.VK_EQUALS,'\0'),
+//	new KeyEventTranslator.Key(null,0,'\'')
+// );
+
+// KeyEventTranslator.addTranslation(
+//	new KeyEventTranslator.Key("S",KeyEvent.VK_EQUALS,'\0'),
+//	new KeyEventTranslator.Key(null,0,'`')
+// );
+
+/*}}}*/

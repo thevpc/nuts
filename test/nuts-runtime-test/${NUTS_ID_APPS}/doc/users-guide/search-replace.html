@@ -1,0 +1,187 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Search and Replace</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit 5.7 User's Guide"><link rel="up" href="editing.html" title="Chapter&nbsp;5.&nbsp;Editing Text"><link rel="prev" href="markers.html" title="Markers"><link rel="next" href="source-edit.html" title="Chapter&nbsp;6.&nbsp;Editing Source Code"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Search and Replace</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="markers.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;5.&nbsp;Editing Text</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="source-edit.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="search-replace"></a>Search and Replace</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="d0e3745"></a>Searching For Text</h3></div></div></div><p><span class="guimenu"><strong>Search</strong></span>&gt;<span class="guimenuitem"><strong>Find</strong></span>
+            (shortcut: <code class="keycap">C+f</code>) displays the search and replace
+            dialog box.</p><p>The search string can be entered in the <span class="guibutton"><strong>Search
+            for</strong></span> text field. This text field remembers previously
+            entered strings; see <a class="xref" href="history.html" title="Appendix&nbsp;C.&nbsp;History Text Fields">Appendix&nbsp;C, <i>History Text Fields</i></a> for details.</p><p>If text was selected in the text area and the selection does
+            not span a line break, the selected text becomes the default search
+            string.</p><p>If the selection spans a line break, the <span class="guibutton"><strong>Search in
+            Selection</strong></span> and <span class="guibutton"><strong>HyperSearch</strong></span> buttons
+            will be pre-selected, and the search string field will be initially
+            blank. (See <a class="xref" href="search-replace.html#hypersearch" title="HyperSearch">the section called &#8220;HyperSearch&#8221;</a> for information about the
+            HyperSearch feature.) </p><p>Selecting the <span class="guibutton"><strong>Ignore case</strong></span> check box
+            makes the search case insensitive - for example, searching for
+            <span class="quote">&#8220;<span class="quote">Hello</span>&#8221;</span> will match <span class="quote">&#8220;<span class="quote">hello</span>&#8221;</span>,
+            <span class="quote">&#8220;<span class="quote">HELLO</span>&#8221;</span> and <span class="quote">&#8220;<span class="quote">HeLlO</span>&#8221;</span>.</p><p>After selecting the <span class="guibutton"><strong>Whole word</strong></span>
+            check box, searching respects the <span class="guibutton"><strong>Extra word
+            characters</strong></span> setting from the editing options
+            for recognizing words.
+            </p><p>To search for special characters (such as newlines or
+            non-printable characters), inexact sequences of text, or strings
+            that span multiple lines, we use
+            <span class="bold"><strong>Regular Expressions</strong></span>.
+            Selecting the <span class="guibutton"><strong>Regular expressions</strong></span> check
+            box allows special characters to be used in the search string.
+            Regular expression syntax is described in <a class="xref" href="regexps.html" title="Appendix&nbsp;E.&nbsp;Regular Expressions">Appendix&nbsp;E, <i>Regular Expressions</i></a>.
+            If you use (groups) in the search field, you back-reference them
+            with $1 through $9 in the replace field. </p><p>The <span class="guibutton"><strong>Backward</strong></span> and
+            <span class="guibutton"><strong>Forward</strong></span> buttons specify the search direction.
+            Note that regular expressions can only be used when searching in a
+            forward direction.</p><p>Clicking <span class="guibutton"><strong>Find</strong></span> will locate the next
+            occurrence of the search string (or previous occurrence, if
+            searching backwards). If the <span class="guibutton"><strong>Keep dialog</strong></span>
+            check box is selected, the dialog box will remain open after the
+            search string has been located; otherwise, it will close.</p><p>If no occurrences could be found and the <span class="guibutton"><strong>Auto
+            wrap</strong></span> check box is selected, the search will
+            automatically restart from the beginning of the buffer (or the end,
+            if searching backwards). If <span class="guibutton"><strong>Auto wrap</strong></span> is not
+            selected, a confirmation dialog box is shown before restarting the
+            search.</p><p><span class="guimenu"><strong>Search</strong></span>&gt;<span class="guimenuitem"><strong>Find
+            Next</strong></span> (shortcut: <code class="keycap">C+g</code>) locates the next
+            occurrence of the most recent search string without displaying the
+            search and replace dialog box.</p><p><span class="guimenu"><strong>Search</strong></span>&gt;<span class="guimenuitem"><strong>Find
+            Previous</strong></span> (shortcut: <code class="keycap">C+h</code>) locates the
+            previous occurrence of the most recent search string without
+            displaying the search and replace dialog box.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="d0e3857"></a>Replacing Text</h3></div></div></div><p>The replace string text field of the search dialog remembers
+            previously entered strings; see <a class="xref" href="history.html" title="Appendix&nbsp;C.&nbsp;History Text Fields">Appendix&nbsp;C, <i>History Text Fields</i></a> for
+            details.</p><p>Clicking <span class="guibutton"><strong>Replace &amp; Find</strong></span> will
+            perform a replacement in the current selection and locate the next
+            occurrence of the search string. Clicking <span class="guibutton"><strong>Replace
+            All</strong></span> will replace all occurrences of the search string
+            with the replacement string in the current search scope (which is
+            either the selection, the current buffer, or a set of buffers, as
+            specified in the search and replace dialog box).</p><p>Occurrences of the search string can be replaced with either a
+            replacement string, or the return value of a BeanShell script
+            snippet. Two radio buttons in the search and replace dialog box
+            select between the two replacement modes, which are described in
+            detail below.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="d0e3874"></a>Text Replace</h4></div></div></div><p>If the <span class="guibutton"><strong>Text</strong></span> button is selected, the
+                search string is simply replaced with the replacement
+                string.</p><p>If regular expressions are enabled, positional parameters
+                (<code class="literal">$0</code>, <code class="literal">$1</code>,
+                <code class="literal">$2</code>, and so on) can be used to insert the
+                contents of matched subexpressions in the replacement string;
+                see <a class="xref" href="regexps.html" title="Appendix&nbsp;E.&nbsp;Regular Expressions">Appendix&nbsp;E, <i>Regular Expressions</i></a> for more information.</p><p>If the search is case-insensitive, jEdit attempts to
+                modify the case of the replacement string to match that of the
+                particular instance of the search string being replaced. For
+                example, searching for <span class="quote">&#8220;<span class="quote">label</span>&#8221;</span> and replacing it
+                with <span class="quote">&#8220;<span class="quote">text</span>&#8221;</span>, will perform the following
+                replacements:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><span class="quote">&#8220;<span class="quote">String label</span>&#8221;</span> would become
+                        <span class="quote">&#8220;<span class="quote">String text</span>&#8221;</span></p></li><li class="listitem"><p><span class="quote">&#8220;<span class="quote">setLabel</span>&#8221;</span> would become
+                        <span class="quote">&#8220;<span class="quote">setText</span>&#8221;</span></p></li><li class="listitem"><p><span class="quote">&#8220;<span class="quote">DEFAULT_LABEL</span>&#8221;</span> would become
+                        <span class="quote">&#8220;<span class="quote">DEFAULT_TEXT</span>&#8221;</span></p></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="d0e3925"></a>BeanShell Replace</h4></div></div></div><p>In BeanShell replacement mode, the search string is
+                replaced with the return value of a BeanShell snippet. If
+                you want to use multiple line snippet, enclose your BeanShell
+                in braces. The following predefined variables can be referenced
+                in the snippet:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="varname">_0</code> -- the text to be
+                        replaced</p></li><li class="listitem"><p><code class="varname">_1</code> - <code class="varname">_9</code> --
+                        if regular expressions are enabled, these contain the
+                        values of matched subexpressions.</p></li><li class="listitem"><p><code class="varname">index</code> --
+                        if <span class="guibutton"><strong>Replace All</strong></span> is used,
+                        the index (starting at 0) of the match in the buffer.</p></li><li class="listitem"><p><code class="varname">indexInSel</code> --
+                        if <span class="guibutton"><strong>Replace All</strong></span> is used,
+                        the index (starting at 0) of the match in the selection.</p></li></ul></div><p>BeanShell syntax and features are covered in great detail
+                in <a class="xref" href="writing-macros-part.html" title="Part&nbsp;III.&nbsp;Writing Macros">Part&nbsp;III, &#8220;Writing Macros&#8221;</a>, but here are some
+                examples:</p><div class="informalexample"><p>To replace each occurrence of <span class="quote">&#8220;<span class="quote">Windows</span>&#8221;</span>
+                    with <span class="quote">&#8220;<span class="quote">Linux</span>&#8221;</span>, and each occurrence of
+                    <span class="quote">&#8220;<span class="quote">Linux</span>&#8221;</span> with <span class="quote">&#8220;<span class="quote">Windows</span>&#8221;</span>, search for
+                    the following regular expression:</p><pre class="programlisting">(Windows|Linux)</pre><p>Replacing it with the following BeanShell
+                    snippet:</p><pre class="programlisting">_1.equals("Windows") ? "Linux" : "Windows"</pre></div><div class="informalexample"><p>To convert all HTML tags to lower case, search for the
+                    following regular expression:</p><pre class="programlisting">&lt;\S+</pre><p>Replacing it with the following BeanShell
+                    snippet:</p><pre class="programlisting">_0.toLowerCase()</pre></div><div class="informalexample"><p>To replace arithmetic expressions contained in curly
+                    braces with the result of evaluating the expression, search
+                    for the following regular expression:</p><pre class="programlisting">\{(.+?)\}</pre><p>Replacing it with the following BeanShell
+                    snippet:</p><pre class="programlisting">eval(_1)</pre></div><div class="informalexample"><p>To replace 3d6 with 3 simulated dice throws:</p><pre class="programlisting">3d6</pre><p>Replacing it with the following BeanShell
+                    snippet (note the braces around multi-instruction beanshell code):</p><pre class="programlisting">
+                    {r = new java.util.Random(); b = "";
+                    for(i=0;i&lt;3;i++)b+=(r.nextInt(5)+1) + " ";
+                    return b;}
+                    </pre></div><div class="informalexample"><p>To renumber items in a markdown list:</p><pre class="programlisting">^(\s+)[0-9]+\. )</pre><p>Replacing it with the following Beanshell snippet:</p><pre class="programlisting">_1 + index + ". "</pre><p>I you need to add padding, it looks like this:</p><pre class="programlisting">String.format("%03d", new Object[]{index})</pre></div><div class="informalexample"><p>To add odd/even class to a table row:</p><pre class="programlisting">&lt;tr&gt;</pre><p>Replacing it with the following Beanshell snippet:</p><pre class="programlisting">"&lt;tr class=\"" + (index % 2 == 0? "even" : "odd") + "\"&gt;"</pre></div><p>These examples only scratch the surface; the possibilities
+                are endless.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="hypersearch"></a>HyperSearch</h3></div></div></div><p>If the <span class="guibutton"><strong>HyperSearch</strong></span> check box in the
+            search and replace dialog box is selected, clicking
+            <span class="guibutton"><strong>Find</strong></span> lists all occurrences of the search
+            string, instead of locating the next match.</p><p>By default, HyperSearch results are shown in a floating
+            window. This window can be docked using the commands in its top-left
+            corner popup menu; see <a class="xref" href="docking.html" title="Window Docking Layouts">the section called &#8220;Window Docking Layouts&#8221;</a>.</p><p>If the <span class="guibutton"><strong>Multiple results</strong></span> toggle button is
+            selected in the results window, past search results are
+            retained.</p><p>Running searches can be stopped in the
+            <span class="guimenu"><strong>Utilities</strong></span>&gt;<span class="guisubmenu"><strong>Troubleshooting</strong></span>&gt;<span class="guimenuitem"><strong>I/O
+            Progress Monitor</strong></span> dialog box.</p><p>Once the results are shown in the Hypersearch dockable, you can
+            left-click on a result to jump to the position, or right-click to see some
+            "hidden actions". From the top tree-node, for example, you can
+            <span class="guimenuitem"><strong>Redo Hypersearch</strong></span>, and <span class="guimenuitem"><strong>Copy to
+            Clipboard</strong></span>. </p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="d0e4075"></a>Multiple File Search</h3></div></div></div><p>Search and replace commands can be performed over an arbitrary
+            set of files in one step. The set of files to search is selected
+            with a set of buttons in the search dialog box.</p><p>If the <span class="guibutton"><strong>Current buffer</strong></span> button is
+            selected, only the current buffer is searched. This is the default
+            behavior.</p><p>If the <span class="guibutton"><strong>All buffers</strong></span> button is selected,
+            all open buffers whose names match the glob pattern entered in the
+            <span class="guibutton"><strong>Filter</strong></span> text field will be searched. See <a class="xref" href="globs.html" title="Appendix&nbsp;D.&nbsp;Glob Patterns">Appendix&nbsp;D, <i>Glob Patterns</i></a> for more information about glob patterns.</p><p>If the <span class="guibutton"><strong>Directory</strong></span> radio button is
+            selected, all files contained in the specified directory whose names
+            match the glob will be searched. The directory to search in can
+            either be entered in the <span class="guibutton"><strong>Directory</strong></span> text
+            field, or chosen in a file selector dialog box by clicking the
+            <span class="guibutton"><strong>Choose</strong></span> button next to the field. If the
+            <span class="guibutton"><strong>Search subdirectories</strong></span> check box is selected,
+            all subdirectories of the specified directory will also be searched.
+            Keep in mind that searching through directories containing many
+            files can take a long time.</p><p>The <span class="guibutton"><strong>Directory</strong></span> and
+            <span class="guibutton"><strong>Filter</strong></span> text fields remember previously
+            entered strings; see <a class="xref" href="history.html" title="Appendix&nbsp;C.&nbsp;History Text Fields">Appendix&nbsp;C, <i>History Text Fields</i></a> for details.</p><p>When the search and replace dialog box is opened, the
+            directory and file name filter fields are set to their previous
+            values. They can be set to match the current buffer's directory and
+            file name extension by clicking
+            <span class="guibutton"><strong>Synchronize</strong></span>.</p><p>Note that clicking the <span class="guibutton"><strong>All Buffers</strong></span> or
+            <span class="guibutton"><strong>Directory</strong></span> radio buttons also selects the
+            <span class="guibutton"><strong>HyperSearch</strong></span> check box since that is what you
+            would want, most of the time. However, the
+            <span class="guibutton"><strong>HyperSearch</strong></span> check box can be unchecked, for
+            stepping through search results in multiple files one at a
+            time.</p><p>Two convenience commands are provided for performing multiple
+            file searches.</p><p><span class="guimenu"><strong>Search</strong></span>&gt;<span class="guimenuitem"><strong>Search in Open
+            Buffers</strong></span> (shortcut: <code class="keycap">C+e C+b</code>) displays
+            the search dialog box and selects the <span class="guibutton"><strong>All
+            buffers</strong></span> button.</p><p><span class="guimenu"><strong>Search</strong></span>&gt;<span class="guimenuitem"><strong>Search in
+            Directory</strong></span> (shortcut: <code class="keycap">C+e C+d</code>)
+            displays the search dialog box and selects the
+            <span class="guibutton"><strong>Directory</strong></span> button.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="search-bar"></a>The Search Bar</h3></div></div></div><p>The search bar feature provides a convenient way to search in
+            the current buffer without opening the search dialog box. The search
+            bar does not support replacement or multiple file search. Previously
+            entered strings can be recalled in the search bar with the
+            <code class="keycap">Up</code> and <code class="keycap">Down</code> arrow keys; see <a class="xref" href="history.html" title="Appendix&nbsp;C.&nbsp;History Text Fields">Appendix&nbsp;C, <i>History Text Fields</i></a>.</p><p>By default, the search bar remains hidden until one of the
+            quick search commands (described below) is invoked; however you can
+            choose to have it always visible in the
+            <span class="guibutton"><strong>View</strong></span> pane of the
+            <span class="guimenu"><strong>Utilities</strong></span>&gt;<span class="guimenuitem"><strong>Options</strong></span>
+            dialog box; see <a class="xref" href="global-opts.html#view-pane" title="The View Pane">the section called &#8220;The View Pane&#8221;</a>.</p><p><span class="guimenu"><strong>Search</strong></span>&gt;<span class="guimenuitem"><strong>Incremental Search
+            Bar</strong></span> (shortcut: <code class="keycap">C+COMMA</code>) displays the
+            search bar if necessary, and gives it keyboard focus. </p><p><span class="guimenu"><strong>Search</strong></span>&gt;<span class="guimenuitem"><strong>Incremental Search
+            for Word</strong></span> (shortcut: <code class="keycap">A+COMMA</code>) behaves
+            like the above command except it places the word at the caret in the
+            search string field. If this command is invoked while there is a
+            selection, the selection is placed in the search string
+            field instead.</p><p>Unless the <span class="guibutton"><strong>HyperSearch</strong></span> check box is
+            selected, the search bar will perform an <em class="firstterm">incremental
+            search</em>. In incremental search mode, the first occurrence
+            of the search string is located in the current buffer as it is being
+            typed. Pressing <code class="keycap">ENTER</code> and <code class="keycap">S+ENTER</code>
+            searches for the next and previous occurrence, respectively. Once
+            the desired occurrence has been located, pressing
+            <code class="keycap">ESCAPE</code> returns keyboard focus to the text area.
+            Unless the search bar is set to be always visible (see above),
+            pressing <code class="keycap">ESCAPE</code> will also hide the search
+            bar.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>Incremental searches cannot be not recorded in macros. If
+                your macro needs to perform a search, use the search and replace
+                dialog box instead. See <a class="xref" href="using-macros.html" title="Chapter&nbsp;8.&nbsp;Using Macros">Chapter&nbsp;8, <i>Using Macros</i></a> for
+                information about macros.</p></div><p><span class="guimenu"><strong>Search</strong></span>&gt;<span class="guimenuitem"><strong>HyperSearch
+            Bar</strong></span> (shortcut: <code class="keycap">C+PERIOD</code>) displays the
+            search bar if necessary, gives it keyboard focus, and selects the
+            <span class="guibutton"><strong>HyperSearch</strong></span> check box. If this command is
+            invoked while there is a selection, the selected text will be
+            searched for immediately and the search bar will not be
+            shown.</p><p>If the <span class="guibutton"><strong>HyperSearch</strong></span> check box is
+            selected, pressing <code class="keycap">Enter</code> in the search string field
+            will perform a HyperSearch in the current buffer.</p><p><span class="guimenu"><strong>Search</strong></span>&gt;<span class="guimenuitem"><strong>HyperSearch for
+            Word</strong></span> (shortcut: <code class="keycap">A+PERIOD</code>) performs a
+            HyperSearch for the word at the caret. This command does not show
+            the search bar or give it keyboard focus.</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="markers.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="editing.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="source-edit.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Markers&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Chapter&nbsp;6.&nbsp;Editing Source Code</td></tr></table></div></body></html>

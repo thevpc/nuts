@@ -1,0 +1,39 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Single Execution Macros</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit 5.7 User's Guide"><link rel="up" href="macro-basics.html" title="Chapter&nbsp;13.&nbsp;Macro Basics"><link rel="prev" href="beanshell-intro.html" title="Introducing BeanShell"><link rel="next" href="first-example.html" title="The Mandatory First Example"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Single Execution Macros</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="beanshell-intro.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;13.&nbsp;Macro Basics</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="first-example.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="single-macros"></a>Single Execution Macros</h2></div></div></div><p>As noted in <a class="xref" href="organizing-macros.html" title="How jEdit Organizes Macros">the section called &#8220;How jEdit Organizes Macros&#8221;</a>, you can save a
+        BeanShell script of any length as a text file with the
+        <code class="filename">.bsh</code> extension and run it from the
+        <span class="guimenu"><strong>Macros</strong></span> menu. There are three other ways jEdit lets
+        you use BeanShell quickly, without saving a script to storage, on a
+        <span class="quote">&#8220;<span class="quote">one time only</span>&#8221;</span> basis. You will find them in the
+        <span class="guimenu"><strong>Utilities</strong></span> menu.</p><p><span class="guimenu"><strong>Utilities</strong></span>&gt;<span class="guisubmenu"><strong>BeanShell</strong></span>&gt;<span class="guimenuitem"><strong>Evaluate
+        BeanShell Expression</strong></span> displays a text input dialog that
+        asks you to type a single line of BeanShell commands. You can type more
+        than one BeanShell statement so long as each of them ends with a
+        semicolon. If BeanShell successfully interprets your input, a message
+        box will appear with the return value of the last statement.</p><p><span class="guimenu"><strong>Utilities</strong></span>&gt;<span class="guisubmenu"><strong>BeanShell</strong></span>&gt;<span class="guimenuitem"><strong>Evaluate
+        For Selected Lines</strong></span> displays a text input dialog that asks
+        you to type a single line of BeanShell commands. The commands are
+        evaluated for each line of the selection. In addition to the standard
+        set of variables described in <a class="xref" href="predefined-variables.html" title="Predefined Variables in BeanShell">the section called &#8220;Predefined Variables in BeanShell&#8221;</a>,
+        this command defines the following:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="varname">line</code> - the line number, from the start
+                of the buffer. The first line is numbered 0.</p></li><li class="listitem"><p><code class="varname">index</code> - the line number, from the start
+                of the selection. The first line is numbered 0.</p></li><li class="listitem"><p><code class="varname">text</code> - the text of the line.</p></li></ul></div><div class="informalexample"><p>Try typing an expression like <strong class="userinput"><code>(line + 1) + ": " +
+            text</code></strong> in the <span class="guimenuitem"><strong>Evaluate For Selected
+            Lines</strong></span> dialog box. This will add a line number to each
+            selected line beginning with the number
+            <strong class="userinput"><code>1</code></strong>.</p></div><p>The BeanShell expression you enter will be evaluated and
+        substituted in place of the entire text of a selected line. If you want
+        to leave the line's current text as an element of the modified line, you
+        must include the defined variable <strong class="userinput"><code>text</code></strong> as part of
+        the BeanShell expression that you enter.</p><p><span class="guimenu"><strong>Utilities</strong></span>&gt;<span class="guisubmenu"><strong>BeanShell</strong></span>&gt;<span class="guimenuitem"><strong>Evaluate
+        Selection</strong></span> evaluates the selected text as a BeanShell
+        script and replaces it with the return value of the statement.</p><p>Using <span class="guimenuitem"><strong>Evaluate Selection</strong></span> is an easy way
+        to do arithmetic calculations inline while editing. BeanShell uses
+        numbers and arithmetic operations in an ordinary, intuitive way.</p><div class="informalexample"><p>Try typing an expression like
+            <strong class="userinput"><code>(3745*856)+74</code></strong> in the buffer, select it, and
+            choose
+            <span class="guimenu"><strong>Utilities</strong></span>&gt;<span class="guisubmenu"><strong>BeanShell</strong></span>&gt;<span class="guimenuitem"><strong>Evaluate
+            Selection</strong></span>. The selected text will be replaced by the
+            answer, <strong class="userinput"><code>3205794</code></strong>.  </p></div><div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>Console plugin</b></p></div></div></div><p>You can also do the same thing using the BeanShell interpreter
+            option of the <span class="application">Console</span> plugin.</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="beanshell-intro.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="macro-basics.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="first-example.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Introducing BeanShell&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;The Mandatory First Example</td></tr></table></div></body></html>

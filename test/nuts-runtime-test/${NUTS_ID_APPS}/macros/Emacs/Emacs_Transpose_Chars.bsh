@@ -1,0 +1,27 @@
+/**
+ * Transpose character at caret with previous character, and move caret
+ * forward one. Emulates Emacs "transpose-chars" command (without prefix
+ * argument support).
+ */
+
+source (MiscUtilities.constructPath(dirname(scriptPath), "EmacsUtil.bsh"));
+
+void emacsTransposeChars()
+{
+    caret = textArea.getCaretPosition();
+    if ((caret == 0) || atEndOfBuffer())
+    {
+        beep();
+        return;
+    }
+
+    char chCur = charAtCaret();
+    char chPrev = charAt (caret - 1);
+    selection = new Selection.Range (caret - 1, caret + 1);
+    textArea.setSelection (selection);
+    textArea.setSelectedText (new String ("" + chCur + chPrev));
+    textArea.removeFromSelection (selection);
+}
+
+emacsTransposeChars();
+

@@ -1,0 +1,28 @@
+/*
+ * Copy_Name_to_Clipboad.bsh - Copies the current buffer's filename
+ * to the clipboard.
+ *
+ * Copyright (C) 2002-2004 Ollie Rutherfurd <oliver@rutherfurd.net>
+ *
+ * $Id: Copy_Name_to_Clipboard.bsh 5016 2004-04-09 17:10:15Z spestov $
+ */
+
+void copyBufferNameToClipboard(Buffer buffer)
+{
+	Registers.setRegister('$',buffer.getName());
+	HistoryModel.getModel("clipboard").addItem(buffer.getName());
+}
+
+copyBufferNameToClipboard(buffer);
+
+/*
+
+<listitem>
+	<para><filename>Copy_Name_to_Clipboad.bsh</filename></para>
+	<abstract><para>Copies the current buffer's filename
+		to the clipboard.
+	</para></abstract>
+</listitem>
+
+*/
+

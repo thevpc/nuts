@@ -1,0 +1,73 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Macros</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit Frequently Asked Questions"><link rel="up" href="index.html" title="jEdit Frequently Asked Questions"><link rel="prev" href="usage.html" title="Usage Questions"><link rel="next" href="plugins.html" title="Plugin Questions"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Macros</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="usage.html">Prev</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="plugins.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="macros"></a>Macros</h2></div></div></div><p>This section deals with questions on writing and running
+    macros.</p><div class="qandaset"><a name="d0e1331"></a><dl><dt>1.  <a href="macros.html#macro-using">Using macros</a></dt><dd><dl><dt>Q: <a href="macros.html#d0e1335">Where can I get macros from?</a></dt><dt>Q: <a href="macros.html#d0e1342">I just wrote a new macro for myself. Where should I
+                    save the file?</a></dt><dt>Q: <a href="macros.html#d0e1372">Do I have to use the .bsh file
+                    extension when I save one of my own macro scripts?</a></dt><dt>Q: <a href="macros.html#d0e1402">How can I store the result of a macro so that the next
+                    time I run it the macro can retrieve the value?</a></dt><dt>Q: <a href="macros.html#d0e1432">In a macro I'd like to exec an external program (e.g.
+                    jmk, javac) and capture its output to a buffer. I'd also
+                    like to see this output as the external program runs or be
+                    able to interact with the program. So when I exec, what
+                    happens to System.in/out/err of the exec'd program?</a></dt></dl></dd></dl><table border="0" style="width: 100%;"><colgroup><col align="left" width="1%"><col></colgroup><tbody><tr class="qandadiv"><td align="left" valign="top" colspan="2"><h4 class="title"><a name="macro-using"></a>1. Using macros</h4></td></tr><tr class="toc"><td align="left" valign="top" colspan="2"><dl><dt>Q: <a href="macros.html#d0e1335">Where can I get macros from?</a></dt><dt>Q: <a href="macros.html#d0e1342">I just wrote a new macro for myself. Where should I
+                    save the file?</a></dt><dt>Q: <a href="macros.html#d0e1372">Do I have to use the .bsh file
+                    extension when I save one of my own macro scripts?</a></dt><dt>Q: <a href="macros.html#d0e1402">How can I store the result of a macro so that the next
+                    time I run it the macro can retrieve the value?</a></dt><dt>Q: <a href="macros.html#d0e1432">In a macro I'd like to exec an external program (e.g.
+                    jmk, javac) and capture its output to a buffer. I'd also
+                    like to see this output as the external program runs or be
+                    able to interact with the program. So when I exec, what
+                    happens to System.in/out/err of the exec'd program?</a></dt></dl></td></tr><tr class="question"><td align="left" valign="top"><a name="d0e1335"></a><a name="macro-getting"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>Where can I get macros from?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>There is a plugin available called MacroManager that
+                    will provide a similar interface to jEdit's plugin manager
+                    for installing new macros. The plugin downloads the macros
+                    from the jEdit Community site, so an internet connection is
+                    necessary. </p></td></tr><tr class="question"><td align="left" valign="top"><a name="d0e1342"></a><a name="macro-new-store"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>I just wrote a new macro for myself. Where should I
+                    save the file?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>There is a <code class="filename">macros</code> directory in
+                    your user settings directory. If you store your macro there
+                    it will appear in jEdit's <span class="guimenu"><strong>Macros</strong></span> menu
+                    under the name you have given to the macro's source code
+                    file. The <code class="filename">.bsh</code> will be deleted in the
+                    macro entry, and underscore characters will be converted to
+                    whitespace, so that the file
+                    <code class="filename">My_New_Macro.bsh</code> will be displayed as
+                    <span class="guimenuitem"><strong>My New Macro</strong></span>.</p><p>You can create additional subdirectories in the
+                    <code class="filename">macros</code>to organize your personal macros
+                    by category. Each subdirectory will correspond to a submenu
+                    under the application's <span class="guimenu"><strong>Macros</strong></span> menu. This
+                    is helpful to reduce the screen space used to display the
+                    macros menu at any one time.</p></td></tr><tr class="question"><td align="left" valign="top"><a name="d0e1372"></a><a name="macro-new-ext"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>Do I have to use the <code class="filename">.bsh</code> file
+                    extension when I save one of my own macro scripts?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>You need the <code class="filename">.bsh</code> extension in
+                    order for jEdit to detect and display the name of the macro
+                    in its <span class="guimenu"><strong>Macros</strong></span> menu. The macro must also
+                    be in the <code class="filename">macros</code> directory of either
+                    the jEdit installation directory or the user settings
+                    directory.</p><p>You do not need the extension to run a macro, however.
+                    By selecting <span class="guimenu"><strong>Macros</strong></span>&gt;<span class="guimenuitem"><strong>Run
+                    Other Macro...</strong></span>, you can choose any file to be
+                    run as a macro. While in a macro, you can call
+                    <strong class="userinput"><code>source("full_path")</code></strong> to do the same
+                    thing.</p></td></tr><tr class="question"><td align="left" valign="top"><a name="d0e1402"></a><a name="macro-temp"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>How can I store the result of a macro so that the next
+                    time I run it the macro can retrieve the value?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>You can use either
+                    <strong class="userinput"><code>jEdit.setProperty(String, String)</code></strong> or
+                    <strong class="userinput"><code>jEdit.setTemporaryProperty(String,
+                    String)</code></strong>. Both methods take
+                    <code class="classname">String</code> values for the name of the
+                    property and its value. If you use
+                    <strong class="userinput"><code>setProperty()</code></strong>, the property will
+                    remain in jEdit's property store permanently, so if you only
+                    need the value during the course of a single editing
+                    session, use
+                    <strong class="userinput"><code>setTemporaryProperty()</code></strong>.</p><p>To ensure that your value can be stored regardless of
+                    its type, use the following syntax:</p><pre class="programlisting">jEdit.setTemporaryProperty("myValueName", myValue.toString());</pre><p>
+                    and remember to convert the <span class="quote">&#8220;<span class="quote">myValueName</span>&#8221;</span>
+                    property back to its intended type when you retrieve
+                    it.</p></td></tr><tr class="question"><td align="left" valign="top"><a name="d0e1432"></a><a name="macro-exec"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>In a macro I'd like to exec an external program (e.g.
+                    jmk, javac) and capture its output to a buffer. I'd also
+                    like to see this output as the external program runs or be
+                    able to interact with the program. So when I exec, what
+                    happens to System.in/out/err of the exec'd program?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>Use the <code class="filename">runInSystemShell()</code> or the
+                    <code class="filename">runCommandToBuffer()</code> script methods
+                    that come bundled with the Console plugin. The help
+                    documentation for Console provides details on these methods.
+                    Currently the Console's System shell is not interactive
+                    during execution of a command, but it does receive and
+                    display the standard output and error streams of the
+                    external process.</p></td></tr></tbody></table></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="usage.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="plugins.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Usage Questions&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Plugin Questions</td></tr></table></div></body></html>

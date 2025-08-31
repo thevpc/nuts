@@ -1,0 +1,73 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Command Line Usage</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="jEdit 5.7 User's Guide"><link rel="up" href="starting.html" title="Chapter&nbsp;2.&nbsp;Starting jEdit"><link rel="prev" href="starting.html" title="Chapter&nbsp;2.&nbsp;Starting jEdit"><link rel="next" href="jvm-options.html" title="Java Virtual Machine Options"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Command Line Usage</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="starting.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;2.&nbsp;Starting jEdit</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="jvm-options.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cli-usage"></a>Command Line Usage</h2></div></div></div><p>On operating systems that support a command line, jEdit can be
+        passed various arguments to control its behavior.</p><p>When opening files from the command line, a line number or marker
+        to position the caret on can be specified like so:</p><pre class="screen"><code class="prompt">$ </code><strong class="userinput"><code>jedit MyApplet.java +line:10</code></strong>
+<code class="prompt">$ </code><strong class="userinput"><code>jedit thesis.tex +marker:c</code></strong></pre><p>Command-line switches begin with a "-". Some take a parameter. A
+        file whose name begins with "-" can be opened like so:</p><pre class="screen"><code class="prompt">$ </code><strong class="userinput"><code>jedit -- -myfile</code></strong></pre><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="d0e326"></a>Miscellaneous Options</h3></div></div></div><div class="informaltable"><table class="informaltable" border="1"><colgroup><col width="25%"><col width="75%"></colgroup><thead><tr><th>Option</th><th>Effect</th></tr></thead><tbody><tr><td><strong class="userinput"><code>-log=<em class="replaceable"><code>level</code></em></code></strong></td><td>Set the minimum log level to an integer
+                            between 1 and 9. Default is 7. Has no effect when
+                            connecting to another instance via the edit
+                            server.</td></tr><tr><td><strong class="userinput"><code>-usage</code></strong></td><td>Show a brief command line usage message
+                            without starting jEdit. This message is also shown if
+                            an invalid switch was specified.</td></tr><tr><td><strong class="userinput"><code>-version</code></strong></td><td>Show the version number without starting
+                            jEdit.</td></tr><tr><td><strong class="userinput"><code>-nosplash</code></strong></td><td>Don't show the splash screen on startup.
+                            </td></tr><tr><td><strong class="userinput"><code>--</code></strong></td><td>Specifies the end of command-line processing.
+                            Further parameters are treated as file names, even if
+                            they begin with a dash.</td></tr></tbody></table></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="d0e372"></a>Configuration Options</h3></div></div></div><div class="informaltable"><table class="informaltable" border="1"><colgroup><col width="25%"><col width="75%"></colgroup><thead><tr><th>Option</th><th>Effect</th></tr></thead><tbody><tr><td><strong class="userinput"><code>-plugins</code></strong></td><td>Enable loading of plugins. Has no effect when
+                            connecting to another instance via the edit server.
+                            See <a class="xref" href="using-plugins.html" title="Chapter&nbsp;9.&nbsp;Installing and Using Plugins">Chapter&nbsp;9, <i>Installing and Using Plugins</i></a>.</td></tr><tr><td><strong class="userinput"><code>-noplugins</code></strong></td><td>Disable loading of plugins. Has no effect when
+                            connecting to another instance via the edit
+                            server.</td></tr><tr><td><strong class="userinput"><code>-restore</code></strong></td><td>Restore previously open files on startup. This
+                            is the default. This feature can also be set
+                            permanently in the <span class="guibutton"><strong>General</strong></span>
+                            pane of the
+                            <span class="guimenu"><strong>Utilities</strong></span>&gt;
+                            <span class="guimenuitem"><strong>Options</strong></span> dialog box;
+                            see <a class="xref" href="global-opts.html#general-pane" title="The General Pane">the section called &#8220;The General Pane&#8221;</a>.</td></tr><tr><td><strong class="userinput"><code>-norestore</code></strong></td><td>Do not restore previously open files on
+                            startup.</td></tr><tr><td><strong class="userinput"><code>-run=<em class="replaceable"><code>script</code></em></code></strong></td><td>Run the specified BeanShell script. There can
+                            only be one of these parameters on the command line.
+                            See <a class="xref" href="scripts-command-line.html" title="Running Scripts from the Command Line">the section called &#8220;Running Scripts from the Command Line&#8221;</a>.</td></tr><tr><td><strong class="userinput"><code>-settings=<em class="replaceable"><code>dir</code></em></code></strong></td><td>Store user-specific settings in the directory
+                            named <em class="replaceable"><code>dir</code></em>, instead of the
+                            default
+                            <code class="filename"><em class="replaceable"><code>user.home</code></em>/.jedit</code>.
+                            The directory will be created automatically if it
+                            does not exist. Has no effect when connecting to
+                            another instance via the edit server. See <a class="xref" href="settings-directory.html" title="The jEdit Settings Directory">the section called &#8220;The jEdit Settings Directory&#8221;</a>.</td></tr><tr><td><strong class="userinput"><code>-nosettings</code></strong></td><td>Start jEdit without loading user-specific
+                            settings.</td></tr><tr><td><strong class="userinput"><code>-startupscripts</code></strong></td><td>Run startup scripts. This is the default. Has
+                            no effect when connecting to another instance via the
+                            edit server. See <a class="xref" href="startup-scripts.html" title="Startup Scripts">the section called &#8220;Startup Scripts&#8221;</a>.</td></tr><tr><td><strong class="userinput"><code>-nostartupscripts</code></strong></td><td>Disable startup scripts. Has no effect when
+                            connecting to another instance via the edit
+                            server.</td></tr></tbody></table></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="d0e471"></a>Edit Server Options</h3></div></div></div><p>See <a class="xref" href="starting.html" title="Chapter&nbsp;2.&nbsp;Starting jEdit">Chapter&nbsp;2, <i>Starting jEdit</i></a> for a brief description of the
+            edit server.</p><div class="informaltable"><table class="informaltable" border="1"><colgroup><col width="25%"><col width="75%"></colgroup><thead><tr><th>Option</th><th>Effect</th></tr></thead><tbody><tr><td><strong class="userinput"><code>-background</code></strong></td><td>Run jEdit in background mode. In background
+                            mode, the edit server will continue listening for
+                            client connections even after all views are closed.
+                            Has no effect when connecting to another instance via
+                            the edit server.</td></tr><tr><td><strong class="userinput"><code>-nobackground</code></strong></td><td>Disable background mode. This is the default.
+                            Has no effect when connecting to another instance via
+                            the edit server.</td></tr><tr><td><strong class="userinput"><code>-gui</code></strong></td><td>Open an initial view. This is the default. Has
+                            no effect when connecting to another instance via the
+                            edit server.</td></tr><tr><td><strong class="userinput"><code>-nogui</code></strong></td><td>Do not open an initial view, and instead only
+                            open one when the first client connects. Can only be
+                            used in combination with the
+                            <strong class="userinput"><code>-background</code></strong> switch. You can
+                            use this switch to <span class="quote">&#8220;<span class="quote">pre-load</span>&#8221;</span> jEdit when
+                            you log in to your computer, for example. Has no
+                            effect when connecting to another instance via the
+                            edit server.</td></tr><tr><td><strong class="userinput"><code>-newplainview</code></strong></td><td>Opens the specified files in a new plain view.
+                            For more information about views, see <a class="xref" href="views.html" title="Multiple Views">the section called &#8220;Multiple Views&#8221;</a>.</td></tr><tr><td><strong class="userinput"><code>-newview</code></strong></td><td>Opens the specified files in a new
+                            view.</td></tr><tr><td><strong class="userinput"><code>-reuseview</code></strong></td><td>Opens the specified files in an existing
+                            view.</td></tr><tr><td><strong class="userinput"><code>-quit</code></strong></td><td>Exits the currently running editor
+                            instance.</td></tr><tr><td><strong class="userinput"><code>-server</code></strong></td><td>Store the server port info in the file named
+                            <code class="filename">server</code> inside the settings
+                            directory.</td></tr><tr><td><strong class="userinput"><code>-server=<em class="replaceable"><code>name</code></em></code></strong></td><td>Store the server port info in the file named
+                            <em class="replaceable"><code>name</code></em>. File names for this
+                            parameter are relative to the settings
+                            directory.</td></tr><tr><td><strong class="userinput"><code>-noserver</code></strong></td><td>Do not attempt to connect to a running edit
+                            server, and do not start one either.</td></tr><tr><td><strong class="userinput"><code>-wait</code></strong></td><td>Keeps the client open until the user closes
+                            the specified buffer in the server instance. Does
+                            nothing if passed to the initial jEdit instance. Use
+                            this switch if jEdit is being invoked by another
+                            program as an external editor; otherwise the client
+                            will exit immediately and the invoking program will
+                            assume you have finished editing the given
+                            file.</td></tr></tbody></table></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="starting.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="starting.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="jvm-options.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter&nbsp;2.&nbsp;Starting jEdit&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp; Java Virtual Machine Options </td></tr></table></div></body></html>

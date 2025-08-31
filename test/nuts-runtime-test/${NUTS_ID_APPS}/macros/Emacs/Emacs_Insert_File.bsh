@@ -1,0 +1,21 @@
+/**
+ * Insert the contents of a file at the caret. Emulates the Emacs
+ * "insert-file" command (normally bound to "Ctrl-X i").
+ */
+source (MiscUtilities.constructPath(dirname(scriptPath), "EmacsUtil.bsh"));
+
+void emacsInsertFile()
+{
+    caret = textArea.getCaretPosition();
+    
+    path = buffer.getPath();
+    if (path == null)
+        path = ".";
+    else
+        path = dirname (path);
+    result = GUIUtilities.showVFSFileDialog(view, path, VFSBrowser.OPEN_DIALOG, false);
+    if (result != null)
+        buffer.insertFile (view, result[0]);
+}
+
+emacsInsertFile();

@@ -1,0 +1,58 @@
+/*
+ * Splitpane_grow.bsh v1.1 - a BeanShell macro script for the jEdit text editor
+ * Increases the size of the currently active split pane.
+ * 
+ * Based on SplitPane_up by Claudio Vicari
+ *    (c) 2005, 2011 by Alan Ezust
+ *    Version 1.1 supports more than 2 editpanes. 
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the jEdit program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *
+ * Checked for jEdit 4.5 API
+ *
+ */
+
+ import javax.swing.JSplitPane;
+ import org.gjt.sp.jedit.GUIUtilities; 
+
+ splitPaneGrow() { 
+     EditPane active_area = view.getEditPane(); 
+     if( view.getSplitPane() != null ) {
+         splitPane = GUIUtilities.getComponentParent(active_area, JSplitPane.class);
+         int minimum = splitPane.getMinimumDividerLocation();
+         int maximum = splitPane.getMaximumDividerLocation();
+         double actual_position = (double)splitPane.getDividerLocation();
+         
+         /* converts the integer returned by getDividerLocation in a proportion
+         between 0.0 and 1.0 */
+         actual_position = (actual_position-minimum) / ( maximum - minimum );
+         if (splitPane.getLeftComponent() == active_area) {
+             actual_position += 0.05;
+         }
+         else {
+             actual_position -= 0.05;
+         }
+         if( actual_position <= 0.0 )
+             actual_position = 0.0;
+         if( actual_position >= 1.0 )
+             actual_position = 1.0;
+         
+         splitPane.setDividerLocation( (double)actual_position );
+         active_area.focusOnTextArea();
+     }
+ }
+ splitPaneGrow();
+
