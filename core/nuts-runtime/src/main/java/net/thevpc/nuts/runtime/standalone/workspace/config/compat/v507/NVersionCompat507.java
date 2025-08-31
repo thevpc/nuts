@@ -59,7 +59,7 @@ public class NVersionCompat507 extends AbstractNVersionCompat {
 
     @Override
     public NWorkspaceConfigApi parseApiConfig(NId nutsApiId) {
-        NPath path = NWorkspace.of().getStoreLocation(nutsApiId, NStoreType.CONF)
+        NPath path = NPath.ofIdStore(nutsApiId, NStoreType.CONF)
                 .resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
         NWorkspaceConfigApi c = bytes==null?null: NElementParser.ofJson().parse(bytes, NWorkspaceConfigApi.class);
@@ -73,7 +73,7 @@ public class NVersionCompat507 extends AbstractNVersionCompat {
 
     @Override
     public NWorkspaceConfigRuntime parseRuntimeConfig() {
-        NPath path = NWorkspace.of().getStoreLocation(NWorkspace.of().getRuntimeId(), NStoreType.CONF)
+        NPath path = NPath.ofIdStore(NWorkspace.of().getRuntimeId(), NStoreType.CONF)
                 .resolve(NConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
         NWorkspaceConfigRuntime c = bytes==null?null: NElementParser.ofJson().parse(bytes, NWorkspaceConfigRuntime.class);
@@ -82,7 +82,7 @@ public class NVersionCompat507 extends AbstractNVersionCompat {
 
     @Override
     public NWorkspaceConfigSecurity parseSecurityConfig(NId nutsApiId) {
-        NPath path = NWorkspace.of().getStoreLocation(nutsApiId
+        NPath path = NPath.ofIdStore(nutsApiId
                 , NStoreType.CONF)
                 .resolve(CoreNConstants.Files.WORKSPACE_SECURITY_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
@@ -92,7 +92,7 @@ public class NVersionCompat507 extends AbstractNVersionCompat {
 
     @Override
     public NWorkspaceConfigMain parseMainConfig(NId nutsApiId) {
-        NPath path = NWorkspace.of().getStoreLocation(
+        NPath path = NPath.ofIdStore(
                         nutsApiId, NStoreType.CONF)
                 .resolve(CoreNConstants.Files.WORKSPACE_MAIN_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
