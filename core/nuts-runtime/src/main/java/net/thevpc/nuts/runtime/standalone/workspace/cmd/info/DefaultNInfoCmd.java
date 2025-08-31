@@ -349,7 +349,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         props.put("nuts-global", () ->  NWorkspace.of().getBootOptions().getSystem().orNull());
         props.put("nuts-workspace", () ->  NWorkspace.of().getWorkspaceLocation());
         for (NStoreType folderType : NStoreType.values()) {
-            props.put("nuts-workspace-" + folderType.id(), () ->  NWorkspace.of().getStoreLocation(folderType));
+            props.put("nuts-workspace-" + folderType.id(), () ->  NPath.ofWorkspaceStore(folderType));
         }
         props.put("nuts-open-mode", () ->  NWorkspace.of().getBootOptions().getOpenMode().orNull());
         props.put("nuts-isolation-level", () ->  NWorkspace.of().getBootOptions().getIsolationLevel().orNull());
@@ -540,7 +540,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         props.put("nuts-global", options.getSystem().orNull());
         props.put("nuts-workspace", workspace.getWorkspaceLocation());
         for (NStoreType folderType : NStoreType.values()) {
-            props.put("nuts-workspace-" + folderType.id(), workspace.getStoreLocation(folderType));
+            props.put("nuts-workspace-" + folderType.id(), NPath.ofWorkspaceStore(folderType));
         }
         props.put("nuts-open-mode", options.getOpenMode().orNull());
         props.put("nuts-isolation-level", options.getIsolationLevel().orNull());
