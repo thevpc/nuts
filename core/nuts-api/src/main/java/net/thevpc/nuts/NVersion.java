@@ -106,6 +106,13 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
     int compareTo(NVersion other);
 
     /**
+     * remove qualifier from version
+     * important to check against version intervals
+     * @return new version without qualifier
+     */
+    NVersion baseVersion();
+
+    /**
      * parse the current version as new instance of {@link NVersionFilter}
      *
      * @return new instance of {@link NVersionFilter}
