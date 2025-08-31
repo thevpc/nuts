@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.executor.embedded;
 
 import net.thevpc.nuts.concurrent.NScheduler;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 
 /**
  *
