@@ -1536,7 +1536,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         Map<String, String> m = new HashMap<>();
         m.put("nutsIdContentPath", def.getContent().get().toString());
         for (NStoreType st : NStoreType.values()) {
-            m.put("nutsId" + NNameFormat.TITLE_CASE.format(st.id()) + "Path", getStoreLocation(def.getId(), st).toString());
+            m.put("nutsId" + NNameFormat.TITLE_CASE.format(st.id()) + "Path", NPath.ofIdStore(def.getId(), st).toString());
         }
         return m;
     }
@@ -1838,24 +1838,24 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         getInstalledRepository().uninstall(def);
         NId id = def.getId();
         if (deleteFiles) {
-            if (this.getStoreLocation(id, NStoreType.BIN).exists()) {
-                this.getStoreLocation(id, NStoreType.BIN).deleteTree();
+            if (getLocationModel().getStoreLocation(id, NStoreType.BIN).exists()) {
+                getLocationModel().getStoreLocation(id, NStoreType.BIN).deleteTree();
             }
-            if (this.getStoreLocation(id, NStoreType.LIB).exists()) {
-                this.getStoreLocation(id, NStoreType.LIB).deleteTree();
+            if (getLocationModel().getStoreLocation(id, NStoreType.LIB).exists()) {
+                getLocationModel().getStoreLocation(id, NStoreType.LIB).deleteTree();
             }
-            if (this.getStoreLocation(id, NStoreType.LOG).exists()) {
-                this.getStoreLocation(id, NStoreType.LOG).deleteTree();
+            if (getLocationModel().getStoreLocation(id, NStoreType.LOG).exists()) {
+                getLocationModel().getStoreLocation(id, NStoreType.LOG).deleteTree();
             }
-            if (this.getStoreLocation(id, NStoreType.CACHE).exists()) {
-                this.getStoreLocation(id, NStoreType.CACHE).deleteTree();
+            if (getLocationModel().getStoreLocation(id, NStoreType.CACHE).exists()) {
+                getLocationModel().getStoreLocation(id, NStoreType.CACHE).deleteTree();
             }
             if (eraseFiles) {
-                if (this.getStoreLocation(id, NStoreType.VAR).exists()) {
-                    this.getStoreLocation(id, NStoreType.VAR).deleteTree();
+                if (getLocationModel().getStoreLocation(id, NStoreType.VAR).exists()) {
+                    getLocationModel().getStoreLocation(id, NStoreType.VAR).deleteTree();
                 }
-                if (this.getStoreLocation(id, NStoreType.CONF).exists()) {
-                    this.getStoreLocation(id, NStoreType.CONF).deleteTree();
+                if (getLocationModel().getStoreLocation(id, NStoreType.CONF).exists()) {
+                    getLocationModel().getStoreLocation(id, NStoreType.CONF).deleteTree();
                 }
             }
         }
@@ -2003,7 +2003,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 }
             }
             for (NDefinition def : defs.values()) {
-                NPath bootstrapFolder = this.getStoreLocation(NStoreType.LIB).resolve(NConstants.Folders.ID);
+                NPath bootstrapFolder = getLocationModel().getStoreLocation(NStoreType.LIB).resolve(NConstants.Folders.ID);
                 NId id2 = def.getId();
                 NCp.of().from(def.getContent().get())
                         .to(bootstrapFolder.resolve(this.getDefaultIdBasedir(id2))
