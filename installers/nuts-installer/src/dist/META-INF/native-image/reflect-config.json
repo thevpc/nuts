@@ -3,6 +3,9 @@
   "name":"[B"
 },
 {
+  "name":"[C"
+},
+{
   "name":"[Ljava.awt.event.MouseMotionListener;"
 },
 {
@@ -156,11 +159,20 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"java.awt.Image"
+},
+{
   "name":"java.awt.SequencedEvent"
 },
 {
   "name":"java.awt.event.KeyEvent",
   "fields":[{"name":"VK_A"}, {"name":"VK_BACK_SLASH"}, {"name":"VK_BACK_SPACE"}, {"name":"VK_C"}, {"name":"VK_CONTEXT_MENU"}, {"name":"VK_COPY"}, {"name":"VK_CUT"}, {"name":"VK_DELETE"}, {"name":"VK_DOWN"}, {"name":"VK_END"}, {"name":"VK_ENTER"}, {"name":"VK_F10"}, {"name":"VK_H"}, {"name":"VK_HOME"}, {"name":"VK_INSERT"}, {"name":"VK_KP_DOWN"}, {"name":"VK_KP_LEFT"}, {"name":"VK_KP_RIGHT"}, {"name":"VK_KP_UP"}, {"name":"VK_LEFT"}, {"name":"VK_O"}, {"name":"VK_PAGE_DOWN"}, {"name":"VK_PAGE_UP"}, {"name":"VK_PASTE"}, {"name":"VK_RETURN"}, {"name":"VK_RIGHT"}, {"name":"VK_SPACE"}, {"name":"VK_T"}, {"name":"VK_TAB"}, {"name":"VK_UP"}, {"name":"VK_V"}, {"name":"VK_X"}]
+},
+{
+  "name":"java.io.InputStream"
+},
+{
+  "name":"java.io.Reader"
 },
 {
   "name":"java.lang.String"
@@ -172,6 +184,12 @@
 {
   "name":"java.lang.reflect.AccessibleObject",
   "fields":[{"name":"override"}]
+},
+{
+  "name":"java.nio.ByteBuffer"
+},
+{
+  "name":"java.nio.CharBuffer"
 },
 {
   "name":"java.security.AlgorithmParametersSpi"
@@ -199,6 +217,9 @@
 },
 {
   "name":"java.util.Date"
+},
+{
+  "name":"java.util.List"
 },
 {
   "name":"java.util.Map",

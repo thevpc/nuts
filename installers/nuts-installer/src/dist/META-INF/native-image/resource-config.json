@@ -49,6 +49,8 @@
   }, {
     "pattern":"java.base:\\Qsun/text/resources/LineBreakIteratorData\\E"
   }, {
+    "pattern":"java.datatransfer:\\Qsun/datatransfer/resources/flavormap.properties\\E"
+  }, {
     "pattern":"java.desktop:\\Qcom/formdev/flatlaf/resources/Bundle.properties\\E"
   }, {
     "pattern":"java.desktop:\\Qcom/sun/swing/internal/plaf/basic/resources/basic_en.properties\\E"
