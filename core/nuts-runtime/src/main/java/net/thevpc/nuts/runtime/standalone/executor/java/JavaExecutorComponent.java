@@ -39,6 +39,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
+import net.thevpc.nuts.runtime.standalone.executor.NExecutionContextUtils;
 import net.thevpc.nuts.runtime.standalone.executor.embedded.ClassloaderAwareRunnableImpl;
 import net.thevpc.nuts.runtime.standalone.io.net.util.NetUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
@@ -47,6 +48,7 @@ import net.thevpc.nuts.runtime.standalone.extension.DefaultNClassLoader;
 import net.thevpc.nuts.runtime.standalone.util.NDebugString;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNExecutionContext;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.NRecommendationPhase;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.RequestQueryInfo;
 import net.thevpc.nuts.spi.NComponentScope;
@@ -396,6 +398,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
         }
     }
 
+
     static class EmbeddedProcessExecHelper extends AbstractSyncIProcessExecHelper {
 
         private final NDefinition def;
@@ -456,27 +459,24 @@ public class JavaExecutorComponent implements NExecutorComponent {
                     }
                 }
                 Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader);
-                Map<String, String> newEnv = executionContext.getEnv();
+                Map<String, String> newEnv = new HashMap<>(NWorkspaceExt.of().getConfigModel().sysEnv());
+                newEnv.putAll(executionContext.getEnv());
+                newEnv.putAll(NExecutionContextUtils.defaultEnv(def));
+                ((DefaultNExecutionContext) executionContext).setEnv(newEnv);
                 th = session.copy().callWith(() -> {
-                    NWorkspaceExt.of().getConfigModel().sysEnvPush(newEnv);
+                    Throwable th2 = null;
                     try {
-
-                        Throwable th2 = null;
-                        try {
-                            new ClassloaderAwareRunnableImpl(def.getId(), classLoader, cls, session, joptions, executionContext).runAndWaitFor();
-                        } catch (InvocationTargetException e) {
-                            th2 = e.getTargetException();
-                        } catch (MalformedURLException | NoSuchMethodException | SecurityException
-                                 | IllegalAccessException | IllegalArgumentException
-                                 | ClassNotFoundException e) {
-                            th2 = e;
-                        } catch (Throwable ex) {
-                            th2 = ex;
-                        }
-                        return th2;
-                    } finally {
-                        NWorkspaceExt.of().getConfigModel().sysEnvPop();
+                        new ClassloaderAwareRunnableImpl(def.getId(), classLoader, cls, session, joptions, executionContext).runAndWaitFor();
+                    } catch (InvocationTargetException e) {
+                        th2 = e.getTargetException();
+                    } catch (MalformedURLException | NoSuchMethodException | SecurityException
+                             | IllegalAccessException | IllegalArgumentException
+                             | ClassNotFoundException e) {
+                        th2 = e;
+                    } catch (Throwable ex) {
+                        th2 = ex;
                     }
+                    return th2;
                 });
             } catch (Throwable ex) {
                 th = ex;
