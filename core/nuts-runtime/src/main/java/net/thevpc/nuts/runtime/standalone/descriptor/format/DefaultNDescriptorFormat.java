@@ -5,12 +5,14 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.format.NDependencyFormat;
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextCode;
+import net.thevpc.nuts.util.NMsg;
 
 import java.io.*;
 
@@ -18,6 +20,7 @@ public class DefaultNDescriptorFormat extends DefaultFormatBase<NDescriptorForma
 
     private boolean compact;
     private NDescriptor desc;
+    private NDescriptorStyle descriptorStyle;
 
     public DefaultNDescriptorFormat() {
         super("descriptor-format");
@@ -27,6 +30,18 @@ public class DefaultNDescriptorFormat extends DefaultFormatBase<NDescriptorForma
         super.setNtf(ntf);
         return this;
     }
+
+    @Override
+    public NDescriptorStyle getDescriptorStyle() {
+        return descriptorStyle;
+    }
+
+    @Override
+    public NDescriptorFormat setDescriptorStyle(NDescriptorStyle descriptorStyle) {
+        this.descriptorStyle = descriptorStyle;
+        return this;
+    }
+
 
     @Override
     public NDescriptorFormat compact(boolean compact) {
@@ -69,15 +84,30 @@ public class DefaultNDescriptorFormat extends DefaultFormatBase<NDescriptorForma
 
     @Override
     public void print(NPrintStream out) {
-        if (isNtf()) {
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            NElementWriter.ofJson().setNtf(true).setCompact(isCompact())
-                    .write(desc, os);
-            NTextCode r = NText.ofCode("json", os.toString());
-            out.print(r);
-        } else {
-            NElementWriter.ofJson().setCompact(isCompact())
-                    .write(desc, out);
+        NDescriptorStyle s = getDescriptorStyle();
+        if (s == null) {
+            s = NDescriptorStyle.NUTS;
+        }
+        switch (s) {
+            case NUTS: {
+                if (isNtf()) {
+                    ByteArrayOutputStream os = new ByteArrayOutputStream();
+                    NElementWriter.ofJson().setNtf(true).setCompact(isCompact())
+                            .write(desc, os);
+                    NTextCode r = NText.ofCode("json", os.toString());
+                    out.print(r);
+                } else {
+                    NElementWriter.ofJson().setCompact(isCompact())
+                            .write(desc, out);
+                }
+                break;
+            }
+            case MANIFEST: {
+                throw new NUnsupportedOperationException(NMsg.ofC("formatting descriptor in %s format is not yet implemented yet, your help is more than welcome", s));
+            }
+            case MAVEN: {
+                throw new NUnsupportedOperationException(NMsg.ofC("formatting descriptor in %s format is not yet implemented yet, your help is more than welcome", s));
+            }
         }
     }
 
