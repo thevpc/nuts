@@ -138,7 +138,7 @@ public class CoreNIdUtils {
         if (apiVersion.equals(workspace.getApiVersion().toString())) {
             return workspace.getRuntimeId();
         }
-        NPath apiBoot = NWorkspace.of().getStoreLocation(apiId(apiVersion), NStoreType.CONF).resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
+        NPath apiBoot = NPath.ofIdStore(apiId(apiVersion), NStoreType.CONF).resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
         if (apiBoot.isRegularFile()) {
             NWorkspaceConfigApi c = NElementParser.ofJson().parse(apiBoot, NWorkspaceConfigApi.class);
             if (!NBlankable.isBlank(c.getRuntimeId())) {
