@@ -231,6 +231,7 @@ public final class JavaExecutorOptions {
                             .setTransitive(true)
                             .setDistinct(true)
                             .setLatest(true)
+                            .setInlineDependencies(true)
                             .setDependencyFilter(dependencyFilters.byRunnable())
                             .getResultDefinitions().toList()
             );
@@ -699,13 +700,13 @@ public final class JavaExecutorOptions {
         return appArgs;
     }
 
-    public void fillStrings(NClassLoaderNode n, List<String> list) {
-        URL f = n.getURL();
-        list.add(NPath.of(f).toPath().get().toString());
-        for (NClassLoaderNode d : n.getDependencies()) {
-            fillStrings(d, list);
-        }
-    }
+//    public void fillStrings(NClassLoaderNode n, List<String> list) {
+//        URL f = n.getURL();
+//        list.add(NPath.of(f).toPath().get().toString());
+//        for (NClassLoaderNode d : n.getDependencies()) {
+//            fillStrings(d, list);
+//        }
+//    }
 
 
     public void fillNidStrings(NClassLoaderNode n, List<String> list) {
@@ -716,7 +717,7 @@ public final class JavaExecutorOptions {
             list.add(n.getId().toString());
         }
         for (NClassLoaderNode d : n.getDependencies()) {
-            fillStrings(d, list);
+            fillNidStrings(d, list);
         }
     }
 
