@@ -102,7 +102,7 @@ public class FigletNTextArtImageRenderer implements NTextArtRenderer, Cloneable 
     public FigletNTextArtImageRenderer(NPath file) {
         try (InputStream in = file.getInputStream()) {
             load(in);
-            fontName=file.getNameParts().getBaseName();
+            fontName=file.nameParts().getBaseName();
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
