@@ -6,6 +6,7 @@ import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorComponent;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorOptions;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.time.NClock;
 
 import java.lang.reflect.Method;
@@ -29,77 +30,82 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
 
     @Override
     public Object runWithContext() {
-        NClock now = NClock.now();
-        if (cls.getName().equals("net.thevpc.nuts.Nuts")) {
-            NWorkspaceOptionsBuilder o = NWorkspaceOptionsBuilder.of().setCmdLine(
-                    joptions.getAppArgs().toArray(new String[0])
-            );
-            List<String> appArgs;
-            if (o.getApplicationArguments().get().size() == 0) {
-                if (o.getSkipWelcome().orElse(false)) {
-                    return null;
-                }
-                appArgs = Arrays.asList(new String[]{"welcome"});
-            } else {
-                appArgs = o.getApplicationArguments().get();
-            }
-            session.configure(o.build());
-            Object oldId = NApplications.getSharedMap().get("nuts.embedded.application.id");
-            NApplications.getSharedMap().put("nuts.embedded.application.id", id);
-            try {
-                NExecCmd.of()
-                        .addCommand(appArgs)
-                        .addExecutorOptions(o.getExecutorOptions().orNull())
-                        .setExecutionType(o.getExecutionType().orNull())
-                        .failFast()
-                        .run();
-            } finally {
-                NApplications.getSharedMap().put("nuts.embedded.application.id", oldId);
-            }
-            return null;
-        }
-        final Method[] mainMethod = {null};
-        String nutsAppVersion = null;
-        Object nutsApp = null;
-        NSession sessionCopy = getSession().copy();
         try {
-            nutsAppVersion = CoreNApplications.getNutsAppVersion(cls);
-            if (nutsAppVersion != null) {
-                mainMethod[0] = cls.getMethod("run", NSession.class, String[].class);
-                mainMethod[0].setAccessible(true);
-                nutsApp = CoreNApplications.createApplicationInstance(cls, session, joptions.getAppArgs().toArray(new String[0]));
-            }
-        } catch (Exception rr) {
-            //ignore
-        }
-        String finalNutsAppVersion = nutsAppVersion;
-        Object finalNutsApp = nutsApp;
-        return sessionCopy.callWith(() -> {
-            NApp.of().prepare(new NAppInitInfo(joptions.getAppArgs().toArray(new String[0]), cls, now));
-            try {
-                if (finalNutsAppVersion != null && finalNutsApp != null) {
-                    //NutsWorkspace
-                    NApplications.getSharedMap().put("nuts.embedded.application.id", id);
-                    mainMethod[0].invoke(finalNutsApp, sessionCopy, joptions.getAppArgs().toArray(new String[0]));
+            NWorkspaceExt.of().getConfigModel().sysEnvPush(executionContext.getEnv());
+            NClock now = NClock.now();
+            if (cls.getName().equals("net.thevpc.nuts.Nuts")) {
+                NWorkspaceOptionsBuilder o = NWorkspaceOptionsBuilder.of().setCmdLine(
+                        joptions.getAppArgs().toArray(new String[0])
+                );
+                List<String> appArgs;
+                if (o.getApplicationArguments().get().size() == 0) {
+                    if (o.getSkipWelcome().orElse(false)) {
+                        return null;
+                    }
+                    appArgs = Arrays.asList(new String[]{"welcome"});
                 } else {
-                    //NutsWorkspace
-
-                    NWorkspaceOptionsBuilder bootOptions = JavaExecutorComponent.createChildOptions(executionContext);
-                    System.setProperty("nuts.boot.args",
-                            NCmdLineFormat.ofPlain(
-                                    bootOptions
-                                            .toCmdLine(new NWorkspaceOptionsConfig().setCompact(true))
-                                            .add(id.getLongName())
-                            ).setShellFamily(NShellFamily.SH).toString()
-                    );
-                    mainMethod[0] = cls.getMethod("main", String[].class);
-                    mainMethod[0].invoke(null, new Object[]{joptions.getAppArgs().toArray(new String[0])});
+                    appArgs = o.getApplicationArguments().get();
                 }
-            } catch (Exception e) {
-                throw CoreNUtils.toUncheckedException(e);
+                session.configure(o.build());
+                Object oldId = NApplications.getSharedMap().get("nuts.embedded.application.id");
+                NApplications.getSharedMap().put("nuts.embedded.application.id", id);
+                try {
+                    NExecCmd.of()
+                            .addCommand(appArgs)
+                            .addExecutorOptions(o.getExecutorOptions().orNull())
+                            .setExecutionType(o.getExecutionType().orNull())
+                            .failFast()
+                            .run();
+                } finally {
+                    NApplications.getSharedMap().put("nuts.embedded.application.id", oldId);
+                }
+                return null;
             }
-            return null;
-        });
+            final Method[] mainMethod = {null};
+            String nutsAppVersion = null;
+            Object nutsApp = null;
+            NSession sessionCopy = getSession().copy();
+            try {
+                nutsAppVersion = CoreNApplications.getNutsAppVersion(cls);
+                if (nutsAppVersion != null) {
+                    mainMethod[0] = cls.getMethod("run", NSession.class, String[].class);
+                    mainMethod[0].setAccessible(true);
+                    nutsApp = CoreNApplications.createApplicationInstance(cls, session, joptions.getAppArgs().toArray(new String[0]));
+                }
+            } catch (Exception rr) {
+                //ignore
+            }
+            String finalNutsAppVersion = nutsAppVersion;
+            Object finalNutsApp = nutsApp;
+            return sessionCopy.callWith(() -> {
+                NApp.of().prepare(new NAppInitInfo(joptions.getAppArgs().toArray(new String[0]), cls, now));
+                try {
+                    if (finalNutsAppVersion != null && finalNutsApp != null) {
+                        //NutsWorkspace
+                        NApplications.getSharedMap().put("nuts.embedded.application.id", id);
+                        mainMethod[0].invoke(finalNutsApp, sessionCopy, joptions.getAppArgs().toArray(new String[0]));
+                    } else {
+                        //NutsWorkspace
+
+                        NWorkspaceOptionsBuilder bootOptions = JavaExecutorComponent.createChildOptions(executionContext);
+                        System.setProperty("nuts.boot.args",
+                                NCmdLineFormat.ofPlain(
+                                        bootOptions
+                                                .toCmdLine(new NWorkspaceOptionsConfig().setCompact(true))
+                                                .add(id.getLongName())
+                                ).setShellFamily(NShellFamily.SH).toString()
+                        );
+                        mainMethod[0] = cls.getMethod("main", String[].class);
+                        mainMethod[0].invoke(null, new Object[]{joptions.getAppArgs().toArray(new String[0])});
+                    }
+                } catch (Exception e) {
+                    throw CoreNUtils.toUncheckedException(e);
+                }
+                return null;
+            });
+        }finally {
+            NWorkspaceExt.of().getConfigModel().sysEnvPop();
+        }
     }
 
 }
