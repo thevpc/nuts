@@ -111,10 +111,13 @@ After installing nuts try this commands to install and run some interesting apps
 | Command                                   | Short Description                        |
 |-------------------------------------------|------------------------------------------|
 | nuts io.github.jiashunx:masker-flappybird | run game flappybird                      |
+| nuts org.jmeld:jmeld#3.6.0                | run a folder diff tool                   |
+| nuts org.jd:jd-gui#1.6.6                  | run a java decompiler tool               |
+| nuts jpass:jpass#0.1.26-RELEASE           | jpass a Password Manager                 |
+| nuts org.jedit:jedit#5.7.0                | jedit text tool                          |
 | nuts netbeans-launcher                    | run a multi instance runner for netbeans |
 | nuts kifkif                               | run a file duplicates tool               |
 | nuts pnote                                | run a pnote taking tool                  |
-| nuts org.jmeld:jmeld#2.1                  | run a folder diff tool (broken in 0.8.6) |
-| nuts org.jd:jd-gui#1.6.6                  | run a java decompiler tool               |
-| --repo=+thevpc-goodies org.jedit:jedit    | jedit text tool  (broken in 0.8.6)       |
+| nuts nops                                 | run a nops DevOps tool                   |
+| nuts ntexup --view                        | run a Latex like Presentation Too        |
 |                                           |                                          |
