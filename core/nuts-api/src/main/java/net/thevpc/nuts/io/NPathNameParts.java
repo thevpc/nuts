@@ -75,11 +75,11 @@ public class NPathNameParts {
      *     <li>fullextension</li>
      * </ul>
      *
-     * @param pattern vars pattern
+     * @param template vars template
      * @return file name based on variables
      */
-    public String toName(String pattern) {
-        return NMsg.ofV(pattern,
+    public String toName(String template) {
+        return NMsg.ofV(template,
                 s -> {
                     switch (NStringUtils.trim(s).toLowerCase()) {
                         case "name":
