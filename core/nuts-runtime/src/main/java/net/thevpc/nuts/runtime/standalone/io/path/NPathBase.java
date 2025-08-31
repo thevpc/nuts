@@ -242,12 +242,35 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     }
 
     @Override
-    public NPathNameParts getNameParts() {
-        return getNameParts(NPathExtensionType.LONG);
+    public NPathNameParts nameParts() {
+        return nameParts(NPathExtensionType.SMART);
+    }
+
+    public NPath resolveSibling(NPathRenameOptions renameOptions){
+        if(renameOptions==null){
+            return this;
+        }
+        NPathExtensionType t = renameOptions.type();
+        if(t==null){
+            t=NPathExtensionType.SMART;
+        }
+        String template = renameOptions.template();
+        String extension = renameOptions.extension();
+        if(!NBlankable.isBlank(template)){
+            return resolveSibling(
+                    nameParts(t).toName(template)
+            );
+        }
+        if(!NBlankable.isBlank(extension)){
+            return resolveSibling(
+                    nameParts(t).toNameWithExtension(extension)
+            );
+        }
+        return this;
     }
 
     @Override
-    public NPathNameParts getNameParts(NPathExtensionType type) {
+    public NPathNameParts nameParts(NPathExtensionType type) {
         if (type == null) {
             type = NPathExtensionType.SHORT;
         }
@@ -579,13 +602,4 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         }
     }
 
-    @Override
-    public NPath resolveSiblingWithExtension(String extension) {
-        return resolveSibling(getNameParts().toNameWithExtension(extension));
-    }
-
-    @Override
-    public NPath resolveSiblingWithExtension(String extension,NPathExtensionType type) {
-        return resolveSibling(getNameParts(type).toNameWithExtension(extension));
-    }
 }
