@@ -244,7 +244,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
                     return getStoreLocation().resolve(n);
                 }
                 case EXPLODED: {
-                    NPath storeLocation = NWorkspace.of().getStoreLocation(folderType);
+                    NPath storeLocation = NPath.ofWorkspaceStore(folderType);
                     //uuid is added as
                     return storeLocation.resolve(NConstants.Folders.REPOSITORIES).resolve(getName()).resolve(getUuid());
 
