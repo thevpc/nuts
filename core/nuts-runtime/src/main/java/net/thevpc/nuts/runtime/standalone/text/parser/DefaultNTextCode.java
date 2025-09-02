@@ -29,12 +29,12 @@ package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 import net.thevpc.nuts.spi.NCodeHighlighter;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextCode;
-import net.thevpc.nuts.text.NTextType;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.util.NStringUtils;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 5/23/17.
@@ -55,7 +55,7 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return text.isEmpty();
     }
 
     @Override
@@ -72,7 +72,7 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
     }
 
     @Override
-    public NTextType getType() {
+    public NTextType type() {
         return NTextType.CODE;
     }
 
@@ -108,7 +108,7 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
     }
 
     @Override
-    public int textLength() {
+    public int length() {
         return text == null ? 0 : text.length();
     }
 
@@ -119,5 +119,54 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
         }
         return this;
     }
+
+    @Override
+    public List<NPrimitiveText> toCharList() {
+        return highlight().toCharList();
+    }
+
+    @Override
+    public NText substring(int start, int end) {
+        return new DefaultNTextCode(
+                this.getStart(), getKind(), getSeparator(), getEnd(),
+                getValue().substring(start, end)
+        );
+    }
+
+    public List<NText> split(String chars, boolean returnSeparator) {
+        return NStringUtils.split(getValue(), chars,false,false)
+                .stream().map(x->new DefaultNTextCode(
+                        this.getStart(), getKind(), getSeparator(), getEnd(),
+                        x
+                )).collect(Collectors.toList());
+    }
+
+    @Override
+    public NText trimLeft() {
+        String c = NStringUtils.trimLeft(text);
+        if(Objects.equals(text, c)){
+            return this;
+        }
+        return new DefaultNTextCode(getStart(),getKind(),getSeparator(),getEnd(), c);
+    }
+
+    @Override
+    public NText trimRight() {
+        String c = NStringUtils.trimRight(text);
+        if(Objects.equals(text, c)){
+            return this;
+        }
+        return new DefaultNTextCode(getStart(),getKind(),getSeparator(),getEnd(), c);
+    }
+
+    @Override
+    public NText trim() {
+        String c = NStringUtils.trim(text);
+        if(Objects.equals(text, c)){
+            return this;
+        }
+        return new DefaultNTextCode(getStart(),getKind(),getSeparator(),getEnd(), c);
+    }
+
 
 }
