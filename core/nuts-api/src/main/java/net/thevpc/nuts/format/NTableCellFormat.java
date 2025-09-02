@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts.format;
 
+import net.thevpc.nuts.text.NText;
+
 /**
  * @author thevpc
  * @app.category Format
@@ -33,15 +35,15 @@ package net.thevpc.nuts.format;
  */
 public interface NTableCellFormat {
 
-    default String format(int row, int col, Object value) {
-        return String.valueOf(value);
+    default NText format(int row, int col, NText value) {
+        return value==null?NText.of("") : value;
     }
 
-    default NPositionType getHorizontalAlign(int row, int col, Object value) {
+    default NPositionType getHorizontalAlign(int row, int col, NText value) {
         return NPositionType.FIRST;
     }
 
-    default NPositionType getVerticalAlign(int row, int col, Object value) {
+    default NPositionType getVerticalAlign(int row, int col, NText value) {
         return NPositionType.FIRST;
     }
 
