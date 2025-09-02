@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts.format;
 
+import net.thevpc.nuts.text.NText;
+
 /**
  * @author thevpc
  * @app.category Format
@@ -44,7 +46,7 @@ public interface NTableCell {
 
     int getY();
 
-    Object getValue();
+    NText getValue();
 
-    NTableCell setValue(Object value);
+    NTableCell setValue(NText value);
 }
