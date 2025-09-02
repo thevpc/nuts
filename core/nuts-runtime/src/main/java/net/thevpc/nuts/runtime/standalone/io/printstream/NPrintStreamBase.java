@@ -60,7 +60,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
 
     private NPrintStream printNormalized(NText b) {
         if (b != null) {
-            switch (b.getType()) {
+            switch (b.type()) {
                 case LIST: {
                     for (NText child : ((NTextList) b).getChildren()) {
                         printNormalized(child);
