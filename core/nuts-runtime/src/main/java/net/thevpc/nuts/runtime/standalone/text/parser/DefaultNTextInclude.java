@@ -13,24 +13,27 @@
  * <br>
  * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
  */
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
+import net.thevpc.nuts.text.NPrimitiveText;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NTextInclude;
 import net.thevpc.nuts.text.NTextType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -51,13 +54,13 @@ public class DefaultNTextInclude extends NTextSpecialBase implements NTextInclud
 
 
     @Override
-    public NTextType getType() {
+    public NTextType type() {
         return NTextType.INCLUDE;
     }
 
     @Override
     public boolean isEmpty() {
-        return NBlankable.isBlank(value);
+        return value.isEmpty();
     }
 
     @Override
@@ -68,10 +71,12 @@ public class DefaultNTextInclude extends NTextSpecialBase implements NTextInclud
         DefaultNTextInclude that = (DefaultNTextInclude) o;
         return Objects.equals(value, that.value);
     }
+
     @Override
     public NText immutable() {
         return this;
     }
+
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), value);
@@ -79,12 +84,12 @@ public class DefaultNTextInclude extends NTextSpecialBase implements NTextInclud
 
     @Override
     public String filteredText() {
-        return value == null ? "" : value;
+        return "";//value == null ? "" : value;
     }
 
     @Override
-    public int textLength() {
-        return value == null ? 0 : value.length();
+    public int length() {
+        return 0;//value == null ? 0 : value.length();
     }
 
     @Override
@@ -95,4 +100,32 @@ public class DefaultNTextInclude extends NTextSpecialBase implements NTextInclud
         return this;
     }
 
+    @Override
+    public List<NPrimitiveText> toCharList() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public NText substring(int start, int end) {
+        return new DefaultNTextPlain("");
+    }
+
+    public List<NText> split(String chars, boolean returnSeparator) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public NText trim() {
+        return this;
+    }
+
+    @Override
+    public NText trimLeft() {
+        return this;
+    }
+
+    @Override
+    public NText trimRight() {
+        return this;
+    }
 }
