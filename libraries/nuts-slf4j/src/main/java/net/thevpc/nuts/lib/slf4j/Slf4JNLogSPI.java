@@ -6,18 +6,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.spi.LocationAwareLogger;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
 public class Slf4JNLogSPI implements NLogSPI {
-    private static final String FQCN; // Fully Qualified Class Name
+    private static final String FQCN;
     private final Logger logger;
     private final LocationAwareLogger locationAwareLogger;
-
+    private static final Set<String> LOGGER_PACKAGES = new HashSet<>(Arrays.asList(
+            Slf4JNLogSPI.class.getPackage().getName(),
+            "org.slf4j"
+    ));
     static {
         FQCN = Slf4JNLogSPI.class.getName();
     }
-
     public Slf4JNLogSPI(String loggerName) {
         this.logger = LoggerFactory.getLogger(loggerName);
         this.locationAwareLogger = (logger instanceof LocationAwareLogger)
@@ -122,13 +128,18 @@ public class Slf4JNLogSPI implements NLogSPI {
         StackTraceElement[] stack = new Throwable().getStackTrace();
         for (StackTraceElement frame : stack) {
             String className = frame.getClassName();
-            if (!className.startsWith("com.cts.halbrisk.core.infra.log")) {
-                // This is the real caller
-                String methodName = frame.getMethodName();
+            boolean skip = false;
+            for (String pkg : LOGGER_PACKAGES) {
+                if (className.startsWith(pkg)) {
+                    skip = true;
+                    break;
+                }
+            }
+            if (!skip) {
                 return frame;
             }
         }
-        return null;
+        return null; // fallback
     }
 
     private static org.slf4j.event.Level toSlf4jLevel(Level julLevel) {
