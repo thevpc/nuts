@@ -120,4 +120,8 @@ public interface NLog {
 
     void log(NMsgBuilder msg);
 
+    void setPrefix(NMsg msg);
+
+    NMsg getPrefix();
+
 }
