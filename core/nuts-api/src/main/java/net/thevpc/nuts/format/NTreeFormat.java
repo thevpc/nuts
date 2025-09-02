@@ -42,38 +42,12 @@ import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
  */
 public interface NTreeFormat extends NContentTypeFormat {
     static NTreeFormat of() {
-       return NExtensions.of(NTreeFormat.class);
+        return NExtensions.of(NTreeFormat.class);
     }
 
-    /**
-     * return node format
-     *
-     * @return node format
-     */
-    NTreeNodeFormat getNodeFormat();
-
-    /**
-     * update node format
-     *
-     * @param nodeFormat new node format
-     * @return {@code this} instance
-     */
-    NTreeFormat setNodeFormat(NTreeNodeFormat nodeFormat);
-
-    /**
-     * return linkFormat
-     *
-     * @return linkFormat
-     */
-    NTreeLinkFormat getLinkFormat();
-
-    /**
-     * update link format
-     *
-     * @param linkFormat new link format
-     * @return {@code this} instance
-     */
-    NTreeFormat setLinkFormat(NTreeLinkFormat linkFormat);
+    static NTreeFormat of(Object value) {
+        return of().setValue(value);
+    }
 
     /**
      * return tree model
