@@ -187,7 +187,8 @@
                                         <div class="carousel-slide">
                                             <div class="col col--3">
                                                 <h3 class="feature-title">What is NAF?</h3>
-                                                <p>Nuts Application Framework (NAF) is a lightweight, modular framework designed to simplify the development of modern Java applications. Built on top of the Nuts runtime, NAF provides a unified foundation for configuration, logging, dependency injection, modularity, and extensibility, all while remaining Java 8 compatible and capable of leveraging the latest Java features when available. Whether you're building CLI tools, desktop applications, or services, NAF focuses on clarity, productivity, and maintainability, giving you a consistent API and powerful conventions without unnecessary complexity.</p>
+                                                <p><code>Nuts Application Framework</code> (<code>NAF</code>) is a lightweight, modular framework designed to simplify the development of modern Java applications. Built on top of the Nuts runtime, NAF provides a unified foundation for configuration, logging, dependency injection, modularity, and extensibility, all while remaining Java 8 compatible and able to leverage the latest Java features when available.</p>
+                                                <p><code>NAF</code> is <strong>non-invasive by design</strong>: it integrates seamlessly with existing frameworks and libraries such as <strong>Spring</strong>, <strong>Spring Boot</strong>, <strong>SLF4J</strong>, and more, allowing you to adopt its conventions and APIs without rewriting or restructuring your application. Whether you're building CLI tools, desktop applications, or services, <code>NAF</code> emphasizes clarity, productivity, and maintainability, giving you a consistent foundation and powerful conventions without imposing complexity or locking you in.</p>
                                             </div>
                                         </div>
                                         <div class="carousel-slide">
@@ -367,6 +368,43 @@
                                                                     .withIntent(NMsgIntent.CONFIG)
                                                                     .withThrowable(exception)
                                                             );
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-title">Scoped, Context-Aware Logging (Beyond MDC)</h3>
+                                                <p>Traditional MDC allows you to store key-value pairs for the current thread, but managing nested or dynamic contexts often becomes cumbersome. NLog builds on and extends this concept by allowing nested logging scopes, dynamic placeholders, message prefixes, and custom log handlers — all without touching global configuration or rewriting classes. Logs automatically inherit the correct context, making them structured, expressive, and runtime-aware. With NLog, you get the convenience of MDC plus the power of non-invasive, modular, and scoped logging.</p>
+                                                <pre>
+                                                    <code class="language-java">
+                                                    class MyApp {
+                                                        public void test() {
+                                                            // Top-level logging scope for the application
+                                                            NLogs.of().runWith(
+                                                                NLogContext.of()
+                                                                        // Prefix added to every log message in this scope
+                                                                        .withMessagePrefix(NMsg.ofC("[My Application]"))
+                                                                        // Placeholder available to all logs in this scope
+                                                                        .withPlaceholder("user", "Adam")
+                                                                        // Custom log handler: redirect all messages to stdout with a [SCOPED] prefix
+                                                                        .withLog(message -> NOut.println(NMsg.ofC("[SCOPED] %s", message))),
+                                                                () -> {
+                                                                    OtherClass.doThis(); // Perform actions that generate logs
+                                                                }
+                                                            );
+                                                        }
+                                                    }
+
+                                                    class OtherClass {
+                                                        private static void doThis() {
+                                                            // Standard logger: picks up class context but not the scoped stdout handler
+                                                            NLog.of(LogTest.class).log(NMsg.ofC("hello %s", NMsg.placeholder("user")));
+
+                                                            // Scoped logger: inherits context from outer scope (user=Adam) and uses the custom stdout handler
+                                                            NLog.ofScoped(OtherClass.class).log(NMsg.ofV("hello $user"));
+                                                        }
+                                                    }
                                                     </code>
                                                 </pre>
                                             </div>
@@ -672,7 +710,7 @@
             <p class="text-2 text-center mb-0">
                 Copyright © 2018-2025 Nuts Package Manager Team.
                 <br>
-                Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2025-08-31-224203
+                Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2025-09-02-204951
                 <br>
                 <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                             href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
