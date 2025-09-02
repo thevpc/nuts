@@ -165,3 +165,7 @@ net.thevpc.nuts.runtime.standalone.util.DefaultNConnexionStringBuilderFactory
 net.thevpc.nuts.runtime.standalone.definition.NDefinitionFactoryImpl
 net.thevpc.nuts.runtime.standalone.text.art.NTextArtImpl
 net.thevpc.nuts.runtime.standalone.log.NLogFactorySPIJUL
+net.thevpc.nuts.runtime.standalone.text.art.figlet.FigletNTextArtRendererFactory
+net.thevpc.nuts.runtime.standalone.text.art.img.PixelNTextArtRendererFactory
+net.thevpc.nuts.runtime.standalone.text.art.tree.TreeNTextArtRendererFactory
+net.thevpc.nuts.runtime.standalone.text.art.table.TableNTextArtRendererFactory
