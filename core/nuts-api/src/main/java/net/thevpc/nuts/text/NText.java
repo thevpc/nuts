@@ -31,6 +31,7 @@ import net.thevpc.nuts.util.NMsg;
 
 import java.io.PrintStream;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by vpc on 5/23/17.
@@ -44,6 +45,10 @@ public interface NText extends NBlankable {
 
     static NText ofPlain(String str) {
         return NTexts.of().ofPlain(str);
+    }
+
+    static NText ofNewLine() {
+        return NTexts.of().ofPlain("\n");
     }
 
     static NText of(Object str) {
@@ -207,10 +212,15 @@ public interface NText extends NBlankable {
     }
 
 
-    NTextType getType();
+    NTextType type();
 
     NTextBuilder builder();
 
+    NText substring(int start, int end);
+
+    boolean isPrimitive();
+
+    boolean isNormalized();
 
     NText immutable();
 
@@ -232,9 +242,39 @@ public interface NText extends NBlankable {
      * @return effective length after filtering the text
      */
 
-    int textLength();
+    int length();
 
     boolean isEmpty();
 
     NText simplify();
+
+    List<NText> split(char c);
+
+    List<NText> split(char c, boolean returnSeparator);
+
+    List<NText> split(String separator);
+
+    List<NText> split(String separator, boolean returnSeparator);
+
+    NPrimitiveText[] toCharArray();
+
+    List<NPrimitiveText> toCharList();
+
+    NText trim();
+
+    NText trimLeft();
+
+    NText trimRight();
+
+    NText repeat(int times);
+
+    NText concat(NText other);
+
+    NText concat(NText... others);
+
+    NNormalizedText normalize();
+
+    NNormalizedText normalize(NTextTransformConfig config);
+
+    NNormalizedText normalize(NTextTransformer transformer, NTextTransformConfig config);
 }
