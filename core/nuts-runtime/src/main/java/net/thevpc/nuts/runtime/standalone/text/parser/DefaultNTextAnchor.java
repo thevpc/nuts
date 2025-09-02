@@ -27,10 +27,13 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
 
+import net.thevpc.nuts.text.NPrimitiveText;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextAnchor;
 import net.thevpc.nuts.text.NTextType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -49,13 +52,13 @@ public class DefaultNTextAnchor extends NTextSpecialBase implements NTextAnchor 
     }
 
     @Override
-    public NTextType getType() {
+    public NTextType type() {
         return NTextType.ANCHOR;
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return value.isEmpty();
     }
 
     @Override
@@ -66,10 +69,12 @@ public class DefaultNTextAnchor extends NTextSpecialBase implements NTextAnchor 
         DefaultNTextAnchor that = (DefaultNTextAnchor) o;
         return Objects.equals(value, that.value);
     }
+
     @Override
     public NText immutable() {
         return this;
     }
+
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), value);
@@ -81,17 +86,45 @@ public class DefaultNTextAnchor extends NTextSpecialBase implements NTextAnchor 
     }
 
     @Override
-    public int textLength() {
+    public int length() {
         return 0;
     }
 
 
     @Override
     public NText simplify() {
-        if(value.isEmpty()){
+        if (value.isEmpty()) {
             return DefaultNTextPlain.EMPTY;
         }
         return this;
     }
 
+    @Override
+    public List<NPrimitiveText> toCharList() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public NText substring(int start, int end) {
+        return new DefaultNTextPlain("");
+    }
+
+    public List<NText> split(String chars, boolean returnSeparator) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public NText trim() {
+        return this;
+    }
+
+    @Override
+    public NText trimLeft() {
+        return this;
+    }
+
+    @Override
+    public NText trimRight() {
+        return this;
+    }
 }
