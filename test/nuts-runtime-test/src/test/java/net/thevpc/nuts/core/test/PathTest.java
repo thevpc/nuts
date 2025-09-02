@@ -34,6 +34,7 @@ import net.thevpc.nuts.runtime.standalone.io.path.NPathFromSPI;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.GenericFilePath;
 import net.thevpc.nuts.runtime.standalone.io.util.NPathParts;
 import net.thevpc.nuts.spi.NPathSPI;
+import net.thevpc.nuts.util.NMsg;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
@@ -53,6 +54,26 @@ public class PathTest {
         TestUtils.openNewMinTestWorkspace();
     }
 
+
+    @Test
+    public void testPaths() {
+        NOut.println("----------------------------ofUserStore");
+        for (NStoreType value : NStoreType.values()) {
+            NOut.println(NMsg.ofC("ofUserStore(%s) => %s",value,NPath.ofUserStore(value)));
+        }
+        NOut.println("----------------------------ofSystemStore");
+        for (NStoreType value : NStoreType.values()) {
+            NOut.println(NMsg.ofC("ofSystemStore(%s) => %s",value,NPath.ofSystemStore(value)));
+        }
+        NOut.println("----------------------------ofWorkspaceStore");
+        for (NStoreType value : NStoreType.values()) {
+            NOut.println(NMsg.ofC("ofIdStore(%s) => %s",value,NPath.ofWorkspaceStore(value)));
+        }
+        NOut.println("----------------------------ofIdStore");
+        for (NStoreType value : NStoreType.values()) {
+            NOut.println(NMsg.ofC("ofIdStore(%s) => %s",value,NPath.ofIdStore(NWorkspace.of().getApiId(),value)));
+        }
+    }
 
     @Test
     public void testPathCreation() {
@@ -372,7 +393,7 @@ public class PathTest {
         if (p == null) {
             return new String[]{"", "", ""};
         }
-        NPathNameParts nameParts = p.getNameParts(NPathExtensionType.SMART);
+        NPathNameParts nameParts = p.nameParts();
         String[] strings = {nameParts.getBaseName(), nameParts.getExtension(), nameParts.getFullExtension()};
         return strings;
     }
