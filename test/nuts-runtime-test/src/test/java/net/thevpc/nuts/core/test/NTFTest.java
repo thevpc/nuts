@@ -946,7 +946,7 @@ public class NTFTest {
         NTFParser2 p = createParser();
         p.offer("Hello World");
         NText r = p.read();
-        Assertions.assertEquals(NTextType.PLAIN, r.getType());
+        Assertions.assertEquals(NTextType.PLAIN, r.type());
         Assertions.assertEquals("Hello World", r.toString());
     }
 
@@ -963,7 +963,7 @@ public class NTFTest {
         Assertions.assertNull(r);
         r = p.readFully();
         Assertions.assertNotNull(r);
-        Assertions.assertEquals(NTextType.PLAIN, r.getType());
+        Assertions.assertEquals(NTextType.PLAIN, r.type());
         Assertions.assertEquals("Hello #World\\#", r.toString());
     }
 
@@ -976,7 +976,7 @@ public class NTFTest {
         Assertions.assertNull(r);
         r = p.readFully();
         Assertions.assertNotNull(r);
-        Assertions.assertEquals(NTextType.TITLE, r.getType());
+        Assertions.assertEquals(NTextType.TITLE, r.type());
         Assertions.assertEquals("#) Hello #World\\#\n", r.toString());
     }
 
@@ -991,7 +991,7 @@ public class NTFTest {
             Assertions.assertNull(r);
             r = p.readFully();
             Assertions.assertNotNull(r);
-            Assertions.assertEquals(NTextType.TITLE, r.getType());
+            Assertions.assertEquals(NTextType.TITLE, r.type());
             Assertions.assertEquals(i, ((NTextTitle) r).getLevel());
             Assertions.assertEquals(q + ") Hello #World\\#\n", r.toString());
         }
@@ -1009,7 +1009,7 @@ public class NTFTest {
             Assertions.assertNull(r);
             r = p.readFully();
             Assertions.assertNotNull(r);
-            Assertions.assertEquals(NTextType.STYLED, r.getType());
+            Assertions.assertEquals(NTextType.STYLED, r.type());
 //            Assertions.assertEquals(q + " Hello #World\\# " + q, r.toString());
             Assertions.assertEquals("##{p" + i + ":Hello #World# }##\u001E", r.toString());
         }
@@ -1023,7 +1023,7 @@ public class NTFTest {
         p.offer(s);
         NText r = p.read();
         Assertions.assertNotNull(r);
-        Assertions.assertEquals(NTextType.ANCHOR, r.getType());
+        Assertions.assertEquals(NTextType.ANCHOR, r.type());
         Assertions.assertEquals("```!anchor some anchor```", r.toString());
     }
 
@@ -1035,7 +1035,7 @@ public class NTFTest {
         p.offer(s);
         NText r = p.read();
         Assertions.assertNotNull(r);
-        Assertions.assertEquals(NTextType.LINK, r.getType());
+        Assertions.assertEquals(NTextType.LINK, r.type());
         Assertions.assertEquals("```!link some link```", r.toString());
     }
 
@@ -1047,7 +1047,7 @@ public class NTFTest {
         p.offer(s);
         NText r = p.read();
         Assertions.assertNotNull(r);
-        Assertions.assertEquals(NTextType.LINK, r.getType());
+        Assertions.assertEquals(NTextType.LINK, r.type());
         Assertions.assertEquals("```!link:some link```", r.toString());
     }
 
@@ -1059,7 +1059,7 @@ public class NTFTest {
         p.offer(s);
         NText r = p.read();
         Assertions.assertNotNull(r);
-        Assertions.assertEquals(NTextType.LINK, r.getType());
+        Assertions.assertEquals(NTextType.LINK, r.type());
         Assertions.assertEquals("```!link\nsome link```", r.toString());
     }
 
@@ -1071,7 +1071,7 @@ public class NTFTest {
         p.offer(s);
         NText r = p.read();
         Assertions.assertNotNull(r);
-        Assertions.assertEquals(NTextType.CODE, r.getType());
+        Assertions.assertEquals(NTextType.CODE, r.type());
         Assertions.assertEquals("public class \\` some thing ``` some thing", ((NTextCode) r).getValue());
         Assertions.assertEquals("```java\npublic class \\` some thing \\``` some thing```", r.toString());
     }
@@ -1086,7 +1086,7 @@ public class NTFTest {
         Assertions.assertNull(r);
         r = p.readFully();
         Assertions.assertNotNull(r);
-        Assertions.assertEquals(NTextType.STYLED, r.getType());
+        Assertions.assertEquals(NTextType.STYLED, r.type());
         Assertions.assertEquals("##{p1:text}##\u001E", r.toString());
     }
 
@@ -1101,7 +1101,7 @@ public class NTFTest {
             Assertions.assertNull(r);
             r = p.readFully();
             Assertions.assertNotNull(r);
-            Assertions.assertEquals(NTextType.STYLED, r.getType());
+            Assertions.assertEquals(NTextType.STYLED, r.type());
             Assertions.assertEquals("##{" + c + ":text}##\u001E", r.toString());
         }
     }
@@ -1126,7 +1126,7 @@ public class NTFTest {
             Assertions.assertNull(r);
             r = p.readFully();
             Assertions.assertNotNull(r);
-            Assertions.assertEquals(NTextType.STYLED, r.getType());
+            Assertions.assertEquals(NTextType.STYLED, r.type());
             Assertions.assertEquals("##{" + c + ":text}##\u001E", r.toString());
         }
 
@@ -1138,7 +1138,7 @@ public class NTFTest {
         Assertions.assertNull(r);
         r = p.readFully();
         Assertions.assertNotNull(r);
-        Assertions.assertEquals(NTextType.STYLED, r.getType());
+        Assertions.assertEquals(NTextType.STYLED, r.type());
         Assertions.assertEquals("##{/:text}##\u001E", r.toString());
     }
 
@@ -1152,7 +1152,7 @@ public class NTFTest {
         Assertions.assertNull(r);
         r = p.readFully();
         Assertions.assertNotNull(r);
-        Assertions.assertEquals(NTextType.STYLED, r.getType());
+        Assertions.assertEquals(NTextType.STYLED, r.type());
         Assertions.assertEquals("##{_:text}##\u001E", r.toString());
     }
 
@@ -1164,7 +1164,7 @@ public class NTFTest {
         p.offer(s);
         NText r = p.read();
         Assertions.assertNotNull(r);
-        Assertions.assertEquals(NTextType.COMMAND, r.getType());
+        Assertions.assertEquals(NTextType.COMMAND, r.type());
         Assertions.assertEquals("```!clear-line```", r.toString());
     }
 
@@ -1178,7 +1178,7 @@ public class NTFTest {
         NText r2 = p.readFully();
         Assertions.assertNotNull(r1);
         Assertions.assertNull(r2);
-        Assertions.assertEquals(NTextType.STYLED, r1.getType());
+        Assertions.assertEquals(NTextType.STYLED, r1.type());
         Assertions.assertEquals("##{version:0.8.4}##\u001E", r1.toString());
     }
 
@@ -1188,14 +1188,14 @@ public class NTFTest {
                 .append("a")
                 .appendCode("sh", "b")
                 .append("c");
-        Assertions.assertEquals(3, b.textLength());
+        Assertions.assertEquals(3, b.length());
     }
 
     @Test
     public void test31() {
         NText s = NText.of("a```sh b```\u001Ec");
         NText t = NText.of(s);
-        Assertions.assertEquals(NTextType.LIST, t.getType());
+        Assertions.assertEquals(NTextType.LIST, t.type());
         Assertions.assertEquals(3, ((NTextList) t).size());
     }
 
@@ -1204,7 +1204,7 @@ public class NTFTest {
         NText s = NText.of(
                 "##:_:location##:##:path:/home## (Tan Type)\n");
         NText t = NText.of(s);
-        Assertions.assertEquals(NTextType.LIST, t.getType());
+        Assertions.assertEquals(NTextType.LIST, t.type());
         Assertions.assertEquals(4, ((NTextList) t).size());
     }
 
@@ -1217,14 +1217,14 @@ public class NTFTest {
                 "    manage tasks, jobs, projects\n";
         NText s = NText.of(q);
         NText im = s.immutable();
-        Assertions.assertEquals(NTextType.LIST, s.getType());
+        Assertions.assertEquals(NTextType.LIST, s.type());
         Assertions.assertEquals(q, s.toString());
     }
 
     @Test
     public void test34() {
         NText s = NText.of("```!clear-line``````!move-line-start```");
-        Assertions.assertEquals(NTextType.LIST, s.getType());
+        Assertions.assertEquals(NTextType.LIST, s.type());
         Assertions.assertEquals(2, ((NTextList) s).size());
         Assertions.assertEquals(true, ((NTextList) s).get(0) instanceof NTextCmd);
         Assertions.assertEquals(true, ((NTextCmd) ((NTextList) s).get(0)).getCommand().getName().equals("clear-line"));
@@ -1243,7 +1243,7 @@ public class NTFTest {
         //String str = "##{s12:AA##:12:BB##}##";
         NText parsed = NText.of(str);
         TestUtils.println(parsed);
-        Assertions.assertEquals(NTextType.LIST, parsed.getType());
+        Assertions.assertEquals(NTextType.LIST, parsed.type());
         Assertions.assertEquals(12, ((NTextList) parsed).size());
     }
 
@@ -1271,7 +1271,7 @@ public class NTFTest {
 
         NText parsed = NText.of(str);
         TestUtils.println(parsed);
-        Assertions.assertEquals(NTextType.LIST, parsed.getType());
+        Assertions.assertEquals(NTextType.LIST, parsed.type());
         Assertions.assertEquals(40, ((NTextList) parsed).size());
     }
 
@@ -1289,7 +1289,7 @@ public class NTFTest {
         String str = "\\```underlined underlined\\```";
         NText parsed = NText.of(str);
         TestUtils.println(parsed);
-        Assertions.assertEquals(NTextType.PLAIN, parsed.getType());
+        Assertions.assertEquals(NTextType.PLAIN, parsed.type());
         String text = ((NTextPlain) parsed).getValue();
         Assertions.assertEquals("```underlined underlined```", text);
         String text2 = parsed.toString();
@@ -1301,7 +1301,7 @@ public class NTFTest {
         String str = "```#) Title 1```";
         NText parsed = NText.of(str);
         TestUtils.println(parsed);
-        Assertions.assertEquals(NTextType.CODE, parsed.getType());
+        Assertions.assertEquals(NTextType.CODE, parsed.type());
         String text = ((NTextCode) parsed).getValue();
         Assertions.assertEquals("#) Title 1", text);
         String text2 = parsed.toString();
@@ -1315,10 +1315,10 @@ public class NTFTest {
                 "####) NTF syntax\n";
         NText parsed = NText.of(str);
         TestUtils.println(parsed);
-        Assertions.assertEquals(NTextType.LIST, parsed.getType());
+        Assertions.assertEquals(NTextType.LIST, parsed.type());
         Assertions.assertEquals(2, ((NTextList) parsed).size());
-        Assertions.assertEquals(NTextType.TITLE, ((NTextList) parsed).get(0).getType());
-        Assertions.assertEquals(NTextType.TITLE, ((NTextList) parsed).get(1).getType());
+        Assertions.assertEquals(NTextType.TITLE, ((NTextList) parsed).get(0).type());
+        Assertions.assertEquals(NTextType.TITLE, ((NTextList) parsed).get(1).type());
     }
 
     @Test
