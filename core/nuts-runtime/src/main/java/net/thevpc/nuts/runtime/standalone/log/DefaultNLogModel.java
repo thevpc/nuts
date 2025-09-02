@@ -28,10 +28,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NBootOptions;
 import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogConfig;
-import net.thevpc.nuts.log.NLogFactorySPI;
-import net.thevpc.nuts.log.NLogSPI;
+import net.thevpc.nuts.log.*;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.NCallable;
 import net.thevpc.nuts.util.NMsg;
@@ -39,6 +36,7 @@ import net.thevpc.nuts.util.NMsg;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -59,8 +57,7 @@ public class DefaultNLogModel {
     private NLogFactorySPI defaultFactorySPI = new NLogFactorySPIJUL();
     private NLogFactorySPI factorySPI;
     private NLog nullLogger;
-    private InheritableThreadLocal<Map<String, Object>> mdc = new InheritableThreadLocal<>();
-    final InheritableThreadLocal<NLog> scopedLoggerThreadLocal = new InheritableThreadLocal<>();
+    private InheritableThreadLocal<NLogContext> logContext = new InheritableThreadLocal<>();
 
     public DefaultNLogModel(NWorkspace ws) {
         this.workspace = ws;
@@ -84,60 +81,50 @@ public class DefaultNLogModel {
 //        out = ((NWorkspaceExt) ws).getModel().bootModel.getSystemTerminal().err();
     }
 
-    public Object getMdc(String s) {
-        Map<String, Object> m = mdc.get();
-        if (m == null) {
-            return null;
-        }
-        return m.get(s);
-    }
-
-    public void setMdc(String s, Object value) {
-        if (value != null) {
-            Map<String, Object> m = mdc.get();
-            if (m == null) {
-                m = new HashMap<>();
-                mdc.set(m);
+    public void runWithContext(NLogContext context, Runnable runnable) {
+        NLogContext c1 = logContext.get();
+        NLogContext c2 = c1 == null ? NLogContextImpl.BLANK.mergedWith(context) : c1.mergedWith(context);
+        logContext.set(c2);
+        try {
+            if (runnable != null) {
+                runnable.run();
             }
-            m.put(s, value);
-        } else {
-            Map<String, Object> m = mdc.get();
-            if (m == null) {
-                return;
-            }
-            m.remove(s);
-            if (m.isEmpty()) {
-                mdc.remove();
+        } finally {
+            if (c1 != null) {
+                logContext.set(c1);
+            } else {
+                logContext.remove();
             }
         }
     }
 
-    public void setMdc(Map<String, Object> map) {
-        if (map != null) {
-            Map<String, Object> m = mdc.get();
-            boolean rem = false;
-            for (Map.Entry<String, Object> e : map.entrySet()) {
-                String s = e.getKey();
-                Object value = e.getValue();
-                if (value != null) {
-                    if (m == null) {
-                        m = new HashMap<>();
-                        mdc.set(m);
-                    }
-                    m.put(s, value);
-                    rem = false;
-                } else {
-                    if (m != null) {
-                        m.remove(s);
-                        rem = true;
-                    }
-                }
+    public <T> T callWithContext(NLogContext context, NCallable<T> callable) {
+        NLogContext c1 = logContext.get();
+        NLogContext c2 = c1 == null ? NLogContextImpl.BLANK.mergedWith(context) : c1.mergedWith(context);
+        logContext.set(c2);
+        try {
+            if (callable != null) {
+                return callable.call();
             }
-            if (rem && m.isEmpty()) {
-                mdc.remove();
+        } finally {
+            if (c1 != null) {
+                logContext.set(c1);
+            } else {
+                logContext.remove();
             }
         }
+        return null;
     }
+
+
+    public NLogContext getContext() {
+        NLogContext cc = logContext.get();
+        if (cc == null) {
+            cc = NLogContextImpl.BLANK;
+        }
+        return cc;
+    }
+
 
     public NLogFactorySPI getFactorySPI() {
         return factorySPI == null ? defaultFactorySPI : factorySPI;
@@ -215,36 +202,13 @@ public class DefaultNLogModel {
     }
 
     public NLog createCustomLogger(String name, NLogSPI spi) {
+        if (name == null) {
+            name = "LOGGER-" + UUID.randomUUID();
+        }
         return new DefaultNLog(name, spi, false, this, true);
     }
 
-    public void runWith(NLog log, Runnable r) {
-        NLog old = scopedLoggerThreadLocal.get();
-        scopedLoggerThreadLocal.set(log);
-        try {
-            r.run();
-        } finally {
-            if (old == null) {
-                scopedLoggerThreadLocal.remove();
-            } else {
-                scopedLoggerThreadLocal.set(old);
-            }
-        }
-    }
 
-    public <T> T callWith(NLog log, NCallable<T> r) {
-        NLog old = scopedLoggerThreadLocal.get();
-        scopedLoggerThreadLocal.set(log);
-        try {
-            return r.call();
-        } finally {
-            if (old == null) {
-                scopedLoggerThreadLocal.remove();
-            } else {
-                scopedLoggerThreadLocal.set(old);
-            }
-        }
-    }
 
     public Level getTermLevel() {
         return this.logConfig.getLogTermLevel();
