@@ -13,25 +13,25 @@
  * <br>
  * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
  */
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextStyled;
-import net.thevpc.nuts.text.NTextStyles;
-import net.thevpc.nuts.text.NTextType;
+import net.thevpc.nuts.text.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 5/23/17.
@@ -43,6 +43,19 @@ public class DefaultNTextStyled extends AbstractNText implements NTextStyled {
     private NText child;
     private NTextStyles textStyles;
     private boolean completed;
+
+    public static NText appendStyle(NText any, NTextStyles textStyles) {
+        if (textStyles == null || textStyles.isPlain()) {
+            return any;
+        }
+        if (any instanceof NTextStyled) {
+            NTextStyled base = (NTextStyled) any;
+            NTextStyles styles = base.getStyles();
+            NTextStyles newStyles = styles.append(textStyles);
+            return new DefaultNTextStyled(base.getChild(), newStyles);
+        }
+        return new DefaultNTextStyled(any, textStyles);
+    }
 
     public DefaultNTextStyled(NText child, NTextStyles textStyle) {
         this("##", "##", child, true, textStyle);
@@ -59,7 +72,7 @@ public class DefaultNTextStyled extends AbstractNText implements NTextStyled {
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return child.isEmpty();
     }
 
     @Override
@@ -68,7 +81,7 @@ public class DefaultNTextStyled extends AbstractNText implements NTextStyled {
     }
 
     @Override
-    public NTextType getType() {
+    public NTextType type() {
         return NTextType.STYLED;
     }
 
@@ -106,8 +119,8 @@ public class DefaultNTextStyled extends AbstractNText implements NTextStyled {
     }
 
     @Override
-    public int textLength() {
-        return child.textLength();
+    public int length() {
+        return child.length();
     }
 
     @Override
@@ -118,12 +131,59 @@ public class DefaultNTextStyled extends AbstractNText implements NTextStyled {
     @Override
     public NText simplify() {
         NText c = child.simplify();
-        if(child.equals(DefaultNTextPlain.EMPTY)){
+        if (child.equals(DefaultNTextPlain.EMPTY)) {
             return DefaultNTextPlain.EMPTY;
         }
-        if(!c.equals(child)){
+        if (!c.equals(child)) {
             return new DefaultNTextStyled(start, end, c, completed, textStyles);
         }
         return this;
     }
+
+    @Override
+    public List<NPrimitiveText> toCharList() {
+        List<NPrimitiveText> all = new ArrayList<>();
+        for (NPrimitiveText child : child.toCharList()) {
+            all.add((NPrimitiveText) DefaultNTextStyled.appendStyle(child, textStyles));
+        }
+        return all;
+    }
+
+    @Override
+    public NText substring(int start, int end) {
+        return new DefaultNTextStyled(getStart(), getEnd(), child.substring(start, end), completed, textStyles);
+    }
+
+    @Override
+    public List<NText> split(String separator, boolean returnSeparator) {
+        return child.split(separator, returnSeparator).stream().map(x -> DefaultNTextStyled.appendStyle(x, textStyles)).collect(Collectors.toList());
+    }
+
+    @Override
+    public NText trimLeft() {
+        NText c = child.trimLeft();
+        if (c == child) {
+            return this;
+        }
+        return new DefaultNTextStyled(getStart(), getEnd(), c, completed, textStyles);
+    }
+
+    @Override
+    public NText trimRight() {
+        NText c = child.trimRight();
+        if (c == child) {
+            return this;
+        }
+        return new DefaultNTextStyled(getStart(), getEnd(), c, completed, textStyles);
+    }
+
+    @Override
+    public NText trim() {
+        NText c = child.trim();
+        if (c == child) {
+            return this;
+        }
+        return new DefaultNTextStyled(getStart(), getEnd(), c, completed, textStyles);
+    }
+
 }
