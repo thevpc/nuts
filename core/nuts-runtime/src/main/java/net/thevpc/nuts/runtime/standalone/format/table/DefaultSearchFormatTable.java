@@ -19,6 +19,7 @@ import net.thevpc.nuts.runtime.standalone.format.NIdFormatHelper;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
+import net.thevpc.nuts.text.NText;
 
 /**
  *
@@ -72,7 +73,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
         getTableModel()
                 .addHeaderCells(
                         Arrays.stream(getDisplayOptions().getDisplayProperties())
-                                .map(x -> CoreEnumUtils.getEnumString(x)).toArray()
+                                .map(x -> NText.of(CoreEnumUtils.getEnumString(x))).toArray(NText[]::new)
                 );
     }
 
@@ -82,13 +83,13 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
         if (fid != null) {
             formatElement(fid, index);
         } else {
-            getTableModel().newRow().addCell(object);
+            getTableModel().newRow().addCell(NText.of(object));
         }
         getWriter().flush();
     }
 
     public void formatElement(NIdFormatHelper id, long index) {
-        getTableModel().newRow().addCells((Object[]) id.getMultiColumnRow(getDisplayOptions()));
+        getTableModel().newRow().addCells((NText[]) id.getMultiColumnRow(getDisplayOptions()));
     }
 
     @Override
