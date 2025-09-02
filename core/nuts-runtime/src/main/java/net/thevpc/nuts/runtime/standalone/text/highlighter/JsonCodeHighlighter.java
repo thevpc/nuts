@@ -103,7 +103,7 @@ public class JsonCodeHighlighter implements NCodeHighlighter {
                     }else {
                         NText[] d = StringReaderExtUtils.readJSIdentifier(ar);
                         if (d != null) {
-                            if (d.length == 1 && d[0].getType() == NTextType.PLAIN) {
+                            if (d.length == 1 && d[0].type() == NTextType.PLAIN) {
                                 String txt2 = ((NTextPlain) d[0]).getValue();
                                 switch (txt2) {
                                     case "true":
