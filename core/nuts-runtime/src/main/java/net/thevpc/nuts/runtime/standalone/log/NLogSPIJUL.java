@@ -26,7 +26,24 @@ public class NLogSPIJUL implements NLogSPI {
 
     @Override
     public void log(NMsg message) {
+        String[] caller = findCaller();
         NLogRecord rec=new NLogRecord(NSession.of(),message.getLevel(),message.getIntent(),message,message.toString(),System.currentTimeMillis(),message.getThrowable());
+        rec.setSourceClassName(caller[0]);
+        rec.setSourceMethodName(caller[1]);
         log.log(rec);
+    }
+
+    private String[] findCaller() {
+        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+        // skip the first few frames: getStackTrace(), findCaller(), log(), etc.
+        for (int i = 3; i < stack.length; i++) {
+            StackTraceElement e = stack[i];
+            String cname = e.getClassName();
+            // skip internal logging classes
+            if (!cname.startsWith("net.thevpc.nuts.runtime.standalone.log") && !cname.startsWith("java.util.logging")) {
+                return new String[]{cname, e.getMethodName()};
+            }
+        }
+        return new String[]{"unknown", "unknown"};
     }
 }
