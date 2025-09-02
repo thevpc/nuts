@@ -75,7 +75,7 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
         if (txt == null) {
             txt = NTexts.of();
         }
-        switch (node.getType()) {
+        switch (node.type()) {
             case PLAIN: {
                 NTextPlain p = (NTextPlain) node;
                 writeRaw(formats, p.getValue(), ctx.isFiltered());
