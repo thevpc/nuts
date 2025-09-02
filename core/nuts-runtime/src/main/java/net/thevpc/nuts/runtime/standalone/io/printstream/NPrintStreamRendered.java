@@ -65,7 +65,7 @@ public abstract class NPrintStreamRendered extends NPrintStreamBase {
         if (isNtf()) {
             support.pushNode(b);
         } else {
-            switch (b.getType()) {
+            switch (b.type()) {
                 case PLAIN: {
                     support.pushNode(b);
                     break;
