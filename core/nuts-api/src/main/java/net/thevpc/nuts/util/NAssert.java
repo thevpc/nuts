@@ -115,7 +115,7 @@ public class NAssert {
     }
 
     public static boolean requireFalse(boolean value, Supplier<NMsg> msg) {
-        if (!value) {
+        if (value) {
             throw NExceptions.ofSafeAssertException(createMessage(msg));
         }
         return value;
