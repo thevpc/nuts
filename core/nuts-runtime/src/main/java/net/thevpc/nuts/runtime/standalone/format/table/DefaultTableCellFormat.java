@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.format.table;
 
 import net.thevpc.nuts.format.NTableCellFormat;
+import net.thevpc.nuts.text.NText;
 
 /**
- *
  * @author thevpc
  * @since 0.5.5
  */
@@ -15,8 +15,8 @@ public class DefaultTableCellFormat implements NTableCellFormat {
     }
 
     @Override
-    public String format(int row, int col, Object value) {
-        return String.valueOf(value);
+    public NText format(int row, int col, NText value) {
+        return value == null ? NText.ofBlank() : value;
     }
 
 }
