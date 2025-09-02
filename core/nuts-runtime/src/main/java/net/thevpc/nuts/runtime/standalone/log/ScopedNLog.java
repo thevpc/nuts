@@ -11,6 +11,7 @@ import java.util.logging.Level;
 class ScopedNLog implements NLog {
     private final DefaultNLogModel model;
     private final NLog base;
+    private NMsg prefix;
 
     public ScopedNLog(DefaultNLogModel model, NLog base) {
         this.model = model;
@@ -50,24 +51,55 @@ class ScopedNLog implements NLog {
     public void log(Level level, Supplier<NMsg> msgSupplier) {
         NLog s = model.scopedLoggerThreadLocal.get();
         if (s != null) {
-            s.log(level, msgSupplier);
+            s.log(level, ()->prepareMsg(msgSupplier.get()));
             return;
         }
-        base.log(level, msgSupplier);
+        base.log(level, ()->prepareMsg(msgSupplier.get()));
     }
 
     @Override
     public void log(NMsg msg) {
         NLog s = model.scopedLoggerThreadLocal.get();
         if (s != null) {
-            s.log(msg);
+            s.log(prepareMsg(msg));
             return;
         }
-        base.log(msg);
+        base.log(prepareMsg(msg));
     }
 
     @Override
     public void log(NMsgBuilder msg) {
         log(msg.build());
+    }
+
+    @Override
+    public void setPrefix(NMsg prefix) {
+        this.prefix = prefix;
+    }
+
+    @Override
+    public NMsg getPrefix() {
+        return prefix;
+    }
+
+    private NMsg prepareMsg(NMsg other) {
+        if (other != null) {
+            if (prefix != null) {
+                return NMsg.ofC("%s %s", prefix, other)
+                        .withLevel(other.getLevel())
+                        .withIntent(other.getIntent())
+                        .withDurationNanos(other.getDurationNanos())
+                        .withThrowable(other.getThrowable())
+                        ;
+            } else {
+                return other;
+            }
+        } else {
+            if (prefix != null) {
+                return other;
+            } else {
+                return NMsg.ofBlank();
+            }
+        }
     }
 }
