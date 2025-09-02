@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.log.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NAssert;
@@ -17,14 +16,13 @@ import java.util.logging.*;
 public class DefaultNLog implements NLog {
     private NLogSPI logSPI;
     private static final int offValue = Level.OFF.intValue();
-    private LinkedList<NMsg> suspendedTerminalRecords = new LinkedList<>();
+    private final LinkedList<NMsg> suspendedTerminalRecords = new LinkedList<>();
     private int suspendedMax = 100;
     private boolean suspendTerminalMode = false;
     private String name;
     private NLog scoped;
     private DefaultNLogModel model;
     private boolean custom;
-    private NMsg prefix;
 
     public DefaultNLog(String name, NLogSPI logSPI, boolean suspended, DefaultNLogModel model, boolean custom) {
         this.name = name;
@@ -118,10 +116,12 @@ public class DefaultNLog implements NLog {
 //        DefaultNLogModel logManager = NWorkspaceExt.of().getModel().logModel;
         //logManager.updateHandlers(record);
         if (suspendTerminalMode) {
-            suspendedTerminalRecords.add(msg);
-            if (suspendedTerminalRecords.size() > suspendedMax) {
-                NMsg r = suspendedTerminalRecords.removeFirst();
-                logSPI.log(r);
+            synchronized (suspendedTerminalRecords) {
+                suspendedTerminalRecords.add(msg);
+                if (suspendedTerminalRecords.size() > suspendedMax) {
+                    NMsg r = suspendedTerminalRecords.removeFirst();
+                    logSPI.log(r);
+                }
             }
         }
         logSPI.log(msg);
@@ -135,57 +135,24 @@ public class DefaultNLog implements NLog {
         return scoped;
     }
 
-    @Override
-    public void runWith(Runnable r) {
-        model.runWith(this, r);
-    }
-
-    @Override
-    public <T> T callWith(NCallable<T> r) {
-        return model.callWith(this, r);
-    }
-
     public void suspendTerminal() {
         suspendTerminalMode = true;
     }
 
     public void resumeTerminal() {
         suspendTerminalMode = false;
-        for (Iterator<NMsg> iterator = suspendedTerminalRecords.iterator(); iterator.hasNext(); ) {
-            NMsg r = iterator.next();
-            iterator.remove();
-            logSPI.log(r);
+        synchronized (suspendedTerminalRecords) {
+            for (Iterator<NMsg> iterator = suspendedTerminalRecords.iterator(); iterator.hasNext(); ) {
+                NMsg r = iterator.next();
+                iterator.remove();
+                logSPI.log(r);
+            }
         }
     }
 
-    @Override
-    public void setPrefix(NMsg prefix) {
-        this.prefix = prefix;
-    }
-
-    @Override
-    public NMsg getPrefix() {
-        return prefix;
-    }
 
     private NMsg prepareMsg(NMsg other) {
-        if (other != null) {
-            if (prefix != null) {
-                return NMsg.ofC("%s %s", prefix, other)
-                        .withLevel(other.getLevel())
-                        .withIntent(other.getIntent())
-                        .withDurationNanos(other.getDurationNanos())
-                        .withThrowable(other.getThrowable())
-                        ;
-            } else {
-                return other;
-            }
-        } else {
-            if (prefix != null) {
-                return other;
-            } else {
-                return NMsg.ofPlain("");
-            }
-        }
+        NLogContext c = NLogs.of().getContext();
+        return other.withPrefix(c.getMessagePrefix()).withSuffix(c.getMessageSuffix()).withPlaceholders(c::getPlaceholder);
     }
 }
