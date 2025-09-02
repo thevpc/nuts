@@ -132,11 +132,11 @@ public interface NTexts extends NComponent {
 
     NText transform(NText text, NTextTransformer transformer, NTextTransformConfig config);
 
-    NStream<NText> flatten(NText text);
+    NNormalizedText normalize(NText text);
 
-    NStream<NText> flatten(NText text, NTextTransformConfig config);
+    NNormalizedText normalize(NText text, NTextTransformConfig config);
 
-    NStream<NText> flatten(NText text, NTextTransformer transformer, NTextTransformConfig config);
+    NNormalizedText normalize(NText text, NTextTransformer transformer, NTextTransformConfig config);
 
     String escapeText(String str);
 
