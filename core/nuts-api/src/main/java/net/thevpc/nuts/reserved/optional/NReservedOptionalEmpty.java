@@ -20,7 +20,7 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
 
     public NReservedOptionalEmpty(Supplier<NMsg> message) {
         if (message == null) {
-            message = () -> NMsg.ofMissingValue();
+            message = NMsg::ofMissingValue;
         }
         this.message = message;
     }
@@ -30,16 +30,16 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
     }
 
     public NOptional<T> withMessage(NMsg message) {
-        return new NReservedOptionalEmpty<>(message == null ? (() -> NMsg.ofMissingValue()) : () -> message);
+        return new NReservedOptionalEmpty<T>(message == null ? (NMsg::ofMissingValue) : () -> message);
     }
 
     public NOptional<T> withName(NMsg name) {
-        return new NReservedOptionalEmpty<>(name == null ? (() -> NMsg.ofMissingValue()) : () -> NMsg.ofMissingValue(name));
+        return new NReservedOptionalEmpty<T>(name == null ? (NMsg::ofMissingValue) : () -> NMsg.ofMissingValue(name));
     }
 
     @Override
     public NOptional<T> withName(String name) {
-        return new NReservedOptionalEmpty<>(name == null ? (() -> NMsg.ofMissingValue()) : () -> NMsg.ofMissingValue(name));
+        return new NReservedOptionalEmpty<T>(name == null ? (NMsg::ofMissingValue) : () -> NMsg.ofMissingValue(name));
     }
 
     @Override
