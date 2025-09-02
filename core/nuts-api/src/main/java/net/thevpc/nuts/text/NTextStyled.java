@@ -29,7 +29,7 @@ package net.thevpc.nuts.text;
 /**
  * @app.category Format
  */
-public interface NTextStyled extends NText {
+public interface NTextStyled extends NPrimitiveText {
     static NText of(String str, NTextStyle style) {
         return NText.ofStyled(str, style);
     }
