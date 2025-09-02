@@ -26,11 +26,13 @@
  */
 package net.thevpc.nuts.format;
 
+import net.thevpc.nuts.text.NText;
+
 /**
  * @app.category Format
  * @since 0.5.5
  */
 public interface NTableBordersFormat {
 
-    String format(NTableSeparator s);
+    NText format(NTableSeparator s);
 }
