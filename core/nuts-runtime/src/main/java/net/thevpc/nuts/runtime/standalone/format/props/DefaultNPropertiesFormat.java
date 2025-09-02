@@ -198,7 +198,7 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
     private void printMap(NPrintStream out, NText prefix, Map<Object, Object> props) {
         int len = 1;
         for (Object extraKey : props.keySet()) {
-            int x = stringValue(extraKey).textLength();
+            int x = stringValue(extraKey).length();
             if (x > len) {
                 len = x;
             }
@@ -233,7 +233,7 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
             prefix = txt.ofBlank();
         }
         NText formattedKey = compact ? key
-                : txt.ofBuilder().append(key).append(CoreStringUtils.fillString(' ', len - key.textLength()));
+                : txt.ofBuilder().append(key).append(CoreStringUtils.fillString(' ', len - key.length()));
         if (fancySep != null) {
             NText cc = compact ? key : txt.ofPlain(NStringUtils.formatAlign("", len + 3, NPositionType.FIRST));
             String[] split = value.toString().split(fancySep);
