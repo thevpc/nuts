@@ -118,7 +118,7 @@ public class SqlCodeHighlighter implements NCodeHighlighter {
                     } else {
                         NText[] d = StringReaderExtUtils.readJSIdentifier(ar);
                         if (d != null) {
-                            if (d.length == 1 && d[0].getType() == NTextType.PLAIN) {
+                            if (d.length == 1 && d[0].type() == NTextType.PLAIN) {
                                 String txt2 = ((NTextPlain) d[0]).getValue();
                                 if (reservedWords1.contains(txt2.toLowerCase())) {
                                     d[0] = txt.ofStyled(d[0], NTextStyle.keyword());
