@@ -6,8 +6,6 @@
 package net.thevpc.nuts.runtime.standalone.format.tree;
 
 import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.List;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NContentType;
@@ -17,7 +15,10 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.NIdFormatHelper;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
+import net.thevpc.nuts.runtime.standalone.text.art.tree.XNode;
 import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextArt;
+import net.thevpc.nuts.text.NTextArtTreeRenderer;
 import net.thevpc.nuts.text.NTextBuilder;
 
 /**
@@ -74,18 +75,12 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
     }
 
     public void formatElement(Object object, long index, boolean last) {
-        NTreeFormat tree = NTreeFormat.of();
-        List<String> options = new ArrayList<>();
-        options.add("--omit-root");
-        if (!last) {
-            options.add("--infinite");
-        }
-        
-        tree.configure(false, options.toArray(new String[0]));
-        tree.setNodeFormat(nTreeNodeFormat);
-        //the object must be second level (not root)
-        tree.setValue(new AbstractMap.SimpleEntry<Object, Object>("ROOT",object));
-        tree.println(getWriter());
+        NTextArtTreeRenderer treeRenderer = NTextArt.of().getDefaultTreeRenderer().get()
+                .setNodeFormat(nTreeNodeFormat)
+                .setOmitRoot(true)
+                .setInfinite(!last)
+                ;
+        getWriter().println(treeRenderer.render(NTreeFormat.of(new AbstractMap.SimpleEntry<Object, Object>("ROOT",object)).getModel()));
         getWriter().flush();
     }
 
