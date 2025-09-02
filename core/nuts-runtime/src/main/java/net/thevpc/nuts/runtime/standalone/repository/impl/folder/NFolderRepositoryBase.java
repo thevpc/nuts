@@ -192,12 +192,12 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
         String groupId = id.getGroupId();
         String artifactId = id.getArtifactId();
         NPath foldersFileUrl = config().getLocationPath().resolve(groupId.replace('.', '/') + "/" + artifactId + "/");
-        NSession session = getWorkspace().currentSession();
+//        NSession session = getWorkspace().currentSession();
 
         return NIteratorBuilder.ofSupplier(
                 () -> {
 //                    List<NId> ret = new ArrayList<>();
-                    session.getTerminal().printProgress(NMsg.ofC("looking for versions of %s at %s", id, foldersFileUrl.toCompressedForm()));
+                    NSession.of().getTerminal().printProgress(NMsg.ofC("looking for versions of %s at %s", id, foldersFileUrl.toCompressedForm()));
                     try {
                         return NIterator.of(
                                 foldersFileUrl.stream().filter(
