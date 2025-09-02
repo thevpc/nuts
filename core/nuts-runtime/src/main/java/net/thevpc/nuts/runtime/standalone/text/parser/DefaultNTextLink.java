@@ -26,11 +26,12 @@
  */
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
-import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.text.NTextLink;
-import net.thevpc.nuts.text.NTextType;
+import net.thevpc.nuts.util.NStringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -51,13 +52,13 @@ public class DefaultNTextLink extends NTextSpecialBase implements NTextLink {
 
 
     @Override
-    public NTextType getType() {
+    public NTextType type() {
         return NTextType.LINK;
     }
 
     @Override
     public boolean isEmpty() {
-        return NBlankable.isBlank(value);
+        return value.isEmpty();
     }
 
     @Override
@@ -85,7 +86,7 @@ public class DefaultNTextLink extends NTextSpecialBase implements NTextLink {
     }
 
     @Override
-    public int textLength() {
+    public int length() {
         return value == null ? 0 : value.length();
     }
 
@@ -96,4 +97,54 @@ public class DefaultNTextLink extends NTextSpecialBase implements NTextLink {
         }
         return this;
     }
+
+    @Override
+    public List<NPrimitiveText> toCharList() {
+        List<NPrimitiveText> all = new ArrayList<>();
+        for (char aChar : value.toCharArray()) {
+            all.add(new DefaultNTextStyled(new DefaultNTextPlain(String.valueOf(aChar)), NTextStyles.of(NTextStyle.underlined())));
+        }
+        return all;
+    }
+
+    @Override
+    public NText substring(int start, int end) {
+        return prerender().substring(start, end);
+    }
+
+    public List<NText> split(String chars, boolean returnSeparator) {
+        return prerender().split(chars, returnSeparator);
+    }
+
+    private NText prerender() {
+        return new DefaultNTextStyled(new DefaultNTextPlain(value), NTextStyles.of(NTextStyle.underlined()));
+    }
+
+    @Override
+    public NText trimLeft() {
+        String c = NStringUtils.trimLeft(value);
+        if(Objects.equals(value, c)){
+            return this;
+        }
+        return new DefaultNTextLink(getSeparator(), c);
+    }
+
+    @Override
+    public NText trimRight() {
+        String c = NStringUtils.trimRight(value);
+        if(Objects.equals(value, c)){
+            return this;
+        }
+        return new DefaultNTextLink(getSeparator(), c);
+    }
+
+    @Override
+    public NText trim() {
+        String c = NStringUtils.trim(value);
+        if(Objects.equals(value, c)){
+            return this;
+        }
+        return new DefaultNTextLink(getSeparator(), c);
+    }
+
 }
