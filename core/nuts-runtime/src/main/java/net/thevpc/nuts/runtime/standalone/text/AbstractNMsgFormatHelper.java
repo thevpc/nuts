@@ -9,6 +9,8 @@ import net.thevpc.nuts.util.NMsg;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.function.Function;
 
 public abstract class AbstractNMsgFormatHelper {
     protected NMsg m;
@@ -32,6 +34,23 @@ public abstract class AbstractNMsgFormatHelper {
         if (params == null) {
             params = new Object[0];
         }
+    }
+
+    public Object resolvePlaceholder(Object any) {
+        if(any instanceof NMsg) {
+            return ((NMsg) any).withPlaceholders(m.getPlaceholders());
+        }
+        if(any instanceof NMsg.Placeholder) {
+            String n = ((NMsg.Placeholder) any).getName();
+            Function<String, ?> h = m.getPlaceholders();
+            if(h!=null) {
+                Object v = h.apply(n);
+                if(v!=null){
+                    return v;
+                }
+            }
+        }
+        return any;
     }
 
     public NText format() {
@@ -97,5 +116,5 @@ public abstract class AbstractNMsgFormatHelper {
         throw new NUnsupportedEnumException(t.type());
     }
 
-    protected abstract NText formatPlain(String ss) ;
+    protected abstract NText formatPlain(String ss);
 }
