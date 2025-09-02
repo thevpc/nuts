@@ -76,23 +76,23 @@ public class DefaultNTexts implements NTexts {
         register(File.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
         register(URL.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
         register(Class.class, (o, t) -> {
-            Class cc=(Class) o;
+            Class cc = (Class) o;
             Class dc = cc.getDeclaringClass();
-            if(dc!=null){
+            if (dc != null) {
                 NText p = t.of(dc);
-                NTextBuilder tb=new DefaultNTextNodeBuilder();
+                NTextBuilder tb = new DefaultNTextBuilder();
                 tb.append(p);
-                tb.append(t.ofStyled(".",NTextStyle.comments()));
-                tb.append(t.ofStyled(cc.getSimpleName(),NTextStyle.option()));
+                tb.append(t.ofStyled(".", NTextStyle.comments()));
+                tb.append(t.ofStyled(cc.getSimpleName(), NTextStyle.option()));
                 return tb.build();
-            }else{
-                NTextBuilder tb=new DefaultNTextNodeBuilder();
+            } else {
+                NTextBuilder tb = new DefaultNTextBuilder();
                 Package p = cc.getPackage();
-                if(p!=null){
-                    tb.append(t.ofStyled(p.getName(),NTextStyle.comments()));
-                    tb.append(t.ofStyled(".",NTextStyle.comments()));
+                if (p != null) {
+                    tb.append(t.ofStyled(p.getName(), NTextStyle.comments()));
+                    tb.append(t.ofStyled(".", NTextStyle.comments()));
                 }
-                tb.append(t.ofStyled(cc.getSimpleName(),NTextStyle.info()));
+                tb.append(t.ofStyled(cc.getSimpleName(), NTextStyle.info()));
                 return tb.build();
             }
         });
@@ -182,13 +182,13 @@ public class DefaultNTexts implements NTexts {
         Object msg = m.getMessage();
         switch (format) {
             case CFORMAT: {
-                return new NMsgCFormatHelper(m,this).format();
+                return new NMsgCFormatHelper(m, this).format();
             }
             case JFORMAT: {
-                return new NMsgJFormatHelper(m,this).format();
+                return new NMsgJFormatHelper(m, this).format();
             }
             case VFORMAT: {
-                return new NMsgVFormatHelper(m,this).format();
+                return new NMsgVFormatHelper(m, this).format();
             }
             case PLAIN: {
                 return this.ofPlain((String) msg);
@@ -221,7 +221,7 @@ public class DefaultNTexts implements NTexts {
 
     @Override
     public NTextBuilder ofBuilder() {
-        return new DefaultNTextNodeBuilder();
+        return new DefaultNTextBuilder();
     }
 
     @Override
@@ -296,7 +296,7 @@ public class DefaultNTexts implements NTexts {
     @Override
     public NText ofStyled(NText other, NTextStyles styles) {
         if (other == null) {
-            return ofPlain("");
+            return ofBlank();
         }
         if (styles == null || styles.isPlain()) {
             return other;
@@ -503,7 +503,7 @@ public class DefaultNTexts implements NTexts {
         return new DefaultNTextInclude("" + sep, value);
     }
 
-    public NOptional<NTextFormatTheme> getTheme(String name){
+    public NOptional<NTextFormatTheme> getTheme(String name) {
         return shared.getTheme(name);
     }
 
@@ -694,17 +694,29 @@ public class DefaultNTexts implements NTexts {
     }
 
     @Override
-    public NStream<NText> flatten(NText text) {
-        return flatten(text, null, null);
+    public NNormalizedText normalize(NText text) {
+        return normalize(text, null, null);
     }
 
     @Override
-    public NStream<NText> flatten(NText text, NTextTransformConfig config) {
-        return flatten(text, null, config);
+    public NNormalizedText normalize(NText text, NTextTransformConfig config) {
+        return normalize(text, null, config);
     }
 
     @Override
-    public NStream<NText> flatten(NText text, NTextTransformer transformer, NTextTransformConfig config) {
+    public NNormalizedText normalize(NText text, NTextTransformer transformer, NTextTransformConfig config) {
+        List<NNormalizedText> li = normalizeStream(text, transformer, config).toList();
+        if (li.isEmpty()) {
+            return (NNormalizedText) NText.ofBlank();
+        }
+        if (li.size() == 1) {
+            return li.get(0);
+        }
+        return NText.ofList(li.toArray(new NNormalizedText[0]));
+    }
+
+
+    public NStream<NNormalizedText> normalizeStream(NText text, NTextTransformer transformer, NTextTransformConfig config) {
         if (config == null) {
             config = new NTextTransformConfig();
         }
@@ -724,7 +736,7 @@ public class DefaultNTexts implements NTexts {
             private void refactorNext() {
                 while (!queue.isEmpty()) {
                     NText z = queue.peek();
-                    switch (z.getType()) {
+                    switch (z.type()) {
                         case PLAIN:
                         case CODE:
                         case ANCHOR:
@@ -777,7 +789,7 @@ public class DefaultNTexts implements NTexts {
                 refactorNext();
                 return queue.remove();
             }
-        }).redescribe(NDescribables.ofDesc("flattened text"));
+        }).instanceOf(NNormalizedText.class).redescribe(NDescribables.ofDesc("flattened text"));
     }
 
     @Override
@@ -791,7 +803,7 @@ public class DefaultNTexts implements NTexts {
     int resolveRootLevel(NText text) {
         NRef<Integer> level = NRef.ofNull();
         traverseDFS(text, n -> {
-            if (n.getType() == NTextType.TITLE) {
+            if (n.type() == NTextType.TITLE) {
                 int lvl = ((NTextTitle) n).getLevel();
                 if (level.isNull() || level.get() > lvl) {
                     level.set(lvl);
@@ -835,7 +847,7 @@ public class DefaultNTexts implements NTexts {
                 int offset = rootLevel - level;
                 NTextTransformerContext c = new DefaultNTextTransformerContext(config);
                 text = transform(text, (text1, context) -> {
-                    if (text1.getType() == NTextType.TITLE) {
+                    if (text1.type() == NTextType.TITLE) {
                         NTextTitle t = (NTextTitle) text1;
                         return ofTitle(t.getChild(), t.getLevel() + offset);
                     }
@@ -864,11 +876,11 @@ public class DefaultNTexts implements NTexts {
         if (anchor != null) {
             List<NText> ok = new ArrayList<>();
             boolean foundAnchor = false;
-            if (text.getType() == NTextType.LIST) {
+            if (text.type() == NTextType.LIST) {
                 for (NText o : ((NTextList) text)) {
                     if (foundAnchor) {
                         ok.add(o);
-                    } else if (o.getType() == NTextType.ANCHOR) {
+                    } else if (o.type() == NTextType.ANCHOR) {
                         if (anchor.equals(((DefaultNTextAnchor) o).getValue())) {
                             foundAnchor = true;
                         }
@@ -887,7 +899,7 @@ public class DefaultNTexts implements NTexts {
         if (text == null) {
             return;
         }
-        switch (text.getType()) {
+        switch (text.type()) {
             case PLAIN:
             case CODE:
             case ANCHOR:
@@ -934,7 +946,7 @@ public class DefaultNTexts implements NTexts {
                 visitor.visit(t);
                 break;
             }
-            case INCLUDE:{
+            case INCLUDE: {
                 NTextInclude t = (NTextInclude) text;
                 visitor.visit(t);
                 break;
@@ -948,7 +960,7 @@ public class DefaultNTexts implements NTexts {
         q.add(text);
         while (!q.isEmpty()) {
             NText u = q.remove();
-            switch (text.getType()) {
+            switch (text.type()) {
                 case PLAIN:
                 case CODE:
                 case ANCHOR:
@@ -1012,7 +1024,7 @@ public class DefaultNTexts implements NTexts {
         if (pt != text) {
             return pt;
         }
-        switch (text.getType()) {
+        switch (text.type()) {
             case PLAIN:
             case CODE:
             case ANCHOR:
@@ -1076,7 +1088,7 @@ public class DefaultNTexts implements NTexts {
                 }
                 return null;
             }
-            case INCLUDE:{
+            case INCLUDE: {
                 return null;
             }
         }
@@ -1142,6 +1154,7 @@ public class DefaultNTexts implements NTexts {
             public boolean configureFirst(NCmdLine cmdLine) {
                 return false;
             }
+
             @Override
             public int getSupportLevel(NSupportLevelContext context) {
                 return NConstants.Support.DEFAULT_SUPPORT;
