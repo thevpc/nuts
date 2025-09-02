@@ -13,24 +13,23 @@
  * <br>
  * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
  */
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
-import net.thevpc.nuts.text.NTerminalCmd;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextCmd;
-import net.thevpc.nuts.text.NTextType;
+import net.thevpc.nuts.text.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -46,13 +45,14 @@ public class DefaultNTextCommand extends NTextSpecialBase implements NTextCmd {
                 , end);
         this.command = command;
     }
+
     @Override
     public boolean isEmpty() {
-        return command==null;
+        return command == null;
     }
 
     @Override
-    public NTextType getType() {
+    public NTextType type() {
         return NTextType.COMMAND;
     }
 
@@ -69,10 +69,12 @@ public class DefaultNTextCommand extends NTextSpecialBase implements NTextCmd {
         DefaultNTextCommand that = (DefaultNTextCommand) o;
         return Objects.equals(command, that.command);
     }
+
     @Override
     public NText immutable() {
         return this;
     }
+
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), command);
@@ -84,7 +86,7 @@ public class DefaultNTextCommand extends NTextSpecialBase implements NTextCmd {
     }
 
     @Override
-    public int textLength() {
+    public int length() {
         return 0;
     }
 
@@ -93,4 +95,32 @@ public class DefaultNTextCommand extends NTextSpecialBase implements NTextCmd {
         return this;
     }
 
+    @Override
+    public List<NPrimitiveText> toCharList() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public NText substring(int start, int end) {
+        return new DefaultNTextPlain("");
+    }
+
+    public List<NText> split(String chars, boolean returnSeparator) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public NText trim() {
+        return this;
+    }
+
+    @Override
+    public NText trimLeft() {
+        return this;
+    }
+
+    @Override
+    public NText trimRight() {
+        return this;
+    }
 }
