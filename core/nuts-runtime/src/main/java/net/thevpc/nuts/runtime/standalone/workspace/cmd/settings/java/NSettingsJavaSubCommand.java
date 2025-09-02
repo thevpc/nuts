@@ -14,6 +14,8 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.NPlatformFamily;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextArt;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,16 +91,16 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
             }
             return true;
         } else if (cmdLine.next("list java","java list").isPresent()) {
-            NTableFormat t = NTableFormat.of()
+            //NTableFormat t = NTableFormat.of()
                     //                    .setBorder(TableFormatter.SPACE_BORDER)
-                    .setVisibleHeader(true);
+            //        .setVisibleHeader(true);
             NMutableTableModel m = NMutableTableModel.of();
-            t.setValue(m);
-            m.addHeaderCells("Name", "Version", "Path");
+            //t.setValue(m);
+            m.addHeaderCells(NText.ofPlain("Name"), NText.ofPlain("Version"), NText.ofPlain("Path"));
             while (cmdLine.hasNext()) {
-                if (!t.configureFirst(cmdLine)) {
+                //if (!t.configureFirst(cmdLine)) {
                     cmdLine.setCommandName("config list java").throwUnexpectedArgument();
-                }
+                //}
             }
             if (cmdLine.isExecMode()) {
                 NPlatformLocation[] sdks = workspace.findPlatforms(NPlatformFamily.JAVA, null).toArray(NPlatformLocation[]::new);
@@ -121,9 +123,9 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                     }
                 });
                 for (NPlatformLocation jloc : sdks) {
-                    m.addRow(jloc.getName(), jloc.getVersion(), jloc.getPath());
+                    m.addRow(NText.of(jloc.getName()), NText.of(jloc.getVersion()), NText.of(jloc.getPath()));
                 }
-                out.print(t.format());
+                out.print(NTextArt.of().getDefaultTableRenderer().get().render(m));
             }
             return true;
         }
