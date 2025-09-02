@@ -38,22 +38,6 @@ public interface NTableFormat extends NContentTypeFormat {
        return NExtensions.of(NTableFormat.class);
     }
 
-    boolean isVisibleHeader();
-
-    NTableFormat setVisibleHeader(boolean visibleHeader);
-
-    NTableBordersFormat getBorder();
-
-    NTableFormat setBorder(NTableBordersFormat border);
-
-    NTableFormat setBorder(String borderName);
-
-    NTableFormat setVisibleColumn(int col, Boolean visible);
-
-    Boolean getVisibleColumn(int col);
-
-    NTableFormat setCellFormat(NTableCellFormat formatter);
-
     NTableModel getModel();
 
     @Override
