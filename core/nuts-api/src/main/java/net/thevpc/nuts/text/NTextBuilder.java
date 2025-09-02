@@ -69,13 +69,15 @@ public interface NTextBuilder extends NText, Iterable<NText> {
 
     NTextBuilder appendAll(Collection<?> others);
 
+    NTextBuilder appendAll(NText[] others);
+
     NText build();
 
     List<NText> getChildren();
 
     NText subChildren(int from, int to);
 
-    NText substring(int from, int to);
+    NText substring(int start, int end);
 
     NTextBuilder delete(int start, int end);
 
@@ -90,6 +92,12 @@ public interface NTextBuilder extends NText, Iterable<NText> {
     int size();
 
     NText get(int index);
+
+    NTextBuilder trim();
+
+    NTextBuilder trimLeft();
+
+    NTextBuilder trimRight();
 
     /**
      * replaces the builder content with the simplest text in the form of suite
@@ -124,4 +132,7 @@ public interface NTextBuilder extends NText, Iterable<NText> {
      */
     NTextBuilder readLine();
 
+    NTextBuilder newLine();
+
+    NTextBuilder clear();
 }
