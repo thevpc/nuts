@@ -43,7 +43,7 @@ public abstract class AbstractNMsgFormatHelper {
     }
 
     private NText convertCurrent(NText t) {
-        switch (t.getType()) {
+        switch (t.type()) {
             case PLAIN: {
                 String ss = ((NTextPlain) t).getValue();
                 return formatPlain(ss);
@@ -94,7 +94,7 @@ public abstract class AbstractNMsgFormatHelper {
                 return convertCurrent(c.build());
             }
         }
-        throw new NUnsupportedEnumException(t.getType());
+        throw new NUnsupportedEnumException(t.type());
     }
 
     protected abstract NText formatPlain(String ss) ;
