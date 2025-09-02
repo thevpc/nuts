@@ -27,6 +27,7 @@ package net.thevpc.nuts.format;
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.text.NText;
 
 /**
  * Mutable Table Model
@@ -60,7 +61,7 @@ public interface NMutableTableModel extends NTableModel, NComponent {
      * @param values cells
      * @return {@code this} instance
      */
-    NMutableTableModel addHeaderCells(Object... values);
+    NMutableTableModel addHeaderCells(NText... values);
 
     /**
      * add header cell
@@ -68,7 +69,7 @@ public interface NMutableTableModel extends NTableModel, NComponent {
      * @param value cell
      * @return {@code this} instance
      */
-    NMutableTableModel addHeaderCell(Object value);
+    NMutableTableModel addHeaderCell(NText value);
 
     /**
      * add row cells
@@ -76,7 +77,7 @@ public interface NMutableTableModel extends NTableModel, NComponent {
      * @param values row cells
      * @return {@code this} instance
      */
-    NMutableTableModel addRow(Object... values);
+    NMutableTableModel addRow(NText... values);
 
     /**
      * add row cells
@@ -84,7 +85,7 @@ public interface NMutableTableModel extends NTableModel, NComponent {
      * @param values row cells
      * @return {@code this} instance
      */
-    NMutableTableModel addCells(Object... values);
+    NMutableTableModel addCells(NText... values);
 
     /**
      * add row cell
@@ -92,7 +93,7 @@ public interface NMutableTableModel extends NTableModel, NComponent {
      * @param value cell
      * @return {@code this} instance
      */
-    NMutableTableModel addCell(Object value);
+    NMutableTableModel addCell(NText value);
 
     /**
      * update cell at the given position
@@ -102,7 +103,7 @@ public interface NMutableTableModel extends NTableModel, NComponent {
      * @param value  cell value
      * @return {@code this} instance
      */
-    NMutableTableModel setCellValue(int row, int column, Object value);
+    NMutableTableModel setCellValue(int row, int column, NText value);
 
     /**
      * update cell colspan
@@ -131,7 +132,7 @@ public interface NMutableTableModel extends NTableModel, NComponent {
      * @param value  new value
      * @return {@code this} instance
      */
-    NMutableTableModel setHeaderValue(int column, Object value);
+    NMutableTableModel setHeaderValue(int column, NText value);
 
     /**
      * update header colspan
