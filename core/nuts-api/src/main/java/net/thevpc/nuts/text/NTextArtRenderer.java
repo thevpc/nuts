@@ -31,5 +31,4 @@ public interface NTextArtRenderer {
 
     String getName();
 
-    NText render(NText text);
 }
