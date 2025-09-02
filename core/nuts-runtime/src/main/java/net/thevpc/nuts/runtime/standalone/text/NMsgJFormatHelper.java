@@ -39,7 +39,7 @@ public class NMsgJFormatHelper extends AbstractNMsgFormatHelper{
                         paramIndex = NLiteral.of(paramIndexStr).asInt().get();
                     }
                 }
-                Object a = params[paramIndex];
+                Object a = resolvePlaceholder(params[paramIndex]);
                 if (a == null) {
                     sb.append((String) null);
                 } else if (NTextUtils.isSpecialLiteral(a)) {
