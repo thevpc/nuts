@@ -775,7 +775,8 @@ public class NStringUtils {
 
     /**
      * text replacing all $abc and ${abc} vars
-     * @param text text to parse
+     *
+     * @param text   text to parse
      * @param mapper mapper function. when returns null, no replacement is performed
      * @return text replacing all $abc and ${abc} vars
      */
@@ -1144,24 +1145,53 @@ public class NStringUtils {
     }
 
     public static String replaceTail(String s, String oldTail, String newTail) {
-        NAssert.requireNonNull(s,"string");
-        NAssert.requireNonNull(s,"oldTail");
-        NAssert.requireTrue(!oldTail.isEmpty(),"oldTail not empty");
+        NAssert.requireNonNull(s, "string");
+        NAssert.requireNonNull(s, "oldTail");
+        NAssert.requireTrue(!oldTail.isEmpty(), "oldTail not empty");
         if (s.endsWith(oldTail)) {
-            return s.substring(0, s.length() - oldTail.length()) + (newTail==null?"":newTail);
-        }else{
+            return s.substring(0, s.length() - oldTail.length()) + (newTail == null ? "" : newTail);
+        } else {
             return s;
         }
     }
 
     public static String replaceHead(String s, String oldHead, String newHead) {
-        NAssert.requireNonNull(s,"string");
-        NAssert.requireNonNull(s,"oldTail");
-        NAssert.requireTrue(!oldHead.isEmpty(),"oldHead not empty");
+        NAssert.requireNonNull(s, "string");
+        NAssert.requireNonNull(s, "oldTail");
+        NAssert.requireTrue(!oldHead.isEmpty(), "oldHead not empty");
         if (s.startsWith(oldHead)) {
             return newHead + s.substring(oldHead.length());
-        }else{
+        } else {
             return s;
         }
+    }
+
+    public static StringBuilder trim(StringBuilder sb) {
+        trimLeft(sb);
+        trimRight(sb);
+        return sb;
+    }
+
+    public static StringBuilder trimLeft(StringBuilder sb) {
+        int len = sb.length();
+        int start = 0;
+        while (start < len && Character.isWhitespace(sb.charAt(start))) {
+            start++;
+        }
+        if (start > 0) {
+            sb.delete(0, start);
+        }
+        return sb;
+    }
+
+    public static StringBuilder trimRight(StringBuilder sb) {
+        int end = sb.length() - 1;
+        while (end >= 0 && Character.isWhitespace(sb.charAt(end))) {
+            end--;
+        }
+        if (end < sb.length() - 1) {
+            sb.delete(end + 1, sb.length());
+        }
+        return sb;
     }
 }
