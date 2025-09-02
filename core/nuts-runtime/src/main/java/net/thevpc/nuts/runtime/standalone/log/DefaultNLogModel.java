@@ -59,6 +59,7 @@ public class DefaultNLogModel {
     private NLogFactorySPI defaultFactorySPI = new NLogFactorySPIJUL();
     private NLogFactorySPI factorySPI;
     private NLog nullLogger;
+    private InheritableThreadLocal<Map<String, Object>> mdc = new InheritableThreadLocal<>();
     final InheritableThreadLocal<NLog> scopedLoggerThreadLocal = new InheritableThreadLocal<>();
 
     public DefaultNLogModel(NWorkspace ws) {
@@ -81,6 +82,61 @@ public class DefaultNLogModel {
             logConfig.setLogFileSize(lc.getLogFileSize());
         }
 //        out = ((NWorkspaceExt) ws).getModel().bootModel.getSystemTerminal().err();
+    }
+
+    public Object getMdc(String s) {
+        Map<String, Object> m = mdc.get();
+        if (m == null) {
+            return null;
+        }
+        return m.get(s);
+    }
+
+    public void setMdc(String s, Object value) {
+        if (value != null) {
+            Map<String, Object> m = mdc.get();
+            if (m == null) {
+                m = new HashMap<>();
+                mdc.set(m);
+            }
+            m.put(s, value);
+        } else {
+            Map<String, Object> m = mdc.get();
+            if (m == null) {
+                return;
+            }
+            m.remove(s);
+            if (m.isEmpty()) {
+                mdc.remove();
+            }
+        }
+    }
+
+    public void setMdc(Map<String, Object> map) {
+        if (map != null) {
+            Map<String, Object> m = mdc.get();
+            boolean rem = false;
+            for (Map.Entry<String, Object> e : map.entrySet()) {
+                String s = e.getKey();
+                Object value = e.getValue();
+                if (value != null) {
+                    if (m == null) {
+                        m = new HashMap<>();
+                        mdc.set(m);
+                    }
+                    m.put(s, value);
+                    rem = false;
+                } else {
+                    if (m != null) {
+                        m.remove(s);
+                        rem = true;
+                    }
+                }
+            }
+            if (rem && m.isEmpty()) {
+                mdc.remove();
+            }
+        }
     }
 
     public NLogFactorySPI getFactorySPI() {
@@ -137,13 +193,13 @@ public class DefaultNLogModel {
     }
 
     public NLog getNullLogger() {
-        if(nullLogger==null){
-            nullLogger=new DefaultNLog("", new NLogSPI() {
+        if (nullLogger == null) {
+            nullLogger = new DefaultNLog("", new NLogSPI() {
                 @Override
                 public void log(NMsg message) {
 
                 }
-            },false,this, false);
+            }, false, this, false);
         }
         return nullLogger;
     }
@@ -152,14 +208,14 @@ public class DefaultNLogModel {
         Map<String, NLog> loaded = loaded();
         NLog y = loaded.get(name);
         if (y == null) {
-            y = new DefaultNLog(name, getFactorySPI().getLogSPI(name), false,this,false);
+            y = new DefaultNLog(name, getFactorySPI().getLogSPI(name), false, this, false);
             loaded.put(name, y);
         }
         return y;
     }
 
-    public NLog createCustomLogger(String name,NLogSPI spi) {
-        return new DefaultNLog(name, spi, false,this,true);
+    public NLog createCustomLogger(String name, NLogSPI spi) {
+        return new DefaultNLog(name, spi, false, this, true);
     }
 
     public void runWith(NLog log, Runnable r) {
