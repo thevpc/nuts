@@ -29,7 +29,7 @@ import java.awt.Image;
  *
  * @author vpc
  */
-public interface NTextArtImageRenderer extends NTextArtRenderer {
+public interface NTextArtImageRenderer extends NTextArtTextRenderer {
 
     NTextArtImageRenderer setFontName(String fontName);
 
