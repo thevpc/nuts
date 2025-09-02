@@ -2037,8 +2037,15 @@ public final class NBootWorkspaceCmdLineParser {
             case "ANSI":
             case "A":
                 return "ANSI";
+            case "TRUE":
+            case "YES":
+            case "Y":
+            case "SUPPORTED":
             case "FORMATTED":
                 return "FORMATTED";
+            case "NO":
+            case "FALSE":
+            case "UNSUPPORTED":
             case "FILTERED":
                 return "FILTERED";
             case "":
