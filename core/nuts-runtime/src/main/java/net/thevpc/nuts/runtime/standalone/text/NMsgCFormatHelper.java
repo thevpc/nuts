@@ -40,9 +40,9 @@ public class NMsgCFormatHelper extends AbstractNMsgFormatHelper {
 //                                new Formatter(sb2, locale).format(part.getValue(), txt.ofText(a));
 //                                sb.append(sb2);
                         NText u = txt.of(a);
-                        if (u.getType() == NTextType.PLAIN) {
+                        if (u.type() == NTextType.PLAIN) {
                             sb.append(NText.ofPlain(doFormatPlain(((NTextPlain) u).getValue(), part.getValue())));
-                        } else if (u.getType() == NTextType.STYLED && ((NTextStyled) u).getChild().getType() == NTextType.PLAIN) {
+                        } else if (u.type() == NTextType.STYLED && ((NTextStyled) u).getChild().type() == NTextType.PLAIN) {
                             sb.append(NText.ofStyled(doFormatPlain(
                                     ((NTextPlain) ((NTextStyled) u).getChild()).getValue()
                                     , part.getValue()), ((NTextStyled) u).getStyles()));
