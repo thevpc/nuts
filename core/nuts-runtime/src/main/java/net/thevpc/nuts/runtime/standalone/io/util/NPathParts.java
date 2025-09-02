@@ -311,7 +311,7 @@ public class NPathParts {
         NTexts txt = NTexts.of();
         NTextBuilder result = txt.ofBuilder();
         result.append(protocol);
-        if (authority != null && authority.textLength() > 0) {
+        if (authority != null && authority.length() > 0) {
             result.append("://", NTextStyle.path());
             result.append(authority);
         } else {
