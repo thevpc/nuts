@@ -106,7 +106,7 @@ public class TraceNProgressListener implements NProgressListener/*, NutsOutputSt
             }
             formattedLine.append(" ").append(event.getMessage()).append(" ");
             String ff = formattedLine.toString();
-            int length = text.ofBuilder().append(ff).textLength();
+            int length = text.ofBuilder().append(ff).length();
             if (length < minLength) {
                 CoreStringUtils.fillString(' ', minLength - length, formattedLine);
             } else {
