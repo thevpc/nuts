@@ -26,138 +26,83 @@ package net.thevpc.nuts.runtime.standalone.text.art;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.text.art.figlet.FigletNTextArtImageRenderer;
 import net.thevpc.nuts.runtime.standalone.text.art.img.PixelNTextArtImageRenderer;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.text.NTextArt;
-import net.thevpc.nuts.text.NTextArtImageRenderer;
 import net.thevpc.nuts.util.NCollections;
-import net.thevpc.nuts.text.NTextArtRenderer;
 
 /**
  * @author vpc
  */
 @NComponentScope(NScopeType.WORKSPACE)
 public class NTextArtImpl implements NTextArt {
+    private List<NTextArtRendererFactory> factories;
 
-    private void loadResourceList(String rendererType, Map<String, NTextArtRenderer> all) {
-        try {
-            Enumeration<URL> resources = Thread.currentThread().getContextClassLoader().getResources("META-INF/textart/" + rendererType + ".lst");
-            for (URL url : NCollections.list(resources)) {
-                for (String line : NPath.of(url).lines()) {
-                    line = line.trim();
-                    if (!line.isEmpty() && !line.startsWith("#")) {
-                        String id = rendererType + ":" + line;
-                        getRenderer(id).ifPresent(x -> {
-                            all.put(id, x);
-                        });
-                    }
-                }
-            }
-        } catch (IOException ex) {
-            // just ignore
+    public List<NTextArtRendererFactory> getFactories() {
+        if (factories == null) {
+            factories = NExtensions.of().createComponents(NTextArtRendererFactory.class, null);
         }
-        try {
-            Enumeration<URL> resources = NTextArtImpl.class.getClassLoader().getResources("META-INF/textart/" + rendererType + ".lst");
-            for (URL url : NCollections.list(resources)) {
-                for (String line : NPath.of(url).lines()) {
-                    line = line.trim();
-                    if (!line.isEmpty() && !line.startsWith("#")) {
-                        String id = rendererType + ":" + line;
-                        getRenderer(id).ifPresent(x -> {
-                            all.put(id, x);
-                        });
-                    }
-                }
-            }
-        } catch (IOException ex) {
-            // just ignore
-        }
+        return factories;
     }
 
     @Override
     public List<NTextArtRenderer> getRenderers() {
-
-        Map<String, NTextArtRenderer> all = new LinkedHashMap<>();
-        for (String id : new String[]{
-                "pixel:cipher",
-                "pixel:hash",
-                "pixel:dot",
-                "pixel:star",
-                "pixel:dollar",
-                "pixel:standard"}) {
-            all.put(id, getRenderer(id).get());
+        List<NTextArtRenderer> all = new ArrayList<>();
+        for (NTextArtRendererFactory factory : getFactories()) {
+            for (NTextArtRenderer nTextArtRenderer : factory.listRenderers().collect(Collectors.toList())) {
+                all.add(nTextArtRenderer);
+            }
         }
-        loadResourceList("pixel", all);
-        loadResourceList("figlet", all);
-        return new ArrayList<>(all.values());
+        return all;
+    }
+
+    @Override
+    public List<NTextArtRenderer> getRenderers(Class<? extends NTextArtRenderer> rendererType) {
+        List<NTextArtRenderer> all = new ArrayList<>();
+        for (NTextArtRendererFactory factory : getFactories()) {
+            for (NTextArtRenderer nTextArtRenderer : factory.listRenderers().collect(Collectors.toList())) {
+                all.add(nTextArtRenderer);
+            }
+        }
+        return all;
     }
 
     @Override
     public NOptional<NTextArtRenderer> loadRenderer(NPath path) {
-        if (path.isRegularFile()) {
-            return parseRenderer(path.readString());
-        } else {
-            return NOptional.ofEmpty(NMsg.ofC("renderer file not found : %s", path));
+        for (NTextArtRendererFactory factory : getFactories()) {
+            NOptional<NTextArtRenderer> p = factory.load(path);
+            if (p.isPresent()) {
+                return p;
+            }
         }
+        return NOptional.ofEmpty(NMsg.ofC("renderer file not found : %s", path));
     }
 
-    @Override
-    public NOptional<NTextArtRenderer> parseRenderer(String rendererDefinition) {
-        if (rendererDefinition.startsWith("flf2")) {
-            try {
-                return NOptional.of(new FigletNTextArtImageRenderer(new ByteArrayInputStream(rendererDefinition.getBytes()))
-                );
-            } catch (Exception ex) {
-                return NOptional.ofError(NMsg.ofC("figet renderer loading failed : %s", ex));
-            }
-        } else if (rendererDefinition.startsWith("pixel{")) {
-            try {
-                return NOptional.of(new PixelNTextArtImageRenderer(new ByteArrayInputStream(rendererDefinition.getBytes()))
-                );
-            } catch (Exception ex) {
-                return NOptional.ofError(NMsg.ofC("pixel renderer loading failed : %s", ex));
-            }
-        } else {
-            return NOptional.ofEmpty(NMsg.ofC("renderer spec not supported"));
-        }
-    }
 
     public NOptional<NTextArtRenderer> getDefaultRenderer() {
         return getRenderer("figlet:banner");
     }
 
     @Override
-    public NOptional<NTextArtRenderer> getRenderer(String fontName) {
-        if (fontName != null) {
-            if (fontName.startsWith("figlet:")) {
-                try {
-                    return FigletNTextArtImageRenderer.ofName(fontName.substring("figlet:".length())).instanceOf(NTextArtRenderer.class);
-                } catch (Exception e) {
-                    return NOptional.ofNamedEmpty(fontName);
-                }
-            }
-            if (fontName.startsWith("pixel:")) {
-                try {
-                    return PixelNTextArtImageRenderer.ofName(fontName.substring("pixel:".length())).instanceOf(NTextArtRenderer.class);
-                } catch (Exception e) {
-                    return NOptional.ofNamedEmpty(fontName);
-                }
+    public NOptional<NTextArtRenderer> getRenderer(String rendererName) {
+        for (NTextArtRendererFactory factory : getFactories()) {
+            NOptional<NTextArtRenderer> p = factory.getRenderer(rendererName);
+            if (p.isPresent()) {
+                return p;
             }
         }
-        return NOptional.ofNamedEmpty(fontName);
+        return NOptional.ofNamedEmpty(rendererName);
     }
 
     @Override
@@ -166,18 +111,58 @@ public class NTextArtImpl implements NTextArt {
     }
 
     @Override
-    public NOptional<NTextArtImageRenderer> parseImageRenderer(String rendererDefinition) {
-        return parseRenderer(rendererDefinition).instanceOf(NTextArtImageRenderer.class);
-    }
-
-    @Override
     public NOptional<NTextArtImageRenderer> getImageRenderer(String rendererName) {
         return getRenderer(rendererName).instanceOf(NTextArtImageRenderer.class);
     }
 
     @Override
+    public NOptional<NTextArtTextRenderer> loadTextRenderer(NPath path) {
+        return loadRenderer(path).instanceOf(NTextArtTextRenderer.class);
+    }
+
+    @Override
+    public NOptional<NTextArtTextRenderer> getTextRenderer(String rendererName) {
+        return getRenderer(rendererName).instanceOf(NTextArtTextRenderer.class);
+    }
+
+    @Override
+    public NOptional<NTextArtTableRenderer> loadTableRenderer(NPath path) {
+        return loadRenderer(path).instanceOf(NTextArtTableRenderer.class);
+    }
+
+    @Override
+    public NOptional<NTextArtTableRenderer> getTableRenderer(String rendererName) {
+        return getRenderer(rendererName).instanceOf(NTextArtTableRenderer.class);
+    }
+
+    @Override
+    public NOptional<NTextArtTreeRenderer> loadTreeRenderer(NPath path) {
+        return loadRenderer(path).instanceOf(NTextArtTreeRenderer.class);
+    }
+
+    @Override
+    public NOptional<NTextArtTreeRenderer> getTreeRenderer(String rendererName) {
+        return getRenderer(rendererName).instanceOf(NTextArtTreeRenderer.class);
+    }
+
+    @Override
     public NOptional<NTextArtImageRenderer> getDefaultImageRenderer() {
-        return getRenderer("pixel:standard").instanceOf(NTextArtImageRenderer.class);
+        return getImageRenderer("pixel:standard").instanceOf(NTextArtImageRenderer.class);
+    }
+
+    @Override
+    public NOptional<NTextArtTextRenderer> getDefaultTextRenderer() {
+        return getTextRenderer("figlet:banner");
+    }
+
+    @Override
+    public NOptional<NTextArtTableRenderer> getDefaultTableRenderer() {
+        return getTableRenderer("table:default");
+    }
+
+    @Override
+    public NOptional<NTextArtTreeRenderer> getDefaultTreeRenderer() {
+        return getTreeRenderer("tree:default");
     }
 
     @Override
