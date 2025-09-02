@@ -24,8 +24,9 @@ public class DefaultNLog implements NLog {
     private NLog scoped;
     private DefaultNLogModel model;
     private boolean custom;
+    private NMsg prefix;
 
-    public DefaultNLog(String name, NLogSPI logSPI, boolean suspended, DefaultNLogModel model,boolean custom) {
+    public DefaultNLog(String name, NLogSPI logSPI, boolean suspended, DefaultNLogModel model, boolean custom) {
         this.name = name;
         this.logSPI = logSPI;
         this.model = model;
@@ -98,7 +99,7 @@ public class DefaultNLog implements NLog {
         if (!isLoggable(msg.getLevel())) {
             return;
         }
-        logSPI.log(msg);
+        logSPI.log(prepareMsg(msg));
     }
 
     @Override
@@ -109,12 +110,12 @@ public class DefaultNLog implements NLog {
         }
         NMsg msg = msgSupplier.get();
         if (msg == null) {
-            msg = NMsg.ofC("").withLevel(level);
+            msg = prepareMsg(NMsg.ofPlain("").withLevel(level));
         } else {
-            msg = msg.withLevel(level);
+            msg = prepareMsg(msg.withLevel(level));
         }
 
-        DefaultNLogModel logManager = NWorkspaceExt.of().getModel().logModel;
+//        DefaultNLogModel logManager = NWorkspaceExt.of().getModel().logModel;
         //logManager.updateHandlers(record);
         if (suspendTerminalMode) {
             suspendedTerminalRecords.add(msg);
@@ -154,6 +155,37 @@ public class DefaultNLog implements NLog {
             NMsg r = iterator.next();
             iterator.remove();
             logSPI.log(r);
+        }
+    }
+
+    @Override
+    public void setPrefix(NMsg prefix) {
+        this.prefix = prefix;
+    }
+
+    @Override
+    public NMsg getPrefix() {
+        return prefix;
+    }
+
+    private NMsg prepareMsg(NMsg other) {
+        if (other != null) {
+            if (prefix != null) {
+                return NMsg.ofC("%s %s", prefix, other)
+                        .withLevel(other.getLevel())
+                        .withIntent(other.getIntent())
+                        .withDurationNanos(other.getDurationNanos())
+                        .withThrowable(other.getThrowable())
+                        ;
+            } else {
+                return other;
+            }
+        } else {
+            if (prefix != null) {
+                return other;
+            } else {
+                return NMsg.ofPlain("");
+            }
         }
     }
 }
