@@ -163,7 +163,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
         if (ret.isEmpty()) {
             throw new IllegalArgumentException("was not expecting " + ar.peekChar() + " as part of word");
         }
-        if (ret.get(0).getType() == NTextType.PLAIN && isOption(((NTextPlain) ret.get(0)).getValue())) {
+        if (ret.get(0).type() == NTextType.PLAIN && isOption(((NTextPlain) ret.get(0)).getValue())) {
             ret.set(0, txt.ofStyled(ret.get(0), NTextStyle.option()));
         }
         return ret.toArray(new NText[0]);
