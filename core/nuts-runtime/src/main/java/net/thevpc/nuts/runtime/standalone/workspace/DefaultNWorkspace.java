@@ -130,7 +130,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     public static final String RUNTIME_VERSION = "0.8.6.0";
     public static final String RUNTIME_VERSION_STRING = NConstants.Ids.NUTS_RUNTIME + "#" + RUNTIME_VERSION;
     public static final NId RUNTIME_ID = NId.get(RUNTIME_VERSION_STRING).get();
-//    public NLog LOG;
+    //    public NLog LOG;
     private NWorkspaceModel wsModel;
 
     public DefaultNWorkspace(NBootOptionsInfo callerBootOptionsInfo, NBootOptions info) {
@@ -606,16 +606,19 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             }
             switch (il) {
                 case USER: {
-                    NTableFormat.of()
-                            .setValue(
-                                    NTableModel.of()
-                                            .addCell(
-                                                    data.text.ofBuilder()
-                                                            .append(" This is the first time ")
-                                                            .appendCode("sh", "nuts")
-                                                            .append(" is launched for this workspace ")
-                                            )
-                            ).println(out);
+                    out.println(
+                            NTextArt.of().getDefaultTableRenderer()
+                                    .get()
+                                    .render(
+                                            NTableModel.of()
+                                                    .addCell(
+                                                            data.text.ofBuilder()
+                                                                    .append(" This is the first time ")
+                                                                    .appendCode("sh", "nuts")
+                                                                    .append(" is launched for this workspace ")
+                                                    )
+                                    )
+                    );
                     break;
                 }
                 case SYSTEM: {
