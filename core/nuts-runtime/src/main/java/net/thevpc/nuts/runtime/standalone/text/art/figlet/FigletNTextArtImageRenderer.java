@@ -33,19 +33,21 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import net.thevpc.nuts.io.NContentMetadata;
+import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextArtRenderer;
+import net.thevpc.nuts.text.NTextArtTextRenderer;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
 
 /**
- *
  * @author vpc
  */
-public class FigletNTextArtImageRenderer implements NTextArtRenderer, Cloneable {
+public class FigletNTextArtImageRenderer implements NTextArtTextRenderer, Cloneable {
 
     public static final int SM_SMUSH_EQUAL = 1;       // bit 0: Equal character smushing
     public static final int SM_SMUSH_UNDERSCORE = 2;  // bit 1: Underscore smushing  
@@ -99,13 +101,25 @@ public class FigletNTextArtImageRenderer implements NTextArtRenderer, Cloneable 
         return NOptional.ofNamedEmpty(NMsg.ofC("font %s not found", name));
     }
 
-    public FigletNTextArtImageRenderer(NPath file) {
+    public FigletNTextArtImageRenderer(NInputSource file) {
         try (InputStream in = file.getInputStream()) {
+            if (file instanceof NPath) {
+                fontName = ((NPath) file).nameParts().getBaseName();
+            } else {
+                NContentMetadata md = file.getMetaData();
+                if (md != null) {
+                    fontName = NPath.of(md.getName().orElse(null)).nameParts().getBaseName();
+                }
+            }
             load(in);
-            fontName=file.nameParts().getBaseName();
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
+    }
+
+    public FigletNTextArtImageRenderer(InputStream in, String name) {
+        fontName = name;
+        load(in);
     }
 
     public static boolean acceptContent(String content) {
@@ -452,7 +466,7 @@ public class FigletNTextArtImageRenderer implements NTextArtRenderer, Cloneable 
         }
 
         // Remove the overlapped portion from current
-        int currentLength = currentRow.textLength();
+        int currentLength = currentRow.length();
         currentRow.delete(currentLength - overlap, currentLength);
 
         // Add the smushed section
