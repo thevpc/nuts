@@ -49,7 +49,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
 
     @Override
     public NText postTransform(NText text, NTextTransformerContext context) {
-        switch (text.getType()) {
+        switch (text.type()) {
             case LIST: {
                 if (config.isFlatten()) {
                     NTextList t = (NTextList) text;
@@ -142,7 +142,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
                 }
                 if (filtered) {
                     return compressTxt(cc.stream().map(x->mapTxt(x, y -> {
-                        if (y.getType() == NTextType.STYLED) {
+                        if (y.type() == NTextType.STYLED) {
                             return ((NTextStyled) y).getChild();
                         }
                         return y;
@@ -152,10 +152,10 @@ public class DefaultNTextTransformer implements NTextTransformer {
                         NTextFormatTheme theme = txts.getTheme(config.getThemeName()).orElse(txts.getTheme());
                         NTextStyles basicStyles = theme.toBasicStyles(t.getStyles(),config.isBasicTrueStyles());
                         return compressTxt(cc.stream().map(x->mapTxt(x, y -> {
-                            if(y.getType() == NTextType.STYLED){
+                            if(y.type() == NTextType.STYLED){
                                 return txts.ofStyled(((NTextStyled) y).getChild(), basicStyles);
                             }
-                            if(y.getType() == NTextType.PLAIN){
+                            if(y.type() == NTextType.PLAIN){
                                 //newline
                                 return y;
                             }
@@ -180,7 +180,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
                 }
                 if (config.isNormalize()) {
                     text = mapTxt(text, x -> {
-                        if (x.getType() == NTextType.PLAIN) {
+                        if (x.type() == NTextType.PLAIN) {
                             return x;
                         }
                         String lnk = ((NTextLink) x).getValue();
@@ -216,7 +216,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
                     } else {
                         li.add(t.getChild());
                     }
-                    li.add(txts.ofPlain("\n"));
+                    li.add(NText.ofNewLine());
                     text = txts.ofStyled(txts.ofList(li), NTextStyle.primary(level));
                 }
                 return mapApplyThemeAndFilter(text);
@@ -257,7 +257,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
                 if (config.isApplyTheme()) {
                     NTextFormatTheme theme = txts.getTheme(config.getThemeName()).orElse(txts.getTheme());
                     text = mapTxt(text, x -> {
-                        if (x.getType() == NTextType.STYLED) {
+                        if (x.type() == NTextType.STYLED) {
                             NTextStyled y = (NTextStyled) x;
                             NTextStyles basicStyles = theme.toBasicStyles(y.getStyles(),config.isBasicTrueStyles());
                             if(!y.getStyles().equals(basicStyles)){
@@ -277,7 +277,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
     private NText mapApplyThemeAndFilter(NText text){
         if (config.isFiltered()) {
             text = mapTxt(text, x -> {
-                if (x.getType() == NTextType.STYLED) {
+                if (x.type() == NTextType.STYLED) {
                     return ((NTextStyled) x).getChild();
                 }
                 return x;
@@ -286,7 +286,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
             if (config.isApplyTheme()) {
                 NTextFormatTheme theme = txts.getTheme(config.getThemeName()).orElse(txts.getTheme());
                 text = mapTxt(text, x -> {
-                    if (x.getType() == NTextType.STYLED) {
+                    if (x.type() == NTextType.STYLED) {
                         NTextStyled y = (NTextStyled) x;
                         NTextStyles basicStyles = theme.toBasicStyles(y.getStyles(),config.isBasicTrueStyles());
                         if(!y.getStyles().equals(basicStyles)){
