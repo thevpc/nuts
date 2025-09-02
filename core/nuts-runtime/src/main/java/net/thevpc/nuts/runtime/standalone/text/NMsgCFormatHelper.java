@@ -28,7 +28,7 @@ public class NMsgCFormatHelper extends AbstractNMsgFormatHelper {
                     if (paramIndex < 0 || paramIndex >= params.length) {
                         throw new NIllegalArgumentException(NMsg.ofPlain("invalid index "+paramIndex+" in message (not in 0.."+(params.length-1)+")"));
                     }
-                    Object a = params[paramIndex];
+                    Object a = resolvePlaceholder(params[paramIndex]);
                     if (a == null) {
                         sb.append((String) null);
                     } else if (NTextUtils.isSpecialLiteral(a)) {
