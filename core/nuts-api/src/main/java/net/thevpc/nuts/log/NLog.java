@@ -27,7 +27,6 @@
 package net.thevpc.nuts.log;
 
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NCallable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NMsgBuilder;
 
@@ -76,6 +75,10 @@ public interface NLog {
         return NLogs.of().createCustomLogger(name, spi);
     }
 
+    static NLog of(NLogSPI spi) {
+        return NLogs.of().createCustomLogger(null, spi);
+    }
+
     static NLog ofScoped(String name) {
         return of(name).scoped();
     }
@@ -91,11 +94,6 @@ public interface NLog {
     boolean isLoggable(Level level);
 
     NLog scoped();
-
-    void runWith(Runnable r);
-
-    <T> T callWith(NCallable<T> r);
-
 
     default void info(NMsg msg) {
         log(msg.asInfo());
@@ -119,9 +117,5 @@ public interface NLog {
     void log(NMsg msg);
 
     void log(NMsgBuilder msg);
-
-    void setPrefix(NMsg msg);
-
-    NMsg getPrefix();
 
 }
