@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * @app.category Format
  */
-public interface NTextList extends NText, Iterable<NText> {
+public interface NTextList extends NNormalizedText, Iterable<NText> {
 
     int size();
 
