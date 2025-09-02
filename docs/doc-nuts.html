@@ -1633,58 +1633,201 @@ me@linux:~&gt; nuts --dry version
                                 <h3 class="main-section2"><a href="#U9A620D158284B78C67D71E477C99E55F0E05A711">4.3 Exec Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
+
 execute a command
+
+
     runs command with the given executor options ( it will be considered an option if it
+
+
     starts with '-' ). This is helpful to issue JVM Options to executor for instance
+
+
+
 
 <span style="color: #0000A3" class="">##)  
 SYNOPSIS:
 
 
 </span>
-    <span style="color: #000055" class="">nuts</span> exec [<<span style="color: #005078" class="">-options</span>>]... <command> <arguments>...
-         <span style="color: #005078" class="">--exec</span> [<<span style="color: #005078" class="">-options</span>>]... <command> <arguments>...
-         <span style="color: #005078" class="">-e</span> [<<span style="color: #005078" class="">-options</span>>]... <command> <arguments>...
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ exec 
+[
+<
+<span style="color: #005078" class="">-options</span>
+>
+]
+... 
+<command>
+ 
+<arguments>
+...
+
+
+         
+<span style="color: #005078" class="">--exec</span>
+ 
+[
+<
+<span style="color: #005078" class="">-options</span>
+>
+]
+... 
+<command>
+ 
+<arguments>
+...
+
+
+         
+<span style="color: #005078" class="">-e</span>
+ 
+[
+<
+<span style="color: #005078" class="">-options</span>
+>
+]
+... 
+<command>
+ 
+<arguments>
+...
+
+
+
 
 <span style="color: #0000A3" class="">##)  
 OPTIONS:
 
 
 </span>
-    <span style="color: #005078" class="">--embedded</span> | <span style="color: #005078" class="">-b</span>sh
+
+
+    
+<span style="color: #005078" class="">--embedded</span>
+ 
+|
+ 
+<span style="color: #005078" class="">-b</span>
+sh
+
+
         when invoking a nuts artifact, it will be executed in the current process (no JVM process wil be spawn)
 
-    <span style="color: #005078" class="">--external</span> | <span style="color: #005078" class="">--spawn</span> or <span style="color: #005078" class="">-x</span>sh
+
+
+
+    
+<span style="color: #005078" class="">--external</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--spawn</span>
+ or 
+<span style="color: #005078" class="">-x</span>
+sh
+
+
         when invoking a nuts artifact, it will always be executed in a newly created
+
+
         process (this is the default)
 
-    <span style="color: #005078" class="">--system</span>
+
+
+
+    
+<span style="color: #005078" class="">--system</span>
+
+
         the command is considered as a native command (not a nuts) and will be passed
+
+
         to the os as is.
 
-    <span style="color: #005078" class="">--root-cmd</span>
+
+
+
+    
+<span style="color: #005078" class="">--root-cmd</span>
+
+
         the command is considered as a native command (not a nuts) and will be passed
+
+
         to the os as is with root privileges (a password will be asked for).
 
-    <span style="color: #005078" class="">--target</span>=<connexion-string>
+
+
+
+    
+<span style="color: #005078" class="">--target</span>
+=
+<connexion-string>
+
+
         the command is run on a remote machine using the given connexion string.
+
+
         The current version supports ssh connexion strings in the following form
+
+
         'ssh://username:password@address:port'.
+
+
         When the username is not provided, the current user is considered.
+
+
         When the password is not provided, the default ssh key is used.
+
+
         When the port is not provided, 22 port number is considered.
 
-    <span style="color: #005078" class="">--current-user</span>
+
+
+
+    
+<span style="color: #005078" class="">--current-user</span>
+
+
         when using a system command, the command is run with the current user privileges (default).
 
-    <span style="color: #005078" class="">--as-root</span>
+
+
+
+    
+<span style="color: #005078" class="">--as-root</span>
+
+
         when using a system command, the command is run with the system root privileges. credentials may be asked for.
 
-    <span style="color: #005078" class="">--as-user</span>=<username>
+
+
+
+    
+<span style="color: #005078" class="">--as-user</span>
+=
+<username>
+
+
         when using a system command, the command is run with the given system username privileges. credentials may be asked for.
 
-    <span style="color: #005078" class="">--open-file</span>
+
+
+
+    
+<span style="color: #005078" class="">--open-file</span>
+
+
         the path to execute will not be executed. Instead it will be opened with assigned editor. System bindings are most likely to be considered.
+
+
+
+
+
 
 
 
@@ -1693,34 +1836,147 @@ EXAMPLES
 
 
 </span>
-    <span style="color: #000055" class="">nuts</span> exec <span style="color: #005078" class="">--help</span>
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ exec 
+<span style="color: #005078" class="">--help</span>
+
+
         show this help and exit
 
-    <span style="color: #000055" class="">nuts</span> exec <span style="color: #005078" class="">--yes</span> <span style="color: #005078" class="">-e</span> <span style="color: #005078" class="">-Xmx1G</span> netbeans-launcher
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ exec 
+<span style="color: #005078" class="">--yes</span>
+ 
+<span style="color: #005078" class="">-e</span>
+ 
+<span style="color: #005078" class="">-Xmx1G</span>
+ netbeans-launcher
+
+
         runs netbeans-launcher with JVM option -Xmx1G. If the artifact is not installed
+
+
         it will be automatically installed ( --yes modifier helps bypassing interactive mode)
 
-    <span style="color: #000055" class="">nuts</span> exec my-nuts-group:my-nuts#12.3
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ exec my-nuts-group
+:
+my-nuts
+#
+12.3
+
+
         executes the version 12.3 of my-nuts-group:my-nuts
 
-    <span style="color: #000055" class="">nuts</span> exec my-nuts-group:my-nuts
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ exec my-nuts-group
+:
+my-nuts
+
+
         executes the latest version of my-nuts-group:my-nuts
 
-    <span style="color: #000055" class="">nuts</span> exec my-nuts
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ exec my-nuts
+
+
         executes the latest version of my-nuts-group:my-nuts supposing that my-nuts-group
+
+
         is added as imported group using config import my-nuts-group
 
-    <span style="color: #000055" class="">nuts</span> <span style="color: #005078" class="">-ZSby</span> <span style="color: #005078" class="">-w</span> test ./build-website.nsh 
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ 
+<span style="color: #005078" class="">-ZSby</span>
+ 
+<span style="color: #005078" class="">-w</span>
+ test ./build-website.nsh 
+
+
         run sh file
 
-    <span style="color: #000055" class="">nuts</span> <span style="color: #005078" class="">-Zy</span> <span style="color: #005078" class="">-w</span> test /home/vpc/target/hl/local.vpc-no-name-1.0.0-SNAPSHOT.jar 
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ 
+<span style="color: #005078" class="">-Zy</span>
+ 
+<span style="color: #005078" class="">-w</span>
+ test /home/vpc/target/hl/local.vpc-no-name-1.0.0-SNAPSHOT.jar 
+
+
         run jar file
 
-    <span style="color: #000055" class="">nuts</span> <span style="color: #005078" class="">--verbose</span> <span style="color: #005078" class="">-ZSbkKy</span> <span style="color: #005078" class="">-w</span>=test6 tn.corp.mlda:mlda 
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ 
+<span style="color: #005078" class="">--verbose</span>
+ 
+<span style="color: #005078" class="">-ZSbkKy</span>
+ 
+<span style="color: #005078" class="">-w</span>
+=
+test6 tn.corp.mlda
+:
+mlda 
+
+
         run javafx app
 
-    <span style="color: #000055" class="">nuts</span> <span style="color: #005078" class="">-ZykKS</span> <span style="color: #005078" class="">-w</span>=temp <span style="color: #005078" class="">--verbose</span> exec <span style="color: #005078" class="">--main-class</span>=1 org.springframework.boot:spring-boot-cli#2.4.1 
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ 
+<span style="color: #005078" class="">-ZykKS</span>
+ 
+<span style="color: #005078" class="">-w</span>
+=
+temp 
+<span style="color: #005078" class="">--verbose</span>
+ exec 
+<span style="color: #005078" class="">--main-class</span>
+=
+1 org.springframework.boot
+:
+spring-boot-cli
+#
+2.4.1 
+
+
         run spring boot cli
+
+
+
 
 </pre>
                                 </div>
@@ -1823,15 +2079,40 @@ me@linux:~&gt; nuts --dry version
                                 <h3 class="main-section2"><a href="#U9A620D158284B78C67D71E477C99E55F0E05A711">4.5 Which Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
+
 resolves commands type
+
+
+
 
 <span style="color: #0000A3" class="">##)  
 SYNOPSIS:
 
 
 </span>
-    <span style="color: #000055" class="">nuts</span> which [<<span style="color: #005078" class="">-options</span>>]... [<command>] ...
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ which 
+[
+<
+<span style="color: #005078" class="">-options</span>
+>
+]
+... 
+[
+<command>
+]
+ ...
+
+
         resolves commands type
+
+
+
+
+
 
 
 
@@ -1840,11 +2121,28 @@ EXAMPLES:
 
 
 </span>
-    <span style="color: #000055" class="">nuts</span> which <span style="color: #005078" class="">--help</span>
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ which 
+<span style="color: #005078" class="">--help</span>
+
+
         show this help and exit
 
-    <span style="color: #000055" class="">nuts</span> which netbeans-launcher exec
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ which netbeans-launcher exec
+
+
         show netbeans-launcher and exec types. The first is a artifact the latter is an internal command
+
+
+
 
 </pre>
                                 </div>
@@ -1871,227 +2169,968 @@ me@linux:~&gt; nuts fetch net.thevpc.app:netbeans-launcher#1.2.2
                                 <h3 class="main-section2"><a href="#U9A620D158284B78C67D71E477C99E55F0E05A711">4.7 Fetch Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
+
 search for artifacts
+
+
+
 
 <span style="color: #0000A3" class="">##)  
 SYNOPSIS:
 
 
 </span>
-    <span style="color: #000055" class="">nuts</span> search [<<span style="color: #005078" class="">-options</span>>]... <ids> ... <args> ...
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ search 
+[
+<
+<span style="color: #005078" class="">-options</span>
+>
+]
+... 
+<ids>
+ ... 
+<args>
+ ...
+
+
         search for <ids>
+
+
+
 
 <span style="color: #0000A3" class="">##)  
 OPTIONS:
 
 
 </span>
-    <span style="color: #005078" class="">--lenient</span>
-        when an id is found but its descriptor and/or its file are not found, do not raise an error and continue. default <span style="color: #000055" class="">no</span>
 
-    <span style="color: #005078" class="">--all-versions</span>
-        return all versions of the same ids. if <span style="color: #000055" class="">no</span> will always return the <span style="color: #000055" class="">latest</span> one. default <span style="color: #000055" class="">yes</span>
 
-    <span style="color: #005078" class="">--duplicates</span>
-        return the same version from distinct repositories if found. default <span style="color: #000055" class="">yes</span>
+    
+<span style="color: #005078" class="">--lenient</span>
 
-    <span style="color: #005078" class="">--distinct</span>
-        remove duplicates . default <span style="color: #000055" class="">false</span>
 
-    <span style="color: #005078" class="">-L</span> | <span style="color: #005078" class="">--latest</span> | <span style="color: #005078" class="">--latest-versions</span>
-        return latest version of each searched id. equivalent to <span style="color: #005078" class="">--all-versions</span>=no
+        when an id is found but its descriptor and/or its file are not found, do not raise an error and continue. default 
+<span style="color: #000055" class="">no</span>
 
-    <span style="color: #005078" class="">-S</span> | <span style="color: #005078" class="">--single</span> | <span style="color: #005078" class="">--single-versions</span>
-        return one instance of each version even if found in distinct repositories. equivalent to <span style="color: #005078" class="">--duplicate</span>=no
 
-    <span style="color: #005078" class="">-s</span> | <span style="color: #005078" class="">--sort</span>
-        sort result. default <span style="color: #000055" class="">no</span>
 
-    <span style="color: #005078" class="">--main</span>
-        include main result. This is meaningful when one needs to find only dependencies, and hence turns this flag to <span style="color: #000055" class="">no</span>. default <span style="color: #000055" class="">yes</span>
 
-    <span style="color: #005078" class="">--dependencies</span>
-        include dependencies in result. default <span style="color: #000055" class="">no</span>
+    
+<span style="color: #005078" class="">--all-versions</span>
 
-    <span style="color: #005078" class="">--main-only</span>
-        include main result and no dependencies. equivalent to <span style="color: #005078" class="">--main</span>=yes <span style="color: #005078" class="">--dependencies</span>=no
 
-    <span style="color: #005078" class="">--dependencies-only</span>
-        include dependencies and no main. equivalent to <span style="color: #005078" class="">--main</span>=no <span style="color: #005078" class="">--dependencies</span>=no
+        return all versions of the same ids. if 
+<span style="color: #000055" class="">no</span>
+ will always return the 
+<span style="color: #000055" class="">latest</span>
+ one. default 
+<span style="color: #000055" class="">yes</span>
 
-    <span style="color: #005078" class="">--main-and-dependencies</span>
-        include main result and no dependencies. equivalent to <span style="color: #005078" class="">--main</span>=yes <span style="color: #005078" class="">--dependencies</span>=yes
 
-    <span style="color: #005078" class="">-r</span> | <span style="color: #005078" class="">--repository</span> <repo-name>
+
+
+    
+<span style="color: #005078" class="">--duplicates</span>
+
+
+        return the same version from distinct repositories if found. default 
+<span style="color: #000055" class="">yes</span>
+
+
+
+
+    
+<span style="color: #005078" class="">--distinct</span>
+
+
+        remove duplicates . default 
+<span style="color: #000055" class="">false</span>
+
+
+
+
+    
+<span style="color: #005078" class="">-L</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--latest</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--latest-versions</span>
+
+
+        return latest version of each searched id. equivalent to 
+<span style="color: #005078" class="">--all-versions</span>
+=
+no
+
+
+
+
+    
+<span style="color: #005078" class="">-S</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--single</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--single-versions</span>
+
+
+        return one instance of each version even if found in distinct repositories. equivalent to 
+<span style="color: #005078" class="">--duplicate</span>
+=
+no
+
+
+
+
+    
+<span style="color: #005078" class="">-s</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--sort</span>
+
+
+        sort result. default 
+<span style="color: #000055" class="">no</span>
+
+
+
+
+    
+<span style="color: #005078" class="">--main</span>
+
+
+        include main result. This is meaningful when one needs to find only dependencies, and hence turns this flag to 
+<span style="color: #000055" class="">no</span>
+. default 
+<span style="color: #000055" class="">yes</span>
+
+
+
+
+    
+<span style="color: #005078" class="">--dependencies</span>
+
+
+        include dependencies in result. default 
+<span style="color: #000055" class="">no</span>
+
+
+
+
+    
+<span style="color: #005078" class="">--main-only</span>
+
+
+        include main result and no dependencies. equivalent to 
+<span style="color: #005078" class="">--main</span>
+=
+yes 
+<span style="color: #005078" class="">--dependencies</span>
+=
+no
+
+
+
+
+    
+<span style="color: #005078" class="">--dependencies-only</span>
+
+
+        include dependencies and no main. equivalent to 
+<span style="color: #005078" class="">--main</span>
+=
+no 
+<span style="color: #005078" class="">--dependencies</span>
+=
+no
+
+
+
+
+    
+<span style="color: #005078" class="">--main-and-dependencies</span>
+
+
+        include main result and no dependencies. equivalent to 
+<span style="color: #005078" class="">--main</span>
+=
+yes 
+<span style="color: #005078" class="">--dependencies</span>
+=
+yes
+
+
+
+
+    
+<span style="color: #005078" class="">-r</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--repository</span>
+ 
+<repo-name>
+
+
         include repository in the search process. if none defined, all repositories are searched.
 
-    <span style="color: #005078" class="">--arch</span> x86|amd64|ia64|ppc|sparc
+
+
+
+    
+<span style="color: #005078" class="">--arch</span>
+ x86
+|
+amd64
+|
+ia64
+|
+ppc
+|
+sparc
+
+
         include architecture in the search process. if none defined, all architectures are searched.
 
-    <span style="color: #005078" class="">--packaging</span> jar|war|...
+
+
+
+    
+<span style="color: #005078" class="">--packaging</span>
+ jar
+|
+war
+|
+...
+
+
         include packaging in the search process. if none defined, all packagings are searched.
 
-    <span style="color: #005078" class="">--cached</span>
-        include cached in the search process. default <span style="color: #000055" class="">yes</span>
 
-    <span style="color: #005078" class="">--indexed</span>
-        include search index in the search process. default <span style="color: #000055" class="">yes</span>
 
-    <span style="color: #005078" class="">--effective</span>
-        compute effective descriptor. default <span style="color: #000055" class="">no</span>
 
-    <span style="color: #005078" class="">--content</span>
-        include content. default <span style="color: #000055" class="">no</span>
+    
+<span style="color: #005078" class="">--cached</span>
 
-    <span style="color: #005078" class="">--install-info</span>
-        include install information. default <span style="color: #000055" class="">false</span>
 
-    <span style="color: #005078" class="">--location</span>
+        include cached in the search process. default 
+<span style="color: #000055" class="">yes</span>
+
+
+
+
+    
+<span style="color: #005078" class="">--indexed</span>
+
+
+        include search index in the search process. default 
+<span style="color: #000055" class="">yes</span>
+
+
+
+
+    
+<span style="color: #005078" class="">--effective</span>
+
+
+        compute effective descriptor. default 
+<span style="color: #000055" class="">no</span>
+
+
+
+
+    
+<span style="color: #005078" class="">--content</span>
+
+
+        include content. default 
+<span style="color: #000055" class="">no</span>
+
+
+
+
+    
+<span style="color: #005078" class="">--install-info</span>
+
+
+        include install information. default 
+<span style="color: #000055" class="">false</span>
+
+
+
+
+    
+<span style="color: #005078" class="">--location</span>
+
+
         force found contents to be copied to location
 
-    <span style="color: #005078" class="">-f</span> | <span style="color: #005078" class="">--fetch</span> offline|online|anywhere|installed|remote
+
+
+
+    
+<span style="color: #005078" class="">-f</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--fetch</span>
+ offline
+|
+online
+|
+anywhere
+|
+installed
+|
+remote
+
+
         include fetch mode in the search process. if none defined, all fetch modes are searched.
 
-    <span style="color: #005078" class="">--offline</span> | <span style="color: #005078" class="">-F</span> 
-        equivalent to <span style="color: #005078" class="">--fetch</span>=offline
 
-    <span style="color: #005078" class="">--online</span> | <span style="color: #005078" class="">-O</span>
-        equivalent to <span style="color: #005078" class="">--fetch</span>=online
 
-    <span style="color: #005078" class="">--anywhere</span> | <span style="color: #005078" class="">-a</span>
-        equivalent to <span style="color: #005078" class="">--fetch</span>=anywhere
 
-    <span style="color: #005078" class="">--installed</span> | <span style="color: #005078" class="">-i</span> 
+    
+<span style="color: #005078" class="">--offline</span>
+ 
+|
+ 
+<span style="color: #005078" class="">-F</span>
+ 
+
+
+        equivalent to 
+<span style="color: #005078" class="">--fetch</span>
+=
+offline
+
+
+
+
+    
+<span style="color: #005078" class="">--online</span>
+ 
+|
+ 
+<span style="color: #005078" class="">-O</span>
+
+
+        equivalent to 
+<span style="color: #005078" class="">--fetch</span>
+=
+online
+
+
+
+
+    
+<span style="color: #005078" class="">--anywhere</span>
+ 
+|
+ 
+<span style="color: #005078" class="">-a</span>
+
+
+        equivalent to 
+<span style="color: #005078" class="">--fetch</span>
+=
+anywhere
+
+
+
+
+    
+<span style="color: #005078" class="">--installed</span>
+ 
+|
+ 
+<span style="color: #005078" class="">-i</span>
+ 
+
+
         search for installed only packages
 
-    <span style="color: #005078" class="">--included</span>
+
+
+
+    
+<span style="color: #005078" class="">--included</span>
+
+
         search for included packages in other installations
 
-    <span style="color: #005078" class="">--deployed</span>
+
+
+
+    
+<span style="color: #005078" class="">--deployed</span>
+
+
         search for installed and required (as dependencies) packages
 
-    <span style="color: #005078" class="">--remote</span> | <span style="color: #005078" class="">-R</span>
-        equivalent to <span style="color: #005078" class="">--fetch</span>=remote
 
-    <span style="color: #005078" class="">--optional</span>
-        relevant when <span style="color: #005078" class="">--dependencies</span> is armed.
-        <span style="color: #005078" class="">--optional</span>=     : search for all dependencies, including optional (default)
-        <span style="color: #005078" class="">--optional</span>=yes  : search for optional dependencies only
-        <span style="color: #005078" class="">--optional</span>=no   : search for non optional dependencies only
 
-    <span style="color: #005078" class="">--scope</span> api|implementation|compile|provided|import
-               |runtime|system|test-compile|test-provided
-               |test-runtime|test|run|run-test|other|all
-        relevant when <span style="color: #005078" class="">--dependencies</span> is armed.
+
+    
+<span style="color: #005078" class="">--remote</span>
+ 
+|
+ 
+<span style="color: #005078" class="">-R</span>
+
+
+        equivalent to 
+<span style="color: #005078" class="">--fetch</span>
+=
+remote
+
+
+
+
+    
+<span style="color: #005078" class="">--optional</span>
+
+
+        relevant when 
+<span style="color: #005078" class="">--dependencies</span>
+ is armed.
+
+
+        
+<span style="color: #005078" class="">--optional</span>
+=
+     : search for all dependencies, including optional (default)
+
+
+        
+<span style="color: #005078" class="">--optional</span>
+=
+yes
+  : search for optional dependencies only
+
+
+        
+<span style="color: #005078" class="">--optional</span>
+=
+no
+   : search for non optional dependencies only
+
+
+
+
+    
+<span style="color: #005078" class="">--scope</span>
+ api
+|
+implementation
+|
+compile
+|
+provided
+|
+import
+
+
+               
+|
+runtime
+|
+system
+|
+test-compile
+|
+test-provided
+
+
+               
+|
+test-runtime
+|
+test
+|
+run
+|
+run-test
+|
+other
+|
+all
+
+
+        relevant when 
+<span style="color: #005078" class="">--dependencies</span>
+ is armed.
+
+
         include scope in the search dependencies process.
-        if none defined, only <span style="color: #000055" class="">run</span> scope is searched.
 
-    <span style="color: #005078" class="">--default</span> | <span style="color: #005078" class="">--default-versions</span>
-        find only default installed versions. This is meaningful with <span style="color: #005078" class="">--installed</span> flag
 
-    <span style="color: #005078" class="">--libs</span> | <span style="color: #005078" class="">--lib</span>
+        if none defined, only 
+<span style="color: #000055" class="">run</span>
+ scope is searched.
+
+
+
+
+    
+<span style="color: #005078" class="">--default</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--default-versions</span>
+
+
+        find only default installed versions. This is meaningful with 
+<span style="color: #005078" class="">--installed</span>
+ flag
+
+
+
+
+    
+<span style="color: #005078" class="">--libs</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--lib</span>
+
+
         find libraries (non app) only
 
-    <span style="color: #005078" class="">--apps</span> | <span style="color: #005078" class="">--app</span>
+
+
+
+    
+<span style="color: #005078" class="">--apps</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--app</span>
+
+
         find applications (non libraries) only
 
-    <span style="color: #005078" class="">--nuts-apps</span> |<span style="color: #005078" class="">--nuts-app</span>
+
+
+
+    
+<span style="color: #005078" class="">--nuts-apps</span>
+ 
+|
+<span style="color: #005078" class="">--nuts-app</span>
+
+
         find nuts applications only
 
-    <span style="color: #005078" class="">--extensions</span> | <span style="color: #005078" class="">--extension</span>
+
+
+
+    
+<span style="color: #005078" class="">--extensions</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--extension</span>
+
+
         find extensions only
 
-    <span style="color: #005078" class="">--runtime</span>
+
+
+
+    
+<span style="color: #005078" class="">--runtime</span>
+
+
         find nuts runtime only
 
-    <span style="color: #005078" class="">--companions</span> | <span style="color: #005078" class="">--companion</span>
+
+
+
+    
+<span style="color: #005078" class="">--companions</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--companion</span>
+
+
         find companions only
 
-    <span style="color: #005078" class="">--api-version</span>
+
+
+
+    
+<span style="color: #005078" class="">--api-version</span>
+
+
         find artifacts compatible with the given api-version
 
-    <span style="color: #005078" class="">-l</span>
-    <span style="color: #005078" class="">--long</span>
-    <span style="color: #005078" class="">--display-long</span>
-        equivalent to <span style="color: #005078" class="">--display</span>=long
 
-    <span style="color: #005078" class="">--display</span>=<comma-separated-columns>
+
+
+    
+<span style="color: #005078" class="">-l</span>
+
+
+    
+<span style="color: #005078" class="">--long</span>
+
+
+    
+<span style="color: #005078" class="">--display-long</span>
+
+
+        equivalent to 
+<span style="color: #005078" class="">--display</span>
+=
+long
+
+
+
+
+    
+<span style="color: #005078" class="">--display</span>
+=
+<comma-separated-columns>
+
+
         define columns to display (ordered list of columns, comma separated)
-        Accepted columns are:
-            <span style="color: #000055" class="">status</span>             : show nuts status using condensed format using 3 characters
-                char #1 : show installation status
-                    <span style="color: #000055" class="">I</span> : means 'installed' and is 'default'
-                    <span style="color: #000055" class="">i</span> : means 'installed' and is not default
-                    <span style="color: #000055" class="">d</span> : means 'dependency' (aka 'required') locally deployed
-                    <span style="color: #000055" class="">f</span> : means 'fetched' locally but not installed
-                    <span style="color: #000055" class="">r</span> : means 'remote' (not fetched)
-                char #2 : show package type
-                    <span style="color: #000055" class="">a</span> : nuts 'api' package
-                    <span style="color: #000055" class="">r</span> : nuts 'runtime' package
-                    <span style="color: #000055" class="">e</span> : nuts 'extension' package
-                    <span style="color: #000055" class="">c</span> : nuts 'companion' package
-                    <span style="color: #000055" class="">-</span> : other package
-                char #3 : show application status
-                    <span style="color: #000055" class="">X</span> : means executable nuts application (implementing NutsApplication)
-                    <span style="color: #000055" class="">x</span> : means executable regular application
-                    <span style="color: #000055" class="">-</span> : means non executable or unknown
-                char #4 : show scope status (when applicable)
-                    <span style="color: #000055" class="">c</span> : compile/api scope
-                    <span style="color: #000055" class="">i</span> : implementation scope
-                    <span style="color: #000055" class="">r</span> : runtime scope
-                    <span style="color: #000055" class="">s</span> : system scope
-                    <span style="color: #000055" class="">p</span> : provided scope
-                    <span style="color: #000055" class="">t</span> : test (any) scope
-                    <span style="color: #000055" class="">m</span> : import scope
-                    <span style="color: #000055" class="">O</span> : other
-                    <span style="color: #000055" class="">-</span> : unknown
-            <span style="color: #000055" class="">install-date</span>       : artifact install date
-            <span style="color: #000055" class="">install-user</span>       : artifact install user
-            <span style="color: #000055" class="">id</span>                 : artifact id
-            <span style="color: #000055" class="">name</span>               : simple name
-            <span style="color: #000055" class="">packaging</span>          : artifact packaging (jar, war, msi, exe, ...)
-            <span style="color: #000055" class="">arch</span>               : artifact supported architectures (x86, x64,...)
-            <span style="color: #000055" class="">platform</span>           : artifact supported platforms (java, dotnet, ...)
-            <span style="color: #000055" class="">os</span>                 : artifact supported operation systems (Linux, Windows,...)
-            <span style="color: #000055" class="">osdist</span>             : artifact supported OS distributions (OpenSuSE, Ubuntu, ...)
-            <span style="color: #000055" class="">de</span>                 : artifact supported OS Desktop Environment (KDE, GNOME,...)
-            <span style="color: #000055" class="">exec-entry</span>         : Main class
-            <span style="color: #000055" class="">file-name</span>          : artifact file name
-            <span style="color: #000055" class="">file</span>               : artifact file path
-            <span style="color: #000055" class="">var-location</span>       : artifact var folder
-            <span style="color: #000055" class="">temp-location</span>      : artifact temp folder
-            <span style="color: #000055" class="">config-location</span>    : artifact config folder
-            <span style="color: #000055" class="">lib-location</span>       : artifact lib folder
-            <span style="color: #000055" class="">log-location</span>       : artifact log folder
-            <span style="color: #000055" class="">cache-location</span>     : artifact cache folder
-            <span style="color: #000055" class="">programs-location</span>  : artifact programs folder
-            <span style="color: #000055" class="">run-location</span>       : artifact run folder
-            <span style="color: #000055" class="">long</span>               : equivalent to <span style="color: #000055" class="">status, install-date, install-user, id</span>
-            <span style="color: #000055" class="">all</span>                : equivalent to all of the above
 
-    <span style="color: #005078" class="">--omit-env</span>
+
+        Accepted columns are:
+
+
+            
+<span style="color: #000055" class="">status</span>
+             : show nuts status using condensed format using 3 characters
+
+
+                char #1 : show installation status
+
+
+                    
+<span style="color: #000055" class="">I</span>
+ : means 'installed' and is 'default'
+
+
+                    
+<span style="color: #000055" class="">i</span>
+ : means 'installed' and is not default
+
+
+                    
+<span style="color: #000055" class="">d</span>
+ : means 'dependency' (aka 'required') locally deployed
+
+
+                    
+<span style="color: #000055" class="">f</span>
+ : means 'fetched' locally but not installed
+
+
+                    
+<span style="color: #000055" class="">r</span>
+ : means 'remote' (not fetched)
+
+
+                char #2 : show package type
+
+
+                    
+<span style="color: #000055" class="">a</span>
+ : nuts 'api' package
+
+
+                    
+<span style="color: #000055" class="">r</span>
+ : nuts 'runtime' package
+
+
+                    
+<span style="color: #000055" class="">e</span>
+ : nuts 'extension' package
+
+
+                    
+<span style="color: #000055" class="">c</span>
+ : nuts 'companion' package
+
+
+                    
+<span style="color: #000055" class="">-</span>
+ : other package
+
+
+                char #3 : show application status
+
+
+                    
+<span style="color: #000055" class="">X</span>
+ : means executable nuts application (implementing NutsApplication)
+
+
+                    
+<span style="color: #000055" class="">x</span>
+ : means executable regular application
+
+
+                    
+<span style="color: #000055" class="">-</span>
+ : means non executable or unknown
+
+
+                char #4 : show scope status (when applicable)
+
+
+                    
+<span style="color: #000055" class="">c</span>
+ : compile/api scope
+
+
+                    
+<span style="color: #000055" class="">i</span>
+ : implementation scope
+
+
+                    
+<span style="color: #000055" class="">r</span>
+ : runtime scope
+
+
+                    
+<span style="color: #000055" class="">s</span>
+ : system scope
+
+
+                    
+<span style="color: #000055" class="">p</span>
+ : provided scope
+
+
+                    
+<span style="color: #000055" class="">t</span>
+ : test (any) scope
+
+
+                    
+<span style="color: #000055" class="">m</span>
+ : import scope
+
+
+                    
+<span style="color: #000055" class="">O</span>
+ : other
+
+
+                    
+<span style="color: #000055" class="">-</span>
+ : unknown
+
+
+            
+<span style="color: #000055" class="">install-date</span>
+       : artifact install date
+
+
+            
+<span style="color: #000055" class="">install-user</span>
+       : artifact install user
+
+
+            
+<span style="color: #000055" class="">id</span>
+                 : artifact id
+
+
+            
+<span style="color: #000055" class="">name</span>
+               : simple name
+
+
+            
+<span style="color: #000055" class="">packaging</span>
+          : artifact packaging (jar, war, msi, exe, ...)
+
+
+            
+<span style="color: #000055" class="">arch</span>
+               : artifact supported architectures (x86, x64,...)
+
+
+            
+<span style="color: #000055" class="">platform</span>
+           : artifact supported platforms (java, dotnet, ...)
+
+
+            
+<span style="color: #000055" class="">os</span>
+                 : artifact supported operation systems (Linux, Windows,...)
+
+
+            
+<span style="color: #000055" class="">osdist</span>
+             : artifact supported OS distributions (OpenSuSE, Ubuntu, ...)
+
+
+            
+<span style="color: #000055" class="">de</span>
+                 : artifact supported OS Desktop Environment (KDE, GNOME,...)
+
+
+            
+<span style="color: #000055" class="">exec-entry</span>
+         : Main class
+
+
+            
+<span style="color: #000055" class="">file-name</span>
+          : artifact file name
+
+
+            
+<span style="color: #000055" class="">file</span>
+               : artifact file path
+
+
+            
+<span style="color: #000055" class="">var-location</span>
+       : artifact var folder
+
+
+            
+<span style="color: #000055" class="">temp-location</span>
+      : artifact temp folder
+
+
+            
+<span style="color: #000055" class="">config-location</span>
+    : artifact config folder
+
+
+            
+<span style="color: #000055" class="">lib-location</span>
+       : artifact lib folder
+
+
+            
+<span style="color: #000055" class="">log-location</span>
+       : artifact log folder
+
+
+            
+<span style="color: #000055" class="">cache-location</span>
+     : artifact cache folder
+
+
+            
+<span style="color: #000055" class="">programs-location</span>
+  : artifact programs folder
+
+
+            
+<span style="color: #000055" class="">run-location</span>
+       : artifact run folder
+
+
+            
+<span style="color: #000055" class="">long</span>
+               : equivalent to 
+<span style="color: #000055" class="">status, install-date, install-user, id</span>
+
+
+            
+<span style="color: #000055" class="">all</span>
+                : equivalent to all of the above
+
+
+
+
+    
+<span style="color: #005078" class="">--omit-env</span>
+
+
         when formatting id, omit env
 
-    <span style="color: #005078" class="">--omit-face</span>
+
+
+
+    
+<span style="color: #005078" class="">--omit-face</span>
+
+
         when formatting id, omit face
 
-    <span style="color: #005078" class="">--omit-group</span>
+
+
+
+    
+<span style="color: #005078" class="">--omit-group</span>
+
+
         when formatting id, omit group
 
-    <span style="color: #005078" class="">--omit-imported-group</span>
+
+
+
+    
+<span style="color: #005078" class="">--omit-imported-group</span>
+
+
         when formatting id, omit imported group
 
-    <span style="color: #005078" class="">--omit-repo</span>
+
+
+
+    
+<span style="color: #005078" class="">--omit-repo</span>
+
+
         when formatting id, omit repository
 
-    <span style="color: #005078" class="">--highlight-imported-group</span>
+
+
+
+    
+<span style="color: #005078" class="">--highlight-imported-group</span>
+
+
         when formatting id, highlight imported group
 
-    <span style="color: #005078" class="">--highlight-optional</span>
+
+
+
+    
+<span style="color: #005078" class="">--highlight-optional</span>
+
+
         when formatting id, highlight optional
 
-    <span style="color: #005078" class="">--highlight-scope</span>
+
+
+
+    
+<span style="color: #005078" class="">--highlight-scope</span>
+
+
         when formatting id, highlight scope
+
+
+
+
+
 
 
 
@@ -2100,23 +3139,84 @@ EXAMPLES
 
 
 </span>
-    <span style="color: #000055" class="">nuts</span> search <span style="color: #005078" class="">--help</span>
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ search 
+<span style="color: #005078" class="">--help</span>
+
+
         show this help and exit
 
-    <span style="color: #000055" class="">nuts</span> search
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ search
+
+
         search installed nuts
 
-    <span style="color: #000055" class="">nuts</span> search <span style="color: #005078" class="">--offline</span> netbeans-*
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ search 
+<span style="color: #005078" class="">--offline</span>
+ netbeans-
+*
+
+
         search all artifacts that start with "netbeans-" in all local repositories
 
-    <span style="color: #000055" class="">nuts</span> search <span style="color: #005078" class="">--anywhere</span> netbeans-*
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ search 
+<span style="color: #005078" class="">--anywhere</span>
+ netbeans-
+*
+
+
         search all artifacts that start with "netbeans-" in all local and remote repositories
 
-    <span style="color: #000055" class="">nuts</span> <span style="color: #005078" class="">-Zy</span> <span style="color: #005078" class="">-w</span> test search <span style="color: #005078" class="">--repository</span> spring 
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ 
+<span style="color: #005078" class="">-Zy</span>
+ 
+<span style="color: #005078" class="">-w</span>
+ test search 
+<span style="color: #005078" class="">--repository</span>
+ spring 
+
+
         search using spring repository only
 
-    <span style="color: #005078" class="">-Zy</span> search <span style="color: #005078" class="">-l</span> <span style="color: #005078" class="">--json</span> 
+
+
+
+    
+<span style="color: #005078" class="">-Zy</span>
+ search 
+<span style="color: #005078" class="">-l</span>
+ 
+<span style="color: #005078" class="">--json</span>
+ 
+
+
         search locally installed artifacts in json format
+
+
+
 
 </pre>
                                 </div>
@@ -2274,28 +3374,84 @@ The available strategies are
                                 <h3 class="main-section2"><a href="#U9A620D158284B78C67D71E477C99E55F0E05A711">4.9 Install Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
-install <span style="color: #000055" class="">nuts</span> package <nuts-artifact>
+
+install 
+<span style="color: #000055" class="">nuts</span>
+ package <nuts-artifact>
+
+
+
 
 <span style="color: #0000A3" class="">##)  
 SYNOPSIS:
 
 
 </span>
-    <span style="color: #000055" class="">nuts</span> install <<span style="color: #005078" class="">-options</span>> <nuts-artifact>...
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ install 
+<
+<span style="color: #005078" class="">-options</span>
+>
+ 
+<nuts-artifact>
+...
+
+
+
 
 <span style="color: #0000A3" class="">##)  
 OPTIONS:
 
 
 </span>
-    <span style="color: #005078" class="">-c</span> | <span style="color: #005078" class="">--companions</span>
+
+
+    
+<span style="color: #005078" class="">-c</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--companions</span>
+
+
         include companions in the install process
 
-    <span style="color: #005078" class="">-i</span> | <span style="color: #005078" class="">--installed</span>
+
+
+
+    
+<span style="color: #005078" class="">-i</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--installed</span>
+
+
         include already installed artifacts in the install process (re-install)
 
-    <span style="color: #005078" class="">-g</span> | <span style="color: #005078" class="">--args</span> <args> ...
+
+
+
+    
+<span style="color: #005078" class="">-g</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--args</span>
+ 
+<args>
+ ...
+
+
         pass the given args to the install executor
+
+
+
+
+
 
 
 
@@ -2304,17 +3460,60 @@ EXAMPLES:
 
 
 </span>
-    <span style="color: #000055" class="">nuts</span> install <span style="color: #005078" class="">--help</span>
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ install 
+<span style="color: #005078" class="">--help</span>
+
+
         show this help and exit
 
-    <span style="color: #000055" class="">nuts</span> install netbeans-launcher
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ install netbeans-launcher
+
+
         install netbeans-launcher
 
-    <span style="color: #000055" class="">nuts</span> <span style="color: #005078" class="">--debug</span> <span style="color: #005078" class="">-Zy</span> <span style="color: #005078" class="">-w</span> test install pnote
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ 
+<span style="color: #005078" class="">--debug</span>
+ 
+<span style="color: #005078" class="">-Zy</span>
+ 
+<span style="color: #005078" class="">-w</span>
+ test install pnote
+
+
         install pnote in debug mode
 
-    <span style="color: #000055" class="">nuts</span> <span style="color: #005078" class="">-Zyb</span> <span style="color: #005078" class="">-w</span> test <span style="color: #005078" class="">--verbose</span> install netbeans-launcher
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ 
+<span style="color: #005078" class="">-Zyb</span>
+ 
+<span style="color: #005078" class="">-w</span>
+ test 
+<span style="color: #005078" class="">--verbose</span>
+ install netbeans-launcher
+
+
         install netbeans-launcher in verbose mode
+
+
+
 
 </pre>
                                 </div>
@@ -2472,27 +3671,71 @@ The available strategies are
                                 <h3 class="main-section2"><a href="#U9A620D158284B78C67D71E477C99E55F0E05A711">4.11 Uninstall Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
-uninstall <span style="color: #000055" class="">nuts</span> package <nuts-artifact>
+
+uninstall 
+<span style="color: #000055" class="">nuts</span>
+ package <nuts-artifact>
+
+
+
 
 <span style="color: #0000A3" class="">##)  
 SYNOPSIS:
 
 
 </span>
-    <span style="color: #000055" class="">nuts</span> uninstall <nuts-artifact>... <args> ...
-        uninstall one or more <span style="color: #000055" class="">nuts</span> from repositories if installed.
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ uninstall 
+<nuts-artifact>
+... 
+<args>
+ ...
+
+
+        uninstall one or more 
+<span style="color: #000055" class="">nuts</span>
+ from repositories if installed.
+
+
         if no nuts-id is defined an error will occur
+
+
+
 
 <span style="color: #0000A3" class="">##)  
 OPTIONS:
 
 
 </span>
-    <span style="color: #005078" class="">-e</span> | <span style="color: #005078" class="">--erase</span>
+
+
+    
+<span style="color: #005078" class="">-e</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--erase</span>
+
+
         enable erase mode to delete all of artifact's config data as well
 
-    <args> ...
+
+
+
+    
+<args>
+ ...
+
+
         provide arguments to pass to uninstaller
+
+
+
+
+
 
 
 
@@ -2501,20 +3744,66 @@ EXAMPLES
 
 
 </span>
-    <span style="color: #000055" class="">nuts</span> uninstall <span style="color: #005078" class="">--help</span>
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ uninstall 
+<span style="color: #005078" class="">--help</span>
+
+
         show this help and exit
 
-    <span style="color: #000055" class="">nuts</span> uninstall netbeans-launcher
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ uninstall netbeans-launcher
+
+
         uninstall netbeans-launcher
 
-    <span style="color: #000055" class="">nuts</span> uninstall my-group:my-thing#2.3
-        uninstalls - if able to resolve it - exactly the <span style="color: #000055" class="">nuts</span> "my-group:my-thing#2.3"
 
-    <span style="color: #000055" class="">nuts</span> uninstall my-group:my-thing
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ uninstall my-group
+:
+my-thing
+#
+2.3
+
+
+        uninstalls - if able to resolve it - exactly the 
+<span style="color: #000055" class="">nuts</span>
+ "my-group:my-thing#2.3"
+
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ uninstall my-group
+:
+my-thing
+
+
         uninstalls - if able to resolve it - the latest version of "my-group:my-thing"
 
-    <span style="color: #000055" class="">nuts</span>uninstall my-thing
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+uninstall my-thing
+
+
         uninstalls - if able to resolve it - the latest version of "my-group:my-thing" as long as "my-group" is defined as a default import group
+
+
+
 
 </pre>
                                 </div>
@@ -2672,38 +3961,127 @@ The available strategies are
                                 <h3 class="main-section2"><a href="#U9A620D158284B78C67D71E477C99E55F0E05A711">4.13 check-updates Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
+
 check for updates
-    check if a newer version of <span style="color: #000055" class="">nuts</span> is available in the current workspace without performing updates
+
+
+    check if a newer version of 
+<span style="color: #000055" class="">nuts</span>
+ is available in the current workspace without performing updates
+
+
+
 
 <span style="color: #0000A3" class="">##)  
 SYNOPSIS
 
 
 </span>
-    <span style="color: #000055" class="">nuts</span> check-updates [<<span style="color: #005078" class="">-options</span>>]... <ids> ...
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ check-updates 
+[
+<
+<span style="color: #005078" class="">-options</span>
+>
+]
+... 
+<ids>
+ ...
+
+
+
 
 <span style="color: #0000A3" class="">##)  
 OPTIONS:
 
 
 </span>
-    <span style="color: #005078" class="">-a</span> | <span style="color: #005078" class="">--all</span>
+
+
+    
+<span style="color: #005078" class="">-a</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--all</span>
+
+
         check updates for both workspace's api, runtime extensions and installed artifacts
 
-    <span style="color: #005078" class="">-w</span> | <span style="color: #005078" class="">--ws</span> or <span style="color: #005078" class="">--workspace</span>
+
+
+
+    
+<span style="color: #005078" class="">-w</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--ws</span>
+ or 
+<span style="color: #005078" class="">--workspace</span>
+
+
         check updates for all workspace's related artifacts (api, runtime and extensions)
 
-    <span style="color: #005078" class="">-i</span> | <span style="color: #005078" class="">--installed</span>
+
+
+
+    
+<span style="color: #005078" class="">-i</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--installed</span>
+
+
         check updates for all installed artifacts
 
-    <span style="color: #005078" class="">-e</span> | <span style="color: #005078" class="">--extensions</span>
+
+
+
+    
+<span style="color: #005078" class="">-e</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--extensions</span>
+
+
         check updates for all workspace's extensions
 
-    <span style="color: #005078" class="">-r</span> | <span style="color: #005078" class="">--runtime</span>
+
+
+
+    
+<span style="color: #005078" class="">-r</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--runtime</span>
+
+
         check updates for workspace's runtime artifact (minor workspace update)
 
-    <span style="color: #005078" class="">-A</span> | <span style="color: #005078" class="">--api</span>
+
+
+
+    
+<span style="color: #005078" class="">-A</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--api</span>
+
+
         check updates for workspace's api (major workspace update)
+
+
+
+
+
 
 
 
@@ -2712,11 +4090,28 @@ EXAMPLES
 
 
 </span>
-    <span style="color: #000055" class="">nuts</span> check-updates <span style="color: #005078" class="">--help</span>
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ check-updates 
+<span style="color: #005078" class="">--help</span>
+
+
         show this help and exit
 
-    <span style="color: #000055" class="">nuts</span> check-updates
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ check-updates
+
+
         check updates for current workspace
+
+
+
 
 </pre>
                                 </div>
@@ -2874,54 +4269,201 @@ The available strategies are
                                 <h3 class="main-section2"><a href="#U9A620D158284B78C67D71E477C99E55F0E05A711">4.15 updates Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
-<span style="color: #000055" class="">nuts</span> update 
-    check if a newer version of <span style="color: #000055" class="">nuts</span> or any of the provided <ids>
+
+<span style="color: #000055" class="">nuts</span>
+ update 
+
+
+    check if a newer version of 
+<span style="color: #000055" class="">nuts</span>
+ or any of the provided <ids>
+
+
     is available in the current workspace and perform update by downloading (fetch)
+
+
     and installing the artifact. The updated version is promoted to 'default' version.
+
+
+
 
 <span style="color: #0000A3" class="">##)  
 SYNOPSIS:
 
 
 </span>
-    <span style="color: #000055" class="">nuts</span> update [<<span style="color: #005078" class="">-options</span>>]... <ids> ... <args> ...
-        update the <span style="color: #000055" class="">nuts</span> to the latest version.
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ update 
+[
+<
+<span style="color: #005078" class="">-options</span>
+>
+]
+... 
+<ids>
+ ... 
+<args>
+ ...
+
+
+        update the 
+<span style="color: #000055" class="">nuts</span>
+ to the latest version.
+
+
         If --force is armed, will re-download the artifacts and its dependencies.
 
-    <span style="color: #000055" class="">nuts</span> update [ <span style="color: #005078" class="">--to-version</span> <version> ]
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ update 
+[
+ 
+<span style="color: #005078" class="">--to-version</span>
+ 
+<version>
+ 
+]
+
+
         update the current workspace to latest version or to the given version if provided.
+
+
+
 
 <span style="color: #0000A3" class="">##)  
 OPTIONS:
 
 
 </span>
-    <span style="color: #005078" class="">-a</span> | <span style="color: #005078" class="">--all</span>
+
+
+    
+<span style="color: #005078" class="">-a</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--all</span>
+
+
         force updates of both workspace's api, runtime extensions and installed artifacts
 
-    <span style="color: #005078" class="">-w</span> | <span style="color: #005078" class="">--ws</span> | <span style="color: #005078" class="">--workspace</span>
+
+
+
+    
+<span style="color: #005078" class="">-w</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--ws</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--workspace</span>
+
+
         update all workspace's related artifacts (api, runtime and extensions)
 
-    <span style="color: #005078" class="">-i</span> | <span style="color: #005078" class="">--installed</span>
+
+
+
+    
+<span style="color: #005078" class="">-i</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--installed</span>
+
+
         update all installed artifacts
 
-    <span style="color: #005078" class="">-e</span> | <span style="color: #005078" class="">--extensions</span>
+
+
+
+    
+<span style="color: #005078" class="">-e</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--extensions</span>
+
+
         update all workspace's extensions
 
-    <span style="color: #005078" class="">-c</span> | <span style="color: #005078" class="">--companions</span>
+
+
+
+    
+<span style="color: #005078" class="">-c</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--companions</span>
+
+
         update all companions
 
-    <span style="color: #005078" class="">-r</span> | <span style="color: #005078" class="">--runtime</span>
+
+
+
+    
+<span style="color: #005078" class="">-r</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--runtime</span>
+
+
         update workspace's runtime artifact (minor workspace update)
 
-    <span style="color: #005078" class="">-A</span> | <span style="color: #005078" class="">--api</span>
+
+
+
+    
+<span style="color: #005078" class="">-A</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--api</span>
+
+
         update workspace's api (major workspace update)
 
-    <span style="color: #005078" class="">-v</span> <version> or <span style="color: #005078" class="">--to-version</span> <version>
+
+
+
+    
+<span style="color: #005078" class="">-v</span>
+ 
+<version>
+ or 
+<span style="color: #005078" class="">--to-version</span>
+ 
+<version>
+
+
         force updates to the provided <version> (may be a downgrade)
 
-    <args> ...
+
+
+
+    
+<args>
+ ...
+
+
         provide arguments to pass to updater
+
+
+
+
+
 
 
 
@@ -2930,14 +4472,38 @@ EXAMPLES
 
 
 </span>
-    <span style="color: #000055" class="">nuts</span> update <span style="color: #005078" class="">--help</span>
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ update 
+<span style="color: #005078" class="">--help</span>
+
+
         show this help and exit
 
-    <span style="color: #000055" class="">nuts</span> update
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ update
+
+
         update workspace
 
-    <span style="color: #000055" class="">nuts</span> update netbeans-launcher
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ update netbeans-launcher
+
+
         update netbeans-launcher
+
+
+
 
 </pre>
                                 </div>
@@ -3015,227 +4581,968 @@ me@linux:~&gt; nuts search -i -l --json
                                 <h3 class="main-section2"><a href="#U9A620D158284B78C67D71E477C99E55F0E05A711">4.17 Search Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
+
 search for artifacts
+
+
+
 
 <span style="color: #0000A3" class="">##)  
 SYNOPSIS:
 
 
 </span>
-    <span style="color: #000055" class="">nuts</span> search [<<span style="color: #005078" class="">-options</span>>]... <ids> ... <args> ...
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ search 
+[
+<
+<span style="color: #005078" class="">-options</span>
+>
+]
+... 
+<ids>
+ ... 
+<args>
+ ...
+
+
         search for <ids>
+
+
+
 
 <span style="color: #0000A3" class="">##)  
 OPTIONS:
 
 
 </span>
-    <span style="color: #005078" class="">--lenient</span>
-        when an id is found but its descriptor and/or its file are not found, do not raise an error and continue. default <span style="color: #000055" class="">no</span>
 
-    <span style="color: #005078" class="">--all-versions</span>
-        return all versions of the same ids. if <span style="color: #000055" class="">no</span> will always return the <span style="color: #000055" class="">latest</span> one. default <span style="color: #000055" class="">yes</span>
 
-    <span style="color: #005078" class="">--duplicates</span>
-        return the same version from distinct repositories if found. default <span style="color: #000055" class="">yes</span>
+    
+<span style="color: #005078" class="">--lenient</span>
 
-    <span style="color: #005078" class="">--distinct</span>
-        remove duplicates . default <span style="color: #000055" class="">false</span>
 
-    <span style="color: #005078" class="">-L</span> | <span style="color: #005078" class="">--latest</span> | <span style="color: #005078" class="">--latest-versions</span>
-        return latest version of each searched id. equivalent to <span style="color: #005078" class="">--all-versions</span>=no
+        when an id is found but its descriptor and/or its file are not found, do not raise an error and continue. default 
+<span style="color: #000055" class="">no</span>
 
-    <span style="color: #005078" class="">-S</span> | <span style="color: #005078" class="">--single</span> | <span style="color: #005078" class="">--single-versions</span>
-        return one instance of each version even if found in distinct repositories. equivalent to <span style="color: #005078" class="">--duplicate</span>=no
 
-    <span style="color: #005078" class="">-s</span> | <span style="color: #005078" class="">--sort</span>
-        sort result. default <span style="color: #000055" class="">no</span>
 
-    <span style="color: #005078" class="">--main</span>
-        include main result. This is meaningful when one needs to find only dependencies, and hence turns this flag to <span style="color: #000055" class="">no</span>. default <span style="color: #000055" class="">yes</span>
 
-    <span style="color: #005078" class="">--dependencies</span>
-        include dependencies in result. default <span style="color: #000055" class="">no</span>
+    
+<span style="color: #005078" class="">--all-versions</span>
 
-    <span style="color: #005078" class="">--main-only</span>
-        include main result and no dependencies. equivalent to <span style="color: #005078" class="">--main</span>=yes <span style="color: #005078" class="">--dependencies</span>=no
 
-    <span style="color: #005078" class="">--dependencies-only</span>
-        include dependencies and no main. equivalent to <span style="color: #005078" class="">--main</span>=no <span style="color: #005078" class="">--dependencies</span>=no
+        return all versions of the same ids. if 
+<span style="color: #000055" class="">no</span>
+ will always return the 
+<span style="color: #000055" class="">latest</span>
+ one. default 
+<span style="color: #000055" class="">yes</span>
 
-    <span style="color: #005078" class="">--main-and-dependencies</span>
-        include main result and no dependencies. equivalent to <span style="color: #005078" class="">--main</span>=yes <span style="color: #005078" class="">--dependencies</span>=yes
 
-    <span style="color: #005078" class="">-r</span> | <span style="color: #005078" class="">--repository</span> <repo-name>
+
+
+    
+<span style="color: #005078" class="">--duplicates</span>
+
+
+        return the same version from distinct repositories if found. default 
+<span style="color: #000055" class="">yes</span>
+
+
+
+
+    
+<span style="color: #005078" class="">--distinct</span>
+
+
+        remove duplicates . default 
+<span style="color: #000055" class="">false</span>
+
+
+
+
+    
+<span style="color: #005078" class="">-L</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--latest</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--latest-versions</span>
+
+
+        return latest version of each searched id. equivalent to 
+<span style="color: #005078" class="">--all-versions</span>
+=
+no
+
+
+
+
+    
+<span style="color: #005078" class="">-S</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--single</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--single-versions</span>
+
+
+        return one instance of each version even if found in distinct repositories. equivalent to 
+<span style="color: #005078" class="">--duplicate</span>
+=
+no
+
+
+
+
+    
+<span style="color: #005078" class="">-s</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--sort</span>
+
+
+        sort result. default 
+<span style="color: #000055" class="">no</span>
+
+
+
+
+    
+<span style="color: #005078" class="">--main</span>
+
+
+        include main result. This is meaningful when one needs to find only dependencies, and hence turns this flag to 
+<span style="color: #000055" class="">no</span>
+. default 
+<span style="color: #000055" class="">yes</span>
+
+
+
+
+    
+<span style="color: #005078" class="">--dependencies</span>
+
+
+        include dependencies in result. default 
+<span style="color: #000055" class="">no</span>
+
+
+
+
+    
+<span style="color: #005078" class="">--main-only</span>
+
+
+        include main result and no dependencies. equivalent to 
+<span style="color: #005078" class="">--main</span>
+=
+yes 
+<span style="color: #005078" class="">--dependencies</span>
+=
+no
+
+
+
+
+    
+<span style="color: #005078" class="">--dependencies-only</span>
+
+
+        include dependencies and no main. equivalent to 
+<span style="color: #005078" class="">--main</span>
+=
+no 
+<span style="color: #005078" class="">--dependencies</span>
+=
+no
+
+
+
+
+    
+<span style="color: #005078" class="">--main-and-dependencies</span>
+
+
+        include main result and no dependencies. equivalent to 
+<span style="color: #005078" class="">--main</span>
+=
+yes 
+<span style="color: #005078" class="">--dependencies</span>
+=
+yes
+
+
+
+
+    
+<span style="color: #005078" class="">-r</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--repository</span>
+ 
+<repo-name>
+
+
         include repository in the search process. if none defined, all repositories are searched.
 
-    <span style="color: #005078" class="">--arch</span> x86|amd64|ia64|ppc|sparc
+
+
+
+    
+<span style="color: #005078" class="">--arch</span>
+ x86
+|
+amd64
+|
+ia64
+|
+ppc
+|
+sparc
+
+
         include architecture in the search process. if none defined, all architectures are searched.
 
-    <span style="color: #005078" class="">--packaging</span> jar|war|...
+
+
+
+    
+<span style="color: #005078" class="">--packaging</span>
+ jar
+|
+war
+|
+...
+
+
         include packaging in the search process. if none defined, all packagings are searched.
 
-    <span style="color: #005078" class="">--cached</span>
-        include cached in the search process. default <span style="color: #000055" class="">yes</span>
 
-    <span style="color: #005078" class="">--indexed</span>
-        include search index in the search process. default <span style="color: #000055" class="">yes</span>
 
-    <span style="color: #005078" class="">--effective</span>
-        compute effective descriptor. default <span style="color: #000055" class="">no</span>
 
-    <span style="color: #005078" class="">--content</span>
-        include content. default <span style="color: #000055" class="">no</span>
+    
+<span style="color: #005078" class="">--cached</span>
 
-    <span style="color: #005078" class="">--install-info</span>
-        include install information. default <span style="color: #000055" class="">false</span>
 
-    <span style="color: #005078" class="">--location</span>
+        include cached in the search process. default 
+<span style="color: #000055" class="">yes</span>
+
+
+
+
+    
+<span style="color: #005078" class="">--indexed</span>
+
+
+        include search index in the search process. default 
+<span style="color: #000055" class="">yes</span>
+
+
+
+
+    
+<span style="color: #005078" class="">--effective</span>
+
+
+        compute effective descriptor. default 
+<span style="color: #000055" class="">no</span>
+
+
+
+
+    
+<span style="color: #005078" class="">--content</span>
+
+
+        include content. default 
+<span style="color: #000055" class="">no</span>
+
+
+
+
+    
+<span style="color: #005078" class="">--install-info</span>
+
+
+        include install information. default 
+<span style="color: #000055" class="">false</span>
+
+
+
+
+    
+<span style="color: #005078" class="">--location</span>
+
+
         force found contents to be copied to location
 
-    <span style="color: #005078" class="">-f</span> | <span style="color: #005078" class="">--fetch</span> offline|online|anywhere|installed|remote
+
+
+
+    
+<span style="color: #005078" class="">-f</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--fetch</span>
+ offline
+|
+online
+|
+anywhere
+|
+installed
+|
+remote
+
+
         include fetch mode in the search process. if none defined, all fetch modes are searched.
 
-    <span style="color: #005078" class="">--offline</span> | <span style="color: #005078" class="">-F</span> 
-        equivalent to <span style="color: #005078" class="">--fetch</span>=offline
 
-    <span style="color: #005078" class="">--online</span> | <span style="color: #005078" class="">-O</span>
-        equivalent to <span style="color: #005078" class="">--fetch</span>=online
 
-    <span style="color: #005078" class="">--anywhere</span> | <span style="color: #005078" class="">-a</span>
-        equivalent to <span style="color: #005078" class="">--fetch</span>=anywhere
 
-    <span style="color: #005078" class="">--installed</span> | <span style="color: #005078" class="">-i</span> 
+    
+<span style="color: #005078" class="">--offline</span>
+ 
+|
+ 
+<span style="color: #005078" class="">-F</span>
+ 
+
+
+        equivalent to 
+<span style="color: #005078" class="">--fetch</span>
+=
+offline
+
+
+
+
+    
+<span style="color: #005078" class="">--online</span>
+ 
+|
+ 
+<span style="color: #005078" class="">-O</span>
+
+
+        equivalent to 
+<span style="color: #005078" class="">--fetch</span>
+=
+online
+
+
+
+
+    
+<span style="color: #005078" class="">--anywhere</span>
+ 
+|
+ 
+<span style="color: #005078" class="">-a</span>
+
+
+        equivalent to 
+<span style="color: #005078" class="">--fetch</span>
+=
+anywhere
+
+
+
+
+    
+<span style="color: #005078" class="">--installed</span>
+ 
+|
+ 
+<span style="color: #005078" class="">-i</span>
+ 
+
+
         search for installed only packages
 
-    <span style="color: #005078" class="">--included</span>
+
+
+
+    
+<span style="color: #005078" class="">--included</span>
+
+
         search for included packages in other installations
 
-    <span style="color: #005078" class="">--deployed</span>
+
+
+
+    
+<span style="color: #005078" class="">--deployed</span>
+
+
         search for installed and required (as dependencies) packages
 
-    <span style="color: #005078" class="">--remote</span> | <span style="color: #005078" class="">-R</span>
-        equivalent to <span style="color: #005078" class="">--fetch</span>=remote
 
-    <span style="color: #005078" class="">--optional</span>
-        relevant when <span style="color: #005078" class="">--dependencies</span> is armed.
-        <span style="color: #005078" class="">--optional</span>=     : search for all dependencies, including optional (default)
-        <span style="color: #005078" class="">--optional</span>=yes  : search for optional dependencies only
-        <span style="color: #005078" class="">--optional</span>=no   : search for non optional dependencies only
 
-    <span style="color: #005078" class="">--scope</span> api|implementation|compile|provided|import
-               |runtime|system|test-compile|test-provided
-               |test-runtime|test|run|run-test|other|all
-        relevant when <span style="color: #005078" class="">--dependencies</span> is armed.
+
+    
+<span style="color: #005078" class="">--remote</span>
+ 
+|
+ 
+<span style="color: #005078" class="">-R</span>
+
+
+        equivalent to 
+<span style="color: #005078" class="">--fetch</span>
+=
+remote
+
+
+
+
+    
+<span style="color: #005078" class="">--optional</span>
+
+
+        relevant when 
+<span style="color: #005078" class="">--dependencies</span>
+ is armed.
+
+
+        
+<span style="color: #005078" class="">--optional</span>
+=
+     : search for all dependencies, including optional (default)
+
+
+        
+<span style="color: #005078" class="">--optional</span>
+=
+yes
+  : search for optional dependencies only
+
+
+        
+<span style="color: #005078" class="">--optional</span>
+=
+no
+   : search for non optional dependencies only
+
+
+
+
+    
+<span style="color: #005078" class="">--scope</span>
+ api
+|
+implementation
+|
+compile
+|
+provided
+|
+import
+
+
+               
+|
+runtime
+|
+system
+|
+test-compile
+|
+test-provided
+
+
+               
+|
+test-runtime
+|
+test
+|
+run
+|
+run-test
+|
+other
+|
+all
+
+
+        relevant when 
+<span style="color: #005078" class="">--dependencies</span>
+ is armed.
+
+
         include scope in the search dependencies process.
-        if none defined, only <span style="color: #000055" class="">run</span> scope is searched.
 
-    <span style="color: #005078" class="">--default</span> | <span style="color: #005078" class="">--default-versions</span>
-        find only default installed versions. This is meaningful with <span style="color: #005078" class="">--installed</span> flag
 
-    <span style="color: #005078" class="">--libs</span> | <span style="color: #005078" class="">--lib</span>
+        if none defined, only 
+<span style="color: #000055" class="">run</span>
+ scope is searched.
+
+
+
+
+    
+<span style="color: #005078" class="">--default</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--default-versions</span>
+
+
+        find only default installed versions. This is meaningful with 
+<span style="color: #005078" class="">--installed</span>
+ flag
+
+
+
+
+    
+<span style="color: #005078" class="">--libs</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--lib</span>
+
+
         find libraries (non app) only
 
-    <span style="color: #005078" class="">--apps</span> | <span style="color: #005078" class="">--app</span>
+
+
+
+    
+<span style="color: #005078" class="">--apps</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--app</span>
+
+
         find applications (non libraries) only
 
-    <span style="color: #005078" class="">--nuts-apps</span> |<span style="color: #005078" class="">--nuts-app</span>
+
+
+
+    
+<span style="color: #005078" class="">--nuts-apps</span>
+ 
+|
+<span style="color: #005078" class="">--nuts-app</span>
+
+
         find nuts applications only
 
-    <span style="color: #005078" class="">--extensions</span> | <span style="color: #005078" class="">--extension</span>
+
+
+
+    
+<span style="color: #005078" class="">--extensions</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--extension</span>
+
+
         find extensions only
 
-    <span style="color: #005078" class="">--runtime</span>
+
+
+
+    
+<span style="color: #005078" class="">--runtime</span>
+
+
         find nuts runtime only
 
-    <span style="color: #005078" class="">--companions</span> | <span style="color: #005078" class="">--companion</span>
+
+
+
+    
+<span style="color: #005078" class="">--companions</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--companion</span>
+
+
         find companions only
 
-    <span style="color: #005078" class="">--api-version</span>
+
+
+
+    
+<span style="color: #005078" class="">--api-version</span>
+
+
         find artifacts compatible with the given api-version
 
-    <span style="color: #005078" class="">-l</span>
-    <span style="color: #005078" class="">--long</span>
-    <span style="color: #005078" class="">--display-long</span>
-        equivalent to <span style="color: #005078" class="">--display</span>=long
 
-    <span style="color: #005078" class="">--display</span>=<comma-separated-columns>
+
+
+    
+<span style="color: #005078" class="">-l</span>
+
+
+    
+<span style="color: #005078" class="">--long</span>
+
+
+    
+<span style="color: #005078" class="">--display-long</span>
+
+
+        equivalent to 
+<span style="color: #005078" class="">--display</span>
+=
+long
+
+
+
+
+    
+<span style="color: #005078" class="">--display</span>
+=
+<comma-separated-columns>
+
+
         define columns to display (ordered list of columns, comma separated)
-        Accepted columns are:
-            <span style="color: #000055" class="">status</span>             : show nuts status using condensed format using 3 characters
-                char #1 : show installation status
-                    <span style="color: #000055" class="">I</span> : means 'installed' and is 'default'
-                    <span style="color: #000055" class="">i</span> : means 'installed' and is not default
-                    <span style="color: #000055" class="">d</span> : means 'dependency' (aka 'required') locally deployed
-                    <span style="color: #000055" class="">f</span> : means 'fetched' locally but not installed
-                    <span style="color: #000055" class="">r</span> : means 'remote' (not fetched)
-                char #2 : show package type
-                    <span style="color: #000055" class="">a</span> : nuts 'api' package
-                    <span style="color: #000055" class="">r</span> : nuts 'runtime' package
-                    <span style="color: #000055" class="">e</span> : nuts 'extension' package
-                    <span style="color: #000055" class="">c</span> : nuts 'companion' package
-                    <span style="color: #000055" class="">-</span> : other package
-                char #3 : show application status
-                    <span style="color: #000055" class="">X</span> : means executable nuts application (implementing NutsApplication)
-                    <span style="color: #000055" class="">x</span> : means executable regular application
-                    <span style="color: #000055" class="">-</span> : means non executable or unknown
-                char #4 : show scope status (when applicable)
-                    <span style="color: #000055" class="">c</span> : compile/api scope
-                    <span style="color: #000055" class="">i</span> : implementation scope
-                    <span style="color: #000055" class="">r</span> : runtime scope
-                    <span style="color: #000055" class="">s</span> : system scope
-                    <span style="color: #000055" class="">p</span> : provided scope
-                    <span style="color: #000055" class="">t</span> : test (any) scope
-                    <span style="color: #000055" class="">m</span> : import scope
-                    <span style="color: #000055" class="">O</span> : other
-                    <span style="color: #000055" class="">-</span> : unknown
-            <span style="color: #000055" class="">install-date</span>       : artifact install date
-            <span style="color: #000055" class="">install-user</span>       : artifact install user
-            <span style="color: #000055" class="">id</span>                 : artifact id
-            <span style="color: #000055" class="">name</span>               : simple name
-            <span style="color: #000055" class="">packaging</span>          : artifact packaging (jar, war, msi, exe, ...)
-            <span style="color: #000055" class="">arch</span>               : artifact supported architectures (x86, x64,...)
-            <span style="color: #000055" class="">platform</span>           : artifact supported platforms (java, dotnet, ...)
-            <span style="color: #000055" class="">os</span>                 : artifact supported operation systems (Linux, Windows,...)
-            <span style="color: #000055" class="">osdist</span>             : artifact supported OS distributions (OpenSuSE, Ubuntu, ...)
-            <span style="color: #000055" class="">de</span>                 : artifact supported OS Desktop Environment (KDE, GNOME,...)
-            <span style="color: #000055" class="">exec-entry</span>         : Main class
-            <span style="color: #000055" class="">file-name</span>          : artifact file name
-            <span style="color: #000055" class="">file</span>               : artifact file path
-            <span style="color: #000055" class="">var-location</span>       : artifact var folder
-            <span style="color: #000055" class="">temp-location</span>      : artifact temp folder
-            <span style="color: #000055" class="">config-location</span>    : artifact config folder
-            <span style="color: #000055" class="">lib-location</span>       : artifact lib folder
-            <span style="color: #000055" class="">log-location</span>       : artifact log folder
-            <span style="color: #000055" class="">cache-location</span>     : artifact cache folder
-            <span style="color: #000055" class="">programs-location</span>  : artifact programs folder
-            <span style="color: #000055" class="">run-location</span>       : artifact run folder
-            <span style="color: #000055" class="">long</span>               : equivalent to <span style="color: #000055" class="">status, install-date, install-user, id</span>
-            <span style="color: #000055" class="">all</span>                : equivalent to all of the above
 
-    <span style="color: #005078" class="">--omit-env</span>
+
+        Accepted columns are:
+
+
+            
+<span style="color: #000055" class="">status</span>
+             : show nuts status using condensed format using 3 characters
+
+
+                char #1 : show installation status
+
+
+                    
+<span style="color: #000055" class="">I</span>
+ : means 'installed' and is 'default'
+
+
+                    
+<span style="color: #000055" class="">i</span>
+ : means 'installed' and is not default
+
+
+                    
+<span style="color: #000055" class="">d</span>
+ : means 'dependency' (aka 'required') locally deployed
+
+
+                    
+<span style="color: #000055" class="">f</span>
+ : means 'fetched' locally but not installed
+
+
+                    
+<span style="color: #000055" class="">r</span>
+ : means 'remote' (not fetched)
+
+
+                char #2 : show package type
+
+
+                    
+<span style="color: #000055" class="">a</span>
+ : nuts 'api' package
+
+
+                    
+<span style="color: #000055" class="">r</span>
+ : nuts 'runtime' package
+
+
+                    
+<span style="color: #000055" class="">e</span>
+ : nuts 'extension' package
+
+
+                    
+<span style="color: #000055" class="">c</span>
+ : nuts 'companion' package
+
+
+                    
+<span style="color: #000055" class="">-</span>
+ : other package
+
+
+                char #3 : show application status
+
+
+                    
+<span style="color: #000055" class="">X</span>
+ : means executable nuts application (implementing NutsApplication)
+
+
+                    
+<span style="color: #000055" class="">x</span>
+ : means executable regular application
+
+
+                    
+<span style="color: #000055" class="">-</span>
+ : means non executable or unknown
+
+
+                char #4 : show scope status (when applicable)
+
+
+                    
+<span style="color: #000055" class="">c</span>
+ : compile/api scope
+
+
+                    
+<span style="color: #000055" class="">i</span>
+ : implementation scope
+
+
+                    
+<span style="color: #000055" class="">r</span>
+ : runtime scope
+
+
+                    
+<span style="color: #000055" class="">s</span>
+ : system scope
+
+
+                    
+<span style="color: #000055" class="">p</span>
+ : provided scope
+
+
+                    
+<span style="color: #000055" class="">t</span>
+ : test (any) scope
+
+
+                    
+<span style="color: #000055" class="">m</span>
+ : import scope
+
+
+                    
+<span style="color: #000055" class="">O</span>
+ : other
+
+
+                    
+<span style="color: #000055" class="">-</span>
+ : unknown
+
+
+            
+<span style="color: #000055" class="">install-date</span>
+       : artifact install date
+
+
+            
+<span style="color: #000055" class="">install-user</span>
+       : artifact install user
+
+
+            
+<span style="color: #000055" class="">id</span>
+                 : artifact id
+
+
+            
+<span style="color: #000055" class="">name</span>
+               : simple name
+
+
+            
+<span style="color: #000055" class="">packaging</span>
+          : artifact packaging (jar, war, msi, exe, ...)
+
+
+            
+<span style="color: #000055" class="">arch</span>
+               : artifact supported architectures (x86, x64,...)
+
+
+            
+<span style="color: #000055" class="">platform</span>
+           : artifact supported platforms (java, dotnet, ...)
+
+
+            
+<span style="color: #000055" class="">os</span>
+                 : artifact supported operation systems (Linux, Windows,...)
+
+
+            
+<span style="color: #000055" class="">osdist</span>
+             : artifact supported OS distributions (OpenSuSE, Ubuntu, ...)
+
+
+            
+<span style="color: #000055" class="">de</span>
+                 : artifact supported OS Desktop Environment (KDE, GNOME,...)
+
+
+            
+<span style="color: #000055" class="">exec-entry</span>
+         : Main class
+
+
+            
+<span style="color: #000055" class="">file-name</span>
+          : artifact file name
+
+
+            
+<span style="color: #000055" class="">file</span>
+               : artifact file path
+
+
+            
+<span style="color: #000055" class="">var-location</span>
+       : artifact var folder
+
+
+            
+<span style="color: #000055" class="">temp-location</span>
+      : artifact temp folder
+
+
+            
+<span style="color: #000055" class="">config-location</span>
+    : artifact config folder
+
+
+            
+<span style="color: #000055" class="">lib-location</span>
+       : artifact lib folder
+
+
+            
+<span style="color: #000055" class="">log-location</span>
+       : artifact log folder
+
+
+            
+<span style="color: #000055" class="">cache-location</span>
+     : artifact cache folder
+
+
+            
+<span style="color: #000055" class="">programs-location</span>
+  : artifact programs folder
+
+
+            
+<span style="color: #000055" class="">run-location</span>
+       : artifact run folder
+
+
+            
+<span style="color: #000055" class="">long</span>
+               : equivalent to 
+<span style="color: #000055" class="">status, install-date, install-user, id</span>
+
+
+            
+<span style="color: #000055" class="">all</span>
+                : equivalent to all of the above
+
+
+
+
+    
+<span style="color: #005078" class="">--omit-env</span>
+
+
         when formatting id, omit env
 
-    <span style="color: #005078" class="">--omit-face</span>
+
+
+
+    
+<span style="color: #005078" class="">--omit-face</span>
+
+
         when formatting id, omit face
 
-    <span style="color: #005078" class="">--omit-group</span>
+
+
+
+    
+<span style="color: #005078" class="">--omit-group</span>
+
+
         when formatting id, omit group
 
-    <span style="color: #005078" class="">--omit-imported-group</span>
+
+
+
+    
+<span style="color: #005078" class="">--omit-imported-group</span>
+
+
         when formatting id, omit imported group
 
-    <span style="color: #005078" class="">--omit-repo</span>
+
+
+
+    
+<span style="color: #005078" class="">--omit-repo</span>
+
+
         when formatting id, omit repository
 
-    <span style="color: #005078" class="">--highlight-imported-group</span>
+
+
+
+    
+<span style="color: #005078" class="">--highlight-imported-group</span>
+
+
         when formatting id, highlight imported group
 
-    <span style="color: #005078" class="">--highlight-optional</span>
+
+
+
+    
+<span style="color: #005078" class="">--highlight-optional</span>
+
+
         when formatting id, highlight optional
 
-    <span style="color: #005078" class="">--highlight-scope</span>
+
+
+
+    
+<span style="color: #005078" class="">--highlight-scope</span>
+
+
         when formatting id, highlight scope
+
+
+
+
+
 
 
 
@@ -3244,23 +5551,84 @@ EXAMPLES
 
 
 </span>
-    <span style="color: #000055" class="">nuts</span> search <span style="color: #005078" class="">--help</span>
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ search 
+<span style="color: #005078" class="">--help</span>
+
+
         show this help and exit
 
-    <span style="color: #000055" class="">nuts</span> search
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ search
+
+
         search installed nuts
 
-    <span style="color: #000055" class="">nuts</span> search <span style="color: #005078" class="">--offline</span> netbeans-*
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ search 
+<span style="color: #005078" class="">--offline</span>
+ netbeans-
+*
+
+
         search all artifacts that start with "netbeans-" in all local repositories
 
-    <span style="color: #000055" class="">nuts</span> search <span style="color: #005078" class="">--anywhere</span> netbeans-*
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ search 
+<span style="color: #005078" class="">--anywhere</span>
+ netbeans-
+*
+
+
         search all artifacts that start with "netbeans-" in all local and remote repositories
 
-    <span style="color: #000055" class="">nuts</span> <span style="color: #005078" class="">-Zy</span> <span style="color: #005078" class="">-w</span> test search <span style="color: #005078" class="">--repository</span> spring 
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ 
+<span style="color: #005078" class="">-Zy</span>
+ 
+<span style="color: #005078" class="">-w</span>
+ test search 
+<span style="color: #005078" class="">--repository</span>
+ spring 
+
+
         search using spring repository only
 
-    <span style="color: #005078" class="">-Zy</span> search <span style="color: #005078" class="">-l</span> <span style="color: #005078" class="">--json</span> 
+
+
+
+    
+<span style="color: #005078" class="">-Zy</span>
+ search 
+<span style="color: #005078" class="">-l</span>
+ 
+<span style="color: #005078" class="">--json</span>
+ 
+
+
         search locally installed artifacts in json format
+
+
+
 
 </pre>
                                 </div>
@@ -3298,218 +5666,869 @@ For Help, type nuts help
                                 <h3 class="main-section2"><a href="#U9A620D158284B78C67D71E477C99E55F0E05A711">4.19 Deploy Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
-configure <span style="color: #000055" class="">nuts</span>
+
+configure 
+<span style="color: #000055" class="">nuts</span>
+
+
+
 
 <span style="color: #0000A3" class="">##)  
 SYNOPSIS:
 
 
 </span>
-    <span style="color: #000055" class="">settings</span> <command> [<args>]...
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ 
+<command>
+ 
+[
+<args>
+]
+...
+
+
+
 
 <span style="color: #005078" class="">###)  
 alias:
 
 
-</span>    <span style="color: #000055" class="">settings</span> list aliases [<name-or-expr>]
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ list aliases 
+[
+<name-or-expr>
+]
+
+
         ...
 
-    <span style="color: #000055" class="">settings</span> add alias <name>=<cmd>...
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ add alias 
+<name>
+=
+<cmd>
+...
+
+
         ...
 
-    <span style="color: #000055" class="">settings</span> remove alias <name>...
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ remove alias 
+<name>
+...
+
+
         ...
+
+
+
 
 <span style="color: #005078" class="">###)  
 alias:
 
 
-</span>    <span style="color: #000055" class="">settings</span> list imports [<name-or-expr>]
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ list imports 
+[
+<name-or-expr>
+]
+
+
         ...
 
-    <span style="color: #000055" class="">settings</span> (import|ia) <name>...
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ 
+(i
+mport
+|
+ia
+)
+ 
+<name>
+...
+
+
         ...
 
-    <span style="color: #000055" class="">settings</span> (unimport|ir) <name>...
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ 
+(u
+nimport
+|
+ir
+)
+ 
+<name>
+...
+
+
         ...
+
+
+
 
 <span style="color: #005078" class="">###)  
 archetype:
 
 
-</span>    <span style="color: #000055" class="">settings</span> (list archetypes|la)
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ 
+(l
+ist archetypes
+|
+la
+)
+
+
         ...
+
+
+
 
 <span style="color: #005078" class="">###)  
 backup/restore:
 
 
-</span>    <span style="color: #000055" class="">settings</span> backup (-<span style="color: #005078" class="">-file</span>|<span style="color: #005078" class="">-f</span>)=<file>
-    <span style="color: #000055" class="">settings</span> backup <file>
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ backup 
+(-
+<span style="color: #005078" class="">-file</span>
+|
+<span style="color: #005078" class="">-f</span>
+)=
+<file>
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ backup 
+<file>
+
+
         ...
 
-    <span style="color: #000055" class="">settings</span> restore (-<span style="color: #005078" class="">-file</span>|<span style="color: #005078" class="">-f</span>)=<file>
-    <span style="color: #000055" class="">settings</span> restore <file>
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ restore 
+(-
+<span style="color: #005078" class="">-file</span>
+|
+<span style="color: #005078" class="">-f</span>
+)=
+<file>
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ restore 
+<file>
+
+
         ...
+
+
+
 
 <span style="color: #005078" class="">###)  
 cli-id:
 
 
-</span>    <span style="color: #000055" class="">settings</span> cli-id
-    <span style="color: #000055" class="">settings</span> get cli-id
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ cli-id
 
-    <span style="color: #000055" class="">settings</span> cli-id=<value>
-    <span style="color: #000055" class="">settings</span> set cli-id <value>
+
+    
+<span style="color: #000055" class="">settings</span>
+ get cli-id
+
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ cli-id
+=
+<value>
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ set cli-id 
+<value>
+
+
         ...
 
-    <span style="color: #000055" class="">settings</span> restore (-<span style="color: #005078" class="">-file</span>|<span style="color: #005078" class="">-f</span>)=<file>
-    <span style="color: #000055" class="">settings</span> restore <file>
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ restore 
+(-
+<span style="color: #005078" class="">-file</span>
+|
+<span style="color: #005078" class="">-f</span>
+)=
+<file>
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ restore 
+<file>
+
+
         ...
+
+
+
 
 <span style="color: #005078" class="">###)  
 connect:
 
 
-</span>    <span style="color: #000055" class="">settings</span> connect <span style="color: #005078" class="">--password</span>=<password> <user>@<host>:port
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ connect 
+<span style="color: #005078" class="">--password</span>
+=
+<password>
+ 
+<user>
+@
+<host>
+:
+port
+
+
         telnet a remote tcp server
+
+
         ...
+
+
+
 
 <span style="color: #005078" class="">###)  
 delete:
 
 
-</span>    <span style="color: #000055" class="">settings</span> delete bin|conf|var|log|temp|cache|run ...
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ delete bin
+|
+conf
+|
+var
+|
+log
+|
+temp
+|
+cache
+|
+run ...
+
+
         delete workspace folder
+
+
+
 
 <span style="color: #005078" class="">###)  
 update stats:
 
 
-</span>    <span style="color: #000055" class="">settings</span> update stats ...
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ update stats ...
+
+
         update repository stats
+
+
+
 
 <span style="color: #005078" class="">###)  
 java:
 
 
-</span>    <span style="color: #000055" class="">settings</span> add java <span style="color: #005078" class="">--search</span>
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ add java 
+<span style="color: #005078" class="">--search</span>
+
+
         deploys an id from registered repository to another
 
-    <span style="color: #000055" class="">settings</span> add java <folder>...
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ add java 
+<folder>
+...
+
+
         deploys an id from registered repository to another
 
-    <span style="color: #000055" class="">settings</span> remove java <name>...
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ remove java 
+<name>
+...
+
+
         deploys an id from registered repository to another
+
+
+
 
 <span style="color: #005078" class="">###)  
 repository:
 
 
-</span>    <span style="color: #000055" class="">settings</span> list repos...
-        ...
-    <span style="color: #000055" class="">settings</span> add repo <repo>...
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ list repos...
+
+
         ...
 
-    <span style="color: #000055" class="">settings</span> remove repo <name>...
+
+    
+<span style="color: #000055" class="">settings</span>
+ add repo 
+<repo>
+...
+
+
         ...
-    <span style="color: #000055" class="">settings</span> enable repo <name>...
+
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ remove repo 
+<name>
+...
+
+
         ...
-    <span style="color: #000055" class="">settings</span> disable repo <name>...
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ enable repo 
+<name>
+...
+
+
         ...
-    <span style="color: #000055" class="">settings</span> edit repo <name> <repo-command>...
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ disable repo 
+<name>
+...
+
+
         ...
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ edit repo 
+<name>
+ 
+<repo-command>
+...
+
+
+        ...
+
+
+
 
 <span style="color: #005078" class="">###)  
 user:
 
 
-</span>    <span style="color: #000055" class="">settings</span> list users...
-        ...
-    <span style="color: #000055" class="">settings</span> add user <user>...
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ list users...
+
+
         ...
 
-    <span style="color: #000055" class="">settings</span> remove user <name>...
+
+    
+<span style="color: #000055" class="">settings</span>
+ add user 
+<user>
+...
+
+
         ...
-    <span style="color: #000055" class="">settings</span> enable user <name>...
+
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ remove user 
+<name>
+...
+
+
         ...
-    <span style="color: #000055" class="">settings</span> disable user <name>...
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ enable user 
+<name>
+...
+
+
         ...
-    <span style="color: #000055" class="">settings</span> edit user <name> <user-command>...
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ disable user 
+<name>
+...
+
+
         ...
-    <span style="color: #000055" class="">settings</span> password...
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ edit user 
+<name>
+ 
+<user-command>
+...
+
+
         ...
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ password...
+
+
+        ...
+
+
+
 
 <span style="color: #005078" class="">###)  
 log:
 
 
-</span>    <span style="color: #000055" class="">settings</span> (set log level|sll) verbose|finest|fine|finer|info|warning|severe|error|config|off|all
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ 
+(s
+et log level
+|
+sll
+)
+ verbose
+|
+finest
+|
+fine
+|
+finer
+|
+info
+|
+warning
+|
+severe
+|
+error
+|
+config
+|
+off
+|
+all
+
+
         ...
 
-    <span style="color: #000055" class="">settings</span> (log level|get log level)
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ 
+(l
+og level
+|
+get log level
+)
+
+
         ...
 
-    <span style="color: #000055" class="">settings</span> install log
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ install log
+
+
         ...
+
+
+
 
 <span style="color: #005078" class="">###)  
 ndi (nuts desktop integration):
 
 
-</span>    <span style="color: #000055" class="">settings</span> ndi [<option>...] <package>...
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ ndi 
+[
+<option>
+...
+]
+ 
+<package>
+...
+
+
         ...
+
+
     OPTIONS:
-    <span style="color: #005078" class="">--fetch</span>|<span style="color: #005078" class="">-t...</span>
+
+
+    
+<span style="color: #005078" class="">--fetch</span>
+|
+<span style="color: #005078" class="">-t...</span>
+
+
         ...
-    (-<span style="color: #005078" class="">-workdir</span>|<span style="color: #005078" class="">-d</span>)=<path>...
+
+
+    
+(-
+<span style="color: #005078" class="">-workdir</span>
+|
+<span style="color: #005078" class="">-d</span>
+)=
+<path>
+...
+
+
         ...
-    <span style="color: #005078" class="">--icon</span>=<path>...
+
+
+    
+<span style="color: #005078" class="">--icon</span>
+=
+<path>
+...
+
+
         ...
-    <span style="color: #005078" class="">--menu</span>=(supported|never|always|preferred)...
+
+
+    
+<span style="color: #005078" class="">--menu</span>
+=(s
+upported
+|
+never
+|
+always
+|
+preferred
+)
+...
+
+
         ...
-    <span style="color: #005078" class="">--menu-category</span>=<path>...
+
+
+    
+<span style="color: #005078" class="">--menu-category</span>
+=
+<path>
+...
+
+
         ...
-    <span style="color: #005078" class="">--menu-name</span>=<name>...
+
+
+    
+<span style="color: #005078" class="">--menu-name</span>
+=
+<name>
+...
+
+
         ...
-    <span style="color: #005078" class="">--shortcut-name</span>=<name>...
+
+
+    
+<span style="color: #005078" class="">--shortcut-name</span>
+=
+<name>
+...
+
+
         ...
-    <span style="color: #005078" class="">--shortcut-path</span>=<path>...
+
+
+    
+<span style="color: #005078" class="">--shortcut-path</span>
+=
+<path>
+...
+
+
         ...
-    <span style="color: #005078" class="">--desktop</span>=(supported|never|always|preferred)...
+
+
+    
+<span style="color: #005078" class="">--desktop</span>
+=(s
+upported
+|
+never
+|
+always
+|
+preferred
+)
+...
+
+
         ...
-    <span style="color: #005078" class="">--desktop-name</span>=<name>...
+
+
+    
+<span style="color: #005078" class="">--desktop-name</span>
+=
+<name>
+...
+
+
         ...
-    <span style="color: #005078" class="">--spawn</span>|<span style="color: #005078" class="">--external</span>|<span style="color: #005078" class="">-x...</span>
+
+
+    
+<span style="color: #005078" class="">--spawn</span>
+|
+<span style="color: #005078" class="">--external</span>
+|
+<span style="color: #005078" class="">-x...</span>
+
+
         ...
-    <span style="color: #005078" class="">--embedded</span>|<span style="color: #005078" class="">-b...</span>
+
+
+    
+<span style="color: #005078" class="">--embedded</span>
+|
+<span style="color: #005078" class="">-b...</span>
+
+
         ...
-    <span style="color: #005078" class="">--terminal...</span>
+
+
+    
+<span style="color: #005078" class="">--terminal...</span>
+
+
         ...
-    <span style="color: #005078" class="">--env</span>|e...
+
+
+    
+<span style="color: #005078" class="">--env</span>
+|
+e...
+
+
         ...
-    <span style="color: #005078" class="">--system...</span>
+
+
+    
+<span style="color: #005078" class="">--system...</span>
+
+
         ...
-    <span style="color: #005078" class="">--current-user...</span>
+
+
+    
+<span style="color: #005078" class="">--current-user...</span>
+
+
         ...
-    <span style="color: #005078" class="">--as-root...</span>
+
+
+    
+<span style="color: #005078" class="">--as-root...</span>
+
+
         ...
-    <span style="color: #005078" class="">--run-as</span>=<user>...
+
+
+    
+<span style="color: #005078" class="">--run-as</span>
+=
+<user>
+...
+
+
         ...
-    (-<span style="color: #005078" class="">-exec-options</span>|<span style="color: #005078" class="">-X</span>)=<options>...
+
+
+    
+(-
+<span style="color: #005078" class="">-exec-options</span>
+|
+<span style="color: #005078" class="">-X</span>
+)=
+<options>
+...
+
+
         ...
-    (-<span style="color: #005078" class="">-installed</span>|<span style="color: #005078" class="">-i</span>)...
+
+
+    
+(-
+<span style="color: #005078" class="">-installed</span>
+|
+<span style="color: #005078" class="">-i</span>
+)
+...
+
+
         ...
-    (-<span style="color: #005078" class="">-companions</span>|<span style="color: #005078" class="">-c</span>)...
+
+
+    
+(-
+<span style="color: #005078" class="">-companions</span>
+|
+<span style="color: #005078" class="">-c</span>
+)
+...
+
+
         ...
-    (-<span style="color: #005078" class="">-switch</span>)...
+
+
+    
+(-
+<span style="color: #005078" class="">-switch</span>
+)
+...
+
+
         ...
-    (-<span style="color: #005078" class="">-ignore-unsupported-os</span>)...
+
+
+    
+(-
+<span style="color: #005078" class="">-ignore-unsupported-os</span>
+)
+...
+
+
         ...
-    (-<span style="color: #005078" class="">-workspace</span>|<span style="color: #005078" class="">-w</span>)=<ws>...
+
+
+    
+(-
+<span style="color: #005078" class="">-workspace</span>
+|
+<span style="color: #005078" class="">-w</span>
+)=
+<ws>
+...
+
+
         ...
-    (-<span style="color: #005078" class="">-name</span>|<span style="color: #005078" class="">-n</span>)=<name>...
+
+
+    
+(-
+<span style="color: #005078" class="">-name</span>
+|
+<span style="color: #005078" class="">-n</span>
+)=
+<name>
+...
+
+
         ...
+
+
+
+
 
 
 <span style="color: #0000A3" class="">##)  
@@ -3517,11 +6536,35 @@ EXAMPLES:
 
 
 </span>
-    <span style="color: #000055" class="">settings</span> <span style="color: #005078" class="">--file</span> myjar.jar
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ 
+<span style="color: #005078" class="">--file</span>
+ myjar.jar
+
+
         settings the myjar.jar file to default local repository
 
-    <span style="color: #000055" class="">deploy</span> <span style="color: #005078" class="">--id</span> example:some-thing <span style="color: #005078" class="">--to</span> system
+
+
+
+    
+<span style="color: #000055" class="">deploy</span>
+ 
+<span style="color: #005078" class="">--id</span>
+ example
+:
+some-thing 
+<span style="color: #005078" class="">--to</span>
+ system
+
+
         settings the latest version of example:some-thing to system repository
+
+
+
 
 </pre>
                                 </div>
@@ -3559,15 +6602,35 @@ For Help, type nuts help
                                 <h3 class="main-section2"><a href="#U9A620D158284B78C67D71E477C99E55F0E05A711">4.21 Push Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
-push a <span style="color: #000055" class="">nuts</span> to remote repository
+
+push a 
+<span style="color: #000055" class="">nuts</span>
+ to remote repository
+
+
+
 
 <span style="color: #0000A3" class="">##)  
 SYNOPSIS:
 
 
 </span>
-    <span style="color: #000055" class="">push</span> <id>
-        pushes a <span style="color: #000055" class="">nuts</span> to remote server
+
+
+    
+<span style="color: #000055" class="">push</span>
+ 
+<id>
+
+
+        pushes a 
+<span style="color: #000055" class="">nuts</span>
+ to remote server
+
+
+
+
+
 
 
 
@@ -3576,8 +6639,20 @@ EXAMPLES:
 
 
 </span>
-    <span style="color: #000055" class="">push</span> my-group:my-name
-        pushes the <span style="color: #000055" class="">nuts</span>
+
+
+    
+<span style="color: #000055" class="">push</span>
+ my-group
+:
+my-name
+
+
+        pushes the 
+<span style="color: #000055" class="">nuts</span>
+
+
+
 
 </pre>
                                 </div>
@@ -3615,218 +6690,869 @@ For Help, type nuts help
                                 <h3 class="main-section2"><a href="#U9A620D158284B78C67D71E477C99E55F0E05A711">4.23 Settings Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
-configure <span style="color: #000055" class="">nuts</span>
+
+configure 
+<span style="color: #000055" class="">nuts</span>
+
+
+
 
 <span style="color: #0000A3" class="">##)  
 SYNOPSIS:
 
 
 </span>
-    <span style="color: #000055" class="">settings</span> <command> [<args>]...
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ 
+<command>
+ 
+[
+<args>
+]
+...
+
+
+
 
 <span style="color: #005078" class="">###)  
 alias:
 
 
-</span>    <span style="color: #000055" class="">settings</span> list aliases [<name-or-expr>]
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ list aliases 
+[
+<name-or-expr>
+]
+
+
         ...
 
-    <span style="color: #000055" class="">settings</span> add alias <name>=<cmd>...
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ add alias 
+<name>
+=
+<cmd>
+...
+
+
         ...
 
-    <span style="color: #000055" class="">settings</span> remove alias <name>...
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ remove alias 
+<name>
+...
+
+
         ...
+
+
+
 
 <span style="color: #005078" class="">###)  
 alias:
 
 
-</span>    <span style="color: #000055" class="">settings</span> list imports [<name-or-expr>]
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ list imports 
+[
+<name-or-expr>
+]
+
+
         ...
 
-    <span style="color: #000055" class="">settings</span> (import|ia) <name>...
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ 
+(i
+mport
+|
+ia
+)
+ 
+<name>
+...
+
+
         ...
 
-    <span style="color: #000055" class="">settings</span> (unimport|ir) <name>...
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ 
+(u
+nimport
+|
+ir
+)
+ 
+<name>
+...
+
+
         ...
+
+
+
 
 <span style="color: #005078" class="">###)  
 archetype:
 
 
-</span>    <span style="color: #000055" class="">settings</span> (list archetypes|la)
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ 
+(l
+ist archetypes
+|
+la
+)
+
+
         ...
+
+
+
 
 <span style="color: #005078" class="">###)  
 backup/restore:
 
 
-</span>    <span style="color: #000055" class="">settings</span> backup (-<span style="color: #005078" class="">-file</span>|<span style="color: #005078" class="">-f</span>)=<file>
-    <span style="color: #000055" class="">settings</span> backup <file>
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ backup 
+(-
+<span style="color: #005078" class="">-file</span>
+|
+<span style="color: #005078" class="">-f</span>
+)=
+<file>
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ backup 
+<file>
+
+
         ...
 
-    <span style="color: #000055" class="">settings</span> restore (-<span style="color: #005078" class="">-file</span>|<span style="color: #005078" class="">-f</span>)=<file>
-    <span style="color: #000055" class="">settings</span> restore <file>
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ restore 
+(-
+<span style="color: #005078" class="">-file</span>
+|
+<span style="color: #005078" class="">-f</span>
+)=
+<file>
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ restore 
+<file>
+
+
         ...
+
+
+
 
 <span style="color: #005078" class="">###)  
 cli-id:
 
 
-</span>    <span style="color: #000055" class="">settings</span> cli-id
-    <span style="color: #000055" class="">settings</span> get cli-id
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ cli-id
 
-    <span style="color: #000055" class="">settings</span> cli-id=<value>
-    <span style="color: #000055" class="">settings</span> set cli-id <value>
+
+    
+<span style="color: #000055" class="">settings</span>
+ get cli-id
+
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ cli-id
+=
+<value>
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ set cli-id 
+<value>
+
+
         ...
 
-    <span style="color: #000055" class="">settings</span> restore (-<span style="color: #005078" class="">-file</span>|<span style="color: #005078" class="">-f</span>)=<file>
-    <span style="color: #000055" class="">settings</span> restore <file>
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ restore 
+(-
+<span style="color: #005078" class="">-file</span>
+|
+<span style="color: #005078" class="">-f</span>
+)=
+<file>
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ restore 
+<file>
+
+
         ...
+
+
+
 
 <span style="color: #005078" class="">###)  
 connect:
 
 
-</span>    <span style="color: #000055" class="">settings</span> connect <span style="color: #005078" class="">--password</span>=<password> <user>@<host>:port
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ connect 
+<span style="color: #005078" class="">--password</span>
+=
+<password>
+ 
+<user>
+@
+<host>
+:
+port
+
+
         telnet a remote tcp server
+
+
         ...
+
+
+
 
 <span style="color: #005078" class="">###)  
 delete:
 
 
-</span>    <span style="color: #000055" class="">settings</span> delete bin|conf|var|log|temp|cache|run ...
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ delete bin
+|
+conf
+|
+var
+|
+log
+|
+temp
+|
+cache
+|
+run ...
+
+
         delete workspace folder
+
+
+
 
 <span style="color: #005078" class="">###)  
 update stats:
 
 
-</span>    <span style="color: #000055" class="">settings</span> update stats ...
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ update stats ...
+
+
         update repository stats
+
+
+
 
 <span style="color: #005078" class="">###)  
 java:
 
 
-</span>    <span style="color: #000055" class="">settings</span> add java <span style="color: #005078" class="">--search</span>
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ add java 
+<span style="color: #005078" class="">--search</span>
+
+
         deploys an id from registered repository to another
 
-    <span style="color: #000055" class="">settings</span> add java <folder>...
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ add java 
+<folder>
+...
+
+
         deploys an id from registered repository to another
 
-    <span style="color: #000055" class="">settings</span> remove java <name>...
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ remove java 
+<name>
+...
+
+
         deploys an id from registered repository to another
+
+
+
 
 <span style="color: #005078" class="">###)  
 repository:
 
 
-</span>    <span style="color: #000055" class="">settings</span> list repos...
-        ...
-    <span style="color: #000055" class="">settings</span> add repo <repo>...
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ list repos...
+
+
         ...
 
-    <span style="color: #000055" class="">settings</span> remove repo <name>...
+
+    
+<span style="color: #000055" class="">settings</span>
+ add repo 
+<repo>
+...
+
+
         ...
-    <span style="color: #000055" class="">settings</span> enable repo <name>...
+
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ remove repo 
+<name>
+...
+
+
         ...
-    <span style="color: #000055" class="">settings</span> disable repo <name>...
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ enable repo 
+<name>
+...
+
+
         ...
-    <span style="color: #000055" class="">settings</span> edit repo <name> <repo-command>...
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ disable repo 
+<name>
+...
+
+
         ...
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ edit repo 
+<name>
+ 
+<repo-command>
+...
+
+
+        ...
+
+
+
 
 <span style="color: #005078" class="">###)  
 user:
 
 
-</span>    <span style="color: #000055" class="">settings</span> list users...
-        ...
-    <span style="color: #000055" class="">settings</span> add user <user>...
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ list users...
+
+
         ...
 
-    <span style="color: #000055" class="">settings</span> remove user <name>...
+
+    
+<span style="color: #000055" class="">settings</span>
+ add user 
+<user>
+...
+
+
         ...
-    <span style="color: #000055" class="">settings</span> enable user <name>...
+
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ remove user 
+<name>
+...
+
+
         ...
-    <span style="color: #000055" class="">settings</span> disable user <name>...
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ enable user 
+<name>
+...
+
+
         ...
-    <span style="color: #000055" class="">settings</span> edit user <name> <user-command>...
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ disable user 
+<name>
+...
+
+
         ...
-    <span style="color: #000055" class="">settings</span> password...
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ edit user 
+<name>
+ 
+<user-command>
+...
+
+
         ...
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ password...
+
+
+        ...
+
+
+
 
 <span style="color: #005078" class="">###)  
 log:
 
 
-</span>    <span style="color: #000055" class="">settings</span> (set log level|sll) verbose|finest|fine|finer|info|warning|severe|error|config|off|all
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ 
+(s
+et log level
+|
+sll
+)
+ verbose
+|
+finest
+|
+fine
+|
+finer
+|
+info
+|
+warning
+|
+severe
+|
+error
+|
+config
+|
+off
+|
+all
+
+
         ...
 
-    <span style="color: #000055" class="">settings</span> (log level|get log level)
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ 
+(l
+og level
+|
+get log level
+)
+
+
         ...
 
-    <span style="color: #000055" class="">settings</span> install log
+
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ install log
+
+
         ...
+
+
+
 
 <span style="color: #005078" class="">###)  
 ndi (nuts desktop integration):
 
 
-</span>    <span style="color: #000055" class="">settings</span> ndi [<option>...] <package>...
+</span>
+    
+<span style="color: #000055" class="">settings</span>
+ ndi 
+[
+<option>
+...
+]
+ 
+<package>
+...
+
+
         ...
+
+
     OPTIONS:
-    <span style="color: #005078" class="">--fetch</span>|<span style="color: #005078" class="">-t...</span>
+
+
+    
+<span style="color: #005078" class="">--fetch</span>
+|
+<span style="color: #005078" class="">-t...</span>
+
+
         ...
-    (-<span style="color: #005078" class="">-workdir</span>|<span style="color: #005078" class="">-d</span>)=<path>...
+
+
+    
+(-
+<span style="color: #005078" class="">-workdir</span>
+|
+<span style="color: #005078" class="">-d</span>
+)=
+<path>
+...
+
+
         ...
-    <span style="color: #005078" class="">--icon</span>=<path>...
+
+
+    
+<span style="color: #005078" class="">--icon</span>
+=
+<path>
+...
+
+
         ...
-    <span style="color: #005078" class="">--menu</span>=(supported|never|always|preferred)...
+
+
+    
+<span style="color: #005078" class="">--menu</span>
+=(s
+upported
+|
+never
+|
+always
+|
+preferred
+)
+...
+
+
         ...
-    <span style="color: #005078" class="">--menu-category</span>=<path>...
+
+
+    
+<span style="color: #005078" class="">--menu-category</span>
+=
+<path>
+...
+
+
         ...
-    <span style="color: #005078" class="">--menu-name</span>=<name>...
+
+
+    
+<span style="color: #005078" class="">--menu-name</span>
+=
+<name>
+...
+
+
         ...
-    <span style="color: #005078" class="">--shortcut-name</span>=<name>...
+
+
+    
+<span style="color: #005078" class="">--shortcut-name</span>
+=
+<name>
+...
+
+
         ...
-    <span style="color: #005078" class="">--shortcut-path</span>=<path>...
+
+
+    
+<span style="color: #005078" class="">--shortcut-path</span>
+=
+<path>
+...
+
+
         ...
-    <span style="color: #005078" class="">--desktop</span>=(supported|never|always|preferred)...
+
+
+    
+<span style="color: #005078" class="">--desktop</span>
+=(s
+upported
+|
+never
+|
+always
+|
+preferred
+)
+...
+
+
         ...
-    <span style="color: #005078" class="">--desktop-name</span>=<name>...
+
+
+    
+<span style="color: #005078" class="">--desktop-name</span>
+=
+<name>
+...
+
+
         ...
-    <span style="color: #005078" class="">--spawn</span>|<span style="color: #005078" class="">--external</span>|<span style="color: #005078" class="">-x...</span>
+
+
+    
+<span style="color: #005078" class="">--spawn</span>
+|
+<span style="color: #005078" class="">--external</span>
+|
+<span style="color: #005078" class="">-x...</span>
+
+
         ...
-    <span style="color: #005078" class="">--embedded</span>|<span style="color: #005078" class="">-b...</span>
+
+
+    
+<span style="color: #005078" class="">--embedded</span>
+|
+<span style="color: #005078" class="">-b...</span>
+
+
         ...
-    <span style="color: #005078" class="">--terminal...</span>
+
+
+    
+<span style="color: #005078" class="">--terminal...</span>
+
+
         ...
-    <span style="color: #005078" class="">--env</span>|e...
+
+
+    
+<span style="color: #005078" class="">--env</span>
+|
+e...
+
+
         ...
-    <span style="color: #005078" class="">--system...</span>
+
+
+    
+<span style="color: #005078" class="">--system...</span>
+
+
         ...
-    <span style="color: #005078" class="">--current-user...</span>
+
+
+    
+<span style="color: #005078" class="">--current-user...</span>
+
+
         ...
-    <span style="color: #005078" class="">--as-root...</span>
+
+
+    
+<span style="color: #005078" class="">--as-root...</span>
+
+
         ...
-    <span style="color: #005078" class="">--run-as</span>=<user>...
+
+
+    
+<span style="color: #005078" class="">--run-as</span>
+=
+<user>
+...
+
+
         ...
-    (-<span style="color: #005078" class="">-exec-options</span>|<span style="color: #005078" class="">-X</span>)=<options>...
+
+
+    
+(-
+<span style="color: #005078" class="">-exec-options</span>
+|
+<span style="color: #005078" class="">-X</span>
+)=
+<options>
+...
+
+
         ...
-    (-<span style="color: #005078" class="">-installed</span>|<span style="color: #005078" class="">-i</span>)...
+
+
+    
+(-
+<span style="color: #005078" class="">-installed</span>
+|
+<span style="color: #005078" class="">-i</span>
+)
+...
+
+
         ...
-    (-<span style="color: #005078" class="">-companions</span>|<span style="color: #005078" class="">-c</span>)...
+
+
+    
+(-
+<span style="color: #005078" class="">-companions</span>
+|
+<span style="color: #005078" class="">-c</span>
+)
+...
+
+
         ...
-    (-<span style="color: #005078" class="">-switch</span>)...
+
+
+    
+(-
+<span style="color: #005078" class="">-switch</span>
+)
+...
+
+
         ...
-    (-<span style="color: #005078" class="">-ignore-unsupported-os</span>)...
+
+
+    
+(-
+<span style="color: #005078" class="">-ignore-unsupported-os</span>
+)
+...
+
+
         ...
-    (-<span style="color: #005078" class="">-workspace</span>|<span style="color: #005078" class="">-w</span>)=<ws>...
+
+
+    
+(-
+<span style="color: #005078" class="">-workspace</span>
+|
+<span style="color: #005078" class="">-w</span>
+)=
+<ws>
+...
+
+
         ...
-    (-<span style="color: #005078" class="">-name</span>|<span style="color: #005078" class="">-n</span>)=<name>...
+
+
+    
+(-
+<span style="color: #005078" class="">-name</span>
+|
+<span style="color: #005078" class="">-n</span>
+)=
+<name>
+...
+
+
         ...
+
+
+
+
 
 
 <span style="color: #0000A3" class="">##)  
@@ -3834,11 +7560,35 @@ EXAMPLES:
 
 
 </span>
-    <span style="color: #000055" class="">settings</span> <span style="color: #005078" class="">--file</span> myjar.jar
+
+
+    
+<span style="color: #000055" class="">settings</span>
+ 
+<span style="color: #005078" class="">--file</span>
+ myjar.jar
+
+
         settings the myjar.jar file to default local repository
 
-    <span style="color: #000055" class="">deploy</span> <span style="color: #005078" class="">--id</span> example:some-thing <span style="color: #005078" class="">--to</span> system
+
+
+
+    
+<span style="color: #000055" class="">deploy</span>
+ 
+<span style="color: #005078" class="">--id</span>
+ example
+:
+some-thing 
+<span style="color: #005078" class="">--to</span>
+ system
+
+
         settings the latest version of example:some-thing to system repository
+
+
+
 
 </pre>
                                 </div>
@@ -3876,15 +7626,34 @@ For Help, type nuts help
                                 <h3 class="main-section2"><a href="#U9A620D158284B78C67D71E477C99E55F0E05A711">4.25 Welcome Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
+
 show minimal welcome message
+
+
     show minimal welcome message
+
+
+
 
 <span style="color: #0000A3" class="">##)  
 SYNOPSIS:
 
 
 </span>
-    <span style="color: #000055" class="">nuts</span> welcome [<<span style="color: #005078" class="">-options</span>>]
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ welcome 
+[
+<
+<span style="color: #005078" class="">-options</span>
+>
+]
+
+
+
+
 
 
 </pre>
@@ -3898,41 +7667,138 @@ SYNOPSIS:
                                 <h3 class="main-section2"><a href="#U9A620D158284B78C67D71E477C99E55F0E05A711">4.26 Info Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
+
 show workspace information and exit
+
+
     show workspace detailed information (paths and libraries)
+
+
+
 
 <span style="color: #0000A3" class="">##)  
 SYNOPSIS:
 
 
 </span>
-    <span style="color: #000055" class="">nuts</span> info [<<span style="color: #005078" class="">-options</span>>]
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ info 
+[
+<
+<span style="color: #005078" class="">-options</span>
+>
+]
+
+
+
 
 <span style="color: #0000A3" class="">##)  
 OPTIONS
 
 
 </span>
-    <span style="color: #005078" class="">-r</span> | <span style="color: #005078" class="">--repos</span>
+
+
+    
+<span style="color: #005078" class="">-r</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--repos</span>
+
+
         show repositories
 
-    <span style="color: #005078" class="">-c</span> | <span style="color: #005078" class="">--cmd</span>
+
+
+
+    
+<span style="color: #005078" class="">-c</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--cmd</span>
+
+
         show command arguments
 
-    <span style="color: #005078" class="">-e</span> | <span style="color: #005078" class="">--env</span>
-        show environment info (<span style="color: #000055" class="">Java™</span> version, os version, ...)
 
-    <span style="color: #005078" class="">-p</span> | <span style="color: #005078" class="">--path</span>
+
+
+    
+<span style="color: #005078" class="">-e</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--env</span>
+
+
+        show environment info (
+<span style="color: #000055" class="">Java™</span>
+ version, os version, ...)
+
+
+
+
+    
+<span style="color: #005078" class="">-p</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--path</span>
+
+
         show workspace locations
 
-    <span style="color: #005078" class="">-f</span> | <span style="color: #005078" class="">--fancy</span>
+
+
+
+    
+<span style="color: #005078" class="">-f</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--fancy</span>
+
+
         show paths variables in multi rows
 
-    <span style="color: #005078" class="">--add</span> <key>=<value>
+
+
+
+    
+<span style="color: #005078" class="">--add</span>
+ 
+<key>
+=
+<value>
+
+
         add extra key=value to info list
 
-    <span style="color: #005078" class="">-g</span> | <span style="color: #005078" class="">--get</span> <name> ...
+
+
+
+    
+<span style="color: #005078" class="">-g</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--get</span>
+ 
+<name>
+ ...
+
+
         filter names to include only the given names
+
+
+
+
+
 
 
 
@@ -3941,11 +7807,29 @@ EXAMPLES
 
 
 </span>
-    <span style="color: #000055" class="">nuts</span> info <span style="color: #005078" class="">--help</span>
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ info 
+<span style="color: #005078" class="">--help</span>
+
+
         show this help and exit
 
-    <span style="color: #000055" class="">nuts</span> info <span style="color: #005078" class="">--json</span>
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ info 
+<span style="color: #005078" class="">--json</span>
+
+
         show info in json format
+
+
+
 
 </pre>
                                 </div>
@@ -4048,29 +7932,89 @@ me@linux:~&gt; nuts version
                                 <h3 class="main-section2"><a href="#U9A620D158284B78C67D71E477C99E55F0E05A711">4.29 Version Cmdline</a></h3>
                                 <div class="text-card">
                                 <pre>
+
 show version
+
+
     show version
+
+
+
 
 <span style="color: #0000A3" class="">##)  
 SYNOPSIS:
 
 
 </span>
-    <span style="color: #000055" class="">nuts</span> version [<<span style="color: #005078" class="">-options</span>>]
-    <span style="color: #000055" class="">nuts</span> <span style="color: #005078" class="">--version</span>
-    <span style="color: #000055" class="">nuts</span> <span style="color: #005078" class="">-version</span>
-    <span style="color: #000055" class="">nuts</span> <span style="color: #005078" class="">-v</span>
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ version 
+[
+<
+<span style="color: #005078" class="">-options</span>
+>
+]
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ 
+<span style="color: #005078" class="">--version</span>
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ 
+<span style="color: #005078" class="">-version</span>
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ 
+<span style="color: #005078" class="">-v</span>
+
+
+
 
 <span style="color: #0000A3" class="">##)  
 OPTIONS:
 
 
 </span>
-    <span style="color: #005078" class="">-a</span> | <span style="color: #005078" class="">--all</span>
-        include all versions (api, runtime, <span style="text-decoration: underline" class="">Java™</span> and operating system)
 
-    <span style="color: #005078" class="">--add</span> <key>=<value> 
+
+    
+<span style="color: #005078" class="">-a</span>
+ 
+|
+ 
+<span style="color: #005078" class="">--all</span>
+
+
+        include all versions (api, runtime, 
+<span style="text-decoration: underline" class="">Java™</span>
+ and operating system)
+
+
+
+
+    
+<span style="color: #005078" class="">--add</span>
+ 
+<key>
+=
+<value>
+ 
+
+
         include key=value pair in the result
+
+
+
+
+
 
 
 
@@ -4079,14 +8023,45 @@ EXAMPLES
 
 
 </span>
-    <span style="color: #000055" class="">nuts</span> version <span style="color: #005078" class="">-a</span>
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ version 
+<span style="color: #005078" class="">-a</span>
+
+
         show all versions
 
-    <span style="color: #000055" class="">nuts</span> <span style="color: #005078" class="">-v</span>
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ 
+<span style="color: #005078" class="">-v</span>
+
+
         show version
 
-    <span style="color: #000055" class="">nuts</span> <span style="color: #005078" class="">-Zy</span> <span style="color: #005078" class="">-w</span> test version <span style="color: #005078" class="">--table</span> 
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ 
+<span style="color: #005078" class="">-Zy</span>
+ 
+<span style="color: #005078" class="">-w</span>
+ test version 
+<span style="color: #005078" class="">--table</span>
+ 
+
+
         show version in tabular format
+
+
+
 
 </pre>
                                 </div>
@@ -4161,14 +8136,27 @@ me@linux:~&gt; nuts license
                                 <h3 class="main-section2"><a href="#U9A620D158284B78C67D71E477C99E55F0E05A711">4.32 License Command Commandline</a></h3>
                                 <div class="text-card">
                                 <pre>
+
 show license info and exit
+
+
+
 
 <span style="color: #0000A3" class="">##)  
 SYNOPSIS:
 
 
 </span>
-    <span style="color: #000055" class="">nuts</span> license
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ license
+
+
+
+
+
 
 
 
@@ -4177,11 +8165,29 @@ EXAMPLES
 
 
 </span>
-    <span style="color: #000055" class="">nuts</span> license <span style="color: #005078" class="">--help</span>sh
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ license 
+<span style="color: #005078" class="">--help</span>
+sh
+
+
         show this help and exit
 
-    <span style="color: #000055" class="">nuts</span> license
+
+
+
+    
+<span style="color: #000055" class="">nuts</span>
+ license
+
+
         show license and exit
+
+
+
 
 </pre>
                                 </div>
@@ -4228,7 +8234,7 @@ EXAMPLES
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-08-31-224203
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-09-02-204951
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
