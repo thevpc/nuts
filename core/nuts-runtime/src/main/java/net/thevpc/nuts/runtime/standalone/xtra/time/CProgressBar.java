@@ -501,7 +501,7 @@ public class CProgressBar {
         long now = System.currentTimeMillis();
         NTexts txt = NTexts.of();
         if (now < lastPrint + minPeriod) {
-            return txt.ofPlain("");
+            return NText.ofBlank();
         }
         lastPrint = now;
         boolean indeterminate = percent < 0;
@@ -626,9 +626,9 @@ public class CProgressBar {
         }
         int s2 = 0;
         if (msg == null) {
-            msg = txt.ofPlain("");
+            msg = NText.ofBlank();
         }
-        s2 = msg.textLength();
+        s2 = msg.length();
         Level armedLogLevel = options.getArmedLogLevel();
         if (armedLogLevel == null) {
             if (isPrefixMoveLineStart()) {
