@@ -20,6 +20,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.NSettingsU
 import net.thevpc.nuts.spi.NRepositoryDB;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextArt;
+import net.thevpc.nuts.text.NTextArtRenderer;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NRef;
@@ -88,15 +90,15 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
         NSession session = NSession.of();
         NPrintStream out = session.out();
         if (cmdLine.next("add repo", "ar").isPresent()) {
-            doAddRepo(cmdLine,out);
+            doAddRepo(cmdLine, out);
             return true;
         } else if (cmdLine.next("remove repo", "rr").isPresent()) {
-            doRemoveRepo(cmdLine,out);
+            doRemoveRepo(cmdLine, out);
 
             return true;
 
         } else if (cmdLine.next("list repos", "lr").isPresent()) {
-            doListRepo(cmdLine,out);
+            doListRepo(cmdLine, out);
             return true;
 
         } else if (cmdLine.next("enable repo", "er").isPresent()) {
@@ -130,21 +132,25 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                 NRepository editedRepo = workspace.findRepository(repoId).get();
                 editedRepo.config().setEnabled(true);
                 workspace.saveConfig();
-            } else if (cmdLine.next("list repos","repo list", "list repo", "lr").isPresent()) {
+            } else if (cmdLine.next("list repos", "repo list", "list repo", "lr").isPresent()) {
                 NRepository editedRepo = workspace.findRepository(repoId).get();
                 List<NRepository> linkRepositories = editedRepo.config().isSupportedMirroring() ? editedRepo.config().getMirrors() : Collections.emptyList();
                 out.println(NMsg.ofC("%s sub repositories.", linkRepositories.size()));
                 NTableFormat t = NTableFormat.of();
                 NMutableTableModel m = NMutableTableModel.of();
                 t.setValue(m);
-                m.addHeaderCells("Id", "Enabled", "Type", "Location");
+                m.addHeaderCells(NText.ofPlain("Id"), NText.ofPlain("Enabled"), NText.ofPlain("Type"), NText.ofPlain("Location"))
+                ;
                 while (cmdLine.hasNext()) {
                     if (!t.configureFirst(cmdLine)) {
                         cmdLine.setCommandName("config edit repo").throwUnexpectedArgument();
                     }
                 }
                 for (NRepository repository : linkRepositories) {
-                    m.addRow(NText.ofStyledPrimary4(repository.getName()), repository.config().isEnabled() ? repository.isEnabled() ? NText.ofStyled("ENABLED", NTextStyle.success()) : NText.ofStyled("<RT-DISABLED>", NTextStyle.error()) : NText.ofStyled("<DISABLED>", NTextStyle.error()), repository.getRepositoryType(), repository.config().getLocation().toString());
+                    m.addRow(
+                            NText.ofStyledPrimary4(repository.getName()), repository.config().isEnabled() ? repository.isEnabled() ? NText.ofStyled("ENABLED", NTextStyle.success()) : NText.ofStyled("<RT-DISABLED>", NTextStyle.error()) : NText.ofStyled("<DISABLED>", NTextStyle.error()),
+                            NText.of(repository.getRepositoryType()),
+                            NText.of(repository.config().getLocation()));
                 }
                 out.print(t);
             } else if (cmdLine.next("-h", "-?", "--help").isPresent()) {
@@ -168,6 +174,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
     private void doListRepo(NCmdLine cmdLine, NPrintStream out) {
         cmdLine.setCommandName("config list repos");
         NRef<String> parent = NRef.ofNull(String.class);
+        NRef<Boolean> longFormat = NRef.ofFalse();
         NSession session = NSession.of();
         while (cmdLine.hasNext()) {
             while (cmdLine.hasNext()) {
@@ -176,6 +183,11 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                 switch (aa.key()) {
                     case "--parent": {
                         cmdLine.matcher().matchEntry((v) -> parent.set(v.stringValue())).anyMatch();
+                        break;
+                    }
+                    case "-l":
+                    case "--long": {
+                        cmdLine.matcher().matchFlag((v) -> longFormat.set(v.booleanValue())).anyMatch();
                         break;
                     }
                     default: {
@@ -197,7 +209,29 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
             NWorkspace workspace = NWorkspace.of();
             List<NRepository> r = parent.isNull() ? workspace.getRepositories() : workspace.findRepository(parent.get())
                     .get().config().getMirrors();
-            out.println(r.stream().map(x -> repoInfo(x, session.getOutputFormat().orDefault() != NContentType.TABLE && session.getOutputFormat().orDefault() != NContentType.PLAIN)).toArray());
+            RepoInfo[] array = r.stream().map(x -> repoInfo(x, session.getOutputFormat().orDefault() != NContentType.TABLE && session.getOutputFormat().orDefault() != NContentType.PLAIN)).toArray(RepoInfo[]::new);
+            NContentType cf = NSession.of().getOutputFormat().orElse(NContentType.PLAIN);
+            if (longFormat.get()) {
+                if (cf == NContentType.PLAIN) {
+                    for (RepoInfo repoInfo : array) {
+                        out.println(repoInfo.name);
+                    }
+                } else {
+                    out.println(array);
+                }
+            } else {
+                if (cf == NContentType.PLAIN) {
+                    NMutableTableModel model = NMutableTableModel.of();
+                    for (RepoInfo repoInfo : array) {
+                        model.addRow(NText.of(repoInfo.name), NText.of(repoInfo.enabled), NText.of(repoInfo.location), NText.of(repoInfo.tags));
+                    }
+                    out.println(NTextArt.of().getTableRenderer("table:spaces")
+                            .get()
+                            .render(model));
+                } else {
+                    out.println(array);
+                }
+            }
         }
     }
 
@@ -290,7 +324,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                         } else {
                             d.location = cmdLine.next().flatMap(NArg::asString).get();
                             NAddRepositoryOptions ro = NRepositoryDB.of().getRepositoryOptionsByName(d.location).orNull();
-                            String loc2 = ro==null?null:ro.getConfig().getLocation().getFullLocation();
+                            String loc2 = ro == null ? null : ro.getConfig().getLocation().getFullLocation();
                             if (loc2 != null) {
                                 d.repositoryName = d.location;
                                 d.location = loc2;
@@ -373,7 +407,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
         RepoInfo[] mirrors;
         String[] tags;
 
-        public RepoInfo(String name, String type, NPath location, RepoStatus enabled, RepoInfo[] mirrors, boolean temporary, boolean preview,String[] tags) {
+        public RepoInfo(String name, String type, NPath location, RepoStatus enabled, RepoInfo[] mirrors, boolean temporary, boolean preview, String[] tags) {
             this.name = name;
             this.type = type;
             this.location = location;
