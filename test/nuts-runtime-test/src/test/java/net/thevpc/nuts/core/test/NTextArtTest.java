@@ -25,15 +25,11 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import net.thevpc.nuts.text.NTextArt;
-import net.thevpc.nuts.text.NTextArtImageRenderer;
-import net.thevpc.nuts.text.NTextArtRenderer;
 
 /**
- *
  * @author vpc
  */
 public class NTextArtTest {
@@ -47,9 +43,9 @@ public class NTextArtTest {
     public void test1() {
         NTextArt art = NTextArt.of();
         NText text = NText.of("hello world \uD83D\uDE80\uD83D\uDE80\uD83D\uDE80");
-        NOut.println(art.getRenderer("figlet:standard").get().render(text));
-        NOut.println(art.getRenderer("figlet:big").get().render(text));
-        NOut.println(art.getRenderer("pixel:standard").get().render(text));
+        NOut.println(art.getTextRenderer("figlet:standard").get().render(text));
+        NOut.println(art.getTextRenderer("figlet:big").get().render(text));
+        NOut.println(art.getTextRenderer("pixel:standard").get().render(text));
         NOut.println(art.getImageRenderer("pixel:standard").get().setFontSize(20).setOutputColumns(60).render(text));
         for (NTextArtRenderer renderer : art.getRenderers()) {
             NOut.println("----------------------------------------------------------------------------------------");
@@ -57,8 +53,8 @@ public class NTextArtTest {
             NOut.println("----------------------------------------------------------------------------------------");
             if (renderer instanceof NTextArtImageRenderer) {
                 NOut.println(((NTextArtImageRenderer) renderer).setOutputColumns(0).render(NText.of(renderer.getName())));
-            } else {
-                NOut.println(renderer.render(NText.of(renderer.getName())));
+            } else if (renderer instanceof NTextArtTextRenderer) {
+                NOut.println(((NTextArtTextRenderer) renderer).render(NText.of(renderer.getName())));
             }
         }
     }
