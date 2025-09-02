@@ -34,6 +34,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,23 +42,23 @@ import java.util.Objects;
 import java.util.function.Function;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NPairElement;
-import net.thevpc.nuts.io.NIOUtils;
-import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextArtImageRenderer;
+import net.thevpc.nuts.text.NTextArtTextRenderer;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
 
 /**
- *
  * @author vpc
  */
-public class PixelNTextArtImageRenderer implements NTextArtImageRenderer {
+public class PixelNTextArtImageRenderer implements NTextArtImageRenderer, NTextArtTextRenderer {
 
     public static final PixelNTextArtImageRenderer HASH = new PixelNTextArtImageRenderer("hash", "Monospaced", 24, false, true, new char[]{' ', '#'}, 0, 0);
     public static final PixelNTextArtImageRenderer DOT = new PixelNTextArtImageRenderer("dot", "Monospaced", 24, false, true, new char[]{' ', '.'}, 0, 0);
@@ -66,14 +67,14 @@ public class PixelNTextArtImageRenderer implements NTextArtImageRenderer {
     public static final PixelNTextArtImageRenderer CIPHER = new PixelNTextArtImageRenderer("cipher", "Monospaced", 24, false, true, " .'`^\",:;Il!i><~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$".toCharArray(), 0, 0);
     public static final PixelNTextArtImageRenderer STANDARD = new PixelNTextArtImageRenderer("standard", "Monospaced", 24, false, true, new char[]{' ', /*'.', ':', '-', '-', '=', '+',*/ '░', '▒', '▓', '█'}, 0, 0);
 
-    private final String fontName;
-    private final int fontSize;
-    private final boolean fontItalic;
-    private final boolean fontBold;
-    private final String[] lines;
-    private final int outputWidth;
-    private final int outputHeight;
-    private final String name;
+    private String fontName;
+    private int fontSize;
+    private boolean fontItalic;
+    private boolean fontBold;
+    private String[] lines;
+    private int outputWidth;
+    private int outputHeight;
+    private String name;
 
     public PixelNTextArtImageRenderer(String name, String fontName, int fontSize, boolean fontItalic, boolean fontBold, String[] lines, int outputWidth, int outputHeight) {
         if (NBlankable.isBlank(name)) {
@@ -109,6 +110,27 @@ public class PixelNTextArtImageRenderer implements NTextArtImageRenderer {
 
     public PixelNTextArtImageRenderer(InputStream in) {
         this(NIOUtils.readString(in));
+    }
+
+    public PixelNTextArtImageRenderer(NInputSource file) {
+        try (InputStream in = file.getInputStream()) {
+            if (file instanceof NPath) {
+                fontName = ((NPath) file).nameParts().getBaseName();
+            } else {
+                NContentMetadata md = file.getMetaData();
+                if (md != null) {
+                    fontName = NPath.of(md.getName().orElse(null)).nameParts().getBaseName();
+                }
+            }
+            load(NIOUtils.loadString(in,false));
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    public PixelNTextArtImageRenderer(InputStream in, String name) {
+        fontName = name;
+        load(NIOUtils.loadString(in,false));
     }
 
     @Override
@@ -216,6 +238,10 @@ public class PixelNTextArtImageRenderer implements NTextArtImageRenderer {
     }
 
     public PixelNTextArtImageRenderer(String content) {
+        load(content);
+    }
+
+    private void load(String content) {
         final NElement o = NElementParser.ofTson().parse(content);
         if (!o.isNamedObject("npixel")) {
             throw new IllegalArgumentException("invalid format");
