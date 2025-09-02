@@ -1,16 +1,12 @@
 package net.thevpc.nuts.text;
 
-import java.util.Arrays;
+import java.util.*;
+
 import net.thevpc.nuts.core.NI18n;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.util.NStringUtils;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
 public class NTextBuilderPlain implements NTextBuilder {
 
@@ -36,7 +32,7 @@ public class NTextBuilderPlain implements NTextBuilder {
     }
 
     @Override
-    public NTextType getType() {
+    public NTextType type() {
         return NTextType.BUILDER;
     }
 
@@ -189,6 +185,31 @@ public class NTextBuilderPlain implements NTextBuilder {
     }
 
     @Override
+    public boolean isNormalized() {
+        return false;
+    }
+
+    @Override
+    public NNormalizedText normalize() {
+        return (NNormalizedText) build();
+    }
+
+    @Override
+    public NNormalizedText normalize(NTextTransformConfig config) {
+        return (NNormalizedText) build();
+    }
+
+    @Override
+    public NNormalizedText normalize(NTextTransformer transformer, NTextTransformConfig config) {
+        return (NNormalizedText) build();
+    }
+
+    @Override
+    public boolean isPrimitive() {
+        return false;
+    }
+
+    @Override
     public NTextBuilder setStyleGenerator(NTextStyleGenerator styleGenerator) {
         return this;
     }
@@ -263,6 +284,18 @@ public class NTextBuilderPlain implements NTextBuilder {
     }
 
     @Override
+    public NTextBuilder appendAll(NText[] others) {
+        if (others != null) {
+            for (NText node : others) {
+                if (node != null) {
+                    append(node);
+                }
+            }
+        }
+        return this;
+    }
+
+    @Override
     public NTextBuilder appendAll(Collection<?> others) {
         if (others != null) {
             for (Object other : others) {
@@ -297,8 +330,8 @@ public class NTextBuilderPlain implements NTextBuilder {
     }
 
     @Override
-    public NText substring(int from, int to) {
-        return new ImmutableNTextPlain(sb.substring(from, to));
+    public NText substring(int start, int end) {
+        return new ImmutableNTextPlain(sb.substring(start, end));
     }
 
     @Override
@@ -333,7 +366,7 @@ public class NTextBuilderPlain implements NTextBuilder {
 
     @Override
     public NText get(int index) {
-        if(index==0){
+        if (index == 0) {
             return build();
         }
         throw new ArrayIndexOutOfBoundsException(index);
@@ -366,6 +399,11 @@ public class NTextBuilderPlain implements NTextBuilder {
     }
 
     @Override
+    public NTextBuilder newLine() {
+        return append("\n");
+    }
+
+    @Override
     public NText immutable() {
         return new ImmutableNTextPlain(sb.toString());
     }
@@ -376,7 +414,7 @@ public class NTextBuilderPlain implements NTextBuilder {
     }
 
     @Override
-    public int textLength() {
+    public int length() {
         return sb.length();
     }
 
@@ -395,21 +433,127 @@ public class NTextBuilderPlain implements NTextBuilder {
         return this;
     }
 
+
+    @Override
+    public NPrimitiveText[] toCharArray() {
+        return toCharList().toArray(new NPrimitiveText[0]);
+    }
+
+    @Override
+    public List<NPrimitiveText> toCharList() {
+        List<NPrimitiveText> all = new ArrayList<>();
+        for (char child : toString().toCharArray()) {
+            all.add(new ImmutableNTextPlain(String.valueOf(child)));
+        }
+        return all;
+    }
+
+    @Override
+    public List<NText> split(char c) {
+        return split(String.valueOf(c), false);
+    }
+
+    @Override
+    public List<NText> split(char c, boolean returnSeparator) {
+        return split(String.valueOf(c), returnSeparator);
+    }
+
+    @Override
+    public List<NText> split(String separator) {
+        return split(separator, false);
+    }
+
+    @Override
+    public List<NText> split(String separator, boolean returnSeparator) {
+        StringTokenizer st = new StringTokenizer(toString(), separator, true);
+        List<NText> all = new ArrayList<>();
+        while (st.hasMoreElements()) {
+            all.add(new ImmutableNTextPlain(st.nextToken()));
+        }
+        return all;
+    }
+
+    @Override
+    public NTextBuilder clear() {
+        sb.delete(0, sb.length());
+        return this;
+    }
+
+    @Override
+    public NTextBuilder trim() {
+        NStringUtils.trim(sb);
+        return this;
+    }
+
+    @Override
+    public NTextBuilder trimLeft() {
+        NStringUtils.trimLeft(sb);
+        return this;
+    }
+
+    @Override
+    public NTextBuilder trimRight() {
+        NStringUtils.trimRight(sb);
+        return this;
+    }
+
+    @Override
+    public NText repeat(int times) {
+        if (times <= 0) {
+            return NText.ofPlain("");
+        }
+        if (times == 1) {
+            return this;
+        }
+        StringBuilder b = new StringBuilder();
+        for (int i = 0; i < times; i++) {
+            b.append(sb.toString());
+        }
+        return new ImmutableNTextPlain(b.toString());
+    }
+
+
+    @Override
+    public NText concat(NText other) {
+        if (other == null) {
+            return this;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.sb);
+        sb.append(other);
+        return new ImmutableNTextPlain(sb.toString());
+    }
+
+    @Override
+    public NText concat(NText... others) {
+        if (others == null) {
+            return this;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.sb);
+        for (NText other : others) {
+            sb.append(other);
+        }
+        return new ImmutableNTextPlain(sb.toString());
+    }
+
     private static class ImmutableNTextPlain implements NTextPlain {
 
-        private final String nString;
+        private final String str;
 
-        public ImmutableNTextPlain(String nString) {
-            this.nString = nString;
+        public ImmutableNTextPlain(String str) {
+            this.str = str == null ? "" : str;
         }
 
         @Override
         public String getValue() {
-            return nString.toString();
+            return str.toString();
         }
 
         @Override
-        public NTextType getType() {
+        public NTextType type() {
             return NTextType.PLAIN;
         }
 
@@ -420,23 +564,23 @@ public class NTextBuilderPlain implements NTextBuilder {
 
         @Override
         public String filteredText() {
-            return nString;
+            return str;
         }
 
         @Override
-        public int textLength() {
-            return nString.length();
+        public int length() {
+            return str.length();
         }
 
         @Override
         public boolean isEmpty() {
-            return nString.isEmpty();
+            return str.isEmpty();
         }
 
         @Override
         public NTextBuilder builder() {
             NTextBuilderPlain b = new NTextBuilderPlain();
-            b.sb.append(nString.toString());
+            b.sb.append(str);
             return b;
         }
 
@@ -447,7 +591,133 @@ public class NTextBuilderPlain implements NTextBuilder {
 
         @Override
         public boolean isBlank() {
-            return nString.trim().isEmpty();
+            return str.trim().isEmpty();
+        }
+
+        @Override
+        public boolean isPrimitive() {
+            return true;
+        }
+
+
+        @Override
+        public List<NPrimitiveText> toCharList() {
+            List<NPrimitiveText> all = new ArrayList<>();
+            for (char child : str.toCharArray()) {
+                all.add(new ImmutableNTextPlain(String.valueOf(child)));
+            }
+            return all;
+        }
+
+        @Override
+        public NText substring(int start, int end) {
+            return new ImmutableNTextPlain(this.str.substring(start, end));
+        }
+
+        @Override
+        public List<NText> split(char c) {
+            return split(String.valueOf(c), false);
+        }
+
+        @Override
+        public List<NText> split(char c, boolean returnSeparator) {
+            return split(String.valueOf(c), returnSeparator);
+        }
+
+        @Override
+        public List<NText> split(String separator) {
+            return split(separator, false);
+        }
+
+        @Override
+        public List<NText> split(String separator, boolean returnSeparator) {
+            StringTokenizer st = new StringTokenizer(str, separator, true);
+            List<NText> all = new ArrayList<>();
+            while (st.hasMoreElements()) {
+                all.add(new ImmutableNTextPlain(st.nextToken()));
+            }
+            return all;
+        }
+
+        @Override
+        public NText trim() {
+            return new ImmutableNTextPlain(this.str.trim());
+        }
+
+        @Override
+        public NText trimLeft() {
+            return new ImmutableNTextPlain(NStringUtils.trimLeft(this.str));
+        }
+
+        @Override
+        public NText trimRight() {
+            return new ImmutableNTextPlain(NStringUtils.trimRight(this.str));
+        }
+
+        @Override
+        public NText repeat(int times) {
+            if (times <= 0) {
+                return NText.ofPlain("");
+            }
+            if (times == 1) {
+                return this;
+            }
+            StringBuilder b = new StringBuilder();
+            for (int i = 0; i < times; i++) {
+                b.append(str);
+            }
+            return new ImmutableNTextPlain(b.toString());
+        }
+
+        @Override
+        public NText concat(NText other) {
+            if (other == null) {
+                return this;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            sb.append(str);
+            sb.append(other);
+            return new ImmutableNTextPlain(sb.toString());
+        }
+
+        @Override
+        public NText concat(NText... others) {
+            if (others == null) {
+                return this;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            sb.append(str);
+            for (NText other : others) {
+                sb.append(other);
+            }
+            return new ImmutableNTextPlain(sb.toString());
+        }
+
+        @Override
+        public boolean isNormalized() {
+            return true;
+        }
+
+        @Override
+        public NNormalizedText normalize() {
+            return this;
+        }
+
+        @Override
+        public NNormalizedText normalize(NTextTransformConfig config) {
+            return this;
+        }
+
+        @Override
+        public NNormalizedText normalize(NTextTransformer transformer, NTextTransformConfig config) {
+            return this;
+        }
+
+        @Override
+        public NPrimitiveText[] toCharArray() {
+            return toCharList().toArray(new NPrimitiveText[0]);
         }
     }
 }
