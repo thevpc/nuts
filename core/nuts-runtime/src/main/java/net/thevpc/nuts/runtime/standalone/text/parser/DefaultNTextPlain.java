@@ -13,24 +13,26 @@
  * <br>
  * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
  */
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextPlain;
-import net.thevpc.nuts.text.NTextType;
+import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.util.NStringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.StringTokenizer;
 
 /**
  * Created by vpc on 5/23/17.
@@ -50,7 +52,7 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain {
     }
 
     @Override
-    public NTextType getType() {
+    public NTextType type() {
         return NTextType.PLAIN;
     }
 
@@ -66,10 +68,12 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain {
         DefaultNTextPlain that = (DefaultNTextPlain) o;
         return Objects.equals(text, that.text);
     }
+
     @Override
     public NText immutable() {
         return this;
     }
+
     @Override
     public int hashCode() {
         return Objects.hash(text);
@@ -77,20 +81,71 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain {
 
     @Override
     public String filteredText() {
-        return text==null?"":text;
+        return text == null ? "" : text;
     }
 
     @Override
-    public int textLength() {
-        return text==null?0:text.length();
+    public int length() {
+        return text == null ? 0 : text.length();
     }
 
     @Override
     public NText simplify() {
-        if(this.equals(DefaultNTextPlain.EMPTY)){
+        if (this.equals(DefaultNTextPlain.EMPTY)) {
             return DefaultNTextPlain.EMPTY;
         }
         return this;
+    }
+
+    @Override
+    public List<NPrimitiveText> toCharList() {
+        List<NPrimitiveText> all = new ArrayList<>();
+        for (char c : text.toCharArray()) {
+            all.add(new DefaultNTextPlain(String.valueOf(c)));
+        }
+        return all;
+    }
+
+    @Override
+    public NText substring(int start, int end) {
+        return new DefaultNTextPlain(getValue().substring(start, end));
+    }
+
+    @Override
+    public List<NText> split(String separator, boolean returnSeparator) {
+        StringTokenizer st = new StringTokenizer(getValue(),separator, true);
+        List<NText> all = new ArrayList<>();
+        while (st.hasMoreElements()) {
+            all.add(new DefaultNTextPlain(st.nextToken()));
+        }
+        return all;
+    }
+
+    @Override
+    public NText trimLeft() {
+        String c = NStringUtils.trimLeft(text);
+        if(Objects.equals(text,c)){
+            return this;
+        }
+        return new DefaultNTextPlain(c);
+    }
+
+    @Override
+    public NText trimRight() {
+        String c = NStringUtils.trimRight(text);
+        if(Objects.equals(text,c)){
+            return this;
+        }
+        return new DefaultNTextPlain(c);
+    }
+
+    @Override
+    public NText trim() {
+        String c = NStringUtils.trim(text);
+        if(Objects.equals(text,c)){
+            return this;
+        }
+        return new DefaultNTextPlain(c);
     }
 
 }
