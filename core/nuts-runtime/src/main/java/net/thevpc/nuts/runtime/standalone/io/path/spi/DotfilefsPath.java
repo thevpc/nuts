@@ -211,30 +211,31 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
                                     break;
                                 }
                             } else {
-                                //version 0.5.7 or later
-                                if (s.endsWith("/")) {
-                                    s = s.substring(0, s.length() - 1);
-                                    int y = s.lastIndexOf('/');
-                                    if (y > 0) {
-                                        s = s.substring(y + 1);
-                                    }
-                                    if (s.length() > 0 && !s.equals("..")) {
-                                        if (folders) {
-                                            if (!s.endsWith("/")) {
-                                                s = s + "/";
-                                            }
-                                            all.add(s);
-                                        }
-                                    }
-                                } else {
-                                    if (files) {
-                                        int y = s.lastIndexOf('/');
-                                        if (y > 0) {
-                                            s = s.substring(y + 1);
-                                        }
-                                        all.add(s);
-                                    }
-                                }
+                                all.add(s);
+//                                //version 0.5.7 or later
+//                                if (s.endsWith("/")) {
+//                                    s = s.substring(0, s.length() - 1);
+//                                    int y = s.lastIndexOf('/');
+//                                    if (y > 0) {
+//                                        s = s.substring(y + 1);
+//                                    }
+//                                    if (s.length() > 0 && !s.equals("..")) {
+//                                        //if (folders) {
+//                                            if (!s.endsWith("/")) {
+//                                                s = s + "/";
+//                                            }
+//                                            all.add(s);
+//                                        //}
+//                                    }
+//                                } else {
+////                                    if (files) {
+//                                        int y = s.lastIndexOf('/');
+//                                        if (y > 0) {
+//                                            s = s.substring(y + 1);
+//                                        }
+//                                        all.add(s);
+////                                    }
+//                                }
                             }
                         }
                     }
