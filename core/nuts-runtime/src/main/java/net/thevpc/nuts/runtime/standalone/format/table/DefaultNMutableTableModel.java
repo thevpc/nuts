@@ -12,6 +12,7 @@ import java.util.List;
 
 import net.thevpc.nuts.format.NTableCell;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.text.NText;
 
 /**
  *
@@ -38,15 +39,15 @@ public class DefaultNMutableTableModel implements NMutableTableModel {
     }
 
     @Override
-    public NMutableTableModel addHeaderCells(Object... values) {
-        for (Object value : values) {
+    public NMutableTableModel addHeaderCells(NText... values) {
+        for (NText value : values) {
             addHeaderCell(value);
         }
         return this;
     }
 
     @Override
-    public NMutableTableModel addHeaderCell(Object value) {
+    public NMutableTableModel addHeaderCell(NText value) {
         DefaultCell c = new DefaultCell();
         c.value = value;
         header.cells.add(c);
@@ -54,22 +55,22 @@ public class DefaultNMutableTableModel implements NMutableTableModel {
     }
 
     @Override
-    public NMutableTableModel addRow(Object... values) {
+    public NMutableTableModel addRow(NText... values) {
         newRow();
         addCells(values);
         return this;
     }
 
     @Override
-    public NMutableTableModel addCells(Object... values) {
-        for (Object value : values) {
+    public NMutableTableModel addCells(NText... values) {
+        for (NText value : values) {
             addCell(value);
         }
         return this;
     }
 
     @Override
-    public NMutableTableModel addCell(Object value) {
+    public NMutableTableModel addCell(NText value) {
         if (rows.isEmpty()) {
             newRow();
         }
@@ -89,7 +90,7 @@ public class DefaultNMutableTableModel implements NMutableTableModel {
     }
 
     @Override
-    public Object getCellValue(int row, int column) {
+    public NText getCellValue(int row, int column) {
         return rows.get(row).cells.get(column).value;
     }
 
@@ -104,7 +105,7 @@ public class DefaultNMutableTableModel implements NMutableTableModel {
     }
 
     @Override
-    public Object getHeaderValue(int column) {
+    public NText getHeaderValue(int column) {
         return header.cells.get(column).value;
     }
 
@@ -119,7 +120,7 @@ public class DefaultNMutableTableModel implements NMutableTableModel {
     }
 
     @Override
-    public NMutableTableModel setCellValue(int row, int column, Object value) {
+    public NMutableTableModel setCellValue(int row, int column, NText value) {
         rows.get(row).cells.get(column).value = value;
         return this;
     }
@@ -137,7 +138,7 @@ public class DefaultNMutableTableModel implements NMutableTableModel {
     }
 
     @Override
-    public NMutableTableModel setHeaderValue(int column, Object value) {
+    public NMutableTableModel setHeaderValue(int column, NText value) {
         header.cells.get(column).value = value;
         return this;
     }
@@ -160,7 +161,7 @@ public class DefaultNMutableTableModel implements NMutableTableModel {
         int x;
         int y;
 
-        Object value;
+        NText value;
 
         @Override
         public int getColspan() {
@@ -195,12 +196,12 @@ public class DefaultNMutableTableModel implements NMutableTableModel {
         }
 
         @Override
-        public Object getValue() {
+        public NText getValue() {
             return value;
         }
 
         @Override
-        public DefaultCell setValue(Object value) {
+        public DefaultCell setValue(NText value) {
             this.value = value;
             return this;
         }
