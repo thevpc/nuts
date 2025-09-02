@@ -48,7 +48,7 @@ public class NTextTransformConfig implements Cloneable, NBlankable {
     private boolean flatten;
 
     /**
-     * when true, transform any node to PLAIN, STYLED or LIST
+     * when true, transform any node to PLAIN, STYLED or LIST (to basic)
      */
     private boolean normalize;
 
