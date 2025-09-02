@@ -595,7 +595,7 @@ public class StyledParserStep extends ParserStep {
 
         NText a = text.ofList(childrenTextNodes2.toArray(new NText[0])).simplify();
         if(a==null){
-            return  text.ofPlain("");
+            return  NText.ofBlank();
         }
         switch (curState) {
             case SHARP:
@@ -603,7 +603,7 @@ public class StyledParserStep extends ParserStep {
                 return text.ofPlain("#");
             }
             case EMPTY:{
-                return text.ofPlain("");
+                return NText.ofBlank();
             }
             case SHARP_CONTENT:
             case SHARP_CONTENT_SHARP:
