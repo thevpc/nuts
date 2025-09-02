@@ -39,7 +39,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
-public class NMsg {
+public class NMsg implements NBlankable {
 
     public static final Object[] NO_PARAMS = new Object[0];
     private final String codeLang;
@@ -48,9 +48,15 @@ public class NMsg {
     private final NTextFormatType format;
     private final NMsgIntent intent;
     private final Object[] params;
+    private final Function<String, ?> placeholderBindings;
     private final NTextStyles styles;
     private final Throwable throwable;
     private final long durationNano;
+
+    public static Placeholder placeholder(String name) {
+        NAssert.requireNonBlank(name, "name");
+        return new Placeholder(name.trim());
+    }
 
     public static NMsg ofMissingValue() {
         return ofMissingValue((String) null);
@@ -108,11 +114,11 @@ public class NMsg {
         return ofC("invalid %s : %s", valueName, NExceptions.getErrorMessage(throwable));
     }
 
-    private static NMsg of(NTextFormatType format, Object message, Object[] params, NTextStyles styles, String codeLang, Level level, Throwable throwable, NMsgIntent intent, long time) {
-        return new NMsg(format, message, params, styles, codeLang, level, throwable, intent, time);
+    private static NMsg of(NTextFormatType format, Object message, Object[] params, NTextStyles styles, String codeLang, Level level, Throwable throwable, NMsgIntent intent, long time, Function<String, ?> placeholderBindings) {
+        return new NMsg(format, message, params, styles, codeLang, level, throwable, intent, time, placeholderBindings);
     }
 
-    private NMsg(NTextFormatType format, Object message, Object[] params, NTextStyles styles, String codeLang, Level level, Throwable throwable, NMsgIntent intent, long durationNano) {
+    private NMsg(NTextFormatType format, Object message, Object[] params, NTextStyles styles, String codeLang, Level level, Throwable throwable, NMsgIntent intent, long durationNano, Function<String, ?> placeholderBindings) {
         NAssert.requireNonNull(message, "message");
         NAssert.requireNonNull(format, "format");
         NAssert.requireNonNull(params, "params");
@@ -139,18 +145,19 @@ public class NMsg {
         this.params = params;
         this.intent = intent;
         this.durationNano = durationNano < 0 ? -1 : durationNano;
+        this.placeholderBindings = placeholderBindings;
     }
 
     public static NMsg ofNtf(String message) {
-        return of(NTextFormatType.NTF, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, -1);
+        return of(NTextFormatType.NTF, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, -1, null);
     }
 
     public static NMsg ofCode(String lang, String text) {
-        return of(NTextFormatType.CODE, NStringUtils.firstNonNull(text, ""), NO_PARAMS, null, lang, null, null, null, -1);
+        return of(NTextFormatType.CODE, NStringUtils.firstNonNull(text, ""), NO_PARAMS, null, lang, null, null, null, -1, null);
     }
 
     public static NMsg ofCode(String text) {
-        return of(NTextFormatType.CODE, NStringUtils.firstNonNull(text, ""), NO_PARAMS, null, null, null, null, null, -1);
+        return of(NTextFormatType.CODE, NStringUtils.firstNonNull(text, ""), NO_PARAMS, null, null, null, null, null, -1, null);
     }
 
     public static NMsg ofStringLiteral(String literal) {
@@ -161,78 +168,62 @@ public class NMsg {
     }
 
     public static NMsg ofStyled(String message, NTextStyle style) {
-        return of(NTextFormatType.STYLED, NStringUtils.firstNonNull(message, ""), NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null, null, null, -1);
+        return of(NTextFormatType.STYLED, NStringUtils.firstNonNull(message, ""), NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null, null, null, -1, null);
     }
 
     public static NMsg ofStyled(String message, NTextStyles styles) {
-        return of(NTextFormatType.STYLED, NStringUtils.firstNonNull(message, ""), NO_PARAMS, styles, null, null, null, null, -1);
+        return of(NTextFormatType.STYLED, NStringUtils.firstNonNull(message, ""), NO_PARAMS, styles, null, null, null, null, -1, null);
     }
 
     public static NMsg ofStyled(NMsg message, NTextStyle style) {
-        return of(NTextFormatType.STYLED, message, NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null, null, null, -1);
+        return of(NTextFormatType.STYLED, message, NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null, null, null, -1, null);
     }
 
     public static NMsg ofStyled(NMsg message, NTextStyles styles) {
-        return of(NTextFormatType.STYLED, message, NO_PARAMS, styles, null, null, null, null, -1);
+        return of(NTextFormatType.STYLED, message, NO_PARAMS, styles, null, null, null, null, -1, null);
     }
 
     public static NMsg ofStyled(NText message, NTextStyle style) {
-        return of(NTextFormatType.STYLED, message, NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null, null, null, -1);
+        return of(NTextFormatType.STYLED, message, NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null, null, null, -1, null);
     }
 
     public static NMsg ofStyled(NText message, NTextStyles styles) {
-        return of(NTextFormatType.STYLED, message, NO_PARAMS, styles, null, null, null, null, -1);
+        return of(NTextFormatType.STYLED, message, NO_PARAMS, styles, null, null, null, null, -1, null);
     }
 
     public static NMsg ofNtf(NText message) {
-        return of(NTextFormatType.NTF, message, NO_PARAMS, null, null, null, null, null, -1);
+        return of(NTextFormatType.NTF, message, NO_PARAMS, null, null, null, null, null, -1, null);
     }
 
     public static NMsg ofBlank() {
-        return of(NTextFormatType.PLAIN, "", NO_PARAMS, null, null, null, null, null, -1);
+        return of(NTextFormatType.PLAIN, "", NO_PARAMS, null, null, null, null, null, -1, null);
     }
 
     public static NMsg ofPlain(String message) {
-        return of(NTextFormatType.PLAIN, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, -1);
+        return of(NTextFormatType.PLAIN, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, -1, null);
     }
 
     public static NMsg ofC(String message) {
-        return of(NTextFormatType.CFORMAT, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, -1);
+        return of(NTextFormatType.CFORMAT, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, -1, null);
     }
 
     public static NMsg ofC(String message, Object... params) {
-        return of(NTextFormatType.CFORMAT, NStringUtils.firstNonNull(message, ""), params, null, null, null, null, null, -1);
+        return of(NTextFormatType.CFORMAT, NStringUtils.firstNonNull(message, ""), params, null, null, null, null, null, -1, null);
     }
 
     public static NMsg ofV(String message, NMsgParam... params) {
-        Map<String, NMsgParam> vars = new LinkedHashMap<>();
-        if (params != null) {
-            for (NMsgParam param : params) {
-                String e = param.getName();
-                if (vars.containsKey(e)) {
-                    throw new IllegalArgumentException("duplicate key " + e);
-                }
-                vars.put(e, param);
-            }
+        if (params == null || params.length == 0) {
+            return ofV(message, s -> null);
         }
-        return ofV(message, s -> {
-            NMsgParam p = vars.get(s);
-            if (p != null) {
-                Supplier<?> ss = p.getValue();
-                if (ss != null) {
-                    return ss.get();
-                }
-            }
-            return null;
-        });
+        return ofV(message, new MapAsSupplier2(params));
     }
 
     public static NMsg ofV(String message, Map<String, ?> vars) {
-        return of(NTextFormatType.VFORMAT, NStringUtils.firstNonNull(message, ""), new Object[]{vars}, null, null, null, null, null, -1);
+        return of(NTextFormatType.VFORMAT, NStringUtils.firstNonNull(message, ""), new Object[]{vars}, null, null, null, null, null, -1, null);
     }
 
     public static NMsg ofV(String message, Function<String, ?> vars) {
-        return of(NTextFormatType.VFORMAT, NStringUtils.firstNonNull(message, ""), new Object[]{vars}, null, null, null, null, null, -1);
+        return of(NTextFormatType.VFORMAT, NStringUtils.firstNonNull(message, ""), new Object[]{vars}, null, null, null, null, null, -1, null);
     }
 
     public static NMsg ofJ(String message, NMsgParam... params) {
@@ -253,11 +244,11 @@ public class NMsg {
 
     @Deprecated
     public static NMsg ofJ(String message) {
-        return of(NTextFormatType.JFORMAT, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, -1);
+        return of(NTextFormatType.JFORMAT, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, -1, null);
     }
 
     public static NMsg ofJ(String message, Object... params) {
-        return of(NTextFormatType.JFORMAT, NStringUtils.firstNonNull(message, ""), params, null, null, null, null, null, -1);
+        return of(NTextFormatType.JFORMAT, NStringUtils.firstNonNull(message, ""), params, null, null, null, null, null, -1, null);
     }
 
     public NTextFormatType getFormat() {
@@ -270,6 +261,10 @@ public class NMsg {
 
     public Object getMessage() {
         return message;
+    }
+
+    public Function<String, ?> getPlaceholders() {
+        return placeholderBindings;
     }
 
     public Object[] getParams() {
@@ -288,8 +283,19 @@ public class NMsg {
         if (o == null) {
             return null;
         }
+        if (o instanceof Placeholder) {
+            if (placeholderBindings != null) {
+                Object v = placeholderBindings.apply(((Placeholder) o).getName());
+                if (v != null) {
+                    o = v;
+                }
+            }
+        }
         if (o instanceof NMsgFormattable) {
             return ((NMsgFormattable) o).toMsg();
+        }
+        if (o instanceof NMsg) {
+            return ((NMsg)o).withPlaceholders(placeholderBindings);
         }
         if (o instanceof Throwable) {
             return NExceptions.getErrorMessage((Throwable) o);
@@ -458,7 +464,7 @@ public class NMsg {
         if (level == this.level && throwable == this.throwable) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, throwable, intent, durationNano);
+        return of(format, message, params, styles, codeLang, level, throwable, intent, durationNano, placeholderBindings);
     }
 
 
@@ -574,11 +580,116 @@ public class NMsg {
         return withLevelAndDefaultIntent(Level.FINEST, NMsgIntent.DEBUG);
     }
 
+    public NMsg withoutPlaceholders() {
+        return of(format, message, params, styles, codeLang, level, null, intent, durationNano, null);
+    }
+
+    public NMsg withPlaceholders(Function<String, ?> placeholderSupplier) {
+        if (placeholderSupplier == null) {
+            return this;
+        }
+        Function<String, ?> oldPlaceholderBindings = placeholderBindings;
+        return of(format, message, params, styles, codeLang, level, null, intent, durationNano, s -> {
+            Object r = placeholderSupplier.apply(s);
+            if (r != null) {
+                return r;
+            }
+            if (oldPlaceholderBindings != null) {
+                return oldPlaceholderBindings.apply(s);
+            }
+            return null;
+        });
+    }
+
+    public NMsg withPlaceholders(NMsgParam... params) {
+        if (params == null || params.length == 0) {
+            return this;
+        }
+        if (placeholderBindings == null) {
+            return of(format, message, params, styles, codeLang, level, null, intent, durationNano, new MapAsSupplier2(params));
+        }
+        if (placeholderBindings instanceof MapAsSupplier2) {
+            Map<String, Supplier<?>> newMap = new LinkedHashMap<>(((MapAsSupplier2) placeholderBindings).content);
+            for (NMsgParam param : params) {
+                NAssert.requireNonNull(param, "param");
+                NAssert.requireNonNull(param.getName(), "param.name");
+                newMap.put(param.getName(), new ConstSupplier<>(param.getValue()));
+            }
+            return of(format, message, params, styles, codeLang, level, null, intent, durationNano, new MapAsSupplier2(newMap));
+        }
+        if (placeholderBindings instanceof MapAsSupplier) {
+            Map<String, Supplier<?>> newMap = new LinkedHashMap<>();
+            for (Map.Entry<String, ?> e : ((MapAsSupplier) placeholderBindings).content.entrySet()) {
+                newMap.put(e.getKey(), e::getValue);
+            }
+            for (NMsgParam param : params) {
+                NAssert.requireNonNull(param, "param");
+                NAssert.requireNonNull(param.getName(), "param.name");
+                newMap.put(param.getName(), new ConstSupplier<>(param.getValue()));
+            }
+            return of(format, message, params, styles, codeLang, level, null, intent, durationNano, new MapAsSupplier2(newMap));
+        }
+        MapAsSupplier2 p2 = new MapAsSupplier2(params);
+        Function<String, ?> oldPlaceholderBindings = placeholderBindings;
+        return of(format, message, params, styles, codeLang, level, null, intent, durationNano, s -> {
+            if (p2.content.containsKey(s)) {
+                return p2.apply(s);
+            }
+            if (oldPlaceholderBindings != null) {
+                return oldPlaceholderBindings.apply(s);
+            }
+            return null;
+        });
+    }
+
+    public NMsg withPlaceholder(String key,Object value) {
+        return withPlaceholders(NMaps.of(key,value));
+    }
+
+    public NMsg withPlaceholders(Map<String, ?> placeholderMap) {
+        if (placeholderMap == null) {
+            return this;
+        }
+        if (placeholderBindings == null) {
+            return of(format, message, params, styles, codeLang, level, null, intent, durationNano, new MapAsSupplier(new LinkedHashMap<>(placeholderMap)));
+        }
+        if (placeholderBindings instanceof MapAsSupplier2) {
+            Map<String, Supplier<?>> newMap = new LinkedHashMap<>(((MapAsSupplier2) placeholderBindings).content);
+            for (Map.Entry<String, ?> e : placeholderMap.entrySet()) {
+                NAssert.requireNonNull(e.getKey(), "param.name");
+                newMap.put(e.getKey(), new ConstSupplier<>(e.getValue()));
+            }
+            return of(format, message, params, styles, codeLang, level, null, intent, durationNano, new MapAsSupplier2(newMap));
+        }
+        if (placeholderBindings instanceof MapAsSupplier) {
+            Map<String, Object> newMap = new LinkedHashMap<>(((MapAsSupplier) placeholderBindings).content);
+            for (Map.Entry<String, ?> e : placeholderMap.entrySet()) {
+                Object v = e.getValue();
+                if (v == null) {
+                    newMap.remove(e.getKey());
+                } else {
+                    newMap.put(e.getKey(), v);
+                }
+            }
+            return of(format, message, params, styles, codeLang, level, null, intent, durationNano, new MapAsSupplier(newMap));
+        }
+        Function<String, ?> oldPlaceholderBindings = placeholderBindings;
+        return of(format, message, params, styles, codeLang, level, null, intent, durationNano, s -> {
+            if (placeholderMap.containsKey(s)) {
+                return placeholderMap.get(s);
+            }
+            if (oldPlaceholderBindings != null) {
+                return oldPlaceholderBindings.apply(s);
+            }
+            return null;
+        });
+    }
+
     public NMsg withLevel(Level level) {
         if (level == this.level) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, null, intent, durationNano);
+        return of(format, message, params, styles, codeLang, level, null, intent, durationNano, placeholderBindings);
     }
 
     private NMsg withLevelAndDefaultIntent(Level level, NMsgIntent intent) {
@@ -588,14 +699,14 @@ public class NMsg {
         if (level == this.level && Objects.equals(intent, this.intent)) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, null, intent, durationNano);
+        return of(format, message, params, styles, codeLang, level, null, intent, durationNano, placeholderBindings);
     }
 
     private NMsg withLevelAndIntent(Level level, NMsgIntent intent) {
         if (level == this.level && Objects.equals(intent, this.intent)) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, null, intent, durationNano);
+        return of(format, message, params, styles, codeLang, level, null, intent, durationNano, placeholderBindings);
     }
 
     private NMsg withLevelAndDefaultIntent(Level level, NMsgIntent intent, Throwable throwable) {
@@ -605,21 +716,21 @@ public class NMsg {
         if (level == this.level && Objects.equals(intent, this.intent) && this.throwable == throwable) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, throwable, intent, durationNano);
+        return of(format, message, params, styles, codeLang, level, throwable, intent, durationNano, placeholderBindings);
     }
 
     private NMsg withLevelAndIntent(Level level, NMsgIntent intent, Throwable throwable) {
         if (level == this.level && Objects.equals(intent, this.intent) && this.throwable == throwable) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, throwable, intent, durationNano);
+        return of(format, message, params, styles, codeLang, level, throwable, intent, durationNano, placeholderBindings);
     }
 
     public NMsg withIntent(NMsgIntent intent) {
         if (Objects.equals(intent, this.intent)) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, null, intent, durationNano);
+        return of(format, message, params, styles, codeLang, level, null, intent, durationNano, placeholderBindings);
     }
 
     public NMsg withDefaultIntent(NMsgIntent intent) {
@@ -629,14 +740,14 @@ public class NMsg {
         if (Objects.equals(intent, this.intent)) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, null, intent, durationNano);
+        return of(format, message, params, styles, codeLang, level, null, intent, durationNano, placeholderBindings);
     }
 
     public NMsg withThrowable(Throwable throwable) {
         if (throwable == this.throwable) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, throwable, intent, durationNano);
+        return of(format, message, params, styles, codeLang, level, throwable, intent, durationNano, placeholderBindings);
     }
 
     public NMsg withDurationMillis(long elapsedTimeMillis) {
@@ -653,7 +764,59 @@ public class NMsg {
         if (elapsedTimeNanos == this.durationNano) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, throwable, intent, elapsedTimeNanos);
+        return of(format, message, params, styles, codeLang, level, throwable, intent, elapsedTimeNanos, placeholderBindings);
+    }
+
+    public NMsg withPrefix(NMsg prefixMessage) {
+        if (NBlankable.isBlank(prefixMessage)) {
+            return this;
+        }
+        if (NBlankable.isBlank(this)) {
+            return prefixMessage;
+        }
+        //this if fast way to inherit level,intent, duration and throwable
+        return of(NTextFormatType.CFORMAT, "%s %s", new Object[]{prefixMessage, cloneWithoutMeta()}, null, null, level, throwable, intent, durationNano, null);
+    }
+
+    public NMsg withSuffix(NMsg suffixMessage) {
+        if (NBlankable.isBlank(suffixMessage)) {
+            return this;
+        }
+        if (NBlankable.isBlank(this)) {
+            return suffixMessage;
+        }
+        //this if fast way to inherit level,intent, duration and throwable
+        return of(NTextFormatType.CFORMAT, "%s %s", new Object[]{cloneWithoutMeta(),suffixMessage}, null, null, level, throwable, intent, durationNano, null);
+    }
+
+    private NMsg cloneWithoutMeta(){
+        return of(format, message, params, styles, codeLang, null, null, null, -1, placeholderBindings);
+    }
+
+    // ---------------------------------------------------------------
+    // STYLING
+    // ---------------------------------------------------------------
+
+    /**
+     * @return -1 if not specified
+     */
+    public long getDurationNanos() {
+        return durationNano;
+    }
+
+    /**
+     * @return -1 if not specified
+     */
+    public long getDurationMillis() {
+        return durationNano < 0 ? -1 : durationNano / 1000000L;
+    }
+
+    public Throwable getThrowable() {
+        return throwable;
+    }
+
+    public NMsgIntent getIntent() {
+        return intent;
     }
 
     @Override
@@ -678,29 +841,11 @@ public class NMsg {
         return result;
     }
 
-    /**
-     * @return -1 if not specified
-     */
-    public long getDurationNanos() {
-        return durationNano;
-    }
 
-    /**
-     * @return -1 if not specified
-     */
-    public long getDurationMillis() {
-        return durationNano < 0 ? -1 : durationNano / 1000000L;
-    }
+    // ---------------------------------------------------------------
+    // STYLING
+    // ---------------------------------------------------------------
 
-    public Throwable getThrowable() {
-        return throwable;
-    }
-
-    public NMsgIntent getIntent() {
-        return intent;
-    }
-
-    /// //////////////////////////////////////////////////////////////////
     public static NMsg ofStyledKeyword(String message) {
         return ofStyled(message, NTextStyle.keyword());
     }
@@ -985,7 +1130,6 @@ public class NMsg {
         return ofStyled(message, NTextStyle.backgroundTrueColor(color));
     }
 
-    /// //////////////////////////////////////////////////////////////////
     public static NMsg ofStyledKeyword(NMsg message) {
         return ofStyled(message, NTextStyle.keyword());
     }
@@ -1206,4 +1350,164 @@ public class NMsg {
         return ofStyled(message, NTextStyle.backgroundTrueColor(color));
     }
 
+    // ---------------------------------------------------------------
+    // PRIVATE CLASSES
+    // ---------------------------------------------------------------
+
+    public static final class Placeholder {
+        private String name;
+
+        private Placeholder(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            Placeholder that = (Placeholder) o;
+            return Objects.equals(name, that.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(name);
+        }
+
+        @Override
+        public String toString() {
+            return "placeholder(" + name + ")";
+        }
+    }
+
+    private static class MapAsSupplier implements Function<String, Object> {
+        Map<String, ?> content;
+
+        public MapAsSupplier(Map<String, ?> other) {
+            this.content = other;
+        }
+
+        @Override
+        public Object apply(String ker) {
+            return content.get(ker);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            MapAsSupplier that = (MapAsSupplier) o;
+            return Objects.equals(content, that.content);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(content);
+        }
+
+        @Override
+        public String toString() {
+            return "MapAsSupplier{" +
+                    "content=" + content +
+                    '}';
+        }
+    }
+
+    @Override
+    public boolean isBlank() {
+        if(message==null) {
+            return true;
+        }
+        switch (format){
+            case PLAIN:
+            case JFORMAT:
+            case VFORMAT:
+            case CFORMAT:
+            case CODE:
+                return NStringUtils.isEmpty((String)message);
+            case STYLED:
+            case NTF:
+            {
+                if(message instanceof NMsg) {
+                    NMsg m = (NMsg) message;
+                    return m == null || m.isBlank();
+                }
+                if(message instanceof NText) {
+                    NText m = (NText) message;
+                    return m.isBlank();
+                }
+                if(message instanceof String) {
+                    return NStringUtils.isEmpty((String)message);
+                }
+                return false;
+            }
+        }
+        return false;
+    }
+
+    private static class ConstSupplier<T> implements Supplier<T> {
+        private T value;
+
+        public ConstSupplier(T value) {
+            this.value = value;
+        }
+
+        @Override
+        public T get() {
+            return value;
+        }
+    }
+
+    private static class MapAsSupplier2 implements Function<String, Object> {
+        Map<String, Supplier<?>> content;
+
+        public MapAsSupplier2(Map<String, Supplier<?>> other) {
+            this.content = other;
+        }
+
+        public MapAsSupplier2(NMsgParam... params) {
+            this.content = new LinkedHashMap<>();
+            if (params != null) {
+                for (NMsgParam param : params) {
+                    NAssert.requireNonNull(param, "param");
+                    String e = param.getName();
+                    NAssert.requireNonNull(e, "param.name");
+                    if (content.containsKey(e)) {
+                        throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("duplicate key %s", e));
+                    }
+                    content.put(e, new ConstSupplier<>(param.getValue()));
+                }
+            }
+        }
+
+        @Override
+        public Object apply(String key) {
+            Supplier<?> p = content.get(key);
+            if (p != null) {
+                return p.get();
+            }
+            return null;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            MapAsSupplier2 that = (MapAsSupplier2) o;
+            return Objects.equals(content, that.content);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(content);
+        }
+
+        @Override
+        public String toString() {
+            return "MapAsSupplier2{" +
+                    "content=" + content +
+                    '}';
+        }
+    }
 }
