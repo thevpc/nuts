@@ -26,7 +26,6 @@ package net.thevpc.nuts.runtime.standalone.format;
 
 import java.time.Instant;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.*;
@@ -148,9 +147,9 @@ public class NIdFormatHelper {
         return ss;
     }
 
-    public Object[] getMultiColumnRow(NFetchDisplayOptions oo) {
+    public NText[] getMultiColumnRow(NFetchDisplayOptions oo) {
         NDisplayProperty[] a = oo.getDisplayProperties();
-        Object[] b = new Object[a.length];
+        NText[] b = new NText[a.length];
         for (int j = 0; j < b.length; j++) {
             b[j] = buildMain(oo, a[j]);
         }
@@ -329,7 +328,7 @@ public class NIdFormatHelper {
                     break;
                 }
             }
-            int len = txt.ofBuilder().append(s).textLength();
+            int len = txt.ofBuilder().append(s).length();
             if (j > 0) {
                 sb.append(' ');
             }
