@@ -31,7 +31,6 @@ import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NLog;
@@ -74,7 +73,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     }
 
     private AttributedString toAttributedString(NText n, NTextStyles styles) {
-        switch (n.getType()) {
+        switch (n.type()) {
             case PLAIN: {
                 styles = NTexts.of().getTheme().toBasicStyles(styles,false);
                 NTextPlain p = (NTextPlain) n;
