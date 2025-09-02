@@ -188,6 +188,10 @@ public class NMsg {
         return of(NTextFormatType.NTF, message, NO_PARAMS, null, null, null, null, null, -1);
     }
 
+    public static NMsg ofBlank() {
+        return of(NTextFormatType.PLAIN, "", NO_PARAMS, null, null, null, null, null, -1);
+    }
+
     public static NMsg ofPlain(String message) {
         return of(NTextFormatType.PLAIN, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, -1);
     }
