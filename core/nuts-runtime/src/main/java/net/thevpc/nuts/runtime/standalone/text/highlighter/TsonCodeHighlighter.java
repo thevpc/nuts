@@ -108,7 +108,7 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
                     } else {
                         NText[] d = readIdentifier(txt, ar);
                         if (d != null) {
-                            if (d.length == 1 && d[0].getType() == NTextType.PLAIN) {
+                            if (d.length == 1 && d[0].type() == NTextType.PLAIN) {
                                 String txt2 = ((NTextPlain) d[0]).getValue();
                                 String s = ar.peekChars(10).replace("\n", " ");
                                 String next = "";
