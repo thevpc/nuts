@@ -28,8 +28,11 @@ package net.thevpc.nuts.log;
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.NCallable;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 
@@ -42,6 +45,16 @@ public interface NLogs extends NComponent {
     static NLogs of() {
         return NExtensions.of(NLogs.class);
     }
+
+    NLogs setMdc(Map<String, Object> values);
+
+    NLogs setMdc(String key, Object value);
+
+    void runWithMdc(Map<String, Object> values, Runnable runnable);
+
+    <T> T callWithMdc(Map<String, Object> values, NCallable<T> callable);
+
+    Object getMdc(String key);
 
     /**
      * Log handler
@@ -87,9 +100,10 @@ public interface NLogs extends NComponent {
      * @return new instance of {@link NLog}
      */
     NLog getLogger(String name);
+
     NLog getNullLogger();
 
-    NLog createCustomLogger(String name,NLogSPI spi);
+    NLog createCustomLogger(String name, NLogSPI spi);
 
     /**
      * return terminal logger level
