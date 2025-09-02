@@ -26,10 +26,11 @@
  */
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextTitle;
-import net.thevpc.nuts.text.NTextType;
+import net.thevpc.nuts.runtime.standalone.text.DefaultNTextBuilder;
+import net.thevpc.nuts.text.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -49,7 +50,7 @@ public class DefaultNTextTitle extends AbstractNText implements NTextTitle {
     }
 
     @Override
-    public NTextType getType() {
+    public NTextType type() {
         return NTextType.TITLE;
     }
 
@@ -91,13 +92,13 @@ public class DefaultNTextTitle extends AbstractNText implements NTextTitle {
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return child.isEmpty();
     }
 
     @Override
-    public int textLength() {
+    public int length() {
         // 1 is the length of '\n'
-        return child.textLength() + 1;
+        return child.length() + 1;
     }
 
     @Override
@@ -112,6 +113,50 @@ public class DefaultNTextTitle extends AbstractNText implements NTextTitle {
             return new DefaultNTextTitle(start, level, child);
         }
         return this;
+    }
+
+    @Override
+    public List<NPrimitiveText> toCharList() {
+        List<NPrimitiveText> all = new ArrayList<>();
+        for (NPrimitiveText aChar : child.toCharList()) {
+            all.add((NPrimitiveText) DefaultNTextStyled.appendStyle(aChar, NTextStyles.of(NTextStyle.primary(level))));
+        }
+        all.add(new DefaultNTextPlain("\n"));
+        return all;
+    }
+
+    @Override
+    public NText substring(int start, int end) {
+        return prerender().substring(start, end);
+    }
+
+    public List<NText> split(String chars, boolean returnSeparator) {
+        return prerender().split(chars, returnSeparator);
+    }
+
+    private NText prerender() {
+        NTextBuilder sb = new DefaultNTextBuilder();
+        sb.append(new DefaultNTextStyled(getChild(), NTextStyles.of(NTextStyle.primary(level))));
+        sb.append("\n");
+        return sb.build();
+    }
+
+    @Override
+    public NText trimLeft() {
+        NText c = getChild().trimLeft();
+        return new DefaultNTextTitle(start, level, c);
+    }
+
+    @Override
+    public NText trimRight() {
+        NText c = getChild().trimRight();
+        return new DefaultNTextTitle(start, level, c);
+    }
+
+    @Override
+    public NText trim() {
+        NText c = getChild().trim();
+        return new DefaultNTextTitle(start, level, c);
     }
 
 }
