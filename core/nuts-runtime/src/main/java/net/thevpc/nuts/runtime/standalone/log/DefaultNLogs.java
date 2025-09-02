@@ -8,8 +8,11 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.util.NCallable;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 
@@ -20,6 +23,64 @@ public class DefaultNLogs implements NLogs {
 
     public DefaultNLogs() {
         this.model = NWorkspaceExt.of().getModel().logModel;
+    }
+
+    public void runWithMdc(Map<String, Object> values, Runnable runnable) {
+        if (runnable != null) {
+            Map<String, Object> old = new HashMap<>();
+            if (values != null) {
+                for (String s : values.keySet()) {
+                    old.put(s, model.getMdc(s));
+                }
+            }
+            try {
+                runnable.run();
+            } finally {
+                if (values != null) {
+                    for (Map.Entry<String, Object> e : old.entrySet()) {
+                        model.setMdc(e.getKey(), e.getValue());
+                    }
+                }
+            }
+        }
+    }
+
+    public <T> T callWithMdc(Map<String, Object> values, NCallable<T> callable) {
+        if (callable != null) {
+            Map<String, Object> old = new HashMap<>();
+            if (values != null) {
+                for (String s : values.keySet()) {
+                    old.put(s, model.getMdc(s));
+                }
+            }
+            try {
+                return callable.call();
+            } finally {
+                if (values != null) {
+                    for (Map.Entry<String, Object> e : old.entrySet()) {
+                        model.setMdc(e.getKey(), e.getValue());
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public NLogs setMdc(Map<String, Object> values) {
+        model.setMdc(values);
+        return this;
+    }
+
+    @Override
+    public NLogs setMdc(String key, Object value) {
+        model.setMdc(key, value);
+        return this;
+    }
+
+    @Override
+    public Object getMdc(String key) {
+        return model.getMdc(key);
     }
 
     @Override
