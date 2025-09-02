@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NLogContext;
+import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.util.NCallable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NMsgBuilder;
@@ -11,7 +13,6 @@ import java.util.logging.Level;
 class ScopedNLog implements NLog {
     private final DefaultNLogModel model;
     private final NLog base;
-    private NMsg prefix;
 
     public ScopedNLog(DefaultNLogModel model, NLog base) {
         this.model = model;
@@ -23,15 +24,6 @@ class ScopedNLog implements NLog {
         return this;
     }
 
-    @Override
-    public void runWith(Runnable r) {
-        r.run();
-    }
-
-    @Override
-    public <T> T callWith(NCallable<T> r) {
-        return r.call();
-    }
 
     @Override
     public String getName() {
@@ -40,7 +32,8 @@ class ScopedNLog implements NLog {
 
     @Override
     public boolean isLoggable(Level level) {
-        NLog s = model.scopedLoggerThreadLocal.get();
+        NLogContext c = NLogs.of().getContext();
+        NLog s = c.getLog();
         if (s != null) {
             return s.isLoggable(level);
         }
@@ -49,22 +42,25 @@ class ScopedNLog implements NLog {
 
     @Override
     public void log(Level level, Supplier<NMsg> msgSupplier) {
-        NLog s = model.scopedLoggerThreadLocal.get();
+        NLogContext c = NLogs.of().getContext();
+        NLog s = c.getLog();
         if (s != null) {
-            s.log(level, ()->prepareMsg(msgSupplier.get()));
+            s.log(level, () -> prepareMsg(msgSupplier.get(), c));
             return;
         }
-        base.log(level, ()->prepareMsg(msgSupplier.get()));
+        base.log(level, msgSupplier);
     }
 
     @Override
     public void log(NMsg msg) {
-        NLog s = model.scopedLoggerThreadLocal.get();
+        NLogContext c = NLogs.of().getContext();
+        NLog s = c.getLog();
         if (s != null) {
-            s.log(prepareMsg(msg));
+            s.log(msg);
+//            s.log(prepareMsg(msg, c));
             return;
         }
-        base.log(prepareMsg(msg));
+        base.log(msg);
     }
 
     @Override
@@ -72,34 +68,8 @@ class ScopedNLog implements NLog {
         log(msg.build());
     }
 
-    @Override
-    public void setPrefix(NMsg prefix) {
-        this.prefix = prefix;
+    private NMsg prepareMsg(NMsg other, NLogContext c) {
+        return other.withPrefix(c.getMessagePrefix()).withSuffix(c.getMessageSuffix()).withPlaceholders(c::getPlaceholder);
     }
 
-    @Override
-    public NMsg getPrefix() {
-        return prefix;
-    }
-
-    private NMsg prepareMsg(NMsg other) {
-        if (other != null) {
-            if (prefix != null) {
-                return NMsg.ofC("%s %s", prefix, other)
-                        .withLevel(other.getLevel())
-                        .withIntent(other.getIntent())
-                        .withDurationNanos(other.getDurationNanos())
-                        .withThrowable(other.getThrowable())
-                        ;
-            } else {
-                return other;
-            }
-        } else {
-            if (prefix != null) {
-                return other;
-            } else {
-                return NMsg.ofBlank();
-            }
-        }
-    }
 }
