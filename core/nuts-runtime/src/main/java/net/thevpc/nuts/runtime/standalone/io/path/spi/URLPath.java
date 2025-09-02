@@ -747,7 +747,7 @@ public class URLPath implements NPathSPI {
 
         public NText asFormattedString() {
             if (p.url == null) {
-                return NText.ofPlain("");
+                return NText.ofBlank();
             }
             return NText.of(p.url);
         }
