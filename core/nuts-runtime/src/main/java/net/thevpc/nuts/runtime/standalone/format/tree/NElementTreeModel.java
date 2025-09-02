@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.format.tree;
 
 import net.thevpc.nuts.format.NTreeModel;
+import net.thevpc.nuts.runtime.standalone.text.art.tree.XNode;
+import net.thevpc.nuts.runtime.standalone.text.art.tree.XNodeFormatter;
 import net.thevpc.nuts.text.NText;
 
 import java.util.List;
