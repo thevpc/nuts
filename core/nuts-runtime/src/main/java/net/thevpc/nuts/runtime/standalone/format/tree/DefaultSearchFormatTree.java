@@ -10,16 +10,15 @@ import java.util.AbstractMap;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.format.NTreeFormat;
+import net.thevpc.nuts.format.NTreeNode;
 import net.thevpc.nuts.format.NTreeNodeFormat;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.NIdFormatHelper;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
-import net.thevpc.nuts.runtime.standalone.text.art.tree.XNode;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextArt;
 import net.thevpc.nuts.text.NTextArtTreeRenderer;
-import net.thevpc.nuts.text.NTextBuilder;
 
 /**
  * @author thevpc
@@ -29,15 +28,12 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
     private Object lastObject;
     NTreeNodeFormat nTreeNodeFormat = new NTreeNodeFormat() {
         @Override
-        public NText format(Object o, int depth) {
+        public NText format(NTreeNode o, int depth) {
             NIdFormatHelper fid = NIdFormatHelper.of(o);
             if (fid != null) {
                 return fid.getSingleColumnRow(getDisplayOptions());
             } else {
-                if (o instanceof XNode) {
-                    return ((XNode) o).toNutsString();
-                }
-                return NTextBuilder.of().append(o).immutable();
+                return o.value();
             }
         }
     };
@@ -75,7 +71,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
     }
 
     public void formatElement(Object object, long index, boolean last) {
-        NTextArtTreeRenderer treeRenderer = NTextArt.of().getDefaultTreeRenderer().get()
+        NTextArtTreeRenderer treeRenderer = NTextArt.of().getTreeRenderer().get()
                 .setNodeFormat(nTreeNodeFormat)
                 .setOmitRoot(true)
                 .setInfinite(!last)
