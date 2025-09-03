@@ -172,16 +172,12 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
             int childEnd = pos + childLen;
 
             if (childEnd <= start) {
-                // Entirely before range → keep as is
                 newChildren.add(child);
             } else if (childStart >= end) {
-                // Entirely after range → keep as is
                 newChildren.add(child);
             } else {
-                // Overlap: compute remaining parts
                 int leftEnd = Math.max(start - childStart, 0);
                 int rightStart = Math.min(end - childStart, childLen);
-
                 if (leftEnd > 0) {
                     newChildren.add(child.substring(0, leftEnd));
                 }
@@ -215,24 +211,6 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
         }
         return this;
     }
-    //    @Override
-//    public NutsTextBuilder append(NutsString str) {
-//        if (str != null) {
-//            NutsText n = ws.text().parser().parse(new StringReader(str.toString()));
-//            if (n != null) {
-//                append(n);
-//            }
-//        }
-//        return this;
-//    }
-//
-//    @Override
-//    public NutsTextBuilder append(NutsFormattable str) {
-//        if (str != null) {
-//            append(ws.text().toText(str));
-//        }
-//        return this;
-//    }
 
 
     @Override
@@ -280,71 +258,91 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
     }
 
     @Override
-    public NText subChildren(int from, int to) {
-        if (from < 0) {
-            from = 0;
-        }
-        if (to >= size()) {
-            to = size() - 1;
-        }
-        if (to <= from) {
-            return NText.ofBlank();
-        }
-        return NTextBuilder.of().appendAll(children.subList(from, to)).build();
-    }
-
-//    public NText substring(int from, int to) {
-//        if (to <= from) {
-//            return NText.ofPlain("");
-//        }
-//        int firstIndex = ensureCut(from);
-//        if (firstIndex < 0) {
-//            return NText.ofPlain("");
-//        }
-//        int secondIndex = ensureCut(to);
-//        if (secondIndex < 0) {
-//            //the cut is till the end
-//            return NTextBuilder.of().appendAll(children.subList(firstIndex, children.size())).build();
-//        }
-//        return NTextBuilder.of().appendAll(children.subList(firstIndex, secondIndex)).build();
-//    }
-
-    @Override
-    public NTextBuilder insert(int at, NText... newTexts) {
-        return replaceChildren(at, at + 1, newTexts);
-    }
-
-    @Override
-    public NTextBuilder replace(int from, int to, NText... newTexts) {
-        if (to <= from) {
+    public NTextBuilder insert(int at, NText... items) {
+        if (items == null || items.length == 0) {
             return this;
         }
-        int firstIndex = ensureCut(from);
-        if (firstIndex < 0) {
+
+        if (at < 0 || at > length()) {
+            throw new IndexOutOfBoundsException("Invalid position: " + at);
+        }
+
+        if (at == length()) {
+            append(items);
             return this;
         }
-        int secondIndex = ensureCut(to);
-        if (secondIndex < 0) {
-            //the cut is till the end
-            replaceChildren(firstIndex, children.size(), newTexts);
+
+        int currentPos = 0;
+        for (int i = 0; i < children.size(); i++) {
+            NText part = children.get(i);
+            int partLength = part.length();
+
+            if (at < currentPos + partLength) {
+                int offsetInPart = at - currentPos;
+
+                if (offsetInPart == 0) {
+                    children.addAll(i, Arrays.asList(items));
+                } else if (offsetInPart == partLength) {
+                    children.addAll(i + 1, Arrays.asList(items));
+                } else {
+                    NText left = part.substring(0, offsetInPart);
+                    NText right = part.substring(offsetInPart, partLength);
+
+                    children.set(i, left);
+                    children.addAll(i + 1, Arrays.asList(items));
+                    children.add(i + 1 + items.length, right);
+                }
+                return this;
+            }
+
+            currentPos += partLength;
         }
-        replaceChildren(firstIndex, secondIndex, newTexts);
+        children.addAll(Arrays.asList(items));
         return this;
     }
 
     @Override
-    public NTextBuilder replaceChildren(int from, int to, NText... newTexts) {
-        if (newTexts == null) {
-            newTexts = new NText[0];
-        } else {
-            newTexts = Arrays.stream(newTexts).filter(x -> x != null && !x.isEmpty()).toArray(NText[]::new);
+    public NTextBuilder replace(int from, int to, NText... newTexts) {
+        if (from < 0 || to < from || to > length()) {
+            throw new IndexOutOfBoundsException("Invalid range: " + from + " to " + to);
         }
-        if (from < to) {
-            children.subList(from, to).clear();
-            if (newTexts.length > 0) {
-                children.addAll(from, Arrays.asList(newTexts));
+
+        int pos = 0;
+        int i = 0;
+        List<NText> result = new ArrayList<>();
+
+        for (NText t : children) {
+            int len = t.length();
+
+            if (pos + len <= from) {
+                result.add(t);
             }
+            else if (pos <= from && from < pos + len) {
+                int splitStart = from - pos;
+                if (splitStart > 0) {
+                    result.add(t.substring(0, splitStart));
+                }
+            }
+
+            if (pos < to && to <= pos + len) {
+                int splitEnd = to - pos;
+                if (newTexts != null && newTexts.length > 0) {
+                    result.addAll(Arrays.asList(newTexts));
+                }
+                if (splitEnd < len) {
+                    result.add(t.substring(splitEnd,t.length()));
+                }
+            }
+            if (pos >= to) {
+                result.add(t);
+            }
+
+            pos += len;
+            i++;
         }
+
+        this.children.clear();
+        this.children.addAll(result);
         return this;
     }
 
@@ -459,74 +457,6 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
         return c;
     }
 
-    public int ensureCut(int at) {
-//        List<NutsText> newValues=new ArrayList<>();
-        if (at <= 0) {
-            return 0;
-        }
-        NTexts text = NTexts.of();
-        int charPos = 0;
-        int index = 0;
-        while (index < children.size()) {
-            NText c = children.get(index);
-            int start = charPos;
-            int len = c.length();
-            int end = start + len;
-            if (at < start) {
-                //continue
-            } else if (at == start) {
-                return index;
-            } else if (at == end) {
-                if (index + 1 < children.size()) {
-                    return index + 1;
-                }
-                return -1;
-            } else if (at > start && at < end) {
-                List<NText> rv = c.builder().flatten().getChildren();
-                List<NText> rv2 = new ArrayList<>(rv.size() + 1);
-                int toReturn = -1;
-                for (int i = 0; i < rv.size(); i++) {
-                    NText child = rv.get(i);
-                    start = charPos;
-                    len = child.length();
-                    end = start + len;
-                    if (at < start) {
-                        rv2.add(child);
-                    } else if (at == start) {
-                        rv2.add(child);
-                        toReturn = i + index;
-                    } else if (at >= end) {
-                        rv2.add(child);
-                    } else {
-                        if (child.type() == NTextType.PLAIN) {
-                            NTextPlain p = (NTextPlain) child;
-                            String tp = p.getValue();
-                            String a = tp.substring(0, at - start);
-                            String b = tp.substring(at - start);
-                            rv2.add(text.ofPlain(a));
-                            rv2.add(text.ofPlain(b));
-                            toReturn = index + i + 1;
-                        } else if (child.type() == NTextType.STYLED) {
-                            NTextStyled p = (NTextStyled) child;
-                            String tp = ((NTextPlain) p.getChild()).getValue();
-                            String a = tp.substring(0, at - start);
-                            String b = tp.substring(at - start);
-                            rv2.add(text.ofStyled(a, p.getStyles()));
-                            rv2.add(text.ofStyled(b, p.getStyles()));
-                            toReturn = index + i + 1;
-                        }
-                    }
-                    charPos = end;
-                }
-                replaceChildren(index, index + 1, rv2.toArray(new NText[0]));
-                return toReturn;
-            }
-            charPos = end;
-            index++;
-        }
-        return -1;
-    }
-
     @Override
     public NText immutable() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -594,9 +524,28 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
     @Override
     public List<NText> split(String separators, boolean keepSeparators) {
         List<NText> result = new ArrayList<>();
-        for (NText child : flatten().getChildren()) {
-            result.addAll(child.split(separators, keepSeparators));
+        NTextBuilder current = NTextBuilder.of();
+
+        for (NText child : getChildren()) {
+            List<NText> parts = child.split(separators, keepSeparators); // recursively split child
+            for (NText part : parts) {
+                String s = part.filteredText();
+                if (keepSeparators && s.length() == 1 && separators.indexOf(s.charAt(0)) >= 0) {
+                    if (current.length() > 0) {
+                        result.add(current.build());
+                        current = NTextBuilder.of();
+                    }
+                    result.add(part); // separator as own element
+                } else {
+                    current.append(part); // normal text
+                }
+            }
         }
+
+        if (current.length() > 0) {
+            result.add(current.build());
+        }
+
         return result;
     }
 
