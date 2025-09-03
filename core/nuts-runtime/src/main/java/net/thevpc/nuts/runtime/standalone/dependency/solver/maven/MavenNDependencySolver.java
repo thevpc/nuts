@@ -2,8 +2,9 @@ package net.thevpc.nuts.runtime.standalone.dependency.solver.maven;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NMsgFormattable;
-import net.thevpc.nuts.format.NTreeModel;
+import net.thevpc.nuts.format.NTreeNode;
 import net.thevpc.nuts.spi.NDependencySolver;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMsg;
 
@@ -90,11 +91,16 @@ public class MavenNDependencySolver implements NDependencySolver {
         if (true) {
             return;
         }
-        class NDependencyTreeNodeAndFormat implements NMsgFormattable {
+        class NDependencyTreeNodeAndFormat  implements NTreeNode,NMsgFormattable {
             NDependencyTreeNode node;
 
             public NDependencyTreeNodeAndFormat(NDependencyTreeNode node) {
                 this.node = node;
+            }
+
+            @Override
+            public NText value() {
+                return NText.of(toMsg());
             }
 
             @Override
@@ -106,24 +112,19 @@ public class MavenNDependencySolver implements NDependencySolver {
             public NMsg toMsg() {
                 return NMsg.ofC("%s", node.getDependency().builder().removeCondition().setExclusions(null).build());
             }
+
+
+
+            @Override
+            public List<NTreeNode> children() {
+                if (node == null) {
+                    return run.transitiveNodes().toList().stream().map(x -> new NDependencyTreeNodeAndFormat(x)).collect(Collectors.toList());
+                }
+                return node.getChildren().stream().map(x -> new NDependencyTreeNodeAndFormat(x)).collect(Collectors.toList());
+            }
         }
 
-        NSession.of().out().println(
-                new NTreeModel() {
-                    @Override
-                    public Object getRoot() {
-                        return new NDependencyTreeNodeAndFormat(null);
-                    }
-
-                    @Override
-                    public List<NDependencyTreeNodeAndFormat> getChildren(Object node) {
-                        if (((NDependencyTreeNodeAndFormat) node).node == null) {
-                            return run.transitiveNodes().toList().stream().map(x -> new NDependencyTreeNodeAndFormat(x)).collect(Collectors.toList());
-                        }
-                        return ((NDependencyTreeNodeAndFormat) node).node.getChildren().stream().map(x -> new NDependencyTreeNodeAndFormat(x)).collect(Collectors.toList());
-                    }
-                }
-        );
+        NSession.of().out().println(new NDependencyTreeNodeAndFormat(null));
     }
 
 
