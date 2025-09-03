@@ -21,7 +21,7 @@ public class DefaultTableHeaderFormat implements NTableCellFormat {
 
     @Override
     public NText format(int row, int col, NText value) {
-        return NTextBuilder.of().append(value==null?NText.of("") : value,
+        return NTextBuilder.of().append(value==null?NText.ofBlank() : value,
                 NTextStyle.primary1()
                 );
     }
