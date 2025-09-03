@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.text.art.tree;
 
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.format.NTreeLinkFormat;
+import net.thevpc.nuts.text.NText;
 
 /**
  *
@@ -34,45 +35,41 @@ import net.thevpc.nuts.format.NTreeLinkFormat;
 class SpaceTreeLinkFormat implements NTreeLinkFormat {
     
     @Override
-    public String formatMain(NPositionType type) {
+    public NText formatMain(NPositionType type) {
         switch (type) {
             case FIRST:
                 {
-                    return "";
+                    return NText.ofBlank();
                 }
             case CENTER:
                 {
-                    return "   ";
+                    return NText.ofPlain("   ");
                 }
             case LAST:
                 {
-                    return "   ";
+                    return NText.ofPlain("   ");
                 }
         }
-        return "";
+        return NText.ofBlank();
     }
 
     @Override
-    public String formatChild(NPositionType type) {
-        String p = "";
+    public NText formatChild(NPositionType type) {
         switch (type) {
             case FIRST:
                 {
-                    p = "";
-                    break;
+                    return NText.ofBlank();
                 }
             case CENTER:
                 {
-                    p = "   ";
-                    break;
+                    return NText.ofPlain("   ");
                 }
             case LAST:
                 {
-                    p = "   ";
-                    break;
+                    return NText.ofPlain("   ");
                 }
         }
-        return p;
+        return NText.ofBlank();
     }
     
 }
