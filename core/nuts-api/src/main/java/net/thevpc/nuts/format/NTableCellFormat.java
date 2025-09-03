@@ -36,7 +36,7 @@ import net.thevpc.nuts.text.NText;
 public interface NTableCellFormat {
 
     default NText format(int row, int col, NText value) {
-        return value==null?NText.of("") : value;
+        return value==null?NText.ofBlank() : value;
     }
 
     default NPositionType getHorizontalAlign(int row, int col, NText value) {
