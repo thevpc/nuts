@@ -3051,8 +3051,8 @@ input:-internal-autofill-selected {
 .feature-title{
   color: #00508a;
   text-align: center;
-  font-family: ZeroesTwo;
-  /*font-family: "Smooch Sans", serif;*/
+  /*font-family: ZeroesTwo;*/
+  font-family: "Smooch Sans", serif;
   font-optical-sizing: auto;
   font-style: normal;
   font-weight: bolder;
@@ -3061,7 +3061,8 @@ input:-internal-autofill-selected {
 .feature-subtitle{
   color: #e75734;
   text-align: center;
-  font-family: ZeroesTwo;
+  /*font-family: ZeroesTwo;*/
+  font-family: "Smooch Sans", serif;
   font-size: 15px;
   /*font-family: "Smooch Sans", serif;*/
   font-optical-sizing: auto;
