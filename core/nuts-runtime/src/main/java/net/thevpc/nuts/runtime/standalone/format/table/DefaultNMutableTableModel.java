@@ -39,7 +39,7 @@ public class DefaultNMutableTableModel implements NMutableTableModel {
     }
 
     @Override
-    public NMutableTableModel addHeaderCells(NText... values) {
+    public NMutableTableModel addHeaderRow(NText... values) {
         for (NText value : values) {
             addHeaderCell(value);
         }
@@ -120,19 +120,19 @@ public class DefaultNMutableTableModel implements NMutableTableModel {
     }
 
     @Override
-    public NMutableTableModel setCellValue(int row, int column, NText value) {
+    public NMutableTableModel setCellValue(int column, int row, NText value) {
         rows.get(row).cells.get(column).value = value;
         return this;
     }
 
     @Override
-    public NMutableTableModel setCellColSpan(int row, int column, int value) {
+    public NMutableTableModel setCellColSpan(int column, int row, int value) {
         rows.get(row).cells.get(column).colspan = value;
         return this;
     }
 
     @Override
-    public NMutableTableModel setCellRowSpan(int row, int column, int value) {
+    public NMutableTableModel setCellRowSpan(int column, int row, int value) {
         rows.get(row).cells.get(column).rowspan = value;
         return this;
     }
