@@ -75,17 +75,11 @@ public interface NTextBuilder extends NText, Iterable<NText> {
 
     List<NText> getChildren();
 
-    NText subChildren(int from, int to);
-
-    NText substring(int start, int end);
-
     NTextBuilder delete(int start, int end);
 
     NTextBuilder insert(int at, NText... newTexts);
 
     NTextBuilder replace(int from, int to, NText... newTexts);
-
-    NTextBuilder replaceChildren(int from, int to, NText... newTexts);
 
     String toString();
 
