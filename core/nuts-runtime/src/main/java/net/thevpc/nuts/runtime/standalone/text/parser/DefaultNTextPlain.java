@@ -113,7 +113,7 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain {
 
     @Override
     public List<NText> split(String separator, boolean returnSeparator) {
-        StringTokenizer st = new StringTokenizer(getValue(),separator, true);
+        StringTokenizer st = new StringTokenizer(getValue(),separator, returnSeparator);
         List<NText> all = new ArrayList<>();
         while (st.hasMoreElements()) {
             all.add(new DefaultNTextPlain(st.nextToken()));
