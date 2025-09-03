@@ -510,4 +510,8 @@ public class PixelNTextArtImageRenderer implements NTextArtImageRenderer, NTextA
         return NText.ofPlain(String.valueOf(lines[idx].charAt(0)));
     }
 
+    @Override
+    public String toString() {
+        return "PixelNTextArtImageRenderer("+name + ')';
+    }
 }
