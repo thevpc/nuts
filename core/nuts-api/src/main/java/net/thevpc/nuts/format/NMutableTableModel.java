@@ -61,7 +61,7 @@ public interface NMutableTableModel extends NTableModel, NComponent {
      * @param values cells
      * @return {@code this} instance
      */
-    NMutableTableModel addHeaderCells(NText... values);
+    NMutableTableModel addHeaderRow(NText... values);
 
     /**
      * add header cell
@@ -98,32 +98,32 @@ public interface NMutableTableModel extends NTableModel, NComponent {
     /**
      * update cell at the given position
      *
-     * @param row    row index
      * @param column column index
+     * @param row    row index
      * @param value  cell value
      * @return {@code this} instance
      */
-    NMutableTableModel setCellValue(int row, int column, NText value);
+    NMutableTableModel setCellValue(int column, int row, NText value);
 
     /**
      * update cell colspan
      *
-     * @param row    row index
      * @param column column index
+     * @param row    row index
      * @param value  new value
      * @return {@code this} instance
      */
-    NMutableTableModel setCellColSpan(int row, int column, int value);
+    NMutableTableModel setCellColSpan(int column, int row, int value);
 
     /**
      * update cell rowspan
      *
-     * @param row    row index
      * @param column column index
+     * @param row    row index
      * @param value  new value
      * @return {@code this} instance
      */
-    NMutableTableModel setCellRowSpan(int row, int column, int value);
+    NMutableTableModel setCellRowSpan(int column, int row, int value);
 
     /**
      * update header value
