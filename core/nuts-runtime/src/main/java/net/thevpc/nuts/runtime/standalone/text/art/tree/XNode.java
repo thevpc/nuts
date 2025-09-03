@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.format.NTreeNode;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 
@@ -38,7 +39,7 @@ import net.thevpc.nuts.text.NTextBuilder;
  *
  * @author thevpc
  */
-public class XNode {
+public class XNode implements NTreeNode {
 
     NText key;
     Object value;
@@ -102,6 +103,11 @@ public class XNode {
         }
     }
 
+    @Override
+    public NText value() {
+        return toNutsString();
+    }
+
     private NText resolveTitle() {
         if (title != null) {
             return title;
@@ -153,7 +159,12 @@ public class XNode {
         return null;
     }
 
-    public List getChildren() {
+    @Override
+    public List<NTreeNode> children() {
+        return (List) getChildren();
+    }
+
+    public List<XNode> getChildren() {
         if (value instanceof Map.Entry) {
             Object v = ((Map.Entry) value).getValue();
             return getAsList(v);
@@ -198,7 +209,7 @@ public class XNode {
         return false;
     }
 
-    private List getAsList(Object value) {
+    private List<XNode> getAsList(Object value) {
         if (value instanceof List) {
             return ((List<Object>) value).stream().map(me -> node(me, format)).collect(Collectors.toList());
         }
