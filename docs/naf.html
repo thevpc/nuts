@@ -226,56 +226,60 @@
                                         <div class="carousel-slide">
                                             <div class="col col--3">
                                                 <h3 class="feature-title">NMsg in a nutshell</h3>
-                                                <p><code>NMsg</code> is a structured message builder in Nuts/NAF. It supports multiple placeholder formats—C-style (%s), Java-style ({}), and variable substitution ($name)—as well as plain, styled, code, and <code>NTF</code> text. When rendered through NOut or other Nuts-aware outputs, common types like numbers, booleans, and dates are automatically colorized for better readability. You can also apply styles or semantic intents directly to messages, making them versatile for interactive CLI output.</p>
+                                                <p><code>NMsg</code> allows you to create structured messages with dynamic <strong>placeholders</strong>, automatically rendering common types such as <strong>booleans</strong>, <strong>numbers</strong>, <strong>paths</strong>, <strong>dates</strong>, and <strong>enums</strong> in colors for improved readability. You can also apply custom styles to placeholders or entire messages, and even nest messages within messages to build complex, rich, and expressive content. This makes <code>NMsg</code> a versatile tool for clear, context-aware, and visually informative output in any application.</p>
                                                 <pre>
                                                     <code class="language-java">
-                                                        // 1) C-FORMAT: printf-style placeholders
-                                                        NMsg cfmt = NMsg.ofC("Hello %s, you have %d new notifications", "Alice", 5);
-                                                        // (numbers auto-colored when rendered)
+                                                    // Simple example with automatic coloring
+                                                    NMsg.ofC("User %s set flag %s on path %s",
+                                                        "Alice", true, NPath.of("/tmp/data.txt")
+                                                    );
 
-                                                        // 2) J-FORMAT: {} placeholders (optionally numbered like {0})
-                                                        NMsg jfmt = NMsg.ofJ("Downloading {} from {}", "report.pdf", "server-01");
+                                                    // Custom styling example
+                                                    NMsg.ofC("Task %s completed with status %s",
+                                                        "Upload",
+                                                        NText.ofStyled("OK", NTextStyle.primary1())
+                                                    );
 
-                                                        // 3) V-FORMAT: $name placeholders (three correct ways)
-
-                                                        // 3.a) Using NMsgParam.of(name, value)
-                                                        NMsg vfmtParams = NMsg.ofV("Feature enabled? $enabled",
-                                                            NMsgParam.of("enabled", true));
-
-                                                        // 3.b) Using a Map
-                                                        NMsg vfmtMap = NMsg.ofV("User $user on $app",
-                                                            Map.of("user", "Alice", "app", "NAF"));
-
-                                                        // 3.c) Using a name->value function
-                                                        NMsg vfmtFn = NMsg.ofV("Threshold=$th, Date=$date", name -> switch (name) {
+                                                    // Nested messages example
+                                                    NMsg.ofV("User $user completed ${task}",
+                                                        NMaps.of(
+                                                            "user", "Alice",
+                                                            "task", NMsg.ofV("task %s in %s", "Upload",
+                                                                     NText.ofStyled("123ms", NTextStyle.secondary1()))
+                                                        )
+                                                    );
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-title">Placeholder Formats</h3>
+                                                <p><code>NMsg</code> supports multiple placeholder formats to create flexible and dynamic messages. You can use C-style placeholders (<code>%s</code>, <code>%d</code>) for traditional printf-style formatting, Java-style placeholders (<code>{}</code>) similar to MessageFormat or <strong>SLF4J</strong>, and variable substitution (<code>$name</code>) for named placeholders. The variable substitution format can take parameters, maps, or functions, making it easy to build messages dynamically and adaptively for your application.</p>
+                                                <pre>
+                                                    <code class="language-java">
+                                                        NMsg.ofC("Hello %s, you have %d new notifications", "Alice", 5);
+                                                        NMsg.ofJ("Downloading {} from {}", "report.pdf", "server-01");
+                                                        NMsg.ofV("User $user on ${app}", Map.of("user", "Alice", "app", "NAF"));
+                                                        NMsg.ofV("Threshold=$th, Date=$date", name -> switch (name) {
                                                             case "th"   -> 0.85;
                                                             case "date" -> LocalDate.now();
                                                             default     -> null;
                                                         });
-
-                                                        // 4) PLAIN: no formatting, printed as-is
-                                                        NMsg plain = NMsg.ofPlain("This is a plain message");
-
-                                                        // 5) STYLED: emphasize/severity styling
-                                                        NMsg styled = NMsg.ofStyled("Error: file not found", NTextStyle.error());
-
-                                                        // 6) CODE: mono/code blocks (optionally with language)
-                                                        NMsg code = NMsg.ofCode("java", "System.out.println(\"Hello NAF\");");
-
-                                                        // 7) NTF: Nuts Text Format (lightweight markup)
-                                                        NMsg ntf = NMsg.ofNtf("##bold## ##:/:italic## ```java public class{}```");
-
-                                                        // Render them
-                                                        NOut.println(cfmt);
-                                                        NOut.println(jfmt);
-                                                        NOut.println(vfmtParams);
-                                                        NOut.println(vfmtMap);
-                                                        NOut.println(vfmtFn);
-                                                        NOut.println(plain);
-                                                        NOut.println(styled);
-                                                        NOut.println(code);
-                                                        NOut.println(ntf);
-
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-title">Text Rendering Formats</h3>
+                                                <p><code>NMsg</code> NMsg also provides multiple text rendering formats to make messages visually expressive. You can use plain messages that print as-is, styled messages to highlight errors, warnings, or other emphasis, code blocks for monospaced text with optional language hints, and NTF (Nuts Text Format) for lightweight markup supporting bold, italic, colors, and other rich formatting. These formats, combined with placeholders, allow NMsg to produce rich, dynamic, and visually informative output in any context.</p>
+                                                <pre>
+                                                    <code class="language-java">
+                                                        NMsg.ofPlain("This is a plain message");
+                                                        NMsg.ofStyled("Error: file not found", NTextStyle.error());
+                                                        NMsg.ofCode("java", "System.out.println(\"Hello NAF\");");
+                                                        NMsg.ofNtf("##bold## ##:/:italic## ```java public class{} ```");
                                                     </code>
                                                 </pre>
                                             </div>
@@ -316,10 +320,10 @@
                                                         // access local standard folders
                                                         NPath.ofUserHome();         // User home directory
                                                         NPath.ofUserDirectory();    // Current working directory
-                                                        // User store path (~/.config on linux, C:\Users\{user}\AppData\Local on windows)
+                                                        // User store path (~/.config/nuts on linux, C:\Users\{user}\AppData\Local\nuts on windows)
                                                         NPath.ofUserStore(NStoreType.CONFIG);
-                                                        // User store path (/user/bin on linux, C:\Program Files on windows)
-                                                        NPath.ofSystemStore(NStoreType.APP);  // System store path
+                                                        // User store path (/opt/nuts/ on linux, C:\Program Files\nuts on windows)
+                                                        NPath.ofSystemStore(NStoreType.BIN);  // System store path
                                                     </code>
                                                 </pre>
                                             </div>
@@ -327,7 +331,7 @@
                                         <div class="carousel-slide">
                                             <div class="col col--3">
                                                 <h3 class="feature-title">Structured Console Output with NTF</h3>
-                                                <p>Nuts supports NTF (Nuts Text Format), enabling rich, structured, and styled console output. You can embed variables, apply colors or styles, and produce messages that are both human-readable and machine-friendly. This makes your CLI output more expressive, interactive, and easier to interpret.</p>
+                                                <p><code>Nuts</code> supports <code>NTF</code> (<strong>Nuts Text Format</strong>), enabling rich, structured, and styled console output. You can embed variables, apply colors or styles, and produce messages that are both human-readable and machine-friendly. This makes your CLI output more expressive, interactive, and easier to interpret.</p>
                                                 <pre>
                                                     <code class="language-java">
                                                         NOut.println(
@@ -356,18 +360,18 @@
                                         <div class="carousel-slide">
                                             <div class="col col--3">
                                                 <h3 class="feature-title">Unified Logging with NLog</h3>
-                                                <p>Workspace- and session-aware, NLog combines structured messages (NMsg/NMsgBuilder), styled output with colors, intents, and NTF formatting, and seamless integration with JUL or SLF4J. Whether you’re building CLI tools, scripts, or full applications, NLog ensures logs are expressive, context-sensitive, and runtime-aware.</p>
+                                                <p><code>NLog</code> combines structured messages (<code>NMsg</code>), styled output with colors and <code>NTF</code> formatting, and seamless integration with <strong>JUL</strong> or <strong>SLF4J</strong>. Messages carry an <strong>Intent</strong>, similar to logging markers, which allows you to classify, filter, or style logs at runtime. Whether you’re building CLI tools, scripts, or full applications, <code>NLog</code> makes logs expressive, rich, and easy to understand.</p>
                                                 <pre>
                                                     <code class="language-java">
-                                                        NLog.of("myapp")
-                                                            .info(
-                                                                NMsg.ofV("Hello %s, task %s failed du to error %s",
-                                                                    "user","Alice","status",
-                                                                    NText.ofStyled("OK",NTextStyle.primary1()),exception
-                                                                    )
-                                                                    .withIntent(NMsgIntent.CONFIG)
-                                                                    .withThrowable(exception)
-                                                            );
+                                                        NLog.of("myapp").info(
+                                                            NMsg.ofV("Hello %s, task %s completed with status %s",
+                                                                "user","Alice","status",
+                                                                NText.ofStyled("OK", NTextStyle.primary1()), exception
+                                                            )
+                                                            .withIntent(NMsgIntent.CONFIG)   // Classifies this log, can be used for filtering or styling
+                                                            .withThrowable(exception)        // Attaches the exception
+                                                            .withDurationMs(123)             // Optional: report task duration
+                                                        );
                                                     </code>
                                                 </pre>
                                             </div>
@@ -380,27 +384,21 @@
                                                     <code class="language-java">
                                                     class MyApp {
                                                         public void test() {
-                                                            // Top-level logging scope for the application
                                                             NLogs.of().runWith(
                                                                 NLogContext.of()
-                                                                        // Prefix added to every log message in this scope
-                                                                        .withMessagePrefix(NMsg.ofC("[My Application]"))
-                                                                        // Placeholder available to all logs in this scope
-                                                                        .withPlaceholder("user", "Adam")
-                                                                        // Custom log handler: redirect all messages to stdout with a [SCOPED] prefix
-                                                                        .withLog(message -> NOut.println(NMsg.ofC("[SCOPED] %s", message))),
+                                                                        .withMessagePrefix(NMsg.ofC("[My Application]")) // Prefix added to every log message in this scope
+                                                                        .withPlaceholder("user", "Adam") // Placeholder available to all logs in this scope
+                                                                        .withLog(message -> NOut.println(NMsg.ofC("[SCOPED] %s", message))), // Custom log handler: redirect all messages to stdout with a [SCOPED] prefix
                                                                 () -> {
                                                                     OtherClass.doThis(); // Perform actions that generate logs
                                                                 }
                                                             );
                                                         }
                                                     }
-
                                                     class OtherClass {
                                                         private static void doThis() {
                                                             // Standard logger: picks up class context but not the scoped stdout handler
                                                             NLog.of(LogTest.class).log(NMsg.ofC("hello %s", NMsg.placeholder("user")));
-
                                                             // Scoped logger: inherits context from outer scope (user=Adam) and uses the custom stdout handler
                                                             NLog.ofScoped(OtherClass.class).log(NMsg.ofV("hello $user"));
                                                         }
@@ -412,7 +410,7 @@
                                         <div class="carousel-slide">
                                             <div class="col col--3">
                                                 <h3 class="feature-title">NElement — Structured Data, Any Format</h3>
-                                                <p>With NElement, Nuts lets you build, parse, and format structured data effortlessly. From plain objects to JSON, XML, or TSON, you can read and write files, parse into Java objects, or print with optional NTF color formatting — all in a workspace-aware, runtime-friendly way.</p>
+                                                <p>With <code>NElement</code>, <code>Nuts</code> lets you build, parse, and format structured data effortlessly. From plain objects to <strong>JSON</strong>, <strong>XML</strong>, or <strong>TSON</strong>, you can read and write files, parse into Java objects, or print with optional <code>NTF</code> color formatting — all in a runtime-friendly way.</p>
                                                 <pre>
                                                     <code class="language-java">
                                                         // Build an element
@@ -441,13 +439,64 @@
                                                     <code class="language-java">
                                                         NTextArt art = NTextArt.of();
                                                         NText text = NText.of("hello world");
-                                                        NOut.println(art.getRenderer("figlet:standard").get().render(text));
-                                                        NOut.println(art.getRenderer("figlet:big").get().render(text));
-                                                        NOut.println(art.getRenderer("pixel:standard").get().render(text));
+                                                        NOut.println(art.getTextRenderer("figlet:standard").get().render(text));
                                                         NOut.println(art.getImageRenderer("pixel:standard").get()
-                                                                              .setFontSize(20)
-                                                                              .setOutputColumns(60)
-                                                                              .render(text));
+                                                                .setFontSize(20) .setOutputColumns(60) .render(text));
+                                                        //   _                _    _                                             _        _
+                                                        //  | |              | |  | |                                           | |      | |
+                                                        //  | |__      ___   | |  | |    ___       __      __    ___     _ __   | |    __| |
+                                                        //  | '_ \    / _ \  | |  | |   / _ \      \ \ /\ / /   / _ \   | '__|  | |   / _` |
+                                                        //  | | | |  |  __/  | |  | |  | (_) |      \ V  V /   | (_) |  | |     | |  | (_| |
+                                                        //  |_| |_|   \___|  |_|  |_|   \___/        \_/\_/     \___/   |_|     |_|   \__,_|
+                                                        //
+                                                        //  █         ░██   ███                             ███      █
+                                                        //  █           █    ▓█                              ░█      █
+                                                        //  █ █▒  ░██   █    ▓█    █▒       █   █  █▓  ██░█░ ░█   ▒█ █
+                                                        //  █▓▓█░░█ █░  █    ▓█  ░█ ▓▒      █ █ █░█ ▓▓ ██▓▓  ░█   █░▒█
+                                                        //  █  █░█████  █    ▓█  ▓█ ▒█      █▓█ ▓▒█ ░█ ██    ░█  ░█  █
+                                                        //  █  █░ █     ██   ▓█   █ █░      ██░█▓ █ █▒ ██    ░█░ ░█░██
+                                                        //  ▓  ▓░ ░▓▓    ▓▓   ▓▓░  ▓░       ░▓ ▓   ▓▒  ▒▒     ░▓▓ ░▓ ▓
+
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-title">NTextArt — Turn Text into Art</h3>
+                                                <p>Beyond ASCII banners and pixel-style visuals, <code>NTextArt</code> also supports structured data rendering. You can display tables with aligned rows and columns, and hierarchical trees where each node can contain multi-line or styled text — even full tables. Branches, indentation, and node formatting are handled automatically, making it easy to visualize complex hierarchical or tabular data directly in the terminal with a clean, readable layout.</p>
+                                                <pre>
+                                                    <code class="language-java">
+                                                        class MyNode implements NTreeNode {
+                                                            int value;
+                                                            public MyNode(int value) { this.value = value;}
+                                                            @Override
+                                                            public NText value() {
+                                                                return art.getTableRenderer().get().render(NTableModel.of().addRow(NText.of(value)));
+                                                            }
+                                                            @Override
+                                                            public List&lt;NTreeNode> children() {
+                                                                return (value < 3) ? Arrays.&lt;Integer>asList(value + 1, value + 2).stream().map(MyNode::new).collect(Collectors.toList())
+                                                                        : Collections.emptyList();
+                                                            }
+                                                        }
+                                                        NTreeNode tree = new MyNode(1);
+                                                        NOut.println(art.getTreeRenderer().get().render(tree));
+                                                        //   ╭─╮
+                                                        //   │1│
+                                                        //   ╰─╯
+                                                        //   ├── ╭─╮
+                                                        //   │   │2│
+                                                        //   │   ╰─╯
+                                                        //   │   ├── ╭─╮
+                                                        //   │   │   │3│
+                                                        //   │   │   ╰─╯
+                                                        //   │   └── ╭─╮
+                                                        //   │       │4│
+                                                        //   │       ╰─╯
+                                                        //   └── ╭─╮
+                                                        //       │3│
+                                                        //       ╰─╯
                                                     </code>
                                                 </pre>
                                             </div>
@@ -710,7 +759,7 @@
             <p class="text-2 text-center mb-0">
                 Copyright © 2018-2025 Nuts Package Manager Team.
                 <br>
-                Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2025-09-02-210003
+                Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2025-09-03-033553
                 <br>
                 <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                             href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
