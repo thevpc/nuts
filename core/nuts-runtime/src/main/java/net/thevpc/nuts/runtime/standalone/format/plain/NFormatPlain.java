@@ -91,7 +91,7 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
         Object value = getValue();
         if (value instanceof NTableModel) {
             NTableFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
-        } else if (value instanceof NTreeModel) {
+        } else if (value instanceof NTreeNode) {
             NTreeFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
         } else if (value instanceof Properties) {
             NPropertiesFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
