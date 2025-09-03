@@ -5,6 +5,9 @@
  */
 package net.thevpc.nuts.core.test;
 
+import net.thevpc.nuts.core.test.utils.TestUtils;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextList;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
@@ -15,6 +18,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -24,7 +28,7 @@ public class StringTest {
 
     @BeforeAll
     public static void init() {
-//        TestUtils.openNewMinTestWorkspace();
+        TestUtils.openNewMinTestWorkspace();
     }
 
     @Test
@@ -116,4 +120,5 @@ public class StringTest {
         Assertions.assertEquals(1, NStringUtils.readLines(new StringBuilder("a\r\n")).size());
         Assertions.assertEquals(3, NStringUtils.readLines(new StringBuilder("\ra\r\n\r\n")).size());
     }
+
 }
