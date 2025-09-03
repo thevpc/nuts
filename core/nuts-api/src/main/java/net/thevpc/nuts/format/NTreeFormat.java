@@ -54,7 +54,7 @@ public interface NTreeFormat extends NContentTypeFormat {
      *
      * @return tree model
      */
-    NTreeModel getModel();
+    NTreeNode getModel();
 
     @Override
     NTreeFormat setValue(Object value);
