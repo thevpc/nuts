@@ -27,7 +27,8 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
                 "simple",
                 "columns",
                 "rows",
-                "none"
+                "none",
+                "unicode"
         )
         );
     }
@@ -51,7 +52,7 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
     public static DefaultTableFormatBorders SIMPLE_BORDER = new DefaultTableFormatBorders(
             "simple",
             "-", "-", "-", "-",
-            "|", " | ", "|",
+            "|", "|", "|",
             "|", "-", "+", "|",
             "-", "-", "-", "-"
     );
@@ -119,7 +120,7 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
     public DefaultNTextArtTableRenderer setBorder(String borderName) {
         NTableBordersFormat n = parseTableBorders(borderName);
         if (n == null) {
-            throw new NIllegalArgumentException(NMsg.ofC("unsupported border. use one of : %s", getAvailableTableBorders()));
+            throw new NIllegalArgumentException(NMsg.ofC("unsupported border '%s'. use one of : %s", borderName, getAvailableTableBorders()));
         }
         setBorder(n);
         return this;
@@ -144,97 +145,324 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
 
     @Override
     public String getName() {
-        return ((DefaultTableFormatBorders) border).getName();
+        DefaultTableFormatBorders b = (DefaultTableFormatBorders) border;
+        return b == null ? "none" : b.getName();
     }
 
     public NText render(NText model) {
         return render(NTableModel.of().addRow(model));
     }
 
+    // Replace the existing render method with this version that includes the bottom border
     public NText render(NTableModel model) {
-        NTextBuilder out = new DefaultNTextBuilder();
-        NTextBuilder line = new DefaultNTextBuilder();
+        NTextBuilder out = NTextBuilder.of();
         List<Row> rows = rebuild(model);
-        if (rows.size() > 0) {
-            List<DefaultCell> cells = rows.get(0).cells;
-            if (!this.getSeparators(NTableSeparator.FIRST_ROW_START, NTableSeparator.FIRST_ROW_SEP, NTableSeparator.FIRST_ROW_LINE, NTableSeparator.FIRST_ROW_END).isEmpty()) {
-                line.append(this.getSeparator(NTableSeparator.FIRST_ROW_START));
-                for (int i = 0; i < cells.size(); i++) {
-                    if (i > 0) {
-                        line.append(this.getSeparator(NTableSeparator.FIRST_ROW_SEP));
-                    }
-                    DefaultCell cell = cells.get(i);
-                    NText B = this.getSeparator(NTableSeparator.FIRST_ROW_LINE);
-                    NText s = cell.rendered.toText();
-                    line.append(B.repeat(s.length()));
-                }
-                line.append(this.getSeparator(NTableSeparator.FIRST_ROW_END));
+        if (rows.isEmpty()) return NText.of("");
 
-                out.append(line.trim().newLine().build());
-                line.clear();
+        // --- Compute col widths ---
+        int totalColumns = 0;
+        for (Row row : rows) {
+            int colIndex = 0;
+            for (DefaultCell cell : row.cells) {
+                cell.startColIndex = colIndex;
+                colIndex += Math.max(1, cell.colspan);
             }
-            for (int i1 = 0; i1 < rows.size(); i1++) {
-                if (i1 > 0) {
-                    if (!this.getSeparators(NTableSeparator.MIDDLE_ROW_START, NTableSeparator.MIDDLE_ROW_SEP, NTableSeparator.MIDDLE_ROW_LINE, NTableSeparator.MIDDLE_ROW_END).isEmpty()) {
-                        line.append(this.getSeparator(NTableSeparator.MIDDLE_ROW_START));
-                        for (int i = 0; i < cells.size(); i++) {
-                            if (i > 0) {
-                                line.append(this.getSeparator(NTableSeparator.MIDDLE_ROW_SEP));
-                            }
-                            DefaultCell cell = cells.get(i);
-                            NText B = this.getSeparator(NTableSeparator.MIDDLE_ROW_LINE);
-                            NText s = cell.rendered.toText();
-                            line.append(B.repeat(s.length()));
-                        }
-                        line.append(this.getSeparator(NTableSeparator.MIDDLE_ROW_END));
-                        line.trim();
-                        out.append(line.newLine().build());
-                        line.clear();
+            totalColumns = Math.max(totalColumns, colIndex);
+        }
+
+        int[] colWidths = new int[totalColumns];
+        for (Row row : rows) {
+            for (DefaultCell cell : row.cells) {
+                for (int i = 0; i < cell.rendered.rendered.length; i++) {
+                    int lineWidth = cell.rendered.getLine(i).length();
+                    int spanWidth = 0;
+                    for (int c = 0; c < Math.max(1, cell.colspan); c++) {
+                        spanWidth += colWidths[cell.startColIndex + c];
+                    }
+                    int diff = Math.max(0, lineWidth - spanWidth);
+                    for (int c = 0; c < Math.max(1, cell.colspan); c++) {
+                        colWidths[cell.startColIndex + c] += diff / Math.max(1, cell.colspan);
                     }
                 }
-
-                Row row = rows.get(i1);
-                cells = row.cells;
-
-                line.append(this.getSeparator(NTableSeparator.ROW_START));
-                for (int i = 0; i < cells.size(); i++) {
-                    if (i > 0) {
-                        line.append(this.getSeparator(NTableSeparator.ROW_SEP));
-                    }
-                    DefaultCell cell = cells.get(i);
-                    NText s = cell.rendered.toText();
-                    line.append(s);
-                }
-                line.append(this.getSeparator(NTableSeparator.ROW_END));
-
-                out.append(line.trim().newLine().build());
-                line.clear();
-            }
-
-            if (!(this.getSeparators(NTableSeparator.LAST_ROW_START, NTableSeparator.LAST_ROW_SEP, NTableSeparator.LAST_ROW_LINE, NTableSeparator.LAST_ROW_END)).isEmpty()) {
-                line.append(this.getSeparator(NTableSeparator.LAST_ROW_START));
-                cells = rows.get(0).cells;
-                for (int i = 0; i < cells.size(); i++) {
-                    if (i > 0) {
-                        line.append(this.getSeparator(NTableSeparator.LAST_ROW_SEP));
-                    }
-                    DefaultCell cell = cells.get(i);
-                    NText B = this.getSeparator(NTableSeparator.LAST_ROW_LINE);
-                    NText s = cell.rendered.toText();
-                    line.append(B.repeat(s.length()));
-                }
-                line.append(this.getSeparator(NTableSeparator.LAST_ROW_END));
             }
         }
-        out.append(line.trim().build());
-        line.clear();
+
+        // --- Compute row heights ---
+        int startRowIndex = 0;
+        for (int r = 0; r < rows.size(); r++) {
+            Row row = rows.get(r);
+            int maxHeight = 0;
+            row.startRowIndex = startRowIndex;
+            for (DefaultCell cell : row.cells) {
+                int span = Math.max(1, cell.rowspan);
+                int perRowHeight = cell.rendered.rendered.length / span;
+                int remainder = cell.rendered.rendered.length % span;
+                for (int i = 0; i < span && (r + i) < rows.size(); i++) {
+                    int h = perRowHeight + (i < remainder ? 1 : 0);
+                    rows.get(r + i).rowHeight = Math.max(rows.get(r + i).rowHeight, h);
+                }
+                cell.startRowIndex = row.startRowIndex;
+                maxHeight = Math.max(maxHeight, perRowHeight);
+            }
+            row.rowHeight = Math.max(row.rowHeight, maxHeight);
+            startRowIndex += row.rowHeight;
+        }
+
+        // --- Render table ---
+        for (int r = 0; r <= rows.size(); r++) {
+            Row upper = r > 0 ? rows.get(r - 1) : null;
+            Row current = r < rows.size() ? rows.get(r) : null;
+
+            // Render separator row
+            if (current != null) {
+                // Top or middle separator
+                out.append(renderSeparatorRow(upper, current,
+                        upper == null ? NTableSeparator.FIRST_ROW_START : NTableSeparator.MIDDLE_ROW_START,
+                        upper == null ? NTableSeparator.FIRST_ROW_END : NTableSeparator.MIDDLE_ROW_END,
+                        upper == null ? NTableSeparator.FIRST_ROW_LINE : NTableSeparator.MIDDLE_ROW_LINE,
+                        colWidths));
+            } else if (upper != null) {
+                // Bottom border (when current is null but we have an upper row)
+                out.append(renderSeparatorRow(upper, null,
+                        NTableSeparator.LAST_ROW_START,
+                        NTableSeparator.LAST_ROW_END,
+                        NTableSeparator.LAST_ROW_LINE,
+                        colWidths));
+            }
+
+            if (current == null) break;
+
+            // Final fix for content rendering:
+            for (int li = 0; li < current.rowHeight; li++) {
+                NTextBuilder sb = NTextBuilder.of();
+                sb.append(this.getSeparator(NTableSeparator.ROW_START));
+                int col = 0;
+                while (col < totalColumns) {
+                    DefaultCell cell = findCellByColumn(current, col);
+                    int span = Math.max(1, cell.colspan);
+                    int cellWidth = 0;
+                    for (int i = 0; i < span; i++) {
+                        cellWidth += colWidths[col + i];
+                    }
+                    if (span > 1) {
+                        int separatorWidth = this.getSeparator(NTableSeparator.ROW_SEP).length();
+                        cellWidth += separatorWidth * (span - 1);
+                    }
+
+                    // CORRECT FIX: Calculate which line of the cell's content to show
+                    int cellLineIndex;
+                    if (cell.startRowIndex == current.startRowIndex) {
+                        // Cell starts in this row - use current line index
+                        cellLineIndex = li;
+                    } else {
+                        // Cell spans from previous row - calculate offset
+                        int rowsAbove = current.startRowIndex - cell.startRowIndex;
+                        int totalCellHeight = cell.rendered.rendered.length;
+
+                        // Distribute cell content across spanned rows
+                        int linesPerRow = totalCellHeight / Math.max(1, cell.rowspan);
+                        int remainder = totalCellHeight % Math.max(1, cell.rowspan);
+
+                        // Calculate starting line for this spanned row
+                        int startLine = rowsAbove * linesPerRow + Math.min(rowsAbove, remainder);
+                        cellLineIndex = startLine + li;
+                    }
+
+                    NText text;
+                    if (cellLineIndex >= 0 && cellLineIndex < cell.rendered.rendered.length) {
+                        text = cell.rendered.getLine(cellLineIndex);
+                    } else {
+                        text = NText.ofBlank();
+                    }
+
+                    sb.append(text.concat(NText.ofSpaces(cellWidth - text.length())));
+                    col += span;
+                    if (col < totalColumns) {
+                        sb.append(this.getSeparator(NTableSeparator.ROW_SEP));
+                    }
+                }
+                sb.append(this.getSeparator(NTableSeparator.ROW_END));
+                out.append(sb.newLine().build());
+            }
+        }
+
         return out.build();
+    }
+
+    // Improved method to check if a column is covered by rowspan
+    private boolean isColumnCoveredByRowspan(Row upperRow, Row currentRow, int col) {
+        if (upperRow == null) return false;
+
+        // Check if any cell in the upper row spans into the current row and covers this column
+        for (DefaultCell upperCell : upperRow.cells) {
+            if (upperCell.rowspan > 1) {
+                // This cell spans multiple rows
+                int startCol = upperCell.startColIndex;
+                int endCol = startCol + Math.max(1, upperCell.colspan) - 1;
+
+                // Check if this column is within the cell's column span
+                if (col >= startCol && col <= endCol) {
+                    // The cell spans into the next row, so this position is covered
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    // Now let's completely rewrite the separator rendering logic:
+    private NText renderSeparatorRow(Row upperRow, Row currentRow,
+                                     NTableSeparator startSep,
+                                     NTableSeparator endSep,
+                                     NTableSeparator lineSep,
+                                     int[] colWidths) {
+        NTextBuilder sb = NTextBuilder.of();
+        int totalColumns = colWidths.length;
+
+        // Handle start separator
+        boolean firstColumnHasRowspan = upperRow != null && currentRow != null &&
+                hasRowspanInColumn(upperRow, 0);
+        if (firstColumnHasRowspan) {
+            sb.append(this.getSeparator(NTableSeparator.ROW_START)); // │
+        } else {
+            sb.append(this.getSeparator(startSep)); // ╭ or ├
+        }
+
+        // Process each column
+        for (int col = 0; col < totalColumns; col++) {
+            boolean columnHasRowspan = upperRow != null && currentRow != null &&
+                    hasRowspanInColumn(upperRow, col);
+
+            if (columnHasRowspan) {
+                // Column has rowspan - draw spaces
+                sb.append(NText.ofSpaces(colWidths[col]));
+            } else {
+                // Normal column - draw horizontal line
+                sb.append(this.getSeparator(lineSep).repeat(colWidths[col]));
+            }
+
+            // Handle column junctions
+            if (col < totalColumns - 1) {
+                boolean currentHasRowspan = upperRow != null && currentRow != null &&
+                        hasRowspanInColumn(upperRow, col);
+                boolean nextHasRowspan = upperRow != null && currentRow != null &&
+                        hasRowspanInColumn(upperRow, col + 1);
+
+                if (currentHasRowspan && nextHasRowspan) {
+                    // Both sides have rowspan - space
+                    sb.append(" ");
+                } else if (currentHasRowspan || nextHasRowspan) {
+                    // One side has rowspan
+                    if (currentHasRowspan) {
+                        // Left has rowspan, right doesn't
+                        sb.append(this.getSeparator(NTableSeparator.ROW_SEP)); // │
+                    } else {
+                        // Right has rowspan, left doesn't
+                        sb.append(this.getSeparator(NTableSeparator.ROW_SEP)); // │
+                    }
+                } else {
+                    // Normal junction - no rowspan on either side
+                    if (upperRow == null) {
+                        // Top border
+                        sb.append(this.getSeparator(NTableSeparator.FIRST_ROW_SEP)); // ┬
+                    } else if (currentRow == null) {
+                        // Bottom border
+                        sb.append(this.getSeparator(NTableSeparator.LAST_ROW_SEP)); // ┴
+                    } else {
+                        // Middle separator - check if there are cell boundaries
+                        boolean upperHasBoundary = hasCellBoundaryBetween(upperRow, col, col + 1);
+                        boolean currentHasBoundary = hasCellBoundaryBetween(currentRow, col, col + 1);
+
+                        if (upperHasBoundary && currentHasBoundary) {
+                            sb.append(this.getSeparator(NTableSeparator.MIDDLE_ROW_SEP)); // ┼
+                        } else if (upperHasBoundary) {
+                            sb.append(this.getSeparator(NTableSeparator.LAST_ROW_SEP)); // ┴
+                        } else if (currentHasBoundary) {
+                            sb.append(this.getSeparator(NTableSeparator.FIRST_ROW_SEP)); // ┬
+                        } else {
+                            sb.append(this.getSeparator(lineSep)); // ─
+                        }
+                    }
+                }
+            }
+        }
+
+        // Handle end separator
+        boolean lastColumnHasRowspan = upperRow != null && currentRow != null &&
+                hasRowspanInColumn(upperRow, totalColumns - 1);
+        if (lastColumnHasRowspan) {
+            sb.append(this.getSeparator(NTableSeparator.ROW_END)); // │
+        } else {
+            sb.append(this.getSeparator(endSep)); // ╮ or ┤
+        }
+
+        return sb.newLine().build();
+    }
+
+
+
+    // Helper method to check if there's a cell boundary between two columns
+    private boolean hasCellBoundaryBetween(Row row, int col1, int col2) {
+        if (row == null) return false;
+
+        DefaultCell cell1 = findCellByColumnSafe(row, col1);
+        DefaultCell cell2 = findCellByColumnSafe(row, col2);
+
+        return cell1 != cell2;
+    }
+
+    // Helper method to check if a column has rowspan
+    private boolean hasRowspanInColumn(Row row, int col) {
+        if (row == null) return false;
+
+        for (DefaultCell cell : row.cells) {
+            int startCol = cell.startColIndex;
+            int endCol = startCol + Math.max(1, cell.colspan) - 1;
+
+            if (col >= startCol && col <= endCol && cell.rowspan > 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+    // Safe version that returns null if not found
+    private DefaultCell findCellByColumnSafe(Row row, int col) {
+        for (DefaultCell cell : row.cells) {
+            int start = cell.startColIndex;
+            int end = start + Math.max(1, cell.colspan) - 1;
+            if (col >= start && col <= end) {
+                return cell;
+            }
+        }
+        return null;
+    }
+
+    // --- Helpers ---
+    private boolean columnHasCell(Row row, int col) {
+        for (DefaultCell cell : row.cells) {
+            int start = cell.startColIndex;
+            int end = start + Math.max(1, cell.colspan) - 1;
+            if (col >= start && col <= end) return true;
+        }
+        return false;
+    }
+
+    private DefaultCell findCellByColumn(Row row, int col) {
+        for (DefaultCell cell : row.cells) {
+            int start = cell.startColIndex;
+            int end = start + Math.max(1, cell.colspan) - 1;
+            if (col >= start && col <= end) return cell;
+        }
+        throw new IllegalStateException("No cell found for column " + col);
     }
 
 
     public static class Row {
 
         List<DefaultCell> cells = new ArrayList<>();
+        int rowHeight;
+        int startRowIndex;
     }
 
     public static class RenderedCell {
@@ -243,23 +471,20 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
         int rows;
         int columns;
         NTableCellFormat formatter;
-        NTexts metrics;
         NPositionType valign;
         NPositionType halign;
 
-        private RenderedCell(NTexts metrics) {
-            this.metrics = metrics;
+        private RenderedCell() {
         }
 
-        public RenderedCell(int c, int r, Object o, NText str, NTableCellFormat formatter, NPositionType valign, NPositionType halign, NTexts metrics) {
+        public RenderedCell(int c, int r, Object o, NText str, NTableCellFormat formatter, NPositionType valign, NPositionType halign) {
             this.formatter = formatter;
-            this.metrics = metrics;
             this.valign = valign;
             this.halign = halign;
             if (str == null) {
-                str = NText.of("");
-            }else{
-                str=str.normalize();
+                str = NText.ofBlank();
+            } else {
+                str = str.normalize();
             }
             List<NTextBuilder> strings = new ArrayList<>();
             List<NText> st = str.split("\n", true);
@@ -290,10 +515,6 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
             }
         }
 
-        public int len(String other) {
-            return metrics.of(other).length();
-        }
-
         public RenderedCell appendHorizontally(RenderedCell other) {
             NPrimitiveText[][] rendered0 = new NPrimitiveText[Math.max(rows, other.rows)][];
             for (int i = 0; i < rendered0.length; i++) {
@@ -314,7 +535,7 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
                 }
                 rendered0[i] = sb.toCharArray();
             }
-            RenderedCell c = new RenderedCell(metrics);
+            RenderedCell c = new RenderedCell();
             c.rendered = rendered0;
             c.columns = columns + other.columns;
             c.rows = rendered0.length;
@@ -346,7 +567,7 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
                 }
                 rendered0[i + rendered.length] = sb.toCharArray();
             }
-            RenderedCell c = new RenderedCell(metrics);
+            RenderedCell c = new RenderedCell();
             c.rendered = rendered0;
             c.columns = columns + other.columns;
             c.rows = rendered0.length;
@@ -360,7 +581,7 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
                     rendered0[row + r][col + c] = other.rendered[r][c];
                 }
             }
-            RenderedCell c = new RenderedCell(metrics);
+            RenderedCell c = new RenderedCell();
             c.rendered = rendered0;
             c.columns = columns;
             c.rows = rows;
@@ -372,7 +593,7 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
             for (int i = 0; i < rendered0.length; i++) {
                 System.arraycopy(rendered[i + row], col, rendered0[i], 0, toCol - col);
             }
-            RenderedCell c = new RenderedCell(metrics);
+            RenderedCell c = new RenderedCell();
             c.rendered = rendered0;
             c.columns = columns;
             c.rows = rows;
@@ -391,8 +612,8 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
                             if (min < columns) {
                                 int x = columns - min;
                                 NTextBuilder s = NTextBuilder.of();
-                                s.append(chars);
-                                formatAndHorizontalAlign(s, halign, columns, metrics);
+                                s.appendAll(chars);
+                                formatAndHorizontalAlign(s, halign, columns);
                                 rendered0[i] = s.toCharArray();
                             } else {
                                 rendered0[i] = rendered[i];
@@ -415,8 +636,8 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
                             if (min < columns) {
                                 int x = columns - min;
                                 NTextBuilder s = NTextBuilder.of();
-                                s.append(chars);
-                                formatAndHorizontalAlign(s, halign, columns, metrics);
+                                s.appendAll(chars);
+                                formatAndHorizontalAlign(s, halign, columns);
                                 rendered0[i] = s.toCharArray();
                             } else {
                                 rendered0[i] = rendered[i];
@@ -435,8 +656,8 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
                             if (min < columns) {
                                 int x = columns - min;
                                 NTextBuilder s = NTextBuilder.of();
-                                s.append(chars);
-                                formatAndHorizontalAlign(s, halign, columns, metrics);
+                                s.appendAll(chars);
+                                formatAndHorizontalAlign(s, halign, columns);
                                 rendered0[i] = s.toCharArray();
                             } else {
                                 rendered0[i] = rendered[i];
@@ -457,7 +678,7 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
 //                    Arrays.fill(rendered0[i],0,columns,' ');
 //                }
 //            }
-            RenderedCell c = new RenderedCell(metrics);
+            RenderedCell c = new RenderedCell();
             c.rendered = rendered0;
             c.columns = columns;
             c.rows = rows;
@@ -471,7 +692,7 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
                 rendered0[i] = new NPrimitiveText[rendered[i].length];
                 System.arraycopy(rendered[i], 0, rendered0[i], 0, rendered[i].length);
             }
-            RenderedCell c = new RenderedCell(metrics);
+            RenderedCell c = new RenderedCell();
             c.rendered = rendered0;
             c.columns = columns;
             c.rows = rows;
@@ -494,6 +715,56 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
         public String toString() {
             return toText().filteredText();
         }
+
+        public NText getLine(int cellLineIndex) {
+            return NText.ofList(rendered[cellLineIndex]).simplify();
+        }
+    }
+
+    private void computeLayout(List<Row> rows, int[] colWidths, int totalColumns) {
+        int startRowIndex = 0;
+        for (Row row : rows) {
+            row.startRowIndex = startRowIndex;
+            int maxHeight = 0;
+            int colIndex = 0;
+            for (DefaultCell cell : row.cells) {
+                cell.startColIndex = colIndex;
+
+                int cellHeight = cell.rendered.rendered.length;
+                int span = Math.max(1, cell.rowspan);
+
+                // distribute height over spanned rows
+                int perRowHeight = cellHeight / span;
+                int remainder = cellHeight % span;
+                for (int i = 0; i < span && (rows.indexOf(row) + i) < rows.size(); i++) {
+                    Row r = rows.get(rows.indexOf(row) + i);
+                    r.rowHeight = Math.max(r.rowHeight, perRowHeight + (i < remainder ? 1 : 0));
+                }
+
+                colIndex += Math.max(1, cell.colspan);
+                maxHeight = Math.max(maxHeight, cellHeight);
+            }
+            startRowIndex += row.rowHeight;
+        }
+
+        // compute column widths
+        for (Row row : rows) {
+            int c = 0;
+            for (DefaultCell cell : row.cells) {
+                int width = 0;
+                for (NPrimitiveText[] line : cell.rendered.rendered) {
+                    width = Math.max(width, NText.ofList(line).length());
+                }
+                // distribute width over spanned columns
+                int span = Math.max(1, cell.colspan);
+                int perColWidth = width / span;
+                int remainder = width % span;
+                for (int i = 0; i < span && (c + i) < totalColumns; i++) {
+                    colWidths[c + i] = Math.max(colWidths[c + i], perColWidth + (i < remainder ? 1 : 0));
+                }
+                c += span;
+            }
+        }
     }
 
     private static NPrimitiveText SPACE() {
@@ -510,6 +781,8 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
         int cy;
         int cw;
         int ch;
+        int startRowIndex;
+        int startColIndex;
 
         NText value;
         RenderedCell rendered;
@@ -849,7 +1122,7 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
 
     }
 
-    public static void formatAndHorizontalAlign(NTextBuilder sb, NPositionType a, int columns, NTexts tf) {
+    public static void formatAndHorizontalAlign(NTextBuilder sb, NPositionType a, int columns) {
         int length = sb.length();
         switch (a) {
             case FIRST: {
@@ -1004,8 +1277,7 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
                         formatter.format(r0, c0, cvalue),
                         formatter,
                         formatter.getVerticalAlign(r0, c0, cvalue),
-                        formatter.getHorizontalAlign(r0, c0, cvalue),
-                        metrics
+                        formatter.getHorizontalAlign(r0, c0, cvalue)
                 ));
                 cell.cw = cell.getRendered().columns;
                 cell.ch = cell.getRendered().rows;
@@ -1111,4 +1383,8 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "DefaultNTextArtTableRenderer(" + getName() + ")";
+    }
 }
