@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.format.tree;
 
 import java.util.*;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -28,15 +27,15 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
 
     private Object tree;
 
-    public DefaultNTreeFormat(NWorkspace workspace) {
+    public DefaultNTreeFormat() {
         super("tree-format");
     }
 
-    public DefaultNTreeFormat(NWorkspace workspace, NTreeModel tree) {
-        this(workspace, tree, null, null);
+    public DefaultNTreeFormat(NTreeNode tree) {
+        this(tree, null, null);
     }
 
-    public DefaultNTreeFormat(NWorkspace workspace, NTreeModel tree, NTreeNodeFormat formatter, NTreeLinkFormat linkFormatter) {
+    public DefaultNTreeFormat(NTreeNode tree, NTreeNodeFormat formatter, NTreeLinkFormat linkFormatter) {
         super("tree");
         renderer.setFormatter(formatter);
         renderer.setLinkFormat(linkFormatter);
@@ -52,7 +51,7 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
 
         @Override
         public NText stringValue(Object o) {
-            return renderer.getNodeFormat().format(o, -1);
+            return renderer.getNodeFormat().format((NTreeNode)o, -1);
         }
 
     };
@@ -71,16 +70,14 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
 
 
     @Override
-    public NTreeModel getModel() {
-        if (tree instanceof NTreeModel) {
+    public NTreeNode getModel() {
+        if (tree instanceof NTreeNode) {
 //        if(tree instanceof NutsTreeModel){
-            return (NTreeModel) tree;
+            return (NTreeNode) tree;
         }
         Object destructredObject = NElements.of()
                 .destruct(tree);
-        return new NElementTreeModel(
-                XNode.root(destructredObject, rootName, xNodeFormatter)
-        );
+        return XNode.root(destructredObject, rootName, xNodeFormatter);
     }
 
     @Override
