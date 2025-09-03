@@ -4,8 +4,8 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.text.art.NTextArtImpl;
-import net.thevpc.nuts.runtime.standalone.text.art.figlet.FigletNTextArtImageRenderer;
 import net.thevpc.nuts.runtime.standalone.text.art.img.PixelNTextArtImageRenderer;
+import net.thevpc.nuts.runtime.standalone.text.art.tree.DefaultNTextArtTreeRenderer;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextArtImageRenderer;
 import net.thevpc.nuts.text.NTextArtRenderer;
@@ -74,6 +74,17 @@ public class TableNTextArtRendererFactory implements NTextArtRendererFactory {
                 // just ignore
             }
         }
+        for (String id : new String[]{
+                "table:default",
+                "table:spaces",
+                "table:simple",
+                "table:columns",
+                "table:rows",
+                "table:none",
+                "table:unicode",
+        }) {
+            all.put(id, getRenderer(id).get());
+        }
         return all.values().stream();
     }
 
@@ -84,12 +95,15 @@ public class TableNTextArtRendererFactory implements NTextArtRendererFactory {
 
     public NOptional<NTextArtRenderer> getRenderer(String renderName) {
         if (renderName.startsWith(rendererType + ":")) {
-            try {
-                String n = renderName.substring(rendererType.length() + 1);
-                DefaultNTextArtTableRenderer r = new DefaultNTextArtTableRenderer().setBorder(n);
-                return NOptional.of(r);
-            } catch (Exception e) {
-                return NOptional.ofNamedEmpty(renderName);
+            switch (renderName) {
+                case "table:default":
+                case "table:spaces":
+                case "table:simple":
+                case "table:columns":
+                case "table:rows":
+                case "table:none":
+                case "table:unicode":
+                    return NOptional.of(new DefaultNTextArtTableRenderer().setBorder(renderName.substring(rendererType.length() + 1)));
             }
         }
         return NOptional.ofNamedEmpty(renderName);
