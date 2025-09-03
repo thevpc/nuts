@@ -1,14 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.text.art.tree;
 
-import net.thevpc.nuts.format.NPositionType;
-import net.thevpc.nuts.format.NTreeLinkFormat;
-import net.thevpc.nuts.format.NTreeModel;
-import net.thevpc.nuts.format.NTreeNodeFormat;
+import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextArtTextRenderer;
 import net.thevpc.nuts.text.NTextArtTreeRenderer;
 import net.thevpc.nuts.text.NTextBuilder;
+import net.thevpc.nuts.util.NBlankable;
 
 import java.util.*;
 
@@ -25,8 +23,8 @@ public class DefaultNTextArtTreeRenderer implements NTextArtTreeRenderer, NTextA
     private Map<String, String> multilineProperties = new HashMap<>();
     public final NTreeNodeFormat TO_STRING_FORMATTER = new NTreeNodeFormat() {
         @Override
-        public NText format(Object o, int depth) {
-            return NTextBuilder.of().append(o).immutable();
+        public NText format(NTreeNode o, int depth) {
+            return o.value();
         }
     };
 
@@ -84,13 +82,12 @@ public class DefaultNTextArtTreeRenderer implements NTextArtTreeRenderer, NTextA
         return this;
     }
 
-    public boolean isEffectiveOmitRoot(NTreeModel tree) {
+    public boolean isEffectiveOmitRoot(NTreeNode tree) {
         if (isOmitRoot()) {
             return true;
         }
         if (omitEmptyRoot) {
-            Object root = tree.getRoot();
-            return root == null || root.toString().isEmpty();
+            return NBlankable.isBlank(tree.value());
         }
         return false;
     }
@@ -107,85 +104,79 @@ public class DefaultNTextArtTreeRenderer implements NTextArtTreeRenderer, NTextA
     }
 
     public NText render(NText text) {
-        return render(new NTreeModel() {
-            @Override
-            public Object getRoot() {
-                return null;
-            }
-
-            @Override
-            public List<?> getChildren(Object node) {
-                return Arrays.asList(text);
-            }
-        });
+        return render(NTreeNode.of(null, NTreeNode.of(text)));
     }
 
-    public NText render(NTreeModel tree) {
+    public NText render(NTreeNode tree) {
         NTextBuilder out = NTextBuilder.of();
-        print(tree, "", NPositionType.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(tree), 0, false);
+        print(tree, NText.ofBlank(), NPositionType.FIRST, out, isEffectiveOmitRoot(tree), 0, false);
         return out.build();
     }
 
-    private boolean print(NTreeModel tree, String prefix, NPositionType type, Object o, NTextBuilder out, boolean hideRoot, int depth, boolean prefixNewLine) {
-        Object oValue = o;
-        if (oValue instanceof XNode) {
-            oValue = ((XNode) oValue).toNutsString();
-        }
+    private boolean print(NTreeNode node, NText prefix, NPositionType type, NTextBuilder out, boolean hideRoot, int depth, boolean prefixNewLine) {
         if (!hideRoot) {
-            if (prefixNewLine) {
-                out.append("\n");
+            List<NText> lines = node.value().split('\n', false);
+
+            for (int i = 0; i < lines.size(); i++) {
+                if (i == 0) {
+                    if (prefixNewLine) out.append("\n");
+                    out.append(prefix).append(linkFormatter.formatMain(type)).append(lines.get(i));
+                } else {
+                    // continuation lines: preserve vertical links from ancestors
+                    NText continuationPrefix = prefix.concat(
+                            (type == NPositionType.LAST) ? NText.of("    ") : linkFormatter.formatChild(type)
+                    );
+                    out.append("\n").append(continuationPrefix).append(lines.get(i));
+                }
             }
-            out.append(prefix);
-            out.append(linkFormatter.formatMain(type));
-            out.append(formatter.format(oValue, depth));
-            prefixNewLine = true;
+            prefixNewLine = true; // node printed
         }
-        List<?> children = tree.getChildren(o);
-        if (children == null) {
-            children = Collections.EMPTY_LIST;
+
+        List<NTreeNode> children = node.children();
+        if (children != null && !children.isEmpty()) {
+            for (int i = 0; i < children.size(); i++) {
+                NTreeNode child = children.get(i);
+                boolean isLast = (i == children.size() - 1);
+                NPositionType childType = isLast ? NPositionType.LAST : NPositionType.CENTER;
+
+                // compute new prefix for child:
+                NText childPrefix = prefix.concat(
+                        (type == NPositionType.LAST) ? NText.of("    ") : linkFormatter.formatChild(type)
+                );
+
+                prefixNewLine |= print(child, childPrefix, childType, out, false, depth + 1, prefixNewLine);
+            }
         }
-        Iterator<?> childrenIter = children.iterator();
-        Object last = null;
-        if (childrenIter.hasNext()) {
-            last = childrenIter.next();
-        }
-        while (childrenIter.hasNext()) {
-            Object c = last;
-            last = childrenIter.next();
-            prefixNewLine |= print(tree, prefix + linkFormatter.formatChild(type), NPositionType.CENTER, c, out, false, depth + 1, prefixNewLine);
-        }
-        if (last != null) {
-            prefixNewLine |= print(tree, prefix + linkFormatter.formatChild(type), (infinite && "".equals(prefix)) ? NPositionType.CENTER : NPositionType.LAST, last, out, false, depth + 1, prefixNewLine);
-        }
+
         return prefixNewLine;
     }
 
-    private void print(NTreeModel tree, String prefix, NPositionType type, Object o, NTextBuilder out, boolean hideRoot, int depth) {
+    private void print(NTreeNode tree, NText prefix, NPositionType type, NTextBuilder out, boolean hideRoot, int depth) {
         boolean skipNewLine = true;
         if (!hideRoot) {
             out.append(prefix);
             out.append(linkFormatter.formatMain(type));
-            out.append(formatter.format(o, depth));
+            out.append(formatter.format(tree, depth));
             skipNewLine = false;
         }
-        List children1 = tree.getChildren(o);
+        List<NTreeNode> children1 = tree.children();
         if (children1 == null) {
             children1 = Collections.emptyList();
         }
-        Iterator<Object> children = children1.iterator();
-        Object last = null;
+        Iterator<NTreeNode> children = children1.iterator();
+        NTreeNode last = null;
         if (children.hasNext()) {
             last = children.next();
         }
         while (children.hasNext()) {
-            Object c = last;
+            NTreeNode c = last;
             last = children.next();
             if (skipNewLine) {
                 skipNewLine = false;
             } else {
                 out.append("\n");
             }
-            print(tree, prefix + linkFormatter.formatChild(type), NPositionType.CENTER, c, out, false, depth + 1);
+            print(tree, prefix.concat(linkFormatter.formatChild(type)), NPositionType.CENTER, out, false, depth + 1);
         }
         if (last != null) {
             if (skipNewLine) {
@@ -193,8 +184,8 @@ public class DefaultNTextArtTreeRenderer implements NTextArtTreeRenderer, NTextA
             } else {
                 out.append("\n");
             }
-            print(tree, prefix + linkFormatter.formatChild(type), (infinite && "".equals(prefix)) ? NPositionType.CENTER : NPositionType.LAST, last, out, false, depth + 1);
         }
+        print(tree, prefix.concat(linkFormatter.formatChild(type)), (infinite && NBlankable.isBlank(prefix)) ? NPositionType.CENTER : NPositionType.LAST, out, false, depth + 1);
     }
 
     public DefaultNTextArtTreeRenderer addMultilineProperty(String property, String separator) {
@@ -209,5 +200,10 @@ public class DefaultNTextArtTreeRenderer implements NTextArtTreeRenderer, NTextA
             sep = ":|;";
         }
         return sep;
+    }
+
+    @Override
+    public String toString() {
+        return "DefaultNTextArtTreeRenderer(" + name + ")";
     }
 }
