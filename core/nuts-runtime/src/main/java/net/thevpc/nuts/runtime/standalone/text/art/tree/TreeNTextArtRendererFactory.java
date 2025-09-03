@@ -4,7 +4,7 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.text.art.NTextArtImpl;
-import net.thevpc.nuts.runtime.standalone.text.art.figlet.FigletNTextArtImageRenderer;
+import net.thevpc.nuts.runtime.standalone.text.art.figlet.FigletNTextArtTextRenderer;
 import net.thevpc.nuts.runtime.standalone.text.art.img.PixelNTextArtImageRenderer;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextArtImageRenderer;
@@ -74,6 +74,7 @@ public class TreeNTextArtRendererFactory implements NTextArtRendererFactory {
                 // just ignore
             }
         }
+        all.put("tree:default",new DefaultNTextArtTreeRenderer("tree:default"));
         return all.values().stream();
     }
 
@@ -84,10 +85,8 @@ public class TreeNTextArtRendererFactory implements NTextArtRendererFactory {
 
     public NOptional<NTextArtRenderer> getRenderer(String renderName) {
         if (renderName.startsWith(rendererType + ":")) {
-            try {
-                return FigletNTextArtImageRenderer.ofName(renderName.substring(rendererType.length() + 1)).instanceOf(NTextArtRenderer.class);
-            } catch (Exception e) {
-                return NOptional.ofNamedEmpty(renderName);
+            switch (renderName){
+                case "tree:default":return NOptional.of(new DefaultNTextArtTreeRenderer("tree:default"));
             }
         }
         return NOptional.ofNamedEmpty(renderName);
