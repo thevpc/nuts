@@ -28,6 +28,7 @@ package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.PrintStream;
 import java.util.Collection;
@@ -209,6 +210,17 @@ public interface NText extends NBlankable {
 
     static NText ofStyledPrimary9(String value) {
         return ofStyled(value, NTextStyle.primary9());
+    }
+
+    static NText ofSpace() {
+        return ofPlain(" ");
+    }
+
+    static NText ofSpaces(int columns) {
+        if (columns <= 0) {
+            return ofBlank();
+        }
+        return ofPlain(NStringUtils.repeat(' ', columns));
     }
 
 
