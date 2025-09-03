@@ -41,7 +41,6 @@ import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
-import net.thevpc.nuts.runtime.standalone.log.NLogSPIJUL;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepositoryModel;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
 import net.thevpc.nuts.runtime.standalone.util.*;
@@ -59,7 +58,6 @@ import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.format.NTableModel;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.reserved.NScopedWorkspace;
 import net.thevpc.nuts.NLocationKey;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNLog;
@@ -607,7 +605,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             switch (il) {
                 case USER: {
                     out.println(
-                            NTextArt.of().getDefaultTableRenderer()
+                            NTextArt.of().getTableRenderer()
                                     .get()
                                     .render(
                                             NTableModel.of()
