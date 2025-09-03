@@ -21,7 +21,6 @@ import net.thevpc.nuts.spi.NRepositoryDB;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextArt;
-import net.thevpc.nuts.text.NTextArtRenderer;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NRef;
@@ -139,7 +138,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                 NTableFormat t = NTableFormat.of();
                 NMutableTableModel m = NMutableTableModel.of();
                 t.setValue(m);
-                m.addHeaderCells(NText.ofPlain("Id"), NText.ofPlain("Enabled"), NText.ofPlain("Type"), NText.ofPlain("Location"))
+                m.addHeaderRow(NText.ofPlain("Id"), NText.ofPlain("Enabled"), NText.ofPlain("Type"), NText.ofPlain("Location"))
                 ;
                 while (cmdLine.hasNext()) {
                     if (!t.configureFirst(cmdLine)) {
