@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts.format;
 
+import net.thevpc.nuts.text.NText;
+
 /**
  * Format class responsible of formatting prefix of a tree
  *
@@ -41,7 +43,7 @@ public interface NTreeLinkFormat {
      * @param type position type
      * @return formatted prefix
      */
-    String formatMain(NPositionType type);
+    NText formatMain(NPositionType type);
 
     /**
      * return prefix for node child for the given layout
@@ -49,5 +51,5 @@ public interface NTreeLinkFormat {
      * @param type position type
      * @return formatted prefix
      */
-    String formatChild(NPositionType type);
+    NText formatChild(NPositionType type);
 }
