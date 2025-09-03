@@ -75,6 +75,8 @@ public class DefaultNTexts implements NTexts {
         register(Path.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
         register(File.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
         register(URL.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
+        register(NTreeNode.class, (o, t) -> NTextArt.of().getTreeRenderer().get().render((NTreeNode) o));
+        register(NTableModel.class, (o, t) -> NTextArt.of().getTableRenderer().get().render((NTableModel) o));
         register(Class.class, (o, t) -> {
             Class cc = (Class) o;
             Class dc = cc.getDeclaringClass();
