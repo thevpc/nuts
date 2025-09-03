@@ -322,14 +322,6 @@ public class NTextBuilderPlain implements NTextBuilder {
     }
 
     @Override
-    public NText subChildren(int from, int to) {
-        if (from == 0 && to == 1) {
-            return new ImmutableNTextPlain(sb.toString());
-        }
-        return new ImmutableNTextPlain("");
-    }
-
-    @Override
     public NText substring(int start, int end) {
         return new ImmutableNTextPlain(sb.substring(start, end));
     }
@@ -354,10 +346,6 @@ public class NTextBuilderPlain implements NTextBuilder {
         return this;
     }
 
-    @Override
-    public NTextBuilder replaceChildren(int from, int to, NText... newTexts) {
-        return this;
-    }
 
     @Override
     public int size() {
