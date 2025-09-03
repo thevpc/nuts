@@ -23,10 +23,7 @@
  */
 package net.thevpc.nuts.text;
 
-import net.thevpc.nuts.format.NTreeFormat;
-import net.thevpc.nuts.format.NTreeLinkFormat;
-import net.thevpc.nuts.format.NTreeModel;
-import net.thevpc.nuts.format.NTreeNodeFormat;
+import net.thevpc.nuts.format.*;
 
 /**
  *
@@ -54,5 +51,5 @@ public interface NTextArtTreeRenderer extends NTextArtRenderer{
 
     NTextArtTreeRenderer setOmitRoot(boolean hideRoot);
 
-    NText render(NTreeModel text);
+    NText render(NTreeNode text);
 }
