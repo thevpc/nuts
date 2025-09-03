@@ -44,5 +44,5 @@ public interface NTreeNodeFormat {
      * @param depth  tree node depth
      * @return string representation
      */
-    NText format(Object object, int depth);
+    NText format(NTreeNode object, int depth);
 }
