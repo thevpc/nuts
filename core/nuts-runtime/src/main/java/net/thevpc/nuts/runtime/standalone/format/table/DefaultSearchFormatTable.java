@@ -71,7 +71,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
     @Override
     public void start() {
         getTableModel()
-                .addHeaderCells(
+                .addHeaderRow(
                         Arrays.stream(getDisplayOptions().getDisplayProperties())
                                 .map(x -> NText.of(CoreEnumUtils.getEnumString(x))).toArray(NText[]::new)
                 );
