@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . It's based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
@@ -26,52 +26,44 @@ package net.thevpc.nuts.runtime.standalone.text.art.tree;
 
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.format.NTreeLinkFormat;
+import net.thevpc.nuts.text.NText;
 
 /**
  *
  * @author thevpc
  */
 class AsciiTreeLinkFormat implements NTreeLinkFormat {
-        @Override
-    public String formatMain(NPositionType type) {
+    @Override
+    public NText formatMain(NPositionType type) {
         switch (type) {
-            case FIRST:
-                {
-                    return "";
-                }
-            case CENTER:
-                {
-                    return "|-- ";
-                }
-            case LAST:
-                {
-                    return "--- ";
-                }
+            case FIRST: {
+                return NText.ofBlank();
+            }
+            case CENTER: {
+                return NText.ofPlain("|-- ");
+            }
+            case LAST: {
+                return NText.ofPlain("--- ");
+            }
         }
-        return "";
+        return NText.ofBlank();
     }
 
     @Override
-    public String formatChild(NPositionType type) {
+    public NText formatChild(NPositionType type) {
         String p = "";
         switch (type) {
-            case FIRST:
-                {
-                    p = "";
-                    break;
-                }
-            case CENTER:
-                {
-                    p = "|   ";
-                    break;
-                }
-            case LAST:
-                {
-                    p = "    ";
-                    break;
-                }
+            case FIRST: {
+                return NText.ofBlank();
+            }
+            case CENTER: {
+                return NText.ofPlain("|   ");
+            }
+            case LAST: {
+                return NText.ofPlain("    ");
+            }
         }
-        return p;
+        return NText.ofBlank();
     }
-    
+
 }
