@@ -25,7 +25,7 @@ public class FigletNTextArtRendererFactory implements NTextArtRendererFactory {
     @Override
     public NOptional<NTextArtRenderer> load(NInputSource path) {
         try {
-            return NOptional.of(new FigletNTextArtImageRenderer(path));
+            return NOptional.of(new FigletNTextArtTextRenderer(path));
         } catch (Exception e) {
             return NOptional.ofNamedEmpty(rendererType + " renderer");
         }
@@ -43,7 +43,7 @@ public class FigletNTextArtRendererFactory implements NTextArtRendererFactory {
     @Override
     public NOptional<NTextArtRenderer> load(InputStream path) {
         try {
-            return NOptional.of(new FigletNTextArtImageRenderer(path, null));
+            return NOptional.of(new FigletNTextArtTextRenderer(path, null));
         } catch (Exception e) {
             return NOptional.ofNamedEmpty(rendererType + " renderer");
         }
@@ -81,7 +81,7 @@ public class FigletNTextArtRendererFactory implements NTextArtRendererFactory {
     public NOptional<NTextArtRenderer> getRenderer(String renderName) {
         if (renderName.startsWith(rendererType + ":")) {
             try {
-                return FigletNTextArtImageRenderer.ofName(renderName.substring(rendererType.length() + 1)).instanceOf(NTextArtRenderer.class);
+                return FigletNTextArtTextRenderer.ofName(renderName.substring(rendererType.length() + 1)).instanceOf(NTextArtRenderer.class);
             } catch (Exception e) {
                 return NOptional.ofNamedEmpty(renderName);
             }
