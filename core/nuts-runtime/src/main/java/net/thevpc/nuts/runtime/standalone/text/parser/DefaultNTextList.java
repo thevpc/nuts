@@ -25,10 +25,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
-import net.thevpc.nuts.text.NPrimitiveText;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextList;
-import net.thevpc.nuts.text.NTextType;
+import net.thevpc.nuts.text.*;
 
 import java.util.*;
 
@@ -185,9 +182,28 @@ public class DefaultNTextList extends AbstractNText implements NTextList {
     @Override
     public List<NText> split(String separators, boolean keepSeparators) {
         List<NText> result = new ArrayList<>();
+        NTextBuilder current = NTextBuilder.of();
+
         for (NText child : getChildren()) {
-            result.addAll(child.split(separators, keepSeparators));
+            List<NText> parts = child.split(separators, keepSeparators); // recursively split child
+            for (NText part : parts) {
+                String s = part.filteredText();
+                if (keepSeparators && s.length() == 1 && separators.indexOf(s.charAt(0)) >= 0) {
+                    if (current.length() > 0) {
+                        result.add(current.build());
+                        current = NTextBuilder.of();
+                    }
+                    result.add(part); // separator as own element
+                } else {
+                    current.append(part); // normal text
+                }
+            }
         }
+
+        if (current.length() > 0) {
+            result.add(current.build());
+        }
+
         return result;
     }
 
