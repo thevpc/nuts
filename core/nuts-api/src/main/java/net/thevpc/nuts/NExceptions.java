@@ -2,10 +2,14 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.core.NExceptionWithExitCodeBase;
 import net.thevpc.nuts.core.NI18n;
+import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.UncheckedException;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.NoSuchElementException;
 
@@ -102,12 +106,12 @@ public class NExceptions {
     }
 
     public static String getErrorMessage(Throwable ex) {
-        return getErrorMessage(ex,128);
+        return getErrorMessage(ex, 128);
     }
 
-    private static String getErrorMessage(Throwable ex,int maxDepth) {
+    private static String getErrorMessage(Throwable ex, int maxDepth) {
         if (ex instanceof InvocationTargetException) {
-            if(maxDepth>0) {
+            if (maxDepth > 0) {
                 String e = getErrorMessage(((InvocationTargetException) ex).getTargetException(), maxDepth - 1);
                 if (e != null) {
                     return e;
@@ -119,5 +123,21 @@ public class NExceptions {
             m = ex.toString();
         }
         return m;
+    }
+
+    public static RuntimeException ofUncheckedException(Exception e) {
+        if (e == null) {
+            return new NullPointerException("null exception");
+        }
+        if (e instanceof RuntimeException) {
+            return (RuntimeException) e;
+        }
+        if (e instanceof IOException) {
+            if (!NWorkspace.get().isPresent()) {
+                return new UncheckedIOException((IOException) e);
+            }
+            return new NIOException(e);
+        }
+        return new UncheckedException(getErrorMessage(e),e);
     }
 }
