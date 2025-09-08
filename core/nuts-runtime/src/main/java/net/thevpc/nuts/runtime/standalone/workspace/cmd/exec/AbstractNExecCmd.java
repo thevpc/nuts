@@ -102,9 +102,9 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
     public NExecCmd setCommandDefinition(NDefinition definition) {
         this.commandDefinition = definition;
         if (this.commandDefinition != null) {
-            this.commandDefinition.getContent().get();
-            this.commandDefinition.getDependencies().get();
-            this.commandDefinition.getEffectiveDescriptor().get();
+//            this.commandDefinition.getContent().get();
+//            this.commandDefinition.getDependencies().get();
+//            this.commandDefinition.getEffectiveDescriptor().get();
 //            this.commandDefinition.getInstallInformation().get(session);
         }
         return this;
