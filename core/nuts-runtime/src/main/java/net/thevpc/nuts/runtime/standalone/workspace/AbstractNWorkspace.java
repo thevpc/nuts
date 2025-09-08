@@ -55,7 +55,7 @@ public abstract class AbstractNWorkspace implements NWorkspace {
     }
 
     @Override
-    public void runWith(NRunnable runnable) {
+    public void runWith(Runnable runnable) {
         NScopedWorkspace.runWith(this,runnable);
     }
 
