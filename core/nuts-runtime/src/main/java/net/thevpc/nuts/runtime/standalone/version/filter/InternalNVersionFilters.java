@@ -19,7 +19,11 @@ public class InternalNVersionFilters extends InternalNTypedFilters<NVersionFilte
     }
 
     public NOptional<NVersionFilter> byValue(String version) {
-        return DefaultNVersionFilter.parse(version);
+        return byValue(version, null);
+    }
+
+    public NOptional<NVersionFilter> byValue(String version, NVersionComparator versionComparator) {
+        return DefaultNVersionFilter.parse(version, versionComparator);
     }
 
     @Override
@@ -92,7 +96,12 @@ public class InternalNVersionFilters extends InternalNTypedFilters<NVersionFilte
 
     @Override
     public NVersionFilter parse(String expression) {
-        return new NVersionFilterParser(expression).parse();
+        return parse(expression, null);
+    }
+
+    @Override
+    public NVersionFilter parse(String expression, NVersionComparator versionComparator) {
+        return new NVersionFilterParser(expression, versionComparator).parse();
     }
 
     @Override
