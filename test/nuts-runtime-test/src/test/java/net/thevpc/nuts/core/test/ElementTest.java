@@ -96,40 +96,28 @@ public class ElementTest {
         NObjectFormat ss = NObjectFormat.of().setValue(p).setNtf(false);
         ss.println();
         String json = ss.formatPlain();
-        String EXPECTED = "[\n"
-                + "  {\n"
-                + "    \"first\": {\n"
-                + "      \"name\": \"first name\",\n"
-                + "      \"valid\": true,\n"
-                + "      \"children\": [\n"
-                + "        {\n"
-                + "          \"path\": \"path1\",\n"
-                + "          \"color\": \"red\"\n"
-                + "        },\n"
-                + "        {\n"
-                + "          \"path\": \"path2\",\n"
-                + "          \"color\": \"green\"\n"
-                + "        }\n"
-                + "      ]\n"
-                + "    }\n"
-                + "  },\n"
-                + "  {\n"
-                + "    \"second\": {\n"
-                + "      \"name\": \"second name\",\n"
-                + "      \"valid\": true,\n"
-                + "      \"children\": [\n"
-                + "        {\n"
-                + "          \"path\": \"path3\",\n"
-                + "          \"color\": \"yellow\"\n"
-                + "        },\n"
-                + "        {\n"
-                + "          \"path\": \"path4\",\n"
-                + "          \"color\": \"magenta\"\n"
-                + "        }\n"
-                + "      ]\n"
-                + "    }\n"
-                + "  }\n"
-                + "]";
+        String EXPECTED = "[\n" +
+                "  {\n" +
+                "    first : {\n" +
+                "        name : \"first name\"  ,\n" +
+                "        valid : true  ,\n" +
+                "        children : [\n" +
+                "            {path : \"path1\", color : \"red\"}  ,\n" +
+                "            {path : \"path2\", color : \"green\"}\n" +
+                "          ]\n" +
+                "      }\n" +
+                "  }  ,\n" +
+                "  {\n" +
+                "    second : {\n" +
+                "        name : \"second name\"  ,\n" +
+                "        valid : true  ,\n" +
+                "        children : [\n" +
+                "            {path : \"path3\", color : \"yellow\"}  ,\n" +
+                "            {path : \"path4\", color : \"magenta\"}\n" +
+                "          ]\n" +
+                "      }\n" +
+                "  }\n" +
+                "]";
         TestUtils.println(EXPECTED);
         TestUtils.println("-----------------------------------------------------");
         TestUtils.println(json);
@@ -151,64 +139,77 @@ public class ElementTest {
         }
 
         for (TT tt : new TT[]{
-                new TT("", "[\n" +
-                        "  [\n" +
-                        "    {\n" +
-                        "      \"first\": {\n" +
-                        "        \"name\": \"first name\",\n" +
-                        "        \"valid\": true,\n" +
-                        "        \"children\": [\n" +
-                        "          {\n" +
-                        "            \"path\": \"path1\",\n" +
-                        "            \"color\": \"red\"\n" +
-                        "          },\n" +
-                        "          {\n" +
-                        "            \"path\": \"path2\",\n" +
-                        "            \"color\": \"green\"\n" +
-                        "          }\n" +
-                        "        ]\n" +
+                new TT("", "[[\n" +
+                        "  {\n" +
+                        "    first : {\n" +
+                        "        name : \"first name\"  ,\n" +
+                        "        valid : true  ,\n" +
+                        "        children : [\n" +
+                        "            {path : \"path1\", color : \"red\"}  ,\n" +
+                        "            {path : \"path2\", color : \"green\"}\n" +
+                        "          ]\n" +
                         "      }\n" +
-                        "    },\n" +
-                        "    {\n" +
-                        "      \"second\": {\n" +
-                        "        \"name\": \"second name\",\n" +
-                        "        \"valid\": true,\n" +
-                        "        \"children\": [\n" +
-                        "          {\n" +
-                        "            \"path\": \"path3\",\n" +
-                        "            \"color\": \"yellow\"\n" +
-                        "          },\n" +
-                        "          {\n" +
-                        "            \"path\": \"path4\",\n" +
-                        "            \"color\": \"magenta\"\n" +
-                        "          }\n" +
-                        "        ]\n" +
+                        "  }  ,\n" +
+                        "  {\n" +
+                        "    second : {\n" +
+                        "        name : \"second name\"  ,\n" +
+                        "        valid : true  ,\n" +
+                        "        children : [\n" +
+                        "            {path : \"path3\", color : \"yellow\"}  ,\n" +
+                        "            {path : \"path4\", color : \"magenta\"}\n" +
+                        "          ]\n" +
                         "      }\n" +
+                        "  }\n" +
+                        "]]"),
+                new TT(".", "[{\n" +
+                        "  first : {\n" +
+                        "      name : \"first name\"  ,\n" +
+                        "      valid : true  ,\n" +
+                        "      children : [\n" +
+                        "          {path : \"path1\", color : \"red\"}  ,\n" +
+                        "          {path : \"path2\", color : \"green\"}\n" +
+                        "        ]\n" +
                         "    }\n" +
-                        "  ]\n" +
-                        "]"),
-                new TT(".", EXPECTED),
-                new TT("*", EXPECTED),
-                new TT(".*.name", "[\n" +
-                        "  \"first name\",\n" +
-                        "  \"second name\"\n" +
-                        "]"),
-                new TT("..name", "[\n" +
-                        "  \"first name\",\n" +
-                        "  \"second name\"\n" +
-                        "]"),
-                new TT("*.*.name", "[\n" +
-                        "  \"first name\",\n" +
-                        "  \"second name\"\n" +
-                        "]")
+                        "}, {\n" +
+                        "  second : {\n" +
+                        "      name : \"second name\"  ,\n" +
+                        "      valid : true  ,\n" +
+                        "      children : [\n" +
+                        "          {path : \"path3\", color : \"yellow\"}  ,\n" +
+                        "          {path : \"path4\", color : \"magenta\"}\n" +
+                        "        ]\n" +
+                        "    }\n" +
+                        "}]"),
+                new TT("*", "[{\n" +
+                        "  first : {\n" +
+                        "      name : \"first name\"  ,\n" +
+                        "      valid : true  ,\n" +
+                        "      children : [\n" +
+                        "          {path : \"path1\", color : \"red\"}  ,\n" +
+                        "          {path : \"path2\", color : \"green\"}\n" +
+                        "        ]\n" +
+                        "    }\n" +
+                        "}, {\n" +
+                        "  second : {\n" +
+                        "      name : \"second name\"  ,\n" +
+                        "      valid : true  ,\n" +
+                        "      children : [\n" +
+                        "          {path : \"path3\", color : \"yellow\"}  ,\n" +
+                        "          {path : \"path4\", color : \"magenta\"}\n" +
+                        "        ]\n" +
+                        "    }\n" +
+                        "}]"),
+                new TT(".*.name", "[\"first name\", \"second name\"]"),
+                new TT("..name", "[\"first name\", \"second name\"]"),
+                new TT("*.*.name", "[\"first name\", \"second name\"]")
         }) {
             TestUtils.println("=====================================");
             TestUtils.println("CHECKING : '" + tt.path + "'");
             List<NElement> filtered1 = NElementPath.of(tt.path).filter(p);
             ss.setValue(filtered1).println();
             NText sexpected = NText.ofPlain(tt.expected.get(0));
-            NText sresult = ss.format().immutable();
-            Assertions.assertEquals(sexpected.immutable(), sresult.immutable());
+            NText sresult = ss.format();
+            Assertions.assertEquals(sexpected, sresult);
         }
     }
 
