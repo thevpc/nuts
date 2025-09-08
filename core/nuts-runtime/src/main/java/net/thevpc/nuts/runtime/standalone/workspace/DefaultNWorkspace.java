@@ -620,8 +620,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     break;
                 }
                 case SYSTEM: {
-                    NTableFormat.of()
-                            .setValue(
+                    out.println(NTextArt.of().getTableRenderer()
+                            .get().render(
                                     NTableModel.of()
                                             .addCell(
                                                     data.text.ofBuilder()
@@ -629,40 +629,40 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                                                             .appendCode("sh", "nuts")
                                                             .append(" is launched as system for this workspace ")
                                             )
-                            ).println(out);
+                            ));
                     break;
                 }
                 case CONFINED: {
-                    NTableFormat.of()
-                            .setValue(
+                    out.println(NTextArt.of().getTableRenderer()
+                            .get().render(
                                     NTableModel.of()
                                             .addCell(
                                                     data.text.ofBuilder()
                                                             .append(" This is a confined workspace ")
                                             )
-                            ).println(out);
+                            ));
                     break;
                 }
                 case SANDBOX: {
-                    NTableFormat.of()
-                            .setValue(
+                    out.println(NTextArt.of().getTableRenderer()
+                            .get().render(
                                     NTableModel.of()
                                             .addCell(
                                                     data.text.ofBuilder()
                                                             .append(" This is a sandbox workspace ")
                                             )
-                            ).println(out);
+                            ));
                     break;
                 }
                 case MEMORY: {
-                    NTableFormat.of()
-                            .setValue(
+                    out.println(NTextArt.of().getTableRenderer()
+                            .get().render(
                                     NTableModel.of()
                                             .addCell(
                                                     data.text.ofBuilder()
                                                             .append(" This is an in-memory workspace ")
                                             )
-                            ).println(out);
+                            ));
                     break;
                 }
             }
@@ -2153,21 +2153,16 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
     @Override
     public NSession currentSession() {
-        return sessionScopes().peek();
+        NSession old = wsModel.sessionScopes.get();
+        if(old==null){
+            return defaultSession();
+        }
+        return old;
     }
 
     @Override
-    public Stack<NSession> sessionScopes() {
-        InheritableThreadLocal<Stack<NSession>> ss = wsModel.sessionScopes;
-        Stack<NSession> nSessions = ss.get();
-        if (nSessions == null) {
-            nSessions = new Stack<>();
-            ss.set(nSessions);
-        }
-        if (nSessions.isEmpty()) {
-            nSessions.push(defaultSession());
-        }
-        return nSessions;
+    public NScopedValue<NSession> sessionScopes() {
+        return wsModel.sessionScopes;
     }
 
     public enum InstallStrategy0 implements NEnum {
