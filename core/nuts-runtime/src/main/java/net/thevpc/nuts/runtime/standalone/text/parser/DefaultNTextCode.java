@@ -30,6 +30,7 @@ package net.thevpc.nuts.runtime.standalone.text.parser;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.List;
@@ -121,8 +122,14 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
     }
 
     @Override
-    public List<NPrimitiveText> toCharList() {
-        return highlight().toCharList();
+    public boolean isWhitespace() {
+        return highlight().isWhitespace();
+    }
+
+
+    @Override
+    public NStream<NPrimitiveText> toCharStream() {
+        return highlight().toCharStream();
     }
 
     @Override
