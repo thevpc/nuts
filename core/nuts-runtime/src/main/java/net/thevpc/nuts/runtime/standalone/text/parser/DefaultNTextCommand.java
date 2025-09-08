@@ -27,6 +27,7 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.util.NStream;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,8 +97,13 @@ public class DefaultNTextCommand extends NTextSpecialBase implements NTextCmd {
     }
 
     @Override
-    public List<NPrimitiveText> toCharList() {
-        return new ArrayList<>();
+    public NStream<NPrimitiveText> toCharStream() {
+        return NStream.ofEmpty();
+    }
+
+    @Override
+    public boolean isWhitespace() {
+        return false;
     }
 
     @Override
