@@ -127,8 +127,7 @@ public class DefaultNWorkspaceConfigModel {
             )
     );
 
-    private InheritableThreadLocal<Stack<Map<String, String>>> currentEnv = new InheritableThreadLocal<>();
-    //    private final NutsLogger LOG;
+    public NScopedValue<Map<String, String>> currentEnv = new NScopedValue<>(this::rootEnv);
 
     public DefaultNWorkspaceConfigModel(final DefaultNWorkspace workspace) {
         this.workspace = workspace;
@@ -136,8 +135,6 @@ public class DefaultNWorkspaceConfigModel {
         this.bootClassLoader = bOptions.getClassWorldLoader().orElseGet(() -> Thread.currentThread().getContextClassLoader());
         this.bootClassWorldURLs = NCoreCollectionUtils.nonNullList(bOptions.getClassWorldURLs().orNull());
         workspaceSystemTerminalAdapter = new WorkspaceSystemTerminalAdapter(workspace);
-
-//        this.pathExpansionConverter = NWorkspaceVarExpansionFunction.of();
         this.bootModel = workspace.getModel().bootModel;
         addPathFactory(new FilePath.FilePathFactory());
         addPathFactory(new ClassLoaderPath.ClasspathFactory());
@@ -153,53 +150,30 @@ public class DefaultNWorkspaceConfigModel {
     }
 
 
-    public void sysEnvPop() {
-        Stack<Map<String, String>> s = currentEnv.get();
-        if (s != null && !s.isEmpty()) {
-            s.pop();
-        }
-    }
-
-    public Map<String, String> sysEnvPush(Map<String, String> env) {
-        Stack<Map<String, String>> s = currentEnv.get();
-        if (s == null) {
-            s = new Stack<>();
-            currentEnv.set(s);
-        }
-        Map<String, String> p = null;
-        if (!s.isEmpty()) {
-            p = s.peek();
-        }
-        Map<String, String> newEnv = newSysEnvEmptyMap();
-        if (p == null) {
-            newEnv.putAll(System.getenv());
-        } else {
-            for (Map.Entry<String, String> e : p.entrySet()) {
-                String k = e.getKey();
-                String v = e.getValue();
-                if (k != null) {
-                    if (v != null) {
-                        newEnv.put(k, v);
-                    }
-                }
-            }
-        }
+    public Map<String, String> appendEnv(Map<String, String> env) {
+        Map<String, String> curr = currentEnv.get();
+        Map<String, String> m = newSysEnvEmptyMap();
+        m.putAll(curr);
         if (env != null) {
             for (Map.Entry<String, String> e : env.entrySet()) {
                 String k = e.getKey();
                 String v = e.getValue();
                 if (k != null) {
                     if (v == null) {
-                        newEnv.remove(k);
+                        m.remove(k);
                     } else {
-                        newEnv.put(k, v);
+                        m.put(k, v);
                     }
                 }
             }
         }
+        return m;
+    }
 
-        s.push(newEnv);
-        return newEnv;
+    public Map<String, String> rootEnv() {
+        Map<String, String> m = newSysEnvEmptyMap();
+        m.putAll(System.getenv());
+        return m;
     }
 
     public Map<String, String> newSysEnvEmptyMap() {
@@ -208,17 +182,11 @@ public class DefaultNWorkspaceConfigModel {
                 return new NCaseInsensitiveStringMap();
             }
         }
-        return new  HashMap<>();
+        return new HashMap<>();
     }
 
     public Map<String, String> sysEnv() {
-        Stack<Map<String, String>> s = currentEnv.get();
-        if (s == null || s.isEmpty()) {
-            Map<String, String> m = newSysEnvEmptyMap();
-            m.putAll(System.getenv());
-            return m;
-        }
-        return s.peek();
+        return currentEnv.get();
     }
 
     public void onNewComponent(Class componentType) {
