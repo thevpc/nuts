@@ -20,6 +20,7 @@ import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
 import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextArt;
 
 /**
  *
@@ -27,7 +28,6 @@ import net.thevpc.nuts.text.NText;
  */
 public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
 
-    private NTableFormat table;
     private NMutableTableModel model;
 
     public DefaultSearchFormatTable(NPrintStream writer, NFetchDisplayOptions options) {
@@ -35,25 +35,19 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
     }
 
     public NMutableTableModel getTableModel() {
-        getTable();
-        return model;
-    }
-
-    public NTableFormat getTable() {
-        if (table == null) {
-            table = NTableFormat.of();
+        if (model == null) {
             model = NMutableTableModel.of();
-            table.setValue(model);
             NSession session = NSession.of();
+
             if (session.getOutputFormatOptions() != null) {
                 for (String outputFormatOption : session.getOutputFormatOptions()) {
                     if (outputFormatOption != null) {
-                        table.configure(true, NCmdLine.of(outputFormatOption, NShellFamily.BASH).setExpandSimpleOptions(false));
+                        //table.configure(true, NCmdLine.of(outputFormatOption, NShellFamily.BASH).setExpandSimpleOptions(false));
                     }
                 }
             }
         }
-        return table;
+        return model;
     }
 
     @Override
@@ -94,7 +88,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
 
     @Override
     public void complete(long count) {
-        getTable().println(getWriter());
+        getWriter().println(NTextArt.of().getTableRenderer().get().render(getTableModel()));
     }
 
 }
