@@ -42,11 +42,7 @@ public class DefaultNProgressMonitors implements NProgressMonitors {
     @Override
     public NOptional<NProgressMonitor> currentMonitor() {
         NWorkspaceModel m = NWorkspaceExt.of().getModel();
-        Stack<NProgressMonitor> u = m.currentProgressMonitors.get();
-        if (u == null || u.isEmpty()) {
-            return NOptional.ofNamedEmpty("current progress monitor");
-        }
-        return NOptional.of(u.peek());
+        return NOptional.of(m.currentProgressMonitors.get());
     }
 
     @Override
