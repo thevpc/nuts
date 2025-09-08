@@ -1,629 +1,328 @@
 package net.thevpc.nuts.runtime.standalone.format.yaml;
 
-import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.elem.NArrayElementBuilder;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NObjectElementBuilder;
-import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.runtime.standalone.format.json.ReaderLocation;
+import net.thevpc.nuts.elem.*;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
-import java.util.Stack;
+import java.util.ArrayList;
+import java.util.List;
 
 class YamlParser {
-    public static void main(String[] args) {
-        Nuts.require();
-        YamlParser e = new YamlParser();
-        NElement nElement = e.parseElement(new BufferedReader(new StringReader("\n" +
-                "id: changelog070\n" +
-                "title: Version 0.7.2.0 released\n" +
-                "sub_title: Publishing 0.7.2.0 version\n" +
-                "author: thevpc\n" +
-                "author_title: Criticize the world Casually...\n" +
-                "author_url: https://github.com/thevpc\n" +
-                "author_image_url: https://avatars3.githubusercontent.com/u/10106809?s=460&u=28d1736bdf0b6e6f81981b3a2ebbd2db369b25c8&v=4\n" +
-                "tags: [nuts]\n" +
-                "publish_date: 2020-09-23")));
-        System.out.println(nElement);
-    }
+    private YamlTokenizer tokenizer;
+    private YamlElement unread;
 
-    private BufferedReader reader;
-    private int fileOffset;
-    private int lineNumber;
-    private int lineOffset;
-    private int current;
-    private boolean skipLF;
-    private Stack<Integer> indentStack = new Stack<>();
+    private static class YamlElement {
+        NElement element;
+        int indentation;
+
+        public YamlElement(NElement element, int indentation) {
+            this.element = element;
+            this.indentation = indentation;
+        }
+    }
 
     public NElement parseElement(Reader reader) {
-        this.reader = (reader instanceof BufferedReader) ? (BufferedReader) reader : new BufferedReader(reader);
-        this.fileOffset = 0;
-        this.lineNumber = 1;
-        this.lineOffset = 0;
-        readNext();
-        skipEmptyLinesAndComments();
-        return readElement(0);
+        this.tokenizer = new YamlTokenizer(reader);
+//        while (true){
+//            YamlToken u = this.tokenizer.next();
+//            if(u==null){
+//                break;
+//            }
+//            System.out.println(u);
+//        }
+        List<NElement> all = new ArrayList<>();
+        while (true) {
+            YamlElement e = parseAny(0, AsWhat.ANY);
+            if (e == null) {
+                break;
+            }
+            all.add(e.element);
+        }
+        if (all.size() == 0) {
+            return NElement.ofNull();
+        }
+        if (all.size() == 1) {
+            return all.get(0);
+        }
+        return NElement.ofArray(all.toArray(new NElement[0]));
     }
 
-    private void readTerminal(String s) {
-        final int len = s.length();
-        for (int i = 0; i < len; i++) {
-            char ch = s.charAt(i);
-            if (!readChar(ch)) {
-                throw expected("'" + ch + "'");
+    private NElement parseAnyNoIndentation() {
+        YamlToken t = tokenizer.next();
+        if (t == null) {
+            return null;
+        } else {
+            switch (t.type) {
+                case OPEN_BRACKET: {
+                    return parseArrayNoIndent(t);
+                }
+                case OPEN_BRACE: {
+                    return parseObjectNoIndent(t);
+                }
+                case NAME:
+                case DOUBLE_STRING:
+                case SINGLE_STRING:
+                case NULL:
+                case INTEGER:
+                case DECIMAL:
+                case TRUE:
+                case FALSE:
+                case OPEN_STRING: {
+                    return valElement(t);
+                }
+                default: {
+                    throw new IllegalArgumentException("unexpected token " + t.type);
+                }
             }
         }
     }
 
-    private int readNext() {
-        try {
-            current = reader.read();
-            if (current != -1) {
-                fileOffset++;
-                if (skipLF) {
-                    if (current == '\n') {
-                        current = reader.read();
-                        if (current != -1) {
-                            fileOffset++;
+    private static enum AsWhat {
+        KEY, VALUE,
+        ANY
+    }
+
+    private YamlElement parseAny(int indentation, AsWhat asVal) {
+        if (unread != null) {
+            if (unread.indentation >= indentation) {
+                return unread;
+            }
+            return null;
+        }
+        YamlToken t = tokenizer.next();
+        if (t == null) {
+            return null;
+        } else {
+            switch (t.type) {
+                case DASH: {
+                    if(asVal == AsWhat.KEY) {
+                        throw new IllegalArgumentException("no allowed key as array element ");
+                    }
+                    YamlElement ee = parseArrayByDash(t);
+                    return checkIndentation(ee, indentation);
+                }
+                case OPEN_BRACKET: {
+                    if(asVal == AsWhat.KEY) {
+                        throw new IllegalArgumentException("no allowed key as array element ");
+                    }
+                    NElement u = parseArrayNoIndent(t);
+                    YamlElement ee = new YamlElement(u, indentation);
+                    return checkIndentation(ee, indentation);
+                }
+                case OPEN_BRACE: {
+                    if(asVal == AsWhat.KEY) {
+                        throw new IllegalArgumentException("no allowed key as array element ");
+                    }
+                    NElement u = parseObjectNoIndent(t);
+                    YamlElement ee = new YamlElement(u, indentation);
+                    return checkIndentation(ee, indentation);
+                }
+                case NAME:
+                case DOUBLE_STRING:
+                case SINGLE_STRING:
+                case NULL:
+                case INTEGER:
+                case DECIMAL:
+                case TRUE:
+                case FALSE:
+                case OPEN_STRING: {
+                    NElement key = valElement(t);
+                    if ((asVal == AsWhat.KEY || asVal == AsWhat.ANY) && t.hasIndentation() && t.indentation < indentation) {
+                        tokenizer.pushBack(t);
+                        return null;
+                    }
+                    if (asVal == AsWhat.KEY) {
+                        YamlElement ee = new YamlElement(key, indentation);
+                        return checkIndentation(ee, indentation);
+                    }
+                    if (asVal == AsWhat.VALUE) {
+                        if (!t.hasIndentation() || (t.hasIndentation() && t.indentation <= indentation)) {
+                            YamlElement ee = new YamlElement(key, indentation);
+                            return checkIndentation(ee, indentation);
                         }
                     }
-                    skipLF = false;
+                    YamlToken t2 = tokenizer.next();
+                    if (t2 == null) {
+                        YamlElement ee = new YamlElement(key, indentation);
+                        return checkIndentation(ee, indentation);
+                    }
+                    if (t2.type == YamlToken.Type.COLON) {
+                        YamlElement u = parseAny(t.hasIndentation() ? t.indentation : indentation, AsWhat.VALUE);
+                        YamlElement ee = parseObjectByPairs(NElement.ofPair(key, u.element), t.indentation);
+                        return checkIndentation(ee, indentation);
+                    }
+                    tokenizer.pushBack(t2);
+                    YamlElement ee = new YamlElement(key, indentation);
+                    return checkIndentation(ee, indentation);
                 }
-                if (current == '\r') {
-                    skipLF = true;
-                    lineNumber++;
-                    lineOffset = 0;
-                    current = '\n';
-                } else if (current == '\n') {
-                    lineNumber++;
-                    lineOffset = 0;
-                } else {
-                    lineOffset++;
+                default: {
+                    throw new IllegalArgumentException("unexpected token " + t.type);
                 }
             }
-        } catch (IOException ex) {
-            throw new NIOException(ex);
-        }
-        return current;
-    }
-
-    private RuntimeException expected(String expected) {
-        if (current == -1) {
-            return error("unexpected end of input");
-        }
-        return error("expected " + expected);
-    }
-
-    private RuntimeException error(String message) {
-        return new RuntimeException(message + ":" + getLocation());
-    }
-
-    private boolean isHexDigit() {
-        return current >= '0' && current <= '9'
-                || current >= 'a' && current <= 'f'
-                || current >= 'A' && current <= 'F';
-    }
-
-    ReaderLocation getLocation() {
-        return new ReaderLocation(fileOffset, lineNumber, lineOffset);
-    }
-
-    private boolean isNumberChar(char c) {
-        return (c >= '0' && c <= '9') || c == '.' || c == '+' || c == '-' || c == 'e' || c == 'E';
-    }
-
-    private void readerMark() {
-        try {
-            reader.mark(1024);
-        } catch (IOException ex) {
-            throw new NIOException(ex);
         }
     }
 
-    private void readerReset() {
-        try {
-            reader.reset();
-        } catch (IOException ex) {
-            throw new NIOException(ex);
-        }
-    }
-
-    private boolean readChar(char ch) {
-        if (current != ch) {
-            return false;
-        }
-        readNext();
-        return true;
-    }
-
-    private int consumeIndent() {
-        int indent = 0;
-        while (true) {
-            if (current == ' ') {
-                indent++;
-                readNext();
-            } else if (current == '\t') {
-                indent += 2; // Tabs are typically treated as 2 spaces in YAML
-                readNext();
+    private YamlElement checkIndentation(YamlElement u, int indentation) {
+        if (u != null) {
+            if (u.indentation<0 ||  u.indentation>= indentation) {
+                return u;
             } else {
+                unread = u;
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    private NElement valElement(YamlToken t) {
+        switch (t.type) {
+            case NAME: {
+                return NElement.ofName((String) t.value);
+            }
+            case DOUBLE_STRING: {
+                return NElement.ofString((String) t.value, NElementType.DOUBLE_QUOTED_STRING);
+            }
+            case SINGLE_STRING: {
+                return NElement.ofString((String) t.value, NElementType.SINGLE_QUOTED_STRING);
+            }
+            case NULL: {
+                return NElement.ofNull();
+            }
+
+            case INTEGER:
+            case DECIMAL: {
+                return NElement.ofNumber((Number) t.value);
+            }
+            case TRUE:
+            case FALSE: {
+                return NElement.ofBoolean((Boolean) t.value);
+            }
+            case OPEN_STRING: {
+                return NElement.ofString((String) t.value, NElementType.DOUBLE_QUOTED_STRING);
+            }
+        }
+        throw new IllegalArgumentException("unexpected token type: " + t.type);
+    }
+
+    private NElement parseArrayNoIndent(YamlToken t) {
+        List<NElement> list = new ArrayList<>();
+        boolean acceptValue = true;
+        boolean acceptComma = false;
+        boolean acceptClose = true;
+        while (true) {
+            t = tokenizer.next();
+            if (t == null) {
+                throw new IllegalArgumentException("missing ']'");
+            }
+            if (t.type == YamlToken.Type.COMMA) {
+                if (!acceptComma) {
+                    throw new IllegalArgumentException("unexpected ','");
+                }
+                acceptValue = true;
+                acceptComma = false;
+                acceptClose = false;
+            } else if (t.type == YamlToken.Type.CLOSE_BRACKET) {
+                if (!acceptClose) {
+                    throw new IllegalArgumentException("unexpected ']'");
+                }
+                break;
+            } else {
+                if (!acceptValue) {
+                    throw new IllegalArgumentException("unexpected value");
+                }
+                acceptValue = false;
+                acceptComma = true;
+                acceptClose = true;
+                tokenizer.pushBack(t);
+                list.add(parseAnyNoIndentation());
+            }
+        }
+        return NElement.ofArray(list.toArray(new NElement[0]));
+    }
+
+    private NElement parseObjectNoIndent(YamlToken t) {
+        List<NElement> list = new ArrayList<>();
+        boolean acceptValue = true;
+        boolean acceptComma = false;
+        boolean acceptClose = true;
+        while (true) {
+            t = tokenizer.next();
+            if (t == null) {
+                throw new IllegalArgumentException("missing '}'");
+            }
+            if (t.type == YamlToken.Type.COMMA) {
+                if (!acceptComma) {
+                    throw new IllegalArgumentException("unexpected ','");
+                }
+                acceptValue = true;
+                acceptComma = false;
+                acceptClose = false;
+            } else if (t.type == YamlToken.Type.CLOSE_BRACKET) {
+                if (!acceptClose) {
+                    throw new IllegalArgumentException("unexpected ']'");
+                }
+                break;
+            } else {
+                if (!acceptValue) {
+                    throw new IllegalArgumentException("unexpected value");
+                }
+                acceptValue = false;
+                acceptComma = true;
+                acceptClose = true;
+                tokenizer.pushBack(t);
+                NElement key = parseAnyNoIndentation();
+                t = tokenizer.next();
+                if (t == null || t.type != YamlToken.Type.COLON) {
+                    throw new IllegalArgumentException("missing ':'");
+                }
+                NElement value = parseAnyNoIndentation();
+                list.add(NElement.ofPair(key, value));
+
+            }
+        }
+        return NElement.ofObject(list.toArray(new NElement[0]));
+    }
+
+    private YamlElement parseObjectByPairs(NPairElement pair, int indentation) {
+        List<NPairElement> list = new ArrayList<>();
+        list.add(pair);
+        while (true) {
+            YamlElement a = parseAny(indentation, AsWhat.KEY);
+            if (a == null) {
+                break;
+            }
+            YamlToken t = tokenizer.next();
+            if (t == null || t.type != YamlToken.Type.COLON) {
+                throw new IllegalArgumentException("missing ':'");
+            }
+            YamlElement b = parseAny(indentation, AsWhat.VALUE);
+            list.add(NElement.ofPair(a.element, b.element));
+        }
+        return new YamlElement(NElement.ofObject(list.toArray(new NElement[0])), indentation);
+    }
+
+    private YamlElement parseArrayByDash(YamlToken dash) {
+        List<NElement> list = new ArrayList<>();
+        YamlElement afterDash = parseAny(dash.indentation, AsWhat.ANY);
+        if (afterDash == null) {
+            throw new IllegalArgumentException("unexpected end of array");
+        }
+        list.add(afterDash.element);
+        while (true) {
+            YamlToken t = tokenizer.next();
+            if (t == null) {
+                break;
+            } else if (t.type == YamlToken.Type.DASH && t.indentation == dash.indentation) {
+                afterDash = parseAny(dash.indentation, AsWhat.ANY);
+                if (afterDash == null) {
+                    throw new IllegalArgumentException("unexpected end of array");
+                }
+                list.add(afterDash.element);
+            } else {
+                tokenizer.pushBack(t);
                 break;
             }
         }
-        return indent;
-    }
-
-    private int peekIndent() {
-        readerMark();
-        int indent = consumeIndent();
-        readerReset();
-        return indent;
-    }
-
-    private boolean readNewLine() {
-        boolean someNL = false;
-        while (current == '\n' || current == ';') {
-            readNext();
-            someNL = true;
-        }
-        return someNL;
-    }
-
-    private String readComments() {
-        if (current == '#') {
-            StringBuilder c = new StringBuilder();
-            readNext();
-            while (current != -1 && current != '\n') {
-                c.append((char) current);
-                readNext();
-            }
-            return c.toString();
-        }
-        return null;
-    }
-
-    private void skipWhiteSpace() {
-        while (current == ' ' || current == '\t') {
-            readNext();
-        }
-    }
-
-    private void skipEmptyLinesAndComments() {
-        while (true) {
-            if (current == '\n') {
-                readNext();
-                continue;
-            }
-            if (current == '#') {
-                readComments();
-                continue;
-            }
-            if (current == ' ' || current == '\t') {
-                skipWhiteSpace();
-                continue;
-            }
-            break;
-        }
-    }
-
-    private NElement readLiteral(boolean asValue) {
-        if (current == '"') {
-            readNext();
-            StringBuilder sb = new StringBuilder();
-            while (current != '"') {
-                if (current == -1) {
-                    throw expected("'\"'");
-                }
-                if (current == '\\') {
-                    readNext();
-                    switch (current) {
-                        case '"':
-                        case '/':
-                        case '\\':
-                            sb.append((char) current);
-                            break;
-                        case 'b':
-                            sb.append('\b');
-                            break;
-                        case 'f':
-                            sb.append('\f');
-                            break;
-                        case 'n':
-                            sb.append('\n');
-                            break;
-                        case 'r':
-                            sb.append('\r');
-                            break;
-                        case 't':
-                            sb.append('\t');
-                            break;
-                        case 'u':
-                            char[] hexChars = new char[4];
-                            for (int i = 0; i < 4; i++) {
-                                readNext();
-                                if (!isHexDigit()) {
-                                    throw expected("hexadecimal digit");
-                                }
-                                hexChars[i] = (char) current;
-                            }
-                            sb.append((char) Integer.parseInt(new String(hexChars), 16));
-                            break;
-                        default:
-                            throw expected("valid escape sequence");
-                    }
-                    readNext();
-                } else if (current < 0x20) {
-                    throw expected("valid string character");
-                } else {
-                    sb.append((char) current);
-                    readNext();
-                }
-            }
-            readNext();
-            return NElement.ofString(sb.toString());
-        } else if (current == '\'') {
-            readNext();
-            StringBuilder sb = new StringBuilder();
-            while (current != '\'') {
-                if (current == -1) {
-                    throw expected("\"'\"");
-                }
-                if (current == '\'' && readNext() == '\'') {
-                    // Handle escaped single quote
-                    sb.append('\'');
-                    readNext();
-                } else if (current < 0x20) {
-                    throw expected("valid string character");
-                } else {
-                    sb.append((char) current);
-                    readNext();
-                }
-            }
-            readNext();
-            return NElement.ofString(sb.toString());
-        } else {
-            StringBuilder sb = new StringBuilder();
-            boolean str = false;
-            boolean dot = false;
-            boolean E = false;
-
-            while (current != -1 && current != '\n' && current != '\r') {
-                if (current == '#') {
-                    break; // Comment
-                }
-                if (!asValue && current == ':') {
-                    break; // Key-value separator
-                }
-                if (!asValue && current == '-' && sb.length() == 0) {
-                    break; // This might be an array element
-                }
-                // For flow-style arrays and objects, stop at delimiters
-                if (asValue && (current == ',' || current == ']' || current == '}')) {
-                    break;
-                }
-
-                final char c = (char) current;
-                sb.append(c);
-                if (!str) {
-                    if (!isNumberChar(c)) {
-                        str = true;
-                    } else if (c == '.') {
-                        dot = true;
-                    } else if (c == 'e' || c == 'E') {
-                        E = true;
-                    }
-                }
-                readNext();
-            }
-
-            String trimmed = sb.toString().trim();
-            if (trimmed.isEmpty()) {
-                return NElement.ofString("");
-            }
-
-            if (!str && trimmed.length() > 0) {
-                try {
-                    if (dot || E) {
-                        return NElement.ofNumber(Double.parseDouble(trimmed));
-                    } else {
-                        return NElement.ofNumber(Long.parseLong(trimmed));
-                    }
-                } catch (NumberFormatException e) {
-                    // Fall through to string handling
-                }
-            }
-
-            switch (trimmed) {
-                case "true":
-                    return NElement.ofTrue();
-                case "false":
-                    return NElement.ofFalse();
-                case "null":
-                    return NElement.ofNull();
-                case "~":
-                    return NElement.ofNull();
-            }
-            return NElement.ofString(trimmed);
-        }
-    }
-
-    public NElement readElement(int expectedIndent) {
-        if (current == -1) {
-            return NElement.ofNull();
-        }
-
-        // Check if we have content at the current position
-        int currentIndent = peekIndent();
-        if (currentIndent < expectedIndent) {
-            return NElement.ofNull();
-        }
-
-        YamlNode firstNode = readNode(expectedIndent, false);
-        if (firstNode == null) {
-            return NElement.ofNull();
-        }
-
-        switch (firstNode.type) {
-            case LITERAL:
-                return firstNode.getElement();
-            case OBJECT_ELEMENT: {
-                NObjectElementBuilder obj = NElement.ofObjectBuilder();
-                obj.add(firstNode.getEntry());
-
-                while (true) {
-                    skipEmptyLinesAndComments();
-                    if (current == -1) {
-                        break;
-                    }
-
-                    int newIndent = peekIndent();
-                    if (newIndent < expectedIndent) {
-                        break;
-                    }
-                    if (newIndent > expectedIndent) {
-                        break; // This would be nested content
-                    }
-                    if (newIndent == expectedIndent) {
-                        YamlNode nextNode = readNode(expectedIndent, false);
-                        if (nextNode == null) {
-                            break;
-                        }
-
-                        if (nextNode.type == NodeType.OBJECT_ELEMENT) {
-                            obj.add(nextNode.getEntry());
-                        } else if (nextNode.type == NodeType.LITERAL) {
-                            // Treat as key with empty value
-                            String key = nextNode.getElement().asStringValue().get();
-                            obj.set(key, NElement.ofString(""));
-                        } else {
-                            throw expected("object entry");
-                        }
-                    } else {
-                        // If we get here, something's wrong with indentation logic
-                        break;
-                    }
-                }
-                return obj.build();
-            }
-            case ARRAY_ELEMENT: {
-                NArrayElementBuilder arr = NElement.ofArrayBuilder();
-                arr.add(firstNode.getElement());
-
-                while (true) {
-                    skipEmptyLinesAndComments();
-                    if (current == -1) {
-                        break;
-                    }
-
-                    int newIndent = peekIndent();
-                    if (newIndent < expectedIndent) {
-                        break;
-                    }
-                    if (newIndent > expectedIndent) {
-                        break; // Nested content
-                    }
-                    if (newIndent == expectedIndent) {
-                        YamlNode nextNode = readNode(expectedIndent, false);
-                        if (nextNode == null || nextNode.type != NodeType.ARRAY_ELEMENT) {
-                            break;
-                        }
-                        arr.add(nextNode.getElement());
-                    } else {
-                        break;
-                    }
-                }
-                return arr.build();
-            }
-            default:
-                throw new IllegalStateException("Unexpected node type: " + firstNode.type);
-        }
-    }
-
-    public YamlNode readNode(int expectedIndent, boolean asValue) {
-        if (!asValue) {
-            skipEmptyLinesAndComments();
-            if (current == -1) {
-                return null;
-            }
-
-            int actualIndent = peekIndent(); // Just peek, don't consume yet
-            if (actualIndent < expectedIndent) {
-                return null; // Not enough indentation
-            }
-
-            consumeIndent(); // Now consume the indentation
-        }
-
-        skipWhiteSpace();
-        readComments();
-        skipWhiteSpace();
-
-        if (current == -1) {
-            return null;
-        }
-
-        char c = (char) current;
-        switch (c) {
-            case '-': {
-                if (asValue) {
-                    NElement li = readLiteral(true);
-                    return YamlNode.forLiteral(li);
-                }
-                readNext();
-                skipWhiteSpace();
-                if (current == '\n' || current == -1) {
-                    return YamlNode.forArrayElement(NElement.ofString(""));
-                } else {
-                    YamlNode elementNode = readNode(expectedIndent, true);
-                    NElement element = (elementNode != null) ? elementNode.getElement() : NElement.ofString("");
-                    return YamlNode.forArrayElement(element);
-                }
-            }
-            case '{': {
-                // Flow style object
-                readNext();
-                skipWhiteSpace();
-                NObjectElementBuilder obj = NElement.ofObjectBuilder();
-
-                if (current == '}') {
-                    // Empty object
-                    readNext();
-                    return YamlNode.forLiteral(obj.build());
-                }
-
-                while (current != '}' && current != -1) {
-                    skipWhiteSpace();
-                    YamlNode keyNode = readNode(expectedIndent, true);
-                    if (keyNode == null) break;
-
-                    NElement key = keyNode.getElement();
-                    skipWhiteSpace();
-                    if (!readChar(':')) {
-                        throw expected("':'");
-                    }
-                    skipWhiteSpace();
-                    YamlNode valueNode = readNode(expectedIndent, true);
-                    NElement value = (valueNode != null) ? valueNode.getElement() : NElement.ofNull();
-
-                    obj.set(key.asStringValue().get(), value);
-                    skipWhiteSpace();
-                    if (current == ',') {
-                        readNext();
-                        skipWhiteSpace();
-                    } else if (current != '}') {
-                        break;
-                    }
-                }
-                if (!readChar('}')) {
-                    throw expected("'}'");
-                }
-                return YamlNode.forLiteral(obj.build());
-            }
-            case '[': {
-                // Flow style array
-                readNext();
-                skipWhiteSpace();
-                NArrayElementBuilder arr = NElement.ofArrayBuilder();
-
-                if (current == ']') {
-                    // Empty array
-                    readNext();
-                    return YamlNode.forLiteral(arr.build());
-                }
-
-                while (current != ']' && current != -1) {
-                    skipWhiteSpace();
-
-                    // Skip newlines in flow style
-                    if (current == '\n') {
-                        readNext();
-                        skipWhiteSpace();
-                        continue;
-                    }
-
-                    if (current == ']') {
-                        break; // End of array
-                    }
-
-                    // Read element as literal for flow-style arrays
-                    NElement element = readLiteral(true);
-                    arr.add(element);
-                    skipWhiteSpace();
-
-                    // Skip newlines after element
-                    while (current == '\n') {
-                        readNext();
-                        skipWhiteSpace();
-                    }
-
-                    if (current == ',') {
-                        readNext();
-                        skipWhiteSpace();
-                        // Skip newlines after comma
-                        while (current == '\n') {
-                            readNext();
-                            skipWhiteSpace();
-                        }
-                    } else if (current == ']') {
-                        // We're at the end, let the loop condition handle it
-                        break;
-                    } else if (current == -1) {
-                        throw expected("']'");
-                    }
-                }
-
-                if (current != ']') {
-                    throw expected("']'");
-                }
-                readNext(); // consume the ']'
-                return YamlNode.forLiteral(arr.build());
-            }
-            case '?': {
-                if (asValue) {
-                    NElement li = readLiteral(true);
-                    return YamlNode.forLiteral(li);
-                }
-                readNext();
-                skipWhiteSpace();
-                YamlNode keyNode = readNode(expectedIndent, true);
-                NElement key = (keyNode != null) ? keyNode.getElement() : NElement.ofString("");
-                skipWhiteSpace();
-                if (!readChar(':')) {
-                    throw expected("':'");
-                }
-                skipWhiteSpace();
-                YamlNode valueNode = readNode(expectedIndent, true);
-                NElement value = (valueNode != null) ? valueNode.getElement() : NElement.ofString("");
-                return YamlNode.forObjectElement(NElement.ofPair(key, value));
-            }
-            default: {
-                NElement key = readLiteral(false);
-                if (asValue) {
-                    return YamlNode.forLiteral(key);
-                }
-                skipWhiteSpace();
-                if (current == ':') {
-                    readNext();
-                    skipWhiteSpace();
-                    if (current == '\n' || current == -1) {
-                        return YamlNode.forObjectElement(NElement.ofPair(key, NElement.ofString("")));
-                    } else {
-                        // Check if the value starts with structural characters
-                        if (current == '[' || current == '{') {
-                            YamlNode valueNode = readNode(expectedIndent, true);
-                            NElement value = (valueNode != null) ? valueNode.getElement() : NElement.ofString("");
-                            return YamlNode.forObjectElement(NElement.ofPair(key, value));
-                        } else {
-                            // For regular values, use readLiteral to avoid colon issues
-                            NElement value = readLiteral(true);
-                            return YamlNode.forObjectElement(NElement.ofPair(key, value));
-                        }
-                    }
-                }
-                return YamlNode.forLiteral(key);
-            }
-        }
+        return new YamlElement(NElement.ofArray(list.toArray(new NElement[0])), dash.indentation);
     }
 }
