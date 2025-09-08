@@ -11,6 +11,14 @@ import java.util.Base64;
 import java.util.List;
 
 public class YamlFormat {
+    private NElement str(String any){
+        StringBuilder sb = new StringBuilder();
+        for (char c : any.toCharArray()) {
+            sb.append(NStringUtils.escapeChar(c));
+        }
+        return NElement.ofString(sb.toString());
+    }
+
     private NElement ensureYaml(NElement value) {
         switch (value.type().typeGroup()) {
             case OPERATOR: {
@@ -37,9 +45,6 @@ public class YamlFormat {
             case LOCAL_DATETIME:
             case LOCAL_TIME:
             case REGEX:
-            case NAME:
-            case SINGLE_QUOTED_STRING:
-            case DOUBLE_QUOTED_STRING:
             case LINE_STRING:
             case ANTI_QUOTED_STRING:
             case TRIPLE_ANTI_QUOTED_STRING:
@@ -47,8 +52,21 @@ public class YamlFormat {
             case TRIPLE_SINGLE_QUOTED_STRING:
             case INSTANT:
             case CUSTOM: {
-                return NElement.ofPrimitiveBuilder().copyFrom(value).setString(value.toString()).build();
+                return str(value.toString());
             }
+            case SINGLE_QUOTED_STRING: {
+                String s = value.asStringValue().get();
+                if (s.codePoints().anyMatch(codePoint -> codePoint < 32)) {
+                    return str(value.asStringValue().get());
+                }
+                // should check for
+                return value;
+            }
+            case DOUBLE_QUOTED_STRING: {
+                return str(value.asStringValue().get());
+            }
+            case NAME:
+                return value;
             case BINARY_STREAM: {
                 NBinaryStreamElement value1 = (NBinaryStreamElement) value;
                 String s = Base64.getEncoder().encodeToString(NInputSource.of(value1.value()).readBytes());
