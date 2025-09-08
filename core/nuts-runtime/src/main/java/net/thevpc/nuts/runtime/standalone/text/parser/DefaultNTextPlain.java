@@ -27,12 +27,14 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringTokenizer;
+import java.util.stream.Stream;
 
 /**
  * Created by vpc on 5/23/17.
@@ -106,6 +108,12 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain {
         return all;
     }
 
+
+    @Override
+    public NStream<NPrimitiveText> toCharStream() {
+        return NStream.ofStream(text.codePoints().mapToObj(c -> new DefaultNTextPlain(new String(Character.toChars(c)))));
+    }
+
     @Override
     public NText substring(int start, int end) {
         return new DefaultNTextPlain(getValue().substring(start, end));
@@ -113,7 +121,7 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain {
 
     @Override
     public List<NText> split(String separator, boolean returnSeparator) {
-        StringTokenizer st = new StringTokenizer(getValue(),separator, returnSeparator);
+        StringTokenizer st = new StringTokenizer(getValue(), separator, returnSeparator);
         List<NText> all = new ArrayList<>();
         while (st.hasMoreElements()) {
             all.add(new DefaultNTextPlain(st.nextToken()));
@@ -122,9 +130,14 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain {
     }
 
     @Override
+    public boolean isWhitespace() {
+        return !text.isEmpty() && text.trim().isEmpty();
+    }
+
+    @Override
     public NText trimLeft() {
         String c = NStringUtils.trimLeft(text);
-        if(Objects.equals(text,c)){
+        if (Objects.equals(text, c)) {
             return this;
         }
         return new DefaultNTextPlain(c);
@@ -133,7 +146,7 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain {
     @Override
     public NText trimRight() {
         String c = NStringUtils.trimRight(text);
-        if(Objects.equals(text,c)){
+        if (Objects.equals(text, c)) {
             return this;
         }
         return new DefaultNTextPlain(c);
@@ -142,7 +155,7 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain {
     @Override
     public NText trim() {
         String c = NStringUtils.trim(text);
-        if(Objects.equals(text,c)){
+        if (Objects.equals(text, c)) {
             return this;
         }
         return new DefaultNTextPlain(c);
