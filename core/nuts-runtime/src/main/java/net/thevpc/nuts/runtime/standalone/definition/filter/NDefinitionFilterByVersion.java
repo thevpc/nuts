@@ -26,10 +26,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.definition.filter;
 
-import net.thevpc.nuts.NDefinition;
-import net.thevpc.nuts.NDefinitionFilter;
-import net.thevpc.nuts.NDefinitionFilters;
-import net.thevpc.nuts.NVersionFilter;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.version.filter.DefaultNVersionFilter;
 import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.util.NSimplifiable;
@@ -43,9 +40,9 @@ public class NDefinitionFilterByVersion extends AbstractDefinitionFilter {
 
     private NVersionFilter versionFilter;
 
-    public NDefinitionFilterByVersion(String versionFilter) {
+    public NDefinitionFilterByVersion(String versionFilter, NVersionComparator versionComparator) {
         super(NFilterOp.CUSTOM);
-        this.versionFilter = (NVersionFilter) DefaultNVersionFilter.parse(versionFilter).get().simplify();
+        this.versionFilter = (NVersionFilter) DefaultNVersionFilter.parse(versionFilter,versionComparator).get().simplify();
     }
 
     @Override
