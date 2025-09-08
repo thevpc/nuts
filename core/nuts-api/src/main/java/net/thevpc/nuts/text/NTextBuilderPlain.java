@@ -1,6 +1,8 @@
 package net.thevpc.nuts.text;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import net.thevpc.nuts.core.NI18n;
 import net.thevpc.nuts.util.NBlankable;
@@ -327,6 +329,11 @@ public class NTextBuilderPlain implements NTextBuilder {
     }
 
     @Override
+    public boolean isString(String anyString) {
+        return anyString != null && anyString.equals(sb.toString());
+    }
+
+    @Override
     public NTextBuilder insert(int at, NText... newTexts) {
         StringBuilder sb2 = new StringBuilder();
         for (NText newText : newTexts) {
@@ -387,6 +394,33 @@ public class NTextBuilderPlain implements NTextBuilder {
     }
 
     @Override
+    public boolean isNewLine() {
+        String s = filteredText();
+        return
+                s.equals("\n")
+                        || s.equals("\r")
+                        || s.equals("\r\n")
+                ;
+    }
+
+    @Override
+    public List<NPrimitiveText> toCharList() {
+        return sb.codePoints().mapToObj(c -> new ImmutableNTextPlain(new String(Character.toChars(c))))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public NStream<NPrimitiveText> toCharStream() {
+        return NStream.ofStream(sb.codePoints().mapToObj(c -> new ImmutableNTextPlain(new String(Character.toChars(c)))));
+    }
+
+    @Override
+    public boolean isWhitespace() {
+        String s = sb.toString();
+        return !s.isEmpty() && s.trim().isEmpty();
+    }
+
+    @Override
     public NTextBuilder newLine() {
         return append("\n");
     }
@@ -427,14 +461,6 @@ public class NTextBuilderPlain implements NTextBuilder {
         return toCharList().toArray(new NPrimitiveText[0]);
     }
 
-    @Override
-    public List<NPrimitiveText> toCharList() {
-        List<NPrimitiveText> all = new ArrayList<>();
-        for (char child : toString().toCharArray()) {
-            all.add(new ImmutableNTextPlain(String.valueOf(child)));
-        }
-        return all;
-    }
 
     @Override
     public List<NText> split(char c) {
@@ -500,6 +526,23 @@ public class NTextBuilderPlain implements NTextBuilder {
         return new ImmutableNTextPlain(b.toString());
     }
 
+    @Override
+    public NText repeatln(int times) {
+        if (times <= 0) {
+            return NText.ofPlain("");
+        }
+        if (times == 1) {
+            return this;
+        }
+        StringBuilder b = new StringBuilder();
+        for (int i = 0; i < times; i++) {
+            if (i > 0) {
+                b.append("\n");
+            }
+            b.append(sb.toString());
+        }
+        return new ImmutableNTextPlain(b.toString());
+    }
 
     @Override
     public NText concat(NText other) {
@@ -587,14 +630,30 @@ public class NTextBuilderPlain implements NTextBuilder {
             return true;
         }
 
+        @Override
+        public boolean isNewLine() {
+            String s = filteredText();
+            return
+                    s.equals("\n")
+                            || s.equals("\r")
+                            || s.equals("\r\n")
+                    ;
+        }
+
+        @Override
+        public boolean isWhitespace() {
+            return !str.isEmpty() && str.trim().isEmpty();
+        }
 
         @Override
         public List<NPrimitiveText> toCharList() {
-            List<NPrimitiveText> all = new ArrayList<>();
-            for (char child : str.toCharArray()) {
-                all.add(new ImmutableNTextPlain(String.valueOf(child)));
-            }
-            return all;
+            return str.codePoints().mapToObj(c -> new ImmutableNTextPlain(new String(Character.toChars(c))))
+                    .collect(Collectors.toList());
+        }
+
+        @Override
+        public NStream<NPrimitiveText> toCharStream() {
+            return NStream.ofStream(str.codePoints().mapToObj(c -> new ImmutableNTextPlain(new String(Character.toChars(c)))));
         }
 
         @Override
@@ -658,6 +717,24 @@ public class NTextBuilderPlain implements NTextBuilder {
         }
 
         @Override
+        public NText repeatln(int times) {
+            if (times <= 0) {
+                return NText.ofPlain("");
+            }
+            if (times == 1) {
+                return this;
+            }
+            StringBuilder b = new StringBuilder();
+            for (int i = 0; i < times; i++) {
+                if (i > 0) {
+                    b.append("\n");
+                }
+                b.append(str);
+            }
+            return new ImmutableNTextPlain(b.toString());
+        }
+
+        @Override
         public NText concat(NText other) {
             if (other == null) {
                 return this;
@@ -707,5 +784,11 @@ public class NTextBuilderPlain implements NTextBuilder {
         public NPrimitiveText[] toCharArray() {
             return toCharList().toArray(new NPrimitiveText[0]);
         }
+
+        @Override
+        public boolean isString(String anyString) {
+            return anyString != null && anyString.equals(str);
+        }
+
     }
 }
