@@ -46,7 +46,7 @@ public interface NTableCell {
 
     int getY();
 
-    NText getValue();
+    NText getContent();
 
-    NTableCell setValue(NText value);
+    NTableCell setContent(NText content);
 }
