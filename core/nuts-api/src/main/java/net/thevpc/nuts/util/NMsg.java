@@ -28,6 +28,7 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.NExceptions;
 import net.thevpc.nuts.format.NMsgFormattable;
+import net.thevpc.nuts.format.NTextFormattable;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.text.*;
 
@@ -290,6 +291,9 @@ public class NMsg implements NBlankable {
                     o = v;
                 }
             }
+        }
+        if (o instanceof NTextFormattable) {
+            return ((NTextFormattable) o).toText();
         }
         if (o instanceof NMsgFormattable) {
             return ((NMsgFormattable) o).toMsg();
