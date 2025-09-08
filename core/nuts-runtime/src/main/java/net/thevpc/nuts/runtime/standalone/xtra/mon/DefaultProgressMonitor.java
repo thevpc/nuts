@@ -70,36 +70,13 @@ public class DefaultProgressMonitor implements NProgressMonitor {
     @Override
     public void runWith(Runnable runnable) {
         NWorkspaceModel m = NWorkspaceExt.of().getModel();
-        Stack<NProgressMonitor> u = m.currentProgressMonitors.get();
-        if (u == null) {
-            u = new Stack<>();
-            m.currentProgressMonitors.set(u);
-        }
-        u.push(this);
-        start();
-        try {
-            runnable.run();
-            complete();
-        } finally {
-            complete();
-            u.pop();
-        }
+        m.currentProgressMonitors.runWith(this,runnable);
     }
 
     @Override
-    public <T> T callWith(NCallable<T> runnable) {
+    public <T> T callWith(NCallable<T> callable) {
         NWorkspaceModel m = NWorkspaceExt.of().getModel();
-        Stack<NProgressMonitor> u = m.currentProgressMonitors.get();
-        if (u == null) {
-            u = new Stack<>();
-            m.currentProgressMonitors.set(u);
-        }
-        u.push(this);
-        try {
-            return runnable.call();
-        } finally {
-            u.pop();
-        }
+        return m.currentProgressMonitors.callWith(this,callable);
     }
 
     @Override
