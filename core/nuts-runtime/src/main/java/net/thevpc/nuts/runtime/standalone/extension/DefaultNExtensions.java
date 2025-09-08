@@ -10,13 +10,15 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.format.NFormats;
 import net.thevpc.nuts.io.NServiceLoader;
+import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.runtime.standalone.format.NFormatsImpl;
+import net.thevpc.nuts.runtime.standalone.log.DefaultNLogs;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
-import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 import java.net.URL;
@@ -83,22 +85,35 @@ public class DefaultNExtensions implements NExtensions {
     }
 
     public <T extends NComponent, V> NOptional<T> createComponent(Class<T> serviceType, V criteriaType) {
-        switch (serviceType.getName()) {
-            case "net.thevpc.nuts.text.NTexts": {
-                NTexts t = wsModel.textModel.defaultNTexts;
-                if (t == null) {
-                    t = new DefaultNTexts();
-                    wsModel.textModel.defaultNTexts = t;
+        if(wsModel.extensionModel==null){
+            switch (serviceType.getName()) {
+                case "net.thevpc.nuts.text.NTexts": {
+                    NTexts t = wsModel.textModel.defaultNTexts;
+                    if (t == null) {
+                        t = new DefaultNTexts();
+                        wsModel.textModel.defaultNTexts = t;
+                    }
+                    return NOptional.of((T) t);
                 }
-                return NOptional.of((T) t);
-            }
-            case "net.thevpc.nuts.format.NFormats": {
-                NFormats t = wsModel.textModel.defaultNFormats;
-                if (t == null) {
-                    t = new NFormatsImpl();
-                    wsModel.textModel.defaultNFormats = t;
+                case "net.thevpc.nuts.format.NFormats": {
+                    NFormats t = wsModel.textModel.defaultNFormats;
+                    if (t == null) {
+                        t = new NFormatsImpl();
+                        wsModel.textModel.defaultNFormats = t;
+                    }
+                    return NOptional.of((T) t);
                 }
-                return NOptional.of((T) t);
+                case "net.thevpc.nuts.log.NLogs": {
+                    NLogs t = wsModel.textModel.defaultNLogs;
+                    if (t == null) {
+                        t = new DefaultNLogs();
+                        wsModel.textModel.defaultNLogs = t;
+                    }
+                    return NOptional.of((T) t);
+                }
+                default:{
+                    throw NExceptions.ofSafeUnexpectedException(NMsg.ofC("Workspace is still booting and component container is not yet available. but you asked for %s",serviceType.getName()));
+                }
             }
         }
         return wsModel.extensionModel.createSupported(serviceType, criteriaType);
