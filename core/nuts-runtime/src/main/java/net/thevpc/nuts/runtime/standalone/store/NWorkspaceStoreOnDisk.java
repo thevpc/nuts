@@ -294,7 +294,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
 
     @Override
     public Iterator<NVersion> searchInstalledVersions(NId id) {
-        NWorkspace workspace = NWorkspace.of();
+//        NWorkspace workspace = NWorkspace.of();
         NPath installFolder
                 = NPath.ofIdStore(id.builder().setVersion("ANY").build(), NStoreType.CONF).getParent();
         if (installFolder.isDirectory()) {
