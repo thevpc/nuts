@@ -59,16 +59,9 @@ import java.util.logging.Level;
  * Created by vpc on 2/1/17.
  */
 public class DefaultNSession implements Cloneable, NSession, NCopiable {
-    public static final InheritableThreadLocal<Stack<NSession>> CURRENT_SESSION = new InheritableThreadLocal<>();
-
-    //    protected NutsIterableFormat iterFormatHandler = null;
-//    protected NutsIterableOutput iterFormat = null;
     protected NWorkspace workspace = null;
     protected List<String> outputFormatOptions = new ArrayList<>();
     private NTerminal terminal;
-    //    private NPropertiesHolder sharedProperties = new NPropertiesHolder();
-//    private NPropertiesHolder transitiveProperties = new NPropertiesHolder();
-//    private NPropertiesHolder refProperties = new NPropertiesHolder();
     private NPropertiesHolder properties = new NPropertiesHolder();
     private Map<Class, LinkedHashSet<NListener>> listeners = new HashMap<>();
     private String dependencySolver;
@@ -128,23 +121,11 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
 //    }
 
     @Override
-    public void runWith(NRunnable runnable) {
+    public void runWith(Runnable runnable) {
         if (runnable != null) {
             NScopedWorkspace.runWith(workspace, () -> {
-                Stack<NSession> nSessions = NWorkspaceExt.of().sessionScopes();
-                if (!nSessions.isEmpty()) {
-                    NSession l = nSessions.peek();
-                    if (l == this) {
-                        runnable.run();
-                        return;
-                    }
-                }
-                try {
-                    nSessions.push(this);
-                    runnable.run();
-                } finally {
-                    nSessions.pop();
-                }
+                NScopedValue<NSession> nSessions = NWorkspaceExt.of().sessionScopes();
+                nSessions.runWith(DefaultNSession.this, runnable);
             });
         }
     }
@@ -152,20 +133,9 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     @Override
     public <T> T callWith(NCallable<T> callable) {
         if (callable != null) {
-            return NScopedWorkspace.callWith0(workspace, () -> {
-                Stack<NSession> nSessions = NWorkspaceExt.of().sessionScopes();
-                if (!nSessions.isEmpty()) {
-                    NSession l = nSessions.peek();
-                    if (l == this) {
-                        return callable.call();
-                    }
-                }
-                try {
-                    nSessions.push(this);
-                    return callable.call();
-                } finally {
-                    nSessions.pop();
-                }
+            return NScopedWorkspace.callWith(workspace, () -> {
+                NScopedValue<NSession> nSessions = NWorkspaceExt.of().sessionScopes();
+                return nSessions.callWith(DefaultNSession.this, callable);
             });
         }
         return null;
