@@ -89,51 +89,60 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
     @Override
     public void print(NPrintStream w) {
         Object value = getValue();
-        if (value instanceof NTableModel) {
-            NTableFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
-        } else if (value instanceof NTreeNode) {
-            NTreeFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
-        } else if (value instanceof Properties) {
-            NPropertiesFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
-        } else if (value instanceof NElement) {
-            ew().write(value, w);
-        } else if (value instanceof org.w3c.dom.Document) {
-            XmlUtils.writeDocument((org.w3c.dom.Document) value, new StreamResult(w.asPrintStream()), false, true);
-        } else if (value instanceof org.w3c.dom.Element) {
-            Element elem = (org.w3c.dom.Element) value;
-            Document doc = XmlUtils.createDocument();
-            doc.appendChild(doc.importNode(elem, true));
-            XmlUtils.writeDocument(doc, new StreamResult(w.asPrintStream()), false, false);
-        } else {
-            NElements element = NElements.of();
-            Object newVal = element.destruct(value);
-            Flags f = new Flags();
-            collectFlags(newVal, f, 300);
-            if (f.map) {
-                if (f.msg || f.formattable) {
-                    NTreeFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
-                } else if (f.elems) {
-                    ew().write(value,w);
-                } else {
-                    //defaults to elements
-                    ew().write(value,w);
-                }
-            } else if (f.list) {
-                if (f.msg || f.formattable) {
-                    NTableFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
-                    //table.configure(true, "--no-header", "--border=spaces");
-                } else if (f.elems) {
-                    ew().write(value,w);
-                } else {
-                    //defaults to elements
-                    ew().write(value,w);
-                }
-            } else {
-                NPrintStream out = getValidPrintStream(w);
-                out.print(NText.of(value));
-                out.flush();
-            }
+        NText t = NText.of(value);
+        {
+            NPrintStream out = getValidPrintStream(w);
+            out.print(t);
+            out.flush();
         }
+//        if(true){
+//            return;
+//        }
+//        if (value instanceof NTableModel) {
+//            NTableFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+//        } else if (value instanceof NTreeNode) {
+//            NTreeFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+//        } else if (value instanceof Properties) {
+//            NPropertiesFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+//        } else if (value instanceof NElement) {
+//            ew().write(value, w);
+//        } else if (value instanceof org.w3c.dom.Document) {
+//            XmlUtils.writeDocument((org.w3c.dom.Document) value, new StreamResult(w.asPrintStream()), false, true);
+//        } else if (value instanceof org.w3c.dom.Element) {
+//            Element elem = (org.w3c.dom.Element) value;
+//            Document doc = XmlUtils.createDocument();
+//            doc.appendChild(doc.importNode(elem, true));
+//            XmlUtils.writeDocument(doc, new StreamResult(w.asPrintStream()), false, false);
+//        } else {
+//            NElements element = NElements.of();
+//            Object newVal = element.destruct(value);
+//            Flags f = new Flags();
+//            collectFlags(newVal, f, 300);
+//            if (f.map) {
+//                if (f.msg || f.formattable) {
+//                    NTreeFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+//                } else if (f.elems) {
+//                    ew().write(value,w);
+//                } else {
+//                    //defaults to elements
+//                    ew().write(value,w);
+//                }
+//            } else if (f.list) {
+//                if (f.msg || f.formattable) {
+//                    NTableFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+//                    //table.configure(true, "--no-header", "--border=spaces");
+//                } else if (f.elems) {
+//                    ew().write(value,w);
+//                } else {
+//                    //defaults to elements
+//                    ew().write(value,w);
+//                }
+//            } else {
+//                NPrintStream out = getValidPrintStream(w);
+//                out.print(NText.of(value));
+//                out.flush();
+//            }
+//        }
     }
 
     private NElementWriter ew() {
