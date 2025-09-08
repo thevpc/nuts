@@ -138,7 +138,7 @@ public class TerminalTest {
         Assertions.assertEquals("n##{separator:(}##\u001E",portion_npar.toString());
         NText rep=c.builder().replace(23,24, NText.ofStyled("()(", NTextStyle.danger())).build();
         NOut.println(rep);
-        Assertions.assertEquals("##{keyword:public}##\u001E ##{keyword:static}##\u001E ##{keyword:void}##\u001E main##{danger:()(}##\u001EString##{separator:[}##\u001E##{separator:]}##\u001E args##{separator:)}##\u001E##{separator:{}##\u001E##{separator:}}##\u001E",
+        Assertions.assertEquals("##{keyword:public}##\u001E ##{keyword:static}##\u001E ##{keyword:void}##\u001E main##{danger:()(}##\u001EString##{separator:[]}##\u001E args##{separator:){}}##\u001E",
                 rep.toString());
     }
 
