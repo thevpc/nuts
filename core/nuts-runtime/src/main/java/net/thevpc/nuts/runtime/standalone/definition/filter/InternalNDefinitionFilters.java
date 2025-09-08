@@ -17,7 +17,6 @@ public class InternalNDefinitionFilters extends InternalNTypedFilters<NDefinitio
 
     public InternalNDefinitionFilters(NWorkspace workspace) {
         super(NDefinitionFilter.class);
-//        localModel = model.getShared(LocalModel.class, () -> new LocalModel(ws));
     }
 
     @Override
@@ -246,7 +245,7 @@ public class InternalNDefinitionFilters extends InternalNTypedFilters<NDefinitio
 
     @Override
     public NDefinitionFilter byVersion(String version) {
-        return new NDefinitionFilterByVersion(version);
+        return new NDefinitionFilterByVersion(version,null);
     }
 
     @Override
