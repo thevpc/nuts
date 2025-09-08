@@ -682,7 +682,6 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         return new AbstractNSearchVersionsRepositoryCmd(this) {
             @Override
             public NSearchVersionsRepositoryCmd run() {
-//                if (getFilter() instanceof NInstallStatusDefinitionFilter) {
                 final NVersionFilter filter0 = getId().getVersion().filter();
                 result = NStream.ofIterator(_wstore().searchInstalledVersions(getId()))
                         .map(vv -> {
@@ -692,12 +691,6 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                             }
                             return null;
                         }).nonNull().redescribe(NDescribables.ofDesc("FileToVersion")).iterator();
-//                } else {
-//                    this.result = NIteratorBuilder.of(deployments.searchVersions(getId(), getFilter(), true))
-//                            .named(NElements.ofUplet("searchVersionsInMain"))
-//                            .build()
-//                    ;
-//                }
                 return this;
             }
         };
