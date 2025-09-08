@@ -26,6 +26,8 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.core.test.borrowed.MavenComparableVersion;
+import net.thevpc.nuts.core.test.borrowed.SpringComparableVersion;
 import net.thevpc.nuts.reserved.parser.NReservedVersionIntervalParser;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.*;
@@ -36,7 +38,7 @@ import org.junit.jupiter.api.*;
 public class VersionTest {
     @BeforeAll
     public static void init() {
-        TestUtils.openNewTestWorkspace();
+//        TestUtils.openNewTestWorkspace();
     }
 
     @Test
@@ -90,7 +92,8 @@ public class VersionTest {
     public void test10() {
         NVersion v1 = NVersion.get("1.2-preview").get();
         NVersion v2 = NVersion.get("1.2").get();
-        Assertions.assertTrue(v1.compareTo(v2)<0);
+        // preview is unsupported qualifier so it is after final
+        Assertions.assertTrue(v1.compareTo(v2)>0);
     }
 
     @Test
@@ -102,13 +105,13 @@ public class VersionTest {
 
     @Test
     public void test12() {
-        Assertions.assertTrue(DefaultNVersion.compareVersions("1.2-preview","1.2.1")<0);
-        Assertions.assertTrue(DefaultNVersion.compareVersions("1.2","1.2.1")<0);
-        Assertions.assertTrue(DefaultNVersion.compareVersions("1.2-preview","1.2-rc")>0);
-        Assertions.assertTrue(DefaultNVersion.compareVersions("1.2-alpha","1.2-beta")<0);
-        Assertions.assertTrue(DefaultNVersion.compareVersions("1.2-rc","1.2-ga")<0);
-        Assertions.assertTrue(DefaultNVersion.compareVersions("1.2-gamma","1.2-Gamma")==0);
-        Assertions.assertTrue(DefaultNVersion.compareVersions("1.2-gamma","1.2-hecta")<0);
+        Assertions.assertTrue(NVersion.of("1.2-preview").compareTo("1.2.1")<0);
+        Assertions.assertTrue(NVersion.of("1.2").compareTo("1.2.1")<0);
+        Assertions.assertTrue(NVersion.of("1.2-preview").compareTo("1.2-rc")>0);
+        Assertions.assertTrue(NVersion.of("1.2-alpha").compareTo("1.2-beta")<0);
+        Assertions.assertTrue(NVersion.of("1.2-rc").compareTo("1.2-ga")<0);
+        Assertions.assertTrue(NVersion.of("1.2-gamma").compareTo("1.2-Gamma")==0);
+        Assertions.assertTrue(NVersion.of("1.2-gamma").compareTo("1.2-hecta")<0);
     }
 
     @Test
@@ -208,13 +211,125 @@ public class VersionTest {
 
     @Test
     public void test20() {
-        new NReservedVersionIntervalParser().parse(",,").get();
+        new NReservedVersionIntervalParser(null).parse(",,").get();
     }
 
     @Test
     public void test21() {
         NVersion r = NVersion.get("0.8.5.0").get().inc(-1, 10);
         Assertions.assertEquals(r.toString(),"0.8.5.10");
+    }
+
+    @Test
+    public void test22() {
+        NVersion v = NVersion.of("1.2.3.Final");
+        Assertions.assertTrue(v.filter().acceptVersion(v));
+    }
+
+
+    @Test
+    public void placeholderTest() {
+        //this is a placeholder
+    }
+
+
+    @Test
+    public void test23b() {
+        MavenComparableVersion e = new MavenComparableVersion("1.2.hello.hella");
+    }
+
+    @Test
+    public void test23() {
+        Assertions.assertTrue(_compare(NVersion.of("1.2.3"), NVersion.of("1.2.3.Final"))==0);
+        Assertions.assertTrue(_compare(NVersion.of("1.2.3"), NVersion.of("1.2.3.beta"))>0);
+        Assertions.assertTrue(_compare(NVersion.of("1.2.3"), NVersion.of("1.2.3.SNAPSHOT"))>0);
+        Assertions.assertTrue(_compare(NVersion.of("1.2.3"), NVersion.of("1.2.3.SOMETHING"))<0);
+        Assertions.assertTrue(_compare(NVersion.of("1.0-alpha"), NVersion.of("1.0-beta")) < 0);
+        Assertions.assertTrue(_compare(NVersion.of("1.0-beta"), NVersion.of("1.0-milestone")) < 0);
+        Assertions.assertTrue(_compare(NVersion.of("1.0-milestone"), NVersion.of("1.0-rc")) < 0);
+        Assertions.assertTrue(_compare(NVersion.of("1.0-rc"), NVersion.of("1.0-SNAPSHOT")) < 0);
+        Assertions.assertTrue(_compare(NVersion.of("1.0-SNAPSHOT"), NVersion.of("1.0")) < 0); // empty=final
+        Assertions.assertTrue(_compare(NVersion.of("1.0"), NVersion.of("1.0-sp")) < 0);
+        Assertions.assertTrue(_compare(NVersion.of("1.0.1"), NVersion.of("1.0.0-alpha")) > 0);
+        Assertions.assertTrue(_compare(NVersion.of("1.0.0"), NVersion.of("1.0.0-alpha")) > 0);
+        Assertions.assertTrue(_compare(NVersion.of("1.0.0"), NVersion.of("1.0.0-SNAPSHOT")) > 0);
+        Assertions.assertTrue(_compare(NVersion.of("1.0.0-SNAPSHOT"), NVersion.of("1.0.0")) < 0);
+        Assertions.assertTrue(_compare(NVersion.of("1.0.0-alpha-SNAPSHOT"), NVersion.of("1.0.0-alpha")) < 0);
+        Assertions.assertTrue(_compare(NVersion.of("1.0.0-zzz"), NVersion.of("1.0.0-aaa")) > 0);
+        Assertions.assertTrue(_compare(NVersion.of("1.0.0-zzz"), NVersion.of("1.0.0")) > 0);
+    }
+    private int _compareIgnoreMaven(NVersion v1, NVersion v2) {
+        return _compare(v1,v2,false);
+    }
+
+    private int _compare(NVersion v1, NVersion v2) {
+        return _compare(v1,v2,true);
+    }
+    private int _compare(NVersion v1, NVersion v2,boolean error) {
+        int x=v1.compareTo(v2);
+        int y=v2.compareTo(v1);
+        Assertions.assertEquals(x,-y);
+        int s=new SpringComparableVersion(v1.toString()).compareTo(new SpringComparableVersion(v2.toString()));
+        int m=new MavenComparableVersion(v1.toString()).compareTo(new MavenComparableVersion(v2.toString()));
+        if(Math.signum(s)!=Math.signum(m)){
+            System.out.println("spring has a bad implementation  "+v1+" "+(s<0?'<':s>0?'>':'=')+" "+v2+" but maven says that "+v1+" "+(m<0?'<':m>0?'>':'=')+" "+v2);
+        }
+        if(Math.signum(x)!=Math.signum(m)){
+            System.out.println("you said that "+v1+" "+(x<0?'<':x>0?'>':'=')+" "+v2+" but maven says that "+v1+" "+(m<0?'<':m>0?'>':'=')+" "+v2);
+        }
+        if(error){
+            Assertions.assertEquals(Math.signum(x),Math.signum(m));
+        }
+        return x;// unknown < empty? Maven treats empty > unknown
+    }
+
+    @Test
+    public void test24() {
+        Nuts.require();
+        Assertions.assertTrue(NVersion.of("[1.2.3,1.2.4[").filter().acceptVersion(NVersion.of("1.2.3.Final")));
+        Assertions.assertFalse(NVersion.of("[1.2.3,1.2.4[").filter().acceptVersion(NVersion.of("1.2.3.beta")));
+        Assertions.assertFalse(NVersion.of("[1.2.3,1.2.4[").filter().acceptVersion(NVersion.of("1.2.3.SNAPSHOT")));
+        Assertions.assertTrue(NVersion.of("[1.2.3,1.2.4[").filter().acceptVersion(NVersion.of("1.2.3.SOMETHING"))); // SOMETHING is after final
+        Assertions.assertTrue(NVersion.of("[1.2.3,1.2.4]").filter().acceptVersion(NVersion.of("1.2.3")));
+        Assertions.assertTrue(NVersion.of("[1.2.3,1.2.4)").filter().acceptVersion(NVersion.of("1.2.3")));
+        Assertions.assertFalse(NVersion.of("[1.2.3,1.2.4)").filter().acceptVersion(NVersion.of("1.2.4")));
+        Assertions.assertTrue(NVersion.of("[1.2.3,1.2.4)").filter().acceptVersion(NVersion.of("1.2.3.1")));
+        Assertions.assertTrue(NVersion.of("[1.0,1.1],[1.2,1.3)").filter().acceptVersion(NVersion.of("1.0.5")));
+        Assertions.assertFalse(NVersion.of("[1.0,1.1],[1.2,1.3)").filter().acceptVersion(NVersion.of("1.1.5")));
+        Assertions.assertTrue(NVersion.of("[1.0,1.1],[1.2,1.3)").filter().acceptVersion(NVersion.of("1.2.0")));
+
+    }
+
+    @Test
+    public void test25() {
+        Assertions.assertEquals("1.0.0", NVersion.of("1.0.0-beta").toCanonical().getValue());
+        Assertions.assertEquals("1.2.3", NVersion.of("1.2.3.SNAPSHOT").toCanonical().getValue());
+    }
+
+    @Test
+    public void test26() {
+        Assertions.assertTrue(_compare(NVersion.of("1.0-rc1"), NVersion.of("1.0-rc2")) < 0);
+        Assertions.assertTrue(_compare(NVersion.of("1.0.0-RC1"), NVersion.of("1.0.0-rc2")) < 0); // case-insensitive
+    }
+
+    @Test
+    public void test27() {
+        Assertions.assertTrue(_compare(NVersion.of("1.01.0"), NVersion.of("1.1.0")) == 0);
+        Assertions.assertTrue(_compare(NVersion.of("1.0.0"), NVersion.of("1.0.00")) == 0);
+    }
+
+    @Test
+    public void test28() {
+        Assertions.assertTrue(_compare(NVersion.of("1.final.alpha"), NVersion.of("1.alpha")) == 0);
+        Assertions.assertTrue(_compare(NVersion.of("1.final"), NVersion.of("1")) == 0); // final = empty
+        Assertions.assertTrue(_compare(NVersion.of("1.final.final"), NVersion.of("1.final")) == 0);
+        Assertions.assertTrue(_compare(NVersion.of("1.SNAPSHOT.alpha"), NVersion.of("1-SNAPSHOT")) < 0);
+    }
+
+
+    @Test
+    public void testMavenIncompatible() {
+        Assertions.assertTrue(_compareIgnoreMaven(NVersion.of("1.alpha.final"), NVersion.of("1.alpha")) == 0);
     }
 
 
