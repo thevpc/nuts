@@ -58,5 +58,28 @@ public class YamlTest {
                 .setCompact(false)
                 .writeln(e);
     }
+    @Test
+    public void test2() throws Exception {
+        String ee = NElement.ofString("a").toString();
+        NElement e = NElementParser.ofYaml().parse("\n" +
+                "id: changelog070\n" +
+                "title: Version 0.7.2.0 released\n" +
+                "sub_title: Publishing 0.7.2.0 version\n" +
+                "author: thevpc\n" +
+                "author_title: Criticize the world Casually...\n" +
+                "author_url: https://github.com/thevpc\n" +
+                "author_image_url: https://avatars3.githubusercontent.com/u/10106809?s=460&u=28d1736bdf0b6e6f81981b3a2ebbd2db369b25c8&v=4\n" +
+                "tags: [nuts]\n" +
+                "publish_date: 2020-09-23", NElement.class);
+        NElementWriter.ofJson()
+                .setCompact(false)
+                .writeln(e);
+        NElementWriter.ofTson()
+                .setCompact(false)
+                .writeln(e);
+        NElementWriter.ofYaml()
+                .setCompact(false)
+                .writeln(e);
+    }
 
 }
