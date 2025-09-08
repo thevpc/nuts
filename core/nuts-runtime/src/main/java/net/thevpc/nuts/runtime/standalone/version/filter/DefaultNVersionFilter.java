@@ -74,12 +74,12 @@ public class DefaultNVersionFilter extends AbstractVersionFilter implements NExp
         super(NFilterOp.CUSTOM);
     }
 
-    public static NOptional<NVersionFilter> parse(String version) {
+    public static NOptional<NVersionFilter> parse(String version,NVersionComparator versionComparator) {
         if (NBlankable.isBlank(version) || "*".equals(version)) {
             return NOptional.of(NVersionFilters.of().always());
         }
 
-        NOptional<List<NVersionInterval>> r = NVersionInterval.ofList(version);
+        NOptional<List<NVersionInterval>> r = NVersionInterval.ofList(version,versionComparator);
         return r.map(
                 x -> {
                     DefaultNVersionFilter dd = new DefaultNVersionFilter();
