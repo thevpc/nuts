@@ -43,31 +43,27 @@ public class DefaultNVersionInterval implements NVersionInterval, Serializable {
     private final boolean includeUpperBound;
     private final String lowerBound;
     private final String upperBound;
+    private NVersionComparator versionComparator;
 
-    public DefaultNVersionInterval(boolean inclusiveLowerBoundary, boolean inclusiveUpperBoundary, String min, String max) {
+    public DefaultNVersionInterval(boolean inclusiveLowerBoundary, boolean inclusiveUpperBoundary, String min, String max,NVersionComparator versionComparator) {
         this.includeLowerBound = inclusiveLowerBoundary;
         this.includeUpperBound = inclusiveUpperBoundary;
         this.lowerBound = NStringUtils.trimToNull(min);
         this.upperBound = NStringUtils.trimToNull(max);
+        this.versionComparator = versionComparator;
     }
 
     @Override
     public boolean acceptVersion(NVersion version) {
-        NVersion baseVersion = null;
+        NVersionComparator versionComparator=this.versionComparator==null?NVersionComparator.ofMaven() : this.versionComparator;
         if (!NBlankable.isBlank(lowerBound) && !lowerBound.equals(NConstants.Versions.LATEST) && !lowerBound.equals(NConstants.Versions.RELEASE)) {
-            if(baseVersion==null){
-                baseVersion = version.baseVersion();
-            }
-            int t = baseVersion.compareTo(lowerBound);
+            int t = versionComparator.compare(version,NVersion.of(lowerBound));
             if ((includeLowerBound && t < 0) || (!includeLowerBound && t <= 0)) {
                 return false;
             }
         }
         if (!NBlankable.isBlank(upperBound) && !upperBound.equals(NConstants.Versions.LATEST) && !upperBound.equals(NConstants.Versions.RELEASE)) {
-            if(baseVersion==null){
-                baseVersion = version.baseVersion();
-            }
-            int t = baseVersion.compareTo(upperBound);
+            int t = versionComparator.compare(version,NVersion.of(upperBound));
             return (!includeUpperBound || t <= 0) && (includeUpperBound || t < 0);
         }
         return true;
