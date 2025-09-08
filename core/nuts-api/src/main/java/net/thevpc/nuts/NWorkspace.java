@@ -61,7 +61,7 @@ public interface NWorkspace extends NWorkspaceBase, NEnvContext, NComponent, Clo
         return NScopedWorkspace.currentWorkspace();
     }
 
-    static void run(NRunnable runnable) {
+    static void run(Runnable runnable) {
         NScopedWorkspace.runWith(runnable);
     }
 
@@ -79,7 +79,7 @@ public interface NWorkspace extends NWorkspaceBase, NEnvContext, NComponent, Clo
 
     boolean isSharedInstance();
 
-    void runWith(NRunnable runnable);
+    void runWith(Runnable runnable);
 
     <T> T callWith(NCallable<T> callable);
 
