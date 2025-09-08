@@ -33,8 +33,8 @@ import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStream;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -154,4 +154,122 @@ public interface NTexts extends NComponent {
     NOptional<NTextFormat<Number>> createNumberTextFormat(String type, String pattern);
 
     NOptional<NStringFormat<Number>> createNumberStringFormat(String type, String pattern);
+
+    public static NText[] trimLeft(NText[] value) {
+        if (value == null) {
+            return new NText[0];
+        }
+        int len = value.length;
+        if (len == 0) {
+            return value;
+        }
+        int st = 0;
+        while ((st < len) && (value[st].isWhitespace())) {
+            st++;
+        }
+        if (st > 0) {
+            return Arrays.copyOfRange(value,st, len);
+        }
+        return value;
+    }
+
+    public static NText[] trimRight(NText[] value) {
+        if (value == null) {
+            return new NPrimitiveText[0];
+        }
+        int len = value.length;
+        if (len == 0) {
+            return value;
+        }
+        int st = len;
+        while ((st > 0) && (value[st - 1].isWhitespace())) {
+            st--;
+        }
+        if (st < len) {
+            return Arrays.copyOfRange(value,0, st);
+        }
+        return value;
+    }
+
+    public static NText[] trim(NText[] value) {
+        if (value == null || value.length == 0) {
+            return new NPrimitiveText[0];
+        }
+
+        int start = 0;
+        int end = value.length - 1;
+
+        while (start <= end && value[start].isWhitespace()) {
+            start++;
+        }
+
+        while (end >= start && value[end].isWhitespace()) {
+            end--;
+        }
+
+        if (start == 0 && end == value.length - 1) {
+            return value;
+        }
+
+        return Arrays.copyOfRange(value, start, end + 1);
+    }
+
+    public static NPrimitiveText[] trim(NPrimitiveText[] value) {
+        if (value == null || value.length == 0) {
+            return new NPrimitiveText[0];
+        }
+
+        int start = 0;
+        int end = value.length - 1;
+
+        while (start <= end && value[start].isWhitespace()) {
+            start++;
+        }
+
+        while (end >= start && value[end].isWhitespace()) {
+            end--;
+        }
+
+        if (start == 0 && end == value.length - 1) {
+            return value;
+        }
+
+        return Arrays.copyOfRange(value, start, end + 1);
+    }
+
+    public static NPrimitiveText[] trimLeft(NPrimitiveText[] value) {
+        if (value == null) {
+            return new NPrimitiveText[0];
+        }
+        int len = value.length;
+        if (len == 0) {
+            return value;
+        }
+        int st = 0;
+        while ((st < len) && (value[st].isWhitespace())) {
+            st++;
+        }
+        if (st > 0) {
+            return Arrays.copyOfRange(value,st, len);
+        }
+        return value;
+    }
+
+    public static NPrimitiveText[] trimRight(NPrimitiveText[] value) {
+        if (value == null) {
+            return new NPrimitiveText[0];
+        }
+        int len = value.length;
+        if (len == 0) {
+            return value;
+        }
+        int st = len;
+        while ((st > 0) && (value[st - 1].isWhitespace())) {
+            st--;
+        }
+        if (st < len) {
+            return Arrays.copyOfRange(value,0, st);
+        }
+        return value;
+    }
 }
