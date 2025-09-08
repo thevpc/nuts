@@ -31,6 +31,7 @@ import net.thevpc.nuts.text.NPrimitiveText;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextAnchor;
 import net.thevpc.nuts.text.NTextType;
+import net.thevpc.nuts.util.NStream;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,8 +101,13 @@ public class DefaultNTextAnchor extends NTextSpecialBase implements NTextAnchor 
     }
 
     @Override
-    public List<NPrimitiveText> toCharList() {
-        return new ArrayList<>();
+    public NStream<NPrimitiveText> toCharStream() {
+        return NStream.ofEmpty();
+    }
+
+    @Override
+    public boolean isWhitespace() {
+        return false;
     }
 
     @Override
