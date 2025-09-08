@@ -26,6 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.util.NStream;
 
 import java.util.*;
 
@@ -142,6 +143,34 @@ public class DefaultNTextList extends AbstractNText implements NTextList {
     @Override
     public NText immutable() {
         return this;
+    }
+
+
+    @Override
+    public NStream<NPrimitiveText> toCharStream() {
+        if(children.isEmpty()) {
+            return NStream.ofEmpty();
+        }
+        NStream<NPrimitiveText> s=children.get(0).toCharStream();
+        for (int i = 1; i <children.size(); i++) {
+            s=s.concat(children.get(i).toCharStream());
+        }
+        return s;
+    }
+
+    @Override
+    public boolean isWhitespace() {
+        boolean hasContent = false;
+        for (NText child : children) {
+            if (child.isEmpty()) {
+                continue;
+            }
+            if (!child.isWhitespace()) {
+                return false;
+            }
+            hasContent = true;
+        }
+        return hasContent;
     }
 
     @Override
