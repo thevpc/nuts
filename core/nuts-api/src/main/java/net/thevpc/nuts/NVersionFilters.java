@@ -34,8 +34,11 @@ import net.thevpc.nuts.util.NOptional;
  */
 public interface NVersionFilters extends NTypedFilters<NVersionFilter> {
     static NVersionFilters of() {
-       return NExtensions.of(NVersionFilters.class);
+        return NExtensions.of(NVersionFilters.class);
     }
 
     NOptional<NVersionFilter> byValue(String version);
+
+    NOptional<NVersionFilter> byValue(String version, NVersionComparator comparator);
+    NVersionFilter parse(String expression, NVersionComparator versionComparator);
 }
