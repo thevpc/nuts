@@ -7,7 +7,9 @@ import net.thevpc.nuts.util.NBlankable;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class AbstractNText implements NText {
 
@@ -78,6 +80,11 @@ public abstract class AbstractNText implements NText {
     }
 
     @Override
+    public List<NPrimitiveText> toCharList() {
+        return toCharStream().collect(Collectors.toList());
+    }
+
+    @Override
     public NText repeat(int times) {
         if (times <= 0) {
             return NText.ofBlank();
@@ -87,6 +94,24 @@ public abstract class AbstractNText implements NText {
         }
         NTextBuilder b = NTextBuilder.of();
         for (int i = 0; i < times; i++) {
+            b.append(this);
+        }
+        return b.build();
+    }
+
+    @Override
+    public NText repeatln(int times) {
+        if (times <= 0) {
+            return NText.ofBlank();
+        }
+        if (times == 1) {
+            return this;
+        }
+        NTextBuilder b = NTextBuilder.of();
+        for (int i = 0; i < times; i++) {
+            if(i>0){
+                b.append(NText.ofNewLine());
+            }
             b.append(this);
         }
         return b.build();
@@ -122,5 +147,32 @@ public abstract class AbstractNText implements NText {
     @Override
     public NNormalizedText normalize(NTextTransformer transformer, NTextTransformConfig config) {
         return NTexts.of().normalize(this, transformer, config);
+    }
+
+    @Override
+    public boolean isString(String anyString) {
+        return anyString != null && anyString.equals(filteredText());
+    }
+
+    @Override
+    public boolean isNewLine() {
+        Iterator<NPrimitiveText> it = toCharStream().iterator();
+        if (!it.hasNext()) {
+            return false;
+        }
+        String f = it.next().filteredText();
+        if (f.equals("\n")) {
+            return !it.hasNext();
+        }
+        if (!f.equals("\r")) {
+            return false;
+        }
+        if (!it.hasNext()) {
+            return true;
+        }
+        if (it.next().filteredText().equals("\n")) {
+            return !it.hasNext();
+        }
+        return false;
     }
 }
