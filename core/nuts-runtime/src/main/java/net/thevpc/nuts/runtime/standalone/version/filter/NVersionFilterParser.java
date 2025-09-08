@@ -11,8 +11,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class NVersionFilterParser extends NTypedFiltersParser<NVersionFilter> {
-    public NVersionFilterParser(String str) {
+    private NVersionComparator comparator;
+    public NVersionFilterParser(String str,NVersionComparator comparator) {
         super(str);
+        this.comparator=comparator;
     }
 
     @Override
@@ -53,7 +55,7 @@ public class NVersionFilterParser extends NTypedFiltersParser<NVersionFilter> {
         if (v != null) {
             List<NVersionInterval> intervals = v.intervals().orNull();
             if (intervals != null && intervals.size() > 0) {
-                return new NVersionIntervalsVersionFilter(v);
+                return new NVersionIntervalsVersionFilter(v,comparator);
             }
         }
         return super.parse();
@@ -61,10 +63,12 @@ public class NVersionFilterParser extends NTypedFiltersParser<NVersionFilter> {
 
     private class NVersionIntervalsVersionFilter extends AbstractVersionFilter {
         private final NVersion version;
+        private final NVersionComparator versionComparator;
 
-        public NVersionIntervalsVersionFilter(NVersion version) {
+        public NVersionIntervalsVersionFilter(NVersion version,NVersionComparator versionComparator) {
             super(NFilterOp.CUSTOM);
             this.version = version;
+            this.versionComparator = versionComparator;
         }
 
         @Override
@@ -74,7 +78,7 @@ public class NVersionFilterParser extends NTypedFiltersParser<NVersionFilter> {
 
         @Override
         public boolean acceptVersion(NVersion version) {
-            for (NVersionInterval i : version.intervals().orElse(new ArrayList<>())) {
+            for (NVersionInterval i : version.intervals(versionComparator).orElse(new ArrayList<>())) {
                 if (i.acceptVersion(version)) {
                     return true;
                 }
@@ -84,7 +88,7 @@ public class NVersionFilterParser extends NTypedFiltersParser<NVersionFilter> {
 
         @Override
         public String toString() {
-            List<NVersionInterval> intervals = version.intervals().orElse(new ArrayList<>());
+            List<NVersionInterval> intervals = version.intervals(versionComparator).orElse(new ArrayList<>());
             StringBuffer sb=new StringBuffer();
             for (int i = 0; i < intervals.size(); i++) {
                 if(i>0){
