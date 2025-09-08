@@ -1,5 +1,6 @@
 package net.thevpc.nuts.reserved;
 
+import net.thevpc.nuts.NScopedValue;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NCallable;
 import net.thevpc.nuts.util.NMsg;
@@ -9,7 +10,7 @@ import net.thevpc.nuts.util.NRunnable;
 import java.util.Stack;
 
 public class NScopedWorkspace {
-    public static InheritableThreadLocal<Stack<NWorkspace>> workspaceScopes = new InheritableThreadLocal<>();
+    public static NScopedValue<NWorkspace> workspaceScopes = new NScopedValue<>();
     public static NWorkspace defaultSharedWorkspaceInstance;
     public static InheritableThreadLocal<NWorkspace> threadSharedWorkspaceInstanceScopes =new InheritableThreadLocal<>();
 
@@ -36,8 +37,8 @@ public class NScopedWorkspace {
     }
 
     public static NOptional<NWorkspace> currentWorkspace() {
-        Stack<NWorkspace> workspaces = workspaceScopes();
-        if (workspaces.isEmpty()) {
+        NWorkspace ws = workspaceScopes.get();
+        if (ws==null) {
             NWorkspace shw = defaultSharedWorkspaceInstance;
             if(shw !=null){
                 return NOptional.of(shw);
@@ -45,21 +46,10 @@ public class NScopedWorkspace {
             NMsg emptyMessage = NMsg.ofPlain("missing workspace in the current context. If not sure what does this mean, just call 'Nuts.require()'");
             return NOptional.ofEmpty(emptyMessage);
         }
-        NWorkspace w = workspaces.peek();
-        return NOptional.of(w);
+        return NOptional.of(ws);
     }
 
-    private static Stack<NWorkspace> workspaceScopes() {
-        InheritableThreadLocal<Stack<NWorkspace>> ss = workspaceScopes;
-        Stack<NWorkspace> workspaces = ss.get();
-        if (workspaces == null) {
-            workspaces = new Stack<>();
-            ss.set(workspaces);
-        }
-        return workspaces;
-    }
-
-    public static void runWith(NRunnable runnable) {
+    public static void runWith(Runnable runnable) {
         runWith(currentWorkspace().get(), runnable);
     }
 
@@ -67,46 +57,22 @@ public class NScopedWorkspace {
         return callWith(currentWorkspace().get(), callable);
     }
 
-    public static void runWith(NWorkspace ws, NRunnable runnable) {
+    public static void runWith(NWorkspace ws, Runnable runnable) {
         if (runnable != null) {
-            Stack<NWorkspace> workspaceScopes = workspaceScopes();
-            if (!workspaceScopes.isEmpty()) {
-                NWorkspace l = workspaceScopes.peek();
-                if (l == ws) {
-                    runnable.run();
-                    return;
-                }
-            }
-            try {
-                workspaceScopes.push(ws);
+            if(ws == null) {
                 runnable.run();
-            } finally {
-                workspaceScopes.pop();
+            }else {
+                workspaceScopes.runWith(ws, runnable);
             }
         }
     }
 
     public static <T> T callWith(NWorkspace ws, NCallable<T> callable) {
         if (callable != null) {
-            return callWith0(ws, ()->ws.currentSession().callWith(callable));
-        }
-        return null;
-    }
-
-    public static <T> T callWith0(NWorkspace ws, NCallable<T> callable) {
-        if (callable != null) {
-            Stack<NWorkspace> workspaceScopes = workspaceScopes();
-            if (!workspaceScopes.isEmpty()) {
-                NWorkspace l = workspaceScopes.peek();
-                if (l == ws) {
-                    return callable.call();
-                }
-            }
-            try {
-                workspaceScopes.push(ws);
+            if(ws == null) {
                 return callable.call();
-            } finally {
-                workspaceScopes.pop();
+            }else {
+                return workspaceScopes.callWith(ws, callable);
             }
         }
         return null;
