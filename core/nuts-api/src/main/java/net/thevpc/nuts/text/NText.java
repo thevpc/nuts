@@ -28,6 +28,7 @@ package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.PrintStream;
@@ -272,6 +273,8 @@ public interface NText extends NBlankable {
 
     List<NPrimitiveText> toCharList();
 
+    NStream<NPrimitiveText> toCharStream();
+
     NText trim();
 
     NText trimLeft();
@@ -280,9 +283,17 @@ public interface NText extends NBlankable {
 
     NText repeat(int times);
 
+    NText repeatln(int times);
+
     NText concat(NText other);
 
     NText concat(NText... others);
+
+    boolean isString(String anyString);
+
+    boolean isNewLine();
+
+    boolean isWhitespace();
 
     NNormalizedText normalize();
 
