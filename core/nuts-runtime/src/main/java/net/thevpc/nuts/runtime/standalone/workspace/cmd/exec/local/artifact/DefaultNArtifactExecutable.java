@@ -42,9 +42,9 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
         this.def = def;
         this.runAs = runAs;
         //all these information are available, an exception would be thrown if not!
-        def.getContent().get();
-        def.getDependencies().get();
-        def.getEffectiveDescriptor().get();
+//        def.getContent().get();
+//        def.getDependencies().get();
+//        def.getEffectiveDescriptor().get();
 //        def.getInstallInformation();
 
         this.commandName = commandName;
