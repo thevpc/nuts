@@ -154,5 +154,5 @@ public interface NProgressMonitor {
 
     void runWith(Runnable runnable);
 
-    <T> T callWith(NCallable<T> runnable);
+    <T> T callWith(NCallable<T> callable);
 }
