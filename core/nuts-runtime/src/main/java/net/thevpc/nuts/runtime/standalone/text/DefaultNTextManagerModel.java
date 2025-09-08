@@ -32,6 +32,7 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.format.NFormats;
 import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryService;
 import net.thevpc.nuts.runtime.standalone.elem.NElementFactoryService;
 import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
@@ -83,6 +84,7 @@ public class DefaultNTextManagerModel {
     private Map<String, NTextFormatTheme> cachedThemes = new HashMap<>();
     public NTexts defaultNTexts;
     public NFormats defaultNFormats;
+    public NLogs defaultNLogs;
 
     public DefaultNTextManagerModel(NWorkspace workspace) {
         this.workspace = workspace;
