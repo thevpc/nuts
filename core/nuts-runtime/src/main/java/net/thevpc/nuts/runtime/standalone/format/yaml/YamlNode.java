@@ -5,24 +5,25 @@ import net.thevpc.nuts.elem.NPairElement;
 
 class YamlNode {
 
+    int indent;
     NodeType type;
-    Object value;
+    NElement value;
 
-    YamlNode(NodeType type, Object value) {
+    YamlNode(NodeType type, NElement value, int indent) {
         this.type = type;
         this.value = value;
     }
 
-    static YamlNode forLiteral(NElement value) {
-        return new YamlNode(NodeType.LITERAL, value);
+    static YamlNode forLiteral(NElement value, int indent) {
+        return new YamlNode(NodeType.LITERAL, value, indent);
     }
 
-    static YamlNode forArrayElement(NElement value) {
-        return new YamlNode(NodeType.ARRAY_ELEMENT, value);
+    static YamlNode forArrayElement(NElement value, int indent) {
+        return new YamlNode(NodeType.ARRAY_ELEMENT, value, indent);
     }
 
-    static YamlNode forObjectElement(NPairElement value) {
-        return new YamlNode(NodeType.OBJECT_ELEMENT, value);
+    static YamlNode forObjectElement(NPairElement value, int indent) {
+        return new YamlNode(NodeType.OBJECT_ELEMENT, value, indent);
     }
 
     public NodeType getType() {
