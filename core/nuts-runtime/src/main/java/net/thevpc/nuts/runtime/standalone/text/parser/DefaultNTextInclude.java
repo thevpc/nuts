@@ -31,6 +31,7 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NTextInclude;
 import net.thevpc.nuts.text.NTextType;
+import net.thevpc.nuts.util.NStream;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,8 +102,13 @@ public class DefaultNTextInclude extends NTextSpecialBase implements NTextInclud
     }
 
     @Override
-    public List<NPrimitiveText> toCharList() {
-        return new ArrayList<>();
+    public boolean isWhitespace() {
+        return false;
+    }
+
+    @Override
+    public NStream<NPrimitiveText> toCharStream() {
+        return NStream.ofEmpty();
     }
 
     @Override
