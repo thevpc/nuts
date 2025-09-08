@@ -59,7 +59,7 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
      */
     static NOptional<NVersion> get(String version) {
         if (NBlankable.isBlank(version)) {
-            return NOptional.of(new DefaultNVersion(""));
+            return NOptional.of(BLANK);
         }
         String version2 = NStringUtils.trim(version);
         if (PATTERN.matcher(version2).matches()) {
@@ -105,12 +105,24 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
     @Override
     int compareTo(NVersion other);
 
+    int compareTo(NVersion other, NVersionComparator comparator);
+
+    int compareTo(String other, NVersionComparator comparator);
+
     /**
      * remove qualifier from version
      * important to check against version intervals
+     *
      * @return new version without qualifier
      */
-    NVersion baseVersion();
+    NVersion toCanonical();
+
+    /**
+     * remove trailing zeros
+     *
+     * @return
+     */
+    NVersion toNormalized();
 
     /**
      * parse the current version as new instance of {@link NVersionFilter}
@@ -118,6 +130,8 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
      * @return new instance of {@link NVersionFilter}
      */
     NVersionFilter filter();
+
+    NVersionFilter filter(NVersionComparator comparator);
 
     /**
      * when the current version is a single value version X , returns ],X] version that guarantees backward compatibility
@@ -143,6 +157,8 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
      * @return new interval array
      */
     NOptional<List<NVersionInterval>> intervals();
+
+    NOptional<List<NVersionInterval>> intervals(NVersionComparator comparator);
 
     /**
      * return true if this version denotes as single value and does not match an interval.
@@ -267,4 +283,6 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
     boolean isReleaseVersion();
 
     boolean isSnapshotVersion();
+
+    List<NVersionPart> parts();
 }
