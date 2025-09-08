@@ -135,13 +135,12 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                 NRepository editedRepo = workspace.findRepository(repoId).get();
                 List<NRepository> linkRepositories = editedRepo.config().isSupportedMirroring() ? editedRepo.config().getMirrors() : Collections.emptyList();
                 out.println(NMsg.ofC("%s sub repositories.", linkRepositories.size()));
-                NTableFormat t = NTableFormat.of();
+
                 NMutableTableModel m = NMutableTableModel.of();
-                t.setValue(m);
                 m.addHeaderRow(NText.ofPlain("Id"), NText.ofPlain("Enabled"), NText.ofPlain("Type"), NText.ofPlain("Location"))
                 ;
                 while (cmdLine.hasNext()) {
-                    if (!t.configureFirst(cmdLine)) {
+                    if (!NSession.of().configureFirst(cmdLine)) {
                         cmdLine.setCommandName("config edit repo").throwUnexpectedArgument();
                     }
                 }
@@ -151,7 +150,8 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                             NText.of(repository.getRepositoryType()),
                             NText.of(repository.config().getLocation()));
                 }
-                out.print(t);
+                out.print(NTextArt.of().getTableRenderer()
+                        .get().render(m));
             } else if (cmdLine.next("-h", "-?", "--help").isPresent()) {
                 out.println(NMsg.ofC("edit repository %s add repo ...", repoId));
                 out.println(NMsg.ofC("edit repository %s remove repo ...", repoId));
