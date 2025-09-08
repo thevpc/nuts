@@ -28,8 +28,10 @@ package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTextBuilder;
 import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.util.NStream;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -113,6 +115,16 @@ public class DefaultNTextTitle extends AbstractNText implements NTextTitle {
             return new DefaultNTextTitle(start, level, child);
         }
         return this;
+    }
+
+    @Override
+    public boolean isWhitespace() {
+        return false;
+    }
+
+    @Override
+    public NStream<NPrimitiveText> toCharStream() {
+        return child.toCharStream().concat(NStream.ofSingleton(new DefaultNTextPlain("\n")));
     }
 
     @Override

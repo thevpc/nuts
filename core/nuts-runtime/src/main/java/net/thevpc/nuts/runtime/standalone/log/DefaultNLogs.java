@@ -7,11 +7,8 @@ import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NCallable;
-import net.thevpc.nuts.util.NMsg;
 
 import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 
@@ -19,7 +16,6 @@ import java.util.logging.Level;
 public class DefaultNLogs implements NLogs {
 
     private final DefaultNLogModel model;
-    private InheritableThreadLocal<NLogContext> logContext = new InheritableThreadLocal<>();
 
     public DefaultNLogs() {
         this.model = NWorkspaceExt.of().getModel().logModel;
