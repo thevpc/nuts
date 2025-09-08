@@ -25,8 +25,9 @@ public class NReservedVersionIntervalParser {
     String v1 = null;
     String v2 = null;
     List<NVersionInterval> dd = new ArrayList<>();
-
-    public NReservedVersionIntervalParser() {
+    NVersionComparator versionComparator;
+    public NReservedVersionIntervalParser(NVersionComparator versionComparator) {
+        this.versionComparator=versionComparator;
     }
 
     void reset() {
@@ -40,20 +41,20 @@ public class NReservedVersionIntervalParser {
         if (sval.endsWith("*")) {
             String min = sval.substring(0, sval.length() - 1);
             if (min.equals("")) {
-                dd.add(new DefaultNVersionInterval(false, false, min, null));
+                dd.add(new DefaultNVersionInterval(false, false, min, null,this.versionComparator));
             } else {
                 String max = NVersion.of(min).inc(-1).getValue();
-                dd.add(new DefaultNVersionInterval(true, false, min, max));
+                dd.add(new DefaultNVersionInterval(true, false, min, max,this.versionComparator));
             }
         } else {
-            dd.add(new DefaultNVersionInterval(true, true, sval, sval));
+            dd.add(new DefaultNVersionInterval(true, true, sval, sval,this.versionComparator));
         }
     }
 
     void addNextInterval() {
         boolean inclusiveLowerBoundary = open == '[' && (v1 != null);
         boolean inclusiveUpperBoundary = close == ']' && (v2 != null);
-        dd.add(new DefaultNVersionInterval(inclusiveLowerBoundary, inclusiveUpperBoundary, v1, v2));
+        dd.add(new DefaultNVersionInterval(inclusiveLowerBoundary, inclusiveUpperBoundary, v1, v2,this.versionComparator));
         reset();
     }
 
