@@ -40,8 +40,8 @@ import java.util.List;
  */
 public interface NVersionInterval extends Serializable {
 
-    static NOptional<NVersionInterval> of(String s){
-        return ofList(s).flatMap(
+    static NOptional<NVersionInterval> of(String s,NVersionComparator versionComparator) {
+        return ofList(s,versionComparator).flatMap(
                 x->{
                     if(x.isEmpty()){
                         return NOptional.ofEmpty(()-> NMsg.ofPlain("empty interval"));
@@ -53,8 +53,8 @@ public interface NVersionInterval extends Serializable {
                 }
         );
     }
-    static NOptional<List<NVersionInterval>> ofList(String s){
-        return new NReservedVersionIntervalParser().parse(s);
+    static NOptional<List<NVersionInterval>> ofList(String s,NVersionComparator versionComparator){
+        return new NReservedVersionIntervalParser(versionComparator).parse(s);
     }
     boolean acceptVersion(NVersion version);
 
