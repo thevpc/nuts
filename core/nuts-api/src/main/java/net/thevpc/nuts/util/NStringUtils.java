@@ -1184,6 +1184,31 @@ public class NStringUtils {
         return sb;
     }
 
+    public static String escapeChar(char c) {
+        switch (c) {
+            case '\b':
+                return ("\\b");
+            case '\t':
+                return "\\t";
+            case '\n':
+                return ("\\n");
+            case '\f':
+                return ("\\f");
+            case '\r':
+                return ("\\r");
+            case '\\':
+                return ("\\\\");
+            default: {
+                if (c < 0x20 || c > 0x7e) {
+                    String s = "0000" + Integer.toString(c, 16);
+                    return ("\\u" + s.substring(s.length() - 4));
+                } else {
+                    return String.valueOf(c);
+                }
+            }
+        }
+    }
+
     public static StringBuilder trimRight(StringBuilder sb) {
         int end = sb.length() - 1;
         while (end >= 0 && Character.isWhitespace(sb.charAt(end))) {
