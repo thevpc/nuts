@@ -55,6 +55,7 @@ public class DefaultNTexts implements NTexts {
     private void registerDefaults() {
         register(NFormattable.class, (o, t) -> (((NFormattable) o).formatter().setNtf(true).format()));
         register(NFormatted.class, (o, t) -> (((NFormatted) o).format()));
+        register(NTextFormattable.class, (o, t) -> (NText) o);
         register(NMsgFormattable.class, (o, t) -> _NMsg_toString((((NMsgFormattable) o).toMsg())));
         register(NMsg.class, (o, t) -> _NMsg_toString((NMsg) o));
         register(NText.class, (o, t) -> (NText) o);
