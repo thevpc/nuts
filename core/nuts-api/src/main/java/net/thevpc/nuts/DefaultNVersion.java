@@ -69,117 +69,92 @@ public class DefaultNVersion implements NVersion {
                 parts.addNumber(BigInteger.ZERO, ".");
                 level++;
             }
-            VersionPart digit = parts.getNumberAt(level);
-            digit.string = String.valueOf(new BigInteger(digit.string).add(count));
+            NVersionPart digit = parts.getNumberAt(level);
+            parts.setNumberAt(level, new BigInteger(digit.value()).add(count));
             return parts.toString();
         } else {
             for (int i = digitCount; i < level; i++) {
                 parts.addNumber(BigInteger.ZERO, ".");
             }
-            VersionPart digit = parts.getNumberAt(level);
-            digit.string = String.valueOf(new BigInteger(digit.string).add(count));
+            NVersionPart digit = parts.getNumberAt(level);
+            parts.setNumberAt(level, new BigInteger(digit.value()).add(count));
             return parts.toString();
         }
     }
 
 
-    public static int compareVersions(String v1, String v2) {
-        v1 = NStringUtils.trim(v1);
-        v2 = NStringUtils.trim(v2);
-        if (v1.equals(v2)) {
-            return 0;
-        }
-        if (NConstants.Versions.LATEST.equals(v1)) {
-            return 1;
-        }
-        if (NConstants.Versions.LATEST.equals(v2)) {
-            return -1;
-        }
-        if (NConstants.Versions.RELEASE.equals(v1)) {
-            return 1;
-        }
-        if (NConstants.Versions.RELEASE.equals(v2)) {
-            return -1;
-        }
-        VersionParts v1arr = splitVersionParts2(v1);
-        VersionParts v2arr = splitVersionParts2(v2);
-        return v1arr.compareTo(v2arr);
+    public List<NVersionPart> parts() {
+        return new ArrayList<>(splitVersionParts2(NStringUtils.trim(expression)).all);
     }
-
 
     private static VersionParts splitVersionParts2(String v1) {
         v1 = NStringUtils.trim(v1);
-        List<VersionPart> parts = new ArrayList<>();
+        List<NVersionPart> parts = new ArrayList<>();
         StringBuilder last = null;
-        VersionPartType partType = null;
+        NVersionPartType partType = null;
+        boolean qualVisited = false;
+        boolean numberVisited = false;
         for (char c : v1.toCharArray()) {
             if (Character.isDigit(c)) {
+                numberVisited = true;
                 if (last == null) {
                     last = new StringBuilder();
                     last.append(c);
-                    partType = VersionPartType.INT;
-                } else if (partType == VersionPartType.INT) {
+                    partType = NVersionPartType.NUMBER;
+                } else if (partType == NVersionPartType.NUMBER) {
                     last.append(c);
                 } else {
-                    parts.add(new VersionPart(last.toString(), partType));
+                    parts.add(new DefaultNVersionPart(last.toString(), partType));
                     last.delete(0, last.length());
-                    partType = VersionPartType.INT;
+                    partType = NVersionPartType.NUMBER;
                     last.append(c);
                 }
             } else if (c == '.' || c == '-') {
                 if (last != null) {
-                    parts.add(new VersionPart(last.toString(), partType));
+                    parts.add(new DefaultNVersionPart(last.toString(), partType));
                     last = null;
                 }
-                parts.add(new VersionPart(String.valueOf(c), VersionPartType.SEPARATOR));
-                partType = VersionPartType.SEPARATOR;
+                parts.add(new DefaultNVersionPart(String.valueOf(c), NVersionPartType.SEPARATOR));
+                partType = NVersionPartType.SEPARATOR;
             } else {
                 if (last == null) {
-                    partType = VersionPartType.QAL;
+                    if (numberVisited) {
+                        if (qualVisited) {
+                            partType = NVersionPartType.SUFFIX;
+                        } else {
+                            partType = NVersionPartType.QUALIFIER;
+                            qualVisited = true;
+                        }
+                    } else {
+                        partType = NVersionPartType.PREFIX;
+                    }
                     last = new StringBuilder();
                     last.append(c);
-                } else if (partType == VersionPartType.QAL) {
+                } else if (partType == NVersionPartType.QUALIFIER || partType == NVersionPartType.PREFIX || partType == NVersionPartType.SUFFIX) {
                     last.append(c);
                 } else {
-                    parts.add(new VersionPart(last.toString(), partType));
-                    partType = VersionPartType.QAL;
+                    parts.add(new DefaultNVersionPart(last.toString(), partType));
+                    if (numberVisited) {
+                        if (qualVisited) {
+                            partType = NVersionPartType.SUFFIX;
+                        } else {
+                            partType = NVersionPartType.QUALIFIER;
+                            qualVisited = true;
+                        }
+                    } else {
+                        partType = NVersionPartType.PREFIX;
+                    }
                     last.delete(0, last.length());
                     last.append(c);
                 }
             }
         }
         if (last != null && last.length() > 0) {
-            parts.add(new VersionPart(last.toString(), partType));
+            parts.add(new DefaultNVersionPart(last.toString(), partType));
         }
         return new VersionParts(parts);
     }
 
-
-    private static Integer getKnownQualifierIndex(String v1) {
-        switch (v1.toLowerCase()) {
-            case "a":
-            case "alpha":
-                return 1;
-            case "b":
-            case "beta":
-                return 2;
-            case "m":
-            case "milestone":
-                return 3;
-            case "rc":
-            case "cr":
-                return 4;
-            case "snapshot":
-                return 5;
-            case "":
-            case "ga":
-            case "final":
-                return 6;
-            case "sp":
-                return 7;
-        }
-        return null;
-    }
 
     public boolean isLatestVersion() {
         String s = asSingleValue().orNull();
@@ -214,42 +189,72 @@ public class DefaultNVersion implements NVersion {
 
     @Override
     public int compareTo(String other) {
-        return compareVersions(expression, other);
+        return compareTo(NVersion.of(other), null);
     }
 
     @Override
     public int compareTo(NVersion other) {
-        return compareTo(other == null ? null : other.getValue());
+        return compareTo(other, null);
     }
 
-    public NVersion baseVersion(){
+    @Override
+    public int compareTo(String other, NVersionComparator comparator) {
+        return compareTo(other == null ? BLANK : NVersion.of(other), comparator);
+    }
+
+    @Override
+    public int compareTo(NVersion other, NVersionComparator comparator) {
+        return (comparator == null ? NVersionComparator.of() : comparator).compare(this, other);
+    }
+
+    public NVersion toCanonical() {
         VersionParts parts = getParts();
-        StringBuilder sb=new StringBuilder();
-        for (VersionPart p : parts.all) {
-            switch (p.type){
-                case INT:{
-                    sb.append(p.string);
-                    break;
-                }
-                case SEPARATOR:{
-                    if(p.string.equals(".")) {
-                        sb.append(p.string);
-                    }else{
-                        return NVersion.of(sb.toString());
-                    }
-                    break;
-                }
-                case QAL:{
-                    return NVersion.of(sb.toString());
-                }
+        List<NVersionPart> can = new ArrayList<>();
+
+        for (NVersionPart p : parts.all) {
+            if (p.type() == NVersionPartType.NUMBER || p.type() == NVersionPartType.PREFIX || p.type() == NVersionPartType.SEPARATOR) {
+                can.add(p);
+            } else if (p.type() == NVersionPartType.QUALIFIER) {
+                break;
             }
+        }
+        while (!can.isEmpty() && can.get(can.size() - 1).type() == NVersionPartType.SEPARATOR) {
+            can.remove(can.size() - 1);
+        }
+        StringBuilder sb = new StringBuilder();
+        for (NVersionPart v : can) {
+            sb.append(v.value());
+        }
+        return NVersion.of(sb.toString());
+    }
+
+    public NVersion toNormalized() {
+        List<NVersionPart> parts = new ArrayList<>(getParts().all);
+        while (!parts.isEmpty()) {
+            NVersionPart last = parts.get(parts.size() - 1);
+            if (last.type() == NVersionPartType.SEPARATOR) {
+                parts.remove(parts.size() - 1);
+            } else if (last.type() == NVersionPartType.NUMBER && new BigInteger(last.value()).equals(BigInteger.ZERO)) {
+                parts.remove(parts.size() - 1);
+            } else {
+                break;
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        for (NVersionPart v : parts) {
+            sb.append(v.value());
         }
         return NVersion.of(sb.toString());
     }
 
     @Override
     public NVersionFilter filter() {
-        return NVersionFilters.of().byValue(expression).get();
+        return filter(null);
+    }
+
+    @Override
+    public NVersionFilter filter(NVersionComparator comparator) {
+        return NVersionFilters.of().byValue(expression,comparator).get();
     }
 
     @Override
@@ -272,7 +277,12 @@ public class DefaultNVersion implements NVersion {
 
     @Override
     public NOptional<List<NVersionInterval>> intervals() {
-        return NVersionInterval.ofList(expression);
+        return intervals(null);
+    }
+
+    @Override
+    public NOptional<List<NVersionInterval>> intervals(NVersionComparator comparator) {
+        return NVersionInterval.ofList(expression,comparator);
     }
 
     public NOptional<String> asSingleValue() {
@@ -421,7 +431,7 @@ public class DefaultNVersion implements NVersion {
         int size = parts.size();
         NLiteral[] all = new NLiteral[size];
         for (int i = 0; i < size; i++) {
-            all[i] = NLiteral.of(parts.get(i).string);
+            all[i] = NLiteral.of(parts.get(i).value());
         }
         return all;
     }
@@ -431,12 +441,12 @@ public class DefaultNVersion implements NVersion {
         int size = parts.size();
         if (index >= 0) {
             if (index < parts.size()) {
-                return NOptional.of(NLiteral.of(parts.get(index).string));
+                return NOptional.of(NLiteral.of(parts.get(index).value()));
             }
         } else {
             int x = size + index;
             if (x >= 0 && x < parts.size()) {
-                return NOptional.of(NLiteral.of(parts.get(x).string));
+                return NOptional.of(NLiteral.of(parts.get(x).value()));
             }
         }
         return NOptional.ofEmpty(() -> NMsg.ofC("version part not found : %s", index));
@@ -446,16 +456,16 @@ public class DefaultNVersion implements NVersion {
         VersionParts parts = getParts();
         int size = parts.getNumbersCount();
         if (level >= 0) {
-            VersionPart digit = parts.getNumberAt(level);
+            NVersionPart digit = parts.getNumberAt(level);
             return NOptional.of(
-                    digit == null ? null : NLiteral.of(digit.string),
+                    digit == null ? null : NLiteral.of(digit.value()),
                     () -> NMsg.ofC("missing number at %s", level)
             );
         } else {
             int x = size + level;
-            VersionPart digit = x >= 0 ? parts.getNumberAt(x) : null;
+            NVersionPart digit = x >= 0 ? parts.getNumberAt(x) : null;
             return NOptional.of(
-                    digit == null ? null : NLiteral.of(digit.string),
+                    digit == null ? null : NLiteral.of(digit.value()),
                     () -> NMsg.ofC("missing number at %s", level)
             );
         }
@@ -510,91 +520,15 @@ public class DefaultNVersion implements NVersion {
         return expression == null ? "" : expression;
     }
 
-    enum VersionPartType {
-        INT,
-        QAL,
-        SEPARATOR,
-    }
-
-    private static class VersionPart {
-
-        String string;
-        VersionPartType type;
-
-        public VersionPart(String string, VersionPartType type) {
-            this.string = string;
-            this.type = type;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(string, type);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            VersionPart that = (VersionPart) o;
-            return string.equalsIgnoreCase(that.string) && type == that.type;
-        }
-
-        @Override
-        public String toString() {
-            String name = type.name().toLowerCase();
-            return name + "(" + string + ")";
-        }
-
-        public int compareTo(VersionPart v2) {
-            VersionPart v1 = this;
-            if (v1.equals(v2)) {
-                return 0;
-            }
-            if (v1.type == VersionPartType.SEPARATOR && v2.type == VersionPartType.SEPARATOR) {
-                //a dash usually precedes a qualifier, and is always less important than something preceded with a dot.
-                if (v1.string.equals("-")) {
-                    return -1;
-                } else {
-                    return 1;
-                }
-            } else if (v1.type == VersionPartType.SEPARATOR) {
-                return -1;
-            } else if (v2.type == VersionPartType.SEPARATOR) {
-                return 1;
-            }
-
-            if (v1.type == VersionPartType.INT && v2.type == VersionPartType.INT) {
-                return new BigInteger(v1.string).compareTo(new BigInteger(v2.string));
-            } else if (v1.type == VersionPartType.INT) {
-                return 1;
-            } else if (v2.type == VersionPartType.INT) {
-                return -1;
-            } else {
-                //both are string...
-                Integer q1 = getKnownQualifierIndex(v1.string);
-                Integer q2 = getKnownQualifierIndex(v2.string);
-                if (q1 != null && q2 != null) {
-                    return q1.compareTo(q2);
-                } else if (q1 != null) {
-                    return -1;
-                } else if (q2 != null) {
-                    return 1;
-                } else {
-                    return v1.string.compareToIgnoreCase(v2.string);
-                }
-            }
-        }
-    }
-
     private static class VersionParts {
 
-        List<VersionPart> all;
+        List<NVersionPart> all;
 
-        public VersionParts(List<VersionPart> all) {
+        public VersionParts(List<NVersionPart> all) {
             this.all = all;
         }
 
-        public VersionPart get(int index) {
+        public NVersionPart get(int index) {
             return all.get(index);
         }
 
@@ -604,18 +538,46 @@ public class DefaultNVersion implements NVersion {
 
         public int getNumbersCount() {
             int c = 0;
-            for (VersionPart s : all) {
-                if (s.type == VersionPartType.INT) {
+            for (NVersionPart s : all) {
+                if (s.type() == NVersionPartType.NUMBER) {
                     c++;
                 }
             }
             return c;
         }
 
-        public VersionPart getNumberAt(int index) {
+        public void setNumberAt(int index, BigInteger value) {
             int c = 0;
-            for (VersionPart s : all) {
-                if (s.type == VersionPartType.INT) {
+            for (int i = 0; i < all.size(); i++) {
+                NVersionPart s = all.get(i);
+                if (s.type() == NVersionPartType.NUMBER) {
+                    if (c == index) {
+                        all.set(i, new DefaultNVersionPart(value.toString(), NVersionPartType.NUMBER));
+                        return;
+                    }
+                    c++;
+                }
+            }
+        }
+
+        public void setNumberAt(int index, long value) {
+            int c = 0;
+            for (int i = 0; i < all.size(); i++) {
+                NVersionPart s = all.get(i);
+                if (s.type() == NVersionPartType.NUMBER) {
+                    if (c == index) {
+                        all.set(i, new DefaultNVersionPart(String.valueOf(value), NVersionPartType.NUMBER));
+                        return;
+                    }
+                    c++;
+                }
+            }
+        }
+
+        public NVersionPart getNumberAt(int index) {
+            int c = 0;
+            for (NVersionPart s : all) {
+                if (s.type() == NVersionPartType.NUMBER) {
                     if (c == index) {
                         return s;
                     }
@@ -627,106 +589,47 @@ public class DefaultNVersion implements NVersion {
 
         public void insertNumber(long val, String sep) {
             if (all.size() == 0) {
-                all.add(new VersionPart(String.valueOf(val), VersionPartType.INT));
-            } else if (all.get(0).type == VersionPartType.INT) {
+                all.add(new DefaultNVersionPart(String.valueOf(val), NVersionPartType.NUMBER));
+            } else if (all.get(0).type() == NVersionPartType.NUMBER) {
                 if (sep == null) {
                     sep = ".";
                 }
                 if (!sep.equals(".") && !sep.equals("-")) {
                     throw new IllegalArgumentException("illegal separator");
                 }
-                all.add(0, new VersionPart(sep, VersionPartType.SEPARATOR));
-                all.add(0, new VersionPart(String.valueOf(val), VersionPartType.INT));
+                all.add(0, new DefaultNVersionPart(sep, NVersionPartType.SEPARATOR));
+                all.add(0, new DefaultNVersionPart(String.valueOf(val), NVersionPartType.NUMBER));
             } else {
-                all.add(0, new VersionPart(String.valueOf(val), VersionPartType.INT));
+                all.add(0, new DefaultNVersionPart(String.valueOf(val), NVersionPartType.NUMBER));
             }
         }
 
         public void addNumber(BigInteger val, String sep) {
             if (all.size() == 0) {
-                all.add(new VersionPart(String.valueOf(val), VersionPartType.INT));
-            } else if (all.get(all.size() - 1).type == VersionPartType.INT) {
+                all.add(new DefaultNVersionPart(String.valueOf(val), NVersionPartType.NUMBER));
+            } else if (all.get(all.size() - 1).type() == NVersionPartType.NUMBER) {
                 if (sep == null) {
                     sep = ".";
                 }
                 if (!sep.equals(".") && !sep.equals("-")) {
-                    throw new IllegalArgumentException(NMsg.ofC(NI18n.of("illegal version number separator %s"),sep).toString());
+                    throw new IllegalArgumentException(NMsg.ofC(NI18n.of("illegal version number separator %s"), sep).toString());
                 }
-                all.add(new VersionPart(sep, VersionPartType.SEPARATOR));
-                all.add(new VersionPart(String.valueOf(val), VersionPartType.INT));
+                all.add(new DefaultNVersionPart(sep, NVersionPartType.SEPARATOR));
+                all.add(new DefaultNVersionPart(String.valueOf(val), NVersionPartType.NUMBER));
             } else {
-                all.add(new VersionPart(String.valueOf(val), VersionPartType.INT));
+                all.add(new DefaultNVersionPart(String.valueOf(val), NVersionPartType.NUMBER));
             }
         }
 
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            for (VersionPart versionPart : all) {
-                sb.append(versionPart.string);
+            for (NVersionPart versionPart : all) {
+                sb.append(versionPart.value());
             }
             return sb.toString();
         }
 
-        /**
-         * https://maven.apache.org/ref/3.3.3/maven-artifact/apidocs/org/apache/maven/artifact/versioning/ComparableVersion.html
-         *
-         * @param v2 v2
-         * @return compare int
-         */
-        public int compareTo(VersionParts v2) {
-            VersionParts v1 = this;
-            int i = 0;
-            int j = 0;
-            while (i < v1.size() || j < v2.size()) {
-                if (i < v1.size() && j < v2.size()) {
-                    VersionPart a = v1.get(i);
-                    VersionPart b = v2.get(i);
-                    int r = a.compareTo(b);
-                    if (r != 0) {
-                        return r;
-                    }
-                    i++;
-                    j++;
-                } else if (i < v1.size()) {
-                    if (isQualifierFrom(i, v1)) {
-                        return -1;
-                    }
-                    return 1;
-                } else {
-                    if (isQualifierFrom(i, v2)) {
-                        return 1;
-                    }
-                    return -1;
-                }
-            }
-            return 0;
-        }
-    }
 
-    private static boolean isQualifierFrom(int i, VersionParts v1) {
-        VersionPart a = v1.get(i);
-        if (a.type == VersionPartType.SEPARATOR && a.string.equals("-")) {
-            if (i + 1 < v1.size()) {
-                for (int j = i + 1; j < v1.size(); j++) {
-                    a = v1.get(j);
-                    switch (a.type) {
-                        case SEPARATOR:
-                            if (a.string.equals(".")) {
-                                return false;
-                            }
-                            break;
-                        case QAL:
-                            return true;
-                        default:
-                            return false;
-                    }
-                }
-                return true;
-            } else {
-                return true;
-            }
-        }
-        return false;
     }
 
 
