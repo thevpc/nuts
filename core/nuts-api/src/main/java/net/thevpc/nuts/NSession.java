@@ -58,7 +58,7 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
         return NWorkspace.get().map(NWorkspace::currentSession);
     }
 
-    void runWith(NRunnable runnable);
+    void runWith(Runnable runnable);
 
     <T> T callWith(NCallable<T> callable);
 
