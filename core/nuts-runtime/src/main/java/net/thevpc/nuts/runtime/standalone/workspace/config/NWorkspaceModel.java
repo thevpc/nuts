@@ -34,7 +34,7 @@ import java.util.Stack;
 public class NWorkspaceModel {
     public NLog LOG;
     public NWorkspace workspace;
-    public InheritableThreadLocal<Stack<NSession>> sessionScopes = new InheritableThreadLocal<>();
+    public NScopedValue<NSession> sessionScopes = new NScopedValue<>();
     public NSession initSession;
     public DefaultNBootModel bootModel;
     public DefaultNWorkspaceSecurityModel securityModel;
@@ -69,7 +69,7 @@ public class NWorkspaceModel {
     public DefaultNExtensions extensions;
     public NWorkspaceStore store;
     public DefaultElementMapperStore defaultElementMapperStore = new DefaultElementMapperStore();
-    public InheritableThreadLocal<Stack<NProgressMonitor>> currentProgressMonitors = new InheritableThreadLocal<>();
+    public NScopedValue<NProgressMonitor> currentProgressMonitors = new NScopedValue<>();
 
     public NWorkspaceModel(NWorkspace workspace, NBootOptions initialBootOptions) {
         this.workspace = workspace;
