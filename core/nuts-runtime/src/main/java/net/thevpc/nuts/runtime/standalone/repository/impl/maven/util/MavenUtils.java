@@ -656,7 +656,7 @@ public class MavenUtils {
         }
         for (Iterator<String> iterator = s.getVersions().iterator(); iterator.hasNext(); ) {
             String version = iterator.next();
-            if (!s.getLatest().isEmpty() && DefaultNVersion.compareVersions(version, s.getLatest()) > 0) {
+            if (!s.getLatest().isEmpty() && NVersionComparator.ofMaven().compare(NVersion.of(version), NVersion.of(s.getLatest())) > 0) {
                 iterator.remove();
             }
         }
