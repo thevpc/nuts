@@ -12,6 +12,7 @@ import net.thevpc.nuts.time.NClock;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
 
@@ -30,8 +31,8 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
 
     @Override
     public Object runWithContext() {
-        try {
-            NWorkspaceExt.of().getConfigModel().sysEnvPush(executionContext.getEnv());
+        Map<String, String> newEnv = NWorkspaceExt.of().getConfigModel().appendEnv(executionContext.getEnv());
+        return NWorkspaceExt.of().getConfigModel().currentEnv.callWith(newEnv, () -> {
             NClock now = NClock.now();
             if (cls.getName().equals("net.thevpc.nuts.Nuts")) {
                 NWorkspaceOptionsBuilder o = NWorkspaceOptionsBuilder.of().setCmdLine(
@@ -103,9 +104,7 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
                 }
                 return null;
             });
-        }finally {
-            NWorkspaceExt.of().getConfigModel().sysEnvPop();
-        }
+        });
     }
 
 }
