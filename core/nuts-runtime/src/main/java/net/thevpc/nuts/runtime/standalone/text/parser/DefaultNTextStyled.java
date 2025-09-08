@@ -27,6 +27,7 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.util.NStream;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -147,6 +148,16 @@ public class DefaultNTextStyled extends AbstractNText implements NTextStyled {
             all.add((NPrimitiveText) DefaultNTextStyled.appendStyle(child, textStyles));
         }
         return all;
+    }
+
+    @Override
+    public boolean isWhitespace() {
+        return child.isWhitespace();
+    }
+
+    @Override
+    public NStream<NPrimitiveText> toCharStream() {
+        return child.toCharStream().map(x -> (NPrimitiveText) DefaultNTextStyled.appendStyle(x, textStyles));
     }
 
     @Override
