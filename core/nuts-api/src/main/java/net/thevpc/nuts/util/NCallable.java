@@ -26,15 +26,34 @@
  */
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.NExceptions;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.reserved.util.NCallableWithDescription;
 
+import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
 /**
  * Describable Runnable
  */
-public interface NCallable<T> extends NElementRedescribable<NCallable<T>>{
+public interface NCallable<T> extends NElementRedescribable<NCallable<T>> {
+    static <T> NCallable<T> of(Callable<T> other) {
+        if (other instanceof NCallable) {
+            return (NCallable<T>) other;
+        }
+        return () -> {
+            try {
+                if (other != null) {
+                    return other.call();
+                }
+                return null;
+            } catch (RuntimeException e) {
+                throw e;
+            } catch (Exception e) {
+                throw NExceptions.ofUncheckedException(e);
+            }
+        };
+    }
 
     T call();
 
