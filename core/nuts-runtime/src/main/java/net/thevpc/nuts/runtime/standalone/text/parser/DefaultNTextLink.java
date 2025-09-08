@@ -28,6 +28,7 @@ package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.ArrayList;
@@ -108,6 +109,16 @@ public class DefaultNTextLink extends NTextSpecialBase implements NTextLink {
     }
 
     @Override
+    public NStream<NPrimitiveText> toCharStream() {
+        return NStream.ofStream(value.codePoints().mapToObj(c -> new DefaultNTextStyled(new DefaultNTextPlain(new String(Character.toChars(c))), NTextStyles.of(NTextStyle.underlined()))));
+    }
+
+    @Override
+    public boolean isWhitespace() {
+        return !value.isEmpty() && value.trim().isEmpty();
+    }
+
+    @Override
     public NText substring(int start, int end) {
         return prerender().substring(start, end);
     }
@@ -123,7 +134,7 @@ public class DefaultNTextLink extends NTextSpecialBase implements NTextLink {
     @Override
     public NText trimLeft() {
         String c = NStringUtils.trimLeft(value);
-        if(Objects.equals(value, c)){
+        if (Objects.equals(value, c)) {
             return this;
         }
         return new DefaultNTextLink(getSeparator(), c);
@@ -132,7 +143,7 @@ public class DefaultNTextLink extends NTextSpecialBase implements NTextLink {
     @Override
     public NText trimRight() {
         String c = NStringUtils.trimRight(value);
-        if(Objects.equals(value, c)){
+        if (Objects.equals(value, c)) {
             return this;
         }
         return new DefaultNTextLink(getSeparator(), c);
@@ -141,7 +152,7 @@ public class DefaultNTextLink extends NTextSpecialBase implements NTextLink {
     @Override
     public NText trim() {
         String c = NStringUtils.trim(value);
-        if(Objects.equals(value, c)){
+        if (Objects.equals(value, c)) {
             return this;
         }
         return new DefaultNTextLink(getSeparator(), c);
