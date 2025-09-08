@@ -85,7 +85,7 @@ public interface NWorkspaceExt {
 
     void setInstallationDigest(String value);
 
-    Stack<NSession> sessionScopes();
+    NScopedValue<NSession> sessionScopes();
 
     DefaultNRepositoryModel getRepositoryModel();
 
