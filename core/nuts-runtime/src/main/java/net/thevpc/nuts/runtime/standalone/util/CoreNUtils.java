@@ -30,7 +30,10 @@ import net.thevpc.nuts.NConstants;
 
 import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.format.NDescriptorFormat;
+import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.NOsFamily;
 
@@ -43,7 +46,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -577,6 +579,57 @@ public class CoreNUtils {
         return deps.stream()
                 .filter(x -> NId.getApi("").get().equalsShortId(x))
                 .distinct().collect(Collectors.toList());
+    }
+
+    public static void formatAndHorizontalAlign(NTextBuilder sb, NPositionType a, int columns) {
+        int length = sb.length();
+        switch (a) {
+            case FIRST: {
+                while (length < columns) {
+                    sb.append(NText.ofSpace());
+                    length++;
+                }
+                break;
+            }
+            case LAST: {
+                while (length < columns) {
+                    sb.insert(0, NText.ofSpace());
+                    length++;
+                }
+                break;
+            }
+            case CENTER: {
+                boolean after = true;
+                while (length < columns) {
+                    if (after) {
+                        sb.append(NText.ofSpace());
+                    } else {
+                        sb.insert(0, NText.ofSpace());
+                    }
+                    after = !after;
+                    length++;
+                }
+                break;
+            }
+            case HEADER: {
+                boolean after = true;
+                int maxBefore = 10;
+                while (length < columns) {
+                    if (after || maxBefore <= 0) {
+                        sb.append(NText.ofSpace());
+                    } else {
+                        sb.insert(0, NText.ofSpace());
+                        maxBefore--;
+                    }
+                    after = !after;
+                    length++;
+                }
+                break;
+            }
+            default: {
+                throw new NUnsupportedArgumentException(NMsg.ofC("unsupported position type %s", a));
+            }
+        }
     }
 
     public static class NDefaultThreadFactory implements ThreadFactory {
