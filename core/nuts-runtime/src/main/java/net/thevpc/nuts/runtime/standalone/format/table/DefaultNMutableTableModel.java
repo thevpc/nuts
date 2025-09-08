@@ -196,13 +196,13 @@ public class DefaultNMutableTableModel implements NMutableTableModel {
         }
 
         @Override
-        public NText getValue() {
+        public NText getContent() {
             return value;
         }
 
         @Override
-        public DefaultCell setValue(NText value) {
-            this.value = value;
+        public DefaultCell setContent(NText content) {
+            this.value = content;
             return this;
         }
 
