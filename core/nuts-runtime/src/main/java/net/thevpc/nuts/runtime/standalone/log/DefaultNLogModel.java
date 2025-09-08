@@ -57,7 +57,7 @@ public class DefaultNLogModel {
     private NLogFactorySPI defaultFactorySPI = new NLogFactorySPIJUL();
     private NLogFactorySPI factorySPI;
     private NLog nullLogger;
-    private InheritableThreadLocal<NLogContext> logContext = new InheritableThreadLocal<>();
+    private NScopedValue<NLogContext> logContext = new NScopedValue<>();
 
     public DefaultNLogModel(NWorkspace ws) {
         this.workspace = ws;
@@ -84,36 +84,13 @@ public class DefaultNLogModel {
     public void runWithContext(NLogContext context, Runnable runnable) {
         NLogContext c1 = logContext.get();
         NLogContext c2 = c1 == null ? NLogContextImpl.BLANK.mergedWith(context) : c1.mergedWith(context);
-        logContext.set(c2);
-        try {
-            if (runnable != null) {
-                runnable.run();
-            }
-        } finally {
-            if (c1 != null) {
-                logContext.set(c1);
-            } else {
-                logContext.remove();
-            }
-        }
+        logContext.runWith(c2,runnable);
     }
 
     public <T> T callWithContext(NLogContext context, NCallable<T> callable) {
         NLogContext c1 = logContext.get();
         NLogContext c2 = c1 == null ? NLogContextImpl.BLANK.mergedWith(context) : c1.mergedWith(context);
-        logContext.set(c2);
-        try {
-            if (callable != null) {
-                return callable.call();
-            }
-        } finally {
-            if (c1 != null) {
-                logContext.set(c1);
-            } else {
-                logContext.remove();
-            }
-        }
-        return null;
+        return logContext.callWith(c2,callable);
     }
 
 
