@@ -123,9 +123,9 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
     @Override
     public NTextBuilder append(NText node) {
         if (node != null) {
-            if(node instanceof NTextBuilder) {
+            if (node instanceof NTextBuilder) {
                 children.add(((NTextBuilder) node).build());
-            }else{
+            } else {
                 children.add(node);
             }
             flattened = false;
@@ -243,7 +243,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
         if (all.isEmpty()) {
             return DefaultNTextPlain.EMPTY;
         }
-        if (size() == 1) {
+        if (all.size() == 1) {
             return all.get(0);
         }
         if (!all.equals(children)) {
@@ -316,8 +316,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
 
             if (pos + len <= from) {
                 result.add(t);
-            }
-            else if (pos <= from && from < pos + len) {
+            } else if (pos <= from && from < pos + len) {
                 int splitStart = from - pos;
                 if (splitStart > 0) {
                     result.add(t.substring(0, splitStart));
@@ -330,7 +329,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
                     result.addAll(Arrays.asList(newTexts));
                 }
                 if (splitEnd < len) {
-                    result.add(t.substring(splitEnd,t.length()));
+                    result.add(t.substring(splitEnd, t.length()));
                 }
             }
             if (pos >= to) {
@@ -495,7 +494,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
     @Override
     public boolean isEmpty() {
         for (NText child : children) {
-            if(!child.isEmpty()){
+            if (!child.isEmpty()) {
                 return false;
             }
         }
@@ -513,12 +512,30 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
     }
 
     @Override
-    public List<NPrimitiveText> toCharList() {
-        List<NPrimitiveText> all = new ArrayList<>();
-        for (NText child : children) {
-            all.addAll(child.toCharList());
+    public NStream<NPrimitiveText> toCharStream() {
+        if (children.isEmpty()) {
+            return NStream.ofEmpty();
         }
-        return all;
+        NStream<NPrimitiveText> s = children.get(0).toCharStream();
+        for (int i = 1; i < children.size(); i++) {
+            s = s.concat(children.get(i).toCharStream());
+        }
+        return s;
+    }
+
+    @Override
+    public boolean isWhitespace() {
+        boolean hasContent = false;
+        for (NText child : children) {
+            if (child.isEmpty()) {
+                continue;
+            }
+            if (!child.isWhitespace()) {
+                return false;
+            }
+            hasContent = true;
+        }
+        return hasContent;
     }
 
     @Override
