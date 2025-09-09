@@ -11,14 +11,14 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
@@ -66,7 +66,7 @@ public class CoreIOUtils {
     public static final String MIME_TYPE_SHA1 = "text/sha-1";
     public static String newLineString = null;
 
-    public static final URL urlOf(String any){
+    public static final URL urlOf(String any) {
         try {
             return URI.create(any).toURL();
         } catch (MalformedURLException e) {
@@ -196,7 +196,7 @@ public class CoreIOUtils {
             } else {
                 if (NBlankable.isBlank(loc)) {
                     if (NBlankable.isBlank(goodName)) {
-                        goodName = CoreNUtils.randomColorName() + "-repo";
+                        goodName = NNames.pickName(new Random().nextInt(), 2, 3, NNameFormat.KEBAB_CASE) + "-repo";
                     }
                     loc = goodName;
                 }
@@ -344,7 +344,7 @@ public class CoreIOUtils {
     }
 
     public static InputStream getCachedUrlWithSHA1(String path, String sourceTypeName, boolean ignoreSha1NotFound) {
-        NWorkspace workspace=NWorkspace.of();
+        NWorkspace workspace = NWorkspace.of();
         final NPath cacheBasePath = NPath.ofIdStore(workspace.getRuntimeId(), NStoreType.CACHE);
         final NPath urlContent = cacheBasePath.resolve("urls-content");
         String sha1 = null;
@@ -513,7 +513,7 @@ public class CoreIOUtils {
     }
 
     public static boolean isObsoleteInstant(Instant instant) {
-        NSession session=NSession.of();
+        NSession session = NSession.of();
         if (session.getExpireTime().isPresent()) {
             return instant == null || instant.isBefore(session.getExpireTime().orNull());
         }
@@ -638,7 +638,7 @@ public class CoreIOUtils {
                 //ignore
             }
         }
-        NSession session=NSession.of();
+        NSession session = NSession.of();
         if (old == null) {
             switch (doWhenNotExist) {
                 case IGNORE: {
@@ -647,9 +647,9 @@ public class CoreIOUtils {
                 case CREATE: {
                     out.mkParentDirs();
                     out.writeBytes(content);
-                    if (session.isPlainTrace()) {
-                        NOut.resetLine().println(NMsg.ofC("create file %s", out));
-                    }
+//                    if (session.isPlainTrace()) {
+//                        NOut.resetLine().println(NMsg.ofC("create file %s", out));
+//                    }
                     return PathInfo.Status.CREATED;
                 }
                 case ASK: {
@@ -662,9 +662,9 @@ public class CoreIOUtils {
                             ).getBooleanValue()) {
                         out.mkParentDirs();
                         out.writeBytes(content);
-                        if (session.isPlainTrace()) {
-                            NOut.resetLine().println(NMsg.ofC("create file %s", out));
-                        }
+//                        if (session.isPlainTrace()) {
+//                            NOut.resetLine().println(NMsg.ofC("create file %s", out));
+//                        }
                         return PathInfo.Status.CREATED;
                     } else {
                         return PathInfo.Status.DISCARDED;
@@ -684,24 +684,24 @@ public class CoreIOUtils {
                 }
                 case OVERRIDE: {
                     out.writeBytes(content);
-                    if (session.isPlainTrace()) {
-                        NOut.resetLine().println(NMsg.ofC("update file %s", out));
-                    }
+//                    if (session.isPlainTrace()) {
+//                        NOut.resetLine().println(NMsg.ofC("update file %s", out));
+//                    }
                     return PathInfo.Status.OVERRIDDEN;
                 }
                 case ASK: {
                     if (NAsk.of()
                             .setDefaultValue(true)
-                            .setRememberMeKey(rememberMeKey==null?null:("Override."+rememberMeKey))
+                            .setRememberMeKey(rememberMeKey == null ? null : ("Override." + rememberMeKey))
                             .forBoolean(NMsg.ofC("override %s ?",
                                     NText.ofStyled(
                                             betterPath(out.toString()), NTextStyle.path()
                                     ))
                             ).getBooleanValue()) {
                         out.writeBytes(content);
-                        if (session.isPlainTrace()) {
-                            NOut.resetLine().println(NMsg.ofC("update file %s", out));
-                        }
+//                        if (session.isPlainTrace()) {
+//                            NOut.resetLine().println(NMsg.ofC("update file %s", out));
+//                        }
                         return PathInfo.Status.OVERRIDDEN;
                     } else {
                         return PathInfo.Status.DISCARDED;
@@ -792,7 +792,7 @@ public class CoreIOUtils {
     }
 
     public static NExecOutput validateErr(NExecOutput err) {
-        NSession session=NSession.of();
+        NSession session = NSession.of();
         if (err == null) {
             err = NExecOutput.ofStream(session.err());
         }
@@ -846,11 +846,11 @@ public class CoreIOUtils {
 
     public static NExecInput validateIn(NExecInput in) {
         if (in == null) {
-            NSession session=NSession.of();
+            NSession session = NSession.of();
             in = NExecInput.ofStream(session.in());
         }
         if (in.getType() == NRedirectType.INHERIT) {
-            NSession session=NSession.of();
+            NSession session = NSession.of();
             if (NIO.of().isStdin(session.in())) {
                 in = NExecInput.ofInherit();
             } else {
@@ -865,7 +865,7 @@ public class CoreIOUtils {
     }
 
     public static NExecOutput validateOut(NExecOutput out) {
-        NSession session=NSession.of();
+        NSession session = NSession.of();
         if (out == null) {
             out = NExecOutput.ofStream(session.out());
         }
@@ -962,14 +962,14 @@ public class CoreIOUtils {
         return false;
     }
 
-    public static String concatPath(String ...all) {
-        StringBuilder sb=new StringBuilder();
-        if(all!=null){
+    public static String concatPath(String... all) {
+        StringBuilder sb = new StringBuilder();
+        if (all != null) {
             for (String s : all) {
-                if(s!=null){
-                    s=s.trim();
+                if (s != null) {
+                    s = s.trim();
                 }
-                if(s.length()>0) {
+                if (s.length() > 0) {
 
                     boolean newSlash = s.length() > 0 && s.charAt(0) == '/';
                     boolean wasSlash = sb.length() > 0 && sb.charAt(sb.length() - 1) == '/';
@@ -977,7 +977,7 @@ public class CoreIOUtils {
                         if (!wasSlash && !newSlash) {
                             sb.append("/");
                             sb.append(s);
-                        }else{
+                        } else {
                             sb.append(s);
                         }
                     } else {
@@ -990,9 +990,9 @@ public class CoreIOUtils {
     }
 
     public static String ensureLeadingSlash(String s) {
-        if(s.length()>0){
-            if(!s.startsWith("/")){
-                return "/"+s;
+        if (s.length() > 0) {
+            if (!s.startsWith("/")) {
+                return "/" + s;
             }
             return s;
         }
