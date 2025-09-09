@@ -80,7 +80,7 @@ public class NLogUtils {
                 NSession.of(), lvl,
                 lvl.intValue() <= Level.SEVERE.intValue() ? NMsgIntent.FAIL :
                         lvl.intValue() <= Level.WARNING.intValue() ? NMsgIntent.ALERT :
-                                lvl.intValue() <= Level.INFO.intValue() ? NMsgIntent.INFO :
+                                lvl.intValue() <= Level.INFO.intValue() ? NMsgIntent.NOTICE :
                                         lvl.intValue() <= Level.FINE.intValue() ? NMsgIntent.DEBUG :
                                                 NMsgIntent.DEBUG,
                 jMsg,
