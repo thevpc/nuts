@@ -48,14 +48,14 @@ class IdCache {
                 count += _addOne(n, bootClassLoader, extensionPoints, LOG, logStart, serviceClass);
             }
             LOG.log(NMsg.ofC("found %s extensions from %s (id=%s) (classloader %s). looking for %s", count, url, id, bootClassLoader, extensionPointStrings)
-                    .withIntent(NMsgIntent.INFO).withLevel(Level.FINE)
+                    .withIntent(NMsgIntent.NOTICE).withLevel(Level.FINE)
             );
         } else {
             for (String n : CoreServiceUtils.loadZipServiceClassNamesFromClassLoader(bootClassLoader, serviceClass)) {
                 count += _addOne(n, bootClassLoader, extensionPoints, LOG, logStart, serviceClass);
             }
             LOG.log(NMsg.ofC("found %s extensions from classloader %s (id=%s) . looking for %s", count, bootClassLoader, id, extensionPointStrings)
-                    .withIntent(NMsgIntent.INFO).withLevel(Level.FINE)
+                    .withIntent(NMsgIntent.NOTICE).withLevel(Level.FINE)
             );
         }
     }
@@ -78,12 +78,12 @@ class IdCache {
                     if (id == null) {
                         LOG
                                 .log(NMsg.ofC("discover extensions from current classloader %s. looking for %s", bootClassLoader, extensionPointStrings)
-                                        .withIntent(NMsgIntent.INFO).withLevel(Level.FINE)
+                                        .withIntent(NMsgIntent.NOTICE).withLevel(Level.FINE)
                                 );
                     } else {
                         LOG
                                 .log(NMsg.ofC("discover extensions from %s (id=%s) (classloader %s). looking for %s", url, id, bootClassLoader, extensionPointStrings)
-                                        .withIntent(NMsgIntent.INFO).withLevel(Level.FINE)
+                                        .withIntent(NMsgIntent.NOTICE).withLevel(Level.FINE)
                                 );
                     }
                     logStart.set(true);
@@ -98,7 +98,7 @@ class IdCache {
                     cc.add(c);
                     LOG
                             .log(NMsg.ofC("discovered %s as %s in %s", c, extensionPoint, url == null ? "default classloader" : url)
-                                    .withIntent(NMsgIntent.INFO).withLevel(Level.FINE)
+                                    .withIntent(NMsgIntent.NOTICE).withLevel(Level.FINE)
                             );
                     count++;
                 }
