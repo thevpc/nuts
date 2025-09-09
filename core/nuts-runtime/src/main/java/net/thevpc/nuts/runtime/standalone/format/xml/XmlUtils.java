@@ -26,7 +26,10 @@
 package net.thevpc.nuts.runtime.standalone.format.xml;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import javax.xml.parsers.DocumentBuilder;
@@ -370,6 +373,21 @@ public class XmlUtils {
         return true;
     }
 
+    public static String nodePath(Node n) {
+        ArrayList<String> a=new ArrayList<>();
+        while(n!=null){
+            if(n instanceof Document){
+                break;
+            }
+            String nn = n.getNodeName();
+            if(nn!=null) {
+                a.add(nn);
+            }
+            n=n.getParentNode();
+        }
+        Collections.reverse(a);
+        return String.join("/", a);
+    }
     public static boolean isNode(Element n, String... names) {
         Node nn = n;
         for (int i = names.length - 1; i >= 0; i--) {
