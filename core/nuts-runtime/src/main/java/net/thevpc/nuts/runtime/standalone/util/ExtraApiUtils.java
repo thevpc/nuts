@@ -21,7 +21,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -162,7 +161,7 @@ public class ExtraApiUtils {
                                 return true;
                             } else {
                                 bLog.log(NMsg.ofC("url %s is not in classpath. failed to check class %s",
-                                        url, clz).asFinest().withIntent(NMsgIntent.INFO));
+                                        url, clz).asFinest().withIntent(NMsgIntent.FAIL));
                                 return false;
                             }
                         }
