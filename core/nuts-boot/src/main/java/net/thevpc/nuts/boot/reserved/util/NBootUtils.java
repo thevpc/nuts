@@ -509,7 +509,7 @@ public final class NBootUtils {
             }
             return updatedFile;
         } catch (IOException ex) {
-            NBootContext.log().with().level(Level.WARNING).verbWarning().error(ex).log(NBootMsg.ofPlain("unable to update update " + filePath));
+            NBootContext.log().with().level(Level.WARNING).verbAlert().error(ex).log(NBootMsg.ofPlain("unable to update update " + filePath));
             return false;
         }
     }
@@ -1229,7 +1229,7 @@ public final class NBootUtils {
             return line;
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
-            NBootContext.log().with().level(Level.OFF).verbWarning().log(NBootMsg.ofC("[Graphical Environment Unsupported] %s", title));
+            NBootContext.log().with().level(Level.OFF).verbAlert().log(NBootMsg.ofC("[Graphical Environment Unsupported] %s", title));
             if (in == null) {
                 return new Scanner(System.in).nextLine();
             }
@@ -1245,7 +1245,7 @@ public final class NBootUtils {
             javax.swing.JOptionPane.showMessageDialog(null, message);
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
-            NBootContext.log().with().level(Level.OFF).verbWarning().log(NBootMsg.ofC("[Graphical Environment Unsupported] %s", title));
+            NBootContext.log().with().level(Level.OFF).verbAlert().log(NBootMsg.ofC("[Graphical Environment Unsupported] %s", title));
         }
     }
 
@@ -1371,7 +1371,7 @@ public final class NBootUtils {
                                         url, clz));
                                 return true;
                             } else {
-                                log.with().level(Level.FINEST).verbInfo().log(NBootMsg.ofC("url %s is not in classpath. failed to check class %s",
+                                log.with().level(Level.FINEST).verbNotice().log(NBootMsg.ofC("url %s is not in classpath. failed to check class %s",
                                         url, clz));
                                 return false;
                             }
@@ -2002,7 +2002,7 @@ public final class NBootUtils {
                         if (!force && !refForceAll.isForce(true)) {
                             if (header != null) {
                                 if (!firstNonNull(bOptions.getBot(), false)) {
-                                    NBootContext.log().with().level(Level.WARNING).verbWarning().log(NBootMsg.ofC("%s", header));
+                                    NBootContext.log().with().level(Level.WARNING).verbAlert().log(NBootMsg.ofC("%s", header));
                                 }
                             }
                         }
@@ -2050,7 +2050,7 @@ public final class NBootUtils {
                                 );
                             } else {
                                 // Level.OFF is to force logging in all cases
-                                log.with().level(Level.OFF).verbWarning().log(NBootMsg.ofC("do you confirm deleting %s [y/n/c] (default 'n') ? : ", directory));
+                                log.with().level(Level.OFF).verbAlert().log(NBootMsg.ofC("do you confirm deleting %s [y/n/c] (default 'n') ? : ", directory));
                                 line = readline.get();
                             }
                         }
@@ -2113,7 +2113,7 @@ public final class NBootUtils {
                     }
                 });
                 count[0]++;
-                log.with().level(Level.FINEST).verbWarning().log(NBootMsg.ofC("delete folder : %s (%s files/folders deleted)", directory, count[0]));
+                log.with().level(Level.FINEST).verbAlert().log(NBootMsg.ofC("delete folder : %s (%s files/folders deleted)", directory, count[0]));
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -2160,7 +2160,7 @@ public final class NBootUtils {
                             + "You was asked to confirm deleting folders as part as recover/reset option."), 255);
         }
         NBootLog log = NBootContext.log();
-        log.with().level(Level.FINEST).verbWarning().log(NBootMsg.ofC("delete workspace location(s) at : %s",
+        log.with().level(Level.FINEST).verbAlert().log(NBootMsg.ofC("delete workspace location(s) at : %s",
                 lastBootOptions.getWorkspace()
         ));
         boolean force = false;
@@ -2174,7 +2174,7 @@ public final class NBootUtils {
             }
             case "NO":
             case "ERROR": {
-                log.with().level(Level.WARNING).verbWarning().log(NBootMsg.ofPlain("reset cancelled (applied '--no' argument)"));
+                log.with().level(Level.WARNING).verbAlert().log(NBootMsg.ofPlain("reset cancelled (applied '--no' argument)"));
                 throw new NBootCancelException();
             }
         }
@@ -2233,7 +2233,7 @@ public final class NBootUtils {
                             + "You was asked to confirm deleting folders as part as recover/reset option."), 255);
         }
         NBootLog log = NBootContext.log();
-        log.with().level(Level.FINEST).verbWarning().log(NBootMsg.ofC("hard reset nuts to remove all workspaces and all configuration files."));
+        log.with().level(Level.FINEST).verbAlert().log(NBootMsg.ofC("hard reset nuts to remove all workspaces and all configuration files."));
         boolean force = false;
         switch (confirm) {
             case "ASK": {
@@ -2245,7 +2245,7 @@ public final class NBootUtils {
             }
             case "NO":
             case "ERROR": {
-                log.with().level(Level.WARNING).verbWarning().log(NBootMsg.ofPlain("reset cancelled (applied '--no' argument)"));
+                log.with().level(Level.WARNING).verbAlert().log(NBootMsg.ofPlain("reset cancelled (applied '--no' argument)"));
                 throw new NBootCancelException();
             }
         }
