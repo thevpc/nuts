@@ -56,7 +56,7 @@ public final class NBootBootConfigLoader {
                 }
             }
             if (log.isLoggable(Level.FINEST)) {
-                log.with().level(Level.CONFIG).verbInfo().log(NBootMsg.ofC("previous Workspace config not found at %s", bootFile.getPath()));
+                log.with().level(Level.CONFIG).verbNotice().log(NBootMsg.ofC("previous Workspace config not found at %s", bootFile.getPath()));
             }
         } catch (Exception ex) {
             log.with().level(Level.CONFIG).verbFail().error(ex).log(NBootMsg.ofC("unable to load nuts version file %s", bootFile));
