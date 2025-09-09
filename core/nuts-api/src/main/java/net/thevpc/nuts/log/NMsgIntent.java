@@ -40,7 +40,7 @@ import java.util.Objects;
 public final class NMsgIntent {
     private static final Map<String, NMsgIntent> cached = new HashMap<>();
 
-    public static final NMsgIntent INFO = of("INFO");
+    public static final NMsgIntent NOTICE = of("NOTICE");
     public static final NMsgIntent DEBUG = of("DEBUG");
 
     /**
@@ -56,12 +56,12 @@ public final class NMsgIntent {
     /**
      * Log verb used for tracing general purpose warnings
      */
-    public static final NMsgIntent ALERT = of("WARNING");
+    public static final NMsgIntent ALERT = of("ALERT");
 
     /**
      * Log verb used for tracing general purpose warnings
      */
-    public static final NMsgIntent CONFIG = of("CONFIG");
+    public static final NMsgIntent INIT = of("INIT");
 
     /**
      * Log verb used for tracing the failure to run an operation
