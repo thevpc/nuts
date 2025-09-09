@@ -201,7 +201,7 @@
                     
                     <ul class="nav flex-column">
                         
-                        <li class="nav-item"><a class="nav-link" href="#aliases">3.1 Aliases</a>
+                        <li class="nav-item"><a class="nav-link" href="#aliases">3.1 Aliases, Imports & Launchers</a>
                             
                             
                         </li>
@@ -688,8 +688,6 @@ OpenJDK 64-Bit Server VM (build 24.0.1+9-suse-1.1-x8664, mixed mode, sharing)
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi10-tab" data-toggle="tab" href="#idi10" role="tab" aria-controls="idi10" aria-selected="false">windows</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link active" id="idi11-tab" data-toggle="tab" href="#idi11" role="tab" aria-controls="idi11" aria-selected="true">linux</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link " id="idi12-tab" data-toggle="tab" href="#idi12" role="tab" aria-controls="idi12" aria-selected="false">macos</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi13-tab" data-toggle="tab" href="#idi13" role="tab" aria-controls="idi13" aria-selected="false">wget</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi14-tab" data-toggle="tab" href="#idi14" role="tab" aria-controls="idi14" aria-selected="false">curl</a></li>
 </ul>
 <div class="tab-content my-3"><div class="tab-pane fade show " id="idi10" role="tabpanel" aria-labelledby="idi10-tab"><p class="md-phrase">download <a href="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar" class="md-link">nuts-app-0.8.6.jar</a></p>
 <pre class="md-code md-code-``` "><code class="">
@@ -718,17 +716,8 @@ Supported Windows systems include Window 7 and later.
 
 </div>
 </div>
-<div class="tab-pane fade show active" id="idi11" role="tabpanel" aria-labelledby="idi11-tab"><b class="md-bold">for testing or development (using curl):</b>
-This will reset/delete any previous nuts installation before installing the latest version. Removing the 
-<mark class="md-code md-code-` ">Z</mark>
- modifier (replace 
-<mark class="md-code md-code-` ">-Zy</mark>
- by 
-<mark class="md-code md-code-` ">-y</mark>
-) flag if you do not want to reset the workspace.
- 
-<pre class="md-code md-code-``` "><code class="">
-$ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -o nuts.jar &amp;&amp; java -jar nuts.jar -ZyS
+<div class="tab-pane fade show active" id="idi11" role="tabpanel" aria-labelledby="idi11-tab"><pre class="md-code md-code-``` "><code class="">
+$ curl -s https://thevpc.net/nuts/install-latest.sh | bash
 $ exit
 </code></pre>
 Linux Systems installation is based on bash shell. First launch will configure "~/.bashrc" so that 
@@ -744,8 +733,7 @@ All Linux versions and distributions should work with or without X Window (or eq
 </div>
 </div>
 <div class="tab-pane fade show " id="idi12" role="tabpanel" aria-labelledby="idi12-tab"><pre class="md-code md-code-``` "><code class="">
-$ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -o nuts.jar
-$ java -jar nuts.jar -Zy
+$ curl -s https://thevpc.net/nuts/install-latest.sh | bash
 $ exit
 </code></pre>
 MacOS Systems installation is based on 
@@ -755,24 +743,6 @@ MacOS Systems installation is based on
  and other companion tool commands will be available in any future terminal instances. Using 
 <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b>
  on MacOS system should be seamless. A simple bash terminal (MacOs Terminal App) is already a nuts-aware terminal.
-<div class="alert alert-success mb-4">Any bash terminal application is a nuts-aware terminal.
-
-</div>
-</div>
-<div class="tab-pane fade show " id="idi13" role="tabpanel" aria-labelledby="idi13-tab"><pre class="md-code md-code-``` "><code class="">
-$ wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -qO nuts.jar
-$ java -jar nuts.jar -Zy
-$ exit
-</code></pre>
-<div class="alert alert-success mb-4">Any bash terminal application is a nuts-aware terminal.
-
-</div>
-</div>
-<div class="tab-pane fade show " id="idi14" role="tabpanel" aria-labelledby="idi14-tab"><pre class="md-code md-code-``` "><code class="">
-$ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -o nuts.jar
-$ java -jar nuts.jar -Zy
-$ exit
-</code></pre>
 <div class="alert alert-success mb-4">Any bash terminal application is a nuts-aware terminal.
 
 </div>
@@ -833,8 +803,6 @@ OpenJDK 64-Bit Server VM (build 24.0.1+9-suse-1.1-x8664, mixed mode, sharing)
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi20-tab" data-toggle="tab" href="#idi20" role="tab" aria-controls="idi20" aria-selected="false">windows</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link active" id="idi21-tab" data-toggle="tab" href="#idi21" role="tab" aria-controls="idi21" aria-selected="true">linux</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link " id="idi22-tab" data-toggle="tab" href="#idi22" role="tab" aria-controls="idi22" aria-selected="false">macos</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi23-tab" data-toggle="tab" href="#idi23" role="tab" aria-controls="idi23" aria-selected="false">wget</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link " id="idi24-tab" data-toggle="tab" href="#idi24" role="tab" aria-controls="idi24" aria-selected="false">curl</a></li>
 </ul>
 <div class="tab-content my-3"><div class="tab-pane fade show " id="idi20" role="tabpanel" aria-labelledby="idi20-tab"><p class="md-phrase">download <a href="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar" class="md-link">nuts-app-0.8.5.jar</a></p>
 <pre class="md-code md-code-``` "><code class="">
@@ -863,30 +831,8 @@ Supported Windows systems include Window 7 and later.
 
 </div>
 </div>
-<div class="tab-pane fade show active" id="idi21" role="tabpanel" aria-labelledby="idi21-tab"><b class="md-bold">for production (using wget):</b>
-This will reset/delete any previous nuts installation before installing the latest version. Removing the 
-<mark class="md-code md-code-` ">Z</mark>
- modifier (replace 
-<mark class="md-code md-code-` ">-Zy</mark>
- by 
-<mark class="md-code md-code-` ">-y</mark>
-) flag if you do not want to reset the workspace.
-<pre class="md-code md-code-``` "><code class="">
-$ wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar -o nuts.jar
-$ java -jar nuts.jar -Zy
-$ exit
-</code></pre>
-<b class="md-bold">for production (using curl):</b>
-This will reset/delete any previous nuts installation before installing the latest version. Removing the 
-<mark class="md-code md-code-` ">Z</mark>
- modifier (replace 
-<mark class="md-code md-code-` ">-Zy</mark>
- by 
-<mark class="md-code md-code-` ">-y</mark>
-) flag if you do not want to reset the workspace.
-<pre class="md-code md-code-``` "><code class="">
-$ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar -o nuts.jar
-$ java -jar nuts.jar -Zy
+<div class="tab-pane fade show active" id="idi21" role="tabpanel" aria-labelledby="idi21-tab"><pre class="md-code md-code-``` "><code class="">
+$ curl -s https://thevpc.net/nuts/install-stable.sh | bash
 $ exit
 </code></pre>
 Linux Systems installation is based on bash shell. First launch will configure "~/.bashrc" so that 
@@ -908,8 +854,7 @@ All Linux versions and distributions should work with or without X Window (or eq
 </div>
 </div>
 <div class="tab-pane fade show " id="idi22" role="tabpanel" aria-labelledby="idi22-tab"><pre class="md-code md-code-``` "><code class="">
-$ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar -o nuts.jar
-$ java -jar nuts.jar -Zy
+$ curl -s https://thevpc.net/nuts/install-stable.sh | bash
 $ exit
 </code></pre>
 MacOS Systems installation is based on 
@@ -919,23 +864,6 @@ MacOS Systems installation is based on
  and other companion tool commands will be available in any future terminal instances. Using 
 <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b>
  on MacOS system should be seamless. A simple bash terminal (MacOs Terminal App) is already a nuts-aware terminal.
-<div class="alert alert-success mb-4">Any bash terminal application is a nuts-aware terminal.
-
-</div>
-</div>
-<div class="tab-pane fade show " id="idi23" role="tabpanel" aria-labelledby="idi23-tab"><pre class="md-code md-code-``` "><code class="">
-  $ wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar -o nuts.jar
-  $  java -jar nuts.jar -y
-</code></pre>
-<div class="alert alert-success mb-4">Any bash terminal application is a nuts-aware terminal.
-
-</div>
-</div>
-<div class="tab-pane fade show " id="idi24" role="tabpanel" aria-labelledby="idi24-tab"><pre class="md-code md-code-``` "><code class="">
-$ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar -o nuts.jar
-$ java -jar nuts.jar -Zy
-$ exit
-</code></pre>
 <div class="alert alert-success mb-4">Any bash terminal application is a nuts-aware terminal.
 
 </div>
@@ -1179,7 +1107,7 @@ java -jar nuts.jar
                         
                             <!--pageLevel2-->
                             <section id="aliases" >
-                                <h3 class="main-section2"><a href="#U482D96C9C1BB8064EB31E359DDBCBEAB542E676F">3.1 Aliases</a></h3>
+                                <h3 class="main-section2"><a href="#U482D96C9C1BB8064EB31E359DDBCBEAB542E676F">3.1 Aliases, Imports & Launchers</a></h3>
                                 <div class="text-card">
                                 Aliases, Imports and launchers, are three features in nuts where you can call artifacts with a simple word instead of using the full id. Indeed, usually, artifacts are uniquely identified by groupId, artifactId, version and classifier (whenever applicable). This is kind of cumbersome if most of the cases:
 <pre class="md-code md-code-``` bash"><code class="bash">
@@ -8234,7 +8162,7 @@ sh
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-09-08-173547
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-09-09-173300
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
