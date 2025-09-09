@@ -473,11 +473,11 @@ public class NMsg implements NBlankable {
 
 
     public NMsg asInfo() {
-        return withLevelAndDefaultIntent(Level.FINE, NMsgIntent.INFO);
+        return withLevelAndDefaultIntent(Level.INFO, NMsgIntent.NOTICE);
     }
 
     public NMsg asConfig() {
-        return withLevelAndDefaultIntent(Level.CONFIG, NMsgIntent.CONFIG);
+        return withLevelAndDefaultIntent(Level.CONFIG, NMsgIntent.INIT);
     }
 
     public NMsg asWarning() {
