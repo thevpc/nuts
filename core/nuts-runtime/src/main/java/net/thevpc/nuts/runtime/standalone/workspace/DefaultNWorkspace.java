@@ -589,7 +589,9 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                                 .append(":")
                                 .append(this.getWorkspaceLocation())
                                 .append(" ")
-                );
+                                .append(" (")
+                                .append(getDigestName())
+                                .append(")")                );
             } else {
                 out.println(
                         data.text.ofBuilder()
