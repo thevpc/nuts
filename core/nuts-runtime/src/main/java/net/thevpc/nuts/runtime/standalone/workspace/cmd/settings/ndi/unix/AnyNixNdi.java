@@ -19,10 +19,7 @@ import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NAsk;
 import net.thevpc.nuts.util.NAskParser;
 
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AnyNixNdi extends BaseSystemNdi {
@@ -61,16 +58,23 @@ public class AnyNixNdi extends BaseSystemNdi {
         NSession session = NSession.of();
         if (Arrays.stream(updatedPaths).anyMatch(x -> x.getStatus() != PathInfo.Status.DISCARDED) && session.isTrace()) {
             if (session.isPlainTrace()) {
-                NOut.resetLine().println(NMsg.ofC("%s %s to point to workspace %s",
+                NOut.resetLine().println(NMsg.ofC("%s scripts to point to current workspace : ",
                         session.isYes() ?
                                 factory.ofStyled("force updating", NTextStyle.warn().append(NTextStyle.underlined())) :
                                 factory.ofStyled("force updating", NTextStyle.warn())
-                        ,
-                        factory.ofBuilder().appendJoined(", ",
-                                Arrays.stream(updatedPaths).map(x ->
-                                        factory.ofStyled(x.getPath().getName(), NTextStyle.path())).collect(Collectors.toList())),
-                        NWorkspace.of().getWorkspaceLocation()
                 ));
+                List<String> sortedNames = Arrays.stream(updatedPaths).map(x->x.getPath().getName()).sorted().collect(Collectors.toList());
+                int maxPerLine = 5; // adjust for readability
+                for (int i = 0; i < sortedNames.size(); i += maxPerLine) {
+                    List<String> sublist = sortedNames.subList(i, Math.min(i + maxPerLine, sortedNames.size()));
+                    NOut.print("\t");
+                    NOut.println(
+                            factory.ofBuilder()
+                                    .appendJoined(", ", sublist.stream()
+                                            .map(name -> factory.ofStyled(name, NTextStyle.path()))
+                                            .collect(Collectors.toList()))
+                    );
+                }
             }
             final String sysRcName = NShellHelper.of(NWorkspace.of().getShellFamily()).getSysRcName();
             NAsk.of()
