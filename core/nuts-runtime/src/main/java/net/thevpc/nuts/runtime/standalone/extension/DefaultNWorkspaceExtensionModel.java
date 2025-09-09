@@ -233,7 +233,7 @@ public class DefaultNWorkspaceExtensionModel {
             }).filter(Objects::nonNull).toArray(PathAndUrl[]::new);
             _LOG()
                     .log(NMsg.ofC("initialize workspace extensions from %s/%s urls : %s", valid.length, urls.length, Arrays.asList(urls))
-                            .asFine().withIntent(NMsgIntent.INFO));
+                            .asFine().withIntent(NMsgIntent.NOTICE));
             for (PathAndUrl v : valid) {
                 objectFactory.discoverTypes(
                         CoreNIdUtils.resolveOrGenerateIdFromFileName(v.path),
