@@ -24,7 +24,7 @@ public class NReservedBootConfigLoaderOld {
     @SuppressWarnings("unchecked")
     public static void loadConfigVersion507(NBootOptionsInfo config, Map<String, Object> jsonObject,
                                             NBootLog bLog) {
-        bLog.with().level(Level.CONFIG).verbInfo().log(NBootMsg.ofPlain("config version compatibility : 0.5.7"));
+        bLog.with().level(Level.CONFIG).verbNotice().log(NBootMsg.ofPlain("config version compatibility : 0.5.7"));
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
         config.setWorkspace((String) jsonObject.get("workspace"));
@@ -69,7 +69,7 @@ public class NReservedBootConfigLoaderOld {
     @SuppressWarnings("unchecked")
     public static void loadConfigVersion506(NBootOptionsInfo config, Map<String, Object> jsonObject,
                                             NBootLog bLog) {
-        bLog.with().level(Level.CONFIG).verbInfo().log(NBootMsg.ofPlain("config version compatibility : 0.5.6"));
+        bLog.with().level(Level.CONFIG).verbNotice().log(NBootMsg.ofPlain("config version compatibility : 0.5.6"));
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
         config.setWorkspace((String) jsonObject.get("workspace"));
@@ -102,7 +102,7 @@ public class NReservedBootConfigLoaderOld {
      */
     public static void loadConfigVersion502(NBootOptionsInfo config, Map<String, Object> jsonObject,
                                             NBootLog bLog) {
-        bLog.with().level(Level.CONFIG).verbInfo().log(NBootMsg.ofPlain("config version compatibility : 0.5.2"));
+        bLog.with().level(Level.CONFIG).verbNotice().log(NBootMsg.ofPlain("config version compatibility : 0.5.2"));
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
         config.setWorkspace((String) jsonObject.get("workspace"));
