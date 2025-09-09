@@ -46,7 +46,12 @@ import java.util.logging.LogRecord;
  * @app.category Internal
  */
 public class NBootLog {
-
+    public static final String INTENT_ALERT="ALERT";
+    public static final String INTENT_FAIL="FAIL";
+    public static final String INTENT_NOTICE="NOTICE";
+    public static final String INTENT_START="START";
+    public static final String INTENT_READ="READ";
+    public static final String INTENT_SUCCESS="SUCCESS";
     /**
      * Universal Data and time format "yyyy-MM-dd HH:mm:ss.SSS"
      */
@@ -76,14 +81,14 @@ public class NBootLog {
     }
 
     public void error(NBootMsg message, Throwable e) {
-        log(Level.SEVERE, "FAIL",message,e);
+        log(Level.SEVERE, INTENT_FAIL,message,e);
     }
     public void warn(NBootMsg message) {
-        log(Level.WARNING, "WARNING",message);
+        log(Level.WARNING, INTENT_ALERT,message);
     }
 
     public void error(NBootMsg message) {
-        log(Level.SEVERE, "FAIL",message);
+        log(Level.SEVERE, INTENT_FAIL,message);
     }
     public void log(Level lvl, String logVerb, NBootMsg message) {
         if (isLoggableTerm(lvl)) {
@@ -108,13 +113,13 @@ public class NBootLog {
         Level level = record.getLevel();
         if (verb == null) {
             if (level.intValue() >= Level.SEVERE.intValue()) {
-                verb = "FAIL";
+                verb = INTENT_FAIL;
             } else if (level.intValue() >= Level.WARNING.intValue()) {
-                verb = "WARNING";
+                verb = INTENT_ALERT;
             } else if (level.intValue() >= Level.INFO.intValue()) {
-                verb = "INFO";
+                verb = INTENT_NOTICE;
             } else {
-                verb = "INFO";
+                verb = INTENT_NOTICE;
             }
         }
         log(level, verb, NBootMsg.ofPlain(record.getMessage()), record.getThrown());
@@ -331,23 +336,23 @@ public class NBootLog {
         }
 
         public LogOp verbFail() {
-            this.verb = "FAIL";
+            this.verb = INTENT_FAIL;
             return this;
         }
         public LogOp verbCache() {
             this.verb = "CACHE";
             return this;
         }
-        public LogOp verbInfo() {
-            this.verb = "INFO";
+        public LogOp verbNotice() {
+            this.verb = INTENT_NOTICE;
             return this;
         }
         public LogOp verbRead() {
             this.verb = "READ";
             return this;
         }
-        public LogOp verbWarning() {
-            this.verb = "WARNING";
+        public LogOp verbAlert() {
+            this.verb = INTENT_ALERT;
             return this;
         }
         public LogOp verbSuccess() {
