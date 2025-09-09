@@ -1,0 +1,17 @@
+able, agile, alert, brave, bright, clever, crisp, curious, daring, dauntless, eager,
+elegant, fast, fierce, fiery, gentle, happy, hearty, humble, keen, kind, lively, loyal,
+mighty, nimble, noble, playful, proud, quick, quiet, rapid, rash, robust, silent,
+silly, sly, smart, soft, steadfast, swift, tough, valiant, vast, vibrant, vivid, wary, wild, witty, young, zealous,
+dark, light, clumsy, awkward, nervous, jumpy
+
+bold, wise, cunning, crafty, smooth, sleek, graceful, refined, polished, skilled, expert, masterful, talented, gifted, brilliant, radiant, glowing, shining, sparkling, gleaming, dazzling, stunning, striking, majestic, regal, royal, grand, impressive, magnificent, splendid, superb, excellent, outstanding, remarkable, extraordinary, exceptional, unique, rare, precious, valuable, treasured, beloved, cherished, adored, admired, respected, honored, revered, celebrated, famous, renowned, legendary, mythical, magical, mystical, enchanted, charmed, blessed, fortunate, lucky
+tiny, small, large, huge, massive, giant, enormous, colossal, towering, tall, short, long, wide, narrow, thick, thin, slender, lean, sturdy, solid, strong, weak, frail, delicate, fine, rough, smooth, bumpy, jagged, sharp, blunt, pointed, curved, straight, round, square, flat, deep, shallow, heavy, light, dense, loose, tight, flexible, rigid, hard, soft
+
+golden, silver, bronze, copper, crimson, scarlet, ruby, emerald, sapphire, amber, violet, purple, indigo, azure, turquoise, jade, pearl, ivory, ebony, obsidian, crystal, diamond, steel, iron, stone, marble, velvet, silk, satin, glossy, matte, shiny, dull, faded, vivid, pale, bright, dim, shadowy, misty, foggy, cloudy, clear, transparent, opaque
+
+cheerful, jolly, merry, joyful, gleeful, bubbly, peppy, spunky, zesty, spirited, energetic, dynamic, active, restless, hyper, frantic, frenzied, wild, crazy, mad, insane, bizarre, weird, strange, odd, peculiar, quirky, eccentric, unusual, abnormal, normal, ordinary, plain, simple, basic, complex, complicated, intricate, elaborate, fancy, ornate, decorative
+careful, cautious, prudent, sensible, reasonable, rational, logical, practical, realistic, idealistic, optimistic, pessimistic, hopeful, doubtful, skeptical, trusting, suspicious, paranoid, fearless, fearful, timid, shy, bashful, modest, arrogant, conceited, vain, selfish, generous, greedy, stingy, wasteful, frugal, thrifty, economical, expensive, cheap, affordable, valuable, worthless
+stormy, windy, breezy, gusty, calm, still, frozen, icy, frosty, chilly, cool, warm, hot, blazing, burning, scorching, sizzling, steamy, humid, dry, arid, dusty, sandy, rocky, stony, earthy, muddy, dirty, clean, fresh, stale, musty, fragrant, aromatic, pungent, bitter, sweet, sour, salty, spicy, mild, bland
+bouncy, springy, elastic, flexible, stiff, rigid, fluid, flowing, streaming, rushing, racing, charging, dashing, darting, zipping, zooming, crawling, creeping, sneaking, stalking, prowling, wandering, roaming, drifting, floating, gliding, soaring, diving, plunging, tumbling, rolling, spinning, twirling, dancing, prancing, skipping, hopping, jumping, leaping, bounding
+Temporal & Abstract:
+ancient, old, aged, mature, youthful, new, fresh, modern, current, recent, past, future, eternal, timeless, fleeting, brief, momentary, lasting, enduring, permanent, temporary, seasonal, monthly, weekly, daily, hourly, instant, immediate, delayed, slow, gradual, sudden, abrupt, surprising, shocking, expected, predictable, unpredictable, random, chaotic, orderly, organized, messy, cluttered, neat, tidy
