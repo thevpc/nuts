@@ -94,6 +94,7 @@ public class JavaJarUtils {
                     }
                 }
                 XmlUtils.visitNode(ee, x -> {
+                    String npath=XmlUtils.nodePath(x);
                     if (x instanceof Element) {
                         Element e = (Element) x;
                         if (XmlUtils.isNode(e, "build", "plugins", "plugin", "configuration", "archive", "manifest", "mainClass")) {
