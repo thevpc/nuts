@@ -5537,7 +5537,7 @@ Options are :
                                     <span class="badge badge-info">INSTALLATION COMMAND</span>
                                     <pre><code>nuts install org.springframework.boot:spring-boot-cli &  nuts settings add alias spring="--main-class=1 spring-boot-cli"</code></pre>
                                     <span class="badge badge-info">EXAMPLE COMMAND</span>
-                                    <pre><code>nuts spring init --dependencies=web</code></pre>
+                                    <pre><code>nuts spring init --dependencies=web,data-jpa my-project</code></pre>
                                 </div>
                             </div>
                             <div class="text-card">
@@ -5570,7 +5570,7 @@ Options are :
                                 </div>
                                 <div class="mb-4">
                                     <span class="badge badge-info">INSTALLATION COMMAND</span>
-                                    <pre><code>nuts com.google.tsunami:tsunami-main & nuts settings add alias tsunami='--cp=${NUTS_ID_APPS</code></pre>
+                                    <pre><code>nuts com.google.tsunami:tsunami-main & nuts settings add alias tsunami='--cp=${NUTS_ID_APPS}/your-plugins-folder/*.jar tsunami-main'</code></pre>
                                     <span class="badge badge-info">EXAMPLE COMMAND</span>
                                     <pre><code>nuts tsunami --ip-v4-target=127.0.0.1</code></pre>
                                 </div>
@@ -6424,7 +6424,7 @@ nuts ntomcat --start
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-09-08-173547
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-09-09-173300
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
