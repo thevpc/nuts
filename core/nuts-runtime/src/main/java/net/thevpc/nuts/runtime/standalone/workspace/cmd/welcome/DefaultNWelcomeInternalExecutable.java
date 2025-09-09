@@ -72,9 +72,6 @@ public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutabl
             welcome.put("runtime-version", session.getWorkspace().getRuntimeId().getVersion());
             welcome.put("workspace", NWorkspace.of().getWorkspaceLocation());
             welcome.put("hash-name", NPath.of(session.getWorkspace().getDigestName()));
-            if (NOut.isPlain()) {
-                session = session.copy().setOutputFormat(NContentType.PROPS);
-            }
             NOut.resetLine().println(welcome);
         }
         return NExecutionException.SUCCESS;
