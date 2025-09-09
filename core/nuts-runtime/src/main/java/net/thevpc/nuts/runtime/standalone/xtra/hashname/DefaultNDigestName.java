@@ -8,6 +8,8 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.NPlatformHome;
+import net.thevpc.nuts.util.NNameFormat;
+import net.thevpc.nuts.util.NNames;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,66 +21,68 @@ public class DefaultNDigestName implements NDigestName {
     public DefaultNDigestName() {
     }
 
-    public String getWorkspaceHashName(String path) {
-        if (path == null) {
-            path = "";
-        }
-        String n;
-        String p;
-        if (path.contains("\\") || path.contains("/") || path.equals(".") || path.equals("..")) {
-            Path pp = Paths.get(path).toAbsolutePath().normalize();
-            n = pp.getFileName().toString();
-            p = pp.getParent() == null ? null : pp.getParent().toString();
-        } else {
-            n = path;
-            p = "";
-        }
-        if (p == null) {
-            return ("Root " + n).trim();
-        } else {
-            Path root = Paths.get(NPlatformHome.USER.getWorkspaceLocation(null)).getParent().getParent();
-            if (p.equals(root.toString())) {
-                return n;
-            }
-            return (getDigestName(p) + " " + n).trim();
-        }
-    }
+//    public String getWorkspaceHashName(String path) {
+//        if (path == null) {
+//            path = "";
+//        }
+//        String n;
+//        String p;
+//        if (path.contains("\\") || path.contains("/") || path.equals(".") || path.equals("..")) {
+//            Path pp = Paths.get(path).toAbsolutePath().normalize();
+//            n = pp.getFileName().toString();
+//            p = pp.getParent() == null ? null : pp.getParent().toString();
+//        } else {
+//            n = path;
+//            p = "";
+//        }
+//        if (p == null) {
+//            return ("Root " + n).trim();
+//        } else {
+//            Path root = Paths.get(NPlatformHome.USER.getWorkspaceLocation(null)).getParent().getParent();
+//            if (p.equals(root.toString())) {
+//                return n;
+//            }
+//            return (getDigestName(p) + " " + n).trim();
+//        }
+//    }
 
 
     @Override
     public String getDigestName(Object source) {
-        return getDigestName(source, null);
-    }
-
-    @Override
-    public String getDigestName(Object source, String sourceType) {
         if (source == null) {
             return "default";
         } else if (source instanceof String) {
-            if ("workspace".equalsIgnoreCase(sourceType)) {
-                return getWorkspaceHashName(source.toString());
-            }
-            if (source.toString().isEmpty()) {
-                return "empty";
-            }
-            return getDigestName(source.hashCode());
+            return getDigestNameString((String) source);
         } else if (source instanceof NPath) {
-            if ("workspace".equalsIgnoreCase(sourceType)) {
-                return getWorkspaceHashName(source.toString());
-            }
-            return getDigestName(source.hashCode());
+            return getDigestNameString(source.toString());
         } else if (source instanceof NWorkspace) {
             NPath location = ((NWorkspace) source).getLocation();
-            return getWorkspaceHashName(location == null ? null : location.toString());
+            if(location==null){
+                return getDigestNameString("default");
+            }
+            return getDigestNameString(location.toString());
         } else if (source instanceof NSession) {
             NPath location = ((NSession) source).getWorkspace().getLocation();
-            return getWorkspaceHashName(location == null ? null : location.toString());
+            if(location==null){
+                return getDigestNameString("default");
+            }
+            return getDigestNameString(location.toString());
         } else if (source instanceof Integer) {
-            int i = (int) source;
-            return CoreNUtils.COLOR_NAMES[Math.abs(i) % CoreNUtils.COLOR_NAMES.length];
+            return getDigestNameInt((int) source);
         } else {
-            return getDigestName(source.hashCode());
+            return getDigestNameInt(source.hashCode());
         }
+    }
+
+    private String getDigestNameInt(int source) {
+        return NNames.pickName(source,2,3, NNameFormat.CLASS_NAME);
+    }
+
+    private String getDigestNameString(String source) {
+        if (source == null || source.isEmpty()) {
+            return "empty";
+        }
+        return getDigestNameInt(source.hashCode());
     }
 
     @Override
